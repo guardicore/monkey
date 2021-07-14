@@ -11,7 +11,6 @@ import AWSRunButton from './RunOnAWS/AWSRunButton';
 import CloudOptions from './scoutsuite-setup/CloudOptions';
 
 const CONFIG_URL = '/api/configuration/island';
-const MODE_URL = '/api/island-mode'
 
 function RunOptions(props) {
 
@@ -57,22 +56,11 @@ function RunOptions(props) {
     return InlineSelection(defaultContents, newProps);
   }
 
-  function getIslandMode() {
-    let mode = 'advanced';
-    authComponent.authFetch(MODE_URL)
-      .then(res => res.json())
-        .then(res => {
-          mode = res.mode
-        }
-      );
-    return mode;
+  function shouldShowScoutsuite(islandMode){
+    return islandMode !== 'ransomware';
   }
 
-  function shouldShowScoutsuite(){
-    return getIslandMode() === 'advanced';
-  }
-
-  function defaultContents() {
+  function defaultContents(props) {
     return (
       <>
         <RunOnIslandButton title={'From Island'}
@@ -85,8 +73,8 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-        {shouldShowScoutsuite() && <AWSRunButton setComponent={setComponent}/> }
-        {shouldShowScoutsuite() && <NextSelectionButton title={'Cloud security scan'}
+        {shouldShowScoutsuite(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
+        {shouldShowScoutsuite(props.islandMode) && <NextSelectionButton title={'Cloud security scan'}
                              description={'Explains how to enable cloud security scan.'}
                              icon={faCloud}
                              onButtonClick={() => {

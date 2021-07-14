@@ -27,6 +27,7 @@ import {StandardLayoutComponent} from './layouts/StandardLayoutComponent';
 import LoadingScreen from './ui-components/LoadingScreen';
 
 const reportZeroTrustRoute = '/report/zeroTrust';
+const islandModeRoute = '/api/island-mode'
 
 class AppComponent extends AuthComponent {
   updateStatus = () => {
@@ -113,15 +114,26 @@ class AppComponent extends AuthComponent {
         infection_done: false,
         report_done: false,
         isLoggedIn: undefined,
-        needsRegistration: undefined
+        needsRegistration: undefined,
+        islandMode: undefined
       },
       noAuthLoginAttempted: undefined
     };
   }
 
+  updateIslandMode() {
+     this.authFetch(islandModeRoute)
+      .then(res => res.json())
+        .then(res => {
+          this.setState({islandMode: res.mode})
+        }
+      );
+  }
+
   componentDidMount() {
     this.updateStatus();
     this.interval = setInterval(this.updateStatus, 10000);
+    this.updateIslandMode()
   }
 
   componentWillUnmount() {
@@ -147,6 +159,7 @@ class AppComponent extends AuthComponent {
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/run-monkey',
               <StandardLayoutComponent component={RunMonkeyPage}
+                                       islandMode={this.state.islandMode}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/infection/map',
