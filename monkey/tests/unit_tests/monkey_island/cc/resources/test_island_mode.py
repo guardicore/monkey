@@ -51,8 +51,9 @@ def test_island_mode_endpoint(flask_client, uses_database, mode):
 
 
 def test_island_mode_endpoint__invalid_mode(flask_client, uses_database):
-    flask_client.post(
+    resp_post = flask_client.post(
         "/api/island-mode", data=json.dumps({"mode": "bogus_mode"}), follow_redirects=True
     )
-    resp = flask_client.get("/api/island-mode", follow_redirects=True)
-    assert resp.status_code == 422
+    resp_get = flask_client.get("/api/island-mode", follow_redirects=True)
+    assert resp_post.status_code == 422
+    assert json.loads(resp_get.data)["mode"] is None
