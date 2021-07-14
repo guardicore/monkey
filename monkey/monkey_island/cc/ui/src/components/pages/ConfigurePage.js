@@ -50,6 +50,13 @@ class ConfigurePageComponent extends AuthComponent {
     };
   }
 
+  componentDidUpdate() {
+    if (!this.getSectionsOrder().includes(this.currentSection)) {
+      this.currentSection = this.getSectionsOrder()[0]
+      this.setState({selectedSection: this.currentSection})
+    }
+  }
+
   getSectionsOrder() {
     let islandMode = this.props.islandMode ? this.props.islandMode : 'advanced'
     return CONFIGURATION_TABS_PER_MODE[islandMode];
