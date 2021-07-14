@@ -4,16 +4,23 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
-import guardicoreLogoImage from '../images/guardicore-logo.png';
-import logoImage from '../images/monkey-icon.svg';
-import infectionMonkeyImage from '../images/infection-monkey.svg';
 import VersionComponent from './side-menu/VersionComponent';
 import '../styles/components/SideNav.scss';
+import {CompletedSteps} from "./side-menu/CompletedSteps";
 
 
-class SideNavComponent extends React.Component {
+const guardicoreLogoImage = require('../images/guardicore-logo.png');
+const logoImage = require('../images/monkey-icon.svg');
+const infectionMonkeyImage = require('../images/infection-monkey.svg');
 
-  render() {
+
+type Props = {
+  disabled?: boolean,
+  completedSteps: CompletedSteps
+}
+
+
+const SideNavComponent = ({disabled=false, completedSteps}: Props) => {
     return (
       <>
         <NavLink to={'/'} exact={true}>
@@ -25,25 +32,26 @@ class SideNavComponent extends React.Component {
 
         <ul className='navigation'>
           <li>
-            <NavLink to='/run-monkey'>
+            <NavLink to='/run-monkey' className={getNavLinkClass()}>
               <span className='number'>1.</span>
               Run Monkey
-              {this.props.completedSteps.run_monkey ?
+              {completedSteps.runMonkey ?
                 <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
                 : ''}
             </NavLink>
           </li>
           <li>
-            <NavLink to='/infection/map'>
+            <NavLink to='/infection/map' className={getNavLinkClass()}>
               <span className='number'>2.</span>
               Infection Map
-              {this.props.completedSteps.infection_done ?
+              {completedSteps.infectionDone ?
                 <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
                 : ''}
             </NavLink>
           </li>
           <li>
             <NavLink to='/report/security'
+                     className={getNavLinkClass()}
                      isActive={(_match, location) => {
                        return (location.pathname === '/report/attack'
                          || location.pathname === '/report/zeroTrust'
@@ -51,13 +59,13 @@ class SideNavComponent extends React.Component {
                      }}>
               <span className='number'>3.</span>
               Security Reports
-              {this.props.completedSteps.report_done ?
+              {completedSteps.reportDone ?
                 <FontAwesomeIcon icon={faCheck} className='pull-right checkmark'/>
                 : ''}
             </NavLink>
           </li>
           <li>
-            <NavLink to='/start-over'>
+            <NavLink to='/start-over' className={getNavLinkClass()}>
               <span className='number'><FontAwesomeIcon icon={faUndo} style={{'marginLeft': '-1px'}}/></span>
               Start Over
             </NavLink>
@@ -66,8 +74,14 @@ class SideNavComponent extends React.Component {
 
         <hr/>
         <ul>
-          <li><NavLink to='/configure'>Configuration</NavLink></li>
-          <li><NavLink to='/infection/telemetry'>Logs</NavLink></li>
+          <li><NavLink to='/configure'
+                       className={getNavLinkClass()}>
+            Configuration
+          </NavLink></li>
+          <li><NavLink to='/infection/telemetry'
+          className={getNavLinkClass()}>
+            Logs
+          </NavLink></li>
         </ul>
 
         <hr/>
@@ -85,8 +99,15 @@ class SideNavComponent extends React.Component {
           <NavLink to='/license'>License</NavLink>
         </div>
         <VersionComponent/>
-      </>)
-  }
+      </>);
+
+    function getNavLinkClass() {
+      if(disabled){
+        return `nav-link disabled`
+      } else {
+        return ''
+      }
+    }
 }
 
 export default SideNavComponent;

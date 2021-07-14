@@ -2,19 +2,19 @@ import React from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import {Container} from 'react-bootstrap';
 
-import GettingStartedPage from 'components/pages/GettingStartedPage';
-import ConfigurePage from 'components/pages/ConfigurePage';
-import RunMonkeyPage from 'components/pages/RunMonkeyPage/RunMonkeyPage';
-import MapPage from 'components/pages/MapPage';
-import TelemetryPage from 'components/pages/TelemetryPage';
-import StartOverPage from 'components/pages/StartOverPage';
-import ReportPage from 'components/pages/ReportPage';
-import LicensePage from 'components/pages/LicensePage';
-import AuthComponent from 'components/AuthComponent';
-import LoginPageComponent from 'components/pages/LoginPage';
-import RegisterPageComponent from 'components/pages/RegisterPage';
+import ConfigurePage from './pages/ConfigurePage.js';
+import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
+import MapPage from './pages/MapPage';
+import TelemetryPage from './pages/TelemetryPage';
+import StartOverPage from './pages/StartOverPage';
+import ReportPage from './pages/ReportPage';
+import LicensePage from './pages/LicensePage';
+import AuthComponent from './AuthComponent';
+import LoginPageComponent from './pages/LoginPage';
+import RegisterPageComponent from './pages/RegisterPage';
 import Notifier from 'react-desktop-notification';
-import NotFoundPage from 'components/pages/NotFoundPage';
+import NotFoundPage from './pages/NotFoundPage';
+import GettingStartedPage from './pages/GettingStartedPage';
 
 
 import 'normalize.css/normalize.css';
@@ -22,14 +22,33 @@ import 'react-data-components/css/table-twbs.css';
 import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
-import notificationIcon from '../images/notification-logo-512x512.png';
 import {StandardLayoutComponent} from './layouts/StandardLayoutComponent';
 import LoadingScreen from './ui-components/LoadingScreen';
+import LandingPageComponent from "./pages/LandingPage";
+import {DisabledSidebarLayoutComponent} from "./layouts/DisabledSidebarLayoutComponent";
+import {CompletedSteps} from "./side-menu/CompletedSteps";
+import Timeout = NodeJS.Timeout;
+
+
+let notificationIcon = require('../images/notification-logo-512x512.png');
 
 const reportZeroTrustRoute = '/report/zeroTrust';
-const islandModeRoute = '/api/island-mode'
+
 
 class AppComponent extends AuthComponent {
+  private interval: Timeout;
+
+  constructor(props) {
+    super(props);
+    let completedSteps = new CompletedSteps(false);
+    this.state = {
+      completedSteps: completedSteps,
+      islandMode: undefined,
+      noAuthLoginAttempted: undefined
+    };
+    this.interval = undefined;
+  }
+
   updateStatus = () => {
     if (this.state.isLoggedIn === false) {
       return
@@ -50,6 +69,8 @@ class AppComponent extends AuthComponent {
               });
             })
         }
+
+        this.checkMode();
 
         if (res) {
           this.authFetch('/api')
@@ -72,10 +93,22 @@ class AppComponent extends AuthComponent {
       });
   };
 
+  checkMode = () => {
+    // TODO change to fetch the mode from UI
+    this.authFetch('/api')
+      .then(res => res.json())
+      .then(res => {
+        this.setState({IslandMode: undefined})
+      });
+  }
+
   renderRoute = (route_path, page_component, is_exact_path = false) => {
     let render_func = () => {
       switch (this.state.isLoggedIn) {
         case true:
+          if(this.state.islandMode === undefined){
+            return this.getLandingPage();
+          }
           return page_component;
         case false:
           switch (this.state.needsRegistration) {
@@ -98,6 +131,12 @@ class AppComponent extends AuthComponent {
     }
   };
 
+  getLandingPage() {
+    return <DisabledSidebarLayoutComponent component={LandingPageComponent}
+                                           completedSteps={new CompletedSteps()}
+                                           onStatusChange={this.updateStatus}/>
+  }
+
   redirectTo = (userPath, targetPath) => {
     let pathQuery = new RegExp(userPath + '[/]?$', 'g');
     if (window.location.pathname.match(pathQuery)) {
@@ -105,35 +144,9 @@ class AppComponent extends AuthComponent {
     }
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      completedSteps: {
-        run_server: true,
-        run_monkey: false,
-        infection_done: false,
-        report_done: false,
-        isLoggedIn: undefined,
-        needsRegistration: undefined,
-        islandMode: undefined
-      },
-      noAuthLoginAttempted: undefined
-    };
-  }
-
-  updateIslandMode() {
-     this.authFetch(islandModeRoute)
-      .then(res => res.json())
-        .then(res => {
-          this.setState({islandMode: res.mode})
-        }
-      );
-  }
-
   componentDidMount() {
     this.updateStatus();
     this.interval = setInterval(this.updateStatus, 10000);
-    this.updateIslandMode()
   }
 
   componentWillUnmount() {
@@ -219,7 +232,5 @@ class AppComponent extends AuthComponent {
     return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith('/report'));
   }
 }
-
-AppComponent.defaultProps = {};
 
 export default AppComponent;
