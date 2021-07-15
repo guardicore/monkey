@@ -24,7 +24,7 @@ RANSOMWARE = {
                 },
                 "info_box": {
                     "title": "",
-                    "type": "object",
+                    "type": "text",
                     "info": "No files will be encrypted if a directory is not specified or doesn't "
                     "exist on a victim machine.",
                 },
@@ -52,11 +52,10 @@ RANSOMWARE = {
                         },
                     },
                 },
-                "readme_note": {
+                "text_box": {
                     "title": "",
-                    "type": "object",
-                    "description": "Note: A README.txt will be left in the specified target "
-                    "directory.",
+                    "type": "text",
+                    "text": "Note: A README.txt will be left in the specified target " "directory.",
                 },
             },
         },

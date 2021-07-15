@@ -11,7 +11,7 @@ BASIC_NETWORK = {
             "properties": {
                 "info_box": {
                     "title": "",
-                    "type": "object",
+                    "type": "text",
                     "info": 'The Monkey scans its subnet if "Local network scan" is checked. '
                     'Additionally, the Monkey scans machines according to "Scan '
                     'target list".',
