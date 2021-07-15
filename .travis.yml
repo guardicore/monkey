@@ -44,7 +44,7 @@ install:
 - npm --version
 
 # hugo (for documentation)
-- curl --output - -L https://api.github.com/repos/gohugoio/hugo/releases/latest | grep --color=never "browser_download_url.*Linux-64bit.tar.gz" | grep -v extended | cut -d ':' -f2,3 | tr -d '"' | xargs -n 1 curl -L --output hugo.tar.gz
+- curl -L https://github.com/gohugoio/hugo/releases/download/v0.85.0/hugo_0.85.0_Linux-64bit.tar.gz --output hugo.tar.gz
 # print hugo version (useful for debugging documentation build errors)
 - tar -zxf hugo.tar.gz
 - ./hugo version
