@@ -1,7 +1,7 @@
 import logging
 from pprint import pformat
 
-from infection_monkey.ransomware import ransomware_payload, readme_utils
+from infection_monkey.ransomware import ransomware_payload, readme_dropper
 from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
 from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
 from infection_monkey.ransomware.ransomware_config import RansomwareConfig
@@ -27,13 +27,14 @@ def build_ransomware_payload(config: dict):
 
     file_encryptor = _build_file_encryptor()
     file_selector = _build_file_selector()
+    leave_readme = _build_leave_readme()
     telemetry_messenger = _build_telemetry_messenger()
 
     return RansomwarePayload(
         ransomware_config,
         file_encryptor,
         file_selector,
-        readme_utils.leave_readme,
+        leave_readme,
         telemetry_messenger,
     )
 
@@ -49,6 +50,10 @@ def _build_file_selector():
     targeted_file_extensions.discard(ransomware_payload.EXTENSION)
 
     return ProductionSafeTargetFileSelector(targeted_file_extensions)
+
+
+def _build_leave_readme():
+    return readme_dropper.leave_readme
 
 
 def _build_telemetry_messenger():

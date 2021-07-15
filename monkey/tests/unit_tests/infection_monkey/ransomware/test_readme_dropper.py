@@ -1,7 +1,7 @@
 import pytest
 from tests.utils import hash_file
 
-from infection_monkey.ransomware.readme_utils import leave_readme
+from infection_monkey.ransomware.readme_dropper import leave_readme
 
 DEST_FILE = "README.TXT"
 README_HASH = "c98c24b677eff44860afea6f493bbaec5bb1c4cbb209c6fc2bbb47f66ff2ad31"
