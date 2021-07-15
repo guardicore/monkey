@@ -1,7 +1,7 @@
 import logging
 from pprint import pformat
 
-from infection_monkey.ransomware import ransomware_payload, readme_dropper
+from infection_monkey.ransomware import readme_dropper
 from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
 from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
 from infection_monkey.ransomware.ransomware_config import RansomwareConfig
@@ -47,7 +47,7 @@ def _build_file_encryptor():
 
 def _build_file_selector():
     targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
-    targeted_file_extensions.discard(ransomware_payload.EXTENSION)
+    targeted_file_extensions.discard(EXTENSION)
 
     return ProductionSafeTargetFileSelector(targeted_file_extensions)
 
