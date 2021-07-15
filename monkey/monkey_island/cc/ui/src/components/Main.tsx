@@ -29,6 +29,7 @@ import {DisabledSidebarLayoutComponent} from "./layouts/DisabledSidebarLayoutCom
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
 import IslandHttpClient from "./IslandHttpClient";
+import _ from "lodash";
 
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
@@ -91,18 +92,13 @@ class AppComponent extends AuthComponent {
                 this.authFetch('/api')
                   .then(res => res.json())
                   .then(res => {
+                    let completedSteps = CompletedSteps.buildFromResponse(res.completed_steps);
                     // This check is used to prevent unnecessary re-rendering
-                    let isChanged = false;
-                    for (let step in this.state.completedSteps) {
-                      if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
-                        isChanged = true;
-                        break;
-                      }
+                    if (_.isEqual(this.state.completedSteps, completedSteps)) {
+                      return;
                     }
-                    if (isChanged) {
-                      this.setState({completedSteps: res['completed_steps']});
-                      this.showInfectionDoneNotification();
-                    }
+                    this.setState({completedSteps: completedSteps});
+                    this.showInfectionDoneNotification();
                   });
               }
             )

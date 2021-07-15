@@ -9,14 +9,24 @@ export class CompletedSteps {
   public constructor(runServer?: boolean,
                      runMonkey?: boolean,
                      infectinDone?: boolean,
-                     reportDone?: boolean,
-                     isLoggedIn?: boolean,
-                     needsRegistration?: boolean) {
+                     reportDone?: boolean) {
     this.runServer = runServer || false;
     this.runMonkey = runMonkey || false;
     this.infectionDone = infectinDone || false;
     this.reportDone = reportDone || false;
-    this.isLoggedIn = isLoggedIn || false;
-    this.needsRegistration = needsRegistration || false;
   }
+
+  static buildFromResponse(response: CompletedStepsRequest) {
+    return new CompletedSteps(response.run_server,
+                              response.run_monkey,
+                              response.infection_done,
+                              response.report_done);
+  }
+}
+
+type CompletedStepsRequest = {
+  run_server: boolean,
+  run_monkey: boolean,
+  infection_done: boolean,
+  report_done: boolean
 }
