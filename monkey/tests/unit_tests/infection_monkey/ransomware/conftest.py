@@ -12,8 +12,12 @@ def patched_home_env(monkeypatch, tmp_path):
 
 
 @pytest.fixture
-def ransomware_target(tmp_path, data_for_tests_dir):
-    ransomware_test_data = Path(data_for_tests_dir) / "ransomware_targets"
+def ransomware_test_data(data_for_tests_dir):
+    return Path(data_for_tests_dir) / "ransomware_targets"
+
+
+@pytest.fixture
+def ransomware_target(tmp_path, ransomware_test_data):
     ransomware_target = tmp_path / "ransomware_target"
     shutil.copytree(ransomware_test_data, ransomware_target)
 

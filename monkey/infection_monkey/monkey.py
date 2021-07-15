@@ -1,7 +1,6 @@
 import argparse
 import logging
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -20,18 +19,12 @@ from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.ransomware.ransomware_payload_builder import build_ransomware_payload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
-from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
-    BatchingTelemetryMessenger,
-)
-from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
-    LegacyTelemetryMessengerAdapter,
-)
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -473,12 +466,8 @@ class InfectionMonkey(object):
 
     @staticmethod
     def run_ransomware():
-        telemetry_messenger = LegacyTelemetryMessengerAdapter()
-        batching_telemetry_messenger = BatchingTelemetryMessenger(telemetry_messenger)
-
         try:
-            RansomwarePayload(
-                WormConfiguration.ransomware, batching_telemetry_messenger, shutil.copyfile
-            ).run_payload()
+            ransomware_payload = build_ransomware_payload(WormConfiguration.ransomware)
+            ransomware_payload.run_payload()
         except Exception as ex:
             LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
