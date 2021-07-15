@@ -79,25 +79,26 @@ class AppComponent extends AuthComponent {
         if (res) {
           this.checkMode()
             .then(() => {
-              if(this.state.islandMode === null) {
-                return
-              }
-              this.authFetch('/api')
-                .then(res => res.json())
-                .then(res => {
-                  // This check is used to prevent unnecessary re-rendering
-                  let isChanged = false;
-                  for (let step in this.state.completedSteps) {
-                    if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
-                      isChanged = true;
-                      break;
+                if (this.state.islandMode === null) {
+                  return
+                }
+                this.authFetch('/api')
+                  .then(res => res.json())
+                  .then(res => {
+                    // This check is used to prevent unnecessary re-rendering
+                    let isChanged = false;
+                    for (let step in this.state.completedSteps) {
+                      if (this.state.completedSteps[step] !== res['completed_steps'][step]) {
+                        isChanged = true;
+                        break;
+                      }
                     }
-                  }
-                  if (isChanged) {
-                    this.setState({completedSteps: res['completed_steps']});
-                    this.showInfectionDoneNotification();
-                  }
-                });}
+                    if (isChanged) {
+                      this.setState({completedSteps: res['completed_steps']});
+                      this.showInfectionDoneNotification();
+                    }
+                  });
+              }
             )
 
         }
@@ -115,9 +116,9 @@ class AppComponent extends AuthComponent {
     let render_func = () => {
       switch (this.state.isLoggedIn) {
         case true:
-          if (this.state.islandMode === null && route_path !== Routes.LandingPage) {
+          if (this.needsRedirectionToLandingPage(route_path)) {
             return <Redirect to={{pathname: Routes.LandingPage}}/>
-          } else if(route_path === Routes.LandingPage && this.state.islandMode !== null){
+          } else if (this.needsRedirectionToGettingStarted(route_path)) {
             return <Redirect to={{pathname: Routes.GettingStartedPage}}/>
           }
           return page_component;
@@ -141,6 +142,16 @@ class AppComponent extends AuthComponent {
       return <Route path={route_path} render={render_func}/>;
     }
   };
+
+  needsRedirectionToLandingPage = (route_path) => {
+    return (this.state.islandMode === null && route_path !== Routes.LandingPage)
+  }
+
+  needsRedirectionToGettingStarted = (route_path) => {
+    return route_path === Routes.LandingPage &&
+      this.state.islandMode !== null &&
+      this.state.islandMode !== undefined
+  }
 
   redirectTo = (userPath, targetPath) => {
     let pathQuery = new RegExp(userPath + '[/]?$', 'g');
