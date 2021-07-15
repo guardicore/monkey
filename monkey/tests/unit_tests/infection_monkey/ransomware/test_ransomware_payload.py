@@ -7,25 +7,12 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
     TEST_KEYBOARD_TXT,
 )
 
+from infection_monkey.ransomware.ransomware_config import RansomwareConfig
 from infection_monkey.ransomware.ransomware_payload import (
     README_DEST,
     README_SRC,
     RansomwarePayload,
 )
-
-
-@pytest.fixture
-def ransomware_payload_config(ransomware_target):
-    return {
-        "encryption": {
-            "enabled": True,
-            "directories": {
-                "linux_target_dir": str(ransomware_target),
-                "windows_target_dir": str(ransomware_target),
-            },
-        },
-        "other_behaviors": {"readme": False},
-    }
 
 
 @pytest.fixture
@@ -50,15 +37,26 @@ def build_ransomware_payload(
 
 
 @pytest.fixture
-def mock_file_encryptor(ransomware_target):
+def ransomware_payload_config(ransomware_test_data):
+    class RansomwareConfigStub(RansomwareConfig):
+        def __init__(self, encryption_enabled, readme_enabled, target_directory):
+            self.encryption_enabled = encryption_enabled
+            self.readme_enabled = readme_enabled
+            self.target_directory = target_directory
+
+    return RansomwareConfigStub(True, False, ransomware_test_data)
+
+
+@pytest.fixture
+def mock_file_encryptor():
     return MagicMock()
 
 
 @pytest.fixture
-def mock_file_selector(ransomware_target):
+def mock_file_selector(ransomware_test_data):
     selected_files = [
-        ransomware_target / ALL_ZEROS_PDF,
-        ransomware_target / TEST_KEYBOARD_TXT,
+        ransomware_test_data / ALL_ZEROS_PDF,
+        ransomware_test_data / TEST_KEYBOARD_TXT,
     ]
     return MagicMock(return_value=selected_files)
 
@@ -68,37 +66,29 @@ def mock_leave_readme():
     return MagicMock()
 
 
-def test_env_variables_in_target_dir_resolved_linux(
+def test_files_selected_from_target_dir(
+    ransomware_payload,
     ransomware_payload_config,
-    build_ransomware_payload,
-    ransomware_target,
-    patched_home_env,
     mock_file_selector,
 ):
-    path_with_env_variable = "$HOME/ransomware_target"
-
-    ransomware_payload_config["encryption"]["directories"][
-        "linux_target_dir"
-    ] = ransomware_payload_config["encryption"]["directories"][
-        "windows_target_dir"
-    ] = path_with_env_variable
-    build_ransomware_payload(ransomware_payload_config).run_payload()
-
-    mock_file_selector.assert_called_with(ransomware_target)
+    ransomware_payload.run_payload()
+    mock_file_selector.assert_called_with(ransomware_payload_config.target_directory)
 
 
-def test_all_selected_files_encrypted(ransomware_target, ransomware_payload, mock_file_encryptor):
+def test_all_selected_files_encrypted(
+    ransomware_test_data, ransomware_payload, mock_file_encryptor
+):
     ransomware_payload.run_payload()
 
     assert mock_file_encryptor.call_count == 2
-    mock_file_encryptor.assert_any_call(ransomware_target / ALL_ZEROS_PDF)
-    mock_file_encryptor.assert_any_call(ransomware_target / TEST_KEYBOARD_TXT)
+    mock_file_encryptor.assert_any_call(ransomware_test_data / ALL_ZEROS_PDF)
+    mock_file_encryptor.assert_any_call(ransomware_test_data / TEST_KEYBOARD_TXT)
 
 
 def test_encryption_skipped_if_configured_false(
-    build_ransomware_payload, ransomware_payload_config, ransomware_target, mock_file_encryptor
+    build_ransomware_payload, ransomware_payload_config, mock_file_encryptor
 ):
-    ransomware_payload_config["encryption"]["enabled"] = False
+    ransomware_payload_config.encryption_enabled = False
 
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
     ransomware_payload.run_payload()
@@ -109,9 +99,8 @@ def test_encryption_skipped_if_configured_false(
 def test_encryption_skipped_if_no_directory(
     build_ransomware_payload, ransomware_payload_config, mock_file_encryptor
 ):
-    ransomware_payload_config["encryption"]["enabled"] = True
-    ransomware_payload_config["encryption"]["directories"]["linux_target_dir"] = ""
-    ransomware_payload_config["encryption"]["directories"]["windows_target_dir"] = ""
+    ransomware_payload_config.encryption_enabled = True
+    ransomware_payload_config.target_directory = None
 
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
     ransomware_payload.run_payload()
@@ -158,10 +147,8 @@ def test_telemetry_failure(
     assert "No such file or directory" in telem.get_data()["files"][0]["error"]
 
 
-def test_readme_false(
-    build_ransomware_payload, ransomware_payload_config, mock_leave_readme, ransomware_target
-):
-    ransomware_payload_config["other_behaviors"]["readme"] = False
+def test_readme_false(build_ransomware_payload, ransomware_payload_config, mock_leave_readme):
+    ransomware_payload_config.readme_enabled = False
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
     ransomware_payload.run_payload()
@@ -169,21 +156,20 @@ def test_readme_false(
 
 
 def test_readme_true(
-    build_ransomware_payload, ransomware_payload_config, mock_leave_readme, ransomware_target
+    build_ransomware_payload, ransomware_payload_config, mock_leave_readme, ransomware_test_data
 ):
-    ransomware_payload_config["other_behaviors"]["readme"] = True
+    ransomware_payload_config.readme_enabled = True
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
     ransomware_payload.run_payload()
-    mock_leave_readme.assert_called_with(README_SRC, ransomware_target / README_DEST)
+    mock_leave_readme.assert_called_with(README_SRC, ransomware_test_data / README_DEST)
 
 
 def test_no_readme_if_no_directory(
     build_ransomware_payload, ransomware_payload_config, mock_leave_readme
 ):
-    ransomware_payload_config["encryption"]["directories"]["linux_target_dir"] = ""
-    ransomware_payload_config["encryption"]["directories"]["windows_target_dir"] = ""
-    ransomware_payload_config["other_behaviors"]["readme"] = True
+    ransomware_payload_config.target_directory = None
+    ransomware_payload_config.readme_enabled = True
 
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
