@@ -7,6 +7,7 @@ import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 import VersionComponent from './side-menu/VersionComponent';
 import '../styles/components/SideNav.scss';
 import {CompletedSteps} from "./side-menu/CompletedSteps";
+import {isReportRoute} from "./Main";
 
 
 const guardicoreLogoImage = require('../images/guardicore-logo.png');
@@ -53,9 +54,7 @@ const SideNavComponent = ({disabled=false, completedSteps}: Props) => {
             <NavLink to='/report/security'
                      className={getNavLinkClass()}
                      isActive={(_match, location) => {
-                       return (location.pathname === '/report/attack'
-                         || location.pathname === '/report/zeroTrust'
-                         || location.pathname === '/report/security')
+                       return (isReportRoute(location.pathname))
                      }}>
               <span className='number'>3.</span>
               Security Reports

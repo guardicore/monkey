@@ -33,12 +33,18 @@ import IslandHttpClient from "./IslandHttpClient";
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
-const reportZeroTrustRoute = '/report/zeroTrust';
-
-
 const Routes = {
   LandingPage: '/landing-page',
-  GettingStartedPage: '/'
+  GettingStartedPage: '/',
+  Report: '/report',
+  AttackReport: '/report/attack',
+  ZeroTrustReport: '/report/zeroTrust',
+  SecurityReport: '/report/security',
+  RansomwareReport: '/report/ransomware',
+}
+
+export function isReportRoute(route){
+  return route.startsWith(Routes.Report);
 }
 
 class AppComponent extends AuthComponent {
@@ -237,7 +243,7 @@ class AppComponent extends AuthComponent {
       const hostname = window.location.hostname;
       const port = window.location.port;
       const protocol = window.location.protocol;
-      const url = `${protocol}//${hostname}:${port}${reportZeroTrustRoute}`;
+      const url = `${protocol}//${hostname}:${port}${Routes.ZeroTrustReport}`;
 
       Notifier.start(
         'Monkey Island',
