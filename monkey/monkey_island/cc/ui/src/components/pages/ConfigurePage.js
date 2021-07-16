@@ -59,13 +59,13 @@ class ConfigurePageComponent extends AuthComponent {
 
   getSectionsOrder() {
     let islandMode = this.props.islandMode ? this.props.islandMode : 'advanced'
-    // TODO delete the following line before merging
-    islandMode = 'advanced'
     return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
   setInitialConfig(config) {
     // Sets a reference to know if config was changed
+    config['attack'] = {}
+    this.currentFormData = {}
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
@@ -230,6 +230,9 @@ class ConfigurePageComponent extends AuthComponent {
 
   onChange = ({formData}) => {
     let configuration = this.state.configuration;
+    if (this.state.selectedSection === 'attack'){
+      formData = {};
+    }
     configuration[this.state.selectedSection] = formData;
     this.setState({currentFormData: formData, configuration: configuration});
   };
@@ -237,10 +240,7 @@ class ConfigurePageComponent extends AuthComponent {
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
 
-    if (this.currentSection === 'attack' && this.state.currentFormData === undefined) {
-      this.state.currentFormData = this.state.attackConfig;
-    }
-    else if (Object.keys(this.state.currentFormData).length > 0) {
+    if (Object.keys(this.state.currentFormData).length > 0) {
       newConfig[this.currentSection] = this.state.currentFormData;
     }
     this.setState({configuration: newConfig, lastAction: 'none'});
@@ -340,14 +340,13 @@ class ConfigurePageComponent extends AuthComponent {
       this.setState({showAttackAlert: true});
       return;
     }
+
     this.updateConfigSection();
     this.currentSection = key;
-
     this.setState({
       selectedSection: key,
       currentFormData: this.state.configuration[key]
     });
-
   };
 
   resetConfig = () => {
@@ -359,6 +358,7 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
+          res.configuration['attack'] = {}
           this.setState({
             lastAction: 'reset',
             schema: res.schema,
