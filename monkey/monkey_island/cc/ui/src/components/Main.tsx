@@ -1,0 +1,266 @@
+import React from 'react';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
+import {Container} from 'react-bootstrap';
+
+import ConfigurePage from './pages/ConfigurePage.js';
+import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
+import MapPage from './pages/MapPage';
+import TelemetryPage from './pages/TelemetryPage';
+import StartOverPage from './pages/StartOverPage';
+import ReportPage from './pages/ReportPage';
+import LicensePage from './pages/LicensePage';
+import AuthComponent from './AuthComponent';
+import LoginPageComponent from './pages/LoginPage';
+import RegisterPageComponent from './pages/RegisterPage';
+import LandingPage from "./pages/LandingPage";
+import Notifier from 'react-desktop-notification';
+import NotFoundPage from './pages/NotFoundPage';
+import GettingStartedPage from './pages/GettingStartedPage';
+
+
+import 'normalize.css/normalize.css';
+import 'react-data-components/css/table-twbs.css';
+import 'styles/App.css';
+import 'react-toggle/style.css';
+import 'react-table/react-table.css';
+import LoadingScreen from './ui-components/LoadingScreen';
+import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
+import {CompletedSteps} from "./side-menu/CompletedSteps";
+import Timeout = NodeJS.Timeout;
+import IslandHttpClient from "./IslandHttpClient";
+import _ from "lodash";
+
+
+let notificationIcon = require('../images/notification-logo-512x512.png');
+
+const Routes = {
+  LandingPage: '/landing-page',
+  GettingStartedPage: '/',
+  Report: '/report',
+  AttackReport: '/report/attack',
+  ZeroTrustReport: '/report/zeroTrust',
+  SecurityReport: '/report/security',
+  RansomwareReport: '/report/ransomware',
+  LoginPage: '/login',
+  RegisterPage: '/register',
+  ConfigurePage: '/configure',
+  RunMonkeyPage: '/run-monkey',
+  MapPage: '/infection/map',
+  TelemetryPage: '/infection/telemetry',
+  StartOverPage: '/start-over',
+  LicensePage: '/license'
+}
+
+export function isReportRoute(route){
+  return route.startsWith(Routes.Report);
+}
+
+class AppComponent extends AuthComponent {
+  private interval: Timeout;
+
+  constructor(props) {
+    super(props);
+    let completedSteps = new CompletedSteps(false);
+    this.state = {
+      loading: true,
+      completedSteps: completedSteps,
+      islandMode: undefined,
+      noAuthLoginAttempted: undefined
+    };
+    this.interval = undefined;
+  }
+
+  updateStatus = () => {
+    if (this.state.isLoggedIn === false) {
+      return
+    }
+    this.auth.loggedIn()
+      .then(res => {
+        if (this.state.isLoggedIn !== res) {
+          this.setState({
+            isLoggedIn: res
+          });
+        }
+
+        if (!res) {
+          this.auth.needsRegistration()
+            .then(result => {
+              this.setState({
+                needsRegistration: result
+              });
+            })
+        }
+
+        if (res) {
+          this.setMode()
+            .then(() => {
+                if (this.state.islandMode === null) {
+                  return
+                }
+                this.authFetch('/api')
+                  .then(res => res.json())
+                  .then(res => {
+                    let completedSteps = CompletedSteps.buildFromResponse(res.completed_steps);
+                    // This check is used to prevent unnecessary re-rendering
+                    if (_.isEqual(this.state.completedSteps, completedSteps)) {
+                      return;
+                    }
+                    this.setState({completedSteps: completedSteps});
+                    this.showInfectionDoneNotification();
+                  });
+              }
+            )
+
+        }
+      });
+  };
+
+  setMode = () => {
+    return IslandHttpClient.get('/api/island-mode')
+      .then(res => {
+        this.setState({islandMode: res.body.mode});
+      });
+  }
+
+  renderRoute = (route_path, page_component, is_exact_path = false) => {
+    let render_func = () => {
+      switch (this.state.isLoggedIn) {
+        case true:
+          if (this.needsRedirectionToLandingPage(route_path)) {
+            return <Redirect to={{pathname: Routes.LandingPage}}/>
+          } else if (this.needsRedirectionToGettingStarted(route_path)) {
+            return <Redirect to={{pathname: Routes.GettingStartedPage}}/>
+          }
+          return page_component;
+        case false:
+          switch (this.state.needsRegistration) {
+            case true:
+              return <Redirect to={{pathname: Routes.RegisterPage}}/>
+            case false:
+              return <Redirect to={{pathname: Routes.LoginPage}}/>;
+            default:
+              return <LoadingScreen text={'Loading page...'}/>;
+          }
+        default:
+          return <LoadingScreen text={'Loading page...'}/>;
+      }
+    };
+
+    if (is_exact_path) {
+      return <Route exact path={route_path} render={render_func}/>;
+    } else {
+      return <Route path={route_path} render={render_func}/>;
+    }
+  };
+
+  needsRedirectionToLandingPage = (route_path) => {
+    return (this.state.islandMode === null && route_path !== Routes.LandingPage)
+  }
+
+  needsRedirectionToGettingStarted = (route_path) => {
+    return route_path === Routes.LandingPage &&
+      this.state.islandMode !== null && this.state.islandMode !== undefined
+  }
+
+  redirectTo = (userPath, targetPath) => {
+    let pathQuery = new RegExp(userPath + '[/]?$', 'g');
+    if (window.location.pathname.match(pathQuery)) {
+      return <Redirect to={{pathname: targetPath}}/>
+    }
+  };
+
+  componentDidMount() {
+    this.updateStatus();
+    this.interval = setInterval(this.updateStatus, 10000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  render() {
+    return (
+      <Router>
+        <Container fluid>
+          <Switch>
+            <Route path={Routes.LoginPage} render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
+            <Route path={Routes.RegisterPage} render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
+            {this.renderRoute(Routes.LandingPage,
+              <SidebarLayoutComponent component={LandingPage}
+                                      sideNavDisabled={true}
+                                      completedSteps={new CompletedSteps()}
+                                      onStatusChange={this.updateStatus}/>)}
+            {this.renderRoute(Routes.GettingStartedPage,
+              <SidebarLayoutComponent component={GettingStartedPage}
+                                       completedSteps={this.state.completedSteps}
+                                       onStatusChange={this.updateStatus}
+              />,
+              true)}
+            {this.renderRoute(Routes.ConfigurePage,
+              <SidebarLayoutComponent component={ConfigurePage}
+                                       islandMode={this.state.islandMode}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.RunMonkeyPage,
+              <SidebarLayoutComponent component={RunMonkeyPage}
+                                       islandMode={this.state.islandMode}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.MapPage,
+              <SidebarLayoutComponent component={MapPage}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.TelemetryPage,
+              <SidebarLayoutComponent component={TelemetryPage}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.StartOverPage,
+              <SidebarLayoutComponent component={StartOverPage}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.redirectTo(Routes.Report, Routes.SecurityReport)}
+            {this.renderRoute(Routes.SecurityReport,
+              <SidebarLayoutComponent component={ReportPage}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.AttackReport,
+              <SidebarLayoutComponent component={ReportPage}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.ZeroTrustReport,
+              <SidebarLayoutComponent component={ReportPage}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.RansomwareReport,
+              <SidebarLayoutComponent component={ReportPage}
+                                       completedSteps={this.state.completedSteps}/>)}
+            {this.renderRoute(Routes.LicensePage,
+              <SidebarLayoutComponent component={LicensePage}
+                                       onStatusChange={this.updateStatus}
+                                       completedSteps={this.state.completedSteps}/>)}
+            <Route component={NotFoundPage}/>
+          </Switch>
+        </Container>
+      </Router>
+    );
+  }
+
+  showInfectionDoneNotification() {
+    if (this.shouldShowNotification()) {
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+      const protocol = window.location.protocol;
+      const url = `${protocol}//${hostname}:${port}${Routes.ZeroTrustReport}`;
+
+      Notifier.start(
+        'Monkey Island',
+        'Infection is done! Click here to go to the report page.',
+        url,
+        notificationIcon);
+    }
+  }
+
+  shouldShowNotification() {
+    // No need to show the notification to redirect to the report if we're already in the report page
+    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith(Routes.Report));
+  }
+}
+
+export default AppComponent;
