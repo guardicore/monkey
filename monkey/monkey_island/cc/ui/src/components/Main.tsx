@@ -62,8 +62,9 @@ class AppComponent extends AuthComponent {
     super(props);
     let completedSteps = new CompletedSteps(false);
     this.state = {
+      loading: true,
       completedSteps: completedSteps,
-      islandMode: null,
+      islandMode: undefined,
       noAuthLoginAttempted: undefined
     };
     this.interval = undefined;
@@ -158,7 +159,7 @@ class AppComponent extends AuthComponent {
 
   needsRedirectionToGettingStarted = (route_path) => {
     return route_path === Routes.LandingPage &&
-      this.state.islandMode !== null
+      this.state.islandMode !== null && this.state.islandMode !== undefined
   }
 
   redirectTo = (userPath, targetPath) => {
