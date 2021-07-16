@@ -23,9 +23,8 @@ import 'react-data-components/css/table-twbs.css';
 import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
-import {StandardLayoutComponent} from './layouts/StandardLayoutComponent';
 import LoadingScreen from './ui-components/LoadingScreen';
-import {DisabledSidebarLayoutComponent} from "./layouts/DisabledSidebarLayoutComponent";
+import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
 import IslandHttpClient from "./IslandHttpClient";
@@ -179,52 +178,53 @@ class AppComponent extends AuthComponent {
             <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
             <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
             {this.renderRoute(Routes.LandingPage,
-              <DisabledSidebarLayoutComponent component={LandingPage}
-                                              completedSteps={new CompletedSteps()}
-                                              onStatusChange={this.updateStatus}/>)}
+              <SidebarLayoutComponent component={LandingPage}
+                                      sideNavDisabled={true}
+                                      completedSteps={new CompletedSteps()}
+                                      onStatusChange={this.updateStatus}/>)}
             {this.renderRoute(Routes.GettingStartedPage,
-              <StandardLayoutComponent component={GettingStartedPage}
+              <SidebarLayoutComponent component={GettingStartedPage}
                                        completedSteps={this.state.completedSteps}
                                        onStatusChange={this.updateStatus}
               />,
               true)}
             {this.renderRoute('/configure',
-              <StandardLayoutComponent component={ConfigurePage}
+              <SidebarLayoutComponent component={ConfigurePage}
                                        islandMode={this.state.islandMode}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/run-monkey',
-              <StandardLayoutComponent component={RunMonkeyPage}
+              <SidebarLayoutComponent component={RunMonkeyPage}
                                        islandMode={this.state.islandMode}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/infection/map',
-              <StandardLayoutComponent component={MapPage}
+              <SidebarLayoutComponent component={MapPage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/infection/telemetry',
-              <StandardLayoutComponent component={TelemetryPage}
+              <SidebarLayoutComponent component={TelemetryPage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/start-over',
-              <StandardLayoutComponent component={StartOverPage}
+              <SidebarLayoutComponent component={StartOverPage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.redirectTo('/report', '/report/security')}
             {this.renderRoute('/report/security',
-              <StandardLayoutComponent component={ReportPage}
+              <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/report/attack',
-              <StandardLayoutComponent component={ReportPage}
+              <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/report/zeroTrust',
-              <StandardLayoutComponent component={ReportPage}
+              <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/report/ransomware',
-              <StandardLayoutComponent component={ReportPage}
+              <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
             {this.renderRoute('/license',
-              <StandardLayoutComponent component={LicensePage}
+              <SidebarLayoutComponent component={LicensePage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
             <Route component={NotFoundPage}/>
