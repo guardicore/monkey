@@ -2,6 +2,7 @@ import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 import InfoBox from './InfoBox';
+import TextBox from './TextBox';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -78,6 +79,9 @@ export default function UiSchema(props) {
         },
         directories: {
             // Directory inputs are dynamically hidden
+        },
+        text_box: {
+          'ui:field': TextBox
         },
       enabled: {'ui:widget': 'hidden'}
       },
