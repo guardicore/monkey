@@ -1,1 +1,2 @@
 monkey/tests/data_for_tests/ransomware_targets/** -text
+monkey/tests/data_for_tests/stable_file.txt -text
