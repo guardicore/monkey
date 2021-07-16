@@ -2,14 +2,12 @@ import logging
 from pathlib import Path
 from typing import Callable, List
 
+from infection_monkey.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.ransomware.ransomware_config import RansomwareConfig
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 LOG = logging.getLogger(__name__)
-
-README_SRC = Path(__file__).parent / "ransomware_readme.txt"
-README_DEST = "README.txt"
 
 
 class RansomwarePayload:
@@ -39,7 +37,7 @@ class RansomwarePayload:
             self._encrypt_files(file_list)
 
         if self._config.readme_enabled:
-            self._leave_readme(README_SRC, self._config.target_directory / README_DEST)
+            self._leave_readme(README_SRC, self._config.target_directory / README_FILE_NAME)
 
     def _find_files(self) -> List[Path]:
         LOG.info(f"Collecting files in {self._config.target_directory}")
