@@ -41,6 +41,14 @@ const Routes = {
   ZeroTrustReport: '/report/zeroTrust',
   SecurityReport: '/report/security',
   RansomwareReport: '/report/ransomware',
+  LoginPage: '/login',
+  RegisterPage: '/register',
+  ConfigurePage: '/configure',
+  RunMonkeyPage: '/run-monkey',
+  MapPage: '/infection/map',
+  TelemetryPage: '/infection/telemetry',
+  StartOverPage: '/start-over',
+  LicensePage: '/license'
 }
 
 export function isReportRoute(route){
@@ -83,7 +91,7 @@ class AppComponent extends AuthComponent {
         }
 
         if (res) {
-          this.checkMode()
+          this.setMode()
             .then(() => {
                 if (this.state.islandMode === null) {
                   return
@@ -106,7 +114,7 @@ class AppComponent extends AuthComponent {
       });
   };
 
-  checkMode = () => {
+  setMode = () => {
     return IslandHttpClient.get('/api/island-mode')
       .then(res => {
         this.setState({islandMode: res.body.mode});
@@ -126,9 +134,9 @@ class AppComponent extends AuthComponent {
         case false:
           switch (this.state.needsRegistration) {
             case true:
-              return <Redirect to={{pathname: '/register'}}/>
+              return <Redirect to={{pathname: Routes.RegisterPage}}/>
             case false:
-              return <Redirect to={{pathname: '/login'}}/>;
+              return <Redirect to={{pathname: Routes.LoginPage}}/>;
             default:
               return <LoadingScreen text={'Loading page...'}/>;
           }
@@ -150,8 +158,7 @@ class AppComponent extends AuthComponent {
 
   needsRedirectionToGettingStarted = (route_path) => {
     return route_path === Routes.LandingPage &&
-      this.state.islandMode !== null &&
-      this.state.islandMode !== undefined
+      this.state.islandMode !== null
   }
 
   redirectTo = (userPath, targetPath) => {
@@ -175,8 +182,8 @@ class AppComponent extends AuthComponent {
       <Router>
         <Container fluid>
           <Switch>
-            <Route path='/login' render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
-            <Route path='/register' render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
+            <Route path={Routes.LoginPage} render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
+            <Route path={Routes.RegisterPage} render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
             {this.renderRoute(Routes.LandingPage,
               <SidebarLayoutComponent component={LandingPage}
                                       sideNavDisabled={true}
@@ -188,42 +195,42 @@ class AppComponent extends AuthComponent {
                                        onStatusChange={this.updateStatus}
               />,
               true)}
-            {this.renderRoute('/configure',
+            {this.renderRoute(Routes.ConfigurePage,
               <SidebarLayoutComponent component={ConfigurePage}
                                        islandMode={this.state.islandMode}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/run-monkey',
+            {this.renderRoute(Routes.RunMonkeyPage,
               <SidebarLayoutComponent component={RunMonkeyPage}
                                        islandMode={this.state.islandMode}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/infection/map',
+            {this.renderRoute(Routes.MapPage,
               <SidebarLayoutComponent component={MapPage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/infection/telemetry',
+            {this.renderRoute(Routes.TelemetryPage,
               <SidebarLayoutComponent component={TelemetryPage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/start-over',
+            {this.renderRoute(Routes.StartOverPage,
               <SidebarLayoutComponent component={StartOverPage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.redirectTo('/report', '/report/security')}
-            {this.renderRoute('/report/security',
+            {this.redirectTo(Routes.Report, Routes.SecurityReport)}
+            {this.renderRoute(Routes.SecurityReport,
               <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/report/attack',
+            {this.renderRoute(Routes.AttackReport,
               <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/report/zeroTrust',
+            {this.renderRoute(Routes.ZeroTrustReport,
               <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/report/ransomware',
+            {this.renderRoute(Routes.RansomwareReport,
               <SidebarLayoutComponent component={ReportPage}
                                        completedSteps={this.state.completedSteps}/>)}
-            {this.renderRoute('/license',
+            {this.renderRoute(Routes.LicensePage,
               <SidebarLayoutComponent component={LicensePage}
                                        onStatusChange={this.updateStatus}
                                        completedSteps={this.state.completedSteps}/>)}
@@ -251,7 +258,7 @@ class AppComponent extends AuthComponent {
 
   shouldShowNotification() {
     // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith('/report'));
+    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith(Routes.Report));
   }
 }
 
