@@ -2,13 +2,16 @@ import collections
 import copy
 import functools
 import logging
+from typing import Dict
 
 from jsonschema import Draft4Validator, validators
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
+from monkey.monkey_island.cc.services.config_filters import FILTER_PER_MODE
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
+from monkey_island.cc.services.mode.island_mode_service import get_mode
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
@@ -235,9 +238,23 @@ class ConfigService:
     def get_default_config(should_encrypt=False):
         ConfigService.init_default_config()
         config = copy.deepcopy(ConfigService.default_config)
+        mode = get_mode()
+        config = ConfigService._set_default_config_values_per_mode(mode, config)
         if should_encrypt:
             ConfigService.encrypt_config(config)
         logger.info("Default config was called")
+        return config
+
+    @staticmethod
+    def _set_default_config_values_per_mode(mode: str, config: Dict) -> Dict:
+        if mode == "advanced":
+            return config
+        config_filter = FILTER_PER_MODE[mode]
+        config = ConfigService._apply_config_filter(config, config_filter)
+
+    @staticmethod
+    def _apply_config_filter(config: Dict, config_filter: Dict):
+        config.update(config_filter)
         return config
 
     @staticmethod
