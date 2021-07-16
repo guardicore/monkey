@@ -1,6 +1,6 @@
 import pytest
-from tests.utils import hash_file
 
+from common.utils.file_utils import get_file_sha256_hash
 from infection_monkey.ransomware.readme_dropper import leave_readme
 
 DEST_FILE = "README.TXT"
@@ -23,10 +23,10 @@ def test_readme_already_exists(src_readme, dest_readme):
 
     leave_readme(src_readme, dest_readme)
 
-    assert hash_file(dest_readme) == EMPTY_FILE_HASH
+    assert get_file_sha256_hash(dest_readme) == EMPTY_FILE_HASH
 
 
 def test_leave_readme(src_readme, dest_readme):
     leave_readme(src_readme, dest_readme)
 
-    assert hash_file(dest_readme) == README_HASH
+    assert get_file_sha256_hash(dest_readme) == README_HASH
