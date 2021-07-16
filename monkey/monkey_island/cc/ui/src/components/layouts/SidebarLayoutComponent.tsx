@@ -6,13 +6,16 @@ import {Col, Row} from 'react-bootstrap';
 const SidebarLayoutComponent = ({component: Component,
                                   sideNavDisabled = false,
                                   completedSteps = null,
+                                  defaultReport = '',
                                   ...other
                                 }) => (
   <Route {...other} render={() => {
     return (
       <Row>
         <Col sm={3} md={3} lg={3} xl={2} className='sidebar'>
-          <SideNavComponent disabled={sideNavDisabled} completedSteps={completedSteps}/>
+          <SideNavComponent disabled={sideNavDisabled}
+                            completedSteps={completedSteps}
+                            defaultReport={defaultReport}/>
         </Col>
         <Component {...other} />
       </Row>)

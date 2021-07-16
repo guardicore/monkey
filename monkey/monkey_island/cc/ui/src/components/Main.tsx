@@ -33,7 +33,7 @@ import _ from "lodash";
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
-const Routes = {
+export const Routes = {
   LandingPage: '/landing-page',
   GettingStartedPage: '/',
   Report: '/report',
@@ -178,7 +178,21 @@ class AppComponent extends AuthComponent {
     clearInterval(this.interval);
   }
 
+  getDefaultReport() {
+    if(this.state.islandMode === 'ransomware'){
+      return Routes.RansomwareReport
+    } else {
+      return Routes.SecurityReport
+    }
+  }
+
   render() {
+
+    let defaultSideNavProps = {completedSteps: this.state.completedSteps,
+                               onStatusChange: this.updateStatus,
+                               islandMode: this.state.islandMode,
+                               defaultReport: this.getDefaultReport()}
+
     return (
       <Router>
         <Container fluid>
@@ -191,55 +205,52 @@ class AppComponent extends AuthComponent {
                                       completedSteps={new CompletedSteps()}
                                       onStatusChange={this.updateStatus}/>)}
             {this.renderRoute(Routes.GettingStartedPage,
-              <SidebarLayoutComponent component={GettingStartedPage}
-                                       completedSteps={this.state.completedSteps}
-                                       onStatusChange={this.updateStatus}
-              />,
+              <SidebarLayoutComponent component={GettingStartedPage} {...defaultSideNavProps}/>,
               true)}
             {this.renderRoute(Routes.ConfigurePage,
-              <SidebarLayoutComponent component={ConfigurePage}
-                                       islandMode={this.state.islandMode}
-                                       onStatusChange={this.updateStatus}
-                                       completedSteps={this.state.completedSteps}/>)}
+              <SidebarLayoutComponent component={ConfigurePage} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.RunMonkeyPage,
-              <SidebarLayoutComponent component={RunMonkeyPage}
-                                       islandMode={this.state.islandMode}
-                                       onStatusChange={this.updateStatus}
-                                       completedSteps={this.state.completedSteps}/>)}
+              <SidebarLayoutComponent component={RunMonkeyPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.MapPage,
-              <SidebarLayoutComponent component={MapPage}
-                                       onStatusChange={this.updateStatus}
-                                       completedSteps={this.state.completedSteps}/>)}
+              <SidebarLayoutComponent component={MapPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.TelemetryPage,
-              <SidebarLayoutComponent component={TelemetryPage}
-                                       onStatusChange={this.updateStatus}
-                                       completedSteps={this.state.completedSteps}/>)}
+              <SidebarLayoutComponent component={TelemetryPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.StartOverPage,
-              <SidebarLayoutComponent component={StartOverPage}
-                                       onStatusChange={this.updateStatus}
-                                       completedSteps={this.state.completedSteps}/>)}
-            {this.redirectTo(Routes.Report, Routes.SecurityReport)}
+              <SidebarLayoutComponent component={StartOverPage} {...defaultSideNavProps}/>)}
+            {this.redirectToReport()}
             {this.renderRoute(Routes.SecurityReport,
               <SidebarLayoutComponent component={ReportPage}
-                                       completedSteps={this.state.completedSteps}/>)}
+                                      islandMode={this.state.islandMode}
+                                      {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.AttackReport,
               <SidebarLayoutComponent component={ReportPage}
-                                       completedSteps={this.state.completedSteps}/>)}
+                                      islandMode={this.state.islandMode}
+                                      {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.ZeroTrustReport,
               <SidebarLayoutComponent component={ReportPage}
-                                       completedSteps={this.state.completedSteps}/>)}
+                                      islandMode={this.state.islandMode}
+                                      {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.RansomwareReport,
               <SidebarLayoutComponent component={ReportPage}
-                                       completedSteps={this.state.completedSteps}/>)}
+                                      islandMode={this.state.islandMode}
+                                      {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.LicensePage,
               <SidebarLayoutComponent component={LicensePage}
-                                       onStatusChange={this.updateStatus}
-                                       completedSteps={this.state.completedSteps}/>)}
+                                      islandMode={this.state.islandMode}
+                                      {...defaultSideNavProps}/>)}
             <Route component={NotFoundPage}/>
           </Switch>
         </Container>
       </Router>
     );
+  }
+
+  redirectToReport() {
+    if (this.state.islandMode === 'ransomware') {
+      return this.redirectTo(Routes.Report, Routes.RansomwareReport)
+    } else {
+      return this.redirectTo(Routes.Report, Routes.SecurityReport)
+    }
   }
 
   showInfectionDoneNotification() {
