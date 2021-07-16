@@ -59,6 +59,8 @@ class ConfigurePageComponent extends AuthComponent {
 
   getSectionsOrder() {
     let islandMode = this.props.islandMode ? this.props.islandMode : 'advanced'
+    // TODO delete the following line before merging
+    islandMode = 'advanced'
     return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
@@ -234,7 +236,11 @@ class ConfigurePageComponent extends AuthComponent {
 
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
-    if (Object.keys(this.state.currentFormData).length > 0) {
+
+    if (this.currentSection === 'attack' && this.state.currentFormData === undefined) {
+      this.state.currentFormData = this.state.attackConfig;
+    }
+    else if (Object.keys(this.state.currentFormData).length > 0) {
       newConfig[this.currentSection] = this.state.currentFormData;
     }
     this.setState({configuration: newConfig, lastAction: 'none'});
@@ -309,10 +315,16 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   userChangedConfig() {
-    if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
-      if (Object.keys(this.state.currentFormData).length === 0 ||
-        JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
-        return false;
+    try {
+      if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
+        if (Object.keys(this.state.currentFormData).length === 0 ||
+          JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
+          return false;
+        }
+      }
+    } catch (TypeError) {
+      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)){
+         return false;
       }
     }
     return true;
@@ -330,10 +342,12 @@ class ConfigurePageComponent extends AuthComponent {
     }
     this.updateConfigSection();
     this.currentSection = key;
+
     this.setState({
       selectedSection: key,
       currentFormData: this.state.configuration[key]
     });
+
   };
 
   resetConfig = () => {
