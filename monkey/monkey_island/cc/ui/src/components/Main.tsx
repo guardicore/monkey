@@ -33,7 +33,7 @@ import _ from "lodash";
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
-const Routes = {
+export const Routes = {
   LandingPage: '/landing-page',
   GettingStartedPage: '/',
   Report: '/report',

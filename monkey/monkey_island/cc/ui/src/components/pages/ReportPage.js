@@ -16,6 +16,7 @@ class ReportPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.sections = ['security', 'zeroTrust', 'attack', 'ransomware'];
+
     this.state = {
       securityReport: {},
       attackReport: {},
@@ -28,6 +29,7 @@ class ReportPageComponent extends AuthComponent {
         {key: 'zeroTrust', title: 'Zero trust report'},
         {key: 'attack', title: 'ATT&CK report'}]
     };
+
   }
 
   static selectReport(reports) {
@@ -65,9 +67,6 @@ class ReportPageComponent extends AuthComponent {
             ransomwareReport: res
           });
         });
-      if (this.shouldShowRansomwareReport(this.state.ransomwareReport)) {
-        this.addRansomwareReportTab();
-      }
     }
   }
 
@@ -95,32 +94,6 @@ class ReportPageComponent extends AuthComponent {
       });
     return ztReport
   };
-
-  shouldShowRansomwareReport(report) { // TODO: Add proper check
-    if (report) {
-      return true;
-    }
-  }
-
-  addRansomwareReportTab() { // TODO: Fetch mode from API endpoint
-    let ransomwareTab = {key: 'ransomware', title: 'Ransomware report'};
-
-    // let mode = "";
-    // this.authFetch('/api/mode')
-    //   .then(res => res.json())
-    //     .then(res => {
-    //       mode = res.mode
-    //     }
-    //   );
-
-    let mode = 'ransomware';
-    if (mode === 'ransomware') {
-      this.state.orderedSections.splice(0, 0, ransomwareTab);
-    }
-    else {
-      this.state.orderedSections.push(ransomwareTab);
-    }
-  }
 
   componentWillUnmount() {
     clearInterval(this.state.ztReportRefreshInterval);
@@ -187,8 +160,31 @@ class ReportPageComponent extends AuthComponent {
     }
   }
 
+  addRansomwareTab() {
+    let ransomwareTab = {key: 'ransomware', title: 'Ransomware report'};
+    if(this.isRansomwareTabMissing(ransomwareTab)){
+      if (this.props.islandMode === 'ransomware') {
+        this.state.orderedSections.splice(0, 0, ransomwareTab);
+      }
+      else {
+        this.state.orderedSections.push(ransomwareTab);
+      }
+    }
+  }
+
+  isRansomwareTabMissing(ransomwareTab) {
+    return (
+      this.props.islandMode !== undefined &&
+      !this.state.orderedSections.some(tab =>
+      (tab.key === ransomwareTab.key
+      && tab.title === ransomwareTab.title)
+    ));
+  }
+
   render() {
     let content;
+
+    this.addRansomwareTab();
 
     if (this.state.runStarted) {
       content = this.getReportContent();
