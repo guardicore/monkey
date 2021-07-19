@@ -6,8 +6,8 @@ from flask import make_response, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.mode.get_island_mode_service import ModeNotSetError, get_mode
-from monkey_island.cc.services.mode.set_island_mode_service import set_mode
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
+from monkey_island.cc.services.mode.set_island_mode_service import set_mode
 
 logger = logging.getLogger(__name__)
 

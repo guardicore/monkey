@@ -1,16 +1,16 @@
 import collections
 import copy
-import dpath.util
 import functools
 import logging
-from typing import Dict, Optional
+from typing import Dict
 
+import dpath.util
 from jsonschema import Draft4Validator, validators
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from monkey_island.cc.services.config_filters import FILTER_PER_MODE
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
+from monkey_island.cc.services.config_filters import FILTER_PER_MODE
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.mode.get_island_mode_service import ModeNotSetError, get_mode
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService

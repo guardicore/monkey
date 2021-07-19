@@ -1,6 +1,6 @@
 from monkey_island.cc.models.island_mode_model import IslandMode
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 def set_mode(mode: IslandModeEnum):
