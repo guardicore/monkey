@@ -13,7 +13,11 @@ def uses_database():
 
 
 @pytest.mark.parametrize("mode", ["ransomware", "advanced"])
-def test_island_mode_post(flask_client, mode):
+def test_island_mode_post(flask_client, mode, monkeypatch):
+    monkeypatch.setattr(
+        "monkey_island.cc.services.mode.set_island_mode_service.ConfigService.update_config_on_mode_set",  # noqa: E501
+        lambda _: None,
+    )
     resp = flask_client.post(
         "/api/island-mode", data=json.dumps({"mode": mode}), follow_redirects=True
     )
