@@ -64,6 +64,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   setInitialConfig(config) {
     // Sets a reference to know if config was changed
+    config['attack'] = {}
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
@@ -228,12 +229,16 @@ class ConfigurePageComponent extends AuthComponent {
 
   onChange = ({formData}) => {
     let configuration = this.state.configuration;
+    if (this.state.selectedSection === 'attack'){
+      formData = {};
+    }
     configuration[this.state.selectedSection] = formData;
     this.setState({currentFormData: formData, configuration: configuration});
   };
 
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
+
     if (Object.keys(this.state.currentFormData).length > 0) {
       newConfig[this.currentSection] = this.state.currentFormData;
     }
@@ -309,10 +314,16 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   userChangedConfig() {
-    if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
-      if (Object.keys(this.state.currentFormData).length === 0 ||
-        JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
-        return false;
+    try {
+      if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
+        if (Object.keys(this.state.currentFormData).length === 0 ||
+          JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
+          return false;
+        }
+      }
+    } catch (TypeError) {
+      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)){
+         return false;
       }
     }
     return true;
@@ -328,6 +339,7 @@ class ConfigurePageComponent extends AuthComponent {
       this.setState({showAttackAlert: true});
       return;
     }
+
     this.updateConfigSection();
     this.currentSection = key;
     this.setState({
@@ -345,6 +357,7 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
+          res.configuration['attack'] = {}
           this.setState({
             lastAction: 'reset',
             schema: res.schema,
