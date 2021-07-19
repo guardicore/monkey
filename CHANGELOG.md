@@ -41,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - MongoDb now gets launched by the Island via python. #1148
 - Create/check data directory on Island init. #1170
 - The formatting of some log messages to make them more readable. #1283
+- Some unit tests to run faster. #1125
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
