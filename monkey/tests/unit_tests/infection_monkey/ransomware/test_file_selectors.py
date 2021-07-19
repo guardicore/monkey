@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import pytest
 from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
@@ -12,6 +13,7 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 from tests.utils import is_user_admin
 
 from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
+from infection_monkey.ransomware.ransomware_payload import README_SRC
 
 TARGETED_FILE_EXTENSIONS = [".pdf", ".txt"]
 
@@ -53,3 +55,21 @@ def test_directories_not_selected(ransomware_test_data, file_selector):
     selected_files = file_selector(ransomware_test_data)
 
     assert (ransomware_test_data / SUBDIR / HELLO_TXT) not in selected_files
+
+
+def test_ransomware_readme_not_selected(ransomware_target, file_selector):
+    readme_file = ransomware_target / "README.txt"
+    shutil.copyfile(README_SRC, readme_file)
+
+    selected_files = file_selector(ransomware_target)
+
+    assert readme_file not in selected_files
+
+
+def test_pre_existing_readme_is_selected(ransomware_target, stable_file, file_selector):
+    readme_file = ransomware_target / "README.txt"
+    shutil.copyfile(stable_file, readme_file)
+
+    selected_files = file_selector(ransomware_target)
+
+    assert readme_file in selected_files

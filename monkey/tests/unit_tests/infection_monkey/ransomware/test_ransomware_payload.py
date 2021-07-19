@@ -7,12 +7,9 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
     TEST_KEYBOARD_TXT,
 )
 
+from infection_monkey.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.ransomware.ransomware_config import RansomwareConfig
-from infection_monkey.ransomware.ransomware_payload import (
-    README_DEST,
-    README_SRC,
-    RansomwarePayload,
-)
+from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
 
 
 @pytest.fixture
@@ -162,7 +159,7 @@ def test_readme_true(
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
     ransomware_payload.run_payload()
-    mock_leave_readme.assert_called_with(README_SRC, ransomware_test_data / README_DEST)
+    mock_leave_readme.assert_called_with(README_SRC, ransomware_test_data / README_FILE_NAME)
 
 
 def test_no_readme_if_no_directory(
