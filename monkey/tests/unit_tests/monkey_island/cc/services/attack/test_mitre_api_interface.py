@@ -1,14 +1,11 @@
-from unittest import TestCase
-
 from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
 
 
-class TestMitreApiInterface(TestCase):
-    def test_get_all_mitigations(self):
-        mitigations = MitreApiInterface.get_all_mitigations()
-        self.assertIsNotNone((len(mitigations.items()) >= 282))
-        mitigation = next(iter(mitigations.values()))
-        self.assertEqual(mitigation["type"], "course-of-action")
-        self.assertIsNotNone(mitigation["name"])
-        self.assertIsNotNone(mitigation["description"])
-        self.assertIsNotNone(mitigation["external_references"])
+def test_get_all_mitigations():
+    mitigations = MitreApiInterface.get_all_mitigations()
+    assert len(mitigations.items()) >= 282
+    mitigation = next(iter(mitigations.values()))
+    assert mitigation["type"] == "course-of-action"
+    assert mitigation["name"] is not None
+    assert mitigation["description"] is not None
+    assert mitigation["external_references"] is not None
