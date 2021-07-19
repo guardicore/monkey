@@ -38,10 +38,11 @@
                                    .-.         yN//Ny         .-.
                                                :dmmd:
 
+This is NOT a real ransomware attack.
+
 Infection Monkey is an open-source breach and attack simulation (BAS) platform. The files in this
-directory have been manipulated as part of a ransomware simulation. This is NOT a real ransomware
-attack. If you've discovered this file and are unsure about how to proceed, please contact your
-administrator.
+directory have been manipulated as part of a ransomware simulation. If you've discovered this file
+and are unsure about how to proceed, please contact your administrator.
 
 For more information about Infection Monkey, see https://www.guardicore.com/infectionmonkey.
 
