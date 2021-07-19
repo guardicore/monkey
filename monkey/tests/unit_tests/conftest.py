@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
@@ -28,3 +29,13 @@ def patched_home_env(monkeypatch, tmp_path):
     monkeypatch.setenv("HOME", str(tmp_path))
 
     return tmp_path
+
+
+# The monkeypatch fixture is function scoped, so it cannot be used by session-scoped fixtures. This
+# monkeypatch_session fixture can be session-scoped. For more information, see
+# https://github.com/pytest-dev/pytest/issues/363#issuecomment-406536200
+@pytest.fixture(scope="session")
+def monkeypatch_session():
+    monkeypatch_ = MonkeyPatch()
+    yield monkeypatch_
+    monkeypatch_.undo()
