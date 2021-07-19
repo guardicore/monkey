@@ -1,17 +1,18 @@
 import collections
 import copy
+import dpath.util
 import functools
 import logging
-from typing import Dict
+from typing import Dict, Optional
 
 from jsonschema import Draft4Validator, validators
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-from monkey.monkey_island.cc.services.config_filters import FILTER_PER_MODE
+from monkey_island.cc.services.config_filters import FILTER_PER_MODE
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
-from monkey_island.cc.services.mode.island_mode_service import get_mode
+from monkey_island.cc.services.mode.get_island_mode_service import ModeNotSetError, get_mode
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
@@ -238,23 +239,34 @@ class ConfigService:
     def get_default_config(should_encrypt=False):
         ConfigService.init_default_config()
         config = copy.deepcopy(ConfigService.default_config)
-        mode = get_mode()
-        config = ConfigService._set_default_config_values_per_mode(mode, config)
+
         if should_encrypt:
             ConfigService.encrypt_config(config)
+
         logger.info("Default config was called")
+
         return config
 
     @staticmethod
+    def update_config_on_mode_set(mode: str) -> None:
+        config = ConfigService.get_config()
+        ConfigService.update_config_per_mode(mode, config, True)
+
+    @staticmethod
+    def update_config_per_mode(mode: str, config: Dict, should_encrypt: bool) -> None:
+        config = ConfigService._set_default_config_values_per_mode(mode, config)
+        ConfigService.update_config(config_json=config, should_encrypt=True)
+
+    @staticmethod
     def _set_default_config_values_per_mode(mode: str, config: Dict) -> Dict:
-        if mode == "advanced":
-            return config
         config_filter = FILTER_PER_MODE[mode]
         config = ConfigService._apply_config_filter(config, config_filter)
+        return config
 
     @staticmethod
     def _apply_config_filter(config: Dict, config_filter: Dict):
-        config.update(config_filter)
+        for path, value in config_filter.items():
+            dpath.util.set(config, path, value, ".")
         return config
 
     @staticmethod
@@ -268,7 +280,11 @@ class ConfigService:
         PostBreachFilesService.remove_PBA_files()
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
-        ConfigService.update_config(config, should_encrypt=False)
+        try:
+            mode = get_mode()
+            ConfigService.update_config_per_mode(mode, config, should_encrypt=False)
+        except ModeNotSetError:
+            ConfigService.update_config(config, should_encrypt=False)
         logger.info("Monkey config reset was called")
 
     @staticmethod
