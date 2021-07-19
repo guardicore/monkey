@@ -186,12 +186,21 @@ class AppComponent extends AuthComponent {
     }
   }
 
+  getSideNavHeader() {
+    if(this.state.islandMode === 'ransomware'){
+      return "Ransomware"
+    } else {
+      return "Custom"
+    }
+  }
+
   render() {
 
     let defaultSideNavProps = {completedSteps: this.state.completedSteps,
                                onStatusChange: this.updateStatus,
                                islandMode: this.state.islandMode,
-                               defaultReport: this.getDefaultReport()}
+                               defaultReport: this.getDefaultReport(),
+                               sideNavHeader: this.getSideNavHeader()}
 
     return (
       <Router>

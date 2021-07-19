@@ -7,6 +7,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   sideNavDisabled = false,
                                   completedSteps = null,
                                   defaultReport = '',
+                                  sideNavHeader = '',
                                   ...other
                                 }) => (
   <Route {...other} render={() => {
@@ -15,7 +16,8 @@ const SidebarLayoutComponent = ({component: Component,
         <Col sm={3} md={3} lg={3} xl={2} className='sidebar'>
           <SideNavComponent disabled={sideNavDisabled}
                             completedSteps={completedSteps}
-                            defaultReport={defaultReport}/>
+                            defaultReport={defaultReport}
+                            header={sideNavHeader}/>
         </Col>
         <Component {...other} />
       </Row>)

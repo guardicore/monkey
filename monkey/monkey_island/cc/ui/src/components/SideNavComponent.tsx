@@ -18,11 +18,15 @@ const infectionMonkeyImage = require('../images/infection-monkey.svg');
 type Props = {
   disabled?: boolean,
   completedSteps: CompletedSteps,
-  defaultReport: string
+  defaultReport: string,
+  header?: string
 }
 
 
-const SideNavComponent = ({disabled, completedSteps, defaultReport}: Props) => {
+const SideNavComponent = ({disabled,
+                           completedSteps,
+                           defaultReport,
+                           header=''}: Props) => {
 
   return (
     <>
@@ -34,6 +38,14 @@ const SideNavComponent = ({disabled, completedSteps, defaultReport}: Props) => {
       </NavLink>
 
       <ul className='navigation'>
+        {(header !== '') &&
+        <>
+          <li>
+            <h4 className={'text-muted'}>{header}</h4>
+          </li>
+          <hr/>
+        </>}
+
         <li>
           <NavLink to={Routes.RunMonkeyPage} className={getNavLinkClass()}>
             <span className='number'>1.</span>
