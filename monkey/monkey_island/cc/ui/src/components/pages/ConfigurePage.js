@@ -65,7 +65,6 @@ class ConfigurePageComponent extends AuthComponent {
   setInitialConfig(config) {
     // Sets a reference to know if config was changed
     config['attack'] = {}
-    this.currentFormData = {}
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
