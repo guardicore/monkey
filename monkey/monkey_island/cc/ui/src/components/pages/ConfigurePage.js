@@ -118,13 +118,13 @@ class ConfigurePageComponent extends AuthComponent {
     this.setState({showUnsafeAttackOptionsWarning: false});
   }
 
-
   updateConfig = (callback = null) => {
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
         this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration}, callback);
+        this.setState({configuration: data.configuration,
+          currentFormData: data.configuration[this.state.selectedSection]}, callback);
       })
   };
 
