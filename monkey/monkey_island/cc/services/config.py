@@ -13,6 +13,7 @@ from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_filters import FILTER_PER_MODE
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.mode.get_island_mode_service import ModeNotSetError, get_mode
+from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
@@ -248,18 +249,18 @@ class ConfigService:
         return config
 
     @staticmethod
-    def update_config_on_mode_set(mode: str) -> None:
+    def update_config_on_mode_set(mode: IslandModeEnum) -> None:
         config = ConfigService.get_config()
         ConfigService.update_config_per_mode(mode, config, True)
 
     @staticmethod
-    def update_config_per_mode(mode: str, config: Dict, should_encrypt: bool) -> None:
+    def update_config_per_mode(mode: IslandModeEnum, config: Dict, should_encrypt: bool) -> None:
         config = ConfigService._set_default_config_values_per_mode(mode, config)
         ConfigService.update_config(config_json=config, should_encrypt=True)
 
     @staticmethod
-    def _set_default_config_values_per_mode(mode: str, config: Dict) -> Dict:
-        config_filter = FILTER_PER_MODE[mode]
+    def _set_default_config_values_per_mode(mode: IslandModeEnum, config: Dict) -> Dict:
+        config_filter = FILTER_PER_MODE[mode.value]
         config = ConfigService._apply_config_filter(config, config_filter)
         return config
 
