@@ -2,6 +2,7 @@ import pytest
 
 from monkey_island.cc.environment import Environment
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 IPS = ["0.0.0.0", "9.9.9.9"]
 PORT = 9999
@@ -41,3 +42,27 @@ def test_set_server_ips_in_config_current_server(config):
     ConfigService.set_server_ips_in_config(config)
     expected_config_current_server = f"{IPS[0]}:{PORT}"
     assert config["internal"]["island_server"]["current_server"] == expected_config_current_server
+
+
+def test_update_config_on_mode_set_advanced(config, monkeypatch):
+    monkeypatch.setattr("monkey_island.cc.services.config.ConfigService.get_config", lambda: config)
+    monkeypatch.setattr(
+        "monkey_island.cc.services.config.ConfigService.update_config",
+        lambda config_json, should_encrypt: config_json,
+    )
+
+    mode = IslandModeEnum.ADVANCED
+    manipulated_config = ConfigService.update_config_on_mode_set(mode)
+    assert manipulated_config == config
+
+
+def test_update_config_on_mode_set_ransomware(config, monkeypatch):
+    monkeypatch.setattr("monkey_island.cc.services.config.ConfigService.get_config", lambda: config)
+    monkeypatch.setattr(
+        "monkey_island.cc.services.config.ConfigService.update_config",
+        lambda config_json, should_encrypt: config_json,
+    )
+
+    mode = IslandModeEnum.RANSOMWARE
+    manipulated_config = ConfigService.update_config_on_mode_set(mode)
+    assert manipulated_config["monkey"]["post_breach"]["post_breach_actions"] == []
