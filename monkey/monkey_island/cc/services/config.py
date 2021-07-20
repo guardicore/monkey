@@ -2,18 +2,15 @@ import collections
 import copy
 import functools
 import logging
-from typing import Dict
 
-import dpath.util
 from jsonschema import Draft4Validator, validators
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
-from monkey_island.cc.services.config_filters import FILTER_PER_MODE
+from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.mode.get_island_mode_service import ModeNotSetError, get_mode
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
@@ -249,28 +246,6 @@ class ConfigService:
         return config
 
     @staticmethod
-    def update_config_on_mode_set(mode: IslandModeEnum) -> bool:
-        config = ConfigService.get_config()
-        return ConfigService.update_config_per_mode(mode, config, True)
-
-    @staticmethod
-    def update_config_per_mode(mode: IslandModeEnum, config: Dict, should_encrypt: bool) -> bool:
-        config = ConfigService._set_default_config_values_per_mode(mode, config)
-        return ConfigService.update_config(config_json=config, should_encrypt=True)
-
-    @staticmethod
-    def _set_default_config_values_per_mode(mode: IslandModeEnum, config: Dict) -> Dict:
-        config_filter = FILTER_PER_MODE[mode.value]
-        config = ConfigService._apply_config_filter(config, config_filter)
-        return config
-
-    @staticmethod
-    def _apply_config_filter(config: Dict, config_filter: Dict):
-        for path, value in config_filter.items():
-            dpath.util.set(config, path, value, ".")
-        return config
-
-    @staticmethod
     def init_config():
         if ConfigService.get_config(should_decrypt=False) != {}:
             return
@@ -283,7 +258,7 @@ class ConfigService:
         ConfigService.set_server_ips_in_config(config)
         try:
             mode = get_mode()
-            ConfigService.update_config_per_mode(mode, config, should_encrypt=False)
+            update_config_per_mode(mode, config, should_encrypt=False)
         except ModeNotSetError:
             ConfigService.update_config(config, should_encrypt=False)
         logger.info("Monkey config reset was called")
