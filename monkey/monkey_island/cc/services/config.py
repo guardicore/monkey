@@ -249,14 +249,14 @@ class ConfigService:
         return config
 
     @staticmethod
-    def update_config_on_mode_set(mode: IslandModeEnum) -> None:
+    def update_config_on_mode_set(mode: IslandModeEnum) -> bool:
         config = ConfigService.get_config()
-        ConfigService.update_config_per_mode(mode, config, True)
+        return ConfigService.update_config_per_mode(mode, config, True)
 
     @staticmethod
-    def update_config_per_mode(mode: IslandModeEnum, config: Dict, should_encrypt: bool) -> None:
+    def update_config_per_mode(mode: IslandModeEnum, config: Dict, should_encrypt: bool) -> bool:
         config = ConfigService._set_default_config_values_per_mode(mode, config)
-        ConfigService.update_config(config_json=config, should_encrypt=True)
+        return ConfigService.update_config(config_json=config, should_encrypt=True)
 
     @staticmethod
     def _set_default_config_values_per_mode(mode: IslandModeEnum, config: Dict) -> Dict:
