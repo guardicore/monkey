@@ -186,7 +186,7 @@ class AppComponent extends AuthComponent {
     }
   }
 
-  getSideNavHeader() {
+  getIslandModeTitle() {
     if(this.state.islandMode === 'ransomware'){
       return "Ransomware"
     } else {
@@ -200,7 +200,7 @@ class AppComponent extends AuthComponent {
                                onStatusChange: this.updateStatus,
                                islandMode: this.state.islandMode,
                                defaultReport: this.getDefaultReport(),
-                               sideNavHeader: this.getSideNavHeader()}
+                               sideNavHeader: this.getIslandModeTitle()}
 
     return (
       <Router>
