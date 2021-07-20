@@ -69,8 +69,11 @@ def test_send_immediately(monkeypatch, telemetry_messenger_spy):
     batching_telemetry_messenger.send_telemetry(telem)
     release_GIL()
 
-    assert len(telemetry_messenger_spy.telemetries) == 1
-    assert telemetry_messenger_spy.telemetries[0] == telem
+    try:
+        assert len(telemetry_messenger_spy.telemetries) == 1
+        assert telemetry_messenger_spy.telemetries[0] == telem
+    finally:
+        del batching_telemetry_messenger
 
 
 def test_send_telem_batch(monkeypatch, telemetry_messenger_spy):
@@ -78,20 +81,23 @@ def test_send_telem_batch(monkeypatch, telemetry_messenger_spy):
         monkeypatch, telemetry_messenger_spy
     )
 
-    expected_data = {"entries": [1, 2]}
-    telem1 = BatchableTelemStub(1)
-    telem2 = BatchableTelemStub(2)
+    try:
+        expected_data = {"entries": [1, 2]}
+        telem1 = BatchableTelemStub(1)
+        telem2 = BatchableTelemStub(2)
 
-    batching_telemetry_messenger.send_telemetry(telem1)
-    batching_telemetry_messenger.send_telemetry(telem2)
-    release_GIL()
+        batching_telemetry_messenger.send_telemetry(telem1)
+        batching_telemetry_messenger.send_telemetry(telem2)
+        release_GIL()
 
-    assert len(telemetry_messenger_spy.telemetries) == 0
-    advance_clock_to_next_period(monkeypatch)
-    release_GIL()
+        assert len(telemetry_messenger_spy.telemetries) == 0
+        advance_clock_to_next_period(monkeypatch)
+        release_GIL()
 
-    assert len(telemetry_messenger_spy.telemetries) == 1
-    assert telemetry_messenger_spy.telemetries[0].get_data() == expected_data
+        assert len(telemetry_messenger_spy.telemetries) == 1
+        assert telemetry_messenger_spy.telemetries[0].get_data() == expected_data
+    finally:
+        del batching_telemetry_messenger
 
 
 def test_send_different_telem_types(monkeypatch, telemetry_messenger_spy):
@@ -99,20 +105,23 @@ def test_send_different_telem_types(monkeypatch, telemetry_messenger_spy):
         monkeypatch, telemetry_messenger_spy
     )
 
-    telem1 = BatchableTelemStub(1, "cat1")
-    telem2 = BatchableTelemStub(2, "cat2")
+    try:
+        telem1 = BatchableTelemStub(1, "cat1")
+        telem2 = BatchableTelemStub(2, "cat2")
 
-    batching_telemetry_messenger.send_telemetry(telem1)
-    batching_telemetry_messenger.send_telemetry(telem2)
-    release_GIL()
+        batching_telemetry_messenger.send_telemetry(telem1)
+        batching_telemetry_messenger.send_telemetry(telem2)
+        release_GIL()
 
-    assert len(telemetry_messenger_spy.telemetries) == 0
-    advance_clock_to_next_period(monkeypatch)
-    release_GIL()
+        assert len(telemetry_messenger_spy.telemetries) == 0
+        advance_clock_to_next_period(monkeypatch)
+        release_GIL()
 
-    assert len(telemetry_messenger_spy.telemetries) == 2
-    assert telemetry_messenger_spy.telemetries[0] == telem1
-    assert telemetry_messenger_spy.telemetries[1] == telem2
+        assert len(telemetry_messenger_spy.telemetries) == 2
+        assert telemetry_messenger_spy.telemetries[0] == telem1
+        assert telemetry_messenger_spy.telemetries[1] == telem2
+    finally:
+        del batching_telemetry_messenger
 
 
 def test_send_two_batches(monkeypatch, telemetry_messenger_spy):
@@ -120,22 +129,25 @@ def test_send_two_batches(monkeypatch, telemetry_messenger_spy):
         monkeypatch, telemetry_messenger_spy
     )
 
-    telem1 = BatchableTelemStub(1, "cat1")
-    telem2 = BatchableTelemStub(2, "cat1")
+    try:
+        telem1 = BatchableTelemStub(1, "cat1")
+        telem2 = BatchableTelemStub(2, "cat1")
 
-    batching_telemetry_messenger.send_telemetry(telem1)
-    advance_clock_to_next_period(monkeypatch)
-    release_GIL()
+        batching_telemetry_messenger.send_telemetry(telem1)
+        advance_clock_to_next_period(monkeypatch)
+        release_GIL()
 
-    batching_telemetry_messenger.send_telemetry(telem2)
-    release_GIL()
-    assert len(telemetry_messenger_spy.telemetries) == 1
+        batching_telemetry_messenger.send_telemetry(telem2)
+        release_GIL()
+        assert len(telemetry_messenger_spy.telemetries) == 1
 
-    advance_clock_to_next_period(monkeypatch)
-    release_GIL()
+        advance_clock_to_next_period(monkeypatch)
+        release_GIL()
 
-    assert len(telemetry_messenger_spy.telemetries) == 2
-    assert telemetry_messenger_spy.telemetries[1] == telem2
+        assert len(telemetry_messenger_spy.telemetries) == 2
+        assert telemetry_messenger_spy.telemetries[1] == telem2
+    finally:
+        del batching_telemetry_messenger
 
 
 def test_send_remaining_telem_after_stop(monkeypatch, telemetry_messenger_spy):
@@ -149,8 +161,10 @@ def test_send_remaining_telem_after_stop(monkeypatch, telemetry_messenger_spy):
     batching_telemetry_messenger.send_telemetry(telem)
     release_GIL()
 
-    assert len(telemetry_messenger_spy.telemetries) == 0
-    del batching_telemetry_messenger
+    try:
+        assert len(telemetry_messenger_spy.telemetries) == 0
+    finally:
+        del batching_telemetry_messenger
 
     assert len(telemetry_messenger_spy.telemetries) == 1
     assert telemetry_messenger_spy.telemetries[0].get_data() == expected_data
