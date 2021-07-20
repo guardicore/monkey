@@ -2,19 +2,19 @@ from typing import Dict
 
 import dpath.util
 
-from monkey_island.cc.services.config import ConfigService
+import monkey_island.cc.services.config as config_service
 from monkey_island.cc.services.config_filters import FILTER_PER_MODE
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 def update_config_on_mode_set(mode: IslandModeEnum) -> bool:
-    config = ConfigService.get_config()
+    config = config_service.ConfigService.get_config()
     return update_config_per_mode(mode, config, True)
 
 
 def update_config_per_mode(mode: IslandModeEnum, config: Dict, should_encrypt: bool) -> bool:
     config = _set_default_config_values_per_mode(mode, config)
-    return ConfigService.update_config(config_json=config, should_encrypt=True)
+    return config_service.ConfigService.update_config(config_json=config, should_encrypt=True)
 
 
 def _set_default_config_values_per_mode(mode: IslandModeEnum, config: Dict) -> Dict:
