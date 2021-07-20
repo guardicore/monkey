@@ -1,4 +1,7 @@
+import os
 import time
+
+import pytest
 
 from infection_monkey.telemetry.base_telem import BaseTelem
 from infection_monkey.telemetry.batchable_telem_mixin import BatchableTelemMixin
@@ -60,6 +63,7 @@ def build_batching_telemetry_messenger(monkeypatch, telemetry_messenger_spy):
     return BatchingTelemetryMessenger(telemetry_messenger_spy, period=PERIOD)
 
 
+@pytest.mark.skipif(os.name != "posix", reason="This test is racey on Windows")
 def test_send_immediately(monkeypatch, telemetry_messenger_spy):
     batching_telemetry_messenger = build_batching_telemetry_messenger(
         monkeypatch, telemetry_messenger_spy
@@ -76,6 +80,7 @@ def test_send_immediately(monkeypatch, telemetry_messenger_spy):
         del batching_telemetry_messenger
 
 
+@pytest.mark.skipif(os.name != "posix", reason="This test is racey on Windows")
 def test_send_telem_batch(monkeypatch, telemetry_messenger_spy):
     batching_telemetry_messenger = build_batching_telemetry_messenger(
         monkeypatch, telemetry_messenger_spy
@@ -100,6 +105,7 @@ def test_send_telem_batch(monkeypatch, telemetry_messenger_spy):
         del batching_telemetry_messenger
 
 
+@pytest.mark.skipif(os.name != "posix", reason="This test is racey on Windows")
 def test_send_different_telem_types(monkeypatch, telemetry_messenger_spy):
     batching_telemetry_messenger = build_batching_telemetry_messenger(
         monkeypatch, telemetry_messenger_spy
@@ -124,6 +130,7 @@ def test_send_different_telem_types(monkeypatch, telemetry_messenger_spy):
         del batching_telemetry_messenger
 
 
+@pytest.mark.skipif(os.name != "posix", reason="This test is racey on Windows")
 def test_send_two_batches(monkeypatch, telemetry_messenger_spy):
     batching_telemetry_messenger = build_batching_telemetry_messenger(
         monkeypatch, telemetry_messenger_spy
@@ -150,6 +157,7 @@ def test_send_two_batches(monkeypatch, telemetry_messenger_spy):
         del batching_telemetry_messenger
 
 
+@pytest.mark.skipif(os.name != "posix", reason="This test is racey on Windows")
 def test_send_remaining_telem_after_stop(monkeypatch, telemetry_messenger_spy):
     batching_telemetry_messenger = build_batching_telemetry_messenger(
         monkeypatch, telemetry_messenger_spy
