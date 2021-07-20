@@ -13,6 +13,7 @@ def test_is_config_encrypted__json(monkey_config_json):
     assert not ConfigurationImport.is_config_encrypted(monkey_config_json)
 
 
+@pytest.mark.slow
 def test_is_config_encrypted__ciphertext(monkey_config_json):
     encrypted_config = encrypt_string(monkey_config_json, PASSWORD)
     assert ConfigurationImport.is_config_encrypted(encrypted_config)

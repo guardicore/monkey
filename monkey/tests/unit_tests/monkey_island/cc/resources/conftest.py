@@ -9,12 +9,9 @@ import monkey_island.cc.resources.island_mode
 from monkey_island.cc.services.representations import output_json
 
 
-# We can't scope to module, because monkeypatch is a function scoped decorator.
-# Potential solutions: https://github.com/pytest-dev/pytest/issues/363#issuecomment-406536200 or
-# https://stackoverflow.com/questions/53963822/python-monkeypatch-setattr-with-pytest-fixture-at-module-scope
-@pytest.fixture(scope="function")
-def flask_client(monkeypatch):
-    monkeypatch.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
+@pytest.fixture(scope="session")
+def flask_client(monkeypatch_session):
+    monkeypatch_session.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
 
     with mock_init_app().test_client() as client:
         yield client

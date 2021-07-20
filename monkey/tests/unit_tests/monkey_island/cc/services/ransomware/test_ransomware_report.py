@@ -23,14 +23,14 @@ def fake_mongo(monkeypatch):
 
 @pytest.mark.usefixtures("uses_database")
 def test_get_encrypted_files_table(fake_mongo, monkeypatch):
-    fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
-    fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
-    fake_mongo.db.edge.insert(EDGE_EXPLOITED)
-    fake_mongo.db.edge.insert(EDGE_SCANNED)
-    fake_mongo.db.telemetry.insert(ENCRYPTED)
-    fake_mongo.db.telemetry.insert(ENCRYPTED_2)
-    fake_mongo.db.telemetry.insert(ENCRYPTION_ERROR)
-    fake_mongo.db.telemetry.insert(ENCRYPTION_ONE_FILE)
+    fake_mongo.db.monkey.insert_one(MONKEY_AT_ISLAND)
+    fake_mongo.db.monkey.insert_one(MONKEY_AT_VICTIM)
+    fake_mongo.db.edge.insert_one(EDGE_EXPLOITED)
+    fake_mongo.db.edge.insert_one(EDGE_SCANNED)
+    fake_mongo.db.telemetry.insert_one(ENCRYPTED)
+    fake_mongo.db.telemetry.insert_one(ENCRYPTED_2)
+    fake_mongo.db.telemetry.insert_one(ENCRYPTION_ERROR)
+    fake_mongo.db.telemetry.insert_one(ENCRYPTION_ONE_FILE)
 
     monkeypatch.setattr(
         ReportService,
@@ -58,11 +58,11 @@ def test_get_encrypted_files_table(fake_mongo, monkeypatch):
 
 @pytest.mark.usefixtures("uses_database")
 def test_get_encrypted_files_table__only_errors(fake_mongo, monkeypatch):
-    fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
-    fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
-    fake_mongo.db.edge.insert(EDGE_EXPLOITED)
-    fake_mongo.db.edge.insert(EDGE_SCANNED)
-    fake_mongo.db.telemetry.insert(ENCRYPTION_ERROR)
+    fake_mongo.db.monkey.insert_one(MONKEY_AT_ISLAND)
+    fake_mongo.db.monkey.insert_one(MONKEY_AT_VICTIM)
+    fake_mongo.db.edge.insert_one(EDGE_EXPLOITED)
+    fake_mongo.db.edge.insert_one(EDGE_SCANNED)
+    fake_mongo.db.telemetry.insert_one(ENCRYPTION_ERROR)
 
     monkeypatch.setattr(
         ReportService,
@@ -84,10 +84,10 @@ def test_get_encrypted_files_table__only_errors(fake_mongo, monkeypatch):
 
 @pytest.mark.usefixtures("uses_database")
 def test_get_encrypted_files_table__no_telemetries(fake_mongo, monkeypatch):
-    fake_mongo.db.monkey.insert(MONKEY_AT_ISLAND)
-    fake_mongo.db.monkey.insert(MONKEY_AT_VICTIM)
-    fake_mongo.db.edge.insert(EDGE_EXPLOITED)
-    fake_mongo.db.edge.insert(EDGE_SCANNED)
+    fake_mongo.db.monkey.insert_one(MONKEY_AT_ISLAND)
+    fake_mongo.db.monkey.insert_one(MONKEY_AT_VICTIM)
+    fake_mongo.db.edge.insert_one(EDGE_EXPLOITED)
+    fake_mongo.db.edge.insert_one(EDGE_SCANNED)
 
     monkeypatch.setattr(
         ReportService,

@@ -360,7 +360,7 @@ class ConfigService:
                 parent_config_arr = config_arr
                 config_arr = config_arr[config_key_part]
 
-            if isinstance(config_arr, collections.Sequence) and not isinstance(config_arr, str):
+            if isinstance(config_arr, collections.abc.Sequence) and not isinstance(config_arr, str):
                 for i in range(len(config_arr)):
                     # Check if array of shh key pairs and then decrypt
                     if isinstance(config_arr[i], dict) and "public_key" in config_arr[i]:
