@@ -7,7 +7,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   sideNavDisabled = false,
                                   completedSteps = null,
                                   defaultReport = '',
-                                  sideNavHeader = '',
+                                  sideNavHeader = (<></>),
                                   ...other
                                 }) => (
   <Route {...other} render={() => {

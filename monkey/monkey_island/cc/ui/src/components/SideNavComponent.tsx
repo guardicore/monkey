@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactFragment} from 'react';
 import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
@@ -19,14 +19,14 @@ type Props = {
   disabled?: boolean,
   completedSteps: CompletedSteps,
   defaultReport: string,
-  header?: string
+  header?: ReactFragment
 }
 
 
 const SideNavComponent = ({disabled,
                            completedSteps,
                            defaultReport,
-                           header=''}: Props) => {
+                           header=null}: Props) => {
 
   return (
     <>
@@ -38,10 +38,10 @@ const SideNavComponent = ({disabled,
       </NavLink>
 
       <ul className='navigation'>
-        {(header !== '') &&
+        {(header !== null) &&
         <>
           <li>
-            <h4 className={'text-muted'}>{header}</h4>
+            {header}
           </li>
           <hr/>
         </>}
