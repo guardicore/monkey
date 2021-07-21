@@ -10,7 +10,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
 from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
-from monkey_island.cc.services.mode.get_island_mode_service import ModeNotSetError, get_mode
+from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 

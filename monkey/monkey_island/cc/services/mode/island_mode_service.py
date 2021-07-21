@@ -15,3 +15,17 @@ def set_mode(mode: IslandModeEnum):
         LOG.error(
             "Could not apply configuration changes per mode. Using default advanced configuration."
         )
+
+
+def get_mode() -> str:
+    if IslandMode.objects:
+        mode = IslandMode.objects[0].mode
+        return mode
+    else:
+        raise ModeNotSetError
+
+
+class ModeNotSetError(Exception):
+    """
+    Throw this exception when island mode is not set.
+    """
