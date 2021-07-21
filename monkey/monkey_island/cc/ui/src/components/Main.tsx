@@ -30,7 +30,7 @@ import Timeout = NodeJS.Timeout;
 import IslandHttpClient from "./IslandHttpClient";
 import _ from "lodash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
+import {faFileCode, faLightbulb, faTimes} from "@fortawesome/free-solid-svg-icons";
 
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
@@ -192,8 +192,10 @@ class AppComponent extends AuthComponent {
   getIslandModeTitle(){
     if(this.state.islandMode === 'ransomware'){
       return this.formIslandModeTitle("Ransomware", faFileCode);
-    } else {
+    } else if(this.state.islandMode === 'advanced') {
       return this.formIslandModeTitle("Custom", faLightbulb);
+    } else {
+      return this.formIslandModeTitle("", faTimes);
     }
   }
 
@@ -223,7 +225,8 @@ class AppComponent extends AuthComponent {
               <SidebarLayoutComponent component={LandingPage}
                                       sideNavDisabled={true}
                                       completedSteps={new CompletedSteps()}
-                                      onStatusChange={this.updateStatus}/>)}
+                                      onStatusChange={this.updateStatus}
+                                      {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.GettingStartedPage,
               <SidebarLayoutComponent component={GettingStartedPage} {...defaultSideNavProps}/>,
               true)}
