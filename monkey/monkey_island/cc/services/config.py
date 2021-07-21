@@ -8,7 +8,9 @@ from jsonschema import Draft4Validator, validators
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryptor import get_encryptor
+from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
+from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
@@ -235,9 +237,12 @@ class ConfigService:
     def get_default_config(should_encrypt=False):
         ConfigService.init_default_config()
         config = copy.deepcopy(ConfigService.default_config)
+
         if should_encrypt:
             ConfigService.encrypt_config(config)
+
         logger.info("Default config was called")
+
         return config
 
     @staticmethod
@@ -251,7 +256,11 @@ class ConfigService:
         PostBreachFilesService.remove_PBA_files()
         config = ConfigService.get_default_config(True)
         ConfigService.set_server_ips_in_config(config)
-        ConfigService.update_config(config, should_encrypt=False)
+        try:
+            mode = get_mode()
+            update_config_per_mode(mode, config, should_encrypt=False)
+        except ModeNotSetError:
+            ConfigService.update_config(config, should_encrypt=False)
         logger.info("Monkey config reset was called")
 
     @staticmethod
