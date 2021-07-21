@@ -13,4 +13,5 @@ class BaseTemplate(ConfigTemplate):
             "HostnameCollector",
         ],
         "monkey.post_breach.post_breach_actions": [],
+        "internal.general.keep_tunnel_open_time": 0,
     }
