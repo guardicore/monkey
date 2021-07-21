@@ -13,5 +13,6 @@ class Elastic(ConfigTemplate):
             "basic.exploiters.exploiter_classes": ["ElasticGroovyExploiter"],
             "internal.classes.finger_classes": ["PingScanner", "HTTPFinger", "ElasticFinger"],
             "basic_network.scope.subnet_scan_list": ["10.2.2.4", "10.2.2.5"],
+            "basic_network.scope.depth": 1,
         }
     )
