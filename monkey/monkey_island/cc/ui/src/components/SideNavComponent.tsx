@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactFragment} from 'react';
 import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
@@ -18,11 +18,15 @@ const infectionMonkeyImage = require('../images/infection-monkey.svg');
 type Props = {
   disabled?: boolean,
   completedSteps: CompletedSteps,
-  defaultReport: string
+  defaultReport: string,
+  header?: ReactFragment
 }
 
 
-const SideNavComponent = ({disabled, completedSteps, defaultReport}: Props) => {
+const SideNavComponent = ({disabled,
+                           completedSteps,
+                           defaultReport,
+                           header=null}: Props) => {
 
   return (
     <>
@@ -34,6 +38,14 @@ const SideNavComponent = ({disabled, completedSteps, defaultReport}: Props) => {
       </NavLink>
 
       <ul className='navigation'>
+        {(header !== null) &&
+        <>
+          <li>
+            {header}
+          </li>
+          <hr/>
+        </>}
+
         <li>
           <NavLink to={Routes.RunMonkeyPage} className={getNavLinkClass()}>
             <span className='number'>1.</span>
