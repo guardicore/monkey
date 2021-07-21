@@ -70,6 +70,7 @@ class AppComponent extends AuthComponent {
       noAuthLoginAttempted: undefined
     };
     this.interval = undefined;
+    this.setMode();
   }
 
   updateStatus = () => {
