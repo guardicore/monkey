@@ -5,10 +5,11 @@ import flask_restful
 from flask import make_response, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.services.config_manipulator import update_config_on_mode_set
 from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode, set_mode
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class IslandMode(flask_restful.Resource):
@@ -20,6 +21,12 @@ class IslandMode(flask_restful.Resource):
 
             mode = IslandModeEnum(mode_str)
             set_mode(mode)
+
+            if not update_config_on_mode_set(mode):
+                LOG.error(
+                    "Could not apply configuration changes per mode. "
+                    "Using default advanced configuration."
+                )
 
             return make_response({}, 200)
         except (AttributeError, json.decoder.JSONDecodeError):
