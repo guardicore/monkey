@@ -55,8 +55,10 @@ const LandingPageComponent = (props) => {
   }
 
   function setScenario(scenario: string) {
-    IslandHttpClient.post('/api/island-mode', {'mode': scenario});
-    props.onStatusChange();
+    IslandHttpClient.post('/api/island-mode', {'mode': scenario})
+    .then(() => {
+      props.onStatusChange();
+      });
   }
 }
 
