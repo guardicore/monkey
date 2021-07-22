@@ -19,6 +19,7 @@ NODE_SRC=https://deb.nodesource.com/setup_12.x
 APP_TOOL_URL=https://github.com/AppImage/AppImageKit/releases/download/12/appimagetool-x86_64.AppImage
 PYTHON_VERSION="3.7.11"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
+ISLAND_DIR_COPY_TIMEOUT=60 #Seconds
 
 exit_if_missing_argument() {
   if [ -z "$2" ] || [ "${2:0:1}" == "-" ]; then
@@ -123,6 +124,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
+  git config --global core.autocrlf false
   git clone --single-branch --recurse-submodules -b "$branch" "$MONKEY_ORIGIN_URL" "$repo_dir" 2>&1 || handle_error
 }
 
@@ -164,7 +166,10 @@ copy_monkey_island_to_appdir() {
   cp "$1"/__init__.py "$INSTALL_DIR"
   cp "$1"/monkey_island.py "$INSTALL_DIR"
   cp -r "$1"/common "$INSTALL_DIR/"
-  cp -r "$1"/monkey_island "$INSTALL_DIR/"
+  if ! timeout "${ISLAND_DIR_COPY_TIMEOUT}" cp -r "$1"/monkey_island "$INSTALL_DIR/"; then
+    log_message "Copying island files takes too long. Maybe you're copying a dev folder instead of a fresh repository?"
+    exit
+  fi
   cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/
 
   # TODO: This is a workaround that may be able to be removed after PR #848 is
