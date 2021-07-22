@@ -29,6 +29,7 @@ import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIs
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
 import {sambacryIssueOverview, sambacryIssueReport} from './security/issues/SambacryIssue';
 import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
+import {cdbIssueOverview, cdbIssueReport} from './security/issues/CDBIssue';
 import {shellShockIssueOverview, shellShockIssueReport} from './security/issues/ShellShockIssue';
 import {ms08_067IssueOverview, ms08_067IssueReport} from './security/issues/MS08_067Issue';
 import {
@@ -134,6 +135,11 @@ class ReportPageComponent extends AuthComponent {
       'ElasticGroovyExploiter': {
         [this.issueContentTypes.OVERVIEW]: elasticIssueOverview,
         [this.issueContentTypes.REPORT]: elasticIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'CouchDBExploiter': {
+        [this.issueContentTypes.OVERVIEW]: cdbIssueOverview,
+        [this.issueContentTypes.REPORT]: cdbIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ShellShockExploiter': {
