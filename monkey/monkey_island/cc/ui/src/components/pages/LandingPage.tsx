@@ -6,6 +6,9 @@ import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/LandingPage.scss';
 import IslandHttpClient from "../IslandHttpClient";
 
+function sleep(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 const LandingPageComponent = (props) => {
 
@@ -56,7 +59,7 @@ const LandingPageComponent = (props) => {
 
   function setScenario(scenario: string) {
     IslandHttpClient.post('/api/island-mode', {'mode': scenario});
-    props.onStatusChange();
+    sleep(500).then(_ => {props.onStatusChange();});
   }
 }
 
