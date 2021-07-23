@@ -10,6 +10,16 @@ from monkey_island.cc.services.reporting.exporter import Exporter
 
 __authors__ = ["maor.rayzin", "shay.nehmad"]
 
+
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (  # noqa:E501 (Long import)
+    ExploiterDescriptorEnum,
+)
+
+# noqa:E501 (Long import)
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_report_info import (  # noqa:E501 (Long import)
+    CredentialType,
+)
+
 logger = logging.getLogger(__name__)
 
 INFECTION_MONKEY_ARN = "324264561773:product/guardicore/aws-infection-monkey"
@@ -30,8 +40,13 @@ class AWSExporter(Exporter):
 
         for machine in issues_list:
             for issue in issues_list[machine]:
-                if issue.get("aws_instance_id", None):
-                    findings_list.append(AWSExporter._prepare_finding(issue, current_aws_region))
+                try:
+                    if "aws_instance_id" in issue:
+                        findings_list.append(
+                            AWSExporter._prepare_finding(issue, current_aws_region)
+                        )
+                except AWSExporter.FindingNotFoundError as e:
+                    logger.error(e)
 
         if not AWSExporter._send_findings(findings_list, current_aws_region):
             logger.error("Exporting findings to aws failed")
@@ -49,23 +64,29 @@ class AWSExporter(Exporter):
     def _prepare_finding(issue, region):
         findings_dict = {
             "island_cross_segment": AWSExporter._handle_island_cross_segment_issue,
-            "ssh": AWSExporter._handle_ssh_issue,
-            "shellshock": AWSExporter._handle_shellshock_issue,
+            ExploiterDescriptorEnum.SSH.value.class_name: {
+                CredentialType.PASSWORD.value: AWSExporter._handle_ssh_issue,
+                CredentialType.KEY.value: AWSExporter._handle_ssh_key_issue,
+            },
+            ExploiterDescriptorEnum.SHELLSHOCK.value.class_name: AWSExporter._handle_shellshock_issue,  # noqa:E501
             "tunnel": AWSExporter._handle_tunnel_issue,
-            "elastic": AWSExporter._handle_elastic_issue,
-            "smb_password": AWSExporter._handle_smb_password_issue,
-            "smb_pth": AWSExporter._handle_smb_pth_issue,
-            "sambacry": AWSExporter._handle_sambacry_issue,
+            ExploiterDescriptorEnum.ELASTIC.value.class_name: AWSExporter._handle_elastic_issue,
+            ExploiterDescriptorEnum.SMB.value.class_name: {
+                CredentialType.PASSWORD.value: AWSExporter._handle_smb_password_issue,
+                CredentialType.HASH.value: AWSExporter._handle_smb_pth_issue,
+            },
+            ExploiterDescriptorEnum.SAMBACRY.value.class_name: AWSExporter._handle_sambacry_issue,
             "shared_passwords": AWSExporter._handle_shared_passwords_issue,
-            "wmi_password": AWSExporter._handle_wmi_password_issue,
-            "wmi_pth": AWSExporter._handle_wmi_pth_issue,
-            "ssh_key": AWSExporter._handle_ssh_key_issue,
+            ExploiterDescriptorEnum.WMI.value.class_name: {
+                CredentialType.PASSWORD.value: AWSExporter._handle_wmi_password_issue,
+                CredentialType.HASH.value: AWSExporter._handle_wmi_pth_issue,
+            },
             "shared_passwords_domain": AWSExporter._handle_shared_passwords_domain_issue,
             "shared_admins_domain": AWSExporter._handle_shared_admins_domain_issue,
             "strong_users_on_crit": AWSExporter._handle_strong_users_on_crit_issue,
-            "struts2": AWSExporter._handle_struts2_issue,
-            "weblogic": AWSExporter._handle_weblogic_issue,
-            "hadoop": AWSExporter._handle_hadoop_issue,
+            ExploiterDescriptorEnum.STRUTS2.value.class_name: AWSExporter._handle_struts2_issue,
+            ExploiterDescriptorEnum.WEBLOGIC.value.class_name: AWSExporter._handle_weblogic_issue,
+            ExploiterDescriptorEnum.HADOOP.value.class_name: AWSExporter._handle_hadoop_issue,
             # azure and conficker are not relevant issues for an AWS env
         }
 
@@ -78,7 +99,7 @@ class AWSExporter(Exporter):
         account_id = AwsInstance().get_account_id()
         logger.debug("aws account id acquired: {}".format(account_id))
 
-        finding = {
+        aws_finding = {
             "SchemaVersion": "2018-10-08",
             "Id": uuid.uuid4().hex,
             "ProductArn": product_arn,
@@ -89,9 +110,25 @@ class AWSExporter(Exporter):
             "CreatedAt": datetime.now().isoformat() + "Z",
             "UpdatedAt": datetime.now().isoformat() + "Z",
         }
-        return AWSExporter.merge_two_dicts(
-            finding, findings_dict[issue["type"]](issue, instance_arn)
-        )
+
+        processor = AWSExporter._get_issue_processor(findings_dict, issue)
+
+        return AWSExporter.merge_two_dicts(aws_finding, processor(issue, instance_arn))
+
+    @staticmethod
+    def _get_issue_processor(finding_dict, issue):
+        try:
+            processor = finding_dict[issue["type"]]
+            if type(processor) == dict:
+                processor = processor[issue["credential_type"]]
+            return processor
+        except KeyError:
+            raise AWSExporter.FindingNotFoundError(
+                f"Finding {issue['type']} not added as AWS exportable finding"
+            )
+
+    class FindingNotFoundError(Exception):
+        pass
 
     @staticmethod
     def _send_findings(findings_list, region):
