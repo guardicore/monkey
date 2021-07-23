@@ -82,7 +82,7 @@ class ConfigService:
         current config.
         :param should_decrypt: If True, the value of the config key will be decrypted
                                (if it's in the list of encrypted config values).
-        :return: The value of the requested config key.
+        :return: The value of the requested config key or None.
         """
         config_key = functools.reduce(lambda x, y: x + "." + y, config_key_as_arr)
         config = mongo.db.config.find_one(

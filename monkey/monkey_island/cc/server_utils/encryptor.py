@@ -51,7 +51,13 @@ class Encryptor:
         enc_message = base64.b64decode(enc_message)
         cipher_iv = enc_message[0 : AES.block_size]
         cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return self._unpad(cipher.decrypt(enc_message[AES.block_size :]).decode())
+        try:
+            dec_message = self._unpad(cipher.decrypt(enc_message[AES.block_size :]).decode())
+            return dec_message
+        except Exception as e:
+            print("monkey-island secret key does not match MongoDB encrypted key")
+            print("Either run 'docker container start -a monkey-island' or kill and restart the MongoDB container.")
+            return None
 
 
 def initialize_encryptor(password_file_dir):
