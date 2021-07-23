@@ -1,4 +1,5 @@
 .landing-page h1.page-title {
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -7,10 +8,27 @@
   margin-left: 12px;
 }
 
+.landing-page .scenario-info {
+  margin-bottom: 20px;
+}
+
 .landing-page .monkey-description-title {
   margin-top: 30px;
 }
 
 .landing-page .d-block {
   height: 100%;
+
+.guardicore-logo {
+  margin-bottom: 0.5em;
+  position: absolute !important;
+  bottom: 0;
+}
+
+.guardicore-logo .license-text {
+  position: relative;
+}
+
+.guardicore-logo .version-text {
+  position: relative;
 }
