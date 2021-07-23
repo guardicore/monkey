@@ -54,10 +54,14 @@ class Encryptor:
         try:
             dec_message = self._unpad(cipher.decrypt(enc_message[AES.block_size :]).decode())
             return dec_message
-        except Exception as e:
+        except UnicodeDecodeError:
             print("monkey-island secret key does not match MongoDB encrypted key")
-            print("Either run 'docker container start -a monkey-island' or kill and restart the MongoDB container.")
-            return None
+            print("Possible solutions:")
+            print("Run'docker container start -a monkey-island'")
+            print("Kill and restart the MongoDB container.")
+        except Exception as e:
+            print(e)
+        return None
 
 
 def initialize_encryptor(password_file_dir):
