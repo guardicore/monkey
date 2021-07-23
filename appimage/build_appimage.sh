@@ -124,8 +124,7 @@ clone_monkey_repo() {
   fi
 
   log_message "Cloning files from git"
-  git config --global core.autocrlf false
-  git clone --single-branch --recurse-submodules -b "$branch" "$MONKEY_ORIGIN_URL" "$repo_dir" 2>&1 || handle_error
+  git clone -c core.autocrlf=false --single-branch --recurse-submodules -b "$branch" "$MONKEY_ORIGIN_URL" "$repo_dir" 2>&1 || handle_error
 }
 
 setup_appdir() {
@@ -168,7 +167,7 @@ copy_monkey_island_to_appdir() {
   cp -r "$1"/common "$INSTALL_DIR/"
   if ! timeout "${ISLAND_DIR_COPY_TIMEOUT}" cp -r "$1"/monkey_island "$INSTALL_DIR/"; then
     log_message "Copying island files takes too long. Maybe you're copying a dev folder instead of a fresh repository?"
-    exit
+    exit 1
   fi
   cp ./server_config.json.standard "$INSTALL_DIR"/monkey_island/cc/
 
