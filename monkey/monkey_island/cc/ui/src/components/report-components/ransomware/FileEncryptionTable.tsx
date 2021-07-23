@@ -1,25 +1,36 @@
 import React from 'react';
 import ReactTable from 'react-table';
-import {renderArray} from '../common/RenderArrays';
 
 
 type Props = {
-  tableData: [TableRow]
+  telemetry: object,
 }
 
 type TableRow = {
-  exploits: [string],
-  total_attempts: number,
-  successful_encryptions: number,
-  hostname: string
+  hostname: string,
+  file_path: number,
 }
 
-const pageSize = 10;
-
+const PAGE_SIZE = 10;
+const HOSTNAME_REGEX = /^(.* - )?(\S+) :.*$/
+const columns = [
+  {
+    Header: 'Encrypted Files',
+    columns: [
+      {Header: 'Host', id: 'host', accessor: x => x.hostname},
+      {Header: 'File Path', id: 'file_path', accessor: x => x.file_path},
+      {Header: 'Encryption Algorithm',
+        id: 'encryption_algorithm',
+        accessor: () => {return 'Bit Flip'}}
+    ]
+  }
+];
 
 const FileEncryptionTable = (props: Props) => {
-  let defaultPageSize = props.tableData.length > pageSize ? pageSize : props.tableData.length;
-  let showPagination = props.tableData.length > pageSize;
+  let tableData = processTelemetry(props.telemetry);
+  let defaultPageSize = tableData.length > PAGE_SIZE ? PAGE_SIZE : tableData.length;
+  let showPagination = tableData.length > PAGE_SIZE;
+
   return (
     <>
       <h3 className={'report-section-header'}>
@@ -28,7 +39,7 @@ const FileEncryptionTable = (props: Props) => {
       <div className="data-table-container">
         <ReactTable
           columns={columns}
-          data={props.tableData}
+          data={tableData}
           showPagination={showPagination}
           defaultPageSize={defaultPageSize}
         />
@@ -37,30 +48,61 @@ const FileEncryptionTable = (props: Props) => {
   );
 }
 
-const columns = [
-  {
-    Header: 'Ransomware info',
-    columns: [
-      {Header: 'Machine', id: 'machine', accessor: x => x.hostname},
-      {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)},
-      {Header: 'Files encrypted',
-        id: 'files_encrypted',
-        accessor: x => renderFileEncryptionStats(x.successful_encryptions, x.total_attempts)}
-    ]
-  }
-];
+function processTelemetry(telemetry): Array<TableRow> {
+  // Sort ascending so that newer telemetry records overwrite older ones.
+  sortTelemetry(telemetry);
 
-function renderFileEncryptionStats(successful: number, total: number) {
-  let textClassName = ''
+  let latestTelemetry = getLatestTelemetry(telemetry);
+  let tableData = getDataForTable(latestTelemetry);
 
-  if(successful > 0) {
-      textClassName = 'text-danger'
-  } else {
-      textClassName = 'text-dark'
-  }
-
-  return (<p className={textClassName}>{successful} out of {total}</p>);
+  return tableData;
 }
 
+function sortTelemetry(telemetry): void {
+  telemetry.objects.sort((a, b) => {
+    if (a.timestamp > b.timestamp) {
+      return 1;
+    } else if (a.timestamp > b.timestamp) {
+      return -1;
+    }
+
+    return 0;
+  });
+}
+
+function getLatestTelemetry(telemetry) {
+  let latestTelemetry = {};
+  for (let i = 0; i < telemetry.objects.length; i++) {
+    let monkey = telemetry.objects[i].monkey
+
+    if (! (monkey in latestTelemetry)) {
+      latestTelemetry[monkey] = {};
+    }
+
+    telemetry.objects[i].data.files.forEach((file_encryption_telemetry) => {
+      latestTelemetry[monkey][file_encryption_telemetry.path] = file_encryption_telemetry.success
+    });
+  }
+
+  return latestTelemetry
+}
+
+function getDataForTable(telemetry): Array<TableRow> {
+  let tableData = [];
+
+  for (const monkey in telemetry) {
+    for (const path in telemetry[monkey]) {
+      if (telemetry[monkey][path]) {
+        tableData.push({'hostname': parseHostname(monkey), 'file_path': path});
+      }
+    }
+  }
+
+  return tableData;
+}
+
+function parseHostname(monkey) {
+    return monkey.match(HOSTNAME_REGEX)[2]
+}
 
 export default FileEncryptionTable;

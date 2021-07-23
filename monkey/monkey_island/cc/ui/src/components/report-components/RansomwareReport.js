@@ -19,7 +19,7 @@ class RansomwareReport extends React.Component {
       <div>
         <BreachSection/>
         <LateralMovement propagationStats={this.props.report.propagation_stats} />
-        <FileEncryptionTable tableData={this.props.report.encrypted_files_table} />
+        <FileEncryptionTable telemetry={this.props.telemetry} />
       </div>
     )
   }

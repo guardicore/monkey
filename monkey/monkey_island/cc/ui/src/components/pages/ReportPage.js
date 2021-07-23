@@ -22,6 +22,7 @@ class ReportPageComponent extends AuthComponent {
       attackReport: {},
       zeroTrustReport: {},
       ransomwareReport: {},
+      ransomwareTelemetry: {},
       allMonkeysAreDead: false,
       runStarted: true,
       selectedSection: ReportPageComponent.selectReport(this.sections),
@@ -65,6 +66,13 @@ class ReportPageComponent extends AuthComponent {
         .then(res => {
           this.setState({
             ransomwareReport: res
+          });
+        });
+      this.authFetch('/api/telemetry?telem_category=file_encryption')
+        .then(res => res.json())
+        .then(res => {
+          this.setState({
+            ransomwareTelemetry: res
           });
         });
     }
@@ -156,7 +164,12 @@ class ReportPageComponent extends AuthComponent {
       case 'zeroTrust':
         return (<ZeroTrustReport report={this.state.zeroTrustReport}/>);
       case 'ransomware':
-        return (<RansomwareReport report={this.state.ransomwareReport}/>);
+        return (
+          <RansomwareReport
+            report={this.state.ransomwareReport}
+            telemetry={this.state.ransomwareTelemetry}
+          />
+        );
     }
   }
 
