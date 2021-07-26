@@ -25,7 +25,7 @@ function BreachSection() {
 function getBreachSectionBody(machines) {
     let machineList = [];
     for(let i = 0; i < machines.length; i++){
-      machineList.push(<li>{getMachine(machines[i])}</li>);
+      machineList.push(getMachine(machines[i]));
     }
     return (
       <div className={'ransomware-breach-section'}>
@@ -39,10 +39,10 @@ function getBreachSectionBody(machines) {
 
 function getMachine(machine) {
   return (
-    <>
+    <li key={machine['hostname']}>
     <b>{machine['hostname']}</b>
       ({renderLimitedArray(machine['ip_addresses'], 2, 'ip-address')}) at {machine['start_time']}
-    </>
+    </li>
   )
 }
 

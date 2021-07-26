@@ -24,11 +24,13 @@ export let renderLimitedArray = function (array,
     } else {
       element = (<>{array[i]}</>);
     }
-    elements.push(<div className={className}>{element}</div>);
+    elements.push(<div className={className} key={array[i]}>{element}</div>);
   }
   let remainder = array.length - limit;
   if(remainder > 0){
-    elements.push(<div className={className}>&nbsp;and {remainder} more</div>);
+    elements.push(<div className={className} key={'remainder'}>
+      &nbsp;and {remainder} more
+    </div>);
   }
   return elements
 }
