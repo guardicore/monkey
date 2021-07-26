@@ -19,7 +19,7 @@ class RansomwareReport extends React.Component {
       <div>
         <BreachSection/>
         <LateralMovement propagationStats={this.props.report.propagation_stats} />
-        <AttackSection telemetry={this.props.telemetry} />
+        <AttackSection />
       </div>
     )
   }

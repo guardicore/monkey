@@ -1,6 +1,8 @@
-import React, {ReactElement} from 'react';
+import React, {ReactElement, ReactFragment, useEffect, useState} from 'react';
+import IslandHttpClient from '../../IslandHttpClient';
 import {FileEncryptionTable, TableRow} from './FileEncryptionTable';
 import NumberedReportSection from './NumberedReportSection';
+import LoadingIcon from '../../ui-components/LoadingIcon';
 
 const ATTACK_DESCRIPTION = 'After the attacker or malware has propagated through your network, \
                             your data is at risk on any machine the attacker can access. It can be \
@@ -8,22 +10,35 @@ const ATTACK_DESCRIPTION = 'After the attacker or malware has propagated through
                             whatever way the attacker chooses.'
 const HOSTNAME_REGEX = /^(.* - )?(\S+) :.*$/;
 
-function AttackSection({telemetry}: {telemetry: object}): ReactElement {
-  let tableData = processTelemetry(telemetry);
-  let body = (
-    <>
-      <p>Infection Monkey has encrypted <strong>{tableData.length} files</strong> on your network:</p>
-      <FileEncryptionTable tableData={tableData} />
-    </>
-  );
+function AttackSection(): ReactElement {
+  const [tableData, setTableData] = useState(null);
+
+  useEffect(() => {
+    IslandHttpClient.get('/api/telemetry?telem_category=file_encryption')
+      .then(resp => setTableData(processTelemetry(resp.body)));
+  }, []);
+
+
+  if (tableData == null) {
+      return <LoadingIcon />
+  }
 
   return (
     <NumberedReportSection
       index={3}
       title='Attack'
       description={ATTACK_DESCRIPTION}
-      body={body}
+      body={getBody(tableData)}
     />
+  );
+}
+
+function getBody(tableData): ReactFragment {
+  return (
+    <>
+      <p>Infection Monkey has encrypted <strong>{tableData.length} files</strong> on your network:</p>
+      <FileEncryptionTable tableData={tableData} />
+    </>
   );
 }
 
