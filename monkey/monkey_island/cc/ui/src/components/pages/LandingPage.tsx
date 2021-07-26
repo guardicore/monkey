@@ -2,21 +2,18 @@ import React from 'react';
 import {Col, Row} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/LandingPage.scss';
 import IslandHttpClient from "../IslandHttpClient";
-import VersionComponent from '../side-menu/VersionComponent';
-import {Routes} from "../Main";
 
-const guardicoreLogoImage = require('../../images/guardicore-logo.png');
+import Logo from "../logo/LogoComponent";
 
 const LandingPageComponent = (props) => {
 
   return (
   <>
     <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
-         lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
+         lg={{offset: 3, span: 9}} xl={{offset: 3, span: 6}}
          className={'landing-page'}>
         <h1 className="page-title">Breach & Attack Simulation</h1>
         <div style={{'fontSize': '1.2em'}}>
@@ -26,10 +23,9 @@ const LandingPageComponent = (props) => {
     </Col>
 
     <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
-         lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
+         lg={{offset: 3, span: 9}} xl={{offset: 3, span: 6}}
          className={'guardicore-logo'}>
-         <hr/>
-        <GuardicoreLogo/>
+      <Logo/>
     </Col>
   </>
   );
@@ -94,36 +90,13 @@ function ScenarioInfo() {
     return (
       <>
         <div className={'scenario-info'}>
-          Check monkey documentation hub for better explanation
+          Check the Infection Monkey documentation hub for more information
           on <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
-           Ransomware
-          </a> and <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
-           Custom
-          </a> simulations.
+           simulations
+          </a>.
         </div>
       </>
     );
-}
-
-function GuardicoreLogo() {
-  return (
-    <>
-      <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
-        <span>Powered by</span>
-        <a href='http://www.guardicore.com' rel='noopener noreferrer' target='_blank'>
-          <img src={guardicoreLogoImage} alt='GuardiCore'/>
-        </a>
-      </div>
-      <div className='license-link text-center'>
-        <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
-          <FontAwesomeIcon icon={faExternalLinkAlt} /> Documentation
-        </a>
-        <br/>
-        <Link to={Routes.LicensePage}>License</Link>
-      </div>
-      <VersionComponent/>
-    </>
-  );
 }
 
 export default LandingPageComponent;

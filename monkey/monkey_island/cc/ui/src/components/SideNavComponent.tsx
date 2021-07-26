@@ -4,16 +4,15 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
-import VersionComponent from './side-menu/VersionComponent';
 import '../styles/components/SideNav.scss';
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import {isReportRoute, Routes} from "./Main";
 
 
-const guardicoreLogoImage = require('../images/guardicore-logo.png');
 const logoImage = require('../images/monkey-icon.svg');
 const infectionMonkeyImage = require('../images/infection-monkey.svg');
 
+import Logo from "./logo/LogoComponent";
 
 type Props = {
   disabled?: boolean,
@@ -97,21 +96,7 @@ const SideNavComponent = ({disabled,
         </NavLink></li>
       </ul>
 
-      <hr/>
-      <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
-        <span>Powered by</span>
-        <a href='http://www.guardicore.com' rel='noopener noreferrer' target='_blank'>
-          <img src={guardicoreLogoImage} alt='GuardiCore'/>
-        </a>
-      </div>
-      <div className='license-link text-center'>
-        <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
-          <FontAwesomeIcon icon={faExternalLinkAlt} /> Documentation
-        </a>
-        <br/>
-        <NavLink to={Routes.LicensePage}>License</NavLink>
-      </div>
-      <VersionComponent/>
+      <Logo/>
     </>);
 
   function getNavLinkClass() {
