@@ -24,6 +24,7 @@ from monkey_island.cc.resources.configuration_export import ConfigurationExport
 from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.environment import Environment
+from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
 from monkey_island.cc.resources.island_logs import IslandLog
 from monkey_island.cc.resources.island_mode import IslandMode
@@ -154,6 +155,7 @@ def init_api_resources(api):
     api.add_resource(ZeroTrustReport, "/api/report/zero-trust/<string:report_data>")
     api.add_resource(AttackReport, "/api/report/attack")
     api.add_resource(RansomwareReport, "/api/report/ransomware")
+    api.add_resource(ManualExploitation, "/api/exploitations/manual")
 
     api.add_resource(ZeroTrustFindingEvent, "/api/zero-trust/finding-event/<string:finding_id>")
     api.add_resource(TelemetryFeed, "/api/telemetry-feed", "/api/telemetry-feed/")

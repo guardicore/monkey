@@ -21,6 +21,7 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
 )
+from monkey_island.cc.services.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (  # noqa: E501
     ExploiterDescriptorEnum,
@@ -553,12 +554,8 @@ class ReportService:
             return None
 
     @staticmethod
-    def get_manual_monkeys():
-        return [
-            monkey["hostname"]
-            for monkey in mongo.db.monkey.find({}, {"hostname": 1, "parent": 1, "guid": 1})
-            if NodeService.get_monkey_manual_run(monkey)
-        ]
+    def get_manual_monkey_hostnames():
+        return [monkey["hostname"] for monkey in get_manual_monkeys()]
 
     @staticmethod
     def get_config_users():
@@ -654,7 +651,7 @@ class ReportService:
         exploited_nodes = ReportService.get_exploited()
         report = {
             "overview": {
-                "manual_monkeys": ReportService.get_manual_monkeys(),
+                "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
                 "config_users": config_users,
                 "config_passwords": config_passwords,
                 "config_exploits": ReportService.get_config_exploits(),
