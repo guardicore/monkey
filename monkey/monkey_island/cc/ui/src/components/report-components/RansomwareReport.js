@@ -6,6 +6,7 @@ import FileEncryptionTable from './ransomware/FileEncryptionTable';
 import LateralMovement from './ransomware/LateralMovement';
 
 import '../../styles/pages/report/RansomwareReport.scss';
+import BreachSection from './ransomware/BreachSection';
 
 class RansomwareReport extends React.Component {
 
@@ -16,6 +17,7 @@ class RansomwareReport extends React.Component {
   generateReportContent() {
     return (
       <div>
+        <BreachSection/>
         <LateralMovement propagationStats={this.props.report.propagation_stats} />
         <FileEncryptionTable tableData={this.props.report.encrypted_files_table} />
       </div>

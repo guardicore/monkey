@@ -40,6 +40,7 @@ class Monkey(Document):
     hostname = StringField()
     internet_access = BooleanField()
     ip_addresses = ListField(StringField())
+    launch_time = StringField()
     keepalive = DateTimeField()
     modifytime = DateTimeField()
     # TODO make "parent" an embedded document, so this can be removed and the schema explained (
