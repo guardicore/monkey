@@ -36,8 +36,8 @@ function AttackSection(): ReactElement {
 function getBody(tableData): ReactFragment {
   return (
     <>
-      <p>Infection Monkey has encrypted <strong>{tableData.length} files</strong> on your network:</p>
-      <FileEncryptionTable tableData={tableData} />
+      <p>Infection Monkey has encrypted <strong>{tableData.length} files</strong> on your network.</p>
+      {(tableData.length > 0) && <FileEncryptionTable tableData={tableData} />}
     </>
   );
 }
