@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from "react";
-import IslandHttpClient from "../../IslandHttpClient";
-import NumberedReportSection from "./NumberedReportSection";
-import LoadingIcon from "../../ui-components/LoadingIcon";
-import {renderLimitedArray} from "../common/RenderArrays";
+import React, {useEffect, useState} from 'react';
+import IslandHttpClient from '../../IslandHttpClient';
+import NumberedReportSection from './NumberedReportSection';
+import LoadingIcon from '../../ui-components/LoadingIcon';
+import {renderLimitedArray} from '../common/RenderArrays';
 
 function BreachSection() {
   const [machines, setMachines] = useState(null);
