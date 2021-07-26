@@ -2,7 +2,7 @@ import React from 'react';
 
 import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
-import Attack from './ransomware/Attack';
+import AttackSection from './ransomware/AttackSection';
 import LateralMovement from './ransomware/LateralMovement';
 
 import '../../styles/pages/report/RansomwareReport.scss';
@@ -19,7 +19,7 @@ class RansomwareReport extends React.Component {
       <div>
         <BreachSection/>
         <LateralMovement propagationStats={this.props.report.propagation_stats} />
-        <Attack telemetry={this.props.telemetry} />
+        <AttackSection telemetry={this.props.telemetry} />
       </div>
     )
   }

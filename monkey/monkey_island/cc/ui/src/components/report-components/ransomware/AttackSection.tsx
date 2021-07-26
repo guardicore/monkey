@@ -8,7 +8,7 @@ const ATTACK_DESCRIPTION = 'After the attacker or malware has propagated through
                             whatever way the attacker chooses.'
 const HOSTNAME_REGEX = /^(.* - )?(\S+) :.*$/;
 
-function Attack({telemetry}: {telemetry: object}): ReactElement {
+function AttackSection({telemetry}: {telemetry: object}): ReactElement {
   let tableData = processTelemetry(telemetry);
   let body = (
     <>
@@ -84,4 +84,4 @@ function parseHostname(monkey: string): string {
     return monkey.match(HOSTNAME_REGEX)[2];
 }
 
-export default Attack;
+export default AttackSection;
