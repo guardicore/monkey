@@ -7,7 +7,7 @@ import {renderLimitedArray} from '../common/RenderArrays';
 function BreachSection() {
   const [machines, setMachines] = useState(null);
   let description = 'Ransomware attacks start after machines in the internal network get compromised. ' +
-    'The initial compromise was simulated by running monkeys manually.';
+    'The initial compromise was simulated by running Monkey Agents manually.';
 
   useEffect(() => {
     IslandHttpClient.get('/api/exploitations/manual')
@@ -40,8 +40,8 @@ function getBreachSectionBody(machines) {
 function getMachine(machine) {
   return (
     <li key={machine['hostname']}>
-    <b>{machine['hostname']}</b>
-      ({renderLimitedArray(machine['ip_addresses'], 2, 'ip-address')}) at {machine['start_time']}
+    <b>{machine['hostname']}</b>&nbsp;
+      ({renderLimitedArray(machine['ip_addresses'], 2, 'ip-address')}) at <b>{machine['start_time']}</b>
     </li>
   )
 }
