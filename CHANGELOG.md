@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The capability for a user to specify their own SSL certificate. #1208
 - API endpoint for ransomware report. #1297
 - Add ransomware report. #1240
+- A script to build a docker image locally. #1140
 
 ### Changed
 - server_config.json can be selected at runtime. #963
