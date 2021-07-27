@@ -1,32 +1,34 @@
 import React from 'react';
-import {Col, Row} from 'react-bootstrap';
+import {Container,Col, Row} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/LandingPage.scss';
 import IslandHttpClient from "../IslandHttpClient";
 
+import ParticleBackground from '../ui-components/ParticleBackground';
 import Logo from "../logo/LogoComponent";
 
 const LandingPageComponent = (props) => {
 
   return (
   <>
+    <ParticleBackground/>
     <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
          lg={{offset: 3, span: 9}} xl={{offset: 3, span: 6}}
          className={'landing-page'}>
-        <h1 className="page-title">Breach & Attack Simulation</h1>
-        <div style={{'fontSize': '1.2em'}}>
-          <ScenarioButtons/>
-        <br/>
-      </div>
+       <h1 className="page-title">Breach & Attack Simulation</h1>
+       <div style={{'fontSize': '1.2em'}}>
+         <ScenarioButtons/>
+       <br/>
+       </div>
+       <br/>
+       <br/>
+       <Col className={'guardicore-logo'}>
+        <Logo/>
+      </Col>
     </Col>
 
-    <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
-         lg={{offset: 3, span: 9}} xl={{offset: 3, span: 6}}
-         className={'guardicore-logo'}>
-      <Logo/>
-    </Col>
   </>
   );
 
@@ -86,13 +88,13 @@ function MonkeyInfo() {
 }
 
 function ScenarioInfo() {
-    // TODO change links when added to documentation
+    // TODO change link when scenarios are added to documentation
     return (
       <>
         <div className={'scenario-info'}>
           Check the Infection Monkey documentation hub for more information
           on <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
-           simulations
+           scenarios
           </a>.
         </div>
       </>
