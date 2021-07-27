@@ -135,15 +135,20 @@ copy_entrypoint_to_build_dir() {
     cp ./entrypoint.sh "$BUILD_DIR"
     chmod 755 "$BUILD_DIR/entrypoint.sh"
 }
+
 copy_monkey_island_to_build_dir() {
   local src=$1
+
   cp "$src"/__init__.py "$BUILD_DIR"
   cp "$src"/monkey_island.py "$BUILD_DIR"
-  cp -r "$src"/common "$BUILD_DIR/"
-  if ! timeout "${ISLAND_DIR_COPY_TIMEOUT}" cp -r "$src"/monkey_island "$BUILD_DIR/"; then
-    log_message "Copying island files takes too long. Maybe you're copying a dev folder instead of a fresh repository?"
-    exit 1
-  fi
+  cp -v -r "$src"/common "$BUILD_DIR/"
+
+  rsync \
+      -avr \
+      --exclude=monkey_island/cc/ui/node_modules \
+      --exclude=monkey_island/cc/ui/.npm \
+      "$src"/monkey_island "$BUILD_DIR/"
+
   cp ./server_config.json "$BUILD_DIR"/monkey_island/cc/
 }
 
