@@ -1,0 +1,45 @@
+# Infection Monkey Linux Package Builder
+
+## About
+
+This directory contains the necessary artifacts for building an Infection
+Monkey packages for Linux.
+
+## AppImage
+
+### Building an AppImage
+
+1. Create a clean VM or LXC (not docker!) based on Ubuntu 18.04.
+1. Copy the `build_scipts/` directory to `$HOME/` in the VM.
+1. On the VM, `cd $HOME/build_scripts`
+1. Run `sudo -v`.
+1. Execute `./build_package.sh --package appimage`. This will pull all necessary dependencies
+   and build the AppImage.
+
+NOTE: This script is intended to be run from a clean VM. You can also manually
+remove build artifacts by running `appimage/clean.sh`
+
+### Running the AppImage
+
+The build script will produce an AppImage executable named
+`Infection_Monkey-x86_64.AppImage`. Simply execute this file and you're off to
+the races.
+
+A new directory, `$HOME/.monkey_island` will be created to store runtime
+artifacts.
+
+## Docker
+
+### Building a Docker image
+1. Create a clean Ubuntu 18.04 VM (not WSL).
+1. Copy the `build_scipts/` directory to `$HOME/` in the VM.
+1. On the VM, `cd $HOME/build_scripts`
+1. Run `sudo -v`.
+1. Execute `./build_package.sh --package docker`. This will pull all necessary dependencies
+   and build the Docker image.
+
+NOTE: This script is intended to be run from a clean VM. You can also manually
+remove build artifacts by running `docker/clean.sh`
+
+### Running the Docker Image
+See `docker/DOCKER_README.md` for instructions on running the docker image.
