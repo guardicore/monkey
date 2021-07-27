@@ -221,6 +221,7 @@ class AppComponent extends AuthComponent {
             <Route path={Routes.RegisterPage} render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
             {this.renderRoute(Routes.LandingPage,
               <SidebarLayoutComponent component={LandingPage}
+                                      sideNavShow={false}
                                       sideNavDisabled={true}
                                       completedSteps={new CompletedSteps()}
                                       onStatusChange={this.updateStatus}/>)}

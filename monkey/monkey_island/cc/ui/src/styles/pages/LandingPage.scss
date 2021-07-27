@@ -1,4 +1,12 @@
+.landing-page {
+  background-color: rgba(255, 255, 255, 0.89);
+  position: absolute !important;
+  height: 100%;
+  bottom: 0;
+}
+
 .landing-page h1.page-title {
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -7,10 +15,28 @@
   margin-left: 12px;
 }
 
+.landing-page .scenario-info {
+  margin-bottom: 20px;
+}
+
 .landing-page .monkey-description-title {
   margin-top: 30px;
 }
 
 .landing-page .d-block {
   height: 100%;
+}
+
+.landing-page .guardicore-logo {
+  position: absolute;
+  bottom: 0;
+  left: 0 !important;
+}
+
+.guardicore-logo .license-text {
+  position: relative;
+}
+
+.guardicore-logo .version-text {
+  position: relative;
 }

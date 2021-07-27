@@ -1,31 +1,44 @@
 import React from 'react';
-import {Col, Row} from 'react-bootstrap';
+import {Container,Col, Row} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/LandingPage.scss';
 import IslandHttpClient from "../IslandHttpClient";
 
+import ParticleBackground from '../ui-components/ParticleBackground';
+import Logo from "../logo/LogoComponent";
 
 const LandingPageComponent = (props) => {
 
   return (
-    <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
-         lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
+  <>
+    <ParticleBackground/>
+    <Col sm={{offset: 1, span: 10}} md={{offset: 1, span: 10}}
+         lg={{offset: 2, span: 8}} xl={{offset: 3, span: 6}}
          className={'landing-page'}>
-      <h1 className="page-title">Welcome to the Monkey Island Server</h1>
-      <div style={{'fontSize': '1.2em'}}>
-        <ScenarioButtons/>
-        <br/>
-      </div>
+       <h1 className="page-title">Breach & Attack Simulation</h1>
+       <div style={{'fontSize': '1.2em'}}>
+         <ScenarioButtons/>
+       <br/>
+       </div>
+       <br/>
+       <br/>
+       <Col className={'guardicore-logo'}>
+        <Logo/>
+      </Col>
     </Col>
+
+  </>
   );
+
 
   function ScenarioButtons() {
     return (
       <section>
         <h2 className={'scenario-choice-title'}>Choose a scenario:</h2>
         <div className="container">
+          <ScenarioInfo/>
           <Row className="justify-content-center">
             <div className="col-lg-6 col-sm-6">
               <Link to="/run-monkey"
@@ -72,6 +85,20 @@ function MonkeyInfo() {
       and reports to this Monkey Island Command and Control server.
     </>
   );
+}
+
+function ScenarioInfo() {
+    // TODO change link when scenarios are added to documentation
+    return (
+      <>
+        <div className={'scenario-info'}>
+          Check the Infection Monkey documentation hub for more information
+          on <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
+           scenarios
+          </a>.
+        </div>
+      </>
+    );
 }
 
 export default LandingPageComponent;
