@@ -156,7 +156,11 @@ class ReportPageComponent extends AuthComponent {
       case 'zeroTrust':
         return (<ZeroTrustReport report={this.state.zeroTrustReport}/>);
       case 'ransomware':
-        return (<RansomwareReport report={this.state.ransomwareReport}/>);
+        return (
+          <RansomwareReport
+            report={this.state.ransomwareReport}
+          />
+        );
     }
   }
 

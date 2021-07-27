@@ -1,25 +1,30 @@
 import React from 'react';
 import ReactTable from 'react-table';
-import {renderArray} from '../common/RenderArrays';
 
-
-type Props = {
-  tableData: [TableRow]
-}
 
 type TableRow = {
-  exploits: [string],
-  total_attempts: number,
-  successful_encryptions: number,
-  hostname: string
+  hostname: string,
+  file_path: number,
 }
 
-const pageSize = 10;
+const PAGE_SIZE = 10;
+const columns = [
+  {
+    Header: 'Encrypted Files',
+    columns: [
+      {Header: 'Host', id: 'host', accessor: x => x.hostname},
+      {Header: 'File Path', id: 'file_path', accessor: x => x.file_path},
+      {Header: 'Encryption Algorithm',
+        id: 'encryption_algorithm',
+        accessor: () => {return 'Bit Flip'}}
+    ]
+  }
+];
 
+const FileEncryptionTable = ({tableData}: {tableData: Array<TableRow>}) => {
+  let defaultPageSize = tableData.length > PAGE_SIZE ? PAGE_SIZE : tableData.length;
+  let showPagination = tableData.length > PAGE_SIZE;
 
-const FileEncryptionTable = (props: Props) => {
-  let defaultPageSize = props.tableData.length > pageSize ? pageSize : props.tableData.length;
-  let showPagination = props.tableData.length > pageSize;
   return (
     <>
       <h3 className={'report-section-header'}>
@@ -28,7 +33,7 @@ const FileEncryptionTable = (props: Props) => {
       <div className="data-table-container">
         <ReactTable
           columns={columns}
-          data={props.tableData}
+          data={tableData}
           showPagination={showPagination}
           defaultPageSize={defaultPageSize}
         />
@@ -37,30 +42,4 @@ const FileEncryptionTable = (props: Props) => {
   );
 }
 
-const columns = [
-  {
-    Header: 'Ransomware info',
-    columns: [
-      {Header: 'Machine', id: 'machine', accessor: x => x.hostname},
-      {Header: 'Exploits', id: 'exploits', accessor: x => renderArray(x.exploits)},
-      {Header: 'Files encrypted',
-        id: 'files_encrypted',
-        accessor: x => renderFileEncryptionStats(x.successful_encryptions, x.total_attempts)}
-    ]
-  }
-];
-
-function renderFileEncryptionStats(successful: number, total: number) {
-  let textClassName = ''
-
-  if(successful > 0) {
-      textClassName = 'text-danger'
-  } else {
-      textClassName = 'text-dark'
-  }
-
-  return (<p className={textClassName}>{successful} out of {total}</p>);
-}
-
-
-export default FileEncryptionTable;
+export {FileEncryptionTable, TableRow};
