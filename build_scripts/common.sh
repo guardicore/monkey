@@ -1,3 +1,5 @@
+CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
+
 copy_monkey_island_to_build_dir() {
   local src=$1
   local build_dir=$2

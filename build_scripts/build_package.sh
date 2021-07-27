@@ -1,10 +1,6 @@
 WORKSPACE=${WORKSPACE:-$HOME}
 DEFAULT_REPO_MONKEY_HOME=$WORKSPACE/git/monkey
-
-
-
 MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
-CONFIG_URL="https://raw.githubusercontent.com/guardicore/monkey/develop/deployment_scripts/config"
 NODE_SRC=https://deb.nodesource.com/setup_12.x
 
 log_message() {
