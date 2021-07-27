@@ -14,8 +14,8 @@ const LandingPageComponent = (props) => {
   return (
   <>
     <ParticleBackground/>
-    <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
-         lg={{offset: 3, span: 9}} xl={{offset: 3, span: 6}}
+    <Col sm={{offset: 1, span: 10}} md={{offset: 1, span: 10}}
+         lg={{offset: 2, span: 8}} xl={{offset: 3, span: 6}}
          className={'landing-page'}>
        <h1 className="page-title">Breach & Attack Simulation</h1>
        <div style={{'fontSize': '1.2em'}}>
