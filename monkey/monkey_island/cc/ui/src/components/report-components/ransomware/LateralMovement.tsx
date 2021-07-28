@@ -5,7 +5,7 @@ import pluralize from 'pluralize'
 const LATERAL_MOVEMENT_DESCRIPTION = 'After the initial breach, the attacker will begin the Lateral \
                                       Movement phase of the attack. They will employ various \
                                       techniques in order to compromise other systems in your \
-                                      network and encrypt as many files as possible.'
+                                      network.'
 
 type PropagationStats = {
   num_scanned_nodes: number,
