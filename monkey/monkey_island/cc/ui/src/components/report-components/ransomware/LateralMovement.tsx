@@ -1,6 +1,7 @@
 import React, {ReactElement} from 'react';
 import NumberedReportSection from './NumberedReportSection';
 import pluralize from 'pluralize'
+import BreachedServersComponent from '../security/BreachedServers';
 
 const LATERAL_MOVEMENT_DESCRIPTION = 'After the initial breach, the attacker will begin the Lateral \
                                       Movement phase of the attack. They will employ various \
@@ -18,6 +19,8 @@ function LateralMovement({propagationStats}: {propagationStats: PropagationStats
     <>
       {getScannedVsExploitedStats(propagationStats.num_scanned_nodes, propagationStats.num_exploited_nodes)}
       {getExploitationStatsPerExploit(propagationStats.num_exploited_per_exploit)}
+      <br/>
+      <BreachedServersComponent />
     </>
   )
 
