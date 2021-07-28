@@ -6,7 +6,7 @@ description: "Verify your network is properly segmented."
 weight: 4
 ---
 
-## Overview 
+## Overview
 
 Segmentation is a method of creating secure zones in data centers and cloud deployments. It allows organizations to isolate workloads from one another and secure them individually, typically using policies. A useful way to test your company's segmentation effectiveness is to ensure that your network segments are properly separated (e.g., your development environment is isolated from your production environment and your applications are isolated from one another).
 
@@ -18,15 +18,15 @@ You can use the Infection Monkey's cross-segment traffic feature to verify that 
 ## Configuration
 
 - **Network -> Network analysis -> Network segmentation testing** This configuration setting allows you to define
- subnets that should be segregated from each other. If any of the provided networks can reach each other, you'll see it 
+ subnets that should be segregated from each other. If any of the provided networks can reach each other, you'll see it
  in the security report.
 - **(Optional) Network -> Scope** You can disable **Local network scan** and leave all other options at the default setting if you only want to test for network segmentation without any lateral movement.
 - **(Optional) Monkey -> Post-Breach Actions** If you only want to test segmentation in the network, you can turn off all post-breach actions. These actions simulate an attacker's behavior after getting access to a new system, so they might trigger your defense solutions and interrupt the segmentation test.
 
 ## Suggested run mode
 
-Execute The Infection Monkey on machines in different subnetworks using the “Manual” run option. 
- 
+Execute The Infection Monkey on machines in different subnetworks using the “Manual” run option.
+
  Note that if the Infection Monkey can't communicate to the Monkey Island, it will
  not be able to send scan results, so make sure all machines can reach the the Monkey Island.
 
