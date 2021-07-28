@@ -9,7 +9,7 @@ Below are some of the most common questions we receive about the Infection Monke
 
 - [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
-- [Is Infection Monkey a malware/virus?](#is-infection-monkey-a-malwarevirus)
+- [Is the Infection Monkey a malware/virus?](#is-infection-monkey-a-malwarevirus)
 - [Reset/enable the Monkey Island password](#resetenable-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
@@ -38,11 +38,11 @@ If you want to see what has changed between versions, refer to the [releases pag
 
 The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
 
-## Is Infection Monkey a malware/virus?
+## Is the Infection Monkey a malware/virus?
 
-Infection Monkey is not malware, but it uses similar techniques to safely simulate malware on your network.
+The Infection Monkey is not malware, but it uses similar techniques to safely simulate malware on your network.
 
-Because of this, Monkey gets flagged as malware by some antivirus solutions during the installation. If this happens,
+Because of this, the Infection Monkey gets flagged as malware by some antivirus solutions during the installation. If this happens,
 [verify the integrity of the downloaded installer](/usage/file-checksums) first. Then create a new folder and
 disable antivirus scan for that folder. Lastly, re-install the Infection Monkey in the newly created folder.
 
