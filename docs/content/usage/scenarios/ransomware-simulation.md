@@ -1,9 +1,10 @@
 ---
-title: "Ransomware Simulation"
+title: " Ransomware Simulation"
 date: 2021-06-23T18:13:59+05:30
 draft: true
 description: "Simulate a ransomware attack on your network and assess the potential damage."
-weight: 10
+weight: 1
+pre: "<i class='fa fa-lock'></i>"
 ---
 
 The Infection Monkey is capable of simulating a ransomware attack on your
