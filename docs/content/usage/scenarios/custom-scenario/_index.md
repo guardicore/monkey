@@ -11,7 +11,7 @@ chapter: true
 
 If none of the existing scenarios fit your use case, you can choose the "Custom" scenario and configure the simulation according to your needs.
 
-<!-- image -->
+![Custom scenario](/images/usage/scenarios/custom-scenario.png "Custom scenario")
 
 Below are some examples with instructions on how to configure them.
 
