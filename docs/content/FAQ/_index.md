@@ -40,11 +40,14 @@ The Infection Monkey agent shuts off either when it can't find new victims or it
 
 ## Is the Infection Monkey a malware/virus?
 
-The Infection Monkey is not malware, but it uses similar techniques to safely simulate malware on your network.
+The Infection Monkey is not malware, but it uses similar techniques to safely
+simulate malware on your network.
 
-Because of this, the Infection Monkey gets flagged as malware by some antivirus solutions during the installation. If this happens,
-[verify the integrity of the downloaded installer](/usage/file-checksums) first. Then create a new folder and
-disable antivirus scan for that folder. Lastly, re-install the Infection Monkey in the newly created folder.
+Because of this, the Infection Monkey gets flagged as malware by some antivirus
+solutions during installation. If this happens, [verify the integrity of the
+downloaded installer](/usage/file-checksums) first. Then, create a new folder
+and disable antivirus scan for that folder. Lastly, re-install the Infection
+Monkey in the newly created folder.
 
 ## Reset/enable the Monkey Island password
 
