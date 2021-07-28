@@ -8,12 +8,21 @@ pre = "<i class='fas fa-map-marked-alt'></i> "
 
 # Scenarios
 
-This section describes possible scenarios for the Infection Monkey and how you can configure the tool. 
-You can also refer to [our FAQ](../../faq) for more specific questions and answers.
+This section describes <i>Scenarios</i> in the Infection Monkey.
 
 {{% notice note %}}
 Don't worry! The Infection Monkey uses safe exploiters and does not cause any permanent system modifications that could impact security or operations.
 {{% /notice %}}
+
+The Infection Monkey has pre-existing scenarios to simulate common types of attacks that take place. These scenarios, when selected, manipulate the default configuration values and only show the configuration fields relevant to the selected scenario. This makes it possible for you to quickly run the Monkey on your network with a targeted configuration.
+
+![Choose scenario](/images/usage/scenarios/choose-scenario.png "Choose a scenario")
+
+To exit a scenario and select another one, click on "Start Over".
+
+![Start over](/images/usage/scenarios/start-over.png "Start over")
+
+You can also refer to [our FAQ](../../faq) for more specific questions and answers.
 
 ## Section contents
 
