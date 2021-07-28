@@ -21,8 +21,11 @@ from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
 )
-from monkey_island.cc.services.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.services.reporting.exploitations.manual_exploitation import get_manual_monkeys
+from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
+    get_monkey_exploited,
+)
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (  # noqa: E501
     ExploiterDescriptorEnum,
 )
@@ -147,47 +150,6 @@ class ReportService:
         ]
         nodes = nodes_without_monkeys + nodes_with_monkeys
         return nodes
-
-    @staticmethod
-    def get_exploited():
-        exploited_with_monkeys = [
-            NodeService.get_displayed_node_by_id(monkey["_id"], True)
-            for monkey in mongo.db.monkey.find({}, {"_id": 1})
-            if not NodeService.get_monkey_manual_run(NodeService.get_monkey_by_id(monkey["_id"]))
-        ]
-
-        exploited_without_monkeys = [
-            NodeService.get_displayed_node_by_id(node["_id"], True)
-            for node in mongo.db.node.find({"exploited": True}, {"_id": 1})
-        ]
-
-        exploited = exploited_with_monkeys + exploited_without_monkeys
-
-        exploited = [
-            {
-                "label": exploited_node["label"],
-                "ip_addresses": exploited_node["ip_addresses"],
-                "domain_name": exploited_node["domain_name"],
-                "exploits": ReportService.get_exploits_used_on_node(exploited_node),
-            }
-            for exploited_node in exploited
-        ]
-
-        logger.info("Exploited nodes generated for reporting")
-
-        return exploited
-
-    @staticmethod
-    def get_exploits_used_on_node(node: dict) -> List[str]:
-        return list(
-            set(
-                [
-                    ExploiterDescriptorEnum.get_by_class_name(exploit["exploiter"]).display_name
-                    for exploit in node["exploits"]
-                    if exploit["result"]
-                ]
-            )
-        )
 
     @staticmethod
     def get_stolen_creds():
@@ -646,7 +608,7 @@ class ReportService:
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
         scanned_nodes = ReportService.get_scanned()
-        exploited_nodes = ReportService.get_exploited()
+        exploited_cnt = len(get_monkey_exploited())
         report = {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
@@ -664,7 +626,7 @@ class ReportService:
             },
             "glance": {
                 "scanned": scanned_nodes,
-                "exploited": exploited_nodes,
+                "exploited_cnt": exploited_cnt,
                 "stolen_creds": ReportService.get_stolen_creds(),
                 "azure_passwords": ReportService.get_azure_creds(),
                 "ssh_keys": ReportService.get_ssh_keys(),

@@ -164,14 +164,3 @@ def test_get_stolen_creds_no_creds(fake_mongo):
     expected_stolen_creds_no_creds = []
 
     assert expected_stolen_creds_no_creds == stolen_creds_no_creds
-
-
-def test_get_exploits_used_on_node():
-    exploits = ReportService.get_exploits_used_on_node(NODE_DICT)
-    assert sorted(exploits) == sorted(["Elastic Groovy Exploiter", "Drupal Server Exploiter"])
-
-    exploits = ReportService.get_exploits_used_on_node(NODE_DICT_DUPLICATE_EXPLOITS)
-    assert exploits == ["Drupal Server Exploiter"]
-
-    exploits = ReportService.get_exploits_used_on_node(NODE_DICT_FAILED_EXPLOITS)
-    assert exploits == []
