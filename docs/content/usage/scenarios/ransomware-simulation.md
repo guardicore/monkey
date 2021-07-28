@@ -10,26 +10,6 @@ pre: "<i class='fa fa-lock'></i>"
 The Infection Monkey is capable of simulating a ransomware attack on your
 network using a set of configurable behaviors.
 
-## Leaving a README.txt file
-
-Many ransomware packages leave a README.txt file on the victim machine with an
-explanation of what has occurred and instructions for paying the attacker.
-The Infection Monkey can also leave a README.txt file in the target directory on
-the victim machine in order to replicate this behavior. This can be enabled or
-disabled by checking the box on the configuration screen. Note that if no
-target directory is specified for encryption, the Infection Monkey will not
-leave a README.txt file.
-
-<!-- add screenshot highlighting readme option -->
-
-The README.txt file informs the user that a ransomware simulation has taken
-place and that they should contact their administrator. The contents of the
-file can be found
-[here](https://github.com/guardicore/monkey/tree/develop/monkey/infection_monkey/ransomware/ransomware_readme.txt).
-
-
-<!-- add config screenshot here -->
-
 
 ## Encryption
 
@@ -57,7 +37,7 @@ To ensure minimum interference and easy recoverability, the ransomware
 simulation will only encrypt files contained in a user-specified directory. If
 no directory is specified, no files will be encrypted.
 
-<!-- add screenshot highlighting encryption options -->
+![Ransomware configuration](/images/usage/scenarios/ransomware-config.png "Ransomware configuration")
 
 ### How are the files encrypted?
 
@@ -166,3 +146,16 @@ BitDefender](https://labs.bitdefender.com/2017/07/a-technical-look-into-the-gold
 - .xlsx
 - .xvd
 - .zip
+
+
+## Leaving a README.txt file
+
+Many ransomware packages leave a README.txt file on the victim machine with an
+explanation of what has occurred and instructions for paying the attacker.
+The Infection Monkey will also leave a README.txt file in the target directory on
+the victim machine in order to replicate this behavior.
+
+The README.txt file informs the user that a ransomware simulation has taken
+place and that they should contact their administrator. The contents of the
+file can be found
+[here](https://github.com/guardicore/monkey/tree/develop/monkey/infection_monkey/ransomware/ransomware_readme.txt).
