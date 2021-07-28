@@ -9,6 +9,10 @@ tags: ["setup", "windows"]
 
 ## Deployment
 
+{{% notice tip %}}
+Don't get scared if the Infection Monkey gets [flagged as malware during the installation](/faq/#is-infection-monkey-a-malwarevirus).
+{{% /notice %}}
+
 After running the installer, the following prompt should appear on the screen:
 
 ![Windows installer screenshot](../../images/setup/windows/installer-screenshot-1.png "Windows installer screenshot")
