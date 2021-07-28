@@ -36,6 +36,7 @@ copy_server_config_to_build_dir() {
 
 build_package() {
   local version=$1
+  local dist_dir=$2
   pushd ./docker
 
   docker_image_name="guardicore/monkey-island:$version"
@@ -43,6 +44,8 @@ build_package() {
 
   build_docker_image_tar "$docker_image_name" "$tar_name"
   build_docker_image_tgz "$tar_name" "$version"
+
+  move_package_to_dist_dir $dist_dir
 
   popd
 }
@@ -57,4 +60,8 @@ build_docker_image_tgz() {
   mv "$1" ./tgz
   cp ./DOCKER_README.md ./tgz/README.md
   tar -C ./tgz -cvf "$OUTPUT_NAME_TGZ" --gzip .
+}
+
+move_package_to_dist_dir() {
+    mv $OUTPUT_NAME_TGZ "$1/"
 }

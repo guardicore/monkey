@@ -122,11 +122,15 @@ add_apprun() {
 }
 
 build_package() {
+  local version=$1
+  local dist_dir=$2
   log_message "Building AppImage"
   pushd "$APPIMAGE_DIR"
 
   ARCH="x86_64" appimagetool "$APPIMAGE_DIR/squashfs-root"
-  apply_version_to_appimage "$1"
+  apply_version_to_appimage "$version"
+
+  move_package_to_dist_dir $dist_dir
 
   popd
 }
@@ -134,4 +138,8 @@ build_package() {
 apply_version_to_appimage() {
   log_message "Renaming Infection_Monkey-x86_64.AppImage -> Infection_Monkey-$1-x86_64.AppImage"
   mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
+}
+
+move_package_to_dist_dir() {
+    mv Infection_Monkey*.AppImage "$1/"
 }

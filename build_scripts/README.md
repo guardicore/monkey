@@ -22,7 +22,7 @@ remove build artifacts by running `appimage/clean.sh`
 ### Running the AppImage
 
 The build script will produce an AppImage executable named
-`Infection_Monkey-x86_64.AppImage`. Simply execute this file and you're off to
+`./dist/Infection_Monkey-x86_64.AppImage`. Simply execute this file and you're off to
 the races.
 
 A new directory, `$HOME/.monkey_island` will be created to store runtime
@@ -42,4 +42,5 @@ NOTE: This script is intended to be run from a clean VM. You can also manually
 remove build artifacts by running `docker/clean.sh`
 
 ### Running the Docker Image
-See `docker/DOCKER_README.md` for instructions on running the docker image.
+The build script will produce a `.tgz` file in `./dist/`. See
+`docker/DOCKER_README.md` for instructions on running the docker image.

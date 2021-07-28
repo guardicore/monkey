@@ -2,6 +2,8 @@ WORKSPACE=${WORKSPACE:-$HOME}
 DEFAULT_REPO_MONKEY_HOME=$WORKSPACE/git/monkey
 MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
 NODE_SRC=https://deb.nodesource.com/setup_12.x
+BUILD_SCRIPTS_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
+DIST_DIR="$BUILD_SCRIPTS_DIR/dist"
 
 log_message() {
   echo -e "\n\n"
@@ -187,12 +189,16 @@ if ! is_valid_git_repo "$monkey_repo"; then
   clone_monkey_repo "$monkey_repo" "$branch"
 fi
 
+if [ ! -d "$DIST_DIR" ]; then
+    mkdir "$DIST_DIR"
+fi
+
 install_build_prereqs
 install_package_specific_build_prereqs "$WORKSPACE"
 
 
 setup_build_dir "$agent_binary_dir" "$monkey_repo"
-build_package "$monkey_version"
+build_package "$monkey_version" "$DIST_DIR"
 
 log_message "Finished building package: $package"
 exit 0
