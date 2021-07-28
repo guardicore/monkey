@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react';
+import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
 import PostBreach from 'components/report-components/security/PostBreach';
@@ -566,6 +567,12 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{marginBottom: '20px'}}>
+          <p>
+            The Monkey successfully breached&nbsp;
+            <span className="badge badge-danger">
+              {this.state.report.glance.exploited_cnt}
+            </span> {Pluralize('machine', this.state.report.glance.exploited_cnt)}:
+          </p>
           <BreachedServers />
         </div>
 

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table';
-import Pluralize from 'pluralize';
 import {renderArray, renderIpAddresses} from '../common/RenderArrays';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import IslandHttpClient from '../../IslandHttpClient';
@@ -39,10 +38,6 @@ function BreachedServersComponent() {
   let showPagination = exploitations.length > pageSize;
   return (
     <>
-      <p>
-        The Monkey successfully breached <span
-        className="badge badge-danger">{exploitations.length}</span> {Pluralize('machine', exploitations.length)}:
-      </p>
       <div className="data-table-container">
         <ReactTable
           columns={columns}
