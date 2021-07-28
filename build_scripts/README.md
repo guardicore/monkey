@@ -13,7 +13,7 @@ Monkey packages for Linux.
 1. Copy the `build_scipts/` directory to `$HOME/` in the VM.
 1. On the VM, `cd $HOME/build_scripts`
 1. Run `sudo -v`.
-1. Execute `./build_package.sh --package appimage`. This will pull all necessary dependencies
+1. Execute `./build_appimage.sh`. This will pull all necessary dependencies
    and build the AppImage.
 
 NOTE: This script is intended to be run from a clean VM. You can also manually
@@ -35,7 +35,7 @@ artifacts.
 1. Copy the `build_scipts/` directory to `$HOME/` in the VM.
 1. On the VM, `cd $HOME/build_scripts`
 1. Run `sudo -v`.
-1. Execute `./build_package.sh --package docker`. This will pull all necessary dependencies
+1. Execute `./build_docker.sh --package docker`. This will pull all necessary dependencies
    and build the Docker image.
 
 NOTE: This script is intended to be run from a clean VM. You can also manually
