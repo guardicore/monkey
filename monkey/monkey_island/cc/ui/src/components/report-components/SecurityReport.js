@@ -566,7 +566,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{marginBottom: '20px'}}>
-          <BreachedServers data={this.state.report.glance.exploited}/>
+          <BreachedServers />
         </div>
 
         <div style={{marginBottom: '20px'}}>

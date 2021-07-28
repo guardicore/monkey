@@ -1,6 +1,7 @@
 import pytest
 
 from monkey_island.cc.services.ransomware import ransomware_report
+from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.report import ReportService
 
 
@@ -8,13 +9,13 @@ from monkey_island.cc.services.reporting.report import ReportService
 def patch_report_service_for_stats(monkeypatch):
     TEST_SCANNED_RESULTS = [{}, {}, {}, {}]
     TEST_EXPLOITED_RESULTS = [
-        {"exploits": ["SSH Exploiter"]},
-        {"exploits": ["SSH Exploiter", "SMB Exploiter"]},
-        {"exploits": ["WMI Exploiter"]},
+        MonkeyExploitation("", [], "", exploits=["SSH Exploiter"]),
+        MonkeyExploitation("", [], "", exploits=["SSH Exploiter", "SMB Exploiter"]),
+        MonkeyExploitation("", [], "", exploits=["WMI Exploiter"]),
     ]
 
     monkeypatch.setattr(ReportService, "get_scanned", lambda: TEST_SCANNED_RESULTS)
-    monkeypatch.setattr(ReportService, "get_exploited", lambda: TEST_EXPLOITED_RESULTS)
+    monkeypatch.setattr(ransomware_report, "get_monkey_exploited", lambda: TEST_EXPLOITED_RESULTS)
 
 
 def test_get_propagation_stats__num_scanned(patch_report_service_for_stats):
