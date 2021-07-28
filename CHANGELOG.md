@@ -43,6 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Create/check data directory on Island init. #1170
 - The formatting of some log messages to make them more readable. #1283
 - Some unit tests to run faster. #1125
+- Moved appimage/ to build_scripts/appimage/. #1140
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
