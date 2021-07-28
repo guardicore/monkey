@@ -88,12 +88,11 @@ function MonkeyInfo() {
 }
 
 function ScenarioInfo() {
-    // TODO change link when scenarios are added to documentation
     return (
       <>
         <div className={'scenario-info'}>
           Check the Infection Monkey documentation hub for more information
-          on <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
+          on <a href='https://www.guardicore.com/infectionmonkey/docs/usage/scenarios/' rel="noopener noreferrer" target="_blank">
            scenarios
           </a>.
         </div>
