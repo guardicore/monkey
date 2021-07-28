@@ -14,7 +14,7 @@ This section describes the different attack <i>Scenarios</i> that the Infection 
 Don't worry! The Infection Monkey uses safe exploiters and does not cause any permanent system modifications that could impact security or operations.
 {{% /notice %}}
 
-The Infection Monkey has pre-existing scenarios to simulate common types of attacks that take place. These scenarios, when selected, manipulate the default configuration values and only show the configuration fields relevant to the selected scenario. This makes it possible for you to quickly run the Monkey on your network with a targeted configuration.
+The Infection Monkey has pre-built scenarios to simulate common types of attacks that take place. These scenarios, when selected, manipulate the default configuration values and only show the configuration fields relevant to the selected scenario. This makes it possible for you to quickly run the Monkey on your network in order to accomplish a specific objective.
 
 ![Choose scenario](/images/usage/scenarios/choose-scenario.png "Choose a scenario")
 
