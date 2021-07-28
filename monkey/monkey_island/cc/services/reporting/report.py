@@ -610,7 +610,7 @@ class ReportService:
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
         scanned_nodes = ReportService.get_scanned()
-        exploited_nodes = get_monkey_exploited()
+        exploited_cnt = len(get_monkey_exploited())
         report = {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
@@ -628,7 +628,7 @@ class ReportService:
             },
             "glance": {
                 "scanned": scanned_nodes,
-                "exploited": exploited_nodes,
+                "exploited_cnt": exploited_cnt,
                 "stolen_creds": ReportService.get_stolen_creds(),
                 "azure_passwords": ReportService.get_azure_creds(),
                 "ssh_keys": ReportService.get_ssh_keys(),

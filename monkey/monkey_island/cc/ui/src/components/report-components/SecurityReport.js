@@ -288,9 +288,9 @@ class ReportPageComponent extends AuthComponent {
         <h2>
           Overview
         </h2>
-        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited.length > 0}/>
+        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited_cnt > 0}/>
         {
-          this.state.report.glance.exploited.length > 0 ?
+          this.state.report.glance.exploited_cnt > 0 ?
             ''
             :
             <p className='alert alert-info'>
@@ -524,7 +524,7 @@ class ReportPageComponent extends AuthComponent {
 
   generateReportGlanceSection() {
     let exploitPercentage =
-      (100 * this.state.report.glance.exploited.length) / this.state.report.glance.scanned.length;
+      (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
     return (
       <div id='glance'>
         <h3>
@@ -535,7 +535,7 @@ class ReportPageComponent extends AuthComponent {
             The Monkey discovered <span
             className='badge badge-warning'>{this.state.report.glance.scanned.length}</span> machines and
             successfully breached <span
-            className='badge badge-danger'>{this.state.report.glance.exploited.length}</span> of them.
+            className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
           </p>
           <div className='text-center' style={{margin: '10px'}}>
             <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth='4'
