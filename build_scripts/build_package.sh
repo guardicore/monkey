@@ -45,7 +45,7 @@ echo_help() {
   echo "--version                      A version number for the package."
   echo "                               (Default: dev)"
   echo ""
-  echo "--package                      Which package to build (\"appimage\" or \"docker.\""
+  echo "--package                      Which package to build (\"appimage\" or \"docker.\")"
 
   exit 0
 }
