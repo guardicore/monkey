@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container,Col, Row} from 'react-bootstrap';
+import {Col, Row} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
@@ -21,8 +21,7 @@ const LandingPageComponent = (props) => {
          lg={{offset: 2, span: 8}} xl={{offset: 3, span: 6}}
          className={'landing-page'}>
        <MonkeyBanner />
-       <h1 className="page-title">Breach & Attack Simulation</h1>
-       <div style={{'fontSize': '1.2em'}}>
+       <div className={'scenario-header'}>
          <ScenarioButtons/>
        <br/>
        </div>
