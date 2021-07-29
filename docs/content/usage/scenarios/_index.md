@@ -24,8 +24,6 @@ To exit a scenario and select another one, click on "Start Over".
 
 ![Start over](/images/usage/scenarios/start-over.png "Start over")
 
-You can also refer to [our FAQ](../../faq) for more specific questions and answers.
-
 ## Section contents
 
 {{% children description=True style="p"%}}
