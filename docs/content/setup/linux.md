@@ -14,11 +14,14 @@ package that contains an application and everything that it may need to run.
 
 The Infection Monkey AppImage package should run on most modern Linux distros that have FUSE
 installed, but the ones that we've tested are:
-- CentOS
-- Debian
-- Kali
+- BlackArch 2020.12.01
+- Kali 2021.2
+- Parrot 4.11
+- Rocky 8
+- Suse Leap 15.3
 - Ubuntu 18.04
 - Ubuntu 20.04
+- Ubuntu 21.04
 
 ## Deployment
 
