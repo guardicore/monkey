@@ -8,7 +8,7 @@ pre = "<i class='fas fa-map-marked-alt'></i> "
 
 # Scenarios
 
-This section describes the different attack <i>Scenarios</i> that the Infection Monkey can simulate.
+This section describes the different attack scenarios that the Infection Monkey can simulate.
 
 {{% notice note %}}
 Don't worry! The Infection Monkey uses safe exploiters and does not cause any permanent system modifications that could impact security or operations.
