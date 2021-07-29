@@ -3,7 +3,6 @@ import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
-import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
 import '../styles/components/SideNav.scss';
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import {isReportRoute, Routes} from "./Main";

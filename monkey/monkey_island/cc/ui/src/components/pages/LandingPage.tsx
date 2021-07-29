@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container,Col, Row} from 'react-bootstrap';
+import {Col, Row} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +9,9 @@ import IslandHttpClient from "../IslandHttpClient";
 import ParticleBackground from '../ui-components/ParticleBackground';
 import Logo from "../logo/LogoComponent";
 
+const monkeyIcon = require('../../images/monkey-icon.svg')
+const infectionMonkey = require('../../images/infection-monkey.svg')
+
 const LandingPageComponent = (props) => {
 
   return (
@@ -17,8 +20,8 @@ const LandingPageComponent = (props) => {
     <Col sm={{offset: 1, span: 10}} md={{offset: 1, span: 10}}
          lg={{offset: 2, span: 8}} xl={{offset: 3, span: 6}}
          className={'landing-page'}>
-       <h1 className="page-title">Breach & Attack Simulation</h1>
-       <div style={{'fontSize': '1.2em'}}>
+       <MonkeyBanner />
+       <div className={'scenario-header'}>
          <ScenarioButtons/>
        <br/>
        </div>
@@ -99,6 +102,15 @@ function ScenarioInfo() {
         </div>
       </>
     );
+}
+
+function MonkeyBanner(props) {
+  return (
+    <div className={'landing-page-banner'}>
+      <img className={'landing-banner-component landing-banner-monkey-icon'} src={monkeyIcon} />
+      <img className={'landing-banner-component landing-banner-title'} src={infectionMonkey} />
+    </div>
+  );
 }
 
 export default LandingPageComponent;
