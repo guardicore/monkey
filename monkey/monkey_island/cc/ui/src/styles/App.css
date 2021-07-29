@@ -21,7 +21,7 @@ body {
  * Sidebar
  */
 
-@media (min-width: 768px) {
+@media (min-width: 575px) {
   .sidebar {
     position: fixed !important;
     top: 0;
@@ -120,6 +120,15 @@ body {
 
   .guardicore-link img {
     height: 38px;
+    padding-left: 4px;
+    padding-right: 4px;
+    vertical-align: middle;
+  }
+}
+
+@media (max-width: 575px) {
+  .guardicore-link img {
+    height: 28px;
     padding-left: 4px;
     padding-right: 4px;
     vertical-align: middle;
