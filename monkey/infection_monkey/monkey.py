@@ -125,7 +125,12 @@ class InfectionMonkey(object):
             if is_running_on_island():
                 WormConfiguration.started_on_island = True
                 ControlClient.report_start_on_island()
-            ControlClient.should_monkey_run(self._opts.vulnerable_port)
+
+            if not ControlClient.should_monkey_run(self._opts.vulnerable_port):
+                raise PlannedShutdownException(
+                    "Monkey shouldn't run on current machine "
+                    "(it will be exploited later with more depth)."
+                )
 
             if firewall.is_enabled():
                 firewall.add_firewall_rule()
