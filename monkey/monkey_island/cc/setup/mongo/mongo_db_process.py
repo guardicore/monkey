@@ -29,7 +29,10 @@ class MongoDbProcess:
                 self._mongo_run_cmd, stderr=subprocess.STDOUT, stdout=log
             )
 
-        logger.info("MongoDB launched successfully!")
+        if self.is_running():
+            raise MongoDbProcessException
+
+        logger.info("MongoDB has been launched!")
 
     def stop(self):
         if not self._process:
@@ -47,3 +50,11 @@ class MongoDbProcess:
                 f"MongoDB did not terminate gracefully and will be forcefully killed: {te}"
             )
             self._process.kill()
+
+    def is_running(self):
+        if self._process.poll() is not None:
+            return True
+
+
+class MongoDbProcessException(Exception):
+    pass

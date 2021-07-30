@@ -8,7 +8,7 @@ from monkey_island.cc.database import get_db_version, is_db_server_up
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 from monkey_island.cc.setup.mongo import mongo_connector
 from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
-from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
+from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess, MongoDbProcessException
 
 DB_DIR_NAME = "db"
 MONGO_LOG_FILENAME = "mongodb.log"
@@ -26,7 +26,11 @@ def start_mongodb(data_dir: str) -> MongoDbProcess:
     log_file = os.path.join(data_dir, MONGO_LOG_FILENAME)
 
     mongo_db_process = MongoDbProcess(db_dir=db_dir, log_file=log_file)
-    mongo_db_process.start()
+    try:
+        mongo_db_process.start()
+    except MongoDbProcessException:
+        logger.error("MongoDB has not started. Check mongodb.log")
+        sys.exit(-1)
 
     return mongo_db_process
 
