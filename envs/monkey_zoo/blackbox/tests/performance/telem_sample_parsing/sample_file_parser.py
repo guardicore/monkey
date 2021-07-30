@@ -5,7 +5,7 @@ from typing import Dict, List
 
 from tqdm import tqdm
 
-TELEM_DIR_PATH = "./tests/performance/telem_sample"
+TELEM_DIR_PATH = "../envs/monkey_zoo/blackbox/tests/performance/telemetry_sample"
 MAX_SAME_TYPE_TELEM_FILES = 10000
 LOGGER = logging.getLogger(__name__)
 

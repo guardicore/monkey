@@ -16,7 +16,6 @@ from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_mult
     FakeMonkey,
 )
 
-TELEM_DIR_PATH = "./tests/performance/telemetry_sample"
 LOGGER = logging.getLogger(__name__)
 
 
