@@ -53,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Attempted to delete a directory when monkey config reset was called. #1054
 - An errant space in the windows commands to run monkey manually. #1153
 - gevent tracebacks in console output. #859
+- Crash and failure to run PBAs if max depth reached. #1374
 
 ### Security
 - Address minor issues discovered by Dlint. #1075
