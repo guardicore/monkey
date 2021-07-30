@@ -2,8 +2,6 @@ import json
 import logging
 from datetime import timedelta
 
-from tqdm import tqdm
-
 from envs.monkey_zoo.blackbox.analyzers.performance_analyzer import PerformanceAnalyzer
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
@@ -35,11 +33,12 @@ class TelemetryPerformanceTest:
         LOGGER.info("Telemetries imported successfully.")
         all_telemetries.sort(key=lambda telem: telem["time"]["$date"])
         telemetry_parse_times = {}
-        for telemetry in tqdm(
-            all_telemetries, total=len(all_telemetries), ascii=True, desc="Telemetries sent"
-        ):
-            telemetry_endpoint = TelemetryPerformanceTest.get_verbose_telemetry_endpoint(telemetry)
-            telemetry_parse_times[telemetry_endpoint] = self.get_telemetry_time(telemetry)
+        for i in range(len(all_telemetries)):
+            telemetry_endpoint = TelemetryPerformanceTest.get_verbose_telemetry_endpoint(
+                all_telemetries[i]
+            )
+            telemetry_parse_times[telemetry_endpoint] = self.get_telemetry_time(all_telemetries[i])
+            LOGGER.info(f"Telemetry Nr.{i} sent out of {len(all_telemetries)} total.")
         test_config = PerformanceTestConfig(
             MAX_ALLOWED_SINGLE_TELEM_PARSE_TIME, MAX_ALLOWED_TOTAL_TIME
         )

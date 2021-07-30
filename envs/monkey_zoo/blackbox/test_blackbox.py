@@ -39,6 +39,7 @@ from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test impor
     TelemetryPerformanceTest,
 )
 from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
+from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 DEFAULT_TIMEOUT_SECONDS = 5 * 60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
@@ -109,6 +110,7 @@ def island_client(island, quick_performance_tests):
             pytest.exit("BB tests couldn't establish communication to the island.")
     if not quick_performance_tests:
         island_client_object.reset_env()
+        island_client_object.set_scenario(IslandModeEnum.ADVANCED.value)
     yield island_client_object
 
 

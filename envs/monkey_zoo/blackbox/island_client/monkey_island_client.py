@@ -62,6 +62,10 @@ class MonkeyIslandClient(object):
             LOGGER.error("Failed to reset the environment.")
             assert False
 
+    @avoid_race_condition
+    def set_scenario(self, scenario):
+        self.requests.post_json("api/island-mode", {"mode": scenario})
+
     def find_monkeys_in_db(self, query):
         if query is None:
             raise TypeError
