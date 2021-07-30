@@ -14,4 +14,5 @@ class BaseTemplate(ConfigTemplate):
         ],
         "monkey.post_breach.post_breach_actions": [],
         "internal.general.keep_tunnel_open_time": 0,
+        "internal.monkey.internet_services": [],
     }
