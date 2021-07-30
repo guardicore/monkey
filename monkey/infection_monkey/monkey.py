@@ -237,12 +237,12 @@ class InfectionMonkey(object):
                     if not self._keep_running:
                         break
 
-                InfectionMonkey.run_ransomware()
-
                 if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                     time_to_sleep = WormConfiguration.timeout_between_iterations
                     LOG.info("Sleeping %d seconds before next life cycle iteration", time_to_sleep)
                     time.sleep(time_to_sleep)
+
+            InfectionMonkey.run_ransomware()
 
             if self._keep_running and WormConfiguration.alive:
                 LOG.info("Reached max iterations (%d)", WormConfiguration.max_iterations)
