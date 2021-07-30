@@ -40,7 +40,7 @@ from infection_monkey.utils.monkey_dir import (
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.windows_upgrader import WindowsUpgrader
 
-MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, shutting down"
+MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, skipping propagation phase."
 
 
 LOG = logging.getLogger(__name__)
@@ -147,10 +147,13 @@ class InfectionMonkey(object):
             post_breach_phase = Thread(target=self.start_post_breach_phase)
             post_breach_phase.start()
 
-            LOG.debug("Starting the propagation phase.")
-            self.shutdown_by_max_depth_reached()
-
-            self.propagate()
+            if not InfectionMonkey.max_propagation_depth_reached():
+                LOG.info("Starting the propagation phase.")
+                LOG.debug("Running with depth: %d" % WormConfiguration.depth)
+                self.propagate()
+            else:
+                LOG.info("Maximum propagation depth has been reached; monkey will not propagate.")
+                TraceTelem(MAX_DEPTH_REACHED_MESSAGE).send()
 
             InfectionMonkey.run_ransomware()
 
@@ -181,12 +184,9 @@ class InfectionMonkey(object):
         self.collect_system_info_if_configured()
         PostBreach().execute_all_configured()
 
-    def shutdown_by_max_depth_reached(self):
-        if 0 == WormConfiguration.depth:
-            TraceTelem(MAX_DEPTH_REACHED_MESSAGE).send()
-            raise PlannedShutdownException(MAX_DEPTH_REACHED_MESSAGE)
-        else:
-            LOG.debug("Running with depth: %d" % WormConfiguration.depth)
+    @staticmethod
+    def max_propagation_depth_reached():
+        return 0 == WormConfiguration.depth
 
     def collect_system_info_if_configured(self):
         LOG.debug("Calling for system info collection")
