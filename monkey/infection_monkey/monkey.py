@@ -63,6 +63,7 @@ class InfectionMonkey(object):
         self._opts = None
         self._upgrading_to_64 = False
         self._monkey_tunnel = None
+        self._post_breach_phase = None
 
     def initialize(self):
         LOG.info("Monkey is initializing...")
@@ -144,8 +145,8 @@ class InfectionMonkey(object):
             TunnelTelem().send()
 
             LOG.debug("Starting the post-breach phase asynchronously.")
-            post_breach_phase = Thread(target=self.start_post_breach_phase)
-            post_breach_phase.start()
+            self._post_breach_phase = Thread(target=self.start_post_breach_phase)
+            self._post_breach_phase.start()
 
             if not InfectionMonkey.max_propagation_depth_reached():
                 LOG.info("Starting the propagation phase.")
@@ -167,18 +168,20 @@ class InfectionMonkey(object):
                 )
                 time.sleep(time_to_sleep)
 
-            if self._monkey_tunnel:
-                self._monkey_tunnel.stop()
-                self._monkey_tunnel.join()
-
-            post_breach_phase.join()
-
         except PlannedShutdownException:
             LOG.info(
                 "A planned shutdown of the Monkey occurred. Logging the reason and finishing "
                 "execution."
             )
             LOG.exception("Planned shutdown, reason:")
+
+        finally:
+            if self._monkey_tunnel:
+                self._monkey_tunnel.stop()
+                self._monkey_tunnel.join()
+
+            if self._post_breach_phase:
+                self._post_breach_phase.join()
 
     def start_post_breach_phase(self):
         self.collect_system_info_if_configured()
