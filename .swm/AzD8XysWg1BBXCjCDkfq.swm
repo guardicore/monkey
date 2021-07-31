@@ -17,7 +17,7 @@
             "type": "snippet",
             "path": "monkey/infection_monkey/config.py",
             "comments": [],
-            "firstLineNumber": 126,
+            "firstLineNumber": 124,
             "lines": [
                 "     exploiter_classes = []",
                 "     system_info_collector_classes = []",
@@ -33,19 +33,18 @@
             "type": "snippet",
             "path": "monkey/infection_monkey/monkey.py",
             "comments": [],
-            "firstLineNumber": 159,
+            "firstLineNumber": 220,
             "lines": [
+                "             if not self._keep_running or not WormConfiguration.alive:",
+                "                 break",
                 " ",
-                "                 if not self._keep_running or not WormConfiguration.alive:",
-                "                     break",
-                "*",
-                "*                machines = self._network.get_victim_machines(",
-                "*                    max_find=WormConfiguration.victims_max_find,",
-                "*                    stop_callback=ControlClient.check_for_stop,",
-                "*                )",
-                "                 is_empty = True",
-                "                 for machine in machines:",
-                "                     if ControlClient.check_for_stop():"
+                "*            machines = self._network.get_victim_machines(",
+                "*                max_find=WormConfiguration.victims_max_find,",
+                "*                stop_callback=ControlClient.check_for_stop,",
+                "*            )",
+                "             is_empty = True",
+                "             for machine in machines:",
+                "                 if ControlClient.check_for_stop():"
             ]
         },
         {
@@ -77,11 +76,11 @@
     "symbols": {},
     "file_version": "2.0.1",
     "meta": {
-        "app_version": "0.4.1-1",
+        "app_version": "0.4.9-1",
         "file_blobs": {
-            "monkey/infection_monkey/config.py": "ffdea551eb1ae2b65d4700db896c746771e7954c",
-            "monkey/infection_monkey/monkey.py": "c81a6251746e3af4e93eaa7d50af44d33debe05c",
-            "monkey/monkey_island/cc/services/config_schema/internal.py": "d03527b89c21dfb832a15e4f7d55f4027d83b453"
+            "monkey/infection_monkey/config.py": "0bede1c57949987f5c8025bd9b8f7aa29d02a6af",
+            "monkey/infection_monkey/monkey.py": "89d2fa8452dee70f6d2985a9bb452f0159ea8219",
+            "monkey/monkey_island/cc/services/config_schema/internal.py": "1ce1c864b1df332b65e16b4ce9ed533affd73f9c"
         }
     }
 }

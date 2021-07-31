@@ -22,7 +22,6 @@ from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import check_internet_access, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
-from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
 
 requests.packages.urllib3.disable_warnings()
 
@@ -401,10 +400,8 @@ class ControlClient(object):
             and ControlClient.can_island_see_port(vulnerable_port)
             and WormConfiguration.started_on_island
         ):
-            raise PlannedShutdownException(
-                "Monkey shouldn't run on current machine "
-                "(it will be exploited later with more depth)."
-            )
+            return False
+
         return True
 
     @staticmethod
