@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - PostgreSQL fingerprinter. #892
 - A runtime-configurable option to specify a data directory where runtime
   configuration and other artifacts can be stored. #994
-- Scripts to build an AppImage for Monkey Island. #1069, #1090, #1136
+- Scripts to build an AppImage for Monkey Island. #1069, #1090, #1136, #1381
 - `log_level` option to server config. #1151
 - A ransomware simulation payload. #1238
 - The capability for a user to specify their own SSL certificate. #1208
@@ -43,7 +43,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Create/check data directory on Island init. #1170
 - The formatting of some log messages to make them more readable. #1283
 - Some unit tests to run faster. #1125
-- Moved appimage/ to build_scripts/appimage/. #1140
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
