@@ -9,3 +9,4 @@ rm -rf "$HOME/git/monkey"
 rm -rf "$HOME/.monkey_island"
 rm -rf "$APPIMAGE_DIR/squashfs-root"
 rm "$APPIMAGE_DIR"/Infection_Monkey*x86_64.AppImage
+rm "$APPIMAGE_DIR/../dist/Infection_Monkey*x86_64.AppImage"

@@ -11,3 +11,4 @@ rm -rf "$DOCKER_DIR/monkey"
 rm -rf "$DOCKER_DIR/tgz"
 rm "$DOCKER_DIR"/dk.monkeyisland.*.tar
 rm "$DOCKER_DIR"/infection_monkey_docker*.tgz
+rm "$DOCKER_DIR"/../dist/infection_monkey_docker*.tgz
