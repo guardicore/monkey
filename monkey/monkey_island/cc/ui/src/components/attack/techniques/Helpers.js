@@ -15,7 +15,7 @@ export function renderMachineFromSystemData(data) {
   }
   data['ips'].forEach(function (ipInfo) {
     if (typeof ipInfo === 'object') {
-      machineStr += ipInfo['addr'] + ', ';
+      machineStr += ipInfo.join(', ') + ', ';
     } else {
       machineStr += ipInfo + ', ';
     }
