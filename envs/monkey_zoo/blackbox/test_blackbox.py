@@ -23,6 +23,7 @@ from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
 from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
+from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
@@ -43,28 +44,6 @@ from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 DEFAULT_TIMEOUT_SECONDS = 5 * 60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
-GCP_TEST_MACHINE_LIST = [
-    "sshkeys-11",
-    "sshkeys-12",
-    "elastic-4",
-    "elastic-5",
-    "hadoop-2",
-    "hadoop-3",
-    "mssql-16",
-    "mimikatz-14",
-    "mimikatz-15",
-    "struts2-23",
-    "struts2-24",
-    "tunneling-9",
-    "tunneling-10",
-    "tunneling-11",
-    "tunneling-12",
-    "weblogic-18",
-    "weblogic-19",
-    "shellshock-8",
-    "zerologon-25",
-    "drupal-28",
-]
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
