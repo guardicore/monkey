@@ -6,7 +6,15 @@ import BreachedServersComponent from '../security/BreachedServers';
 const LATERAL_MOVEMENT_DESCRIPTION = 'After the initial breach, the attacker will begin the Lateral \
                                       Movement phase of the attack. They will employ various \
                                       techniques in order to compromise other systems in your \
-                                      network.'
+                                      network. \
+                                      <br /> \
+                                      <br /> \
+                                      <a \
+                                        href="https://www.guardicore.com/blog/stopping-ransomware-with-segmentation/" \
+                                        target="_blank" \
+                                      > \
+				        See some real-world examples on Guardicore\'s blog. \
+                                      </a>'
 
 type PropagationStats = {
   num_scanned_nodes: number,

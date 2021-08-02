@@ -31,9 +31,7 @@ function Description({text}: {text: string}): ReactElement {
   return (
     <div className='alert alert-secondary description'>
       <FontAwesomeIcon icon={faInfoCircle} className='alert-icon'/>
-      <span>
-        {text}
-      </span>
+      <span dangerouslySetInnerHTML={{__html: text}} />
     </div>
   )
 }
