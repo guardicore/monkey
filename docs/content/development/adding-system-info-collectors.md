@@ -16,7 +16,7 @@ If all you want to do is execute a shell command, then there's no need to add a 
 
 ## How to add a new System Info Collector
 
-### From the Infection Monkey Side
+### Modify the Infection Monkey Agent
 
 #### Framework
 
@@ -41,7 +41,7 @@ class MyNewCollector(SystemInfoCollector):
 
 Override the `collect` method with your own implementation. See the `EnvironmentCollector.py` System Info Collector for reference. You can log during collection as well.
 
-### From the Monkey Island Side
+### Modify the Monkey Island
 
 #### Configuration
 
