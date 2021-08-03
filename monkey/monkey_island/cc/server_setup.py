@@ -33,9 +33,11 @@ from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
-from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcessException  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
     MONGO_URL,
+    TIMEOUT,
+    MongoDBTimeOutException,
+    MongoDBVersionException,
     connect_to_mongodb,
     register_mongo_shutdown_callback,
     start_mongodb,
@@ -60,13 +62,17 @@ def run_monkey_island():
         register_mongo_shutdown_callback(mongo_db_process)
 
     try:
-        connect_to_mongodb(mongo_db_process)
-    except MongoDbProcessException:
-        logger.error(
-            f"MongoDB could not start. For details, check the MongoDB log at "
-            f"{mongo_db_process.get_log_file()}"
-        )
-        sys.exit(-1)
+        connect_to_mongodb()
+    except MongoDBTimeOutException:
+        if config_options.start_mongodb and not mongo_db_process.is_running():
+            logger.error(
+                f"Failed to start MongoDB process. Check log at {mongo_db_process.log_file}."
+            )
+        else:
+            logger.error(f"Failed to connect to MongoDB after {TIMEOUT} seconds. ")
+        sys.exit(1)
+    except MongoDBVersionException:
+        sys.exit(1)
 
     _configure_gevent_exception_handling(Path(config_options.data_dir))
     _start_island_server(island_args.setup_only, config_options)

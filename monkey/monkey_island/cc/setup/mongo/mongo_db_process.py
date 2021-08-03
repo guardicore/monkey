@@ -29,9 +29,6 @@ class MongoDbProcess:
                 self._mongo_run_cmd, stderr=subprocess.STDOUT, stdout=log
             )
 
-        if not self.is_running():
-            raise MongoDbProcessException
-
         logger.info("MongoDB has been launched!")
 
     def stop(self):
@@ -57,9 +54,6 @@ class MongoDbProcess:
 
         return False
 
-    def get_log_file(self) -> str:
+    @property
+    def log_file(self) -> str:
         return self._log_file
-
-
-class MongoDbProcessException(Exception):
-    pass
