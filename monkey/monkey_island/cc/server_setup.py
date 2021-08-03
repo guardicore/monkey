@@ -99,7 +99,7 @@ def _start_mongodb(data_dir: Path) -> MongoDbProcess:
 def _connect_to_mongodb(data_dir: Path, mongo_db_process: MongoDbProcess):
     try:
         mongo_setup.connect_to_mongodb()
-    except mongo_setup.MongoDBTimeOutException as ex:
+    except mongo_setup.MongoDBTimeOutError as ex:
         if mongo_db_process and not mongo_db_process.is_running():
             logger.error(
                 f"Failed to start MongoDB process. Check log at {mongo_db_process.log_file}."
@@ -107,7 +107,7 @@ def _connect_to_mongodb(data_dir: Path, mongo_db_process: MongoDbProcess):
         else:
             logger.error(ex)
         sys.exit(1)
-    except mongo_setup.MongoDBVersionException as ex:
+    except mongo_setup.MongoDBVersionError as ex:
         logger.error(ex)
         sys.exit(1)
 
