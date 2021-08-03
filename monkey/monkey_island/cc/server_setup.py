@@ -23,7 +23,10 @@ from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
-from monkey_island.cc.server_utils.consts import GEVENT_EXCEPTION_LOG  # noqa: E402
+from monkey_island.cc.server_utils.consts import (  # noqa: E402
+    GEVENT_EXCEPTION_LOG,
+    MONGO_CONNECTION_TIMEOUT,
+)
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
@@ -52,7 +55,7 @@ def run_monkey_island():
     if config_options.start_mongodb:
         mongo_db_process = _start_mongodb(config_options.data_dir)
 
-    _connect_to_mongodb(config_options.data_dir, mongo_db_process)
+    _connect_to_mongodb(mongo_db_process)
 
     _configure_gevent_exception_handling(Path(config_options.data_dir))
     _start_island_server(island_args.setup_only, config_options)
@@ -96,9 +99,9 @@ def _start_mongodb(data_dir: Path) -> MongoDbProcess:
     return mongo_db_process
 
 
-def _connect_to_mongodb(data_dir: Path, mongo_db_process: MongoDbProcess):
+def _connect_to_mongodb(mongo_db_process: MongoDbProcess):
     try:
-        mongo_setup.connect_to_mongodb()
+        mongo_setup.connect_to_mongodb(MONGO_CONNECTION_TIMEOUT)
     except mongo_setup.MongoDBTimeOutError as ex:
         if mongo_db_process and not mongo_db_process.is_running():
             logger.error(

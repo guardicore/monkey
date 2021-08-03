@@ -2,6 +2,7 @@ import atexit
 import logging
 import os
 import time
+from pathlib import Path
 
 from monkey_island.cc.database import get_db_version, is_db_server_up
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
@@ -16,12 +17,11 @@ MONGO_URL = os.environ.get(
     "mongodb://{0}:{1}/{2}".format(MONGO_DB_HOST, MONGO_DB_PORT, MONGO_DB_NAME),
 )
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
-TIMEOUT = 15
 
 logger = logging.getLogger(__name__)
 
 
-def start_mongodb(data_dir: str) -> MongoDbProcess:
+def start_mongodb(data_dir: Path) -> MongoDbProcess:
     db_dir = _create_db_dir(data_dir)
     log_file = os.path.join(data_dir, MONGO_LOG_FILENAME)
 
@@ -43,20 +43,20 @@ def register_mongo_shutdown_callback(mongo_db_process: MongoDbProcess):
     atexit.register(mongo_db_process.stop)
 
 
-def connect_to_mongodb():
-    _wait_for_mongo_db_server(MONGO_URL)
+def connect_to_mongodb(timeout: float):
+    _wait_for_mongo_db_server(MONGO_URL, timeout)
     _assert_mongo_db_version(MONGO_URL)
     mongo_connector.connect_dal_to_mongodb()
 
 
-def _wait_for_mongo_db_server(mongo_url):
+def _wait_for_mongo_db_server(mongo_url, timeout):
     start_time = time.time()
 
     while not is_db_server_up(mongo_url):
         logger.info(f"Waiting for MongoDB server on {mongo_url}")
 
-        if (time.time() - start_time) > TIMEOUT:
-            raise MongoDBTimeOutError(f"Failed to connect to MongoDB after {TIMEOUT} seconds.")
+        if (time.time() - start_time) > timeout:
+            raise MongoDBTimeOutError(f"Failed to connect to MongoDB after {timeout} seconds.")
 
         time.sleep(1)
 
