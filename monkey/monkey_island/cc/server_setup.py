@@ -23,7 +23,10 @@ from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
-from monkey_island.cc.server_utils.consts import GEVENT_EXCEPTION_LOG  # noqa: E402
+from monkey_island.cc.server_utils.consts import (  # noqa: E402
+    GEVENT_EXCEPTION_LOG,
+    MONGO_CONNECTION_TIMEOUT,
+)
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
@@ -32,13 +35,9 @@ from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # 
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
+from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
-from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
-    MONGO_URL,
-    connect_to_mongodb,
-    register_mongo_shutdown_callback,
-    start_mongodb,
-)
+from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -52,11 +51,11 @@ def run_monkey_island():
     _configure_logging(config_options)
     _initialize_globals(config_options, server_config_path)
 
+    mongo_db_process = None
     if config_options.start_mongodb:
-        mongo_db_process = start_mongodb(config_options.data_dir)
-        register_mongo_shutdown_callback(mongo_db_process)
+        mongo_db_process = _start_mongodb(config_options.data_dir)
 
-    connect_to_mongodb()
+    _connect_to_mongodb(mongo_db_process)
 
     _configure_gevent_exception_handling(Path(config_options.data_dir))
     _start_island_server(island_args.setup_only, config_options)
@@ -93,6 +92,29 @@ def _initialize_globals(config_options: IslandConfigOptions, server_config_path:
     initialize_services(config_options.data_dir)
 
 
+def _start_mongodb(data_dir: Path) -> MongoDbProcess:
+    mongo_db_process = mongo_setup.start_mongodb(data_dir)
+    mongo_setup.register_mongo_shutdown_callback(mongo_db_process)
+
+    return mongo_db_process
+
+
+def _connect_to_mongodb(mongo_db_process: MongoDbProcess):
+    try:
+        mongo_setup.connect_to_mongodb(MONGO_CONNECTION_TIMEOUT)
+    except mongo_setup.MongoDBTimeOutError as ex:
+        if mongo_db_process and not mongo_db_process.is_running():
+            logger.error(
+                f"Failed to start MongoDB process. Check log at {mongo_db_process.log_file}."
+            )
+        else:
+            logger.error(ex)
+        sys.exit(1)
+    except mongo_setup.MongoDBVersionError as ex:
+        logger.error(ex)
+        sys.exit(1)
+
+
 def _configure_gevent_exception_handling(data_dir):
     hub = gevent.hub.get_hub()
 
@@ -107,7 +129,7 @@ def _configure_gevent_exception_handling(data_dir):
 
 def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
     populate_exporter_list()
-    app = init_app(MONGO_URL)
+    app = init_app(mongo_setup.MONGO_URL)
 
     init_collections()
 
