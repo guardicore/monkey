@@ -53,7 +53,7 @@ def _wait_for_mongo_db_server(mongo_url):
     start_time = time.time()
 
     while not is_db_server_up(mongo_url):
-        logger.info("Waiting for MongoDB server on {0}".format(mongo_url))
+        logger.info(f"Waiting for MongoDB server on {mongo_url}")
 
         if (time.time() - start_time) > TIMEOUT:
             raise MongoDBTimeOutException(f"Failed to connect to MongoDB after {TIMEOUT} seconds.")
@@ -74,7 +74,7 @@ def _assert_mongo_db_version(mongo_url):
             f"Mongo DB version too old. {required_version} is required, but got {server_version}."
         )
     else:
-        logger.info("Mongo DB version OK. Got {0}".format(str(server_version)))
+        logger.info(f"Mongo DB version OK. Got {server_version}")
 
 
 class MongoDBTimeOutException(Exception):
