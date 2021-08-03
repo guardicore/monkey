@@ -8,7 +8,7 @@ from monkey_island.cc.database import get_db_version, is_db_server_up
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 from monkey_island.cc.setup.mongo import mongo_connector
 from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
-from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
+from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess, MongoDbProcessException
 
 DB_DIR_NAME = "db"
 MONGO_LOG_FILENAME = "mongodb.log"
@@ -26,6 +26,7 @@ def start_mongodb(data_dir: str) -> MongoDbProcess:
     log_file = os.path.join(data_dir, MONGO_LOG_FILENAME)
 
     mongo_db_process = MongoDbProcess(db_dir=db_dir, log_file=log_file)
+
     mongo_db_process.start()
 
     return mongo_db_process
@@ -43,15 +44,19 @@ def register_mongo_shutdown_callback(mongo_db_process: MongoDbProcess):
     atexit.register(mongo_db_process.stop)
 
 
-def connect_to_mongodb():
-    _wait_for_mongo_db_server(MONGO_URL)
+def connect_to_mongodb(mongo_db_process: MongoDbProcess):
+    _wait_for_mongo_db_server(MONGO_URL, mongo_db_process)
     _assert_mongo_db_version(MONGO_URL)
     mongo_connector.connect_dal_to_mongodb()
 
 
-def _wait_for_mongo_db_server(mongo_url):
+def _wait_for_mongo_db_server(mongo_url, mongo_db_process):
     while not is_db_server_up(mongo_url):
         logger.info("Waiting for MongoDB server on {0}".format(mongo_url))
+
+        if mongo_db_process is not None and not mongo_db_process.is_running():
+            raise MongoDbProcessException
+
         time.sleep(1)
 
 

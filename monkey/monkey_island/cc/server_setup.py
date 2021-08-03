@@ -33,6 +33,7 @@ from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
+from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcessException  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
     MONGO_URL,
     connect_to_mongodb,
@@ -52,11 +53,20 @@ def run_monkey_island():
     _configure_logging(config_options)
     _initialize_globals(config_options, server_config_path)
 
+    mongo_db_process = None
+
     if config_options.start_mongodb:
         mongo_db_process = start_mongodb(config_options.data_dir)
         register_mongo_shutdown_callback(mongo_db_process)
 
-    connect_to_mongodb()
+    try:
+        connect_to_mongodb(mongo_db_process)
+    except MongoDbProcessException:
+        logger.error(
+            f"MongoDB could not start. For details, check the MongoDB log at "
+            f"{mongo_db_process.get_log_file()}"
+        )
+        sys.exit(-1)
 
     _configure_gevent_exception_handling(Path(config_options.data_dir))
     _start_island_server(island_args.setup_only, config_options)
