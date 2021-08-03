@@ -35,7 +35,6 @@ from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # 
 from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_setup import (  # noqa: E402
     MONGO_URL,
-    TIMEOUT,
     MongoDBTimeOutException,
     MongoDBVersionException,
     connect_to_mongodb,
@@ -63,15 +62,16 @@ def run_monkey_island():
 
     try:
         connect_to_mongodb()
-    except MongoDBTimeOutException:
+    except MongoDBTimeOutException as ex:
         if config_options.start_mongodb and not mongo_db_process.is_running():
             logger.error(
                 f"Failed to start MongoDB process. Check log at {mongo_db_process.log_file}."
             )
         else:
-            logger.error(f"Failed to connect to MongoDB after {TIMEOUT} seconds. ")
+            logger.error(ex)
         sys.exit(1)
-    except MongoDBVersionException:
+    except MongoDBVersionException as ex:
+        logger.error(ex)
         sys.exit(1)
 
     _configure_gevent_exception_handling(Path(config_options.data_dir))
