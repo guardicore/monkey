@@ -10,7 +10,7 @@ tags: ["contribute"]
 
 To set up a development environment using scripts, look at the readme under [`/deployment_scripts`](https://github.com/guardicore/monkey/blob/develop/deployment_scripts). If you want to set it up manually or run into problems, keep reading.
 
-## Agent
+## The Infection Monkey Agent
 
 The agent (which we sometimes refer to as the Infection Monkey) is a single Python project under the [`infection_monkey`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey) folder. The Infection Monkey agent was built for Python 3.7. You can get it up and running by setting up a [virtual environment](https://docs.python-guide.org/dev/virtualenvs/) and installing the requirements listed in the [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/requirements.txt) inside it.
 

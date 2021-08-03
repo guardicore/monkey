@@ -16,7 +16,7 @@ If all you want to do is execute shell commands, then there's no need to add a n
 
 ## How to add a new PBA
 
-### From the Infection Monkey Side
+### Modify the Infection Monkey Agent
 
 #### Framework
 
@@ -43,7 +43,7 @@ If your PBA consists only of simple shell commands, you can reuse the generic PB
 
 Otherwise, you'll need to override the `run` method with your own implementation. See the `communicate_as_new_user.py` PBA for reference. Make sure to send the relevant PostBreachTelem upon success/failure. You can log during the PBA as well.
 
-### From the Monkey Island Side
+### Modify the Monkey Island
 
 #### Configuration
 
