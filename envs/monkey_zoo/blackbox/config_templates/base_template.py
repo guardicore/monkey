@@ -7,6 +7,7 @@ class BaseTemplate(ConfigTemplate):
     config_values = {
         "basic.exploiters.exploiter_classes": [],
         "basic_network.scope.local_network_scan": False,
+        "basic_network.scope.depth": 1,
         "internal.classes.finger_classes": ["PingScanner", "HTTPFinger"],
         "internal.monkey.system_info.system_info_collector_classes": [
             "EnvironmentCollector",
