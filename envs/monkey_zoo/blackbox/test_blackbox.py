@@ -171,7 +171,7 @@ class TestMonkeyBlackbox:
         TestMonkeyBlackbox.run_exploitation_test(island_client, Elastic, "Elastic_exploiter")
 
     def test_struts_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Struts2, "Strtuts2_exploiter")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Struts2, "Struts2_exploiter")
 
     def test_weblogic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Weblogic, "Weblogic_exploiter")
