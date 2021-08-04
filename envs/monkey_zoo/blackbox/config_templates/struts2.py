@@ -12,5 +12,7 @@ class Struts2(ConfigTemplate):
         {
             "basic.exploiters.exploiter_classes": ["Struts2Exploiter"],
             "basic_network.scope.subnet_scan_list": ["10.2.2.23", "10.2.2.24"],
+            "internal.network.tcp_scanner.HTTP_PORTS": [80, 8080],
+            "internal.network.tcp_scanner.tcp_target_ports": [80, 8080],
         }
     )
