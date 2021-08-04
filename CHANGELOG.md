@@ -36,6 +36,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `server_config.json` puts environment config options in a separate section
   named "environment". #1161
 - BlackBox tests can now register if they are ran on a fresh installation. #1180
+- Limit the ports used for scanning in blackbox tests. #1368
+- Limit the propagation depth of most blackbox tests. #1400
+- Blackbox tests wait less time for monkeys to die. #1400
 - Improved the structure of unit tests by scoping fixtures only to relevant modules
   instead of having a one huge fixture file, improved and renamed the directory
   structure of unit tests and unit test infrastructure. #1178
