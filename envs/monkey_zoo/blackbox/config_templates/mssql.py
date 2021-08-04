@@ -10,6 +10,7 @@ class Mssql(ConfigTemplate):
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": ["MSSQLExploiter"],
+            "internal.classes.finger_classes": ["PingScanner"],
             "basic_network.scope.subnet_scan_list": ["10.2.2.16"],
             "basic.credentials.exploit_password_list": [
                 "Password1!",
@@ -18,5 +19,7 @@ class Mssql(ConfigTemplate):
                 "12345678",
             ],
             "basic.credentials.exploit_user_list": ["Administrator", "m0nk3y", "user"],
+            "internal.network.tcp_scanner.HTTP_PORTS": [],
+            "internal.network.tcp_scanner.tcp_target_ports": [3389],
         }
     )
