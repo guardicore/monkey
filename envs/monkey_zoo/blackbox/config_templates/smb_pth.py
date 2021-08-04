@@ -14,6 +14,8 @@ class SmbPth(ConfigTemplate):
             "basic.credentials.exploit_password_list": ["Password1!", "Ivrrw5zEzs"],
             "basic.credentials.exploit_user_list": ["Administrator", "m0nk3y", "user"],
             "internal.classes.finger_classes": ["SMBFinger", "PingScanner", "HTTPFinger"],
+            "internal.network.tcp_scanner.HTTP_PORTS": [],
+            "internal.network.tcp_scanner.tcp_target_ports": [445],
             "internal.classes.exploits.exploit_ntlm_hash_list": [
                 "5da0889ea2081aa79f6852294cba4a5e",
                 "50c9987a6bf1ac59398df9f911122c9b",
