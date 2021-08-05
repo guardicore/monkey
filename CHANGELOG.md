@@ -7,7 +7,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.11.0] - 2021-08-XX
 ### Added
-- PostgreSQL fingerprinter. #892
 - A runtime-configurable option to specify a data directory where runtime
   configuration and other artifacts can be stored. #994
 - Scripts to build an AppImage for Monkey Island. #1069, #1090, #1136, #1381
@@ -25,10 +24,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Store Monkey agents in the configurable data_dir when monkey is "run from the
   island". #997
 - Reformat all code using black. #1070
-- Sort all imports usind isort. #1081
+- Sort all imports using isort. #1081
 - Address all flake8 issues. #1071
 - Use pipenv for python dependency management. #1091
-- Mov unit tests to a dedicated `tests/` directory to improve pytest collection
+- Move unit tests to a dedicated `tests/` directory to improve pytest collection
   time. #1102
 - Skip BB performance tests by default. Run them if `--run-performance-tests`
   flag is specified.
