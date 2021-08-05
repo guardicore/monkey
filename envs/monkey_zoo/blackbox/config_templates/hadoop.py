@@ -12,5 +12,7 @@ class Hadoop(ConfigTemplate):
         {
             "basic.exploiters.exploiter_classes": ["HadoopExploiter"],
             "basic_network.scope.subnet_scan_list": ["10.2.2.2", "10.2.2.3"],
+            "internal.network.tcp_scanner.HTTP_PORTS": [],
+            "internal.network.tcp_scanner.tcp_target_ports": [8088],
         }
     )

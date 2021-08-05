@@ -12,5 +12,7 @@ class Weblogic(ConfigTemplate):
         {
             "basic.exploiters.exploiter_classes": ["WebLogicExploiter"],
             "basic_network.scope.subnet_scan_list": ["10.2.2.18", "10.2.2.19"],
+            "internal.network.tcp_scanner.HTTP_PORTS": [7001],
+            "internal.network.tcp_scanner.tcp_target_ports": [],
         }
     )

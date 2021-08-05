@@ -14,5 +14,7 @@ class Zerologon(ConfigTemplate):
             "basic_network.scope.subnet_scan_list": ["10.2.2.25"],
             # Empty list to make sure ZeroLogon adds "Administrator" username
             "basic.credentials.exploit_user_list": [],
+            "internal.network.tcp_scanner.HTTP_PORTS": [],
+            "internal.network.tcp_scanner.tcp_target_ports": [135, 445],
         }
     )
