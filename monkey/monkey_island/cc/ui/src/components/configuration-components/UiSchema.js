@@ -13,6 +13,18 @@ export default function UiSchema(props) {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
+      },
+      credentials: {
+        exploit_user_list: {
+          items: {
+            classNames: 'config-template-no-header'
+          }
+        },
+        exploit_password_list: {
+          items: {
+            classNames: 'config-template-no-header'
+          }
+        }
       }
     },
     basic_network: {
@@ -21,8 +33,23 @@ export default function UiSchema(props) {
         info_box: {
           'ui:field': InfoBox
         },
+        blocked_ips: {
+          items: {
+            classNames: 'config-template-no-header'
+          }
+        },
         subnet_scan_list: {
-          format: 'ip-list'
+          format: 'ip-list',
+          items: {
+            classNames: 'config-template-no-header'
+          }
+        }
+      },
+      network_analysis: {
+        inaccessible_subnets: {
+          items: {
+            classNames: 'config-template-no-header'
+          }
         }
       }
     },
