@@ -156,7 +156,8 @@ class InfectionMonkey(object):
                 LOG.info("Maximum propagation depth has been reached; monkey will not propagate.")
                 TraceTelem(MAX_DEPTH_REACHED_MESSAGE).send()
 
-            InfectionMonkey.run_ransomware()
+            if self._keep_running and WormConfiguration.alive:
+                InfectionMonkey.run_ransomware()
 
             # if host was exploited, before continue to closing the tunnel ensure the exploited
             # host had its chance to
