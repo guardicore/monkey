@@ -1,6 +1,7 @@
 ---
 title: "Zero Trust report"
 date: 2020-06-24T21:16:18+03:00
+weight: 2
 draft: false
 description: "Generates a status report with detailed explanations of Zero Trust security gaps and prescriptive instructions on how to rectify them"
 ---
@@ -28,7 +29,7 @@ This diagram provides you with a quick glance at how your organization scores on
 
 ## Test Results
 
-This section shows how your network fared against each of the tests the Infection Monkey ran. The tests are ordered by Zero Trust pillar, so you can quickly navigate to the category you want to prioritize. 
+This section shows how your network fared against each of the tests the Infection Monkey ran. The tests are ordered by Zero Trust pillar, so you can quickly navigate to the category you want to prioritize.
 
 ![Zero Trust Report test results](/images/usage/reports/ztreport2.png "Zero Trust Report test results")
 
