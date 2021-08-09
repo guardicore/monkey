@@ -20,7 +20,7 @@ After running the installer, the following prompt should appear on the screen:
 1. Follow the steps to complete the installation.
 1. Run the Monkey Island by clicking on the desktop shortcut.
 
-### Start Monkey Island with user-provided certificcate
+### Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
 enterprise or other security-sensitive environments, it is recommended that the
