@@ -48,6 +48,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Create/check data directory on Island initialization. #1170
 - Format some log messages to make them more readable. #1283
 - Improve runtime of some unit tests. #1125
+- Run curl OR wget (not both) when attempting to communicate as a new user on
+  Linux. #1407
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
