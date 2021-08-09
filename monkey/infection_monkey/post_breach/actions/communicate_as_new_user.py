@@ -1,5 +1,6 @@
 import logging
 import random
+import shutil
 import string
 import subprocess
 
@@ -64,11 +65,13 @@ class CommunicateAsNewUser(PBA):
                 'Invoke-WebRequest {url} -UseBasicParsing"'
             )
         else:
-            # true || false -> 0.  false || true -> 0.  false || false -> 1. So:
             # if curl works, we're good.
             # If curl doesn't exist or fails and wget work, we're good.
             # And if both don't exist: we'll call it a win.
-            format_string = "curl {url} || wget -O/dev/null -q {url}"
+            if shutil.which("curl") is not None:
+                format_string = "curl {url}"
+            else:
+                format_string = "wget -O/dev/null -q {url}"
         return format_string.format(url=url)
 
     def send_result_telemetry(self, exit_status, commandline, username):
