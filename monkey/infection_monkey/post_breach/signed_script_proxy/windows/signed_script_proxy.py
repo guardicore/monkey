@@ -2,7 +2,7 @@ import os
 
 from infection_monkey.control import ControlClient
 
-TEMP_COMSPEC = os.path.join(os.getcwd(), "random_executable.exe")
+TEMP_COMSPEC = os.path.join(os.getcwd(), "T1216_random_executable.exe")
 
 
 def get_windows_commands_to_proxy_execution_using_signed_script():
