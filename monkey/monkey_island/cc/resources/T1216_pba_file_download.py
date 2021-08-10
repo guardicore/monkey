@@ -16,5 +16,5 @@ class T1216PBAFileDownload(flask_restful.Resource):
         executable_file_name = "T1216_random_executable.exe"
         return send_from_directory(
             directory=os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "resources", "pba"),
-            filename=executable_file_name,
+            path=executable_file_name,
         )
