@@ -18,10 +18,10 @@ installed, but the ones that we've tested are:
 - Kali 2021.2
 - Parrot 4.11
 - Rocky 8
-- Suse Leap 15.3
-- Ubuntu 18.04
-- Ubuntu 20.04
-- Ubuntu 21.04
+- openSUSE Leap 15.3
+- Ubuntu Bionic 18.04
+- Ubuntu Focal 20.04
+- Ubuntu Hirsute 21.04
 
 ## Deployment
 
