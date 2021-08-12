@@ -37,13 +37,13 @@ $ sha256sum monkey-linux-64
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
-| monkey-windows-64.exe                                | Windows Agent     | 1.11.0  | `a136b858b8cb1ca9c63ab7c6ac9da144c5f5fba79158cac2f343fc6664874406` |
-| monkey-windows-32.exe                                | Windows Agent     | 1.11.0  | `067ba67c17d1d340f8843029096bcabe64b9f5efdf744bc225c47d19d0901dd9` |
-| monkey-linux-64                                      | Linux Agent       | 1.11.0  | `d6f8e13a6f901613806adac9be68713d9a14f87256e834ec08c8cbceb1b8868a` |
+| monkey-windows-64.exe                                | Windows Agent     | 1.11.0  | `12c55377381a8fc7d8ff731db52302ef2f8bb894d8712769e5a91a140ba22b0a` |
+| monkey-windows-32.exe                                | Windows Agent     | 1.11.0  | `e006b26663f59b92bad8d49b034cd8101dd481f881e3c4839a9c1e64fd99e849` |
+| monkey-linux-64                                      | Linux Agent       | 1.11.0  | `fb4c979ce6c29bb458be50a44cc6839650826b831da849da69a05dfefdc66462` |
 | monkey-linux-32                                      | Linux Agent       | 1.11.0  | `88d6d717f99047ae6f8ff9527b41ff004217c99b1b027f112d062dd9e66d11ab` |
-| Infection_Monkey-1.11.0-x86_64.AppImage              | Linux Package     | 1.11.0  | `bfe1be6358f33977dbf28342c1a23287898505f005a158d6fa571f70c57ba793` |
-| infection_monkey_docker_20210809_223831.tgz          | Docker            | 1.11.0  | `e86d88b61b6beb854089191e1c5234231302805ab96112ce2c1a7808f8b0ea49` |
-| Monkey Island v1.11.0_3783.exe                       | Windows Installer | 1.11.0  | `1f0022a8d8981a500c00cb1aebb4e8c1de38ecc476f8235af6a7157cd7a3c63c` |
+| Infection_Monkey-1.11.0-x86_64.AppImage              | Linux Package     | 1.11.0  | `6312b6bff18c11c7db694f42cf5a41e894786c39e3e093b6b15abcbff80337f2` |
+| infection_monkey_docker_20210811_211212.tgz          | Docker            | 1.11.0  | `40f203387cadd153f97c6a21dfdddacd4d4eeea334a9300d862bfb4ba528e2e6` |
+| Monkey Island v1.11.0_3789.exe                       | Windows Installer | 1.11.0  | `20633c1993ea5f86b57b3a48d6875e8f72881f856f4713d747f07a559da05ccc` |
 
 
 ## Older checksums
