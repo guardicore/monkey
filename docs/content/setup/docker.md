@@ -29,7 +29,7 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
 1. Load the Monkey Island Docker image:
 
     ```bash
-    sudo docker load -i dk.monkeyisland.1.10.0.tar
+    sudo docker load -i dk.monkeyisland.VERSION.tar
     ```
 
 ### 2. Start MongoDB
@@ -58,7 +58,7 @@ been signed by a private certificate authority.
     sudo docker run \
         --name monkey-island \
         --network=host \
-        guardicore/monkey-island:1.10.0
+        guardicore/monkey-island:VERSION
     ```
 
 ### 3b. Start Monkey Island with user-provided certificate
@@ -81,7 +81,7 @@ been signed by a private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:1.10.0 --setup-only
+        guardicore/monkey-island:VERSION --setup-only
     ```
 
 1. Move your `.crt` and `.key` files to `./monkey_island_data`.
@@ -122,7 +122,7 @@ been signed by a private certificate authority.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:1.10.0
+        guardicore/monkey-island:VERSION
     ```
 
 ### 4. Accessing Monkey Island
@@ -152,7 +152,7 @@ to store data in the `monkey-mongo` container.
 UnicodeDecodeError: 'utf-8' codec can't decode byte 0xee in position 0: invalid continuation byte
 ```
 
-Starting a new container from the `guardicore/monkey-island:1.10.0` image
+Starting a new container from the `guardicore/monkey-island:VERSION` image
 generates a new secret key for storing sensitive information in MongoDB. If you
 have an old database instance running (from a previous instance of Infection
 Monkey), the data stored in the `monkey-mongo` container has been encrypted

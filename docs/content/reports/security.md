@@ -1,6 +1,7 @@
 ---
 title: "Security report"
 date: 2020-06-24T21:16:10+03:00
+weight: 1
 draft: false
 description: "Provides actionable recommendations and insight into an attacker's view of your network"
 ---
