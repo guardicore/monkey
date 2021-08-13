@@ -10,6 +10,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration
   pages. #1353
+- Crash when unexpected character encoding is used by ping command on German
+  language systems. #1175
+
 
 ## [1.11.0] - 2021-08-13
 ### Added
