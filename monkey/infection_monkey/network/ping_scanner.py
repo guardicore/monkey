@@ -43,13 +43,12 @@ class PingScanner(HostScanner, HostFinger):
         if not "win32" == sys.platform:
             timeout /= 1000
 
-        Encoding = "cp850"
         sub_proc = subprocess.Popen(
             ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            encoding=Encoding,
+            encoding=os.device_encoding(1),
         )
 
         output = " ".join(sub_proc.communicate())
