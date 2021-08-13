@@ -5,7 +5,7 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [1.11.0] - 2021-08-XX
+## [1.11.0] - 2021-08-13
 ### Added
 - A runtime-configurable option to specify a data directory where runtime
   configuration and other artifacts can be stored. #994
