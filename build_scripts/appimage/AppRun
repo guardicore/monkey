@@ -1,0 +1,29 @@
+#! /bin/bash
+
+# Export APPRUN if running from an extracted image
+self="$(readlink -f -- $0)"
+here="${self%/*}"
+APPDIR="${APPDIR:-${here}}"
+
+# Export TCl/Tk
+export TCL_LIBRARY="${APPDIR}/usr/share/tcltk/tcl8.4"
+export TK_LIBRARY="${APPDIR}/usr/share/tcltk/tk8.4"
+export TKPATH="${TK_LIBRARY}"
+
+# Export SSL certificate
+export SSL_CERT_FILE="${APPDIR}/opt/_internal/certs.pem"
+
+# Call the entry point
+for opt in "$@"
+do
+    [ "${opt:0:1}" != "-" ] && break
+    if [[ "${opt}" =~ "I" ]] || [[ "${opt}" =~ "E" ]]; then
+        # Environment variables are disabled ($PYTHONHOME). Let's run in a safe
+        # mode from the raw Python binary inside the AppImage
+        "$APPDIR/opt/python3.7/bin/python3.7" "$@"
+        exit "$?"
+    fi
+done
+
+(PYTHONHOME="${APPDIR}/opt/python3.7" exec "${APPDIR}/opt/python3.7/bin/python3.7" "${APPDIR}/usr/src/monkey_island.py" $@)
+exit "$?"

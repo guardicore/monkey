@@ -1,5 +1,6 @@
 # Intellij
 .idea/
+.run/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -81,9 +82,10 @@ MonkeyZoo/*
 !MonkeyZoo/README.MD
 !MonkeyZoo/config.tf
 !MonkeyZoo/MonkeyZooDocs.pdf
+monkey/logs
 
 # Exported monkey telemetries
-/monkey/telem_sample/
+/envs/monkey_zoo/blackbox/tests/performance/telemetry_sample/
 
 # Profiling logs
 profiler_logs/

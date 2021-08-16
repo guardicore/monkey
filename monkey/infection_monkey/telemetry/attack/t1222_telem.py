@@ -9,12 +9,10 @@ class T1222Telem(VictimHostTelem):
         :param command: command used to change permissions
         :param machine: VictimHost type object
         """
-        super(T1222Telem, self).__init__('T1222', status, machine)
+        super(T1222Telem, self).__init__("T1222", status, machine)
         self.command = command
 
     def get_data(self):
         data = super(T1222Telem, self).get_data()
-        data.update({
-            'command': self.command
-        })
+        data.update({"command": self.command})
         return data

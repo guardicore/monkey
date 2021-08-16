@@ -3,11 +3,8 @@ import socket
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
-__author__ = "itay.mizeretz"
-
 
 class PostBreachTelem(BaseTelem):
-
     def __init__(self, pba, result):
         """
         Default post breach telemetry constructor
@@ -23,11 +20,11 @@ class PostBreachTelem(BaseTelem):
 
     def get_data(self):
         return {
-            'command': self.pba.command,
-            'result': self.result,
-            'name': self.pba.name,
-            'hostname': self.hostname,
-            'ip': self.ip
+            "command": self.pba.command,
+            "result": self.result,
+            "name": self.pba.name,
+            "hostname": self.hostname,
+            "ip": self.ip,
         }
 
     @staticmethod

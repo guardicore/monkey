@@ -17,12 +17,20 @@ if [ ! -f /tmp/foo.txt ]; then  # If the file already exists, assume that the co
   CREATED_RND_FILE=true
 fi
 
+umask 377
+
 echo "Generating key in $server_root/server.key..."
 openssl genrsa -out "$server_root"/server.key 2048
+chmod 600 "$server_root"/server.key
+
 echo "Generating csr in $server_root/server.csr..."
 openssl req -new -key "$server_root"/server.key -out "$server_root"/server.csr -subj "/C=GB/ST=London/L=London/O=Global Security/OU=Monkey Department/CN=monkey.com"
+chmod 600 "$server_root"/server.csr
+
 echo "Generating certificate in $server_root/server.crt..."
 openssl x509 -req -days 366 -in "$server_root"/server.csr -signkey "$server_root"/server.key -out "$server_root"/server.crt
+chmod 600 "$server_root"/server.crt
+
 
 # Shove some new random data into the file to override the original seed we put in.
 if [ "$CREATED_RND_FILE" = true ] ; then

@@ -1,9 +1,12 @@
 import logging
+import shlex
 import subprocess
 import sys
 
 from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR
-from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import MimikatzCredentialCollector
+from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import (
+    MimikatzCredentialCollector,
+)
 
 sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 import infection_monkey.config  # noqa: E402
@@ -12,9 +15,7 @@ from infection_monkey.system_info import InfoCollector  # noqa: E402
 from infection_monkey.system_info.wmi_consts import WMI_CLASSES  # noqa: E402
 
 LOG = logging.getLogger(__name__)
-LOG.info('started windows info collector')
-
-__author__ = 'uri'
+LOG.info("started windows info collector")
 
 
 class WindowsInfoCollector(InfoCollector):
@@ -25,8 +26,8 @@ class WindowsInfoCollector(InfoCollector):
     def __init__(self):
         super(WindowsInfoCollector, self).__init__()
         self._config = infection_monkey.config.WormConfiguration
-        self.info['reg'] = {}
-        self.info['wmi'] = {}
+        self.info["reg"] = {}
+        self.info["wmi"] = {}
 
     def get_info(self):
         """
@@ -40,27 +41,28 @@ class WindowsInfoCollector(InfoCollector):
         # TODO: Think about returning self.get_wmi_info()
         self.get_installed_packages()
         from infection_monkey.config import WormConfiguration
+
         if MIMIKATZ_COLLECTOR in WormConfiguration.system_info_collector_classes:
             self.get_mimikatz_info()
 
         return self.info
 
     def get_installed_packages(self):
-        LOG.info('Getting installed packages')
+        LOG.info("Getting installed packages")
 
-        packages = subprocess.check_output("dism /online /get-packages", shell=True)
-        self.info["installed_packages"] = packages.decode('utf-8', errors='ignore')
+        packages = subprocess.check_output(shlex.split("dism /online /get-packages"))
+        self.info["installed_packages"] = packages.decode("utf-8", errors="ignore")
 
-        features = subprocess.check_output("dism /online /get-features", shell=True)
-        self.info["installed_features"] = features.decode('utf-8', errors='ignore')
+        features = subprocess.check_output(shlex.split("dism /online /get-features"))
+        self.info["installed_features"] = features.decode("utf-8", errors="ignore")
 
-        LOG.debug('Got installed packages')
+        LOG.debug("Got installed packages")
 
     def get_wmi_info(self):
-        LOG.info('Getting wmi info')
+        LOG.info("Getting wmi info")
         for wmi_class_name in WMI_CLASSES:
-            self.info['wmi'][wmi_class_name] = WMIUtils.get_wmi_class(wmi_class_name)
-        LOG.debug('Finished get_wmi_info')
+            self.info["wmi"][wmi_class_name] = WMIUtils.get_wmi_class(wmi_class_name)
+        LOG.debug("Finished get_wmi_info")
 
     def get_mimikatz_info(self):
         LOG.info("Gathering mimikatz info")
@@ -70,8 +72,8 @@ class WindowsInfoCollector(InfoCollector):
                 if "credentials" in self.info:
                     self.info["credentials"].update(credentials)
                 self.info["mimikatz"] = credentials
-                LOG.info('Mimikatz info gathered successfully')
+                LOG.info("Mimikatz info gathered successfully")
             else:
-                LOG.info('No mimikatz info was gathered')
+                LOG.info("No mimikatz info was gathered")
         except Exception as e:
             LOG.info(f"Mimikatz credential collector failed: {e}")

@@ -37,7 +37,8 @@ class ProcessListCollector(SystemInfoCollector):
                     "full_image_path": process.exe(),
                 }
             except (psutil.AccessDenied, WindowsError):
-                # we may be running as non root and some processes are impossible to acquire in Windows/Linux.
+                # we may be running as non root and some processes are impossible to acquire in
+                # Windows/Linux.
                 # In this case we'll just add what we know.
                 processes[process.pid] = {
                     "name": "null",
@@ -48,4 +49,4 @@ class ProcessListCollector(SystemInfoCollector):
                 }
                 continue
 
-        return {'process_list': processes}
+        return {"process_list": processes}

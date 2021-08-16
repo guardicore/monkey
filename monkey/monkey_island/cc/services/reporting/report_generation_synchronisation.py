@@ -4,8 +4,10 @@ from gevent.lock import BoundedSemaphore
 
 logger = logging.getLogger(__name__)
 
-# These are pseudo-singletons - global Locks. These locks will allow only one thread to generate a report at a time.
-# Report generation can be quite slow if there is a lot of data, and the UI queries the Root service often; without
+# These are pseudo-singletons - global Locks. These locks will allow only one thread to generate
+# a report at a time.
+# Report generation can be quite slow if there is a lot of data, and the UI queries the Root
+# service often; without
 # the locks, these requests would accumulate, overload the server, eventually causing it to crash.
 logger.debug("Initializing report generation locks.")
 __report_generating_lock = BoundedSemaphore()
@@ -28,6 +30,7 @@ def safe_generate_reports():
 def safe_generate_regular_report():
     # Local import to avoid circular imports
     from monkey_island.cc.services.reporting.report import ReportService
+
     try:
         __regular_report_generating_lock.acquire()
         report = ReportService.generate_report()
@@ -39,6 +42,7 @@ def safe_generate_regular_report():
 def safe_generate_attack_report():
     # Local import to avoid circular imports
     from monkey_island.cc.services.attack.attack_report import AttackReportService
+
     try:
         __attack_report_generating_lock.acquire()
         attack_report = AttackReportService.generate_new_report()

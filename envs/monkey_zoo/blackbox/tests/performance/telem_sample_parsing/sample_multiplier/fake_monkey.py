@@ -1,7 +1,8 @@
 import random
 
-from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_ip_generator import \
-    FakeIpGenerator
+from envs.monkey_zoo.blackbox.tests.performance.telem_sample_parsing.sample_multiplier.fake_ip_generator import (  # noqa: E501
+    FakeIpGenerator,
+)
 
 
 class FakeMonkey:

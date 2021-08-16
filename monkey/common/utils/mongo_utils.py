@@ -1,14 +1,11 @@
 import sys
 
-if sys.platform == 'win32':
+if sys.platform == "win32":
     import win32com
     import wmi
 
-__author__ = 'maor.rayzin'
-
 
 class MongoUtils:
-
     def __init__(self):
         # Static class
         pass
@@ -35,14 +32,17 @@ class MongoUtils:
             try:
                 # objectSid property of ds_user is problematic and need this special treatment.
                 # ISWbemObjectEx interface. Class Uint8Array ?
-                if str(o._oleobj_.GetTypeInfo().GetTypeAttr().iid) == "{269AD56A-8A67-4129-BC8C-0506DCFE9880}":
+                if (
+                    str(o._oleobj_.GetTypeInfo().GetTypeAttr().iid)
+                    == "{269AD56A-8A67-4129-BC8C-0506DCFE9880}"
+                ):
                     return o.Value
-            except:
+            except Exception:
                 pass
 
             try:
                 return o.GetObjectText_()
-            except:
+            except Exception:
                 pass
 
             return repr(o)

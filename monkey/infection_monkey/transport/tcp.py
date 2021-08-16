@@ -32,13 +32,13 @@ class SocketsPipe(Thread):
                 other = self.dest if r is self.source else self.source
                 try:
                     data = r.recv(READ_BUFFER_SIZE)
-                except:
+                except Exception:
                     break
                 if data:
                     try:
                         other.sendall(data)
                         update_last_serve_time()
-                    except:
+                    except Exception:
                         break
                     self._keep_connection = True
 
@@ -47,7 +47,6 @@ class SocketsPipe(Thread):
 
 
 class TcpProxy(TransportProxyBase):
-
     def run(self):
         pipes = []
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -71,7 +70,13 @@ class TcpProxy(TransportProxyBase):
 
             pipe = SocketsPipe(source, dest)
             pipes.append(pipe)
-            LOG.debug("piping sockets %s:%s->%s:%s", address[0], address[1], self.dest_host, self.dest_port)
+            LOG.debug(
+                "piping sockets %s:%s->%s:%s",
+                address[0],
+                address[1],
+                self.dest_host,
+                self.dest_port,
+            )
             pipe.start()
 
         l_socket.close()

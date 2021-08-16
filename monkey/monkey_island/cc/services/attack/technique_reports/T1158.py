@@ -1,8 +1,6 @@
 from common.common_consts.post_breach_consts import POST_BREACH_HIDDEN_FILES
 from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique
 
-__author__ = "shreyamalviya"
-
 
 class T1158(PostBreachTechnique):
     tech_id = "T1158"

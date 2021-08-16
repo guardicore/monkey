@@ -5,13 +5,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class MonkeyLogParser(object):
-
     def __init__(self, log_path):
         self.log_path = log_path
         self.log_contents = self.read_log()
 
     def read_log(self):
-        with open(self.log_path, 'r') as log:
+        with open(self.log_path, "r") as log:
             return log.read()
 
     def print_errors(self):

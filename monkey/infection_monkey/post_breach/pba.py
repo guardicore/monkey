@@ -11,12 +11,11 @@ from infection_monkey.utils.plugins.plugin import Plugin
 
 LOG = logging.getLogger(__name__)
 
-__author__ = 'VakarisZ'
-
 
 class PBA(Plugin):
     """
-    Post breach action object. Can be extended to support more than command execution on target machine.
+    Post breach action object. Can be extended to support more than command execution on target
+    machine.
     """
 
     @staticmethod
@@ -36,14 +35,6 @@ class PBA(Plugin):
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
 
-    def get_pba(self):
-        """
-        This method returns a PBA object based on a worm's configuration.
-        Return None or False if you don't want the pba to be executed.
-        :return: A pba object.
-        """
-        return self
-
     @staticmethod
     def should_run(class_name):
         """
@@ -60,7 +51,9 @@ class PBA(Plugin):
             exec_funct = self._execute_default
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
-                T1064Telem(ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action.").send()
+                T1064Telem(
+                    ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action."
+                ).send()
             PostBreachTelem(self, result).send()
         else:
             LOG.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
@@ -87,7 +80,9 @@ class PBA(Plugin):
         :return: Tuple of command's output string and boolean, indicating if it succeeded
         """
         try:
-            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True).decode()
+            output = subprocess.check_output(  # noqa: DUO116
+                self.command, stderr=subprocess.STDOUT, shell=True
+            ).decode()
             return output, True
         except subprocess.CalledProcessError as e:
             # Return error output of the command

@@ -4,7 +4,8 @@ from monkey_island.cc.environment import Environment, EnvironmentConfig
 class TestingEnvironment(Environment):
     """
     Use this environment for running Unit Tests.
-    This will cause all mongo connections to happen via `mongomock` instead of using an actual mongodb instance.
+    This will cause all mongo connections to happen via `mongomock` instead of using an actual
+    mongodb instance.
     """
 
     _credentials_required = True

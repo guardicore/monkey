@@ -19,8 +19,6 @@ except NameError:
     # noinspection PyShadowingBuiltins
     WindowsError = psutil.AccessDenied
 
-__author__ = 'uri'
-
 
 class OperatingSystem(IntEnum):
     Windows = 0
@@ -29,16 +27,19 @@ class OperatingSystem(IntEnum):
 
 class SystemInfoCollector(object):
     """
-    A class that checks the current operating system and calls system information collecting modules accordingly
+    A class that checks the current operating system and calls system information collecting
+    modules accordingly
     """
 
     def __init__(self):
         self.os = SystemInfoCollector.get_os()
         if OperatingSystem.Windows == self.os:
             from .windows_info_collector import WindowsInfoCollector
+
             self.collector = WindowsInfoCollector()
         else:
             from .linux_info_collector import LinuxInfoCollector
+
             self.collector = LinuxInfoCollector()
 
     def get_info(self):
@@ -76,11 +77,10 @@ class InfoCollector(object):
         :return: None. Updates class information
         """
         LOG.debug("Reading subnets")
-        self.info['network_info'] = \
-            {
-                'networks': get_host_subnets(),
-                'netstat': NetstatCollector.get_netstat_info()
-            }
+        self.info["network_info"] = {
+            "networks": get_host_subnets(),
+            "netstat": NetstatCollector.get_netstat_info(),
+        }
 
     def get_azure_info(self):
         """
@@ -91,11 +91,12 @@ class InfoCollector(object):
         # noinspection PyBroadException
         try:
             from infection_monkey.config import WormConfiguration
+
             if AZURE_CRED_COLLECTOR not in WormConfiguration.system_info_collector_classes:
                 return
             LOG.debug("Harvesting creds if on an Azure machine")
             azure_collector = AzureCollector()
-            if 'credentials' not in self.info:
+            if "credentials" not in self.info:
                 self.info["credentials"] = {}
             azure_creds = azure_collector.extract_stored_credentials()
             for cred in azure_creds:
@@ -105,11 +106,12 @@ class InfoCollector(object):
                     self.info["credentials"][username] = {}
                 # we might be losing passwords in case of multiple reset attempts on same username
                 # or in case another collector already filled in a password for this user
-                self.info["credentials"][username]['password'] = password
-                self.info["credentials"][username]['username'] = username
+                self.info["credentials"][username]["password"] = password
+                self.info["credentials"][username]["username"] = username
             if len(azure_creds) != 0:
                 self.info["Azure"] = {}
-                self.info["Azure"]['usernames'] = [cred[0] for cred in azure_creds]
+                self.info["Azure"]["usernames"] = [cred[0] for cred in azure_creds]
         except Exception:
-            # If we failed to collect azure info, no reason to fail all the collection. Log and continue.
+            # If we failed to collect azure info, no reason to fail all the collection. Log and
+            # continue.
             LOG.error("Failed collecting Azure info.", exc_info=True)

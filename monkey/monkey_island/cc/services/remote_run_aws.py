@@ -6,14 +6,11 @@ from common.cmd.aws.aws_cmd_runner import AwsCmdRunner
 from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
 
-__author__ = "itay.mizeretz"
-
 logger = logging.getLogger(__name__)
 
 
 class RemoteRunAwsService:
     aws_instance = None
-    is_auth = False
 
     def __init__(self):
         pass
@@ -48,9 +45,13 @@ class RemoteRunAwsService:
         return CmdRunner.run_multiple_commands(
             instances,
             lambda instance: RemoteRunAwsService.run_aws_monkey_cmd_async(
-                instance['instance_id'], RemoteRunAwsService._is_linux(instance['os']), island_ip,
-                instances_bitness[instance['instance_id']]),
-            lambda _, result: result.is_success)
+                instance["instance_id"],
+                RemoteRunAwsService._is_linux(instance["os"]),
+                island_ip,
+                instances_bitness[instance["instance_id"]],
+            ),
+            lambda _, result: result.is_success,
+        )
 
     @staticmethod
     def is_running_on_aws():
@@ -68,23 +69,29 @@ class RemoteRunAwsService:
         """
         For all given instances, checks whether they're 32 or 64 bit.
         :param instances: List of instances to check
-        :return: Dictionary with instance ids as keys, and True/False as values. True if 64bit, False otherwise
+        :return: Dictionary with instance ids as keys, and True/False as values. True if 64bit,
+        False otherwise
         """
         return CmdRunner.run_multiple_commands(
             instances,
             lambda instance: RemoteRunAwsService.run_aws_bitness_cmd_async(
-                instance['instance_id'], RemoteRunAwsService._is_linux(instance['os'])),
+                instance["instance_id"], RemoteRunAwsService._is_linux(instance["os"])
+            ),
             lambda instance, result: RemoteRunAwsService._get_bitness_by_result(
-                RemoteRunAwsService._is_linux(instance['os']), result))
+                RemoteRunAwsService._is_linux(instance["os"]), result
+            ),
+        )
 
     @staticmethod
     def _get_bitness_by_result(is_linux, result):
         if not result.is_success:
             return None
         elif is_linux:
-            return result.stdout.find('i686') == -1  # i686 means 32bit
+            return result.stdout.find("i686") == -1  # i686 means 32bit
         else:
-            return result.stdout.lower().find('programfiles(x86)') != -1  # if not found it means 32bit
+            return (
+                result.stdout.lower().find("programfiles(x86)") != -1
+            )  # if not found it means 32bit
 
     @staticmethod
     def run_aws_bitness_cmd_async(instance_id, is_linux):
@@ -94,7 +101,7 @@ class RemoteRunAwsService:
         :param is_linux:    Whether target is linux
         :return:            Cmd
         """
-        cmd_text = 'uname -m' if is_linux else 'Get-ChildItem Env:'
+        cmd_text = "uname -m" if is_linux else "Get-ChildItem Env:"
         return RemoteRunAwsService.run_aws_cmd_async(instance_id, is_linux, cmd_text)
 
     @staticmethod
@@ -117,24 +124,42 @@ class RemoteRunAwsService:
 
     @staticmethod
     def _is_linux(os):
-        return 'linux' == os
+        return "linux" == os
 
     @staticmethod
     def _get_run_monkey_cmd_linux_line(bit_text, island_ip):
-        return r'wget --no-check-certificate https://' + island_ip + r':5000/api/monkey/download/monkey-linux-' + \
-               bit_text + r'; chmod +x monkey-linux-' + bit_text + r'; ./monkey-linux-' + bit_text + r' m0nk3y -s ' + \
-               island_ip + r':5000'
+        return (
+            r"wget --no-check-certificate https://"
+            + island_ip
+            + r":5000/api/monkey/download/monkey-linux-"
+            + bit_text
+            + r"; chmod +x monkey-linux-"
+            + bit_text
+            + r"; ./monkey-linux-"
+            + bit_text
+            + r" m0nk3y -s "
+            + island_ip
+            + r":5000"
+        )
 
     @staticmethod
     def _get_run_monkey_cmd_windows_line(bit_text, island_ip):
-        return r"[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {" \
-               r"$true}; (New-Object System.Net.WebClient).DownloadFile('https://" + island_ip + \
-               r":5000/api/monkey/download/monkey-windows-" + bit_text + r".exe','.\\monkey.exe'); " \
-                                                                         r";Start-Process -FilePath '.\\monkey.exe' " \
-                                                                         r"-ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
+        return (
+            r"[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {"
+            r"$true}; (New-Object System.Net.WebClient).DownloadFile('https://"
+            + island_ip
+            + r":5000/api/monkey/download/monkey-windows-"
+            + bit_text
+            + r".exe','.\\monkey.exe'); "
+            r";Start-Process -FilePath '.\\monkey.exe' "
+            r"-ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
+        )
 
     @staticmethod
     def _get_run_monkey_cmd_line(is_linux, is_64bit, island_ip):
-        bit_text = '64' if is_64bit else '32'
-        return RemoteRunAwsService._get_run_monkey_cmd_linux_line(bit_text, island_ip) if is_linux \
+        bit_text = "64" if is_64bit else "32"
+        return (
+            RemoteRunAwsService._get_run_monkey_cmd_linux_line(bit_text, island_ip)
+            if is_linux
             else RemoteRunAwsService._get_run_monkey_cmd_windows_line(bit_text, island_ip)
+        )

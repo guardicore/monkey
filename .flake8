@@ -1,0 +1,17 @@
+[flake8]
+## Warn about linter issues.
+
+exclude = monkey/monkey_island/cc/ui,vulture_allowlist.py
+show-source = True
+max-complexity = 10
+max-line-length = 100
+
+### ignore "whitespace before ':'", "line break before binary operator" for
+### compatibility with black, and cyclomatic complexity (for now).
+extend-ignore = E203, W503, C901
+
+### --statistics Count the number of occurrences of each error/warning code and print a report.
+statistics = True
+
+### --count will print the total number of errors.
+count = True

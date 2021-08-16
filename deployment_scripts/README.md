@@ -16,7 +16,7 @@ Invoke-WebRequest https://raw.githubusercontent.com/guardicore/monkey/develop/de
 
 This will download our deploy script. It's a good idea to read it quickly before executing it!
 
-After downloading that script, execute it in  `powershell`. 
+After downloading that script, execute it in  `powershell`.
 
 The first argument is an empty directory (script can create one). The second argument is which branch you want to clone - by default, the script will check out the `develop` branch. Some example usages:
 
@@ -49,9 +49,9 @@ Then execute the resulting script with your shell.
 After downloading that script, execute it in a shell. The first argument should be an absolute path of an empty directory (the script will create one if doesn't exist, default is ./infection_monkey). The second parameter is the branch you want to clone (develop by default). Some example usages:
 
 - `./deploy_linux.sh` (deploys under ./infection_monkey)
-- `./deploy_linux.sh "/home/test/monkey"` (deploys under /home/test/monkey)
+- `./deploy_linux.sh /home/test/monkey` (deploys under /home/test/monkey)
 - `./deploy_linux.sh "" "master"` (deploys master branch in script directory)
-- `./deploy_linux.sh "/home/user/new" "master"` (if directory "new" is not found creates it and clones master branch into it)
+- `./deploy_linux.sh /home/user/new "master"` (if directory "new" is not found creates it and clones master branch into it)
 
 You may also pass in an optional third `false` parameter to disable downloading the latest agent binaries.
 
@@ -59,7 +59,35 @@ You may also pass in an optional third `false` parameter to disable downloading 
 
 After the `deploy_linux.sh` script completes, you can start the monkey island.
 
+Note: You'll need to run the commands below in a new shell in order to ensure
+your PATH environment variable is up to date.
+
 ```sh
-cd infection_monkey/monkey
-./monkey_island/linux/run.sh
+cd infection_monkey/monkey/monkey_island
+pipenv run python ../monkey_island.py
 ```
+
+## Pre-commit hooks
+
+Both the Linux and Windows deployment scrips will install and configure
+[pre-commit](https://pre-commit.com/). Pre-commit is a multi-language package
+manager for pre-commit hooks. It will run a set of checks when you attempt to
+commit. If your commit does not pass all checks, it will be reformatted and/or
+you'll be given a list of errors and warnings that need to be fixed before you
+can commit.
+
+Our CI system runs the same checks when pull requests are submitted. This
+system may report that the build has failed if the pre-commit hooks have not
+been run or all issues have not been resolved.
+
+### Manually installing pre-commit
+
+To install and configure pre-commit manually, run `pip install --user
+pre-commit`. Next, go to the top level directory of this repository and run
+`pre-commit install -t pre-commit -t pre-push` Now, pre-commit will automatically run whenever you `git commit`.
+
+## Swimm
+
+Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
+
+In order to pass the pre-commit checks, you'll have to [install Swimm successfully](https://www.guardicore.com/infectionmonkey/docs/development/swimm/). Both the Linux and Windows deployment scrips will install [Swimm](https://swimm.io/), but you'll have to sign up [here](https://swimm.io/sign-beta) to complete the process.

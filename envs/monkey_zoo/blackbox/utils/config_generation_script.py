@@ -18,12 +18,8 @@ from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
 from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
-from envs.monkey_zoo.blackbox.island_client.island_config_parser import (
-    IslandConfigParser,
-)
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import (
-    MonkeyIslandClient,
-)
+from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
 DST_DIR_NAME = "generated_configs"
 DST_DIR_PATH = pathlib.Path(pathlib.Path(__file__).parent.absolute(), DST_DIR_NAME)

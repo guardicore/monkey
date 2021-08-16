@@ -5,7 +5,6 @@ from monkey_island.cc.services.reporting.report import ReportService
 
 
 class SecurityReport(flask_restful.Resource):
-
     @jwt_required
     def get(self):
         return ReportService.get_report()

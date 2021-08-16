@@ -11,7 +11,7 @@
 }
 
 .icon-success {
-  color: $success
+  color: $success;
 }
 
 .icon-failed {
@@ -25,4 +25,12 @@
   100% {
     transform: rotate(359deg);
   }
+}
+
+.upload-status-icon-success {
+  color: $success;
+}
+
+.upload-status-icon-error {
+  color: $danger;
 }

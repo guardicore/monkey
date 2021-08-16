@@ -1,50 +1,46 @@
 import logging
 import os
-from pathlib import Path
 
-import monkey_island.cc.services.config
-
-__author__ = "VakarisZ"
-
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
 logger = logging.getLogger(__name__)
 
-# Where to find file names in config
-PBA_WINDOWS_FILENAME_PATH = ['monkey', 'post_breach', 'PBA_windows_filename']
-PBA_LINUX_FILENAME_PATH = ['monkey', 'post_breach', 'PBA_linux_filename']
-UPLOADS_DIR_NAME = 'userUploads'
 
+class PostBreachFilesService:
+    DATA_DIR = None
+    CUSTOM_PBA_DIRNAME = "custom_pbas"
 
-ABS_UPLOAD_PATH = Path(MONKEY_ISLAND_ABS_PATH, 'cc', UPLOADS_DIR_NAME)
+    # TODO: A number of these services should be instance objects instead of
+    # static/singleton hybrids. At the moment, this requires invasive refactoring that's
+    # not a priority.
+    @classmethod
+    def initialize(cls, data_dir):
+        cls.DATA_DIR = data_dir
+        custom_pba_dir = cls.get_custom_pba_directory()
+        create_secure_directory(custom_pba_dir)
 
+    @staticmethod
+    def save_file(filename: str, file_contents: bytes):
+        file_path = os.path.join(PostBreachFilesService.get_custom_pba_directory(), filename)
+        with open(file_path, "wb") as f:
+            f.write(file_contents)
 
-def remove_PBA_files():
-    if monkey_island.cc.services.config.ConfigService.get_config():
-        windows_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
-        linux_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
-        if linux_filename:
-            remove_file(linux_filename)
-        if windows_filename:
-            remove_file(windows_filename)
+    @staticmethod
+    def remove_PBA_files():
+        for f in os.listdir(PostBreachFilesService.get_custom_pba_directory()):
+            PostBreachFilesService.remove_file(f)
 
+    @staticmethod
+    def remove_file(file_name):
+        file_path = os.path.join(PostBreachFilesService.get_custom_pba_directory(), file_name)
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except OSError as e:
+            logger.error("Can't remove previously uploaded post breach files: %s" % e)
 
-def remove_file(file_name):
-    file_path = os.path.join(ABS_UPLOAD_PATH, file_name)
-    try:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-    except OSError as e:
-        logger.error("Can't remove previously uploaded post breach files: %s" % e)
-
-
-def set_config_PBA_files(config_json):
-    """
-    Sets PBA file info in config_json to current config's PBA file info values.
-    :param config_json: config_json that will be modified
-    """
-    if monkey_island.cc.services.config.ConfigService.get_config():
-        linux_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
-        windows_filename = monkey_island.cc.services.config.ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
-        config_json['monkey']['post_breach']['PBA_linux_filename'] = linux_filename
-        config_json['monkey']['post_breach']['PBA_windows_filename'] = windows_filename
+    @staticmethod
+    def get_custom_pba_directory():
+        return os.path.join(
+            PostBreachFilesService.DATA_DIR, PostBreachFilesService.CUSTOM_PBA_DIRNAME
+        )

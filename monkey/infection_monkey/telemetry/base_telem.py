@@ -3,11 +3,11 @@ import json
 import logging
 
 from infection_monkey.control import ControlClient
+from infection_monkey.telemetry.i_telem import ITelem
 
 logger = logging.getLogger(__name__)
 LOGGED_DATA_LENGTH = 300  # How many characters of telemetry data will be logged
 
-__author__ = 'itay.mizeretz'
 
 # TODO: Rework the interface for telemetry; this class has too many responsibilities
 #       (i.e. too many reasons to change):
@@ -23,13 +23,10 @@ __author__ = 'itay.mizeretz'
 #       logging and sending them.
 
 
-class BaseTelem(object, metaclass=abc.ABCMeta):
+class BaseTelem(ITelem, metaclass=abc.ABCMeta):
     """
     Abstract base class for telemetry.
     """
-
-    def __init__(self):
-        pass
 
     def send(self, log_data=True):
         """
@@ -40,13 +37,6 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         self._log_telem_sending(serialized_data, log_data)
         ControlClient.send_telemetry(self.telem_category, serialized_data)
 
-    @abc.abstractmethod
-    def get_data(self) -> dict:
-        """
-        :return: Data of telemetry (should be dict)
-        """
-        pass
-
     @property
     def json_encoder(self):
         return json.JSONEncoder
@@ -55,14 +45,6 @@ class BaseTelem(object, metaclass=abc.ABCMeta):
         logger.debug(f"Sending {self.telem_category} telemetry.")
         if log_data:
             logger.debug(f"Telemetry contents: {BaseTelem._truncate_data(serialized_data)}")
-
-    @property
-    @abc.abstractmethod
-    def telem_category(self):
-        """
-        :return: Telemetry type
-        """
-        pass
 
     @staticmethod
     def _truncate_data(data: str):

@@ -5,7 +5,7 @@ import shutil
 from envs.monkey_zoo.blackbox.log_handlers.monkey_log_parser import MonkeyLogParser
 from envs.monkey_zoo.blackbox.log_handlers.monkey_logs_downloader import MonkeyLogsDownloader
 
-LOG_DIR_NAME = 'logs'
+LOG_DIR_NAME = "logs"
 LOGGER = logging.getLogger(__name__)
 
 
@@ -18,8 +18,10 @@ class TestLogsHandler(object):
     def parse_test_logs(self):
         log_paths = self.download_logs()
         if not log_paths:
-            LOGGER.error("No logs were downloaded. Maybe no monkeys were ran "
-                         "or early exception prevented log download?")
+            LOGGER.error(
+                "No logs were downloaded. Maybe no monkeys were ran "
+                "or early exception prevented log download?"
+            )
             return
         TestLogsHandler.parse_logs(log_paths)
 

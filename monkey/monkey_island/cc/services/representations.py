@@ -6,9 +6,9 @@ from flask import make_response
 
 
 def normalize_obj(obj):
-    if ('_id' in obj) and ('id' not in obj):
-        obj['id'] = obj['_id']
-        del obj['_id']
+    if ("_id" in obj) and ("id" not in obj):
+        obj["id"] = obj["_id"]
+        del obj["_id"]
 
     for key, value in list(obj.items()):
         if isinstance(value, bson.objectid.ObjectId):

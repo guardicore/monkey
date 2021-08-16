@@ -1,11 +1,8 @@
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
-__author__ = "itay.mizeretz"
-
 
 class ScanTelem(BaseTelem):
-
     def __init__(self, machine):
         """
         Default scan telemetry constructor
@@ -17,7 +14,4 @@ class ScanTelem(BaseTelem):
     telem_category = TelemCategoryEnum.SCAN
 
     def get_data(self):
-        return {
-            'machine': self.machine.as_dict(),
-            'service_count': len(self.machine.services)
-        }
+        return {"machine": self.machine.as_dict(), "service_count": len(self.machine.services)}

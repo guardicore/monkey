@@ -10,7 +10,7 @@ tags: ["contribute"]
 
 To set up a development environment using scripts, look at the readme under [`/deployment_scripts`](https://github.com/guardicore/monkey/blob/develop/deployment_scripts). If you want to set it up manually or run into problems, keep reading.
 
-## Agent
+## The Infection Monkey Agent
 
 The agent (which we sometimes refer to as the Infection Monkey) is a single Python project under the [`infection_monkey`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey) folder. The Infection Monkey agent was built for Python 3.7. You can get it up and running by setting up a [virtual environment](https://docs.python-guide.org/dev/virtualenvs/) and installing the requirements listed in the [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/requirements.txt) inside it.
 
@@ -23,3 +23,17 @@ This means setting up an environment with Linux 32/64-bit with Python installed 
 The Monkey Island is a Python backend React frontend project. Similar to the agent, the backend's requirements are listed in the matching [`requirements.txt`](https://github.com/guardicore/monkey/blob/master/monkey/monkey_island/requirements.txt).
 
 To setup a working front environment, run the instructions listed in the [`readme.txt`](https://github.com/guardicore/monkey/blob/master/monkey/monkey_island/readme.txt)
+
+## Pre-commit
+
+Pre-commit is a multi-language package manager for pre-commit hooks. It will run a set of checks when you attempt to commit. If your commit does not pass all checks, it will be reformatted and/or you'll be given a list of errors and warnings that need to be fixed before you can commit.
+
+Our CI system runs the same checks when pull requests are submitted. This system may report that the build has failed if the pre-commit hooks have not been run or all issues have not been resolved.
+
+To install and configure pre-commit, run `pip install --user pre-commit`. Next, go to the top level directory of this repository and run `pre-commit install -t pre-commit -t pre-push`. Pre-commit will now run automatically whenever you `git commit`.
+
+## Swimm
+
+Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
+
+In order to pass the pre-commit checks, you'll have to [install Swimm successfully](https://www.guardicore.com/infectionmonkey/docs/development/swimm/). Both the Linux and Windows deployment scrips will install [Swimm](https://swimm.io/), but you'll have to sign up [here](https://swimm.io/sign-beta) to complete the process.

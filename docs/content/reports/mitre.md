@@ -2,11 +2,12 @@
 title: "MITRE ATT&CK report"
 description: "Maps the Monkey's actions to the MITRE ATT&CK knowledge base"
 date: 2020-06-24T21:17:18+03:00
+weight: 3
 draft: false
 ---
 
 {{% notice info %}}
-Check out [the documentation for other reports available in the Infection Monkey](../) and [the documentation for supported ATT&CK techniques](../../../reference/mitre_techniques).
+Check out [the documentation for other reports available in the Infection Monkey]({{< ref "/reports" >}}) and [the documentation for supported ATT&CK techniques]({{< ref "/reference/mitre_techniques" >}}).
 {{% /notice %}}
 
 The Infection Monkey maps its actions to the [MITRE ATT&CK](https://attack.mitre.org/) knowledge base. After simulating an advanced persistent threat (APT) attack, it generates a report summarizing the success of the techniques utilized along with recommended mitigation steps, helping you identify and mitigate attack paths in your environment.

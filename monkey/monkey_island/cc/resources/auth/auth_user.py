@@ -1,6 +1,3 @@
-__author__ = 'itay.mizeretz'
-
-
 class User(object):
     def __init__(self, user_id, username, secret):
         self.id = user_id

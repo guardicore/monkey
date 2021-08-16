@@ -6,8 +6,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.attack_schema import SCHEMA
 from monkey_island.cc.services.config import ConfigService
 
-__author__ = "VakarisZ"
-
 logger = logging.getLogger(__name__)
 
 
@@ -17,7 +15,7 @@ class AttackConfig(object):
 
     @staticmethod
     def get_config():
-        config = mongo.db.attack.find_one({'name': 'newconfig'})['properties']
+        config = mongo.db.attack.find_one({"name": "newconfig"})["properties"]
         return config
 
     @staticmethod
@@ -29,7 +27,7 @@ class AttackConfig(object):
         """
         attack_config = AttackConfig.get_config()
         for config_key, attack_type in list(attack_config.items()):
-            for type_key, technique in list(attack_type['properties'].items()):
+            for type_key, technique in list(attack_type["properties"].items()):
                 if type_key == technique_id:
                     return technique
         return None
@@ -44,7 +42,7 @@ class AttackConfig(object):
 
     @staticmethod
     def update_config(config_json):
-        mongo.db.attack.update({'name': 'newconfig'}, {"$set": config_json}, upsert=True)
+        mongo.db.attack.update({"name": "newconfig"}, {"$set": config_json}, upsert=True)
         return True
 
     @staticmethod
@@ -63,37 +61,44 @@ class AttackConfig(object):
     @staticmethod
     def set_arrays(attack_techniques, monkey_config, monkey_schema):
         """
-        Sets exploiters/scanners/PBAs and other array type fields in monkey's config according to ATT&CK matrix
+        Sets exploiters/scanners/PBAs and other array type fields in monkey's config according to
+        ATT&CK matrix
         :param attack_techniques: ATT&CK techniques dict. Format: {'T1110': True, ...}
         :param monkey_config: Monkey island's configuration
         :param monkey_schema: Monkey configuration schema
         """
-        for key, definition in list(monkey_schema['definitions'].items()):
-            for array_field in definition['anyOf']:
+        for key, definition in list(monkey_schema["definitions"].items()):
+            for array_field in definition["anyOf"]:
                 # Check if current array field has attack_techniques assigned to it
-                if 'attack_techniques' in array_field and array_field['attack_techniques']:
-                    should_remove = not AttackConfig.should_enable_field(array_field['attack_techniques'],
-                                                                         attack_techniques)
+                if "attack_techniques" in array_field and array_field["attack_techniques"]:
+                    should_remove = not AttackConfig.should_enable_field(
+                        array_field["attack_techniques"], attack_techniques
+                    )
                     # If exploiter's attack technique is disabled, disable the exploiter/scanner/PBA
-                    AttackConfig.r_alter_array(monkey_config, key, array_field['enum'][0], remove=should_remove)
+                    AttackConfig.r_alter_array(
+                        monkey_config, key, array_field["enum"][0], remove=should_remove
+                    )
 
     @staticmethod
     def set_booleans(attack_techniques, monkey_config, monkey_schema):
         """
-        Sets boolean type fields, like "should use mimikatz?" in monkey's config according to ATT&CK matrix
+        Sets boolean type fields, like "should use mimikatz?" in monkey's config according to
+        ATT&CK matrix
         :param attack_techniques: ATT&CK techniques dict. Format: {'T1110': True, ...}
         :param monkey_config: Monkey island's configuration
         :param monkey_schema: Monkey configuration schema
         """
-        for key, value in list(monkey_schema['properties'].items()):
+        for key, value in list(monkey_schema["properties"].items()):
             AttackConfig.r_set_booleans([key], value, attack_techniques, monkey_config)
 
     @staticmethod
     def r_set_booleans(path, value, attack_techniques, monkey_config):
         """
-        Recursively walks trough monkey configuration (DFS) to find which boolean fields needs to be set and sets them
+        Recursively walks trough monkey configuration (DFS) to find which boolean fields needs to
+        be set and sets them
         according to ATT&CK matrix.
-        :param path: Property names that leads to current value. E.g. ['monkey', 'system_info', 'should_use_mimikatz']
+        :param path: Property names that leads to current value. E.g. ['monkey', 'system_info',
+        'should_use_mimikatz']
         :param value: Value of config property
         :param attack_techniques: ATT&CK techniques dict. Format: {'T1110': True, ...}
         :param monkey_config: Monkey island's configuration
@@ -101,15 +106,20 @@ class AttackConfig(object):
         if isinstance(value, dict):
             dictionary = {}
             # If 'value' is a boolean value that should be set:
-            if 'type' in value and value['type'] == 'boolean' \
-                    and 'attack_techniques' in value and value['attack_techniques']:
-                AttackConfig.set_bool_conf_val(path,
-                                               AttackConfig.should_enable_field(value['attack_techniques'],
-                                                                                attack_techniques),
-                                               monkey_config)
+            if (
+                "type" in value
+                and value["type"] == "boolean"
+                and "attack_techniques" in value
+                and value["attack_techniques"]
+            ):
+                AttackConfig.set_bool_conf_val(
+                    path,
+                    AttackConfig.should_enable_field(value["attack_techniques"], attack_techniques),
+                    monkey_config,
+                )
             # If 'value' is dict, we go over each of it's fields to search for booleans
-            elif 'properties' in value:
-                dictionary = value['properties']
+            elif "properties" in value:
+                dictionary = value["properties"]
             else:
                 dictionary = value
             for key, item in list(dictionary.items()):
@@ -122,11 +132,12 @@ class AttackConfig(object):
     def set_bool_conf_val(path, val, monkey_config):
         """
         Changes monkey's configuration by setting one of its boolean fields value
-        :param path: Path to boolean value in monkey's configuration. ['monkey', 'system_info', 'should_use_mimikatz']
+        :param path: Path to boolean value in monkey's configuration. ['monkey', 'system_info',
+        'should_use_mimikatz']
         :param val: Boolean
         :param monkey_config: Monkey's configuration
         """
-        util.set(monkey_config, '/'.join(path), val)
+        util.set(monkey_config, "/".join(path), val)
 
     @staticmethod
     def should_enable_field(field_techniques, users_techniques):
@@ -141,7 +152,9 @@ class AttackConfig(object):
                 if not users_techniques[technique]:
                     return False
             except KeyError:
-                logger.error("Attack technique %s is defined in schema, but not implemented." % technique)
+                logger.error(
+                    "Attack technique %s is defined in schema, but not implemented." % technique
+                )
         return True
 
     @staticmethod
@@ -172,8 +185,8 @@ class AttackConfig(object):
         attack_config = AttackConfig.get_config()
         techniques = {}
         for type_name, attack_type in list(attack_config.items()):
-            for key, technique in list(attack_type['properties'].items()):
-                techniques[key] = technique['value']
+            for key, technique in list(attack_type["properties"].items()):
+                techniques[key] = technique["value"]
         return techniques
 
     @staticmethod
@@ -184,6 +197,9 @@ class AttackConfig(object):
         attack_config = AttackConfig.get_config()
         techniques = {}
         for type_name, attack_type in list(attack_config.items()):
-            for key, technique in list(attack_type['properties'].items()):
-                techniques[key] = {'selected': technique['value'], 'type': SCHEMA['properties'][type_name]['title']}
+            for key, technique in list(attack_type["properties"].items()):
+                techniques[key] = {
+                    "selected": technique["value"],
+                    "type": SCHEMA["properties"][type_name]["title"],
+                }
         return techniques

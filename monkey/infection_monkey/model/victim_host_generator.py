@@ -31,7 +31,7 @@ class VictimHostGenerator(object):
         for address in net_range:
             if not self.is_ip_scannable(address):  # check if the IP should be skipped
                 continue
-            if hasattr(net_range, 'domain_name'):
+            if hasattr(net_range, "domain_name"):
                 victim = VictimHost(address, net_range.domain_name)
             else:
                 victim = VictimHost(address)

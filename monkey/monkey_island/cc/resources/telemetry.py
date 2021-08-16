@@ -10,11 +10,9 @@ from common.common_consts.telem_categories import TelemCategoryEnum
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey import Monkey
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.resources.test.utils.telem_store import TestTelemStore
+from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
-
-__author__ = 'Barak'
 
 logger = logging.getLogger(__name__)
 
@@ -22,37 +20,42 @@ logger = logging.getLogger(__name__)
 class Telemetry(flask_restful.Resource):
     @jwt_required
     def get(self, **kw):
-        monkey_guid = request.args.get('monkey_guid')
-        telem_category = request.args.get('telem_category')
-        timestamp = request.args.get('timestamp')
+        monkey_guid = request.args.get("monkey_guid")
+        telem_category = request.args.get("telem_category")
+        timestamp = request.args.get("timestamp")
         if "null" == timestamp:  # special case to avoid ugly JS code...
             timestamp = None
 
-        result = {'timestamp': datetime.now().isoformat()}
+        result = {"timestamp": datetime.now().isoformat()}
         find_filter = {}
 
         if monkey_guid:
-            find_filter["monkey_guid"] = {'$eq': monkey_guid}
+            find_filter["monkey_guid"] = {"$eq": monkey_guid}
         if telem_category:
-            find_filter["telem_category"] = {'$eq': telem_category}
+            find_filter["telem_category"] = {"$eq": telem_category}
         if timestamp:
-            find_filter['timestamp'] = {'$gt': dateutil.parser.parse(timestamp)}
+            find_filter["timestamp"] = {"$gt": dateutil.parser.parse(timestamp)}
 
-        result['objects'] = self.telemetry_to_displayed_telemetry(mongo.db.telemetry.find(find_filter))
+        result["objects"] = self.telemetry_to_displayed_telemetry(
+            mongo.db.telemetry.find(find_filter)
+        )
         return result
 
     # Used by monkey. can't secure.
-    @TestTelemStore.store_test_telem
+    @TestTelemStore.store_exported_telem
     def post(self):
         telemetry_json = json.loads(request.data)
-        telemetry_json['data'] = json.loads(telemetry_json['data'])
-        telemetry_json['timestamp'] = datetime.now()
-        telemetry_json['command_control_channel'] = {'src': request.remote_addr, 'dst': request.host}
+        telemetry_json["data"] = json.loads(telemetry_json["data"])
+        telemetry_json["timestamp"] = datetime.now()
+        telemetry_json["command_control_channel"] = {
+            "src": request.remote_addr,
+            "dst": request.host,
+        }
 
         # Monkey communicated, so it's alive. Update the TTL.
-        Monkey.get_single_monkey_by_guid(telemetry_json['monkey_guid']).renew_ttl()
+        Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"]).renew_ttl()
 
-        monkey = NodeService.get_monkey_by_guid(telemetry_json['monkey_guid'])
+        monkey = NodeService.get_monkey_by_guid(telemetry_json["monkey_guid"])
         NodeService.update_monkey_modify_time(monkey["_id"])
 
         process_telemetry(telemetry_json)
@@ -75,10 +78,10 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
-            if x['telem_category'] == TelemCategoryEnum.SYSTEM_INFO and 'credentials' in x['data']:
-                for user in x['data']['credentials']:
-                    if -1 != user.find(','):
-                        new_user = user.replace(',', '.')
-                        x['data']['credentials'][new_user] = x['data']['credentials'].pop(user)
+            if x["telem_category"] == TelemCategoryEnum.SYSTEM_INFO and "credentials" in x["data"]:
+                for user in x["data"]["credentials"]:
+                    if -1 != user.find(","):
+                        new_user = user.replace(",", ".")
+                        x["data"]["credentials"][new_user] = x["data"]["credentials"].pop(user)
 
         return objects

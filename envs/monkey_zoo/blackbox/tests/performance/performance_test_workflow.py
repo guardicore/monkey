@@ -1,12 +1,15 @@
 from envs.monkey_zoo.blackbox.tests.basic_test import BasicTest
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
-from envs.monkey_zoo.blackbox.tests.performance.endpoint_performance_test import EndpointPerformanceTest
+from envs.monkey_zoo.blackbox.tests.performance.endpoint_performance_test import (
+    EndpointPerformanceTest,
+)
 from envs.monkey_zoo.blackbox.tests.performance.performance_test_config import PerformanceTestConfig
 
 
 class PerformanceTestWorkflow(BasicTest):
-
-    def __init__(self, name, exploitation_test: ExploitationTest, performance_config: PerformanceTestConfig):
+    def __init__(
+        self, name, exploitation_test: ExploitationTest, performance_config: PerformanceTestConfig
+    ):
         self.name = name
         self.exploitation_test = exploitation_test
         self.island_client = exploitation_test.island_client
@@ -25,7 +28,9 @@ class PerformanceTestWorkflow(BasicTest):
             self.exploitation_test.wait_for_monkey_process_to_finish()
             if not self.island_client.is_all_monkeys_dead():
                 raise RuntimeError("Can't test report times since not all Monkeys have died.")
-        performance_test = EndpointPerformanceTest(self.name, self.performance_config, self.island_client)
+        performance_test = EndpointPerformanceTest(
+            self.name, self.performance_config, self.island_client
+        )
         try:
             if not self.island_client.is_all_monkeys_dead():
                 raise RuntimeError("Can't test report times since not all Monkeys have died.")

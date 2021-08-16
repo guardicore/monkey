@@ -2,8 +2,6 @@ from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
-__author__ = "VakarisZ"
-
 
 class T1018(AttackTechnique):
     tech_id = "T1018"
@@ -11,20 +9,33 @@ class T1018(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey found machines on the network."
 
-    query = [{'$match': {'telem_category': 'scan'}},
-             {'$sort': {'timestamp': 1}},
-             {'$group': {'_id': {'monkey_guid': '$monkey_guid'},
-                         'machines': {'$addToSet': '$data.machine'},
-                         'started': {'$first': '$timestamp'},
-                         'finished': {'$last': '$timestamp'}}},
-             {'$lookup': {'from': 'monkey',
-                          'localField': '_id.monkey_guid',
-                          'foreignField': 'guid',
-                          'as': 'monkey_tmp'}},
-             {'$addFields': {'_id': 0, 'monkey_tmp': {'$arrayElemAt': ['$monkey_tmp', 0]}}},
-             {'$addFields': {'monkey': {'hostname': '$monkey_tmp.hostname',
-                                        'ips': '$monkey_tmp.ip_addresses'},
-                             'monkey_tmp': 0}}]
+    query = [
+        {"$match": {"telem_category": "scan"}},
+        {"$sort": {"timestamp": 1}},
+        {
+            "$group": {
+                "_id": {"monkey_guid": "$monkey_guid"},
+                "machines": {"$addToSet": "$data.machine"},
+                "started": {"$first": "$timestamp"},
+                "finished": {"$last": "$timestamp"},
+            }
+        },
+        {
+            "$lookup": {
+                "from": "monkey",
+                "localField": "_id.monkey_guid",
+                "foreignField": "guid",
+                "as": "monkey_tmp",
+            }
+        },
+        {"$addFields": {"_id": 0, "monkey_tmp": {"$arrayElemAt": ["$monkey_tmp", 0]}}},
+        {
+            "$addFields": {
+                "monkey": {"hostname": "$monkey_tmp.hostname", "ips": "$monkey_tmp.ip_addresses"},
+                "monkey_tmp": 0,
+            }
+        },
+    ]
 
     @staticmethod
     def get_report_data():
@@ -40,5 +51,5 @@ class T1018(AttackTechnique):
         status, scan_info = get_technique_status_and_data()
 
         data = T1018.get_base_data_by_status(status)
-        data.update({'scan_info': scan_info})
+        data.update({"scan_info": scan_info})
         return data

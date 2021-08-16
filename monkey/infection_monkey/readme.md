@@ -14,16 +14,16 @@ The monkey is composed of three separate parts.
 1. Install python 3.7.4 and choose **ADD to PATH** option when installing.
 
     Download and install from: <https://www.python.org/ftp/python/3.7.4/>
-    
+
     In case you still need to add python directories to path:
-    - Run the following command on a cmd console (Replace C:\Python37 with your python directory if it's different) 
+    - Run the following command on a cmd console (Replace C:\Python37 with your python directory if it's different)
     `setx /M PATH "%PATH%;C:\Python37;C:\Python37\Scripts`
     - Close the console, make sure you execute all commands in a new cmd console from now on.
 2. Install further dependencies
     - if not installed, install Microsoft Visual C++ 2017 SP1 Redistributable Package
         - 32bit: <https://aka.ms/vs/16/release/vc_redist.x86.exe>
         - 64bit: <https://go.microsoft.com/fwlink/?LinkId=746572>
-3. Download the dependent python packages using 
+3. Download the dependent python packages using
         `pip install -r requirements.txt`
 4. Download and extract UPX binary to monkey\infection_monkey\bin\upx.exe:
         <https://github.com/upx/upx/releases/download/v3.94/upx394w.zip>
@@ -50,6 +50,7 @@ Tested on Ubuntu 16.04.
 
 2. Install the python packages listed in requirements.txt using pip
     - `cd [code location]/infection_monkey`
+    - `python3.7 -m pipenv lock -r --dev > requirements.txt`
     - `python3.7 -m pip install -r requirements.txt`
 
 3. Build Sambacry binaries
@@ -63,8 +64,8 @@ Tested on Ubuntu 16.04.
 5. To build, run in terminal:
     - `cd [code location]/infection_monkey`
     - `chmod +x build_linux.sh`
-    - `./build_linux.sh`
-    
+    - `pipenv run ./build_linux.sh`
+
     output is placed under `dist/monkey32` or `dist/monkey64` depending on your version of python
 
 ### Sambacry
@@ -94,3 +95,24 @@ You can either build them yourself or download pre-built binaries.
     - Available here:
         - 32bit: <https://github.com/guardicore/monkey/releases/download/1.6/traceroute32>
         - 64bit: <https://github.com/guardicore/monkey/releases/download/1.6/traceroute64>
+
+
+
+### Troubleshooting
+
+Some of the possible errors that may come up while trying to build the infection monkey:
+
+#### Linux
+
+When committing your changes for the first time, you may encounter some errors thrown by the pre-commit hooks. This is most likely because some python dependencies are missing from your system.
+To resolve this, use `pipenv` to create a `requirements.txt` for both the `infection_monkey/` and `monkey_island/` requirements and install it with `pip`.
+
+   - `cd [code location]/infection_monkey`
+   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.7 -m pip install -r requirements.txt`
+
+   and
+
+   - `cd [code location]/monkey_island`
+   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.7 -m pip install -r requirements.txt`

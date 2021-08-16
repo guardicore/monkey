@@ -1,9 +1,7 @@
 import os
 from io import BytesIO
 
-__author__ = 'hoffer'
-
-MONKEYFS_PREFIX = 'monkeyfs://'
+MONKEYFS_PREFIX = "monkeyfs://"
 
 open_orig = open
 
@@ -11,11 +9,10 @@ open_orig = open
 class VirtualFile(BytesIO):
     _vfs = {}  # virtual File-System
 
-    def __init__(self, name, mode='r', buffering=None):
+    def __init__(self, name, mode="r", buffering=None):
         if not name.startswith(MONKEYFS_PREFIX):
             name = MONKEYFS_PREFIX + name
         self.name = name
-        self._mode = mode
         if name in VirtualFile._vfs:
             super(VirtualFile, self).__init__(self._vfs[name])
         else:
@@ -53,7 +50,7 @@ def virtual_path(name):
 
 
 # noinspection PyShadowingBuiltins
-def open(name, mode='r', buffering=-1):
+def open(name, mode="r", buffering=-1):
     # use normal open for regular paths, and our "virtual" open for monkeyfs:// paths
     if name.startswith(MONKEYFS_PREFIX):
         return VirtualFile(name, mode, buffering)

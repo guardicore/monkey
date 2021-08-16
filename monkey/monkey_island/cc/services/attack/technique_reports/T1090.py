@@ -2,8 +2,6 @@ from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
-__author__ = "VakarisZ"
-
 
 class T1090(AttackTechnique):
     tech_id = "T1090"
@@ -23,5 +21,5 @@ class T1090(AttackTechnique):
         status, monkeys = get_technique_status_and_data()
 
         data = T1090.get_base_data_by_status(status)
-        data.update({'proxies': monkeys})
+        data.update({"proxies": monkeys})
         return data

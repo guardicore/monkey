@@ -8,7 +8,11 @@ class Weblogic(ConfigTemplate):
 
     config_values = copy(BaseTemplate.config_values)
 
-    config_values.update({
-        "basic.exploiters.exploiter_classes": ["WebLogicExploiter"],
-        "basic_network.scope.subnet_scan_list": ["10.2.2.18", "10.2.2.19"]
-    })
+    config_values.update(
+        {
+            "basic.exploiters.exploiter_classes": ["WebLogicExploiter"],
+            "basic_network.scope.subnet_scan_list": ["10.2.2.18", "10.2.2.19"],
+            "internal.network.tcp_scanner.HTTP_PORTS": [7001],
+            "internal.network.tcp_scanner.tcp_target_ports": [],
+        }
+    )

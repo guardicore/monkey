@@ -15,8 +15,6 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 
-__author__ = 'hoffer'
-
 LOG = getLogger(__name__)
 
 
@@ -47,7 +45,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     chunk = end_range - start_range
                 try:
                     self.wfile.write(f.read(chunk))
-                except:
+                except Exception:
                     break
                 total += chunk
                 start_range += chunk
@@ -65,11 +63,11 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             f.close()
 
     def send_head(self):
-        if self.path != '/' + urllib.parse.quote(os.path.basename(self.filename)):
+        if self.path != "/" + urllib.parse.quote(os.path.basename(self.filename)):
             self.send_error(500, "")
             return None, 0, 0
         try:
-            f = monkeyfs.open(self.filename, 'rb')
+            f = monkeyfs.open(self.filename, "rb")
         except IOError:
             self.send_error(404, "File not found")
             return None, 0, 0
@@ -78,7 +76,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         end_range = size
 
         if "Range" in self.headers:
-            s, e = self.headers['range'][6:].split('-', 1)
+            s, e = self.headers["range"][6:].split("-", 1)
             sl = len(s)
             el = len(e)
             if sl > 0:
@@ -98,33 +96,38 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
 
         self.send_header("Content-type", "application/octet-stream")
-        self.send_header("Content-Range", 'bytes ' + str(start_range) + '-' + str(end_range - 1) + '/' + str(size))
+        self.send_header(
+            "Content-Range",
+            "bytes " + str(start_range) + "-" + str(end_range - 1) + "/" + str(size),
+        )
         self.send_header("Content-Length", min(end_range - start_range, size))
         self.end_headers()
         return f, start_range, end_range
 
     def log_message(self, format_string, *args):
-        LOG.debug("FileServHTTPRequestHandler: %s - - [%s] %s" % (self.address_string(),
-                                                                  self.log_date_time_string(),
-                                                                  format_string % args))
+        LOG.debug(
+            "FileServHTTPRequestHandler: %s - - [%s] %s"
+            % (self.address_string(), self.log_date_time_string(), format_string % args)
+        )
 
 
 class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
-    proxy_via = None  # pseudonym of the proxy in Via header, set to None not to modify original Via header
 
     def do_POST(self):
         try:
-            content_length = int(self.headers['Content-Length'])
+            content_length = int(self.headers["Content-Length"])
             post_data = self.rfile.read(content_length).decode()
             LOG.info("Received bootloader's request: {}".format(post_data))
             try:
                 dest_path = self.path
-                r = requests.post(url=dest_path,
-                                  data=post_data,
-                                  verify=False,
-                                  proxies=infection_monkey.control.ControlClient.proxies,
-                                  timeout=SHORT_REQUEST_TIMEOUT)
+                r = requests.post(  # noqa: DUO123
+                    url=dest_path,
+                    data=post_data,
+                    verify=False,
+                    proxies=infection_monkey.control.ControlClient.proxies,
+                    timeout=SHORT_REQUEST_TIMEOUT,
+                )
                 self.send_response(r.status_code)
             except requests.exceptions.ConnectionError as e:
                 LOG.error("Couldn't forward request to the island: {}".format(e))
@@ -144,18 +147,21 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
         LOG.info("Received a connect request!")
         # just provide a tunnel, transfer the data with no modification
         req = self
-        req.path = "https://%s/" % req.path.replace(':443', '')
+        req.path = "https://%s/" % req.path.replace(":443", "")
 
         u = urlsplit(req.path)
         address = (u.hostname, u.port or 443)
         try:
             conn = socket.create_connection(address)
         except socket.error as e:
-            LOG.debug("HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s" % (repr(address), e))
+            LOG.debug(
+                "HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s"
+                % (repr(address), e)
+            )
             self.send_error(504)  # 504 Gateway Timeout
             return
-        self.send_response(200, 'Connection Established')
-        self.send_header('Connection', 'close')
+        self.send_response(200, "Connection Established")
+        self.send_header("Connection", "close")
         self.end_headers()
 
         conns = [self.connection, conn]
@@ -175,8 +181,10 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
         conn.close()
 
     def log_message(self, format_string, *args):
-        LOG.debug("HTTPConnectProxyHandler: %s - [%s] %s" %
-                  (self.address_string(), self.log_date_time_string(), format_string % args))
+        LOG.debug(
+            "HTTPConnectProxyHandler: %s - [%s] %s"
+            % (self.address_string(), self.log_date_time_string(), format_string % args)
+        )
 
 
 class HTTPServer(threading.Thread):
@@ -198,11 +206,13 @@ class HTTPServer(threading.Thread):
 
             @staticmethod
             def report_download(dest=None):
-                LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
-                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
-                                       get_interface_to_target(dest[0]),
-                                       dest[0],
-                                       self._filename).send()
+                LOG.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
+                TempHandler.T1105Telem(
+                    TempHandler.ScanStatus.USED,
+                    get_interface_to_target(dest[0]),
+                    dest[0],
+                    self._filename,
+                ).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True
@@ -229,6 +239,7 @@ class LockedHTTPServer(threading.Thread):
     and subsequent code will be able to continue to execute. That way subsequent code will
     always call already running HTTP server
     """
+
     # Seconds to wait until server stops
     STOP_TIMEOUT = 5
 
@@ -247,15 +258,18 @@ class LockedHTTPServer(threading.Thread):
         class TempHandler(FileServHTTPRequestHandler):
             from common.utils.attack_utils import ScanStatus
             from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+
             filename = self._filename
 
             @staticmethod
             def report_download(dest=None):
-                LOG.info('File downloaded from (%s,%s)' % (dest[0], dest[1]))
-                TempHandler.T1105Telem(TempHandler.ScanStatus.USED,
-                                       get_interface_to_target(dest[0]),
-                                       dest[0],
-                                       self._filename).send()
+                LOG.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
+                TempHandler.T1105Telem(
+                    TempHandler.ScanStatus.USED,
+                    get_interface_to_target(dest[0]),
+                    dest[0],
+                    self._filename,
+                ).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True

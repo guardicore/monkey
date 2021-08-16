@@ -37,20 +37,22 @@
             "lines": [
                 "*from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER",
                 "*from infection_monkey.config import WormConfiguration",
-                " from infection_monkey.post_breach.pba import PBA",
-                " from infection_monkey.utils.users import get_commands_to_add_user",
-                " ",
-                " ",
-                " class BackdoorUser(PBA):",
-                "     def __init__(self):",
+                "*from infection_monkey.post_breach.pba import PBA",
+                "*from infection_monkey.utils.random_password_generator import get_random_password",
+                "*from infection_monkey.utils.users import get_commands_to_add_user",
+                "*",
+                "*",
+                "*class BackdoorUser(PBA):",
+                "*    def __init__(self):",
+                "*        random_password = get_random_password()",
+                "*",
                 "*        linux_cmds, windows_cmds = get_commands_to_add_user(",
-                "+        pass  # Swimmer: Impl here!",
-                "*            WormConfiguration.user_to_add,",
-                "*            WormConfiguration.remote_user_pass)",
+                "*            WormConfiguration.user_to_add, random_password",
+                "*        )",
+                "*",
                 "*        super(BackdoorUser, self).__init__(",
-                "*            POST_BREACH_BACKDOOR_USER,",
-                "*            linux_cmd=' '.join(linux_cmds),",
-                "*            windows_cmd=windows_cmds)"
+                "*            POST_BREACH_BACKDOOR_USER, linux_cmd=\" \".join(linux_cmds), windows_cmd=windows_cmds",
+                "*        )"
             ]
         },
         {
@@ -59,17 +61,17 @@
             "comments": [],
             "firstLineNumber": 1,
             "lines": [
-                "*from common.common_consts.post_breach_consts import POST_BREACH_BACKDOOR_USER, POST_BREACH_COMMUNICATE_AS_NEW_USER\r",
-                " from monkey_island.cc.services.attack.technique_reports.pba_technique import PostBreachTechnique\r",
-                " \r",
-                " __author__ = \"shreyamalviya\"\r"
+                " from common.common_consts.post_breach_consts import (",
+                "*    POST_BREACH_BACKDOOR_USER,",
+                "     POST_BREACH_COMMUNICATE_AS_NEW_USER,",
+                " )"
             ]
         },
         {
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py",
             "comments": [],
-            "firstLineNumber": 9,
+            "firstLineNumber": 12,
             "lines": [
                 "     unscanned_msg = \"Monkey didn't try creating a new user on the network's systems.\"",
                 "     scanned_msg = \"Monkey tried creating a new user on the network's systems, but failed.\"",
@@ -82,25 +84,23 @@
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
             "comments": [],
-            "firstLineNumber": 4,
+            "firstLineNumber": 5,
             "lines": [
-                "                    \"might do after breaching a new machine. Used in ATT&CK and Zero trust reports.\",",
+                "     \"might do after breaching a new machine. Used in ATT&CK and Zero trust reports.\",",
                 "     \"type\": \"string\",",
                 "     \"anyOf\": [",
                 "*        {",
                 "+        # Swimmer: Add new PBA here to config!",
                 "*            \"type\": \"string\",",
-                "*            \"enum\": [",
-                "*                \"BackdoorUser\"",
-                "*            ],",
+                "*            \"enum\": [\"BackdoorUser\"],",
                 "*            \"title\": \"Back door user\",",
                 "*            \"safe\": True,",
                 "*            \"info\": \"Attempts to create a new user on the system and delete it afterwards.\",",
-                "*            \"attack_techniques\": [\"T1136\"]",
+                "*            \"attack_techniques\": [\"T1136\"],",
                 "*        },",
                 "         {",
                 "             \"type\": \"string\",",
-                "             \"enum\": ["
+                "             \"enum\": [\"CommunicateAsNewUser\"],"
             ]
         },
         {
@@ -108,14 +108,15 @@
             "text": "Take a look at the configuration of the island again - see the \"command to run after breach\" option we offer the user? It's implemented exactly like you did right now but each user can do it for themselves. \n\nHowever, what if the PBA needs to do stuff which is more complex than just running a few commands? In that case... "
         }
     ],
-    "file_version": "2.0.0",
+    "symbols": {},
+    "file_version": "2.0.1",
     "meta": {
-        "app_version": "0.3.7-0",
+        "app_version": "0.4.4-0",
         "file_blobs": {
             "monkey/common/common_consts/post_breach_consts.py": "25e6679cb1623aae1a732deb05cc011a452743e3",
-            "monkey/infection_monkey/post_breach/actions/add_user.py": "a85845840d9cb37529ad367e159cd9001929e759",
-            "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py": "d9d86e08ea4aeb0a6bee3f483e4fea50ee6cd200",
-            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "857e80da477ab31dbc00ed0a3f1cd49b69b505fa"
+            "monkey/infection_monkey/post_breach/actions/add_user.py": "26b048a492fcb6d319fc0c01d2f4a0bd302ecbc8",
+            "monkey/monkey_island/cc/services/attack/technique_reports/T1136.py": "dfc5945a362b88c1135f4476526c6c82977b02ee",
+            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "086dc85693ae02ddfa106099245c0f155139805c"
         }
     }
 }

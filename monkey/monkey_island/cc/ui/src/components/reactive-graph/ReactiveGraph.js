@@ -1,6 +1,5 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
-import Dimensions from 'react-dimensions'
 
 class GraphWrapper extends React.Component {
 

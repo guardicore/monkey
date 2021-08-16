@@ -37,24 +37,31 @@ $ sha256sum monkey-linux-64
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
-| monkey-windows-64.exe                                | Windows Agent     | 1.10.0  | `3b499a4cf1a67a33a91c73b05884e4d6749e990e444fa1d2a3281af4db833fa1` |
-| monkey-windows-32.exe                                | Windows Agent     | 1.10.0  | `8e891e90b11b97fbbef27f1408c1fcad486b19c612773f2d6a9edac5d4cdb47f` |
-| monkey-linux-64                                      | Linux Agent       | 1.10.0  | `932f703510b6484c3824fc797f90f99722e38a7f8956cf6fa58fdecb3790ab93` |
-| monkey-linux-32                                      | Linux Agent       | 1.10.0  | `a6de7d571051292b9db966afe025413dc20b214c4aab53e48d90d8e04264f4f5` |
-| infection_monkey_deb.tgz                             | Debian Package    | 1.10.0  | `534d85c4abc78e2c86a74d8b88759b091b62077dd9e32f02eeb43d716d359ff6` |
-| infection_monkey_debzt.tgz                           | Debian Package    | 1.10.0  | `bd01d8482f80990e6cc0ed654c07dbd80da71eebe3dd244365e9bc00f86b1c03` |
-| Monkey Island v1.10.0_3593_windows.exe	           | Windows Installer | 1.10.0  | `ebd2c5627d21dd8670def02c3a5a995f9e799ba567cf4caacd702654264ddf06` |
-| Monkey Island v1.10.0_3593_windowszt.exe             | Windows Installer | 1.10.0  | `60aaf3b32e5d06c91fe0d4f1b950529517ac33796f67e9ccfef0e8ce1c5372d8` |
-| infection_monkey_docker_docker_20210326_171631.tgz   | Docker            | 1.10.0  | `e4f9c7c5aafe7e38b33d2927a9c0cf6a3ac27858d3d0e3f2252c2e91809a78db` |
-| infection_monkey_docker_dockerzt_20210326_172035.tgz | Docker            | 1.10.0  | `248640e9eaa18e4c27f67237f0594d9533732f372ba4674d5d1bea43ab498cf5` |
-| monkey-island-vmware.ova                             | OVA               | 1.10.0  | `3472ad4ae557ddad7d7db8fbbfcfd33c4f2d95d870b18fa4cab49af6b562009c` |
-| monkey-island-vmwarezt.ova                           | OVA               | 1.10.0  | `3472ad4ae557ddad7d7db8fbbfcfd33c4f2d95d870b18fa4cab49af6b562009c` |
+| monkey-windows-64.exe                                | Windows Agent     | 1.11.0  | `12c55377381a8fc7d8ff731db52302ef2f8bb894d8712769e5a91a140ba22b0a` |
+| monkey-windows-32.exe                                | Windows Agent     | 1.11.0  | `e006b26663f59b92bad8d49b034cd8101dd481f881e3c4839a9c1e64fd99e849` |
+| monkey-linux-64                                      | Linux Agent       | 1.11.0  | `fb4c979ce6c29bb458be50a44cc6839650826b831da849da69a05dfefdc66462` |
+| monkey-linux-32                                      | Linux Agent       | 1.11.0  | `88d6d717f99047ae6f8ff9527b41ff004217c99b1b027f112d062dd9e66d11ab` |
+| Infection_Monkey-1.11.0-x86_64.AppImage              | Linux Package     | 1.11.0  | `6312b6bff18c11c7db694f42cf5a41e894786c39e3e093b6b15abcbff80337f2` |
+| infection_monkey_docker_20210811_211212.tgz          | Docker            | 1.11.0  | `40f203387cadd153f97c6a21dfdddacd4d4eeea334a9300d862bfb4ba528e2e6` |
+| Monkey Island v1.11.0_3789.exe                       | Windows Installer | 1.11.0  | `20633c1993ea5f86b57b3a48d6875e8f72881f856f4713d747f07a559da05ccc` |
 
 
 ## Older checksums
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
+| monkey-windows-64.exe                                | Windows Agent     | 1.10.0  | `3b499a4cf1a67a33a91c73b05884e4d6749e990e444fa1d2a3281af4db833fa1` |
+| monkey-windows-32.exe                                | Windows Agent     | 1.10.0  | `8e891e90b11b97fbbef27f1408c1fcad486b19c612773f2d6a9edac5d4cdb47f` |
+| monkey-linux-64                                      | Linux Agent       | 1.10.0  | `932f703510b6484c3824fc797f90f99722e38a7f8956cf6fa58fdecb3790ab93` |
+| monkey-linux-32                                      | Linux Agent       | 1.10.0  | `a6de7d571051292b9db966afe025413dc20b214c4aab53e48d90d8e04264f4f5` |
+| infection_monkey_deb.tgz                             | Debian Package    | 1.10.0  | `534d85c4abc78e2c86a74d8b88759b091b62077dd9e32f02eeb43d716d359ff6` |
+| infection_monkey_debzt.tgz                           | Debian Package    | 1.10.0  | `bd01d8482f80990e6cc0ed654c07dbd80da71eebe3dd244365e9bc00f86b1c03` |
+| Monkey Island v1.10.0_3593_windows.exe               | Windows Installer | 1.10.0  | `ebd2c5627d21dd8670def02c3a5a995f9e799ba567cf4caacd702654264ddf06` |
+| Monkey Island v1.10.0_3593_windowszt.exe             | Windows Installer | 1.10.0  | `60aaf3b32e5d06c91fe0d4f1b950529517ac33796f67e9ccfef0e8ce1c5372d8` |
+| infection_monkey_docker_docker_20210326_171631.tgz   | Docker            | 1.10.0  | `e4f9c7c5aafe7e38b33d2927a9c0cf6a3ac27858d3d0e3f2252c2e91809a78db` |
+| infection_monkey_docker_dockerzt_20210326_172035.tgz | Docker            | 1.10.0  | `248640e9eaa18e4c27f67237f0594d9533732f372ba4674d5d1bea43ab498cf5` |
+| monkey-island-vmware.ova                             | OVA               | 1.10.0  | `3472ad4ae557ddad7d7db8fbbfcfd33c4f2d95d870b18fa4cab49af6b562009c` |
+| monkey-island-vmwarezt.ova                           | OVA               | 1.10.0  | `3472ad4ae557ddad7d7db8fbbfcfd33c4f2d95d870b18fa4cab49af6b562009c` |
 | monkey-windows-64.exe                                | Windows Agent     | 1.9.0   | `24622cb8dbabb0cf4b25ecd3c13800c72ec5b59b76895b737ece509640d4c068` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.9.0   | `67f12171c3859a21fc8f54c5b2299790985453e9ac028bb80efc7328927be3d8` |
 | monkey-linux-64                                      | Linux Agent       | 1.9.0   | `aec6b14dc2bea694eb01b517cca70477deeb695f39d40b1d9e5ce02a8075c956` |

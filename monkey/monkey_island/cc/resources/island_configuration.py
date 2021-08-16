@@ -10,13 +10,15 @@ from monkey_island.cc.services.config import ConfigService
 class IslandConfiguration(flask_restful.Resource):
     @jwt_required
     def get(self):
-        return jsonify(schema=ConfigService.get_config_schema(),
-                       configuration=ConfigService.get_config(False, True, True))
+        return jsonify(
+            schema=ConfigService.get_config_schema(),
+            configuration=ConfigService.get_config(False, True, True),
+        )
 
     @jwt_required
     def post(self):
         config_json = json.loads(request.data)
-        if 'reset' in config_json:
+        if "reset" in config_json:
             ConfigService.reset_config()
         else:
             if not ConfigService.update_config(config_json, should_encrypt=True):

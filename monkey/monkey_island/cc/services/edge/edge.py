@@ -12,7 +12,6 @@ RIGHT_ARROW = "\u2192"
 
 
 class EdgeService(Edge):
-
     @staticmethod
     def get_all_edges() -> List[EdgeService]:
         return EdgeService.objects()
@@ -44,7 +43,9 @@ class EdgeService(Edge):
         elif self.dst_node_id == node_id:
             self.dst_label = label
         else:
-            raise DoesNotExist("Node id provided does not match with any endpoint of an self provided.")
+            raise DoesNotExist(
+                "Node id provided does not match with any endpoint of an self provided."
+            )
         self.save()
 
     @staticmethod
@@ -65,12 +66,8 @@ class EdgeService(Edge):
         self.save()
 
     def update_based_on_scan_telemetry(self, telemetry: Dict):
-        machine_info = copy.deepcopy(telemetry['data']['machine'])
-        new_scan = \
-            {
-                "timestamp": telemetry["timestamp"],
-                "data": machine_info
-            }
+        machine_info = copy.deepcopy(telemetry["data"]["machine"])
+        new_scan = {"timestamp": telemetry["timestamp"], "data": machine_info}
         ip_address = machine_info.pop("ip_addr")
         domain_name = machine_info.pop("domain_name")
         self.scans.append(new_scan)
@@ -81,7 +78,7 @@ class EdgeService(Edge):
     def update_based_on_exploit(self, exploit: Dict):
         self.exploits.append(exploit)
         self.save()
-        if exploit['result']:
+        if exploit["result"]:
             self.set_exploited()
 
     def set_exploited(self):

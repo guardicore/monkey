@@ -9,14 +9,11 @@ class T1005Telem(AttackTelem):
         :param gathered_data_type: Type of data collected from local system
         :param info: Additional info about data
         """
-        super(T1005Telem, self).__init__('T1005', status)
+        super(T1005Telem, self).__init__("T1005", status)
         self.gathered_data_type = gathered_data_type
         self.info = info
 
     def get_data(self):
         data = super(T1005Telem, self).get_data()
-        data.update({
-            'gathered_data_type': self.gathered_data_type,
-            'info': self.info
-        })
+        data.update({"gathered_data_type": self.gathered_data_type, "info": self.info})
         return data

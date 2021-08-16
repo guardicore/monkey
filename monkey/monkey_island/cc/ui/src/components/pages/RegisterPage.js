@@ -39,11 +39,12 @@ class RegisterPageComponent extends React.Component {
           this.auth.attemptNoAuthLogin().then(() => {
             this.redirectToHome();
           });
+        } else {
+          this.setState({
+            failed: true,
+            error: res['error']
+          });
         }
-        this.setState({
-          failed: true,
-          error: res['error']
-        });
       })
   }
 
@@ -56,7 +57,7 @@ class RegisterPageComponent extends React.Component {
   };
 
   redirectToHome = () => {
-    window.location.href = '/';
+    window.location.href = '/landing-page';
   };
 
   constructor(props) {

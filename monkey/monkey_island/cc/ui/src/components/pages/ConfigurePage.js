@@ -1,7 +1,6 @@
 import React from 'react';
 import Form from 'react-jsonschema-form-bs4';
-import {Col, Modal, Nav, Button} from 'react-bootstrap';
-import FileSaver from 'file-saver';
+import {Button, Col, Modal, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
 import UiSchema from '../configuration-components/UiSchema';
@@ -11,9 +10,15 @@ import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamati
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import InternalConfig from '../configuration-components/InternalConfig';
-import UnsafeOptionsConfirmationModal from '../configuration-components/UnsafeOptionsConfirmationModal.js';
+import UnsafeConfigOptionsConfirmationModal
+  from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
+import ConfigExportModal from '../configuration-components/ExportConfigModal';
+import ConfigImportModal from '../configuration-components/ImportConfigModal';
+import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
+import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
+import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 
 const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
@@ -24,28 +29,42 @@ class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.currentSection = 'attack';
-    this.currentFormData = {};
     this.initialConfig = {};
     this.initialAttackConfig = {};
-    this.sectionsOrder = ['attack', 'basic', 'basic_network', 'monkey', 'internal'];
+    this.currentSection = this.getSectionsOrder()[0];
 
     this.state = {
       attackConfig: {},
       configuration: {},
+      currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
       schema: {},
       sections: [],
-      selectedSection: 'attack',
+      selectedSection: this.currentSection,
       showAttackAlert: false,
       showUnsafeOptionsConfirmation: false,
-      showUnsafeAttackOptionsWarning: false
+      showUnsafeAttackOptionsWarning: false,
+      showConfigExportModal: false,
+      showConfigImportModal: false
     };
+  }
+
+  componentDidUpdate() {
+    if (!this.getSectionsOrder().includes(this.currentSection)) {
+      this.currentSection = this.getSectionsOrder()[0]
+      this.setState({selectedSection: this.currentSection})
+    }
+  }
+
+  getSectionsOrder() {
+    let islandMode = this.props.islandMode ? this.props.islandMode : 'advanced'
+    return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
   setInitialConfig(config) {
     // Sets a reference to know if config was changed
+    config['attack'] = {}
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
@@ -56,6 +75,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   componentDidMount = () => {
     let urls = [CONFIG_URL, ATTACK_URL];
+    // ??? Why fetch config here and not in `render()`?
     Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
       .then(data => {
         let sections = [];
@@ -63,11 +83,14 @@ class ConfigurePageComponent extends AuthComponent {
         let monkeyConfig = data[0];
         this.setInitialConfig(monkeyConfig.configuration);
         this.setInitialAttackConfig(attackConfig.configuration);
-        for (let sectionKey of this.sectionsOrder) {
+        for (let sectionKey of this.getSectionsOrder()) {
           if (sectionKey === 'attack') {
             sections.push({key: sectionKey, title: 'ATT&CK'})
           } else {
-            sections.push({key: sectionKey, title: monkeyConfig.schema.properties[sectionKey].title});
+            sections.push({
+              key: sectionKey,
+              title: monkeyConfig.schema.properties[sectionKey].title
+            });
           }
         }
         this.setState({
@@ -75,7 +98,7 @@ class ConfigurePageComponent extends AuthComponent {
           configuration: monkeyConfig.configuration,
           attackConfig: attackConfig.configuration,
           sections: sections,
-          selectedSection: 'attack'
+          currentFormData: monkeyConfig.configuration[this.state.selectedSection]
         })
       });
   };
@@ -87,10 +110,8 @@ class ConfigurePageComponent extends AuthComponent {
   onUnsafeConfirmationContinueClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false});
 
-    if (this.state.lastAction == 'submit_attempt') {
+    if (this.state.lastAction === 'submit_attempt') {
       this.configSubmit();
-    } else if (this.state.lastAction == 'import_attempt') {
-      this.setConfigFromImportCandidate();
     }
   }
 
@@ -98,13 +119,13 @@ class ConfigurePageComponent extends AuthComponent {
     this.setState({showUnsafeAttackOptionsWarning: false});
   }
 
-
-  updateConfig = (callback=null) => {
+  updateConfig = (callback = null) => {
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
         this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration}, callback);
+        this.setState({configuration: data.configuration,
+          currentFormData: data.configuration[this.state.selectedSection]}, callback);
       })
   };
 
@@ -208,17 +229,45 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onChange = ({formData}) => {
-    this.currentFormData = formData;
+    let configuration = this.state.configuration;
+    if (this.state.selectedSection === 'attack'){
+      formData = {};
+    }
+    configuration[this.state.selectedSection] = formData;
+    this.setState({currentFormData: formData, configuration: configuration});
   };
 
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
-    if (Object.keys(this.currentFormData).length > 0) {
-      newConfig[this.currentSection] = this.currentFormData;
-      this.currentFormData = {};
+
+    if (Object.keys(this.state.currentFormData).length > 0) {
+      newConfig[this.currentSection] = this.state.currentFormData;
     }
     this.setState({configuration: newConfig, lastAction: 'none'});
   };
+
+  renderConfigExportModal = () => {
+    return (<ConfigExportModal show={this.state.showConfigExportModal}
+                               onHide={() => {
+                                 this.setState({showConfigExportModal: false});
+                               }}/>);
+  }
+
+  renderConfigImportModal = () => {
+    return (<ConfigImportModal show={this.state.showConfigImportModal}
+                               onClose={this.onClose}/>);
+  }
+
+  onClose = (importSuccessful) => {
+    if(importSuccessful === true){
+      this.updateConfig();
+      this.setState({lastAction: 'import_success',
+                          showConfigImportModal: false});
+
+    } else {
+      this.setState({showConfigImportModal: false});
+    }
+  }
 
   renderAttackAlertModal = () => {
     return (<Modal show={this.state.showAttackAlert} onHide={() => {
@@ -248,7 +297,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderUnsafeOptionsConfirmationModal() {
     return (
-      <UnsafeOptionsConfirmationModal
+      <UnsafeConfigOptionsConfirmationModal
         show={this.state.showUnsafeOptionsConfirmation}
         onCancelClick={this.onUnsafeConfirmationCancelClick}
         onContinueClick={this.onUnsafeConfirmationContinueClick}
@@ -266,10 +315,16 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   userChangedConfig() {
-    if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
-      if (Object.keys(this.currentFormData).length === 0 ||
-        JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.currentFormData)) {
-        return false;
+    try {
+      if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
+        if (Object.keys(this.state.currentFormData).length === 0 ||
+          JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
+          return false;
+        }
+      }
+    } catch (TypeError) {
+      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)){
+         return false;
       }
     }
     return true;
@@ -285,10 +340,12 @@ class ConfigurePageComponent extends AuthComponent {
       this.setState({showAttackAlert: true});
       return;
     }
+
     this.updateConfigSection();
     this.currentSection = key;
     this.setState({
-      selectedSection: key
+      selectedSection: key,
+      currentFormData: this.state.configuration[key]
     });
   };
 
@@ -301,10 +358,12 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
+          res.configuration['attack'] = {}
           this.setState({
             lastAction: 'reset',
             schema: res.schema,
-            configuration: res.configuration
+            configuration: res.configuration,
+            currentFormData: res.configuration[this.state.selectedSection]
           });
           this.setInitialConfig(res.configuration);
           this.props.onStatusChange();
@@ -338,42 +397,9 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch(apiEndpoint, request_options);
   }
 
-  setConfigOnImport = (event) => {
-    try {
-      var newConfig = JSON.parse(event.target.result);
-    } catch (SyntaxError) {
-      this.setState({lastAction: 'import_failure'});
-      return;
-    }
-
-    this.setState({lastAction: 'import_attempt', importCandidateConfig: newConfig},
-      () => {
-        if (this.canSafelySubmitConfig(newConfig)) {
-          this.setConfigFromImportCandidate();
-        } else {
-          this.setState({showUnsafeOptionsConfirmation: true});
-        }
-      }
-    );
-  }
-
-  setConfigFromImportCandidate(){
-    this.setState({
-      configuration: this.state.importCandidateConfig,
-      lastAction: 'import_success'
-    }, () => {
-      this.sendConfig();
-      this.setInitialConfig(this.state.importCandidateConfig);
-    });
-    this.currentFormData = {};
-  }
-
   exportConfig = () => {
     this.updateConfigSection();
-    const configAsJson = JSON.stringify(this.state.configuration, null, 2);
-    const configAsBinary = new Blob([configAsJson], {type: 'text/plain;charset=utf-8'});
-
-    FileSaver.saveAs(configAsBinary, 'monkey.conf');
+    this.setState({showConfigExportModal: true});
   };
 
   sendConfig() {
@@ -395,13 +421,6 @@ class ConfigurePageComponent extends AuthComponent {
       }));
   }
 
-  importConfig = (event) => {
-    let reader = new FileReader();
-    reader.onload = this.setConfigOnImport;
-    reader.readAsText(event.target.files[0]);
-    event.target.value = null;
-  };
-
   renderMatrix = () => {
     return (<ConfigMatrixComponent configuration={this.state.attackConfig}
                                    submit={this.componentDidMount}
@@ -419,12 +438,17 @@ class ConfigurePageComponent extends AuthComponent {
       setPbaFilenameLinux: this.setPbaFilenameLinux,
       selectedSection: this.state.selectedSection
     })
-    formProperties['formData'] = this.state.configuration[this.state.selectedSection];
+    formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
+    formProperties['formData'] = this.state.currentFormData;
     formProperties['onChange'] = this.onChange;
     formProperties['customFormats'] = formValidationFormats;
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
+
+    applyUiSchemaManipulators(this.state.selectedSection,
+                              formProperties['formData'],
+                              formProperties['uiSchema']);
 
     if (this.state.selectedSection === 'internal') {
       return (<InternalConfig {...formProperties}/>)
@@ -481,13 +505,15 @@ class ConfigurePageComponent extends AuthComponent {
     let content = '';
     if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0) {
       content = this.renderMatrix()
-    } else if (this.state.selectedSection !== 'attack') {
+    } else if (this.state.selectedSection !== 'attack' && Object.entries(this.state.configuration).length !== 0) {
       content = this.renderConfigContent(displayedSchema)
     }
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
            className={'main'}>
+        {this.renderConfigExportModal()}
+        {this.renderConfigImportModal()}
         {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
         {this.renderUnsafeAttackOptionsWarningModal()}
@@ -495,21 +521,25 @@ class ConfigurePageComponent extends AuthComponent {
         {this.renderNav()}
         {content}
         <div className='text-center'>
-          <button type='submit' onClick={this.onSubmit} className='btn btn-success btn-lg' style={{margin: '5px'}}>
+          <button type='submit' onClick={this.onSubmit} className='btn btn-success btn-lg'
+                  style={{margin: '5px'}}>
             Submit
           </button>
-          <button type='button' onClick={this.resetConfig} className='btn btn-danger btn-lg' style={{margin: '5px'}}>
+          <button type='button' onClick={this.resetConfig} className='btn btn-danger btn-lg'
+                  style={{margin: '5px'}}>
             Reset to defaults
           </button>
         </div>
         <div className='text-center'>
-          <button onClick={() => document.getElementById('uploadInputInternal').click()}
+          <button onClick={() => {
+            this.setState({showConfigImportModal: true})
+          }}
                   className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Import config
           </button>
-          <input id='uploadInputInternal' type='file' accept='.conf' onChange={this.importConfig}
-                 style={{display: 'none'}}/>
-          <button type='button' onClick={this.exportConfig} className='btn btn-info btn-lg' style={{margin: '5px'}}>
+          <button type='button'
+                  onClick={this.exportConfig}
+                  className='btn btn-info btn-lg' style={{margin: '5px'}}>
             Export config
           </button>
         </div>
@@ -524,12 +554,6 @@ class ConfigurePageComponent extends AuthComponent {
             <div className='alert alert-success'>
               <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.
-            </div>
-            : ''}
-          {this.state.lastAction === 'import_failure' ?
-            <div className='alert alert-danger'>
-              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
-              Failed importing configuration. Invalid config file.
             </div>
             : ''}
           {this.state.lastAction === 'invalid_configuration' ?

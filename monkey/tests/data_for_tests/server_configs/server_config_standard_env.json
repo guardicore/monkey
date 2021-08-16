@@ -1,0 +1,9 @@
+{
+  "environment" : {
+    "server_config": "standard",
+    "deployment": "develop"
+  },
+  "mongodb": {
+        "start_mongodb": true
+  }
+}

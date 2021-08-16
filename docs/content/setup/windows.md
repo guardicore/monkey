@@ -9,6 +9,10 @@ tags: ["setup", "windows"]
 
 ## Deployment
 
+{{% notice tip %}}
+Don't get scared if the Infection Monkey gets [flagged as malware during the installation](/faq/#is-infection-monkey-a-malwarevirus).
+{{% /notice %}}
+
 After running the installer, the following prompt should appear on the screen:
 
 ![Windows installer screenshot](../../images/setup/windows/installer-screenshot-1.png "Windows installer screenshot")
@@ -16,7 +20,47 @@ After running the installer, the following prompt should appear on the screen:
 1. Follow the steps to complete the installation.
 1. Run the Monkey Island by clicking on the desktop shortcut.
 
+### Start Monkey Island with user-provided certificate
+
+By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
+enterprise or other security-sensitive environments, it is recommended that the
+user provide Infection Monkey with a certificate that has been signed by a
+private certificate authority.
+
+1. If you haven't already, run the Monkey Island by clicking on the desktop
+   shortcut. This will populate MongoDB, as well as create and populate
+   `%AppData%\monkey_island`.
+1. Stop the Monkey Island process.
+1. (Optional but recommended) Move your `.crt` and `.key` files to `%AppData%\monkey_island`.
+1. Edit `%AppData%\monkey_island\server_config.json` to configure Monkey Island
+   to use your certificate. Your config should look something like this:
+
+    ```json {linenos=inline,hl_lines=["11-14"]}
+    {
+      "log_level": "DEBUG",
+      "environment": {
+        "server_config": "password",
+        "deployment": "windows"
+      },
+      "mongodb": {
+        "start_mongodb": true
+     },
+      "ssl_certificate": {
+        "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
+        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>"
+      }
+    }
+    ```
+1. Run the Monkey Island by clicking on the desktop shortcut.
+
 ## Troubleshooting
+
+### Support
+
+Only **English** system locale is supported. If your command prompt gives output in a different
+language, the Infection Monkey is not guaranteed to work.
+
+For supported Windows versions, take a look at the [OS support page](../../reference/operating_systems_support).
 
 ### Missing Windows update
 

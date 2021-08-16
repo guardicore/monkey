@@ -12,9 +12,9 @@ class ScoutSuiteFinding(Finding):
     details = LazyReferenceField(ScoutSuiteFindingDetails, required=True)
 
     @staticmethod
-    def save_finding(test: str,
-                     status: str,
-                     detail_ref: ScoutSuiteFindingDetails) -> ScoutSuiteFinding:
+    def save_finding(
+        test: str, status: str, detail_ref: ScoutSuiteFindingDetails
+    ) -> ScoutSuiteFinding:
         finding = ScoutSuiteFinding(test=test, status=status, details=detail_ref)
         finding.save()
         return finding

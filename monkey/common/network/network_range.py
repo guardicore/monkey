@@ -5,8 +5,6 @@ import socket
 import struct
 from abc import ABCMeta, abstractmethod
 
-__author__ = 'itamar'
-
 LOG = logging.getLogger(__name__)
 
 
@@ -48,14 +46,14 @@ class NetworkRange(object, metaclass=ABCMeta):
         address_str = address_str.strip()
         if NetworkRange.check_if_range(address_str):
             return IpRange(ip_range=address_str)
-        if -1 != address_str.find('/'):
+        if -1 != address_str.find("/"):
             return CidrRange(cidr_range=address_str)
         return SingleIpRange(ip_address=address_str)
 
     @staticmethod
     def check_if_range(address_str):
-        if -1 != address_str.find('-'):
-            ips = address_str.split('-')
+        if -1 != address_str.find("-"):
+            ips = address_str.split("-")
             try:
                 ipaddress.ip_address(ips[0]) and ipaddress.ip_address(ips[1])
             except ValueError:
@@ -85,28 +83,36 @@ class CidrRange(NetworkRange):
         return ipaddress.ip_address(ip_address) in self._ip_network
 
     def _get_range(self):
-        return [CidrRange._ip_to_number(str(x)) for x in self._ip_network if x != self._ip_network.broadcast_address]
+        return [
+            CidrRange._ip_to_number(str(x))
+            for x in self._ip_network
+            if x != self._ip_network.broadcast_address
+        ]
 
 
 class IpRange(NetworkRange):
     def __init__(self, ip_range=None, lower_end_ip=None, higher_end_ip=None, shuffle=True):
         super(IpRange, self).__init__(shuffle=shuffle)
         if ip_range is not None:
-            addresses = ip_range.split('-')
+            addresses = ip_range.split("-")
             if len(addresses) != 2:
-                raise ValueError('Illegal IP range format: %s. Format is 192.168.0.5-192.168.0.20' % ip_range)
+                raise ValueError(
+                    "Illegal IP range format: %s. Format is 192.168.0.5-192.168.0.20" % ip_range
+                )
             self._lower_end_ip, self._higher_end_ip = [x.strip() for x in addresses]
         elif (lower_end_ip is not None) and (higher_end_ip is not None):
             self._lower_end_ip = lower_end_ip.strip()
             self._higher_end_ip = higher_end_ip.strip()
         else:
-            raise ValueError('Illegal IP range: %s' % ip_range)
+            raise ValueError("Illegal IP range: %s" % ip_range)
 
         self._lower_end_ip_num = self._ip_to_number(self._lower_end_ip)
         self._higher_end_ip_num = self._ip_to_number(self._higher_end_ip)
         if self._higher_end_ip_num < self._lower_end_ip_num:
             raise ValueError(
-                'Higher end IP %s is smaller than lower end IP %s' % (self._lower_end_ip, self._higher_end_ip))
+                "Higher end IP %s is smaller than lower end IP %s"
+                % (self._lower_end_ip, self._higher_end_ip)
+            )
 
     def __repr__(self):
         return "<IpRange %s-%s>" % (self._lower_end_ip, self._higher_end_ip)
@@ -151,12 +157,13 @@ class SingleIpRange(NetworkRange):
     @staticmethod
     def string_to_host(string_):
         """
-        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name and ip
+        Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name
+        and ip
         :param string_: String that was entered in "Scan IP/subnet list"
         :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
         """
         # The most common use case is to enter ip/range into "Scan IP/subnet list"
-        domain_name = ''
+        domain_name = ""
 
         # Try casting user's input as IP
         try:
@@ -167,8 +174,10 @@ class SingleIpRange(NetworkRange):
                 ip = socket.gethostbyname(string_)
                 domain_name = string_
             except socket.error:
-                LOG.error("Your specified host: {} is not found as a domain name and"
-                          " it's not an IP address".format(string_))
+                LOG.error(
+                    "Your specified host: {} is not found as a domain name and"
+                    " it's not an IP address".format(string_)
+                )
                 return None, string_
         # If a string_ was entered instead of IP we presume that it was domain name and translate it
         return ip, domain_name

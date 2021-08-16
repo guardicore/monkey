@@ -1,1 +1,1 @@
-ES_SERVICE = 'elastic-search-9200'
+ES_SERVICE = "elastic-search-9200"

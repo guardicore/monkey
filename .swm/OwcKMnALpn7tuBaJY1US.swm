@@ -37,7 +37,7 @@
             "firstLineNumber": 1,
             "lines": [
                 " import logging",
-                "*import socket",
+                " import socket",
                 "*",
                 "*from common.common_consts.system_info_collectors_names import HOSTNAME_COLLECTOR",
                 "*from infection_monkey.system_info.system_info_collector import SystemInfoCollector",
@@ -58,13 +58,13 @@
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/definitions/system_info_collector_classes.py",
             "comments": [],
-            "firstLineNumber": 1,
+            "firstLineNumber": 4,
             "lines": [
-                " from common.common_consts.system_info_collectors_names import (AWS_COLLECTOR, AZURE_CRED_COLLECTOR,\r",
-                "*                                                               ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR,\r",
-                "                                                                MIMIKATZ_COLLECTOR, PROCESS_LIST_COLLECTOR)\r",
-                " \r",
-                " SYSTEM_INFO_COLLECTOR_CLASSES = {\r"
+                "     ENVIRONMENT_COLLECTOR,",
+                "*    HOSTNAME_COLLECTOR,",
+                "     MIMIKATZ_COLLECTOR,",
+                "     PROCESS_LIST_COLLECTOR,",
+                " )"
             ]
         },
         {
@@ -73,23 +73,21 @@
             "comments": [],
             "firstLineNumber": 37,
             "lines": [
-                "             \"info\": \"If on AWS, collects more information about the AWS instance currently running on.\",",
-                "             \"attack_techniques\": [\"T1082\"]",
+                "             \"currently running on.\",",
+                "             \"attack_techniques\": [\"T1082\"],",
                 "         },",
                 "*        {",
                 "+        # SWIMMER: Collector config goes here. Tip: Hostname collection relates to the T1082 and T1016 techniques.",
                 "*            \"type\": \"string\",",
-                "*            \"enum\": [",
-                "*                HOSTNAME_COLLECTOR",
-                "*            ],",
+                "*            \"enum\": [HOSTNAME_COLLECTOR],",
                 "*            \"title\": \"Hostname collector\",",
                 "*            \"safe\": True,",
                 "*            \"info\": \"Collects machine's hostname.\",",
-                "*            \"attack_techniques\": [\"T1082\", \"T1016\"]",
+                "*            \"attack_techniques\": [\"T1082\", \"T1016\"],",
                 "*        },",
                 "         {",
                 "             \"type\": \"string\",",
-                "             \"enum\": ["
+                "             \"enum\": [PROCESS_LIST_COLLECTOR],"
             ]
         },
         {
@@ -98,20 +96,21 @@
             "comments": [],
             "firstLineNumber": 1,
             "lines": [
-                " from common.common_consts.system_info_collectors_names import (AWS_COLLECTOR, AZURE_CRED_COLLECTOR,",
-                "                                                                ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR,",
-                "                                                                MIMIKATZ_COLLECTOR, PROCESS_LIST_COLLECTOR)",
-                "*                                                      HOSTNAME_COLLECTOR,",
-                " MONKEY = {",
-                "     \"title\": \"Monkey\",",
-                "     \"type\": \"object\","
+                " from common.common_consts.system_info_collectors_names import (",
+                "     AWS_COLLECTOR,",
+                "     AZURE_CRED_COLLECTOR,",
+                "     ENVIRONMENT_COLLECTOR,",
+                "*    HOSTNAME_COLLECTOR,",
+                "     MIMIKATZ_COLLECTOR,",
+                "     PROCESS_LIST_COLLECTOR,",
+                " )"
             ]
         },
         {
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/monkey.py",
             "comments": [],
-            "firstLineNumber": 85,
+            "firstLineNumber": 92,
             "lines": [
                 "                     \"default\": [",
                 "                         ENVIRONMENT_COLLECTOR,",
@@ -119,7 +118,7 @@
                 "*                        HOSTNAME_COLLECTOR,",
                 "                         PROCESS_LIST_COLLECTOR,",
                 "                         MIMIKATZ_COLLECTOR,",
-                "                         AZURE_CRED_COLLECTOR"
+                "                         AZURE_CRED_COLLECTOR,"
             ]
         },
         {
@@ -148,26 +147,26 @@
             "comments": [],
             "firstLineNumber": 1,
             "lines": [
-                " import logging\r",
-                " import typing\r",
-                " \r",
-                "*from common.common_consts.system_info_collectors_names import (AWS_COLLECTOR, ENVIRONMENT_COLLECTOR, HOSTNAME_COLLECTOR,\r",
-                "                                                                PROCESS_LIST_COLLECTOR)\r",
-                " from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import process_aws_telemetry\r",
-                " from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import \\\r"
+                " import logging",
+                " import typing",
+                " ",
+                " from common.common_consts.system_info_collectors_names import (",
+                "     AWS_COLLECTOR,",
+                "     ENVIRONMENT_COLLECTOR,",
+                "*    HOSTNAME_COLLECTOR,"
             ]
         },
         {
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py",
             "comments": [],
-            "firstLineNumber": 14,
+            "firstLineNumber": 25,
             "lines": [
                 " SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {",
                 "     AWS_COLLECTOR: [process_aws_telemetry],",
                 "     ENVIRONMENT_COLLECTOR: [process_environment_telemetry],",
                 "*    HOSTNAME_COLLECTOR: [process_hostname_telemetry],",
-                "     PROCESS_LIST_COLLECTOR: [check_antivirus_existence]",
+                "     PROCESS_LIST_COLLECTOR: [check_antivirus_existence],",
                 " }",
                 " "
             ]
@@ -175,15 +174,18 @@
         {
             "type": "snippet",
             "lines": [
-                " from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import process_aws_telemetry\r",
-                " from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import \\\r",
-                "     process_environment_telemetry\r",
-                "*from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import process_hostname_telemetry\r",
-                " from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import check_antivirus_existence\r",
-                " \r",
-                " logger = logging.getLogger(__name__)\r"
+                " )",
+                " from monkey_island.cc.services.telemetry.processing.system_info_collectors.environment import (",
+                "     process_environment_telemetry,",
+                " )",
+                "*from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import (",
+                "*    process_hostname_telemetry,",
+                "*)",
+                " from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (",
+                "     check_antivirus_existence,",
+                " )"
             ],
-            "firstLineNumber": 6,
+            "firstLineNumber": 12,
             "path": "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py",
             "comments": []
         },
@@ -192,9 +194,17 @@
             "text": "System info collectors are useful to get more data for various things, such as ZT tests or MITRE techniques. Take a look at some other techniques!"
         }
     ],
-    "file_version": "2.0.0",
+    "symbols": {},
+    "file_version": "2.0.1",
     "meta": {
-        "app_version": "0.3.7-0",
-        "file_blobs": {}
+        "app_version": "0.4.4-0",
+        "file_blobs": {
+            "monkey/common/common_consts/system_info_collectors_names.py": "175a054e1408805a4cebbe27e2f9616db40988cf",
+            "monkey/infection_monkey/system_info/collectors/hostname_collector.py": "0aeecd9fb7bde83cccd4501ec03e0da199ec5fc3",
+            "monkey/monkey_island/cc/services/config_schema/definitions/system_info_collector_classes.py": "9a4a39050eb088876df4fa629e14faf820e714a0",
+            "monkey/monkey_island/cc/services/config_schema/monkey.py": "e745da5828c63e975625ac2e9b80ce9626324970",
+            "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/hostname.py": "e2de4519cbd71bba70e81cf3ff61817437d95a21",
+            "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py": "7ce4b6fcfbce0d6cd8a60297213c5be1699b22df"
+        }
     }
 }

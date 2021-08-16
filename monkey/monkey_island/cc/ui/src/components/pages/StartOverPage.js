@@ -38,11 +38,11 @@ class StartOverPageComponent extends AuthComponent {
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
            className={'main'}>
-        <StartOverModal cleaned = {this.state.cleaned}
-                        showCleanDialog = {this.state.showCleanDialog}
-                        allMonkeysAreDead = {this.state.allMonkeysAreDead}
-                        onVerify = {this.cleanup}
-                        onClose = {this.closeModal}/>
+        <StartOverModal cleaned={this.state.cleaned}
+                        showCleanDialog={this.state.showCleanDialog}
+                        allMonkeysAreDead={this.state.allMonkeysAreDead}
+                        onVerify={this.cleanup}
+                        onClose={this.closeModal}/>
         <h1 className="page-title">Start Over</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p>
@@ -88,7 +88,10 @@ class StartOverPageComponent extends AuthComponent {
             cleaned: true
           });
         }
-      }).then(this.updateMonkeysRunning());
+      }).then(() => {
+        this.updateMonkeysRunning();
+        this.props.onStatusChange();
+      });
   };
 
   closeModal = () => {

@@ -1,0 +1,11 @@
+{
+  "data_dir": "~/.monkey_island",
+  "log_level": "DEBUG",
+  "environment": {
+    "server_config": "password",
+    "deployment": "standard"
+  },
+  "mongodb": {
+        "start_mongodb": true
+  }
+}

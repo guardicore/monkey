@@ -2,8 +2,6 @@ import gridfs
 from flask_pymongo import MongoClient, PyMongo
 from pymongo.errors import ServerSelectionTimeoutError
 
-__author__ = 'Barak'
-
 mongo = PyMongo()
 
 
@@ -34,5 +32,5 @@ def get_db_version(mongo_url):
     :return: version as a tuple (e.g. `(u'4', u'0', u'8')`)
     """
     client = MongoClient(mongo_url, serverSelectionTimeoutMS=100)
-    server_version = tuple(client.server_info()['version'].split('.'))
+    server_version = tuple(client.server_info()["version"].split("."))
     return server_version

@@ -1,7 +1,5 @@
 import logging
 
-__author__ = 'maor.rayzin'
-
 logger = logging.getLogger(__name__)
 
 
@@ -30,4 +28,4 @@ class ReportExporterManager(object, metaclass=Singleton):
             try:
                 exporter().handle_report(report)
             except Exception as e:
-                logger.exception('Failed to export report, error: ' + e)
+                logger.exception("Failed to export report, error: " + e)

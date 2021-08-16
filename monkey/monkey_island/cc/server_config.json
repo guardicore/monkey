@@ -1,0 +1,10 @@
+{
+  "log_level": "DEBUG",
+  "environment": {
+    "server_config": "password",
+    "deployment": "develop"
+  },
+  "mongodb": {
+        "start_mongodb": true
+  }
+}

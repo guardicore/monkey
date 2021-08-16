@@ -23,6 +23,13 @@ log_message() {
   echo -e "DEPLOYMENT SCRIPT: $1"
 }
 
+configure_precommit() {
+    $1 -m pip install --user pre-commit
+    pushd "$2"
+    $HOME/.local/bin/pre-commit install -t pre-commit -t pre-push
+    popd
+}
+
 if is_root; then
   log_message "Please don't run this script as root"
   exit 1
@@ -84,9 +91,9 @@ fi
 
 log_message "Cloning files from git"
 branch=${2:-"develop"}
+log_message "Branch selected: ${branch}"
 if [[ ! -d "$monkey_home/monkey" ]]; then # If not already cloned
   git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
-  chmod 774 -R "${monkey_home}"
 fi
 
 # Create folders
@@ -110,7 +117,7 @@ if [[ ${python_cmd} == "" ]]; then
   log_message "Python 3.7 command not found. Installing python 3.7."
   sudo add-apt-repository ppa:deadsnakes/ppa
   sudo apt-get update
-  sudo apt-get install -y python3.7 python3.7-dev
+  sudo apt-get install -y python3.7 python3.7-dev python3.7-venv
   log_message "Python 3.7 is now available with command 'python3.7'."
   python_cmd="python3.7"
 fi
@@ -132,14 +139,22 @@ fi
 ${python_cmd} get-pip.py
 rm get-pip.py
 
+log_message "Installing pipenv"
+${python_cmd} -m pip install --user -U pipx
+${python_cmd} -m pipx ensurepath
+source ~/.profile
+pipx install pipenv
+
 log_message "Installing island requirements"
-requirements_island="$ISLAND_PATH/requirements.txt"
-${python_cmd} -m pip install -r "${requirements_island}" --user --upgrade || handle_error
+pushd $ISLAND_PATH
+pipenv install --dev
+popd
 
 log_message "Installing monkey requirements"
 sudo apt-get install -y libffi-dev upx libssl-dev libc++1
-requirements_monkey="$INFECTION_MONKEY_DIR/requirements.txt"
-${python_cmd} -m pip install -r "${requirements_monkey}" --user --upgrade || handle_error
+pushd $INFECTION_MONKEY_DIR
+pipenv install --dev
+popd
 
 agents=${3:-true}
 # Download binaries
@@ -223,7 +238,21 @@ else
   curl -o ${MONKEY_BIN_DIR}/traceroute32 ${TRACEROUTE_32_BINARY_URL}
 fi
 
+# Download Swimm
+log_message "Downloading swimm"
+if exists wget; then
+  wget ${SWIMM_URL} -O $HOME/swimm
+else
+  curl ${SWIMM_URL} -o $HOME/swimm
+fi
+
+log_message "Installing swimm"
+sudo dpkg -i $HOME/swimm || (sudo apt-get update && sudo apt-get -f install)
+rm $HOME/swimm
+
 sudo chmod +x "${INFECTION_MONKEY_DIR}/build_linux.sh"
+
+configure_precommit ${python_cmd} ${monkey_home}
 
 log_message "Deployment script finished."
 exit 0

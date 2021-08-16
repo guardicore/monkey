@@ -2,11 +2,8 @@ import logging
 import time
 from abc import abstractmethod
 
-from common.cmd.cmd import Cmd
 from common.cmd.cmd_result import CmdResult
 from common.cmd.cmd_status import CmdStatus
-
-__author__ = 'itay.mizeretz'
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +18,10 @@ class CmdRunner(object):
     * command id - any unique identifier of a command which was already run
     * command result - represents the result of running a command. Always of type CmdResult
     * command status - represents the current status of a command. Always of type CmdStatus
-    * command info - Any consistent structure representing additional information of a command which was already run
-    * instance - a machine that commands will be run on. Can be any dictionary with 'instance_id' as a field
+    * command info - Any consistent structure representing additional information of a command
+    which was already run
+    * instance - a machine that commands will be run on. Can be any dictionary with 'instance_id'
+    as a field
     * instance_id - any unique identifier of an instance (machine). Can be of any format
     """
 
@@ -34,22 +33,13 @@ class CmdRunner(object):
     def __init__(self, is_linux):
         self.is_linux = is_linux
 
-    def run_command(self, command_line, timeout=DEFAULT_TIMEOUT):
-        """
-        Runs the given command on the remote machine
-        :param command_line: The command line to run
-        :param timeout: Timeout in seconds for command.
-        :return: Command result
-        """
-        c_id = self.run_command_async(command_line)
-        return self.wait_commands([Cmd(self, c_id)], timeout)[1]
-
     @staticmethod
     def run_multiple_commands(instances, inst_to_cmd, inst_n_cmd_res_to_res):
         """
         Run multiple commands on various instances
         :param instances:   List of instances.
-        :param inst_to_cmd: Function which receives an instance, runs a command asynchronously and returns Cmd
+        :param inst_to_cmd: Function which receives an instance, runs a command asynchronously
+        and returns Cmd
         :param inst_n_cmd_res_to_res:   Function which receives an instance and CmdResult
                                         and returns a parsed result (of any format)
         :return: Dictionary with 'instance_id' as key and parsed result as value
@@ -64,7 +54,7 @@ class CmdRunner(object):
         command_result_pairs = CmdRunner.wait_commands(list(command_instance_dict.keys()))
         for command, result in command_result_pairs:
             instance = command_instance_dict[command]
-            instance_results[instance['instance_id']] = inst_n_cmd_res_to_res(instance, result)
+            instance_results[instance["instance_id"]] = inst_n_cmd_res_to_res(instance, result)
 
         return instance_results
 
@@ -91,7 +81,9 @@ class CmdRunner(object):
         results = []
 
         while (curr_time - init_time < timeout) and (len(commands) != 0):
-            for command in list(commands):  # list(commands) clones the list. We do so because we remove items inside
+            for command in list(
+                commands
+            ):  # list(commands) clones the list. We do so because we remove items inside
                 CmdRunner._process_command(command, commands, results, True)
 
             time.sleep(CmdRunner.WAIT_SLEEP_TIME)
@@ -102,8 +94,11 @@ class CmdRunner(object):
 
         for command, result in results:
             if not result.is_success:
-                logger.error('The following command failed: `%s`. status code: %s',
-                             str(command[1]), str(result.status_code))
+                logger.error(
+                    "The following command failed: `%s`. status code: %s",
+                    str(command[1]),
+                    str(result.status_code),
+                )
 
         return results
 
@@ -148,11 +143,13 @@ class CmdRunner(object):
         c_id = command.cmd_id
         try:
             command_info = c_runner.query_command(c_id)
-            if (not should_process_only_finished) or c_runner.get_command_status(command_info) != CmdStatus.IN_PROGRESS:
+            if (not should_process_only_finished) or c_runner.get_command_status(
+                command_info
+            ) != CmdStatus.IN_PROGRESS:
                 commands.remove(command)
                 results.append((command, c_runner.get_command_result(command_info)))
         except Exception:
-            logger.exception('Exception while querying command: `%s`', str(c_id))
+            logger.exception("Exception while querying command: `%s`", str(c_id))
             if not should_process_only_finished:
                 commands.remove(command)
                 results.append((command, CmdResult(False)))

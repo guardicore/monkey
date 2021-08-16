@@ -14,9 +14,9 @@ This guide will show you how to create a new _System Info Collector_ for the Inf
 
 If all you want to do is execute a shell command, then there's no need to add a new System Info Collector - just configure the required commands in the Monkey Island's post-breach action (PBA) section! Also, if there is a relevant System Info Collector and you only need to add more information to it, simply expand the existing one. Otherwise, you must add a new System Info Collector.
 
-## How to add a new System Info Collector 
+## How to add a new System Info Collector
 
-### From the Monkey Island Side
+### Modify the Infection Monkey Agent
 
 #### Framework
 
@@ -41,7 +41,7 @@ class MyNewCollector(SystemInfoCollector):
 
 Override the `collect` method with your own implementation. See the `EnvironmentCollector.py` System Info Collector for reference. You can log during collection as well.
 
-### From the Monkey Island Side
+### Modify the Monkey Island
 
 #### Configuration
 

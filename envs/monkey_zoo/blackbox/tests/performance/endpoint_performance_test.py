@@ -10,7 +10,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class EndpointPerformanceTest(BasicTest):
-
     def __init__(self, name, test_config: PerformanceTestConfig, island_client: MonkeyIslandClient):
         self.name = name
         self.test_config = test_config
@@ -21,8 +20,9 @@ class EndpointPerformanceTest(BasicTest):
         endpoint_timings = {}
         for endpoint in self.test_config.endpoints_to_test:
             self.island_client.clear_caches()
-            endpoint_timings[endpoint] = self.island_client.requests.get_request_time(endpoint,
-                                                                                      SupportedRequestMethod.GET)
+            endpoint_timings[endpoint] = self.island_client.requests.get_request_time(
+                endpoint, SupportedRequestMethod.GET
+            )
         analyzer = PerformanceAnalyzer(self.test_config, endpoint_timings)
 
         return analyzer.analyze_test_results()

@@ -2,37 +2,49 @@
 Define a Document Schema for the Monkey document.
 """
 import ring
-from mongoengine import (BooleanField, DateTimeField, Document, DoesNotExist, DynamicField, EmbeddedDocumentField,
-                         ListField, ReferenceField, StringField)
+from mongoengine import (
+    BooleanField,
+    DateTimeField,
+    Document,
+    DoesNotExist,
+    DynamicField,
+    EmbeddedDocumentField,
+    ListField,
+    ReferenceField,
+    StringField,
+)
 
 from common.cloud import environment_names
-from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.models.command_control_channel import CommandControlChannel
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
+from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
-
-MAX_MONKEYS_AMOUNT_TO_CACHE = 100
 
 
 class Monkey(Document):
     """
     This class has 2 main section:
-        *   The schema section defines the DB fields in the document. This is the data of the object.
-        *   The logic section defines complex questions we can ask about a single document which are asked multiple
+        *   The schema section defines the DB fields in the document. This is the data of the
+        object.
+        *   The logic section defines complex questions we can ask about a single document which
+        are asked multiple
             times, somewhat like an API.
     """
+
     # SCHEMA
     guid = StringField(required=True)
-    config = EmbeddedDocumentField('Config')
-    creds = ListField(EmbeddedDocumentField('Creds'))
+    config = EmbeddedDocumentField("Config")
+    creds = ListField(EmbeddedDocumentField("Creds"))
     dead = BooleanField()
     description = StringField()
     hostname = StringField()
     internet_access = BooleanField()
     ip_addresses = ListField(StringField())
+    launch_time = StringField()
     keepalive = DateTimeField()
     modifytime = DateTimeField()
-    # TODO make "parent" an embedded document, so this can be removed and the schema explained (and validated) verbosely.
+    # TODO make "parent" an embedded document, so this can be removed and the schema explained (
+    #  and validated) verbosely.
     # This is a temporary fix, since mongoengine doesn't allow for lists of strings to be null
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
@@ -45,9 +57,13 @@ class Monkey(Document):
     command_control_channel = EmbeddedDocumentField(CommandControlChannel)
 
     # Environment related fields
-    environment = StringField(default=environment_names.Environment.UNKNOWN.value,
-                              choices=environment_names.ALL_ENVIRONMENTS_NAMES)
-    aws_instance_id = StringField(required=False)  # This field only exists when the monkey is running on an AWS
+    environment = StringField(
+        default=environment_names.Environment.UNKNOWN.value,
+        choices=environment_names.ALL_ENVIRONMENTS_NAMES,
+    )
+    aws_instance_id = StringField(
+        required=False
+    )  # This field only exists when the monkey is running on an AWS
 
     # instance. See https://github.com/guardicore/monkey/issues/426.
 
@@ -61,7 +77,7 @@ class Monkey(Document):
 
     @staticmethod
     # See https://www.python.org/dev/peps/pep-0484/#forward-references
-    def get_single_monkey_by_guid(monkey_guid) -> 'Monkey':
+    def get_single_monkey_by_guid(monkey_guid) -> "Monkey":
         try:
             return Monkey.objects.get(guid=monkey_guid)
         except DoesNotExist as ex:
@@ -70,7 +86,7 @@ class Monkey(Document):
     @staticmethod
     def get_latest_modifytime():
         if Monkey.objects.count() > 0:
-            return Monkey.objects.order_by('-modifytime').first().modifytime
+            return Monkey.objects.order_by("-modifytime").first().modifytime
         return None
 
     def is_dead(self):
@@ -129,10 +145,11 @@ class Monkey(Document):
         Formats network info from monkey's model
         :return: dictionary with an array of IP's and a hostname
         """
-        return {'ips': self.ip_addresses, 'hostname': self.hostname}
+        return {"ips": self.ip_addresses, "hostname": self.hostname}
 
     @ring.lru(
-        expire=1  # data has TTL of 1 second. This is useful for rapid calls for report generation.
+        # data has TTL of 1 second. This is useful for rapid calls for report generation.
+        expire=1
     )
     @staticmethod
     def is_monkey(object_id):
