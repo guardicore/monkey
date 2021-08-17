@@ -43,14 +43,20 @@ class PingScanner(HostScanner, HostFinger):
         if not "win32" == sys.platform:
             timeout /= 1000
 
+        ping_cmd = ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr]
+        encoding = os.device_encoding(1)
+
+        LOG.debug(f"Running ping command: {' '.join(ping_cmd)}")
+
         sub_proc = subprocess.Popen(
-            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            ping_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            encoding=os.device_encoding(1),
+            encoding=encoding,
         )
 
+        LOG.debug(f"Retrieving ping command output using {encoding} encoding")
         output = " ".join(sub_proc.communicate())
         regex_result = self._ttl_regex.search(output)
         if regex_result:
