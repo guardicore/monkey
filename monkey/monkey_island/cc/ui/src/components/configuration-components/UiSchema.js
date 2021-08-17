@@ -3,6 +3,7 @@ import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox';
+import HideInput from '../ui-components/HideInput';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -13,6 +14,13 @@ export default function UiSchema(props) {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
+      },
+      credentials : {
+        exploit_password_list: {
+            items: {
+            'ui:widget': HideInput
+            }
+         }
       }
     },
     basic_network: {
