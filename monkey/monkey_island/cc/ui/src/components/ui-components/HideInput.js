@@ -24,15 +24,15 @@ class HideInput extends React.PureComponent {
   render() {
     return (
     <div>
-      <InputGroup className='mb-3'>
+      <InputGroup className='mb-4'>
         <FormControl
             value={this.props.value || ''}
             type={this.state.hidden ? 'text' : 'password'}
             onChange={(event) => this.onChange(event)}
         />
         <InputGroup.Append>
-          <InputGroup.Text>
-            <i onClick={this.toggleShow} className={this.state.hidden ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+          <InputGroup.Text onClick={this.toggleShow} >
+            <i className={this.state.hidden ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
           </InputGroup.Text>
         </InputGroup.Append>
       </InputGroup>

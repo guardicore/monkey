@@ -18,7 +18,7 @@ export default function UiSchema(props) {
       credentials : {
         exploit_password_list: {
             items: {
-            'ui:widget': HideInput
+              'ui:widget': HideInput
             }
          }
       }
@@ -111,6 +111,18 @@ export default function UiSchema(props) {
         },
         aws_keys: {
           classNames: 'config-field-hidden'
+        }
+      },
+      exploits: {
+        exploit_lm_hash_list:{
+          items: {
+              'ui:widget': HideInput
+          }
+        },
+        exploit_ntlm_hash_list: {
+          items: {
+              'ui:widget': HideInput
+          }
         }
       }
     }
