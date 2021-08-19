@@ -21,28 +21,22 @@ class PingScanner(HostScanner, HostFinger):
     _SCANNED_SERVICE = ""
 
     def __init__(self):
-        self._config = infection_monkey.config.WormConfiguration
+        self._timeout = infection_monkey.config.WormConfiguration.ping_scan_timeout
+        if not "win32" == sys.platform:
+            self._timeout /= 1000
+
         self._devnull = open(os.devnull, "w")
         self._ttl_regex = re.compile(TTL_REGEX_STR, re.IGNORECASE)
 
     def is_host_alive(self, host):
-
-        timeout = self._config.ping_scan_timeout
-        if not "win32" == sys.platform:
-            timeout /= 1000
-
         return 0 == subprocess.call(
-            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), host.ip_addr],
             stdout=self._devnull,
             stderr=self._devnull,
         )
 
     def get_host_fingerprint(self, host):
-        timeout = self._config.ping_scan_timeout
-        if not "win32" == sys.platform:
-            timeout /= 1000
-
-        ping_cmd = ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr]
+        ping_cmd = ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), host.ip_addr]
         LOG.debug(f"Running ping command: {' '.join(ping_cmd)}")
 
         # If stdout is not connected to a terminal (i.e. redirected to a pipe or file), the result
@@ -77,3 +71,6 @@ class PingScanner(HostScanner, HostFinger):
                 LOG.debug("Error parsing ping fingerprint: %s", exc)
 
         return False
+
+    def _build_ping_command(self, host):
+        return ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), host.ip_addr]
