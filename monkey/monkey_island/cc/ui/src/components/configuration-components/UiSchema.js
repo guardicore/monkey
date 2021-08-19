@@ -3,7 +3,7 @@ import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox';
-import HideInput from '../ui-components/HideInput';
+import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -18,7 +18,7 @@ export default function UiSchema(props) {
       credentials : {
         exploit_password_list: {
             items: {
-              'ui:widget': HideInput
+              'ui:widget': SensitiveTextInput
             }
          }
       }
@@ -116,12 +116,12 @@ export default function UiSchema(props) {
       exploits: {
         exploit_lm_hash_list:{
           items: {
-              'ui:widget': HideInput
+              'ui:widget': SensitiveTextInput
           }
         },
         exploit_ntlm_hash_list: {
           items: {
-              'ui:widget': HideInput
+              'ui:widget': SensitiveTextInput
           }
         }
       }

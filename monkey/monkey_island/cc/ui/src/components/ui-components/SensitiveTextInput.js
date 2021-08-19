@@ -1,18 +1,16 @@
 import React from 'react';
 import {InputGroup, FormControl} from 'react-bootstrap';
-import '../../styles/components/HideInput.scss'
 
-class HideInput extends React.PureComponent {
+class SensitiveTextInput extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
       hidden: false
     };
-    this.toggleShow = this.toggleShow.bind(this);
   }
 
-  toggleShow() {
+  toggleShow = () => {
     this.setState({hidden: ! this.state.hidden});
   }
 
@@ -24,7 +22,7 @@ class HideInput extends React.PureComponent {
   render() {
     return (
     <div>
-      <InputGroup className='mb-4'>
+      <InputGroup>
         <FormControl
             value={this.props.value || ''}
             type={this.state.hidden ? 'text' : 'password'}
@@ -41,4 +39,4 @@ class HideInput extends React.PureComponent {
   }
 }
 
-export default HideInput;
+export default SensitiveTextInput;
