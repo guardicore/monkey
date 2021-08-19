@@ -29,14 +29,17 @@ class PingScanner(HostScanner, HostFinger):
         self._ttl_regex = re.compile(TTL_REGEX_STR, re.IGNORECASE)
 
     def is_host_alive(self, host):
+        ping_cmd = self._build_ping_command(host.ip_addr)
+        LOG.debug(f"Running ping command: {' '.join(ping_cmd)}")
+
         return 0 == subprocess.call(
-            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), host.ip_addr],
+            ping_cmd,
             stdout=self._devnull,
             stderr=self._devnull,
         )
 
     def get_host_fingerprint(self, host):
-        ping_cmd = ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), host.ip_addr]
+        ping_cmd = self._build_ping_command(host.ip_addr)
         LOG.debug(f"Running ping command: {' '.join(ping_cmd)}")
 
         # If stdout is not connected to a terminal (i.e. redirected to a pipe or file), the result
@@ -72,5 +75,5 @@ class PingScanner(HostScanner, HostFinger):
 
         return False
 
-    def _build_ping_command(self, host):
-        return ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), host.ip_addr]
+    def _build_ping_command(self, ip_addr):
+        return ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), ip_addr]
