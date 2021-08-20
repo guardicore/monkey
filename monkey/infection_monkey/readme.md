@@ -7,7 +7,6 @@ The monkey is composed of three separate parts.
 
 - The Infection Monkey itself - PyInstaller compressed python archives
 - Sambacry binaries - Two linux binaries, 32/64 bit.
-- Traceroute binaries - Two linux binaries, 32/64bit.
 
 ## Windows
 
@@ -57,11 +56,7 @@ Tested on Ubuntu 16.04.
     - Build/Download according to sections at the end of this readme.
     - Place the binaries under [code location]/infection_monkey/bin, under the names 'sc_monkey_runner32.so', 'sc_monkey_runner64.so'
 
-4. Build Traceroute binaries
-    - Build/Download according to sections at the end of this readme.
-    - Place the binaries under [code location]/infection_monkey/bin, under the names 'traceroute32', 'traceroute64'
-
-5. To build, run in terminal:
+4. To build, run in terminal:
     - `cd [code location]/infection_monkey`
     - `chmod +x build_linux.sh`
     - `pipenv run ./build_linux.sh`
@@ -82,21 +77,6 @@ Sambacry requires two standalone binaries to execute remotely.
     - Available here:
         - 32bit: <https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner32.so>
         - 64bit: <https://github.com/guardicore/monkey/releases/download/1.6/sc_monkey_runner64.so>
-
-### Traceroute
-
-Traceroute requires two standalone binaries to execute remotely.
-The monkey carries the standalone binaries since traceroute isn't built in all Linux distributions.
-You can either build them yourself or download pre-built binaries.
-
-1. Build traceroute yourself
-    - The sources of traceroute are available here with building instructions: <http://traceroute.sourceforge.net>
-1. Download our pre-built traceroute binaries
-    - Available here:
-        - 32bit: <https://github.com/guardicore/monkey/releases/download/1.6/traceroute32>
-        - 64bit: <https://github.com/guardicore/monkey/releases/download/1.6/traceroute64>
-
-
 
 ### Troubleshooting
 
