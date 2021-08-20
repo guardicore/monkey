@@ -3,6 +3,7 @@ import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox';
+import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -22,7 +23,8 @@ export default function UiSchema(props) {
         },
         exploit_password_list: {
           items: {
-            classNames: 'config-template-no-header'
+            classNames: 'config-template-no-header',
+            'ui:widget': SensitiveTextInput
           }
         }
       }
@@ -130,6 +132,18 @@ export default function UiSchema(props) {
         },
         aws_keys: {
           classNames: 'config-field-hidden'
+        }
+      },
+      exploits: {
+        exploit_lm_hash_list:{
+          items: {
+              'ui:widget': SensitiveTextInput
+          }
+        },
+        exploit_ntlm_hash_list: {
+          items: {
+              'ui:widget': SensitiveTextInput
+          }
         }
       }
     }

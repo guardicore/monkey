@@ -6,10 +6,10 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
-
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration
   pages. #1353
+- Credentials shown in plain text on configuration screens. #1183
 
 ## [1.11.0] - 2021-08-13
 ### Added
