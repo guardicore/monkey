@@ -6,6 +6,10 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Removed
+- Internet access check on agent start. #1402
+- The "internal.monkey.internet_services" configuration option that enabled
+  internet access checks. #1402
 
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration
