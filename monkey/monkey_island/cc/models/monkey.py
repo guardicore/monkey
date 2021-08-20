@@ -38,7 +38,6 @@ class Monkey(Document):
     dead = BooleanField()
     description = StringField()
     hostname = StringField()
-    internet_access = BooleanField()
     ip_addresses = ListField(StringField())
     launch_time = StringField()
     keepalive = DateTimeField()

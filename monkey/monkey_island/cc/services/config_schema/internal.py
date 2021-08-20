@@ -60,16 +60,6 @@ INTERNAL = {
                     "monkey propagating to "
                     "a high number of machines",
                 },
-                "internet_services": {
-                    "title": "Internet services",
-                    "type": "array",
-                    "uniqueItems": True,
-                    "items": {"type": "string"},
-                    "default": ["monkey.guardicore.com", "www.google.com"],
-                    "description": "List of internet services to try and communicate with to "
-                    "determine internet"
-                    " connectivity (use either ip or domain)",
-                },
                 "self_delete_in_cleanup": {
                     "title": "Self delete on cleanup",
                     "type": "boolean",

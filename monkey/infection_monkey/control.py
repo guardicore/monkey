@@ -19,7 +19,7 @@ from common.common_consts.timeouts import (
     SHORT_REQUEST_TIMEOUT,
 )
 from infection_monkey.config import GUID, WormConfiguration
-from infection_monkey.network.info import check_internet_access, local_ips
+from infection_monkey.network.info import local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
 
@@ -40,7 +40,7 @@ class ControlClient(object):
     proxies = {}
 
     @staticmethod
-    def wakeup(parent=None, has_internet_access=None):
+    def wakeup(parent=None):
         if parent:
             LOG.debug("parent: %s" % (parent,))
 
@@ -48,15 +48,11 @@ class ControlClient(object):
         if not parent:
             parent = GUID
 
-        if has_internet_access is None:
-            has_internet_access = check_internet_access(WormConfiguration.internet_services)
-
         monkey = {
             "guid": GUID,
             "hostname": hostname,
             "ip_addresses": local_ips(),
             "description": " ".join(platform.uname()),
-            "internet_access": has_internet_access,
             "config": WormConfiguration.as_dict(),
             "parent": parent,
             "launch_time": str(datetime.now().strftime(DEFAULT_TIME_FORMAT)),
