@@ -10,6 +10,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Misaligned buttons and input fields on exploiter and network configuration
   pages. #1353
 - Credentials shown in plain text on configuration screens. #1183
+- Typo "trough" -> "through" in telemetry and docstring.
 
 ## [1.11.0] - 2021-08-13
 ### Added

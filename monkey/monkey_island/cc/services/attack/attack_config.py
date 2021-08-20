@@ -94,7 +94,7 @@ class AttackConfig(object):
     @staticmethod
     def r_set_booleans(path, value, attack_techniques, monkey_config):
         """
-        Recursively walks trough monkey configuration (DFS) to find which boolean fields needs to
+        Recursively walks through monkey configuration (DFS) to find which boolean fields needs to
         be set and sets them
         according to ATT&CK matrix.
         :param path: Property names that leads to current value. E.g. ['monkey', 'system_info',
