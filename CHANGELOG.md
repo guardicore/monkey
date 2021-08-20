@@ -5,6 +5,10 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Fixed
+- Credentials shown in plain text on configuration screens. #1183
+
 ## [1.11.0] - 2021-08-13
 ### Added
 - A runtime-configurable option to specify a data directory where runtime
