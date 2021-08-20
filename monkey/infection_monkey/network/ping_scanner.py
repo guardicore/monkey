@@ -38,18 +38,27 @@ class PingScanner(HostScanner, HostFinger):
         )
 
     def get_host_fingerprint(self, host):
-
         timeout = self._config.ping_scan_timeout
         if not "win32" == sys.platform:
             timeout /= 1000
 
+        ping_cmd = ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr]
+        LOG.debug(f"Running ping command: {' '.join(ping_cmd)}")
+
+        # If stdout is not connected to a terminal (i.e. redirected to a pipe or file), the result
+        # of os.device_encoding(1) will be None. Setting errors="backslashreplace" prevents a crash
+        # in this case. See #1175 and #1403 for more information.
+        encoding = os.device_encoding(1)
         sub_proc = subprocess.Popen(
-            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            ping_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding=encoding,
+            errors="backslashreplace",
         )
 
+        LOG.debug(f"Retrieving ping command output using {encoding} encoding")
         output = " ".join(sub_proc.communicate())
         regex_result = self._ttl_regex.search(output)
         if regex_result:
