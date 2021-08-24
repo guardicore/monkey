@@ -8,16 +8,16 @@ export function powershellIssueOverview() {
 export function powershellIssueReport(issue) {
     return (
       <>
-        Restrict powershell remote command execution and/or
+        Restrict PowerShell remote command execution and/or
         harden the credentials of relevant users.
         <CollapsibleWellComponent>
           The machine <span className="badge badge-primary">{issue.machine}</span> (<span
           className="badge badge-info" style={{margin: '2px'}}>{issue.ip_address}</span>) was
           exploited via <span
-          className="badge badge-danger">Powershell remoting</span>.
+          className="badge badge-danger">PowerShell Remoting</span>.
           <br/>
           The attack was made possible because the target machine had
-          Powershell remoting enabled and Monkey
+          PowerShell Remoting enabled and Monkey
           had access to correct credentials.
         </CollapsibleWellComponent>
       </>

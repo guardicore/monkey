@@ -143,7 +143,7 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.REPORT]: shellShockIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
-      'PowershellExploiter': {
+      'PowerShellExploiter': {
         [this.issueContentTypes.OVERVIEW]: powershellIssueOverview,
         [this.issueContentTypes.REPORT]: powershellIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
