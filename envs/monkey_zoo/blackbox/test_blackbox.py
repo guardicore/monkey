@@ -55,14 +55,14 @@ def GCPHandler(request, no_gcp):
     if not no_gcp:
         try:
             GCPHandler = gcp_machine_handlers.GCPHandler()
-            GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
+            GCPHandler.start_machines(GCP_TEST_MACHINE_LIST)
         except Exception as e:
             LOGGER.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
         def fin():
-            GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
+            GCPHandler.stop_machines(GCP_TEST_MACHINE_LIST)
 
         request.addfinalizer(fin)
 

@@ -13,15 +13,12 @@ class GCPHandler(object):
 
     # Key path location relative to this file's directory
     RELATIVE_KEY_PATH = "../../gcp_keys/gcp_key.json"
-    DEFAULT_ZONE = "europe-west3-a"
     DEFAULT_PROJECT = "guardicore-22050661"
 
     def __init__(
         self,
-        zone=DEFAULT_ZONE,
         project_id=DEFAULT_PROJECT,
     ):
-        self.zone = zone
         abs_key_path = GCPHandler.get_absolute_key_path()
 
         subprocess.call(GCPHandler.get_auth_command(abs_key_path), shell=True)  # noqa: DUO116
@@ -43,26 +40,31 @@ class GCPHandler(object):
             )
         return absolute_key_path
 
-    def start_machines(self, machine_list):
+    @staticmethod
+    def start_machines(machine_list):
         """
         Start all the machines in the list.
-        :param machine_list: A space-separated string with all the machine names. Example:
-        start_machines(`" ".join(["elastic-3", "mssql-16"])`)
+        :param machine_list: A dictionary with zone and machines per zone.
         """
         LOGGER.info("Setting up all GCP machines...")
         try:
-            subprocess.call(  # noqa: DUO116
-                (GCPHandler.MACHINE_STARTING_COMMAND % (machine_list, self.zone)), shell=True
-            )
+            for zone in machine_list:
+                subprocess.call(  # noqa: DUO116
+                    (GCPHandler.MACHINE_STARTING_COMMAND % (" ".join(machine_list[zone]), zone)),
+                    shell=True,
+                )
             LOGGER.info("GCP machines successfully started.")
         except Exception as e:
             LOGGER.error("GCP Handler failed to start GCP machines: %s" % e)
 
-    def stop_machines(self, machine_list):
+    @staticmethod
+    def stop_machines(machine_list):
         try:
-            subprocess.call(  # noqa: DUO116
-                (GCPHandler.MACHINE_STOPPING_COMMAND % (machine_list, self.zone)), shell=True
-            )
+            for zone in machine_list:
+                subprocess.call(  # noqa: DUO116
+                    (GCPHandler.MACHINE_STOPPING_COMMAND % (" ".join(machine_list[zone]), zone)),
+                    shell=True,
+                )
             LOGGER.info("GCP machines stopped successfully.")
         except Exception as e:
             LOGGER.error("GCP Handler failed to stop network machines: %s" % e)
