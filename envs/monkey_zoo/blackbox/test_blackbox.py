@@ -13,6 +13,7 @@ from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
+from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
 from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
@@ -155,6 +156,11 @@ class TestMonkeyBlackbox:
 
     def test_mssql_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Mssql, "MSSQL_exploiter")
+
+    def test_powershell_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, PowerShell, "PowerShell_Remoting_exploiter"
+        )
 
     def test_smb_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
