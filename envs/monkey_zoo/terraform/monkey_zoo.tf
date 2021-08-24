@@ -313,33 +313,33 @@ resource "google_compute_instance_from_template" "mssql-16" {
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-3-47" {
-  name = "${local.resource_prefix}powershell-3-47"
+resource "google_compute_instance_from_template" "powershell-3-46" {
+  name = "${local.resource_prefix}powershell-3-46"
   source_instance_template = local.default_windows
   boot_disk{
     initialize_params {
-      image = data.google_compute_image.powershell-3-47.self_link
+      image = data.google_compute_image.powershell-3-46.self_link
     }
     auto_delete = true
   }
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
-    network_ip="10.2.3.47"
+    network_ip="10.2.3.46"
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-45" {
-  name = "${local.resource_prefix}powershell-45"
+resource "google_compute_instance_from_template" "powershell-3-45" {
+  name = "${local.resource_prefix}powershell-3-45"
   source_instance_template = local.default_windows
   boot_disk{
     initialize_params {
-      image = data.google_compute_image.powershell-45.self_link
+      image = data.google_compute_image.powershell-3-45.self_link
     }
     auto_delete = true
   }
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.45"
+    network_ip="10.2.3.45"
   }
 }
 

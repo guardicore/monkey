@@ -10,7 +10,6 @@ class Performance(ConfigTemplate):
             "3Q=(Ge(+&w]*",
             "`))jU7L(w}",
             "t67TC5ZDmz",
-            "Passw0rd!",
         ],
         "basic.credentials.exploit_user_list": ["m0nk3y"],
         "basic.exploiters.exploiter_classes": [
@@ -60,7 +59,5 @@ class Performance(ConfigTemplate):
             "10.2.2.23",
             "10.2.2.24",
             "10.2.2.25",
-            "10.2.2.45",
-            "10.2.3.47",
         ],
     }

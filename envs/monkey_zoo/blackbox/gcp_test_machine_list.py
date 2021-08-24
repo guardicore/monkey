@@ -7,7 +7,7 @@ GCP_TEST_MACHINE_LIST = {
         "hadoop-2",
         "hadoop-3",
         "mssql-16",
-        "powershell-45",
+        "powershell-3-45",
         "mimikatz-14",
         "mimikatz-15",
         "struts2-23",
@@ -23,6 +23,7 @@ GCP_TEST_MACHINE_LIST = {
         "drupal-28",
     ],
     "europe-west1-b": [
-        "powershell-3-47",
+        "powershell-3-45",
+        "powershell-3-46",
     ],
 }

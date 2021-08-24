@@ -10,8 +10,8 @@ class PowerShell(ConfigTemplate):
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": ["PowerShellExploiter"],
-            "basic_network.scope.subnet_scan_list": ["10.2.2.45", "10.2.3.47"],
-            "basic.credentials.exploit_password_list": ["Passw0rd!", ""],
+            "basic_network.scope.subnet_scan_list": ["10.2.3.45", "10.2.3.46"],
+            "basic.credentials.exploit_password_list": ["Passw0rd!"],
             "basic_network.scope.depth": 2,
             "basic.credentials.exploit_user_list": ["m0nk3y", "m0nk3y-user"],
             "internal.classes.finger_classes": ["PingScanner"],
