@@ -109,6 +109,7 @@ _.version_string  # unused method (monkey/infection_monkey/transport/http.py:148
 _.version_string  # unused method (monkey/infection_monkey/transport/http.py:27)
 _.close_connection  # unused attribute (monkey/infection_monkey/transport/http.py:57)
 protocol_version  # unused variable (monkey/infection_monkey/transport/http.py:24)
+binaries  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-pypsrp.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.exploit.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.network.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.post_breach.actions.py:4)
