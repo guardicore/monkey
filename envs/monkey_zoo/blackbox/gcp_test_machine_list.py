@@ -7,7 +7,6 @@ GCP_TEST_MACHINE_LIST = {
         "hadoop-2",
         "hadoop-3",
         "mssql-16",
-        "powershell-3-45",
         "mimikatz-14",
         "mimikatz-15",
         "struts2-23",

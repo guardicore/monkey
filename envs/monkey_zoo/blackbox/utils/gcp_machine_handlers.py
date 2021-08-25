@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+from multiprocessing.dummy import Pool
 
 LOGGER = logging.getLogger(__name__)
 
@@ -44,24 +45,24 @@ def start_machines(machine_list):
     """
     LOGGER.info("Setting up all GCP machines...")
     try:
+        arglist = []
         for zone in machine_list:
-            subprocess.call(  # noqa: DUO116
-                (MACHINE_STARTING_COMMAND % (" ".join(machine_list[zone]), zone)),
-                shell=True,
-            )
-        LOGGER.info("GCP machines successfully started.")
+            arglist.append((MACHINE_STARTING_COMMAND, machine_list, zone))
+        with Pool(2) as pool:
+            pool.map(run_gcp_command, arglist)
+            LOGGER.info("GCP machines successfully started.")
     except Exception as e:
         LOGGER.error("GCP Handler failed to start GCP machines: %s" % e)
 
 
 def stop_machines(machine_list):
     try:
+        arglist = []
         for zone in machine_list:
-            subprocess.call(  # noqa: DUO116
-                (MACHINE_STOPPING_COMMAND % (" ".join(machine_list[zone]), zone)),
-                shell=True,
-            )
-        LOGGER.info("GCP machines stopped successfully.")
+            arglist.append((MACHINE_STOPPING_COMMAND, machine_list, zone))
+        with Pool(2) as pool:
+            pool.map(run_gcp_command, arglist)
+            LOGGER.info("GCP machines stopped successfully.")
     except Exception as e:
         LOGGER.error("GCP Handler failed to stop network machines: %s" % e)
 
@@ -72,3 +73,11 @@ def get_auth_command(key_path):
 
 def get_set_project_command(project):
     return SET_PROPERTY_PROJECT % project
+
+
+def run_gcp_command(arglist):
+    gcp_cmd, machine_list, zone = arglist
+    subprocess.call(  # noqa DUO116
+        (gcp_cmd % (" ".join(machine_list[zone]), zone)),
+        shell=True,
+    )
