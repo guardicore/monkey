@@ -6,11 +6,7 @@ class FailedExploitationError(Exception):
     """ Raise when exploiter fails instead of returning False """
 
 
-class CredentialsError(Exception):
-    """ Raise when credentials are wrong"""
-
-
-class InvalidRegistrationCredentialsError(CredentialsError):
+class InvalidRegistrationCredentialsError(Exception):
     """ Raise when server config file changed and island needs to restart """
 
 
