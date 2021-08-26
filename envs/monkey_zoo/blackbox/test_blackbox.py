@@ -13,6 +13,7 @@ from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
+from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
 from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
@@ -39,7 +40,11 @@ from envs.monkey_zoo.blackbox.tests.performance.report_generation_from_telemetri
 from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import (
     TelemetryPerformanceTest,
 )
-from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
+from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
+    initialize_gcp_client,
+    start_machines,
+    stop_machines,
+)
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 DEFAULT_TIMEOUT_SECONDS = 5 * 60
@@ -53,15 +58,15 @@ LOGGER = logging.getLogger(__name__)
 def GCPHandler(request, no_gcp):
     if not no_gcp:
         try:
-            GCPHandler = gcp_machine_handlers.GCPHandler()
-            GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
+            initialize_gcp_client()
+            start_machines(GCP_TEST_MACHINE_LIST)
         except Exception as e:
             LOGGER.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
         def fin():
-            GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
+            stop_machines(GCP_TEST_MACHINE_LIST)
 
         request.addfinalizer(fin)
 
@@ -155,6 +160,11 @@ class TestMonkeyBlackbox:
 
     def test_mssql_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Mssql, "MSSQL_exploiter")
+
+    def test_powershell_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, PowerShell, "PowerShell_Remoting_exploiter"
+        )
 
     def test_smb_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
