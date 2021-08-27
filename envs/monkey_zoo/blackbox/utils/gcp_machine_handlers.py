@@ -79,4 +79,3 @@ def run_gcp_pool(gcp_command, machine_list):
     arglist = [(gcp_command, machine_list[zone], zone) for zone in machine_list]
     with Pool(2) as pool:
         pool.map(run_gcp_command, arglist)
-
