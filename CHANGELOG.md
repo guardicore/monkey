@@ -22,6 +22,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Malfunctioning timestomping PBA. #1405
 - Malfunctioning shell startup script PBA. #1419
 
+### Security
+- Generate a random password when creating a new user for CommunicateAsNewUser PBA. #1434
+
 ## [1.11.0] - 2021-08-13
 ### Added
 - A runtime-configurable option to specify a data directory where runtime

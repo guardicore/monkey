@@ -10,6 +10,7 @@ from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.auto_new_user_factory import create_auto_new_user
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.new_user_error import NewUserError
+from infection_monkey.utils.random_password_generator import get_random_password
 
 INFECTION_MONKEY_WEBSITE_URL = "https://infectionmonkey.com/"
 
@@ -21,7 +22,6 @@ CREATED_PROCESS_AS_USER_FAILED_FORMAT = (
 )
 
 USERNAME_PREFIX = "somenewuser"
-PASSWORD = "N3WPa55W0rD!1"
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +29,8 @@ logger = logging.getLogger(__name__)
 class CommunicateAsNewUser(PBA):
     """
     This PBA creates a new user, and then creates HTTPS requests as that user. This is used for a
-    Zero Trust test of the
-    People pillar. See the relevant telemetry processing to see what findings are created.
+    Zero Trust test of the People pillar. See the relevant telemetry processing to see what findings
+    are created.
     """
 
     def __init__(self):
@@ -39,7 +39,8 @@ class CommunicateAsNewUser(PBA):
     def run(self):
         username = CommunicateAsNewUser.get_random_new_user_name()
         try:
-            with create_auto_new_user(username, PASSWORD) as new_user:
+            password = get_random_password()
+            with create_auto_new_user(username, password) as new_user:
                 http_request_commandline = CommunicateAsNewUser.get_commandline_for_http_request(
                     INFECTION_MONKEY_WEBSITE_URL
                 )
