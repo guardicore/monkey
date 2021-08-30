@@ -70,10 +70,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve runtime of some unit tests. #1125
 - Run curl OR wget (not both) when attempting to communicate as a new user on
   Linux. #1407
+- Renamed Communicate as new user to Communicate as backdoor user. #1433
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
 - Island logger config and --logger-config CLI option. #1151
+- Backdoor user post breach action. #1433
 
 ### Fixed
 - Attempt to delete a directory when monkey config reset was called. #1054

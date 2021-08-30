@@ -67,7 +67,7 @@ MONKEY = {
                     "uniqueItems": True,
                     "items": {"$ref": "#/definitions/post_breach_actions"},
                     "default": [
-                        "CommunicateAsNewUser",
+                        "CommunicateAsBackdoorUser",
                         "ModifyShellStartupFiles",
                         "HiddenFiles",
                         "TrapCommand",

@@ -18,8 +18,8 @@ EVENTS = [
         timestamp=datetime.strptime("2021-01-19 12:07:17.802138", "%Y-%m-%d %H:%M:%S.%f"),
     ),
     Event.create_event(
-        title="Communicate as new user",
-        message="Monkey on gc-pc-244 couldn't communicate as new user. "
+        title="Communicate as backdoor user",
+        message="Monkey on gc-pc-244 couldn't communicate as backdoor user. "
         "Details: System error 5 has occurred. Access is denied.",
         event_type="monkey_network",
         timestamp=datetime.strptime("2021-01-19 12:22:42.246020", "%Y-%m-%d %H:%M:%S.%f"),
@@ -28,7 +28,7 @@ EVENTS = [
 
 TESTS = [
     zero_trust_consts.TEST_ENDPOINT_SECURITY_EXISTS,
-    zero_trust_consts.TEST_COMMUNICATE_AS_NEW_USER,
+    zero_trust_consts.TEST_COMMUNICATE_AS_BACKDOOR_USER,
 ]
 
 STATUS = [

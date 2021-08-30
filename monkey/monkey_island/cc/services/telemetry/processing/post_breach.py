@@ -1,16 +1,16 @@
 import copy
 
-from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
+from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_new_user import (
+from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_backdoor_user import (
     check_new_user_communication,
 )
 
 EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 
-def process_communicate_as_new_user_telemetry(telemetry_json):
+def process_communicate_as_backdoor_user_telemetry(telemetry_json):
     current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
     message = telemetry_json["data"]["result"][0]
     success = telemetry_json["data"]["result"][1]
@@ -18,7 +18,7 @@ def process_communicate_as_new_user_telemetry(telemetry_json):
 
 
 POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
-    POST_BREACH_COMMUNICATE_AS_NEW_USER: process_communicate_as_new_user_telemetry,
+    POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER: process_communicate_as_backdoor_user_telemetry,
 }
 
 

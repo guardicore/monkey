@@ -7,8 +7,8 @@ POST_BREACH_ACTIONS = {
     "anyOf": [
         {
             "type": "string",
-            "enum": ["CommunicateAsNewUser"],
-            "title": "Communicate as new user",
+            "enum": ["CommunicateAsBackdoorUser"],
+            "title": "Communicate as backdoor user",
             "safe": True,
             "info": "Attempts to create a new user, create HTTPS requests as that "
             "user and delete the user "
