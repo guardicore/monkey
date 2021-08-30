@@ -40,7 +40,7 @@ SCHEMA = {
                     "depends_on": ["T1210"],
                 },
                 "T1086": {
-                    "title": "Powershell",
+                    "title": "PowerShell",
                     "type": "bool",
                     "value": True,
                     "necessary": True,

