@@ -4,7 +4,7 @@ import shutil
 import string
 import subprocess
 
-from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_NEW_USER
+from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.auto_new_user_factory import create_auto_new_user
@@ -26,7 +26,7 @@ USERNAME_PREFIX = "somenewuser"
 logger = logging.getLogger(__name__)
 
 
-class CommunicateAsNewUser(PBA):
+class CommunicateAsBackdoorUser(PBA):
     """
     This PBA creates a new user, and then creates HTTPS requests as that user. This is used for a
     Zero Trust test of the People pillar. See the relevant telemetry processing to see what findings
@@ -34,14 +34,16 @@ class CommunicateAsNewUser(PBA):
     """
 
     def __init__(self):
-        super(CommunicateAsNewUser, self).__init__(name=POST_BREACH_COMMUNICATE_AS_NEW_USER)
+        super(CommunicateAsBackdoorUser, self).__init__(
+            name=POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
+        )
 
     def run(self):
-        username = CommunicateAsNewUser.get_random_new_user_name()
+        username = CommunicateAsBackdoorUser.get_random_new_user_name()
         try:
             password = get_random_password()
             with create_auto_new_user(username, password) as new_user:
-                http_request_commandline = CommunicateAsNewUser.get_commandline_for_http_request(
+                http_request_commandline = CommunicateAsBackdoorUser.get_commandline_for_http_request(
                     INFECTION_MONKEY_WEBSITE_URL
                 )
                 exit_status = new_user.run_as(http_request_commandline)
