@@ -6,11 +6,16 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Changed
+- The name of the "Communicate as new user" post-breach action to "Communicate
+  as backdoor user". #1410
+
 ### Removed
 - Internet access check on agent start. #1402
 - The "internal.monkey.internet_services" configuration option that enabled
   internet access checks. #1402
 - Disused traceroute binaries. #1397
+- "Back door user" post-breach action. #1410
 
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration
@@ -70,13 +75,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve runtime of some unit tests. #1125
 - Run curl OR wget (not both) when attempting to communicate as a new user on
   Linux. #1407
-- The name of the "Communicate as new user" post-breach action to "Communicate
-  as backdoor user". #1410
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
 - Island logger config and --logger-config CLI option. #1151
-- "Back door user" post-breach action. #1410
 
 ### Fixed
 - Attempt to delete a directory when monkey config reset was called. #1054
