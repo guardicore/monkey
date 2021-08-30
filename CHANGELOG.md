@@ -42,7 +42,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Select Logger configuration at runtime. #971
 - Select `mongo_key.bin` file location at runtime. #994
 - Store Monkey agents in the configurable data_dir when monkey is "run from the
-7
+- island". #997
 - Reformat all code using black. #1070
 - Sort all imports using isort. #1081
 - Address all flake8 issues. #1071
@@ -70,7 +70,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve runtime of some unit tests. #1125
 - Run curl OR wget (not both) when attempting to communicate as a new user on
   Linux. #1407
-- Renamed "Communicate as new user" post-breach action to "Communicate as backdoor user". #1410
+- The name of the "Communicate as new user" post-breach action to "Communicate
+  as backdoor user". #1410
 
 ### Removed
 - Relevant dead code as reported by Vulture. #1149
