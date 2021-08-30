@@ -175,7 +175,6 @@
         "PBA_windows_filename": "",
         "PBA_linux_filename": "",
         "post_breach_actions": [
-          "BackdoorUser",
           "CommunicateAsNewUser",
           "ModifyShellStartupFiles",
           "HiddenFiles",

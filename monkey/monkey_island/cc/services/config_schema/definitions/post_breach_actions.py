@@ -7,14 +7,6 @@ POST_BREACH_ACTIONS = {
     "anyOf": [
         {
             "type": "string",
-            "enum": ["BackdoorUser"],
-            "title": "Back door user",
-            "safe": True,
-            "info": "Attempts to create a new user on the system and delete it afterwards.",
-            "attack_techniques": ["T1136"],
-        },
-        {
-            "type": "string",
             "enum": ["CommunicateAsNewUser"],
             "title": "Communicate as new user",
             "safe": True,
