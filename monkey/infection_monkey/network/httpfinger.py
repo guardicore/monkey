@@ -3,7 +3,7 @@ import logging
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class HTTPFinger(HostFinger):
@@ -41,11 +41,11 @@ class HTTPFinger(HostFinger):
                         self.init_service(host.services, ("tcp-" + port[1]), port[0])
                         host.services["tcp-" + port[1]]["name"] = "http"
                         host.services["tcp-" + port[1]]["data"] = (server, ssl)
-                        LOG.info("Port %d is open on host %s " % (port[0], host))
+                        logger.info("Port %d is open on host %s " % (port[0], host))
                         break  # https will be the same on the same port
                 except Timeout:
-                    LOG.debug(f"Timout while requesting headers from {url}")
+                    logger.debug(f"Timout while requesting headers from {url}")
                 except ConnectionError:  # Someone doesn't like us
-                    LOG.debug(f"Connection error while requesting headers from {url}")
+                    logger.debug(f"Connection error while requesting headers from {url}")
 
         return True

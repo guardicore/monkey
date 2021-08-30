@@ -10,7 +10,7 @@ from infection_monkey.network.info import get_free_tcp_port, local_ips
 from infection_monkey.network.tools import check_tcp_port, get_interface_to_target
 from infection_monkey.transport.base import get_last_serve_time
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 MCAST_GROUP = "224.1.1.1"
 MCAST_PORT = 5007
@@ -38,10 +38,10 @@ def _check_tunnel(address, port, existing_sock=None):
     else:
         sock = existing_sock
 
-    LOG.debug("Checking tunnel %s:%s", address, port)
+    logger.debug("Checking tunnel %s:%s", address, port)
     is_open, _ = check_tcp_port(address, int(port))
     if not is_open:
-        LOG.debug("Could not connect to %s:%s", address, port)
+        logger.debug("Could not connect to %s:%s", address, port)
         if not existing_sock:
             sock.close()
         return False
@@ -49,7 +49,7 @@ def _check_tunnel(address, port, existing_sock=None):
     try:
         sock.sendto(b"+", (address, MCAST_PORT))
     except Exception as exc:
-        LOG.debug("Caught exception in tunnel registration: %s", exc)
+        logger.debug("Caught exception in tunnel registration: %s", exc)
 
     if not existing_sock:
         sock.close()
@@ -68,7 +68,7 @@ def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
     for adapter in l_ips:
         for attempt in range(0, attempts):
             try:
-                LOG.info("Trying to find using adapter %s", adapter)
+                logger.info("Trying to find using adapter %s", adapter)
                 sock = _set_multicast_socket(timeout, adapter)
                 sock.sendto(b"?", (MCAST_GROUP, MCAST_PORT))
                 tunnels = []
@@ -92,7 +92,7 @@ def find_tunnel(default=None, attempts=3, timeout=DEFAULT_TIMEOUT):
                             return address, port
 
             except Exception as exc:
-                LOG.debug("Caught exception in tunnel lookup: %s", exc)
+                logger.debug("Caught exception in tunnel lookup: %s", exc)
                 continue
 
     return None
@@ -103,9 +103,9 @@ def quit_tunnel(address, timeout=DEFAULT_TIMEOUT):
         sock = _set_multicast_socket(timeout)
         sock.sendto(b"-", (address, MCAST_PORT))
         sock.close()
-        LOG.debug("Success quitting tunnel")
+        logger.debug("Success quitting tunnel")
     except Exception as exc:
-        LOG.debug("Exception quitting tunnel: %s", exc)
+        logger.debug("Exception quitting tunnel: %s", exc)
         return
 
 
@@ -132,13 +132,13 @@ class MonkeyTunnel(Thread):
             return
 
         if not firewall.listen_allowed(localport=self.local_port):
-            LOG.info("Machine firewalled, listen not allowed, not running tunnel.")
+            logger.info("Machine firewalled, listen not allowed, not running tunnel.")
             return
 
         proxy = self._proxy_class(
             local_port=self.local_port, dest_host=self._target_addr, dest_port=self._target_port
         )
-        LOG.info(
+        logger.info(
             "Running tunnel using proxy class: %s, listening on port %s, routing to: %s:%s",
             proxy.__class__.__name__,
             self.local_port,
@@ -154,22 +154,22 @@ class MonkeyTunnel(Thread):
                     ip_match = get_interface_to_target(address[0])
                     if ip_match:
                         answer = "%s:%d" % (ip_match, self.local_port)
-                        LOG.debug(
+                        logger.debug(
                             "Got tunnel request from %s, answering with %s", address[0], answer
                         )
                         self._broad_sock.sendto(answer.encode(), (address[0], MCAST_PORT))
                 elif b"+" == search:
                     if not address[0] in self._clients:
-                        LOG.debug("Tunnel control: Added %s to watchlist", address[0])
+                        logger.debug("Tunnel control: Added %s to watchlist", address[0])
                         self._clients.append(address[0])
                 elif b"-" == search:
-                    LOG.debug("Tunnel control: Removed %s from watchlist", address[0])
+                    logger.debug("Tunnel control: Removed %s from watchlist", address[0])
                     self._clients = [client for client in self._clients if client != address[0]]
 
             except socket.timeout:
                 continue
 
-        LOG.info("Stopping tunnel, waiting for clients: %s" % repr(self._clients))
+        logger.info("Stopping tunnel, waiting for clients: %s" % repr(self._clients))
 
         # wait till all of the tunnel clients has been disconnected, or no one used the tunnel in
         # QUIT_TIMEOUT seconds
@@ -177,12 +177,12 @@ class MonkeyTunnel(Thread):
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
                 if b"-" == search:
-                    LOG.debug("Tunnel control: Removed %s from watchlist", address[0])
+                    logger.debug("Tunnel control: Removed %s from watchlist", address[0])
                     self._clients = [client for client in self._clients if client != address[0]]
             except socket.timeout:
                 continue
 
-        LOG.info("Closing tunnel")
+        logger.info("Closing tunnel")
         self._broad_sock.close()
         proxy.stop()
         proxy.join()

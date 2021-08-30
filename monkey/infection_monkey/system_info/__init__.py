@@ -10,7 +10,7 @@ from infection_monkey.system_info.azure_cred_collector import AzureCollector
 from infection_monkey.system_info.netstat_collector import NetstatCollector
 from infection_monkey.system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # Linux doesn't have WindowsError
 try:
@@ -76,7 +76,7 @@ class InfoCollector(object):
         containing host ip and the subnet range
         :return: None. Updates class information
         """
-        LOG.debug("Reading subnets")
+        logger.debug("Reading subnets")
         self.info["network_info"] = {
             "networks": get_host_subnets(),
             "netstat": NetstatCollector.get_netstat_info(),
@@ -94,7 +94,7 @@ class InfoCollector(object):
 
             if AZURE_CRED_COLLECTOR not in WormConfiguration.system_info_collector_classes:
                 return
-            LOG.debug("Harvesting creds if on an Azure machine")
+            logger.debug("Harvesting creds if on an Azure machine")
             azure_collector = AzureCollector()
             if "credentials" not in self.info:
                 self.info["credentials"] = {}
@@ -114,4 +114,4 @@ class InfoCollector(object):
         except Exception:
             # If we failed to collect azure info, no reason to fail all the collection. Log and
             # continue.
-            LOG.error("Failed collecting Azure info.", exc_info=True)
+            logger.error("Failed collecting Azure info.", exc_info=True)

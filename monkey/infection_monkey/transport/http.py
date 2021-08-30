@@ -15,7 +15,7 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 
-LOG = getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
@@ -105,7 +105,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         return f, start_range, end_range
 
     def log_message(self, format_string, *args):
-        LOG.debug(
+        logger.debug(
             "FileServHTTPRequestHandler: %s - - [%s] %s"
             % (self.address_string(), self.log_date_time_string(), format_string % args)
         )
@@ -118,7 +118,7 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
         try:
             content_length = int(self.headers["Content-Length"])
             post_data = self.rfile.read(content_length).decode()
-            LOG.info("Received bootloader's request: {}".format(post_data))
+            logger.info("Received bootloader's request: {}".format(post_data))
             try:
                 dest_path = self.path
                 r = requests.post(  # noqa: DUO123
@@ -130,21 +130,21 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
                 )
                 self.send_response(r.status_code)
             except requests.exceptions.ConnectionError as e:
-                LOG.error("Couldn't forward request to the island: {}".format(e))
+                logger.error("Couldn't forward request to the island: {}".format(e))
                 self.send_response(404)
             except Exception as e:
-                LOG.error("Failed to forward bootloader request: {}".format(e))
+                logger.error("Failed to forward bootloader request: {}".format(e))
             finally:
                 self.end_headers()
                 self.wfile.write(r.content)
         except Exception as e:
-            LOG.error("Failed receiving bootloader telemetry: {}".format(e))
+            logger.error("Failed receiving bootloader telemetry: {}".format(e))
 
     def version_string(self):
         return ""
 
     def do_CONNECT(self):
-        LOG.info("Received a connect request!")
+        logger.info("Received a connect request!")
         # just provide a tunnel, transfer the data with no modification
         req = self
         req.path = "https://%s/" % req.path.replace(":443", "")
@@ -154,7 +154,7 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
         try:
             conn = socket.create_connection(address)
         except socket.error as e:
-            LOG.debug(
+            logger.debug(
                 "HTTPConnectProxyHandler: Got exception while trying to connect to %s: %s"
                 % (repr(address), e)
             )
@@ -181,7 +181,7 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
         conn.close()
 
     def log_message(self, format_string, *args):
-        LOG.debug(
+        logger.debug(
             "HTTPConnectProxyHandler: %s - [%s] %s"
             % (self.address_string(), self.log_date_time_string(), format_string % args)
         )
@@ -206,7 +206,7 @@ class HTTPServer(threading.Thread):
 
             @staticmethod
             def report_download(dest=None):
-                LOG.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
+                logger.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
                 TempHandler.T1105Telem(
                     TempHandler.ScanStatus.USED,
                     get_interface_to_target(dest[0]),
@@ -263,7 +263,7 @@ class LockedHTTPServer(threading.Thread):
 
             @staticmethod
             def report_download(dest=None):
-                LOG.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
+                logger.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
                 TempHandler.T1105Telem(
                     TempHandler.ScanStatus.USED,
                     get_interface_to_target(dest[0]),

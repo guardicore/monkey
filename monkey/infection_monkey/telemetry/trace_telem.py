@@ -3,7 +3,7 @@ import logging
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TraceTelem(BaseTelem):
@@ -14,7 +14,7 @@ class TraceTelem(BaseTelem):
         """
         super(TraceTelem, self).__init__()
         self.msg = msg
-        LOG.debug("Trace: %s" % msg)
+        logger.debug("Trace: %s" % msg)
 
     telem_category = TelemCategoryEnum.TRACE
 

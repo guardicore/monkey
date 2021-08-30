@@ -11,7 +11,7 @@ from infection_monkey.network.HostFinger import HostFinger
 
 ES_PORT = 9200
 ES_HTTP_TIMEOUT = 5
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ElasticFinger(HostFinger):
@@ -40,9 +40,9 @@ class ElasticFinger(HostFinger):
                 host.services[ES_SERVICE]["version"] = data["version"]["number"]
                 return True
         except Timeout:
-            LOG.debug("Got timeout while trying to read header information")
+            logger.debug("Got timeout while trying to read header information")
         except ConnectionError:  # Someone doesn't like us
-            LOG.debug("Unknown connection error")
+            logger.debug("Unknown connection error")
         except KeyError:
-            LOG.debug("Failed parsing the ElasticSearch JSOn response")
+            logger.debug("Failed parsing the ElasticSearch JSOn response")
         return False

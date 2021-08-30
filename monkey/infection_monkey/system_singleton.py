@@ -5,7 +5,7 @@ from abc import ABCMeta, abstractmethod
 
 from infection_monkey.config import WormConfiguration
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class _SystemSingleton(object, metaclass=ABCMeta):
@@ -32,16 +32,18 @@ class WindowsSystemSingleton(_SystemSingleton):
         last_error = ctypes.windll.kernel32.GetLastError()
 
         if not handle:
-            LOG.error(
+            logger.error(
                 "Cannot acquire system singleton %r, unknown error %d", self._mutex_name, last_error
             )
             return False
         if winerror.ERROR_ALREADY_EXISTS == last_error:
-            LOG.debug("Cannot acquire system singleton %r, mutex already exist", self._mutex_name)
+            logger.debug(
+                "Cannot acquire system singleton %r, mutex already exist", self._mutex_name
+            )
             return False
 
         self._mutex_handle = handle
-        LOG.debug("Global singleton mutex %r acquired", self._mutex_name)
+        logger.debug("Global singleton mutex %r acquired", self._mutex_name)
 
         return True
 
@@ -64,7 +66,7 @@ class LinuxSystemSingleton(_SystemSingleton):
         try:
             sock.bind("\0" + self._unix_sock_name)
         except socket.error as e:
-            LOG.error(
+            logger.error(
                 "Cannot acquire system singleton %r, error code %d, error: %s",
                 self._unix_sock_name,
                 e.args[0],
@@ -74,7 +76,7 @@ class LinuxSystemSingleton(_SystemSingleton):
 
         self._sock_handle = sock
 
-        LOG.debug("Global singleton mutex %r acquired", self._unix_sock_name)
+        logger.debug("Global singleton mutex %r acquired", self._unix_sock_name)
 
         return True
 

@@ -10,8 +10,8 @@ sys.coinit_flags = 0  # needed for proper destruction of the wmi python module
 import infection_monkey.config  # noqa: E402
 from infection_monkey.system_info import InfoCollector  # noqa: E402
 
-LOG = logging.getLogger(__name__)
-LOG.info("started windows info collector")
+logger = logging.getLogger(__name__)
+logger.info("started windows info collector")
 
 
 class WindowsInfoCollector(InfoCollector):
@@ -30,7 +30,7 @@ class WindowsInfoCollector(InfoCollector):
         Tries to read credential secrets using mimikatz
         :return: Dict of system information
         """
-        LOG.debug("Running Windows collector")
+        logger.debug("Running Windows collector")
         super(WindowsInfoCollector, self).get_info()
         # TODO: Think about returning self.get_wmi_info()
         from infection_monkey.config import WormConfiguration
@@ -41,15 +41,15 @@ class WindowsInfoCollector(InfoCollector):
         return self.info
 
     def get_mimikatz_info(self):
-        LOG.info("Gathering mimikatz info")
+        logger.info("Gathering mimikatz info")
         try:
             credentials = MimikatzCredentialCollector.get_creds()
             if credentials:
                 if "credentials" in self.info:
                     self.info["credentials"].update(credentials)
                 self.info["mimikatz"] = credentials
-                LOG.info("Mimikatz info gathered successfully")
+                logger.info("Mimikatz info gathered successfully")
             else:
-                LOG.info("No mimikatz info was gathered")
+                logger.info("No mimikatz info was gathered")
         except Exception as e:
-            LOG.info(f"Mimikatz credential collector failed: {e}")
+            logger.info(f"Mimikatz credential collector failed: {e}")

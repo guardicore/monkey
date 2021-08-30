@@ -7,7 +7,7 @@ from infection_monkey.ransomware.ransomware_config import RansomwareConfig
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class RansomwarePayload:
@@ -30,7 +30,7 @@ class RansomwarePayload:
         if not self._config.target_directory:
             return
 
-        LOG.info("Running ransomware payload")
+        logger.info("Running ransomware payload")
 
         if self._config.encryption_enabled:
             file_list = self._find_files()
@@ -40,19 +40,19 @@ class RansomwarePayload:
             self._leave_readme(README_SRC, self._config.target_directory / README_FILE_NAME)
 
     def _find_files(self) -> List[Path]:
-        LOG.info(f"Collecting files in {self._config.target_directory}")
+        logger.info(f"Collecting files in {self._config.target_directory}")
         return sorted(self._select_files(self._config.target_directory))
 
     def _encrypt_files(self, file_list: List[Path]):
-        LOG.info(f"Encrypting files in {self._config.target_directory}")
+        logger.info(f"Encrypting files in {self._config.target_directory}")
 
         for filepath in file_list:
             try:
-                LOG.debug(f"Encrypting {filepath}")
+                logger.debug(f"Encrypting {filepath}")
                 self._encrypt_file(filepath)
                 self._send_telemetry(filepath, True, "")
             except Exception as ex:
-                LOG.warning(f"Error encrypting {filepath}: {ex}")
+                logger.warning(f"Error encrypting {filepath}: {ex}")
                 self._send_telemetry(filepath, False, str(ex))
 
     def _send_telemetry(self, filepath: Path, success: bool, error: str):

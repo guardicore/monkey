@@ -11,7 +11,7 @@ from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 DIR_CHANGE_WINDOWS = "cd %s & "
@@ -78,7 +78,7 @@ class UsersPBA(PBA):
 
         status = None
         if not pba_file_contents or not pba_file_contents.content:
-            LOG.error("Island didn't respond with post breach file.")
+            logger.error("Island didn't respond with post breach file.")
             status = ScanStatus.SCANNED
 
         if not status:
@@ -99,5 +99,5 @@ class UsersPBA(PBA):
                 written_PBA_file.write(pba_file_contents.content)
             return True
         except IOError as e:
-            LOG.error("Can not upload post breach file to target machine: %s" % e)
+            logger.error("Can not upload post breach file to target machine: %s" % e)
             return False

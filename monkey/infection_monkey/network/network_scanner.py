@@ -9,7 +9,7 @@ from infection_monkey.network.info import get_interfaces_ranges, local_ips
 from infection_monkey.network.ping_scanner import PingScanner
 from infection_monkey.network.tcp_scanner import TcpScanner
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 ITERATION_BLOCK_SIZE = 5
 
@@ -31,7 +31,7 @@ class NetworkScanner(object):
         if not self._ip_addresses:
             raise Exception("Cannot find local IP address for the machine")
 
-        LOG.info("Found local IP addresses of the machine: %r", self._ip_addresses)
+        logger.info("Found local IP addresses of the machine: %r", self._ip_addresses)
         # for fixed range, only scan once.
         self._ranges = [
             NetworkRange.get_range_obj(address_str=x) for x in WormConfiguration.subnet_scan_list
@@ -39,7 +39,7 @@ class NetworkScanner(object):
         if WormConfiguration.local_network_scan:
             self._ranges += get_interfaces_ranges()
         self._ranges += self._get_inaccessible_subnets_ips()
-        LOG.info("Base local networks to scan are: %r", self._ranges)
+        logger.info("Base local networks to scan are: %r", self._ranges)
 
     def _get_inaccessible_subnets_ips(self):
         """
@@ -91,22 +91,22 @@ class NetworkScanner(object):
 
         victims_count = 0
         for victim_chunk in victim_generator.generate_victims(ITERATION_BLOCK_SIZE):
-            LOG.debug("Scanning for potential victims in chunk %r", victim_chunk)
+            logger.debug("Scanning for potential victims in chunk %r", victim_chunk)
 
             # check before running scans
             if stop_callback and stop_callback():
-                LOG.debug("Got stop signal")
+                logger.debug("Got stop signal")
                 return
 
             results = pool.map(self.scan_machine, victim_chunk)
             resulting_victims = [x for x in results if x is not None]
             for victim in resulting_victims:
-                LOG.debug("Found potential victim: %r", victim)
+                logger.debug("Found potential victim: %r", victim)
                 victims_count += 1
                 yield victim
 
                 if victims_count >= max_find:
-                    LOG.debug("Found max needed victims (%d), stopping scan", max_find)
+                    logger.debug("Found max needed victims (%d), stopping scan", max_find)
                     return
             if WormConfiguration.tcp_scan_interval:
                 # time.sleep uses seconds, while config is in milliseconds
@@ -125,9 +125,9 @@ class NetworkScanner(object):
         :param victim: VictimHost machine
         :return: Victim or None if victim isn't alive
         """
-        LOG.debug("Scanning target address: %r", victim)
+        logger.debug("Scanning target address: %r", victim)
         if any(scanner.is_host_alive(victim) for scanner in self.scanners):
-            LOG.debug("Found potential target_ip: %r", victim)
+            logger.debug("Found potential target_ip: %r", victim)
             return victim
         else:
             return None
