@@ -45,7 +45,7 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
     safe_generate_attack_report,
 )
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 TECHNIQUES = {
     "T1210": T1210.T1210,
@@ -110,7 +110,7 @@ class AttackReportService:
                 technique_report_data.update(tech_info)
                 report["techniques"].update({tech_id: technique_report_data})
             except KeyError as e:
-                LOG.error(
+                logger.error(
                     "Attack technique does not have it's report component added "
                     "to attack report service. %s" % e
                 )

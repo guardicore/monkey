@@ -13,7 +13,7 @@ from infection_monkey.utils.commands import (
 )
 from infection_monkey.utils.environment import is_64bit_python, is_64bit_windows_os, is_windows_os
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -38,7 +38,7 @@ class WindowsUpgrader(object):
                 ) as written_monkey_file:
                     shutil.copyfileobj(downloaded_monkey_file, written_monkey_file)
         except (IOError, AttributeError) as e:
-            LOG.error("Failed to download the Monkey to the target path: %s." % e)
+            logger.error("Failed to download the Monkey to the target path: %s." % e)
             return
 
         monkey_options = build_monkey_commandline_explicitly(
@@ -58,7 +58,7 @@ class WindowsUpgrader(object):
             creationflags=DETACHED_PROCESS,
         )
 
-        LOG.info(
+        logger.info(
             "Executed 64bit monkey process (PID=%d) with command line: %s",
             monkey_process.pid,
             " ".join(monkey_cmdline),
@@ -66,4 +66,4 @@ class WindowsUpgrader(object):
 
         time.sleep(WindowsUpgrader.__UPGRADE_WAIT_TIME__)
         if monkey_process.poll() is not None:
-            LOG.error("Seems like monkey died too soon")
+            logger.error("Seems like monkey died too soon")

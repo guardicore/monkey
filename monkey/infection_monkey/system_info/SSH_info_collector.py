@@ -6,7 +6,7 @@ import pwd
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class SSHCollector(object):
@@ -18,10 +18,10 @@ class SSHCollector(object):
 
     @staticmethod
     def get_info():
-        LOG.info("Started scanning for ssh keys")
+        logger.info("Started scanning for ssh keys")
         home_dirs = SSHCollector.get_home_dirs()
         ssh_info = SSHCollector.get_ssh_files(home_dirs)
-        LOG.info("Scanned for ssh keys")
+        logger.info("Scanned for ssh keys")
         return ssh_info
 
     @staticmethod
@@ -66,7 +66,7 @@ class SSHCollector(object):
                         if glob.glob(os.path.join(current_path, "*.pub")):
                             # Getting first file in current path with .pub extension(public key)
                             public = glob.glob(os.path.join(current_path, "*.pub"))[0]
-                            LOG.info("Found public key in %s" % public)
+                            logger.info("Found public key in %s" % public)
                             try:
                                 with open(public) as f:
                                     info["public_key"] = f.read()
@@ -80,7 +80,7 @@ class SSHCollector(object):
                                             private_key = f.read()
                                             if private_key.find("ENCRYPTED") == -1:
                                                 info["private_key"] = private_key
-                                                LOG.info("Found private key in %s" % private)
+                                                logger.info("Found private key in %s" % private)
                                                 T1005Telem(
                                                     ScanStatus.USED, "SSH key", "Path: %s" % private
                                                 ).send()
@@ -94,7 +94,7 @@ class SSHCollector(object):
                                     try:
                                         with open(known_hosts) as f:
                                             info["known_hosts"] = f.read()
-                                            LOG.info("Found known_hosts in %s" % known_hosts)
+                                            logger.info("Found known_hosts in %s" % known_hosts)
                                     except (IOError, OSError):
                                         pass
                                 # If private key found don't search more

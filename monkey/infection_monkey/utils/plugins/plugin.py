@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 from os.path import basename, dirname, isfile, join
 from typing import Callable, Sequence, Type, TypeVar
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def _get_candidate_files(base_package_file):
@@ -32,7 +32,7 @@ class Plugin(metaclass=ABCMeta):
         """
         objects = []
         candidate_files = _get_candidate_files(cls.base_package_file())
-        LOG.info(
+        logger.info(
             "looking for classes of type {} in {}".format(cls.__name__, cls.base_package_name())
         )
         # Go through all of files
@@ -48,13 +48,13 @@ class Plugin(metaclass=ABCMeta):
             ]
             # Get object from class
             for class_object in classes:
-                LOG.debug("Checking if should run object {}".format(class_object.__name__))
+                logger.debug("Checking if should run object {}".format(class_object.__name__))
                 try:
                     if class_object.should_run(class_object.__name__):
                         objects.append(class_object)
-                        LOG.debug("Added {} to list".format(class_object.__name__))
+                        logger.debug("Added {} to list".format(class_object.__name__))
                 except Exception as e:
-                    LOG.warning(
+                    logger.warning(
                         "Exception {} when checking if {} should run".format(
                             str(e), class_object.__name__
                         )
@@ -75,7 +75,7 @@ class Plugin(metaclass=ABCMeta):
                 instance = class_object()
                 instances.append(instance)
             except Exception as e:
-                LOG.warning(
+                logger.warning(
                     "Exception {} when initializing {}".format(str(e), class_object.__name__)
                 )
         return instances

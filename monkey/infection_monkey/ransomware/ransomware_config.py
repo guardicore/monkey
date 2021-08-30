@@ -3,7 +3,7 @@ import logging
 from common.utils.file_utils import InvalidPath, expand_path
 from infection_monkey.utils.environment import is_windows_os
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class RansomwareConfig:
@@ -23,5 +23,5 @@ class RansomwareConfig:
         try:
             self.target_directory = expand_path(target_directory)
         except InvalidPath as e:
-            LOG.debug(f"Target ransomware directory set to None: {e}")
+            logger.debug(f"Target ransomware directory set to None: {e}")
             self.target_directory = None

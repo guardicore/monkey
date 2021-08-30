@@ -8,7 +8,7 @@ from infection_monkey.transport.base import TransportProxyBase, update_last_serv
 READ_BUFFER_SIZE = 8192
 DEFAULT_TIMEOUT = 30
 
-LOG = getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class SocketsPipe(Thread):
@@ -70,7 +70,7 @@ class TcpProxy(TransportProxyBase):
 
             pipe = SocketsPipe(source, dest)
             pipes.append(pipe)
-            LOG.debug(
+            logger.debug(
                 "piping sockets %s:%s->%s:%s",
                 address[0],
                 address[1],

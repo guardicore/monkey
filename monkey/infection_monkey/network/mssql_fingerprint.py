@@ -5,7 +5,7 @@ import socket
 import infection_monkey.config
 from infection_monkey.network.HostFinger import HostFinger
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MSSQLFinger(HostFinger):
@@ -42,11 +42,11 @@ class MSSQLFinger(HostFinger):
 
         # send data and receive response
         try:
-            LOG.info("Sending message to requested host: {0}, {1}".format(host, message))
+            logger.info("Sending message to requested host: {0}, {1}".format(host, message))
             sock.sendto(message, server_address)
             data, server = sock.recvfrom(self.BUFFER_SIZE)
         except socket.timeout:
-            LOG.info(
+            logger.info(
                 "Socket timeout reached, maybe browser service on host: {0} doesnt "
                 "exist".format(host)
             )
@@ -54,12 +54,12 @@ class MSSQLFinger(HostFinger):
             return False
         except socket.error as e:
             if e.errno == errno.ECONNRESET:
-                LOG.info(
+                logger.info(
                     "Connection was forcibly closed by the remote host. The host: {0} is "
                     "rejecting the packet.".format(host)
                 )
             else:
-                LOG.error(
+                logger.error(
                     "An unknown socket error occurred while trying the mssql fingerprint, "
                     "closing socket.",
                     exc_info=True,
@@ -73,7 +73,7 @@ class MSSQLFinger(HostFinger):
 
         # Loop through the server data
         instances_list = data[3:].decode().split(";;")
-        LOG.info("{0} MSSQL instances found".format(len(instances_list)))
+        logger.info("{0} MSSQL instances found".format(len(instances_list)))
         for instance in instances_list:
             instance_info = instance.split(";")
             if len(instance_info) > 1:

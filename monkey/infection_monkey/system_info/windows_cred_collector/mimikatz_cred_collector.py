@@ -6,7 +6,7 @@ from infection_monkey.system_info.windows_cred_collector.windows_credentials imp
     WindowsCredentials,
 )
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MimikatzCredentialCollector(object):

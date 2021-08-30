@@ -18,7 +18,7 @@ from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
 from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
 
-LOG = None
+logger = None
 
 LOG_CONFIG = {
     "version": 1,
@@ -43,7 +43,7 @@ LOG_CONFIG = {
 
 
 def main():
-    global LOG
+    global logger
 
     if 2 > len(sys.argv):
         return True
@@ -116,19 +116,19 @@ def main():
         del LOG_CONFIG["handlers"]["file"]
 
     logging.config.dictConfig(LOG_CONFIG)
-    LOG = logging.getLogger()
+    logger = logging.getLogger()
 
     def log_uncaught_exceptions(ex_cls, ex, tb):
-        LOG.critical("".join(traceback.format_tb(tb)))
-        LOG.critical("{0}: {1}".format(ex_cls, ex))
+        logger.critical("".join(traceback.format_tb(tb)))
+        logger.critical("{0}: {1}".format(ex_cls, ex))
 
     sys.excepthook = log_uncaught_exceptions
 
-    LOG.info(
+    logger.info(
         ">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<", monkey_cls.__name__, os.getpid()
     )
 
-    LOG.info(f"version: {get_version()}")
+    logger.info(f"version: {get_version()}")
 
     monkey = monkey_cls(monkey_args)
     monkey.initialize()
@@ -150,7 +150,7 @@ def main():
 
         return True
     except Exception as e:
-        LOG.exception("Exception thrown from monkey's start function. More info: {}".format(e))
+        logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))
     finally:
         monkey.cleanup()
 

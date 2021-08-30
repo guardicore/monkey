@@ -12,7 +12,7 @@ from infection_monkey.network.info import get_routes, local_ips
 DEFAULT_TIMEOUT = 10
 BANNER_READ = 1024
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 SLEEP_BETWEEN_POLL = 0.5
 
 
@@ -59,7 +59,7 @@ def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     except socket.timeout:
         return False, None
     except socket.error as exc:
-        LOG.debug("Check port: %s:%s, Exception: %s", ip, port, exc)
+        logger.debug("Check port: %s:%s, Exception: %s", ip, port, exc)
         return False, None
 
     banner = None
@@ -90,7 +90,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
     possible_ports = []
     connected_ports_sockets = []
     try:
-        LOG.debug("Connecting to the following ports %s" % ",".join((str(x) for x in ports)))
+        logger.debug("Connecting to the following ports %s" % ",".join((str(x) for x in ports)))
         for sock, port in zip(sockets, ports):
             err = sock.connect_ex((ip, port))
             if err == 0:  # immediate connect
@@ -105,7 +105,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
             if err == 115:  # EINPROGRESS     115     /* Operation now in progress */
                 possible_ports.append((port, sock))
                 continue
-            LOG.warning("Failed to connect to port %s, error code is %d", port, err)
+            logger.warning("Failed to connect to port %s, error code is %d", port, err)
 
         if len(possible_ports) != 0:
             timeout = int(round(timeout))  # clamp to integer, to avoid checking input
@@ -125,7 +125,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                     time.sleep(SLEEP_BETWEEN_POLL)
                     timeout -= SLEEP_BETWEEN_POLL
 
-            LOG.debug(
+            logger.debug(
                 "On host %s discovered the following ports %s"
                 % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
             )
@@ -150,7 +150,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
             return [], []
 
     except socket.error as exc:
-        LOG.warning("Exception when checking ports on host %s, Exception: %s", str(ip), exc)
+        logger.warning("Exception when checking ports on host %s, Exception: %s", str(ip), exc)
         return [], []
 
 
@@ -169,7 +169,7 @@ def get_interface_to_target(dst):
             s.connect((dst, 1))
             ip_to_dst = s.getsockname()[0]
         except KeyError:
-            LOG.debug(
+            logger.debug(
                 "Couldn't get an interface to the target, presuming that target is localhost."
             )
             ip_to_dst = "127.0.0.1"

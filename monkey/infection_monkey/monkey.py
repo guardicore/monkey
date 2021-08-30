@@ -43,7 +43,7 @@ from infection_monkey.windows_upgrader import WindowsUpgrader
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, skipping propagation phase."
 
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class InfectionMonkey(object):
@@ -66,7 +66,7 @@ class InfectionMonkey(object):
         self._post_breach_phase = None
 
     def initialize(self):
-        LOG.info("Monkey is initializing...")
+        logger.info("Monkey is initializing...")
 
         if not self._singleton.try_lock():
             raise Exception("Another instance of the monkey is already running")
@@ -87,26 +87,26 @@ class InfectionMonkey(object):
         if self._opts.depth is not None:
             WormConfiguration._depth_from_commandline = True
             WormConfiguration.depth = self._opts.depth
-            LOG.debug("Setting propagation depth from command line")
-        LOG.debug(f"Set propagation depth to {WormConfiguration.depth}")
+            logger.debug("Setting propagation depth from command line")
+        logger.debug(f"Set propagation depth to {WormConfiguration.depth}")
 
         self._keep_running = True
         self._network = NetworkScanner()
 
         if self._default_server:
             if self._default_server not in WormConfiguration.command_servers:
-                LOG.debug("Added default server: %s" % self._default_server)
+                logger.debug("Added default server: %s" % self._default_server)
                 WormConfiguration.command_servers.insert(0, self._default_server)
             else:
-                LOG.debug(
+                logger.debug(
                     "Default server: %s is already in command servers list" % self._default_server
                 )
 
     def start(self):
         try:
-            LOG.info("Monkey is starting...")
+            logger.info("Monkey is starting...")
 
-            LOG.debug("Starting the setup phase.")
+            logger.debug("Starting the setup phase.")
             # Sets island's IP and port for monkey to communicate to
             self.set_default_server()
             self.set_default_port()
@@ -144,16 +144,18 @@ class InfectionMonkey(object):
             StateTelem(is_done=False, version=get_version()).send()
             TunnelTelem().send()
 
-            LOG.debug("Starting the post-breach phase asynchronously.")
+            logger.debug("Starting the post-breach phase asynchronously.")
             self._post_breach_phase = Thread(target=self.start_post_breach_phase)
             self._post_breach_phase.start()
 
             if not InfectionMonkey.max_propagation_depth_reached():
-                LOG.info("Starting the propagation phase.")
-                LOG.debug("Running with depth: %d" % WormConfiguration.depth)
+                logger.info("Starting the propagation phase.")
+                logger.debug("Running with depth: %d" % WormConfiguration.depth)
                 self.propagate()
             else:
-                LOG.info("Maximum propagation depth has been reached; monkey will not propagate.")
+                logger.info(
+                    "Maximum propagation depth has been reached; monkey will not propagate."
+                )
                 TraceTelem(MAX_DEPTH_REACHED_MESSAGE).send()
 
             if self._keep_running and WormConfiguration.alive:
@@ -164,17 +166,17 @@ class InfectionMonkey(object):
             # connect to the tunnel
             if len(self._exploited_machines) > 0:
                 time_to_sleep = WormConfiguration.keep_tunnel_open_time
-                LOG.info(
+                logger.info(
                     "Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep
                 )
                 time.sleep(time_to_sleep)
 
         except PlannedShutdownException:
-            LOG.info(
+            logger.info(
                 "A planned shutdown of the Monkey occurred. Logging the reason and finishing "
                 "execution."
             )
-            LOG.exception("Planned shutdown, reason:")
+            logger.exception("Planned shutdown, reason:")
 
         finally:
             if self._monkey_tunnel:
@@ -193,13 +195,13 @@ class InfectionMonkey(object):
         return 0 == WormConfiguration.depth
 
     def collect_system_info_if_configured(self):
-        LOG.debug("Calling for system info collection")
+        logger.debug("Calling for system info collection")
         try:
             system_info_collector = SystemInfoCollector()
             system_info = system_info_collector.get_info()
             SystemInfoTelem(system_info).send()
         except Exception as e:
-            LOG.exception(f"Exception encountered during system info collection: {str(e)}")
+            logger.exception(f"Exception encountered during system info collection: {str(e)}")
 
     def shutdown_by_not_alive_config(self):
         if not WormConfiguration.alive:
@@ -230,7 +232,7 @@ class InfectionMonkey(object):
 
                 is_empty = False
                 for finger in self._fingerprint:
-                    LOG.info(
+                    logger.info(
                         "Trying to get OS fingerprint from %r with module %s",
                         machine,
                         finger.__class__.__name__,
@@ -238,7 +240,7 @@ class InfectionMonkey(object):
                     try:
                         finger.get_host_fingerprint(machine)
                     except BaseException as exc:
-                        LOG.error(
+                        logger.error(
                             "Failed to run fingerprinter %s, exception %s"
                             % finger.__class__.__name__,
                             str(exc),
@@ -248,13 +250,13 @@ class InfectionMonkey(object):
 
                 # skip machines that we've already exploited
                 if machine in self._exploited_machines:
-                    LOG.debug("Skipping %r - already exploited", machine)
+                    logger.debug("Skipping %r - already exploited", machine)
                     continue
                 elif machine in self._fail_exploitation_machines:
                     if WormConfiguration.retry_failed_explotation:
-                        LOG.debug("%r - exploitation failed before, trying again", machine)
+                        logger.debug("%r - exploitation failed before, trying again", machine)
                     else:
-                        LOG.debug("Skipping %r - exploitation failed before", machine)
+                        logger.debug("Skipping %r - exploitation failed before", machine)
                         continue
 
                 if self._monkey_tunnel:
@@ -267,7 +269,7 @@ class InfectionMonkey(object):
                         )
                     else:
                         machine.set_default_server(self._default_server)
-                    LOG.debug(
+                    logger.debug(
                         "Default server for machine: %r set to %s"
                         % (machine, machine.default_server)
                     )
@@ -292,24 +294,24 @@ class InfectionMonkey(object):
 
             if (not is_empty) and (WormConfiguration.max_iterations > iteration_index + 1):
                 time_to_sleep = WormConfiguration.timeout_between_iterations
-                LOG.info("Sleeping %d seconds before next life cycle iteration", time_to_sleep)
+                logger.info("Sleeping %d seconds before next life cycle iteration", time_to_sleep)
                 time.sleep(time_to_sleep)
 
         if self._keep_running and WormConfiguration.alive:
-            LOG.info("Reached max iterations (%d)", WormConfiguration.max_iterations)
+            logger.info("Reached max iterations (%d)", WormConfiguration.max_iterations)
         elif not WormConfiguration.alive:
-            LOG.info("Marked not alive from configuration")
+            logger.info("Marked not alive from configuration")
 
     def upgrade_to_64_if_needed(self):
         if WindowsUpgrader.should_upgrade():
             self._upgrading_to_64 = True
             self._singleton.unlock()
-            LOG.info("32bit monkey running on 64bit Windows. Upgrading.")
+            logger.info("32bit monkey running on 64bit Windows. Upgrading.")
             WindowsUpgrader.upgrade(self._opts)
             raise PlannedShutdownException("Finished upgrading from 32bit to 64bit.")
 
     def cleanup(self):
-        LOG.info("Monkey cleanup started")
+        logger.info("Monkey cleanup started")
         self._keep_running = False
 
         if self._upgrading_to_64:
@@ -326,7 +328,7 @@ class InfectionMonkey(object):
             self._singleton.unlock()
 
         InfectionMonkey.self_delete()
-        LOG.info("Monkey is shutting down")
+        logger.info("Monkey is shutting down")
 
     @staticmethod
     def close_tunnel():
@@ -334,7 +336,7 @@ class InfectionMonkey(object):
             ControlClient.proxies.get("https", "").replace("https://", "").split(":")[0]
         )
         if tunnel_address:
-            LOG.info("Quitting tunnel %s", tunnel_address)
+            logger.info("Quitting tunnel %s", tunnel_address)
             tunnel.quit_tunnel(tunnel_address)
 
     @staticmethod
@@ -363,7 +365,7 @@ class InfectionMonkey(object):
                     os.remove(sys.executable)
                     status = ScanStatus.USED
             except Exception as exc:
-                LOG.error("Exception in self delete: %s", exc)
+                logger.error("Exception in self delete: %s", exc)
                 status = ScanStatus.SCANNED
             if status:
                 T1107Telem(status, sys.executable).send()
@@ -386,7 +388,7 @@ class InfectionMonkey(object):
         :return: True if successfully exploited, False otherwise
         """
         if not exploiter.is_os_supported():
-            LOG.info(
+            logger.info(
                 "Skipping exploiter %s host:%r, os %s is not supported",
                 exploiter.__class__.__name__,
                 machine,
@@ -394,7 +396,9 @@ class InfectionMonkey(object):
             )
             return False
 
-        LOG.info("Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__)
+        logger.info(
+            "Trying to exploit %r with exploiter %s...", machine, exploiter.__class__.__name__
+        )
 
         result = False
         try:
@@ -403,11 +407,11 @@ class InfectionMonkey(object):
                 self.successfully_exploited(machine, exploiter, exploiter.RUNS_AGENT_ON_SUCCESS)
                 return True
             else:
-                LOG.info(
+                logger.info(
                     "Failed exploiting %r with exploiter %s", machine, exploiter.__class__.__name__
                 )
         except ExploitingVulnerableMachineError as exc:
-            LOG.error(
+            logger.error(
                 "Exception while attacking %s using %s: %s",
                 machine,
                 exploiter.__class__.__name__,
@@ -416,14 +420,14 @@ class InfectionMonkey(object):
             self.successfully_exploited(machine, exploiter, exploiter.RUNS_AGENT_ON_SUCCESS)
             return True
         except FailedExploitationError as e:
-            LOG.info(
+            logger.info(
                 "Failed exploiting %r with exploiter %s, %s",
                 machine,
                 exploiter.__class__.__name__,
                 e,
             )
         except Exception as exc:
-            LOG.exception(
+            logger.exception(
                 "Exception while attacking %s using %s: %s",
                 machine,
                 exploiter.__class__.__name__,
@@ -442,13 +446,13 @@ class InfectionMonkey(object):
         if RUNS_AGENT_ON_SUCCESS:
             self._exploited_machines.add(machine)
 
-        LOG.info("Successfully propagated to %s using %s", machine, exploiter.__class__.__name__)
+        logger.info("Successfully propagated to %s using %s", machine, exploiter.__class__.__name__)
 
         # check if max-exploitation limit is reached
         if WormConfiguration.victims_max_exploit <= len(self._exploited_machines):
             self._keep_running = False
 
-            LOG.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
+            logger.info("Max exploited victims reached (%d)", WormConfiguration.victims_max_exploit)
 
     def set_default_port(self):
         try:
@@ -466,11 +470,11 @@ class InfectionMonkey(object):
                 "Monkey couldn't find server with {} default tunnel.".format(self._default_tunnel)
             )
         self._default_server = WormConfiguration.current_server
-        LOG.debug("default server set to: %s" % self._default_server)
+        logger.debug("default server set to: %s" % self._default_server)
 
     def log_arguments(self):
         arg_string = " ".join([f"{key}: {value}" for key, value in vars(self._opts).items()])
-        LOG.info(f"Monkey started with arguments: {arg_string}")
+        logger.info(f"Monkey started with arguments: {arg_string}")
 
     @staticmethod
     def run_ransomware():
@@ -478,4 +482,4 @@ class InfectionMonkey(object):
             ransomware_payload = build_ransomware_payload(WormConfiguration.ransomware)
             ransomware_payload.run_payload()
         except Exception as ex:
-            LOG.error(f"An unexpected error occurred while running the ransomware payload: {ex}")
+            logger.error(f"An unexpected error occurred while running the ransomware payload: {ex}")

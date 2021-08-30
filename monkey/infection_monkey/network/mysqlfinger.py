@@ -7,7 +7,7 @@ from infection_monkey.network.tools import struct_unpack_tracker, struct_unpack_
 
 MYSQL_PORT = 3306
 SQL_SERVICE = "mysqld-3306"
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MySQLFinger(HostFinger):
@@ -45,7 +45,7 @@ class MySQLFinger(HostFinger):
 
             if protocol == 0xFF:
                 # error code, bug out
-                LOG.debug("Mysql server returned error")
+                logger.debug("Mysql server returned error")
                 return False
 
             version, curpos = struct_unpack_tracker_string(
@@ -70,7 +70,7 @@ class MySQLFinger(HostFinger):
             s.close()
 
         except Exception as err:
-            LOG.debug("Error getting mysql fingerprint: %s", err)
+            logger.debug("Error getting mysql fingerprint: %s", err)
 
         return False
 
