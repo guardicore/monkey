@@ -80,7 +80,7 @@ script:
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
-- curl -L https://github.com/swimmio/SwimmReleases/releases/download/v0.5.0-0/swimm-cli.js --output swimm_cli
+- curl -L https://github.com/swimmio/SwimmReleases/releases/download/v0.5.7-0/swimm-cli.js --output swimm_cli
 - node swimm_cli --version
 - node swimm_cli verify
 
