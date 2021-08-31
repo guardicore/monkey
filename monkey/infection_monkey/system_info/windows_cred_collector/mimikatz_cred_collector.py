@@ -1,12 +1,9 @@
-import logging
 from typing import List
 
 from infection_monkey.system_info.windows_cred_collector import pypykatz_handler
 from infection_monkey.system_info.windows_cred_collector.windows_credentials import (
     WindowsCredentials,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class MimikatzCredentialCollector(object):
