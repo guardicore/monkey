@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 import pytest
@@ -27,6 +28,7 @@ class StubLogonUser:
         return None
 
 
+@pytest.mark.skipif(os.name == "posix", reason="This test only runs on Windows.")
 def test_new_user_delete_windows(subprocess_check_output_spy, monkeypatch):
     monkeypatch.setattr(
         "infection_monkey.utils.windows.users.win32security.LogonUser",
