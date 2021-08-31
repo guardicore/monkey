@@ -2,7 +2,17 @@ import logging
 import subprocess
 
 from infection_monkey.utils.auto_new_user import AutoNewUser
+from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.new_user_error import NewUserError
+
+if is_windows_os():
+    import win32api
+    import win32con
+    import win32event
+    import win32process
+    import win32security
+    from winsys import _advapi32
+
 
 ACTIVE_NO_NET_USER = "/ACTIVE:NO"
 WAIT_TIMEOUT_IN_MILLISECONDS = 60 * 1000
@@ -42,10 +52,6 @@ class AutoNewWindowsUser(AutoNewUser):
         _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT)
 
     def __enter__(self):
-        # Importing these only on windows, as they won't exist on linux.
-        import win32con
-        import win32security
-
         try:
             # Logon as new user: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf
             # -winbase-logonusera
@@ -62,12 +68,6 @@ class AutoNewWindowsUser(AutoNewUser):
         return self
 
     def run_as(self, command):
-        # Importing these only on windows, as they won't exist on linux.
-        import win32api
-        import win32event
-        import win32process
-        from winsys import _advapi32
-
         exit_code = -1
         process_handle = None
         thread_handle = None
