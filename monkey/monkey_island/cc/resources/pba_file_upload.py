@@ -1,5 +1,4 @@
 import copy
-import logging
 
 import flask_restful
 from flask import Response, request, send_from_directory
@@ -11,7 +10,6 @@ from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
-logger = logging.getLogger(__name__)
 # Front end uses these strings to identify which files to work with (linux or windows)
 LINUX_PBA_TYPE = "PBAlinux"
 WINDOWS_PBA_TYPE = "PBAwindows"
