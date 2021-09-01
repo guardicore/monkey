@@ -30,6 +30,7 @@ WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
 ScoutSuite = {git = "git://github.com/guardicode/ScoutSuite"}
 pyopenssl = "==19.0.0" # We can't build 32bit ubuntu12 binary with newer versions of pyopenssl
 pypsrp = "*"
+typing-extensions = "*"
 
 [dev-packages]
 
