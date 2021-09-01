@@ -24,30 +24,6 @@ class RegisterPageComponent extends React.Component {
     });
   };
 
-  setNoAuth = () => {
-    let options = {};
-    options['headers'] = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    };
-    options['method'] = 'PATCH';
-    options['body'] = JSON.stringify({'server_config': 'standard'});
-
-    return fetch(this.NO_AUTH_API_ENDPOINT, options)
-      .then(res => {
-        if (res.status === 200) {
-          this.auth.attemptNoAuthLogin().then(() => {
-            this.redirectToHome();
-          });
-        } else {
-          this.setState({
-            failed: true,
-            error: res['error']
-          });
-        }
-      })
-  }
-
   updateUsername = (evt) => {
     this.username = evt.target.value;
   };
