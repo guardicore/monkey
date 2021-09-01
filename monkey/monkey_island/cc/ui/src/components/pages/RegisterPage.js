@@ -98,13 +98,6 @@ class RegisterPageComponent extends React.Component {
                     </Button>
                     <Row>
                       <Col>
-                        <a href='#' onClick={this.setNoAuth} className={'no-auth-link'}>
-                          I want anyone to access the island
-                        </a>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
                         {
                           this.state.failed ?
                             <div className='alert alert-danger' role='alert'>{this.state.error}</div>
