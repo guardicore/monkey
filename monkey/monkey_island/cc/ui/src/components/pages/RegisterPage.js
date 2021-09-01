@@ -7,8 +7,6 @@ import ParticleBackground from '../ui-components/ParticleBackground';
 
 class RegisterPageComponent extends React.Component {
 
-  NO_AUTH_API_ENDPOINT = '/api/environment';
-
   register = (event) => {
     event.preventDefault();
     this.auth.register(this.username, this.password).then(res => {
