@@ -52,12 +52,11 @@ Monkey in the newly created folder.
 ## Reset/enable the Monkey Island password
 
 When you first access the Monkey Island server, you'll be prompted to create an account.
-To reset the credentials or enable/disable the authentication,
-edit the `server_config.json` file manually
+To reset the credentials, edit the `server_config.json` file manually
 (located in the [data directory](/reference/data_directory)).
 
 In order to reset the credentials, the following edits need to be made:
-1. Delete the `user` field if one exists. It will look like this:
+1. Delete the `user` field. It will look like this:
 ```json
 {
   ...
@@ -65,7 +64,7 @@ In order to reset the credentials, the following edits need to be made:
   ...
 }
 ```
-1. Delete the `password_hash` field if one exists. It will look like this:
+1. Delete the `password_hash` field. It will look like this:
 ```json
 {
   ...
