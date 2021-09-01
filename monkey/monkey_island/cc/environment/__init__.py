@@ -77,9 +77,6 @@ class Environment(object, metaclass=ABCMeta):
     def testing(self, value):
         self._testing = value
 
-    def save_config(self):
-        self._config.save_to_file()
-
     def get_config(self) -> EnvironmentConfig:
         return self._config
 
