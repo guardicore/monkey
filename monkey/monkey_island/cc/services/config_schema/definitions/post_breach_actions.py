@@ -39,7 +39,7 @@ POST_BREACH_ACTIONS = {
             "enum": ["TrapCommand"],
             "title": "Trap",
             "safe": True,
-            "info": "On Linux systems, attempts to trap an interrupt signal in order "
+            "info": "On Linux systems, attempts to trap a terminate signal in order "
             "to execute a command "
             "upon receiving that signal. Removes the trap afterwards.",
             "attack_techniques": ["T1154"],

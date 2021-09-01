@@ -28,9 +28,11 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   language systems. #1175
 - Malfunctioning timestomping PBA. #1405
 - Malfunctioning shell startup script PBA. #1419
+- Trap command produced no output. #1406
 
 ### Security
-- Generate a random password when creating a new user for CommunicateAsNewUser PBA. #1434
+- Generate a random password when creating a new user for CommunicateAsNewUser
+  PBA. #1434
 
 ## [1.11.0] - 2021-08-13
 ### Added
@@ -62,8 +64,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   instead of $HOME. #1143
 - Put environment config options in `server_config.json` into a separate
   section named "environment". #1161
-- Automatically register if BlackBox tests are run on a fresh installation.
-  #1180
+- Automatically register if BlackBox tests are run on a fresh
+  installation. #1180
 - Limit the ports used for scanning in blackbox tests. #1368
 - Limit the propagation depth of most blackbox tests. #1400
 - Wait less time for monkeys to die when running BlackBox tests. #1400
