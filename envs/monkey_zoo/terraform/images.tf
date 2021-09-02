@@ -57,6 +57,10 @@ data "google_compute_image" "mssql-16" {
   name = "mssql-16"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "powershell-3-47" {
+  name = "powershell-3-47"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "powershell-3-46" {
   name = "powershell-3-46"
   project = local.monkeyzoo_project
