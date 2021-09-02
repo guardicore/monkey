@@ -24,5 +24,6 @@ GCP_TEST_MACHINE_LIST = {
     "europe-west1-b": [
         "powershell-3-45",
         "powershell-3-46",
+        "powershell-3-47",
     ],
 }

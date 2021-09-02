@@ -33,8 +33,9 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 25 Zerologon](#_Toc536021478)<br>
 [Nr. 3-45 Powershell](#_Toc536021479)<br>
 [Nr. 3-46 Powershell](#_Toc536021480)<br>
-[Nr. 250 MonkeyIsland](#_Toc536021481)<br>
-[Nr. 251 MonkeyIsland](#_Toc536021482)<br>
+[Nr. 3-47 Powershell](#_Toc536021481)<br>
+[Nr. 250 MonkeyIsland](#_Toc536021482)<br>
+[Nr. 251 MonkeyIsland](#_Toc536021483)<br>
 [Network topography](#network-topography)<br>
 
 # Warning\!
@@ -1142,7 +1143,35 @@ fullTest.conf is a good config to start, because it covers all machines.
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021481" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021481" class="anchor"></span>Nr. <strong>3-47 Powershell</strong></p>
+<p>(10.2.3.47)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>WinRM service</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Xk8VDTsC</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021482" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
 </tr>
@@ -1174,7 +1203,7 @@ fullTest.conf is a good config to start, because it covers all machines.
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021482" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021483" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
 <p>(10.2.2.251)</p></th>
 <th></th>
 </tr>
