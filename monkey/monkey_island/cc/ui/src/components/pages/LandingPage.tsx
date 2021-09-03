@@ -15,24 +15,24 @@ const infectionMonkey = require('../../images/infection-monkey.svg')
 const LandingPageComponent = (props) => {
 
   return (
-  <>
-    <ParticleBackground/>
-    <Col sm={{offset: 1, span: 10}} md={{offset: 1, span: 10}}
-         lg={{offset: 2, span: 8}} xl={{offset: 3, span: 6}}
-         className={'landing-page'}>
-       <MonkeyBanner />
-       <div className={'scenario-header'}>
-         <ScenarioButtons/>
-       <br/>
-       </div>
-       <br/>
-       <br/>
-       <Col className={'guardicore-logo'}>
-        <Logo/>
+    <>
+      <ParticleBackground/>
+      <Col sm={{offset: 1, span: 10}} md={{offset: 1, span: 10}}
+           lg={{offset: 2, span: 8}} xl={{offset: 3, span: 6}}
+           className={'landing-page'}>
+        <MonkeyBanner/>
+        <div className={'scenario-header'}>
+          <ScenarioButtons/>
+          <br/>
+          <Col className={'guardicore-logo'}>
+            <Logo/>
+          </Col>
+        </div>
+        <br/>
+        <br/>
       </Col>
-    </Col>
 
-  </>
+    </>
   );
 
 
@@ -72,8 +72,8 @@ const LandingPageComponent = (props) => {
 
   function setScenario(scenario: string) {
     IslandHttpClient.post('/api/island-mode', {'mode': scenario})
-    .then(() => {
-      props.onStatusChange();
+      .then(() => {
+        props.onStatusChange();
       });
   }
 }
@@ -91,23 +91,24 @@ function MonkeyInfo() {
 }
 
 function ScenarioInfo() {
-    return (
-      <>
-        <div className={'scenario-info'}>
-          Check the Infection Monkey documentation hub for more information
-          on <a href='https://www.guardicore.com/infectionmonkey/docs/usage/scenarios/' rel="noopener noreferrer" target="_blank">
-           scenarios
-          </a>.
-        </div>
-      </>
-    );
+  return (
+    <>
+      <div className={'scenario-info'}>
+        Check the Infection Monkey documentation hub for more information
+        on <a href='https://www.guardicore.com/infectionmonkey/docs/usage/scenarios/' rel="noopener noreferrer"
+              target="_blank">
+        scenarios
+      </a>.
+      </div>
+    </>
+  );
 }
 
 function MonkeyBanner(props) {
   return (
     <div className={'landing-page-banner'}>
-      <img className={'landing-banner-component landing-banner-monkey-icon'} src={monkeyIcon} />
-      <img className={'landing-banner-component landing-banner-title'} src={infectionMonkey} />
+      <img className={'landing-banner-component landing-banner-monkey-icon'} src={monkeyIcon}/>
+      <img className={'landing-banner-component landing-banner-title'} src={infectionMonkey}/>
     </div>
   );
 }
