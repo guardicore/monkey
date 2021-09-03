@@ -1,6 +1,5 @@
 .landing-page {
   background-color: rgba(255, 255, 255, 0.89);
-  position: absolute !important;
   height: 100%;
   bottom: 0;
 }
@@ -25,12 +24,6 @@
 
 .landing-page .d-block {
   height: 100%;
-}
-
-.landing-page .guardicore-logo {
-  position: absolute;
-  bottom: 10px;
-  left: 0 !important;
 }
 
 .guardicore-logo .license-text {
