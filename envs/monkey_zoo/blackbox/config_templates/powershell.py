@@ -17,7 +17,7 @@ class PowerShell(ConfigTemplate):
             "internal.classes.finger_classes": ["PingScanner"],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
             "internal.network.tcp_scanner.tcp_target_ports": [],
-            "internal.classes.exploits.exploit_ntlm_hash_list": [
+            "internal.exploits.exploit_ntlm_hash_list": [
                 "d0f0132b308a0c4e5d1029cc06f48692",
             ],
         }
