@@ -29,7 +29,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Malfunctioning timestomping PBA. #1405
 - Malfunctioning shell startup script PBA. #1419
 - Trap command produced no output. #1406
-- Overlapping Guardicore logo in the landing page #1441
+- Overlapping Guardicore logo in the landing page. #1441
+- PBA table collapse in security report on data change. #1423
 
 ### Security
 - Generate a random password when creating a new user for CommunicateAsNewUser
