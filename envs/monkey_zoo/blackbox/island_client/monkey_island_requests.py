@@ -7,12 +7,16 @@ import requests
 
 from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 
-# SHA3-512 of '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()'
-NO_AUTH_CREDS = "1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()"
+ISLAND_USERNAME = "m0nk3y"
+ISLAND_PASSWORD = "Passw0rd!"
 LOGGER = logging.getLogger(__name__)
 
 
 class AuthenticationFailedError(Exception):
+    pass
+
+
+class InvalidRegistrationCredentialsError(Exception):
     pass
 
 
@@ -48,9 +52,9 @@ class MonkeyIslandRequests(object):
         try:
             return self.get_jwt_from_server()
         except AuthenticationFailedError:
-            self.try_set_island_to_no_password()
+            self.try_set_island_to_credentials()
             return self.get_jwt_from_server()
-        except requests.ConnectionError as err:
+        except (requests.ConnectionError, InvalidRegistrationCredentialsError) as err:
             LOGGER.error(
                 "Unable to connect to island, aborting! Error information: {}. Server: {}".format(
                     err, self.addr
@@ -61,17 +65,21 @@ class MonkeyIslandRequests(object):
     def get_jwt_from_server(self):
         resp = requests.post(  # noqa: DUO123
             self.addr + "api/auth",
-            json={"username": NO_AUTH_CREDS, "password": NO_AUTH_CREDS},
+            json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
         if resp.status_code == 401:
             raise AuthenticationFailedError
         return resp.json()["access_token"]
 
-    def try_set_island_to_no_password(self):
-        requests.patch(  # noqa: DUO123
-            self.addr + "api/environment", json={"server_config": "standard"}, verify=False
+    def try_set_island_to_credentials(self):
+        resp = requests.post(  # noqa: DUO123
+            self.addr + "api/registration",
+            json={"user": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
+            verify=False,
         )
+        if resp.status_code == 400:
+            raise InvalidRegistrationCredentialsError("Missing part of the credentials")
 
     class _Decorators:
         @classmethod
@@ -117,6 +125,5 @@ class MonkeyIslandRequests(object):
             self.addr + url, headers=self.get_jwt_header(), verify=False
         )
 
-    @_Decorators.refresh_jwt_token
     def get_jwt_header(self):
         return {"Authorization": "Bearer " + self.token}
