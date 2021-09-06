@@ -18,6 +18,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "Back door user" post-breach action. #1410
 - Stale code in the Windows system info collector that collected installed
   packages and WMI info. #1389
+- Remove insecure access feature in the Monkey Island. #1418
 
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration

@@ -67,7 +67,6 @@ class AppComponent extends AuthComponent {
       loading: true,
       completedSteps: completedSteps,
       islandMode: undefined,
-      noAuthLoginAttempted: undefined
     };
     this.interval = undefined;
     this.setMode();
@@ -77,45 +76,44 @@ class AppComponent extends AuthComponent {
     if (this.state.isLoggedIn === false) {
       return
     }
-    this.auth.loggedIn()
-      .then(res => {
-        if (this.state.isLoggedIn !== res) {
-          this.setState({
-            isLoggedIn: res
-          });
-        }
 
-        if (!res) {
-          this.auth.needsRegistration()
-            .then(result => {
-              this.setState({
-                needsRegistration: result
-              });
-            })
-        }
+    let res = this.auth.loggedIn();
 
-        if (res) {
-          this.setMode()
-            .then(() => {
-                if (this.state.islandMode === null) {
-                  return
-                }
-                this.authFetch('/api')
-                  .then(res => res.json())
-                  .then(res => {
-                    let completedSteps = CompletedSteps.buildFromResponse(res.completed_steps);
-                    // This check is used to prevent unnecessary re-rendering
-                    if (_.isEqual(this.state.completedSteps, completedSteps)) {
-                      return;
-                    }
-                    this.setState({completedSteps: completedSteps});
-                    this.showInfectionDoneNotification();
-                  });
-              }
-            )
-
-        }
+    if (this.state.isLoggedIn !== res) {
+      this.setState({
+        isLoggedIn: res
       });
+    }
+
+    if (!res) {
+      this.auth.needsRegistration()
+        .then(result => {
+          this.setState({
+            needsRegistration: result
+          });
+        })
+    }
+
+    if (res) {
+      this.setMode()
+        .then(() => {
+            if (this.state.islandMode === null) {
+              return
+            }
+            this.authFetch('/api')
+              .then(res => res.json())
+              .then(res => {
+                let completedSteps = CompletedSteps.buildFromResponse(res.completed_steps);
+                // This check is used to prevent unnecessary re-rendering
+                if (_.isEqual(this.state.completedSteps, completedSteps)) {
+                  return;
+                }
+                this.setState({completedSteps: completedSteps});
+                this.showInfectionDoneNotification();
+              });
+          }
+        )
+    }
   };
 
   setMode = () => {

@@ -40,8 +40,8 @@ def test_get_with_partial_credentials(partial_credentials):
     assert config_dict["user"] == "test"
 
 
-def test_save_to_file(config_file, standard_with_credentials):
-    shutil.copyfile(standard_with_credentials, config_file)
+def test_save_to_file(config_file, with_credentials):
+    shutil.copyfile(with_credentials, config_file)
 
     environment_config = EnvironmentConfig(config_file)
     environment_config.aws = "test_aws"
@@ -53,8 +53,8 @@ def test_save_to_file(config_file, standard_with_credentials):
     assert environment_config.to_dict() == from_file["environment"]
 
 
-def test_save_to_file_preserve_log_level(config_file, standard_with_credentials):
-    shutil.copyfile(standard_with_credentials, config_file)
+def test_save_to_file_preserve_log_level(config_file, with_credentials):
+    shutil.copyfile(with_credentials, config_file)
 
     environment_config = EnvironmentConfig(config_file)
     environment_config.aws = "test_aws"
@@ -67,12 +67,12 @@ def test_save_to_file_preserve_log_level(config_file, standard_with_credentials)
     assert from_file["log_level"] == "NOTICE"
 
 
-def test_add_user(config_file, standard_with_credentials):
+def test_add_user(config_file, with_credentials):
     new_user = "new_user"
     new_password_hash = "fedcba"
     new_user_creds = UserCreds(new_user, new_password_hash)
 
-    shutil.copyfile(standard_with_credentials, config_file)
+    shutil.copyfile(with_credentials, config_file)
 
     environment_config = EnvironmentConfig(config_file)
     environment_config.add_user(new_user_creds)
@@ -85,8 +85,8 @@ def test_add_user(config_file, standard_with_credentials):
     assert from_file["environment"]["password_hash"] == new_password_hash
 
 
-def test_get_users(standard_with_credentials):
-    environment_config = EnvironmentConfig(standard_with_credentials)
+def test_get_users(with_credentials):
+    environment_config = EnvironmentConfig(with_credentials)
     users = environment_config.get_users()
 
     assert len(users) == 1
