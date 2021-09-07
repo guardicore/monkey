@@ -75,6 +75,7 @@ class PostBreachComponent extends React.Component {
             SubComponent={row => {
               return renderDetails(row.original.pba_results);
             }}
+            collapseOnDataChange={false}
           />
         </div>
       </>
