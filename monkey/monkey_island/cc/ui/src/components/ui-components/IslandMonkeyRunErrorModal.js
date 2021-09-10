@@ -28,6 +28,7 @@ class IslandMonkeyRunErrorModal extends React.PureComponent {
     return (
       <span>
         Some Monkey binaries are not found where they should be...<br/>
+        <b>Make sure that your antivirus is not deleting the binaries.</b><br/><br/>
         You can download the files from <a href="https://github.com/guardicore/monkey/releases/latest"
                                            target="blank">here</a>,
         at the bottommost section titled "Assets", and place them under the
