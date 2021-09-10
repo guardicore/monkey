@@ -46,7 +46,6 @@ class EnvironmentConfig:
         aws = dict_data["aws"] if "aws" in dict_data else None
 
         self.server_config = dict_data["server_config"]
-        self.deployment = dict_data["deployment"]
         self.user_creds = _get_user_credentials_from_config(dict_data)
         self.aws = aws
 
