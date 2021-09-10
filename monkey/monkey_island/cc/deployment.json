@@ -1,0 +1,8 @@
+{
+    "version": {
+        "major": 1,
+        "minor": 11,
+        "patch": 0
+    },
+    "deployment": "develop"
+}
