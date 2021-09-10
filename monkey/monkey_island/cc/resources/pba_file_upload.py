@@ -1,4 +1,5 @@
 import copy
+from http import HTTPStatus
 
 import flask_restful
 from flask import Response, request, send_from_directory
@@ -27,8 +28,8 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file to send, linux or windows
         :return: Returns file contents
         """
-        if self.check_file_type(file_type):
-            return Response(status=422, mimetype="text/plain")
+        if self.is_pba_file_type_supported(file_type):
+            return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         # Verify that file_name is indeed a file from config
         if file_type == LINUX_PBA_TYPE:
@@ -44,8 +45,8 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was received, linux or windows
         :return: Returns flask response object with uploaded file's filename
         """
-        if self.check_file_type(file_type):
-            return Response(status=422, mimetype="text/plain")
+        if self.is_pba_file_type_supported(file_type):
+            return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         filename = FileUpload.upload_pba_file(
             request.files["filepond"], (file_type == LINUX_PBA_TYPE)
@@ -80,8 +81,8 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was deleted, linux of windows
         :return: Empty response
         """
-        if self.check_file_type(file_type):
-            return Response(status=422, mimetype="text/plain")
+        if self.is_pba_file_type_supported(file_type):
+            return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         filename_path = (
             PBA_LINUX_FILENAME_PATH if file_type == "PBAlinux" else PBA_WINDOWS_FILENAME_PATH
@@ -94,10 +95,5 @@ class FileUpload(flask_restful.Resource):
         return {}
 
     @staticmethod
-    def check_file_type(file_type):
-        """
-        Check if the file type is not supported
-        :param file_type: Type indicates which file was received, linux or windows
-        :return: Boolean
-        """
+    def is_pba_file_type_supported(file_type: str) -> bool:
         return file_type not in {LINUX_PBA_TYPE, WINDOWS_PBA_TYPE}
