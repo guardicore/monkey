@@ -16,9 +16,8 @@ def config_file(tmpdir):
 def test_get_with_credentials(with_credentials):
     config_dict = EnvironmentConfig(with_credentials).to_dict()
 
-    assert len(config_dict.keys()) == 4
+    assert len(config_dict.keys()) == 3
     assert config_dict["server_config"] == "password"
-    assert config_dict["deployment"] == "develop"
     assert config_dict["user"] == "test"
     assert config_dict["password_hash"] == "abcdef"
 
@@ -26,17 +25,15 @@ def test_get_with_credentials(with_credentials):
 def test_get_with_no_credentials(no_credentials):
     config_dict = EnvironmentConfig(no_credentials).to_dict()
 
-    assert len(config_dict.keys()) == 2
+    assert len(config_dict.keys()) == 1
     assert config_dict["server_config"] == "password"
-    assert config_dict["deployment"] == "develop"
 
 
 def test_get_with_partial_credentials(partial_credentials):
     config_dict = EnvironmentConfig(partial_credentials).to_dict()
 
-    assert len(config_dict.keys()) == 3
+    assert len(config_dict.keys()) == 2
     assert config_dict["server_config"] == "password"
-    assert config_dict["deployment"] == "develop"
     assert config_dict["user"] == "test"
 
 
@@ -80,7 +77,7 @@ def test_add_user(config_file, with_credentials):
     with open(config_file, "r") as f:
         from_file = json.load(f)
 
-    assert len(from_file["environment"].keys()) == 4
+    assert len(from_file["environment"].keys()) == 3
     assert from_file["environment"]["user"] == new_user
     assert from_file["environment"]["password_hash"] == new_password_hash
 

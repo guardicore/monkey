@@ -1,10 +1,13 @@
+import json
 import logging
+import os
+from typing import Optional
 
 import requests
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.utils.exceptions import VersionServerConnectionError
 from common.version import get_version
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +43,7 @@ class VersionUpdateService:
         :return: False if not, version in string format ('1.6.2') otherwise
         """
         url = VersionUpdateService.VERSION_SERVER_CHECK_NEW_URL % (
-            env_singleton.env.get_deployment(),
+            VersionUpdateService.get_deployment_file(),
             get_version(),
         )
 
@@ -61,6 +64,17 @@ class VersionUpdateService:
     @staticmethod
     def get_download_link():
         return VersionUpdateService.VERSION_SERVER_DOWNLOAD_URL % (
-            env_singleton.env.get_deployment(),
+            VersionUpdateService.get_deployment_file(),
             get_version(),
         )
+
+    @staticmethod
+    def get_deployment_file() -> Optional[str]:
+        deployment = "unknown"
+
+        deployment_info_file_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "deployment.json")
+        with open(deployment_info_file_path, "r") as deployment_info_file:
+            deployment_info = json.load(deployment_info_file)
+            deployment = deployment_info["deployment"]
+
+        return deployment

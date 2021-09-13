@@ -1,18 +1,11 @@
 # To get the version from shell, run `python ./version.py` (see `python ./version.py -h` for
 # details).
 import argparse
-import json
 from pathlib import Path
 
-deployment_info_file_path = Path(__file__).parent.parent.joinpath(
-    "monkey_island", "cc", "deployment.json"
-)
-with open(deployment_info_file_path, "r") as deployment_info_file:
-    deployment_info = json.load(deployment_info_file)
-    MAJOR = deployment_info["version"]["major"]
-    MINOR = deployment_info["version"]["minor"]
-    PATCH = deployment_info["version"]["patch"]
-
+MAJOR = "1"
+MINOR = "11"
+PATCH = "0"
 
 build_file_path = Path(__file__).parent.joinpath("BUILD")
 with open(build_file_path, "r") as build_file:

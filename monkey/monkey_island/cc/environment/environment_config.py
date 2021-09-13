@@ -2,33 +2,21 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.resources.auth.auth_user import User
 from monkey_island.cc.resources.auth.user_store import UserStore
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 
 class EnvironmentConfig:
     def __init__(self, file_path):
         self._server_config_path = os.path.expanduser(file_path)
         self.server_config = None
-        self.deployment = self._get_deployment_from_file()
         self.user_creds = None
         self.aws = None
 
         self._load_from_file(self._server_config_path)
-
-    def _get_deployment_from_file(self) -> Optional[str]:
-        deployment = None
-
-        deployment_info_file_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "deployment.json")
-        with open(deployment_info_file_path, "r") as deployment_info_file:
-            deployment_info = json.load(deployment_info_file)
-            deployment = deployment_info["deployment"]
-
-        return deployment
 
     def _load_from_file(self, file_path):
         file_path = os.path.expanduser(file_path)
@@ -61,7 +49,6 @@ class EnvironmentConfig:
     def to_dict(self) -> Dict:
         config_dict = {
             "server_config": self.server_config,
-            "deployment": self.deployment,
         }
         if self.aws:
             config_dict.update({"aws": self.aws})
