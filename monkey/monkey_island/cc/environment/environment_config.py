@@ -13,7 +13,6 @@ class EnvironmentConfig:
     def __init__(self, file_path):
         self._server_config_path = os.path.expanduser(file_path)
         self.server_config = None
-        self.deployment = None
         self.user_creds = None
         self.aws = None
 
@@ -35,7 +34,6 @@ class EnvironmentConfig:
         aws = dict_data["aws"] if "aws" in dict_data else None
 
         self.server_config = dict_data["server_config"]
-        self.deployment = dict_data["deployment"]
         self.user_creds = _get_user_credentials_from_config(dict_data)
         self.aws = aws
 
@@ -51,7 +49,6 @@ class EnvironmentConfig:
     def to_dict(self) -> Dict:
         config_dict = {
             "server_config": self.server_config,
-            "deployment": self.deployment,
         }
         if self.aws:
             config_dict.update({"aws": self.aws})

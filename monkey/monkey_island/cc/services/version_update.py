@@ -1,10 +1,14 @@
+import json
 import logging
+from pathlib import Path
 
 import requests
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.utils.exceptions import VersionServerConnectionError
 from common.version import get_version
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+
+DEPLOYMENT_FILE_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "deployment.json"
 
 logger = logging.getLogger(__name__)
 
@@ -39,8 +43,9 @@ class VersionUpdateService:
         Checks if newer monkey version is available
         :return: False if not, version in string format ('1.6.2') otherwise
         """
+
         url = VersionUpdateService.VERSION_SERVER_CHECK_NEW_URL % (
-            env_singleton.env.get_deployment(),
+            VersionUpdateService.get_deployment_from_file(DEPLOYMENT_FILE_PATH),
             get_version(),
         )
 
@@ -61,6 +66,25 @@ class VersionUpdateService:
     @staticmethod
     def get_download_link():
         return VersionUpdateService.VERSION_SERVER_DOWNLOAD_URL % (
-            env_singleton.env.get_deployment(),
+            VersionUpdateService.get_deployment_from_file(DEPLOYMENT_FILE_PATH),
             get_version(),
         )
+
+    @staticmethod
+    def get_deployment_from_file(file_path: Path) -> str:
+        deployment = "unknown"
+
+        try:
+            with open(file_path, "r") as deployment_info_file:
+                deployment_info = json.load(deployment_info_file)
+                deployment = deployment_info["deployment"]
+        except FileNotFoundError as ex:
+            logger.debug(f"Deployment file {file_path} is not found. Exception: {ex}")
+        except KeyError as ex:
+            logger.debug(f"Invalid key in the deployment file. Exception: {ex}")
+        except json.JSONDecodeError as ex:
+            logger.debug(f"Invalid deployment info file. Exception: {ex}")
+        except Exception as ex:
+            logger.debug(f"Couldn't get deployment info from {file_path}. Exception: {ex}.")
+
+        return deployment

@@ -88,9 +88,3 @@ class Environment(object, metaclass=ABCMeta):
 
     def get_auth_expiration_time(self):
         return self._AUTH_EXPIRATION_TIME
-
-    def get_deployment(self) -> str:
-        deployment = "unknown"
-        if self._config and self._config.deployment:
-            deployment = self._config.deployment
-        return deployment
