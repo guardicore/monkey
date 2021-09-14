@@ -72,15 +72,6 @@ install_nodejs() {
   sudo apt-get install -y nodejs
 }
 
-install_common_build_prereqs() {
-  sudo apt-get update
-  sudo apt-get upgrade -y
-
-  # monkey island prereqs
-  sudo apt-get install -y curl libcurl4 openssl git build-essential moreutils
-  install_nodejs
-}
-
 is_valid_git_repo() {
   pushd "$1" 2>/dev/null || return 1
   git status >/dev/null 2>&1
