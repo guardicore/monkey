@@ -6,6 +6,11 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- A new exploiter that allows propagation via PowerShell Remoting. #1246
+- A warning regarding antivirus when agent binaries are missing. #1450
+- A deployment.json file to store the deployment type. #1205
+
 ### Changed
 - The name of the "Communicate as new user" post-breach action to "Communicate
   as backdoor user". #1410
@@ -18,7 +23,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "Back door user" post-breach action. #1410
 - Stale code in the Windows system info collector that collected installed
   packages and WMI info. #1389
-- Remove insecure access feature in the Monkey Island. #1418
+- Insecure access feature in the Monkey Island. #1418
+- The "deployment" field from the server_config.json #1205
 
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration
@@ -32,6 +38,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Trap command produced no output. #1406
 - Overlapping Guardicore logo in the landing page. #1441
 - PBA table collapse in security report on data change. #1423
+- Unsigned Windows agent binaries in Linux packages are now signed. #1444
 
 ### Security
 - Generate a random password when creating a new user for CommunicateAsNewUser
