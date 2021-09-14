@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 
@@ -6,30 +6,20 @@ from monkey_island.cc.services.version_update import VersionUpdateService
 
 
 @pytest.fixture
-def deployment_info_file_path(monkeypatch, data_for_tests_dir):
-    path = os.path.join(data_for_tests_dir, "deployment.json")
-    monkeypatch.setattr(os.path, "join", lambda *args: path)
+def deployment_info_file_path(data_for_tests_dir):
+    path = data_for_tests_dir / "deployment.json"
     return path
 
 
 @pytest.fixture
-def ghost_file(monkeypatch):
-    path = "ghost_file"
-    monkeypatch.setattr(os.path, "join", lambda *args: path)
+def key_error_deployment_info_file_path(data_for_tests_dir):
+    path = data_for_tests_dir / "deployment_key_error.json"
     return path
 
 
 @pytest.fixture
-def key_error_deployment_info_file_path(monkeypatch, data_for_tests_dir):
-    path = os.path.join(data_for_tests_dir, "deployment_key_error.json")
-    monkeypatch.setattr(os.path, "join", lambda *args: path)
-    return path
-
-
-@pytest.fixture
-def flawed_deployment_info_file_path(monkeypatch, data_for_tests_dir):
-    path = os.path.join(data_for_tests_dir, "deployment_flawed")
-    monkeypatch.setattr(os.path, "join", lambda *args: path)
+def flawed_deployment_info_file_path(data_for_tests_dir):
+    path = data_for_tests_dir / "deployment_flawed"
     return path
 
 
@@ -38,7 +28,8 @@ def test_get_deployment_field_from_file(deployment_info_file_path):
     assert deployment == "develop"
 
 
-def test_get_deployment_field_from_nonexistent_file(ghost_file):
+def test_get_deployment_field_from_nonexistent_file():
+    ghost_file = Path("ghost_file")
     deployment = VersionUpdateService().get_deployment_from_file(ghost_file)
     assert deployment == "unknown"
 

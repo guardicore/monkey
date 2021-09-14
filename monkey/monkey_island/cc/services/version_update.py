@@ -1,12 +1,14 @@
 import json
 import logging
-import os
+from pathlib import Path
 
 import requests
 
 from common.utils.exceptions import VersionServerConnectionError
 from common.version import get_version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+
+DEPLOYMENT_FILE_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "deployment.json"
 
 logger = logging.getLogger(__name__)
 
@@ -41,10 +43,9 @@ class VersionUpdateService:
         Checks if newer monkey version is available
         :return: False if not, version in string format ('1.6.2') otherwise
         """
-        deployment_info_file_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "deployment.json")
 
         url = VersionUpdateService.VERSION_SERVER_CHECK_NEW_URL % (
-            VersionUpdateService.get_deployment_from_file(deployment_info_file_path),
+            VersionUpdateService.get_deployment_from_file(DEPLOYMENT_FILE_PATH),
             get_version(),
         )
 
@@ -64,15 +65,13 @@ class VersionUpdateService:
 
     @staticmethod
     def get_download_link():
-        deployment_info_file_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "deployment.json")
-
         return VersionUpdateService.VERSION_SERVER_DOWNLOAD_URL % (
-            VersionUpdateService.get_deployment_from_file(deployment_info_file_path),
+            VersionUpdateService.get_deployment_from_file(DEPLOYMENT_FILE_PATH),
             get_version(),
         )
 
     @staticmethod
-    def get_deployment_from_file(file_path: str) -> str:
+    def get_deployment_from_file(file_path: Path) -> str:
         deployment = "unknown"
 
         try:
