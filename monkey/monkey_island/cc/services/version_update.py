@@ -75,8 +75,13 @@ class VersionUpdateService:
     def get_deployment_from_file(file_path: str) -> str:
         deployment = "unknown"
 
-        with open(file_path, "r") as deployment_info_file:
-            deployment_info = json.load(deployment_info_file)
-            deployment = deployment_info["deployment"]
+        try:
+            with open(file_path, "r") as deployment_info_file:
+                deployment_info = json.load(deployment_info_file)
+                deployment = deployment_info["deployment"]
+        except Exception as ex:
+            logger.debug(
+                f"Couldn't get deployment info from {str(file_path)}. Exception: {str(ex)}."
+            )
 
         return deployment
