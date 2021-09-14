@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-from typing import Optional
 
 import requests
 
@@ -42,8 +41,10 @@ class VersionUpdateService:
         Checks if newer monkey version is available
         :return: False if not, version in string format ('1.6.2') otherwise
         """
+        deployment_info_file_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "deployment.json")
+
         url = VersionUpdateService.VERSION_SERVER_CHECK_NEW_URL % (
-            VersionUpdateService.get_deployment_file(),
+            VersionUpdateService.get_deployment_from_file(deployment_info_file_path),
             get_version(),
         )
 
@@ -63,17 +64,18 @@ class VersionUpdateService:
 
     @staticmethod
     def get_download_link():
+        deployment_info_file_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "deployment.json")
+
         return VersionUpdateService.VERSION_SERVER_DOWNLOAD_URL % (
-            VersionUpdateService.get_deployment_file(),
+            VersionUpdateService.get_deployment_from_file(deployment_info_file_path),
             get_version(),
         )
 
     @staticmethod
-    def get_deployment_file() -> Optional[str]:
+    def get_deployment_from_file(file_path: str) -> str:
         deployment = "unknown"
 
-        deployment_info_file_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "deployment.json")
-        with open(deployment_info_file_path, "r") as deployment_info_file:
+        with open(file_path, "r") as deployment_info_file:
             deployment_info = json.load(deployment_info_file)
             deployment = deployment_info["deployment"]
 
