@@ -6,7 +6,7 @@ import LoadingIcon from '../../ui-components/LoadingIcon';
 
 const ATTACK_DESCRIPTION = 'After the attacker or malware has propagated through your network, \
                             your data is at risk on any machine the attacker can access. It can be \
-                            encrypted and held for ransomware, exfiltrated, or manipulated in \
+                            encrypted and held for ransom, exfiltrated, or manipulated in \
                             whatever way the attacker chooses.'
 const HOSTNAME_REGEX = /^(.* - )?(\S+) :.*$/;
 
