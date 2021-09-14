@@ -78,7 +78,13 @@ class VersionUpdateService:
             with open(file_path, "r") as deployment_info_file:
                 deployment_info = json.load(deployment_info_file)
                 deployment = deployment_info["deployment"]
+        except FileNotFoundError as ex:
+            logger.debug(f"Deployment file {file_path} is not found. Exception: {ex}")
+        except KeyError as ex:
+            logger.debug(f"Invalid key in the deployment file. Exception: {ex}")
+        except json.JSONDecodeError as ex:
+            logger.debug(f"Invalid deployment info file. Exception: {ex}")
         except Exception as ex:
-            logger.debug(f"Couldn't get deployment info from {file_path}. Exception: {str(ex)}.")
+            logger.debug(f"Couldn't get deployment info from {file_path}. Exception: {ex}.")
 
         return deployment
