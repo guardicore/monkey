@@ -80,8 +80,6 @@ class VersionUpdateService:
                 deployment_info = json.load(deployment_info_file)
                 deployment = deployment_info["deployment"]
         except Exception as ex:
-            logger.debug(
-                f"Couldn't get deployment info from {str(file_path)}. Exception: {str(ex)}."
-            )
+            logger.debug(f"Couldn't get deployment info from {file_path}. Exception: {str(ex)}.")
 
         return deployment
