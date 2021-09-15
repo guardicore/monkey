@@ -112,7 +112,7 @@ branch="develop"
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
 monkey_version="dev"
 package=""
-deployment_type="develop"
+deployment_type=""
 
 while (( "$#" )); do
   case "$1" in

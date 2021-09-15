@@ -16,8 +16,10 @@ copy_monkey_island_to_build_dir() {
 }
 
 modify_deployment() {
-  local deployment_file_path="$2/monkey_island/cc/deployment.json"
-  echo -e "{\n    \"deployment\": \"$1\"\n}" > $deployment_file_path
+  if [ -n "$1" ]; then
+    local deployment_file_path="$2/monkey_island/cc/deployment.json"
+    echo -e "{\n    \"deployment\": \"$1\"\n}" > $deployment_file_path
+  fi
 }
 
 add_agent_binaries_to_build_dir() {
