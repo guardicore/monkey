@@ -27,6 +27,7 @@ install_package_specific_build_prereqs() {
 setup_build_dir() {
   local agent_binary_dir=$1
   local monkey_repo=$2
+  local deployment_type=$3
 
   pushd $APPIMAGE_DIR
 
@@ -36,6 +37,7 @@ setup_build_dir() {
 
   copy_monkey_island_to_build_dir "$monkey_repo/monkey" "$BUILD_DIR"
   copy_server_config_to_build_dir
+  modify_deployment "$deployment_type" "$BUILD_DIR"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$BUILD_DIR"
 
   install_monkey_island_python_dependencies
