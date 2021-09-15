@@ -15,6 +15,11 @@ copy_monkey_island_to_build_dir() {
       "$src"/monkey_island "$build_dir/"
 }
 
+modify_deployment() {
+  local deployment_file_path="$2/monkey_island/cc/deployment.json"
+  echo -e "{\n    \"deployment\": \"$1\"\n}" > $deployment_file_path
+}
+
 add_agent_binaries_to_build_dir() {
   local agent_binary_dir=$1
   local island_binaries_path="$2/monkey_island/cc/binaries/"
