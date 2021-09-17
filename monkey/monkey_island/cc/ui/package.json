@@ -27,7 +27,7 @@
     "not dead"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.12.1",
+    "@babel/cli": "^7.15.4",
     "@babel/core": "^7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.1",
