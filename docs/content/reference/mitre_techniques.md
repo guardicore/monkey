@@ -18,7 +18,6 @@ In the following table, we list all the MITRE ATT&CK techniques the Infection Mo
 | TACTIC                                                            | TECHNIQUES                                                                                 |
 |---                                                                |---                                                                                         |
 | [Execution](https://attack.mitre.org/tactics/TA0002/)             | [Command-line Interface](https://attack.mitre.org/techniques/T1059/)                       |
-|                                                                   | [Execution Through Module Load](https://attack.mitre.org/techniques/T1129/)                |
 |                                                                   | [Execution Through API](https://attack.mitre.org/techniques/T1106/)                        |
 |                                                                   | [Powershell](https://attack.mitre.org/techniques/T1086/)                                   |
 |                                                                   | [Scripting](https://attack.mitre.org/techniques/T1064/)                                    |

@@ -7,8 +7,8 @@ import requests
 
 from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
 
-ISLAND_USERNAME = "m0nk3y"
-ISLAND_PASSWORD = "Passw0rd!"
+ISLAND_USERNAME = "test"
+ISLAND_PASSWORD = "test"
 LOGGER = logging.getLogger(__name__)
 
 

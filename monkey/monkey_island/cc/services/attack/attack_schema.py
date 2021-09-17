@@ -17,18 +17,6 @@ SCHEMA = {
                     "systems "
                     "and execute other software during the course of an operation.",
                 },
-                "T1129": {
-                    "title": "Execution through module load",
-                    "type": "bool",
-                    "value": True,
-                    "necessary": False,
-                    "link": "https://attack.mitre.org/techniques/T1129",
-                    "description": "The Windows module loader can be instructed to load DLLs from "
-                    "arbitrary "
-                    "local paths and arbitrary Universal Naming Convention (UNC) "
-                    "network paths.",
-                    "depends_on": ["T1078", "T1003"],
-                },
                 "T1106": {
                     "title": "Execution through API",
                     "type": "bool",
