@@ -1,3 +1,4 @@
+import copy
 from typing import List
 
 import pytest
@@ -32,15 +33,30 @@ class MockFieldEncryptor(IFieldEncryptor):
         return [MockFieldEncryptor.plaintext[int(v)] for v in value]
 
 
-MOCK_SENSITIVE_FIELDS = [SensitiveField("overview.foo.the_key", MockFieldEncryptor)]
+@pytest.fixture(autouse=True)
+def patch_sensitive_fields(monkeypatch):
+    mock_sensitive_fields = [SensitiveField("overview.foo.the_key", MockFieldEncryptor)]
+    monkeypatch.setattr(
+        "monkey_island.cc.models.utils.report_encryptor.sensitive_fields", mock_sensitive_fields
+    )
 
 
 @pytest.mark.usefixtures("uses_database")
-def test_report_encryption(monkeypatch, data_for_tests_dir):
-    monkeypatch.setattr(
-        "monkey_island.cc.models.utils.report_encryptor.sensitive_fields", MOCK_SENSITIVE_FIELDS
-    )
+def test_report_encryption(data_for_tests_dir):
     Report.save_report(MOCK_REPORT_DICT)
 
     assert Report.objects.first()["overview"]["foo"]["the_key"] == ["0", "1"]
     assert Report.get_report()["overview"]["foo"]["the_key"] == MOCK_SENSITIVE_FIELD_CONTENTS
+
+
+@pytest.mark.usefixtures("uses_database")
+def test_report_dot_encoding(data_for_tests_dir):
+    mrd = copy.deepcopy(MOCK_REPORT_DICT)
+    mrd["meta_info"] = {"foo.bar": "baz"}
+    Report.save_report(mrd)
+
+    assert "foo.bar" not in Report.objects.first()["meta_info"]
+    assert "foo,,,bar" in Report.objects.first()["meta_info"]
+
+    report = Report.get_report()
+    assert "foo.bar" in report["meta_info"]
