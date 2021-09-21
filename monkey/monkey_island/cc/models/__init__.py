@@ -7,3 +7,4 @@ from .creds import Creds  # noqa: F401, E402
 from .monkey import Monkey  # noqa: F401, E402
 from .monkey_ttl import MonkeyTtl  # noqa: F401, E402
 from .pba_results import PbaResults  # noqa: F401, E402
+from .report import Report  # noqa: F401, E402
