@@ -5,7 +5,7 @@ import os
 
 import pytest
 from tests.unit_tests.monkey_island.cc.mongomock_fixtures import *  # noqa: F401,F403,E402
-from tests.unit_tests.monkey_island.cc.services.utils.test_config_encryption import (
+from tests.unit_tests.monkey_island.cc.services.utils.test_encryption import (
     MONKEY_CONFIGS_DIR_PATH,
     STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME,
 )
