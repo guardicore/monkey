@@ -3,18 +3,20 @@ from typing import Callable, Type
 
 import dpath.util
 
-from monkey_island.cc.models.utils.field_types.field_type_abc import FieldTypeABC
-from monkey_island.cc.models.utils.field_types.string_list import StringList
+from monkey_island.cc.models.utils.field_encryptors.i_field_encryptor import IFieldEncryptor
+from monkey_island.cc.models.utils.field_encryptors.string_list_encryptor import StringListEncryptor
 
 
 @dataclass
 class SensitiveField:
     path: str
     path_separator = "."
-    field_type: Type[FieldTypeABC]
+    field_type: Type[IFieldEncryptor]
 
 
-sensitive_fields = [SensitiveField(path="overview.config_passwords", field_type=StringList)]
+sensitive_fields = [
+    SensitiveField(path="overview.config_passwords", field_type=StringListEncryptor)
+]
 
 
 def encrypt(report: dict) -> dict:

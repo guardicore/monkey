@@ -1,7 +1,7 @@
 import pytest
 
 from monkey_island.cc.models import Report
-from monkey_island.cc.models.utils.field_types.string_list import StringList
+from monkey_island.cc.models.utils.field_encryptors.string_list_encryptor import StringListEncryptor
 from monkey_island.cc.models.utils.report_encryptor import SensitiveField
 from monkey_island.cc.server_utils.encryptor import initialize_encryptor
 
@@ -13,7 +13,7 @@ MOCK_REPORT_DICT = {
     "meta_info": {"foo": "bar"},
 }
 
-MOCK_SENSITIVE_FIELDS = [SensitiveField("overview.foo.the_key", StringList)]
+MOCK_SENSITIVE_FIELDS = [SensitiveField("overview.foo.the_key", StringListEncryptor)]
 
 
 @pytest.mark.usefixtures("uses_database")
