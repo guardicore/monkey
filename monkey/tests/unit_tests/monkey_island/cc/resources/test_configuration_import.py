@@ -2,7 +2,7 @@ import pytest
 from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption_test import (
     MALFORMED_CIPHER_TEXT_CORRUPTED,
 )
-from tests.unit_tests.monkey_island.cc.services.utils.test_config_encryption import PASSWORD
+from tests.unit_tests.monkey_island.cc.services.utils.test_encryption import PASSWORD
 
 from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.configuration_import import ConfigurationImport

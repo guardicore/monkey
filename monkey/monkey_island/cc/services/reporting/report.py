@@ -4,8 +4,6 @@ import itertools
 import logging
 from typing import List
 
-from bson import json_util
-
 from common.config_value_paths import (
     EXPLOITER_CLASSES_PATH,
     LOCAL_NETWORK_SCAN_PATH,
@@ -16,7 +14,7 @@ from common.config_value_paths import (
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey
+from monkey_island.cc.models import Monkey, Report
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
@@ -633,12 +631,10 @@ class ReportService:
                 "strong_users": PTHReportService.get_strong_users_on_crit_details(),
             },
             "recommendations": {"issues": issues, "domain_issues": domain_issues},
-            "meta": {"latest_monkey_modifytime": monkey_latest_modify_time},
+            "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
         }
         ReportExporterManager().export(report)
-        mongo.db.report.drop()
-        mongo.db.report.insert_one(ReportService.encode_dot_char_before_mongo_insert(report))
-
+        Report.save_report(report)
         return report
 
     @staticmethod
@@ -668,27 +664,16 @@ class ReportService:
         return issues_dict
 
     @staticmethod
-    def encode_dot_char_before_mongo_insert(report_dict):
-        """
-        mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.'
-        char with the unicode
-        ,,, combo instead.
-        :return: dict with formatted keys with no dots.
-        """
-        report_as_json = json_util.dumps(report_dict).replace(".", ",,,")
-        return json_util.loads(report_as_json)
-
-    @staticmethod
     def is_latest_report_exists():
         """
         This function checks if a monkey report was already generated and if it's the latest one.
         :return: True if report is the latest one, False if there isn't a report or its not the
         latest.
         """
-        latest_report_doc = mongo.db.report.find_one({}, {"meta.latest_monkey_modifytime": 1})
+        latest_report_doc = mongo.db.report.find_one({}, {"meta_info.latest_monkey_modifytime": 1})
 
         if latest_report_doc:
-            report_latest_modifytime = latest_report_doc["meta"]["latest_monkey_modifytime"]
+            report_latest_modifytime = latest_report_doc["meta_info"]["latest_monkey_modifytime"]
             latest_monkey_modifytime = Monkey.get_latest_modifytime()
             return report_latest_modifytime == latest_monkey_modifytime
 
@@ -707,16 +692,8 @@ class ReportService:
             )
 
     @staticmethod
-    def decode_dot_char_before_mongo_insert(report_dict):
-        """
-        this function replaces the ',,,' combo with the '.' char instead.
-        :return: report dict with formatted keys (',,,' -> '.')
-        """
-        report_as_json = json_util.dumps(report_dict).replace(",,,", ".")
-        return json_util.loads(report_as_json)
-
-    @staticmethod
     def get_report():
-        if ReportService.is_latest_report_exists():
-            return ReportService.decode_dot_char_before_mongo_insert(mongo.db.report.find_one())
-        return safe_generate_regular_report()
+        if not ReportService.is_latest_report_exists():
+            return safe_generate_regular_report()
+
+        return Report.get_report()
