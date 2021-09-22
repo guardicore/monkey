@@ -9,7 +9,10 @@ from monkey_island.cc.models.utils.report_encryptor import SensitiveField
 
 MOCK_SENSITIVE_FIELD_CONTENTS = ["the_string", "the_string2"]
 MOCK_REPORT_DICT = {
-    "overview": {"foo": {"the_key": MOCK_SENSITIVE_FIELD_CONTENTS, "other_key": "other_value"}},
+    "overview": {
+        "foo": {"the_key": MOCK_SENSITIVE_FIELD_CONTENTS, "other_key": "other_value"},
+        "bar": {"the_key": []},
+    },
     "glance": {"foo": "bar"},
     "recommendations": {"foo": "bar"},
     "meta_info": {"foo": "bar"},
@@ -26,31 +29,35 @@ class MockFieldEncryptor(IFieldEncryptor):
     @staticmethod
     def _encrypt(value: str) -> str:
         MockFieldEncryptor.plaintext.append(value)
-        return str(len(MockFieldEncryptor.plaintext) - 1)
+        return f"ENCRYPTED_{str(len(MockFieldEncryptor.plaintext) - 1)}"
 
     @staticmethod
     def decrypt(value: List[str]) -> List[str]:
-        return [MockFieldEncryptor.plaintext[int(v)] for v in value]
+        return MockFieldEncryptor.plaintext
 
 
 @pytest.fixture(autouse=True)
 def patch_sensitive_fields(monkeypatch):
-    mock_sensitive_fields = [SensitiveField("overview.foo.the_key", MockFieldEncryptor)]
+    mock_sensitive_fields = [
+        SensitiveField("overview.foo.the_key", MockFieldEncryptor),
+        SensitiveField("overview.bar.the_key", MockFieldEncryptor),
+    ]
     monkeypatch.setattr(
         "monkey_island.cc.models.utils.report_encryptor.sensitive_fields", mock_sensitive_fields
     )
 
 
 @pytest.mark.usefixtures("uses_database")
-def test_report_encryption(data_for_tests_dir):
+def test_report_encryption():
     Report.save_report(MOCK_REPORT_DICT)
 
-    assert Report.objects.first()["overview"]["foo"]["the_key"] == ["0", "1"]
+    assert Report.objects.first()["overview"]["foo"]["the_key"] == ["ENCRYPTED_0", "ENCRYPTED_1"]
+    assert Report.objects.first()["overview"]["bar"]["the_key"] == []
     assert Report.get_report()["overview"]["foo"]["the_key"] == MOCK_SENSITIVE_FIELD_CONTENTS
 
 
 @pytest.mark.usefixtures("uses_database")
-def test_report_dot_encoding(data_for_tests_dir):
+def test_report_dot_encoding():
     mrd = copy.deepcopy(MOCK_REPORT_DICT)
     mrd["meta_info"] = {"foo.bar": "baz"}
     Report.save_report(mrd)
