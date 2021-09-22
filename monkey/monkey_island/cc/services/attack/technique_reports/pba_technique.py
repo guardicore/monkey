@@ -15,7 +15,7 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
         """
         :return: names of post breach action
         """
-        pass
+        ...
 
     @classmethod
     def get_pba_query(cls, post_breach_action_names):

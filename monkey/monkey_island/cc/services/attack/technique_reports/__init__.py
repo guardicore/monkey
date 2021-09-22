@@ -25,7 +25,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         """
         :return: Message that will be displayed in case attack technique was not scanned.
         """
-        pass
+        ...
 
     @property
     @abc.abstractmethod
@@ -33,7 +33,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         """
         :return: Message that will be displayed in case attack technique was scanned.
         """
-        pass
+        ...
 
     @property
     @abc.abstractmethod
@@ -41,7 +41,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         """
         :return: Message that will be displayed in case attack technique was used by the scanner.
         """
-        pass
+        ...
 
     @property
     @abc.abstractmethod
@@ -49,7 +49,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         """
         :return: Id of attack technique. E.g. T1003
         """
-        pass
+        ...
 
     @property
     @abc.abstractmethod
@@ -59,7 +59,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
                  (examples: 1. "Trap Command" PBA (technique T1154) is Linux only.
                             2. "Job Scheduling" PBA has different techniques for Windows and Linux.
         """
-        pass
+        ...
 
     @staticmethod
     @abstractstatic
@@ -67,7 +67,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         """
         :return: Report data aggregated from the database.
         """
-        pass
+        ...
 
     @classmethod
     def technique_status(cls):
@@ -124,7 +124,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 
     @staticmethod
     def _get_unscanned_msg_with_reasons(unscanned_msg):
-        pass
+        ...
 
     @classmethod
     def technique_title(cls):
