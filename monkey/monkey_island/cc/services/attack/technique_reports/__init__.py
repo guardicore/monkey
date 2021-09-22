@@ -1,5 +1,6 @@
 import abc
 import logging
+from typing import List
 
 from common.utils.attack_utils import ScanStatus
 from common.utils.code_utils import abstractstatic
@@ -47,6 +48,16 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def tech_id(self):
         """
         :return: Id of attack technique. E.g. T1003
+        """
+        pass
+
+    @property
+    @abc.abstractmethod
+    def relevant_systems(self) -> List[str]:
+        """
+        :return: systems on which the technique is relevant
+                 (examples: 1. "Trap Command" PBA (technique T1154) is Linux only.
+                            2. "Job Scheduling" PBA has different techniques for Windows and Linux.
         """
         pass
 
@@ -104,11 +115,16 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         if status == ScanStatus.DISABLED.value:
             return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
-            return cls.unscanned_msg
+            unscanned_msg = AttackTechnique._get_unscanned_msg_with_reasons(cls.unscanned_msg)
+            return unscanned_msg
         elif status == ScanStatus.SCANNED.value:
             return cls.scanned_msg
         else:
             return cls.used_msg
+
+    @staticmethod
+    def _get_unscanned_msg_with_reasons(unscanned_msg):
+        pass
 
     @classmethod
     def technique_title(cls):

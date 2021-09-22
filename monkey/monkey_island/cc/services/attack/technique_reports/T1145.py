@@ -5,9 +5,10 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1145(AttackTechnique):
     tech_id = "T1145"
-    unscanned_msg = "Monkey didn't find any shh keys."
+    relevant_systems = ["Linux", "Windows"]
+    unscanned_msg = "Monkey didn't find any SSH keys."
     scanned_msg = ""
-    used_msg = "Monkey found ssh keys on machines in the network."
+    used_msg = "Monkey found SSH keys on machines in the network."
 
     # Gets data about ssh keys found
     query = [

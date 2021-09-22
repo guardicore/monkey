@@ -6,6 +6,7 @@ from monkey_island.cc.services.attack.technique_reports.technique_report_tools i
 
 class T1110(AttackTechnique):
     tech_id = "T1110"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't try to brute force any services."
     scanned_msg = "Monkey tried to brute force some services, but failed."
     used_msg = "Monkey successfully used brute force in the network."

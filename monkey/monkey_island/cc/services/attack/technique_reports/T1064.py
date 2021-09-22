@@ -4,6 +4,7 @@ from monkey_island.cc.services.attack.technique_reports.usage_technique import U
 
 class T1064(UsageTechnique):
     tech_id = "T1064"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't run scripts or tried to run and failed."
     scanned_msg = ""
     used_msg = "Monkey ran scripts on machines in the network."

@@ -5,6 +5,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1016(AttackTechnique):
     tech_id = "T1016"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't gather network configurations."
     scanned_msg = ""
     used_msg = "Monkey gathered network configurations on systems in the network."

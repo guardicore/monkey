@@ -5,6 +5,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1222(AttackTechnique):
     tech_id = "T1222"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't try to change any file permissions."
     scanned_msg = "Monkey tried to change file permissions, but failed."
     used_msg = "Monkey successfully changed file permissions in network systems."

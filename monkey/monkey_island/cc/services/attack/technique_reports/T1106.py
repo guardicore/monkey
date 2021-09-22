@@ -3,6 +3,7 @@ from monkey_island.cc.services.attack.technique_reports.usage_technique import U
 
 class T1106(UsageTechnique):
     tech_id = "T1106"
+    relevant_systems = ["Windows"]
     unscanned_msg = "Monkey didn't try to directly use WinAPI."
     scanned_msg = "Monkey tried to use WinAPI, but failed."
     used_msg = "Monkey successfully used WinAPI."
