@@ -6,7 +6,7 @@ import logging
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
-from monkey_island.cc.services.utils.i_encryptor import IEncryptor
+from monkey_island.cc.server_utils.encryption.i_encryptor import IEncryptor
 
 logger = logging.getLogger(__name__)
 

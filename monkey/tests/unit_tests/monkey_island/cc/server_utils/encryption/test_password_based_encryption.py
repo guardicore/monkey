@@ -4,7 +4,7 @@ from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption
     VALID_CIPHER_TEXT,
 )
 
-from monkey_island.cc.services.utils.password_encryption import (
+from monkey_island.cc.server_utils.encryption.password_based_encryption import (
     InvalidCredentialsError,
     PasswordBasedEncryptor,
 )

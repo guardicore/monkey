@@ -1,6 +1,9 @@
 import os
 
-from monkey_island.cc.server_utils.key_encryptor import get_encryptor, initialize_encryptor
+from monkey_island.cc.server_utils.encryption.data_store_encryptor import (
+    get_encryptor,
+    initialize_encryptor,
+)
 
 PASSWORD_FILENAME = "mongo_key.bin"
 

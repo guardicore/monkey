@@ -8,13 +8,13 @@ from flask import request
 
 from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.utils.password_encryption import (
+from monkey_island.cc.server_utils.encryption.password_based_encryption import (
     InvalidCiphertextError,
     InvalidCredentialsError,
     PasswordBasedEncryptor,
     is_encrypted,
 )
+from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__name__)
 
