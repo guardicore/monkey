@@ -214,9 +214,10 @@ SCHEMA = {
                     "value": False,
                     "necessary": False,
                     "link": "https://attack.mitre.org/techniques/T1216",
-                    "description": "Adversaries may use scripts signed with "
-                    "trusted certificates to "
-                    "proxy execution of malicious files on Windows systems.",
+                    "description": "Adversaries may use scripts signed with trusted certificates "
+                    "to proxy execution of malicious files on Windows systems. This behavior could "
+                    "be abused by adversaries to execute malicious files that could bypass "
+                    "application control and signature validation on systems.",
                 },
             },
         },
