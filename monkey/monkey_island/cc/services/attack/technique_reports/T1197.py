@@ -4,9 +4,8 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1197(AttackTechnique):
     tech_id = "T1197"
-    unscanned_msg = (
-        "Monkey didn't try to use any bits jobs since it didn't run on any Windows machines."
-    )
+    relevant_systems = ["Windows"]
+    unscanned_msg = "Monkey didn't try to use any bits jobs."
     scanned_msg = "Monkey tried to use bits jobs but failed."
     used_msg = "Monkey successfully used bits jobs at least once in the network."
 

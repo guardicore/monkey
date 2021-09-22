@@ -4,9 +4,10 @@ from monkey_island.cc.services.attack.technique_reports.pba_technique import Pos
 
 class T1216(PostBreachTechnique):
     tech_id = "T1216"
+    relevant_sytems = ["Windows"]
     unscanned_msg = (
         "Monkey didn't attempt to execute an arbitrary program with the help of a "
-        "pre-existing signed script since it didn't run on any Windows machines. "
+        "pre-existing signed script. "
     )
     scanned_msg = (
         "Monkey attempted to execute an arbitrary program with the help of a "

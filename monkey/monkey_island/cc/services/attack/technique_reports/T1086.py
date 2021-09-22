@@ -5,9 +5,10 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1086(AttackTechnique):
     tech_id = "T1086"
-    unscanned_msg = "Monkey didn't run powershell since it didn't run on any Windows machines."
+    relevant_systems = ["Windows"]
+    unscanned_msg = "Monkey didn't run PowerShell."
     scanned_msg = ""
-    used_msg = "Monkey successfully ran powershell commands on exploited machines in the network."
+    used_msg = "Monkey successfully ran PowerShell commands on exploited machines in the network."
 
     query = [
         {
