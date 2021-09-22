@@ -3,11 +3,7 @@ from typing import Dict, List
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
 
-def get_reverse_config_schema():
-    return _get_config_schema_per_attack_technique()
-
-
-def _get_config_schema_per_attack_technique() -> Dict[str, Dict[str, List[str]]]:
+def get_config_schema_per_attack_technique() -> Dict[str, Dict[str, List[str]]]:
     """
     :return: dictionary mapping each attack technique to relevant config fields; example -
             {
