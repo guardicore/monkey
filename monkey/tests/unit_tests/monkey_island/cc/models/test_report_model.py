@@ -4,8 +4,8 @@ from typing import List
 import pytest
 
 from monkey_island.cc.models import Report
+from monkey_island.cc.models.utils.document_encryptor import SensitiveField
 from monkey_island.cc.models.utils.field_encryptors.i_field_encryptor import IFieldEncryptor
-from monkey_island.cc.models.utils.report_encryptor import SensitiveField
 
 MOCK_SENSITIVE_FIELD_CONTENTS = ["the_string", "the_string2"]
 MOCK_REPORT_DICT = {
@@ -19,32 +19,30 @@ MOCK_REPORT_DICT = {
 }
 
 
-class MockFieldEncryptor(IFieldEncryptor):
+class MockStringListEncryptor(IFieldEncryptor):
     plaintext = []
 
     @staticmethod
     def encrypt(value: List[str]) -> List[str]:
-        return [MockFieldEncryptor._encrypt(v) for v in value]
+        return [MockStringListEncryptor._encrypt(v) for v in value]
 
     @staticmethod
     def _encrypt(value: str) -> str:
-        MockFieldEncryptor.plaintext.append(value)
-        return f"ENCRYPTED_{str(len(MockFieldEncryptor.plaintext) - 1)}"
+        MockStringListEncryptor.plaintext.append(value)
+        return f"ENCRYPTED_{str(len(MockStringListEncryptor.plaintext) - 1)}"
 
     @staticmethod
     def decrypt(value: List[str]) -> List[str]:
-        return MockFieldEncryptor.plaintext
+        return MockStringListEncryptor.plaintext
 
 
 @pytest.fixture(autouse=True)
 def patch_sensitive_fields(monkeypatch):
     mock_sensitive_fields = [
-        SensitiveField("overview.foo.the_key", MockFieldEncryptor),
-        SensitiveField("overview.bar.the_key", MockFieldEncryptor),
+        SensitiveField("overview.foo.the_key", MockStringListEncryptor),
+        SensitiveField("overview.bar.the_key", MockStringListEncryptor),
     ]
-    monkeypatch.setattr(
-        "monkey_island.cc.models.utils.report_encryptor.sensitive_fields", mock_sensitive_fields
-    )
+    monkeypatch.setattr("monkey_island.cc.models.report.sensitive_fields", mock_sensitive_fields)
 
 
 @pytest.mark.usefixtures("uses_database")

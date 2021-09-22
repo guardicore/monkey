@@ -3,7 +3,13 @@ from __future__ import annotations
 from bson import json_util
 from mongoengine import DictField, Document
 
-from monkey_island.cc.models.utils import report_encryptor
+from monkey_island.cc.models.utils import document_encryptor
+from monkey_island.cc.models.utils.document_encryptor import SensitiveField
+from monkey_island.cc.models.utils.field_encryptors.string_list_encryptor import StringListEncryptor
+
+sensitive_fields = [
+    SensitiveField(path="overview.config_passwords", field_encryptor=StringListEncryptor)
+]
 
 
 class Report(Document):
@@ -18,7 +24,7 @@ class Report(Document):
     @staticmethod
     def save_report(report_dict: dict):
         report_dict = _encode_dot_char_before_mongo_insert(report_dict)
-        report_dict = report_encryptor.encrypt(report_dict)
+        report_dict = document_encryptor.encrypt(sensitive_fields, report_dict)
         Report.objects.delete()
         Report(
             overview=report_dict["overview"],
@@ -30,7 +36,9 @@ class Report(Document):
     @staticmethod
     def get_report() -> dict:
         report_dict = Report.objects.first().to_mongo()
-        return _decode_dot_char_before_mongo_insert(report_encryptor.decrypt(report_dict))
+        return _decode_dot_char_before_mongo_insert(
+            document_encryptor.decrypt(sensitive_fields, report_dict)
+        )
 
 
 def _encode_dot_char_before_mongo_insert(report_dict):
