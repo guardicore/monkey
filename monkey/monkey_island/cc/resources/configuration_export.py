@@ -5,7 +5,7 @@ from flask import request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.utils.encryption import encrypt_string
+from monkey_island.cc.services.utils.password_encryption import PasswordBasedEncryptor
 
 
 class ConfigurationExport(flask_restful.Resource):
@@ -20,6 +20,8 @@ class ConfigurationExport(flask_restful.Resource):
         if should_encrypt:
             password = data["password"]
             plaintext_config = json.dumps(plaintext_config)
-            config_export = encrypt_string(plaintext_config, password)
+
+            pb_encryptor = PasswordBasedEncryptor(password)
+            config_export = pb_encryptor.encrypt(plaintext_config)
 
         return {"config_export": config_export, "encrypted": should_encrypt}

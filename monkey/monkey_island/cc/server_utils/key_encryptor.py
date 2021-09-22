@@ -1,17 +1,16 @@
-import base64
 import os
 
 # PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports but
 # is maintained.
 from Crypto import Random  # noqa: DUO133  # nosec: B413
-from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
+from monkey_island.cc.services.utils.key_encryption import KeyBasedEncryptor
 
 _encryptor = None
 
 
-class Encryptor:
+class DataStoreEncryptor:
     _BLOCK_SIZE = 32
     _PASSWORD_FILENAME = "mongo_key.bin"
 
@@ -32,30 +31,19 @@ class Encryptor:
         with open(password_file, "rb") as f:
             self._cipher_key = f.read()
 
-    def _pad(self, message):
-        return message + (self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE)) * chr(
-            self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE)
-        )
-
-    def _unpad(self, message: str):
-        return message[0 : -ord(message[len(message) - 1])]
-
     def enc(self, message: str):
-        cipher_iv = Random.new().read(AES.block_size)
-        cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(message).encode())).decode()
+        key_encryptor = KeyBasedEncryptor(self._cipher_key)
+        return key_encryptor.encrypt(message)
 
-    def dec(self, enc_message):
-        enc_message = base64.b64decode(enc_message)
-        cipher_iv = enc_message[0 : AES.block_size]
-        cipher = AES.new(self._cipher_key, AES.MODE_CBC, cipher_iv)
-        return self._unpad(cipher.decrypt(enc_message[AES.block_size :]).decode())
+    def dec(self, enc_message: str):
+        key_encryptor = KeyBasedEncryptor(self._cipher_key)
+        return key_encryptor.decrypt(enc_message)
 
 
 def initialize_encryptor(password_file_dir):
     global _encryptor
 
-    _encryptor = Encryptor(password_file_dir)
+    _encryptor = DataStoreEncryptor(password_file_dir)
 
 
 def get_encryptor():

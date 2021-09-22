@@ -5,7 +5,7 @@ from ScoutSuite.providers.base.authentication_strategy import AuthenticationExce
 from common.cloud.scoutsuite_consts import CloudProviders
 from common.config_value_paths import AWS_KEYS_PATH
 from common.utils.exceptions import InvalidAWSKeys
-from monkey_island.cc.server_utils.encryptor import get_encryptor
+from monkey_island.cc.server_utils.key_encryptor import get_encryptor
 from monkey_island.cc.services.config import ConfigService
 
 
