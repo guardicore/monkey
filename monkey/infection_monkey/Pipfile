@@ -31,12 +31,6 @@ ScoutSuite = {git = "git://github.com/guardicode/ScoutSuite"}
 pyopenssl = "==19.0.0" # We can't build 32bit ubuntu12 binary with newer versions of pyopenssl
 pypsrp = "*"
 typing-extensions = "*"
-cython = "*" # Remove this after removing pyspnego
-# Pinning pyspnego to this commit resolves #1456. A new pyspnego release that includes this commit
-# is expected after 2021-10-01. Once a new version of pyspnego is released (v0.2.0?), both pyspnego
-# and cython can be removed from this Pipfile (since pyspnego is a dependency of pypsrp and pypsrp
-# has no hard version requirement.
-pyspnego = {editable = true, ref = "3f748f210e4fb6b186b0036e1a0bf38762d64c37", git = "https://github.com/jborean93/pyspnego"}
 
 [dev-packages]
 
