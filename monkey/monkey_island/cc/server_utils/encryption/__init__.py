@@ -8,6 +8,6 @@ from monkey_island.cc.server_utils.encryption.password_based_encryption import (
 )
 from monkey_island.cc.server_utils.encryption.data_store_encryptor import (
     DataStoreEncryptor,
-    get_encryptor,
-    initialize_encryptor,
+    get_datastore_encryptor,
+    initialize_datastore_encryptor,
 )

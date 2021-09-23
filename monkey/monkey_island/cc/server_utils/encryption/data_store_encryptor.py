@@ -40,11 +40,11 @@ class DataStoreEncryptor:
         return self._key_base_encryptor.decrypt(enc_message)
 
 
-def initialize_encryptor(key_file_dir):
+def initialize_datastore_encryptor(key_file_dir):
     global _encryptor
 
     _encryptor = DataStoreEncryptor(key_file_dir)
 
 
-def get_encryptor():
+def get_datastore_encryptor():
     return _encryptor

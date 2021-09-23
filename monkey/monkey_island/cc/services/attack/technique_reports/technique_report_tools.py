@@ -1,4 +1,4 @@
-from monkey_island.cc.server_utils.encryption import get_encryptor
+from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
 
 
 def parse_creds(attempt):
@@ -29,7 +29,7 @@ def censor_password(password, plain_chars=3, secret_chars=5):
     """
     if not password:
         return ""
-    password = get_encryptor().dec(password)
+    password = get_datastore_encryptor().dec(password)
     return password[0:plain_chars] + "*" * secret_chars
 
 
@@ -42,5 +42,5 @@ def censor_hash(hash_, plain_chars=5):
     """
     if not hash_:
         return ""
-    hash_ = get_encryptor().dec(hash_)
+    hash_ = get_datastore_encryptor().dec(hash_)
     return hash_[0:plain_chars] + " ..."
