@@ -1,4 +1,4 @@
-from infection_monkey.model.host import VictimHost  # noqa: F401
+from infection_monkey.model.host import VictimHost
 
 MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
