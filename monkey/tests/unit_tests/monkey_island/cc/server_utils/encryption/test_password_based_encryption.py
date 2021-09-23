@@ -4,11 +4,7 @@ from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption
     VALID_CIPHER_TEXT,
 )
 
-from monkey_island.cc.services.utils.encryption import (
-    InvalidCredentialsError,
-    decrypt_ciphertext,
-    encrypt_string,
-)
+from monkey_island.cc.server_utils.encryption import InvalidCredentialsError, PasswordBasedEncryptor
 
 MONKEY_CONFIGS_DIR_PATH = "monkey_configs"
 STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME = "monkey_config_standard.json"
@@ -18,23 +14,27 @@ INCORRECT_PASSWORD = "goodbye321"
 
 @pytest.mark.slow
 def test_encrypt_decrypt_string(monkey_config_json):
-    encrypted_config = encrypt_string(monkey_config_json, PASSWORD)
-    assert decrypt_ciphertext(encrypted_config, PASSWORD) == monkey_config_json
+    pb_encryptor = PasswordBasedEncryptor(PASSWORD)
+    encrypted_config = pb_encryptor.encrypt(monkey_config_json)
+    assert pb_encryptor.decrypt(encrypted_config) == monkey_config_json
 
 
 @pytest.mark.slow
 def test_decrypt_string__wrong_password(monkey_config_json):
+    pb_encryptor = PasswordBasedEncryptor(INCORRECT_PASSWORD)
     with pytest.raises(InvalidCredentialsError):
-        decrypt_ciphertext(VALID_CIPHER_TEXT, INCORRECT_PASSWORD)
+        pb_encryptor.decrypt(VALID_CIPHER_TEXT)
 
 
 @pytest.mark.slow
 def test_decrypt_string__malformed_corrupted():
+    pb_encryptor = PasswordBasedEncryptor(PASSWORD)
     with pytest.raises(ValueError):
-        decrypt_ciphertext(MALFORMED_CIPHER_TEXT_CORRUPTED, PASSWORD)
+        pb_encryptor.decrypt(MALFORMED_CIPHER_TEXT_CORRUPTED)
 
 
 @pytest.mark.slow
 def test_decrypt_string__no_password(monkey_config_json):
+    pb_encryptor = PasswordBasedEncryptor("")
     with pytest.raises(InvalidCredentialsError):
-        decrypt_ciphertext(VALID_CIPHER_TEXT, "")
+        pb_encryptor.decrypt(VALID_CIPHER_TEXT)

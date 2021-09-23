@@ -27,7 +27,7 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,
 )
-from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
+from monkey_island.cc.server_utils.encryption import initialize_datastore_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
@@ -88,7 +88,7 @@ def _configure_logging(config_options):
 def _initialize_globals(config_options: IslandConfigOptions, server_config_path: str):
     env_singleton.initialize_from_file(server_config_path)
 
-    initialize_encryptor(config_options.data_dir)
+    initialize_datastore_encryptor(config_options.data_dir)
     initialize_services(config_options.data_dir)
 
 
