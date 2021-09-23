@@ -27,9 +27,7 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,
 )
-from monkey_island.cc.server_utils.encryption.data_store_encryptor import (  # noqa: E402
-    initialize_encryptor,
-)
+from monkey_island.cc.server_utils.encryption import initialize_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402

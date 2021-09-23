@@ -4,7 +4,7 @@ import os
 # is maintained.
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 
-from monkey_island.cc.server_utils.encryption.key_based_encryptor import KeyBasedEncryptor
+from monkey_island.cc.server_utils.encryption import KeyBasedEncryptor
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
 _encryptor = None

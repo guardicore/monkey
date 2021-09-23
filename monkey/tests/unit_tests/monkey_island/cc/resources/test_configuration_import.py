@@ -8,9 +8,7 @@ from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption
 
 from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.configuration_import import ConfigurationImport
-from monkey_island.cc.server_utils.encryption.password_based_encryption import (
-    PasswordBasedEncryptor,
-)
+from monkey_island.cc.server_utils.encryption import PasswordBasedEncryptor
 
 
 def test_is_config_encrypted__json(monkey_config_json):

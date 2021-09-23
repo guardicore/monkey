@@ -5,10 +5,7 @@ import pytest
 
 from common.config_value_paths import AWS_KEYS_PATH
 from monkey_island.cc.database import mongo
-from monkey_island.cc.server_utils.encryption.data_store_encryptor import (
-    get_encryptor,
-    initialize_encryptor,
-)
+from monkey_island.cc.server_utils.encryption import get_encryptor, initialize_encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_auth_service import (
     is_aws_keys_setup,

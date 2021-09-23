@@ -4,10 +4,7 @@ from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption
     VALID_CIPHER_TEXT,
 )
 
-from monkey_island.cc.server_utils.encryption.password_based_encryption import (
-    InvalidCredentialsError,
-    PasswordBasedEncryptor,
-)
+from monkey_island.cc.server_utils.encryption import InvalidCredentialsError, PasswordBasedEncryptor
 
 MONKEY_CONFIGS_DIR_PATH = "monkey_configs"
 STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME = "monkey_config_standard.json"

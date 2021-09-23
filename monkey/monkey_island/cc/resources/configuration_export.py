@@ -4,9 +4,7 @@ import flask_restful
 from flask import request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.server_utils.encryption.password_based_encryption import (
-    PasswordBasedEncryptor,
-)
+from monkey_island.cc.server_utils.encryption import PasswordBasedEncryptor
 from monkey_island.cc.services.config import ConfigService
 
 

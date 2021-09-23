@@ -1,4 +1,4 @@
-from monkey_island.cc.server_utils.encryption.data_store_encryptor import get_encryptor
+from monkey_island.cc.server_utils.encryption import get_encryptor
 
 
 def parse_creds(attempt):
