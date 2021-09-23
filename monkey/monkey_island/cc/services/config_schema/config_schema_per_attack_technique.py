@@ -42,3 +42,6 @@ def _add_config_field_to_reverse_schema(
             technique[definition_type] = [config_field]
     else:
         reverse_schema[attack_technique] = {definition_type: [config_field]}
+
+
+CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE = get_config_schema_per_attack_technique()

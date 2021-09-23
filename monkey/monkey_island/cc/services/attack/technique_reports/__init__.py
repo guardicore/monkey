@@ -7,6 +7,9 @@ from common.utils.code_utils import abstractstatic
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.services.attack.attack_config import AttackConfig
+from monkey_island.cc.services.config_schema.config_schema_per_attack_technique import (
+    CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -115,16 +118,43 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         if status == ScanStatus.DISABLED.value:
             return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
-            unscanned_msg = AttackTechnique._get_unscanned_msg_with_reasons(cls.unscanned_msg)
+            unscanned_msg = cls._get_unscanned_msg_with_reasons(cls.unscanned_msg)
             return unscanned_msg
         elif status == ScanStatus.SCANNED.value:
             return cls.scanned_msg
         else:
             return cls.used_msg
 
-    @staticmethod
-    def _get_unscanned_msg_with_reasons(unscanned_msg):
-        ...
+    @classmethod
+    def _get_unscanned_msg_with_reasons(cls, unscanned_msg):
+        reasons = []
+        if len(cls.relevant_systems) == 1:
+            reasons.append(f"- The Monkey did not run on any {cls.relevant_systems[0]} systems.")
+        if cls.tech_id in CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE:
+            reasons.append(
+                "- The following configuration options were disabled:<br/>"
+                f"{cls._get_relevant_config_values()}"
+            )
+
+        if reasons:
+            unscanned_msg = (
+                unscanned_msg.strip(".")
+                + " due to one of the following reasons:\n"
+                + "\n".join(reasons)
+            )
+
+        return unscanned_msg
+
+    @classmethod
+    def _get_relevant_config_values(cls):
+        config_options = ""
+        for config_type in CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE[cls.tech_id]:
+            config_options += (
+                f"- {config_type} — "
+                f"{', '.join(CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE[cls.tech_id][config_type])}<br/>"
+            )
+
+        return config_options
 
     @classmethod
     def technique_title(cls):
