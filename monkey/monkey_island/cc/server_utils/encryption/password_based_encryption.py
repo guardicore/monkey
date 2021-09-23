@@ -8,6 +8,14 @@ from monkey_island.cc.server_utils.encryption.i_encryptor import IEncryptor
 
 logger = logging.getLogger(__name__)
 
+# PBE as implemented takes low-entropy, user provided password and it adds some
+# entropy to it and encrypts/decrypts the data. This implementation uses AES256-CBC
+# and it is less secure encryption then KeyBasedEncryptor.
+# The security of it depends on what will the user provide as password.
+# We can merge the two into the one encryption method but then we lose the entropy
+# of the key with whatever key derivation function we use.
+# Note: password != key
+
 
 class PasswordBasedEncryptor(IEncryptor):
 

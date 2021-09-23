@@ -12,15 +12,15 @@ _encryptor = None
 
 class DataStoreEncryptor:
     _BLOCK_SIZE = 32
-    _PASSWORD_FILENAME = "mongo_key.bin"
+    _KEY_FILENAME = "mongo_key.bin"
 
-    def __init__(self, password_file_dir):
-        password_file = os.path.join(password_file_dir, self._PASSWORD_FILENAME)
+    def __init__(self, key_file_dir):
+        key_file = os.path.join(key_file_dir, self._KEY_FILENAME)
 
-        if os.path.exists(password_file):
-            self._load_existing_key(password_file)
+        if os.path.exists(key_file):
+            self._load_existing_key(key_file)
         else:
-            self._init_key(password_file)
+            self._init_key(key_file)
 
         self._key_base_encryptor = KeyBasedEncryptor(self._cipher_key)
 
@@ -29,8 +29,8 @@ class DataStoreEncryptor:
         with open_new_securely_permissioned_file(password_file_path, "wb") as f:
             f.write(self._cipher_key)
 
-    def _load_existing_key(self, password_file):
-        with open(password_file, "rb") as f:
+    def _load_existing_key(self, key_file):
+        with open(key_file, "rb") as f:
             self._cipher_key = f.read()
 
     def enc(self, message: str):
@@ -40,10 +40,10 @@ class DataStoreEncryptor:
         return self._key_base_encryptor.decrypt(enc_message)
 
 
-def initialize_encryptor(password_file_dir):
+def initialize_encryptor(key_file_dir):
     global _encryptor
 
-    _encryptor = DataStoreEncryptor(password_file_dir)
+    _encryptor = DataStoreEncryptor(key_file_dir)
 
 
 def get_encryptor():
