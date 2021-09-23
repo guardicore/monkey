@@ -6,14 +6,14 @@ import logging
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
 
-from monkey_island.cc.server_utils.encryption.i_encryptor import IEncryptor
+from monkey_island.cc.server_utils.encryption import IEncryptor
 
 logger = logging.getLogger(__name__)
 
-# KBE is an encryption method which use random key of specific length
+# KeyBasedEncryptor is an encryption method which use random key of specific length
 # and AES block cipher to encrypt/decrypt the data. The key is more complex
 # one and hard to remember than user provided one. This class provides more secure way of
-# encryption compared to PBE because of the random and complex key.
+# encryption compared to PasswordBasedEncryptor because of the random and complex key.
 # We can merge the two into the one encryption method but then we lose the entropy
 # of the key with whatever key derivation function we use.
 # Note: password != key
@@ -37,6 +37,7 @@ class KeyBasedEncryptor(IEncryptor):
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
         return self._unpad(cipher.decrypt(enc_message[AES.block_size :]).decode())
 
+    # TODO: Review and evaluate the security of the padding function
     def _pad(self, message):
         return message + (self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE)) * chr(
             self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE)
