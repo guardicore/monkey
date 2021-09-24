@@ -1,7 +1,10 @@
 import mongoengine
 import pytest
 
-MOCK_DB_NAME = "mongoenginetest"
+# Database name has to match the db used in the codebase,
+# else the name needs to be mocked during tests.
+# Currently its used like so: "mongo.db.telemetry.find()".
+MOCK_DB_NAME = "db"
 
 
 @pytest.fixture(scope="module", autouse=True)
