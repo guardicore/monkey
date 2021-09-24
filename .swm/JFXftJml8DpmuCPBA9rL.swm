@@ -17,16 +17,15 @@
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
             "comments": [],
-            "firstLineNumber": 56,
+            "firstLineNumber": 52,
             "lines": [
                 "             \"Removes the file afterwards.\",",
                 "             \"attack_techniques\": [\"T1166\"],",
                 "         },",
                 "*        {",
-                "+        # Swimmer: ADD DETAILS HERE!",
                 "*            \"type\": \"string\",",
                 "*            \"enum\": [\"ScheduleJobs\"],",
-                "*            \"title\": \"Job scheduling\",",
+                "*            \"title\": \"Job Scheduling\",",
                 "*            \"safe\": True,",
                 "*            \"info\": \"Attempts to create a scheduled job on the system and remove it.\",",
                 "*            \"attack_techniques\": [\"T1168\", \"T1053\"],",
@@ -42,11 +41,11 @@
         }
     ],
     "symbols": {},
-    "file_version": "2.0.1",
+    "file_version": "2.0.3",
     "meta": {
-        "app_version": "0.4.1-1",
+        "app_version": "0.5.7-0",
         "file_blobs": {
-            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "ea9b18aba7f71da12c9c82ac39d8a0cf2c472a9c"
+            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "7d62ac36e875ca3c249d808250cb3268e4d3d68d"
         }
     }
 }
