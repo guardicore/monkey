@@ -15,14 +15,12 @@
         },
         {
             "type": "snippet",
-            "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
-            "comments": [],
-            "firstLineNumber": 52,
             "lines": [
                 "             \"Removes the file afterwards.\",",
                 "             \"attack_techniques\": [\"T1166\"],",
                 "         },",
                 "*        {",
+                "+        # Swimmer: ADD DETAILS HERE!",
                 "*            \"type\": \"string\",",
                 "*            \"enum\": [\"ScheduleJobs\"],",
                 "*            \"title\": \"Job Scheduling\",",
@@ -33,7 +31,10 @@
                 "         {",
                 "             \"type\": \"string\",",
                 "             \"enum\": [\"Timestomping\"],"
-            ]
+            ],
+            "firstLineNumber": 52,
+            "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
+            "comments": []
         },
         {
             "type": "text",
