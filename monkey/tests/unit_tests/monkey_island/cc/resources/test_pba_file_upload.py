@@ -92,15 +92,18 @@ def test_pba_file_upload_endpoint(
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
     )
+
     resp_get = flask_client.get(f"/api/fileUpload/{pba_os}?load=test.py")
+    assert resp_get.status_code == 200
+    assert resp_get.data.decode() == "m0nk3y"
+    # Closing the response closes the file handle, else it can't be deleted
+    resp_get.close()
+
     resp_delete = flask_client.delete(
         f"/api/fileUpload/{pba_os}", data="test.py", content_type="text/plain;"
     )
     resp_get_del = flask_client.get(f"/api/fileUpload/{pba_os}?load=test.py")
     assert resp_post.status_code == 200
-
-    assert resp_get.status_code == 200
-    assert resp_get.data.decode() == "m0nk3y"
 
     assert resp_delete.status_code == 200
 
