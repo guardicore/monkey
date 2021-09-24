@@ -16,7 +16,7 @@ FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE = {
 }
 
 
-class FakeAttackTechnique(AttackTechnique):
+class FakeAttackTechnique_TwoRelevantSystems(AttackTechnique):
     tech_id = "T0001"
     relevant_systems = ["System 1", "System 2"]
     unscanned_msg = "UNSCANNED"
@@ -27,7 +27,7 @@ class FakeAttackTechnique(AttackTechnique):
         pass
 
 
-EXPECTED_UNSCANNED_MSG = (
+EXPECTED_UNSCANNED_MSG_TWO_RELEVANT_SYSTEMS = (
     "UNSCANNED due to one of the following reasons:\n"
     "- The following configuration options were disabled:<br/>"
     "- Definition Type 1 — Config Option 1<br/>"
@@ -35,61 +35,10 @@ EXPECTED_UNSCANNED_MSG = (
 )
 
 
-EXPECTED_SCANNED_MSG = "SCANNED"
+EXPECTED_SCANNED_MSG_TWO_RELEVANT_SYSTEMS = "SCANNED"
 
 
-EXPECTED_USED_MSG = "USED"
-
-
-def test_get_message_by_status_disabled(monkeypatch):
-    monkeypatch.setattr(
-        (
-            "monkey_island.cc.services.attack.technique_reports."
-            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
-        ),
-        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
-    )
-    technique_msg = FakeAttackTechnique.get_message_by_status(ScanStatus.DISABLED.value)
-    assert technique_msg == disabled_msg
-
-
-def test_get_message_by_status_unscanned(monkeypatch):
-    monkeypatch.setattr(
-        (
-            "monkey_island.cc.services.attack.technique_reports."
-            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
-        ),
-        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
-    )
-    technique_msg = FakeAttackTechnique.get_message_by_status(ScanStatus.UNSCANNED.value)
-    assert technique_msg == EXPECTED_UNSCANNED_MSG
-
-
-def test_get_message_by_status_scanned(monkeypatch):
-    monkeypatch.setattr(
-        (
-            "monkey_island.cc.services.attack.technique_reports."
-            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
-        ),
-        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
-    )
-    technique_msg = FakeAttackTechnique.get_message_by_status(ScanStatus.SCANNED.value)
-    assert technique_msg == EXPECTED_SCANNED_MSG
-
-
-def test_get_message_by_status_used(monkeypatch):
-    monkeypatch.setattr(
-        (
-            "monkey_island.cc.services.attack.technique_reports."
-            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
-        ),
-        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
-    )
-    technique_msg = FakeAttackTechnique.get_message_by_status(ScanStatus.USED.value)
-    assert technique_msg == EXPECTED_USED_MSG
-
-
-###
+EXPECTED_USED_MSG_TWO_RELEVANT_SYSTEMS = "USED"
 
 
 class FakeAttackTechnique_OneRelevantSystem(AttackTechnique):
@@ -116,6 +65,65 @@ EXPECTED_SCANNED_MSG_ONE_RELEVANT_SYSTEM = "SCANNED"
 
 
 EXPECTED_USED_MSG_ONE_RELEVANT_SYSTEM = "USED"
+
+
+def test_get_message_by_status_disabled_two_relevant_systems(monkeypatch):
+    monkeypatch.setattr(
+        (
+            "monkey_island.cc.services.attack.technique_reports."
+            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
+        ),
+        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
+    )
+    technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
+        ScanStatus.DISABLED.value
+    )
+    assert technique_msg == disabled_msg
+
+
+def test_get_message_by_status_unscanned_two_relevant_systems(monkeypatch):
+    monkeypatch.setattr(
+        (
+            "monkey_island.cc.services.attack.technique_reports."
+            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
+        ),
+        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
+    )
+    technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
+        ScanStatus.UNSCANNED.value
+    )
+    assert technique_msg == EXPECTED_UNSCANNED_MSG_TWO_RELEVANT_SYSTEMS
+
+
+def test_get_message_by_status_scanned_two_relevant_systems(monkeypatch):
+    monkeypatch.setattr(
+        (
+            "monkey_island.cc.services.attack.technique_reports."
+            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
+        ),
+        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
+    )
+    technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
+        ScanStatus.SCANNED.value
+    )
+    assert technique_msg == EXPECTED_SCANNED_MSG_TWO_RELEVANT_SYSTEMS
+
+
+def test_get_message_by_status_used_two_relevant_systems(monkeypatch):
+    monkeypatch.setattr(
+        (
+            "monkey_island.cc.services.attack.technique_reports."
+            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
+        ),
+        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
+    )
+    technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
+        ScanStatus.USED.value
+    )
+    assert technique_msg == EXPECTED_USED_MSG_TWO_RELEVANT_SYSTEMS
+
+
+###
 
 
 def test_get_message_by_status_disabled_one_relevant_system(monkeypatch):
