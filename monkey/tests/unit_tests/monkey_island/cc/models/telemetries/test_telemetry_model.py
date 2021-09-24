@@ -1,9 +1,10 @@
 from copy import deepcopy
 from datetime import datetime
 
+import mongoengine
 import pytest
 
-from monkey_island.cc.models.telemetries.telemetry import Telemetry
+from monkey_island.cc.models.telemetries import Telemetry
 from monkey_island.cc.models.utils.document_encryptor import SensitiveField
 from monkey_island.cc.models.utils.field_encryptors.mimikatz_results_encryptor import (
     MimikatzResultsEncryptor,
@@ -61,6 +62,12 @@ def patch_sensitive_fields(monkeypatch):
     )
 
 
+@pytest.fixture(autouse=True)
+def fake_mongo(monkeypatch):
+    mongo = mongoengine.connection.get_connection()
+    monkeypatch.setattr("monkey_island.cc.models.telemetries.telemetry.mongo", mongo)
+
+
 @pytest.mark.usefixtures("uses_database", "uses_encryptor")
 def test_telemetry_encryption(monkeypatch):
 
@@ -74,11 +81,11 @@ def test_telemetry_encryption(monkeypatch):
         == MOCK_CREDENTIALS["Vakaris"]["ntlm_hash"]
     )
     assert (
-        Telemetry.get_telemetry()["data"]["credentials"]["user"]["password"]
+        Telemetry.get_telemetry_by_query({})[0]["data"]["credentials"]["user"]["password"]
         == MOCK_CREDENTIALS["user"]["password"]
     )
     assert (
-        Telemetry.get_telemetry()["data"]["mimikatz"]["Vakaris"]["ntlm_hash"]
+        Telemetry.get_telemetry_by_query({})[0]["data"]["mimikatz"]["Vakaris"]["ntlm_hash"]
         == MOCK_CREDENTIALS["Vakaris"]["ntlm_hash"]
     )
 

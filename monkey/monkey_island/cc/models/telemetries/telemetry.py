@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-from mongoengine import DateTimeField, DictField, Document, EmbeddedDocumentField, StringField
+from typing import List
 
+from mongoengine import DateTimeField, Document, DynamicField, EmbeddedDocumentField, StringField
+
+from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommandControlChannel
 from monkey_island.cc.models.utils import document_encryptor
 from monkey_island.cc.models.utils.document_encryptor import FieldNotFoundError, SensitiveField
@@ -17,7 +20,7 @@ sensitive_fields = [
 
 class Telemetry(Document):
 
-    data = DictField(required=True)
+    data = DynamicField(required=True)
     timestamp = DateTimeField(required=True)
     monkey_guid = StringField(required=True)
     telem_category = StringField(required=True)
@@ -45,6 +48,12 @@ class Telemetry(Document):
         ).save()
 
     @staticmethod
-    def get_telemetry() -> dict:
-        telemetry_dict = Telemetry.objects.first().to_mongo()
-        return document_encryptor.decrypt(sensitive_fields, telemetry_dict)
+    def get_telemetry_by_query(query: dict, output_fields=None) -> List[dict]:
+        telemetries = mongo.db.telemetry.find(query, output_fields)
+        decrypted_list = []
+        for telemetry in telemetries:
+            try:
+                decrypted_list.append(document_encryptor.decrypt(sensitive_fields, telemetry))
+            except FieldNotFoundError:
+                decrypted_list.append(telemetry)
+        return decrypted_list
