@@ -1,3 +1,5 @@
+from enum import Enum
+
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.services.attack.technique_reports.__init__ import (
     AttackTechnique,
@@ -27,18 +29,15 @@ class FakeAttackTechnique_TwoRelevantSystems(AttackTechnique):
         pass
 
 
-EXPECTED_UNSCANNED_MSG_TWO_RELEVANT_SYSTEMS = (
-    "UNSCANNED due to one of the following reasons:\n"
-    "- The following configuration options were disabled:<br/>"
-    "- Definition Type 1 — Config Option 1<br/>"
-    "- Definition Type 2 — Config Option 5<br/>"
-)
-
-
-EXPECTED_SCANNED_MSG_TWO_RELEVANT_SYSTEMS = "SCANNED"
-
-
-EXPECTED_USED_MSG_TWO_RELEVANT_SYSTEMS = "USED"
+class ExpectedMsgs_TwoRelevantSystems(Enum):
+    UNSCANNED: str = (
+        "UNSCANNED due to one of the following reasons:\n"
+        "- The following configuration options were disabled:<br/>"
+        "- Definition Type 1 — Config Option 1<br/>"
+        "- Definition Type 2 — Config Option 5<br/>"
+    )
+    SCANNED: str = "SCANNED"
+    USED: str = "USED"
 
 
 class FakeAttackTechnique_OneRelevantSystem(AttackTechnique):
@@ -52,19 +51,16 @@ class FakeAttackTechnique_OneRelevantSystem(AttackTechnique):
         pass
 
 
-EXPECTED_UNSCANNED_MSG_ONE_RELEVANT_SYSTEM = (
-    "UNSCANNED due to one of the following reasons:\n"
-    "- The Monkey did not run on any System 1 systems.\n"
-    "- The following configuration options were disabled:<br/>"
-    "- Definition Type 1 — Config Option 1<br/>"
-    "- Definition Type 2 — Config Option 5<br/>"
-)
-
-
-EXPECTED_SCANNED_MSG_ONE_RELEVANT_SYSTEM = "SCANNED"
-
-
-EXPECTED_USED_MSG_ONE_RELEVANT_SYSTEM = "USED"
+class ExpectedMsgs_OneRelevantSystem(Enum):
+    UNSCANNED: str = (
+        "UNSCANNED due to one of the following reasons:\n"
+        "- The Monkey did not run on any System 1 systems.\n"
+        "- The following configuration options were disabled:<br/>"
+        "- Definition Type 1 — Config Option 1<br/>"
+        "- Definition Type 2 — Config Option 5<br/>"
+    )
+    SCANNED: str = "SCANNED"
+    USED: str = "USED"
 
 
 def test_get_message_by_status_disabled_two_relevant_systems(monkeypatch):
@@ -92,7 +88,7 @@ def test_get_message_by_status_unscanned_two_relevant_systems(monkeypatch):
     technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
         ScanStatus.UNSCANNED.value
     )
-    assert technique_msg == EXPECTED_UNSCANNED_MSG_TWO_RELEVANT_SYSTEMS
+    assert technique_msg == ExpectedMsgs_TwoRelevantSystems.UNSCANNED.value
 
 
 def test_get_message_by_status_scanned_two_relevant_systems(monkeypatch):
@@ -106,7 +102,7 @@ def test_get_message_by_status_scanned_two_relevant_systems(monkeypatch):
     technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
         ScanStatus.SCANNED.value
     )
-    assert technique_msg == EXPECTED_SCANNED_MSG_TWO_RELEVANT_SYSTEMS
+    assert technique_msg == ExpectedMsgs_TwoRelevantSystems.SCANNED.value
 
 
 def test_get_message_by_status_used_two_relevant_systems(monkeypatch):
@@ -120,7 +116,7 @@ def test_get_message_by_status_used_two_relevant_systems(monkeypatch):
     technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
         ScanStatus.USED.value
     )
-    assert technique_msg == EXPECTED_USED_MSG_TWO_RELEVANT_SYSTEMS
+    assert technique_msg == ExpectedMsgs_TwoRelevantSystems.USED.value
 
 
 ###
@@ -151,7 +147,7 @@ def test_get_message_by_status_unscanned_one_relevant_system(monkeypatch):
     technique_msg = FakeAttackTechnique_OneRelevantSystem.get_message_by_status(
         ScanStatus.UNSCANNED.value
     )
-    assert technique_msg == EXPECTED_UNSCANNED_MSG_ONE_RELEVANT_SYSTEM
+    assert technique_msg == ExpectedMsgs_OneRelevantSystem.UNSCANNED.value
 
 
 def test_get_message_by_status_scanned_one_relevant_system(monkeypatch):
@@ -165,7 +161,7 @@ def test_get_message_by_status_scanned_one_relevant_system(monkeypatch):
     technique_msg = FakeAttackTechnique_OneRelevantSystem.get_message_by_status(
         ScanStatus.SCANNED.value
     )
-    assert technique_msg == EXPECTED_SCANNED_MSG_ONE_RELEVANT_SYSTEM
+    assert technique_msg == ExpectedMsgs_OneRelevantSystem.SCANNED.value
 
 
 def test_get_message_by_status_used_one_relevant_system(monkeypatch):
@@ -179,4 +175,4 @@ def test_get_message_by_status_used_one_relevant_system(monkeypatch):
     technique_msg = FakeAttackTechnique_OneRelevantSystem.get_message_by_status(
         ScanStatus.USED.value
     )
-    assert technique_msg == EXPECTED_USED_MSG_ONE_RELEVANT_SYSTEM
+    assert technique_msg == ExpectedMsgs_OneRelevantSystem.USED.value
