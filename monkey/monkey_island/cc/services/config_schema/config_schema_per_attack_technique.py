@@ -22,11 +22,10 @@ def get_config_schema_per_attack_technique() -> Dict[str, Dict[str, List[str]]]:
         definition_type = definitions[definition]["title"]
         for field in definitions[definition]["anyOf"]:
             config_field = field["title"]
-            if "attack_techniques" in field:
-                for attack_technique in field["attack_techniques"]:
-                    _add_config_field_to_reverse_schema(
-                        definition_type, config_field, attack_technique, reverse_schema
-                    )
+            for attack_technique in field.get("attack_techniques", []):
+                _add_config_field_to_reverse_schema(
+                    definition_type, config_field, attack_technique, reverse_schema
+                )
 
     return reverse_schema
 
