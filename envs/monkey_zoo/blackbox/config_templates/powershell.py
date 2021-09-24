@@ -10,10 +10,15 @@ class PowerShell(ConfigTemplate):
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": ["PowerShellExploiter"],
-            "basic_network.scope.subnet_scan_list": ["10.2.3.45", "10.2.3.46", "10.2.3.47"],
+            "basic_network.scope.subnet_scan_list": [
+                "10.2.3.45",
+                "10.2.3.46",
+                "10.2.3.47",
+                "10.2.3.48",
+            ],
             "basic.credentials.exploit_password_list": ["Passw0rd!"],
-            "basic_network.scope.depth": 2,
-            "basic.credentials.exploit_user_list": ["m0nk3y", "m0nk3y-user"],
+            "basic_network.scope.depth": 2,  # TODO: Remove .\\ when DC name is added
+            "basic.credentials.exploit_user_list": ["m0nk3y", "m0nk3y-user", ".\\m0nk3y"],
             "internal.classes.finger_classes": ["PingScanner"],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
             "internal.network.tcp_scanner.tcp_target_ports": [],

@@ -25,5 +25,6 @@ GCP_TEST_MACHINE_LIST = {
         "powershell-3-45",
         "powershell-3-46",
         "powershell-3-47",
+        "powershell-3-48",
     ],
 }
