@@ -47,7 +47,6 @@ class WindowsInfoCollector(InfoCollector):
             if credentials:
                 if "credentials" in self.info:
                     self.info["credentials"].update(credentials)
-                self.info["mimikatz"] = credentials
                 logger.info("Mimikatz info gathered successfully")
             else:
                 logger.info("No mimikatz info was gathered")
