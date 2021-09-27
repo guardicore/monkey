@@ -7,6 +7,7 @@ from flask import make_response, request
 import monkey_island.cc.environment.environment_singleton as env_singleton
 import monkey_island.cc.resources.auth.password_utils as password_utils
 from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError
+from monkey_island.cc.database import mongo
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.setup.mongo.database_initializer import init_collections
 
@@ -21,6 +22,8 @@ class Registration(flask_restful.Resource):
         credentials = _get_user_credentials_from_request(request)
 
         try:
+            # if new registration is required (credentials are reset), drop previous user's data
+            _drop_mongo_db()
             env_singleton.env.try_add_user(credentials)
             init_collections()
             return make_response({"error": ""}, 200)
@@ -42,3 +45,7 @@ def _get_user_credentials_from_request(request):
     password_hash = password_utils.hash_password(password)
 
     return UserCreds(username, password_hash)
+
+
+def _drop_mongo_db():
+    mongo.db.command("dropDatabase")
