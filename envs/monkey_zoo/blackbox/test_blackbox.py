@@ -13,7 +13,10 @@ from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
-from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell, PowerShell_Cached
+from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
+from envs.monkey_zoo.blackbox.config_templates.powershell_cached_credentials import (
+    PowerShellCachedCredentials,
+)
 from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
@@ -53,7 +56,6 @@ LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 WINDOWS = "windows"
-LINUX = "linux"
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -171,7 +173,9 @@ class TestMonkeyBlackbox:
     @pytest.mark.os(WINDOWS)
     def test_powershell_exploiter_cached_credentials(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
-            island_client, PowerShell_Cached, "PowerShell_Remoting_exploiter_cached_credentials"
+            island_client,
+            PowerShellCachedCredentials,
+            "PowerShell_Remoting_exploiter_cached_credentials",
         )
 
     def test_smb_and_mimikatz_exploiters(self, island_client):
