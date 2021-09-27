@@ -13,8 +13,8 @@ const LATERAL_MOVEMENT_DESCRIPTION = 'After the initial breach, the attacker wil
                                         href="https://www.guardicore.com/blog/stopping-ransomware-with-segmentation/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report" \
                                         target="_blank" \
                                       > \
-				        See some real-world examples on Guardicore\'s blog. \
-                                      </a>'
+                                        See some real-world examples on Guardicore\'s blog. \
+                                      </a>';
 
 type PropagationStats = {
   num_scanned_nodes: number,
