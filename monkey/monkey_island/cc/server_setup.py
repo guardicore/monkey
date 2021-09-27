@@ -36,7 +36,6 @@ from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
-from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -130,8 +129,6 @@ def _configure_gevent_exception_handling(data_dir):
 def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
     populate_exporter_list()
     app = init_app(mongo_setup.MONGO_URL)
-
-    init_collections()
 
     if should_setup_only:
         logger.warning("Setup only flag passed. Exiting.")
