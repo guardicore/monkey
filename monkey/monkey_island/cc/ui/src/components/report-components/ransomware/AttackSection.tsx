@@ -7,7 +7,16 @@ import LoadingIcon from '../../ui-components/LoadingIcon';
 const ATTACK_DESCRIPTION = 'After the attacker or malware has propagated through your network, \
                             your data is at risk on any machine the attacker can access. It can be \
                             encrypted and held for ransom, exfiltrated, or manipulated in \
-                            whatever way the attacker chooses.'
+                            whatever way the attacker chooses. \
+                            <br /> \
+                            <br /> \
+                            <a \
+                              href="https://www.guardicore.com/blog/what-are-ransomware-costs/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report" \
+                              target="_blank" \
+                            > \
+                              Learn about the financial impact of ransomware on Guardicore\'s blog. \
+                            </a>';
+
 const HOSTNAME_REGEX = /^(.* - )?(\S+) :.*$/;
 
 function AttackSection(): ReactElement {
