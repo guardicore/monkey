@@ -6,8 +6,19 @@ import {renderLimitedArray} from '../common/RenderArrays';
 
 function BreachSection() {
   const [machines, setMachines] = useState(null);
-  let description = 'Ransomware attacks start after machines in the internal network get compromised. ' +
-    'The initial compromise was simulated by running Monkey Agents manually.';
+  let description = 'Ransomware attacks start after machines in the internal network get \
+                     compromised. The initial compromise was simulated by running Monkey Agents \
+                     manually. Detecting ransomware at this stage will minimize the impact to the \
+                     organization. \
+                     <br /> \
+                     <br /> \
+                     <a \
+                       href="https://www.guardicore.com/blog/4-techniques-for-early-ransomware-detection/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report" \
+                       target="_blank" \
+                     > \
+                       Learn techniques for early ransomware detection on Guardicore\'s blog. \
+                     </a>';
+
 
   useEffect(() => {
     IslandHttpClient.get('/api/exploitations/manual')
