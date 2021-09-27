@@ -5,7 +5,7 @@ import {faInfoCircle} from '@fortawesome/free-solid-svg-icons';
 type Props = {
   index: number,
   title: string,
-  description: string,
+  description: ReactFragment,
   body: ReactFragment
 }
 
@@ -14,7 +14,7 @@ function NumberedReportSection(props: Props): ReactElement {
     <div className='numbered-report-section'>
       <Header index={props.index} title={props.title} />
       <div className='indented'>
-        <Description text={props.description} />
+        <Description description={props.description} />
         {props.body}
       </div>
     </div>
@@ -27,11 +27,11 @@ function Header({index, title}: {index: number, title: string}): ReactElement {
   )
 }
 
-function Description({text}: {text: string}): ReactElement {
+function Description({description}: {description: ReactFragment}): ReactElement {
   return (
     <div className='alert alert-secondary description'>
       <FontAwesomeIcon icon={faInfoCircle} className='alert-icon'/>
-      <span dangerouslySetInnerHTML={{__html: text}} />
+      <span>{description}</span>
     </div>
   )
 }
