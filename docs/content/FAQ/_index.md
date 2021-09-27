@@ -26,6 +26,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [After I've set up Monkey Island, how can I execute the Infection Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
 - [How can I make the Infection Monkey agents propagate “deeper” into the network?](#how-can-i-make-the-infection-monkey-agent-propagate-deeper-into-the-network)
 - [What if the report returns a blank screen?](#what-if-the-report-returns-a-blank-screen)
+- [Can I limit how the Infection Monkey propagates through my network?](#can-i-limit-how-the-infection-monkey-propagates-through-my-network)
 - [How can I get involved with the project?](#how-can-i-get-involved-with-the-project)
 
 ## Where can I get the latest version of the Infection Monkey?
@@ -223,6 +224,58 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 
 - **Linux**: First, uninstall the current version with `sudo apt uninstall mongodb` and then install the latest version using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/).
 - **Windows**: First, remove the MongoDB binaries from the `monkey\monkey_island\bin\mongodb` folder. Download and install the latest version of MongoDB using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/). After installation is complete, copy the files from the `C:\Program Files\MongoDB\Server\4.2\bin` folder to the `monkey\monkey_island\bin\mongodb folder`. Try to run the Monkey Island again and everything should work.
+
+## Can I limit how the Infection Monkey propagates through my network?
+
+Yes! To limit how the Infection Monkey propagates through your network, you can:
+
+#### Adjust the scan depth
+
+The scan depth limits the number of hops that the Infection Monkey agent will
+spread from patient zero. If you set the scan depth to one, the agent will only
+reach a single hop from the initially infected machine. Scan depth does not
+limit the number of devices, just the number of hops.
+
+- **Example**: In this example, the scan depth is set to two. _Host A_ scans the
+network and finds hosts _B, C, D_ and _E_. The Infection Monkey agent
+successfully propagates from _Host A_ to _Host C_. Since the scan depth is 2,
+the agent will pivot from _Host C_ and continue to scan other machines on the
+network. However, if _Host C_ successfully breaches _Host E_, it will not pivot
+further nor continue to scan or propagate.
+
+![What is scan depth](/images/faq/propagation_depth_diagram.png "What is scan
+depth")
+
+
+#### Enable or disable scanning the local subnet
+
+You can find the settings that define how the Infection Monkey will scan your
+network in `Configuration -> Network`. Each agent will scan its entire local
+subnet by default, but you can disable this behavior by unchecking the `Local
+network scan` button.
+
+#### Add IPs to the IP allow list
+
+You can specify which hosts you want the Infection Monkey agents to attempt to
+scan in the `Configuration -> Network -> Scan target list` section.
+
+#### Add IPs to the IP block list
+
+
+If there are any hosts on your network that you would like to prevent the
+Infection Monkey from scanning or exploiting, you can add them to the list of
+"Blocked IPs" in `Configuration -> Network -> Blocked IPs`.
+
+#### Specify max number of victims to find/exploit
+
+Two settings in `Configuration -> Internal -> Monkey` allow you to further
+limit the Infection Monkey's propagation:
+
+- **Max victims to find**: This limits the total number of machines that the
+Infection Monkey is allowed to scan.
+- **Max victims to exploit**: This limits the total number of machines that the
+Infection Monkey is allowed to successfully exploit.
+
 
 ## How can I get involved with the project?
 
