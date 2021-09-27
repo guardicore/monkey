@@ -21,13 +21,10 @@ FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE = {
 
 
 @pytest.fixture(scope="function", autouse=True)
-def mock_config_schema_per_attack_technique(monkeypatch):
+def mock_config_schema_per_attack_technique(monkeypatch, fake_schema):
     monkeypatch.setattr(
-        (
-            "monkey_island.cc.services.attack.technique_reports."
-            "__init__.CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE"
-        ),
-        FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE,
+        ("monkey_island.cc.services.attack.technique_reports." "__init__.SCHEMA"),
+        fake_schema,
     )
 
 
