@@ -27,3 +27,20 @@ class PowerShell(ConfigTemplate):
             ],
         }
     )
+
+
+class PowerShell_Cached(ConfigTemplate):
+    config_values = copy(BaseTemplate.config_values)
+
+    config_values.update(
+        {
+            "basic.exploiters.exploiter_classes": ["PowerShellExploiter"],
+            "basic_network.scope.subnet_scan_list": [
+                "10.2.3.46",
+            ],
+            "basic_network.scope.depth": 2,
+            "internal.classes.finger_classes": ["PingScanner"],
+            "internal.network.tcp_scanner.HTTP_PORTS": [],
+            "internal.network.tcp_scanner.tcp_target_ports": [],
+        }
+    )
