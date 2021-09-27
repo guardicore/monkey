@@ -31,7 +31,6 @@ def get_config_schema_per_attack_technique(schema: Dict) -> Dict[str, Dict[str, 
 def _add_config_field_to_reverse_schema(
     definition_type: str, config_field: str, attack_technique: str, reverse_schema: Dict
 ) -> None:
-    if attack_technique in reverse_schema:
-        reverse_schema[attack_technique].setdefault(definition_type, []).append(config_field)
-    else:
-        reverse_schema[attack_technique] = {definition_type: [config_field]}
+    reverse_schema.setdefault(attack_technique, {})
+    reverse_schema[attack_technique].setdefault(definition_type, [])
+    reverse_schema[attack_technique][definition_type].append(config_field)
