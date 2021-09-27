@@ -9,7 +9,7 @@ from flask import request
 from common.common_consts.telem_categories import TelemCategoryEnum
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey import Monkey
-from monkey_island.cc.models.telemetries.telemetry import Telemetry as TelemetryModel
+from monkey_island.cc.models.telemetries import get_telemetry_by_query, save_telemetry
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
@@ -38,7 +38,7 @@ class Telemetry(flask_restful.Resource):
             find_filter["timestamp"] = {"$gt": dateutil.parser.parse(timestamp)}
 
         result["objects"] = self.telemetry_to_displayed_telemetry(
-            TelemetryModel.get_telemetry_by_query(query=find_filter)
+            get_telemetry_by_query(query=find_filter)
         )
         return result
 
@@ -61,7 +61,7 @@ class Telemetry(flask_restful.Resource):
 
         process_telemetry(telemetry_json)
 
-        TelemetryModel.save_telemetry(telemetry_json)
+        save_telemetry(telemetry_json)
 
         return {}, 201
 

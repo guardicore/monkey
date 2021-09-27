@@ -4,8 +4,8 @@ from typing import List
 import pytest
 
 from monkey_island.cc.models import Report
-from monkey_island.cc.models.utils.document_encryptor import SensitiveField
-from monkey_island.cc.models.utils.field_encryptors.i_field_encryptor import IFieldEncryptor
+from monkey_island.cc.utils import SensitiveField
+from monkey_island.cc.utils.field_encryptors import IFieldEncryptor
 
 MOCK_SENSITIVE_FIELD_CONTENTS = ["the_string", "the_string2"]
 MOCK_REPORT_DICT = {

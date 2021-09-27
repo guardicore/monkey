@@ -5,7 +5,7 @@ import mongoengine
 import pytest
 from bson import ObjectId
 
-from monkey_island.cc.models.telemetries import Telemetry
+from monkey_island.cc.models.telemetries import save_telemetry
 from monkey_island.cc.services.reporting.report import ReportService
 
 TELEM_ID = {
@@ -138,12 +138,13 @@ NODE_DICT_FAILED_EXPLOITS["exploits"][1]["result"] = False
 def fake_mongo(monkeypatch):
     mongo = mongoengine.connection.get_connection()
     monkeypatch.setattr("monkey_island.cc.services.reporting.report.mongo", mongo)
-    monkeypatch.setattr("monkey_island.cc.models.telemetries.telemetry.mongo", mongo)
+    monkeypatch.setattr("monkey_island.cc.models.telemetries.telemetry_dal.mongo", mongo)
     monkeypatch.setattr("monkey_island.cc.services.node.mongo", mongo)
     return mongo
 
 
-def test_get_stolen_creds_exploit(fake_mongo, uses_database):
+@pytest.mark.usefixtures("uses_database")
+def test_get_stolen_creds_exploit(fake_mongo):
     fake_mongo.db.telemetry.insert_one(EXPLOIT_TELEMETRY_TELEM)
 
     stolen_creds_exploit = ReportService.get_stolen_creds()
@@ -155,9 +156,10 @@ def test_get_stolen_creds_exploit(fake_mongo, uses_database):
     assert expected_stolen_creds_exploit == stolen_creds_exploit
 
 
-def test_get_stolen_creds_system_info(fake_mongo, uses_database):
+@pytest.mark.usefixtures("uses_database")
+def test_get_stolen_creds_system_info(fake_mongo):
     fake_mongo.db.monkey.insert_one(MONKEY_TELEM)
-    Telemetry.save_telemetry(SYSTEM_INFO_TELEMETRY_TELEM)
+    save_telemetry(SYSTEM_INFO_TELEMETRY_TELEM)
 
     stolen_creds_system_info = ReportService.get_stolen_creds()
     expected_stolen_creds_system_info = [
@@ -169,9 +171,10 @@ def test_get_stolen_creds_system_info(fake_mongo, uses_database):
     assert expected_stolen_creds_system_info == stolen_creds_system_info
 
 
-def test_get_stolen_creds_no_creds(fake_mongo, uses_database):
+@pytest.mark.usefixtures("uses_database")
+def test_get_stolen_creds_no_creds(fake_mongo):
     fake_mongo.db.monkey.insert_one(MONKEY_TELEM)
-    Telemetry.save_telemetry(NO_CREDS_TELEMETRY_TELEM)
+    save_telemetry(NO_CREDS_TELEMETRY_TELEM)
 
     stolen_creds_no_creds = ReportService.get_stolen_creds()
     expected_stolen_creds_no_creds = []

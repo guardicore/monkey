@@ -1,7 +1,7 @@
 import pytest
 
-from monkey_island.cc.models.utils.field_encryptors.string_list_encryptor import StringListEncryptor
 from monkey_island.cc.server_utils.encryption import initialize_datastore_encryptor
+from monkey_island.cc.utils.field_encryptors import StringListEncryptor
 
 MOCK_STRING_LIST = ["test_1", "test_2"]
 EMPTY_LIST = []

@@ -1,7 +1,7 @@
 from typing import List
 
-from monkey_island.cc.models.utils.field_encryptors.i_field_encryptor import IFieldEncryptor
 from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
+from monkey_island.cc.utils.field_encryptors import IFieldEncryptor
 
 
 class StringListEncryptor(IFieldEncryptor):

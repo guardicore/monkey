@@ -15,7 +15,7 @@ from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey, Report
-from monkey_island.cc.models.telemetries import Telemetry
+from monkey_island.cc.models.telemetries import get_telemetry_by_query
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
@@ -166,7 +166,7 @@ class ReportService:
     @staticmethod
     def _get_credentials_from_system_info_telems():
         formatted_creds = []
-        for telem in Telemetry.get_telemetry_by_query(
+        for telem in get_telemetry_by_query(
             {"telem_category": "system_info", "data.credentials": {"$exists": True}},
             {"data.credentials": 1, "monkey_guid": 1},
         ):
