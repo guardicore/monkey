@@ -26,6 +26,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [After I've set up Monkey Island, how can I execute the Infection Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
 - [How can I make the Infection Monkey agents propagate “deeper” into the network?](#how-can-i-make-the-infection-monkey-agent-propagate-deeper-into-the-network)
 - [What if the report returns a blank screen?](#what-if-the-report-returns-a-blank-screen)
+- [How can I limit Monkey's propagation through the network?](#how-can-i-limit-monkeys-propagation-through-the-network)
 - [How can I get involved with the project?](#how-can-i-get-involved-with-the-project)
 
 ## Where can I get the latest version of the Infection Monkey?
@@ -223,6 +224,42 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 
 - **Linux**: First, uninstall the current version with `sudo apt uninstall mongodb` and then install the latest version using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/).
 - **Windows**: First, remove the MongoDB binaries from the `monkey\monkey_island\bin\mongodb` folder. Download and install the latest version of MongoDB using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/). After installation is complete, copy the files from the `C:\Program Files\MongoDB\Server\4.2\bin` folder to the `monkey\monkey_island\bin\mongodb folder`. Try to run the Monkey Island again and everything should work.
+
+## How can I limit Monkey's propagation through the network?
+
+In order to limit Monkey's ability to propagate through the network you can:
+
+#### Set a propagation depth
+
+Setting a propagation depth means that the monkey will spread user-provided number of hops from patient zero. If we set
+propagation depth to 1, the Monkey will spread only one hop from patient zero. Propagation depth does not limit the number of
+devices, just the number of hops.
+
+- **Example**: Propagation depth is set to 2. Host A scans the network and finds host B, C, D and E.
+Monkey successfully propagates from Host A to Host C. Since the propagation depth is 2. Monkey will pivot
+from Host C, continue to scan the network and attempt to propagate machines. If Host C successfully breaches
+Host E, it will not pivot further and it will not continue to attempt propagation.
+
+![What is propagation depth](/images/faq/propagation_depth_diagram.png "What is propagation depth")
+
+
+#### Allow/Block IP list
+
+In `Monkey Configuration -> Network` we can specify how Monkey will scan the network. By default Monkey scans the entire subnet.
+That can be changed by unchecking the `Local network scan` button.
+Additionally, the Monkey scans the network based on the **Allow IPs list** in the `Scan target list` section. All IPs that  are specified in that
+section Monkey will be allowed to scan and try to propagate to.
+On top of this, we can add a list of IPs that Monkey will not scan at all under `Blocked IPs` section.
+
+#### Specify max number of victims to find/exploit
+
+Under `Monkey Configuration -> Internal -> Monkey` we can specify two numbers which are limiting Monkey's propagation.
+
+- **Max victims to find**: this number limits the number of machines that the monkey is allowed to scan. If monkey finds more
+machines then what is specified it will not try to scan them. The default number is 100 machines.
+- **Max victims to exploit**: this number limits the number of machines that the monkey is allowed to successfully exploit.
+Setting this number too high may result in the monkey propagating to a high number of machines. The default number is 100 machines.
+
 
 ## How can I get involved with the project?
 
