@@ -1,9 +1,7 @@
 from typing import Dict, List
 
-from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 
-
-def get_config_schema_per_attack_technique() -> Dict[str, Dict[str, List[str]]]:
+def get_config_schema_per_attack_technique(schema: Dict) -> Dict[str, Dict[str, List[str]]]:
     """
     :return: dictionary mapping each attack technique to relevant config fields; example -
             {
@@ -17,7 +15,7 @@ def get_config_schema_per_attack_technique() -> Dict[str, Dict[str, List[str]]]:
     """
     reverse_schema = {}
 
-    definitions = SCHEMA["definitions"]
+    definitions = schema["definitions"]
     for definition in definitions:
         definition_type = definitions[definition]["title"]
         for field in definitions[definition]["anyOf"]:
@@ -37,6 +35,3 @@ def _add_config_field_to_reverse_schema(
         reverse_schema[attack_technique].setdefault(definition_type, []).append(config_field)
     else:
         reverse_schema[attack_technique] = {definition_type: [config_field]}
-
-
-CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE = get_config_schema_per_attack_technique()
