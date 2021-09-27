@@ -227,42 +227,43 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 
 ## Can I limit how the Infection Monkey propagates through my network?
 
-In order to limit how the Infection Monkey is able to propagate through your
-network, you can:
+Yes! To limit how the Infection Monkey propagates through your network, you can:
 
 #### Adjust the scan depth
 
 The scan depth limits the number of hops that the Infection Monkey agent will
-spread from patient zero. If the scan depth is set to 1, the agent will spread
-only 1 hop from patient zero. Scan depth does not limit the number of devices,
-just the number of hops.
+spread from patient zero. If you set the scan depth to one, the agent will only
+reach a single hop from the initially infected machine. Scan depth does not
+limit the number of devices, just the number of hops.
 
-- **Example**: Scan depth is set to 2. _Host A_ scans the network and finds
-hosts _B, C, D_ and _E_.  The Infection Monkey agent successfully propagates
-from _Host A_ to _Host C_. Since the scan depth is 2, the agent will pivot from
-_Host C_ and continue to scan other machines on the network. If _Host C_
-successfully breaches _Host E_, it will not pivot further and it will not
-continue to scan or propagate.
+- **Example**: In this example, the scan depth is set to two. _Host A_ scans the
+network and finds hosts _B, C, D_ and _E_. The Infection Monkey agent
+successfully propagates from _Host A_ to _Host C_. Since the scan depth is 2,
+the agent will pivot from _Host C_ and continue to scan other machines on the
+network. However, if _Host C_ successfully breaches _Host E_, it will not pivot
+further nor continue to scan or propagate.
 
 ![What is scan depth](/images/faq/propagation_depth_diagram.png "What is scan
 depth")
 
 
-#### Enable/disable scanning the local subnet
-Settings that define how the Infection Monkey will scan the network can be
-found in `Configuration -> Network`. By default each agent will scan its entire
-local subnet.  This behavior can be disabled by unchecking the `Local network
-scan` button.
+#### Enable or disable scanning the local subnet
+
+You can find the settings that define how the Infection Monkey will scan your
+network in `Configuration -> Network`. Each agent will scan its entire local
+subnet by default, but you can disable this behavior by unchecking the `Local
+network scan` button.
 
 #### Add IPs to the IP allow list
 
-The Infection Monkey agents attempt to scan any hosts that are specified in the
-`Configuration -> Network -> Scan target list` section.
+You can specify which hosts you want the Infection Monkey agents to attempt to
+scan in the `Configuration -> Network -> Scan target list` section.
 
 #### Add IPs to the IP block list
 
+
 If there are any hosts on your network that you would like to prevent the
-Infection Monkey from scanning or exploiting, they can be added to list of
+Infection Monkey from scanning or exploiting, you can add them to the list of
 "Blocked IPs" in `Configuration -> Network -> Blocked IPs`.
 
 #### Specify max number of victims to find/exploit
@@ -272,7 +273,7 @@ limit the Infection Monkey's propagation:
 
 - **Max victims to find**: This limits the total number of machines that the
 Infection Monkey is allowed to scan.
-- **Max victims to exploit**: This limits the number of machines that the
+- **Max victims to exploit**: This limits the total number of machines that the
 Infection Monkey is allowed to successfully exploit.
 
 
