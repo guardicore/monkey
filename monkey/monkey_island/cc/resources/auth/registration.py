@@ -16,14 +16,16 @@ logger = logging.getLogger(__name__)
 
 class Registration(flask_restful.Resource):
     def get(self):
-        return {"needs_registration": env_singleton.env.needs_registration()}
+        is_registration_needed = env_singleton.env.needs_registration()
+        if is_registration_needed:
+            # if registration is required, drop previous user's data (for credentials reset case)
+            _drop_mongo_db()
+        return {"needs_registration": is_registration_needed}
 
     def post(self):
         credentials = _get_user_credentials_from_request(request)
 
         try:
-            # if new registration is required (credentials are reset), drop previous user's data
-            _drop_mongo_db()
             env_singleton.env.try_add_user(credentials)
             init_collections()
             return make_response({"error": ""}, 200)
