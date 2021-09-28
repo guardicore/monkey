@@ -15,6 +15,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The name of the "Communicate as new user" post-breach action to "Communicate
   as backdoor user". #1410
 - ATT&CK report messages (more accurate now). #1483
+- Initialise MongoDB collection of attack mitigations after registration or login (if required)
+  instead of on Island startup. #1495
 
 ### Removed
 - Internet access check on agent start. #1402
