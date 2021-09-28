@@ -14,8 +14,8 @@ from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
 from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
-from envs.monkey_zoo.blackbox.config_templates.powershell_cached_credentials import (
-    PowerShellCachedCredentials,
+from envs.monkey_zoo.blackbox.config_templates.powershell_credentials_reuse import (
+    PowerShellCredentialsReuse,
 )
 from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
@@ -55,7 +55,6 @@ MACHINE_BOOTUP_WAIT_SECONDS = 30
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
-WINDOWS = "windows"
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -170,12 +169,12 @@ class TestMonkeyBlackbox:
             island_client, PowerShell, "PowerShell_Remoting_exploiter"
         )
 
-    @pytest.mark.os(WINDOWS)
-    def test_powershell_exploiter_cached_credentials(self, island_client):
+    @pytest.mark.skip_powershell_reuse
+    def test_powershell_exploiter_credentials_reuse(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
             island_client,
-            PowerShellCachedCredentials,
-            "PowerShell_Remoting_exploiter_cached_credentials",
+            PowerShellCredentialsReuse,
+            "PowerShell_Remoting_exploiter_credentials_reuse",
         )
 
     def test_smb_and_mimikatz_exploiters(self, island_client):

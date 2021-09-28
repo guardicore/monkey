@@ -28,10 +28,10 @@ def pytest_addoption(parser):
         help="If enabled performance tests will be run.",
     )
     parser.addoption(
-        "--os",
-        action="store",
-        default=None,
-        help="Use to run Windows or Linux specific tests.",
+        "--skip-powershell-reuse",
+        action="store_true",
+        default=False,
+        help="Use to run PowerShell credentials reuse test.",
     )
 
 
@@ -58,17 +58,10 @@ def pytest_runtest_setup(item):
             "Skipping performance test because " "--run-performance-tests flag isn't specified."
         )
 
-    if not item.config.getoption("--os"):
+    if "skip_powershell_reuse" in item.keywords and item.config.getoption(
+        "--skip-powershell-reuse"
+    ):
         pytest.skip(
-            "Skipping OS specific test because"
-            "--os flag isn't specified."
-            " Specify --os with windows or linux as options."
-        )
-
-    os = [mark.args[0] for mark in item.iter_markers(name="os")]
-
-    if os and item.config.getoption("--os") not in os:
-        pytest.skip(
-            f'Skipping OS specific test. Run with "--os={os[0]}" if '
-            f"you want this test to be executed."
+            "Skipping powershell credentials reuse test because "
+            "--skip-powershell-cached flag isn't specified."
         )
