@@ -35,6 +35,8 @@ PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 # elsewhere.
 TIMEOUT_IN_SECONDS = 15
 
+PROXY_SCHEMA = "%s:%s"
+
 
 class ControlClient(object):
     proxies = {}
@@ -113,7 +115,7 @@ class ControlClient(object):
                 if proxy_find:
                     proxy_address, proxy_port = proxy_find
                     logger.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
-                    ControlClient.proxies["https"] = "https://%s:%s" % (proxy_address, proxy_port)
+                    ControlClient.proxies["https"] = PROXY_SCHEMA % (proxy_address, proxy_port)
                     return ControlClient.find_server()
                 else:
                     logger.info("No tunnel found")
