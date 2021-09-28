@@ -64,7 +64,7 @@ class FakeAttackTechnique_OneRelevantSystem(AttackTechnique):
 class ExpectedMsgs_OneRelevantSystem(Enum):
     UNSCANNED: str = (
         "UNSCANNED due to one of the following reasons:\n"
-        "- The Monkey did not run on any System 1 systems.\n"
+        "- Monkey did not run on any System 1 systems.\n"
         "- The following configuration options were disabled:<br/>"
         "- Definition Type 1 — Config Option 1<br/>"
         "- Definition Type 2 — Config Option 5<br/>"
