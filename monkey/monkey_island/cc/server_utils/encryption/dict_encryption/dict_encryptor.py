@@ -3,7 +3,9 @@ from typing import Callable, List, Type
 
 import dpath.util
 
-from monkey_island.cc.utils.field_encryptors import IFieldEncryptor
+from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
+    IFieldEncryptor,
+)
 
 
 class FieldNotFoundError(Exception):
@@ -17,7 +19,7 @@ class SensitiveField:
     field_encryptor: Type[IFieldEncryptor]
 
 
-def encrypt(sensitive_fields: List[SensitiveField], document_dict: dict) -> dict:
+def encrypt_dict(sensitive_fields: List[SensitiveField], document_dict: dict) -> dict:
     for sensitive_field in sensitive_fields:
         _apply_operation_to_document_field(
             document_dict, sensitive_field, sensitive_field.field_encryptor.encrypt
@@ -26,7 +28,7 @@ def encrypt(sensitive_fields: List[SensitiveField], document_dict: dict) -> dict
     return document_dict
 
 
-def decrypt(sensitive_fields: List[SensitiveField], document_dict: dict) -> dict:
+def decrypt_dict(sensitive_fields: List[SensitiveField], document_dict: dict) -> dict:
     for sensitive_field in sensitive_fields:
         _apply_operation_to_document_field(
             document_dict, sensitive_field, sensitive_field.field_encryptor.decrypt

@@ -4,8 +4,11 @@ from typing import List
 import pytest
 
 from monkey_island.cc.models import Report
-from monkey_island.cc.utils import SensitiveField
-from monkey_island.cc.utils.field_encryptors import IFieldEncryptor
+from monkey_island.cc.models.report import get_report, save_report
+from monkey_island.cc.server_utils.encryption import SensitiveField
+from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
+    IFieldEncryptor,
+)
 
 MOCK_SENSITIVE_FIELD_CONTENTS = ["the_string", "the_string2"]
 MOCK_REPORT_DICT = {
@@ -42,26 +45,28 @@ def patch_sensitive_fields(monkeypatch):
         SensitiveField("overview.foo.the_key", MockStringListEncryptor),
         SensitiveField("overview.bar.the_key", MockStringListEncryptor),
     ]
-    monkeypatch.setattr("monkey_island.cc.models.report.sensitive_fields", mock_sensitive_fields)
+    monkeypatch.setattr(
+        "monkey_island.cc.models.report.report_dal.sensitive_fields", mock_sensitive_fields
+    )
 
 
 @pytest.mark.usefixtures("uses_database")
 def test_report_encryption():
-    Report.save_report(MOCK_REPORT_DICT)
+    save_report(MOCK_REPORT_DICT)
 
     assert Report.objects.first()["overview"]["foo"]["the_key"] == ["ENCRYPTED_0", "ENCRYPTED_1"]
     assert Report.objects.first()["overview"]["bar"]["the_key"] == []
-    assert Report.get_report()["overview"]["foo"]["the_key"] == MOCK_SENSITIVE_FIELD_CONTENTS
+    assert get_report()["overview"]["foo"]["the_key"] == MOCK_SENSITIVE_FIELD_CONTENTS
 
 
 @pytest.mark.usefixtures("uses_database")
 def test_report_dot_encoding():
     mrd = copy.deepcopy(MOCK_REPORT_DICT)
     mrd["meta_info"] = {"foo.bar": "baz"}
-    Report.save_report(mrd)
+    save_report(mrd)
 
     assert "foo.bar" not in Report.objects.first()["meta_info"]
     assert "foo,,,bar" in Report.objects.first()["meta_info"]
 
-    report = Report.get_report()
+    report = get_report()
     assert "foo.bar" in report["meta_info"]

@@ -7,4 +7,4 @@ from .creds import Creds
 from .monkey import Monkey
 from .monkey_ttl import MonkeyTtl
 from .pba_results import PbaResults
-from .report import Report
+from monkey_island.cc.models.report.report import Report

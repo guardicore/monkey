@@ -5,8 +5,13 @@ from typing import List
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommandControlChannel
 from monkey_island.cc.models.telemetries.telemetry import Telemetry
-from monkey_island.cc.utils import FieldNotFoundError, SensitiveField, dict_encryptor
-from monkey_island.cc.utils.field_encryptors import MimikatzResultsEncryptor
+from monkey_island.cc.server_utils.encryption import (
+    FieldNotFoundError,
+    MimikatzResultsEncryptor,
+    SensitiveField,
+    decrypt_dict,
+    encrypt_dict,
+)
 
 sensitive_fields = [
     SensitiveField("data.credentials", MimikatzResultsEncryptor),
@@ -16,7 +21,7 @@ sensitive_fields = [
 
 def save_telemetry(telemetry_dict: dict):
     try:
-        telemetry_dict = dict_encryptor.encrypt(sensitive_fields, telemetry_dict)
+        telemetry_dict = encrypt_dict(sensitive_fields, telemetry_dict)
     except FieldNotFoundError:
         pass  # Not all telemetries require encryption
 
@@ -40,7 +45,7 @@ def get_telemetry_by_query(query: dict, output_fields=None) -> List[dict]:
     decrypted_list = []
     for telemetry in telemetries:
         try:
-            decrypted_list.append(dict_encryptor.decrypt(sensitive_fields, telemetry))
+            decrypted_list.append(decrypt_dict(sensitive_fields, telemetry))
         except FieldNotFoundError:
             decrypted_list.append(telemetry)
     return decrypted_list

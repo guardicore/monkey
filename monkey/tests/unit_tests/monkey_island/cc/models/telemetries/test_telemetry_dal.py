@@ -6,8 +6,10 @@ import pytest
 
 from monkey_island.cc.models.telemetries import get_telemetry_by_query, save_telemetry
 from monkey_island.cc.models.telemetries.telemetry import Telemetry
-from monkey_island.cc.utils import SensitiveField
-from monkey_island.cc.utils.field_encryptors import MimikatzResultsEncryptor
+from monkey_island.cc.server_utils.encryption import SensitiveField
+from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
+    MimikatzResultsEncryptor,
+)
 
 MOCK_CREDENTIALS = {
     "Vakaris": {
