@@ -11,3 +11,11 @@ from monkey_island.cc.server_utils.encryption.data_store_encryptor import (
     get_datastore_encryptor,
     initialize_datastore_encryptor,
 )
+from .dict_encryption.dict_encryptor import (
+    SensitiveField,
+    encrypt_dict,
+    decrypt_dict,
+    FieldNotFoundError,
+)
+from .dict_encryption.field_encryptors.mimikatz_results_encryptor import MimikatzResultsEncryptor
+from .dict_encryption.field_encryptors.string_list_encryptor import StringListEncryptor

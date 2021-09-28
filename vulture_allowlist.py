@@ -181,7 +181,6 @@ Report.recommendations
 Report.glance
 Report.meta_info
 Report.meta
-Report.save_report
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)

@@ -41,10 +41,13 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Overlapping Guardicore logo in the landing page. #1441
 - PBA table collapse in security report on data change. #1423
 - Unsigned Windows agent binaries in Linux packages are now signed. #1444
+- Some of the gathered credentials no longer appear in database plaintext. #1454
 
 ### Security
 - Generate a random password when creating a new user for CommunicateAsNewUser
   PBA. #1434
+- Credentials gathered from victim machines are no longer stored plaintext in the database. #1454
+
 
 ## [1.11.0] - 2021-08-13
 ### Added
