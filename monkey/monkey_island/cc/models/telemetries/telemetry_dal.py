@@ -13,10 +13,7 @@ from monkey_island.cc.server_utils.encryption import (
     encrypt_dict,
 )
 
-sensitive_fields = [
-    SensitiveField("data.credentials", MimikatzResultsEncryptor),
-    SensitiveField("data.mimikatz", MimikatzResultsEncryptor),
-]
+sensitive_fields = [SensitiveField("data.credentials", MimikatzResultsEncryptor)]
 
 
 def save_telemetry(telemetry_dict: dict):
