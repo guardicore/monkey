@@ -4,7 +4,6 @@ dead or is kept deliberately. Referencing these in a file like this makes sure t
 Vulture doesn't mark these as dead again.
 """
 from monkey_island.cc.models import Report
-from monkey_island.cc.models.telemetries import Telemetry
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -182,9 +181,6 @@ Report.recommendations
 Report.glance
 Report.meta_info
 Report.meta
-Report.save_report
-Telemetry.save_telemetry
-Telemetry.get_telemetry_by_query
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
