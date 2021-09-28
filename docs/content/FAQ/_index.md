@@ -58,7 +58,7 @@ To reset the credentials, edit the `server_config.json` file manually
 
 {{% notice warning %}}
 If you reset the credentials, the database will be cleared. Any findings of the Infection Monkey from previous runs will be lost. <br/><br/>
-However, you can save the Monkey's exisiting configuration by logging in with your current credentials and clicking on the **Export config** button on the configuration page.
+However, you can save the Monkey's existing configuration by logging in with your current credentials and clicking on the **Export config** button on the configuration page.
 {{% /notice %}}
 
 
