@@ -14,7 +14,8 @@ from common.config_value_paths import (
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey, Report
+from monkey_island.cc.models import Monkey
+from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.models.telemetries import get_telemetry_by_query
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
@@ -635,7 +636,7 @@ class ReportService:
             "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
         }
         ReportExporterManager().export(report)
-        Report.save_report(report)
+        save_report(report)
         return report
 
     @staticmethod
@@ -697,4 +698,4 @@ class ReportService:
         if not ReportService.is_latest_report_exists():
             return safe_generate_regular_report()
 
-        return Report.get_report()
+        return get_report()
