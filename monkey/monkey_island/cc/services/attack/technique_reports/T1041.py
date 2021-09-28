@@ -5,6 +5,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1041(AttackTechnique):
     tech_id = "T1041"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't exfiltrate any info through command and control channel."
     scanned_msg = ""
     used_msg = "Monkey exfiltrated info through command and control channel."

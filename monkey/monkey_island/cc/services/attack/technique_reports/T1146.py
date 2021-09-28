@@ -4,11 +4,13 @@ from monkey_island.cc.services.attack.technique_reports.pba_technique import Pos
 
 class T1146(PostBreachTechnique):
     tech_id = "T1146"
-    unscanned_msg = (
-        "Monkey didn't try clearing the command history since it didn't run on any Linux machines."
+    relevant_systems = ["Linux"]
+    unscanned_msg = "Monkey didn't try clearing the command history on a Linux system."
+    scanned_msg = "Monkey tried clearing the command history on a Linux system but failed."
+    used_msg = (
+        "Monkey successfully cleared the command history on a Linux system (and then "
+        "restored it back)."
     )
-    scanned_msg = "Monkey tried clearing the command history but failed."
-    used_msg = "Monkey successfully cleared the command history (and then restored it back)."
     pba_names = [POST_BREACH_CLEAR_CMD_HISTORY]
 
     @staticmethod

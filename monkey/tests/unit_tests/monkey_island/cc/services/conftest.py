@@ -20,3 +20,51 @@ def config(monkeypatch, IPS, PORT):
     monkeypatch.setattr(Environment, "_ISLAND_PORT", PORT)
     config = ConfigService.get_default_config(True)
     return config
+
+
+@pytest.fixture
+def fake_schema():
+    return {
+        "definitions": {
+            "definition_type_1": {
+                "title": "Definition Type 1",
+                "anyOf": [
+                    {
+                        "title": "Config Option 1",
+                        "attack_techniques": ["T0000", "T0001"],
+                    },
+                    {
+                        "title": "Config Option 2",
+                        "attack_techniques": ["T0000"],
+                    },
+                    {
+                        "title": "Config Option 3",
+                        "attack_techniques": [],
+                    },
+                    {
+                        "title": "Config Option 4",
+                    },
+                ],
+            },
+            "definition_type_2": {
+                "title": "Definition Type 2",
+                "anyOf": [
+                    {
+                        "title": "Config Option 5",
+                        "attack_techniques": ["T0000", "T0001"],
+                    },
+                    {
+                        "title": "Config Option 6",
+                        "attack_techniques": ["T0000"],
+                    },
+                    {
+                        "title": "Config Option 7",
+                        "attack_techniques": [],
+                    },
+                    {
+                        "title": "Config Option 8",
+                    },
+                ],
+            },
+        }
+    }

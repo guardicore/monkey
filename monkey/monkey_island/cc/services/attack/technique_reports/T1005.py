@@ -4,6 +4,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1005(AttackTechnique):
     tech_id = "T1005"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't gather any sensitive data from local system."
     scanned_msg = ""
     used_msg = "Monkey successfully gathered sensitive data from local system."

@@ -1,5 +1,5 @@
 FINGER_CLASSES = {
-    "title": "Fingerprint class",
+    "title": "Fingerprinters",
     "description": "Fingerprint modules collect info about external services "
     "Infection Monkey scans.",
     "type": "string",
@@ -7,7 +7,7 @@ FINGER_CLASSES = {
         {
             "type": "string",
             "enum": ["SMBFinger"],
-            "title": "SMBFinger",
+            "title": "SMB Fingerprinter",
             "safe": True,
             "info": "Figures out if SMB is running and what's the version of it.",
             "attack_techniques": ["T1210"],
@@ -15,7 +15,7 @@ FINGER_CLASSES = {
         {
             "type": "string",
             "enum": ["SSHFinger"],
-            "title": "SSHFinger",
+            "title": "SSH Fingerprinter",
             "safe": True,
             "info": "Figures out if SSH is running.",
             "attack_techniques": ["T1210"],
@@ -23,21 +23,21 @@ FINGER_CLASSES = {
         {
             "type": "string",
             "enum": ["PingScanner"],
-            "title": "PingScanner",
+            "title": "Ping Scanner",
             "safe": True,
             "info": "Tries to identify if host is alive and which OS it's running by ping scan.",
         },
         {
             "type": "string",
             "enum": ["HTTPFinger"],
-            "title": "HTTPFinger",
+            "title": "HTTP Fingerprinter",
             "safe": True,
             "info": "Checks if host has HTTP/HTTPS ports open.",
         },
         {
             "type": "string",
             "enum": ["MySQLFinger"],
-            "title": "MySQLFinger",
+            "title": "MySQL Fingerprinter",
             "safe": True,
             "info": "Checks if MySQL server is running and tries to get it's version.",
             "attack_techniques": ["T1210"],
@@ -45,7 +45,7 @@ FINGER_CLASSES = {
         {
             "type": "string",
             "enum": ["MSSQLFinger"],
-            "title": "MSSQLFinger",
+            "title": "MSSQL Fingerprinter",
             "safe": True,
             "info": "Checks if Microsoft SQL service is running and tries to gather "
             "information about it.",
@@ -54,7 +54,7 @@ FINGER_CLASSES = {
         {
             "type": "string",
             "enum": ["ElasticFinger"],
-            "title": "ElasticFinger",
+            "title": "Elastic Fingerprinter",
             "safe": True,
             "info": "Checks if ElasticSearch is running and attempts to find it's " "version.",
             "attack_techniques": ["T1210"],

@@ -3,10 +3,8 @@ from monkey_island.cc.services.attack.technique_reports.usage_technique import U
 
 class T1035(UsageTechnique):
     tech_id = "T1035"
-    unscanned_msg = (
-        "Monkey didn't try to interact with Windows services since it didn't run on "
-        "any Windows machines."
-    )
+    relevant_systems = ["Windows"]
+    unscanned_msg = "Monkey didn't try to interact with Windows services."
     scanned_msg = "Monkey tried to interact with Windows services, but failed."
     used_msg = "Monkey successfully interacted with Windows services."
 

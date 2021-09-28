@@ -6,6 +6,7 @@ from monkey_island.cc.services.attack.technique_reports.technique_report_tools i
 
 class T1021(AttackTechnique):
     tech_id = "T1021"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't try to login to any remote services."
     scanned_msg = "Monkey tried to login to remote services with valid credentials, but failed."
     used_msg = "Monkey successfully logged into remote services on the network."

@@ -5,6 +5,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1188(AttackTechnique):
     tech_id = "T1188"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't use multi-hop proxy."
     scanned_msg = ""
     used_msg = "Monkey used multi-hop proxy."

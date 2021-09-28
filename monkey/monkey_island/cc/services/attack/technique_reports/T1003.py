@@ -6,6 +6,7 @@ from monkey_island.cc.services.reporting.report import ReportService
 
 class T1003(AttackTechnique):
     tech_id = "T1003"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = (
         "Monkey tried to obtain credentials from systems in the network but didn't "
         "find any or failed."

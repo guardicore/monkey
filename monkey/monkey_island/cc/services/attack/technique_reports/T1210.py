@@ -5,6 +5,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1210(AttackTechnique):
     tech_id = "T1210"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = (
         "Monkey didn't scan any remote services. Maybe it didn't find any machines on the network?"
     )

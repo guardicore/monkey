@@ -6,6 +6,7 @@ from monkey_island.cc.services.config import ConfigService
 
 class T1065(AttackTechnique):
     tech_id = "T1065"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = ""
     scanned_msg = ""
     used_msg = ""
