@@ -23,6 +23,8 @@ disabled_msg = (
 class AttackTechnique(object, metaclass=abc.ABCMeta):
     """ Abstract class for ATT&CK report components """
 
+    config_schema_per_attack_technique = None
+
     @property
     @abc.abstractmethod
     def unscanned_msg(self):
@@ -108,8 +110,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :return: Dict with message and status
         """
         return {"message": cls.get_message_by_status(status), "status": status}
-
-    config_schema_per_attack_technique = None
 
     @classmethod
     def get_message_by_status(cls, status):
