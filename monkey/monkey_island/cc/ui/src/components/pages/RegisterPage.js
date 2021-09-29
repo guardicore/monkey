@@ -4,11 +4,13 @@ import {Row, Col, Container, Form, Button} from 'react-bootstrap';
 import AuthService from '../../services/AuthService';
 import monkeyDetective from '../../images/detective-monkey.svg';
 import ParticleBackground from '../ui-components/ParticleBackground';
+import LoadingIcon from '../ui-components/LoadingIcon';
 
 class RegisterPageComponent extends React.Component {
 
   register = (event) => {
     event.preventDefault();
+    this.setState({loading: true})
     this.auth.register(this.username, this.password).then(res => {
       this.setState({failed: false, error: ''});
       if (res['result']) {
@@ -68,7 +70,12 @@ class RegisterPageComponent extends React.Component {
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
                     <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
                     <Button className={'monkey-submit-button'} type={'submit'} >
-                      Let's go!
+                      {
+                        this.state.loading ?
+                          <LoadingIcon/>
+                          :
+                          'Let\'s go!'
+                      }
                     </Button>
                     <Row>
                       <Col>
