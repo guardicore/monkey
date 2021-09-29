@@ -5,13 +5,16 @@ from pymongo import errors
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
+from monkey_island.cc.services.database import Database
 
 logger = logging.getLogger(__name__)
 
 
-def init_collections():
-    logger.info("Setting up the Monkey Island, this might take a while...")
-    _try_store_mitigations_on_mongo()
+def reset_database():
+    Database.reset_db()
+    if Database.is_mitigations_missing():
+        logger.info("Populating Monkey Island with ATT&CK mitigations, this might take a while...")
+        _try_store_mitigations_on_mongo()
 
 
 def _try_store_mitigations_on_mongo():

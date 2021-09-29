@@ -37,3 +37,7 @@ class Database(object):
     def init_db():
         if not mongo.db.collection_names():
             Database.reset_db()
+
+    @staticmethod
+    def is_mitigations_missing() -> bool:
+        return bool(AttackMitigations.COLLECTION_NAME not in mongo.db.list_collection_names())

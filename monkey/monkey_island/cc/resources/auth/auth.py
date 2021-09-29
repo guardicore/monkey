@@ -11,9 +11,6 @@ from jwt import PyJWTError
 import monkey_island.cc.environment.environment_singleton as env_singleton
 import monkey_island.cc.resources.auth.password_utils as password_utils
 import monkey_island.cc.resources.auth.user_store as user_store
-from monkey_island.cc.database import mongo
-from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.setup.mongo.database_initializer import init_collections
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +42,6 @@ class Authenticate(flask_restful.Resource):
 
         if _credentials_match_registered_user(username, password):
             access_token = _create_access_token(username)
-            _check_attack_mitigations_in_mongo()
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
@@ -76,11 +72,6 @@ def _create_access_token(username):
     logger.debug(f"Created access token for user {username} that begins with {access_token[:4]}")
 
     return access_token
-
-
-def _check_attack_mitigations_in_mongo():
-    if AttackMitigations.COLLECTION_NAME not in mongo.db.list_collection_names():
-        init_collections()
 
 
 # See https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
