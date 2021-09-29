@@ -35,3 +35,11 @@
   margin-bottom: 20px;
   text-align: center;
 }
+
+.auth-container .monkey-submit-button:hover .loading-icon {
+  color: $monkey-black;
+}
+
+.auth-container .monkey-submit-button:focus .loading-icon {
+  color: $monkey-black;
+}

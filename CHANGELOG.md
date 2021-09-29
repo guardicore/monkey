@@ -14,6 +14,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The name of the "Communicate as new user" post-breach action to "Communicate
   as backdoor user". #1410
+- Resetting login credentials also cleans the contents of the database. #1495
 - ATT&CK report messages (more accurate now). #1483
 
 ### Removed
