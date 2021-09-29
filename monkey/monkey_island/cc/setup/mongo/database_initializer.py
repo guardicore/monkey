@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def reset_database():
     Database.reset_db()
     if Database.is_mitigations_missing():
-        logger.info("Populating Monkey Island with ATT&CK mitigations, this might take a while...")
+        logger.info("Populating Monkey Island with ATT&CK mitigations.")
         _try_store_mitigations_on_mongo()
 
 
