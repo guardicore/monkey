@@ -35,20 +35,5 @@ def _try_store_mitigations_on_mongo():
 
 
 def _store_mitigations_on_mongo():
-    stix2_mitigations = MitreApiInterface.get_all_mitigations()
-    mongo_mitigations = AttackMitigations.dict_from_stix2_attack_patterns(
-        MitreApiInterface.get_all_attack_techniques()
-    )
-    mitigation_technique_relationships = (
-        MitreApiInterface.get_technique_and_mitigation_relationships()
-    )
-    for relationship in mitigation_technique_relationships:
-        mongo_mitigations[relationship["target_ref"]].add_mitigation(
-            stix2_mitigations[relationship["source_ref"]]
-        )
-    for relationship in mitigation_technique_relationships:
-        mongo_mitigations[relationship["target_ref"]].add_no_mitigations_info(
-            stix2_mitigations[relationship["source_ref"]]
-        )
-    for key, mongo_object in mongo_mitigations.items():
-        mongo_object.save()
+    # TODO: import attack mitigations
+    pass
