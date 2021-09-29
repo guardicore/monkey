@@ -1,14 +1,23 @@
+import json
 import logging
+from pathlib import Path
 
 from pymongo import errors
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.services.attack.mitre_api_interface import MitreApiInterface
 from monkey_island.cc.services.database import Database
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 logger = logging.getLogger(__name__)
 
+ATTACK_MITIGATION_PATH = (
+    Path(MONKEY_ISLAND_ABS_PATH)
+    / "cc"
+    / "setup"
+    / "mongo"
+    / f"{AttackMitigations.COLLECTION_NAME}.json"
+)
 
 def reset_database():
     Database.reset_db()
@@ -35,5 +44,10 @@ def _try_store_mitigations_on_mongo():
 
 
 def _store_mitigations_on_mongo():
-    # TODO: import attack mitigations
-    pass
+    try:
+        with open(ATTACK_MITIGATION_PATH) as f:
+            file_data = json.load(f)
+        mongodb_collection = mongo.db[AttackMitigations.COLLECTION_NAME]
+        mongodb_collection.insert_many(file_data)
+    except json.decoder.JSONDecodeError as e:
+        raise Exception(f"Invalid attack mitigations {ATTACK_MITIGATION_PATH} file: {e}")
