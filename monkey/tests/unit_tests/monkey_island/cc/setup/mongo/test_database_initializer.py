@@ -1,11 +1,9 @@
-import json.decoder
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import mongomock
 import pytest
 
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
 
@@ -47,15 +45,16 @@ def test_store_mitigations_on_mongo__invalid_mitigation(
         reset_database()
 
 
-def test_get_all_mitigations():
-    attack_mitigation_path = (
-        Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "setup" / "mongo" / "attack_mitigations.json"
-    )
+def test_get_all_mitigations(monkeypatch, fake_mongo, fake_config):
+    fake_mongo.db.validate_collection = MagicMock(return_value=True)
 
-    with open(attack_mitigation_path) as mitigations:
-        mitigations = json.load(mitigations)["data"]
-        assert len(mitigations) >= 266
-        mitigation = next(iter(mitigations))["mitigations"][0]
-        assert mitigation["name"] is not None
-        assert mitigation["description"] is not None
-        assert mitigation["url"] is not None
+    reset_database()
+
+    mitigations = list(fake_mongo.db.attack_mitigations.find({}))
+
+    assert len(mitigations) >= 266
+
+    mitigation = mitigations[0]["mitigations"][0]
+    assert mitigation["name"] is not None
+    assert mitigation["description"] is not None
+    assert mitigation["url"] is not None
