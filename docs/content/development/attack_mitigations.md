@@ -1,8 +1,7 @@
 ---
-title: "ATT&CK   Mitigations"
+title: "MITRE ATT&CK Mitigations"
 date: 2021-09-30T08:18:37+03:00
 draft: true
-pre: '&nbsp<b><u>!!</u></b> '
 weight: 10
 ---
 
@@ -10,10 +9,27 @@ weight: 10
 Check out [the documentation for the MITRE ATT&CK techniques as well]({{< ref "/reports/mitre" >}}).
 {{% /notice %}}
 
-Infection Monkey is shipped with pre-existing ATT&CK mitigations located at `monkey/monkey_island/cc/setup/mongo/attack_mitigations.json`.
-This allows Monkey Island to be setup faster.
+## Summary
 
-The `attack_mitigations.json` can be updated by running `monkey/deployment_scripts/dump_attack_mitigations.py` by providing the link to
-[Cyber Threat Intelligence Repository](https://github.com/mitre/cti) , mongo host and port information and the dump file location.
+Infection Monkey is shipped with pre-processed information about MITRE ATT&CK
+mitigations located at
+`monkey/monkey_island/cc/setup/mongo/attack_mitigations.json`.
 
-When starting Monkey Island this information is stored in the mongo database almost instantly, making the setup faster.
+This may need to be periodically updated as the MITRE ATT&CK framework evolves.
+
+
+## Updating the MITRE ATT&CK mitigations data
+1. Clone the [MITRE Cyber Threat Intelligence
+   Repository](https://github.com/mitre/cti) or the [Guardicore
+   fork](https://github.com/guardicore/cti)
+   ```
+   $ CTI_REPO=$PWD/cti
+   $ git clone <REPO> $CTI_REPO
+   ```
+2. Start a mongodb v4.2 server
+3. Run the script to generate the `attack_mitigations.json` file
+   ```
+   $ cd monkey/deployment_scripts/dump_attack_mitigations
+   $ pip install -r requirements.txt
+   $ python dump_attack_mitigations.py --cti-repo $CTI_REPO --dump-file-path ../../monkey/monkey_island/cc/setup/mongo/attack_mitigations.json
+   ```
