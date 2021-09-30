@@ -53,7 +53,7 @@ def test_get_all_mitigations():
     )
 
     with open(attack_mitigation_path) as mitigations:
-        mitigations = json.load(mitigations)
+        mitigations = json.load(mitigations)["data"]
         assert len(mitigations) >= 266
         mitigation = next(iter(mitigations))["mitigations"][0]
         assert mitigation["name"] is not None

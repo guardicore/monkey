@@ -1,6 +1,7 @@
 import json
 import logging
 from pathlib import Path
+from pprint import pformat
 
 from pymongo import errors
 
@@ -46,8 +47,11 @@ def _try_store_mitigations_on_mongo():
 def _store_mitigations_on_mongo():
     try:
         with open(ATTACK_MITIGATION_PATH) as f:
-            file_data = json.load(f)
+            attack_mitigations = json.load(f)
+
+        logger.debug(f'Loading attack mitigations data:\n{pformat(attack_mitigations["metadata"])}')
+
         mongodb_collection = mongo.db[AttackMitigations.COLLECTION_NAME]
-        mongodb_collection.insert_many(file_data)
+        mongodb_collection.insert_many(attack_mitigations["data"])
     except json.decoder.JSONDecodeError as e:
         raise Exception(f"Invalid attack mitigations {ATTACK_MITIGATION_PATH} file: {e}")
