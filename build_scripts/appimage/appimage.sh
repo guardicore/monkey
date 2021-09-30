@@ -108,8 +108,9 @@ build_package() {
   local dist_dir=$2
 
   log_message "Building AppImage"
-  pushd "$APPIMAGE_DIR"
+  set_version "$version"
 
+  pushd "$APPIMAGE_DIR"
   ARCH="x86_64" linuxdeploy \
       --appdir "$APPIMAGE_DIR/squashfs-root" \
       --icon-file "$ICON_PATH" \
@@ -118,15 +119,19 @@ build_package() {
       --deploy-deps-only="$MONGO_PATH/bin/mongod"\
       --output appimage
 
-  apply_version_to_appimage "$version"
   move_package_to_dist_dir $dist_dir
 
   popd
 }
 
-apply_version_to_appimage() {
-  log_message "Renaming Infection_Monkey-x86_64.AppImage -> Infection_Monkey-$1-x86_64.AppImage"
-  mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
+set_version() {
+  # The linuxdeploy and appimage-builder tools will use the commit hash of the
+  # repo to name the AppImage, which is preferable to using "dev". If the
+  # version was specified in a command-line argument (i.e. not "dev"), then
+  # setting the VERSION environment variable will change this behavior.
+  if [ $1 != "dev" ]; then
+         export VERSION=$1
+  fi
 }
 
 move_package_to_dist_dir() {
