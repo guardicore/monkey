@@ -7,8 +7,8 @@ from pymongo import errors
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.services.database import Database
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.services.database import Database
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,7 @@ ATTACK_MITIGATION_PATH = (
     / "mongo"
     / f"{AttackMitigations.COLLECTION_NAME}.json"
 )
+
 
 def reset_database():
     Database.reset_db()
