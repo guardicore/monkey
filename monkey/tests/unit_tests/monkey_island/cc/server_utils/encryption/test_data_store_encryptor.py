@@ -1,35 +1,26 @@
 import os
 
+import pytest
+from tests.unit_tests.monkey_island.cc.conftest import ENCRYPTOR_SECRET
+
 from monkey_island.cc.server_utils.encryption import (
+    DataStoreEncryptor,
     get_datastore_encryptor,
     initialize_datastore_encryptor,
 )
 
-PASSWORD_FILENAME = "mongo_key.bin"
-
 PLAINTEXT = "Hello, Monkey!"
-CYPHERTEXT = "vKgvD6SjRyIh1dh2AM/rnTa0NI/vjfwnbZLbMocWtE4e42WJmSUz2ordtbQrH1Fq"
 
 
-def test_aes_cbc_encryption(data_for_tests_dir):
-    initialize_datastore_encryptor(data_for_tests_dir)
+@pytest.mark.usefixtures("uses_encryptor")
+def test_encryption(data_for_tests_dir):
+    encrypted_data = get_datastore_encryptor().enc(PLAINTEXT)
+    assert encrypted_data != PLAINTEXT
 
-    assert get_datastore_encryptor().enc(PLAINTEXT) != PLAINTEXT
-
-
-def test_aes_cbc_decryption(data_for_tests_dir):
-    initialize_datastore_encryptor(data_for_tests_dir)
-
-    assert get_datastore_encryptor().dec(CYPHERTEXT) == PLAINTEXT
-
-
-def test_aes_cbc_enc_dec(data_for_tests_dir):
-    initialize_datastore_encryptor(data_for_tests_dir)
-
-    assert get_datastore_encryptor().dec(get_datastore_encryptor().enc(PLAINTEXT)) == PLAINTEXT
+    decrypted_data = get_datastore_encryptor().dec(encrypted_data)
+    assert decrypted_data == PLAINTEXT
 
 
 def test_create_new_password_file(tmpdir):
-    initialize_datastore_encryptor(tmpdir)
-
-    assert os.path.isfile(os.path.join(tmpdir, PASSWORD_FILENAME))
+    initialize_datastore_encryptor(tmpdir, ENCRYPTOR_SECRET)
+    assert os.path.isfile(os.path.join(tmpdir, DataStoreEncryptor._KEY_FILENAME))
