@@ -8,6 +8,7 @@ from monkey_island.cc.server_utils.encryption import (
     get_datastore_encryptor,
     initialize_datastore_encryptor,
 )
+from monkey_island.cc.server_utils.encryption.data_store_encryptor import setup_datastore_key
 
 PLAINTEXT = "Hello, Monkey!"
 
@@ -22,5 +23,6 @@ def test_encryption(data_for_tests_dir):
 
 
 def test_create_new_password_file(tmpdir):
-    initialize_datastore_encryptor(tmpdir, ENCRYPTOR_SECRET)
+    initialize_datastore_encryptor(tmpdir)
+    setup_datastore_key(ENCRYPTOR_SECRET)
     assert os.path.isfile(os.path.join(tmpdir, DataStoreEncryptor._KEY_FILENAME))
