@@ -9,6 +9,9 @@ from monkey_island.cc.server_utils.encryption.data_store_encryptor import (
     DataStoreEncryptor,
     get_datastore_encryptor,
     initialize_datastore_encryptor,
+    remove_old_datastore_key,
+    setup_datastore_key,
+    EncryptorNotInitializedError,
 )
 from .dict_encryption.dict_encryptor import (
     SensitiveField,

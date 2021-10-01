@@ -69,12 +69,28 @@ class EncryptorNotInitializedError(Exception):
     pass
 
 
+def encryptor_initialized_key_not_set(f):
+    def inner_function(*args, **kwargs):
+        if _encryptor is None:
+            raise EncryptorNotInitializedError
+        else:
+            if not _encryptor.is_key_setup():
+                return f(*args, **kwargs)
+            else:
+                pass
+
+    return inner_function
+
+
+@encryptor_initialized_key_not_set
+def remove_old_datastore_key():
+    if os.path.isfile(_encryptor.key_file_path):
+        os.remove(_encryptor.key_file_path)
+
+
+@encryptor_initialized_key_not_set
 def setup_datastore_key(secret: str):
-    if _encryptor is None:
-        raise EncryptorNotInitializedError
-    else:
-        if not _encryptor.is_key_setup():
-            _encryptor.init_key(secret)
+    _encryptor.init_key(secret)
 
 
 def get_datastore_encryptor():
