@@ -2,14 +2,15 @@ import pytest
 from tests.unit_tests.monkey_island.cc.conftest import MOCK_PASSWORD, MOCK_USERNAME
 
 from monkey_island.cc.server_utils.encryption import (
-    DataStoreEncryptor,
-    EncryptorNotInitializedError,
+    FactoryNotInitializedError,
     data_store_encryptor,
+    encryptor_factory,
     get_datastore_encryptor,
     initialize_datastore_encryptor,
+    initialize_encryptor_factory,
     remove_old_datastore_key,
-    setup_datastore_key,
 )
+from monkey_island.cc.server_utils.encryption.encryptor_factory import EncryptorFactory
 
 PLAINTEXT = "Hello, Monkey!"
 
@@ -25,45 +26,38 @@ def test_encryption(data_for_tests_dir):
 
 @pytest.fixture
 def initialized_key_dir(tmpdir):
-    initialize_datastore_encryptor(tmpdir)
-    setup_datastore_key(MOCK_USERNAME, MOCK_PASSWORD)
+    initialize_encryptor_factory(tmpdir)
+    initialize_datastore_encryptor(MOCK_USERNAME, MOCK_PASSWORD)
     yield tmpdir
     data_store_encryptor._encryptor = None
+    encryptor_factory._factory = None
 
 
 def test_key_creation(initialized_key_dir):
-    assert (initialized_key_dir / DataStoreEncryptor._KEY_FILENAME).isfile()
-
-
-def test_key_removal_fails_if_key_initialized(initialized_key_dir):
-    remove_old_datastore_key()
-    assert (initialized_key_dir / DataStoreEncryptor._KEY_FILENAME).isfile()
+    assert (initialized_key_dir / EncryptorFactory._KEY_FILENAME).isfile()
 
 
 def test_key_removal(initialized_key_dir, monkeypatch):
-    monkeypatch.setattr(DataStoreEncryptor, "is_key_setup", lambda _: False)
     remove_old_datastore_key()
-    assert not (initialized_key_dir / DataStoreEncryptor._KEY_FILENAME).isfile()
+    assert not (initialized_key_dir / EncryptorFactory._KEY_FILENAME).isfile()
 
 
 def test_key_removal__no_key(tmpdir):
-    initialize_datastore_encryptor(tmpdir)
-    assert not (tmpdir / DataStoreEncryptor._KEY_FILENAME).isfile()
+    initialize_encryptor_factory(tmpdir)
+    assert not (tmpdir / EncryptorFactory._KEY_FILENAME).isfile()
     # Make sure no error thrown when we try to remove an non-existing key
     remove_old_datastore_key()
-
-    data_store_encryptor._encryptor = None
+    encryptor_factory._factory = None
 
 
 def test_encryptor_not_initialized():
-    with pytest.raises(EncryptorNotInitializedError):
+    with pytest.raises(FactoryNotInitializedError):
         remove_old_datastore_key()
-        setup_datastore_key()
+        initialize_datastore_encryptor(MOCK_USERNAME, MOCK_PASSWORD)
 
 
-def test_setup_datastore_key(tmpdir):
-    initialize_datastore_encryptor(tmpdir)
-    assert not (tmpdir / DataStoreEncryptor._KEY_FILENAME).isfile()
-    setup_datastore_key(MOCK_USERNAME, MOCK_PASSWORD)
-    assert (tmpdir / DataStoreEncryptor._KEY_FILENAME).isfile()
-    assert get_datastore_encryptor().is_key_setup()
+def test_initialize_encryptor(tmpdir):
+    initialize_encryptor_factory(tmpdir)
+    assert not (tmpdir / EncryptorFactory._KEY_FILENAME).isfile()
+    initialize_datastore_encryptor(MOCK_USERNAME, MOCK_PASSWORD)
+    assert (tmpdir / EncryptorFactory._KEY_FILENAME).isfile()

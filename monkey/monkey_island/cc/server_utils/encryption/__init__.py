@@ -4,15 +4,15 @@ from monkey_island.cc.server_utils.encryption.password_based_string_encryptior i
     PasswordBasedStringEncryptor,
     is_encrypted,
 )
-from .password_based_bytes_encryption import InvalidCredentialsError, InvalidCiphertextError
-from monkey_island.cc.server_utils.encryption.data_store_encryptor import (
-    DataStoreEncryptor,
-    get_datastore_encryptor,
-    initialize_datastore_encryptor,
+from .encryptor_factory import (
+    FactoryNotInitializedError,
     remove_old_datastore_key,
-    setup_datastore_key,
-    EncryptorNotInitializedError,
+    get_encryptor_factory,
+    get_secret_from_credentials,
+    initialize_encryptor_factory,
 )
+from .data_store_encryptor import initialize_datastore_encryptor, get_datastore_encryptor
+from .password_based_bytes_encryption import InvalidCredentialsError, InvalidCiphertextError
 from .dict_encryption.dict_encryptor import (
     SensitiveField,
     encrypt_dict,

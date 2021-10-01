@@ -6,7 +6,10 @@ from flask import make_response, request
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError
 from monkey_island.cc.resources.auth.credential_utils import get_user_credentials_from_request
-from monkey_island.cc.server_utils.encryption import remove_old_datastore_key, setup_datastore_key
+from monkey_island.cc.server_utils.encryption import (
+    initialize_datastore_encryptor,
+    remove_old_datastore_key,
+)
 from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
 logger = logging.getLogger(__name__)
@@ -24,7 +27,7 @@ class Registration(flask_restful.Resource):
             env_singleton.env.try_add_user(credentials)
             remove_old_datastore_key()
             username, password = get_user_credentials_from_request(request)
-            setup_datastore_key(username, password)
+            initialize_datastore_encryptor(username, password)
             reset_database()
             return make_response({"error": ""}, 200)
         except (InvalidRegistrationCredentialsError, RegistrationNotNeededError) as e:

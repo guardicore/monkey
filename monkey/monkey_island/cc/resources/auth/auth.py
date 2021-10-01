@@ -13,7 +13,10 @@ from monkey_island.cc.resources.auth.credential_utils import (
     get_credentials_from_request,
     password_matches_hash,
 )
-from monkey_island.cc.server_utils.encryption.data_store_encryptor import setup_datastore_key
+from monkey_island.cc.server_utils.encryption import (
+    get_datastore_encryptor,
+    initialize_datastore_encryptor,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +47,8 @@ class Authenticate(flask_restful.Resource):
         username, password = get_credentials_from_request(request)
 
         if _credentials_match_registered_user(username, password):
-            setup_datastore_key(username, password)
+            if not get_datastore_encryptor():
+                initialize_datastore_encryptor(username, password)
             access_token = _create_access_token(username)
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:

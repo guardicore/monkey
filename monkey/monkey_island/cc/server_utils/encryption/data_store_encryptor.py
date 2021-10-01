@@ -8,7 +8,11 @@ from typing import Union
 
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 
-from monkey_island.cc.server_utils.encryption import KeyBasedEncryptor
+from monkey_island.cc.server_utils.encryption import FactoryNotInitializedError, KeyBasedEncryptor
+from monkey_island.cc.server_utils.encryption.encryptor_factory import (
+    get_encryptor_factory,
+    get_secret_from_credentials,
+)
 from monkey_island.cc.server_utils.encryption.password_based_bytes_encryption import (
     PasswordBasedBytesEncryptor,
 )
@@ -19,33 +23,27 @@ _encryptor: Union[None, DataStoreEncryptor] = None
 
 class DataStoreEncryptor:
     _BLOCK_SIZE = 32
-    _KEY_FILENAME = "mongo_key.bin"
 
-    def __init__(self, key_file_dir: str):
-        self.key_file_path = os.path.join(key_file_dir, self._KEY_FILENAME)
-        self._key_based_encryptor = None
-
-    def init_key(self, secret: str):
-        if os.path.exists(self.key_file_path):
-            self._load_existing_key(secret)
+    def __init__(self, key_file_path: str, secret: str):
+        if os.path.exists(key_file_path):
+            self._key_based_encryptor = DataStoreEncryptor._load_existing_key(key_file_path, secret)
         else:
-            self._create_new_key(secret)
+            self._key_based_encryptor = DataStoreEncryptor._create_new_key(key_file_path, secret)
 
-    def _load_existing_key(self, secret: str):
-        with open(self.key_file_path, "rb") as f:
+    @staticmethod
+    def _load_existing_key(key_file_path: str, secret: str):
+        with open(key_file_path, "rb") as f:
             encrypted_key = f.read()
         cipher_key = PasswordBasedBytesEncryptor(secret).decrypt(encrypted_key)
-        self._key_based_encryptor = KeyBasedEncryptor(cipher_key)
+        return KeyBasedEncryptor(cipher_key)
 
-    def _create_new_key(self, secret: str):
-        cipher_key = Random.new().read(self._BLOCK_SIZE)
+    @staticmethod
+    def _create_new_key(key_file_path: str, secret: str):
+        cipher_key = Random.new().read(DataStoreEncryptor._BLOCK_SIZE)
         encrypted_key = PasswordBasedBytesEncryptor(secret).encrypt(cipher_key)
-        with open_new_securely_permissioned_file(self.key_file_path, "wb") as f:
+        with open_new_securely_permissioned_file(key_file_path, "wb") as f:
             f.write(encrypted_key)
-        self._key_based_encryptor = KeyBasedEncryptor(cipher_key)
-
-    def is_key_setup(self) -> bool:
-        return self._key_based_encryptor is not None
+        return KeyBasedEncryptor(cipher_key)
 
     def enc(self, message: str):
         return self._key_based_encryptor.encrypt(message)
@@ -54,43 +52,14 @@ class DataStoreEncryptor:
         return self._key_based_encryptor.decrypt(enc_message)
 
 
-def initialize_datastore_encryptor(key_file_dir: str):
+def initialize_datastore_encryptor(username: str, password: str):
     global _encryptor
 
-    _encryptor = DataStoreEncryptor(key_file_dir)
-
-
-class EncryptorNotInitializedError(Exception):
-    pass
-
-
-def _get_secret_from_credentials(username: str, password: str) -> str:
-    return f"{username}:{password}"
-
-
-def encryptor_initialized_key_not_set(f):
-    def inner_function(*args, **kwargs):
-        if _encryptor is None:
-            raise EncryptorNotInitializedError
-        else:
-            if not _encryptor.is_key_setup():
-                return f(*args, **kwargs)
-            else:
-                pass
-
-    return inner_function
-
-
-@encryptor_initialized_key_not_set
-def remove_old_datastore_key():
-    if os.path.isfile(_encryptor.key_file_path):
-        os.remove(_encryptor.key_file_path)
-
-
-@encryptor_initialized_key_not_set
-def setup_datastore_key(username: str, password: str):
-    secret = _get_secret_from_credentials(username, password)
-    _encryptor.init_key(secret)
+    factory = get_encryptor_factory()
+    if not factory:
+        raise FactoryNotInitializedError
+    secret = get_secret_from_credentials(username, password)
+    _encryptor = DataStoreEncryptor(factory.key_file_path, secret)
 
 
 def get_datastore_encryptor():

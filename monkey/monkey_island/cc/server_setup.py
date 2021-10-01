@@ -11,6 +11,8 @@ from gevent.pywsgi import WSGIServer
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
+from monkey_island.cc.server_utils.encryption import initialize_encryptor_factory
+
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
@@ -27,7 +29,6 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,
 )
-from monkey_island.cc.server_utils.encryption import initialize_datastore_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
@@ -87,7 +88,7 @@ def _configure_logging(config_options):
 def _initialize_globals(config_options: IslandConfigOptions, server_config_path: str):
     env_singleton.initialize_from_file(server_config_path)
 
-    initialize_datastore_encryptor(config_options.data_dir)
+    initialize_encryptor_factory(config_options.data_dir)
     initialize_services(config_options.data_dir)
 
 
