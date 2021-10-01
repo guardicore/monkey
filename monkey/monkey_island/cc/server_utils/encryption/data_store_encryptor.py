@@ -69,6 +69,10 @@ class EncryptorNotInitializedError(Exception):
     pass
 
 
+def _get_secret_from_credentials(username: str, password: str) -> str:
+    return f"{username}:{password}"
+
+
 def encryptor_initialized_key_not_set(f):
     def inner_function(*args, **kwargs):
         if _encryptor is None:
@@ -89,7 +93,8 @@ def remove_old_datastore_key():
 
 
 @encryptor_initialized_key_not_set
-def setup_datastore_key(secret: str):
+def setup_datastore_key(username: str, password: str):
+    secret = _get_secret_from_credentials(username, password)
     _encryptor.init_key(secret)
 
 

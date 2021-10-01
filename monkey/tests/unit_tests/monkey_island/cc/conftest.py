@@ -28,10 +28,11 @@ def monkey_config_json(monkey_config):
     return json.dumps(monkey_config)
 
 
-ENCRYPTOR_SECRET = "m0nk3y_u53r:53cr3t_p455w0rd"
+MOCK_USERNAME = "m0nk3y_u53r"
+MOCK_PASSWORD = "3cr3t_p455w0rd"
 
 
 @pytest.fixture
 def uses_encryptor(data_for_tests_dir):
     initialize_datastore_encryptor(data_for_tests_dir)
-    setup_datastore_key(ENCRYPTOR_SECRET)
+    setup_datastore_key(MOCK_USERNAME, MOCK_PASSWORD)

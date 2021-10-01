@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from tests.unit_tests.monkey_island.cc.conftest import ENCRYPTOR_SECRET
+from tests.unit_tests.monkey_island.cc.conftest import MOCK_PASSWORD, MOCK_USERNAME
 
 from monkey_island.cc.server_utils.encryption import (
     DataStoreEncryptor,
@@ -28,7 +28,7 @@ def test_encryption(data_for_tests_dir):
 @pytest.fixture
 def initialized_key_dir(tmpdir):
     initialize_datastore_encryptor(tmpdir)
-    setup_datastore_key(ENCRYPTOR_SECRET)
+    setup_datastore_key(MOCK_USERNAME, MOCK_PASSWORD)
     yield tmpdir
     data_store_encryptor._encryptor = None
 
@@ -66,6 +66,6 @@ def test_encryptor_not_initialized():
 def test_setup_datastore_key(tmpdir):
     initialize_datastore_encryptor(tmpdir)
     assert not os.path.isfile(os.path.join(tmpdir, DataStoreEncryptor._KEY_FILENAME))
-    setup_datastore_key(ENCRYPTOR_SECRET)
+    setup_datastore_key(MOCK_USERNAME, MOCK_PASSWORD)
     assert os.path.isfile(os.path.join(tmpdir, DataStoreEncryptor._KEY_FILENAME))
     assert get_datastore_encryptor().is_key_setup()

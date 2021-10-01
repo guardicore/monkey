@@ -25,11 +25,6 @@ def get_user_credentials_from_request(_request) -> UserCreds:
     return UserCreds(username, password_hash)
 
 
-def get_secret_from_request(_request) -> str:
-    username, password = get_creds_from_request(_request)
-    return f"{username}:{password}"
-
-
 def get_creds_from_request(_request: Request) -> Tuple[str, str]:
     cred_dict = json.loads(request.data)
     username = cred_dict.get("username", "")

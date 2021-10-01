@@ -11,7 +11,6 @@ import monkey_island.cc.environment.environment_singleton as env_singleton
 import monkey_island.cc.resources.auth.user_store as user_store
 from monkey_island.cc.resources.auth.credential_utils import (
     get_creds_from_request,
-    get_secret_from_request,
     password_matches_hash,
 )
 from monkey_island.cc.server_utils.encryption.data_store_encryptor import setup_datastore_key
@@ -45,14 +44,14 @@ class Authenticate(flask_restful.Resource):
         username, password = get_creds_from_request(request)
 
         if _credentials_match_registered_user(username, password):
-            setup_datastore_key(get_secret_from_request(request))
+            setup_datastore_key(username, password)
             access_token = _create_access_token(username)
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
 
 
-def _credentials_match_registered_user(username: str, password: str):
+def _credentials_match_registered_user(username: str, password: str) -> bool:
     user = user_store.UserStore.username_table.get(username, None)
 
     if user and password_matches_hash(password, user.secret):
