@@ -10,7 +10,7 @@ from jwt import PyJWTError
 import monkey_island.cc.environment.environment_singleton as env_singleton
 import monkey_island.cc.resources.auth.user_store as user_store
 from monkey_island.cc.resources.auth.credential_utils import (
-    get_creds_from_request,
+    get_credentials_from_request,
     password_matches_hash,
 )
 from monkey_island.cc.server_utils.encryption.data_store_encryptor import setup_datastore_key
@@ -41,7 +41,7 @@ class Authenticate(flask_restful.Resource):
             "password": "my_password"
         }
         """
-        username, password = get_creds_from_request(request)
+        username, password = get_credentials_from_request(request)
 
         if _credentials_match_registered_user(username, password):
             setup_datastore_key(username, password)

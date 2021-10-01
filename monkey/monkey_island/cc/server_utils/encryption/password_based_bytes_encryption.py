@@ -1,6 +1,5 @@
 import io
 import logging
-from io import BytesIO
 
 import pyAesCrypt
 
@@ -17,28 +16,30 @@ logger = logging.getLogger(__name__)
 # Note: password != key
 
 
-class PasswordBasedByteEncryptor(IEncryptor):
+class PasswordBasedBytesEncryptor(IEncryptor):
 
     _BUFFER_SIZE = pyAesCrypt.crypto.bufferSizeDef
 
     def __init__(self, password: str):
         self.password = password
 
-    def encrypt(self, plaintext: BytesIO) -> BytesIO:
+    def encrypt(self, plaintext: bytes) -> bytes:
         ciphertext_stream = io.BytesIO()
 
-        pyAesCrypt.encryptStream(plaintext, ciphertext_stream, self.password, self._BUFFER_SIZE)
+        pyAesCrypt.encryptStream(
+            io.BytesIO(plaintext), ciphertext_stream, self.password, self._BUFFER_SIZE
+        )
 
-        return ciphertext_stream
+        return ciphertext_stream.getvalue()
 
-    def decrypt(self, ciphertext: BytesIO) -> BytesIO:
+    def decrypt(self, ciphertext: bytes) -> bytes:
         plaintext_stream = io.BytesIO()
 
-        ciphertext_stream_len = len(ciphertext.getvalue())
+        ciphertext_stream_len = len(ciphertext)
 
         try:
             pyAesCrypt.decryptStream(
-                ciphertext,
+                io.BytesIO(ciphertext),
                 plaintext_stream,
                 self.password,
                 self._BUFFER_SIZE,
@@ -51,7 +52,7 @@ class PasswordBasedByteEncryptor(IEncryptor):
             else:
                 logger.info("The corrupt ciphertext provided.")
                 raise InvalidCiphertextError
-        return plaintext_stream
+        return plaintext_stream.getvalue()
 
 
 class InvalidCredentialsError(Exception):

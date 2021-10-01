@@ -19,13 +19,13 @@ def password_matches_hash(plaintext_password, password_hash):
 
 
 def get_user_credentials_from_request(_request) -> UserCreds:
-    username, password = get_creds_from_request(_request)
+    username, password = get_credentials_from_request(_request)
     password_hash = hash_password(password)
 
     return UserCreds(username, password_hash)
 
 
-def get_creds_from_request(_request: Request) -> Tuple[str, str]:
+def get_credentials_from_request(_request: Request) -> Tuple[str, str]:
     cred_dict = json.loads(request.data)
     username = cred_dict.get("username", "")
     password = cred_dict.get("password", "")

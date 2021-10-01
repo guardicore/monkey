@@ -1,12 +1,11 @@
 import base64
-import io
 import logging
 
 import pyAesCrypt
 
 from monkey_island.cc.server_utils.encryption import IEncryptor
-from monkey_island.cc.server_utils.encryption.password_based_byte_encryption import (
-    PasswordBasedByteEncryptor,
+from monkey_island.cc.server_utils.encryption.password_based_bytes_encryption import (
+    PasswordBasedBytesEncryptor,
 )
 
 logger = logging.getLogger(__name__)
@@ -20,17 +19,15 @@ class PasswordBasedStringEncryptor(IEncryptor):
         self.password = password
 
     def encrypt(self, plaintext: str) -> str:
-        plaintext_stream = io.BytesIO(plaintext.encode())
-        ciphertext = PasswordBasedByteEncryptor(self.password).encrypt(plaintext_stream)
+        ciphertext = PasswordBasedBytesEncryptor(self.password).encrypt(plaintext.encode())
 
-        return base64.b64encode(ciphertext.getvalue()).decode()
+        return base64.b64encode(ciphertext).decode()
 
     def decrypt(self, ciphertext: str) -> str:
         ciphertext = base64.b64decode(ciphertext)
-        ciphertext_stream = io.BytesIO(ciphertext)
 
-        plaintext_stream = PasswordBasedByteEncryptor(self.password).decrypt(ciphertext_stream)
-        return plaintext_stream.getvalue().decode("utf-8")
+        plaintext_stream = PasswordBasedBytesEncryptor(self.password).decrypt(ciphertext)
+        return plaintext_stream.decode()
 
 
 def is_encrypted(ciphertext: str) -> bool:

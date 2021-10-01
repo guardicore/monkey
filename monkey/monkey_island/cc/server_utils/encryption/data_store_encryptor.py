@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import io
 import os
 
 # PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports but
@@ -10,8 +9,8 @@ from typing import Union
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 
 from monkey_island.cc.server_utils.encryption import KeyBasedEncryptor
-from monkey_island.cc.server_utils.encryption.password_based_byte_encryption import (
-    PasswordBasedByteEncryptor,
+from monkey_island.cc.server_utils.encryption.password_based_bytes_encryption import (
+    PasswordBasedBytesEncryptor,
 )
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
@@ -24,7 +23,7 @@ class DataStoreEncryptor:
 
     def __init__(self, key_file_dir: str):
         self.key_file_path = os.path.join(key_file_dir, self._KEY_FILENAME)
-        self._key_base_encryptor = None
+        self._key_based_encryptor = None
 
     def init_key(self, secret: str):
         if os.path.exists(self.key_file_path):
@@ -35,28 +34,24 @@ class DataStoreEncryptor:
     def _load_existing_key(self, secret: str):
         with open(self.key_file_path, "rb") as f:
             encrypted_key = f.read()
-        cipher_key = (
-            PasswordBasedByteEncryptor(secret).decrypt(io.BytesIO(encrypted_key)).getvalue()
-        )
-        self._key_base_encryptor = KeyBasedEncryptor(cipher_key)
+        cipher_key = PasswordBasedBytesEncryptor(secret).decrypt(encrypted_key)
+        self._key_based_encryptor = KeyBasedEncryptor(cipher_key)
 
     def _create_new_key(self, secret: str):
         cipher_key = Random.new().read(self._BLOCK_SIZE)
-        encrypted_key = (
-            PasswordBasedByteEncryptor(secret).encrypt(io.BytesIO(cipher_key)).getvalue()
-        )
+        encrypted_key = PasswordBasedBytesEncryptor(secret).encrypt(cipher_key)
         with open_new_securely_permissioned_file(self.key_file_path, "wb") as f:
             f.write(encrypted_key)
-        self._key_base_encryptor = KeyBasedEncryptor(cipher_key)
+        self._key_based_encryptor = KeyBasedEncryptor(cipher_key)
 
     def is_key_setup(self) -> bool:
-        return self._key_base_encryptor is not None
+        return self._key_based_encryptor is not None
 
     def enc(self, message: str):
-        return self._key_base_encryptor.encrypt(message)
+        return self._key_based_encryptor.encrypt(message)
 
     def dec(self, enc_message: str):
-        return self._key_base_encryptor.decrypt(enc_message)
+        return self._key_based_encryptor.decrypt(enc_message)
 
 
 def initialize_datastore_encryptor(key_file_dir: str):
