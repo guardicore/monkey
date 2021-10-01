@@ -10,6 +10,7 @@ from monkey_island.cc.server_utils.encryption import (
     initialize_encryptor_factory,
     remove_old_datastore_key,
 )
+from monkey_island.cc.server_utils.encryption.data_store_encryptor import DataStoreEncryptor
 from monkey_island.cc.server_utils.encryption.encryptor_factory import EncryptorFactory
 
 PLAINTEXT = "Hello, Monkey!"
@@ -37,7 +38,7 @@ def test_key_creation(initialized_key_dir):
     assert (initialized_key_dir / EncryptorFactory._KEY_FILENAME).isfile()
 
 
-def test_key_removal(initialized_key_dir, monkeypatch):
+def test_key_removal(initialized_key_dir):
     remove_old_datastore_key()
     assert not (initialized_key_dir / EncryptorFactory._KEY_FILENAME).isfile()
 
@@ -61,3 +62,7 @@ def test_initialize_encryptor(tmpdir):
     assert not (tmpdir / EncryptorFactory._KEY_FILENAME).isfile()
     initialize_datastore_encryptor(MOCK_USERNAME, MOCK_PASSWORD)
     assert (tmpdir / EncryptorFactory._KEY_FILENAME).isfile()
+
+
+def test_key_file_encryption(tmpdir, monkeypatch):
+    monkeypatch(DataStoreEncryptor._)

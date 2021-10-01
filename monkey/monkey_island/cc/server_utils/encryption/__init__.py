@@ -8,7 +8,7 @@ from .encryptor_factory import (
     FactoryNotInitializedError,
     remove_old_datastore_key,
     get_encryptor_factory,
-    get_secret_from_credentials,
+    _get_secret_from_credentials,
     initialize_encryptor_factory,
 )
 from .data_store_encryptor import initialize_datastore_encryptor, get_datastore_encryptor
