@@ -6,7 +6,7 @@ from monkey_island.cc.server_utils.encryption.encryptors.password_based_string_e
     PasswordBasedStringEncryptor,
     is_encrypted,
 )
-from monkey_island.cc.server_utils.encryption.encryptors.password_based_bytes_encryption import (
+from monkey_island.cc.server_utils.encryption.encryptors.password_based_bytes_encryptor import (
     PasswordBasedBytesEncryptor,
     InvalidCredentialsError,
     InvalidCiphertextError,
