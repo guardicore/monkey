@@ -3,8 +3,9 @@ from typing import Union
 
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 
-from monkey_island.cc.server_utils.encryption import IEncryptor, KeyBasedEncryptor
-from monkey_island.cc.server_utils.encryption.encryptors.password_based_bytes_encryption import (
+from monkey_island.cc.server_utils.encryption import (
+    IEncryptor,
+    KeyBasedEncryptor,
     PasswordBasedBytesEncryptor,
 )
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file

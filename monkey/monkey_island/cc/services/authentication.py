@@ -1,8 +1,8 @@
 from monkey_island.cc.server_utils.encryption import (
     get_datastore_encryptor,
     initialize_datastore_encryptor,
+    remove_old_datastore_key,
 )
-from monkey_island.cc.server_utils.encryption.data_store_encryptor import remove_old_datastore_key
 
 
 class AuthenticationService:

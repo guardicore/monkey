@@ -11,7 +11,11 @@ from monkey_island.cc.server_utils.encryption.encryptors.password_based_bytes_en
     InvalidCredentialsError,
     InvalidCiphertextError,
 )
-from .data_store_encryptor import initialize_datastore_encryptor, get_datastore_encryptor
+from .data_store_encryptor import (
+    initialize_datastore_encryptor,
+    get_datastore_encryptor,
+    remove_old_datastore_key,
+)
 from .dict_encryption.dict_encryptor import (
     SensitiveField,
     encrypt_dict,
