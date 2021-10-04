@@ -10,10 +10,8 @@ from tests.unit_tests.monkey_island.cc.server_utils.encryption.test_password_bas
     STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME,
 )
 
-from monkey_island.cc.server_utils.encryption import (
-    initialize_datastore_encryptor,
-    initialize_encryptor_factory,
-)
+from monkey_island.cc.server_utils.encryption import initialize_datastore_encryptor
+from monkey_island.cc.services.authentication import AuthenticationService
 
 
 @pytest.fixture
@@ -36,5 +34,5 @@ MOCK_PASSWORD = "3cr3t_p455w0rd"
 
 @pytest.fixture
 def uses_encryptor(data_for_tests_dir):
-    initialize_encryptor_factory(data_for_tests_dir)
-    initialize_datastore_encryptor(MOCK_USERNAME, MOCK_PASSWORD)
+    secret = AuthenticationService._get_secret_from_credentials(MOCK_USERNAME, MOCK_PASSWORD)
+    initialize_datastore_encryptor(data_for_tests_dir, secret)

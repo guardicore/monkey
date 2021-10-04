@@ -156,7 +156,7 @@ def test_get_stolen_creds_exploit(fake_mongo):
     assert expected_stolen_creds_exploit == stolen_creds_exploit
 
 
-@pytest.mark.usefixtures("uses_database")
+@pytest.mark.usefixtures("uses_database", "uses_encryptor")
 def test_get_stolen_creds_system_info(fake_mongo):
     fake_mongo.db.monkey.insert_one(MONKEY_TELEM)
     save_telemetry(SYSTEM_INFO_TELEMETRY_TELEM)

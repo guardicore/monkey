@@ -15,14 +15,14 @@ _BLOCK_SIZE = 32
 _encryptor: Union[None, IEncryptor] = None
 
 
-def _load_existing_key(key_file_path: str, secret: str):
+def _load_existing_key(key_file_path: str, secret: str) -> KeyBasedEncryptor:
     with open(key_file_path, "rb") as f:
         encrypted_key = f.read()
     cipher_key = PasswordBasedBytesEncryptor(secret).decrypt(encrypted_key)
     return KeyBasedEncryptor(cipher_key)
 
 
-def _create_new_key(key_file_path: str, secret: str):
+def _create_new_key(key_file_path: str, secret: str) -> KeyBasedEncryptor:
     cipher_key = _get_random_bytes()
     encrypted_key = PasswordBasedBytesEncryptor(secret).encrypt(cipher_key)
     with open_new_securely_permissioned_file(key_file_path, "wb") as f:
@@ -50,9 +50,9 @@ def initialize_datastore_encryptor(key_file_dir: str, secret: str):
         _encryptor = _create_new_key(key_file_path, secret)
 
 
-def _get_key_file_path(key_file_dir: str):
+def _get_key_file_path(key_file_dir: str) -> str:
     return os.path.join(key_file_dir, _KEY_FILENAME)
 
 
-def get_datastore_encryptor():
+def get_datastore_encryptor() -> IEncryptor:
     return _encryptor

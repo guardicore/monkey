@@ -18,12 +18,14 @@ def mock_port_in_env_singleton(monkeypatch, PORT):
     monkeypatch.setattr("monkey_island.cc.services.config.env_singleton", mock_singleton)
 
 
+@pytest.mark.usefixtures("uses_encryptor")
 def test_set_server_ips_in_config_command_servers(config, IPS, PORT):
     ConfigService.set_server_ips_in_config(config)
     expected_config_command_servers = [f"{ip}:{PORT}" for ip in IPS]
     assert config["internal"]["island_server"]["command_servers"] == expected_config_command_servers
 
 
+@pytest.mark.usefixtures("uses_encryptor")
 def test_set_server_ips_in_config_current_server(config, IPS, PORT):
     ConfigService.set_server_ips_in_config(config)
     expected_config_current_server = f"{IPS[0]}:{PORT}"
