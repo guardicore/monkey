@@ -11,8 +11,6 @@ from gevent.pywsgi import WSGIServer
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
-from monkey_island.cc.server_utils.encryption import initialize_encryptor_factory
-
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
@@ -88,7 +86,6 @@ def _configure_logging(config_options):
 def _initialize_globals(config_options: IslandConfigOptions, server_config_path: str):
     env_singleton.initialize_from_file(server_config_path)
 
-    initialize_encryptor_factory(config_options.data_dir)
     initialize_services(config_options.data_dir)
 
 

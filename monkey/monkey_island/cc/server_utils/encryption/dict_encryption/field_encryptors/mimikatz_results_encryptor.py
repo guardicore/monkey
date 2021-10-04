@@ -17,7 +17,7 @@ class MimikatzResultsEncryptor(IFieldEncryptor):
         for _, credentials in results.items():
             for secret_type in MimikatzResultsEncryptor.secret_types:
                 try:
-                    credentials[secret_type] = get_datastore_encryptor().enc(
+                    credentials[secret_type] = get_datastore_encryptor().encrypt(
                         credentials[secret_type]
                     )
                 except ValueError as e:
@@ -25,12 +25,14 @@ class MimikatzResultsEncryptor(IFieldEncryptor):
                         f"Failed encrypting sensitive field for "
                         f"user {credentials['username']}! Error: {e}"
                     )
-                    credentials[secret_type] = get_datastore_encryptor().enc("")
+                    credentials[secret_type] = get_datastore_encryptor().encrypt("")
         return results
 
     @staticmethod
     def decrypt(results: dict) -> dict:
         for _, credentials in results.items():
             for secret_type in MimikatzResultsEncryptor.secret_types:
-                credentials[secret_type] = get_datastore_encryptor().dec(credentials[secret_type])
+                credentials[secret_type] = get_datastore_encryptor().decrypt(
+                    credentials[secret_type]
+                )
         return results

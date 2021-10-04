@@ -9,8 +9,8 @@ from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors i
 class StringListEncryptor(IFieldEncryptor):
     @staticmethod
     def encrypt(value: List[str]):
-        return [get_datastore_encryptor().enc(string) for string in value]
+        return [get_datastore_encryptor().encrypt(string) for string in value]
 
     @staticmethod
     def decrypt(value: List[str]):
-        return [get_datastore_encryptor().dec(string) for string in value]
+        return [get_datastore_encryptor().decrypt(string) for string in value]
