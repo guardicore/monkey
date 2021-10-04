@@ -2,7 +2,7 @@ from monkey_island.cc.server_utils.encryption.encryptors.i_encryptor import IEnc
 from monkey_island.cc.server_utils.encryption.encryptors.key_based_encryptor import (
     KeyBasedEncryptor,
 )
-from monkey_island.cc.server_utils.encryption.encryptors.password_based_string_encryptior import (
+from monkey_island.cc.server_utils.encryption.encryptors.password_based_string_encryptor import (
     PasswordBasedStringEncryptor,
     is_encrypted,
 )
