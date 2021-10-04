@@ -1,4 +1,3 @@
-import base64
 import io
 import logging
 
@@ -17,36 +16,30 @@ logger = logging.getLogger(__name__)
 # Note: password != key
 
 
-class PasswordBasedEncryptor(IEncryptor):
+class PasswordBasedBytesEncryptor(IEncryptor):
 
     _BUFFER_SIZE = pyAesCrypt.crypto.bufferSizeDef
 
     def __init__(self, password: str):
         self.password = password
 
-    def encrypt(self, plaintext: str) -> str:
-        plaintext_stream = io.BytesIO(plaintext.encode())
+    def encrypt(self, plaintext: bytes) -> bytes:
         ciphertext_stream = io.BytesIO()
 
         pyAesCrypt.encryptStream(
-            plaintext_stream, ciphertext_stream, self.password, self._BUFFER_SIZE
+            io.BytesIO(plaintext), ciphertext_stream, self.password, self._BUFFER_SIZE
         )
 
-        ciphertext_b64 = base64.b64encode(ciphertext_stream.getvalue())
-        logger.info("String encrypted.")
+        return ciphertext_stream.getvalue()
 
-        return ciphertext_b64.decode()
-
-    def decrypt(self, ciphertext: str):
-        ciphertext = base64.b64decode(ciphertext)
-        ciphertext_stream = io.BytesIO(ciphertext)
+    def decrypt(self, ciphertext: bytes) -> bytes:
         plaintext_stream = io.BytesIO()
 
-        ciphertext_stream_len = len(ciphertext_stream.getvalue())
+        ciphertext_stream_len = len(ciphertext)
 
         try:
             pyAesCrypt.decryptStream(
-                ciphertext_stream,
+                io.BytesIO(ciphertext),
                 plaintext_stream,
                 self.password,
                 self._BUFFER_SIZE,
@@ -59,7 +52,7 @@ class PasswordBasedEncryptor(IEncryptor):
             else:
                 logger.info("The corrupt ciphertext provided.")
                 raise InvalidCiphertextError
-        return plaintext_stream.getvalue().decode("utf-8")
+        return plaintext_stream.getvalue()
 
 
 class InvalidCredentialsError(Exception):
@@ -68,8 +61,3 @@ class InvalidCredentialsError(Exception):
 
 class InvalidCiphertextError(Exception):
     """ Raised when ciphertext is corrupted """
-
-
-def is_encrypted(ciphertext: str) -> bool:
-    ciphertext = base64.b64decode(ciphertext)
-    return ciphertext.startswith(b"AES")

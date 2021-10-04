@@ -5,10 +5,7 @@ import pytest
 
 from common.config_value_paths import AWS_KEYS_PATH
 from monkey_island.cc.database import mongo
-from monkey_island.cc.server_utils.encryption import (
-    get_datastore_encryptor,
-    initialize_datastore_encryptor,
-)
+from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.zero_trust.scoutsuite.scoutsuite_auth_service import (
     is_aws_keys_setup,
@@ -19,7 +16,7 @@ class MockObject:
     pass
 
 
-@pytest.mark.usefixtures("uses_database")
+@pytest.mark.usefixtures("uses_database", "uses_encryptor")
 def test_is_aws_keys_setup(tmp_path):
     # Mock default configuration
     ConfigService.init_default_config()
@@ -29,9 +26,7 @@ def test_is_aws_keys_setup(tmp_path):
     mongo.db.config.find_one = MagicMock(return_value=ConfigService.default_config)
     assert not is_aws_keys_setup()
 
-    # Make sure noone changed config path and broke this function
-    initialize_datastore_encryptor(tmp_path)
-    bogus_key_value = get_datastore_encryptor().enc("bogus_aws_key")
+    bogus_key_value = get_datastore_encryptor().encrypt("bogus_aws_key")
     dpath.util.set(
         ConfigService.default_config, AWS_KEYS_PATH + ["aws_secret_access_key"], bogus_key_value
     )

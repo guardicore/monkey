@@ -1,50 +1,59 @@
 import os
+from typing import Union
 
-# PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports but
-# is maintained.
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 
-from monkey_island.cc.server_utils.encryption import KeyBasedEncryptor
+from monkey_island.cc.server_utils.encryption import (
+    IEncryptor,
+    KeyBasedEncryptor,
+    PasswordBasedBytesEncryptor,
+)
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
-_encryptor = None
+_KEY_FILENAME = "mongo_key.bin"
+_BLOCK_SIZE = 32
+
+_encryptor: Union[None, IEncryptor] = None
 
 
-class DataStoreEncryptor:
-    _BLOCK_SIZE = 32
-    _KEY_FILENAME = "mongo_key.bin"
-
-    def __init__(self, key_file_dir):
-        key_file = os.path.join(key_file_dir, self._KEY_FILENAME)
-
-        if os.path.exists(key_file):
-            self._load_existing_key(key_file)
-        else:
-            self._init_key(key_file)
-
-        self._key_base_encryptor = KeyBasedEncryptor(self._cipher_key)
-
-    def _init_key(self, password_file_path: str):
-        self._cipher_key = Random.new().read(self._BLOCK_SIZE)
-        with open_new_securely_permissioned_file(password_file_path, "wb") as f:
-            f.write(self._cipher_key)
-
-    def _load_existing_key(self, key_file):
-        with open(key_file, "rb") as f:
-            self._cipher_key = f.read()
-
-    def enc(self, message: str):
-        return self._key_base_encryptor.encrypt(message)
-
-    def dec(self, enc_message: str):
-        return self._key_base_encryptor.decrypt(enc_message)
+def _load_existing_key(key_file_path: str, secret: str) -> KeyBasedEncryptor:
+    with open(key_file_path, "rb") as f:
+        encrypted_key = f.read()
+    cipher_key = PasswordBasedBytesEncryptor(secret).decrypt(encrypted_key)
+    return KeyBasedEncryptor(cipher_key)
 
 
-def initialize_datastore_encryptor(key_file_dir):
+def _create_new_key(key_file_path: str, secret: str) -> KeyBasedEncryptor:
+    cipher_key = _get_random_bytes()
+    encrypted_key = PasswordBasedBytesEncryptor(secret).encrypt(cipher_key)
+    with open_new_securely_permissioned_file(key_file_path, "wb") as f:
+        f.write(encrypted_key)
+    return KeyBasedEncryptor(cipher_key)
+
+
+def _get_random_bytes() -> bytes:
+    return Random.new().read(_BLOCK_SIZE)
+
+
+def remove_old_datastore_key(key_file_dir: str):
+    key_file_path = _get_key_file_path(key_file_dir)
+    if os.path.isfile(key_file_path):
+        os.remove(key_file_path)
+
+
+def initialize_datastore_encryptor(key_file_dir: str, secret: str):
     global _encryptor
 
-    _encryptor = DataStoreEncryptor(key_file_dir)
+    key_file_path = _get_key_file_path(key_file_dir)
+    if os.path.exists(key_file_path):
+        _encryptor = _load_existing_key(key_file_path, secret)
+    else:
+        _encryptor = _create_new_key(key_file_path, secret)
 
 
-def get_datastore_encryptor():
+def _get_key_file_path(key_file_dir: str) -> str:
+    return os.path.join(key_file_dir, _KEY_FILENAME)
+
+
+def get_datastore_encryptor() -> IEncryptor:
     return _encryptor

@@ -8,7 +8,7 @@ from tests.unit_tests.monkey_island.cc.services.utils.ciphertexts_for_encryption
 
 from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.configuration_import import ConfigurationImport
-from monkey_island.cc.server_utils.encryption import PasswordBasedEncryptor
+from monkey_island.cc.server_utils.encryption import PasswordBasedStringEncryptor
 
 
 def test_is_config_encrypted__json(monkey_config_json):
@@ -17,7 +17,7 @@ def test_is_config_encrypted__json(monkey_config_json):
 
 @pytest.mark.slow
 def test_is_config_encrypted__ciphertext(monkey_config_json):
-    pb_encryptor = PasswordBasedEncryptor(PASSWORD)
+    pb_encryptor = PasswordBasedStringEncryptor(PASSWORD)
     encrypted_config = pb_encryptor.encrypt(monkey_config_json)
     assert ConfigurationImport.is_config_encrypted(encrypted_config)
 

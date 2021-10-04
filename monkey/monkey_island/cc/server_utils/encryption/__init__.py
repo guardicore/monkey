@@ -1,15 +1,20 @@
-from monkey_island.cc.server_utils.encryption.i_encryptor import IEncryptor
-from monkey_island.cc.server_utils.encryption.key_based_encryptor import KeyBasedEncryptor
-from monkey_island.cc.server_utils.encryption.password_based_encryption import (
-    InvalidCiphertextError,
-    InvalidCredentialsError,
-    PasswordBasedEncryptor,
+from monkey_island.cc.server_utils.encryption.encryptors.i_encryptor import IEncryptor
+from monkey_island.cc.server_utils.encryption.encryptors.key_based_encryptor import (
+    KeyBasedEncryptor,
+)
+from monkey_island.cc.server_utils.encryption.encryptors.password_based_string_encryptior import (
+    PasswordBasedStringEncryptor,
     is_encrypted,
 )
-from monkey_island.cc.server_utils.encryption.data_store_encryptor import (
-    DataStoreEncryptor,
-    get_datastore_encryptor,
+from monkey_island.cc.server_utils.encryption.encryptors.password_based_bytes_encryption import (
+    PasswordBasedBytesEncryptor,
+    InvalidCredentialsError,
+    InvalidCiphertextError,
+)
+from .data_store_encryptor import (
     initialize_datastore_encryptor,
+    get_datastore_encryptor,
+    remove_old_datastore_key,
 )
 from .dict_encryption.dict_encryptor import (
     SensitiveField,

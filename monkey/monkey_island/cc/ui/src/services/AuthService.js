@@ -46,7 +46,7 @@ export default class AuthService {
     return this._authFetch(this.REGISTRATION_API_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify({
-        'user': username,
+        'username': username,
         'password': password
       })
     }).then(res => {

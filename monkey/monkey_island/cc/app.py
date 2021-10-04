@@ -54,7 +54,6 @@ from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth impor
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
-from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
 
@@ -108,7 +107,6 @@ def init_app_services(app):
 
     with app.app_context():
         database.init()
-        Database.init_db()
 
     # If running on AWS, this will initialize the instance data, which is used "later" in the
     # execution of the island.

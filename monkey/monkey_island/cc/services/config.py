@@ -90,9 +90,9 @@ class ConfigService:
         if should_decrypt:
             if config_key_as_arr in ENCRYPTED_CONFIG_VALUES:
                 if isinstance(config, str):
-                    config = get_datastore_encryptor().dec(config)
+                    config = get_datastore_encryptor().decrypt(config)
                 elif isinstance(config, list):
-                    config = [get_datastore_encryptor().dec(x) for x in config]
+                    config = [get_datastore_encryptor().decrypt(x) for x in config]
         return config
 
     @staticmethod
@@ -130,7 +130,7 @@ class ConfigService:
         if item_value in items_from_config:
             return
         if should_encrypt:
-            item_value = get_datastore_encryptor().enc(item_value)
+            item_value = get_datastore_encryptor().encrypt(item_value)
         mongo.db.config.update(
             {"name": "newconfig"}, {"$addToSet": {item_key: item_value}}, upsert=False
         )
@@ -350,10 +350,10 @@ class ConfigService:
                     ]
                 else:
                     flat_config[key] = [
-                        get_datastore_encryptor().dec(item) for item in flat_config[key]
+                        get_datastore_encryptor().decrypt(item) for item in flat_config[key]
                     ]
             else:
-                flat_config[key] = get_datastore_encryptor().dec(flat_config[key])
+                flat_config[key] = get_datastore_encryptor().decrypt(flat_config[key])
         return flat_config
 
     @staticmethod
@@ -379,25 +379,25 @@ class ConfigService:
                         )
                     else:
                         config_arr[i] = (
-                            get_datastore_encryptor().dec(config_arr[i])
+                            get_datastore_encryptor().decrypt(config_arr[i])
                             if is_decrypt
-                            else get_datastore_encryptor().enc(config_arr[i])
+                            else get_datastore_encryptor().encrypt(config_arr[i])
                         )
             else:
                 parent_config_arr[config_arr_as_array[-1]] = (
-                    get_datastore_encryptor().dec(config_arr)
+                    get_datastore_encryptor().decrypt(config_arr)
                     if is_decrypt
-                    else get_datastore_encryptor().enc(config_arr)
+                    else get_datastore_encryptor().encrypt(config_arr)
                 )
 
     @staticmethod
     def decrypt_ssh_key_pair(pair, encrypt=False):
         if encrypt:
-            pair["public_key"] = get_datastore_encryptor().enc(pair["public_key"])
-            pair["private_key"] = get_datastore_encryptor().enc(pair["private_key"])
+            pair["public_key"] = get_datastore_encryptor().encrypt(pair["public_key"])
+            pair["private_key"] = get_datastore_encryptor().encrypt(pair["private_key"])
         else:
-            pair["public_key"] = get_datastore_encryptor().dec(pair["public_key"])
-            pair["private_key"] = get_datastore_encryptor().dec(pair["private_key"])
+            pair["public_key"] = get_datastore_encryptor().decrypt(pair["public_key"])
+            pair["private_key"] = get_datastore_encryptor().decrypt(pair["private_key"])
         return pair
 
     @staticmethod

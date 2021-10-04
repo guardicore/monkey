@@ -11,7 +11,7 @@ from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.server_utils.encryption import (
     InvalidCiphertextError,
     InvalidCredentialsError,
-    PasswordBasedEncryptor,
+    PasswordBasedStringEncryptor,
     is_encrypted,
 )
 from monkey_island.cc.services.config import ConfigService
@@ -72,7 +72,7 @@ class ConfigurationImport(flask_restful.Resource):
         try:
             config = request_contents["config"]
             if ConfigurationImport.is_config_encrypted(request_contents["config"]):
-                pb_encryptor = PasswordBasedEncryptor(request_contents["password"])
+                pb_encryptor = PasswordBasedStringEncryptor(request_contents["password"])
                 config = pb_encryptor.decrypt(config)
             return json.loads(config)
         except (JSONDecodeError, InvalidCiphertextError):
