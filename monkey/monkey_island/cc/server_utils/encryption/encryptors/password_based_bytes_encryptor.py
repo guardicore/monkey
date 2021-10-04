@@ -3,7 +3,7 @@ import logging
 
 import pyAesCrypt
 
-from monkey_island.cc.server_utils.encryption import IEncryptor
+from .i_encryptor import IEncryptor
 
 logger = logging.getLogger(__name__)
 

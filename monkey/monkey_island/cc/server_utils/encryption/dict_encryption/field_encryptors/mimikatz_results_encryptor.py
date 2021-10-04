@@ -1,9 +1,7 @@
 import logging
 
-from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
-from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
-    IFieldEncryptor,
-)
+from ... import get_datastore_encryptor
+from . import IFieldEncryptor
 
 logger = logging.getLogger(__name__)
 

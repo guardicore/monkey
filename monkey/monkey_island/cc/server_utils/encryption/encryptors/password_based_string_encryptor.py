@@ -3,10 +3,8 @@ import logging
 
 import pyAesCrypt
 
-from monkey_island.cc.server_utils.encryption import IEncryptor
-from monkey_island.cc.server_utils.encryption.encryptors.password_based_bytes_encryptor import (
-    PasswordBasedBytesEncryptor,
-)
+from .i_encryptor import IEncryptor
+from .password_based_bytes_encryptor import PasswordBasedBytesEncryptor
 
 logger = logging.getLogger(__name__)
 
