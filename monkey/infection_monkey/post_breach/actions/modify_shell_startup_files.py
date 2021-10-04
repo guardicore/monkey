@@ -20,6 +20,13 @@ class ModifyShellStartupFiles(PBA):
 
     def run(self):
         results = [pba.run() for pba in self.modify_shell_startup_PBA_list()]
+        if not results:
+            results = [
+                (
+                    "Modify shell startup files PBA failed: Unable to find any regular users",
+                    False,
+                )
+            ]
         PostBreachTelem(self, results).send()
 
     def modify_shell_startup_PBA_list(self):
@@ -61,6 +68,7 @@ class ModifyShellStartupFiles(PBA):
                         output = subprocess.check_output(  # noqa: DUO116
                             self.command, stderr=subprocess.STDOUT, shell=True
                         ).decode()
+
                         return output, True
                     except subprocess.CalledProcessError as e:
                         # Return error output of the command
