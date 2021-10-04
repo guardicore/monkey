@@ -26,7 +26,7 @@ def test_is_aws_keys_setup(tmp_path):
     mongo.db.config.find_one = MagicMock(return_value=ConfigService.default_config)
     assert not is_aws_keys_setup()
 
-    bogus_key_value = get_datastore_encryptor().enc("bogus_aws_key")
+    bogus_key_value = get_datastore_encryptor().encrypt("bogus_aws_key")
     dpath.util.set(
         ConfigService.default_config, AWS_KEYS_PATH + ["aws_secret_access_key"], bogus_key_value
     )
