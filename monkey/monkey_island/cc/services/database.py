@@ -34,10 +34,5 @@ class Database(object):
         logger.info("Dropped collection {}".format(collection_name))
 
     @staticmethod
-    def init_db():
-        if not mongo.db.collection_names():
-            Database.reset_db()
-
-    @staticmethod
     def is_mitigations_missing() -> bool:
         return bool(AttackMitigations.COLLECTION_NAME not in mongo.db.list_collection_names())
