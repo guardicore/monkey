@@ -4,7 +4,7 @@ import logging
 import pyAesCrypt
 
 from monkey_island.cc.server_utils.encryption import IEncryptor
-from monkey_island.cc.server_utils.encryption.password_based_bytes_encryption import (
+from monkey_island.cc.server_utils.encryption.encryptors.password_based_bytes_encryption import (
     PasswordBasedBytesEncryptor,
 )
 
