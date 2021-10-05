@@ -115,7 +115,20 @@ class ControlClient(object):
                 if proxy_find:
                     proxy_address, proxy_port = proxy_find
                     logger.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
-                    ControlClient.proxies["https"] = PROXY_SCHEMA % (proxy_address, proxy_port)
+                    from infection_monkey.utils.environment import is_windows_os
+
+                    logger.info(f"requests version: {requests.__version__}")
+                    import urllib3
+
+                    logger.info(f"urllib3 version: {urllib3.__version__}")
+                    if is_windows_os():
+                        ControlClient.proxies["https"] = "https://%s:%s" % (
+                            proxy_address,
+                            proxy_port,
+                        )
+                    else:
+                        ControlClient.proxies["https"] = PROXY_SCHEMA % (proxy_address, proxy_port)
+                    logger.info(ControlClient.proxies)
                     return ControlClient.find_server()
                 else:
                     logger.info("No tunnel found")
