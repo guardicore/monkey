@@ -11,6 +11,7 @@ PLAINTEXT = "Hello, Monkey!"
 MOCK_SECRET = "53CR31"
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_encryptor")
 def test_encryption(data_for_tests_dir):
     encrypted_data = get_datastore_encryptor().encrypt(PLAINTEXT)
@@ -33,10 +34,12 @@ def initialized_encryptor_dir(tmpdir):
     return tmpdir
 
 
+@pytest.mark.slow
 def test_key_creation(initialized_encryptor_dir):
     assert (initialized_encryptor_dir / data_store_encryptor._KEY_FILENAME).isfile()
 
 
+@pytest.mark.slow
 def test_key_removal(initialized_encryptor_dir):
     remove_old_datastore_key(initialized_encryptor_dir)
     assert not (initialized_encryptor_dir / data_store_encryptor._KEY_FILENAME).isfile()
@@ -49,6 +52,7 @@ def test_key_removal__no_key(tmpdir):
     data_store_encryptor._factory = None
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("cleanup_encryptor")
 def test_key_file_encryption(tmpdir, monkeypatch):
     monkeypatch.setattr(data_store_encryptor, "_get_random_bytes", lambda: PLAINTEXT.encode())
