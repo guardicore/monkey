@@ -6,13 +6,9 @@ import pytest
 
 from monkey_island.cc.models.telemetries import get_telemetry_by_query, save_telemetry
 from monkey_island.cc.models.telemetries.telemetry import Telemetry
-from monkey_island.cc.server_utils.encryption import SensitiveField
-from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
-    MimikatzResultsEncryptor,
-)
 
 MOCK_CREDENTIALS = {
-    "Vakaris": {
+    "M0nk3y": {
         "username": "M0nk3y",
         "password": "",
         "ntlm_hash": "e87f2f73e353f1d95e42ce618601b61f",
@@ -24,7 +20,6 @@ MOCK_CREDENTIALS = {
 MOCK_DATA_DICT = {
     "network_info": {},
     "credentials": deepcopy(MOCK_CREDENTIALS),
-    "mimikatz": deepcopy(MOCK_CREDENTIALS),
 }
 
 MOCK_TELEMETRY = {
@@ -49,19 +44,6 @@ MOCK_NO_ENCRYPTION_NEEDED_TELEMETRY = {
     "data": {"done": False},
 }
 
-MOCK_SENSITIVE_FIELDS = [
-    SensitiveField("data.credentials", MimikatzResultsEncryptor),
-    SensitiveField("data.mimikatz", MimikatzResultsEncryptor),
-]
-
-
-@pytest.fixture(autouse=True)
-def patch_sensitive_fields(monkeypatch):
-    monkeypatch.setattr(
-        "monkey_island.cc.models.telemetries.telemetry_dal.sensitive_fields",
-        MOCK_SENSITIVE_FIELDS,
-    )
-
 
 @pytest.fixture(autouse=True)
 def fake_mongo(monkeypatch):
@@ -71,24 +53,27 @@ def fake_mongo(monkeypatch):
 
 @pytest.mark.usefixtures("uses_database", "uses_encryptor")
 def test_telemetry_encryption():
+    secret_keys = ["password", "lm_hash", "ntlm_hash"]
 
     save_telemetry(MOCK_TELEMETRY)
-    assert (
-        not Telemetry.objects.first()["data"]["credentials"]["user"]["password"]
-        == MOCK_CREDENTIALS["user"]["password"]
-    )
-    assert (
-        not Telemetry.objects.first()["data"]["mimikatz"]["Vakaris"]["ntlm_hash"]
-        == MOCK_CREDENTIALS["Vakaris"]["ntlm_hash"]
-    )
-    assert (
-        get_telemetry_by_query({})[0]["data"]["credentials"]["user"]["password"]
-        == MOCK_CREDENTIALS["user"]["password"]
-    )
-    assert (
-        get_telemetry_by_query({})[0]["data"]["mimikatz"]["Vakaris"]["ntlm_hash"]
-        == MOCK_CREDENTIALS["Vakaris"]["ntlm_hash"]
-    )
+
+    encrypted_telemetry = Telemetry.objects.first()
+    for user in MOCK_CREDENTIALS.keys():
+        assert encrypted_telemetry["data"]["credentials"][user]["username"] == user
+
+        for s in secret_keys:
+            assert (
+                encrypted_telemetry["data"]["credentials"][user][s] != MOCK_CREDENTIALS[user][s]
+            )
+
+    decrypted_telemetry = get_telemetry_by_query({})[0]
+    for user in MOCK_CREDENTIALS.keys():
+        assert decrypted_telemetry["data"]["credentials"][user]["username"] == user
+
+        for s in secret_keys:
+            assert (
+                decrypted_telemetry["data"]["credentials"][user][s] == MOCK_CREDENTIALS[user][s]
+            )
 
 
 @pytest.mark.usefixtures("uses_database", "uses_encryptor")
