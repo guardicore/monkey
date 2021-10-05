@@ -53,10 +53,23 @@ class DataStoreEncryptor(IEncryptor):
         if self._key_file_path.is_file():
             self._key_file_path.unlink()
 
+        self._key_based_encryptor = None
 
-def remove_old_datastore_key():
+
+def reinitialize_datastore_encryptor(
+    key_file_dir: str, secret: str, key_file_name: str = "mongo_key.bin"
+):
+    _delete_encryptor()
+    initialize_datastore_encryptor(key_file_dir, secret, key_file_name)
+
+
+def _delete_encryptor():
+    global _encryptor
+
     if _encryptor:
         _encryptor.erase_key()
+
+    _encryptor = None
 
 
 def initialize_datastore_encryptor(

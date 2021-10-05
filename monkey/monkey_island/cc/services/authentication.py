@@ -1,7 +1,7 @@
 from monkey_island.cc.server_utils.encryption import (
     get_datastore_encryptor,
     initialize_datastore_encryptor,
-    remove_old_datastore_key,
+    reinitialize_datastore_encryptor,
 )
 
 
@@ -22,8 +22,8 @@ class AuthenticationService:
 
     @staticmethod
     def reset_datastore_encryptor(username: str, password: str):
-        remove_old_datastore_key()
-        AuthenticationService._init_encryptor_from_credentials(username, password)
+        secret = AuthenticationService._get_secret_from_credentials(username, password)
+        reinitialize_datastore_encryptor(AuthenticationService.KEY_FILE_DIRECTORY, secret)
 
     @staticmethod
     def _init_encryptor_from_credentials(username: str, password: str):

@@ -12,9 +12,9 @@ from .password_based_bytes_encryptor import (
     InvalidCiphertextError,
 )
 from .data_store_encryptor import (
-    initialize_datastore_encryptor,
     get_datastore_encryptor,
-    remove_old_datastore_key,
+    initialize_datastore_encryptor,
+    reinitialize_datastore_encryptor,
 )
 from .dict_encryptor import (
     SensitiveField,

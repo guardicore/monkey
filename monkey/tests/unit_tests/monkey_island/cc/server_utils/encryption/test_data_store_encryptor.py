@@ -1,10 +1,11 @@
 import pytest
 
+from common.utils.file_utils import get_file_sha256_hash
 from monkey_island.cc.server_utils.encryption import (
     data_store_encryptor,
     get_datastore_encryptor,
     initialize_datastore_encryptor,
-    remove_old_datastore_key,
+    reinitialize_datastore_encryptor,
 )
 
 PLAINTEXT = "Hello, Monkey!"
@@ -43,27 +44,46 @@ def test_key_creation(key_file, tmp_path):
 
 
 @pytest.mark.slow
+def test_existing_key_reused(key_file, tmp_path):
+    assert not key_file.is_file()
+
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    key_file_hash_1 = get_file_sha256_hash(key_file)
+
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    key_file_hash_2 = get_file_sha256_hash(key_file)
+
+    assert key_file_hash_1 == key_file_hash_2
+
+
+@pytest.mark.slow
 def test_key_removal(key_file, tmp_path):
     initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
     assert key_file.is_file()
 
-    remove_old_datastore_key()
+    get_datastore_encryptor().erase_key()
     assert not key_file.is_file()
 
 
-def test_key_removal__no_key(key_file):
-    assert not key_file.is_file()
-    # Make sure no error thrown when we try to remove an non-existing key
-    remove_old_datastore_key()
-
-
-def test_key_removal__no_key_2(key_file, tmp_path):
+@pytest.mark.slow
+def test_key_removal__no_key(key_file, tmp_path):
     assert not key_file.is_file()
     initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
     assert key_file.is_file()
 
-    key_file.unlink()
+    get_datastore_encryptor().erase_key()
     assert not key_file.is_file()
 
     # Make sure no error thrown when we try to remove an non-existing key
     get_datastore_encryptor().erase_key()
+
+
+@pytest.mark.slow
+def test_reinitialize_datastore_encryptor(key_file, tmp_path):
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    key_file_hash_1 = get_file_sha256_hash(key_file)
+
+    reinitialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    key_file_hash_2 = get_file_sha256_hash(key_file)
+
+    assert key_file_hash_1 != key_file_hash_2
