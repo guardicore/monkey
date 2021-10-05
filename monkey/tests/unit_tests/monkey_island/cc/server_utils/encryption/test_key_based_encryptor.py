@@ -1,3 +1,5 @@
+import pytest
+
 from monkey_island.cc.server_utils.encryption import KeyBasedEncryptor
 
 PLAINTEXT = "password"
@@ -15,19 +17,8 @@ def test_encrypt_decrypt_string_with_key():
     assert decrypted == PLAINTEXT
 
 
-def test_encrypt_decrypt_string_utf8_with_key_1():
-    encrypted = kb_encryptor.encrypt(PLAINTEXT_UTF8_1)
+@pytest.mark.parametrize("plaintext", [PLAINTEXT_UTF8_1, PLAINTEXT_UTF8_2, PLAINTEXT_UTF8_3])
+def test_encrypt_decrypt_string_utf8_with_key(plaintext):
+    encrypted = kb_encryptor.encrypt(plaintext)
     decrypted = kb_encryptor.decrypt(encrypted)
-    assert decrypted == PLAINTEXT_UTF8_1
-
-
-def test_encrypt_decrypt_string_utf8_with_key_2():
-    encrypted = kb_encryptor.encrypt(PLAINTEXT_UTF8_2)
-    decrypted = kb_encryptor.decrypt(encrypted)
-    assert decrypted == PLAINTEXT_UTF8_2
-
-
-def test_encrypt_decrypt_string_utf8_with_key_3():
-    encrypted = kb_encryptor.encrypt(PLAINTEXT_UTF8_3)
-    decrypted = kb_encryptor.decrypt(encrypted)
-    assert decrypted == PLAINTEXT_UTF8_3
+    assert decrypted == plaintext
