@@ -8,6 +8,9 @@ from monkey_island.cc.server_utils.encryption import (
     reinitialize_datastore_encryptor,
 )
 
+# Mark all tests in this module as slow
+pytestmark = pytest.mark.slow
+
 PLAINTEXT = "Hello, Monkey!"
 MOCK_SECRET = "53CR31"
 
@@ -25,7 +28,6 @@ def key_file(tmp_path):
     return tmp_path / KEY_FILENAME
 
 
-@pytest.mark.slow
 def test_encryption(tmp_path):
     initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
 
@@ -36,14 +38,12 @@ def test_encryption(tmp_path):
     assert decrypted_data == PLAINTEXT
 
 
-@pytest.mark.slow
 def test_key_creation(key_file, tmp_path):
     assert not key_file.is_file()
     initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
     assert key_file.is_file()
 
 
-@pytest.mark.slow
 def test_existing_key_reused(key_file, tmp_path):
     assert not key_file.is_file()
 
@@ -56,7 +56,6 @@ def test_existing_key_reused(key_file, tmp_path):
     assert key_file_hash_1 == key_file_hash_2
 
 
-@pytest.mark.slow
 def test_key_removal(key_file, tmp_path):
     initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
     assert key_file.is_file()
@@ -65,7 +64,6 @@ def test_key_removal(key_file, tmp_path):
     assert not key_file.is_file()
 
 
-@pytest.mark.slow
 def test_key_removal__no_key(key_file, tmp_path):
     assert not key_file.is_file()
     initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
@@ -78,7 +76,6 @@ def test_key_removal__no_key(key_file, tmp_path):
     get_datastore_encryptor().erase_key()
 
 
-@pytest.mark.slow
 def test_reinitialize_datastore_encryptor(key_file, tmp_path):
     initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
     key_file_hash_1 = get_file_sha256_hash(key_file)
