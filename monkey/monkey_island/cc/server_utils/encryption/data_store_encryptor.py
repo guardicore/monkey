@@ -5,7 +5,9 @@ from Crypto import Random  # noqa: DUO133  # nosec: B413
 
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
-from .encryptors import IEncryptor, KeyBasedEncryptor, PasswordBasedBytesEncryptor
+from .i_encryptor import IEncryptor
+from .key_based_encryptor import KeyBasedEncryptor
+from .password_based_bytes_encryptor import PasswordBasedBytesEncryptor
 
 _KEY_FILENAME = "mongo_key.bin"
 _BLOCK_SIZE = 32

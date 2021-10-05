@@ -1,6 +1,6 @@
 import logging
 
-from ... import get_datastore_encryptor
+from ..data_store_encryptor import get_datastore_encryptor
 from . import IFieldEncryptor
 
 logger = logging.getLogger(__name__)

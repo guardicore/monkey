@@ -1,8 +1,6 @@
 import pytest
 
-from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
-    StringListEncryptor,
-)
+from monkey_island.cc.server_utils.encryption import StringListEncryptor
 
 MOCK_STRING_LIST = ["test_1", "test_2"]
 EMPTY_LIST = []

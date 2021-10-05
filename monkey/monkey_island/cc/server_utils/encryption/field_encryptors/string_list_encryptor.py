@@ -1,6 +1,6 @@
 from typing import List
 
-from ... import get_datastore_encryptor
+from ..data_store_encryptor import get_datastore_encryptor
 from . import IFieldEncryptor
 
 
