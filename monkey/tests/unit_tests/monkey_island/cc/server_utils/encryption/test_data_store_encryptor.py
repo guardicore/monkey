@@ -10,10 +10,24 @@ from monkey_island.cc.server_utils.encryption import (
 PLAINTEXT = "Hello, Monkey!"
 MOCK_SECRET = "53CR31"
 
+KEY_FILENAME = "test_key.bin"
+
+
+@pytest.fixture(autouse=True)
+def cleanup_encryptor():
+    yield
+    data_store_encryptor._encryptor = None
+
+
+@pytest.fixture
+def key_file(tmp_path):
+    return tmp_path / KEY_FILENAME
+
 
 @pytest.mark.slow
-@pytest.mark.usefixtures("uses_encryptor")
-def test_encryption(data_for_tests_dir):
+def test_encryption(tmp_path):
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+
     encrypted_data = get_datastore_encryptor().encrypt(PLAINTEXT)
     assert encrypted_data != PLAINTEXT
 
@@ -21,45 +35,35 @@ def test_encryption(data_for_tests_dir):
     assert decrypted_data == PLAINTEXT
 
 
-@pytest.fixture
-def cleanup_encryptor():
-    yield
-    data_store_encryptor._encryptor = None
-
-
-@pytest.mark.usefixtures("cleanup_encryptor")
-@pytest.fixture
-def initialized_encryptor_dir(tmpdir):
-    initialize_datastore_encryptor(tmpdir, MOCK_SECRET)
-    return tmpdir
+@pytest.mark.slow
+def test_key_creation(key_file, tmp_path):
+    assert not key_file.is_file()
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    assert key_file.is_file()
 
 
 @pytest.mark.slow
-def test_key_creation(initialized_encryptor_dir):
-    assert (initialized_encryptor_dir / data_store_encryptor._KEY_FILENAME).isfile()
+def test_key_removal(key_file, tmp_path):
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    assert key_file.is_file()
+
+    remove_old_datastore_key()
+    assert not key_file.is_file()
 
 
-@pytest.mark.slow
-def test_key_removal(initialized_encryptor_dir):
-    remove_old_datastore_key(initialized_encryptor_dir)
-    assert not (initialized_encryptor_dir / data_store_encryptor._KEY_FILENAME).isfile()
-
-
-def test_key_removal__no_key(tmpdir):
-    assert not (tmpdir / data_store_encryptor._KEY_FILENAME).isfile()
+def test_key_removal__no_key(key_file):
+    assert not key_file.is_file()
     # Make sure no error thrown when we try to remove an non-existing key
-    remove_old_datastore_key(tmpdir)
-    data_store_encryptor._factory = None
+    remove_old_datastore_key()
 
 
-@pytest.mark.slow
-@pytest.mark.usefixtures("cleanup_encryptor")
-def test_key_file_encryption(tmpdir, monkeypatch):
-    monkeypatch.setattr(data_store_encryptor, "_get_random_bytes", lambda: PLAINTEXT.encode())
-    initialize_datastore_encryptor(tmpdir, MOCK_SECRET)
-    key_file_path = data_store_encryptor._get_key_file_path(tmpdir)
-    key_file_contents = open(key_file_path, "rb").read()
-    assert not key_file_contents == PLAINTEXT.encode()
+def test_key_removal__no_key_2(key_file, tmp_path):
+    assert not key_file.is_file()
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    assert key_file.is_file()
 
-    key_based_encryptor = data_store_encryptor._load_existing_key(key_file_path, MOCK_SECRET)
-    assert key_based_encryptor._key == PLAINTEXT.encode()
+    key_file.unlink()
+    assert not key_file.is_file()
+
+    # Make sure no error thrown when we try to remove an non-existing key
+    get_datastore_encryptor().erase_key()

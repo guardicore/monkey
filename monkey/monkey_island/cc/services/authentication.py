@@ -22,7 +22,7 @@ class AuthenticationService:
 
     @staticmethod
     def reset_datastore_encryptor(username: str, password: str):
-        remove_old_datastore_key(AuthenticationService.KEY_FILE_DIRECTORY)
+        remove_old_datastore_key()
         AuthenticationService._init_encryptor_from_credentials(username, password)
 
     @staticmethod
