@@ -30,16 +30,12 @@ class KeyBasedEncryptor(IEncryptor):
     def encrypt(self, plaintext: str) -> str:
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
-        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(plaintext))).decode()
+        padded_plaintext = Padding.pad(plaintext.encode(), self._BLOCK_SIZE)
+        return base64.b64encode(cipher_iv + cipher.encrypt(padded_plaintext)).decode()
 
     def decrypt(self, ciphertext: str):
         enc_message = base64.b64decode(ciphertext)
         cipher_iv = enc_message[0 : AES.block_size]
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
-        return self._unpad(cipher.decrypt(enc_message[AES.block_size :]))
-
-    def _pad(self, message: str) -> bytes:
-        return Padding.pad(message.encode(), self._BLOCK_SIZE)
-
-    def _unpad(self, message: bytes) -> str:
-        return Padding.unpad(message, self._BLOCK_SIZE).decode()
+        padded_plaintext = cipher.decrypt(enc_message[AES.block_size :])
+        return Padding.unpad(padded_plaintext, self._BLOCK_SIZE).decode()
