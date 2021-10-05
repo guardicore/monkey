@@ -44,6 +44,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - PBA table collapse in security report on data change. #1423
 - Unsigned Windows agent binaries in Linux packages are now signed. #1444
 - Some of the gathered credentials no longer appear in database plaintext. #1454
+- Encryptor breaking with UTF-8 characters. (Passwords in different languages can be submitted in
+  the config successfully now.) #1490
+
 
 ### Security
 - Generate a random password when creating a new user for CommunicateAsNewUser

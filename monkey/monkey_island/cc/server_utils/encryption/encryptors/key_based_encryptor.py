@@ -5,6 +5,7 @@ import logging
 # is maintained.
 from Crypto import Random  # noqa: DUO133  # nosec: B413
 from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
+from Crypto.Util import Padding  # noqa: DUO133
 
 from monkey_island.cc.server_utils.encryption import IEncryptor
 
@@ -29,19 +30,12 @@ class KeyBasedEncryptor(IEncryptor):
     def encrypt(self, plaintext: str) -> str:
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
-        return base64.b64encode(cipher_iv + cipher.encrypt(self._pad(plaintext).encode())).decode()
+        padded_plaintext = Padding.pad(plaintext.encode(), self._BLOCK_SIZE)
+        return base64.b64encode(cipher_iv + cipher.encrypt(padded_plaintext)).decode()
 
     def decrypt(self, ciphertext: str):
         enc_message = base64.b64decode(ciphertext)
         cipher_iv = enc_message[0 : AES.block_size]
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
-        return self._unpad(cipher.decrypt(enc_message[AES.block_size :]).decode())
-
-    # TODO: Review and evaluate the security of the padding function
-    def _pad(self, message):
-        return message + (self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE)) * chr(
-            self._BLOCK_SIZE - (len(message) % self._BLOCK_SIZE)
-        )
-
-    def _unpad(self, message: str):
-        return message[0 : -ord(message[len(message) - 1])]
+        padded_plaintext = cipher.decrypt(enc_message[AES.block_size :])
+        return Padding.unpad(padded_plaintext, self._BLOCK_SIZE).decode()
