@@ -59,7 +59,7 @@ class InfoCollector(object):
     """
 
     def __init__(self):
-        self.info = {}
+        self.info = {"credentials": {}}
 
     def get_info(self):
         # Collect all hardcoded
@@ -96,8 +96,6 @@ class InfoCollector(object):
                 return
             logger.debug("Harvesting creds if on an Azure machine")
             azure_collector = AzureCollector()
-            if "credentials" not in self.info:
-                self.info["credentials"] = {}
             azure_creds = azure_collector.extract_stored_credentials()
             for cred in azure_creds:
                 username = cred[0]

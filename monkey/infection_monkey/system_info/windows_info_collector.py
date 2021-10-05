@@ -45,8 +45,7 @@ class WindowsInfoCollector(InfoCollector):
         try:
             credentials = MimikatzCredentialCollector.get_creds()
             if credentials:
-                if "credentials" in self.info:
-                    self.info["credentials"].update(credentials)
+                self.info["credentials"].update(credentials)
                 logger.info("Mimikatz info gathered successfully")
             else:
                 logger.info("No mimikatz info was gathered")
