@@ -22,6 +22,7 @@ from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
+from infection_monkey.utils.environment import is_windows_os
 
 requests.packages.urllib3.disable_warnings()
 
@@ -113,26 +114,31 @@ class ControlClient(object):
                 logger.info("Starting tunnel lookup...")
                 proxy_find = tunnel.find_tunnel(default=default_tunnel)
                 if proxy_find:
-                    proxy_address, proxy_port = proxy_find
-                    logger.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
-                    from infection_monkey.utils.environment import is_windows_os
-
-                    logger.info(f"requests version: {requests.__version__}")
-                    import urllib3
-
-                    logger.info(f"urllib3 version: {urllib3.__version__}")
-                    if is_windows_os():
-                        ControlClient.proxies["https"] = "http://%s:%s" % (
-                            proxy_address,
-                            proxy_port,
-                        )
-                    else:
-                        ControlClient.proxies["https"] = PROXY_SCHEMA % (proxy_address, proxy_port)
-                    logger.info(ControlClient.proxies)
+                    ControlClient.set_proxies(proxy_find)
                     return ControlClient.find_server()
                 else:
                     logger.info("No tunnel found")
                     return False
+
+    @staticmethod
+    def set_proxies(proxy_find):
+        """
+        Note: Proxy schema changes! When upgrading to newer python version or
+        when urllib3 and requests are updated there is possibility that the proxy
+        schema is changed.
+        https://github.com/psf/requests/issues/5297
+        https://github.com/psf/requests/issues/5855
+        """
+        proxy_address, proxy_port = proxy_find
+        logger.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
+        if is_windows_os():
+            ControlClient.proxies["https"] = "http://%s:%s" % (
+                proxy_address,
+                proxy_port,
+            )
+        else:
+            ControlClient.proxies["https"] = PROXY_SCHEMA % (proxy_address, proxy_port)
+        logger.info(ControlClient.proxies)
 
     @staticmethod
     def keepalive():
