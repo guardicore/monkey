@@ -39,7 +39,10 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
             {
                 "$project": {
                     "_id": 0,
-                    "machine": {"hostname": "$data.hostname", "ips": ["$data.ip"]},
+                    "machine": {
+                        "hostname": {"$arrayElemAt": ["$data.hostname", 0]},
+                        "ips": [{"$arrayElemAt": ["$data.ip", 0]}],
+                    },
                     "result": "$data.result",
                 }
             },
