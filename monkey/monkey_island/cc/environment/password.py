@@ -6,6 +6,6 @@ class PasswordEnvironment(Environment):
 
     def get_auth_users(self):
         if self._is_registered():
-            return self._config.get_users()
+            return [self._config.get_user()]
         else:
             return []
