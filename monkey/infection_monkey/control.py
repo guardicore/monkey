@@ -36,8 +36,6 @@ PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 # elsewhere.
 TIMEOUT_IN_SECONDS = 15
 
-PROXY_SCHEMA = "%s:%s"
-
 
 class ControlClient(object):
     proxies = {}
@@ -132,13 +130,9 @@ class ControlClient(object):
         proxy_address, proxy_port = proxy_find
         logger.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
         if is_windows_os():
-            ControlClient.proxies["https"] = "http://%s:%s" % (
-                proxy_address,
-                proxy_port,
-            )
+            ControlClient.proxies["https"] = f"http://{proxy_address}:{proxy_port}"
         else:
-            ControlClient.proxies["https"] = PROXY_SCHEMA % (proxy_address, proxy_port)
-        logger.info(ControlClient.proxies)
+            ControlClient.proxies["https"] = f"{proxy_address}:{proxy_port}"
 
     @staticmethod
     def keepalive():
