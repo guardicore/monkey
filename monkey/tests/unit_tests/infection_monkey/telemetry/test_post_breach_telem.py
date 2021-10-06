@@ -6,6 +6,7 @@ from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 
 HOSTNAME = "hostname"
 IP = "0.0.0.0"
+OS = "operating system"
 PBA_COMMAND = "run some pba"
 PBA_NAME = "some pba"
 RESULT = False
@@ -21,6 +22,7 @@ class StubSomePBA:
 def post_breach_telem_test_instance(monkeypatch):
     PBA = StubSomePBA()
     monkeypatch.setattr(PostBreachTelem, "_get_hostname_and_ip", lambda: (HOSTNAME, IP))
+    monkeypatch.setattr(PostBreachTelem, "_get_os", lambda: OS)
     return PostBreachTelem(PBA, RESULT)
 
 
@@ -32,6 +34,7 @@ def test_post_breach_telem_send(post_breach_telem_test_instance, spy_send_teleme
         "name": PBA_NAME,
         "hostname": HOSTNAME,
         "ip": IP,
+        "os": OS,
     }
     expected_data = json.dumps(expected_data, cls=post_breach_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data
