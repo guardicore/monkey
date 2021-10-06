@@ -122,7 +122,7 @@ class ControlClient(object):
 
                     logger.info(f"urllib3 version: {urllib3.__version__}")
                     if is_windows_os():
-                        ControlClient.proxies["https"] = "https://%s:%s" % (
+                        ControlClient.proxies["https"] = "http://%s:%s" % (
                             proxy_address,
                             proxy_port,
                         )
