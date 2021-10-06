@@ -121,9 +121,12 @@ class ControlClient(object):
     @staticmethod
     def set_proxies(proxy_find):
         """
-        Note: Proxy schema changes! When upgrading to newer python version or
-        when urllib3 and requests are updated there is possibility that the proxy
-        schema is changed.
+        Note: Proxy schema changes which causes the machine to not open a tunnel back.
+        If we get "ValueError: check_hostname requires server_hostname" or
+        "Proxy URL had not schema, should start with http:// or https://" errors,
+        the proxy schema needs to be changed.
+        Keep this in mind when upgrading to newer python version or when urllib3 and
+        requests are updated there is possibility that the proxy schema is changed.
         https://github.com/psf/requests/issues/5297
         https://github.com/psf/requests/issues/5855
         """
