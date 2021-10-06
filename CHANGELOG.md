@@ -48,6 +48,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   the config successfully now.) #1490
 - Mimikatz collector no longer fails if Azure credential collector is disabled. #1512 #1493
 - Unhandled error when "modify shell startup files PBA" is unable to find regular users. #1507
+- ATT&CK report bug that showed different techniques' results under a technique if the PBA behind
+  them was the same. #1514
+- ATT&CK report bug that said that the technique "`.bash_profile` and `.bashrc`" was not attempted
+  when it actually was attempted but failed. #1511
 
 
 ### Security

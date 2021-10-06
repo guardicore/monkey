@@ -18,7 +18,7 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
         ...
 
     @classmethod
-    def get_pba_query(cls, post_breach_action_names):
+    def get_pba_query(cls, post_breach_action_names, relevant_systems):
         """
         :param post_breach_action_names: Names of post-breach actions with which the technique is
         associated
@@ -29,14 +29,20 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
         return [
             {
                 "$match": {
-                    "telem_category": "post_breach",
-                    "$or": [{"data.name": pba_name} for pba_name in post_breach_action_names],
+                    "$and": [
+                        {"telem_category": "post_breach"},
+                        {"$or": [{"data.name": pba_name} for pba_name in post_breach_action_names]},
+                        {"$or": [{"data.os": os} for os in relevant_systems]},
+                    ]
                 }
             },
             {
                 "$project": {
                     "_id": 0,
-                    "machine": {"hostname": "$data.hostname", "ips": ["$data.ip"]},
+                    "machine": {
+                        "hostname": {"$arrayElemAt": ["$data.hostname", 0]},
+                        "ips": [{"$arrayElemAt": ["$data.ip", 0]}],
+                    },
                     "result": "$data.result",
                 }
             },
@@ -50,13 +56,18 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
 
         @cls.is_status_disabled
         def get_technique_status_and_data():
-            info = list(mongo.db.telemetry.aggregate(cls.get_pba_query(cls.pba_names)))
+            info = list(
+                mongo.db.telemetry.aggregate(cls.get_pba_query(cls.pba_names, cls.relevant_systems))
+            )
             status = ScanStatus.UNSCANNED.value
             if info:
                 successful_PBAs = mongo.db.telemetry.count(
                     {
-                        "$or": [{"data.name": pba_name} for pba_name in cls.pba_names],
-                        "data.result.1": True,
+                        "$and": [
+                            {"$or": [{"data.name": pba_name} for pba_name in cls.pba_names]},
+                            {"$or": [{"data.os": os} for os in cls.relevant_systems]},
+                            {"data.result.1": True},
+                        ]
                     }
                 )
                 status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
