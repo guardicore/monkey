@@ -9,26 +9,3 @@ class T1504(PostBreachTechnique):
     scanned_msg = "Monkey tried modifying PowerShell startup files but failed."
     used_msg = "Monkey successfully modified PowerShell startup files."
     pba_names = [POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION]
-
-    @staticmethod
-    def get_pba_query(*args):
-        return [
-            {
-                "$match": {
-                    "telem_category": "post_breach",
-                    "data.name": POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
-                }
-            },
-            {
-                "$project": {
-                    "_id": 0,
-                    "machine": {
-                        "hostname": {"$arrayElemAt": ["$data.hostname", 0]},
-                        "ips": [{"$arrayElemAt": ["$data.ip", 0]}],
-                    },
-                    "result": "$data.result",
-                }
-            },
-            {"$unwind": "$result"},
-            {"$match": {"result": {"$regex": r"profile\.ps1"}}},
-        ]
