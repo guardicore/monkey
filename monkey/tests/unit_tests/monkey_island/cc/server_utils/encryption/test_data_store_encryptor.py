@@ -14,8 +14,6 @@ pytestmark = pytest.mark.slow
 PLAINTEXT = "Hello, Monkey!"
 MOCK_SECRET = "53CR31"
 
-KEY_FILENAME = "test_key.bin"
-
 
 @pytest.fixture(autouse=True)
 def cleanup_encryptor():
@@ -25,11 +23,11 @@ def cleanup_encryptor():
 
 @pytest.fixture
 def key_file(tmp_path):
-    return tmp_path / KEY_FILENAME
+    return tmp_path / "test_key.bin"
 
 
 def test_encryption(tmp_path):
-    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    initialize_datastore_encryptor(tmp_path, MOCK_SECRET)
 
     encrypted_data = get_datastore_encryptor().encrypt(PLAINTEXT)
     assert encrypted_data != PLAINTEXT
@@ -38,35 +36,35 @@ def test_encryption(tmp_path):
     assert decrypted_data == PLAINTEXT
 
 
-def test_key_creation(key_file, tmp_path):
+def test_key_creation(key_file):
     assert not key_file.is_file()
-    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     assert key_file.is_file()
 
 
-def test_existing_key_reused(key_file, tmp_path):
+def test_existing_key_reused(key_file):
     assert not key_file.is_file()
 
-    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     key_file_hash_1 = get_file_sha256_hash(key_file)
 
-    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     key_file_hash_2 = get_file_sha256_hash(key_file)
 
     assert key_file_hash_1 == key_file_hash_2
 
 
-def test_key_removal(key_file, tmp_path):
-    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+def test_key_removal(key_file):
+    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     assert key_file.is_file()
 
     get_datastore_encryptor().erase_key()
     assert not key_file.is_file()
 
 
-def test_key_removal__no_key(key_file, tmp_path):
+def test_key_removal__no_key(key_file):
     assert not key_file.is_file()
-    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     assert key_file.is_file()
 
     get_datastore_encryptor().erase_key()
@@ -76,11 +74,11 @@ def test_key_removal__no_key(key_file, tmp_path):
     get_datastore_encryptor().erase_key()
 
 
-def test_reinitialize_datastore_encryptor(key_file, tmp_path):
-    initialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+def test_reinitialize_datastore_encryptor(key_file):
+    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     key_file_hash_1 = get_file_sha256_hash(key_file)
 
-    reinitialize_datastore_encryptor(tmp_path, MOCK_SECRET, KEY_FILENAME)
+    reinitialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     key_file_hash_2 = get_file_sha256_hash(key_file)
 
     assert key_file_hash_1 != key_file_hash_2
