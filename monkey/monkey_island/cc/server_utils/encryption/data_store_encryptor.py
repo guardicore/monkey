@@ -25,18 +25,18 @@ class DataStoreEncryptor(IEncryptor):
 
     def _initialize_key_based_encryptor(self):
         if os.path.exists(self._key_file):
-            return self._load_existing_key()
+            return self._load_key()
 
-        return self._create_new_key()
+        return self._create_key()
 
-    def _load_existing_key(self) -> KeyBasedEncryptor:
+    def _load_key(self) -> KeyBasedEncryptor:
         with open(self._key_file, "rb") as f:
             encrypted_key = f.read()
 
         plaintext_key = self._password_based_encryptor.decrypt(encrypted_key)
         return KeyBasedEncryptor(plaintext_key)
 
-    def _create_new_key(self) -> KeyBasedEncryptor:
+    def _create_key(self) -> KeyBasedEncryptor:
         plaintext_key = Random.new().read(DataStoreEncryptor._KEY_LENGTH_BYTES)
 
         encrypted_key = self._password_based_encryptor.encrypt(plaintext_key)
