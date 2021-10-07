@@ -6,7 +6,6 @@ from typing import Dict
 
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.resources.auth.auth_user import User
-from monkey_island.cc.resources.auth.user_store import UserStore
 
 
 class EnvironmentConfig:
@@ -58,7 +57,6 @@ class EnvironmentConfig:
     def add_user(self, credentials: UserCreds):
         self.user_creds = credentials
         self.save_to_file()
-        UserStore.set_users([self.get_user()])
 
     def get_user(self) -> User:
         auth_user = self.user_creds.to_auth_user()

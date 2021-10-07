@@ -8,7 +8,6 @@ from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt import PyJWTError
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-import monkey_island.cc.resources.auth.user_store as user_store
 from monkey_island.cc.resources.auth.credential_utils import (
     get_username_password_from_request,
     password_matches_hash,
@@ -19,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 
 def init_jwt(app):
-    user_store.UserStore.set_users(env_singleton.env.get_auth_users())
     _ = flask_jwt_extended.JWTManager(app)
     logger.debug(
         "Initialized JWT with secret key that started with " + app.config["JWT_SECRET_KEY"][:4]
@@ -52,18 +50,16 @@ class Authenticate(flask_restful.Resource):
 
 
 def _credentials_match_registered_user(username: str, password: str) -> bool:
-    user = user_store.UserStore.username_table.get(username, None)
+    registered_user = env_singleton.env.get_auth_users()
 
-    if user and password_matches_hash(password, user.secret):
-        return True
+    if not registered_user:
+        return False
 
-    return False
+    return (registered_user.username == username) and password_matches_hash(password, registered_user[0].secret)
 
 
 def _create_access_token(username):
-    access_token = flask_jwt_extended.create_access_token(
-        identity=user_store.UserStore.username_table[username].id
-    )
+    access_token = flask_jwt_extended.create_access_token(identity=username)
     logger.debug(f"Created access token for user {username} that begins with {access_token[:4]}")
 
     return access_token
