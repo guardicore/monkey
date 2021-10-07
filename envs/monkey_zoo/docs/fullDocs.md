@@ -132,12 +132,20 @@ the island.
 
 ### These are most common steps on monkey islands:
 
+### For users
+
+Upload the AppImage deployment option and run it in island-linux-250.
+Or upload the MSI deployment option, install it and run it in island-windows-251.
+After that use the Monkey as you would on local network.
+
+### For developers
+
 #### island-linux-250:
 
-To run monkey island:<br>
+To run monkey island from source:<br>
 `sudo /usr/run\_island.sh`<br>
 
-To run monkey:<br>
+To run monkey from source:<br>
 `sudo /usr/run\_monkey.sh`<br>
 
 To update repository:<br>
@@ -149,10 +157,10 @@ Update all requirements using deployment script:<br>
 
 #### island-windows-251:
 
-To run monkey island:<br>
+To run monkey island from source:<br>
 Execute C:\\run\_monkey\_island.bat as administrator
 
-To run monkey:<br>
+To run monkey from source:<br>
 Execute C:\\run\_monkey.bat as administrator
 
 To update repository:<br>
@@ -163,13 +171,6 @@ To update repository:<br>
 Update all requirements using deployment script:<br>
 1\. `cd C:\infection_monkey\deployment_scripts`<br>
 2\. `./run_script.bat "C:\infection_monkey" "develop"`<br>
-
-# Running tests:
-
-Once you start monkey island you can import test configurations from
-../monkey/envs/configs.
-
-fullTest.conf is a good config to start, because it covers all machines.
 
 # Machines:
 
