@@ -93,12 +93,6 @@ class TestEnvironment(TestCase):
         self._test_bool_env_method("_is_registered", env, NO_CREDENTIALS, False)
         self._test_bool_env_method("_is_registered", env, PARTIAL_CREDENTIALS, False)
 
-    def test_is_credentials_set_up(self):
-        env = TestEnvironment.EnvironmentCredentialsRequired()
-        self._test_bool_env_method("_is_credentials_set_up", env, NO_CREDENTIALS, False)
-        self._test_bool_env_method("_is_credentials_set_up", env, WITH_CREDENTIALS, True)
-        self._test_bool_env_method("_is_credentials_set_up", env, PARTIAL_CREDENTIALS, False)
-
     def _test_bool_env_method(
         self, method_name: str, env: Environment, config: Dict, expected_result: bool
     ):
