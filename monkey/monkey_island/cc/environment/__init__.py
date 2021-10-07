@@ -23,9 +23,8 @@ class Environment(object, metaclass=ABCMeta):
         self._config = config
         self._testing = False  # Assume env is not for unit testing.
 
-    @abstractmethod
-    def get_auth_users(self):
-        pass
+    def get_user(self):
+        return self._config.user_creds
 
     def needs_registration(self) -> bool:
         try:

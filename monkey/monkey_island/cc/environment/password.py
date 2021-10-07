@@ -1,9 +1,7 @@
 from monkey_island.cc.environment import Environment
 
 
+# TODO: We can probably remove these Environment subclasses, but the
+#       AwsEnvironment class still does something unique in its constructor.
 class PasswordEnvironment(Environment):
-    def get_auth_users(self):
-        if self._is_registered():
-            return [self._config.get_user()]
-        else:
-            return []
+    pass

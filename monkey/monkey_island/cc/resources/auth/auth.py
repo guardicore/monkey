@@ -50,12 +50,12 @@ class Authenticate(flask_restful.Resource):
 
 
 def _credentials_match_registered_user(username: str, password: str) -> bool:
-    registered_user = env_singleton.env.get_auth_users()
+    registered_user = env_singleton.env.get_user()
 
     if not registered_user:
         return False
 
-    return (registered_user.username == username) and password_matches_hash(password, registered_user[0].secret)
+    return (registered_user.username == username) and password_matches_hash(password, registered_user.password_hash)
 
 
 def _create_access_token(username):

@@ -13,8 +13,7 @@ WITH_CREDENTIALS = None
 NO_CREDENTIALS = None
 PARTIAL_CREDENTIALS = None
 
-EMPTY_USER_CREDENTIALS = UserCreds("", "")
-FULL_USER_CREDENTIALS = UserCreds(username="test", password_hash="1231234")
+USER_CREDENTIALS = UserCreds(username="test", password_hash="1231234")
 
 
 # This fixture is a dirty hack that can be removed once these tests are converted from
@@ -49,24 +48,18 @@ class StubEnvironmentConfig(EnvironmentConfig):
 class TestEnvironment(TestCase):
     class EnvironmentCredentialsRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig("test", "test", EMPTY_USER_CREDENTIALS)
+            config = StubEnvironmentConfig("test", "test", None)
             super().__init__(config)
-
-        def get_auth_users(self):
-            return []
 
     class EnvironmentAlreadyRegistered(Environment):
         def __init__(self):
             config = StubEnvironmentConfig("test", "test", UserCreds("test_user", "test_secret"))
             super().__init__(config)
 
-        def get_auth_users(self):
-            return [1, "Test_username", "Test_secret"]
-
     @patch.object(target=EnvironmentConfig, attribute="save_to_file", new=MagicMock())
     def test_try_add_user(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
-        credentials = FULL_USER_CREDENTIALS
+        credentials = USER_CREDENTIALS
         env.try_add_user(credentials)
 
         credentials = UserCreds(username="test", password_hash="")

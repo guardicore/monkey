@@ -5,7 +5,6 @@ import os
 from typing import Dict
 
 from monkey_island.cc.environment.user_creds import UserCreds
-from monkey_island.cc.resources.auth.auth_user import User
 
 
 class EnvironmentConfig:
@@ -57,10 +56,6 @@ class EnvironmentConfig:
     def add_user(self, credentials: UserCreds):
         self.user_creds = credentials
         self.save_to_file()
-
-    def get_user(self) -> User:
-        auth_user = self.user_creds.to_auth_user()
-        return auth_user if auth_user else None
 
 
 def _get_user_credentials_from_config(dict_data: Dict):
