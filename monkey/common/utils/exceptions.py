@@ -14,10 +14,6 @@ class RegistrationNotNeededError(Exception):
     """ Raise to indicate the reason why registration is not required """
 
 
-class CredentialsNotRequiredError(RegistrationNotNeededError):
-    """ Raise to indicate the reason why registration is not required """
-
-
 class AlreadyRegisteredError(RegistrationNotNeededError):
     """ Raise to indicate the reason why registration is not required """
 
