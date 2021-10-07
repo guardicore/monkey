@@ -2,17 +2,15 @@ import pytest
 
 from monkey.infection_monkey.control import ControlClient
 
-PROXY_FOUND = ("8.8.8.8", "45455")
 
-
-@pytest.mark.parametrize("is_windows_os", [True, False])
-def test_control_set_proxies(monkeypatch, is_windows_os):
+@pytest.mark.parametrize(
+    "is_windows_os,expected_proxy_string",
+    [(True, "http://8.8.8.8:45455"), (False, "8.8.8.8:45455")],
+)
+def test_control_set_proxies(monkeypatch, is_windows_os, expected_proxy_string):
     monkeypatch.setattr("monkey.infection_monkey.control.is_windows_os", lambda: is_windows_os)
     control_client = ControlClient()
 
-    control_client.set_proxies(PROXY_FOUND)
+    control_client.set_proxies(("8.8.8.8", "45455"))
 
-    if is_windows_os:
-        assert control_client.proxies["https"].startswith("http://")
-    else:
-        assert control_client.proxies["https"].startswith(PROXY_FOUND[0])
+    assert control_client.proxies["https"] == expected_proxy_string

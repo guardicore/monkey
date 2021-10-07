@@ -121,7 +121,8 @@ class ControlClient(object):
     @staticmethod
     def set_proxies(proxy_find):
         """
-        Note: Proxy schema changes which causes the machine to not open a tunnel back.
+        Note: The proxy schema changes between different versions of requests and urllib3,
+        which causes the machine to not open a tunnel back.
         If we get "ValueError: check_hostname requires server_hostname" or
         "Proxy URL had not schema, should start with http:// or https://" errors,
         the proxy schema needs to be changed.
