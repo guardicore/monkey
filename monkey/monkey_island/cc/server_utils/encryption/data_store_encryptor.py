@@ -50,18 +50,16 @@ class DataStoreEncryptor(IEncryptor):
         return self._key_based_encryptor.decrypt(ciphertext)
 
 
-def reinitialize_datastore_encryptor(
-    key_file_dir: str, secret: str, key_file_name: str = "mongo_key.bin"
-):
+def reset_datastore_encryptor(key_file_dir: str, secret: str, key_file_name: str = "mongo_key.bin"):
     key_file_path = Path(key_file_dir) / key_file_name
 
     if key_file_path.is_file():
         key_file_path.unlink()
 
-    initialize_datastore_encryptor(key_file_dir, secret, key_file_name)
+    unlock_datastore_encryptor(key_file_dir, secret, key_file_name)
 
 
-def initialize_datastore_encryptor(
+def unlock_datastore_encryptor(
     key_file_dir: str, secret: str, key_file_name: str = "mongo_key.bin"
 ):
     global _encryptor

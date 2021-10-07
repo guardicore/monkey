@@ -13,8 +13,8 @@ from .password_based_bytes_encryptor import (
 )
 from .data_store_encryptor import (
     get_datastore_encryptor,
-    initialize_datastore_encryptor,
-    reinitialize_datastore_encryptor,
+    unlock_datastore_encryptor,
+    reset_datastore_encryptor,
 )
 from .dict_encryptor import (
     SensitiveField,

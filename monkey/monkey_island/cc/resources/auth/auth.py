@@ -44,7 +44,7 @@ class Authenticate(flask_restful.Resource):
         username, password = get_username_password_from_request(request)
 
         if _credentials_match_registered_user(username, password):
-            AuthenticationService.ensure_datastore_encryptor(username, password)
+            AuthenticationService.unlock_datastore_encryptor(username, password)
             access_token = _create_access_token(username)
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
