@@ -37,6 +37,10 @@ data "google_compute_image" "tunneling-11" {
   name = "tunneling-11"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "tunneling-12" {
+  name = "tunneling-12"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "sshkeys-11" {
   name = "sshkeys-11"
   project = local.monkeyzoo_project
