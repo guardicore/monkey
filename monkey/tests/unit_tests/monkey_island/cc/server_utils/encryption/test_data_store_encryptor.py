@@ -54,26 +54,6 @@ def test_existing_key_reused(key_file):
     assert key_file_hash_1 == key_file_hash_2
 
 
-def test_key_removal(key_file):
-    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
-    assert key_file.is_file()
-
-    get_datastore_encryptor().erase_key()
-    assert not key_file.is_file()
-
-
-def test_key_removal__no_key(key_file):
-    assert not key_file.is_file()
-    initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
-    assert key_file.is_file()
-
-    get_datastore_encryptor().erase_key()
-    assert not key_file.is_file()
-
-    # Make sure no error thrown when we try to remove an non-existing key
-    get_datastore_encryptor().erase_key()
-
-
 def test_reinitialize_datastore_encryptor(key_file):
     initialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
     key_file_hash_1 = get_file_sha256_hash(key_file)
@@ -82,3 +62,25 @@ def test_reinitialize_datastore_encryptor(key_file):
     key_file_hash_2 = get_file_sha256_hash(key_file)
 
     assert key_file_hash_1 != key_file_hash_2
+
+
+def test_reinitialize_when_encryptor_is_none(key_file):
+    with key_file.open(mode="w") as f:
+        f.write("")
+
+    reinitialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
+    assert (
+        get_file_sha256_hash(key_file)
+        != "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    )
+
+
+def test_reinitialize_when_file_not_found(key_file):
+    assert not key_file.is_file()
+    reinitialize_datastore_encryptor(key_file.parent, MOCK_SECRET, key_file.name)
+
+    encrypted_data = get_datastore_encryptor().encrypt(PLAINTEXT)
+    assert encrypted_data != PLAINTEXT
+
+    decrypted_data = get_datastore_encryptor().decrypt(encrypted_data)
+    assert decrypted_data == PLAINTEXT
