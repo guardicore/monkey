@@ -2,7 +2,6 @@ import bcrypt
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.environment.user_creds import UserCreds
-from monkey_island.cc.resources.auth.credential_utils import password_matches_hash
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
     unlock_datastore_encryptor,
@@ -63,9 +62,13 @@ def _credentials_match_registered_user(username: str, password: str) -> bool:
     if not registered_user:
         return False
 
-    return (registered_user.username == username) and password_matches_hash(
+    return (registered_user.username == username) and _password_matches_hash(
         password, registered_user.password_hash
     )
+
+
+def _password_matches_hash(plaintext_password, password_hash):
+    return bcrypt.checkpw(plaintext_password.encode("utf-8"), password_hash.encode("utf-8"))
 
 
 def _get_secret_from_credentials(username: str, password: str) -> str:
