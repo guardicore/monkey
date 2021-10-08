@@ -28,30 +28,26 @@ class AuthenticationService:
     def register_new_user(cls, username: str, password: str):
         credentials = UserCreds(username, _hash_password(password))
         env_singleton.env.try_add_user(credentials)
-        AuthenticationService.reset_datastore_encryptor(username, password)
+        cls._reset_datastore_encryptor(username, password)
         reset_database()
 
     @classmethod
     def authenticate(cls, username: str, password: str) -> bool:
         if _credentials_match_registered_user(username, password):
-            AuthenticationService.unlock_datastore_encryptor(username, password)
+            cls._unlock_datastore_encryptor(username, password)
             return True
 
         return False
 
-    @staticmethod
-    def unlock_datastore_encryptor(username: str, password: str):
-        secret = AuthenticationService._get_secret_from_credentials(username, password)
-        unlock_datastore_encryptor(AuthenticationService.KEY_FILE_DIRECTORY, secret)
+    @classmethod
+    def _unlock_datastore_encryptor(cls, username: str, password: str):
+        secret = _get_secret_from_credentials(username, password)
+        unlock_datastore_encryptor(cls.KEY_FILE_DIRECTORY, secret)
 
-    @staticmethod
-    def reset_datastore_encryptor(username: str, password: str):
-        secret = AuthenticationService._get_secret_from_credentials(username, password)
-        reset_datastore_encryptor(AuthenticationService.KEY_FILE_DIRECTORY, secret)
-
-    @staticmethod
-    def _get_secret_from_credentials(username: str, password: str) -> str:
-        return f"{username}:{password}"
+    @classmethod
+    def _reset_datastore_encryptor(cls, username: str, password: str):
+        secret = _get_secret_from_credentials(username, password)
+        reset_datastore_encryptor(cls.KEY_FILE_DIRECTORY, secret)
 
 
 def _hash_password(plaintext_password):
@@ -70,3 +66,7 @@ def _credentials_match_registered_user(username: str, password: str) -> bool:
     return (registered_user.username == username) and password_matches_hash(
         password, registered_user.password_hash
     )
+
+
+def _get_secret_from_credentials(username: str, password: str) -> str:
+    return f"{username}:{password}"
