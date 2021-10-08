@@ -2,6 +2,7 @@ import bcrypt
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.environment.user_creds import UserCreds
+from monkey_island.cc.resources.auth.credential_utils import password_matches_hash
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
     unlock_datastore_encryptor,
@@ -19,8 +20,8 @@ class AuthenticationService:
     def initialize(cls, key_file_directory):
         cls.KEY_FILE_DIRECTORY = key_file_directory
 
-    @classmethod
-    def needs_registration(cls) -> bool:
+    @staticmethod
+    def needs_registration() -> bool:
         return env_singleton.env.needs_registration()
 
     @classmethod
@@ -29,6 +30,14 @@ class AuthenticationService:
         env_singleton.env.try_add_user(credentials)
         AuthenticationService.reset_datastore_encryptor(username, password)
         reset_database()
+
+    @classmethod
+    def authenticate(cls, username: str, password: str) -> bool:
+        if _credentials_match_registered_user(username, password):
+            AuthenticationService.unlock_datastore_encryptor(username, password)
+            return True
+
+        return False
 
     @staticmethod
     def unlock_datastore_encryptor(username: str, password: str):
@@ -50,3 +59,14 @@ def _hash_password(plaintext_password):
     password_hash = bcrypt.hashpw(plaintext_password.encode("utf-8"), salt)
 
     return password_hash.decode()
+
+
+def _credentials_match_registered_user(username: str, password: str) -> bool:
+    registered_user = env_singleton.env.get_user()
+
+    if not registered_user:
+        return False
+
+    return (registered_user.username == username) and password_matches_hash(
+        password, registered_user.password_hash
+    )
