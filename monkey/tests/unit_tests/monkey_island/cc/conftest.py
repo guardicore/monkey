@@ -10,8 +10,7 @@ from tests.unit_tests.monkey_island.cc.server_utils.encryption.test_password_bas
     STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME,
 )
 
-from monkey_island.cc.server_utils.encryption import initialize_datastore_encryptor
-from monkey_island.cc.services.authentication import AuthenticationService
+from monkey_island.cc.server_utils.encryption import unlock_datastore_encryptor
 
 
 @pytest.fixture
@@ -28,11 +27,7 @@ def monkey_config_json(monkey_config):
     return json.dumps(monkey_config)
 
 
-MOCK_USERNAME = "m0nk3y_u53r"
-MOCK_PASSWORD = "3cr3t_p455w0rd"
-
-
 @pytest.fixture
 def uses_encryptor(data_for_tests_dir):
-    secret = AuthenticationService._get_secret_from_credentials(MOCK_USERNAME, MOCK_PASSWORD)
-    initialize_datastore_encryptor(data_for_tests_dir, secret)
+    secret = "m0nk3y_u53r:3cr3t_p455w0rd"
+    unlock_datastore_encryptor(data_for_tests_dir, secret)

@@ -3,9 +3,7 @@ from typing import Callable, List, Type
 
 import dpath.util
 
-from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
-    IFieldEncryptor,
-)
+from .field_encryptors import IFieldEncryptor
 
 
 class FieldNotFoundError(Exception):

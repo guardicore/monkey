@@ -3,7 +3,7 @@ import logging
 
 import pyAesCrypt
 
-from monkey_island.cc.server_utils.encryption import IEncryptor
+from .i_encryptor import IEncryptor
 
 logger = logging.getLogger(__name__)
 
@@ -47,10 +47,10 @@ class PasswordBasedBytesEncryptor(IEncryptor):
             )
         except ValueError as ex:
             if str(ex).startswith("Wrong password"):
-                logger.info("Wrong password provided for decryption.")
+                logger.error("Wrong password provided for decryption.")
                 raise InvalidCredentialsError
             else:
-                logger.info("The corrupt ciphertext provided.")
+                logger.error("The provided ciphertext was corrupt.")
                 raise InvalidCiphertextError
         return plaintext_stream.getvalue()
 

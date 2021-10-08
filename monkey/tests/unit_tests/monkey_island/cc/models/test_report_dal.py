@@ -5,10 +5,7 @@ import pytest
 
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.report import get_report, save_report
-from monkey_island.cc.server_utils.encryption import SensitiveField
-from monkey_island.cc.server_utils.encryption.dict_encryption.field_encryptors import (
-    IFieldEncryptor,
-)
+from monkey_island.cc.server_utils.encryption import IFieldEncryptor, SensitiveField
 
 MOCK_SENSITIVE_FIELD_CONTENTS = ["the_string", "the_string2"]
 MOCK_REPORT_DICT = {
