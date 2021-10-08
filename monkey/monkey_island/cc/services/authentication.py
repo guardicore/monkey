@@ -20,6 +20,10 @@ class AuthenticationService:
         cls.KEY_FILE_DIRECTORY = key_file_directory
 
     @classmethod
+    def needs_registration(cls) -> bool:
+        return env_singleton.env.needs_registration()
+
+    @classmethod
     def register_new_user(cls, username: str, password: str):
         credentials = UserCreds(username, _hash_password(password))
         env_singleton.env.try_add_user(credentials)

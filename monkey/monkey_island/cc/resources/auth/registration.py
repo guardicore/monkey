@@ -3,7 +3,6 @@ import logging
 import flask_restful
 from flask import make_response, request
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
 from monkey_island.cc.services.authentication import AuthenticationService
@@ -13,8 +12,7 @@ logger = logging.getLogger(__name__)
 
 class Registration(flask_restful.Resource):
     def get(self):
-        is_registration_needed = env_singleton.env.needs_registration()
-        return {"needs_registration": is_registration_needed}
+        return {"needs_registration": AuthenticationService.needs_registration()}
 
     def post(self):
         username, password = get_username_password_from_request(request)
