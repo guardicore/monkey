@@ -17,10 +17,11 @@ class T1086(AttackTechnique):
                 "data.info.executed_cmds": {"$elemMatch": {"powershell": True}},
             }
         },
-        {"$project": {"machine": "$data.machine", "info": "$data.info"}},
+        {"$project": {"telem_category": 1, "machine": "$data.machine", "info": "$data.info"}},
         {
             "$project": {
                 "_id": 0,
+                "telem_category": 1,
                 "machine": 1,
                 "info.finished": 1,
                 "info.executed_cmds": {
@@ -45,6 +46,7 @@ class T1086(AttackTechnique):
         {
             "$project": {
                 "_id": 0,
+                "telem_category": 1,
                 "machine.hostname": "$data.hostname",
                 "machine.ips": "$data.ip",
                 "info": "$data.result",
@@ -56,7 +58,10 @@ class T1086(AttackTechnique):
     def get_report_data():
         @T1086.is_status_disabled
         def get_technique_status_and_data():
-            cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_exploits))
+            exploit_cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_exploits))
+            pba_cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_pbas))
+            cmd_data = exploit_cmd_data + pba_cmd_data
+
             if cmd_data:
                 status = ScanStatus.USED.value
             else:
