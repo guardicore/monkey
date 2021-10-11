@@ -48,7 +48,7 @@ class T1086(AttackTechnique):
                 "_id": 0,
                 "telem_category": 1,
                 "machine.hostname": "$data.hostname",
-                "machine.ips": "$data.ip",
+                "machine.ips": [{"$arrayElemAt": ["$data.ip", 0]}],
                 "info": "$data.result",
             }
         },

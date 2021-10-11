@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table';
-import {renderMachine, ScanStatus} from './Helpers'
+import {renderMachine, renderMachineFromSystemData, ScanStatus} from './Helpers'
 import MitigationsComponent from './MitigationsComponent';
 
 
@@ -10,9 +10,9 @@ class T1086 extends React.Component {
     super(props);
   }
 
-  static getPowershellColumns() {
+  static getPowershellColumnsForExploits() {
     return ([{
-      Header: 'Example Powershell commands used',
+      Header: 'PowerShell commands used on exploited machines',
       columns: [
         {
           Header: 'Machine',
@@ -32,18 +32,63 @@ class T1086 extends React.Component {
     }])
   }
 
+  static getPowershellColumnsForPBAs() {
+    return ([{
+      Header: 'PowerShell commands or scripts used as PBAs',
+      columns: [
+        {
+          Header: 'Machine',
+          id: 'machine',
+          accessor: x => renderMachineFromSystemData(x.machine),
+          style: {'whiteSpace': 'unset'},
+        },
+        {
+          Header: 'Information',
+          id: 'information',
+          accessor: x => x.info,
+          style: {'whiteSpace': 'unset'}
+        }
+      ]
+    }])
+  }
+
+  getPowershellDataPerCategory(category) {
+    let data = [];
+    for (let rowIdx in this.props.data.cmds) {
+      let row = this.props.data.cmds[rowIdx];
+      if (row.telem_category == category) {
+        data.push(row);
+      }
+    }
+
+    return data
+  }
+
   render() {
+    let data_from_exploits = this.getPowershellDataPerCategory("exploit");
+    let data_from_pbas = this.getPowershellDataPerCategory("post_breach");
+
     return (
       <div>
         <div>{this.props.data.message_html}</div>
         <br/>
         {this.props.data.status === ScanStatus.USED ?
+          <div>
           <ReactTable
-            columns={T1086.getPowershellColumns()}
-            data={this.props.data.cmds}
+            columns={T1086.getPowershellColumnsForExploits()}
+            data={data_from_exploits}
             showPagination={false}
-            defaultPageSize={this.props.data.cmds.length}
-          /> : ''}
+            defaultPageSize={data_from_exploits.length}
+          />
+          <br/>
+          <br/>
+          <ReactTable
+            columns={T1086.getPowershellColumnsForPBAs()}
+            data={data_from_pbas}
+            showPagination={false}
+            defaultPageSize={data_from_pbas.length}
+          />
+          </div> : ''}
         <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>
     );
