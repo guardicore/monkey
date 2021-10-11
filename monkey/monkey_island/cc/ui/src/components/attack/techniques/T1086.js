@@ -40,7 +40,7 @@ class T1086 extends React.Component {
           Header: 'Machine',
           id: 'machine',
           accessor: x => renderMachineFromSystemData(x.machine),
-          style: {'whiteSpace': 'unset'},
+          style: {'whiteSpace': 'unset'}
         },
         {
           Header: 'Information',
@@ -65,8 +65,8 @@ class T1086 extends React.Component {
   }
 
   render() {
-    let data_from_exploits = this.getPowershellDataPerCategory("exploit");
-    let data_from_pbas = this.getPowershellDataPerCategory("post_breach");
+    let data_from_exploits = this.getPowershellDataPerCategory('exploit');
+    let data_from_pbas = this.getPowershellDataPerCategory('post_breach');
 
     return (
       <div>
