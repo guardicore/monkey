@@ -40,7 +40,10 @@ class T1086(AttackTechnique):
         {
             "$match": {
                 "telem_category": "post_breach",
-                "data.command": {"$regex": r"\.ps1"},
+                "$or": [
+                    {"data.command": {"$regex": r"\.ps1"}},
+                    {"data.result": {"$regex": r"\.ps1"}},
+                ],
             },
         },
         {
