@@ -10,7 +10,7 @@ class T1086(AttackTechnique):
     scanned_msg = ""
     used_msg = "Monkey successfully ran PowerShell commands on exploited machines in the network."
 
-    query = [
+    query_for_exploits = [
         {
             "$match": {
                 "telem_category": "exploit",
@@ -35,11 +35,28 @@ class T1086(AttackTechnique):
         {"$group": {"_id": "$machine", "data": {"$push": "$$ROOT"}}},
     ]
 
+    query_for_pbas = [
+        {
+            "$match": {
+                "telem_category": "post_breach",
+                "data.command": {"$regex": r"\.ps1"},
+            },
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "machine.hostname": "$data.hostname",
+                "machine.ips": "$data.ip",
+                "info": "$data.result",
+            }
+        },
+    ]
+
     @staticmethod
     def get_report_data():
         @T1086.is_status_disabled
         def get_technique_status_and_data():
-            cmd_data = list(mongo.db.telemetry.aggregate(T1086.query))
+            cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_exploits))
             if cmd_data:
                 status = ScanStatus.USED.value
             else:
