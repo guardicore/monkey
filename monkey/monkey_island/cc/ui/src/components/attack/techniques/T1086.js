@@ -34,7 +34,7 @@ class T1086 extends React.Component {
 
   static getPowershellColumnsForPBAs() {
     return ([{
-      Header: 'PowerShell commands or scripts used as PBAs',
+      Header: 'PBAs that used PowerShell commands or scripts',
       columns: [
         {
           Header: 'Machine',
