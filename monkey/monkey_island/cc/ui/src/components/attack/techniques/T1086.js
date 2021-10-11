@@ -52,21 +52,30 @@ class T1086 extends React.Component {
     }])
   }
 
-  getPowershellDataPerCategory(category) {
-    let data = [];
+  segregatePowershellDataPerCategory() {
+    let exploit_category_name = 'exploit';
+    let pba_category_name = 'post_breach';
+
+    let data_from_exploits = [];
+    let data_from_pbas = [];
+
     for (let rowIdx in this.props.data.cmds) {
       let row = this.props.data.cmds[rowIdx];
-      if (row.telem_category == category) {
-        data.push(row);
+      if (row.telem_category == exploit_category_name) {
+        data_from_exploits.push(row);
+      }
+      else if (row.telem_category == pba_category_name) {
+        data_from_pbas.push(row);
       }
     }
 
-    return data
+    return [data_from_exploits, data_from_pbas]
   }
 
   render() {
-    let data_from_exploits = this.getPowershellDataPerCategory('exploit');
-    let data_from_pbas = this.getPowershellDataPerCategory('post_breach');
+    let segregatedData = this.segregatePowershellDataPerCategory();
+    let data_from_exploits = segregatedData[0];
+    let data_from_pbas = segregatedData[1];
 
     return (
       <div>
