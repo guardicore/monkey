@@ -53,29 +53,29 @@ class T1086 extends React.Component {
   }
 
   segregatePowershellDataPerCategory() {
-    let exploit_category_name = 'exploit';
-    let pba_category_name = 'post_breach';
+    let exploitCategoryName = 'exploit';
+    let pbaCategoryName = 'post_breach';
 
-    let data_from_exploits = [];
-    let data_from_pbas = [];
+    let dataFromExploits = [];
+    let dataFromPBAs = [];
 
     for (let rowIdx in this.props.data.cmds) {
       let row = this.props.data.cmds[rowIdx];
-      if (row.telem_category == exploit_category_name) {
-        data_from_exploits.push(row);
+      if (row.telem_category == exploitCategoryName) {
+        dataFromExploits.push(row);
       }
-      else if (row.telem_category == pba_category_name) {
-        data_from_pbas.push(row);
+      else if (row.telem_category == pbaCategoryName) {
+        dataFromPBAs.push(row);
       }
     }
 
-    return [data_from_exploits, data_from_pbas]
+    return [dataFromExploits, dataFromPBAs]
   }
 
   render() {
     let segregatedData = this.segregatePowershellDataPerCategory();
-    let data_from_exploits = segregatedData[0];
-    let data_from_pbas = segregatedData[1];
+    let dataFromExploits = segregatedData[0];
+    let dataFromPBAs = segregatedData[1];
 
     return (
       <div>
@@ -85,17 +85,17 @@ class T1086 extends React.Component {
           <div>
           <ReactTable
             columns={T1086.getPowershellColumnsForExploits()}
-            data={data_from_exploits}
+            data={dataFromExploits}
             showPagination={false}
-            defaultPageSize={data_from_exploits.length}
+            defaultPageSize={dataFromExploits.length}
           />
           <br/>
           <br/>
           <ReactTable
             columns={T1086.getPowershellColumnsForPBAs()}
-            data={data_from_pbas}
+            data={dataFromPBAs}
             showPagination={false}
-            defaultPageSize={data_from_pbas.length}
+            defaultPageSize={dataFromPBAs.length}
           />
           </div> : ''}
         <MitigationsComponent mitigations={this.props.data.mitigations}/>
