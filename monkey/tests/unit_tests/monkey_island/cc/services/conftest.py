@@ -66,5 +66,21 @@ def fake_schema():
                     },
                 ],
             },
-        }
+        },
+        "properties": {
+            "property_type_1": {
+                "title": "Property Type 1",
+                "properties": {
+                    "tab_1": {
+                        "title": "Tab 1",
+                        "properties": {
+                            "config_option_1": {
+                                "title": "Config Option 1",
+                                "related_attack_techniques": ["T0000"],
+                            },
+                        },
+                    }
+                },
+            }
+        },
     }

@@ -6,6 +6,7 @@ REVERSE_FAKE_SCHEMA = {
     "T0000": {
         "Definition Type 1": ["Config Option 1", "Config Option 2"],
         "Definition Type 2": ["Config Option 5", "Config Option 6"],
+        "Property Type 1": ["Config Option 1 (Tab 1)"],
     },
     "T0001": {
         "Definition Type 1": ["Config Option 1"],
