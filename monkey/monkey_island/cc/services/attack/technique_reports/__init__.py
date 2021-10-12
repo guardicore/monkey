@@ -143,7 +143,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
             reasons.append(f"- Monkey did not run on any {cls.relevant_systems[0]} systems.")
         if cls.tech_id in config_schema_per_attack_technique:
             reasons.append(
-                "- The following configuration options were disabled:<br/>"
+                "- The following configuration options were disabled or empty:<br/>"
                 f"{cls._get_relevant_config_values(config_schema_per_attack_technique)}"
             )
 
