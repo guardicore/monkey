@@ -340,6 +340,7 @@ INTERNAL = {
                     "items": {"type": "string"},
                     "default": [],
                     "description": "List of LM hashes to use on exploits using credentials",
+                    "related_attack_techniques": ["T1075"],
                 },
                 "exploit_ntlm_hash_list": {
                     "title": "Exploit NTLM hash list",
@@ -348,6 +349,7 @@ INTERNAL = {
                     "items": {"type": "string"},
                     "default": [],
                     "description": "List of NTLM hashes to use on exploits using credentials",
+                    "related_attack_techniques": ["T1075"],
                 },
                 "exploit_ssh_keys": {
                     "title": "SSH key pairs list",
