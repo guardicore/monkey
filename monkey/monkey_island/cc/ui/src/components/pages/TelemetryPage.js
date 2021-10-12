@@ -33,6 +33,15 @@ class TelemetryPageComponent extends AuthComponent {
       .then(res => this.setState({data: res.objects}));
   };
 
+  shouldComponentUpdate(_, nextState) {
+    if (nextState.data.length > this.state.data.length)
+    {
+      return true;
+    }
+
+    return false;
+  }
+
   downloadIslandLog = () => {
     this.authFetch('/api/log/island/download')
       .then(res => res.json())

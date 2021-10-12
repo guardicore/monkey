@@ -52,7 +52,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   them was the same. #1514
 - ATT&CK report bug that said that the technique "`.bash_profile` and `.bashrc`" was not attempted
   when it actually was attempted but failed. #1511
-
+- Telemetry bug that caused filtering to automatically refresh itself, periodically. #1392
 
 ### Security
 - Generate a random password when creating a new user for CommunicateAsNewUser
