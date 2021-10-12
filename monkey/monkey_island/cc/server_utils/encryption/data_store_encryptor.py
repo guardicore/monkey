@@ -40,7 +40,7 @@ class DataStoreEncryptor(IEncryptor):
         plaintext_key = Random.new().read(DataStoreEncryptor._KEY_LENGTH_BYTES)
 
         encrypted_key = self._password_based_encryptor.encrypt(plaintext_key)
-        with open_new_securely_permissioned_file(self._key_file, "wb") as f:
+        with open_new_securely_permissioned_file(str(self._key_file), "wb") as f:
             f.write(encrypted_key)
 
         return KeyBasedEncryptor(plaintext_key)
@@ -52,8 +52,8 @@ class DataStoreEncryptor(IEncryptor):
         return self._key_based_encryptor.decrypt(ciphertext)
 
 
-def reset_datastore_encryptor(key_file_dir: str, secret: str, key_file_name: str = _KEY_FILE_NAME):
-    key_file = Path(key_file_dir) / key_file_name
+def reset_datastore_encryptor(key_file_dir: Path, secret: str, key_file_name: str = _KEY_FILE_NAME):
+    key_file = key_file_dir / key_file_name
 
     if key_file.is_file():
         key_file.unlink()
@@ -61,8 +61,10 @@ def reset_datastore_encryptor(key_file_dir: str, secret: str, key_file_name: str
     _initialize_datastore_encryptor(key_file, secret)
 
 
-def unlock_datastore_encryptor(key_file_dir: str, secret: str, key_file_name: str = _KEY_FILE_NAME):
-    key_file = Path(key_file_dir) / key_file_name
+def unlock_datastore_encryptor(
+    key_file_dir: Path, secret: str, key_file_name: str = _KEY_FILE_NAME
+):
+    key_file = key_file_dir / key_file_name
     _initialize_datastore_encryptor(key_file, secret)
 
 
