@@ -42,6 +42,7 @@ class T1086(AttackTechnique):
                 "telem_category": "post_breach",
                 "$or": [
                     {"data.command": {"$regex": r"\.ps1"}},
+                    {"data.command": {"$regex": "powershell"}},
                     {"data.result": {"$regex": r"\.ps1"}},
                 ],
             },
