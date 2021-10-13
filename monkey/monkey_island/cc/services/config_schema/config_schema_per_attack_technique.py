@@ -47,8 +47,11 @@ def _crawl_config_schema_properties_for_reverse_schema(schema: Dict, reverse_sch
 
 
 def _crawl_properties(config_option_path: str, config_option: Dict, reverse_schema: Dict):
-    config_option_path = " -> ".join([config_option_path, config_option["title"]])
-
+    config_option_path = (
+        f"{config_option_path} -> {config_option['title']}"
+        if "title" in config_option
+        else config_option_path
+    )
     for config_option_name in config_option.get("properties", []):
         new_config_option = config_option["properties"][config_option_name]
         _check_related_attack_techniques(
@@ -69,7 +72,7 @@ def _check_related_attack_techniques(
     for attack_technique in config_option.get("related_attack_techniques", []):
         # No config values could be a reason that related attack techniques are left
         # unscanned. See https://github.com/guardicore/monkey/issues/1518 for more.
-        config_field = f"{config_option['title']}"
+        config_field = config_option["title"]
         _add_config_field_to_reverse_schema(
             config_option_path, config_field, attack_technique, reverse_schema
         )
