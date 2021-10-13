@@ -4,7 +4,6 @@ import logging
 import sys
 from pathlib import Path
 from threading import Thread
-from typing import Tuple
 
 import gevent.hub
 from gevent.pywsgi import WSGIServer
@@ -16,10 +15,8 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
-import monkey_island.cc.setup.config_setup as config_setup  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
-from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
 from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
@@ -31,7 +28,11 @@ from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logg
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
+from monkey_island.cc.setup import (  # noqa: E402
+    create_data_dir,
+    island_config_options_validator,
+    setup_default_config,
+)
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
@@ -42,12 +43,20 @@ logger = logging.getLogger(__name__)
 
 def run_monkey_island():
     island_args = parse_cli_args()
-    config_options, server_config_path = _setup_data_dir(island_args)
+    try:
+        data_dir_path = create_data_dir(island_args)
+        config_options, config_file_path = setup_default_config(island_args, data_dir_path)
+    except OSError as ex:
+        print(f"Error opening server config file: {ex}")
+        exit(1)
+    except json.JSONDecodeError as ex:
+        print(f"Error loading server config: {ex}")
+        exit(1)
 
     _exit_on_invalid_config_options(config_options)
 
     _configure_logging(config_options)
-    _initialize_globals(config_options, server_config_path)
+    _initialize_globals(config_options, config_file_path)
 
     mongo_db_process = None
     if config_options.start_mongodb:
@@ -57,17 +66,6 @@ def run_monkey_island():
 
     _configure_gevent_exception_handling(Path(config_options.data_dir))
     _start_island_server(island_args.setup_only, config_options)
-
-
-def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str]:
-    try:
-        return config_setup.setup_data_dir(island_args)
-    except OSError as ex:
-        print(f"Error opening server config file: {ex}")
-        exit(1)
-    except json.JSONDecodeError as ex:
-        print(f"Error loading server config: {ex}")
-        exit(1)
 
 
 def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
