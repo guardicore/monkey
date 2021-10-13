@@ -49,7 +49,7 @@ class AuthenticationService:
         reset_datastore_encryptor(cls.DATA_DIR, secret)
 
 
-def _hash_password(plaintext_password):
+def _hash_password(plaintext_password: str) -> str:
     salt = bcrypt.gensalt()
     password_hash = bcrypt.hashpw(plaintext_password.encode("utf-8"), salt)
 
@@ -67,7 +67,7 @@ def _credentials_match_registered_user(username: str, password: str) -> bool:
     )
 
 
-def _password_matches_hash(plaintext_password, password_hash):
+def _password_matches_hash(plaintext_password: str, password_hash: str) -> bool:
     return bcrypt.checkpw(plaintext_password.encode("utf-8"), password_hash.encode("utf-8"))
 
 
