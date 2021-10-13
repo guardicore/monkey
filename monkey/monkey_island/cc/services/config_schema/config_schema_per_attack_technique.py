@@ -15,6 +15,13 @@ def get_config_schema_per_attack_technique(schema: Dict) -> Dict[str, Dict[str, 
     """
     reverse_schema = {}
 
+    _crawl_config_schema_definitions_for_reverse_schema(schema, reverse_schema)
+    _crawl_config_schema_properties_for_reverse_schema(schema, reverse_schema)
+
+    return reverse_schema
+
+
+def _crawl_config_schema_definitions_for_reverse_schema(schema: Dict, reverse_schema: Dict):
     definitions = schema["definitions"]
     for definition in definitions:
         definition_type = definitions[definition]["title"]
@@ -25,6 +32,8 @@ def get_config_schema_per_attack_technique(schema: Dict) -> Dict[str, Dict[str, 
                     definition_type, config_field, attack_technique, reverse_schema
                 )
 
+
+def _crawl_config_schema_properties_for_reverse_schema(schema: Dict, reverse_schema: Dict):
     properties = schema["properties"]
     for prop in properties:
         property_type = properties[prop]["title"]
@@ -39,8 +48,6 @@ def get_config_schema_per_attack_technique(schema: Dict) -> Dict[str, Dict[str, 
                     _add_config_field_to_reverse_schema(
                         property_type, config_field, attack_technique, reverse_schema
                     )
-
-    return reverse_schema
 
 
 def _add_config_field_to_reverse_schema(
