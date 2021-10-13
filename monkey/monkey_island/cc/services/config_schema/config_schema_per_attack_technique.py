@@ -25,7 +25,7 @@ def _crawl_config_schema_definitions_for_reverse_schema(schema: Dict, reverse_sc
     definitions = schema["definitions"]
     for definition in definitions:
         definition_type = definitions[definition]["title"]
-        for field in definitions[definition]["anyOf"]:
+        for field in definitions[definition].get("anyOf", []):
             config_field = field["title"]
             for attack_technique in field.get("attack_techniques", []):
                 _add_config_field_to_reverse_schema(
@@ -37,9 +37,9 @@ def _crawl_config_schema_properties_for_reverse_schema(schema: Dict, reverse_sch
     properties = schema["properties"]
     for prop in properties:
         property_type = properties[prop]["title"]
-        for category_name in properties[prop]["properties"]:
+        for category_name in properties[prop].get("properties", []):
             category = properties[prop]["properties"][category_name]
-            for config_option_name in category["properties"]:
+            for config_option_name in category.get("properties", []):
                 config_option = category["properties"][config_option_name]
                 for attack_technique in config_option.get("related_attack_techniques", []):
                     # No config values could be a reason that related attack techniques are left
