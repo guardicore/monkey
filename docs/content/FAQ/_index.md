@@ -52,15 +52,17 @@ Monkey in the newly created folder.
 
 ## Reset/enable the Monkey Island password
 
-When you first access the Monkey Island server, you'll be prompted to create an account.
-To reset the credentials, edit the `server_config.json` file manually
-(located in the [data directory]({{< ref "/reference/data_directory" >}})).
 
 {{% notice warning %}}
 If you reset the credentials, the database will be cleared. Any findings of the Infection Monkey from previous runs will be lost. <br/><br/>
 However, you can save the Monkey's existing configuration by logging in with your current credentials and clicking on the **Export config** button on the configuration page.
 {{% /notice %}}
 
+### On Windows and Linux (AppImage)
+
+When you first access the Monkey Island server, you'll be prompted to create an account.
+To reset the credentials, edit the `server_config.json` file manually
+(located in the [data directory]({{< ref "/reference/data_directory" >}})).
 
 In order to reset the credentials, the following edits need to be made:
 1. Delete the `user` field. It will look like this:
@@ -91,10 +93,51 @@ In order to reset the credentials, the following edits need to be made:
       ...
     }
     ```
- Then, reset the Monkey Island process.
- On Linux, use `sudo systemctl restart monkey-island.service`.
- On Windows, restart the program.
- Finally, go to the Monkey Island's URL and create a new account.
+1. Restart the Monkey Island process:
+    * On Linux, simply kill the Monkey Island process and execute the AppImage.
+    * On Windows, restart the program.
+
+1. Go to the Monkey Island's URL and create a new account.
+
+If you are still unable to log into Monkey Island after following the above
+steps, you can perform a complete factory reset by removing the entire [data
+directory]({{< ref "/reference/data_directory" >}}) and then restarting the
+Monkey Island process.
+
+### On Docker
+When you first access the Monkey Island server, you'll be prompted to create an account.
+To reset the credentials, you'll need to perform a complete factory reset:
+
+1. Kill the Monkey Island container:
+    ```bash
+    sudo docker kill monkey-island
+    ```
+1. Kill the MongoDB container:
+    ```bash
+    sudo docker kill monkey-mongo
+    ```
+1. Remove the MongoDB volume:
+    ```bash
+    sudo docker volume rm db
+    ```
+1. Restart the MongoDB container:
+   ```bash
+    sudo docker run \
+        --name monkey-mongo \
+        --network=host \
+        --volume db:/data/db \
+        --detach \
+        mongo:4.2
+    ```
+1. Restart the Monkey Island container
+    ```bash
+    sudo docker run \
+        --name monkey-island \
+        --network=host \
+        guardicore/monkey-island:VERSION
+    ```
+1. Go to the Monkey Island's URL and create a new account.
+
 
 ## Should I run the Infection Monkey continuously?
 
