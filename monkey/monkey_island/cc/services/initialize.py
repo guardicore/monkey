@@ -6,4 +6,4 @@ from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 def initialize_services(data_dir):
     PostBreachFilesService.initialize(data_dir)
     LocalMonkeyRunService.initialize(data_dir)
-    AuthenticationService.initialize(key_file_directory=data_dir)
+    AuthenticationService.initialize(data_dir)

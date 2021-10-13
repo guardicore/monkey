@@ -10,14 +10,14 @@ from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
 
 class AuthenticationService:
-    KEY_FILE_DIRECTORY = None
+    DATA_DIR = None
 
     # TODO: A number of these services should be instance objects instead of
     # static/singleton hybrids. At the moment, this requires invasive refactoring that's
     # not a priority.
     @classmethod
-    def initialize(cls, key_file_directory):
-        cls.KEY_FILE_DIRECTORY = key_file_directory
+    def initialize(cls, data_dir: str):
+        cls.DATA_DIR = data_dir
 
     @staticmethod
     def needs_registration() -> bool:
@@ -41,12 +41,12 @@ class AuthenticationService:
     @classmethod
     def _unlock_datastore_encryptor(cls, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
-        unlock_datastore_encryptor(cls.KEY_FILE_DIRECTORY, secret)
+        unlock_datastore_encryptor(cls.DATA_DIR, secret)
 
     @classmethod
     def _reset_datastore_encryptor(cls, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
-        reset_datastore_encryptor(cls.KEY_FILE_DIRECTORY, secret)
+        reset_datastore_encryptor(cls.DATA_DIR, secret)
 
 
 def _hash_password(plaintext_password):
