@@ -39,15 +39,40 @@ def _crawl_config_schema_properties_for_reverse_schema(schema: Dict, reverse_sch
         property_type = properties[prop]["title"]
         for category_name in properties[prop].get("properties", []):
             category = properties[prop]["properties"][category_name]
-            for config_option_name in category.get("properties", []):
-                config_option = category["properties"][config_option_name]
-                for attack_technique in config_option.get("related_attack_techniques", []):
-                    # No config values could be a reason that related attack techniques are left
-                    # unscanned. See https://github.com/guardicore/monkey/issues/1518 for more.
-                    config_field = f"{config_option['title']} ({category['title']})"
-                    _add_config_field_to_reverse_schema(
-                        property_type, config_field, attack_technique, reverse_schema
-                    )
+            _crawl_properties(
+                config_option_path=property_type,
+                config_option=category,
+                reverse_schema=reverse_schema,
+            )
+
+
+def _crawl_properties(config_option_path: str, config_option: Dict, reverse_schema: Dict):
+    config_option_path = " -> ".join([config_option_path, config_option["title"]])
+
+    for config_option_name in config_option.get("properties", []):
+        new_config_option = config_option["properties"][config_option_name]
+        _check_related_attack_techniques(
+            config_option_path=config_option_path,
+            config_option=new_config_option,
+            reverse_schema=reverse_schema,
+        )
+
+        # check for "properties" and each property's related techniques recursively;
+        # the levels of nesting and where related techniques are declared won't
+        # always be fixed in the config schema
+        _crawl_properties(config_option_path, new_config_option, reverse_schema)
+
+
+def _check_related_attack_techniques(
+    config_option_path: str, config_option: Dict, reverse_schema: Dict
+):
+    for attack_technique in config_option.get("related_attack_techniques", []):
+        # No config values could be a reason that related attack techniques are left
+        # unscanned. See https://github.com/guardicore/monkey/issues/1518 for more.
+        config_field = f"{config_option['title']}"
+        _add_config_field_to_reverse_schema(
+            config_option_path, config_field, attack_technique, reverse_schema
+        )
 
 
 def _add_config_field_to_reverse_schema(
