@@ -19,7 +19,6 @@ import GettingStartedPage from './pages/GettingStartedPage';
 
 
 import 'normalize.css/normalize.css';
-import 'react-data-components/css/table-twbs.css';
 import 'styles/App.css';
 import 'react-toggle/style.css';
 import 'react-table/react-table.css';
