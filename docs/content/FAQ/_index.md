@@ -64,33 +64,33 @@ However, you can save the Monkey's existing configuration by logging in with you
 
 In order to reset the credentials, the following edits need to be made:
 1. Delete the `user` field. It will look like this:
-```json
-{
-  ...
-  "user": "username",
-  ...
-}
-```
+    ```json
+    {
+      ...
+      "user": "username",
+      ...
+    }
+    ```
 1. Delete the `password_hash` field. It will look like this:
-```json
-{
-  ...
-  "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
-  ...
-}
-```
+    ```json
+    {
+      ...
+      "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
+      ...
+    }
+    ```
 1. Set `server_config` to `password`. It should look like this:
-```json
-{
-  ...
-  "environment": {
-    ...
-    "server_config": "password",
-    ...
-  },
-  ...
-}
-```
+    ```json
+    {
+      ...
+      "environment": {
+        ...
+        "server_config": "password",
+        ...
+      },
+      ...
+    }
+    ```
  Then, reset the Monkey Island process.
  On Linux, use `sudo systemctl restart monkey-island.service`.
  On Windows, restart the program.
