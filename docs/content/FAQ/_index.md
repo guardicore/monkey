@@ -54,7 +54,7 @@ Monkey in the newly created folder.
 
 When you first access the Monkey Island server, you'll be prompted to create an account.
 To reset the credentials, edit the `server_config.json` file manually
-(located in the [data directory](/reference/data_directory)).
+(located in the [data directory]({{< ref "/reference/data_directory" >}})).
 
 {{% notice warning %}}
 If you reset the credentials, the database will be cleared. Any findings of the Infection Monkey from previous runs will be lost. <br/><br/>
@@ -125,7 +125,7 @@ You can download the Monkey Island's log file directly from the UI. Click the "l
 ![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
 It can also be found as a local file on the Monkey Island server system in the specified
-[data directory](/reference/data_directory).
+[data directory]({{< ref "/reference/data_directory" >}}).
 
 The log enables you to see which requests were requested from the server and extra logs from the backend logic. The log will contain entries like these:
 
@@ -161,7 +161,7 @@ The logs contain information about the internals of the Infection Monkey agent's
 ### How do I change the log level of the Monkey Island logger?
 
 The log level of the Monkey Island logger is set in the `log_level` field
-in the `server_config.json` file (located in the [data directory](/reference/data_directory)).
+in the `server_config.json` file (located in the [data directory]({{< ref "/reference/data_directory" >}})).
 Make sure to leave everything else in `server_config.json` unchanged:
 
 ```json
