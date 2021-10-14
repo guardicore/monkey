@@ -9,7 +9,7 @@ from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.config_schema.config_schema_per_attack_technique import (
-    get_config_schema_per_attack_technique,
+    ConfigSchemaPerAttackTechnique,
 )
 
 logger = logging.getLogger(__name__)
@@ -122,8 +122,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
             return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
             if not cls.config_schema_per_attack_technique:
-                cls.config_schema_per_attack_technique = get_config_schema_per_attack_technique(
-                    SCHEMA
+                cls.config_schema_per_attack_technique = (
+                    ConfigSchemaPerAttackTechnique().get_config_schema_per_attack_technique(SCHEMA)
                 )
             unscanned_msg = cls._get_unscanned_msg_with_reasons(
                 cls.unscanned_msg, cls.config_schema_per_attack_technique
