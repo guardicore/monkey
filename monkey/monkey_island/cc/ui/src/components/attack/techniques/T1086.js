@@ -12,7 +12,7 @@ class T1086 extends React.Component {
 
   static getPowershellColumnsForExploits() {
     return ([{
-      Header: 'PowerShell commands used during exploitation',
+      Header: 'Exploiters',
       columns: [
         {
           Header: 'Machine',
@@ -34,7 +34,7 @@ class T1086 extends React.Component {
 
   static getPowershellColumnsForPBAs() {
     return ([{
-      Header: 'Post-breach actions that used PowerShell commands/scripts',
+      Header: 'Post-Breach Actions',
       columns: [
         {
           Header: 'Machine',
