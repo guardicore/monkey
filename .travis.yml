@@ -80,9 +80,10 @@ script:
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
-- curl -L https://github.com/swimmio/SwimmReleases/releases/download/v0.5.7-0/swimm-cli.js --output swimm_cli
-- node swimm_cli --version
-- node swimm_cli verify
+- curl -L https://github.com/swimmio/SwimmReleases/releases/latest/download/packed-swimm-linux-cli --output swimm-cli
+- chmod u+x swimm-cli
+- ./swimm-cli --version
+- ./swimm-cli verify
 
 after_success:
   # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
