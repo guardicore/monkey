@@ -66,5 +66,64 @@ def fake_schema():
                     },
                 ],
             },
-        }
+        },
+        "properties": {
+            "property_type_1": {
+                "title": "Property Type 1",
+                "properties": {
+                    "category_1": {
+                        "title": "Category 1",
+                        "properties": {
+                            "config_option_1": {
+                                "title": "Config Option 1",
+                                "related_attack_techniques": ["T0000"],
+                            },
+                        },
+                    },
+                },
+            },
+            "property_type_2": {
+                "title": "Property Type 2",
+                "properties": {
+                    "category_1": {
+                        "title": "Category 1",
+                        "properties": {
+                            "config_option_1": {
+                                "title": "Config Option 1",
+                                "related_attack_techniques": ["T0000"],
+                            },
+                        },
+                    },
+                    "category_2": {
+                        "title": "Category 2",
+                        "properties": {
+                            "config_option_1": {
+                                "title": "Config Option 1",
+                                "properties": {
+                                    "config_option_1.1": {
+                                        "title": "Config Option 1.1",
+                                        "related_attack_techniques": ["T0000"],
+                                    },
+                                },
+                            },
+                            "config_option_2": {
+                                "title": "Config Option 2",
+                                "properties": {
+                                    "config_option_2.1": {
+                                        "title": "Config Option 2.1",
+                                        "properties": {
+                                            "config_option_2.1.1": {
+                                                "title": "Config Option 2.1.1",
+                                                "related_attack_techniques": ["T0000"],
+                                            }
+                                        },
+                                        "related_attack_techniques": ["T0000"],
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
     }

@@ -8,28 +8,17 @@ from monkey_island.cc.services.attack.technique_reports.__init__ import (
     disabled_msg,
 )
 
-FAKE_CONFIG_SCHEMA_PER_ATTACK_TECHNIQUE = {
-    "T0000": {
-        "Definition Type 1": ["Config Option 1", "Config Option 2"],
-        "Definition Type 2": ["Config Option 5", "Config Option 6"],
-    },
-    "T0001": {
-        "Definition Type 1": ["Config Option 1"],
-        "Definition Type 2": ["Config Option 5"],
-    },
-}
-
 
 @pytest.fixture(scope="function", autouse=True)
 def mock_config_schema_per_attack_technique(monkeypatch, fake_schema):
     monkeypatch.setattr(
-        ("monkey_island.cc.services.attack.technique_reports." "__init__.SCHEMA"),
+        ("monkey_island.cc.services.attack.technique_reports.__init__.SCHEMA"),
         fake_schema,
     )
 
 
 class FakeAttackTechnique_TwoRelevantSystems(AttackTechnique):
-    tech_id = "T0001"
+    tech_id = "T0000"
     relevant_systems = ["System 1", "System 2"]
     unscanned_msg = "UNSCANNED"
     scanned_msg = "SCANNED"
@@ -42,9 +31,15 @@ class FakeAttackTechnique_TwoRelevantSystems(AttackTechnique):
 class ExpectedMsgs_TwoRelevantSystems(Enum):
     UNSCANNED: str = (
         "UNSCANNED due to one of the following reasons:\n"
-        "- The following configuration options were disabled:<br/>"
-        "- Definition Type 1 — Config Option 1<br/>"
-        "- Definition Type 2 — Config Option 5<br/>"
+        "- The following configuration options were disabled or empty:<br/>"
+        "- Definition Type 1 — Config Option 1, Config Option 2<br/>"
+        "- Definition Type 2 — Config Option 5, Config Option 6<br/>"
+        "- Property Type 1 -> Category 1 — Config Option 1<br/>"
+        "- Property Type 2 -> Category 1 — Config Option 1<br/>"
+        "- Property Type 2 -> Category 2 -> Config Option 1 — Config Option 1.1<br/>"
+        "- Property Type 2 -> Category 2 -> Config Option 2 — Config Option 2.1<br/>"
+        "- Property Type 2 -> Category 2 -> Config Option 2 -> Config Option 2.1 — Config Option "
+        "2.1.1<br/>"
     )
     SCANNED: str = "SCANNED"
     USED: str = "USED"
@@ -65,7 +60,7 @@ class ExpectedMsgs_OneRelevantSystem(Enum):
     UNSCANNED: str = (
         "UNSCANNED due to one of the following reasons:\n"
         "- Monkey did not run on any System 1 systems.\n"
-        "- The following configuration options were disabled:<br/>"
+        "- The following configuration options were disabled or empty:<br/>"
         "- Definition Type 1 — Config Option 1<br/>"
         "- Definition Type 2 — Config Option 5<br/>"
     )
