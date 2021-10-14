@@ -61,7 +61,7 @@ def run_monkey_island():
 
 def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str]:
     try:
-        return config_setup.setup_data_dir(island_args)
+        return config_setup.setup_server_config(island_args)
     except OSError as ex:
         print(f"Error opening server config file: {ex}")
         exit(1)
