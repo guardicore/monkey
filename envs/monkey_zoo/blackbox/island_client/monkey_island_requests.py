@@ -75,7 +75,7 @@ class MonkeyIslandRequests(object):
     def try_set_island_to_credentials(self):
         resp = requests.post(  # noqa: DUO123
             self.addr + "api/registration",
-            json={"user": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
+            json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
         if resp.status_code == 400:
