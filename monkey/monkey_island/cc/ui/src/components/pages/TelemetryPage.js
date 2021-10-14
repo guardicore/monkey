@@ -1,57 +1,23 @@
 import React from 'react';
 import {Button, Col} from 'react-bootstrap';
-import JSONTree from 'react-json-tree';
-import MUIDataTable from 'mui-datatables';
-import AuthComponent from '../AuthComponent';
+import AuthService from '../../services/AuthService';
 import download from 'downloadjs';
+import TelemetryLogTable from '../ui-components/TelemetryLogTable'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import '../../styles/pages/TelemetryPage.scss';
 import {faDownload} from '@fortawesome/free-solid-svg-icons/faDownload';
 
-const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true}/>;
-const renderTime = (val) => val.split('.')[0];
 
-const columns = [
-  {label: 'Time', name: 'timestamp'},
-  {label: 'Monkey', name: 'monkey'},
-  {label: 'Type', name: 'telem_category'},
-  {label: 'Details', name: 'data', options: { setCellProps: () => ({ style: { width: '40%' }})}}
-];
-
-const table_options = {
-    filterType: 'textField',
-    sortOrder: {
-        name: 'timestamp',
-        direction: 'desc'
-      },
-    print: false,
-    download: false,
-    rowHover: false,
-    rowsPerPage: 20,
-    rowsPerPageOptions: [20, 50, 100],
-    selectableRows: 'none'
-  };
-
-class TelemetryPageComponent extends AuthComponent {
+class TelemetryPageComponent extends React.Component {
   constructor(props) {
     super(props);
+    this.auth = new AuthService();
+    this.authFetch = this.auth.authFetch;
     this.state = {
-      data: [],
-      isFetching: false
+      data: []
     };
   }
-
-  componentDidMount = () => {
-    this.authFetch('/api/telemetry')
-      .then(res => res.json())
-      .then(res => {this.setState({data: res.objects})
-      })
-      .catch(e => {
-        console.log(e);
-        this.setState({...this.state});
-      });
-  };
 
   downloadIslandLog = () => {
     this.authFetch('/api/log/island/download')
@@ -70,21 +36,7 @@ class TelemetryPageComponent extends AuthComponent {
            className={'main'}>
         <div>
           <h1 className="page-title">Logs</h1>
-          <div className="data-table-container">
-            <MUIDataTable
-              columns={columns}
-              data={this.state.data.map(item => {
-                return [
-                  renderTime(item.timestamp),
-                  item.monkey,
-                  item.telem_category,
-                  renderJson(item.data)
-                  ]
-                })
-                }
-                options={table_options}
-            />
-          </div>
+          <TelemetryLogTable/>
         </div>
         <div>
           <h1 className="page-title"> Monkey Island Logs </h1>
