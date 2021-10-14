@@ -1,5 +1,5 @@
 from monkey_island.cc.services.config_schema.config_schema_per_attack_technique import (
-    get_config_schema_per_attack_technique,
+    ConfigSchemaPerAttackTechnique,
 )
 
 REVERSE_FAKE_SCHEMA = {
@@ -19,4 +19,7 @@ REVERSE_FAKE_SCHEMA = {
 
 
 def test_get_config_schema_per_attack_technique(monkeypatch, fake_schema):
-    assert get_config_schema_per_attack_technique(fake_schema) == REVERSE_FAKE_SCHEMA
+    assert (
+        ConfigSchemaPerAttackTechnique().get_config_schema_per_attack_technique(fake_schema)
+        == REVERSE_FAKE_SCHEMA
+    )
