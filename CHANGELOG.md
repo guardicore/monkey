@@ -16,6 +16,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   as backdoor user". #1410
 - Resetting login credentials also cleans the contents of the database. #1495
 - ATT&CK report messages (more accurate now). #1483
+- T1086 (PowerShell) now also reports if ps1 scripts were run by PBAs. #1513
 
 ### Removed
 - Internet access check on agent start. #1402
