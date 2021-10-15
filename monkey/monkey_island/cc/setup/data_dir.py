@@ -1,5 +1,6 @@
 import logging
 import shutil
+from pathlib import Path
 
 from common.version import get_version
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
@@ -12,15 +13,15 @@ from monkey_island.cc.setup.version_file_setup import (
 logger = logging.getLogger(__name__)
 
 
-def setup_data_dir(data_dir_path: str):
+def setup_data_dir(data_dir_path: Path):
     logger.info("Setting up data directory.")
     _reset_data_dir(data_dir_path)
-    create_secure_directory(data_dir_path)
+    create_secure_directory(str(data_dir_path))
     write_version(data_dir_path)
     logger.info("Data directory set up.")
 
 
-def _reset_data_dir(data_dir_path: str):
+def _reset_data_dir(data_dir_path: Path):
     try:
         data_dir_version = get_version_from_dir(data_dir_path)
     except FileNotFoundError:

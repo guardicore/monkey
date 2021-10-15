@@ -22,7 +22,7 @@ def _setup_config_by_cmd_arg(server_config_path) -> Tuple[IslandConfigOptions, s
     # TODO refactor like in https://github.com/guardicore/monkey/pull/1528 because
     # there's absolutely no reason to be exposed to IslandConfigOptions extraction logic
     # if you want to modify data directory related code.
-    setup_data_dir(str(config.data_dir))
+    setup_data_dir(config.data_dir)
 
     return config, server_config_path
 
@@ -34,7 +34,7 @@ def _setup_default_config() -> Tuple[IslandConfigOptions, str]:
     # TODO refactor like in https://github.com/guardicore/monkey/pull/1528 because
     # there's absolutely no reason to be exposed to IslandConfigOptions extraction logic
     # if you want to modify data directory related code.
-    setup_data_dir(str(default_data_dir))
+    setup_data_dir(default_data_dir)
 
     server_config_path = server_config_handler.create_default_server_config_file(default_data_dir)
     config = server_config_handler.load_server_config_from_file(server_config_path)

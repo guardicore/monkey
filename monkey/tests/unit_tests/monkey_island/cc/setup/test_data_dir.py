@@ -29,7 +29,7 @@ def mocked_version_file_path(mocked_data_dir_path: Path) -> Path:
 
 def test_setup_data_dir(mocked_data_dir_path, mocked_version_file_path):
     data_dir_path = mocked_data_dir_path
-    setup_data_dir(str(data_dir_path))
+    setup_data_dir(data_dir_path)
     assert data_dir_path.is_dir()
 
     version_file_path = mocked_version_file_path
@@ -43,7 +43,7 @@ def test_old_version_present(mocked_data_dir_path, mocked_version_file_path):
     bogus_file_path.touch()
 
     # mock version
-    setup_data_dir(str(mocked_data_dir_path))
+    setup_data_dir(mocked_data_dir_path)
 
     assert mocked_version_file_path.read_text() == current_version
     assert not bogus_file_path.is_file()
@@ -55,6 +55,6 @@ def test_data_dir_setup_not_needed(mocked_data_dir_path, mocked_version_file_pat
     bogus_file_path = mocked_data_dir_path.joinpath("test.txt")
     bogus_file_path.touch()
 
-    setup_data_dir(str(mocked_data_dir_path))
+    setup_data_dir(mocked_data_dir_path)
     assert mocked_version_file_path.read_text() == current_version
     assert bogus_file_path.is_file()
