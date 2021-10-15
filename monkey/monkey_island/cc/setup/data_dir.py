@@ -11,6 +11,7 @@ from monkey_island.cc.setup.version_file_setup import (
 )
 
 logger = logging.getLogger(__name__)
+_data_dir_backup_suffix = ".old"
 
 
 def setup_data_dir(data_dir_path: Path):
@@ -26,20 +27,28 @@ def _reset_data_dir(data_dir_path: Path):
         data_dir_version = get_version_from_dir(data_dir_path)
     except FileNotFoundError:
         logger.info("Version file not found on the data directory.")
-        _remove_data_dir(data_dir_path)
+        _backup_old_data_dir(data_dir_path)
         return
 
     island_version = get_version()
     logger.info(f"Version found in the data directory: {data_dir_version}")
     logger.info(f"Currently running version: {island_version}")
     if is_version_greater(island_version, data_dir_version):
-        _remove_data_dir(data_dir_path)
+        _backup_old_data_dir(data_dir_path)
 
 
-def _remove_data_dir(data_dir_path: str):
-    logger.info("Attempting to remove data directory.")
+def _backup_old_data_dir(data_dir_path: Path):
+    logger.info("Attempting to backup old data directory.")
     try:
-        shutil.rmtree(data_dir_path)
-        logger.info("Data directory removed.")
+        backup_path = _get_backup_path(data_dir_path)
+        if backup_path.is_dir():
+            shutil.rmtree(backup_path)
+        Path(data_dir_path).replace(backup_path)
+        logger.info(f"Old data directory moved to {backup_path}.")
     except FileNotFoundError:
-        logger.info("Data directory not found, nothing to remove.")
+        logger.info("Old data directory not found, nothing to backup.")
+
+
+def _get_backup_path(data_dir_path: Path) -> Path:
+    backup_dir_name = data_dir_path.name + _data_dir_backup_suffix
+    return Path(data_dir_path.parent, backup_dir_name)
