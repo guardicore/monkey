@@ -16,37 +16,39 @@ _data_dir_backup_suffix = ".old"
 
 def setup_data_dir(data_dir_path: Path):
     logger.info(f"Setting up data directory in {data_dir_path}.")
-    _reset_data_dir(data_dir_path)
+    _backup_current_data_dir(data_dir_path)
     create_secure_directory(str(data_dir_path))
     write_version(data_dir_path)
     logger.info("Data directory set up.")
 
 
-def _reset_data_dir(data_dir_path: Path):
+def _backup_current_data_dir(data_dir_path: Path):
+    if _is_backup_needed(data_dir_path):
+        logger.debug("Data directory backup needed.")
+        try:
+            return _rename_data_dir(data_dir_path)
+        except FileNotFoundError:
+            logger.debug("No data directory found to backup, this is likely a first installation.")
+
+
+def _is_backup_needed(data_dir_path: Path) -> bool:
     try:
         data_dir_version = get_version_from_dir(data_dir_path)
     except FileNotFoundError:
         logger.debug("Version file not found.")
-        _backup_old_data_dir(data_dir_path)
-        return
+        return True
 
     island_version = get_version()
-    logger.debug(f"Version found in the data directory: {data_dir_version}")
-    logger.debug(f"Currently running version: {island_version}")
-    if is_version_greater(island_version, data_dir_version):
-        _backup_old_data_dir(data_dir_path)
+
+    return is_version_greater(island_version, data_dir_version)
 
 
-def _backup_old_data_dir(data_dir_path: Path):
-    logger.info("Attempting to backup old data directory.")
-    try:
-        backup_path = _get_backup_path(data_dir_path)
-        if backup_path.is_dir():
-            shutil.rmtree(backup_path)
-        Path(data_dir_path).replace(backup_path)
-        logger.info(f"Old data directory moved to {backup_path}.")
-    except FileNotFoundError:
-        logger.info("No data directory found to backup, this is likelly a first installation.")
+def _rename_data_dir(data_dir_path: Path):
+    backup_path = _get_backup_path(data_dir_path)
+    if backup_path.is_dir():
+        shutil.rmtree(backup_path)
+    Path(data_dir_path).replace(backup_path)
+    logger.info(f"Old data directory renamed to {backup_path}.")
 
 
 def _get_backup_path(data_dir_path: Path) -> Path:
