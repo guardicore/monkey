@@ -39,12 +39,18 @@ build_package() {
   local dist_dir=$2
   pushd ./docker
 
+  if [ -n "$1" ]; then
+    version="v$(git rev-parse --short HEAD)"
+  else
+    version="v$version"
+  fi
+
   docker_image_name="guardicore/monkey-island:$version"
-  tar_name="$DOCKER_DIR/InfectionMonkey-docker-v$version.tar"
+  tar_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tar"
 
   build_docker_image_tar "$docker_image_name" "$tar_name"
 
-  tgz_name="$DOCKER_DIR/InfectionMonkey-docker-v$version.tgz"
+  tgz_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tgz"
   build_docker_image_tgz "$tar_name" "$tgz_name"
 
   move_package_to_dist_dir $tgz_name $dist_dir
