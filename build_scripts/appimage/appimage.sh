@@ -119,7 +119,12 @@ build_package() {
       --deploy-deps-only="$MONGO_PATH/bin/mongod"\
       --output appimage
 
-  dst_name="InfectionMonkey-v$version.AppImage"
+  # Rename to
+  if $IS_RELEASE_BUILD; then
+    dst_name="InfectionMonkey-v$version.AppImage"
+  else
+    dst_name=""
+  fi
   move_package_to_dist_dir $dist_dir $dst_name
 
   popd
@@ -127,14 +132,14 @@ build_package() {
 
 set_version() {
   # The linuxdeploy and appimage-builder tools will use the commit hash of the
-  # repo to name the AppImage, which is preferable to using "dev". If the
-  # version was specified in a command-line argument (i.e. not "dev"), then
+  # repo to name the AppImage. If the
+  # version was specified in a command-line argument, then
   # setting the VERSION environment variable will change this behavior.
-  if [ $1 != "dev" ]; then
-         export VERSION=$1
+  if [ -n "$1" ]; then
+    export VERSION="$1"
   fi
 }
 
 move_package_to_dist_dir() {
-    mv Infection_Monkey*.AppImage "$1/$2"
+    mv InfectionMonkey*.AppImage "$1/$2"
 }
