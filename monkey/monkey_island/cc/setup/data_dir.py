@@ -6,7 +6,7 @@ from common.version import get_version
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 from monkey_island.cc.setup.version_file_setup import (
     get_version_from_dir,
-    is_version_greater,
+    is_version_different,
     write_version,
 )
 
@@ -40,7 +40,7 @@ def _is_backup_needed(data_dir_path: Path) -> bool:
 
     island_version = get_version()
 
-    return is_version_greater(island_version, data_dir_version)
+    return is_version_different(island_version, data_dir_version)
 
 
 def _rename_data_dir(data_dir_path: Path):

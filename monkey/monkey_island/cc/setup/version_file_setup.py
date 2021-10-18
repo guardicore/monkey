@@ -17,5 +17,5 @@ def write_version(dir_path: Path):
     version_file_path.write_text(get_version())
 
 
-def is_version_greater(version1: str, version2: str) -> bool:
-    return version.parse(version1) > version.parse(version2)
+def is_version_different(version1: str, version2: str) -> bool:
+    return not version.parse(version1) == version.parse(version2)
