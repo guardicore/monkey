@@ -15,7 +15,7 @@ _data_dir_backup_suffix = ".old"
 
 
 def setup_data_dir(data_dir_path: Path):
-    logger.info("Setting up data directory.")
+    logger.info(f"Setting up data directory in {data_dir_path}.")
     _reset_data_dir(data_dir_path)
     create_secure_directory(str(data_dir_path))
     write_version(data_dir_path)
@@ -26,13 +26,13 @@ def _reset_data_dir(data_dir_path: Path):
     try:
         data_dir_version = get_version_from_dir(data_dir_path)
     except FileNotFoundError:
-        logger.info("Version file not found on the data directory.")
+        logger.debug("Version file not found.")
         _backup_old_data_dir(data_dir_path)
         return
 
     island_version = get_version()
-    logger.info(f"Version found in the data directory: {data_dir_version}")
-    logger.info(f"Currently running version: {island_version}")
+    logger.debug(f"Version found in the data directory: {data_dir_version}")
+    logger.debug(f"Currently running version: {island_version}")
     if is_version_greater(island_version, data_dir_version):
         _backup_old_data_dir(data_dir_path)
 
@@ -46,7 +46,7 @@ def _backup_old_data_dir(data_dir_path: Path):
         Path(data_dir_path).replace(backup_path)
         logger.info(f"Old data directory moved to {backup_path}.")
     except FileNotFoundError:
-        logger.info("Old data directory not found, nothing to backup.")
+        logger.info("No data directory found to backup, this is likelly a first installation.")
 
 
 def _get_backup_path(data_dir_path: Path) -> Path:
