@@ -44,7 +44,6 @@ echo_help() {
   echo "                               (Default: $DEFAULT_REPO_MONKEY_HOME)"
   echo ""
   echo "--version                      A version number for the package."
-  echo "                               (Default: dev)"
   echo ""
   echo "--deployment                   A deployment type for the package."
   echo "                               (Default: develop)"
@@ -110,7 +109,7 @@ agent_binary_dir=""
 as_root=false
 branch="develop"
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
-monkey_version="dev"
+monkey_version=""
 package=""
 deployment_type=""
 
