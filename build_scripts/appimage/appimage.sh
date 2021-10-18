@@ -119,7 +119,8 @@ build_package() {
       --deploy-deps-only="$MONGO_PATH/bin/mongod"\
       --output appimage
 
-  move_package_to_dist_dir $dist_dir
+  dst_name="InfectionMonkey-v$version.AppImage"
+  move_package_to_dist_dir $dist_dir $dst_name
 
   popd
 }
@@ -135,5 +136,5 @@ set_version() {
 }
 
 move_package_to_dist_dir() {
-    mv Infection_Monkey*.AppImage "$1/"
+    mv Infection_Monkey*.AppImage "$1/$2"
 }
