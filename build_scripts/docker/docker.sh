@@ -15,7 +15,7 @@ setup_build_dir() {
 
   copy_entrypoint_to_build_dir "$build_dir"
 
-  build_commit=$(git rev-parse --git-dir "$monkey_repo" --short HEAD)
+  build_commit=$(git -C "$monkey_repo" rev-parse --short HEAD)
 
   copy_monkey_island_to_build_dir "$monkey_repo/monkey" "$build_dir"
   copy_server_config_to_build_dir "$build_dir"
@@ -44,7 +44,7 @@ build_package() {
   if [ -n "$1" ]; then
     version="v$version"
   else
-    version="v$build_commit"
+    version="$build_commit"
   fi
 
   docker_image_name="guardicore/monkey-island:$version"
