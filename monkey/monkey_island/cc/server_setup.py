@@ -5,7 +5,7 @@ import shutil
 import sys
 from pathlib import Path
 from threading import Thread
-from typing import Tuple
+from typing import Optional, Tuple
 
 import gevent.hub
 from gevent.pywsgi import WSGIServer
@@ -71,23 +71,29 @@ def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, st
         print(f"Error loading server config: {ex}")
         exit(1)
     except OldDataError as ex:
-        user_response = input(
-            f"\nExisting data directory ({ex.old_data_dir}) needs to be deleted."
-            " All data from previous runs will be lost. Proceed to delete? (y/n) "
+        return _handle_existing_data_directory(ex, island_args)
+
+
+def _handle_existing_data_directory(
+    exception: Exception, island_args: IslandCmdArgs
+) -> Optional[Tuple[IslandConfigOptions, str]]:
+    user_response = input(
+        f"\nExisting data directory ({exception.old_data_dir}) needs to be deleted."
+        " All data from previous runs will be lost. Proceed to delete? (y/n) "
+    )
+    if user_response == "y":
+        shutil.rmtree(exception.old_data_dir)
+        print("\nOld data directory was deleted. Trying to set up again...\n")
+        return _setup_data_dir(island_args)
+    elif user_response == "n":
+        print(
+            "\nExiting. Please backup and delete the existing data directory. Then, try again."
+            "\nTo learn how to restore and use a backup, please refer to the documentation.\n"
         )
-        if user_response == "y":
-            shutil.rmtree(ex.old_data_dir)
-            print("\nOld data directory was deleted. Trying to set up again...\n")
-            return _setup_data_dir(island_args)
-        elif user_response == "n":
-            print(
-                "\nExiting. Please backup and delete the existing data directory. Then, try again."
-                "\nTo learn how to restore and use a backup, please refer to the documentation.\n"
-            )
-            exit(1)
-        else:
-            print("\nExiting. Unrecognized response, please try again.\n")
-            exit(1)
+        exit(1)
+    else:
+        print("\nExiting. Unrecognized response, please try again.\n")
+        exit(1)
 
 
 def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
