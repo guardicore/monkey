@@ -41,16 +41,3 @@ def _data_dir_version_mismatch_exists(data_dir_path: Path) -> bool:
     island_version = get_version()
 
     return island_version != data_dir_version
-
-
-# def _rename_data_dir(data_dir_path: Path):
-#     backup_path = _get_backup_path(data_dir_path)
-#     if backup_path.is_dir():
-#         shutil.rmtree(backup_path)
-#     Path(data_dir_path).replace(backup_path)
-#     logger.info(f"Old data directory renamed to {backup_path}.")
-
-
-# def _get_backup_path(data_dir_path: Path) -> Path:
-#     backup_dir_name = data_dir_path.name + _data_dir_backup_suffix
-#     return Path(data_dir_path.parent, backup_dir_name)
