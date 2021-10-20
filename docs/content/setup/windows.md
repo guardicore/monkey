@@ -53,6 +53,9 @@ private certificate authority.
     ```
 1. Run the Monkey Island by clicking on the desktop shortcut.
 
+1. Access the Monkey Island web UI by pointing your browser at
+   `https://localhost:5000`.
+
 ## Troubleshooting
 
 ### Support
