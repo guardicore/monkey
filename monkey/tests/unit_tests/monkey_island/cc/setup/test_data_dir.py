@@ -18,13 +18,13 @@ def mock_version(monkeypatch):
 
 
 @pytest.fixture
-def temp_data_dir_path(tmpdir) -> Path:
-    return Path(tmpdir, "data_dir")
+def temp_data_dir_path(tmp_path) -> Path:
+    return tmp_path / "data_dir"
 
 
 @pytest.fixture
 def temp_version_file_path(temp_data_dir_path) -> Path:
-    return temp_data_dir_path.joinpath(_version_filename)
+    return temp_data_dir_path / _version_filename
 
 
 def test_setup_data_dir(temp_data_dir_path, temp_version_file_path):
@@ -41,7 +41,7 @@ def test_old_version_removed(monkeypatch, temp_data_dir_path, temp_version_file_
 
     temp_data_dir_path.mkdir()
     temp_version_file_path.write_text(old_version)
-    bogus_file_path = temp_data_dir_path.joinpath("test.txt")
+    bogus_file_path = temp_data_dir_path / "test.txt"
     bogus_file_path.touch()
 
     setup_data_dir(temp_data_dir_path)
@@ -58,7 +58,7 @@ def test_old_version_not_removed(
 
     temp_data_dir_path.mkdir()
     temp_version_file_path.write_text(old_version)
-    bogus_file_path = temp_data_dir_path.joinpath("test.txt")
+    bogus_file_path = temp_data_dir_path / "test.txt"
     bogus_file_path.touch()
 
     with pytest.raises(IncompatibleDataDirectory):
@@ -71,7 +71,7 @@ def test_old_version_not_removed(
 def test_data_dir_setup_not_needed(temp_data_dir_path, temp_version_file_path):
     temp_data_dir_path.mkdir()
     temp_version_file_path.write_text(current_version)
-    bogus_file_path = temp_data_dir_path.joinpath("test.txt")
+    bogus_file_path = temp_data_dir_path / "test.txt"
     bogus_file_path.touch()
 
     setup_data_dir(temp_data_dir_path)
