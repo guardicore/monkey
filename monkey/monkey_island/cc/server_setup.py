@@ -32,6 +32,7 @@ from monkey_island.cc.services.initialize import initialize_services  # noqa: E4
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
+from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
@@ -61,12 +62,14 @@ def run_monkey_island():
 
 def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str]:
     try:
-        return config_setup.setup_data_dir(island_args)
+        return config_setup.setup_server_config(island_args)
     except OSError as ex:
         print(f"Error opening server config file: {ex}")
         exit(1)
     except json.JSONDecodeError as ex:
         print(f"Error loading server config: {ex}")
+        exit(1)
+    except IncompatibleDataDirectory:
         exit(1)
 
 

@@ -56,6 +56,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - ATT&CK report bug that said that the technique "`.bash_profile` and `.bashrc`" was not attempted
   when it actually was attempted but failed. #1511
 - Bug that periodically cleared the telemetry table's filter. #1392
+- Crashes, stack traces, and other malfunctions when data from older versions of Infection Monkey is
+  present in the data directory. #1114
 
 ### Security
 - Generate a random password when creating a new user for CommunicateAsNewUser
