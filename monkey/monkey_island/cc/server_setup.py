@@ -1,11 +1,10 @@
 import atexit
 import json
 import logging
-import shutil
 import sys
 from pathlib import Path
 from threading import Thread
-from typing import Optional, Tuple
+from typing import Tuple
 
 import gevent.hub
 from gevent.pywsgi import WSGIServer
@@ -33,7 +32,7 @@ from monkey_island.cc.services.initialize import initialize_services  # noqa: E4
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
-from monkey_island.cc.setup.data_dir import OldDataError  # noqa: E402
+from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
@@ -70,29 +69,7 @@ def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, st
     except json.JSONDecodeError as ex:
         print(f"Error loading server config: {ex}")
         exit(1)
-    except OldDataError as ex:
-        return _handle_existing_data_directory(ex, island_args)
-
-
-def _handle_existing_data_directory(
-    exception: Exception, island_args: IslandCmdArgs
-) -> Optional[Tuple[IslandConfigOptions, str]]:
-    user_response = input(
-        f"\nExisting data directory ({exception.old_data_dir}) needs to be deleted."
-        " All data from previous runs will be lost. Proceed to delete? (y/n) "
-    )
-    if user_response == "y":
-        shutil.rmtree(exception.old_data_dir)
-        print("\nOld data directory was deleted. Trying to set up again...\n")
-        return _setup_data_dir(island_args)
-    elif user_response == "n":
-        print(
-            "\nExiting. Please backup and delete the existing data directory. Then, try again."
-            "\nTo learn how to restore and use a backup, please refer to the documentation.\n"
-        )
-        exit(1)
-    else:
-        print("\nExiting. Unrecognized response, please try again.\n")
+    except IncompatibleDataDirectory:
         exit(1)
 
 
