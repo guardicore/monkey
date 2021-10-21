@@ -35,6 +35,8 @@ setup_build_dir() {
 
   mkdir -p "$BUILD_DIR"
 
+  build_commit=$(git -C "$monkey_repo" rev-parse --short HEAD)
+
   copy_monkey_island_to_build_dir "$monkey_repo/monkey" "$BUILD_DIR"
   copy_server_config_to_build_dir
   modify_deployment "$deployment_type" "$BUILD_DIR"
@@ -123,7 +125,7 @@ build_package() {
   if $IS_RELEASE_BUILD; then
     dst_name="InfectionMonkey-v$version.AppImage"
   else
-    dst_name=""
+    dst_name="InfectionMonkey-$build_commit.AppImage"
   fi
   move_package_to_dist_dir $dist_dir $dst_name
 
