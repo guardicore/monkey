@@ -198,7 +198,8 @@ install_package_specific_build_prereqs "$WORKSPACE"
 
 
 setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type"
-build_package "$monkey_version" "$DIST_DIR"
+commit_id=$(get_commit_id "$monkey_repo")
+build_package "$monkey_version" "$commit_id" "$DIST_DIR"
 
 log_message "Finished building package: $package"
 exit 0
