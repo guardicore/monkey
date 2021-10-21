@@ -104,12 +104,16 @@ remove_python_appdir_artifacts() {
 }
 
 build_package() {
-  local version=$1
   local commit_id=$2
   local dist_dir=$3
 
   log_message "Building AppImage"
-  set_version "$version"
+
+  if [ -n "$1" ]; then
+    local version="v$1"
+  else
+    local version="$commit_id"
+  fi
 
   pushd "$APPIMAGE_DIR"
   ARCH="x86_64" linuxdeploy \
@@ -120,25 +124,10 @@ build_package() {
       --deploy-deps-only="$MONGO_PATH/bin/mongod"\
       --output appimage
 
-  # Rename to
-  if $IS_RELEASE_BUILD; then
-    dst_name="InfectionMonkey-v$version.AppImage"
-  else
-    dst_name="InfectionMonkey-$commit_id.AppImage"
-  fi
+  dst_name="InfectionMonkey-$version.AppImage"
   move_package_to_dist_dir $dist_dir $dst_name
 
   popd
-}
-
-set_version() {
-  # The linuxdeploy and appimage-builder tools will use the commit hash of the
-  # repo to name the AppImage. If the
-  # version was specified in a command-line argument, then
-  # setting the VERSION environment variable will change this behavior.
-  if [ -n "$1" ]; then
-    export VERSION="$1"
-  fi
 }
 
 move_package_to_dist_dir() {
