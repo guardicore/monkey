@@ -31,7 +31,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Insecure access feature in the Monkey Island. #1418
 - The "deployment" field from the server_config.json #1205
 - The "Execution through module load" ATT&CK technique,
-  since it can no longer be exercise with current code #1416
+  since it can no longer be exercise with current code. #1416
+- Browser window popup when Monkey Island starts on Windows. #1432
 
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration
