@@ -20,6 +20,13 @@ After running the installer, the following prompt should appear on the screen:
 1. Follow the steps to complete the installation.
 1. Run the Monkey Island by clicking on the desktop shortcut.
 
+{{% notice info %}}
+If you're prompted to delete your data directory and you're not sure what to
+do, see the [FAQ]({{< ref
+"/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
+>}}) for more information.
+{{% /notice %}}
+
 ### Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In

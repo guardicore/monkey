@@ -36,6 +36,13 @@ installed, but the ones that we've tested are:
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
+{{% notice info %}}
+If you're prompted to delete your data directory and you're not sure what to
+do, see the [FAQ]({{< ref
+"/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
+>}}) for more information.
+{{% /notice %}}
+
 ### Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL
