@@ -142,5 +142,5 @@ set_version() {
 }
 
 move_package_to_dist_dir() {
-    mv InfectionMonkey*.AppImage "$1/$2"
+    mv Infection*Monkey*.AppImage "$1/$2"
 }
