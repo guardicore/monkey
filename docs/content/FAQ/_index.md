@@ -8,6 +8,8 @@ pre: "<i class='fas fa-question'></i> "
 Below are some of the most common questions we receive about the Infection Monkey. If the answer you're looking for isn't here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
 
 - [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
+- [I updated to a new version of the Infection Monkey and I'm being asked to delete my existing data directory. Why?](#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why)
+- [How can I use an old data directory?](#how-can-i-use-an-old-data-directory)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
 - [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
 - [Reset/enable the Monkey Island password](#resetenable-the-monkey-island-password)
@@ -34,6 +36,24 @@ Below are some of the most common questions we receive about the Infection Monke
 For the latest **stable** release, visit [our downloads page](https://www.guardicore.com/infectionmonkey/#download). **This is the recommended and supported version**!
 
 If you want to see what has changed between versions, refer to the [releases page on GitHub](https://github.com/guardicore/monkey/releases). For the latest development version, visit the [develop version on GitHub](https://github.com/guardicore/monkey/tree/develop).
+
+## I updated to a new version of the Infection Monkey and I'm being asked to delete my existing data directory. Why?
+
+The [data directory]({{< ref "/reference/data_directory" >}}) contains the
+Infection Monkey's database and other internal
+data. For the new version of Infection Monkey to work flawlessly, a data
+directory with a compatible structure needs to be set up.
+
+If you would like to save the data gathered from the Monkey's previous runs,
+you can make a backup of your [existing data directory]({{< ref
+"/reference/data_directory" >}}) before deleting it.
+
+## How can I use an old data directory?
+
+To use the data stored in a data directory from an older version, reinstall the
+version of the Monkey Island which matches your data directory's version. Then,
+copy the backup of your old data directory to the [appropriate location]({{<
+ref "/reference/data_directory" >}}).
 
 ## How long does a single Infection Monkey agent run? Is there a time limit?
 
