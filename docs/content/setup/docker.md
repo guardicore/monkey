@@ -56,6 +56,7 @@ been signed by a private certificate authority.
 1. Run the Monkey Island server
     ```bash
     sudo docker run \
+        -ti \
         --name monkey-island \
         --network=host \
         guardicore/monkey-island:VERSION
