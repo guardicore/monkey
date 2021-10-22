@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from sys import exit
 from threading import Thread
 from typing import Tuple
 
