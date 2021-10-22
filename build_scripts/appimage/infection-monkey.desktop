@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Infection Monkey
+Name=InfectionMonkey
 Exec=bash
 Comment=An automated breach and attack simulation platform
 Icon=monkey-icon

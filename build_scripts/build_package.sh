@@ -44,7 +44,6 @@ echo_help() {
   echo "                               (Default: $DEFAULT_REPO_MONKEY_HOME)"
   echo ""
   echo "--version                      A version number for the package."
-  echo "                               (Default: dev)"
   echo ""
   echo "--deployment                   A deployment type for the package."
   echo "                               (Default: develop)"
@@ -110,7 +109,7 @@ agent_binary_dir=""
 as_root=false
 branch="develop"
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
-monkey_version="dev"
+monkey_version=""
 package=""
 deployment_type=""
 
@@ -199,7 +198,8 @@ install_package_specific_build_prereqs "$WORKSPACE"
 
 
 setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type"
-build_package "$monkey_version" "$DIST_DIR"
+commit_id=$(get_commit_id "$monkey_repo")
+build_package "$monkey_version" "$commit_id" "$DIST_DIR"
 
 log_message "Finished building package: $package"
 exit 0

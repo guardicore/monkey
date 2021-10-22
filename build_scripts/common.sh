@@ -93,3 +93,8 @@ remove_node_modules() {
   rm -rf "$1/node_modules"
   rm -rf "$1/.npm"
 }
+
+get_commit_id() {
+  local monkey_repo=$1
+  echo $(git -C "$monkey_repo" rev-parse --short HEAD)
+}

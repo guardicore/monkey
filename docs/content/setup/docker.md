@@ -23,13 +23,13 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
 1. Extract the Monkey Island Docker tarball:
 
     ```bash
-    tar -xvzf monkey-island-docker.tar.gz
+    tar -xvzf InfectionMonkey-docker-v1.12.0.tgz
     ```
 
 1. Load the Monkey Island Docker image:
 
     ```bash
-    sudo docker load -i dk.monkeyisland.VERSION.tar
+    sudo docker load -i InfectionMonkey-docker-v1.12.0.tar
     ```
 
 ### 2. Start MongoDB
