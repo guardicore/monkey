@@ -23,6 +23,9 @@ installed, but the ones that we've tested are:
 - Ubuntu Focal 20.04
 - Ubuntu Hirsute 21.04
 
+On Windows, AppImage can be run in WSL.
+
+
 ## Deployment
 
 1. Make the AppImage package executable:
