@@ -77,3 +77,10 @@ def test_data_dir_setup_not_needed(temp_data_dir_path, temp_version_file_path):
     setup_data_dir(temp_data_dir_path)
     assert temp_version_file_path.read_text() == current_version
     assert bogus_file_path.is_file()
+
+
+def test_empty_data_dir(temp_data_dir_path, temp_version_file_path):
+    temp_data_dir_path.mkdir()
+
+    setup_data_dir(temp_data_dir_path)
+    assert temp_version_file_path.read_text() == current_version

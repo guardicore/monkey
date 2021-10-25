@@ -1,4 +1,5 @@
 import logging
+import os
 import shutil
 from pathlib import Path
 
@@ -15,12 +16,20 @@ class IncompatibleDataDirectory(Exception):
 
 def setup_data_dir(data_dir_path: Path) -> None:
     logger.info(f"Setting up data directory at {data_dir_path}.")
-    if data_dir_path.exists() and _data_dir_version_mismatch_exists(data_dir_path):
+    if _is_data_dir_old(data_dir_path):
         logger.info("Version in data directory does not match the Island's version.")
         _handle_old_data_directory(data_dir_path)
     create_secure_directory(str(data_dir_path))
     write_version(data_dir_path)
     logger.info("Data directory set up.")
+
+
+def _is_data_dir_old(data_dir_path: Path) -> bool:
+    dir_exists = data_dir_path.exists()
+    if not dir_exists or not os.listdir(data_dir_path):
+        return False
+
+    return _data_dir_version_mismatch_exists(data_dir_path)
 
 
 def _handle_old_data_directory(data_dir_path: Path) -> None:
