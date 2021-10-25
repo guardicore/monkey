@@ -135,9 +135,10 @@ Currently, there's no "upgrade-in-place" option when a new version is released.
 To get an updated version, download it, stop the current container and run the
 installation commands again with the new file.
 
-When running an updated version using a volume make sure that you have empty
-volume for the Island. Also make sure that you don't have an old mongodb
-volume.
+If you've configured Monkey Island to use a docker volume to store runtime data,
+make sure that it is empty before upgrading the Infection Monkey. Also make sure
+that you use a clean volume for MongoDB, as database schemas may not be compatible
+between different versions of the Infection Monkey.
 
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
