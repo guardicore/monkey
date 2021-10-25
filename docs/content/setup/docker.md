@@ -63,16 +63,16 @@ been signed by a private certificate authority.
 
 ### 3b. Start Monkey Island with user-provided certificate
 
-1. Create a directory named `monkey_island_data`. This will serve as the
-   location where Infection Monkey stores its configuration and runtime
-   artifacts.
+1. Create a directory named `monkey_island_data`. If you already have it,
+   **make sure it's empty**. This will serve as the location where Infection
+   Monkey stores its configuration and runtime artifacts.
 
     ```bash
     mkdir ./monkey_island_data
     chmod 700 ./monkey_island_data
     ```
 
-1. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
+2. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
 
     ```bash
     sudo docker run \
@@ -84,16 +84,16 @@ been signed by a private certificate authority.
         guardicore/monkey-island:VERSION --setup-only
     ```
 
-1. Move your `.crt` and `.key` files to `./monkey_island_data`.
+3. Move your `.crt` and `.key` files to `./monkey_island_data`.
 
-1. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
+4. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
 
     ```bash
     chmod 600 ./monkey_island_data/<KEY_FILE>
     chmod 600 ./monkey_island_data/<CRT_FILE>
     ```
 
-1.  Edit `./monkey_island_data/server_config.json` to configure Monkey Island
+5. Edit `./monkey_island_data/server_config.json` to configure Monkey Island
     to use your certificate. Your config should look something like this:
 
     ```json {linenos=inline,hl_lines=["11-14"]}
@@ -114,7 +114,7 @@ been signed by a private certificate authority.
     }
     ```
 
-1. Start the Monkey Island server:
+6. Start the Monkey Island server:
 
     ```bash
     sudo docker run \
@@ -134,6 +134,10 @@ After the Monkey Island docker container starts, you can access Monkey Island by
 Currently, there's no "upgrade-in-place" option when a new version is released.
 To get an updated version, download it, stop the current container and run the
 installation commands again with the new file.
+
+When running an updated version using a volume make sure that you have empty
+volume for the Island. Also make sure that you don't have an old mongodb
+volume.
 
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
