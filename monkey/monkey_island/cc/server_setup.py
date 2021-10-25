@@ -70,7 +70,8 @@ def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, st
     except json.JSONDecodeError as ex:
         print(f"Error loading server config: {ex}")
         exit(1)
-    except IncompatibleDataDirectory:
+    except IncompatibleDataDirectory as ex:
+        print(f"Incompatible data directory: {ex}")
         exit(1)
 
 
