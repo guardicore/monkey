@@ -72,7 +72,7 @@ been signed by a private certificate authority.
     chmod 700 ./monkey_island_data
     ```
 
-2. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
+1. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
 
     ```bash
     sudo docker run \
@@ -84,16 +84,16 @@ been signed by a private certificate authority.
         guardicore/monkey-island:VERSION --setup-only
     ```
 
-3. Move your `.crt` and `.key` files to `./monkey_island_data`.
+1. Move your `.crt` and `.key` files to `./monkey_island_data`.
 
-4. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
+1. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
 
     ```bash
     chmod 600 ./monkey_island_data/<KEY_FILE>
     chmod 600 ./monkey_island_data/<CRT_FILE>
     ```
 
-5. Edit `./monkey_island_data/server_config.json` to configure Monkey Island
+1.  Edit `./monkey_island_data/server_config.json` to configure Monkey Island
     to use your certificate. Your config should look something like this:
 
     ```json {linenos=inline,hl_lines=["11-14"]}
@@ -114,7 +114,7 @@ been signed by a private certificate authority.
     }
     ```
 
-6. Start the Monkey Island server:
+1. Start the Monkey Island server:
 
     ```bash
     sudo docker run \
