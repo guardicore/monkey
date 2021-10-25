@@ -5,6 +5,7 @@ from pathlib import Path
 
 from common.version import get_version
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
+from monkey_island.cc.setup.env_utils import is_running_on_docker
 from monkey_island.cc.setup.version_file_setup import get_version_from_dir, write_version
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,17 @@ def setup_data_dir(data_dir_path: Path) -> None:
 
 def _is_data_dir_old(data_dir_path: Path) -> bool:
     dir_exists = data_dir_path.exists()
+
+    if is_running_on_docker():
+        if _data_dir_version_mismatch_exists(data_dir_path):
+            error_message = "Found an old volume. "
+            "You must create an empty volume for each docker container "
+            "as specified in setup documentation: "
+            "https://www.guardicore.com/infectionmonkey/docs/setup/docker/"
+            raise IncompatibleDataDirectory(error_message)
+        else:
+            return False
+
     if not dir_exists or not os.listdir(data_dir_path):
         return False
 
