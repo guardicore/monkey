@@ -41,7 +41,7 @@ class CommunicateAsBackdoorUser(PBA):
     def run(self):
         username = CommunicateAsBackdoorUser.get_random_new_user_name()
         try:
-            password = get_random_password()
+            password = get_random_password(14)
             with create_auto_new_user(username, password) as new_user:
                 http_request_commandline = (
                     CommunicateAsBackdoorUser.get_commandline_for_http_request(
