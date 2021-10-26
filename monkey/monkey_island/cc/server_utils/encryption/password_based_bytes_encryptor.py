@@ -47,7 +47,7 @@ class PasswordBasedBytesEncryptor(IEncryptor):
             )
         except ValueError as ex:
             if str(ex).startswith("Wrong password"):
-                logger.error("Wrong password provided for decryption.")
+                logger.debug("Wrong password provided for decryption.")
                 raise InvalidCredentialsError
             else:
                 logger.error("The provided ciphertext was corrupt.")
