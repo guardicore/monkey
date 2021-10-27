@@ -37,6 +37,19 @@ $ sha256sum monkey-linux-64
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
+| monkey-windows-64.exe                                | Windows Agent     | 1.12.0  | `02e5e051a96e2ca61ae8e661b3a5828ee53a0fc00aca6502d5c73a46754f0d07` |
+| monkey-windows-32.exe                                | Windows Agent     | 1.12.0  | `3c10f610f47c4fd227cf85f6bf800d66ed31fe37dc2e2ed408860483685ba504` |
+| monkey-linux-64                                      | Linux Agent       | 1.12.0  | `1ad52eabd704a9b0fbf642fa552629f30d3c5c27e431a687bd4cba4e0104d3f7` |
+| monkey-linux-32                                      | Linux Agent       | 1.12.0  | `d941943046db48cf0eb7f11e144a79749848ae6b50014833c5390936e829f6c3` |
+| InfectionMonkey-v1.12.0.AppImage                     | Linux Package     | 1.12.0  | `1325f2aa1d0c27aec2e2f9864ed53c53c524bd208313f87ea6606f59c90ff310` |
+| InfectionMonkey-docker-v1.12.0.tgz                   | Docker            | 1.12.0  | `dcaf669411d55ea6883920597af4a35f3735a286801e08b6ef047cc91ff32769` |
+| InfectionMonkey-v1.12.0.exe                          | Windows Installer | 1.12.0  | `4d6e0373be3615a4b97721a07d2a854f6316d1ce8c4ff6d6495aac3a8f2c6a69` |
+
+
+## Older checksums
+
+| Filename                                             | Type              | Version | SHA256                                                             |
+|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-windows-64.exe                                | Windows Agent     | 1.11.0  | `12c55377381a8fc7d8ff731db52302ef2f8bb894d8712769e5a91a140ba22b0a` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.11.0  | `e006b26663f59b92bad8d49b034cd8101dd481f881e3c4839a9c1e64fd99e849` |
 | monkey-linux-64                                      | Linux Agent       | 1.11.0  | `fb4c979ce6c29bb458be50a44cc6839650826b831da849da69a05dfefdc66462` |
@@ -44,12 +57,6 @@ $ sha256sum monkey-linux-64
 | Infection_Monkey-1.11.0-x86_64.AppImage              | Linux Package     | 1.11.0  | `6312b6bff18c11c7db694f42cf5a41e894786c39e3e093b6b15abcbff80337f2` |
 | infection_monkey_docker_20210811_211212.tgz          | Docker            | 1.11.0  | `40f203387cadd153f97c6a21dfdddacd4d4eeea334a9300d862bfb4ba528e2e6` |
 | Monkey Island v1.11.0_3789.exe                       | Windows Installer | 1.11.0  | `20633c1993ea5f86b57b3a48d6875e8f72881f856f4713d747f07a559da05ccc` |
-
-
-## Older checksums
-
-| Filename                                             | Type              | Version | SHA256                                                             |
-|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-windows-64.exe                                | Windows Agent     | 1.10.0  | `3b499a4cf1a67a33a91c73b05884e4d6749e990e444fa1d2a3281af4db833fa1` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.10.0  | `8e891e90b11b97fbbef27f1408c1fcad486b19c612773f2d6a9edac5d4cdb47f` |
 | monkey-linux-64                                      | Linux Agent       | 1.10.0  | `932f703510b6484c3824fc797f90f99722e38a7f8956cf6fa58fdecb3790ab93` |
