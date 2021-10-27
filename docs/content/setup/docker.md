@@ -33,6 +33,10 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
     ```
 
 ### 2. Start MongoDB
+{{% notice info %}}
+If you are upgrading the Infection Monkey to a new version, be sure to remove
+any MongoDB containers or volumes associated with the previous version.
+{{% /notice %}}
 
 1. Start a MongoDB Docker container:
 
@@ -56,16 +60,22 @@ been signed by a private certificate authority.
 1. Run the Monkey Island server
     ```bash
     sudo docker run \
+        --tty \
+        --interactive \
         --name monkey-island \
         --network=host \
         guardicore/monkey-island:VERSION
     ```
 
 ### 3b. Start Monkey Island with user-provided certificate
+{{% notice info %}}
+If you are upgrading the Infection Monkey to a new version, be sure to remove
+any volumes associated with the previous version.
+{{% /notice %}}
 
-1. Create a directory named `monkey_island_data`. This will serve as the
-   location where Infection Monkey stores its configuration and runtime
-   artifacts.
+1. Create a directory named `monkey_island_data`. If you already have it,
+   **make sure it's empty**. This will serve as the location where Infection
+   Monkey stores its configuration and runtime artifacts.
 
     ```bash
     mkdir ./monkey_island_data
@@ -118,6 +128,8 @@ been signed by a private certificate authority.
 
     ```bash
     sudo docker run \
+        --tty \
+        --interactive \
         --name monkey-island \
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
@@ -132,8 +144,9 @@ After the Monkey Island docker container starts, you can access Monkey Island by
 ## Upgrading
 
 Currently, there's no "upgrade-in-place" option when a new version is released.
-To get an updated version, download it, stop the current container and run the
-installation commands again with the new file.
+To get an updated version, download it, stop and remove the current Monkey
+Island and MongoDB containers and volumes, and run the installation commands
+again with the new file.
 
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.

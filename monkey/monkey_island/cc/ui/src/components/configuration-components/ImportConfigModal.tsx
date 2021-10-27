@@ -37,7 +37,7 @@ const ConfigImportModal = (props: Props) => {
     if (configContents !== null) {
       sendConfigToServer();
     }
-  }, [configContents])
+  }, [configContents, unsafeOptionsVerified])
 
 
   function sendConfigToServer() {
@@ -67,6 +67,7 @@ const ConfigImportModal = (props: Props) => {
         } else if (res['import_status'] === 'unsafe_options_verification_required') {
           setUploadStatus(UploadStatuses.success);
           setErrorMessage('');
+
           if (isUnsafeOptionSelected(res['config_schema'], JSON.parse(res['config']))) {
             setShowUnsafeOptionsConfirmation(true);
             setCandidateConfig(res['config']);

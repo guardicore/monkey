@@ -221,7 +221,10 @@ class TestMonkeyBlackbox:
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
         raw_config = IslandConfigParser.get_raw_config(Zerologon, island_client)
-        analyzer = ZerologonAnalyzer(island_client, expected_creds)
+        zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
+        communication_analyzer = CommunicationAnalyzer(
+            island_client, IslandConfigParser.get_ips_of_targets(raw_config)
+        )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
@@ -229,7 +232,7 @@ class TestMonkeyBlackbox:
             name=test_name,
             island_client=island_client,
             raw_config=raw_config,
-            analyzers=[analyzer],
+            analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS,
             log_handler=log_handler,
         ).run()

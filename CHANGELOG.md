@@ -5,7 +5,7 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [1.12.0] - 2021-10-27
 ### Added
 - A new exploiter that allows propagation via PowerShell Remoting. #1246
 - A warning regarding antivirus when agent binaries are missing. #1450
@@ -13,12 +13,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - The name of the "Communicate as new user" post-breach action to "Communicate
-  as backdoor user". #1410
+   as backdoor user". #1410
 - Resetting login credentials also cleans the contents of the database. #1495
 - ATT&CK report messages (more accurate now). #1483
 - T1086 (PowerShell) now also reports if ps1 scripts were run by PBAs. #1513
-- ATT&CK report messages to include empty internal config options as reasons for unscanned attack
-  techniques. #1518
+- ATT&CK report messages to include internal config options as reasons
+  for unscanned attack techniques. #1518
 
 ### Removed
 - Internet access check on agent start. #1402
@@ -29,16 +29,15 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Stale code in the Windows system info collector that collected installed
   packages and WMI info. #1389
 - Insecure access feature in the Monkey Island. #1418
-- The "deployment" field from the server_config.json #1205
+- The "deployment" field from the server_config.json. #1205
 - The "Execution through module load" ATT&CK technique,
   since it can no longer be exercise with current code. #1416
-- Browser window popup when Monkey Island starts on Windows. #1428
+- Browser window pop-up when Monkey Island starts on Windows. #1428
 
 ### Fixed
 - Misaligned buttons and input fields on exploiter and network configuration
   pages. #1353
 - Credentials shown in plain text on configuration screens. #1183
-- Typo "trough" -> "through" in telemetry and docstring.
 - Crash when unexpected character encoding is used by ping command on German
   language systems. #1175
 - Malfunctioning timestomping PBA. #1405
@@ -47,24 +46,28 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Overlapping Guardicore logo in the landing page. #1441
 - PBA table collapse in security report on data change. #1423
 - Unsigned Windows agent binaries in Linux packages are now signed. #1444
-- Some of the gathered credentials no longer appear in database plaintext. #1454
-- Encryptor breaking with UTF-8 characters. (Passwords in different languages can be submitted in
-  the config successfully now.) #1490
-- Mimikatz collector no longer fails if Azure credential collector is disabled. #1512 #1493
-- Unhandled error when "modify shell startup files PBA" is unable to find regular users. #1507
-- ATT&CK report bug that showed different techniques' results under a technique if the PBA behind
-  them was the same. #1514
-- ATT&CK report bug that said that the technique "`.bash_profile` and `.bashrc`" was not attempted
-  when it actually was attempted but failed. #1511
+- Some of the gathered credentials no longer appear in plaintext in the
+  database. #1454
+- Encryptor breaking with UTF-8 characters. (Passwords in different languages
+  can be submitted in the config successfully now.) #1490
+- Mimikatz collector no longer fails if Azure credential collector is disabled.
+  #1512, #1493
+- Unhandled error when "modify shell startup files PBA" is unable to find
+  regular users. #1507
+- ATT&CK report bug that showed different techniques' results under a technique
+  if the PBA behind them was the same. #1514
+- ATT&CK report bug that said that the technique "`.bash_profile` and
+  `.bashrc`" was not attempted when it actually was attempted but failed. #1511
 - Bug that periodically cleared the telemetry table's filter. #1392
-- Crashes, stack traces, and other malfunctions when data from older versions of Infection Monkey is
-  present in the data directory. #1114
+- Crashes, stack traces, and other malfunctions when data from older versions
+  of Infection Monkey is present in the data directory. #1114
 - Broken update links. #1524
 
 ### Security
 - Generate a random password when creating a new user for CommunicateAsNewUser
   PBA. #1434
-- Credentials gathered from victim machines are no longer stored plaintext in the database. #1454
+- Credentials gathered from victim machines are no longer stored plaintext in
+  the database. #1454
 - Encrypt the database key with user's credentials. #1463
 
 
