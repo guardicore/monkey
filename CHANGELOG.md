@@ -5,7 +5,7 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [1.12.0] - 2021-10-27
 ### Added
 - A new exploiter that allows propagation via PowerShell Remoting. #1246
 - A warning regarding antivirus when agent binaries are missing. #1450
