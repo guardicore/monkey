@@ -60,6 +60,8 @@ been signed by a private certificate authority.
 1. Run the Monkey Island server
     ```bash
     sudo docker run \
+        --tty \
+        --interactive \
         --name monkey-island \
         --network=host \
         guardicore/monkey-island:VERSION
@@ -126,6 +128,8 @@ any volumes associated with the previous version.
 
     ```bash
     sudo docker run \
+        --tty \
+        --interactive \
         --name monkey-island \
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
