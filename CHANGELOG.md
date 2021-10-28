@@ -5,6 +5,19 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Added
+
+### Changed
+
+### Removed
+
+### Fixed
+- A bug in network map page that caused delay of telemetry log loading. #1545
+
+### Security
+
+
 ## [1.12.0] - 2021-10-27
 ### Added
 - A new exploiter that allows propagation via PowerShell Remoting. #1246
