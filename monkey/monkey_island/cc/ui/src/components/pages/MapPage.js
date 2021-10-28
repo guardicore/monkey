@@ -10,6 +10,7 @@ import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
+import TelemetryLog from '../map/TelemetryLog';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
@@ -20,17 +21,8 @@ class MapPageComponent extends AuthComponent {
       selected: null,
       selectedType: null,
       killPressed: false,
-      showKillDialog: false,
-      telemetry: [],
-      telemetryLastTimestamp: null,
-      isScrolledUp: false,
-      telemetryLines: 0,
-      telemetryCurrentLine: 0,
-      telemetryUpdateInProgress: false
+      showKillDialog: false
     };
-    this.telemConsole = React.createRef();
-    this.handleScroll = this.handleScroll.bind(this);
-    this.scrollTop = 0;
   }
 
   events = {
@@ -40,7 +32,7 @@ class MapPageComponent extends AuthComponent {
   componentDidMount() {
     this.getNodeStateListFromServer();
     this.updateMapFromServer();
-    this.interval = setInterval(this.timedEvents, 5000);
+    this.interval = setInterval(this.updateMapFromServer, 5000);
   }
 
   componentWillUnmount() {
@@ -55,11 +47,6 @@ class MapPageComponent extends AuthComponent {
       });
   };
 
-  timedEvents = () => {
-    this.updateMapFromServer();
-    this.updateTelemetryFromServer();
-  };
-
   updateMapFromServer = () => {
     this.authFetch('/api/netmap')
       .then(res => res.json())
@@ -70,33 +57,6 @@ class MapPageComponent extends AuthComponent {
           });
           this.setState({graph: res});
           this.props.onStatusChange();
-        }
-      });
-  };
-
-  updateTelemetryFromServer = () => {
-    if (this.state.telemetryUpdateInProgress) {
-      return
-    }
-    this.setState({telemetryUpdateInProgress: true});
-    this.authFetch('/api/telemetry-feed?timestamp=' + this.state.telemetryLastTimestamp)
-      .then(res => res.json())
-      .then(res => {
-        if ('telemetries' in res) {
-          let newTelem = this.state.telemetry.concat(res['telemetries']);
-          this.setState(
-            {
-              telemetry: newTelem,
-              telemetryLastTimestamp: res['timestamp'],
-              telemetryUpdateInProgress: false
-            });
-          this.props.onStatusChange();
-
-          let telemConsoleRef = this.telemConsole.current;
-          if (!this.state.isScrolledUp) {
-            telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
-            this.scrollTop = telemConsoleRef.scrollTop;
-          }
         }
       });
   };
@@ -157,46 +117,6 @@ class MapPageComponent extends AuthComponent {
     )
   };
 
-  renderTelemetryEntry(telemetry) {
-    return (
-      <div key={telemetry.id}>
-        <span className="date">{telemetry.timestamp}</span>
-        <span className="source"> {telemetry.hostname}:</span>
-        <span className="event"> {telemetry.brief}</span>
-      </div>
-    );
-  }
-
-  handleScroll(e) {
-    let element = e.target;
-
-    let telemetryStyle = window.getComputedStyle(element);
-    let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''));
-
-    this.setState({
-      isScrolledUp: (element.scrollTop < this.scrollTop),
-      telemetryCurrentLine: Math.trunc(element.scrollTop / telemetryLineHeight) + 1,
-      telemetryLines: Math.trunc(element.scrollHeight / telemetryLineHeight)
-    });
-  }
-
-  renderTelemetryConsole() {
-    return (
-      <div className="telemetry-console" onScroll={this.handleScroll} ref={this.telemConsole}>
-        {
-          this.state.telemetry.map(this.renderTelemetryEntry)
-        }
-      </div>
-    );
-  }
-
-  renderTelemetryLineCount() {
-    return (
-      <div className="telemetry-lines">
-        <b>[{this.state.telemetryCurrentLine}/{this.state.telemetryLines}]</b>
-      </div>
-    );
-  }
 
   render() {
     return (
@@ -220,10 +140,9 @@ class MapPageComponent extends AuthComponent {
               <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#a9aaa9'}}/></span>
             </div>
             <div style={{height: '80vh'}} className={'map-window'}>
-              {this.renderTelemetryLineCount()}
-              {this.renderTelemetryConsole()}
               <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)}
                              events={this.events}/>
+              <TelemetryLog onStatusChange={this.props.onStatusChange}/>
             </div>
           </Col>
           <Col xs={4}>
