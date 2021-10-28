@@ -82,11 +82,9 @@ def test_add_user(config_file, with_credentials):
     assert from_file["environment"]["password_hash"] == new_password_hash
 
 
-def test_get_users(with_credentials):
+def test_user(with_credentials):
     environment_config = EnvironmentConfig(with_credentials)
-    users = environment_config.get_users()
+    user = environment_config.user_creds
 
-    assert len(users) == 1
-    assert users[0].id == 1
-    assert users[0].username == "test"
-    assert users[0].secret == "abcdef"
+    assert user.username == "test"
+    assert user.password_hash == "abcdef"

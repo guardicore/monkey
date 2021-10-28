@@ -6,20 +6,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from common.utils.exceptions import (
-    AlreadyRegisteredError,
-    CredentialsNotRequiredError,
-    InvalidRegistrationCredentialsError,
-    RegistrationNotNeededError,
-)
+from common.utils.exceptions import AlreadyRegisteredError, InvalidRegistrationCredentialsError
 from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCreds
 
 WITH_CREDENTIALS = None
 NO_CREDENTIALS = None
 PARTIAL_CREDENTIALS = None
 
-EMPTY_USER_CREDENTIALS = UserCreds("", "")
-FULL_USER_CREDENTIALS = UserCreds(username="test", password_hash="1231234")
+USER_CREDENTIALS = UserCreds(username="test", password_hash="1231234")
 
 
 # This fixture is a dirty hack that can be removed once these tests are converted from
@@ -52,58 +46,29 @@ class StubEnvironmentConfig(EnvironmentConfig):
 
 
 class TestEnvironment(TestCase):
-    class EnvironmentCredentialsNotRequired(Environment):
-        def __init__(self):
-            config = StubEnvironmentConfig("test", "test", EMPTY_USER_CREDENTIALS)
-            super().__init__(config)
-
-        _credentials_required = False
-
-        def get_auth_users(self):
-            return []
-
     class EnvironmentCredentialsRequired(Environment):
         def __init__(self):
-            config = StubEnvironmentConfig("test", "test", EMPTY_USER_CREDENTIALS)
+            config = StubEnvironmentConfig("test", "test", None)
             super().__init__(config)
-
-        _credentials_required = True
-
-        def get_auth_users(self):
-            return []
 
     class EnvironmentAlreadyRegistered(Environment):
         def __init__(self):
             config = StubEnvironmentConfig("test", "test", UserCreds("test_user", "test_secret"))
             super().__init__(config)
 
-        _credentials_required = True
-
-        def get_auth_users(self):
-            return [1, "Test_username", "Test_secret"]
-
     @patch.object(target=EnvironmentConfig, attribute="save_to_file", new=MagicMock())
     def test_try_add_user(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
-        credentials = FULL_USER_CREDENTIALS
+        credentials = USER_CREDENTIALS
         env.try_add_user(credentials)
 
         credentials = UserCreds(username="test", password_hash="")
         with self.assertRaises(InvalidRegistrationCredentialsError):
             env.try_add_user(credentials)
 
-        env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        credentials = FULL_USER_CREDENTIALS
-        with self.assertRaises(RegistrationNotNeededError):
-            env.try_add_user(credentials)
-
     def test_try_needs_registration(self):
         env = TestEnvironment.EnvironmentAlreadyRegistered()
         with self.assertRaises(AlreadyRegisteredError):
-            env._try_needs_registration()
-
-        env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        with self.assertRaises(CredentialsNotRequiredError):
             env._try_needs_registration()
 
         env = TestEnvironment.EnvironmentCredentialsRequired()
@@ -120,12 +85,6 @@ class TestEnvironment(TestCase):
         self._test_bool_env_method("_is_registered", env, WITH_CREDENTIALS, True)
         self._test_bool_env_method("_is_registered", env, NO_CREDENTIALS, False)
         self._test_bool_env_method("_is_registered", env, PARTIAL_CREDENTIALS, False)
-
-    def test_is_credentials_set_up(self):
-        env = TestEnvironment.EnvironmentCredentialsRequired()
-        self._test_bool_env_method("_is_credentials_set_up", env, NO_CREDENTIALS, False)
-        self._test_bool_env_method("_is_credentials_set_up", env, WITH_CREDENTIALS, True)
-        self._test_bool_env_method("_is_credentials_set_up", env, PARTIAL_CREDENTIALS, False)
 
     def _test_bool_env_method(
         self, method_name: str, env: Environment, config: Dict, expected_result: bool

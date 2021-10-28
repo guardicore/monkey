@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from common.utils.exceptions import (
     AlreadyRegisteredError,
-    CredentialsNotRequiredError,
     InvalidRegistrationCredentialsError,
 )
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
@@ -24,20 +23,14 @@ class Environment(object, metaclass=ABCMeta):
         self._config = config
         self._testing = False  # Assume env is not for unit testing.
 
-    @property
-    @abstractmethod
-    def _credentials_required(self) -> bool:
-        pass
-
-    @abstractmethod
-    def get_auth_users(self):
-        pass
+    def get_user(self):
+        return self._config.user_creds
 
     def needs_registration(self) -> bool:
         try:
             needs_registration = self._try_needs_registration()
             return needs_registration
-        except (CredentialsNotRequiredError, AlreadyRegisteredError) as e:
+        except (AlreadyRegisteredError) as e:
             logger.info(e)
             return False
 
@@ -49,25 +42,14 @@ class Environment(object, metaclass=ABCMeta):
             logger.info(f"New user {credentials.username} registered!")
 
     def _try_needs_registration(self) -> bool:
-        if not self._credentials_required:
-            raise CredentialsNotRequiredError(
-                "Credentials are not required " "for current environment."
+        if self._is_registered():
+            raise AlreadyRegisteredError(
+                "User has already been registered. " "Reset credentials or login."
             )
-        else:
-            if self._is_registered():
-                raise AlreadyRegisteredError(
-                    "User has already been registered. " "Reset credentials or login."
-                )
-            return True
+        return True
 
     def _is_registered(self) -> bool:
-        return self._credentials_required and self._is_credentials_set_up()
-
-    def _is_credentials_set_up(self) -> bool:
-        if self._config and self._config.user_creds:
-            return True
-        else:
-            return False
+        return self._config and self._config.user_creds
 
     @property
     def testing(self):

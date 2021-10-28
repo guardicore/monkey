@@ -19,11 +19,14 @@ def flask_client(monkeypatch_session):
 
 def mock_init_app():
     app = Flask(__name__)
+    app.config["SECRET_KEY"] = "test_key"
 
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
     monkey_island.cc.app.init_app_url_rules(app)
     monkey_island.cc.app.init_api_resources(api)
+
+    flask_jwt_extended.JWTManager(app)
 
     return app

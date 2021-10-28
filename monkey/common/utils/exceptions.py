@@ -14,12 +14,12 @@ class RegistrationNotNeededError(Exception):
     """ Raise to indicate the reason why registration is not required """
 
 
-class CredentialsNotRequiredError(RegistrationNotNeededError):
-    """ Raise to indicate the reason why registration is not required """
-
-
 class AlreadyRegisteredError(RegistrationNotNeededError):
     """ Raise to indicate the reason why registration is not required """
+
+
+class IncorrectCredentialsError(Exception):
+    """ Raise to indicate that authentication failed """
 
 
 class RulePathCreatorNotFound(Exception):

@@ -30,14 +30,6 @@ def test_to_dict_full_creds():
     assert user_creds.to_dict() == {"user": TEST_USER, "password_hash": TEST_HASH}
 
 
-def test_to_auth_user_full_credentials():
-    user_creds = UserCreds(TEST_USER, TEST_HASH)
-    auth_user = user_creds.to_auth_user()
-    assert auth_user.id == 1
-    assert auth_user.username == TEST_USER
-    assert auth_user.secret == TEST_HASH
-
-
 def test_member_values(monkeypatch):
     creds = UserCreds(TEST_USER, TEST_HASH)
     assert creds.username == TEST_USER
