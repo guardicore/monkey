@@ -1,11 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import AuthComponent from '../AuthComponent';
+import LoadingIcon from '../ui-components/LoadingIcon';
 
 
 const authComponent = new AuthComponent({});
 
 const TelemetryLog = (props: { onStatusChange: Function }) => {
 
+  let [telemetriesLoading, setTelemetriesLoading] = useState(true);
   let [telemetryUpdateInProgress, setTelemetryUpdateInProgress] = useState(false);
   let [telemetry, setTelemetry] = useState([]);
   let [lastTelemetryTimestamp, setLastTelemetryTimestamp] = useState(null);
@@ -36,6 +38,7 @@ const TelemetryLog = (props: { onStatusChange: Function }) => {
           setTelemetry(newTelem);
           setLastTelemetryTimestamp(res['timestamp']);
           setTelemetryUpdateInProgress(false);
+          setTelemetriesLoading(false);
           props.onStatusChange();
 
           let telemConsoleRef = telemetryConsole.current;
@@ -87,10 +90,11 @@ const TelemetryLog = (props: { onStatusChange: Function }) => {
   }
 
   return (
-    <>
+    <div className={'telemetry-log-section'}>
+      {telemetriesLoading && <LoadingIcon/>}
       {renderTelemetryLineCount()}
       {renderTelemetryConsole()}
-    </>);
+    </div>);
 }
 
 export default TelemetryLog;
