@@ -4,6 +4,7 @@ import LoadingIcon from '../ui-components/LoadingIcon';
 
 
 const authComponent = new AuthComponent({});
+const telemetryUpdatePeriod = 5000; // UI will fetch telemetries every N milliseconds.
 
 const TelemetryLog = (props: { onStatusChange: Function }) => {
 
@@ -19,7 +20,8 @@ const TelemetryLog = (props: { onStatusChange: Function }) => {
   const telemetryConsole = useRef(null);
 
   useEffect(() => {
-    const interval = setInterval(updateTelemetryFromServer, 5000);
+    updateTelemetryFromServer();
+    const interval = setInterval(updateTelemetryFromServer, telemetryUpdatePeriod);
     return function cleanup() {
       clearInterval(interval);
     };
