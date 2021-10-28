@@ -1,6 +1,7 @@
 import bcrypt
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
+from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
@@ -31,12 +32,11 @@ class AuthenticationService:
         reset_database()
 
     @classmethod
-    def authenticate(cls, username: str, password: str) -> bool:
-        if _credentials_match_registered_user(username, password):
-            cls._unlock_datastore_encryptor(username, password)
-            return True
+    def authenticate(cls, username: str, password: str):
+        if not _credentials_match_registered_user(username, password):
+            raise IncorrectCredentialsError()
 
-        return False
+        cls._unlock_datastore_encryptor(username, password)
 
     @classmethod
     def _unlock_datastore_encryptor(cls, username: str, password: str):

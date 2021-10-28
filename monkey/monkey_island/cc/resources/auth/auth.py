@@ -7,6 +7,7 @@ from flask import make_response, request
 from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt import PyJWTError
 
+from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
 from monkey_island.cc.services.authentication import AuthenticationService
 
@@ -37,11 +38,13 @@ class Authenticate(flask_restful.Resource):
         """
         username, password = get_username_password_from_request(request)
 
-        if AuthenticationService.authenticate(username, password):
+        try:
+            AuthenticationService.authenticate(username, password)
             access_token = _create_access_token(username)
-            return make_response({"access_token": access_token, "error": ""}, 200)
+        except IncorrectCredentialsError:
+            return make_response({"error": "Invalid credentials"}, 401)
 
-        return make_response({"error": "Invalid credentials"}, 401)
+        return make_response({"access_token": access_token, "error": ""}, 200)
 
 
 def _create_access_token(username):

@@ -3,6 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.utils.exceptions import IncorrectCredentialsError
+
 USERNAME = "test_user"
 PASSWORD = "test_password"
 TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
@@ -51,7 +53,7 @@ def test_authentication_successful(make_auth_request, mock_authentication_servic
 
 
 def test_authentication_failure(make_auth_request, mock_authentication_service):
-    mock_authentication_service.authenticate = MagicMock(return_value=False)
+    mock_authentication_service.authenticate = MagicMock(side_effect=IncorrectCredentialsError())
 
     response = make_auth_request(TEST_REQUEST)
 
