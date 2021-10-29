@@ -22,7 +22,6 @@ class Performance(ConfigTemplate):
             "Struts2Exploiter",
             "WebLogicExploiter",
             "HadoopExploiter",
-            "VSFTPDExploiter",
             "MSSQLExploiter",
             "PowerShellExploiter",
             "ZerologonExploiter",
