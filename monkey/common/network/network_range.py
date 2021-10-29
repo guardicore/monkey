@@ -5,7 +5,7 @@ import socket
 import struct
 from abc import ABCMeta, abstractmethod
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class NetworkRange(object, metaclass=ABCMeta):
@@ -174,7 +174,7 @@ class SingleIpRange(NetworkRange):
                 ip = socket.gethostbyname(string_)
                 domain_name = string_
             except socket.error:
-                LOG.error(
+                logger.error(
                     "Your specified host: {} is not found as a domain name and"
                     " it's not an IP address".format(string_)
                 )

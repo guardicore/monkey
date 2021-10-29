@@ -1,6 +1,9 @@
 import subprocess
+from pathlib import Path
 
 from infection_monkey.utils.environment import is_windows_os
+
+MODIFY_POWERSHELL_STARTUP_SCRIPT = Path(__file__).parent / "modify_powershell_startup_file.ps1"
 
 
 def get_windows_commands_to_modify_shell_startup_files():
@@ -28,7 +31,6 @@ def get_windows_commands_to_modify_shell_startup_files():
 
     return [
         "powershell.exe",
-        "infection_monkey/post_breach/shell_startup_files/windows"
-        "/modify_powershell_startup_file.ps1",
+        str(MODIFY_POWERSHELL_STARTUP_SCRIPT),
         "-startup_file_path {0}",
     ], STARTUP_FILES_PER_USER

@@ -8,6 +8,7 @@ from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
+from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
 from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
@@ -40,6 +41,7 @@ CONFIG_TEMPLATES = [
     Hadoop,
     Mssql,
     Performance,
+    PowerShell,
     ShellShock,
     SmbMimikatz,
     SmbPth,

@@ -36,14 +36,10 @@
   text-align: center;
 }
 
-.no-auth-link {
-  margin-top: 10px;
-  float: right;
+.auth-container .monkey-submit-button:hover .loading-icon {
   color: $monkey-black;
-  text-decoration: underline;
 }
 
-.no-auth-link:hover {
-  float: right;
-  color: $monkey-yellow;
+.auth-container .monkey-submit-button:focus .loading-icon {
+  color: $monkey-black;
 }

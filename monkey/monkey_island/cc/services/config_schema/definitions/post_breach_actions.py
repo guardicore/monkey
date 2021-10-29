@@ -1,22 +1,13 @@
 POST_BREACH_ACTIONS = {
-    "title": "Post breach actions",
+    "title": "Post-Breach Actions",
     "description": "Runs scripts/commands on infected machines. These actions safely simulate what "
-    "an adversary"
-    "might do after breaching a new machine. Used in ATT&CK and Zero trust reports.",
+    "an adversary might do after breaching a new machine. Used in ATT&CK and Zero trust reports.",
     "type": "string",
     "anyOf": [
         {
             "type": "string",
-            "enum": ["BackdoorUser"],
-            "title": "Back door user",
-            "safe": True,
-            "info": "Attempts to create a new user on the system and delete it afterwards.",
-            "attack_techniques": ["T1136"],
-        },
-        {
-            "type": "string",
-            "enum": ["CommunicateAsNewUser"],
-            "title": "Communicate as new user",
+            "enum": ["CommunicateAsBackdoorUser"],
+            "title": "Communicate as Backdoor User",
             "safe": True,
             "info": "Attempts to create a new user, create HTTPS requests as that "
             "user and delete the user "
@@ -26,7 +17,7 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": ["ModifyShellStartupFiles"],
-            "title": "Modify shell startup files",
+            "title": "Modify Shell Startup Files",
             "safe": True,
             "info": "Attempts to modify shell startup files, like ~/.profile, "
             "~/.bashrc, ~/.bash_profile "
@@ -37,7 +28,7 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": ["HiddenFiles"],
-            "title": "Hidden files and directories",
+            "title": "Hidden Files and Directories",
             "safe": True,
             "info": "Attempts to create a hidden file and remove it afterward.",
             "attack_techniques": ["T1158"],
@@ -45,11 +36,10 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": ["TrapCommand"],
-            "title": "Trap",
+            "title": "Trap Command",
             "safe": True,
-            "info": "On Linux systems, attempts to trap an interrupt signal in order "
-            "to execute a command "
-            "upon receiving that signal. Removes the trap afterwards.",
+            "info": "On Linux systems, attempts to trap a terminate signal in order "
+            "to execute a command upon receiving that signal. Removes the trap afterwards.",
             "attack_techniques": ["T1154"],
         },
         {
@@ -65,7 +55,7 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": ["ScheduleJobs"],
-            "title": "Job scheduling",
+            "title": "Job Scheduling",
             "safe": True,
             "info": "Attempts to create a scheduled job on the system and remove it.",
             "attack_techniques": ["T1168", "T1053"],
@@ -82,7 +72,7 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": ["SignedScriptProxyExecution"],
-            "title": "Signed script proxy execution",
+            "title": "Signed Script Proxy Execution",
             "safe": False,
             "info": "On Windows systems, attempts to execute an arbitrary file "
             "with the help of a pre-existing signed script.",
@@ -99,7 +89,7 @@ POST_BREACH_ACTIONS = {
         {
             "type": "string",
             "enum": ["ClearCommandHistory"],
-            "title": "Clear command history",
+            "title": "Clear Command History",
             "safe": False,
             "info": "Attempts to clear the command history.",
             "attack_techniques": ["T1146"],

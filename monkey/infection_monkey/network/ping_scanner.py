@@ -14,42 +14,48 @@ TTL_REGEX_STR = r"(?<=TTL\=)[0-9]+"
 LINUX_TTL = 64
 WINDOWS_TTL = 128
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PingScanner(HostScanner, HostFinger):
     _SCANNED_SERVICE = ""
 
     def __init__(self):
-        self._config = infection_monkey.config.WormConfiguration
+        self._timeout = infection_monkey.config.WormConfiguration.ping_scan_timeout
+        if not "win32" == sys.platform:
+            self._timeout /= 1000
+
         self._devnull = open(os.devnull, "w")
         self._ttl_regex = re.compile(TTL_REGEX_STR, re.IGNORECASE)
 
     def is_host_alive(self, host):
-
-        timeout = self._config.ping_scan_timeout
-        if not "win32" == sys.platform:
-            timeout /= 1000
+        ping_cmd = self._build_ping_command(host.ip_addr)
+        logger.debug(f"Running ping command: {' '.join(ping_cmd)}")
 
         return 0 == subprocess.call(
-            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            ping_cmd,
             stdout=self._devnull,
             stderr=self._devnull,
         )
 
     def get_host_fingerprint(self, host):
+        ping_cmd = self._build_ping_command(host.ip_addr)
+        logger.debug(f"Running ping command: {' '.join(ping_cmd)}")
 
-        timeout = self._config.ping_scan_timeout
-        if not "win32" == sys.platform:
-            timeout /= 1000
-
+        # If stdout is not connected to a terminal (i.e. redirected to a pipe or file), the result
+        # of os.device_encoding(1) will be None. Setting errors="backslashreplace" prevents a crash
+        # in this case. See #1175 and #1403 for more information.
+        encoding = os.device_encoding(1)
         sub_proc = subprocess.Popen(
-            ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(timeout), host.ip_addr],
+            ping_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding=encoding,
+            errors="backslashreplace",
         )
 
+        logger.debug(f"Retrieving ping command output using {encoding} encoding")
         output = " ".join(sub_proc.communicate())
         regex_result = self._ttl_regex.search(output)
         if regex_result:
@@ -65,6 +71,9 @@ class PingScanner(HostScanner, HostFinger):
 
                 return True
             except Exception as exc:
-                LOG.debug("Error parsing ping fingerprint: %s", exc)
+                logger.debug("Error parsing ping fingerprint: %s", exc)
 
         return False
+
+    def _build_ping_command(self, ip_addr):
+        return ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), ip_addr]

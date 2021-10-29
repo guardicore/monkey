@@ -4,6 +4,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1105(AttackTechnique):
     tech_id = "T1105"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't try to copy files to any systems."
     scanned_msg = "Monkey tried to copy files, but failed."
     used_msg = "Monkey successfully copied files to systems on the network."

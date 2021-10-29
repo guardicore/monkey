@@ -26,6 +26,7 @@ BASIC = {
                         "VSFTPDExploiter",
                         "MSSQLExploiter",
                         "DrupalExploiter",
+                        "PowerShellExploiter",
                     ],
                 }
             },
@@ -48,7 +49,9 @@ BASIC = {
                     "title": "Exploit password list",
                     "type": "array",
                     "uniqueItems": True,
-                    "items": {"type": "string"},
+                    "items": {
+                        "type": "string",
+                    },
                     "default": [
                         "root",
                         "123456",

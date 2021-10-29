@@ -27,6 +27,12 @@ def pytest_addoption(parser):
         default=False,
         help="If enabled performance tests will be run.",
     )
+    parser.addoption(
+        "--skip-powershell-reuse",
+        action="store_true",
+        default=False,
+        help="Use to run PowerShell credentials reuse test.",
+    )
 
 
 @pytest.fixture(scope="session")
@@ -50,4 +56,12 @@ def pytest_runtest_setup(item):
     ):
         pytest.skip(
             "Skipping performance test because " "--run-performance-tests flag isn't specified."
+        )
+
+    if "skip_powershell_reuse" in item.keywords and item.config.getoption(
+        "--skip-powershell-reuse"
+    ):
+        pytest.skip(
+            "Skipping powershell credentials reuse test because "
+            "--skip-powershell-cached flag isn't specified."
         )

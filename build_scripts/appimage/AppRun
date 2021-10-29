@@ -25,5 +25,7 @@ do
     fi
 done
 
+export PYTHONNOUSERSITE=1
 (PYTHONHOME="${APPDIR}/opt/python3.7" exec "${APPDIR}/opt/python3.7/bin/python3.7" "${APPDIR}/usr/src/monkey_island.py" $@)
+
 exit "$?"

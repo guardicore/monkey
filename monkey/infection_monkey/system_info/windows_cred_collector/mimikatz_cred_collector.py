@@ -1,12 +1,9 @@
-import logging
 from typing import List
 
 from infection_monkey.system_info.windows_cred_collector import pypykatz_handler
 from infection_monkey.system_info.windows_cred_collector.windows_credentials import (
     WindowsCredentials,
 )
-
-LOG = logging.getLogger(__name__)
 
 
 class MimikatzCredentialCollector(object):
@@ -19,6 +16,8 @@ class MimikatzCredentialCollector(object):
     def cred_list_to_cred_dict(creds: List[WindowsCredentials]):
         cred_dict = {}
         for cred in creds:
+            # TODO: This should be handled by the island, not the agent. There is already similar
+            #       code in monkey_island/cc/models/report/report_dal.py.
             # Lets not use "." and "$" in keys, because it will confuse mongo.
             # Ideally we should refactor island not to use a dict and simply parse credential list.
             key = cred.username.replace(".", ",").replace("$", "")

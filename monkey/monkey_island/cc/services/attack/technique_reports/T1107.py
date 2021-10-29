@@ -4,6 +4,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1107(AttackTechnique):
     tech_id = "T1107"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = ""
     scanned_msg = "Monkey tried to delete files on systems in the network, but failed."
     used_msg = "Monkey successfully deleted files on systems in the network."

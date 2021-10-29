@@ -5,21 +5,23 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1086(AttackTechnique):
     tech_id = "T1086"
-    unscanned_msg = "Monkey didn't run powershell since it didn't run on any Windows machines."
+    relevant_systems = ["Windows"]
+    unscanned_msg = "Monkey didn't run PowerShell."
     scanned_msg = ""
-    used_msg = "Monkey successfully ran powershell commands on exploited machines in the network."
+    used_msg = "Monkey successfully ran PowerShell commands on exploited machines in the network."
 
-    query = [
+    query_for_exploits = [
         {
             "$match": {
                 "telem_category": "exploit",
                 "data.info.executed_cmds": {"$elemMatch": {"powershell": True}},
             }
         },
-        {"$project": {"machine": "$data.machine", "info": "$data.info"}},
+        {"$project": {"telem_category": 1, "machine": "$data.machine", "info": "$data.info"}},
         {
             "$project": {
                 "_id": 0,
+                "telem_category": 1,
                 "machine": 1,
                 "info.finished": 1,
                 "info.executed_cmds": {
@@ -34,11 +36,36 @@ class T1086(AttackTechnique):
         {"$group": {"_id": "$machine", "data": {"$push": "$$ROOT"}}},
     ]
 
+    query_for_pbas = [
+        {
+            "$match": {
+                "telem_category": "post_breach",
+                "$or": [
+                    {"data.command": {"$regex": r"\.ps1"}},
+                    {"data.command": {"$regex": "powershell"}},
+                    {"data.result": {"$regex": r"\.ps1"}},
+                ],
+            },
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "telem_category": 1,
+                "machine.hostname": "$data.hostname",
+                "machine.ips": [{"$arrayElemAt": ["$data.ip", 0]}],
+                "info": "$data.result",
+            }
+        },
+    ]
+
     @staticmethod
     def get_report_data():
         @T1086.is_status_disabled
         def get_technique_status_and_data():
-            cmd_data = list(mongo.db.telemetry.aggregate(T1086.query))
+            exploit_cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_exploits))
+            pba_cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_pbas))
+            cmd_data = exploit_cmd_data + pba_cmd_data
+
             if cmd_data:
                 status = ScanStatus.USED.value
             else:

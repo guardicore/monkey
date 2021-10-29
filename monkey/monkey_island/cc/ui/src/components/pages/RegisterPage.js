@@ -4,13 +4,13 @@ import {Row, Col, Container, Form, Button} from 'react-bootstrap';
 import AuthService from '../../services/AuthService';
 import monkeyDetective from '../../images/detective-monkey.svg';
 import ParticleBackground from '../ui-components/ParticleBackground';
+import LoadingIcon from '../ui-components/LoadingIcon';
 
 class RegisterPageComponent extends React.Component {
 
-  NO_AUTH_API_ENDPOINT = '/api/environment';
-
   register = (event) => {
     event.preventDefault();
+    this.setState({loading: true})
     this.auth.register(this.username, this.password).then(res => {
       this.setState({failed: false, error: ''});
       if (res['result']) {
@@ -23,30 +23,6 @@ class RegisterPageComponent extends React.Component {
       }
     });
   };
-
-  setNoAuth = () => {
-    let options = {};
-    options['headers'] = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    };
-    options['method'] = 'PATCH';
-    options['body'] = JSON.stringify({'server_config': 'standard'});
-
-    return fetch(this.NO_AUTH_API_ENDPOINT, options)
-      .then(res => {
-        if (res.status === 200) {
-          this.auth.attemptNoAuthLogin().then(() => {
-            this.redirectToHome();
-          });
-        } else {
-          this.setState({
-            failed: true,
-            error: res['error']
-          });
-        }
-      })
-  }
 
   updateUsername = (evt) => {
     this.username = evt.target.value;
@@ -94,15 +70,13 @@ class RegisterPageComponent extends React.Component {
                     <Form.Control onChange={evt => this.updateUsername(evt)} type='text' placeholder='Username'/>
                     <Form.Control onChange={evt => this.updatePassword(evt)} type='password' placeholder='Password'/>
                     <Button className={'monkey-submit-button'} type={'submit'} >
-                      Let's go!
+                      {
+                        this.state.loading ?
+                          <LoadingIcon/>
+                          :
+                          'Let\'s go!'
+                      }
                     </Button>
-                    <Row>
-                      <Col>
-                        <a href='#' onClick={this.setNoAuth} className={'no-auth-link'}>
-                          I want anyone to access the island
-                        </a>
-                      </Col>
-                    </Row>
                     <Row>
                       <Col>
                         {

@@ -23,7 +23,6 @@ from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.configuration_export import ConfigurationExport
 from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
-from monkey_island.cc.resources.environment import Environment
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
@@ -55,7 +54,6 @@ from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth impor
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
-from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
 
@@ -109,7 +107,6 @@ def init_app_services(app):
 
     with app.app_context():
         database.init()
-        Database.init_db()
 
     # If running on AWS, this will initialize the instance data, which is used "later" in the
     # execution of the island.
@@ -125,7 +122,6 @@ def init_api_resources(api):
     api.add_resource(Root, "/api")
     api.add_resource(Registration, "/api/registration")
     api.add_resource(Authenticate, "/api/auth")
-    api.add_resource(Environment, "/api/environment")
     api.add_resource(Monkey, "/api/monkey", "/api/monkey/", "/api/monkey/<string:guid>")
     api.add_resource(Bootloader, "/api/bootloader/<string:os>")
     api.add_resource(LocalRun, "/api/local-monkey", "/api/local-monkey/")

@@ -10,7 +10,7 @@ tags: ["setup", "windows"]
 ## Deployment
 
 {{% notice tip %}}
-Don't get scared if the Infection Monkey gets [flagged as malware during the installation](/faq/#is-infection-monkey-a-malwarevirus).
+Don't get scared if the Infection Monkey gets [flagged as malware during the installation](/faq/#is-the-infection-monkey-a-malwarevirus).
 {{% /notice %}}
 
 After running the installer, the following prompt should appear on the screen:
@@ -19,6 +19,13 @@ After running the installer, the following prompt should appear on the screen:
 
 1. Follow the steps to complete the installation.
 1. Run the Monkey Island by clicking on the desktop shortcut.
+
+{{% notice info %}}
+If you're prompted to delete your data directory and you're not sure what to
+do, see the [FAQ]({{< ref
+"/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
+>}}) for more information.
+{{% /notice %}}
 
 ### Start Monkey Island with user-provided certificate
 
@@ -52,6 +59,9 @@ private certificate authority.
     }
     ```
 1. Run the Monkey Island by clicking on the desktop shortcut.
+
+1. Access the Monkey Island web UI by pointing your browser at
+   `https://localhost:5000`.
 
 ## Troubleshooting
 

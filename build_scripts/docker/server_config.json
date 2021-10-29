@@ -2,8 +2,7 @@
   "data_dir": "/monkey_island_data",
   "log_level": "DEBUG",
   "environment": {
-    "server_config": "password",
-    "deployment": "docker"
+    "server_config": "password"
   },
   "mongodb": {
     "start_mongodb": false

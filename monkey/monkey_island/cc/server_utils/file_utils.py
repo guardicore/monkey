@@ -5,7 +5,7 @@ import stat
 from contextlib import contextmanager
 from typing import Generator
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def is_windows_os() -> bool:
@@ -35,7 +35,7 @@ def _create_secure_directory_linux(path: str):
         os.mkdir(path, mode=stat.S_IRWXU)
 
     except Exception as ex:
-        LOG.error(f'Could not create a directory at "{path}": {str(ex)}')
+        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
         raise ex
 
 
@@ -48,7 +48,7 @@ def _create_secure_directory_windows(path: str):
         win32file.CreateDirectory(path, security_attributes)
 
     except Exception as ex:
-        LOG.error(f'Could not create a directory at "{path}": {str(ex)}')
+        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
         raise ex
 
 
@@ -74,7 +74,7 @@ def _get_file_descriptor_for_new_secure_file_linux(path: str) -> int:
         return fd
 
     except Exception as ex:
-        LOG.error(f'Could not create a file at "{path}": {str(ex)}')
+        logger.error(f'Could not create a file at "{path}": {str(ex)}')
         raise ex
 
 
@@ -109,7 +109,7 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
         return win32file._open_osfhandle(detached_handle, os.O_RDWR)
 
     except Exception as ex:
-        LOG.error(f'Could not create a file at "{path}": {str(ex)}')
+        logger.error(f'Could not create a file at "{path}": {str(ex)}')
         raise ex
 
 

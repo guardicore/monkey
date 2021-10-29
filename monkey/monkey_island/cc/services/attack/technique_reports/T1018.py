@@ -5,6 +5,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1018(AttackTechnique):
     tech_id = "T1018"
+    relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't find any machines on the network."
     scanned_msg = ""
     used_msg = "Monkey found machines on the network."

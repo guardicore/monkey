@@ -8,8 +8,10 @@ pre: "<i class='fas fa-question'></i> "
 Below are some of the most common questions we receive about the Infection Monkey. If the answer you're looking for isn't here, talk with us [on our Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU), email us at [support@infectionmonkey.com](mailto:support@infectionmonkey.com) or [open an issue on GitHub](https://github.com/guardicore/monkey).
 
 - [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
+- [I updated to a new version of the Infection Monkey and I'm being asked to delete my existing data directory. Why?](#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why)
+- [How can I use an old data directory?](#how-can-i-use-an-old-data-directory)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
-- [Is the Infection Monkey a malware/virus?](#is-infection-monkey-a-malwarevirus)
+- [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
 - [Reset/enable the Monkey Island password](#resetenable-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
@@ -26,6 +28,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [After I've set up Monkey Island, how can I execute the Infection Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
 - [How can I make the Infection Monkey agents propagate “deeper” into the network?](#how-can-i-make-the-infection-monkey-agent-propagate-deeper-into-the-network)
 - [What if the report returns a blank screen?](#what-if-the-report-returns-a-blank-screen)
+- [Can I limit how the Infection Monkey propagates through my network?](#can-i-limit-how-the-infection-monkey-propagates-through-my-network)
 - [How can I get involved with the project?](#how-can-i-get-involved-with-the-project)
 
 ## Where can I get the latest version of the Infection Monkey?
@@ -33,6 +36,24 @@ Below are some of the most common questions we receive about the Infection Monke
 For the latest **stable** release, visit [our downloads page](https://www.guardicore.com/infectionmonkey/#download). **This is the recommended and supported version**!
 
 If you want to see what has changed between versions, refer to the [releases page on GitHub](https://github.com/guardicore/monkey/releases). For the latest development version, visit the [develop version on GitHub](https://github.com/guardicore/monkey/tree/develop).
+
+## I updated to a new version of the Infection Monkey and I'm being asked to delete my existing data directory. Why?
+
+The [data directory]({{< ref "/reference/data_directory" >}}) contains the
+Infection Monkey's database and other internal
+data. For the new version of Infection Monkey to work flawlessly, a data
+directory with a compatible structure needs to be set up.
+
+If you would like to save the data gathered from the Monkey's previous runs,
+you can make a backup of your [existing data directory]({{< ref
+"/reference/data_directory" >}}) before deleting it.
+
+## How can I use an old data directory?
+
+To use the data stored in a data directory from an older version, reinstall the
+version of the Monkey Island which matches your data directory's version. Then,
+copy the backup of your old data directory to the [appropriate location]({{<
+ref "/reference/data_directory" >}}).
 
 ## How long does a single Infection Monkey agent run? Is there a time limit?
 
@@ -51,44 +72,92 @@ Monkey in the newly created folder.
 
 ## Reset/enable the Monkey Island password
 
+
+{{% notice warning %}}
+If you reset the credentials, the database will be cleared. Any findings of the Infection Monkey from previous runs will be lost. <br/><br/>
+However, you can save the Monkey's existing configuration by logging in with your current credentials and clicking on the **Export config** button on the configuration page.
+{{% /notice %}}
+
+### On Windows and Linux (AppImage)
+
 When you first access the Monkey Island server, you'll be prompted to create an account.
-To reset the credentials or enable/disable the authentication,
-edit the `server_config.json` file manually
-(located in the [data directory](/reference/data_directory)).
+To reset the credentials, edit the `server_config.json` file manually
+(located in the [data directory]({{< ref "/reference/data_directory" >}})).
 
 In order to reset the credentials, the following edits need to be made:
-1. Delete the `user` field if one exists. It will look like this:
-```json
-{
-  ...
-  "user": "username",
-  ...
-}
-```
-1. Delete the `password_hash` field if one exists. It will look like this:
-```json
-{
-  ...
-  "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
-  ...
-}
-```
+1. Delete the `user` field. It will look like this:
+    ```json
+    {
+      ...
+      "user": "username",
+      ...
+    }
+    ```
+1. Delete the `password_hash` field. It will look like this:
+    ```json
+    {
+      ...
+      "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
+      ...
+    }
+    ```
 1. Set `server_config` to `password`. It should look like this:
-```json
-{
-  ...
-  "environment": {
-    ...
-    "server_config": "password",
-    ...
-  },
-  ...
-}
-```
- Then, reset the Monkey Island process.
- On Linux, use `sudo systemctl restart monkey-island.service`.
- On Windows, restart the program.
- Finally, go to the Monkey Island's URL and create a new account.
+    ```json
+    {
+      ...
+      "environment": {
+        ...
+        "server_config": "password",
+        ...
+      },
+      ...
+    }
+    ```
+1. Restart the Monkey Island process:
+    * On Linux, simply kill the Monkey Island process and execute the AppImage.
+    * On Windows, restart the program.
+
+1. Go to the Monkey Island's URL and create a new account.
+
+If you are still unable to log into Monkey Island after following the above
+steps, you can perform a complete factory reset by removing the entire [data
+directory]({{< ref "/reference/data_directory" >}}) and then restarting the
+Monkey Island process.
+
+### On Docker
+When you first access the Monkey Island server, you'll be prompted to create an account.
+To reset the credentials, you'll need to perform a complete factory reset:
+
+1. Kill the Monkey Island container:
+    ```bash
+    sudo docker kill monkey-island
+    ```
+1. Kill the MongoDB container:
+    ```bash
+    sudo docker kill monkey-mongo
+    ```
+1. Remove the MongoDB volume:
+    ```bash
+    sudo docker volume rm db
+    ```
+1. Restart the MongoDB container:
+   ```bash
+    sudo docker run \
+        --name monkey-mongo \
+        --network=host \
+        --volume db:/data/db \
+        --detach \
+        mongo:4.2
+    ```
+1. Restart the Monkey Island container
+    ```bash
+    sudo docker run \
+        --name monkey-island \
+        --network=host \
+        guardicore/monkey-island:VERSION
+    ```
+1. Go to the Monkey Island's URL and create a new account.
+
 
 ## Should I run the Infection Monkey continuously?
 
@@ -119,7 +188,7 @@ You can download the Monkey Island's log file directly from the UI. Click the "l
 ![How to download Monkey Island internal log file](/images/faq/download_log_monkey_island.png "How to download Monkey Island internal log file")
 
 It can also be found as a local file on the Monkey Island server system in the specified
-[data directory](/reference/data_directory).
+[data directory]({{< ref "/reference/data_directory" >}}).
 
 The log enables you to see which requests were requested from the server and extra logs from the backend logic. The log will contain entries like these:
 
@@ -155,7 +224,7 @@ The logs contain information about the internals of the Infection Monkey agent's
 ### How do I change the log level of the Monkey Island logger?
 
 The log level of the Monkey Island logger is set in the `log_level` field
-in the `server_config.json` file (located in the [data directory](/reference/data_directory)).
+in the `server_config.json` file (located in the [data directory]({{< ref "/reference/data_directory" >}})).
 Make sure to leave everything else in `server_config.json` unchanged:
 
 ```json
@@ -224,6 +293,58 @@ This is sometimes caused when Monkey Island is installed with an old version of 
 
 - **Linux**: First, uninstall the current version with `sudo apt uninstall mongodb` and then install the latest version using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/).
 - **Windows**: First, remove the MongoDB binaries from the `monkey\monkey_island\bin\mongodb` folder. Download and install the latest version of MongoDB using the [official MongoDB manual](https://docs.mongodb.com/manual/administration/install-community/). After installation is complete, copy the files from the `C:\Program Files\MongoDB\Server\4.2\bin` folder to the `monkey\monkey_island\bin\mongodb folder`. Try to run the Monkey Island again and everything should work.
+
+## Can I limit how the Infection Monkey propagates through my network?
+
+Yes! To limit how the Infection Monkey propagates through your network, you can:
+
+#### Adjust the scan depth
+
+The scan depth limits the number of hops that the Infection Monkey agent will
+spread from patient zero. If you set the scan depth to one, the agent will only
+reach a single hop from the initially infected machine. Scan depth does not
+limit the number of devices, just the number of hops.
+
+- **Example**: In this example, the scan depth is set to two. _Host A_ scans the
+network and finds hosts _B, C, D_ and _E_. The Infection Monkey agent
+successfully propagates from _Host A_ to _Host C_. Since the scan depth is 2,
+the agent will pivot from _Host C_ and continue to scan other machines on the
+network. However, if _Host C_ successfully breaches _Host E_, it will not pivot
+further nor continue to scan or propagate.
+
+![What is scan depth](/images/faq/propagation_depth_diagram.png "What is scan
+depth")
+
+
+#### Enable or disable scanning the local subnet
+
+You can find the settings that define how the Infection Monkey will scan your
+network in `Configuration -> Network`. Each agent will scan its entire local
+subnet by default, but you can disable this behavior by unchecking the `Local
+network scan` button.
+
+#### Add IPs to the IP allow list
+
+You can specify which hosts you want the Infection Monkey agents to attempt to
+scan in the `Configuration -> Network -> Scan target list` section.
+
+#### Add IPs to the IP block list
+
+
+If there are any hosts on your network that you would like to prevent the
+Infection Monkey from scanning or exploiting, you can add them to the list of
+"Blocked IPs" in `Configuration -> Network -> Blocked IPs`.
+
+#### Specify max number of victims to find/exploit
+
+Two settings in `Configuration -> Internal -> Monkey` allow you to further
+limit the Infection Monkey's propagation:
+
+- **Max victims to find**: This limits the total number of machines that the
+Infection Monkey is allowed to scan.
+- **Max victims to exploit**: This limits the total number of machines that the
+Infection Monkey is allowed to successfully exploit.
+
 
 ## How can I get involved with the project?
 

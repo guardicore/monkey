@@ -9,7 +9,7 @@ from monkey_island.cc.services.config_manipulator import update_config_on_mode_s
 from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode, set_mode
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class IslandMode(flask_restful.Resource):
@@ -23,7 +23,7 @@ class IslandMode(flask_restful.Resource):
             set_mode(mode)
 
             if not update_config_on_mode_set(mode):
-                LOG.error(
+                logger.error(
                     "Could not apply configuration changes per mode. "
                     "Using default advanced configuration."
                 )

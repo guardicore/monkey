@@ -9,7 +9,7 @@ from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AzureCollector(object):
@@ -35,7 +35,7 @@ class AzureCollector(object):
         """
         results = [self.extractor(filepath) for filepath in self.file_list]
         results = [x for x in results if x]
-        LOG.info("Found %d Azure VM access configuration file", len(results))
+        logger.info("Found %d Azure VM access configuration file", len(results))
         return results
 
     @staticmethod
@@ -68,13 +68,13 @@ class AzureCollector(object):
             T1064Telem(ScanStatus.USED, "Bash scripts used to extract azure credentials.").send()
             return decrypt_data["username"], decrypt_data["password"]
         except IOError:
-            LOG.warning("Failed to parse VM Access plugin file. Could not open file")
+            logger.warning("Failed to parse VM Access plugin file. Could not open file")
             return None
         except (KeyError, ValueError):
-            LOG.warning("Failed to parse VM Access plugin file. Invalid format")
+            logger.warning("Failed to parse VM Access plugin file. Invalid format")
             return None
         except subprocess.CalledProcessError:
-            LOG.warning(
+            logger.warning(
                 "Failed to decrypt VM Access plugin file. Failed to decode B64 and decrypt data"
             )
             return None
@@ -119,13 +119,13 @@ class AzureCollector(object):
             ).send()
             return username, password
         except IOError:
-            LOG.warning("Failed to parse VM Access plugin file. Could not open file")
+            logger.warning("Failed to parse VM Access plugin file. Could not open file")
             return None
         except (KeyError, ValueError, IndexError):
-            LOG.warning("Failed to parse VM Access plugin file. Invalid format")
+            logger.warning("Failed to parse VM Access plugin file. Invalid format")
             return None
         except subprocess.CalledProcessError:
-            LOG.warning(
+            logger.warning(
                 "Failed to decrypt VM Access plugin file. Failed to decode B64 and decrypt data"
             )
             return None

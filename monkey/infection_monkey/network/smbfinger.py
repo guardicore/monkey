@@ -9,7 +9,7 @@ from infection_monkey.network.HostFinger import HostFinger
 SMB_PORT = 445
 SMB_SERVICE = "tcp-445"
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Packet:
@@ -185,6 +185,6 @@ class SMBFinger(HostFinger):
                     host.services[SMB_SERVICE]["os-version"] = os_version
                 return True
         except Exception as exc:
-            LOG.debug("Error getting smb fingerprint: %s", exc)
+            logger.debug("Error getting smb fingerprint: %s", exc)
 
         return False

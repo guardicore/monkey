@@ -3,6 +3,7 @@ import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox';
+import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -13,6 +14,19 @@ export default function UiSchema(props) {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
+      },
+      credentials: {
+        exploit_user_list: {
+          items: {
+            classNames: 'config-template-no-header'
+          }
+        },
+        exploit_password_list: {
+          items: {
+            classNames: 'config-template-no-header',
+            'ui:widget': SensitiveTextInput
+          }
+        }
       }
     },
     basic_network: {
@@ -21,8 +35,23 @@ export default function UiSchema(props) {
         info_box: {
           'ui:field': InfoBox
         },
+        blocked_ips: {
+          items: {
+            classNames: 'config-template-no-header'
+          }
+        },
         subnet_scan_list: {
-          format: 'ip-list'
+          format: 'ip-list',
+          items: {
+            classNames: 'config-template-no-header'
+          }
+        }
+      },
+      network_analysis: {
+        inaccessible_subnets: {
+          items: {
+            classNames: 'config-template-no-header'
+          }
         }
       }
     },
@@ -103,6 +132,18 @@ export default function UiSchema(props) {
         },
         aws_keys: {
           classNames: 'config-field-hidden'
+        }
+      },
+      exploits: {
+        exploit_lm_hash_list:{
+          items: {
+              'ui:widget': SensitiveTextInput
+          }
+        },
+        exploit_ntlm_hash_list: {
+          items: {
+              'ui:widget': SensitiveTextInput
+          }
         }
       }
     }

@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from sys import exit
 from threading import Thread
 from typing import Tuple
 
@@ -27,16 +28,15 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,
 )
-from monkey_island.cc.server_utils.encryptor import initialize_encryptor  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
+from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
-from monkey_island.cc.setup.mongo.database_initializer import init_collections  # noqa: E402
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -63,12 +63,15 @@ def run_monkey_island():
 
 def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str]:
     try:
-        return config_setup.setup_data_dir(island_args)
+        return config_setup.setup_server_config(island_args)
     except OSError as ex:
         print(f"Error opening server config file: {ex}")
         exit(1)
     except json.JSONDecodeError as ex:
         print(f"Error loading server config: {ex}")
+        exit(1)
+    except IncompatibleDataDirectory as ex:
+        print(f"Incompatible data directory: {ex}")
         exit(1)
 
 
@@ -88,7 +91,6 @@ def _configure_logging(config_options):
 def _initialize_globals(config_options: IslandConfigOptions, server_config_path: str):
     env_singleton.initialize_from_file(server_config_path)
 
-    initialize_encryptor(config_options.data_dir)
     initialize_services(config_options.data_dir)
 
 
@@ -130,8 +132,6 @@ def _configure_gevent_exception_handling(data_dir):
 def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
     populate_exporter_list()
     app = init_app(mongo_setup.MONGO_URL)
-
-    init_collections()
 
     if should_setup_only:
         logger.warning("Setup only flag passed. Exiting.")

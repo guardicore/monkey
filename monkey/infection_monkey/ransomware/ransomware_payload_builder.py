@@ -18,11 +18,11 @@ from infection_monkey.utils.bit_manipulators import flip_bits
 EXTENSION = ".m0nk3y"
 CHUNK_SIZE = 4096 * 24
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def build_ransomware_payload(config: dict):
-    LOG.debug(f"Ransomware payload configuration:\n{pformat(config)}")
+    logger.debug(f"Ransomware payload configuration:\n{pformat(config)}")
     ransomware_config = RansomwareConfig(config)
 
     file_encryptor = _build_file_encryptor()

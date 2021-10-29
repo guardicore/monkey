@@ -24,6 +24,7 @@ class Performance(ConfigTemplate):
             "HadoopExploiter",
             "VSFTPDExploiter",
             "MSSQLExploiter",
+            "PowerShellExploiter",
             "ZerologonExploiter",
         ],
         "basic_network.network_analysis.inaccessible_subnets": [

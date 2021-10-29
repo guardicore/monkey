@@ -145,9 +145,6 @@ class Configuration(object):
     # sets whether or not to retry failed hosts on next scan
     retry_failed_explotation = True
 
-    # addresses of internet servers to ping and check if the monkey has internet acccess.
-    internet_services = ["updates.infectionmonkey.com", "www.google.com"]
-
     keep_tunnel_open_time = 60
 
     # Monkey files directory name

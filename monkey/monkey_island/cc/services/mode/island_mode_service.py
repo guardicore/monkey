@@ -1,9 +1,5 @@
-import logging
-
 from monkey_island.cc.models.island_mode_model import IslandMode
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
-
-LOG = logging.getLogger(__name__)
 
 
 def set_mode(mode: IslandModeEnum):

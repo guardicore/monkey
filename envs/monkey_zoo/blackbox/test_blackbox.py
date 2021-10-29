@@ -13,6 +13,10 @@ from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
+from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
+from envs.monkey_zoo.blackbox.config_templates.powershell_credentials_reuse import (
+    PowerShellCredentialsReuse,
+)
 from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
@@ -39,7 +43,11 @@ from envs.monkey_zoo.blackbox.tests.performance.report_generation_from_telemetri
 from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import (
     TelemetryPerformanceTest,
 )
-from envs.monkey_zoo.blackbox.utils import gcp_machine_handlers
+from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
+    initialize_gcp_client,
+    start_machines,
+    stop_machines,
+)
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 DEFAULT_TIMEOUT_SECONDS = 5 * 60
@@ -53,15 +61,15 @@ LOGGER = logging.getLogger(__name__)
 def GCPHandler(request, no_gcp):
     if not no_gcp:
         try:
-            GCPHandler = gcp_machine_handlers.GCPHandler()
-            GCPHandler.start_machines(" ".join(GCP_TEST_MACHINE_LIST))
+            initialize_gcp_client()
+            start_machines(GCP_TEST_MACHINE_LIST)
         except Exception as e:
             LOGGER.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
         def fin():
-            GCPHandler.stop_machines(" ".join(GCP_TEST_MACHINE_LIST))
+            stop_machines(GCP_TEST_MACHINE_LIST)
 
         request.addfinalizer(fin)
 
@@ -156,6 +164,19 @@ class TestMonkeyBlackbox:
     def test_mssql_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Mssql, "MSSQL_exploiter")
 
+    def test_powershell_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, PowerShell, "PowerShell_Remoting_exploiter"
+        )
+
+    @pytest.mark.skip_powershell_reuse
+    def test_powershell_exploiter_credentials_reuse(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client,
+            PowerShellCredentialsReuse,
+            "PowerShell_Remoting_exploiter_credentials_reuse",
+        )
+
     def test_smb_and_mimikatz_exploiters(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
             island_client, SmbMimikatz, "SMB_exploiter_mimikatz"
@@ -200,7 +221,10 @@ class TestMonkeyBlackbox:
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
         raw_config = IslandConfigParser.get_raw_config(Zerologon, island_client)
-        analyzer = ZerologonAnalyzer(island_client, expected_creds)
+        zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
+        communication_analyzer = CommunicationAnalyzer(
+            island_client, IslandConfigParser.get_ips_of_targets(raw_config)
+        )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
         )
@@ -208,7 +232,7 @@ class TestMonkeyBlackbox:
             name=test_name,
             island_client=island_client,
             raw_config=raw_config,
-            analyzers=[analyzer],
+            analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS,
             log_handler=log_handler,
         ).run()

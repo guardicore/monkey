@@ -8,13 +8,13 @@ from flask import request
 
 from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.utils.encryption import (
+from monkey_island.cc.server_utils.encryption import (
     InvalidCiphertextError,
     InvalidCredentialsError,
-    decrypt_ciphertext,
+    PasswordBasedStringEncryptor,
     is_encrypted,
 )
+from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +72,8 @@ class ConfigurationImport(flask_restful.Resource):
         try:
             config = request_contents["config"]
             if ConfigurationImport.is_config_encrypted(request_contents["config"]):
-                config = decrypt_ciphertext(config, request_contents["password"])
+                pb_encryptor = PasswordBasedStringEncryptor(request_contents["password"])
+                config = pb_encryptor.decrypt(config)
             return json.loads(config)
         except (JSONDecodeError, InvalidCiphertextError):
             logger.exception(

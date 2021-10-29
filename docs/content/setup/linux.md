@@ -23,18 +23,28 @@ installed, but the ones that we've tested are:
 - Ubuntu Focal 20.04
 - Ubuntu Hirsute 21.04
 
+On Windows, AppImage can be run in WSL.
+
+
 ## Deployment
 
 1. Make the AppImage package executable:
     ```bash
-    chmod u+x Infection_Monkey_v1.11.0.AppImage
+    chmod u+x InfectionMonkey-v1.12.0.AppImage
     ```
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./Infection_Monkey_v1.11.0.AppImage
+    ./InfectionMonkey-v1.12.0.AppImage
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
+
+{{% notice info %}}
+If you're prompted to delete your data directory and you're not sure what to
+do, see the [FAQ]({{< ref
+"/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
+>}}) for more information.
+{{% /notice %}}
 
 ### Start Monkey Island with user-provided certificate
 
@@ -49,7 +59,7 @@ private certificate authority.
    `server_config.json` file.
 
     ```bash
-    ./Infection_Monkey_v1.11.0.AppImage --setup-only
+    ./InfectionMonkey-v1.12.0.AppImage --setup-only
     ```
 
 1. (Optional but recommended) Move your `.crt` and `.key` files to
@@ -85,7 +95,7 @@ private certificate authority.
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./Infection_Monkey_v1.11.0.AppImage
+    ./InfectionMonkey-v1.12.0.AppImage
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at

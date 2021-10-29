@@ -17,8 +17,6 @@ from monkey_island.cc.environment import Environment, EnvironmentConfig, UserCre
 WITH_CREDENTIALS = None
 NO_CREDENTIALS = None
 PARTIAL_CREDENTIALS = None
-STANDARD_WITH_CREDENTIALS = None
-STANDARD_ENV = None
 
 EMPTY_USER_CREDENTIALS = UserCreds("", "")
 FULL_USER_CREDENTIALS = UserCreds(username="test", password_hash="1231234")
@@ -31,16 +29,10 @@ def configure_resources(server_configs_dir):
     global WITH_CREDENTIALS
     global NO_CREDENTIALS
     global PARTIAL_CREDENTIALS
-    global STANDARD_WITH_CREDENTIALS
-    global STANDARD_ENV
 
     WITH_CREDENTIALS = os.path.join(server_configs_dir, "server_config_with_credentials.json")
     NO_CREDENTIALS = os.path.join(server_configs_dir, "server_config_no_credentials.json")
     PARTIAL_CREDENTIALS = os.path.join(server_configs_dir, "server_config_partial_credentials.json")
-    STANDARD_WITH_CREDENTIALS = os.path.join(
-        server_configs_dir, "server_config_standard_with_credentials.json"
-    )
-    STANDARD_ENV = os.path.join(server_configs_dir, "server_config_standard_env.json")
 
 
 def get_tmp_file():
@@ -123,28 +115,17 @@ class TestEnvironment(TestCase):
         self._test_bool_env_method("needs_registration", env, NO_CREDENTIALS, True)
         self._test_bool_env_method("needs_registration", env, PARTIAL_CREDENTIALS, True)
 
-        env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        self._test_bool_env_method("needs_registration", env, STANDARD_ENV, False)
-        self._test_bool_env_method("needs_registration", env, STANDARD_WITH_CREDENTIALS, False)
-
     def test_is_registered(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
         self._test_bool_env_method("_is_registered", env, WITH_CREDENTIALS, True)
         self._test_bool_env_method("_is_registered", env, NO_CREDENTIALS, False)
         self._test_bool_env_method("_is_registered", env, PARTIAL_CREDENTIALS, False)
 
-        env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        self._test_bool_env_method("_is_registered", env, STANDARD_ENV, False)
-        self._test_bool_env_method("_is_registered", env, STANDARD_WITH_CREDENTIALS, False)
-
     def test_is_credentials_set_up(self):
         env = TestEnvironment.EnvironmentCredentialsRequired()
         self._test_bool_env_method("_is_credentials_set_up", env, NO_CREDENTIALS, False)
         self._test_bool_env_method("_is_credentials_set_up", env, WITH_CREDENTIALS, True)
         self._test_bool_env_method("_is_credentials_set_up", env, PARTIAL_CREDENTIALS, False)
-
-        env = TestEnvironment.EnvironmentCredentialsNotRequired()
-        self._test_bool_env_method("_is_credentials_set_up", env, STANDARD_ENV, False)
 
     def _test_bool_env_method(
         self, method_name: str, env: Environment, config: Dict, expected_result: bool

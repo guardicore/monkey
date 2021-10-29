@@ -9,7 +9,7 @@ from infection_monkey.post_breach.signed_script_proxy.signed_script_proxy import
 )
 from infection_monkey.utils.environment import is_windows_os
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class SignedScriptProxyExecution(PBA):
@@ -26,7 +26,7 @@ class SignedScriptProxyExecution(PBA):
                 ).decode()
             super().run()
         except Exception as e:
-            LOG.warning(
+            logger.warning(
                 f"An exception occurred on running PBA "
                 f"{POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC}: {str(e)}"
             )

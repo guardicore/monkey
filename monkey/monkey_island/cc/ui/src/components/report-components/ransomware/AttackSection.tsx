@@ -3,11 +3,21 @@ import IslandHttpClient from '../../IslandHttpClient';
 import {FileEncryptionTable, TableRow} from './FileEncryptionTable';
 import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
+import ExternalLink from '../common/ExternalLink';
 
-const ATTACK_DESCRIPTION = 'After the attacker or malware has propagated through your network, \
-                            your data is at risk on any machine the attacker can access. It can be \
-                            encrypted and held for ransomware, exfiltrated, or manipulated in \
-                            whatever way the attacker chooses.'
+const ATTACK_DESCRIPTION = <>
+                             After the attacker or malware has propagated through your network,
+                             your data is at risk on any machine the attacker can access. It can be
+                             encrypted and held for ransom, exfiltrated, or manipulated in
+                             whatever way the attacker chooses.
+                             <br />
+                             <br />
+                             <ExternalLink
+                               url="https://www.guardicore.com/blog/what-are-ransomware-costs/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
+                               text="Learn about the financial impact of ransomware on Guardicore's blog"
+                             />
+                           </>
+
 const HOSTNAME_REGEX = /^(.* - )?(\S+) :.*$/;
 
 function AttackSection(): ReactElement {

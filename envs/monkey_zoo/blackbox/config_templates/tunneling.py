@@ -13,11 +13,11 @@ class Tunneling(ConfigTemplate):
             "basic_network.scope.subnet_scan_list": [
                 "10.2.2.9",
                 "10.2.1.10",
-                "10.2.0.11",
                 "10.2.0.12",
+                "10.2.0.11",
             ],
             "basic_network.scope.depth": 3,
-            "internal.general.keep_tunnel_open_time": 180,
+            "internal.general.keep_tunnel_open_time": 150,
             "basic.credentials.exploit_password_list": [
                 "Password1!",
                 "3Q=(Ge(+&w]*",

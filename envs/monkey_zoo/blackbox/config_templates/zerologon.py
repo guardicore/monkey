@@ -10,7 +10,7 @@ class Zerologon(ConfigTemplate):
 
     config_values.update(
         {
-            "basic.exploiters.exploiter_classes": ["ZerologonExploiter"],
+            "basic.exploiters.exploiter_classes": ["ZerologonExploiter", "SmbExploiter"],
             "basic_network.scope.subnet_scan_list": ["10.2.2.25"],
             # Empty list to make sure ZeroLogon adds "Administrator" username
             "basic.credentials.exploit_user_list": [],

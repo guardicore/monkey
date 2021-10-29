@@ -13,7 +13,7 @@ class GraphWrapper extends React.Component {
       newOptions = this.props.options;
     }
     return (
-      <div class={'net-graph-wrapper'}>
+      <div className={'net-graph-wrapper'}>
         <Graph graph={this.props.graph} options={newOptions} events={this.props.events}/>
       </div>
     )

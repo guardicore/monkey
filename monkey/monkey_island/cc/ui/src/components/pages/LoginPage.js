@@ -48,12 +48,11 @@ class LoginPageComponent extends React.Component {
           this.redirectToRegistration()
         }
       })
-    this.auth.loggedIn()
-      .then(res => {
-        if (res) {
-          this.redirectToHome();
-        }
-      });
+
+    if (this.auth.loggedIn()) {
+      this.redirectToHome();
+    }
+
   }
 
   render() {

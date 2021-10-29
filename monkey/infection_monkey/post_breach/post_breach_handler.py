@@ -4,7 +4,7 @@ from typing import Sequence
 
 from infection_monkey.post_breach.pba import PBA
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PostBreach(object):
@@ -21,7 +21,7 @@ class PostBreach(object):
         """
         with Pool(5) as pool:
             pool.map(self.run_pba, self.pba_list)
-            LOG.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
+            logger.info("All PBAs executed. Total {} executed.".format(len(self.pba_list)))
 
     @staticmethod
     def config_to_pba_list() -> Sequence[PBA]:
@@ -32,8 +32,8 @@ class PostBreach(object):
 
     def run_pba(self, pba):
         try:
-            LOG.debug("Executing PBA: '{}'".format(pba.name))
+            logger.debug("Executing PBA: '{}'".format(pba.name))
             pba.run()
-            LOG.debug(f"Execution of {pba.name} finished")
+            logger.debug(f"Execution of {pba.name} finished")
         except Exception as e:
-            LOG.error("PBA {} failed. Error info: {}".format(pba.name, e))
+            logger.error("PBA {} failed. Error info: {}".format(pba.name, e))

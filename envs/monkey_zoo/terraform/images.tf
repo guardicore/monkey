@@ -37,6 +37,10 @@ data "google_compute_image" "tunneling-11" {
   name = "tunneling-11"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "tunneling-12" {
+  name = "tunneling-12"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "sshkeys-11" {
   name = "sshkeys-11"
   project = local.monkeyzoo_project
@@ -55,6 +59,22 @@ data "google_compute_image" "mimikatz-15" {
 }
 data "google_compute_image" "mssql-16" {
   name = "mssql-16"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "powershell-3-48" {
+  name = "powershell-3-48"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "powershell-3-47" {
+  name = "powershell-3-47"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "powershell-3-46" {
+  name = "powershell-3-46"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "powershell-3-45" {
+  name = "powershell-3-45"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "weblogic-18" {

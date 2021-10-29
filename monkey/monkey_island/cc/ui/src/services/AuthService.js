@@ -1,8 +1,6 @@
 import decode from 'jwt-decode';
 
 export default class AuthService {
-  NO_AUTH_CREDS = '1234567890!@#$%^&*()_nothing_up_my_sleeve_1234567890!@#$%^&*()';
-
   SECONDS_BEFORE_JWT_EXPIRES = 20;
   AUTHENTICATION_API_ENDPOINT = '/api/auth';
   REGISTRATION_API_ENDPOINT = '/api/registration';
@@ -16,7 +14,7 @@ export default class AuthService {
   };
 
   jwtHeader = () => {
-    if (this._loggedIn()) {
+    if (this.loggedIn()) {
       return 'Bearer ' + this._getToken();
     }
   };
@@ -48,7 +46,7 @@ export default class AuthService {
     return this._authFetch(this.REGISTRATION_API_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify({
-        'user': username,
+        'username': username,
         'password': password
       })
     }).then(res => {
@@ -68,7 +66,7 @@ export default class AuthService {
       'Content-Type': 'application/json'
     };
 
-    if (this._loggedIn()) {
+    if (this.loggedIn()) {
       headers['Authorization'] = 'Bearer ' + this._getToken();
     }
 
@@ -101,19 +99,7 @@ export default class AuthService {
       })
   };
 
-  async loggedIn() {
-    let token = this._getToken();
-    if ((token === null) || (this._isTokenExpired(token))) {
-      await this.attemptNoAuthLogin();
-    }
-    return this._loggedIn();
-  }
-
-  attemptNoAuthLogin() {
-    return this._login(this.NO_AUTH_CREDS, this.NO_AUTH_CREDS);
-  }
-
-  _loggedIn() {
+  loggedIn() {
     const token = this._getToken();
     return ((token !== null) && !this._isTokenExpired(token));
   }

@@ -7,7 +7,7 @@ from socket import AF_INET, SOCK_DGRAM, SOCK_STREAM
 
 import psutil
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class NetstatCollector(object):
@@ -26,7 +26,7 @@ class NetstatCollector(object):
 
     @staticmethod
     def get_netstat_info():
-        LOG.info("Collecting netstat info")
+        logger.info("Collecting netstat info")
         return [NetstatCollector._parse_connection(c) for c in psutil.net_connections(kind="inet")]
 
     @staticmethod

@@ -9,7 +9,7 @@ from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.plugins.plugin import Plugin
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class PBA(Plugin):
@@ -56,7 +56,7 @@ class PBA(Plugin):
                 ).send()
             PostBreachTelem(self, result).send()
         else:
-            LOG.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
+            logger.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
 
     def is_script(self):
         """

@@ -24,8 +24,6 @@ $SAMBA_32_BINARY_URL = $MONKEY_DOWNLOAD_URL + "sc_monkey_runner32.so"
 $SAMBA_32_BINARY_NAME = "sc_monkey_runner32.so"
 $SAMBA_64_BINARY_URL = $MONKEY_DOWNLOAD_URL + "sc_monkey_runner64.so"
 $SAMBA_64_BINARY_NAME = "sc_monkey_runner64.so"
-$TRACEROUTE_64_BINARY_URL = $MONKEY_DOWNLOAD_URL + "traceroute64"
-$TRACEROUTE_32_BINARY_URL = $MONKEY_DOWNLOAD_URL + "traceroute32"
 
 # Other directories and paths ( most likely you dont need to configure)
 $MONKEY_ISLAND_DIR = Join-Path "\monkey" -ChildPath "monkey_island"

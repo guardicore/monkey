@@ -77,10 +77,9 @@
                 "             \"attack_techniques\": [\"T1082\"],",
                 "         },",
                 "*        {",
-                "+        # SWIMMER: Collector config goes here. Tip: Hostname collection relates to the T1082 and T1016 techniques.",
                 "*            \"type\": \"string\",",
                 "*            \"enum\": [HOSTNAME_COLLECTOR],",
-                "*            \"title\": \"Hostname collector\",",
+                "*            \"title\": \"Hostname Collector\",",
                 "*            \"safe\": True,",
                 "*            \"info\": \"Collects machine's hostname.\",",
                 "*            \"attack_techniques\": [\"T1082\", \"T1016\"],",
@@ -110,7 +109,7 @@
             "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/monkey.py",
             "comments": [],
-            "firstLineNumber": 92,
+            "firstLineNumber": 91,
             "lines": [
                 "                     \"default\": [",
                 "                         ENVIRONMENT_COLLECTOR,",
@@ -195,14 +194,14 @@
         }
     ],
     "symbols": {},
-    "file_version": "2.0.1",
+    "file_version": "2.0.3",
     "meta": {
-        "app_version": "0.4.4-0",
+        "app_version": "0.5.7-0",
         "file_blobs": {
             "monkey/common/common_consts/system_info_collectors_names.py": "175a054e1408805a4cebbe27e2f9616db40988cf",
             "monkey/infection_monkey/system_info/collectors/hostname_collector.py": "0aeecd9fb7bde83cccd4501ec03e0da199ec5fc3",
-            "monkey/monkey_island/cc/services/config_schema/definitions/system_info_collector_classes.py": "9a4a39050eb088876df4fa629e14faf820e714a0",
-            "monkey/monkey_island/cc/services/config_schema/monkey.py": "e745da5828c63e975625ac2e9b80ce9626324970",
+            "monkey/monkey_island/cc/services/config_schema/definitions/system_info_collector_classes.py": "072640352fc9d50fe09752cfc951dab7d99271af",
+            "monkey/monkey_island/cc/services/config_schema/monkey.py": "da06123a95eebf7f0a68861815ee644bb37c8db6",
             "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/hostname.py": "e2de4519cbd71bba70e81cf3ff61817437d95a21",
             "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py": "7ce4b6fcfbce0d6cd8a60297213c5be1699b22df"
         }

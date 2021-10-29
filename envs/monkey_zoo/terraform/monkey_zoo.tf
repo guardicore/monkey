@@ -26,6 +26,12 @@ resource "google_compute_subnetwork" "monkeyzoo-main" {
   network         = google_compute_network.monkeyzoo.self_link
 }
 
+resource "google_compute_subnetwork" "monkeyzoo-main-1" {
+  name = "${local.resource_prefix}monkeyzoo-main-1"
+  ip_cidr_range   = "10.2.3.0/24"
+  network         = google_compute_network.monkeyzoo.self_link
+}
+
 resource "google_compute_subnetwork" "tunneling-main" {
   name = "${local.resource_prefix}tunneling-main"
   ip_cidr_range   = "10.2.1.0/28"
@@ -304,6 +310,66 @@ resource "google_compute_instance_from_template" "mssql-16" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.16"
+  }
+}
+
+resource "google_compute_instance_from_template" "powershell-3-48" {
+  name = "${local.resource_prefix}powershell-3-48"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.powershell-3-48.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.48"
+  }
+}
+
+resource "google_compute_instance_from_template" "powershell-3-47" {
+  name = "${local.resource_prefix}powershell-3-47"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.powershell-3-47.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.47"
+  }
+}
+
+resource "google_compute_instance_from_template" "powershell-3-46" {
+  name = "${local.resource_prefix}powershell-3-46"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.powershell-3-46.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.46"
+  }
+}
+
+resource "google_compute_instance_from_template" "powershell-3-45" {
+  name = "${local.resource_prefix}powershell-3-45"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.powershell-3-45.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    network_ip="10.2.3.45"
   }
 }
 

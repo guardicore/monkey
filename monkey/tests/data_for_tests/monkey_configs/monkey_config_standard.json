@@ -54,10 +54,6 @@
       "monkey": {
         "victims_max_find": 100,
         "victims_max_exploit": 100,
-        "internet_services": [
-          "monkey.guardicore.com",
-          "www.google.com"
-        ],
         "self_delete_in_cleanup": true,
         "use_file_logging": true,
         "serialize_config": false,
@@ -179,8 +175,7 @@
         "PBA_windows_filename": "",
         "PBA_linux_filename": "",
         "post_breach_actions": [
-          "BackdoorUser",
-          "CommunicateAsNewUser",
+          "CommunicateAsBackdoorUser",
           "ModifyShellStartupFiles",
           "HiddenFiles",
           "TrapCommand",

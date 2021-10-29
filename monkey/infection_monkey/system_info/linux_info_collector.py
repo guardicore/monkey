@@ -3,7 +3,7 @@ import logging
 from infection_monkey.system_info import InfoCollector
 from infection_monkey.system_info.SSH_info_collector import SSHCollector
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class LinuxInfoCollector(InfoCollector):
@@ -20,7 +20,7 @@ class LinuxInfoCollector(InfoCollector):
         Hostname, process list and network subnets
         :return: Dict of system information
         """
-        LOG.debug("Running Linux collector")
+        logger.debug("Running Linux collector")
         super(LinuxInfoCollector, self).get_info()
         self.info["ssh_info"] = SSHCollector.get_info()
         return self.info

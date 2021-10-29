@@ -5,7 +5,8 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 class T1059(AttackTechnique):
     tech_id = "T1059"
-    unscanned_msg = "Monkey didn't exploit any machines to run commands at."
+    relevant_systems = ["Linux", "Windows"]
+    unscanned_msg = "Monkey didn't exploit any machines to run commands on."
     scanned_msg = ""
     used_msg = "Monkey successfully ran commands on exploited machines in the network."
 

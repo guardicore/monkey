@@ -1,5 +1,5 @@
 import copy
-import logging
+from http import HTTPStatus
 
 import flask_restful
 from flask import Response, request, send_from_directory
@@ -11,7 +11,6 @@ from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
-LOG = logging.getLogger(__name__)
 # Front end uses these strings to identify which files to work with (linux or windows)
 LINUX_PBA_TYPE = "PBAlinux"
 WINDOWS_PBA_TYPE = "PBAwindows"
@@ -29,6 +28,9 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file to send, linux or windows
         :return: Returns file contents
         """
+        if self.is_pba_file_type_supported(file_type):
+            return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
+
         # Verify that file_name is indeed a file from config
         if file_type == LINUX_PBA_TYPE:
             filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
@@ -43,6 +45,9 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was received, linux or windows
         :return: Returns flask response object with uploaded file's filename
         """
+        if self.is_pba_file_type_supported(file_type):
+            return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
+
         filename = FileUpload.upload_pba_file(
             request.files["filepond"], (file_type == LINUX_PBA_TYPE)
         )
@@ -76,6 +81,9 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was deleted, linux of windows
         :return: Empty response
         """
+        if self.is_pba_file_type_supported(file_type):
+            return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
+
         filename_path = (
             PBA_LINUX_FILENAME_PATH if file_type == "PBAlinux" else PBA_WINDOWS_FILENAME_PATH
         )
@@ -85,3 +93,7 @@ class FileUpload(flask_restful.Resource):
             ConfigService.set_config_value(filename_path, "")
 
         return {}
+
+    @staticmethod
+    def is_pba_file_type_supported(file_type: str) -> bool:
+        return file_type not in {LINUX_PBA_TYPE, WINDOWS_PBA_TYPE}

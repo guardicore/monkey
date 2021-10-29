@@ -33,7 +33,7 @@ except NameError:
     WindowsError = IOError
 
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
@@ -56,11 +56,11 @@ class MonkeyDrops(object):
         }
 
     def initialize(self):
-        LOG.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
+        logger.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
     def start(self):
         if self._config["destination_path"] is None:
-            LOG.error("No destination path specified")
+            logger.error("No destination path specified")
             return False
 
         # we copy/move only in case path is different
@@ -77,7 +77,7 @@ class MonkeyDrops(object):
             try:
                 shutil.move(self._config["source_path"], self._config["destination_path"])
 
-                LOG.info(
+                logger.info(
                     "Moved source file '%s' into '%s'",
                     self._config["source_path"],
                     self._config["destination_path"],
@@ -85,7 +85,7 @@ class MonkeyDrops(object):
 
                 file_moved = True
             except (WindowsError, IOError, OSError) as exc:
-                LOG.debug(
+                logger.debug(
                     "Error moving source file '%s' into '%s': %s",
                     self._config["source_path"],
                     self._config["destination_path"],
@@ -97,13 +97,13 @@ class MonkeyDrops(object):
             try:
                 shutil.copy(self._config["source_path"], self._config["destination_path"])
 
-                LOG.info(
+                logger.info(
                     "Copied source file '%s' into '%s'",
                     self._config["source_path"],
                     self._config["destination_path"],
                 )
             except (WindowsError, IOError, OSError) as exc:
-                LOG.error(
+                logger.error(
                     "Error copying source file '%s' into '%s': %s",
                     self._config["source_path"],
                     self._config["destination_path"],
@@ -122,7 +122,7 @@ class MonkeyDrops(object):
             try:
                 ref_stat = os.stat(dropper_date_reference_path)
             except OSError:
-                LOG.warning(
+                logger.warning(
                     "Cannot set reference date using '%s', file not found",
                     dropper_date_reference_path,
                 )
@@ -132,7 +132,7 @@ class MonkeyDrops(object):
                         self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime)
                     )
                 except OSError:
-                    LOG.warning("Cannot set reference date to destination file")
+                    logger.warning("Cannot set reference date to destination file")
 
         monkey_options = build_monkey_commandline_explicitly(
             parent=self.opts.parent,
@@ -173,7 +173,7 @@ class MonkeyDrops(object):
                 creationflags=DETACHED_PROCESS,
             )
 
-        LOG.info(
+        logger.info(
             "Executed monkey process (PID=%d) with command line: %s",
             monkey_process.pid,
             " ".join(monkey_commandline),
@@ -181,10 +181,10 @@ class MonkeyDrops(object):
 
         time.sleep(3)
         if monkey_process.poll() is not None:
-            LOG.warning("Seems like monkey died too soon")
+            logger.warning("Seems like monkey died too soon")
 
     def cleanup(self):
-        LOG.info("Cleaning up the dropper")
+        logger.info("Cleaning up the dropper")
 
         try:
             if (
@@ -197,28 +197,28 @@ class MonkeyDrops(object):
                 try:
                     os.remove(self._config["source_path"])
                 except Exception as exc:
-                    LOG.debug(
+                    logger.debug(
                         "Error removing source file '%s': %s", self._config["source_path"], exc
                     )
 
                     # mark the file for removal on next boot
-                    dropper_source_path_ctypes = c_char_p(self._config["source_path"])
+                    dropper_source_path_ctypes = c_char_p(self._config["source_path"].encode())
                     if 0 == ctypes.windll.kernel32.MoveFileExA(
                         dropper_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
                     ):
-                        LOG.debug(
+                        logger.debug(
                             "Error marking source file '%s' for deletion on next boot (error "
                             "%d)",
                             self._config["source_path"],
                             ctypes.windll.kernel32.GetLastError(),
                         )
                     else:
-                        LOG.debug(
+                        logger.debug(
                             "Dropper source file '%s' is marked for deletion on next boot",
                             self._config["source_path"],
                         )
                         T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
 
-            LOG.info("Dropper cleanup complete")
+            logger.info("Dropper cleanup complete")
         except AttributeError:
-            LOG.error("Invalid configuration options. Failing")
+            logger.error("Invalid configuration options. Failing")

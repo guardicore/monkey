@@ -19,13 +19,14 @@ from common.common_consts.timeouts import (
     SHORT_REQUEST_TIMEOUT,
 )
 from infection_monkey.config import GUID, WormConfiguration
-from infection_monkey.network.info import check_internet_access, local_ips
+from infection_monkey.network.info import local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
+from infection_monkey.utils.environment import is_windows_os
 
 requests.packages.urllib3.disable_warnings()
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 DOWNLOAD_CHUNK = 1024
 
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
@@ -40,23 +41,19 @@ class ControlClient(object):
     proxies = {}
 
     @staticmethod
-    def wakeup(parent=None, has_internet_access=None):
+    def wakeup(parent=None):
         if parent:
-            LOG.debug("parent: %s" % (parent,))
+            logger.debug("parent: %s" % (parent,))
 
         hostname = gethostname()
         if not parent:
             parent = GUID
-
-        if has_internet_access is None:
-            has_internet_access = check_internet_access(WormConfiguration.internet_services)
 
         monkey = {
             "guid": GUID,
             "hostname": hostname,
             "ip_addresses": local_ips(),
             "description": " ".join(platform.uname()),
-            "internet_access": has_internet_access,
             "config": WormConfiguration.as_dict(),
             "parent": parent,
             "launch_time": str(datetime.now().strftime(DEFAULT_TIME_FORMAT)),
@@ -76,12 +73,12 @@ class ControlClient(object):
 
     @staticmethod
     def find_server(default_tunnel=None):
-        LOG.debug(
+        logger.debug(
             "Trying to wake up with Monkey Island servers list: %r"
             % WormConfiguration.command_servers
         )
         if default_tunnel:
-            LOG.debug("default_tunnel: %s" % (default_tunnel,))
+            logger.debug("default_tunnel: %s" % (default_tunnel,))
 
         current_server = ""
 
@@ -92,7 +89,7 @@ class ControlClient(object):
                 debug_message = "Trying to connect to server: %s" % server
                 if ControlClient.proxies:
                     debug_message += " through proxies: %s" % ControlClient.proxies
-                LOG.debug(debug_message)
+                logger.debug(debug_message)
                 requests.get(  # noqa: DUO123
                     f"https://{server}/api?action=is-up",
                     verify=False,
@@ -104,7 +101,7 @@ class ControlClient(object):
 
             except ConnectionError as exc:
                 current_server = ""
-                LOG.warning("Error connecting to control server %s: %s", server, exc)
+                logger.warning("Error connecting to control server %s: %s", server, exc)
 
         if current_server:
             return True
@@ -112,16 +109,34 @@ class ControlClient(object):
             if ControlClient.proxies:
                 return False
             else:
-                LOG.info("Starting tunnel lookup...")
+                logger.info("Starting tunnel lookup...")
                 proxy_find = tunnel.find_tunnel(default=default_tunnel)
                 if proxy_find:
-                    proxy_address, proxy_port = proxy_find
-                    LOG.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
-                    ControlClient.proxies["https"] = "https://%s:%s" % (proxy_address, proxy_port)
+                    ControlClient.set_proxies(proxy_find)
                     return ControlClient.find_server()
                 else:
-                    LOG.info("No tunnel found")
+                    logger.info("No tunnel found")
                     return False
+
+    @staticmethod
+    def set_proxies(proxy_find):
+        """
+        Note: The proxy schema changes between different versions of requests and urllib3,
+        which causes the machine to not open a tunnel back.
+        If we get "ValueError: check_hostname requires server_hostname" or
+        "Proxy URL had not schema, should start with http:// or https://" errors,
+        the proxy schema needs to be changed.
+        Keep this in mind when upgrading to newer python version or when urllib3 and
+        requests are updated there is possibility that the proxy schema is changed.
+        https://github.com/psf/requests/issues/5297
+        https://github.com/psf/requests/issues/5855
+        """
+        proxy_address, proxy_port = proxy_find
+        logger.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
+        if is_windows_os():
+            ControlClient.proxies["https"] = f"http://{proxy_address}:{proxy_port}"
+        else:
+            ControlClient.proxies["https"] = f"{proxy_address}:{proxy_port}"
 
     @staticmethod
     def keepalive():
@@ -140,7 +155,7 @@ class ControlClient(object):
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
-            LOG.warning(
+            logger.warning(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
             return {}
@@ -148,7 +163,7 @@ class ControlClient(object):
     @staticmethod
     def send_telemetry(telem_category, json_data: str):
         if not WormConfiguration.current_server:
-            LOG.error(
+            logger.error(
                 "Trying to send %s telemetry before current server is established, aborting."
                 % telem_category
             )
@@ -164,7 +179,7 @@ class ControlClient(object):
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
-            LOG.warning(
+            logger.warning(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
 
@@ -183,7 +198,7 @@ class ControlClient(object):
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
-            LOG.warning(
+            logger.warning(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
 
@@ -200,7 +215,7 @@ class ControlClient(object):
             )
 
         except Exception as exc:
-            LOG.warning(
+            logger.warning(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
             return
@@ -210,10 +225,10 @@ class ControlClient(object):
             formatted_config = pformat(
                 WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
             )
-            LOG.info(f"New configuration was loaded from server:\n{formatted_config}")
+            logger.info(f"New configuration was loaded from server:\n{formatted_config}")
         except Exception as exc:
             # we don't continue with default conf here because it might be dangerous
-            LOG.error(
+            logger.error(
                 "Error parsing JSON reply from control server %s (%s): %s",
                 WormConfiguration.current_server,
                 reply._content,
@@ -238,7 +253,7 @@ class ControlClient(object):
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
-            LOG.warning(
+            logger.warning(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
             return {}
@@ -307,7 +322,7 @@ class ControlClient(object):
                     return dest_file
 
         except Exception as exc:
-            LOG.warning(
+            logger.warning(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
 
@@ -339,7 +354,7 @@ class ControlClient(object):
                 return None, None
 
         except Exception as exc:
-            LOG.warning(
+            logger.warning(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
 

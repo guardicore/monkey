@@ -1,5 +1,4 @@
 DOCKER_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
-OUTPUT_NAME_TGZ="$DOCKER_DIR/infection_monkey_docker_$(date +%Y%m%d_%H%M%S).tgz"
 
 source "$DOCKER_DIR/../common.sh"
 
@@ -18,6 +17,7 @@ setup_build_dir() {
 
   copy_monkey_island_to_build_dir "$monkey_repo/monkey" "$build_dir"
   copy_server_config_to_build_dir "$build_dir"
+  modify_deployment "$deployment_type" "$build_dir"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$build_dir"
 
   generate_ssl_cert "$build_dir"
@@ -36,16 +36,25 @@ copy_server_config_to_build_dir() {
 
 build_package() {
   local version=$1
-  local dist_dir=$2
+  local commit_id=$2
+  local dist_dir=$3
   pushd ./docker
 
+  if [ -n "$1" ]; then
+    version="v$version"
+  else
+    version="$commit_id"
+  fi
+
   docker_image_name="guardicore/monkey-island:$version"
-  tar_name="$DOCKER_DIR/dk.monkeyisland.$version.tar"
+  tar_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tar"
 
   build_docker_image_tar "$docker_image_name" "$tar_name"
-  build_docker_image_tgz "$tar_name" "$version"
 
-  move_package_to_dist_dir $dist_dir
+  tgz_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tgz"
+  build_docker_image_tgz "$tar_name" "$tgz_name"
+
+  move_package_to_dist_dir $tgz_name $dist_dir
 
   popd
 }
@@ -59,9 +68,9 @@ build_docker_image_tgz() {
   mkdir tgz
   mv "$1" ./tgz
   cp ./DOCKER_README.md ./tgz/README.md
-  tar -C ./tgz -cvf "$OUTPUT_NAME_TGZ" --gzip .
+  tar -C ./tgz -cvf "$2" --gzip .
 }
 
 move_package_to_dist_dir() {
-    mv $OUTPUT_NAME_TGZ "$1/"
+    mv "$1" "$2/"
 }

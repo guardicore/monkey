@@ -2,6 +2,7 @@ import socket
 
 from common.common_consts.telem_categories import TelemCategoryEnum
 from infection_monkey.telemetry.base_telem import BaseTelem
+from infection_monkey.utils.environment import is_windows_os
 
 
 class PostBreachTelem(BaseTelem):
@@ -25,6 +26,7 @@ class PostBreachTelem(BaseTelem):
             "name": self.pba.name,
             "hostname": self.hostname,
             "ip": self.ip,
+            "os": PostBreachTelem._get_os(),
         }
 
     @staticmethod
@@ -36,3 +38,7 @@ class PostBreachTelem(BaseTelem):
             hostname = "Unknown"
             ip = "Unknown"
         return hostname, ip
+
+    @staticmethod
+    def _get_os():
+        return "Windows" if is_windows_os() else "Linux"

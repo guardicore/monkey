@@ -5,8 +5,6 @@ from random import randint  # noqa: DUO102
 
 import netifaces
 import psutil
-import requests
-from requests import ConnectionError
 
 from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
@@ -123,23 +121,6 @@ def get_free_tcp_port(min_range=1000, max_range=65535):
             return port
 
     return None
-
-
-def check_internet_access(services):
-    """
-    Checks if any of the services are accessible, over HTTPS
-    :param services: List of IPs/hostnames
-    :return: boolean depending on internet access
-    """
-    for host in services:
-        try:
-            requests.get("https://%s" % (host,), timeout=TIMEOUT, verify=False)  # noqa: DUO123
-            return True
-        except ConnectionError:
-            # Failed connecting
-            pass
-
-    return False
 
 
 def get_interfaces_ranges():

@@ -3,7 +3,7 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
-
+from monkey_island.cc.models import Report
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -65,6 +65,7 @@ HADOOP  # unused variable (monkey/monkey_island/cc/services/reporting/issue_proc
 MSSQL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:44)
 VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:45)
 DRUPAL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:48)
+POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
 _.do_POST  # unused method (monkey/monkey_island/cc/server_utils/bootloader_server.py:26)
 PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
 internet_access  # unused variable (monkey/monkey_island/cc/models/monkey.py:43)
@@ -86,6 +87,7 @@ _.do_HEAD  # unused method (monkey/infection_monkey/transport/http.py:61)
 _.do_GET  # unused method (monkey/infection_monkey/transport/http.py:38)
 _.do_POST  # unused method (monkey/infection_monkey/transport/http.py:34)
 _.do_GET  # unused method (monkey/infection_monkey/exploit/weblogic.py:237)
+PowerShellExploiter  # (monkey\infection_monkey\exploit\powershell.py:27)
 ElasticFinger  # unused class (monkey/infection_monkey/network/elasticfinger.py:18)
 HTTPFinger  # unused class (monkey/infection_monkey/network/httpfinger.py:9)
 MySQLFinger  # unused class (monkey/infection_monkey/network/mysqlfinger.py:13)
@@ -107,6 +109,7 @@ _.version_string  # unused method (monkey/infection_monkey/transport/http.py:148
 _.version_string  # unused method (monkey/infection_monkey/transport/http.py:27)
 _.close_connection  # unused attribute (monkey/infection_monkey/transport/http.py:57)
 protocol_version  # unused variable (monkey/infection_monkey/transport/http.py:24)
+binaries  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-pypsrp.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.exploit.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.network.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.post_breach.actions.py:4)
@@ -173,6 +176,11 @@ import_status  # monkey_island\cc\resources\configuration_import.py:19
 config_schema  # monkey_island\cc\resources\configuration_import.py:25
 exception_stream  # unused attribute (monkey_island/cc/server_setup.py:104)
 ADVANCED  # unused attribute (monkey/monkey_island/cc/services/mode/mode_enum.py:6:)
+Report.overview
+Report.recommendations
+Report.glance
+Report.meta_info
+Report.meta
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
@@ -196,3 +204,4 @@ environment  # unused variable (monkey/monkey_island/cc/models/monkey.py:59)
 _.environment  # unused attribute (monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/environment.py:10)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
+GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)

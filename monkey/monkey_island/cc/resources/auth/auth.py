@@ -1,4 +1,3 @@
-import json
 import logging
 from functools import wraps
 
@@ -9,8 +8,12 @@ from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt import PyJWTError
 
 import monkey_island.cc.environment.environment_singleton as env_singleton
-import monkey_island.cc.resources.auth.password_utils as password_utils
 import monkey_island.cc.resources.auth.user_store as user_store
+from monkey_island.cc.resources.auth.credential_utils import (
+    get_username_password_from_request,
+    password_matches_hash,
+)
+from monkey_island.cc.services.authentication import AuthenticationService
 
 logger = logging.getLogger(__name__)
 
@@ -38,28 +41,20 @@ class Authenticate(flask_restful.Resource):
             "password": "my_password"
         }
         """
-        (username, password) = _get_credentials_from_request(request)
+        username, password = get_username_password_from_request(request)
 
         if _credentials_match_registered_user(username, password):
+            AuthenticationService.unlock_datastore_encryptor(username, password)
             access_token = _create_access_token(username)
             return make_response({"access_token": access_token, "error": ""}, 200)
         else:
             return make_response({"error": "Invalid credentials"}, 401)
 
 
-def _get_credentials_from_request(request):
-    credentials = json.loads(request.data)
-
-    username = credentials["username"]
-    password = credentials["password"]
-
-    return (username, password)
-
-
-def _credentials_match_registered_user(username, password):
+def _credentials_match_registered_user(username: str, password: str) -> bool:
     user = user_store.UserStore.username_table.get(username, None)
 
-    if user and password_utils.password_matches_hash(password, user.secret):
+    if user and password_matches_hash(password, user.secret):
         return True
 
     return False

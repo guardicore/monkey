@@ -20,6 +20,7 @@ exit_if_missing_argument() {
 echo_help() {
   echo "usage: build_package.sh [--help] [--agent-binary-dir <PATH>] [--branch <BRANCH>]"
   echo "                         [--monkey-repo <PATH>] [--version <MONKEY_VERSION>]"
+  echo "                         [--deployment <DEPLOYMENT_TYPE>]"
   echo ""
   echo "Creates a package for Infection Monkey."
   echo ""
@@ -43,7 +44,9 @@ echo_help() {
   echo "                               (Default: $DEFAULT_REPO_MONKEY_HOME)"
   echo ""
   echo "--version                      A version number for the package."
-  echo "                               (Default: dev)"
+  echo ""
+  echo "--deployment                   A deployment type for the package."
+  echo "                               (Default: develop)"
   echo ""
   echo "--package                      Which package to build (\"appimage\" or \"docker.\")"
 
@@ -70,15 +73,6 @@ install_nodejs() {
 
   curl -sL $NODE_SRC | sudo -E bash -
   sudo apt-get install -y nodejs
-}
-
-install_common_build_prereqs() {
-  sudo apt-get update
-  sudo apt-get upgrade -y
-
-  # monkey island prereqs
-  sudo apt-get install -y curl libcurl4 openssl git build-essential moreutils
-  install_nodejs
 }
 
 is_valid_git_repo() {
@@ -115,9 +109,9 @@ agent_binary_dir=""
 as_root=false
 branch="develop"
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
-monkey_version="dev"
+monkey_version=""
 package=""
-
+deployment_type=""
 
 while (( "$#" )); do
   case "$1" in
@@ -150,6 +144,12 @@ while (( "$#" )); do
       exit_if_missing_argument "$1" "$2"
 
       monkey_version=$2
+      shift 2
+      ;;
+    --deployment)
+      exit_if_missing_argument "$1" "$2"
+
+      deployment_type=$2
       shift 2
       ;;
     --package)
@@ -197,8 +197,9 @@ install_build_prereqs
 install_package_specific_build_prereqs "$WORKSPACE"
 
 
-setup_build_dir "$agent_binary_dir" "$monkey_repo"
-build_package "$monkey_version" "$DIST_DIR"
+setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type"
+commit_id=$(get_commit_id "$monkey_repo")
+build_package "$monkey_version" "$commit_id" "$DIST_DIR"
 
 log_message "Finished building package: $package"
 exit 0

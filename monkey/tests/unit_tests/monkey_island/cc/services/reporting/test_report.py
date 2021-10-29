@@ -1,10 +1,11 @@
 import datetime
 from copy import deepcopy
 
-import mongomock
+import mongoengine
 import pytest
 from bson import ObjectId
 
+from monkey_island.cc.models.telemetries import save_telemetry
 from monkey_island.cc.services.reporting.report import ReportService
 
 TELEM_ID = {
@@ -49,6 +50,11 @@ SYSTEM_INFO_TELEMETRY_TELEM = {
     "_id": TELEM_ID["system_info_creds"],
     "monkey_guid": MONKEY_GUID,
     "telem_category": "system_info",
+    "timestamp": datetime.datetime(2021, 2, 19, 9, 0, 14, 984000),
+    "command_control_channel": {
+        "src": "192.168.56.1",
+        "dst": "192.168.56.2",
+    },
     "data": {
         "credentials": {
             USER: {
@@ -64,6 +70,11 @@ NO_CREDS_TELEMETRY_TELEM = {
     "_id": TELEM_ID["no_creds"],
     "monkey_guid": MONKEY_GUID,
     "telem_category": "exploit",
+    "timestamp": datetime.datetime(2021, 2, 19, 9, 0, 14, 984000),
+    "command_control_channel": {
+        "src": "192.168.56.1",
+        "dst": "192.168.56.2",
+    },
     "data": {
         "machine": {
             "ip_addr": VICTIM_IP,
@@ -125,12 +136,14 @@ NODE_DICT_FAILED_EXPLOITS["exploits"][1]["result"] = False
 
 @pytest.fixture
 def fake_mongo(monkeypatch):
-    mongo = mongomock.MongoClient()
+    mongo = mongoengine.connection.get_connection()
     monkeypatch.setattr("monkey_island.cc.services.reporting.report.mongo", mongo)
+    monkeypatch.setattr("monkey_island.cc.models.telemetries.telemetry_dal.mongo", mongo)
     monkeypatch.setattr("monkey_island.cc.services.node.mongo", mongo)
     return mongo
 
 
+@pytest.mark.usefixtures("uses_database")
 def test_get_stolen_creds_exploit(fake_mongo):
     fake_mongo.db.telemetry.insert_one(EXPLOIT_TELEMETRY_TELEM)
 
@@ -143,9 +156,10 @@ def test_get_stolen_creds_exploit(fake_mongo):
     assert expected_stolen_creds_exploit == stolen_creds_exploit
 
 
+@pytest.mark.usefixtures("uses_database", "uses_encryptor")
 def test_get_stolen_creds_system_info(fake_mongo):
     fake_mongo.db.monkey.insert_one(MONKEY_TELEM)
-    fake_mongo.db.telemetry.insert_one(SYSTEM_INFO_TELEMETRY_TELEM)
+    save_telemetry(SYSTEM_INFO_TELEMETRY_TELEM)
 
     stolen_creds_system_info = ReportService.get_stolen_creds()
     expected_stolen_creds_system_info = [
@@ -157,8 +171,10 @@ def test_get_stolen_creds_system_info(fake_mongo):
     assert expected_stolen_creds_system_info == stolen_creds_system_info
 
 
+@pytest.mark.usefixtures("uses_database")
 def test_get_stolen_creds_no_creds(fake_mongo):
-    fake_mongo.db.telemetry.insert_one(NO_CREDS_TELEMETRY_TELEM)
+    fake_mongo.db.monkey.insert_one(MONKEY_TELEM)
+    save_telemetry(NO_CREDS_TELEMETRY_TELEM)
 
     stolen_creds_no_creds = ReportService.get_stolen_creds()
     expected_stolen_creds_no_creds = []

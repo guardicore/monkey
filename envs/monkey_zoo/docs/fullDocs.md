@@ -30,8 +30,13 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 22 Scan](#_Toc526517197)<br>
 [Nr. 23 Struts2](#_Toc536021476)<br>
 [Nr. 24 Struts2](#_Toc536021477)<br>
-[Nr. 250 MonkeyIsland](#_Toc536021478)<br>
-[Nr. 251 MonkeyIsland](#_Toc536021479)<br>
+[Nr. 25 Zerologon](#_Toc536021478)<br>
+[Nr. 3-45 Powershell](#_Toc536021479)<br>
+[Nr. 3-46 Powershell](#_Toc536021480)<br>
+[Nr. 3-47 Powershell](#_Toc536021481)<br>
+[Nr. 3-48 Powershell](#_Toc536021482)<br>
+[Nr. 250 MonkeyIsland](#_Toc536021483)<br>
+[Nr. 251 MonkeyIsland](#_Toc536021484)<br>
 [Network topography](#network-topography)<br>
 
 # Warning\!
@@ -59,9 +64,9 @@ To deploy:
 1.  Configure service account for your project:
 
     a. Create a service account (GCP website -> IAM & Admin -> Service Accounts -> + CREATE SERVICE ACCOUNT) and name it “your\_name-monkeyZoo-user”
-    
+
     b. Give these permissions to your service account:
-    
+
     **Compute Engine -> Compute Network Admin**
     and
     **Compute Engine -> Compute Instance Admin (v1)**
@@ -69,11 +74,11 @@ To deploy:
     **Compute Engine -> Compute Security Admin**
     and
     **Service Account User**
-    
+
     or
-    
+
     **Project -> Owner**
-    
+
     c. Create and download its **Service account key** in JSON and place it in **monkey_zoo/gcp_keys** as **gcp_key.json**.
 
 2.  Get these permissions in the monkeyZoo project (guardicore-22050661) for your service account (ask monkey developers to add them):
@@ -85,29 +90,29 @@ To deploy:
     link to your service account key file):
 
          provider "google" {
-         
+
          project = "test-000000" // Change to your project id
-           
+
            region  = "europe-west3" // Change to your desired region or leave default
-           
+
            zone    = "europe-west3-b" // Change to your desired zone or leave default
-           
-           credentials = "${file("../gcp_keys/gcp_key.json")}" // Change to the location and name of the service key. 
+
+           credentials = "${file("../gcp_keys/gcp_key.json")}" // Change to the location and name of the service key.
                                                                // If you followed instruction above leave it as is
-         
+
          }
-         
+
          locals {
-         
+
            resource_prefix = "" // All of the resources will have this prefix.
                                 // Only change if you want to have multiple zoo's in the same project
-           
+
            service_account_email="tester-monkeyZoo-user@testproject-000000.iam.gserviceaccount.com" // Service account email
-           
+
            monkeyzoo_project="guardicore-22050661" // Project where monkeyzoo images are kept. Leave as is.
-         
+
          }
-    
+
 4.  Run terraform init
 
 To deploy the network run:<br>
@@ -117,7 +122,7 @@ To deploy the network run:<br>
 
 # Using islands:
 
-###How to get into the islands:
+### How to get into the islands:
 
 **island-linux-250:** SSH from GCP
 
@@ -125,14 +130,22 @@ To deploy the network run:<br>
 island-windows-251. Set password for your account and then RDP into
 the island.
 
-###These are most common steps on monkey islands:
+### These are most common steps on monkey islands:
 
-####island-linux-250:
+### For users
 
-To run monkey island:<br>
+Upload the AppImage deployment option and run it in island-linux-250.
+Or upload the MSI deployment option, install it and run it in island-windows-251.
+After that use the Monkey as you would on local network.
+
+### For developers
+
+#### island-linux-250:
+
+To run monkey island from source:<br>
 `sudo /usr/run\_island.sh`<br>
 
-To run monkey:<br>
+To run monkey from source:<br>
 `sudo /usr/run\_monkey.sh`<br>
 
 To update repository:<br>
@@ -142,12 +155,12 @@ Update all requirements using deployment script:<br>
 1\. `cd /usr/infection_monkey/deployment_scripts`<br>
 2\. `./deploy_linux.sh "/usr/infection_monkey" "develop"`<br>
 
-####island-windows-251:
+#### island-windows-251:
 
-To run monkey island:<br>
+To run monkey island from source:<br>
 Execute C:\\run\_monkey\_island.bat as administrator
 
-To run monkey:<br>
+To run monkey from source:<br>
 Execute C:\\run\_monkey.bat as administrator
 
 To update repository:<br>
@@ -156,15 +169,8 @@ To update repository:<br>
 3\. `git pull` (updates develop branch)<br>
 
 Update all requirements using deployment script:<br>
-1. `cd C:\infection_monkey\deployment_scripts`<br>
-2. `./run_script.bat "C:\infection_monkey" "develop"`
-
-# Running tests:
-
-Once you start monkey island you can import test configurations from
-../monkey/envs/configs.
-
-fullTest.conf is a good config to start, because it covers all machines.
+1\. `cd C:\infection_monkey\deployment_scripts`<br>
+2\. `./run_script.bat "C:\infection_monkey" "develop"`<br>
 
 # Machines:
 
@@ -276,10 +282,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>Notes:</td>
 <td><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_index_and_query_a_document.html">Quick</a> tutorial on how to add entries (was useful when setting up).</td>
 </tr>
-<tr class="odd">
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 
@@ -357,10 +359,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>Notes:</td>
 <td></td>
 </tr>
-<tr class="even">
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 
@@ -432,10 +430,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 <tr class="odd">
 <td>Notes:</td>
 <td>Vulnerable app is under /cgi-bin/test.cgi</td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -613,10 +607,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>Notes:</td>
 <td></td>
 </tr>
-<tr class="odd">
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 
@@ -652,10 +642,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 <tr class="even">
 <td>Notes:</td>
 <td>Don’t add this machine’s credentials to exploit configuration.</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -693,10 +679,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -764,10 +746,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 <tr class="odd">
 <td>Notes:</td>
 <td>If you change this machine’s IP it won’t get exploited.</td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
@@ -837,10 +815,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 </tr>
 <tr class="odd">
 <td>Notes:</td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -985,10 +959,6 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>Notes:</td>
 <td>Used to scan a machine that has no vulnerabilities (to evaluate scanning speed for e.g.)</td>
 </tr>
-<tr class="even">
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 
@@ -1093,17 +1063,13 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>Notes:</td>
 <td></td>
 </tr>
-<tr class="even">
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 
 <table>
 <thead>
 <tr class="header">
-<th><p>Nr. <strong>25</strong> ZeroLogon</p>
+<th><p><span id="_Toc536021478" class="anchor"></span>Nr. <strong>25</strong> ZeroLogon </p>
 <p>(10.2.2.25)</p></th>
 <th>(Vulnerable)</th>
 </tr>
@@ -1123,7 +1089,119 @@ fullTest.conf is a good config to start, because it covers all machines.
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021478" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021479" class="anchor"></span>Nr. <strong>3-45 Powershell</strong></p>
+<p>(10.2.3.45)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>WinRM service</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Passw0rd!<br>User: m0nk3y-user, No Password.</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021480" class="anchor"></span>Nr. <strong>3-46 Powershell</strong></p>
+<p>(10.2.3.46)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>WinRM service</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Passw0rd!</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021481" class="anchor"></span>Nr. <strong>3-47 Powershell</strong></p>
+<p>(10.2.3.47)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>WinRM service</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Xk8VDTsC</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021482" class="anchor"></span>Nr. <strong>3-48 Powershell</strong></p>
+<p>(10.2.3.48)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2019 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>WinRM service</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Passw0rd!</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021483" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
 </tr>
@@ -1149,20 +1227,18 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>Notes:</td>
 <td>Only accessible trough GCP</td>
 </tr>
-<tr class="even">
-<td></td>
-<td></td>
-</tr>
+</tbody>
 </table>
 
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021478" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021484" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
 <p>(10.2.2.251)</p></th>
 <th></th>
 </tr>
 </thead>
+<tbody>
 <tr class="odd">
 <td>OS:</td>
 <td><strong>Windows Server 2016 x64</strong></td>
@@ -1183,13 +1259,9 @@ fullTest.conf is a good config to start, because it covers all machines.
 <td>Notes:</td>
 <td>Only accessible trough GCP</td>
 </tr>
-<tr class="even">
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 
 # Network topography:
 
-<img src="/envs/monkey_zoo/docs/images/networkTopography.jpeg" >
+<img src="/envs/monkey_zoo/docs/images/networkTopography.jpg" >

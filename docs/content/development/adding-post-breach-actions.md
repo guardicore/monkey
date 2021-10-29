@@ -39,9 +39,9 @@ class MyNewPba(PBA):
 
 #### Implementation
 
-If your PBA consists only of simple shell commands, you can reuse the generic PBA by passing the commands into the constructor. See the `add_user.py` PBA for reference.
+If your PBA consists only of simple shell commands, you can reuse the generic PBA by passing the commands into the constructor. See the `account_discovery.py` PBA for reference.
 
-Otherwise, you'll need to override the `run` method with your own implementation. See the `communicate_as_new_user.py` PBA for reference. Make sure to send the relevant PostBreachTelem upon success/failure. You can log during the PBA as well.
+Otherwise, you'll need to override the `run` method with your own implementation. See the `communicate_as_backdoor_user.py` PBA for reference. Make sure to send the relevant PostBreachTelem upon success/failure. You can log during the PBA as well.
 
 ### Modify the Monkey Island
 
@@ -73,4 +73,4 @@ Now you can choose your PBA when configuring the Infection Monkey on the Monkey 
 
 #### Telemetry processing
 
-If you wish to process your PBA telemetry (for example, to analyze it for report data), add a processing function to the `POST_BREACH_TELEMETRY_PROCESSING_FUNCS`, which can be found at `monkey/monkey_island/cc/services/telemetry/processing/post_breach.py`. You can reference the `process_communicate_as_new_user_telemetry` method as an example.
+If you wish to process your PBA telemetry (for example, to analyze it for report data), add a processing function to the `POST_BREACH_TELEMETRY_PROCESSING_FUNCS`, which can be found at `monkey/monkey_island/cc/services/telemetry/processing/post_breach.py`. You can reference the `process_communicate_as_backdoor_user_telemetry` method as an example.

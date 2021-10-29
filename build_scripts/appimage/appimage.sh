@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LINUXDEPLOY_URL="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-PYTHON_VERSION="3.7.11"
+PYTHON_VERSION="3.7.12"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
 APPIMAGE_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
 APPDIR="$APPIMAGE_DIR/squashfs-root"
@@ -27,6 +27,7 @@ install_package_specific_build_prereqs() {
 setup_build_dir() {
   local agent_binary_dir=$1
   local monkey_repo=$2
+  local deployment_type=$3
 
   pushd $APPIMAGE_DIR
 
@@ -36,6 +37,7 @@ setup_build_dir() {
 
   copy_monkey_island_to_build_dir "$monkey_repo/monkey" "$BUILD_DIR"
   copy_server_config_to_build_dir
+  modify_deployment "$deployment_type" "$BUILD_DIR"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$BUILD_DIR"
 
   install_monkey_island_python_dependencies
@@ -102,12 +104,18 @@ remove_python_appdir_artifacts() {
 }
 
 build_package() {
-  local version=$1
-  local dist_dir=$2
+  local commit_id=$2
+  local dist_dir=$3
 
   log_message "Building AppImage"
-  pushd "$APPIMAGE_DIR"
 
+  if [ -n "$1" ]; then
+    local version="v$1"
+  else
+    local version="$commit_id"
+  fi
+
+  pushd "$APPIMAGE_DIR"
   ARCH="x86_64" linuxdeploy \
       --appdir "$APPIMAGE_DIR/squashfs-root" \
       --icon-file "$ICON_PATH" \
@@ -116,17 +124,12 @@ build_package() {
       --deploy-deps-only="$MONGO_PATH/bin/mongod"\
       --output appimage
 
-  apply_version_to_appimage "$version"
-  move_package_to_dist_dir $dist_dir
+  dst_name="InfectionMonkey-$version.AppImage"
+  move_package_to_dist_dir $dist_dir $dst_name
 
   popd
 }
 
-apply_version_to_appimage() {
-  log_message "Renaming Infection_Monkey-x86_64.AppImage -> Infection_Monkey-$1-x86_64.AppImage"
-  mv "Infection_Monkey-x86_64.AppImage" "Infection_Monkey-$1-x86_64.AppImage"
-}
-
 move_package_to_dist_dir() {
-    mv Infection_Monkey*.AppImage "$1/"
+    mv Infection*Monkey*.AppImage "$1/$2"
 }
