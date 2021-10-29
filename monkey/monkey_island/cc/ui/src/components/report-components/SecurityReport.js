@@ -25,7 +25,6 @@ import {webLogicIssueOverview, webLogicIssueReport} from './security/issues/WebL
 import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
 import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
 import {drupalIssueOverview, drupalIssueReport} from './security/issues/DrupalIssue';
-import {vsftpdIssueOverview, vsftpdIssueReport} from './security/issues/VsftpdIssue';
 import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
 import {sambacryIssueOverview, sambacryIssueReport} from './security/issues/SambacryIssue';
@@ -106,11 +105,6 @@ class ReportPageComponent extends AuthComponent {
       'DrupalExploiter': {
         [this.issueContentTypes.OVERVIEW]: drupalIssueOverview,
         [this.issueContentTypes.REPORT]: drupalIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'VSFTPDExploiter': {
-        [this.issueContentTypes.OVERVIEW]: vsftpdIssueOverview,
-        [this.issueContentTypes.REPORT]: vsftpdIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'WmiExploiter': {
