@@ -23,7 +23,6 @@ BASIC = {
                         "Struts2Exploiter",
                         "WebLogicExploiter",
                         "HadoopExploiter",
-                        "VSFTPDExploiter",
                         "MSSQLExploiter",
                         "DrupalExploiter",
                         "PowerShellExploiter",
