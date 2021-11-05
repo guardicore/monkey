@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
 import DropdownSelect from '../../../ui-components/DropdownSelect';
 import {OS_TYPES} from '../utils/OsTypes';
-import GenerateLocalWindowsCmd from '../commands/local_windows_cmd';
 import GenerateLocalWindowsPowershell from '../commands/local_windows_powershell';
 import GenerateLocalLinuxWget from '../commands/local_linux_wget';
 import GenerateLocalLinuxCurl from '../commands/local_linux_curl';
@@ -50,8 +49,7 @@ const getContents = (props) => {
 
   function generateCommands() {
     if (osType === OS_TYPES.WINDOWS_64 || osType === OS_TYPES.WINDOWS_32) {
-      return [{type: 'CMD', command: GenerateLocalWindowsCmd(selectedIp, osType, customUsername)},
-        {type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType, customUsername)}]
+      return [{type: 'Powershell', command: GenerateLocalWindowsPowershell(selectedIp, osType, customUsername)}]
     } else {
       return [{type: 'CURL', command: GenerateLocalLinuxCurl(selectedIp, osType, customUsername)},
         {type: 'WGET', command: GenerateLocalLinuxWget(selectedIp, osType, customUsername)}]
