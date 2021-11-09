@@ -9,7 +9,7 @@ Monkey packages for Linux.
 
 ### Building an AppImage
 
-1. Create a clean VM or LXC (not docker!) based on Ubuntu 18.04.
+1. Create a clean VM or LXD (not docker!) based on Ubuntu 18.04.
 1. Copy the `build_scipts/` directory to `$HOME/` in the VM.
 1. On the VM, `cd $HOME/build_scripts`
 1. Run `sudo -v`.
@@ -18,6 +18,8 @@ Monkey packages for Linux.
 
 NOTE: This script is intended to be run from a clean VM. You can also manually
 remove build artifacts by running `appimage/clean.sh`
+
+WARNING: If you use a LXD container, ensure that shiftfs is disabled.
 
 ### Running the AppImage
 
