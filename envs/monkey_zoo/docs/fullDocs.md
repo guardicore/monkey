@@ -11,8 +11,6 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 3 Hadoop](#_Toc526517183)<br>
 [Nr. 4 Elastic](#_Toc526517184)<br>
 [Nr. 5 Elastic](#_Toc526517185)<br>
-[Nr. 6 Sambacry](#_Toc536021459)<br>
-[Nr. 7 Sambacry](#_Toc536021460)<br>
 [Nr. 8 Shellshock](#_Toc536021461)<br>
 [Nr. 9 Tunneling M1](#_Toc536021462)<br>
 [Nr. 10 Tunneling M2](#_Toc536021463)<br>
@@ -318,86 +316,6 @@ Update all requirements using deployment script:<br>
 <tr class="even">
 <td>Notes:</td>
 <td><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_index_and_query_a_document.html">Quick</a> tutorial on how to add entries (was useful when setting up).</td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021459" class="anchor"></span>Nr. <strong>6</strong> Sambacry</p>
-<p>(10.2.2.6)</p></th>
-<th>(Not implemented)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>Samba &gt; 3.5.0 and &lt; 4.6.4, 4.5.10 and 4.4.14</td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>-</td>
-</tr>
-<tr class="even">
-<td>Root password:</td>
-<td>;^TK`9XN_x^</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Scan results:</td>
-<td>Machine exploited using Sambacry exploiter</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021460" class="anchor"></span>Nr. <strong>7</strong> Sambacry</p>
-<p>(10.2.2.7)</p></th>
-<th>(Not implemented)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x32</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>Samba &gt; 3.5.0 and &lt; 4.6.4, 4.5.10 and 4.4.14</td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>-</td>
-</tr>
-<tr class="even">
-<td>Root password:</td>
-<td>*.&amp;A7/W}Rc$</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Scan results:</td>
-<td>Machine exploited using Sambacry exploiter</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
-<td></td>
 </tr>
 </tbody>
 </table>

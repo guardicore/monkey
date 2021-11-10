@@ -16,11 +16,6 @@ data "google_compute_image" "elastic-5" {
   project = local.monkeyzoo_project
 }
 
-/*
-data "google_compute_image" "sambacry-6" {
-  name = "sambacry-6"
-}
-*/
 data "google_compute_image" "shellshock-8" {
   name = "shellshock-8"
   project = local.monkeyzoo_project
