@@ -55,7 +55,6 @@ _.password_restored  # unused attribute (monkey/monkey_island/cc/services/report
 credential_type  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_report_info.py:18)
 password_restored  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_report_info.py:23)
 SSH  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:30)
-SAMBACRY  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:31)
 ELASTIC  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:32)
 MS08_067  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:35)
 SHELLSHOCK  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:36)
