@@ -114,10 +114,6 @@
           "ElasticFinger"
         ]
       },
-      "kill_file": {
-        "kill_file_path_windows": "%windir%\\monkey.not",
-        "kill_file_path_linux": "/var/run/monkey.not"
-      },
       "dropper": {
         "dropper_set_date": true,
         "dropper_date_reference_path_windows": "%windir%\\system32\\kernel32.dll",
