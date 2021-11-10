@@ -242,22 +242,6 @@ class Configuration(object):
     smb_download_timeout = 300  # timeout in seconds
     smb_service_name = "InfectionMonkey"
 
-    # Timeout (in seconds) for sambacry's trigger to yield results.
-    sambacry_trigger_timeout = 5
-    # Folder paths to guess share lies inside.
-    sambacry_folder_paths_to_guess = [
-        "/",
-        "/mnt",
-        "/tmp",
-        "/storage",
-        "/export",
-        "/share",
-        "/shares",
-        "/home",
-    ]
-    # Shares to not check if they're writable.
-    sambacry_shares_not_to_check = ["IPC$", "print$"]
-
     ###########################
     # post breach actions
     ###########################
