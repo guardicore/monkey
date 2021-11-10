@@ -97,12 +97,6 @@ class Configuration(object):
     dropper_target_path_linux = "/tmp/monkey"
 
     ###########################
-    # Kill file
-    ###########################
-    kill_file_path_windows = "%windir%\\monkey.not"
-    kill_file_path_linux = "/var/run/monkey.not"
-
-    ###########################
     # monkey config
     ###########################
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
