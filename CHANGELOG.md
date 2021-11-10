@@ -13,6 +13,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - The VSFTPD exploiter. #1533
 - Manual agent run command for CMD. #1570
+- Sambacry exploiter #1567
 - "Kill file" option in the config. #1536
 
 ### Fixed
