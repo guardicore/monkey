@@ -27,7 +27,6 @@ import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue
 import {drupalIssueOverview, drupalIssueReport} from './security/issues/DrupalIssue';
 import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
-import {sambacryIssueOverview, sambacryIssueReport} from './security/issues/SambacryIssue';
 import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
 import {shellShockIssueOverview, shellShockIssueReport} from './security/issues/ShellShockIssue';
 import {ms08_067IssueOverview, ms08_067IssueReport} from './security/issues/MS08_067Issue';
@@ -120,11 +119,6 @@ class ReportPageComponent extends AuthComponent {
           [this.credentialTypes.PASSWORD]: shhIssueReport,
           [this.credentialTypes.KEY]: sshKeysReport
         },
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'SambaCryExploiter': {
-        [this.issueContentTypes.OVERVIEW]: sambacryIssueOverview,
-        [this.issueContentTypes.REPORT]: sambacryIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ElasticGroovyExploiter': {

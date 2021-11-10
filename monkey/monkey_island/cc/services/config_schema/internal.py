@@ -373,45 +373,6 @@ INTERNAL = {
                         },
                     },
                 },
-                "sambacry": {
-                    "title": "SambaCry",
-                    "type": "object",
-                    "properties": {
-                        "sambacry_trigger_timeout": {
-                            "title": "SambaCry trigger timeout",
-                            "type": "integer",
-                            "default": 5,
-                            "description": "Timeout (in seconds) of SambaCry trigger",
-                        },
-                        "sambacry_folder_paths_to_guess": {
-                            "title": "SambaCry folder paths to guess",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {"type": "string"},
-                            "default": [
-                                "/",
-                                "/mnt",
-                                "/tmp",
-                                "/storage",
-                                "/export",
-                                "/share",
-                                "/shares",
-                                "/home",
-                            ],
-                            "description": "List of full paths to share folder for SambaCry to "
-                            "guess",
-                        },
-                        "sambacry_shares_not_to_check": {
-                            "title": "SambaCry shares not to check",
-                            "type": "array",
-                            "uniqueItems": True,
-                            "items": {"type": "string"},
-                            "default": ["IPC$", "print$"],
-                            "description": "These shares won't be checked when exploiting with "
-                            "SambaCry",
-                        },
-                    },
-                },
             },
             "smb_service": {
                 "title": "SMB service",

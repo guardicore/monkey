@@ -6,7 +6,6 @@
           "WmiExploiter",
           "SSHExploiter",
           "ShellShockExploiter",
-          "SambaCryExploiter",
           "ElasticGroovyExploiter",
           "Struts2Exploiter",
           "WebLogicExploiter",
@@ -140,23 +139,6 @@
         "ms08_067": {
           "ms08_067_exploit_attempts": 5,
           "user_to_add": "Monkey_IUSER_SUPPORT"
-        },
-        "sambacry": {
-          "sambacry_trigger_timeout": 5,
-          "sambacry_folder_paths_to_guess": [
-            "/",
-            "/mnt",
-            "/tmp",
-            "/storage",
-            "/export",
-            "/share",
-            "/shares",
-            "/home"
-          ],
-          "sambacry_shares_not_to_check": [
-            "IPC$",
-            "print$"
-          ]
         }
       },
       "testing": {
@@ -165,29 +147,29 @@
     },
     "monkey": {
       "post_breach": {
-        "custom_PBA_linux_cmd": "",
-        "custom_PBA_windows_cmd": "",
-        "PBA_windows_filename": "",
-        "PBA_linux_filename": "",
+        "custom_pba_linux_cmd": "",
+        "custom_pba_windows_cmd": "",
+        "pba_windows_filename": "",
+        "pba_linux_filename": "",
         "post_breach_actions": [
-          "CommunicateAsBackdoorUser",
-          "ModifyShellStartupFiles",
-          "HiddenFiles",
-          "TrapCommand",
-          "ChangeSetuidSetgid",
-          "ScheduleJobs",
-          "Timestomping",
-          "AccountDiscovery"
+          "communicateasbackdooruser",
+          "modifyshellstartupfiles",
+          "hiddenfiles",
+          "trapcommand",
+          "changesetuidsetgid",
+          "schedulejobs",
+          "timestomping",
+          "accountdiscovery"
         ]
       },
       "system_info": {
         "system_info_collector_classes": [
-          "EnvironmentCollector",
-          "AwsCollector",
-          "HostnameCollector",
-          "ProcessListCollector",
-          "MimikatzCollector",
-          "AzureCollector"
+          "environmentcollector",
+          "awscollector",
+          "hostnamecollector",
+          "processlistcollector",
+          "mimikatzcollector",
+          "azurecollector"
         ]
       },
       "persistent_scanning": {

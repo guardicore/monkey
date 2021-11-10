@@ -106,39 +106,6 @@ resource "google_compute_instance_from_template" "elastic-5" {
   }
 }
 
-/* Couldn't find ubuntu packages for required samba version (too old).
-resource "google_compute_instance_from_template" "sambacry-6" {
-  name = "${local.resource_prefix}sambacry-6"
-  source_instance_template = "${local.default_ubuntu}"
-  boot_disk{
-    initialize_params {
-      image = "${data.google_compute_image.sambacry-6.self_link}"
-    }
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.6"
-  }
-}
-*/
-
-/* We need custom 32 bit Ubuntu machine for this (there are no 32 bit ubuntu machines in GCP).
-resource "google_compute_instance_from_template" "sambacry-7" {
-  name = "${local.resource_prefix}sambacry-7"
-  source_instance_template = "${local.default_ubuntu}"
-  boot_disk {
-    initialize_params {
-      // Add custom image to cloud
-      image = "ubuntu32"
-    }
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.7"
-  }
-}
-*/
-
 resource "google_compute_instance_from_template" "shellshock-8" {
   name = "${local.resource_prefix}shellshock-8"
   source_instance_template = local.default_ubuntu
