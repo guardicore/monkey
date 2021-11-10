@@ -75,7 +75,6 @@ class AWSExporter(Exporter):
                 CredentialType.PASSWORD.value: AWSExporter._handle_smb_password_issue,
                 CredentialType.HASH.value: AWSExporter._handle_smb_pth_issue,
             },
-            ExploiterDescriptorEnum.SAMBACRY.value.class_name: AWSExporter._handle_sambacry_issue,
             "shared_passwords": AWSExporter._handle_shared_passwords_issue,
             ExploiterDescriptorEnum.WMI.value.class_name: {
                 CredentialType.PASSWORD.value: AWSExporter._handle_wmi_password_issue,
@@ -188,24 +187,6 @@ class AWSExporter(Exporter):
             "the required.",
             recommendation="Machines are not locked down at port level. "
             "Network tunnel was set up from {0} to {1}".format(issue["machine"], issue["dest"]),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_sambacry_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Samba servers are vulnerable to 'SambaCry'",
-            description="Change {0} password to a complex one-use password that is not shared "
-            "with other computers on the "
-            "network. Update your Samba server to 4.4.14 and up, "
-            "4.5.10 and up, or 4.6.4 and up.".format(issue["username"]),
-            recommendation="The machine {0} ({1}) is vulnerable to a SambaCry attack. The "
-            "Monkey authenticated over the SMB "
-            "protocol with user {2} and its password, and used the SambaCry "
-            "vulnerability.".format(issue["machine"], issue["ip_address"], issue["username"]),
             instance_arn=instance_arn,
             instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
         )

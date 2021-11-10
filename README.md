@@ -48,7 +48,6 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * WMI
   * Shellshock
   * Conficker
-  * SambaCry
   * Elastic Search (CVE-2015-1427)
   * Weblogic server
   * and more, see our [Documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/) for more information about our RCE exploiters.
