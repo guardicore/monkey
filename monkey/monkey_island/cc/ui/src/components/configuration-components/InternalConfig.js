@@ -11,7 +11,6 @@ const sectionOrder = [
   'dropper',
   'classes',
   'general',
-  'kill_file',
   'testing'
 ];
 const initialSection = sectionOrder[0];

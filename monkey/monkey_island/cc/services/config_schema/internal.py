@@ -213,24 +213,6 @@ INTERNAL = {
                 }
             },
         },
-        "kill_file": {
-            "title": "Kill file",
-            "type": "object",
-            "properties": {
-                "kill_file_path_windows": {
-                    "title": "Kill file path on Windows",
-                    "type": "string",
-                    "default": "%windir%\\monkey.not",
-                    "description": "Path of file which kills monkey if it exists (on Windows)",
-                },
-                "kill_file_path_linux": {
-                    "title": "Kill file path on Linux",
-                    "type": "string",
-                    "default": "/var/run/monkey.not",
-                    "description": "Path of file which kills monkey if it exists (on Linux)",
-                },
-            },
-        },
         "dropper": {
             "title": "Dropper",
             "type": "object",

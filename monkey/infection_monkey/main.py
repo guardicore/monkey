@@ -78,16 +78,6 @@ def main():
     formatted_config = pformat(WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
     print(f"Loaded Configuration:\n{formatted_config}")
 
-    # Make sure we're not in a machine that has the kill file
-    kill_path = (
-        os.path.expandvars(WormConfiguration.kill_file_path_windows)
-        if sys.platform == "win32"
-        else WormConfiguration.kill_file_path_linux
-    )
-    if os.path.exists(kill_path):
-        print("Kill path found, finished run")
-        return True
-
     try:
         if MONKEY_ARG == monkey_mode:
             log_path = get_monkey_log_path()

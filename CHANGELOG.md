@@ -13,6 +13,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - The VSFTPD exploiter. #1533
 - Manual agent run command for CMD. #1570
+- "Kill file" option in the config. #1536
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
