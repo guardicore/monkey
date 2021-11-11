@@ -21,7 +21,8 @@ Below are some of the most common questions we receive about the Infection Monke
   - [How do I change the log level of the Monkey Island logger?](#how-do-i-change-the-log-level-of-the-monkey-island-logger)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
-  - [What's the Infection Monkey's impact on system resources usage?](#whats-the-infection-monkeys-impact-on-system-resources-usage)
+  - [What's the Infection Monkey Agent's impact on system resources usage?](#whats-the-infection-monkeys-impact-on-system-resources-usage)
+  - [What are the system resource requirements for the Monkey Island?](#what-are-the-system-resource-requirements-for-the-monkey-island)
   - [Is it safe to use real passwords and usernames in the Infection Monkey's configuration?](#is-it-safe-to-use-real-passwords-and-usernames-in-the-infection-monkeys-configuration)
   - [How do you store sensitive information on Monkey Island?](#how-do-you-store-sensitive-information-on-monkey-island)
   - [How stable are the exploitations used by the Infection Monkey? Will the Infection Monkey crash my systems with its exploits?](#how-stable-are-the-exploitations-used-by-the-infection-monkey-will-the-infection-monkey-crash-my-systems-with-its-exploits)
@@ -251,11 +252,29 @@ The Infection Monkey leaves hardly any trace on the target system. It will leave
   - Path on Linux: `/tmp/user-1563`
   - Path on Windows: `%temp%\\~df1563.tmp`
 
-### What's the Infection Monkey's impact on system resources usage?
+### What's the Infection Monkey Agent's impact on system resources usage?
 
-The Infection Monkey uses less than a single-digit percent of CPU time and very low RAM usage. For example, on a single-core Windows Server machine, the Infection Monkey consistently uses 0.06% CPU, less than 80MB of RAM and a small amount of I/O periodically.
+The Infection Monkey Agent uses less than a single-digit percent of CPU time and very low RAM usage. For example, on a single-core Windows Server machine, the Infection Monkey Agent consistently uses 0.06% CPU, less than 80MB of RAM and a small amount of I/O periodically.
 
 If you do experience any performance issues please let us know on [our Slack channel](https://infectionmonkey.slack.com/) or [open an issue on GitHub](https://github.com/guardicore/monkey).
+
+### What are the system resource requirements for the Monkey Island?
+
+#### Linux
+
+**CPU**: Intel(R) Xeon(R) CPU @ 2.20GHz or better
+
+**CPU Cores**: 2
+
+**RAM**: 4GB
+
+#### Windows
+
+**CPU**: Intel(R) Xeon(R) CPU @ 2.20GHz or better
+
+**CPU Cores**: 4
+
+**RAM**: 6GB
 
 ### Is it safe to use real passwords and usernames in the Infection Monkey's configuration?
 
