@@ -16,7 +16,6 @@ class T1082(AttackTechnique):
             "$project": {
                 "machine": {"hostname": "$data.hostname", "ips": "$data.network_info.networks"},
                 "aws": "$data.aws",
-                "netstat": "$data.network_info.netstat",
                 "process_list": "$data.process_list",
                 "ssh_info": "$data.ssh_info",
                 "azure_info": "$data.Azure",
@@ -28,7 +27,7 @@ class T1082(AttackTechnique):
                 "machine": 1,
                 "collections": [
                     {
-                        "used": {"$and": [{"$ifNull": ["$netstat", False]}, {"$gt": ["$aws", {}]}]},
+                        "used": {"$and": [{"$gt": ["$aws", {}]}]},
                         "name": {"$literal": "Amazon Web Services info"},
                     },
                     {
@@ -39,12 +38,6 @@ class T1082(AttackTechnique):
                             ]
                         },
                         "name": {"$literal": "Running process list"},
-                    },
-                    {
-                        "used": {
-                            "$and": [{"$ifNull": ["$netstat", False]}, {"$ne": ["$netstat", []]}]
-                        },
-                        "name": {"$literal": "Network connections"},
                     },
                     {
                         "used": {
