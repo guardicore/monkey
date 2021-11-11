@@ -74,9 +74,9 @@ class CommunicateAsBackdoorUser(PBA):
             # If curl doesn't exist or fails and wget work, we're good.
             # And if both don't exist: we'll call it a win.
             if shutil.which("curl") is not None:
-                format_string = "curl {url} --head"
+                format_string = "curl {url} --head --max-time 10"
             else:
-                format_string = "wget -O/dev/null -q {url} --method=HEAD"
+                format_string = "wget -O/dev/null -q {url} --method=HEAD --timeout=10"
         return format_string.format(url=url)
 
     def send_result_telemetry(self, exit_status, commandline, username):
