@@ -17,7 +17,7 @@ class LinuxInfoCollector(InfoCollector):
     def get_info(self):
         """
         Collect Linux system information
-        Hostname, process list and network subnets
+        Hostname and network subnets
         :return: Dict of system information
         """
         logger.debug("Running Linux collector")

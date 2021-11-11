@@ -33,15 +33,6 @@ class T1082(AttackTechnique):
                     },
                     {
                         "used": {
-                            "$and": [
-                                {"$ifNull": ["$process_list", False]},
-                                {"$gt": ["$process_list", {}]},
-                            ]
-                        },
-                        "name": {"$literal": "Running process list"},
-                    },
-                    {
-                        "used": {
                             "$and": [{"$ifNull": ["$netstat", False]}, {"$ne": ["$netstat", []]}]
                         },
                         "name": {"$literal": "Network connections"},

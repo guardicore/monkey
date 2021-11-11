@@ -98,7 +98,6 @@ SignedScriptProxyExecution  # unused class (monkey/infection_monkey/post_breach/
 AwsCollector  # unused class (monkey/infection_monkey/system_info/collectors/aws_collector.py:15)
 EnvironmentCollector  # unused class (monkey/infection_monkey/system_info/collectors/environment_collector.py:19)
 HostnameCollector  # unused class (monkey/infection_monkey/system_info/collectors/hostname_collector.py:10)
-ProcessListCollector  # unused class (monkey/infection_monkey/system_info/collectors/process_list_collector.py:18)
 _.coinit_flags  # unused attribute (monkey/infection_monkey/system_info/windows_info_collector.py:11)
 _.representations  # unused attribute (monkey/monkey_island/cc/app.py:180)
 _.log_message  # unused method (monkey/infection_monkey/transport/http.py:188)

@@ -4,7 +4,6 @@ from common.common_consts.system_info_collectors_names import (
     ENVIRONMENT_COLLECTOR,
     HOSTNAME_COLLECTOR,
     MIMIKATZ_COLLECTOR,
-    PROCESS_LIST_COLLECTOR,
 )
 
 SYSTEM_INFO_COLLECTOR_CLASSES = {
@@ -44,14 +43,6 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             "safe": True,
             "info": "Collects machine's hostname.",
             "attack_techniques": ["T1082", "T1016"],
-        },
-        {
-            "type": "string",
-            "enum": [PROCESS_LIST_COLLECTOR],
-            "title": "Process List Collector",
-            "safe": True,
-            "info": "Collects a list of running processes on the machine.",
-            "attack_techniques": ["T1082"],
         },
         {
             "type": "string",

@@ -26,7 +26,7 @@ class WindowsInfoCollector(InfoCollector):
     def get_info(self):
         """
         Collect Windows system information
-        Hostname, process list and network subnets
+        Hostname and network subnets
         Tries to read credential secrets using mimikatz
         :return: Dict of system information
         """
