@@ -9,6 +9,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 ### Changed
+- "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
+  include a timeout. #1577
 
 ### Removed
 - The VSFTPD exploiter. #1533
