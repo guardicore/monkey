@@ -98,3 +98,6 @@ profiler_logs/
 
 # Virtualenv
 venv/
+
+# Hugo
+.hugo_build.lock
