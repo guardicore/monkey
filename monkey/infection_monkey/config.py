@@ -101,9 +101,6 @@ class Configuration(object):
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
     alive = True
 
-    # sets whether or not to self delete the monkey executable when stopped
-    self_delete_in_cleanup = False
-
     # string of the mutex name for single instance
     singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 

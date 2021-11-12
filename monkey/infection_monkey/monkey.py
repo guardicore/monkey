@@ -343,7 +343,7 @@ class InfectionMonkey(object):
         status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
         T1107Telem(status, get_monkey_dir_path()).send()
 
-        if WormConfiguration.self_delete_in_cleanup and -1 == sys.executable.find("python"):
+        if -1 == sys.executable.find("python"):
             try:
                 status = None
                 if "win32" == sys.platform:
