@@ -15,7 +15,7 @@ if is_windows_os():
 
 
 ACTIVE_NO_NET_USER = "/ACTIVE:NO"
-WAIT_TIMEOUT_IN_MILLISECONDS = 60 * 1000
+WAIT_TIMEOUT_IN_MILLISECONDS = 10 * 1000
 
 logger = logging.getLogger(__name__)
 
