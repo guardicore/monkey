@@ -52,7 +52,6 @@
       "monkey": {
         "victims_max_find": 100,
         "victims_max_exploit": 100,
-        "use_file_logging": true,
         "serialize_config": false,
         "alive": true,
         "aws_keys": {
