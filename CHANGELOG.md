@@ -13,8 +13,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 - The VSFTPD exploiter. #1533
 - Manual agent run command for CMD. #1570
-- Sambacry exploiter #1567
+- Sambacry exploiter. #1567
 - "Kill file" option in the config. #1536
+- Netstat collector, because network connection information wasn't used anywhere. #1535
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
