@@ -54,6 +54,7 @@ class T1082(AttackTechnique):
                         },
                         "name": {"$literal": "Azure info"},
                     },
+                    {"used": True, "name": {"$literal": "Network interfaces"}},
                 ],
             }
         },
