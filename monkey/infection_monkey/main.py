@@ -90,20 +90,17 @@ def main():
     except ValueError:
         return True
 
-    if WormConfiguration.use_file_logging:
-        if os.path.exists(log_path):
-            # If log exists but can't be removed it means other monkey is running. This usually
-            # happens on upgrade
-            # from 32bit to 64bit monkey on Windows. In all cases this shouldn't be a problem.
-            try:
-                os.remove(log_path)
-            except OSError:
-                pass
-        LOG_CONFIG["handlers"]["file"]["filename"] = log_path
-        # noinspection PyUnresolvedReferences
-        LOG_CONFIG["root"]["handlers"].append("file")
-    else:
-        del LOG_CONFIG["handlers"]["file"]
+    if os.path.exists(log_path):
+        # If log exists but can't be removed it means other monkey is running. This usually
+        # happens on upgrade
+        # from 32bit to 64bit monkey on Windows. In all cases this shouldn't be a problem.
+        try:
+            os.remove(log_path)
+        except OSError:
+            pass
+    LOG_CONFIG["handlers"]["file"]["filename"] = log_path
+    # noinspection PyUnresolvedReferences
+    LOG_CONFIG["root"]["handlers"].append("file")
 
     logging.config.dictConfig(LOG_CONFIG)
     logger = logging.getLogger()
