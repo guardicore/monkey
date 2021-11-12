@@ -60,12 +60,6 @@ INTERNAL = {
                     "monkey propagating to "
                     "a high number of machines",
                 },
-                "use_file_logging": {
-                    "title": "Use file logging",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Should the monkey dump to a log file",
-                },
                 "serialize_config": {
                     "title": "Serialize config",
                     "type": "boolean",
