@@ -14,7 +14,7 @@
     "content": [
         {
             "type": "text",
-            "text": "# What are system info collectors?\n\nWell, the name pretty much explains it. They are Monkey classes which collect various information regarding the victim system, such as Environment, SSH Info, Process List, Netstat and more. \n\n## What should I add? \n\nA system info collector which collects the hostname of the system.\n\n## Test manually\n\nOnce you're done, make sure that your collector:\n* Appears in the Island configuration, and is enabled by default\n* The collector actually runs when executing a Monkey.\n* Results show up in the relevant places:\n  * The infection map.\n  * The security report.\n  * The relevant MITRE techniques.\n\n**There are a lot of hints for this unit - don't be afraid to use them!**"
+            "text": "# What are system info collectors?\n\nWell, the name pretty much explains it. They are Monkey classes which collect various information regarding the victim system, such as Environment, SSH Info, Process List and more. \n\n## What should I add? \n\nA system info collector which collects the hostname of the system.\n\n## Test manually\n\nOnce you're done, make sure that your collector:\n* Appears in the Island configuration, and is enabled by default\n* The collector actually runs when executing a Monkey.\n* Results show up in the relevant places:\n  * The infection map.\n  * The security report.\n  * The relevant MITRE techniques.\n\n**There are a lot of hints for this unit - don't be afraid to use them!**"
         },
         {
             "type": "snippet",

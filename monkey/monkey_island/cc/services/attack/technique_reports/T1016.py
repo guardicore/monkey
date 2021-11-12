@@ -16,21 +16,13 @@ class T1016(AttackTechnique):
             "$project": {
                 "machine": {"hostname": "$data.hostname", "ips": "$data.network_info.networks"},
                 "networks": "$data.network_info.networks",
-                "netstat": "$data.network_info.netstat",
             }
         },
         {
             "$addFields": {
                 "_id": 0,
-                "netstat": 0,
                 "networks": 0,
                 "info": [
-                    {
-                        "used": {
-                            "$and": [{"$ifNull": ["$netstat", False]}, {"$gt": ["$netstat", {}]}]
-                        },
-                        "name": {"$literal": "Network connections (netstat)"},
-                    },
                     {
                         "used": {
                             "$and": [{"$ifNull": ["$networks", False]}, {"$gt": ["$networks", {}]}]

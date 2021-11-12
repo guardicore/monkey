@@ -7,7 +7,6 @@ import psutil
 from common.common_consts.system_info_collectors_names import AZURE_CRED_COLLECTOR
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.system_info.azure_cred_collector import AzureCollector
-from infection_monkey.system_info.netstat_collector import NetstatCollector
 from infection_monkey.system_info.system_info_collectors_handler import SystemInfoCollectorsHandler
 
 logger = logging.getLogger(__name__)
@@ -72,15 +71,12 @@ class InfoCollector(object):
     def get_network_info(self):
         """
         Adds network information from the host to the system information.
-        Currently updates with netstat and a list of networks accessible from host
+        Currently updates with list of networks accessible from host
         containing host ip and the subnet range
         :return: None. Updates class information
         """
         logger.debug("Reading subnets")
-        self.info["network_info"] = {
-            "networks": get_host_subnets(),
-            "netstat": NetstatCollector.get_netstat_info(),
-        }
+        self.info["network_info"] = {"networks": get_host_subnets()}
 
     def get_azure_info(self):
         """
