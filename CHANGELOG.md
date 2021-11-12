@@ -19,6 +19,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
 - Windows "run as a user" powershell command for manual agent runs. #1570
+- A bug in the "Signed Script Proxy Execution" PBA that downloaded the exe on Linux
+  systems as well. #1557
 
 ### Security
 
