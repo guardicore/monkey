@@ -126,8 +126,7 @@
         "dropper_log_path_linux": "/tmp/user-1562",
         "dropper_log_path_windows": "%temp%\\~df1562.tmp",
         "monkey_log_path_linux": "/tmp/user-1563",
-        "monkey_log_path_windows": "%temp%\\~df1563.tmp",
-        "send_log_to_server": true
+        "monkey_log_path_windows": "%temp%\\~df1563.tmp"
       },
       "exploits": {
         "exploit_lm_hash_list": [],
