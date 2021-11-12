@@ -21,6 +21,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Checkbox to disable/enable sending log to server. #1537
 - Checkbox for self deleting a monkey agent on cleanup. #1537
 - Checkbox for file logging. #1537
+- Remove serialization of config. #1537
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
