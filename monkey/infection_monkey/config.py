@@ -129,9 +129,6 @@ class Configuration(object):
 
     keep_tunnel_open_time = 60
 
-    # Monkey files directory name
-    monkey_dir_name = "monkey_dir"
-
     ###########################
     # scanners config
     ###########################
