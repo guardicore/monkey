@@ -187,8 +187,9 @@ class MonkeyDrops(object):
         logger.info("Cleaning up the dropper")
 
         try:
-            if self._config["source_path"].lower() != self._config["destination_path"].lower() \
-                    and os.path.exists(self._config["source_path"]):
+            if self._config["source_path"].lower() != self._config[
+                "destination_path"
+            ].lower() and os.path.exists(self._config["source_path"]):
 
                 # try removing the file first
                 try:
