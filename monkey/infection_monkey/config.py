@@ -86,7 +86,6 @@ class Configuration(object):
     # dropper config
     ###########################
 
-    dropper_try_move_first = True
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = "/bin/sh"

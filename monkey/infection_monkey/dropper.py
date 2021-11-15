@@ -72,8 +72,8 @@ class MonkeyDrops(object):
         if not file_moved and os.path.exists(self._config["destination_path"]):
             os.remove(self._config["destination_path"])
 
-        # first try to move the file
-        if not file_moved and WormConfiguration.dropper_try_move_first:
+        # always try to move the file first
+        if not file_moved:
             try:
                 shutil.move(self._config["source_path"], self._config["destination_path"])
 
@@ -187,11 +187,9 @@ class MonkeyDrops(object):
         logger.info("Cleaning up the dropper")
 
         try:
-            if (
-                (self._config["source_path"].lower() != self._config["destination_path"].lower())
-                and os.path.exists(self._config["source_path"])
-                and WormConfiguration.dropper_try_move_first
-            ):
+            if self._config["source_path"].lower() != self._config[
+                "destination_path"
+            ].lower() and os.path.exists(self._config["source_path"]):
 
                 # try removing the file first
                 try:
