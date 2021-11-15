@@ -323,8 +323,7 @@ class InfectionMonkey(object):
             ).send()  # Signal the server (before closing the tunnel)
             InfectionMonkey.close_tunnel()
             firewall.close()
-            if WormConfiguration.send_log_to_server:
-                self.send_log()
+            self.send_log()
             self._singleton.unlock()
 
         InfectionMonkey.self_delete()
