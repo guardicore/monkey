@@ -60,12 +60,6 @@ INTERNAL = {
                     "monkey propagating to "
                     "a high number of machines",
                 },
-                "serialize_config": {
-                    "title": "Serialize config",
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Should the monkey dump its config on startup",
-                },
                 "alive": {
                     "title": "Alive",
                     "type": "boolean",
