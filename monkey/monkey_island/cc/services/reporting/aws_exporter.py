@@ -86,7 +86,6 @@ class AWSExporter(Exporter):
             ExploiterDescriptorEnum.STRUTS2.value.class_name: AWSExporter._handle_struts2_issue,
             ExploiterDescriptorEnum.WEBLOGIC.value.class_name: AWSExporter._handle_weblogic_issue,
             ExploiterDescriptorEnum.HADOOP.value.class_name: AWSExporter._handle_hadoop_issue,
-            # azure and conficker are not relevant issues for an AWS env
         }
 
         configured_product_arn = INFECTION_MONKEY_ARN

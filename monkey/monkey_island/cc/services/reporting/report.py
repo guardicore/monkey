@@ -98,24 +98,6 @@ class ReportService:
         ]
 
     @staticmethod
-    def get_azure_issues():
-        creds = ReportService.get_azure_creds()
-        machines = set([instance["origin"] for instance in creds])
-
-        logger.info("Azure issues generated for reporting")
-
-        return [
-            {
-                "type": "azure_password",
-                "machine": machine,
-                "users": set(
-                    [instance["username"] for instance in creds if instance["origin"] == machine]
-                ),
-            }
-            for machine in machines
-        ]
-
-    @staticmethod
     def get_scanned():
         formatted_nodes = []
 
@@ -247,30 +229,6 @@ class ReportService:
                     not in creds
                 ]
                 creds.extend(ssh_keys)
-        return creds
-
-    @staticmethod
-    def get_azure_creds():
-        """
-        Recover all credentials marked as being from an Azure machine
-        :return: List of credentials.
-        """
-        creds = []
-        for telem in mongo.db.telemetry.find(
-            {"telem_category": "system_info", "data.Azure": {"$exists": True}},
-            {"data.Azure": 1, "monkey_guid": 1},
-        ):
-            azure_users = telem["data"]["Azure"]["usernames"]
-            if len(azure_users) == 0:
-                continue
-            origin = NodeService.get_monkey_by_guid(telem["monkey_guid"])["hostname"]
-            azure_leaked_users = [
-                {"username": user.replace(",", "."), "type": "Clear Password", "origin": origin}
-                for user in azure_users
-            ]
-            creds.extend(azure_leaked_users)
-
-        logger.info("Azure machines creds generated for reporting")
         return creds
 
     @staticmethod
@@ -628,7 +586,6 @@ class ReportService:
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
                 "stolen_creds": ReportService.get_stolen_creds(),
-                "azure_passwords": ReportService.get_azure_creds(),
                 "ssh_keys": ReportService.get_ssh_keys(),
                 "strong_users": PTHReportService.get_strong_users_on_crit_details(),
             },
@@ -645,7 +602,6 @@ class ReportService:
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
-            ReportService.get_azure_issues,
             PTHReportService.get_duplicated_passwords_issues,
             PTHReportService.get_strong_users_on_crit_issues,
         ]

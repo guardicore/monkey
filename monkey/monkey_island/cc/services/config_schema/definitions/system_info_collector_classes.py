@@ -1,6 +1,5 @@
 from common.common_consts.system_info_collectors_names import (
     AWS_COLLECTOR,
-    AZURE_CRED_COLLECTOR,
     ENVIRONMENT_COLLECTOR,
     HOSTNAME_COLLECTOR,
     MIMIKATZ_COLLECTOR,
@@ -52,14 +51,6 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             "safe": True,
             "info": "Collects a list of running processes on the machine.",
             "attack_techniques": ["T1082"],
-        },
-        {
-            "type": "string",
-            "enum": [AZURE_CRED_COLLECTOR],
-            "title": "Azure Credential Collector",
-            "safe": True,
-            "info": "Collects password credentials from Azure VMs",
-            "attack_techniques": ["T1003", "T1005"],
         },
     ],
 }
