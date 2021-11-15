@@ -246,14 +246,6 @@ INTERNAL = {
                     "Windows machine "
                     "(64 bit)",
                 },
-                "dropper_try_move_first": {
-                    "title": "Try to move first",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Determines whether the dropper should try to move itself "
-                    "instead of copying itself"
-                    " to target path",
-                },
             },
         },
         "logging": {
