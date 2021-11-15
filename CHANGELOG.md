@@ -24,6 +24,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Remove serialization of config. #1537
 - Checkbox that gave the option to not try to first move the dropper file. #1537
 - Custom singleton mutex name config option. #1589
+- Azure credential collector, because it was broken (not gathering credentials). #1535
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
