@@ -45,7 +45,6 @@
     "internal": {
       "general": {
         "keep_tunnel_open_time": 60,
-        "monkey_dir_name": "monkey_dir",
         "started_on_island": false
       },
       "monkey": {
