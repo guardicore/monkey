@@ -17,10 +17,6 @@ class HTTPFinger(HostFinger):
         self._config = infection_monkey.config.WormConfiguration
         self.HTTP = [(port, str(port)) for port in self._config.HTTP_PORTS]
 
-    @staticmethod
-    def _banner_match(service, host, banner):
-        pass
-
     def get_host_fingerprint(self, host):
         from contextlib import closing
 
