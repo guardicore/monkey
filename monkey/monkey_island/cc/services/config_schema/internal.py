@@ -60,12 +60,6 @@ INTERNAL = {
                     "monkey propagating to "
                     "a high number of machines",
                 },
-                "self_delete_in_cleanup": {
-                    "title": "Self delete on cleanup",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Should the monkey delete its executable when going down",
-                },
                 "use_file_logging": {
                     "title": "Use file logging",
                     "type": "boolean",
