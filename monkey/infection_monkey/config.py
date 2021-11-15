@@ -99,9 +99,6 @@ class Configuration(object):
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
     alive = True
 
-    # string of the mutex name for single instance
-    singleton_mutex_name = "{2384ec59-0df8-4ab9-918c-843740924a28}"
-
     # how long to wait between scan iterations
     timeout_between_iterations = 100
 
