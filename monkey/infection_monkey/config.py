@@ -99,12 +99,6 @@ class Configuration(object):
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
     alive = True
 
-    # how long to wait between scan iterations
-    timeout_between_iterations = 100
-
-    # how many scan iterations to perform on each run
-    max_iterations = 1
-
     finger_classes = []
     exploiter_classes = []
     system_info_collector_classes = []
