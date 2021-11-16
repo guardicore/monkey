@@ -15,13 +15,6 @@ INTERNAL = {
                     "description": "Time to keep tunnel open before going down after last exploit "
                     "(in seconds)",
                 },
-                "monkey_dir_name": {
-                    "title": "Monkey's directory name",
-                    "type": "string",
-                    "default": r"monkey_dir",
-                    "description": "Directory name for the directory which will contain all of the"
-                    " monkey files",
-                },
                 "started_on_island": {
                     "title": "Started on island",
                     "type": "boolean",

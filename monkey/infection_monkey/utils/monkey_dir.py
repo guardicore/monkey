@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 
-from infection_monkey.config import WormConfiguration
+MONKEY_DIR_NAME = "monkey_dir"
 
 
 def create_monkey_dir():
@@ -26,4 +26,4 @@ def remove_monkey_dir():
 
 
 def get_monkey_dir_path():
-    return os.path.join(tempfile.gettempdir(), WormConfiguration.monkey_dir_name)
+    return os.path.join(tempfile.gettempdir(), MONKEY_DIR_NAME)

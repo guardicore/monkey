@@ -25,6 +25,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Checkbox that gave the option to not try to first move the dropper file. #1537
 - Custom singleton mutex name config option. #1589
 - Azure credential collector, because it was broken (not gathering credentials). #1535
+- Custom monkey directory name config option. #1537
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
