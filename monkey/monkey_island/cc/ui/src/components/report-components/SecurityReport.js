@@ -43,7 +43,6 @@ import {
 import {tunnelIssueReport, tunnelIssueOverview} from './security/issues/TunnelIssue';
 import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
 import {weakPasswordIssueOverview} from './security/issues/WeakPasswordIssue';
-import {azurePasswordIssueOverview, azurePasswordIssueReport} from './security/issues/AzurePasswordIssue';
 import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
   zerologonIssueOverview,
@@ -175,11 +174,6 @@ class ReportPageComponent extends AuthComponent {
       },
       'strong_users_on_crit': {
         [this.issueContentTypes.REPORT]: strongUsersOnCritIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'azure_password': {
-        [this.issueContentTypes.OVERVIEW]: azurePasswordIssueOverview,
-        [this.issueContentTypes.REPORT]: azurePasswordIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'weak_password': {

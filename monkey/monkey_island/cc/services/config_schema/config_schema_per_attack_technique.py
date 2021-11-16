@@ -14,7 +14,6 @@ class ConfigSchemaPerAttackTechnique:
                     "T1003": {
                         "System Info Collectors": [
                             "Mimikatz collector",
-                            "Azure credential collector"
                         ]
                     }
                 }

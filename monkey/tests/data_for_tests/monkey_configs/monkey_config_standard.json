@@ -162,8 +162,7 @@
           "awscollector",
           "hostnamecollector",
           "processlistcollector",
-          "mimikatzcollector",
-          "azurecollector"
+          "mimikatzcollector"
         ]
       },
       "persistent_scanning": {
