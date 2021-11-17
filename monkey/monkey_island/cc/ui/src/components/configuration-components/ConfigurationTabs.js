@@ -1,5 +1,4 @@
 const CONFIGURATION_TABS = {
-  ATTACK: 'attack',
   BASIC: 'basic',
   BASIC_NETWORK: 'basic_network',
   RANSOMWARE: 'ransomware',
@@ -8,7 +7,6 @@ const CONFIGURATION_TABS = {
 };
 
 const advancedModeConfigTabs = [
-  CONFIGURATION_TABS.ATTACK,
   CONFIGURATION_TABS.BASIC,
   CONFIGURATION_TABS.BASIC_NETWORK,
   CONFIGURATION_TABS.RANSOMWARE,
