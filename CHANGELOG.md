@@ -27,6 +27,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Removed environment system info collector #1535
 - Azure credential collector, because it was broken (not gathering credentials). #1535
 - Custom monkey directory name config option. #1537
+- Hostname system info collector. #1535
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
