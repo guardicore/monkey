@@ -8,7 +8,6 @@ from werkzeug.exceptions import NotFound
 import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.database import database, mongo
-from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
@@ -93,9 +92,8 @@ def init_app_config(app, mongo_url):
     # deciding to reset credentials and then still logging in with the old JWT.
     app.config["JWT_SECRET_KEY"] = str(uuid.uuid4())
 
-    # By default, Flask sorts keys of JSON objects alphabetically, which messes with the ATT&CK
-    # matrix in the
-    # configuration. See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
+    # By default, Flask sorts keys of JSON objects alphabetically.
+    # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
     app.json_encoder = CustomJSONEncoder
@@ -166,7 +164,6 @@ def init_api_resources(api):
         "/api/fileUpload/<string:file_type>?restore=<string:filename>",
     )
     api.add_resource(RemoteRun, "/api/remote-monkey", "/api/remote-monkey/")
-    api.add_resource(AttackConfiguration, "/api/attack")
     api.add_resource(VersionUpdate, "/api/version-update", "/api/version-update/")
     api.add_resource(RemotePortCheck, "/api/monkey_control/check_remote_port/<string:port>")
     api.add_resource(StartedOnIsland, "/api/monkey_control/started_on_island")
