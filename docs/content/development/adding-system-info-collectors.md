@@ -39,7 +39,7 @@ class MyNewCollector(SystemInfoCollector):
 
 #### Implementation
 
-Override the `collect` method with your own implementation. See the `hostname_collector.py` System Info Collector for reference. You can log during collection as well.
+Override the `collect` method with your own implementation. See the `process_list_collector.py` System Info Collector for reference. You can log during collection as well.
 
 ### Modify the Monkey Island
 
