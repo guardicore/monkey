@@ -109,29 +109,8 @@
             "lines": [
                 "                     \"default\": [",
                 "                         AWS_COLLECTOR,",
-                "*                        HOSTNAME_COLLECTOR,",
                 "                         PROCESS_LIST_COLLECTOR,",
                 "                         MIMIKATZ_COLLECTOR,"
-            ]
-        },
-        {
-            "type": "snippet",
-            "path": "monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/hostname.py",
-            "comments": [],
-            "firstLineNumber": 1,
-            "lines": [
-                " import logging",
-                " ",
-                "*from monkey_island.cc.models.monkey import Monkey",
-                "+# SWIMMER: This will be useful :) monkey_island.cc.models.monkey.Monkey has the useful",
-                "+# \"get_single_monkey_by_guid\" and \"set_hostname\" methods.",
-                " ",
-                " logger = logging.getLogger(__name__)",
-                " ",
-                " ",
-                "*def process_hostname_telemetry(collector_results, monkey_guid):",
-                "+# SWIMMER: Processing function goes here.",
-                "*    Monkey.get_single_monkey_by_guid(monkey_guid).set_hostname(collector_results[\"hostname\"])"
             ]
         },
         {
@@ -165,9 +144,6 @@
         {
             "type": "snippet",
             "lines": [
-                "*from monkey_island.cc.services.telemetry.processing.system_info_collectors.hostname import (",
-                "*    process_hostname_telemetry,",
-                "*)",
                 " from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (",
                 "     check_antivirus_existence,",
                 " )"
