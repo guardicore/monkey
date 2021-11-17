@@ -199,7 +199,6 @@ LOG_DIR_NAME  # unused variable (envs/monkey_zoo/blackbox/log_handlers/test_logs
 delete_logs  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:85)
 MongoQueryJSONEncoder  # unused class (envs/monkey_zoo/blackbox/utils/json_encoder.py:6)
 environment  # unused variable (monkey/monkey_island/cc/models/monkey.py:59)
-_.environment  # unused attribute (monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/environment.py:10)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)

@@ -3,7 +3,6 @@ import requests
 import requests_mock
 
 from common.cloud.aws.aws_instance import AWS_LATEST_METADATA_URI_PREFIX, AwsInstance
-from common.cloud.environment_names import Environment
 
 INSTANCE_ID_RESPONSE = "i-1234567890abcdef0"
 
@@ -78,10 +77,6 @@ def test_is_instance_good_data(good_data_mock_instance):
     assert good_data_mock_instance.is_instance()
 
 
-def test_get_cloud_provider_name_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.get_cloud_provider_name() == Environment.AWS
-
-
 def test_get_instance_id_good_data(good_data_mock_instance):
     assert good_data_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
 
@@ -108,10 +103,6 @@ def bad_region_data_mock_instance():
 
 def test_is_instance_bad_region_data(bad_region_data_mock_instance):
     assert bad_region_data_mock_instance.is_instance()
-
-
-def test_get_cloud_provider_name_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.get_cloud_provider_name() == Environment.AWS
 
 
 def test_get_instance_id_bad_region_data(bad_region_data_mock_instance):
@@ -142,10 +133,6 @@ def test_is_instance_bad_account_id_data(bad_account_id_data_mock_instance):
     assert bad_account_id_data_mock_instance.is_instance()
 
 
-def test_get_cloud_provider_name_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert bad_account_id_data_mock_instance.get_cloud_provider_name() == Environment.AWS
-
-
 def test_get_instance_id_bad_account_id_data(bad_account_id_data_mock_instance):
     assert bad_account_id_data_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
 
@@ -174,11 +161,6 @@ def bad_instance_id_request_mock_instance(instance_id_exception):
 @pytest.mark.parametrize("instance_id_exception", [requests.RequestException, IOError])
 def test_is_instance_bad_instance_id_request(bad_instance_id_request_mock_instance):
     assert bad_instance_id_request_mock_instance.is_instance() is False
-
-
-@pytest.mark.parametrize("instance_id_exception", [requests.RequestException, IOError])
-def test_get_cloud_provider_name_bad_instance_id_request(bad_instance_id_request_mock_instance):
-    assert bad_instance_id_request_mock_instance.get_cloud_provider_name() == Environment.AWS
 
 
 @pytest.mark.parametrize("instance_id_exception", [requests.RequestException, IOError])
@@ -215,11 +197,6 @@ def test_is_instance_bad_region_request(bad_region_request_mock_instance):
 
 
 @pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
-def test_get_cloud_provider_name_bad_region_request(bad_region_request_mock_instance):
-    assert bad_region_request_mock_instance.get_cloud_provider_name() == Environment.AWS
-
-
-@pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
 def test_get_instance_id_bad_region_request(bad_region_request_mock_instance):
     assert bad_region_request_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
 
@@ -250,11 +227,6 @@ def bad_account_id_request_mock_instance(account_id_exception):
 @pytest.mark.parametrize("account_id_exception", [requests.RequestException, IOError])
 def test_is_instance_bad_account_id_request(bad_account_id_request_mock_instance):
     assert bad_account_id_request_mock_instance.is_instance()
-
-
-@pytest.mark.parametrize("account_id_exception", [requests.RequestException, IOError])
-def test_get_cloud_provider_name_bad_account_id_request(bad_account_id_request_mock_instance):
-    assert bad_account_id_request_mock_instance.get_cloud_provider_name() == Environment.AWS
 
 
 @pytest.mark.parametrize("account_id_exception", [requests.RequestException, IOError])
@@ -294,10 +266,6 @@ def not_found_request_mock_instance():
 
 def test_is_instance_not_found_request(not_found_request_mock_instance):
     assert not_found_request_mock_instance.is_instance() is False
-
-
-def test_get_cloud_provider_name_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.get_cloud_provider_name() == Environment.AWS
 
 
 def test_get_instance_id_not_found_request(not_found_request_mock_instance):

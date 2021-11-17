@@ -39,7 +39,7 @@ class MyNewCollector(SystemInfoCollector):
 
 #### Implementation
 
-Override the `collect` method with your own implementation. See the `EnvironmentCollector.py` System Info Collector for reference. You can log during collection as well.
+Override the `collect` method with your own implementation. See the `hostname_collector.py` System Info Collector for reference. You can log during collection as well.
 
 ### Modify the Monkey Island
 
@@ -57,7 +57,7 @@ You'll need to add your Sytem Info Collector to the `monkey_island/cc/services/c
         {
             "type": "string",
             "enum": [
-                "EnvironmentCollector"
+                "HostnameCollector"
             ],
             "title": "Which Environment this machine is on (on prem/cloud)",
             "attack_techniques": []
@@ -87,7 +87,7 @@ Also, you can add the System Info Collector to be used by default by adding it t
         "$ref": "#/definitions/system_info_collectors_classes"
     },
     "default": [
-        "EnvironmentCollector",
+        "HostnameCollector",
         "MyNewCollector"    <=================================
     ],
     "description": "Determines which system information collectors will collect information."

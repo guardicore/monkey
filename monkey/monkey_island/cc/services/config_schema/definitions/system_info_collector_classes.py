@@ -1,6 +1,5 @@
 from common.common_consts.system_info_collectors_names import (
     AWS_COLLECTOR,
-    ENVIRONMENT_COLLECTOR,
     HOSTNAME_COLLECTOR,
     MIMIKATZ_COLLECTOR,
     PROCESS_LIST_COLLECTOR,
@@ -11,14 +10,6 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
     "description": "Click on a system info collector to find out what it collects.",
     "type": "string",
     "anyOf": [
-        {
-            "type": "string",
-            "enum": [ENVIRONMENT_COLLECTOR],
-            "title": "Environment Collector",
-            "safe": True,
-            "info": "Collects information about machine's environment (on " "premise/GCP/AWS).",
-            "attack_techniques": ["T1082"],
-        },
         {
             "type": "string",
             "enum": [MIMIKATZ_COLLECTOR],
