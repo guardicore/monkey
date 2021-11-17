@@ -122,16 +122,6 @@ class Monkey(Document):
         """
         return Monkey.get_single_monkey_by_id(object_id).hostname
 
-    def set_hostname(self, hostname):
-        """
-        Sets a new hostname for a machine and clears the cache for getting it.
-        :param hostname: The new hostname for the machine.
-        """
-        self.hostname = hostname
-        self.save()
-        Monkey.get_hostname_by_id.delete(self.id)
-        Monkey.get_label_by_id.delete(self.id)
-
     def get_network_info(self):
         """
         Formats network info from monkey's model
@@ -139,10 +129,8 @@ class Monkey(Document):
         """
         return {"ips": self.ip_addresses, "hostname": self.hostname}
 
-    @ring.lru(
-        # data has TTL of 1 second. This is useful for rapid calls for report generation.
-        expire=1
-    )
+    # data has TTL of 1 second. This is useful for rapid calls for report generation.
+    @ring.lru(expire=1)
     @staticmethod
     def is_monkey(object_id):
         try:

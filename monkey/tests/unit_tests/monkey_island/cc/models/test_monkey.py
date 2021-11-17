@@ -134,9 +134,6 @@ class TestMonkey:
         assert cache_info_after_query_2.hits == 1
         assert cache_info_after_query_2.misses == 1
 
-        # set hostname deletes the id from the cache.
-        linux_monkey.set_hostname("Another hostname")
-
         # should be a miss
         label = Monkey.get_label_by_id(linux_monkey.id)
         logger.debug("3) ID: {} label: {}".format(linux_monkey.id, label))
