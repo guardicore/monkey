@@ -9,10 +9,7 @@ class BaseTemplate(ConfigTemplate):
         "basic_network.scope.local_network_scan": False,
         "basic_network.scope.depth": 1,
         "internal.classes.finger_classes": ["PingScanner", "HTTPFinger"],
-        "internal.monkey.system_info.system_info_collector_classes": [
-            "EnvironmentCollector",
-            "HostnameCollector",
-        ],
+        "internal.monkey.system_info.system_info_collector_classes": [],
         "monkey.post_breach.post_breach_actions": [],
         "internal.general.keep_tunnel_open_time": 0,
     }
