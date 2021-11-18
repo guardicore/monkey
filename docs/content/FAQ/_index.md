@@ -82,43 +82,18 @@ However, you can save the Monkey's existing configuration by logging in with you
 ### On Windows and Linux (AppImage)
 
 When you first access the Monkey Island server, you'll be prompted to create an account.
-To reset the credentials, edit the `server_config.json` file manually
+Creating an account will write your credentials in `credentials.json` file
+under [data directory]({{< ref "/reference/data_directory" >}}).
+To reset the credentials:
+
+1. **Remove** the `credentials.json` file manually
 (located in the [data directory]({{< ref "/reference/data_directory" >}})).
 
-In order to reset the credentials, the following edits need to be made:
-1. Delete the `user` field. It will look like this:
-    ```json
-    {
-      ...
-      "user": "username",
-      ...
-    }
-    ```
-1. Delete the `password_hash` field. It will look like this:
-    ```json
-    {
-      ...
-      "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
-      ...
-    }
-    ```
-1. Set `server_config` to `password`. It should look like this:
-    ```json
-    {
-      ...
-      "environment": {
-        ...
-        "server_config": "password",
-        ...
-      },
-      ...
-    }
-    ```
-1. Restart the Monkey Island process:
+2. Restart the Monkey Island process:
     * On Linux, simply kill the Monkey Island process and execute the AppImage.
     * On Windows, restart the program.
 
-1. Go to the Monkey Island's URL and create a new account.
+3. Go to the Monkey Island's URL and create a new account.
 
 If you are still unable to log into Monkey Island after following the above
 steps, you can perform a complete factory reset by removing the entire [data
