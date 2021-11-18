@@ -65,13 +65,6 @@ def patch_datastore_utils(
     )
 
 
-# pass a mock IUserDatastore
-
-# Mock reset_database
-# mock reset_datastore_encryptor
-# mock unlock_datastore_encryptor
-
-
 def test_needs_registration__true(tmp_path):
     has_registered_users = False
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
@@ -156,7 +149,6 @@ def test_authenticate__failed_wrong_credentials(
     a_s = AuthenticationService()
     a_s.initialize(tmp_path, mock_user_datastore)
 
-    # If authentication fails, this function will raise an exception and the test will fail.
     with pytest.raises(IncorrectCredentialsError):
         a_s.authenticate(username, password)
 
@@ -171,7 +163,6 @@ def test_authenticate__failed_no_registered_user(tmp_path, mock_unlock_datastore
     a_s = AuthenticationService()
     a_s.initialize(tmp_path, mock_user_datastore)
 
-    # If authentication fails, this function will raise an exception and the test will fail.
     with pytest.raises(IncorrectCredentialsError):
         a_s.authenticate(USERNAME, PASSWORD)
 
