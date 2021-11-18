@@ -49,7 +49,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
     # Import the config variables
     $config_filename = New-TemporaryFile
-    $config_filename = "config.ps1"
+    $config_filename = "$PsScriptRoot\config.ps1"
     $config_url = "https://raw.githubusercontent.com/guardicore/monkey/" + $branch + "/deployment_scripts/config.ps1"
     $webClient.DownloadFile($config_url, $config_filename)
     . ./config.ps1

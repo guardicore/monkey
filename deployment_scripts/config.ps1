@@ -24,7 +24,6 @@ $WINDOWS_64_BINARY_PATH = "monkey-windows-64.exe"
 # Other directories and paths ( most likely you dont need to configure)
 $MONKEY_ISLAND_DIR = Join-Path "\monkey" -ChildPath "monkey_island"
 $MONKEY_DIR = Join-Path "\monkey" -ChildPath "infection_monkey"
-$SCOUTSUITE_DIR = Join-Path "\monkey" "common" "cloud" "scoutsuite"
 $TEMP_PYTHON_INSTALLER = ".\python.exe"
 $TEMP_MONGODB_ZIP = ".\mongodb.zip"
 $TEMP_OPEN_SSL_ZIP = ".\openssl.zip"
