@@ -75,3 +75,8 @@ def test_get_user_credentials_from_file(tmp_path):
 def test_get_unknown_user(populated_datastore):
     with pytest.raises(UnknownUserError):
         populated_datastore.get_user_credentials("unregistered_user")
+
+
+def test_get_user_credentials__no_user_registered(empty_datastore):
+    with pytest.raises(UnknownUserError):
+        empty_datastore.get_user_credentials("unregistered_user")

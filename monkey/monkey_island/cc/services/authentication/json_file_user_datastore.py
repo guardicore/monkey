@@ -51,7 +51,7 @@ class JsonFileUserDatastore(IUserDatastore):
             json.dump(self._credentials.to_dict(), f, indent=2)
 
     def get_user_credentials(self, username: str) -> UserCreds:
-        if self._credentials.username != username:
+        if self._credentials is None or self._credentials.username != username:
             raise UnknownUserError(f"User {username} does not exist.")
 
         return self._credentials
