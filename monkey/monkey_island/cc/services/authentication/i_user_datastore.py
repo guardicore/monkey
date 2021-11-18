@@ -1,6 +1,6 @@
 import abc
 
-from monkey_island.cc.environment.user_creds import UserCreds
+from .user_creds import UserCreds
 
 
 class IUserDatastore(metaclass=abc.ABCMeta):

@@ -6,10 +6,10 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
 from .i_user_datastore import IUserDatastore
+from .user_creds import UserCreds
 
 CREDENTIALS_FILE = "credentials.json"
 

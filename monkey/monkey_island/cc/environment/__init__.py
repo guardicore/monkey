@@ -7,7 +7,6 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
 )
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
-from monkey_island.cc.environment.user_creds import UserCreds
 
 logger = logging.getLogger(__name__)
 

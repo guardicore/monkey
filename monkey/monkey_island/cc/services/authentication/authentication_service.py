@@ -1,7 +1,6 @@
 import bcrypt
 
 from common.utils.exceptions import IncorrectCredentialsError, UnknownUserError
-from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
     unlock_datastore_encryptor,
@@ -9,6 +8,7 @@ from monkey_island.cc.server_utils.encryption import (
 from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
 from .i_user_datastore import IUserDatastore
+from .user_creds import UserCreds
 
 
 class AuthenticationService:

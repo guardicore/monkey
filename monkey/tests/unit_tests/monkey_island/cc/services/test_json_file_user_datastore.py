@@ -9,12 +9,12 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 from monkey_island.cc.services.authentication.json_file_user_datastore import (
     CREDENTIALS_FILE,
     JsonFileUserDatastore,
 )
+from monkey_island.cc.services.authentication.user_creds import UserCreds
 
 USERNAME = "test"
 PASSWORD_HASH = "DEADBEEF"
