@@ -18,6 +18,10 @@ class AlreadyRegisteredError(RegistrationNotNeededError):
     """ Raise to indicate the reason why registration is not required """
 
 
+class UnknownUserError(Exception):
+    """ Raise to indicate that authentication failed """
+
+
 class IncorrectCredentialsError(Exception):
     """ Raise to indicate that authentication failed """
 
