@@ -93,18 +93,5 @@ MONKEY = {
                 },
             },
         },
-        "persistent_scanning": {
-            "title": "Persistent scanning",
-            "type": "object",
-            "properties": {
-                "retry_failed_explotation": {
-                    "title": "Retry failed exploitation",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Determines whether the monkey should retry exploiting machines"
-                    " it didn't successfully exploit on previous scans",
-                },
-            },
-        },
     },
 }
