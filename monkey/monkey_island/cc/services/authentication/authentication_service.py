@@ -25,7 +25,7 @@ class AuthenticationService:
 
     @classmethod
     def needs_registration(cls) -> bool:
-        return cls.user_datastore.has_registered_users()
+        return not cls.user_datastore.has_registered_users()
 
     @classmethod
     def register_new_user(cls, username: str, password: str):

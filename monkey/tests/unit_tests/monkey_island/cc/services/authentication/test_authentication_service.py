@@ -78,7 +78,7 @@ def test_needs_registration__true(tmp_path):
     a_s = AuthenticationService()
     a_s.initialize(tmp_path, mock_user_datastore)
 
-    assert a_s.needs_registration()
+    assert not a_s.needs_registration()
 
 
 def test_needs_registration__false(tmp_path):
@@ -87,7 +87,7 @@ def test_needs_registration__false(tmp_path):
     a_s = AuthenticationService()
     a_s.initialize(tmp_path, mock_user_datastore)
 
-    assert not a_s.needs_registration()
+    assert a_s.needs_registration()
 
 
 @pytest.mark.parametrize("error", [InvalidRegistrationCredentialsError, AlreadyRegisteredError])
