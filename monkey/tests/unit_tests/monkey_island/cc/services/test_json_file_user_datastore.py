@@ -1,4 +1,8 @@
+import os
+import stat
+
 import pytest
+from tests.monkey_island.utils import assert_windows_permissions
 
 from common.utils.exceptions import (
     AlreadyRegisteredError,
@@ -6,6 +10,7 @@ from common.utils.exceptions import (
     UnknownUserError,
 )
 from monkey_island.cc.environment.user_creds import UserCreds
+from monkey_island.cc.server_utils.file_utils import is_windows_os
 from monkey_island.cc.services.authentication.json_file_user_datastore import (
     CREDENTIALS_FILE,
     JsonFileUserDatastore,
@@ -25,6 +30,11 @@ def populated_datastore(data_for_tests_dir):
     return JsonFileUserDatastore(data_for_tests_dir)
 
 
+@pytest.fixture
+def credentials_file_path(tmp_path):
+    return tmp_path / CREDENTIALS_FILE
+
+
 def test_has_registered_users_pre_registration(empty_datastore):
     assert not empty_datastore.has_registered_users()
 
@@ -33,12 +43,31 @@ def test_has_registered_users_after_registration(populated_datastore):
     assert populated_datastore.has_registered_users()
 
 
-def test_add_user(empty_datastore, tmp_path):
+def test_add_user(empty_datastore, credentials_file_path):
     datastore = empty_datastore
 
     datastore.add_user(UserCreds(USERNAME, PASSWORD_HASH))
     assert datastore.has_registered_users()
-    assert (tmp_path / CREDENTIALS_FILE).exists()
+    assert credentials_file_path.exists()
+
+
+@pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
+def test_add_user__term_posix(empty_datastore, credentials_file_path):
+    empty_datastore.add_user(UserCreds(USERNAME, PASSWORD_HASH))
+    st = os.stat(credentials_file_path)
+
+    expected_mode = stat.S_IRUSR | stat.S_IWUSR
+    actual_mode = st.st_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+
+    assert expected_mode == actual_mode
+
+
+@pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
+def test_add_user__term_windows(empty_datastore, credentials_file_path):
+    datastore = empty_datastore
+
+    datastore.add_user(UserCreds(USERNAME, PASSWORD_HASH))
+    assert_windows_permissions(str(credentials_file_path))
 
 
 def test_add_user__None_creds(empty_datastore):

@@ -7,6 +7,7 @@ from common.utils.exceptions import (
     UnknownUserError,
 )
 from monkey_island.cc.environment.user_creds import UserCreds
+from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
 from .i_user_datastore import IUserDatastore
 
@@ -47,7 +48,7 @@ class JsonFileUserDatastore(IUserDatastore):
         self._store_credentials_to_file()
 
     def _store_credentials_to_file(self):
-        with open(self._credentials_file, "w") as f:
+        with open_new_securely_permissioned_file(self._credentials_file, "w") as f:
             json.dump(self._credentials.to_dict(), f, indent=2)
 
     def get_user_credentials(self, username: str) -> UserCreds:
