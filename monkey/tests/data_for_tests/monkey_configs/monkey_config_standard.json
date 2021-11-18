@@ -163,9 +163,6 @@
           "processlistcollector",
           "mimikatzcollector"
         ]
-      },
-      "persistent_scanning": {
-        "retry_failed_explotation": true
       }
     }
   }
