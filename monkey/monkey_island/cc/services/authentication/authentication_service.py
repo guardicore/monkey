@@ -1,7 +1,6 @@
 import bcrypt
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
-from common.utils.exceptions import IncorrectCredentialsError
+from common.utils.exceptions import IncorrectCredentialsError, UnknownUserError
 from monkey_island.cc.environment.user_creds import UserCreds
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
@@ -9,31 +8,40 @@ from monkey_island.cc.server_utils.encryption import (
 )
 from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
+from .i_user_datastore import IUserDatastore
+
 
 class AuthenticationService:
     DATA_DIR = None
+    user_datastore = None
 
     # TODO: A number of these services should be instance objects instead of
     # static/singleton hybrids. At the moment, this requires invasive refactoring that's
     # not a priority.
     @classmethod
-    def initialize(cls, data_dir: str):
+    def initialize(cls, data_dir: str, user_datastore: IUserDatastore):
         cls.DATA_DIR = data_dir
+        cls.user_datastore = user_datastore
 
-    @staticmethod
-    def needs_registration() -> bool:
-        return env_singleton.env.needs_registration()
+    @classmethod
+    def needs_registration(cls) -> bool:
+        return cls.user_datastore.has_registered_users()
 
     @classmethod
     def register_new_user(cls, username: str, password: str):
         credentials = UserCreds(username, _hash_password(password))
-        env_singleton.env.try_add_user(credentials)
+        cls.user_datastore.add_user(credentials)
         cls._reset_datastore_encryptor(username, password)
         reset_database()
 
     @classmethod
     def authenticate(cls, username: str, password: str):
-        if not _credentials_match_registered_user(username, password):
+        try:
+            registered_user = cls.user_datastore.get_user_credentials(username)
+        except UnknownUserError:
+            raise IncorrectCredentialsError()
+
+        if not _credentials_match_registered_user(username, password, registered_user):
             raise IncorrectCredentialsError()
 
         cls._unlock_datastore_encryptor(username, password)
@@ -56,12 +64,9 @@ def _hash_password(plaintext_password: str) -> str:
     return password_hash.decode()
 
 
-def _credentials_match_registered_user(username: str, password: str) -> bool:
-    registered_user = env_singleton.env.get_user()
-
-    if not registered_user:
-        return False
-
+def _credentials_match_registered_user(
+    username: str, password: str, registered_user: UserCreds
+) -> bool:
     return (registered_user.username == username) and _password_matches_hash(
         password, registered_user.password_hash
     )
