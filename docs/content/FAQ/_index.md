@@ -12,7 +12,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [How can I use an old data directory?](#how-can-i-use-an-old-data-directory)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
 - [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
-- [Reset/enable the Monkey Island password](#resetenable-the-monkey-island-password)
+- [Reset the Monkey Island password](#reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
 - [Logging and how to find logs](#logging-and-how-to-find-logs)
@@ -71,7 +71,7 @@ downloaded installer](/usage/file-checksums) first. Then, create a new folder
 and disable antivirus scan for that folder. Lastly, re-install the Infection
 Monkey in the newly created folder.
 
-## Reset/enable the Monkey Island password
+## Reset the Monkey Island password
 
 
 {{% notice warning %}}
@@ -82,43 +82,18 @@ However, you can save the Monkey's existing configuration by logging in with you
 ### On Windows and Linux (AppImage)
 
 When you first access the Monkey Island server, you'll be prompted to create an account.
-To reset the credentials, edit the `server_config.json` file manually
+Creating an account will write your credentials in `credentials.json` file
+under [data directory]({{< ref "/reference/data_directory" >}}).
+To reset the credentials:
+
+1. **Remove** the `credentials.json` file manually
 (located in the [data directory]({{< ref "/reference/data_directory" >}})).
 
-In order to reset the credentials, the following edits need to be made:
-1. Delete the `user` field. It will look like this:
-    ```json
-    {
-      ...
-      "user": "username",
-      ...
-    }
-    ```
-1. Delete the `password_hash` field. It will look like this:
-    ```json
-    {
-      ...
-      "password_hash": "$2b$12$d050I/MsR5.F5E15Sm7EkunmmwMkUKaZE0P0tJXG.M9tF.Kmkd342",
-      ...
-    }
-    ```
-1. Set `server_config` to `password`. It should look like this:
-    ```json
-    {
-      ...
-      "environment": {
-        ...
-        "server_config": "password",
-        ...
-      },
-      ...
-    }
-    ```
-1. Restart the Monkey Island process:
+2. Restart the Monkey Island process:
     * On Linux, simply kill the Monkey Island process and execute the AppImage.
     * On Windows, restart the program.
 
-1. Go to the Monkey Island's URL and create a new account.
+3. Go to the Monkey Island's URL and create a new account.
 
 If you are still unable to log into Monkey Island after following the above
 steps, you can perform a complete factory reset by removing the entire [data

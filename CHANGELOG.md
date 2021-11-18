@@ -7,6 +7,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
+- credentials.json file for storing Monkey Island user login information. #1206
 
 ### Changed
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and

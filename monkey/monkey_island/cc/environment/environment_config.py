@@ -4,14 +4,11 @@ import json
 import os
 from typing import Dict
 
-from monkey_island.cc.environment.user_creds import UserCreds
-
 
 class EnvironmentConfig:
     def __init__(self, file_path):
         self._server_config_path = os.path.expanduser(file_path)
         self.server_config = None
-        self.user_creds = None
         self.aws = None
 
         self._load_from_file(self._server_config_path)
@@ -24,7 +21,7 @@ class EnvironmentConfig:
 
         self._load_from_json(config_content)
 
-    def _load_from_json(self, config_json: str) -> EnvironmentConfig:
+    def _load_from_json(self, config_json: str):
         data = json.loads(config_json)
         self._load_from_dict(data["environment"])
 
@@ -32,7 +29,6 @@ class EnvironmentConfig:
         aws = dict_data["aws"] if "aws" in dict_data else None
 
         self.server_config = dict_data["server_config"]
-        self.user_creds = _get_user_credentials_from_config(dict_data)
         self.aws = aws
 
     def save_to_file(self):
@@ -50,16 +46,4 @@ class EnvironmentConfig:
         }
         if self.aws:
             config_dict.update({"aws": self.aws})
-        config_dict.update(self.user_creds.to_dict())
         return config_dict
-
-    def add_user(self, credentials: UserCreds):
-        self.user_creds = credentials
-        self.save_to_file()
-
-
-def _get_user_credentials_from_config(dict_data: Dict):
-    username = dict_data.get("user", "")
-    password_hash = dict_data.get("password_hash", "")
-
-    return UserCreds(username, password_hash)

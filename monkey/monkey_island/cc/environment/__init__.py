@@ -7,7 +7,6 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
 )
 from monkey_island.cc.environment.environment_config import EnvironmentConfig
-from monkey_island.cc.environment.user_creds import UserCreds
 
 logger = logging.getLogger(__name__)
 
@@ -22,34 +21,6 @@ class Environment(object, metaclass=ABCMeta):
     def __init__(self, config: EnvironmentConfig):
         self._config = config
         self._testing = False  # Assume env is not for unit testing.
-
-    def get_user(self):
-        return self._config.user_creds
-
-    def needs_registration(self) -> bool:
-        try:
-            needs_registration = self._try_needs_registration()
-            return needs_registration
-        except (AlreadyRegisteredError) as e:
-            logger.info(e)
-            return False
-
-    def try_add_user(self, credentials: UserCreds):
-        if not credentials:
-            raise InvalidRegistrationCredentialsError("Missing part of credentials.")
-        if self._try_needs_registration():
-            self._config.add_user(credentials)
-            logger.info(f"New user {credentials.username} registered!")
-
-    def _try_needs_registration(self) -> bool:
-        if self._is_registered():
-            raise AlreadyRegisteredError(
-                "User has already been registered. " "Reset credentials or login."
-            )
-        return True
-
-    def _is_registered(self) -> bool:
-        return self._config and self._config.user_creds
 
     @property
     def testing(self):
