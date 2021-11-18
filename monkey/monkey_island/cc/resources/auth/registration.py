@@ -3,7 +3,7 @@ import logging
 import flask_restful
 from flask import make_response, request
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError
+from common.utils.exceptions import AlreadyRegisteredError, InvalidRegistrationCredentialsError
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
 from monkey_island.cc.services import AuthenticationService
 
@@ -20,5 +20,5 @@ class Registration(flask_restful.Resource):
         try:
             AuthenticationService.register_new_user(username, password)
             return make_response({"error": ""}, 200)
-        except (InvalidRegistrationCredentialsError, RegistrationNotNeededError) as e:
+        except (InvalidRegistrationCredentialsError, AlreadyRegisteredError) as e:
             return make_response({"error": str(e)}, 400)

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError
+from common.utils.exceptions import AlreadyRegisteredError, InvalidRegistrationCredentialsError
 
 REGISTRATION_URL = "/api/registration"
 
@@ -59,9 +59,7 @@ def test_invalid_credentials(make_registration_request, mock_authentication_serv
 
 
 def test_registration_not_needed(make_registration_request, mock_authentication_service):
-    mock_authentication_service.register_new_user = MagicMock(
-        side_effect=RegistrationNotNeededError()
-    )
+    mock_authentication_service.register_new_user = MagicMock(side_effect=AlreadyRegisteredError())
 
     registration_request_body = "{}"
     response = make_registration_request(registration_request_body)

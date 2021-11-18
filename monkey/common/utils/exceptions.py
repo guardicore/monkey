@@ -10,11 +10,7 @@ class InvalidRegistrationCredentialsError(Exception):
     """ Raise when server config file changed and island needs to restart """
 
 
-class RegistrationNotNeededError(Exception):
-    """ Raise to indicate the reason why registration is not required """
-
-
-class AlreadyRegisteredError(RegistrationNotNeededError):
+class AlreadyRegisteredError(Exception):
     """ Raise to indicate the reason why registration is not required """
 
 
