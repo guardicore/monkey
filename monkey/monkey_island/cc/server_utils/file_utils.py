@@ -55,7 +55,8 @@ def _create_secure_directory_windows(path: str):
 @contextmanager
 def open_new_securely_permissioned_file(path: str, mode: str = "w") -> Generator:
     if is_windows_os():
-        fd = _get_file_descriptor_for_new_secure_file_windows(path)
+        # TODO: Switch from string to Path object to avoid this hack.
+        fd = _get_file_descriptor_for_new_secure_file_windows(str(path))
     else:
         fd = _get_file_descriptor_for_new_secure_file_linux(path)
 
