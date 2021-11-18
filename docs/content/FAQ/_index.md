@@ -12,7 +12,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [How can I use an old data directory?](#how-can-i-use-an-old-data-directory)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
 - [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
-- [Reset/enable the Monkey Island password](#resetenable-the-monkey-island-password)
+- [Reset the Monkey Island password](#reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
   - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
 - [Logging and how to find logs](#logging-and-how-to-find-logs)
@@ -71,7 +71,7 @@ downloaded installer](/usage/file-checksums) first. Then, create a new folder
 and disable antivirus scan for that folder. Lastly, re-install the Infection
 Monkey in the newly created folder.
 
-## Reset/enable the Monkey Island password
+## Reset the Monkey Island password
 
 
 {{% notice warning %}}
