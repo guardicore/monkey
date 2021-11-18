@@ -9,7 +9,7 @@ from jwt import PyJWTError
 
 from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
-from monkey_island.cc.services.authentication import AuthenticationService
+from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
 

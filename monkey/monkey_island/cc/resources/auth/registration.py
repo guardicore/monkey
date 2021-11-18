@@ -5,7 +5,7 @@ from flask import make_response, request
 
 from common.utils.exceptions import InvalidRegistrationCredentialsError, RegistrationNotNeededError
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
-from monkey_island.cc.services.authentication import AuthenticationService
+from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
 
