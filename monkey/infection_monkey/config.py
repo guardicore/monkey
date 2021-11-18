@@ -118,9 +118,6 @@ class Configuration(object):
     # Configuration servers to try to connect to, in this order.
     command_servers = ["192.0.2.0:5000"]
 
-    # sets whether or not to retry failed hosts on next scan
-    retry_failed_explotation = True
-
     keep_tunnel_open_time = 60
 
     ###########################

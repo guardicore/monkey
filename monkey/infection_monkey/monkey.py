@@ -248,12 +248,6 @@ class InfectionMonkey(object):
             if machine in self._exploited_machines:
                 logger.debug("Skipping %r - already exploited", machine)
                 continue
-            elif machine in self._fail_exploitation_machines:
-                if WormConfiguration.retry_failed_explotation:
-                    logger.debug("%r - exploitation failed before, trying again", machine)
-                else:
-                    logger.debug("Skipping %r - exploitation failed before", machine)
-                    continue
 
             if self._monkey_tunnel:
                 self._monkey_tunnel.set_tunnel_for_host(machine)
