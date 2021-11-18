@@ -7,7 +7,7 @@
         "hints": [
             "See `ScheduleJobs` PBA for an example of a PBA which only uses shell commands.",
             "Make sure to add the PBA to the configuration as well.",
-            "MITRE ATT&CK technique T1087 articulates that adversaries may attempt to get a listing of accounts on a system or within an environment which can help them determine which accounts can aid in follow-on behavior. Therefore, the AccountDiscovery PBA is relevant to it. Make sure to map this PBA to the MITRE ATT&CK configuration and report."
+            "MITRE ATT&CK technique T1087 articulates that adversaries may attempt to get a listing of accounts on a system or within an environment which can help them determine which accounts can aid in follow-on behavior. Therefore, the AccountDiscovery PBA is relevant to it which will enable the ATT&CK technique and show it in ATT&CK report."
         ]
     },
     "content": [
