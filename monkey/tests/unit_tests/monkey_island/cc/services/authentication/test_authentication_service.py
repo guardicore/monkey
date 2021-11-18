@@ -101,6 +101,21 @@ def test_register_new_user__fails(
     mock_reset_database.assert_not_called()
 
 
+def test_register_new_user__empty_password_fails(
+    tmp_path, mock_reset_datastore_encryptor, mock_reset_database
+):
+    mock_user_datastore = MockUserDatastore(lambda: False, None, None)
+
+    a_s = AuthenticationService()
+    a_s.initialize(tmp_path, mock_user_datastore)
+
+    with pytest.raises(InvalidRegistrationCredentialsError):
+        a_s.register_new_user(USERNAME, "")
+
+    mock_reset_datastore_encryptor.assert_not_called()
+    mock_reset_database.assert_not_called()
+
+
 def test_register_new_user(tmp_path, mock_reset_datastore_encryptor, mock_reset_database):
     mock_add_user = MagicMock()
     mock_user_datastore = MockUserDatastore(lambda: False, mock_add_user, None)

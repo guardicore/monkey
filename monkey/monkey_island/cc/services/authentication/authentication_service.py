@@ -1,6 +1,10 @@
 import bcrypt
 
-from common.utils.exceptions import IncorrectCredentialsError, UnknownUserError
+from common.utils.exceptions import (
+    IncorrectCredentialsError,
+    InvalidRegistrationCredentialsError,
+    UnknownUserError,
+)
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
     unlock_datastore_encryptor,
@@ -29,6 +33,9 @@ class AuthenticationService:
 
     @classmethod
     def register_new_user(cls, username: str, password: str):
+        if not username or not password:
+            raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
+
         credentials = UserCreds(username, _hash_password(password))
         cls.user_datastore.add_user(credentials)
         cls._reset_datastore_encryptor(username, password)
