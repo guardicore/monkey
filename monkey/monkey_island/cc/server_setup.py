@@ -146,23 +146,16 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         f"{config_options.key_path}."
     )
 
-    if env_singleton.env.is_debug():
-        app.run(
-            host="0.0.0.0",
-            debug=True,
-            ssl_context=(config_options.crt_path, config_options.key_path),
-        )
-    else:
-        http_server = WSGIServer(
-            ("0.0.0.0", ISLAND_PORT),
-            app,
-            certfile=config_options.crt_path,
-            keyfile=config_options.key_path,
-            log=logger,
-            error_log=logger,
-        )
-        _log_init_info()
-        http_server.serve_forever()
+    http_server = WSGIServer(
+        ("0.0.0.0", ISLAND_PORT),
+        app,
+        certfile=config_options.crt_path,
+        keyfile=config_options.key_path,
+        log=logger,
+        error_log=logger,
+    )
+    _log_init_info()
+    http_server.serve_forever()
 
     bootloader_server_thread.join()
 

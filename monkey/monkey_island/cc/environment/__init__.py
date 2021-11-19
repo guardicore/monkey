@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class Environment(object, metaclass=ABCMeta):
-    _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
     _testing = False
@@ -31,9 +30,6 @@ class Environment(object, metaclass=ABCMeta):
 
     def get_config(self) -> EnvironmentConfig:
         return self._config
-
-    def is_debug(self):
-        return self._DEBUG_SERVER
 
     def get_auth_expiration_time(self):
         return self._AUTH_EXPIRATION_TIME
