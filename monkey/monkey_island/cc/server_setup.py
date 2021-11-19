@@ -10,6 +10,8 @@ from typing import Tuple
 import gevent.hub
 from gevent.pywsgi import WSGIServer
 
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
+
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
@@ -152,7 +154,7 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         )
     else:
         http_server = WSGIServer(
-            ("0.0.0.0", env_singleton.env.get_island_port()),
+            ("0.0.0.0", ISLAND_PORT),
             app,
             certfile=config_options.crt_path,
             keyfile=config_options.key_path,
@@ -178,12 +180,7 @@ def _log_init_info():
     logger.info(f"version: {get_version()}")
     logger.info(
         "Listening on the following URLs: {}".format(
-            ", ".join(
-                [
-                    "https://{}:{}".format(x, env_singleton.env.get_island_port())
-                    for x in local_ip_addresses()
-                ]
-            )
+            ", ".join(["https://{}:{}".format(x, ISLAND_PORT) for x in local_ip_addresses()])
         )
     )
     MonkeyDownload.log_executable_hashes()

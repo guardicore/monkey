@@ -5,9 +5,8 @@ import stat
 import subprocess
 from shutil import copyfile
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from monkey_island.cc.resources.monkey_download import get_monkey_executable
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.consts import ISLAND_PORT, MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 logger = logging.getLogger(__name__)
@@ -45,7 +44,7 @@ class LocalMonkeyRunService:
         # run the monkey
         try:
             ip = local_ip_addresses()[0]
-            port = env_singleton.env.get_island_port()
+            port = ISLAND_PORT
 
             args = [dest_path, "m0nk3y", "-s", f"{ip}:{port}"]
             subprocess.Popen(args, cwd=LocalMonkeyRunService.DATA_DIR)

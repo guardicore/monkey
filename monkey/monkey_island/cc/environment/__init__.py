@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class Environment(object, metaclass=ABCMeta):
-    _ISLAND_PORT = 5000
     _DEBUG_SERVER = False
     _AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
@@ -32,9 +31,6 @@ class Environment(object, metaclass=ABCMeta):
 
     def get_config(self) -> EnvironmentConfig:
         return self._config
-
-    def get_island_port(self):
-        return self._ISLAND_PORT
 
     def is_debug(self):
         return self._DEBUG_SERVER

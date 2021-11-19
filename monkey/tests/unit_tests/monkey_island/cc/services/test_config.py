@@ -11,11 +11,8 @@ class MockClass:
 
 
 @pytest.fixture(scope="function", autouse=True)
-def mock_port_in_env_singleton(monkeypatch, PORT):
-    mock_singleton = MockClass()
-    mock_singleton.env = MockClass()
-    mock_singleton.env.get_island_port = lambda: PORT
-    monkeypatch.setattr("monkey_island.cc.services.config.env_singleton", mock_singleton)
+def mock_port(monkeypatch, PORT):
+    monkeypatch.setattr("monkey_island.cc.services.config.ISLAND_PORT", PORT)
 
 
 @pytest.mark.usefixtures("uses_encryptor")
