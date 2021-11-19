@@ -1,6 +1,5 @@
 from common.common_consts.system_info_collectors_names import (
     AWS_COLLECTOR,
-    HOSTNAME_COLLECTOR,
     MIMIKATZ_COLLECTOR,
     PROCESS_LIST_COLLECTOR,
 )
@@ -26,14 +25,6 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             "info": "If on AWS, collects more information about the AWS instance "
             "currently running on.",
             "attack_techniques": ["T1082"],
-        },
-        {
-            "type": "string",
-            "enum": [HOSTNAME_COLLECTOR],
-            "title": "Hostname Collector",
-            "safe": True,
-            "info": "Collects machine's hostname.",
-            "attack_techniques": ["T1082", "T1016"],
         },
         {
             "type": "string",

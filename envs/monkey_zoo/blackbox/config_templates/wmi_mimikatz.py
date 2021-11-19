@@ -16,8 +16,6 @@ class WmiMimikatz(ConfigTemplate):
             "internal.network.tcp_scanner.HTTP_PORTS": [],
             "internal.network.tcp_scanner.tcp_target_ports": [135],
             "monkey.system_info.system_info_collector_classes": [
-                "EnvironmentCollector",
-                "HostnameCollector",
                 "ProcessListCollector",
                 "MimikatzCollector",
             ],

@@ -134,17 +134,14 @@ class TestMonkey:
         assert cache_info_after_query_2.hits == 1
         assert cache_info_after_query_2.misses == 1
 
-        # set hostname deletes the id from the cache.
-        linux_monkey.set_hostname("Another hostname")
-
-        # should be a miss
+        # should be a another hit, since the monkey ID is already cached
         label = Monkey.get_label_by_id(linux_monkey.id)
         logger.debug("3) ID: {} label: {}".format(linux_monkey.id, label))
         cache_info_after_query_3 = Monkey.get_label_by_id.storage.backend.cache_info()
         logger.debug("Cache info: {}".format(str(cache_info_after_query_3)))
         # still 1 hit only
-        assert cache_info_after_query_3.hits == 1
-        assert cache_info_after_query_3.misses == 2
+        assert cache_info_after_query_3.hits == 2
+        assert cache_info_after_query_3.misses == 1
 
     @pytest.mark.usefixtures("uses_database")
     def test_is_monkey(self):
