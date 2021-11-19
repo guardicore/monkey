@@ -15,7 +15,6 @@ class Environment(object, metaclass=ABCMeta):
     _testing = False
 
     def __init__(self, config: EnvironmentConfig):
-        self._config = config
         self._testing = False  # Assume env is not for unit testing.
 
     @property
@@ -25,6 +24,3 @@ class Environment(object, metaclass=ABCMeta):
     @testing.setter
     def testing(self, value):
         self._testing = value
-
-    def get_config(self) -> EnvironmentConfig:
-        return self._config
