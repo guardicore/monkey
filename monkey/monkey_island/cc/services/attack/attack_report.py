@@ -2,7 +2,7 @@ import logging
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.attack.attack_config import AttackConfig
+from monkey_island.cc.services.attack.attack_schema import SCHEMA
 from monkey_island.cc.services.attack.technique_reports import (
     T1003,
     T1005,
@@ -102,7 +102,7 @@ class AttackReportService:
             "meta": {"latest_monkey_modifytime": Monkey.get_latest_modifytime()},
             "name": REPORT_NAME,
         }
-        for tech_id, tech_info in list(AttackConfig.get_techniques_for_report().items()):
+        for tech_id, tech_info in list(AttackReportService.get_techniques_for_report().items()):
             try:
                 technique_report_data = TECHNIQUES[tech_id].get_report_data()
                 technique_report_data.update(tech_info)
@@ -146,3 +146,17 @@ class AttackReportService:
             raise RuntimeError(
                 "Attack Report cache not cleared. DeleteResult: " + delete_result.raw_result
             )
+
+    @staticmethod
+    def get_techniques_for_report():
+        """
+        :return: Format: {"T1110": {"type": "Credential Access", "T1075": ...}
+        """
+        attack_config = SCHEMA["properties"]
+        techniques = {}
+        for type_name, attack_type in list(attack_config.items()):
+            for key, technique in list(attack_type["properties"].items()):
+                techniques[key] = {
+                    "type": SCHEMA["properties"][type_name]["title"],
+                }
+        return techniques

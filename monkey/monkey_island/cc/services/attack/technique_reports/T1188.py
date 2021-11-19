@@ -12,7 +12,6 @@ class T1188(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1188.is_status_disabled
         def get_technique_status_and_data():
             monkeys = Monkey.get_tunneled_monkeys()
             hops = []

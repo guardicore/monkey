@@ -29,7 +29,6 @@ class T1145(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1145.is_status_disabled
         def get_technique_status_and_data():
             ssh_info = list(mongo.db.telemetry.aggregate(T1145.query))
             if ssh_info:

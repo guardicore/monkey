@@ -54,7 +54,6 @@ class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
         :return: Technique's report data aggregated from the database
         """
 
-        @cls.is_status_disabled
         def get_technique_status_and_data():
             info = list(
                 mongo.db.telemetry.aggregate(cls.get_pba_query(cls.pba_names, cls.relevant_systems))

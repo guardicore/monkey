@@ -26,7 +26,6 @@ class T1059(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1059.is_status_disabled
         def get_technique_status_and_data():
             cmd_data = list(mongo.db.telemetry.aggregate(T1059.query))
             if cmd_data:

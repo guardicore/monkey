@@ -4,7 +4,6 @@ from flask import jsonify
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__name__)
@@ -24,7 +23,6 @@ class Database(object):
             if not x.startswith("system.") and not x == AttackMitigations.COLLECTION_NAME
         ]
         ConfigService.init_config()
-        AttackConfig.reset_config()
         logger.info("DB was reset")
         return jsonify(status="OK")
 
