@@ -1,11 +1,11 @@
 import os
 import uuid
+from datetime import timedelta
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.attack.attack_config import AttackConfiguration
@@ -58,6 +58,7 @@ from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
+AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
 
 def serve_static_file(static_path):
@@ -87,7 +88,7 @@ def init_app_config(app, mongo_url):
     app.config["MONGO_URI"] = mongo_url
 
     # See https://flask-jwt-extended.readthedocs.io/en/stable/options
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = env_singleton.env.get_auth_expiration_time()
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = AUTH_EXPIRATION_TIME
     # Invalidate the signature of JWTs if the server process restarts. This avoids the edge case
     # of getting a JWT,
     # deciding to reset credentials and then still logging in with the old JWT.
