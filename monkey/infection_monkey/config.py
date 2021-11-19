@@ -99,12 +99,6 @@ class Configuration(object):
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
     alive = True
 
-    # how long to wait between scan iterations
-    timeout_between_iterations = 100
-
-    # how many scan iterations to perform on each run
-    max_iterations = 1
-
     finger_classes = []
     exploiter_classes = []
     system_info_collector_classes = []
@@ -123,9 +117,6 @@ class Configuration(object):
 
     # Configuration servers to try to connect to, in this order.
     command_servers = ["192.0.2.0:5000"]
-
-    # sets whether or not to retry failed hosts on next scan
-    retry_failed_explotation = True
 
     keep_tunnel_open_time = 60
 
