@@ -201,3 +201,11 @@ environment  # unused variable (monkey/monkey_island/cc/models/monkey.py:59)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)
+
+# TODO: Reevaluate these as the agent refactor progresses
+run_sys_info_collector
+ping
+scan_tcp_port
+fingerprint
+interrupt
+MockPuppet
