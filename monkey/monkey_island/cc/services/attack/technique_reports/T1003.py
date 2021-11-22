@@ -35,7 +35,6 @@ class T1003(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1003.is_status_disabled
         def get_technique_status_and_data():
             if mongo.db.telemetry.count_documents(T1003.query):
                 status = ScanStatus.USED.value

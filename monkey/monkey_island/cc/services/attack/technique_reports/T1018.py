@@ -40,7 +40,6 @@ class T1018(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1018.is_status_disabled
         def get_technique_status_and_data():
             scan_info = list(mongo.db.telemetry.aggregate(T1018.query))
             if scan_info:

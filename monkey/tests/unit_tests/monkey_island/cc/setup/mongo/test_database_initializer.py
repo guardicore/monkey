@@ -23,9 +23,6 @@ def patch_dependencies(monkeypatch_session):
         "monkey_island.cc.services.config.ConfigService.init_config", lambda: None
     )
     monkeypatch_session.setattr(
-        "monkey_island.cc.services.attack.attack_config.AttackConfig.reset_config", lambda: None
-    )
-    monkeypatch_session.setattr(
         "monkey_island.cc.services.database.jsonify", MagicMock(return_value=True)
     )
 

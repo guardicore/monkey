@@ -60,7 +60,6 @@ class T1086(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1086.is_status_disabled
         def get_technique_status_and_data():
             exploit_cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_exploits))
             pba_cmd_data = list(mongo.db.telemetry.aggregate(T1086.query_for_pbas))

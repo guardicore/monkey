@@ -12,7 +12,6 @@ class T1090(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1090.is_status_disabled
         def get_technique_status_and_data():
             monkeys = Monkey.get_tunneled_monkeys()
             monkeys = [monkey.get_network_info() for monkey in monkeys]

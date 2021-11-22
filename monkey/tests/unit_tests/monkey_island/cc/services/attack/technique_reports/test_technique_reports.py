@@ -3,10 +3,7 @@ from enum import Enum
 import pytest
 
 from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.services.attack.technique_reports.__init__ import (
-    AttackTechnique,
-    disabled_msg,
-)
+from monkey_island.cc.services.attack.technique_reports.__init__ import AttackTechnique
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -68,13 +65,6 @@ class ExpectedMsgs_OneRelevantSystem(Enum):
     USED: str = "USED"
 
 
-def test_get_message_by_status_disabled_two_relevant_systems():
-    technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
-        ScanStatus.DISABLED.value
-    )
-    assert technique_msg == disabled_msg
-
-
 def test_get_message_by_status_unscanned_two_relevant_systems():
     technique_msg = FakeAttackTechnique_TwoRelevantSystems.get_message_by_status(
         ScanStatus.UNSCANNED.value
@@ -94,13 +84,6 @@ def test_get_message_by_status_used_two_relevant_systems():
         ScanStatus.USED.value
     )
     assert technique_msg == ExpectedMsgs_TwoRelevantSystems.USED.value
-
-
-def test_get_message_by_status_disabled_one_relevant_system():
-    technique_msg = FakeAttackTechnique_OneRelevantSystem.get_message_by_status(
-        ScanStatus.DISABLED.value
-    )
-    assert technique_msg == disabled_msg
 
 
 def test_get_message_by_status_unscanned_one_relevant_system():

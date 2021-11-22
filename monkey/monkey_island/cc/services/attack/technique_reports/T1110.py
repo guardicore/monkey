@@ -33,7 +33,6 @@ class T1110(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1110.is_status_disabled
         def get_technique_status_and_data():
             attempts = list(mongo.db.telemetry.aggregate(T1110.query))
             succeeded = False

@@ -12,7 +12,6 @@ class T1041(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1041.is_status_disabled
         def get_technique_status_and_data():
             monkeys = list(Monkey.objects())
             info = [

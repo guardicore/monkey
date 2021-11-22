@@ -51,7 +51,6 @@ class T1075(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1075.is_status_disabled
         def get_technique_status_and_data():
             successful_logins = list(mongo.db.telemetry.aggregate(T1075.query))
             if successful_logins:

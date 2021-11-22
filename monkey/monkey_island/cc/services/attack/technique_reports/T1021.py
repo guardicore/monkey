@@ -35,7 +35,6 @@ class T1021(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1021.is_status_disabled
         def get_technique_status_and_data():
             attempts = []
             if mongo.db.telemetry.count_documents(T1021.scanned_query):

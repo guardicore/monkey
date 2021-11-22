@@ -2,7 +2,6 @@ import React from 'react';
 import Form from 'react-jsonschema-form-bs4';
 import {Button, Col, Modal, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
-import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
 import UiSchema from '../configuration-components/UiSchema';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
@@ -20,7 +19,6 @@ import applyUiSchemaManipulators from '../configuration-components/UISchemaManip
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 
-const ATTACK_URL = '/api/attack';
 const CONFIG_URL = '/api/configuration/island';
 export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
@@ -30,11 +28,9 @@ class ConfigurePageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.initialConfig = {};
-    this.initialAttackConfig = {};
     this.currentSection = this.getSectionsOrder()[0];
 
     this.state = {
-      attackConfig: {},
       configuration: {},
       currentFormData: {},
       importCandidateConfig: null,
@@ -42,7 +38,7 @@ class ConfigurePageComponent extends AuthComponent {
       schema: {},
       sections: [],
       selectedSection: this.currentSection,
-      showAttackAlert: false,
+      showUnsubmittedConfigWarning: false,
       showUnsafeOptionsConfirmation: false,
       showUnsafeAttackOptionsWarning: false,
       showConfigExportModal: false,
@@ -64,39 +60,26 @@ class ConfigurePageComponent extends AuthComponent {
 
   setInitialConfig(config) {
     // Sets a reference to know if config was changed
-    config['attack'] = {}
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
-  setInitialAttackConfig(attackConfig) {
-    // Sets a reference to know if attack config was changed
-    this.initialAttackConfig = JSON.parse(JSON.stringify(attackConfig));
-  }
-
   componentDidMount = () => {
-    let urls = [CONFIG_URL, ATTACK_URL];
+    let urls = [CONFIG_URL];
     // ??? Why fetch config here and not in `render()`?
     Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
       .then(data => {
         let sections = [];
-        let attackConfig = data[1];
         let monkeyConfig = data[0];
         this.setInitialConfig(monkeyConfig.configuration);
-        this.setInitialAttackConfig(attackConfig.configuration);
         for (let sectionKey of this.getSectionsOrder()) {
-          if (sectionKey === 'attack') {
-            sections.push({key: sectionKey, title: 'ATT&CK'})
-          } else {
-            sections.push({
-              key: sectionKey,
-              title: monkeyConfig.schema.properties[sectionKey].title
-            });
-          }
+          sections.push({
+            key: sectionKey,
+            title: monkeyConfig.schema.properties[sectionKey].title
+          });
         }
         this.setState({
           schema: monkeyConfig.schema,
           configuration: monkeyConfig.configuration,
-          attackConfig: attackConfig.configuration,
           sections: sections,
           currentFormData: monkeyConfig.configuration[this.state.selectedSection]
         })
@@ -130,41 +113,12 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onSubmit = () => {
-    if (this.state.selectedSection === 'attack') {
-      this.matrixSubmit();
-    } else {
-      this.attemptConfigSubmit();
-    }
+    this.attemptConfigSubmit();
   };
 
   canSafelySubmitConfig(config) {
     return !isUnsafeOptionSelected(this.state.schema, config);
   }
-
-  matrixSubmit = () => {
-    // Submit attack matrix
-    this.authFetch(ATTACK_URL,
-      {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(this.state.attackConfig)
-      })
-      .then(res => {
-        if (!res.ok) {
-          throw Error()
-        }
-        return res;
-      })
-      .then(() => {
-        this.setInitialAttackConfig(this.state.attackConfig);
-      })
-      .then(() => this.updateConfig(this.checkAndShowUnsafeAttackWarning))
-      .then(() => this.setState({lastAction: 'saved'}))
-      .catch(error => {
-        console.log('Bad configuration: ' + error.toString());
-        this.setState({lastAction: 'invalid_configuration'});
-      });
-  };
 
   checkAndShowUnsafeAttackWarning = () => {
     if (isUnsafeOptionSelected(this.state.schema, this.state.configuration)) {
@@ -201,38 +155,8 @@ class ConfigurePageComponent extends AuthComponent {
     });
   }
 
-  // Alters attack configuration when user toggles technique
-  attackTechniqueChange = (technique, value, mapped = false) => {
-    // Change value in attack configuration
-    // Go trough each column in matrix, searching for technique
-    Object.entries(this.state.attackConfig).forEach(techType => {
-      if (Object.prototype.hasOwnProperty.call(techType[1].properties, technique)) {
-        let tempMatrix = this.state.attackConfig;
-        tempMatrix[techType[0]].properties[technique].value = value;
-        this.setState({attackConfig: tempMatrix});
-
-        // Toggle all mapped techniques
-        if (!mapped) {
-          // Loop trough each column and each row
-          Object.entries(this.state.attackConfig).forEach(otherType => {
-            Object.entries(otherType[1].properties).forEach(otherTech => {
-              // If this technique depends on a technique that was changed
-              if (Object.prototype.hasOwnProperty.call(otherTech[1], 'depends_on') &&
-                otherTech[1]['depends_on'].includes(technique)) {
-                this.attackTechniqueChange(otherTech[0], value, true)
-              }
-            })
-          });
-        }
-      }
-    });
-  };
-
   onChange = ({formData}) => {
     let configuration = this.state.configuration;
-    if (this.state.selectedSection === 'attack'){
-      formData = {};
-    }
     configuration[this.state.selectedSection] = formData;
     this.setState({currentFormData: formData, configuration: configuration});
   };
@@ -270,8 +194,8 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   renderAttackAlertModal = () => {
-    return (<Modal show={this.state.showAttackAlert} onHide={() => {
-      this.setState({showAttackAlert: false})
+    return (<Modal show={this.state.showUnsubmittedConfigWarning} onHide={() => {
+      this.setState({showUnsubmittedConfigWarning: false})
     }}>
       <Modal.Body>
         <h2>
@@ -286,7 +210,7 @@ class ConfigurePageComponent extends AuthComponent {
                   size='lg'
                   style={{margin: '5px'}}
                   onClick={() => {
-                    this.setState({showAttackAlert: false})
+                    this.setState({showUnsubmittedConfigWarning: false})
                   }}>
             Cancel
           </Button>
@@ -330,16 +254,13 @@ class ConfigurePageComponent extends AuthComponent {
     return true;
   }
 
-  userChangedMatrix() {
-    return (JSON.stringify(this.state.attackConfig) !== JSON.stringify(this.initialAttackConfig))
-  }
-
   setSelectedSection = (key) => {
-    if ((key === 'attack' && this.userChangedConfig()) ||
-      (this.currentSection === 'attack' && this.userChangedMatrix())) {
-      this.setState({showAttackAlert: true});
-      return;
-    }
+
+    // TODO: Fix https://github.com/guardicore/monkey/issues/1621
+    //if ( key === 'basic' & this.userChangedConfig()) {
+    //  this.setState({showUnsubmittedConfigWarning: true});
+    //  return;
+    //}
 
     this.updateConfigSection();
     this.currentSection = key;
@@ -358,7 +279,6 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
-          res.configuration['attack'] = {}
           this.setState({
             lastAction: 'reset',
             schema: res.schema,
@@ -372,16 +292,6 @@ class ConfigurePageComponent extends AuthComponent {
       this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
       this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
     });
-    this.authFetch(ATTACK_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify('reset_attack_matrix')
-    })
-      .then(res => res.json())
-      .then(res => {
-        this.setState({attackConfig: res.configuration});
-        this.setInitialAttackConfig(res.configuration);
-      })
   };
 
   removePBAfile(apiEndpoint, setFilenameFnc) {
@@ -420,13 +330,6 @@ class ConfigurePageComponent extends AuthComponent {
         this.setState({lastAction: 'invalid_configuration'});
       }));
   }
-
-  renderMatrix = () => {
-    return (<ConfigMatrixComponent configuration={this.state.attackConfig}
-                                   submit={this.componentDidMount}
-                                   reset={this.resetConfig}
-                                   change={this.attackTechniqueChange}/>)
-  };
 
   renderConfigContent = (displayedSchema) => {
     let formProperties = {};
@@ -497,15 +400,13 @@ class ConfigurePageComponent extends AuthComponent {
 
   render() {
     let displayedSchema = {};
-    if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties') && this.state.selectedSection !== 'attack') {
+    if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
 
     let content = '';
-    if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0) {
-      content = this.renderMatrix()
-    } else if (this.state.selectedSection !== 'attack' && Object.entries(this.state.configuration).length !== 0) {
+    if (Object.entries(this.state.configuration).length !== 0) {
       content = this.renderConfigContent(displayedSchema)
     }
     return (

@@ -6,18 +6,13 @@ from common.utils.attack_utils import ScanStatus
 from common.utils.code_utils import abstractstatic
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.services.attack.attack_config import AttackConfig
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
+from monkey_island.cc.services.attack.attack_schema import SCHEMA as ATTACK_SCHEMA
 from monkey_island.cc.services.config_schema.config_schema_per_attack_technique import (
     ConfigSchemaPerAttackTechnique,
 )
 
 logger = logging.getLogger(__name__)
-
-disabled_msg = (
-    "This technique has been disabled. "
-    + "You can enable it from the [configuration page](../../configure)."
-)
 
 
 class AttackTechnique(object, metaclass=abc.ABCMeta):
@@ -81,9 +76,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         Gets the status of a certain attack technique.
         :return: ScanStatus numeric value
         """
-        if not cls._is_enabled_in_config():
-            return ScanStatus.DISABLED.value
-        elif mongo.db.telemetry.find_one(
+        if mongo.db.telemetry.find_one(
             {
                 "telem_category": "attack",
                 "data.status": ScanStatus.USED.value,
@@ -118,8 +111,6 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
-        if status == ScanStatus.DISABLED.value:
-            return disabled_msg
         if status == ScanStatus.UNSCANNED.value:
             if not cls.config_schema_per_attack_technique:
                 cls.config_schema_per_attack_technique = (
@@ -172,7 +163,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         """
         :return: techniques title. E.g. "T1110 Brute force"
         """
-        return AttackConfig.get_technique(cls.tech_id)["title"]
+        return get_technique(cls.tech_id)["title"]
 
     @classmethod
     def get_tech_base_data(cls):
@@ -205,17 +196,16 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         else:
             return {}
 
-    @classmethod
-    def is_status_disabled(cls, get_technique_status_and_data) -> bool:
-        def check_if_disabled_in_config():
-            return (
-                (ScanStatus.DISABLED.value, [])
-                if not cls._is_enabled_in_config()
-                else get_technique_status_and_data()
-            )
 
-        return check_if_disabled_in_config
-
-    @classmethod
-    def _is_enabled_in_config(cls) -> bool:
-        return AttackConfig.get_technique_values()[cls.tech_id]
+def get_technique(technique_id):
+    """
+    Gets technique by id
+    :param technique_id: E.g. T1210
+    :return: Technique object or None if technique is not found
+    """
+    attack_config = ATTACK_SCHEMA["properties"]
+    for config_key, attack_type in list(attack_config.items()):
+        for type_key, technique in list(attack_type["properties"].items()):
+            if type_key == technique_id:
+                return technique
+    return None

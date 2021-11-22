@@ -36,7 +36,6 @@ class T1016(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        @T1016.is_status_disabled
         def get_technique_status_and_data():
             network_info = list(mongo.db.telemetry.aggregate(T1016.query))
             status = ScanStatus.USED.value if network_info else ScanStatus.UNSCANNED.value
