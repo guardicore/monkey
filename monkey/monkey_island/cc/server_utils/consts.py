@@ -51,3 +51,5 @@ DEFAULT_CERTIFICATE_PATHS = {
 }
 
 GEVENT_EXCEPTION_LOG = "gevent_exceptions.log"
+
+ISLAND_PORT = 5000

@@ -7,7 +7,7 @@ import requests
 import urllib3
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from monkey_island.cc.environment import Environment
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
 
 # Disable "unverified certificate" warnings when sending requests to island
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # noqa: DUO131
@@ -49,4 +49,4 @@ class BootloaderHTTPRequestHandler(BaseHTTPRequestHandler):
 
     @staticmethod
     def get_bootloader_resource_url(server_ip):
-        return "https://" + server_ip + ":" + str(Environment._ISLAND_PORT) + "/api/bootloader/"
+        return "https://" + server_ip + ":" + str(ISLAND_PORT) + "/api/bootloader/"

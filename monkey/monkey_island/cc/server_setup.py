@@ -10,13 +10,14 @@ from typing import Tuple
 import gevent.hub
 from gevent.pywsgi import WSGIServer
 
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
+
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
 MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
-import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
 import monkey_island.cc.setup.config_setup as config_setup  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
@@ -89,8 +90,6 @@ def _configure_logging(config_options):
 
 
 def _initialize_globals(config_options: IslandConfigOptions, server_config_path: str):
-    env_singleton.initialize_from_file(server_config_path)
-
     initialize_services(config_options.data_dir)
 
 
@@ -144,23 +143,16 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         f"{config_options.key_path}."
     )
 
-    if env_singleton.env.is_debug():
-        app.run(
-            host="0.0.0.0",
-            debug=True,
-            ssl_context=(config_options.crt_path, config_options.key_path),
-        )
-    else:
-        http_server = WSGIServer(
-            ("0.0.0.0", env_singleton.env.get_island_port()),
-            app,
-            certfile=config_options.crt_path,
-            keyfile=config_options.key_path,
-            log=logger,
-            error_log=logger,
-        )
-        _log_init_info()
-        http_server.serve_forever()
+    http_server = WSGIServer(
+        ("0.0.0.0", ISLAND_PORT),
+        app,
+        certfile=config_options.crt_path,
+        keyfile=config_options.key_path,
+        log=logger,
+        error_log=logger,
+    )
+    _log_init_info()
+    http_server.serve_forever()
 
     bootloader_server_thread.join()
 
@@ -178,12 +170,7 @@ def _log_init_info():
     logger.info(f"version: {get_version()}")
     logger.info(
         "Listening on the following URLs: {}".format(
-            ", ".join(
-                [
-                    "https://{}:{}".format(x, env_singleton.env.get_island_port())
-                    for x in local_ip_addresses()
-                ]
-            )
+            ", ".join(["https://{}:{}".format(x, ISLAND_PORT) for x in local_ip_addresses()])
         )
     )
     MonkeyDownload.log_executable_hashes()

@@ -5,7 +5,6 @@ import logging
 
 from jsonschema import Draft4Validator, validators
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
 from common.config_value_paths import (
     AWS_KEYS_PATH,
     EXPORT_MONKEY_TELEMS_PATH,
@@ -19,6 +18,7 @@ from common.config_value_paths import (
     USER_LIST_PATH,
 )
 from monkey_island.cc.database import mongo
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
 from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
@@ -264,11 +264,11 @@ class ConfigService:
     def set_server_ips_in_config(config):
         ips = local_ip_addresses()
         config["internal"]["island_server"]["command_servers"] = [
-            "%s:%d" % (ip, env_singleton.env.get_island_port()) for ip in ips
+            "%s:%d" % (ip, ISLAND_PORT) for ip in ips
         ]
         config["internal"]["island_server"]["current_server"] = "%s:%d" % (
             ips[0],
-            env_singleton.env.get_island_port(),
+            ISLAND_PORT,
         )
 
     @staticmethod
