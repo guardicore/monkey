@@ -33,6 +33,7 @@ from monkey_island.cc.resources.monkey import Monkey
 from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
 from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
 from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
+from monkey_island.cc.resources.monkey_control.stop_agent_check import StopAgentCheck
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
@@ -168,6 +169,7 @@ def init_api_resources(api):
     api.add_resource(VersionUpdate, "/api/version-update", "/api/version-update/")
     api.add_resource(RemotePortCheck, "/api/monkey_control/check_remote_port/<string:port>")
     api.add_resource(StartedOnIsland, "/api/monkey_control/started_on_island")
+    api.add_resource(StopAgentCheck, "/api/monkey_control/<int:monkey_guid>")
     api.add_resource(ScoutSuiteAuth, "/api/scoutsuite_auth/<string:provider>")
     api.add_resource(AWSKeys, "/api/aws_keys")
 
