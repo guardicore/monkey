@@ -115,7 +115,7 @@ class InfectionMonkey(object):
             logger.debug("Starting the setup phase.")
             mock_master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
             register_signal_handlers(mock_master)
-            input()
+
             # Sets island's IP and port for monkey to communicate to
             self.set_default_server()
             self.set_default_port()
