@@ -14,14 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 class ControlChannel(IControlChannel):
+    control_channel_server = WormConfiguration.current_server
+
     def should_agent_stop(self) -> bool:
-        server = WormConfiguration.current_server
-        if not server:
+        if not self.control_channel_server:
             return
 
         try:
             response = requests.get(  # noqa: DUO123
-                f"{server}/api/monkey_control/{GUID}",
+                f"{self.control_channel_server}/api/monkey_control/{GUID}",
                 verify=False,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
@@ -32,16 +33,16 @@ class ControlChannel(IControlChannel):
             logger.error(f"An error occurred while trying to connect to server. {e}")
 
     def get_config(self) -> dict:
-        return ControlClient.load_control_config()
+        ControlClient.load_control_config()
+        return WormConfiguration.as_dict()
 
     def get_credentials_for_propagation(self) -> dict:
-        server = WormConfiguration.current_server
-        if not server:
+        if not self.control_channel_server:
             return
 
         try:
             response = requests.get(  # noqa: DUO123
-                f"{server}/api/propagationCredentials",
+                f"{self.control_channel_server}/api/propagationCredentials",
                 verify=False,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
