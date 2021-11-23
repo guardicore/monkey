@@ -154,7 +154,7 @@ class MockPuppet(IPuppet):
             return (False, None)
 
         if host == DOT_3:
-            return (True, "Linux")
+            return (True, "linux")
 
         if host == DOT_4:
             return (False, None)
