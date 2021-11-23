@@ -53,8 +53,6 @@ class MockMaster(IMaster):
         self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
 
     def _scan_victims(self):
-        # TODO: The telemetry must be malformed somehow, or something else is wrong. This causes the
-        #       Island to raise an error when reports are viewed.
         ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3"]
         ports = [22, 445, 3389, 8008]
         for ip in ips:
