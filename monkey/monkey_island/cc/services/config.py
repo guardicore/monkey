@@ -411,7 +411,9 @@ class ConfigService:
     @staticmethod
     def get_config_propagation_credentials():
         return {
-            "exploit_user_list": ConfigService.get_config_value(USER_LIST_PATH, should_decrypt=False),
+            "exploit_user_list": ConfigService.get_config_value(
+                USER_LIST_PATH, should_decrypt=False
+            ),
             "exploit_password_list": ConfigService.get_config_value(
                 PASSWORD_LIST_PATH, should_decrypt=False
             ),

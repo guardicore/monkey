@@ -209,3 +209,6 @@ scan_tcp_port
 fingerprint
 interrupt
 MockPuppet
+ControlChannel
+should_agent_stop
+get_credentials_for_propagation
