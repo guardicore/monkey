@@ -12,7 +12,7 @@ class StopSignalHandler:
     def __init__(self, master: IMaster):
         self._master = master
 
-    def __call__(self, _, __):
+    def __call__(self, _, __=None):
         self._master.terminate()
         logger.debug("Some kind of interrupt signal was sent to the Monkey Agent")
         raise PlannedShutdownException("Monkey Agent got an interrupt signal")
@@ -24,4 +24,7 @@ def register_signal_handlers(master: IMaster):
     signal.signal(signal.SIGTERM, stop_signal_handler)
 
     if is_windows_os():
+        import win32api
+
         signal.signal(signal.SIGBREAK, stop_signal_handler)
+        win32api.SetConsoleCtrlHandler(stop_signal_handler, True)
