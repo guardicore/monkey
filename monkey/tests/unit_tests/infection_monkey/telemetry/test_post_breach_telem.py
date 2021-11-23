@@ -20,10 +20,9 @@ class StubSomePBA:
 
 @pytest.fixture
 def post_breach_telem_test_instance(monkeypatch):
-    PBA = StubSomePBA()
     monkeypatch.setattr(PostBreachTelem, "_get_hostname_and_ip", lambda: (HOSTNAME, IP))
     monkeypatch.setattr(PostBreachTelem, "_get_os", lambda: OS)
-    return PostBreachTelem(PBA, RESULT)
+    return PostBreachTelem(PBA_NAME, PBA_COMMAND, RESULT)
 
 
 def test_post_breach_telem_send(post_breach_telem_test_instance, spy_send_telemetry):
