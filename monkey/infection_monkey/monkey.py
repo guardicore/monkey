@@ -38,6 +38,7 @@ from infection_monkey.utils.monkey_dir import (
     remove_monkey_dir,
 )
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
+from infection_monkey.utils.signal_handler import register_signal_handlers
 from infection_monkey.windows_upgrader import WindowsUpgrader
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, skipping propagation phase."
@@ -107,6 +108,8 @@ class InfectionMonkey(object):
             logger.info("Monkey is starting...")
 
             logger.debug("Starting the setup phase.")
+            register_signal_handlers()
+            input()
             # Sets island's IP and port for monkey to communicate to
             self.set_default_server()
             self.set_default_port()
