@@ -6,6 +6,7 @@ from infection_monkey.model.host import VictimHost
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 
@@ -16,6 +17,12 @@ class MockMaster(IMaster):
     def __init__(self, puppet: IPuppet, telemetry_messenger: ITelemetryMessenger):
         self._puppet = puppet
         self._telemetry_messenger = telemetry_messenger
+        self._hosts = {
+            "10.0.0.1": VictimHost("10.0.0.1"),
+            "10.0.0.2": VictimHost("10.0.0.2"),
+            "10.0.0.3": VictimHost("10.0.0.3"),
+            "10.0.0.4": VictimHost("10.0.0.4"),
+        }
 
     def start(self) -> None:
         self._run_sys_info_collectors()
@@ -37,8 +44,13 @@ class MockMaster(IMaster):
         self._telemetry_messenger.send_telemetry(SystemInfoTelem(system_info))
 
     def _run_pbas(self):
-        self._puppet.run_pba("AccountDiscovery", {})
-        self._puppet.run_pba("CommunicateAsBackdoorUser", {})
+        name = "AccountDiscovery"
+        command, result = self._puppet.run_pba(name, {})
+        self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
+
+        name = "CommunicateAsBackdoorUser"
+        command, result = self._puppet.run_pba(name, {})
+        self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
 
     def _scan_victims(self):
         # TODO: The telemetry must be malformed somehow, or something else is wrong. This causes the
@@ -46,7 +58,7 @@ class MockMaster(IMaster):
         ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3"]
         ports = [22, 445, 3389, 8008]
         for ip in ips:
-            h = VictimHost(ip)
+            h = self._hosts[ip]
 
             (response_received, os) = self._puppet.ping(ip)
             h.icmp = response_received
@@ -65,8 +77,8 @@ class MockMaster(IMaster):
             self._telemetry_messenger.send_telemetry(ScanTelem(h))
 
     def _fingerprint(self):
-        machine_1 = VictimHost("10.0.0.1")
-        machine_3 = VictimHost("10.0.0.3")
+        machine_1 = self._hosts["10.0.0.1"]
+        machine_3 = self._hosts["10.0.0.3"]
 
         self._puppet.fingerprint("SMBFinger", machine_1)
         self._telemetry_messenger.send_telemetry(ScanTelem(machine_1))
@@ -78,19 +90,22 @@ class MockMaster(IMaster):
         self._telemetry_messenger.send_telemetry(ScanTelem(machine_3))
 
     def _exploit(self):
-        # TODO: modify what ExploitTelem gets
-        self._telemetry_messenger.send_telemetry(
-            ExploitTelem(self._puppet.exploit_host("PowerShellExploiter", "10.0.0.1", {}, None))
+        result, info, attempts = self._puppet.exploit_host(
+            "PowerShellExploiter", "10.0.0.1", {}, None
         )
         self._telemetry_messenger.send_telemetry(
-            ExploitTelem(self._puppet.exploit_host("SSHExploiter", "10.0.0.3", {}, None))
+            ExploitTelem("PowerShellExploiter", self._hosts["10.0.0.1"], result, info, attempts)
+        )
+
+        result, info, attempts = self._puppet.exploit_host("SSHExploiter", "10.0.0.3", {}, None)
+        self._telemetry_messenger.send_telemetry(
+            ExploitTelem("SSHExploiter", self._hosts["10.0.0.3"], result, info, attempts)
         )
 
     def _run_payload(self):
         # TODO: modify what FileEncryptionTelem gets
-        self._telemetry_messenger.send_telemetry(
-            FileEncryptionTelem(self._run_payload("RansomwarePayload", {}, None))
-        )
+        path, success, error = self._puppet.run_payload("RansomwarePayload", {}, None)
+        self._telemetry_messenger.send_telemetry(FileEncryptionTelem(path, success, error))
 
     def terminate(self) -> None:
         logger.info("Terminating MockMaster")
