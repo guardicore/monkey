@@ -1,8 +1,10 @@
 import logging
 
 from infection_monkey.i_master import IMaster
-from infection_monkey.i_puppet import IPuppet, PortScanData, PortStatus
+from infection_monkey.i_puppet import IPuppet, PortStatus
 from infection_monkey.model.host import VictimHost
+from infection_monkey.telemetry.exploit_telem import ExploitTelem
+from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -19,6 +21,9 @@ class MockMaster(IMaster):
         self._run_sys_info_collectors()
         self._run_pbas()
         self._scan_victims()
+        self._fingerprint()
+        self._exploit()
+        self._run_payload()
 
     def _run_sys_info_collectors(self):
         system_info_telemetry = {}
@@ -58,6 +63,34 @@ class MockMaster(IMaster):
                         h.services[port_scan_data.service]["banner"] = port_scan_data.banner
 
             self._telemetry_messenger.send_telemetry(ScanTelem(h))
+
+    def _fingerprint(self):
+        machine_1 = VictimHost("10.0.0.1")
+        machine_3 = VictimHost("10.0.0.3")
+
+        self._puppet.fingerprint("SMBFinger", machine_1)
+        self._telemetry_messenger.send_telemetry(ScanTelem(machine_1))
+
+        self._puppet.fingerprint("SMBFinger", machine_3)
+        self._telemetry_messenger.send_telemetry(ScanTelem(machine_3))
+
+        self._puppet.fingerprint("HTTPFinger", machine_3)
+        self._telemetry_messenger.send_telemetry(ScanTelem(machine_3))
+
+    def _exploit(self):
+        # TODO: modify what ExploitTelem gets
+        self._telemetry_messenger.send_telemetry(
+            ExploitTelem(self._puppet.exploit_host("PowerShellExploiter", "10.0.0.1", {}, None))
+        )
+        self._telemetry_messenger.send_telemetry(
+            ExploitTelem(self._puppet.exploit_host("SSHExploiter", "10.0.0.3", {}, None))
+        )
+
+    def _run_payload(self):
+        # TODO: modify what FileEncryptionTelem gets
+        self._telemetry_messenger.send_telemetry(
+            FileEncryptionTelem(self._run_payload("RansomwarePayload", {}, None))
+        )
 
     def terminate(self) -> None:
         logger.info("Terminating MockMaster")
