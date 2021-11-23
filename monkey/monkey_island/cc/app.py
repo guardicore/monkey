@@ -33,12 +33,14 @@ from monkey_island.cc.resources.monkey import Monkey
 from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
 from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
 from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
+from monkey_island.cc.resources.monkey_control.stop_agent_check import StopAgentCheck
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
+from monkey_island.cc.resources.propagation_credentials import PropagationCredentials
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.root import Root
@@ -164,10 +166,12 @@ def init_api_resources(api):
         "/api/fileUpload/<string:file_type>?load=<string:filename>",
         "/api/fileUpload/<string:file_type>?restore=<string:filename>",
     )
+    api.add_resource(PropagationCredentials, "/api/propagationCredentials")
     api.add_resource(RemoteRun, "/api/remote-monkey", "/api/remote-monkey/")
     api.add_resource(VersionUpdate, "/api/version-update", "/api/version-update/")
     api.add_resource(RemotePortCheck, "/api/monkey_control/check_remote_port/<string:port>")
     api.add_resource(StartedOnIsland, "/api/monkey_control/started_on_island")
+    api.add_resource(StopAgentCheck, "/api/monkey_control/<int:monkey_guid>")
     api.add_resource(ScoutSuiteAuth, "/api/scoutsuite_auth/<string:provider>")
     api.add_resource(AWSKeys, "/api/aws_keys")
 

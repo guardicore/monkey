@@ -407,3 +407,21 @@ class ConfigService:
     @staticmethod
     def set_started_on_island(value: bool):
         ConfigService.set_config_value(STARTED_ON_ISLAND_PATH, value)
+
+    @staticmethod
+    def get_config_propagation_credentials():
+        return {
+            "exploit_user_list": ConfigService.get_config_value(
+                USER_LIST_PATH, should_decrypt=False
+            ),
+            "exploit_password_list": ConfigService.get_config_value(
+                PASSWORD_LIST_PATH, should_decrypt=False
+            ),
+            "exploit_lm_hash_list": ConfigService.get_config_value(
+                LM_HASH_LIST_PATH, should_decrypt=False
+            ),
+            "exploit_ntlm_hash_list": ConfigService.get_config_value(
+                NTLM_HASH_LIST_PATH, should_decrypt=False
+            ),
+            "exploit_ssh_keys": ConfigService.get_config_value(SSH_KEYS_PATH, should_decrypt=False),
+        }
