@@ -42,11 +42,12 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def scan_tcp_port(self, host: str, port: int) -> PortScanData:
+    def scan_tcp_port(self, host: str, port: int, timeout: int) -> PortScanData:
         """
         Scans a TCP port on a remote host
         :param str host: The domain name or IP address of a host
         :param int port: A TCP port number to scan
+        :param int timeout: The maximum amount of time (in seconds) to wait for a response
         :return: The data collected by scanning the provided host:port combination
         :rtype: PortScanData
         """

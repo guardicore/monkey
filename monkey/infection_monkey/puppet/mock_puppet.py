@@ -161,8 +161,8 @@ class MockPuppet(IPuppet):
 
         return (False, None)
 
-    def scan_tcp_port(self, host: str, port: int) -> PortScanData:
-        logger.debug(f"run_scan_tcp_port({host}, {port})")
+    def scan_tcp_port(self, host: str, port: int, timeout: int = 3) -> PortScanData:
+        logger.debug(f"run_scan_tcp_port({host}, {port}, {timeout})")
         dot_1_results = {
             22: PortScanData(22, PortStatus.CLOSED, None, None),
             445: PortScanData(445, PortStatus.OPEN, "SMB BANNER", "tcp-445"),
