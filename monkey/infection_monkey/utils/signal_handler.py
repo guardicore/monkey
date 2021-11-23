@@ -12,9 +12,9 @@ class StopSignalHandler:
     def __init__(self, master: IMaster):
         self._master = master
 
-    def __call__(self, _, __=None):
+    def __call__(self, signum, __=None):
+        logger.info(f"The Monkey Agent received signal {signum}")
         self._master.terminate()
-        logger.debug("Some kind of interrupt signal was sent to the Monkey Agent")
         raise PlannedShutdownException("Monkey Agent got an interrupt signal")
 
 
