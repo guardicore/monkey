@@ -141,7 +141,7 @@ class MockPuppet(IPuppet):
 
         return {}
 
-    def run_pba(self, name: str, options: dict) -> None:
+    def run_pba(self, name: str, options: Dict) -> None:
         logger.debug(f"run_pba({name}, {options})")
         return None
 
@@ -206,13 +206,13 @@ class MockPuppet(IPuppet):
 
         return {}
 
-    def exploit_host(self, name: str, host: str, options: dict, interrupt: threading.Event) -> bool:
+    def exploit_host(self, name: str, host: str, options: Dict, interrupt: threading.Event) -> bool:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
         successful_exploiters = {DOT_1: {"PowerShellExploiter"}, DOT_3: {"SSHExploiter"}}
 
         return name in successful_exploiters.get(host, {})
 
-    def run_payload(self, name: str, options: dict, interrupt: threading.Event) -> None:
+    def run_payload(self, name: str, options: Dict, interrupt: threading.Event) -> None:
         logger.debug(f"run_payload({name}, {options})")
         return None
 

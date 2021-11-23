@@ -62,7 +62,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def exploit_host(self, name: str, host: str, options: dict, interrupt: threading.Event) -> bool:
+    def exploit_host(self, name: str, host: str, options: Dict, interrupt: threading.Event) -> bool:
         """
         Runs an exploiter against a remote host
         :param str name: The name of the exploiter to run
@@ -74,7 +74,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def run_payload(self, name: str, options: dict, interrupt: threading.Event) -> None:
+    def run_payload(self, name: str, options: Dict, interrupt: threading.Event) -> None:
         """
         Runs a payload
         :param str name: The name of the payload to run
