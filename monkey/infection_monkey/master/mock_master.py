@@ -1,9 +1,13 @@
+import logging
+
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet, PortScanData, PortStatus
 from infection_monkey.model.host import VictimHost
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
+
+logger = logging.getLogger()
 
 
 class MockMaster(IMaster):
@@ -56,7 +60,7 @@ class MockMaster(IMaster):
             self._telemetry_messenger.send_telemetry(ScanTelem(h))
 
     def terminate(self) -> None:
-        pass
+        logger.info("Terminating MockMaster")
 
     def cleanup(self) -> None:
         pass
