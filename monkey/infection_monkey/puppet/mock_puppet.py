@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -147,15 +147,13 @@ class MockPuppet(IPuppet):
 
         return {}
 
-    def run_pba(self, name: str, options: Dict) -> List[Tuple[str, bool]]:
+    def run_pba(self, name: str, options: Dict) -> PostBreachData:
         logger.debug(f"run_pba({name}, {options})")
-        result_1 = PostBreachData("pba command 1", "pba result 1")
-        result_2 = PostBreachData("pba command 2", "pba result 2")
 
-        return [
-            (result_1.command, result_1.result, True),
-            (result_2.command, result_2.result, False),
-        ]
+        if name == "AccountDiscovery":
+            return PostBreachData("pba command 1", "pba result 1")
+        else:
+            return PostBreachData("pba command 2", "pba result 2")
 
     def ping(self, host: str) -> Tuple[bool, Optional[str]]:
         logger.debug(f"run_ping({host})")
@@ -218,7 +216,9 @@ class MockPuppet(IPuppet):
 
         return {}
 
-    def exploit_host(self, name: str, host: str, options: Dict, interrupt: threading.Event) -> bool:
+    def exploit_host(
+        self, name: str, host: str, options: Dict, interrupt: threading.Event
+    ) -> ExploiterResultData:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
         successful_exploiters = {
             DOT_1: {
@@ -233,11 +233,7 @@ class MockPuppet(IPuppet):
             },
         }
 
-        return (
-            successful_exploiters[host][name].result,
-            successful_exploiters[host][name].info,
-            successful_exploiters[host][name].attempts,
-        )
+        return successful_exploiters[host][name]
 
     def run_payload(
         self, name: str, options: Dict, interrupt: threading.Event
