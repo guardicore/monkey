@@ -10,7 +10,9 @@ class PortStatus(Enum):
     CLOSED = 2
 
 
+ExploiterResultData = namedtuple("ExploiterResultData", ["result", "info", "attempts"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
+PostBreachData = namedtuple("PostBreachData", ["command", "result"])
 
 
 class IPuppet(metaclass=abc.ABCMeta):
@@ -24,11 +26,12 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def run_pba(self, name: str, options: Dict) -> None:
+    def run_pba(self, name: str, options: Dict) -> PostBreachData:
         """
         Runs a post-breach action (PBA)
         :param str name: The name of the post-breach action to run
         :param Dict options: A dictionary containing options that modify the behavior of the PBA
+        :rtype: PostBreachData
         """
 
     @abc.abstractmethod
@@ -63,7 +66,9 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def exploit_host(self, name: str, host: str, options: Dict, interrupt: threading.Event) -> bool:
+    def exploit_host(
+        self, name: str, host: str, options: Dict, interrupt: threading.Event
+    ) -> ExploiterResultData:
         """
         Runs an exploiter against a remote host
         :param str name: The name of the exploiter to run
@@ -71,7 +76,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         :param Dict options: A dictionary containing options that modify the behavior of the
                              exploiter
         :return: True if exploitation was successful, False otherwise
-        :rtype: bool
+        :rtype: ExploiterResultData
         """
 
     @abc.abstractmethod

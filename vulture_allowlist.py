@@ -212,3 +212,4 @@ MockPuppet
 ControlChannel
 should_agent_stop
 get_credentials_for_propagation
+MockMaster

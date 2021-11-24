@@ -2,7 +2,13 @@ import logging
 import threading
 from typing import Dict, Optional, Tuple
 
-from infection_monkey.i_puppet import IPuppet, PortScanData, PortStatus
+from infection_monkey.i_puppet import (
+    ExploiterResultData,
+    IPuppet,
+    PortScanData,
+    PortStatus,
+    PostBreachData,
+)
 
 DOT_1 = "10.0.0.1"
 DOT_2 = "10.0.0.2"
@@ -141,9 +147,13 @@ class MockPuppet(IPuppet):
 
         return {}
 
-    def run_pba(self, name: str, options: Dict) -> None:
+    def run_pba(self, name: str, options: Dict) -> PostBreachData:
         logger.debug(f"run_pba({name}, {options})")
-        return None
+
+        if name == "AccountDiscovery":
+            return PostBreachData("pba command 1", ["pba result 1", True])
+        else:
+            return PostBreachData("pba command 2", ["pba result 2", False])
 
     def ping(self, host: str) -> Tuple[bool, Optional[str]]:
         logger.debug(f"run_ping({host})")
@@ -154,7 +164,7 @@ class MockPuppet(IPuppet):
             return (False, None)
 
         if host == DOT_3:
-            return (True, "Linux")
+            return (True, "linux")
 
         if host == DOT_4:
             return (False, None)
@@ -206,15 +216,30 @@ class MockPuppet(IPuppet):
 
         return {}
 
-    def exploit_host(self, name: str, host: str, options: Dict, interrupt: threading.Event) -> bool:
+    def exploit_host(
+        self, name: str, host: str, options: Dict, interrupt: threading.Event
+    ) -> ExploiterResultData:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
-        successful_exploiters = {DOT_1: {"PowerShellExploiter"}, DOT_3: {"SSHExploiter"}}
+        successful_exploiters = {
+            DOT_1: {
+                "PowerShellExploiter": ExploiterResultData(
+                    True, {"info": "important success stuff"}, ["attempt 1"]
+                )
+            },
+            DOT_3: {
+                "SSHExploiter": ExploiterResultData(
+                    False, {"info": "important failure stuff"}, ["attempt 2"]
+                )
+            },
+        }
 
-        return name in successful_exploiters.get(host, {})
+        return successful_exploiters[host][name]
 
-    def run_payload(self, name: str, options: Dict, interrupt: threading.Event) -> None:
+    def run_payload(
+        self, name: str, options: Dict, interrupt: threading.Event
+    ) -> Tuple[None, bool, str]:
         logger.debug(f"run_payload({name}, {options})")
-        return None
+        return (None, True, "")
 
     def cleanup(self) -> None:
         print("Cleanup called!")
