@@ -33,6 +33,7 @@ class MockMaster(IMaster):
         self._run_payload()
 
     def _run_sys_info_collectors(self):
+        logging.info("Running system info collectors")
         system_info_telemetry = {}
         system_info_telemetry["ProcessListCollector"] = self._puppet.run_sys_info_collector(
             "ProcessListCollector"
@@ -42,8 +43,10 @@ class MockMaster(IMaster):
         )
         system_info = self._puppet.run_sys_info_collector("LinuxInfoCollector")
         self._telemetry_messenger.send_telemetry(SystemInfoTelem(system_info))
+        logging.info("Finished running system info collectors")
 
     def _run_pbas(self):
+        logging.info("Running post breach actions")
         name = "AccountDiscovery"
         command, result = self._puppet.run_pba(name, {})
         self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
@@ -51,8 +54,10 @@ class MockMaster(IMaster):
         name = "CommunicateAsBackdoorUser"
         command, result = self._puppet.run_pba(name, {})
         self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
+        logging.info("Finished running post breach actions")
 
     def _scan_victims(self):
+        logging.info("Scanning network for potential victims")
         ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3"]
         ports = [22, 445, 3389, 8008]
         for ip in ips:
@@ -73,8 +78,10 @@ class MockMaster(IMaster):
                         h.services[port_scan_data.service]["banner"] = port_scan_data.banner
 
             self._telemetry_messenger.send_telemetry(ScanTelem(h))
+        logging.info("Finished scanning network for potential victims")
 
     def _fingerprint(self):
+        logging.info("Running fingerprinters on potential victims")
         machine_1 = self._hosts["10.0.0.1"]
         machine_3 = self._hosts["10.0.0.3"]
 
@@ -86,8 +93,10 @@ class MockMaster(IMaster):
 
         self._puppet.fingerprint("HTTPFinger", machine_3)
         self._telemetry_messenger.send_telemetry(ScanTelem(machine_3))
+        logging.info("Finished running fingerprinters on potential victims")
 
     def _exploit(self):
+        logging.info("Exploiting victims")
         result, info, attempts = self._puppet.exploit_host(
             "PowerShellExploiter", "10.0.0.1", {}, None
         )
@@ -99,11 +108,14 @@ class MockMaster(IMaster):
         self._telemetry_messenger.send_telemetry(
             ExploitTelem("SSHExploiter", self._hosts["10.0.0.3"], result, info, attempts)
         )
+        logging.info("Finished exploiting victims")
 
     def _run_payload(self):
+        logging.info("Running payloads")
         # TODO: modify what FileEncryptionTelem gets
         path, success, error = self._puppet.run_payload("RansomwarePayload", {}, None)
         self._telemetry_messenger.send_telemetry(FileEncryptionTelem(path, success, error))
+        logging.info("Finished running payloads")
 
     def terminate(self) -> None:
         logger.info("Terminating MockMaster")
