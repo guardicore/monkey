@@ -4,32 +4,29 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-altgraph = "*"
 cryptography = "==2.5" # We can't build 32bit ubuntu12 binary with newer versions of cryptography
-cffi = ">=1.14"
-ecdsa = "==0.15"
 pyinstaller = {git = "git://github.com/guardicore/pyinstaller"}
-pyinstaller-hooks-contrib = "==2021.1"
+pyinstaller-hooks-contrib = "==2021.1" # Required to build docker with our pyinstaller branch
 impacket = ">=0.9"
-importlib-metadata = "==4.0.1"
+importlib-metadata = "==4.0.1" # Required to build docker with our pyinstaller branch
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"
 odict = "==1.7.0"
 paramiko = ">=2.7.1"
 psutil = ">=5.7.0"
-pycryptodome = "==3.9.8"
-pyftpdlib = "==1.5.6"
 pymssql = "==2.1.5"
 pypykatz = "==0.3.12"
-pysmb = "==1.2.5"
 requests = ">=2.24"
 urllib3 = "==1.26.5"
-"WinSys-3.x" = ">=0.5.2"
 WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
 ScoutSuite = {git = "git://github.com/guardicode/ScoutSuite"}
 pyopenssl = "==19.0.0" # We can't build 32bit ubuntu12 binary with newer versions of pyopenssl
 pypsrp = "*"
-typing-extensions = "*"
+typing-extensions = "*" # Allows us to use 3.9 typing features on 3.7 project
+pycryptodome = "*"  # Used in common/utils/shellcode_obfuscator.py
+altgraph = "*"  # Required for pyinstaller branch, without it agents fail to build
+pysmb = "*"
+"WinSys-3.x" = "*"
 
 [dev-packages]
 
