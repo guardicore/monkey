@@ -5,11 +5,9 @@ name = "pypi"
 
 [packages]
 pyinstaller = "==3.6"
-awscli = "==1.20.44"
 bcrypt = "==3.2.0"
 boto3 = "==1.18.44"
 botocore = "==1.21.44"
-cffi = ">=1.8,!=1.11.3"
 dpath = ">=2.0.5"
 gevent = ">=20.9.0"
 ipaddress = ">=1.0.23"
@@ -17,11 +15,8 @@ jsonschema = "==3.2.0"
 mongoengine = "==0.20"
 netifaces = ">=0.10.9"
 pycryptodome = "==3.9.8"
-python-dateutil = "<3.0.0,>=2.1"
 requests = ">=2.24"
 ring = ">=0.7.3"
-six = ">=1.13.0"
-tqdm = ">=4.47"
 Flask-JWT-Extended = "==4.*"
 Flask-PyMongo = ">=2.3.0"
 Flask-RESTful = ">=0.3.8"
@@ -29,6 +24,8 @@ Flask = ">=1.1"
 Werkzeug = ">=1.0.1"
 ScoutSuite = {git = "https://github.com/guardicode/ScoutSuite"}
 pyaescrypt = "*"
+python-dateutil = "*"
+cffi = "*"  # Without explicit install: ModuleNotFoundError: No module named '_cffi_backend'
 
 [dev-packages]
 virtualenv = ">=20.0.26"
