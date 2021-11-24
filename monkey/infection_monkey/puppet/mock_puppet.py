@@ -151,9 +151,9 @@ class MockPuppet(IPuppet):
         logger.debug(f"run_pba({name}, {options})")
 
         if name == "AccountDiscovery":
-            return PostBreachData("pba command 1", "pba result 1")
+            return PostBreachData("pba command 1", ["pba result 1", True])
         else:
-            return PostBreachData("pba command 2", "pba result 2")
+            return PostBreachData("pba command 2", ["pba result 2", False])
 
     def ping(self, host: str) -> Tuple[bool, Optional[str]]:
         logger.debug(f"run_ping({host})")
