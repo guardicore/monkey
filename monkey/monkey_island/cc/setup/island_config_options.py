@@ -31,3 +31,6 @@ class IslandConfigOptions:
                 "ssl_certificate_key_file", DEFAULT_KEY_PATH
             )
         )
+
+    def update(self, target: IslandConfigOptions):
+        self.__dict__.update(target.__dict__)
