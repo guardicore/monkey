@@ -1,9 +1,5 @@
 {
   "data_dir": "/monkey_island_data",
-  "log_level": "DEBUG",
-  "environment": {
-    "server_config": "password"
-  },
   "mongodb": {
     "start_mongodb": false
   }
