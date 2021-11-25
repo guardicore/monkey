@@ -10,7 +10,7 @@ import gevent.hub
 from gevent.pywsgi import WSGIServer
 
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
-from monkey_island.cc.setup.config_setup import extract_server_config
+from monkey_island.cc.setup.config_setup import get_server_config
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
@@ -64,10 +64,7 @@ def run_monkey_island():
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
     try:
-        return extract_server_config(island_args)
-    except OSError as ex:
-        print(f"Error opening server config file: {ex}")
-        exit(1)
+        return get_server_config(island_args)
     except json.JSONDecodeError as ex:
         print(f"Error loading server config: {ex}")
         exit(1)
