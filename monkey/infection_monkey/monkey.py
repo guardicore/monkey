@@ -13,18 +13,23 @@ from common.version import get_version
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.exploit.HostExploiter import HostExploiter
+from infection_monkey.master.mock_master import MockMaster
 from infection_monkey.model import DELAY_DELETE_CMD
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
+from infection_monkey.puppet.mock_puppet import MockPuppet
 from infection_monkey.ransomware.ransomware_payload_builder import build_ransomware_payload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
+from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
+    LegacyTelemetryMessengerAdapter,
+)
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -38,6 +43,7 @@ from infection_monkey.utils.monkey_dir import (
     remove_monkey_dir,
 )
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
+from infection_monkey.utils.signal_handler import register_signal_handlers
 from infection_monkey.windows_upgrader import WindowsUpgrader
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, skipping propagation phase."
@@ -48,6 +54,7 @@ logger = logging.getLogger(__name__)
 
 class InfectionMonkey(object):
     def __init__(self, args):
+        self.master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
         self._keep_running = False
         self._exploited_machines = set()
         self._fail_exploitation_machines = set()
@@ -106,71 +113,14 @@ class InfectionMonkey(object):
         try:
             logger.info("Monkey is starting...")
 
-            logger.debug("Starting the setup phase.")
+            # Sets the monkey up
+            self.setup()
 
-            # Sets island's IP and port for monkey to communicate to
-            self.set_default_server()
-            self.set_default_port()
+            # Start post breach phase
+            self.start_post_breach()
 
-            # Create a dir for monkey files if there isn't one
-            create_monkey_dir()
-
-            self.upgrade_to_64_if_needed()
-
-            ControlClient.wakeup(parent=self._parent)
-            ControlClient.load_control_config()
-
-            if is_windows_os():
-                T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
-
-            self.shutdown_by_not_alive_config()
-
-            if is_running_on_island():
-                WormConfiguration.started_on_island = True
-                ControlClient.report_start_on_island()
-
-            if not ControlClient.should_monkey_run(self._opts.vulnerable_port):
-                raise PlannedShutdownException(
-                    "Monkey shouldn't run on current machine "
-                    "(it will be exploited later with more depth)."
-                )
-
-            if firewall.is_enabled():
-                firewall.add_firewall_rule()
-
-            self._monkey_tunnel = ControlClient.create_control_tunnel()
-            if self._monkey_tunnel:
-                self._monkey_tunnel.start()
-
-            StateTelem(is_done=False, version=get_version()).send()
-            TunnelTelem().send()
-
-            logger.debug("Starting the post-breach phase asynchronously.")
-            self._post_breach_phase = Thread(target=self.start_post_breach_phase)
-            self._post_breach_phase.start()
-
-            if not InfectionMonkey.max_propagation_depth_reached():
-                logger.info("Starting the propagation phase.")
-                logger.debug("Running with depth: %d" % WormConfiguration.depth)
-                self.propagate()
-            else:
-                logger.info(
-                    "Maximum propagation depth has been reached; monkey will not propagate."
-                )
-                TraceTelem(MAX_DEPTH_REACHED_MESSAGE).send()
-
-            if self._keep_running and WormConfiguration.alive:
-                InfectionMonkey.run_ransomware()
-
-            # if host was exploited, before continue to closing the tunnel ensure the exploited
-            # host had its chance to
-            # connect to the tunnel
-            if len(self._exploited_machines) > 0:
-                time_to_sleep = WormConfiguration.keep_tunnel_open_time
-                logger.info(
-                    "Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep
-                )
-                time.sleep(time_to_sleep)
+            # Start propagation phase
+            self.start_propagation()
 
         except PlannedShutdownException:
             logger.info(
@@ -180,12 +130,96 @@ class InfectionMonkey(object):
             logger.exception("Planned shutdown, reason:")
 
         finally:
-            if self._monkey_tunnel:
-                self._monkey_tunnel.stop()
-                self._monkey_tunnel.join()
+            self.teardown()
 
-            if self._post_breach_phase:
-                self._post_breach_phase.join()
+    def setup(self):
+        logger.debug("Starting the setup phase.")
+
+        self.shutdown_by_not_alive_config()
+
+        # Sets island's IP and port for monkey to communicate to
+        self.set_default_server()
+        self.set_default_port()
+
+        # Create a dir for monkey files if there isn't one
+        create_monkey_dir()
+
+        self.upgrade_to_64_if_needed()
+
+        ControlClient.wakeup(parent=self._parent)
+        ControlClient.load_control_config()
+
+        if ControlClient.check_for_stop():
+            raise PlannedShutdownException("Monkey has been marked for shutdown.")
+
+        if not ControlClient.should_monkey_run(self._opts.vulnerable_port):
+            raise PlannedShutdownException(
+                "Monkey shouldn't run on current machine "
+                "(it will be exploited later with more depth)."
+            )
+
+        if is_windows_os():
+            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
+
+        if is_running_on_island():
+            WormConfiguration.started_on_island = True
+            ControlClient.report_start_on_island()
+
+        if firewall.is_enabled():
+            firewall.add_firewall_rule()
+
+        self._monkey_tunnel = ControlClient.create_control_tunnel()
+        if self._monkey_tunnel:
+            self._monkey_tunnel.start()
+
+        StateTelem(is_done=False, version=get_version()).send()
+        TunnelTelem().send()
+
+        self.master.start()
+
+        register_signal_handlers(self.master)
+
+    def start_propagation(self):
+        if not InfectionMonkey.max_propagation_depth_reached():
+            logger.info("Starting the propagation phase.")
+            logger.debug("Running with depth: %d" % WormConfiguration.depth)
+            self.propagate()
+        else:
+            logger.info("Maximum propagation depth has been reached; monkey will not propagate.")
+            TraceTelem(MAX_DEPTH_REACHED_MESSAGE).send()
+
+        if self._keep_running and WormConfiguration.alive:
+            InfectionMonkey.run_ransomware()
+
+        # if host was exploited, before continue to closing the tunnel ensure the exploited
+        # host had its chance to
+        # connect to the tunnel
+        if len(self._exploited_machines) > 0:
+            time_to_sleep = WormConfiguration.keep_tunnel_open_time
+            logger.info(
+                "Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep
+            )
+            time.sleep(time_to_sleep)
+
+    def start_post_breach(self):
+        logger.debug("Starting the post-breach phase asynchronously.")
+        self._post_breach_phase = Thread(target=self.start_post_breach_phase)
+        self._post_breach_phase.start()
+
+    def teardown(self):
+        if self._monkey_tunnel:
+            self._monkey_tunnel.stop()
+            self._monkey_tunnel.join()
+
+        if self._post_breach_phase:
+            self._post_breach_phase.join()
+
+        if firewall.is_enabled():
+            firewall.remove_firewall_rule()
+            firewall.close()
+
+        self.master.terminate()
+        self.master.cleanup()
 
     def start_post_breach_phase(self):
         self.collect_system_info_if_configured()
