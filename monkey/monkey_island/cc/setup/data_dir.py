@@ -15,7 +15,7 @@ class IncompatibleDataDirectory(Exception):
     pass
 
 
-def setup_data_dir(data_dir_path: Path) -> None:
+def setup_data_dir(data_dir_path: Path) -> Path:
     logger.info(f"Setting up data directory at {data_dir_path}.")
     if _is_data_dir_old(data_dir_path):
         logger.info("Version in data directory does not match the Island's version.")
@@ -23,6 +23,7 @@ def setup_data_dir(data_dir_path: Path) -> None:
     create_secure_directory(str(data_dir_path))
     write_version(data_dir_path)
     logger.info("Data directory set up.")
+    return data_dir_path
 
 
 def _is_data_dir_old(data_dir_path: Path) -> bool:
