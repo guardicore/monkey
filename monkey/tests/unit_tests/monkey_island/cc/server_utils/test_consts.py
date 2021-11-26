@@ -15,4 +15,4 @@ def test_default_server_config_file_path():
     else:
         server_file_path = f"{consts.MONKEY_ISLAND_ABS_PATH}/cc/{consts.SERVER_CONFIG_FILENAME}"
 
-    assert consts.DEFAULT_SERVER_CONFIG_PATH == server_file_path
+    assert consts.PACKAGE_CONFIG_PATH == server_file_path

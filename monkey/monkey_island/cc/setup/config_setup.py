@@ -4,7 +4,7 @@ from pathlib import Path
 
 from common.utils.file_utils import expand_path
 from monkey_island.cc.arg_parser import IslandCmdArgs
-from monkey_island.cc.server_utils.consts import DEFAULT_SERVER_CONFIG_PATH
+from monkey_island.cc.server_utils.consts import PACKAGE_CONFIG_PATH, USER_CONFIG_PATH
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 logger = getLogger(__name__)
@@ -13,7 +13,9 @@ logger = getLogger(__name__)
 def get_server_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
     config = IslandConfigOptions({})
 
-    update_config_from_file(config, DEFAULT_SERVER_CONFIG_PATH)
+    update_config_from_file(config, PACKAGE_CONFIG_PATH)
+
+    update_config_from_file(config, USER_CONFIG_PATH)
 
     if island_args.server_config_path:
         path_to_config = expand_path(island_args.server_config_path)
@@ -26,6 +28,7 @@ def update_config_from_file(config: IslandConfigOptions, config_path: Path):
     try:
         config_from_file = load_server_config_from_file(config_path)
         config.update(config_from_file)
+        logger.info(f"Server config updated from {config_path}")
     except OSError:
         logger.info(f"Server config not found in path {config_path}")
 
