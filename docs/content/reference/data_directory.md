@@ -22,7 +22,7 @@ On Windows, the default path is `%AppData%\monkey_island`.
 The location of the data directory is set in the `data_dir` field in the
 `server_config.json` file.
 
-1. Create a custom `server_config.json` file and set the `data_dir` field. Its
+1. [Create a custom server_config.json file](../server_configuration) and set the `data_dir` field. Its
    contents will look like:
 
     ```json

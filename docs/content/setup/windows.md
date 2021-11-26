@@ -39,25 +39,7 @@ private certificate authority.
    `%AppData%\monkey_island`.
 1. Stop the Monkey Island process.
 1. (Optional but recommended) Move your `.crt` and `.key` files to `%AppData%\monkey_island`.
-1. Edit `%AppData%\monkey_island\server_config.json` to configure Monkey Island
-   to use your certificate. Your config should look something like this:
-
-    ```json {linenos=inline,hl_lines=["11-14"]}
-    {
-      "log_level": "DEBUG",
-      "environment": {
-        "server_config": "password",
-        "deployment": "windows"
-      },
-      "mongodb": {
-        "start_mongodb": true
-     },
-      "ssl_certificate": {
-        "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
-        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>"
-      }
-    }
-    ```
+1. Create a [server configuration file and provide the path to the certificate](../../reference/server_configuration).
 1. Run the Monkey Island by clicking on the desktop shortcut.
 
 1. Access the Monkey Island web UI by pointing your browser at

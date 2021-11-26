@@ -73,28 +73,9 @@ If you are upgrading the Infection Monkey to a new version, be sure to remove
 any volumes associated with the previous version.
 {{% /notice %}}
 
-1. Create a directory named `monkey_island_data`. If you already have it,
-   **make sure it's empty**. This will serve as the location where Infection
-   Monkey stores its configuration and runtime artifacts.
+1. [Setup a volume with configuration file](../../reference/server_configuration/#docker).
 
-    ```bash
-    mkdir ./monkey_island_data
-    chmod 700 ./monkey_island_data
-    ```
-
-1. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
-
-    ```bash
-    sudo docker run \
-        --rm \
-        --name monkey-island \
-        --network=host \
-        --user "$(id -u ${USER}):$(id -g ${USER})" \
-        --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION --setup-only
-    ```
-
-1. Move your `.crt` and `.key` files to `./monkey_island_data`.
+1. Move your `.crt` and `.key` files to the volume created in the previous step (`./monkey_island_data`).
 
 1. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
 
@@ -109,11 +90,6 @@ any volumes associated with the previous version.
     ```json {linenos=inline,hl_lines=["11-14"]}
     {
       "data_dir": "/monkey_island_data",
-      "log_level": "DEBUG",
-      "environment": {
-        "server_config": "password",
-        "deployment": "docker"
-      },
       "mongodb": {
         "start_mongodb": false
      },
@@ -124,7 +100,7 @@ any volumes associated with the previous version.
     }
     ```
 
-1. Start the Monkey Island server:
+1. Start/restart the Monkey Island server:
 
     ```bash
     sudo docker run \
@@ -134,7 +110,7 @@ any volumes associated with the previous version.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION
+        guardicore/monkey-island:VERSION --server-config="/monkey_island_data/server_config.json"
     ```
 
 ### 4. Accessing Monkey Island

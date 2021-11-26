@@ -174,6 +174,10 @@ The log enables you to see which requests were requested from the server and ext
 2019-07-23 10:52:24,027 - report.py:580 - get_domain_issues() - INFO - Domain issues generated for reporting
 ```
 
+It's also possible to change the default log level by editing `log_level` value in a [server configuration file](../../reference/server_configuration).
+You can use any of the default Python log levels.
+
+
 ### Infection Monkey agent logs
 
 The Infection Monkey agent log file can be found in the following paths on machines where it was executed:

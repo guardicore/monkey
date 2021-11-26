@@ -72,30 +72,11 @@ private certificate authority.
     chmod 600 <PATH_TO_CRT_FILE>
     ```
 
-1.  Edit `$HOME/.monkey_island/server_config.json` to configure Monkey Island
-    to use your certificate. Your config should look something like this:
-
-    ```json {linenos=inline,hl_lines=["11-14"]}
-    {
-      "data_dir": "~/.monkey_island",
-      "log_level": "DEBUG",
-      "environment": {
-        "server_config": "password",
-        "deployment": "linux"
-      },
-      "mongodb": {
-        "start_mongodb": true
-     },
-      "ssl_certificate": {
-        "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
-        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>"
-      }
-    }
-    ```
+1. Create a [server configuration file and provide the path to the certificate](../../reference/server_configuration).
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v1.12.0.AppImage
+    ./InfectionMonkey-v1.12.0.AppImage --server-config="/path/to/server_config.json"
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at
