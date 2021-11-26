@@ -13,23 +13,26 @@ from common.version import get_version
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.exploit.HostExploiter import HostExploiter
-from infection_monkey.master.mock_master import MockMaster
+
+# from infection_monkey.master.mock_master import MockMaster
 from infection_monkey.model import DELAY_DELETE_CMD
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.HostFinger import HostFinger
 from infection_monkey.network.network_scanner import NetworkScanner
 from infection_monkey.network.tools import get_interface_to_target, is_running_on_island
 from infection_monkey.post_breach.post_breach_handler import PostBreach
-from infection_monkey.puppet.mock_puppet import MockPuppet
+
+# from infection_monkey.puppet.mock_puppet import MockPuppet
 from infection_monkey.ransomware.ransomware_payload_builder import build_ransomware_payload
 from infection_monkey.system_info import SystemInfoCollector
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.telemetry.attack.victim_host_telem import VictimHostTelem
-from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
-    LegacyTelemetryMessengerAdapter,
-)
+
+# from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
+#     LegacyTelemetryMessengerAdapter,
+# )
 from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -43,7 +46,8 @@ from infection_monkey.utils.monkey_dir import (
     remove_monkey_dir,
 )
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
-from infection_monkey.utils.signal_handler import register_signal_handlers
+
+# from infection_monkey.utils.signal_handler import register_signal_handlers
 from infection_monkey.windows_upgrader import WindowsUpgrader
 
 MAX_DEPTH_REACHED_MESSAGE = "Reached max depth, skipping propagation phase."
@@ -54,7 +58,7 @@ logger = logging.getLogger(__name__)
 
 class InfectionMonkey(object):
     def __init__(self, args):
-        self.master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
+        # self.master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
         self._keep_running = False
         self._exploited_machines = set()
         self._fail_exploitation_machines = set()
@@ -128,6 +132,8 @@ class InfectionMonkey(object):
             # Start propagation phase
             self._start_propagation()
 
+            # self.master.start()
+
         except PlannedShutdownException:
             logger.info(
                 "A planned shutdown of the Monkey occurred. Logging the reason and finishing "
@@ -181,9 +187,7 @@ class InfectionMonkey(object):
         StateTelem(is_done=False, version=get_version()).send()
         TunnelTelem().send()
 
-        register_signal_handlers(self.master)
-
-        self.master.start()
+        # register_signal_handlers(self.master)
 
     @staticmethod
     def _shutdown_by_not_alive_config():
@@ -433,8 +437,8 @@ class InfectionMonkey(object):
             firewall.remove_firewall_rule()
             firewall.close()
 
-        self.master.terminate()
-        self.master.cleanup()
+        # self.master.terminate()
+        # self.master.cleanup()
 
     def cleanup(self):
         logger.info("Monkey cleanup started")
