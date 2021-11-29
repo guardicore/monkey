@@ -11,29 +11,29 @@ logger = getLogger(__name__)
 
 
 def get_server_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
-    config = IslandConfigOptions({})
+    config = IslandConfigOptions()
 
-    update_config_from_file(config, PACKAGE_CONFIG_PATH)
+    _update_config_from_file(config, PACKAGE_CONFIG_PATH)
 
-    update_config_from_file(config, USER_CONFIG_PATH)
+    _update_config_from_file(config, USER_CONFIG_PATH)
 
     if island_args.server_config_path:
         path_to_config = expand_path(island_args.server_config_path)
-        update_config_from_file(config, path_to_config)
+        _update_config_from_file(config, path_to_config)
 
     return config
 
 
-def update_config_from_file(config: IslandConfigOptions, config_path: Path):
+def _update_config_from_file(config: IslandConfigOptions, config_path: Path):
     try:
-        config_from_file = load_server_config_from_file(config_path)
+        config_from_file = _load_server_config_from_file(config_path)
         config.update(config_from_file)
         logger.info(f"Server config updated from {config_path}")
     except OSError:
         logger.info(f"Server config not found in path {config_path}")
 
 
-def load_server_config_from_file(server_config_path) -> IslandConfigOptions:
+def _load_server_config_from_file(server_config_path) -> IslandConfigOptions:
     with open(server_config_path, "r") as f:
         config_content = f.read()
         config = json.loads(config_content)

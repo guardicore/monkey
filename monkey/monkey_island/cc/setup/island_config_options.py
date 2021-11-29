@@ -12,7 +12,9 @@ from monkey_island.cc.server_utils.consts import (
 
 
 class IslandConfigOptions:
-    def __init__(self, config_contents: dict):
+    def __init__(self, config_contents: dict = None):
+        if not config_contents:
+            config_contents = {}
         self.data_dir = expand_path(config_contents.get("data_dir", DEFAULT_DATA_DIR))
 
         self.log_level = config_contents.get("log_level", DEFAULT_LOG_LEVEL)
