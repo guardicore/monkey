@@ -1,13 +1,17 @@
 import json
+import os
 from logging import getLogger
 from pathlib import Path
 
 from common.utils.file_utils import expand_path
 from monkey_island.cc.arg_parser import IslandCmdArgs
-from monkey_island.cc.server_utils.consts import PACKAGE_CONFIG_PATH, USER_CONFIG_PATH
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, SERVER_CONFIG_FILENAME
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 logger = getLogger(__name__)
+
+PACKAGE_CONFIG_PATH = Path(MONKEY_ISLAND_ABS_PATH, "cc", SERVER_CONFIG_FILENAME)
+USER_CONFIG_PATH = Path(os.getcwd(), SERVER_CONFIG_FILENAME)
 
 
 def get_server_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
