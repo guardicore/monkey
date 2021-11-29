@@ -175,7 +175,7 @@ The log enables you to see which requests were requested from the server and ext
 ```
 
 It's also possible to change the default log level by editing `log_level` value in a [server configuration file](../../reference/server_configuration).
-You can use any of the default Python log levels.
+`log_level` can be set to `info`(default, less verbose) or `debug`(more verbose).
 
 
 ### Infection Monkey agent logs
