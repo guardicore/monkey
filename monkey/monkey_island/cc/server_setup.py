@@ -3,7 +3,6 @@ import json
 import logging
 import sys
 from pathlib import Path
-from sys import exit
 from threading import Thread
 
 import gevent.hub
@@ -67,7 +66,7 @@ def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
         return get_server_config(island_args)
     except json.JSONDecodeError as ex:
         print(f"Error loading server config: {ex}")
-        exit(1)
+        sys.exit(1)
 
 
 def _setup_data_dir(data_dir_path: Path):
@@ -75,7 +74,7 @@ def _setup_data_dir(data_dir_path: Path):
         setup_data_dir(data_dir_path)
     except IncompatibleDataDirectory as ex:
         print(f"Incompatible data directory: {ex}")
-        exit(1)
+        sys.exit(1)
 
 
 def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
@@ -83,7 +82,7 @@ def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
         island_config_options_validator.raise_on_invalid_options(config_options)
     except Exception as ex:
         print(f"Configuration error: {ex}")
-        exit(1)
+        sys.exit(1)
 
 
 def _configure_logging(config_options):
