@@ -46,6 +46,9 @@ class MockMaster(IMaster):
         logger.info("Finished running system info collectors")
 
     def _run_pbas(self):
+
+        # TODO: Create monkey_dir and revise setup in monkey.py
+
         logger.info("Running post breach actions")
         name = "AccountDiscovery"
         command, result = self._puppet.run_pba(name, {})
@@ -123,4 +126,5 @@ class MockMaster(IMaster):
         logger.info("Terminating MockMaster")
 
     def cleanup(self) -> None:
+        # TODO: Cleanup monkey_dir and send telemetry
         pass

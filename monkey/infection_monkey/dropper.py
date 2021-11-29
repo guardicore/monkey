@@ -55,10 +55,9 @@ class MonkeyDrops(object):
             "destination_path": self.opts.location,
         }
 
-    def initialize(self):
         logger.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
-    def start(self):
+    def legacy_start(self):
         if self._config["destination_path"] is None:
             logger.error("No destination path specified")
             return False
@@ -183,7 +182,7 @@ class MonkeyDrops(object):
         if monkey_process.poll() is not None:
             logger.warning("Seems like monkey died too soon")
 
-    def cleanup(self):
+    def legacy_cleanup(self):
         logger.info("Cleaning up the dropper")
 
         try:

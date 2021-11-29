@@ -118,16 +118,16 @@ def main():
     logger.info(f"version: {get_version()}")
 
     monkey = monkey_cls(monkey_args)
-    monkey.initialize()
 
     try:
-        monkey.start()
-
+        monkey.legacy_start()
+        # monkey.start()
         return True
     except Exception as e:
         logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))
     finally:
-        monkey.cleanup()
+        monkey.legacy_cleanup()
+        # monkey.cleanup()
 
 
 if "__main__" == __name__:
