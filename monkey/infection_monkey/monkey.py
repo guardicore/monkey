@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 class InfectionMonkey(object):
     def __init__(self, args):
         logger.info("Monkey is initializing...")
-        self.master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
+        self._master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
         self._keep_running = False
         self._exploited_machines = set()
         self._fail_exploitation_machines = set()
@@ -107,24 +107,28 @@ class InfectionMonkey(object):
                 )
 
     def start(self):
-        if not self._is_another_monkey_running():
-
-            logger.info("Monkey is starting...")
-
-            self._connect_to_island()
-
-            if InfectionMonkey._is_monkey_alive_by_config():
-                logger.error("Monkey marked 'not alive' from configuration.")
-                return
-
-            if InfectionMonkey._is_upgrade_to_64_needed():
-                self._upgrade_to_64()
-                return
-
-            self._setup()
-            self.master.start()
-        else:
+        if self._is_another_monkey_running():
             logger.info("Another instance of the monkey is already running")
+            return
+
+        logger.info("Monkey is starting...")
+
+        self._connect_to_island()
+
+        # TODO: Reevaluate who is responsible to send this information
+        if is_windows_os():
+            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
+
+        if InfectionMonkey._is_monkey_alive_by_config():
+            logger.error("Monkey marked 'not alive' from configuration.")
+            return
+
+        if InfectionMonkey._is_upgrade_to_64_needed():
+            self._upgrade_to_64()
+            return
+
+        self._setup()
+        self._master.start()
 
     def legacy_start(self):
         if self._is_another_monkey_running():
@@ -193,22 +197,16 @@ class InfectionMonkey(object):
     def _setup(self):
         logger.debug("Starting the setup phase.")
 
-        # Create a dir for monkey files if there isn't one
-        create_monkey_dir()
+        if is_running_on_island():
+            # TODO: Evaluate also this with ControlClient.should_monkey_run
+            # WormConfiguration.started_on_island = True
+            ControlClient.report_start_on_island()
 
         # TODO: Evaluate should we run this check
         # if not ControlClient.should_monkey_run(self._opts.vulnerable_port):
         #     logger.error("Monkey shouldn't run on current machine "
         #                  "(it will be exploited later with more depth).")
         #     return False
-
-        # Singleton should handle sending this information
-        if is_windows_os():
-            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
-
-        if is_running_on_island():
-            WormConfiguration.started_on_island = True
-            ControlClient.report_start_on_island()
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
@@ -220,9 +218,7 @@ class InfectionMonkey(object):
         StateTelem(is_done=False, version=get_version()).send()
         TunnelTelem().send()
 
-        register_signal_handlers(self.master)
-
-        return True
+        register_signal_handlers(self._master)
 
     def _legacy_setup(self):
         logger.debug("Starting the setup phase.")
@@ -239,22 +235,22 @@ class InfectionMonkey(object):
         ControlClient.wakeup(parent=self._parent)
         ControlClient.load_control_config()
 
+        if is_windows_os():
+            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
+
         InfectionMonkey._legacy_shutdown_by_not_alive_config()
 
         self._legacy_upgrade_to_64_if_needed()
+
+        if is_running_on_island():
+            WormConfiguration.started_on_island = True
+            ControlClient.report_start_on_island()
 
         if not ControlClient.should_monkey_run(self._opts.vulnerable_port):
             raise PlannedShutdownException(
                 "Monkey shouldn't run on current machine "
                 "(it will be exploited later with more depth)."
             )
-
-        if is_windows_os():
-            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
-
-        if is_running_on_island():
-            WormConfiguration.started_on_island = True
-            ControlClient.report_start_on_island()
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
@@ -522,42 +518,43 @@ class InfectionMonkey(object):
             InfectionMonkey._send_log()
             self._singleton.unlock()
 
-        # self.master.terminate()
-        # self.master.cleanup()
-
         InfectionMonkey._self_delete()
         logger.info("Monkey is shutting down")
 
     def cleanup(self):
         logger.info("Monkey cleanup started")
-        self._keep_running = False
-        if self._monkey_tunnel:
-            self._monkey_tunnel.stop()
-            self._monkey_tunnel.join()
+        try:
+            if self._is_upgrade_to_64_needed():
+                logger.debug("Detected upgrade to 64bit")
+                return
 
-        if self._post_breach_phase:
-            self._post_breach_phase.join()
+            if self._master:
+                self._master.cleanup()
 
-        if firewall.is_enabled():
-            firewall.remove_firewall_rule()
-            firewall.close()
+            if self._monkey_tunnel:
+                self._monkey_tunnel.stop()
+                self._monkey_tunnel.join()
 
-        if self._upgrading_to_64:
-            InfectionMonkey._close_tunnel()
-            firewall.close()
-        else:
+            if firewall.is_enabled():
+                firewall.remove_firewall_rule()
+                firewall.close()
+
+            InfectionMonkey._self_delete()
+
+            InfectionMonkey._send_log()
+
             StateTelem(
                 is_done=True, version=get_version()
             ).send()  # Signal the server (before closing the tunnel)
+
+            # TODO: Determine how long between when we
+            #  send telemetry and the monkey actually exits
             InfectionMonkey._close_tunnel()
-            firewall.close()
-            InfectionMonkey._send_log()
             self._singleton.unlock()
+        except Exception as e:
+            logger.error(f"An error occurred while cleaning up the monkey agent: {e}")
+            InfectionMonkey._self_delete()
 
-        self.master.terminate()
-        self.master.cleanup()
-
-        InfectionMonkey._self_delete()
         logger.info("Monkey is shutting down")
 
     @staticmethod
