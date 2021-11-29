@@ -37,7 +37,7 @@ def create_server_config(config_contents: str, server_config_path: Path):
 @pytest.fixture(autouse=True)
 def mock_deployment_config_path(monkeypatch, deployment_server_config_path):
     monkeypatch.setattr(
-        "monkey_island.cc.setup.config_setup.DEFAULT_SERVER_CONFIG_PATH",
+        "monkey_island.cc.setup.config_setup.PACKAGE_CONFIG_PATH",
         deployment_server_config_path,
     )
 
