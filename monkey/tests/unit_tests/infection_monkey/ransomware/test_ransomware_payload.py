@@ -21,12 +21,17 @@ def ransomware_payload(build_ransomware_payload, ransomware_payload_config):
 def build_ransomware_payload(
     mock_file_encryptor, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
 ):
-    def inner(config):
+    def inner(
+        config,
+        file_encryptor=mock_file_encryptor,
+        file_selector=mock_file_selector,
+        leave_readme=mock_leave_readme,
+    ):
         return RansomwarePayload(
             config,
-            mock_file_encryptor,
-            mock_file_selector,
-            mock_leave_readme,
+            file_encryptor,
+            file_selector,
+            leave_readme,
             telemetry_messenger_spy,
         )
 
@@ -121,19 +126,15 @@ def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
 
 
 def test_telemetry_failure(
-    monkeypatch, ransomware_payload_config, mock_leave_readme, telemetry_messenger_spy
+    build_ransomware_payload, ransomware_payload_config, telemetry_messenger_spy
 ):
     file_not_exists = "/file/not/exist"
-    ransomware_payload = RansomwarePayload(
-        ransomware_payload_config,
-        MagicMock(
-            side_effect=FileNotFoundError(
-                f"[Errno 2] No such file or directory: '{file_not_exists}'"
-            )
-        ),
-        MagicMock(return_value=[PurePosixPath(file_not_exists)]),
-        mock_leave_readme,
-        telemetry_messenger_spy,
+    mfe = MagicMock(
+        side_effect=FileNotFoundError(f"[Errno 2] No such file or directory: '{file_not_exists}'")
+    )
+    mfs = MagicMock(return_value=[PurePosixPath(file_not_exists)])
+    ransomware_payload = build_ransomware_payload(
+        config=ransomware_payload_config, file_encryptor=mfe, file_selector=mfs
     )
 
     ransomware_payload.run_payload()
