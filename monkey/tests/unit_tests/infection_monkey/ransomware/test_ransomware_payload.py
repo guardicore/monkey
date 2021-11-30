@@ -1,4 +1,4 @@
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from unittest.mock import MagicMock
 
 import pytest
@@ -173,3 +173,39 @@ def test_no_readme_if_no_directory(
 
     ransomware_payload.run_payload()
     mock_leave_readme.assert_not_called()
+
+
+def test_leave_readme_exceptions_handled(build_ransomware_payload, ransomware_payload_config):
+    leave_readme = MagicMock(side_effect=Exception("Test exception when leaving README"))
+    ransomware_payload_config.readme_enabled = True
+    ransomware_payload = build_ransomware_payload(
+        config=ransomware_payload_config, leave_readme=leave_readme
+    )
+
+    # Test will fail if exception is raised and not handled
+    ransomware_payload.run_payload()
+    ransomware_payload.cleanup()
+
+
+def test_cleanup_incomplete_readme(build_ransomware_payload, ransomware_payload_config):
+    def leave_readme(_: Path, dest: Path):
+        if leave_readme.i == 0:
+            dest.touch()
+
+        leave_readme.i += 1
+
+        raise Exception("Test exception when leaving README")
+
+    leave_readme.i = 0
+
+    ransomware_payload_config.readme_enabled = True
+    ransomware_payload = build_ransomware_payload(
+        config=ransomware_payload_config, leave_readme=leave_readme
+    )
+
+    ransomware_payload.run_payload()
+    assert (ransomware_payload_config.target_directory / README_FILE_NAME).exists()
+
+    ransomware_payload.cleanup()
+    assert not (ransomware_payload_config.target_directory / README_FILE_NAME).exists()
+    assert leave_readme.i == 2
