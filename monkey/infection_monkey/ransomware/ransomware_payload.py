@@ -76,14 +76,14 @@ class RansomwarePayload:
     def cleanup(self):
         if self._readme_incomplete:
             logger.info(
-                "README.txt file dropping was interrupted. Removing corrupt file and "
-                "trying again."
+                "The process of leaving a README.txt was interrupted. Removing the corrupt file "
+                "and trying again."
             )
             try:
                 self._readme_file_path.unlink()
                 self._leave_readme_in_target_directory()
             except Exception as ex:
-                logger.info(
-                    f"An exception occurred: {str(ex)}. README.txt file dropping was "
-                    "unsuccessful."
+                logger.error(
+                    "An error occurred while trying to remove the corrupt or incomplete README.txt "
+                    f"file: {ex}"
                 )
