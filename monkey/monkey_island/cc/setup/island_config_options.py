@@ -34,5 +34,5 @@ class IslandConfigOptions:
             )
         )
 
-    def update(self, target: IslandConfigOptions):
-        self.__dict__.update(target.__dict__)
+    def update(self, target: dict):
+        self.__dict__.update(target)

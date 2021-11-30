@@ -43,10 +43,10 @@ def mock_deployment_config_path(monkeypatch, deployment_server_config_path):
 
 
 @pytest.fixture(autouse=True)
-def mock_user_config_path(monkeypatch, deployment_server_config_path):
+def mock_user_config_path(monkeypatch, user_default_server_config_path):
     monkeypatch.setattr(
         "monkey_island.cc.setup.config_setup.USER_CONFIG_PATH",
-        deployment_server_config_path,
+        user_default_server_config_path,
     )
 
 
@@ -59,8 +59,8 @@ def test_extract_config_defaults():
 
 
 def test_deployment_config_overrides_defaults(deployment_server_config_path):
-    expected = IslandConfigOptions({"key_path": "/key_path_2"})
-    create_server_config(dumps({"key_path": "/key_path_2"}), deployment_server_config_path)
+    expected = IslandConfigOptions({"log_level": "/log_level_2"})
+    create_server_config(dumps({"log_level": "/log_level_2"}), deployment_server_config_path)
     assert (
         expected.__dict__
         == _extract_config(IslandCmdArgs(setup_only=False, server_config_path=None)).__dict__
@@ -70,9 +70,9 @@ def test_deployment_config_overrides_defaults(deployment_server_config_path):
 def test_user_config_overrides_deployment(
     deployment_server_config_path, cmd_server_config_path, user_default_server_config_path
 ):
-    expected = IslandConfigOptions({"key_path": "/key_path_3"})
-    create_server_config(dumps({"key_path": "/key_path_2"}), deployment_server_config_path)
-    create_server_config(dumps({"key_path": "/key_path_3"}), user_default_server_config_path)
+    expected = IslandConfigOptions({"log_level": "/log_level_3"})
+    create_server_config(dumps({"log_level": "/log_level_2"}), deployment_server_config_path)
+    create_server_config(dumps({"log_level": "/log_level_3"}), user_default_server_config_path)
     extracted_config = _extract_config(
         IslandCmdArgs(setup_only=False, server_config_path=cmd_server_config_path)
     )
@@ -82,10 +82,23 @@ def test_user_config_overrides_deployment(
 def test_cmd_config_overrides_everything(
     deployment_server_config_path, cmd_server_config_path, user_default_server_config_path
 ):
-    expected = IslandConfigOptions({"key_path": "/key_path_4"})
-    create_server_config(dumps({"key_path": "/key_path_2"}), deployment_server_config_path)
-    create_server_config(dumps({"key_path": "/key_path_3"}), user_default_server_config_path)
-    create_server_config(dumps({"key_path": "/key_path_4"}), cmd_server_config_path)
+    expected = IslandConfigOptions({"log_level": "/log_level_4"})
+    create_server_config(dumps({"log_level": "/log_level_2"}), deployment_server_config_path)
+    create_server_config(dumps({"log_level": "/log_level_3"}), user_default_server_config_path)
+    create_server_config(dumps({"log_level": "/log_level_4"}), cmd_server_config_path)
+    extracted_config = _extract_config(
+        IslandCmdArgs(setup_only=False, server_config_path=cmd_server_config_path)
+    )
+    assert expected.__dict__ == extracted_config.__dict__
+
+
+def test_not_overriding_unspecified_values(
+    deployment_server_config_path, cmd_server_config_path, user_default_server_config_path
+):
+    expected = IslandConfigOptions({"log_level": "/log_level_4", "data_dir": "/data_dir1"})
+    create_server_config(dumps({"data_dir": "/data_dir1"}), deployment_server_config_path)
+    create_server_config(dumps({"log_level": "/log_level_3"}), user_default_server_config_path)
+    create_server_config(dumps({"log_level": "/log_level_4"}), cmd_server_config_path)
     extracted_config = _extract_config(
         IslandCmdArgs(setup_only=False, server_config_path=cmd_server_config_path)
     )

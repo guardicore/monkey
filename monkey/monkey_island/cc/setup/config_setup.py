@@ -37,8 +37,7 @@ def _update_config_from_file(config: IslandConfigOptions, config_path: Path):
         logger.info(f"Server config not found in path {config_path}")
 
 
-def _load_server_config_from_file(server_config_path) -> IslandConfigOptions:
+def _load_server_config_from_file(server_config_path) -> dict:
     with open(server_config_path, "r") as f:
         config_content = f.read()
-        config = json.loads(config_content)
-        return IslandConfigOptions(config)
+        return json.loads(config_content)
