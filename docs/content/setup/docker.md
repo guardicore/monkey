@@ -101,7 +101,7 @@ enterprise or other security-sensitive environments, it is recommended that the
 user provide Infection Monkey with a certificate that has been signed by a
 private certificate authority.
 
-1. Terminate the docker container it's already running.
+1. Terminate the docker container if it's already running.
 1. Move your `.crt` and `.key` files to `./monkey_island_data` (directory created for the volume).
 1. Make sure that your `.crt` and `.key` files are readable only by you.
     ```bash
@@ -132,7 +132,7 @@ private certificate authority.
 
 ### Change logging level
 
-1. Stop the docker container it's already running.
+1. Stop the docker container if it's already running.
 1. Modify the [server configuration file](../../reference/server_configuration) by adding the following lines:
     ```json
     {
