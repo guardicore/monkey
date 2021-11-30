@@ -46,6 +46,14 @@ do, see the [FAQ]({{< ref
 >}}) for more information.
 {{% /notice %}}
 
+## Configuring the server
+
+You can configure the server by creating
+a [server configuration file](../../reference/server_configuration) and
+providing a path to it via command line parameters:
+
+`./InfectionMonkey-v1.12.0.AppImage --server-config="/path/to/server_config.json"`
+
 ### Start Monkey Island with user-provided certificate
 
 By default, Infection Monkey comes with a [self-signed SSL
@@ -54,13 +62,7 @@ enterprise or other security-sensitive environments, it is recommended that the
 user provide Infection Monkey with a certificate that has been signed by a
 private certificate authority.
 
-1. Run the Infection Monkey AppImage package with the `--setup-only` flag to
-   populate the `$HOME/.monkey_island` directory with a default
-   `server_config.json` file.
-
-    ```bash
-    ./InfectionMonkey-v1.12.0.AppImage --setup-only
-    ```
+1. Terminate the Island process if it's already running.
 
 1. (Optional but recommended) Move your `.crt` and `.key` files to
    `$HOME/.monkey_island`.
@@ -73,6 +75,37 @@ private certificate authority.
     ```
 
 1. Create a [server configuration file and provide the path to the certificate](../../reference/server_configuration).
+Server configuration file should look something like:
+
+```json
+{
+    "ssl_certificate": {
+        "ssl_certificate_file": "$HOME/.monkey_island/my_cert.crt",
+        "ssl_certificate_key_file": "$HOME/.monkey_island/my_key.key"
+    }
+}
+```
+
+1. Start Monkey Island by running the Infection Monkey AppImage package:
+    ```bash
+    ./InfectionMonkey-v1.12.0.AppImage --server-config="/path/to/server_config.json"
+    ```
+
+1. Access the Monkey Island web UI by pointing your browser at
+   `https://localhost:5000`.
+
+### Change logging level
+
+1. Terminate the Island process if it's already running.
+
+1. Create a [server configuration file](../../reference/server_configuration).
+Server configuration file should look something like:
+
+```json
+{
+    "log_level": "INFO"
+}
+```
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash

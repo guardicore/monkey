@@ -37,64 +37,11 @@ Only relevant options can be specified, for example:
 }
 ```
 
-### Applying configuration to the island
+### Configuration options
 
-#### AppImage (Linux)
+See setup instructions for your operating system to understand how to apply these.
 
-Specify the path to the `server_config.json` through a command line argument.
-
-Example: `./InfectionMonkey-v1.12.0.AppImage --server-config="/tmp/server_config.json"`
-
-#### Windows
-
-Move the created `server_config.json` to the install directory, monkey island directory.
-If you haven't changed the default install directory, the path should look like:
-
-`C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\server_config.json`
-
-#### Docker
-
-Best way to configure the docker is to is to map server's [data directory](../data_directory) to a volume:
-
-1. Create a directory for server configuration and other files, e.g. `monkey_island_data`. If you already have it,
-   **make sure it's empty**.
-
-    ```bash
-    mkdir ./monkey_island_data
-    chmod 700 ./monkey_island_data
-    ```
-1. Establish and populate the created directory with server files (modify the `VERSION` to the one you downloaded):
-```bash
-sudo docker run \
-    --rm \
-    --name monkey-island \
-    --network=host \
-    --user "$(id -u ${USER}):$(id -g ${USER})" \
-    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    guardicore/monkey-island:VERSION --setup-only
-```
-
-Once the volume is mapped, we can put `server_config.json` there.
-`server_config.json` for docker **must** contain a valid data directory field and `start_mongodb` set to false.
-
-So, at minimum your `server_config.json` should look like this:
-
-```json
-{
-  "data_dir": "/monkey_island_data",
-  "mongodb": {
-    "start_mongodb": false
- }
-}
-```
-
-Then, the container can be launched by providing `server_config.json` path in the arguments:
-```bash
-sudo docker run \
-    --rm \
-    --name monkey-island \
-    --network=host \
-    --user "$(id -u ${USER}):$(id -g ${USER})" \
-    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    guardicore/monkey-island:VERSION --server-config="/monkey_island_data/server_config.json"
-```
+ - `log_level` - can be set to `"DEBUG"`(verbose), `"INFO"`(less verbose) or `"ERROR"`(silent, except errors).
+ - `ssl_certificate` - contains paths for files, required to run the Island server with custom certificate.
+ - `data_dir` - path to a writeable directory where the Island will store the database and other files.
+ - `mongodb` - options for MongoDB. Should not be changed unless you want to run your own instance of MongoDB.

@@ -201,25 +201,7 @@ The logs contain information about the internals of the Infection Monkey agent's
 2019-07-22 19:16:45,013 [77598:140654230214464:DEBUG] connectionpool._make_request.396: https://updates.infectionmonkey.com:443 "GET / HTTP/1.1" 200 61
 ```
 
-### How do I change the log level of the Monkey Island logger?
-
-The log level of the Monkey Island logger is set in the `log_level` field
-in the `server_config.json` file (located in the [data directory]({{< ref "/reference/data_directory" >}})).
-Make sure to leave everything else in `server_config.json` unchanged:
-
-```json
-{
-  ...
-  "log_level": "DEBUG",
-  ...
-}
-```
-
-Logging levels correspond to [the logging level constants in python](https://docs.python.org/3.7/library/logging.html#logging-levels).
-
-To apply the changes, reset the Monkey Island process.
-On Linux, use `sudo systemctl restart monkey-island.service`.
-On Windows, restart the program.
+Logging level/verbosity can also be changed, see [setup page](../../setup) for you operating system.
 
 ## Running the Infection Monkey in a production environment
 
