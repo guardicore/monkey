@@ -33,7 +33,7 @@ class RansomwarePayload:
         self._readme_incomplete = False
 
     def run_payload(self):
-        if not self._config.target_directory:
+        if not self._target_directory:
             return
 
         logger.info("Running ransomware payload")
@@ -46,11 +46,11 @@ class RansomwarePayload:
             self._leave_readme_in_target_directory()
 
     def _find_files(self) -> List[Path]:
-        logger.info(f"Collecting files in {self._config.target_directory}")
-        return sorted(self._select_files(self._config.target_directory))
+        logger.info(f"Collecting files in {self._target_directory}")
+        return sorted(self._select_files(self._target_directory))
 
     def _encrypt_files(self, file_list: List[Path]):
-        logger.info(f"Encrypting files in {self._config.target_directory}")
+        logger.info(f"Encrypting files in {self._target_directory}")
 
         for filepath in file_list:
             try:
