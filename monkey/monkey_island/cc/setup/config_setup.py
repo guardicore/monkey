@@ -1,5 +1,4 @@
 import json
-import os
 from logging import getLogger
 from pathlib import Path
 
@@ -11,15 +10,12 @@ from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 logger = getLogger(__name__)
 
 PACKAGE_CONFIG_PATH = Path(MONKEY_ISLAND_ABS_PATH, "cc", SERVER_CONFIG_FILENAME)
-USER_CONFIG_PATH = Path(os.getcwd(), SERVER_CONFIG_FILENAME)
 
 
 def get_server_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
     config = IslandConfigOptions()
 
     _update_config_from_file(config, PACKAGE_CONFIG_PATH)
-
-    _update_config_from_file(config, USER_CONFIG_PATH)
 
     if island_args.server_config_path:
         path_to_config = expand_path(island_args.server_config_path)

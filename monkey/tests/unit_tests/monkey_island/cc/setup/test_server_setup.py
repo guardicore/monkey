@@ -18,12 +18,6 @@ def cmd_server_config_path(tmpdir) -> Path:
 
 
 @pytest.fixture
-def user_default_server_config_path(tmpdir) -> Path:
-    # Represents the config that can be put into the install dir
-    return tmpdir / "fake_server_config2.json"
-
-
-@pytest.fixture
 def deployment_server_config_path(tmpdir) -> Path:
     # Represents the config that is built in, deployment specific
     return tmpdir / "fake_server_config3.json"
@@ -42,14 +36,6 @@ def mock_deployment_config_path(monkeypatch, deployment_server_config_path):
     )
 
 
-@pytest.fixture(autouse=True)
-def mock_user_config_path(monkeypatch, user_default_server_config_path):
-    monkeypatch.setattr(
-        "monkey_island.cc.setup.config_setup.USER_CONFIG_PATH",
-        user_default_server_config_path,
-    )
-
-
 def test_extract_config_defaults():
     expected = IslandConfigOptions({})
     assert (
@@ -65,18 +51,6 @@ def test_deployment_config_overrides_defaults(deployment_server_config_path):
         expected.__dict__
         == _extract_config(IslandCmdArgs(setup_only=False, server_config_path=None)).__dict__
     )
-
-
-def test_user_config_overrides_deployment(
-    deployment_server_config_path, cmd_server_config_path, user_default_server_config_path
-):
-    expected = IslandConfigOptions({"log_level": "/log_level_3"})
-    create_server_config(dumps({"log_level": "/log_level_2"}), deployment_server_config_path)
-    create_server_config(dumps({"log_level": "/log_level_3"}), user_default_server_config_path)
-    extracted_config = _extract_config(
-        IslandCmdArgs(setup_only=False, server_config_path=cmd_server_config_path)
-    )
-    assert expected.__dict__ == extracted_config.__dict__
 
 
 def test_cmd_config_overrides_everything(
