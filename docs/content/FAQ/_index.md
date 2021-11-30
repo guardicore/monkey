@@ -200,8 +200,6 @@ The logs contain information about the internals of the Infection Monkey agent's
 2019-07-22 19:16:45,013 [77598:140654230214464:DEBUG] connectionpool._make_request.396: https://updates.infectionmonkey.com:443 "GET / HTTP/1.1" 200 61
 ```
 
-Logging level/verbosity can also be changed, see [setup page](../../setup) for you operating system.
-
 ## Running the Infection Monkey in a production environment
 
 ### How much of a footprint does the Infection Monkey leave?
