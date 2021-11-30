@@ -7,8 +7,6 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 class PowerShell(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
 
-    # TODO: Remove .\\ from exploit user list when DC name is added,
-    #  for more context see https://github.com/guardicore/monkey/issues/1486
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": ["PowerShellExploiter"],
