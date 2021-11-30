@@ -75,16 +75,16 @@ private certificate authority.
     ```
 
 1. Create a [server configuration file and provide the path to the certificate](../../reference/server_configuration).
-Server configuration file should look something like:
+The server configuration file should look something like:
 
-```json
-{
-    "ssl_certificate": {
-        "ssl_certificate_file": "$HOME/.monkey_island/my_cert.crt",
-        "ssl_certificate_key_file": "$HOME/.monkey_island/my_key.key"
+    ```json
+    {
+        "ssl_certificate": {
+            "ssl_certificate_file": "$HOME/.monkey_island/my_cert.crt",
+            "ssl_certificate_key_file": "$HOME/.monkey_island/my_key.key"
+        }
     }
-}
-```
+    ```
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
@@ -99,13 +99,13 @@ Server configuration file should look something like:
 1. Terminate the Island process if it's already running.
 
 1. Create a [server configuration file](../../reference/server_configuration).
-Server configuration file should look something like:
+The server configuration file should look something like:
 
-```json
-{
-    "log_level": "INFO"
-}
-```
+    ```json
+    {
+        "log_level": "INFO"
+    }
+    ```
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
