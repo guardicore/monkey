@@ -6,6 +6,7 @@ import pytest
 import monkey_island.cc.setup.config_setup  # noqa: F401
 from monkey_island.cc.arg_parser import IslandCmdArgs
 from monkey_island.cc.server_setup import _extract_config
+from monkey_island.cc.server_utils.file_utils import is_windows_os
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 BAD_JSON = '{"data_dir": "C:\\test\\test"'
@@ -53,30 +54,34 @@ def test_deployment_config_overrides_defaults(deployment_server_config_path):
     )
 
 
-def test_cmd_config_overrides_everything(
-    deployment_server_config_path, cmd_server_config_path, user_default_server_config_path
-):
-    expected = IslandConfigOptions({"log_level": "/log_level_4"})
+def test_cmd_config_overrides_everything(deployment_server_config_path, cmd_server_config_path):
+    expected = IslandConfigOptions({"log_level": "/log_level_3"})
     create_server_config(dumps({"log_level": "/log_level_2"}), deployment_server_config_path)
-    create_server_config(dumps({"log_level": "/log_level_3"}), user_default_server_config_path)
-    create_server_config(dumps({"log_level": "/log_level_4"}), cmd_server_config_path)
+    create_server_config(dumps({"log_level": "/log_level_3"}), cmd_server_config_path)
     extracted_config = _extract_config(
         IslandCmdArgs(setup_only=False, server_config_path=cmd_server_config_path)
     )
     assert expected.__dict__ == extracted_config.__dict__
 
 
-def test_not_overriding_unspecified_values(
-    deployment_server_config_path, cmd_server_config_path, user_default_server_config_path
-):
-    expected = IslandConfigOptions({"log_level": "/log_level_4", "data_dir": "/data_dir1"})
+def test_not_overriding_unspecified_values(deployment_server_config_path, cmd_server_config_path):
+    expected = IslandConfigOptions({"log_level": "/log_level_2", "data_dir": "/data_dir1"})
     create_server_config(dumps({"data_dir": "/data_dir1"}), deployment_server_config_path)
-    create_server_config(dumps({"log_level": "/log_level_3"}), user_default_server_config_path)
-    create_server_config(dumps({"log_level": "/log_level_4"}), cmd_server_config_path)
+    create_server_config(dumps({"log_level": "/log_level_2"}), cmd_server_config_path)
     extracted_config = _extract_config(
         IslandCmdArgs(setup_only=False, server_config_path=cmd_server_config_path)
     )
     assert expected.__dict__ == extracted_config.__dict__
+
+
+def test_paths_get_expanded(deployment_server_config_path):
+    if is_windows_os():
+        path = "%temp%/path"
+    else:
+        path = "$HOME/path"
+    create_server_config(dumps({"data_dir": path}), deployment_server_config_path)
+    extracted_config = _extract_config(IslandCmdArgs(setup_only=False, server_config_path=None))
+    assert not extracted_config.data_dir == path
 
 
 def test_malformed_json(cmd_server_config_path):
