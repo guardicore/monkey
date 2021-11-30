@@ -30,7 +30,7 @@ def _update_config_from_file(config: IslandConfigOptions, config_path: Path):
         config.update(config_from_file)
         logger.info(f"Server config updated from {config_path}")
     except OSError:
-        logger.info(f"Server config not found in path {config_path}")
+        logger.warn(f"Server config not found in path {config_path}")
 
 
 def _load_server_config_from_file(server_config_path) -> dict:
