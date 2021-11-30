@@ -74,7 +74,10 @@ class RansomwarePayload:
             logger.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
 
     def cleanup(self):
-        if self._readme_incomplete:
+        # This cleanup function is only concerned with cleaning up and replacing *incomplete*
+        # README.txt files; its goal is not to ensure the existence of a README file. Therefore,
+        # only retry if a README.txt file actually exists.
+        if self._readme_incomplete and self._readme_file_path.exists():
             logger.info(
                 "The process of leaving a README.txt was interrupted. Removing the corrupt file "
                 "and trying again."
