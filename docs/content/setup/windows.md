@@ -29,8 +29,10 @@ do, see the [FAQ]({{< ref
 >
 ## Configuring the server
 
-You can configure the server by editing [the configuration file](../../reference/server_configuration) located
-in installation directory. By default, the path should be `C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`.
+You can configure the server by editing [the configuration
+file](../../reference/server_configuration) located in installation directory.
+The default path is
+`C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`.
 
 ### Start Monkey Island with user-provided certificate
 
