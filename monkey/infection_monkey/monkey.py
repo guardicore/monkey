@@ -23,6 +23,7 @@ from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter im
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.exceptions.planned_shutdown_error import PlannedShutdownError
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.signal_handler import register_signal_handlers
