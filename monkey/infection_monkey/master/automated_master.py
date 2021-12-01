@@ -1,6 +1,7 @@
 import logging
 import threading
 import time
+from typing import Dict, List
 
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
@@ -8,7 +9,7 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 CHECK_FOR_STOP_INTERVAL_SEC = 5
-SHUTDOWN_TIMEOUT = 2
+SHUTDOWN_TIMEOUT = 5
 
 logger = logging.getLogger()
 
@@ -63,11 +64,57 @@ class AutomatedMaster(IMaster):
             logger.warn("Forcefully killing the simulation")
 
     def _run_simulation(self):
+        config = self._control_channel.get_config()
+
+        system_info_collector_thread = threading.Thread(
+            target=self._collect_system_info,
+            args=(config["system_info_collector_classes"],),
+            daemon=True,
+        )
+        pba_thread = threading.Thread(
+            target=self._run_pbas, args=(config["post_breach_actions"],), daemon=True
+        )
+
+        system_info_collector_thread.start()
+        pba_thread.start()
+
+        # Future stages of the simulation require the output of the system info collectors. Nothing
+        # requires the output of PBAs, so we don't need to join on that thread.
+        system_info_collector_thread.join()
+
+        if self._can_propagate():
+            propagation_thread = threading.Thread(
+                target=self._propagate, args=(config,), daemon=True
+            )
+            propagation_thread.start()
+            propagation_thread.join()
+
+        payload_thread = threading.Thread(
+            target=self._run_payloads, args=(config["payloads"],), daemon=True
+        )
+        payload_thread.start()
+        payload_thread.join()
+
         while True:
-            time.sleep(30)
+            time.sleep(2)
             logger.debug("Simulation thread is finished sleeping")
             if self._stop.is_set():
                 break
+
+    def _collect_system_info(self, enabled_collectors: List[str]):
+        pass
+
+    def _run_pbas(self, enabled_pbas: List[str]):
+        pass
+
+    def _can_propagate(self):
+        return True
+
+    def _propagate(self, config: Dict):
+        pass
+
+    def _run_payloads(self, enabled_payloads: Dict[str, Dict]):
+        pass
 
     def cleanup(self):
         pass
