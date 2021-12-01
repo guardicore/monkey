@@ -34,7 +34,9 @@ class AutomatedMaster(IMaster):
         logger.info("The simulation has been shutdown.")
 
     def _check_for_stop(self):
-        pass
+        if self._control_channel.should_agent_stop():
+            logger.debug('Received the "stop" signal from the Island')
+            self._stop.set()
 
     def terminate(self):
         logger.info("Stopping automated breach and attack simulation")
