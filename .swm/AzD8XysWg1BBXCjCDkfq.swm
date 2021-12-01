@@ -31,24 +31,6 @@
         },
         {
             "type": "snippet",
-            "path": "monkey/infection_monkey/monkey.py",
-            "comments": [],
-            "firstLineNumber": 220,
-            "lines": [
-                "         if not WormConfiguration.alive:",
-                "             logger.info(\"Marked not alive from configuration\")",
-                " ",
-                "*        machines = self._network.get_victim_machines(",
-                "*            max_find=WormConfiguration.victims_max_find,",
-                "*            stop_callback=ControlClient.check_for_stop,",
-                "*        )",
-                "         for machine in machines:",
-                "             if ControlClient.check_for_stop():",
-                "                 break"
-            ]
-        },
-        {
-            "type": "snippet",
             "path": "monkey/monkey_island/cc/services/config_schema/internal.py",
             "comments": [],
             "firstLineNumber": 28,
@@ -79,7 +61,6 @@
         "app_version": "0.6.6-2",
         "file_blobs": {
             "monkey/infection_monkey/config.py": "8f4984ba6563564343282765ab498efca5d89ba8",
-            "monkey/infection_monkey/monkey.py": "4160a36e0e624404d77526472d51dd07bba49e5a",
             "monkey/monkey_island/cc/services/config_schema/internal.py": "86318eaf19b9991a8af5de861a3eb085238e17a4"
         }
     }
