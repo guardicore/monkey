@@ -120,14 +120,12 @@ def main():
     monkey = monkey_cls(monkey_args)
 
     try:
-        monkey.legacy_start()
-        # monkey.start()
+        monkey.start()
         return True
     except Exception as e:
         logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))
     finally:
-        monkey.legacy_cleanup()
-        # monkey.cleanup()
+        monkey.cleanup()
 
 
 if "__main__" == __name__:
