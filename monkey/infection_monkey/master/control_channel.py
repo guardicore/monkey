@@ -4,7 +4,7 @@ import logging
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from infection_monkey.config import GUID, WormConfiguration
+from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from monkey.infection_monkey.i_control_channel import IControlChannel
 
@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 
 class ControlChannel(IControlChannel):
-    def __init__(self, server: str):
+    def __init__(self, server: str, agent_id: str):
+        self._agent_id = agent_id
         self._control_channel_server = server
 
     def should_agent_stop(self) -> bool:
@@ -23,7 +24,7 @@ class ControlChannel(IControlChannel):
 
         try:
             response = requests.get(  # noqa: DUO123
-                f"{self._control_channel_server}/api/monkey_control/{GUID}",
+                f"{self._control_channel_server}/api/monkey_control/{self._agent_id}",
                 verify=False,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
