@@ -2,13 +2,6 @@ import abc
 
 
 class IControlChannel(metaclass=abc.ABCMeta):
-    @property
-    @abc.abstractmethod
-    def control_channel_server(self):
-        """
-        :return: Worm configuration server
-        """
-
     @abc.abstractmethod
     def should_agent_stop(self) -> bool:
         """

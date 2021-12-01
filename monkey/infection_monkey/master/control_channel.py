@@ -14,15 +14,16 @@ logger = logging.getLogger(__name__)
 
 
 class ControlChannel(IControlChannel):
-    control_channel_server = WormConfiguration.current_server
+    def __init__(self, server: str):
+        self._control_channel_server = server
 
     def should_agent_stop(self) -> bool:
-        if not self.control_channel_server:
+        if not self._control_channel_server:
             return
 
         try:
             response = requests.get(  # noqa: DUO123
-                f"{self.control_channel_server}/api/monkey_control/{GUID}",
+                f"{self._control_channel_server}/api/monkey_control/{GUID}",
                 verify=False,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
@@ -37,12 +38,12 @@ class ControlChannel(IControlChannel):
         return WormConfiguration.as_dict()
 
     def get_credentials_for_propagation(self) -> dict:
-        if not self.control_channel_server:
+        if not self._control_channel_server:
             return
 
         try:
             response = requests.get(  # noqa: DUO123
-                f"{self.control_channel_server}/api/propagationCredentials",
+                f"{self._control_channel_server}/api/propagationCredentials",
                 verify=False,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
