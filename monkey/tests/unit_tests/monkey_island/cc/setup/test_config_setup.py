@@ -1,3 +1,4 @@
+import json
 from json import dumps
 from pathlib import Path
 
@@ -5,8 +6,8 @@ import pytest
 
 import monkey_island.cc.setup.config_setup  # noqa: F401
 from monkey_island.cc.arg_parser import IslandCmdArgs
-from monkey_island.cc.server_setup import _extract_config, get_server_config
 from monkey_island.cc.server_utils.file_utils import is_windows_os
+from monkey_island.cc.setup.config_setup import get_server_config
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions
 
 
@@ -91,5 +92,5 @@ BAD_JSON = '{"data_dir": "C:\\test\\test"'
 
 def test_malformed_json(cmd_server_config_path, cmd_args_with_server_config):
     create_server_config(BAD_JSON, cmd_server_config_path)
-    with pytest.raises(SystemExit):
-        _extract_config(cmd_args_with_server_config)
+    with pytest.raises(json.JSONDecodeError):
+        get_server_config(cmd_args_with_server_config)
