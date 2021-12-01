@@ -42,8 +42,7 @@ class InfectionMonkey:
         logger.info("Monkey is initializing...")
         self._master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
         self._singleton = SystemSingleton()
-        self._opts = None
-        self._set_arguments(args)
+        self._opts = self._get_arguments(args)
         self._parent = self._opts.parent
         self._default_tunnel = self._opts.tunnel
         self._default_server = self._opts.server
@@ -52,18 +51,21 @@ class InfectionMonkey:
         self._add_default_server_to_config()
         self._monkey_tunnel = None
 
-    def _set_arguments(self, args):
+    @staticmethod
+    def _get_arguments(args):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("-p", "--parent")
         arg_parser.add_argument("-t", "--tunnel")
         arg_parser.add_argument("-s", "--server")
         arg_parser.add_argument("-d", "--depth", type=int)
         arg_parser.add_argument("-vp", "--vulnerable-port")
-        self._opts, _ = arg_parser.parse_known_args(args)
-        self._log_arguments()
+        opts, _ = arg_parser.parse_known_args(args)
+        InfectionMonkey._log_arguments(opts)
+        return opts
 
-    def _log_arguments(self):
-        arg_string = " ".join([f"{key}: {value}" for key, value in vars(self._opts).items()])
+    @staticmethod
+    def _log_arguments(args):
+        arg_string = " ".join([f"{key}: {value}" for key, value in vars(args).items()])
         logger.info(f"Monkey started with arguments: {arg_string}")
 
     def _set_propagation_depth(self):
