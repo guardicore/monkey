@@ -40,8 +40,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
             self._period = period
 
             self._should_run_batch_thread = True
-            # TODO: Create a "timer" or "countdown" class and inject an object instead of
-            #       using time.time()
+            # TODO: Replace with infection_monkey.utils.timer.Timer
             self._last_sent_time = time.time()
             self._telemetry_batches: Dict[str, IBatchableTelem] = {}
 

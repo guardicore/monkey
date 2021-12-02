@@ -173,6 +173,7 @@ class MonkeyTunnel(Thread):
 
         # wait till all of the tunnel clients has been disconnected, or no one used the tunnel in
         # QUIT_TIMEOUT seconds
+        # TODO: Replace with infection_monkey.utils.timer.Timer
         while self._clients and (time.time() - get_last_serve_time() < QUIT_TIMEOUT):
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
