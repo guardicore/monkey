@@ -39,8 +39,6 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
         # TODO Used in propagation phase to set the default server for the victim
         self._default_server_port = None
-        self._set_propagation_depth()
-        self._add_default_server_to_config()
         # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
 
@@ -61,23 +59,6 @@ class InfectionMonkey:
         arg_string = " ".join([f"{key}: {value}" for key, value in vars(args).items()])
         logger.info(f"Monkey started with arguments: {arg_string}")
 
-    def _set_propagation_depth(self):
-        if self._opts.depth is not None:
-            WormConfiguration._depth_from_commandline = True
-            WormConfiguration.depth = self._opts.depth
-            logger.debug("Setting propagation depth from command line")
-        logger.debug(f"Set propagation depth to {WormConfiguration.depth}")
-
-    def _add_default_server_to_config(self):
-        if self._default_server:
-            if self._default_server not in WormConfiguration.command_servers:
-                logger.debug("Added default server: %s" % self._default_server)
-                WormConfiguration.command_servers.insert(0, self._default_server)
-            else:
-                logger.debug(
-                    "Default server: %s is already in command servers list" % self._default_server
-                )
-
     def start(self):
         if self._is_another_monkey_running():
             logger.info("Another instance of the monkey is already running")
@@ -85,6 +66,8 @@ class InfectionMonkey:
 
         logger.info("Monkey is starting...")
 
+        self._set_propagation_depth(self._opts)
+        self._add_default_server_to_config(self._opts.server)
         self._connect_to_island()
 
         # TODO: Reevaluate who is responsible to send this information
@@ -103,17 +86,36 @@ class InfectionMonkey:
         self._setup()
         self._master.start()
 
+    @staticmethod
+    def _set_propagation_depth(options):
+        if options.depth is not None:
+            WormConfiguration._depth_from_commandline = True
+            WormConfiguration.depth = options.depth
+            logger.debug("Setting propagation depth from command line")
+        logger.debug(f"Set propagation depth to {WormConfiguration.depth}")
+
+    @staticmethod
+    def _add_default_server_to_config(default_server: str):
+        if default_server:
+            if default_server not in WormConfiguration.command_servers:
+                logger.debug("Added default server: %s" % default_server)
+                WormConfiguration.command_servers.insert(0, default_server)
+            else:
+                logger.debug(
+                    "Default server: %s is already in command servers list" % default_server
+                )
+
     def _connect_to_island(self):
         # Sets island's IP and port for monkey to communicate to
         if not self._is_default_server_set():
             raise Exception(
                 "Monkey couldn't find server with {} default tunnel.".format(
-                    self._opts._default_tunnel
+                    self._opts.tunnel
                 )
             )
         self._set_default_port()
 
-        ControlClient.wakeup(parent=self._opts._parent)
+        ControlClient.wakeup(parent=self._opts.parent)
         ControlClient.load_control_config()
 
     def _is_default_server_set(self) -> bool:
@@ -121,10 +123,10 @@ class InfectionMonkey:
         Sets the default server for the Monkey to communicate back to.
         :return
         """
-        if not ControlClient.find_server(default_tunnel=self._opts._default_tunnel):
+        if not ControlClient.find_server(default_tunnel=self._opts.tunnel):
             return False
-        self._default_server = WormConfiguration.current_server
-        logger.debug("default server set to: %s" % self._default_server)
+        self._opts.server = WormConfiguration.current_server
+        logger.debug("default server set to: %s" % self._opts.server)
         return True
 
     @staticmethod
@@ -180,7 +182,7 @@ class InfectionMonkey:
 
     def _set_default_port(self):
         try:
-            self._default_server_port = self._default_server.split(":")[1]
+            self._default_server_port = self._opts.server.split(":")[1]
         except KeyError:
             self._default_server_port = ""
 
