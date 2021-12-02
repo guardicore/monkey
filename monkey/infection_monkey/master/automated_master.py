@@ -7,6 +7,7 @@ from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 
 CHECK_FOR_STOP_INTERVAL_SEC = 5
 SHUTDOWN_TIMEOUT = 5
@@ -102,7 +103,22 @@ class AutomatedMaster(IMaster):
                 break
 
     def _collect_system_info(self, enabled_collectors: List[str]):
-        pass
+        logger.info("Running system info collectors")
+
+        for collector in enabled_collectors:
+            if self._stop.is_set():
+                logger.debug("Received a stop signal, skipping remaining system info collectors")
+                break
+
+            logger.info(f"Running system info collector: {collector}")
+
+            system_info_telemetry = {}
+            system_info_telemetry[collector] = self._puppet.run_sys_info_collector(collector)
+            self._telemetry_messenger.send_telemetry(
+                SystemInfoTelem({"collectors": system_info_telemetry})
+            )
+
+        logger.info("Finished running system info collectors")
 
     def _run_pbas(self, enabled_pbas: List[str]):
         pass
