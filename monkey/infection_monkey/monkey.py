@@ -109,9 +109,7 @@ class InfectionMonkey:
         # Sets island's IP and port for monkey to communicate to
         if not self._is_default_server_set():
             raise Exception(
-                "Monkey couldn't find server with {} default tunnel.".format(
-                    self._opts.tunnel
-                )
+                "Monkey couldn't find server with {} default tunnel.".format(self._opts.tunnel)
             )
         self._set_default_port()
 
@@ -190,7 +188,7 @@ class InfectionMonkey:
         logger.info("Monkey cleanup started")
         try:
             if self._is_upgrade_to_64_needed():
-                logger.debug("Detected upgrade to 64bit")
+                logger.debug("Cleanup not needed for 32 bit agent on 64 bit system(it didn't run)")
                 return
 
             if self._master:
