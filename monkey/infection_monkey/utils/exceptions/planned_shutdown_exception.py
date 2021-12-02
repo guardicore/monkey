@@ -1,2 +1,0 @@
-class PlannedShutdownException(Exception):
-    pass

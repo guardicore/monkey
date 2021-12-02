@@ -55,7 +55,6 @@ class MonkeyDrops(object):
             "destination_path": self.opts.location,
         }
 
-    def initialize(self):
         logger.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
     def start(self):

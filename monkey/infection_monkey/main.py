@@ -118,11 +118,9 @@ def main():
     logger.info(f"version: {get_version()}")
 
     monkey = monkey_cls(monkey_args)
-    monkey.initialize()
 
     try:
         monkey.start()
-
         return True
     except Exception as e:
         logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))

@@ -1,0 +1,2 @@
+class PlannedShutdownError(Exception):
+    pass

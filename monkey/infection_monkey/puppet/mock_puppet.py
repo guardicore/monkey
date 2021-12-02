@@ -220,17 +220,48 @@ class MockPuppet(IPuppet):
         self, name: str, host: str, options: Dict, interrupt: threading.Event
     ) -> ExploiterResultData:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
+        attempts = [
+            {
+                "result": False,
+                "user": "Administrator",
+                "password": "",
+                "lm_hash": "",
+                "ntlm_hash": "",
+                "ssh_key": host,
+            },
+            {
+                "result": False,
+                "user": "root",
+                "password": "",
+                "lm_hash": "",
+                "ntlm_hash": "",
+                "ssh_key": host,
+            },
+        ]
+        info_powershell = {
+            "display_name": "PowerShell",
+            "started": "2021-11-25T15:57:06.307696",
+            "finished": "2021-11-25T15:58:33.788238",
+            "vulnerable_urls": [],
+            "vulnerable_ports": [],
+            "executed_cmds": [
+                {
+                    "cmd": "/tmp/monkey m0nk3y -s 10.10.10.10:5000 -d 1 >git s /dev/null 2>&1 &",
+                    "powershell": True,
+                }
+            ],
+        }
+        info_ssh = {
+            "display_name": "SSH",
+            "started": "2021-11-25T15:57:06.307696",
+            "finished": "2021-11-25T15:58:33.788238",
+            "vulnerable_urls": [],
+            "vulnerable_ports": [22],
+            "executed_cmds": [],
+        }
         successful_exploiters = {
-            DOT_1: {
-                "PowerShellExploiter": ExploiterResultData(
-                    True, {"info": "important success stuff"}, ["attempt 1"]
-                )
-            },
-            DOT_3: {
-                "SSHExploiter": ExploiterResultData(
-                    False, {"info": "important failure stuff"}, ["attempt 2"]
-                )
-            },
+            DOT_1: {"PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts)},
+            DOT_3: {"SSHExploiter": ExploiterResultData(False, info_ssh, attempts)},
         }
 
         return successful_exploiters[host][name]

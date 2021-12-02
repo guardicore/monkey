@@ -3,7 +3,7 @@ import signal
 
 from infection_monkey.i_master import IMaster
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.exceptions.planned_shutdown_exception import PlannedShutdownException
+from infection_monkey.utils.exceptions.planned_shutdown_error import PlannedShutdownError
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class StopSignalHandler:
         self._handle_signal(signum)
         # Windows signal handlers must return boolean. Only raising this exception for POSIX
         # signals.
-        raise PlannedShutdownException("Monkey Agent got an interrupt signal")
+        raise PlannedShutdownError("Monkey Agent got an interrupt signal")
 
     def handle_windows_signals(self, signum):
         import win32con
