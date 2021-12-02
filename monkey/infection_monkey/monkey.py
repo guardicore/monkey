@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+import time
 
 import infection_monkey.tunnel as tunnel
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -186,6 +187,7 @@ class InfectionMonkey:
 
     def cleanup(self):
         logger.info("Monkey cleanup started")
+        self._wait_for_exploited_machine_connection()
         try:
             if self._is_upgrade_to_64_needed():
                 logger.debug("Cleanup not needed for 32 bit agent on 64 bit system(it didn't run)")
@@ -219,6 +221,19 @@ class InfectionMonkey:
             InfectionMonkey._self_delete()
 
         logger.info("Monkey is shutting down")
+
+    def _wait_for_exploited_machine_connection(self):
+        # TODO check for actual exploitation
+        machines_exploited = False
+        # if host was exploited, before continue to closing the tunnel ensure the exploited
+        # host had its chance to
+        # connect to the tunnel
+        if machines_exploited:
+            time_to_sleep = WormConfiguration.keep_tunnel_open_time
+            logger.info(
+                "Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep
+            )
+            time.sleep(time_to_sleep)
 
     @staticmethod
     def _close_tunnel():
