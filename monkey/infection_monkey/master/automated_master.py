@@ -38,11 +38,6 @@ class AutomatedMaster(IMaster):
         self._master_thread.join()
         logger.info("The simulation has been shutdown.")
 
-    def _check_for_stop(self):
-        if self._control_channel.should_agent_stop():
-            logger.debug('Received the "stop" signal from the Island')
-            self._stop.set()
-
     def terminate(self):
         logger.info("Stopping automated breach and attack simulation")
         self._stop.set()
@@ -60,8 +55,8 @@ class AutomatedMaster(IMaster):
 
         if self._simulation_thread.is_alive():
             logger.warn("Timed out waiting for the simulation to stop")
-            # Since the master thread is a Daemon thread, it will be forcefully
-            # killed when the program exits.
+            # Since the master thread and all child threads are daemon threads, they will be
+            # forcefully killed when the program exits.
             logger.warn("Forcefully killing the simulation")
 
     def _wait_for_master_stop_condition(self):
@@ -74,6 +69,11 @@ class AutomatedMaster(IMaster):
                 timer.reset()
 
             time.sleep(CHECK_FOR_TERMINATE_INTERVAL_SEC)
+
+    def _check_for_stop(self):
+        if self._control_channel.should_agent_stop():
+            logger.debug('Received the "stop" signal from the Island')
+            self._stop.set()
 
     def _master_thread_should_run(self):
         return (not self._stop.is_set()) and self._simulation_thread.is_alive()
@@ -110,6 +110,8 @@ class AutomatedMaster(IMaster):
         payload_thread.start()
         payload_thread.join()
 
+        # TODO: This code is just for testing in development. Remove when
+        # 		implementation of AutomatedMaster is finished.
         while True:
             time.sleep(2)
             logger.debug("Simulation thread is finished sleeping")
