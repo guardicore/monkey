@@ -8,6 +8,10 @@ from werkzeug.exceptions import NotFound
 
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.database import database, mongo
+from monkey_island.cc.resources.agent_controls import (
+    StartedOnIsland,
+    StopAgentCheck,
+)
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
@@ -30,8 +34,6 @@ from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
-from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
-from monkey_island.cc.resources.monkey_control.stop_agent_check import StopAgentCheck
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
@@ -97,6 +99,7 @@ def init_app_config(app, mongo_url):
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
+    app.url_map.strict_slashes = False
     app.json_encoder = CustomJSONEncoder
 
 
@@ -124,7 +127,6 @@ def init_api_resources(api):
     api.add_resource(
         Monkey,
         "/api/monkey",
-        "/api/monkey/",
         "/api/monkey/<string:guid>",
         "/api/monkey/<string:guid>/<string:config_format>",
     )
