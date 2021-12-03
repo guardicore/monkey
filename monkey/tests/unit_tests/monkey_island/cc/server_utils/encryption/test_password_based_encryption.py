@@ -15,6 +15,7 @@ pytestmark = pytest.mark.slow
 
 MONKEY_CONFIGS_DIR_PATH = "monkey_configs"
 STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME = "monkey_config_standard.json"
+FLAT_PLAINTEXT_MONKEY_CONFIG_FILENAME = "flat_config.json"
 PASSWORD = "hello123"
 INCORRECT_PASSWORD = "goodbye321"
 

@@ -1,0 +1,134 @@
+{
+    "HTTP_PORTS": [
+        80,
+        8080,
+        443,
+        8008,
+        7001,
+        9200
+    ],
+    "PBA_linux_filename": "",
+    "PBA_windows_filename": "",
+    "alive": true,
+    "aws_access_key_id": "",
+    "aws_secret_access_key": "",
+    "aws_session_token": "",
+    "blocked_ips": [],
+    "command_servers": [
+        "10.197.94.72:5000"
+    ],
+    "current_server": "10.197.94.72:5000",
+    "custom_PBA_linux_cmd": "",
+    "custom_PBA_windows_cmd": "",
+    "depth": 2,
+    "dropper_date_reference_path_linux": "/bin/sh",
+    "dropper_date_reference_path_windows": "%windir%\\system32\\kernel32.dll",
+    "dropper_log_path_linux": "/tmp/user-1562",
+    "dropper_log_path_windows": "%temp%\\~df1562.tmp",
+    "dropper_set_date": true,
+    "dropper_target_path_linux": "/tmp/monkey",
+    "dropper_target_path_win_32": "C:\\Windows\\temp\\monkey32.exe",
+    "dropper_target_path_win_64": "C:\\Windows\\temp\\monkey64.exe",
+    "exploit_lm_hash_list": [],
+    "exploit_ntlm_hash_list": [],
+    "exploit_password_list": [
+        "root",
+        "123456",
+        "password",
+        "123456789",
+        "qwerty",
+        "111111",
+        "iloveyou"
+    ],
+    "exploit_ssh_keys": [
+    ],
+    "exploit_user_list": [
+        "Administrator",
+        "root",
+        "user",
+        "ubuntu"
+    ],
+    "exploiter_classes": [
+        "SmbExploiter",
+        "WmiExploiter",
+        "SSHExploiter",
+        "ShellShockExploiter",
+        "ElasticGroovyExploiter",
+        "Struts2Exploiter",
+        "WebLogicExploiter",
+        "HadoopExploiter",
+        "MSSQLExploiter",
+        "DrupalExploiter",
+        "PowerShellExploiter"
+    ],
+    "export_monkey_telems": false,
+    "finger_classes": [
+        "SMBFinger",
+        "SSHFinger",
+        "PingScanner",
+        "HTTPFinger",
+        "MySQLFinger",
+        "MSSQLFinger",
+        "ElasticFinger"
+    ],
+    "inaccessible_subnets": [],
+    "keep_tunnel_open_time": 60,
+    "local_network_scan": true,
+    "max_depth": null,
+    "monkey_log_path_linux": "/tmp/user-1563",
+    "monkey_log_path_windows": "%temp%\\~df1563.tmp",
+    "ms08_067_exploit_attempts": 5,
+    "ping_scan_timeout": 1000,
+    "post_breach_actions": [
+        "CommunicateAsBackdoorUser",
+        "ModifyShellStartupFiles",
+        "HiddenFiles",
+        "TrapCommand",
+        "ChangeSetuidSetgid",
+        "ScheduleJobs",
+        "Timestomping",
+        "AccountDiscovery"
+    ],
+    "ransomware": {
+        "encryption": {
+            "enabled": true,
+            "directories": {
+                "linux_target_dir": "",
+                "windows_target_dir": ""
+            }
+        },
+        "other_behaviors": {
+            "readme": true
+        }
+    },
+    "skip_exploit_if_file_exist": false,
+    "smb_download_timeout": 300,
+    "smb_service_name": "InfectionMonkey",
+    "started_on_island": false,
+    "subnet_scan_list": [],
+    "system_info_collector_classes": [
+        "AwsCollector",
+        "ProcessListCollector",
+        "MimikatzCollector"
+    ],
+    "tcp_scan_get_banner": true,
+    "tcp_scan_interval": 0,
+    "tcp_scan_timeout": 3000,
+    "tcp_target_ports": [
+        22,
+        2222,
+        445,
+        135,
+        3389,
+        80,
+        8080,
+        443,
+        8008,
+        3306,
+        7001,
+        8088
+    ],
+    "user_to_add": "Monkey_IUSER_SUPPORT",
+    "victims_max_exploit": 100,
+    "victims_max_find": 100
+}

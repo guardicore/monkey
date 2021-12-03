@@ -208,7 +208,7 @@ class ControlClient(object):
             return
         try:
             reply = requests.get(  # noqa: DUO123
-                "https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+                "https://%s/api/monkey/%s/legacy" % (WormConfiguration.current_server, GUID),
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
