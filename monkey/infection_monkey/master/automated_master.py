@@ -54,10 +54,10 @@ class AutomatedMaster(IMaster):
         self._simulation_thread.join(SHUTDOWN_TIMEOUT)
 
         if self._simulation_thread.is_alive():
-            logger.warn("Timed out waiting for the simulation to stop")
+            logger.warning("Timed out waiting for the simulation to stop")
             # Since the master thread and all child threads are daemon threads, they will be
             # forcefully killed when the program exits.
-            logger.warn("Forcefully killing the simulation")
+            logger.warning("Forcefully killing the simulation")
 
     def _wait_for_master_stop_condition(self):
         timer = Timer()
