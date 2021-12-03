@@ -99,7 +99,9 @@ class AutomatedMaster(IMaster):
         pba_thread.start()
 
         # Future stages of the simulation require the output of the system info collectors. Nothing
-        # requires the output of PBAs, so we don't need to join on that thread.
+        # requires the output of PBAs, so we don't need to join on that thread here. We will join on
+        # the PBA thread later in this function to prevent the simulation from ending while PBAs are
+        # still running.
         system_info_collector_thread.join()
 
         if self._can_propagate():
@@ -114,6 +116,8 @@ class AutomatedMaster(IMaster):
         )
         payload_thread.start()
         payload_thread.join()
+
+        pba_thread.join()
 
         # TODO: This code is just for testing in development. Remove when
         # 		implementation of AutomatedMaster is finished.
