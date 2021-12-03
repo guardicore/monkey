@@ -19,14 +19,20 @@ from monkey_island.cc.services.node import NodeService
 class Monkey(flask_restful.Resource):
 
     # Used by monkey. can't secure.
-    def get(self, guid=None, **kw):
+    def get(self, guid=None, config_format=None, **kw):
         NodeService.update_dead_monkeys()  # refresh monkeys status
         if not guid:
             guid = request.args.get("guid")
 
         if guid:
             monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
-            monkey_json["config"] = ConfigService.decrypt_flat_config(monkey_json["config"])
+            # TODO: When the "legacy" format is no longer needed, update this logic and remove the
+            #       "/api/monkey/<string:guid>/<string:config_format>" route.
+            if config_format == "legacy":
+                ConfigService.decrypt_flat_config(monkey_json["config"])
+            else:
+                ConfigService.format_config_for_agent(monkey_json["config"])
+
             return monkey_json
 
         return {}

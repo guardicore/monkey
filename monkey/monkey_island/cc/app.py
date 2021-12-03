@@ -122,7 +122,13 @@ def init_api_resources(api):
     api.add_resource(Root, "/api")
     api.add_resource(Registration, "/api/registration")
     api.add_resource(Authenticate, "/api/auth")
-    api.add_resource(Monkey, "/api/monkey", "/api/monkey/", "/api/monkey/<string:guid>")
+    api.add_resource(
+        Monkey,
+        "/api/monkey",
+        "/api/monkey/",
+        "/api/monkey/<string:guid>",
+        "/api/monkey/<string:guid>/<string:config_format>",
+    )
     api.add_resource(Bootloader, "/api/bootloader/<string:os>")
     api.add_resource(LocalRun, "/api/local-monkey", "/api/local-monkey/")
     api.add_resource(ClientRun, "/api/client-monkey", "/api/client-monkey/")

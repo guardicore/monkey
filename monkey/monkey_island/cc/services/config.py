@@ -2,6 +2,7 @@ import collections
 import copy
 import functools
 import logging
+from typing import Dict
 
 from jsonschema import Draft4Validator, validators
 
@@ -425,3 +426,7 @@ class ConfigService:
             ),
             "exploit_ssh_keys": ConfigService.get_config_value(SSH_KEYS_PATH, should_decrypt=False),
         }
+
+    @staticmethod
+    def format_config_for_agent(config: Dict):
+        ConfigService.decrypt_flat_config(config)
