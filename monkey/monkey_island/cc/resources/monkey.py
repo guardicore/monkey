@@ -31,7 +31,7 @@ class Monkey(flask_restful.Resource):
             if config_format == "legacy":
                 ConfigService.decrypt_flat_config(monkey_json["config"])
             else:
-                ConfigService.format_config_for_agent(monkey_json["config"])
+                ConfigService.format_flat_config_for_agent(monkey_json["config"])
 
             return monkey_json
 

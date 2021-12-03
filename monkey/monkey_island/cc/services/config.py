@@ -428,5 +428,18 @@ class ConfigService:
         }
 
     @staticmethod
-    def format_config_for_agent(config: Dict):
-        ConfigService.decrypt_flat_config(config)
+    def format_flat_config_for_agent(config: Dict):
+        ConfigService._remove_credentials_from_flat_config(config)
+
+    @staticmethod
+    def _remove_credentials_from_flat_config(config: Dict):
+        fields_to_remove = {
+            "exploit_lm_hash_list",
+            "exploit_ntlm_hash_list",
+            "exploit_password_list",
+            "exploit_ssh_keys",
+            "exploit_user_list",
+        }
+
+        for field in fields_to_remove:
+            config.pop(field, None)
