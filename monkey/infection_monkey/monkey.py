@@ -50,7 +50,6 @@ class InfectionMonkey:
         arg_parser.add_argument("-t", "--tunnel")
         arg_parser.add_argument("-s", "--server")
         arg_parser.add_argument("-d", "--depth", type=int)
-        arg_parser.add_argument("-vp", "--vulnerable-port")
         opts, _ = arg_parser.parse_known_args(args)
         InfectionMonkey._log_arguments(opts)
         return opts
