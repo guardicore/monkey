@@ -431,6 +431,7 @@ class ConfigService:
     def format_flat_config_for_agent(config: Dict):
         ConfigService._remove_credentials_from_flat_config(config)
         ConfigService._format_payloads_from_flat_config(config)
+        ConfigService._format_pbas_from_flat_config(config)
 
     @staticmethod
     def _remove_credentials_from_flat_config(config: Dict):
@@ -449,3 +450,28 @@ class ConfigService:
     def _format_payloads_from_flat_config(config: Dict):
         config.setdefault("payloads", {})["ransomware"] = config["ransomware"]
         config.pop("ransomware", None)
+
+    @staticmethod
+    def _format_pbas_from_flat_config(config: Dict):
+        flat_linux_command_field = "custom_PBA_linux_cmd"
+        flat_linux_filename_field = "PBA_linux_filename"
+        flat_windows_command_field = "custom_PBA_windows_cmd"
+        flat_windows_filename_field = "PBA_windows_filename"
+
+        formatted_pbas_config = {}
+        for pba in config.get("post_breach_actions", []):
+            formatted_pbas_config[pba] = {}
+
+        formatted_pbas_config["Custom"] = {
+            "linux_command": config.get(flat_linux_command_field, ""),
+            "linux_filename": config.get(flat_linux_filename_field, ""),
+            "windows_command": config.get(flat_windows_command_field, ""),
+            "windows_filename": config.get(flat_windows_filename_field, ""),
+        }
+
+        config["post_breach_actions"] = formatted_pbas_config
+
+        config.pop(flat_linux_command_field, None)
+        config.pop(flat_linux_filename_field, None)
+        config.pop(flat_windows_command_field, None)
+        config.pop(flat_windows_filename_field, None)

@@ -55,3 +55,28 @@ def test_format_config_for_agent__ransomware_payload(flat_monkey_config):
     assert flat_monkey_config["payloads"] == expected_ransomware_config
 
     assert "ransomware" not in flat_monkey_config
+
+
+def test_format_config_for_agent__pbas(flat_monkey_config):
+    expected_pbas_config = {
+        "CommunicateAsBackdoorUser": {},
+        "ModifyShellStartupFiles": {},
+        "ScheduleJobs": {},
+        "Timestomping": {},
+        "AccountDiscovery": {},
+        "Custom": {
+            "linux_command": "bash test.sh",
+            "windows_command": "powershell test.ps1",
+            "linux_filename": "test.sh",
+            "windows_filename": "test.ps1",
+        },
+    }
+    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+
+    assert "post_breach_actions" in flat_monkey_config
+    assert flat_monkey_config["post_breach_actions"] == expected_pbas_config
+
+    assert "custom_PBA_linux_cmd" not in flat_monkey_config
+    assert "PBA_linux_filename" not in flat_monkey_config
+    assert "custom_PBA_windows_cmd" not in flat_monkey_config
+    assert "PBA_windows_filename" not in flat_monkey_config

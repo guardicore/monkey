@@ -7,8 +7,8 @@
         7001,
         9200
     ],
-    "PBA_linux_filename": "",
-    "PBA_windows_filename": "",
+    "PBA_linux_filename": "test.sh",
+    "PBA_windows_filename": "test.ps1",
     "alive": true,
     "aws_access_key_id": "",
     "aws_secret_access_key": "",
@@ -18,8 +18,8 @@
         "10.197.94.72:5000"
     ],
     "current_server": "10.197.94.72:5000",
-    "custom_PBA_linux_cmd": "",
-    "custom_PBA_windows_cmd": "",
+    "custom_PBA_linux_cmd": "bash test.sh",
+    "custom_PBA_windows_cmd": "powershell test.ps1",
     "depth": 2,
     "dropper_date_reference_path_linux": "/bin/sh",
     "dropper_date_reference_path_windows": "%windir%\\system32\\kernel32.dll",
@@ -82,9 +82,6 @@
     "post_breach_actions": [
         "CommunicateAsBackdoorUser",
         "ModifyShellStartupFiles",
-        "HiddenFiles",
-        "TrapCommand",
-        "ChangeSetuidSetgid",
         "ScheduleJobs",
         "Timestomping",
         "AccountDiscovery"
