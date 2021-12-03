@@ -1,11 +1,12 @@
 # Without these imports pytests can't use fixtures,
 # because they are not found
 import json
-import os
+from typing import Dict
 
 import pytest
 from tests.unit_tests.monkey_island.cc.mongomock_fixtures import *  # noqa: F401,F403,E402
 from tests.unit_tests.monkey_island.cc.server_utils.encryption.test_password_based_encryption import (  # noqa: E501
+    FLAT_PLAINTEXT_MONKEY_CONFIG_FILENAME,
     MONKEY_CONFIGS_DIR_PATH,
     STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME,
 )
@@ -14,12 +15,24 @@ from monkey_island.cc.server_utils.encryption import unlock_datastore_encryptor
 
 
 @pytest.fixture
-def monkey_config(data_for_tests_dir):
-    plaintext_monkey_config_standard_path = os.path.join(
-        data_for_tests_dir, MONKEY_CONFIGS_DIR_PATH, STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME
-    )
-    plaintext_config = json.loads(open(plaintext_monkey_config_standard_path, "r").read())
-    return plaintext_config
+def load_monkey_config(data_for_tests_dir) -> Dict:
+    def inner(filename: str) -> Dict:
+        config_path = (
+            data_for_tests_dir / MONKEY_CONFIGS_DIR_PATH / FLAT_PLAINTEXT_MONKEY_CONFIG_FILENAME
+        )
+        return json.loads(open(config_path, "r").read())
+
+    return inner
+
+
+@pytest.fixture
+def monkey_config(load_monkey_config):
+    return load_monkey_config(STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME)
+
+
+@pytest.fixture
+def flat_monkey_config(load_monkey_config):
+    return load_monkey_config(FLAT_PLAINTEXT_MONKEY_CONFIG_FILENAME)
 
 
 @pytest.fixture
