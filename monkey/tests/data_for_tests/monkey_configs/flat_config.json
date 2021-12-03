@@ -93,8 +93,8 @@
         "encryption": {
             "enabled": true,
             "directories": {
-                "linux_target_dir": "",
-                "windows_target_dir": ""
+                "linux_target_dir": "/tmp/ransomware-target",
+                "windows_target_dir": "C:\\windows\\temp\\ransomware-target"
             }
         },
         "other_behaviors": {

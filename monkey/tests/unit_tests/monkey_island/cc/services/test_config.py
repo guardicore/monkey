@@ -33,3 +33,25 @@ def test_format_config_for_agent__credentials_removed(flat_monkey_config):
     assert "exploit_password_list" not in flat_monkey_config
     assert "exploit_ssh_keys" not in flat_monkey_config
     assert "exploit_user_list" not in flat_monkey_config
+
+
+def test_format_config_for_agent__ransomware_payload(flat_monkey_config):
+    expected_ransomware_config = {
+        "ransomware": {
+            "encryption": {
+                "enabled": True,
+                "directories": {
+                    "linux_target_dir": "/tmp/ransomware-target",
+                    "windows_target_dir": "C:\\windows\\temp\\ransomware-target",
+                },
+            },
+            "other_behaviors": {"readme": True},
+        }
+    }
+
+    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+
+    assert "payloads" in flat_monkey_config
+    assert flat_monkey_config["payloads"] == expected_ransomware_config
+
+    assert "ransomware" not in flat_monkey_config
