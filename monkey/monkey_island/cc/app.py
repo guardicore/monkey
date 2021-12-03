@@ -11,6 +11,7 @@ from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.agent_controls import (
     StartedOnIsland,
     StopAgentCheck,
+    StopAllAgents,
 )
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
@@ -131,25 +132,23 @@ def init_api_resources(api):
         "/api/monkey/<string:guid>/<string:config_format>",
     )
     api.add_resource(Bootloader, "/api/bootloader/<string:os>")
-    api.add_resource(LocalRun, "/api/local-monkey", "/api/local-monkey/")
-    api.add_resource(ClientRun, "/api/client-monkey", "/api/client-monkey/")
-    api.add_resource(
-        Telemetry, "/api/telemetry", "/api/telemetry/", "/api/telemetry/<string:monkey_guid>"
-    )
+    api.add_resource(LocalRun, "/api/local-monkey")
+    api.add_resource(StopAgentCheck, "/api/local-monkey")
+    api.add_resource(ClientRun, "/api/client-monkey")
+    api.add_resource(Telemetry, "/api/telemetry", "/api/telemetry/<string:monkey_guid>")
 
     api.add_resource(IslandMode, "/api/island-mode")
-    api.add_resource(IslandConfiguration, "/api/configuration/island", "/api/configuration/island/")
+    api.add_resource(IslandConfiguration, "/api/configuration/island")
     api.add_resource(ConfigurationExport, "/api/configuration/export")
     api.add_resource(ConfigurationImport, "/api/configuration/import")
     api.add_resource(
         MonkeyDownload,
         "/api/monkey/download",
-        "/api/monkey/download/",
         "/api/monkey/download/<string:path>",
     )
-    api.add_resource(NetMap, "/api/netmap", "/api/netmap/")
-    api.add_resource(Edge, "/api/netmap/edge", "/api/netmap/edge/")
-    api.add_resource(Node, "/api/netmap/node", "/api/netmap/node/")
+    api.add_resource(NetMap, "/api/netmap")
+    api.add_resource(Edge, "/api/netmap/edge")
+    api.add_resource(Node, "/api/netmap/node")
     api.add_resource(NodeStates, "/api/netmap/nodeStates")
 
     api.add_resource(SecurityReport, "/api/report/security")
@@ -160,9 +159,9 @@ def init_api_resources(api):
     api.add_resource(MonkeyExploitation, "/api/exploitations/monkey")
 
     api.add_resource(ZeroTrustFindingEvent, "/api/zero-trust/finding-event/<string:finding_id>")
-    api.add_resource(TelemetryFeed, "/api/telemetry-feed", "/api/telemetry-feed/")
-    api.add_resource(Log, "/api/log", "/api/log/")
-    api.add_resource(IslandLog, "/api/log/island/download", "/api/log/island/download/")
+    api.add_resource(TelemetryFeed, "/api/telemetry-feed")
+    api.add_resource(Log, "/api/log")
+    api.add_resource(IslandLog, "/api/log/island/download")
     api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
     api.add_resource(T1216PBAFileDownload, T1216_PBA_FILE_DOWNLOAD_PATH)
     api.add_resource(
@@ -172,10 +171,11 @@ def init_api_resources(api):
         "/api/fileUpload/<string:file_type>?restore=<string:filename>",
     )
     api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
-    api.add_resource(RemoteRun, "/api/remote-monkey", "/api/remote-monkey/")
-    api.add_resource(VersionUpdate, "/api/version-update", "/api/version-update/")
+    api.add_resource(RemoteRun, "/api/remote-monkey")
+    api.add_resource(VersionUpdate, "/api/version-update")
     api.add_resource(StartedOnIsland, "/api/monkey_control/started_on_island")
-    api.add_resource(StopAgentCheck, "/api/monkey_control/<int:monkey_guid>")
+    api.add_resource(StopAgentCheck, "/api/monkey_control/needs-to-stop/<int:monkey_guid>")
+    api.add_resource(StopAllAgents, "/api/monkey_control/stop-all-agents")
     api.add_resource(ScoutSuiteAuth, "/api/scoutsuite_auth/<string:provider>")
     api.add_resource(AWSKeys, "/api/aws_keys")
 

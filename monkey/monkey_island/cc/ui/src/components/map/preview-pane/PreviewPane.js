@@ -78,6 +78,7 @@ class PreviewPaneComponent extends AuthComponent {
       });
   }
 
+  // TODO remove this
   forceKillRow(asset) {
     return (
       <tr>
