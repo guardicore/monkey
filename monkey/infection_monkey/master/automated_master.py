@@ -155,7 +155,17 @@ class AutomatedMaster(IMaster):
         pass
 
     def _run_payloads(self, enabled_payloads: Dict[str, Dict]):
-        pass
+        logger.info("Running payloads")
+        logger.debug(f"Found {len(enabled_payloads.keys())} payload(s) to run")
+
+        for payload_name, options in enabled_payloads.items():
+            if self._stop.is_set():
+                logger.debug("Received a stop signal, skipping remaining system info collectors")
+                break
+
+            self._puppet.run_payload(payload_name, options, self._stop)
+
+        logger.info("Finished running payloads")
 
     def cleanup(self):
         pass
