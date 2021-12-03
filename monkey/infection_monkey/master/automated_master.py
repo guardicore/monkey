@@ -7,6 +7,7 @@ from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.utils.timer import Timer
 
@@ -96,7 +97,9 @@ class AutomatedMaster(IMaster):
             daemon=True,
         )
         pba_thread = threading.Thread(
-            target=self._run_pbas, args=(config["post_breach_actions"],), daemon=True
+            target=self._run_plugins,
+            args=(config["post_breach_actions"].items(), "post-breach action", self._run_pba),
+            daemon=True,
         )
 
         system_info_collector_thread.start()
@@ -140,8 +143,12 @@ class AutomatedMaster(IMaster):
             SystemInfoTelem({"collectors": system_info_telemetry})
         )
 
-    def _run_pbas(self, enabled_pbas: List[str]):
-        pass
+    def _run_pba(self, pba: Tuple[str, Dict]):
+        name = pba[0]
+        options = pba[1]
+
+        command, result = self._puppet.run_pba(name, options)
+        self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
 
     def _can_propagate(self):
         return True
