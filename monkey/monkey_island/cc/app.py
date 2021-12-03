@@ -30,7 +30,6 @@ from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
-from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
 from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
 from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
 from monkey_island.cc.resources.monkey_control.stop_agent_check import StopAgentCheck
@@ -132,7 +131,6 @@ def init_api_resources(api):
     )
 
     api.add_resource(IslandMode, "/api/island-mode")
-    api.add_resource(MonkeyConfiguration, "/api/configuration", "/api/configuration/")
     api.add_resource(IslandConfiguration, "/api/configuration/island", "/api/configuration/island/")
     api.add_resource(ConfigurationExport, "/api/configuration/export")
     api.add_resource(ConfigurationImport, "/api/configuration/import")
