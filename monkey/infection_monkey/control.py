@@ -408,18 +408,6 @@ class ControlClient(object):
             return False
 
     @staticmethod
-    def should_monkey_run(vulnerable_port: str) -> bool:
-        if (
-            vulnerable_port
-            and WormConfiguration.get_hop_distance_to_island() > 1
-            and ControlClient.can_island_see_port(vulnerable_port)
-            and WormConfiguration.started_on_island
-        ):
-            return False
-
-        return True
-
-    @staticmethod
     def can_island_see_port(port):
         try:
             url = (

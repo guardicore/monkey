@@ -13,7 +13,6 @@ from infection_monkey.control import ControlClient
 from infection_monkey.master.mock_master import MockMaster
 from infection_monkey.model import DELAY_DELETE_CMD
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.tools import is_running_on_island
 from infection_monkey.puppet.mock_puppet import MockPuppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
@@ -144,13 +143,6 @@ class InfectionMonkey:
     def _setup(self):
         logger.debug("Starting the setup phase.")
 
-        if self._should_exit_for_performance():
-            logger.info(
-                "Monkey shouldn't run on current machine to improve perfomance"
-                "(it will be exploited later with more depth)."
-            )
-            return
-
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
@@ -162,18 +154,6 @@ class InfectionMonkey:
         TunnelTelem().send()
 
         register_signal_handlers(self._master)
-
-    def _should_exit_for_performance(self):
-        """
-        This method implements propagation performance enhancing algorithm that
-        kicks in if the run was started from the Island.
-        Should get replaced by other, better performance enhancement solutions
-        """
-        if is_running_on_island():
-            WormConfiguration.started_on_island = True
-            ControlClient.report_start_on_island()
-
-        return not ControlClient.should_monkey_run(self._opts.vulnerable_port)
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
