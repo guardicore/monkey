@@ -33,6 +33,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Max iterations and timeout between iterations config options. #1600
 - MITRE ATT&CK configuration screen. #1532
 - Propagation credentials from "GET /api/monkey/<string:guid>" endpoint. #1538
+- "GET /api/monkey_control/check_remote_port/<string:port>" endpoint. #1635
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
