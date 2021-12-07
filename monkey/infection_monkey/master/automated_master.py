@@ -30,8 +30,8 @@ class AutomatedMaster(IMaster):
         self._control_channel = control_channel
 
         self._stop = threading.Event()
-        self._master_thread = threading.Thread(target=self._run_master_thread, daemon=True)
-        self._simulation_thread = threading.Thread(target=self._run_simulation, daemon=True)
+        self._master_thread = _create_daemon_thread(target=self._run_master_thread)
+        self._simulation_thread = _create_daemon_thread(target=self._run_simulation)
 
     def start(self):
         logger.info("Starting automated breach and attack simulation")
@@ -87,19 +87,17 @@ class AutomatedMaster(IMaster):
     def _run_simulation(self):
         config = self._control_channel.get_config()
 
-        system_info_collector_thread = threading.Thread(
+        system_info_collector_thread = _create_daemon_thread(
             target=self._run_plugins,
             args=(
                 config["system_info_collector_classes"],
                 "system info collector",
                 self._collect_system_info,
             ),
-            daemon=True,
         )
-        pba_thread = threading.Thread(
+        pba_thread = _create_daemon_thread(
             target=self._run_plugins,
             args=(config["post_breach_actions"].items(), "post-breach action", self._run_pba),
-            daemon=True,
         )
 
         system_info_collector_thread.start()
@@ -112,16 +110,13 @@ class AutomatedMaster(IMaster):
         system_info_collector_thread.join()
 
         if self._can_propagate():
-            propagation_thread = threading.Thread(
-                target=self._propagate, args=(config,), daemon=True
-            )
+            propagation_thread = _create_daemon_thread(target=self._propagate, args=(config,))
             propagation_thread.start()
             propagation_thread.join()
 
-        payload_thread = threading.Thread(
+        payload_thread = _create_daemon_thread(
             target=self._run_plugins,
             args=(config["payloads"].items(), "payload", self._run_payload),
-            daemon=True,
         )
         payload_thread.start()
         payload_thread.join()
@@ -177,3 +172,7 @@ class AutomatedMaster(IMaster):
 
     def cleanup(self):
         pass
+
+
+def _create_daemon_thread(target: Callable[[Any], None], args: Tuple[Any] = ()):
+    return threading.Thread(target=target, args=args, daemon=True)
