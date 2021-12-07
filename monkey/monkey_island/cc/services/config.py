@@ -412,11 +412,11 @@ class ConfigService:
     @staticmethod
     def get_config_propagation_credentials_from_flat_config(config):
         return {
-            "exploit_user_list": config["exploit_user_list"],
-            "exploit_password_list": config["exploit_password_list"],
-            "exploit_lm_hash_list": config["exploit_lm_hash_list"],
-            "exploit_ntlm_hash_list": config["exploit_ntlm_hash_list"],
-            "exploit_ssh_keys": config["exploit_ssh_keys"],
+            "exploit_user_list": config.get("exploit_user_list", []),
+            "exploit_password_list": config.get("exploit_password_list", []),
+            "exploit_lm_hash_list": config.get("exploit_lm_hash_list", []),
+            "exploit_ntlm_hash_list": config.get("exploit_ntlm_hash_list", []),
+            "exploit_ssh_keys": config.get("exploit_ssh_keys", []),
         }
 
     @staticmethod
