@@ -133,7 +133,6 @@ def init_api_resources(api):
     )
     api.add_resource(Bootloader, "/api/bootloader/<string:os>")
     api.add_resource(LocalRun, "/api/local-monkey")
-    api.add_resource(StopAgentCheck, "/api/local-monkey")
     api.add_resource(ClientRun, "/api/client-monkey")
     api.add_resource(Telemetry, "/api/telemetry", "/api/telemetry/<string:monkey_guid>")
 
