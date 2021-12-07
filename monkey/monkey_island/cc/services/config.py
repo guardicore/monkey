@@ -410,21 +410,13 @@ class ConfigService:
         ConfigService.set_config_value(STARTED_ON_ISLAND_PATH, value)
 
     @staticmethod
-    def get_config_propagation_credentials():
+    def get_config_propagation_credentials_from_flat_config(config):
         return {
-            "exploit_user_list": ConfigService.get_config_value(
-                USER_LIST_PATH, should_decrypt=False
-            ),
-            "exploit_password_list": ConfigService.get_config_value(
-                PASSWORD_LIST_PATH, should_decrypt=False
-            ),
-            "exploit_lm_hash_list": ConfigService.get_config_value(
-                LM_HASH_LIST_PATH, should_decrypt=False
-            ),
-            "exploit_ntlm_hash_list": ConfigService.get_config_value(
-                NTLM_HASH_LIST_PATH, should_decrypt=False
-            ),
-            "exploit_ssh_keys": ConfigService.get_config_value(SSH_KEYS_PATH, should_decrypt=False),
+            "exploit_user_list": config["exploit_user_list"],
+            "exploit_password_list": config["exploit_password_list"],
+            "exploit_lm_hash_list": config["exploit_lm_hash_list"],
+            "exploit_ntlm_hash_list": config["exploit_ntlm_hash_list"],
+            "exploit_ssh_keys": config["exploit_ssh_keys"],
         }
 
     @staticmethod
