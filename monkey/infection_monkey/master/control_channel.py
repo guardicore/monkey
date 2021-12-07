@@ -56,7 +56,7 @@ class ControlChannel(IControlChannel):
     def get_credentials_for_propagation(self) -> dict:
         try:
             response = requests.get(  # noqa: DUO123
-                f"{self._control_channel_server}/api/propagationCredentials",
+                f"{self._control_channel_server}/api/propagation-credentials",
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
