@@ -4,7 +4,8 @@ import flask_restful
 from flask import make_response, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.infection_lifecycle import set_stop_all
+from monkey_island.cc.resources.utils.semaphores import AGENT_KILLING_SEMAPHORE
+from monkey_island.cc.services.infection_lifecycle import set_stop_all, was_monkey_killed
 
 
 class StopAllAgents(flask_restful.Resource):
