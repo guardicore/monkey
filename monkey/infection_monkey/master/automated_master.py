@@ -1,12 +1,13 @@
 import logging
 import threading
 import time
-from typing import Dict, List
+from typing import Any, Callable, Dict, List, Tuple
 
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.utils.timer import Timer
 
@@ -29,8 +30,8 @@ class AutomatedMaster(IMaster):
         self._control_channel = control_channel
 
         self._stop = threading.Event()
-        self._master_thread = threading.Thread(target=self._run_master_thread, daemon=True)
-        self._simulation_thread = threading.Thread(target=self._run_simulation, daemon=True)
+        self._master_thread = _create_daemon_thread(target=self._run_master_thread)
+        self._simulation_thread = _create_daemon_thread(target=self._run_simulation)
 
     def start(self):
         logger.info("Starting automated breach and attack simulation")
@@ -86,13 +87,17 @@ class AutomatedMaster(IMaster):
     def _run_simulation(self):
         config = self._control_channel.get_config()
 
-        system_info_collector_thread = threading.Thread(
-            target=self._collect_system_info,
-            args=(config["system_info_collector_classes"],),
-            daemon=True,
+        system_info_collector_thread = _create_daemon_thread(
+            target=self._run_plugins,
+            args=(
+                config["system_info_collector_classes"],
+                "system info collector",
+                self._collect_system_info,
+            ),
         )
-        pba_thread = threading.Thread(
-            target=self._run_pbas, args=(config["post_breach_actions"],), daemon=True
+        pba_thread = _create_daemon_thread(
+            target=self._run_plugins,
+            args=(config["post_breach_actions"].items(), "post-breach action", self._run_pba),
         )
 
         system_info_collector_thread.start()
@@ -105,14 +110,13 @@ class AutomatedMaster(IMaster):
         system_info_collector_thread.join()
 
         if self._can_propagate():
-            propagation_thread = threading.Thread(
-                target=self._propagate, args=(config,), daemon=True
-            )
+            propagation_thread = _create_daemon_thread(target=self._propagate, args=(config,))
             propagation_thread.start()
             propagation_thread.join()
 
-        payload_thread = threading.Thread(
-            target=self._run_payloads, args=(config["payloads"],), daemon=True
+        payload_thread = _create_daemon_thread(
+            target=self._run_plugins,
+            args=(config["payloads"].items(), "payload", self._run_payload),
         )
         payload_thread.start()
         payload_thread.join()
@@ -127,26 +131,19 @@ class AutomatedMaster(IMaster):
             if self._stop.is_set():
                 break
 
-    def _collect_system_info(self, enabled_collectors: List[str]):
-        logger.info("Running system info collectors")
+    def _collect_system_info(self, collector: str):
+        system_info_telemetry = {}
+        system_info_telemetry[collector] = self._puppet.run_sys_info_collector(collector)
+        self._telemetry_messenger.send_telemetry(
+            SystemInfoTelem({"collectors": system_info_telemetry})
+        )
 
-        for collector in enabled_collectors:
-            if self._stop.is_set():
-                logger.debug("Received a stop signal, skipping remaining system info collectors")
-                break
+    def _run_pba(self, pba: Tuple[str, Dict]):
+        name = pba[0]
+        options = pba[1]
 
-            logger.info(f"Running system info collector: {collector}")
-
-            system_info_telemetry = {}
-            system_info_telemetry[collector] = self._puppet.run_sys_info_collector(collector)
-            self._telemetry_messenger.send_telemetry(
-                SystemInfoTelem({"collectors": system_info_telemetry})
-            )
-
-        logger.info("Finished running system info collectors")
-
-    def _run_pbas(self, enabled_pbas: List[str]):
-        pass
+        command, result = self._puppet.run_pba(name, options)
+        self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
 
     def _can_propagate(self):
         return True
@@ -154,8 +151,28 @@ class AutomatedMaster(IMaster):
     def _propagate(self, config: Dict):
         pass
 
-    def _run_payloads(self, enabled_payloads: Dict[str, Dict]):
-        pass
+    def _run_payload(self, payload: Tuple[str, Dict]):
+        name = payload[0]
+        options = payload[1]
+
+        self._puppet.run_payload(name, options, self._stop)
+
+    def _run_plugins(self, plugin: List[Any], plugin_type: str, callback: Callable[[Any], None]):
+        logger.info(f"Running {plugin_type}s")
+        logger.debug(f"Found {len(plugin)} {plugin_type}(s) to run")
+
+        for p in plugin:
+            if self._stop.is_set():
+                logger.debug(f"Received a stop signal, skipping remaining {plugin_type}s")
+                return
+
+            callback(p)
+
+        logger.info(f"Finished running {plugin_type}s")
 
     def cleanup(self):
         pass
+
+
+def _create_daemon_thread(target: Callable[[Any], None], args: Tuple[Any] = ()):
+    return threading.Thread(target=target, args=args, daemon=True)
