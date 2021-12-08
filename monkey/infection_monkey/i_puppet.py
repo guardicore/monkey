@@ -35,7 +35,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def ping(self, host: str) -> Tuple[bool, Optional[str]]:
+    def ping(self, host: str, options: Dict) -> Tuple[bool, Optional[str]]:
         """
         Sends a ping (ICMP packet) to a remote host
         :param str host: The domain name or IP address of a host

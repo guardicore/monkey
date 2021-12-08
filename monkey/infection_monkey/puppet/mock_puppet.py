@@ -155,7 +155,7 @@ class MockPuppet(IPuppet):
         else:
             return PostBreachData("pba command 2", ["pba result 2", False])
 
-    def ping(self, host: str) -> Tuple[bool, Optional[str]]:
+    def ping(self, host: str, options: Dict) -> Tuple[bool, Optional[str]]:
         logger.debug(f"run_ping({host})")
         if host == DOT_1:
             return (True, "windows")
