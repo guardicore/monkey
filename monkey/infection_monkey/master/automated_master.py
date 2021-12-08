@@ -160,7 +160,7 @@ class AutomatedMaster(IMaster):
         hosts_to_exploit = Queue()
 
         scan_thread = _create_daemon_thread(
-            target=self._scan_network, args=(config, hosts_to_exploit)
+            target=self._scan_network, args=(config["network_scan"], hosts_to_exploit)
         )
         exploit_thread = _create_daemon_thread(
             target=self._exploit_targets, args=(hosts_to_exploit, scan_thread)
@@ -208,11 +208,8 @@ class AutomatedMaster(IMaster):
 
                 victim_host = VictimHost(ip)
 
-                self._ping_ip(ip, victim_host)
-
-                # TODO: get ports from config
-                ports = [22, 445, 3389, 8008]
-                self._scan_tcp_ports(ip, ports, victim_host)
+                self._ping_ip(ip, victim_host, scan_config["icmp"])
+                self._scan_tcp_ports(ip, victim_host, scan_config["tcp"])
 
                 hosts_to_exploit.put(hosts_to_exploit)
                 self._telemetry_messenger.send_telemetry(ScanTelem(victim_host))
@@ -224,19 +221,20 @@ class AutomatedMaster(IMaster):
 
         logger.debug(f"Detected the stop signal, scanning thread {threading.get_ident()} exiting")
 
-    def _ping_ip(self, ip: str, victim_host: VictimHost):
-        (response_received, os) = self._puppet.ping(ip)
+    def _ping_ip(self, ip: str, victim_host: VictimHost, options: Dict):
+        (response_received, os) = self._puppet.ping(ip, options)
 
         victim_host.icmp = response_received
         if os is not None:
             victim_host.os["type"] = os
 
-    def _scan_tcp_ports(self, ip: str, ports: List[int], victim_host: VictimHost):
-        for p in ports:
+    def _scan_tcp_ports(self, ip: str, victim_host: VictimHost, options: Dict):
+        for p in options["ports"]:
             if self._stop.is_set():
                 break
 
-            port_scan_data = self._puppet.scan_tcp_port(ip, p)
+            # TODO: check units of timeout
+            port_scan_data = self._puppet.scan_tcp_port(ip, p, options["timeout"])
             if port_scan_data.status == PortStatus.OPEN:
                 victim_host.services[port_scan_data.service] = {}
                 victim_host.services[port_scan_data.service]["display_name"] = "unknown(TCP)"
