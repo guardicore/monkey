@@ -1,4 +1,5 @@
 import logging
+import queue
 import threading
 import time
 from queue import Queue
@@ -7,15 +8,18 @@ from typing import Any, Callable, Dict, List, Tuple
 
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
-from infection_monkey.i_puppet import IPuppet
+from infection_monkey.i_puppet import IPuppet, PortStatus
+from infection_monkey.model.host import VictimHost
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
+from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.utils.timer import Timer
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
 SHUTDOWN_TIMEOUT = 5
+NUM_SCAN_THREADS = 16  # TODO: Adjust this to the optimal number of scan threads
 
 logger = logging.getLogger()
 
@@ -109,7 +113,7 @@ class AutomatedMaster(IMaster):
         # requires the output of PBAs, so we don't need to join on that thread here. We will join on
         # the PBA thread later in this function to prevent the simulation from ending while PBAs are
         # still running.
-        system_info_collector_thread.join()
+        # system_info_collector_thread.join()
 
         if self._can_propagate():
             propagation_thread = _create_daemon_thread(target=self._propagate, args=(config,))
@@ -155,7 +159,9 @@ class AutomatedMaster(IMaster):
 
         hosts_to_exploit = Queue()
 
-        scan_thread = _create_daemon_thread(target=self._scan_network)
+        scan_thread = _create_daemon_thread(
+            target=self._scan_network, args=(config, hosts_to_exploit)
+        )
         exploit_thread = _create_daemon_thread(
             target=self._exploit_targets, args=(hosts_to_exploit, scan_thread)
         )
@@ -168,11 +174,75 @@ class AutomatedMaster(IMaster):
 
         logger.info("Finished attempting to propagate")
 
-    def _scan_network(self):
-        pass
-
     def _exploit_targets(self, hosts_to_exploit: Queue, scan_thread: Thread):
         pass
+
+    # TODO: Refactor this into its own class
+    def _scan_network(self, scan_config: Dict, hosts_to_exploit: Queue):
+        logger.info("Starting network scan")
+
+        # TODO: Generate list of IPs to scan
+        ips_to_scan = Queue()
+        for i in range(1, 255):
+            ips_to_scan.put(f"10.0.0.{i}")
+
+        scan_threads = []
+        for i in range(0, NUM_SCAN_THREADS):
+            t = _create_daemon_thread(
+                target=self._scan_ips, args=(ips_to_scan, scan_config, hosts_to_exploit)
+            )
+            t.start()
+            scan_threads.append(t)
+
+        for t in scan_threads:
+            t.join()
+
+        logger.info("Finished network scan")
+
+    def _scan_ips(self, ips_to_scan: Queue, scan_config: Dict, hosts_to_exploit: Queue):
+        logger.debug(f"Starting scan thread -- Thread ID: {threading.get_ident()}")
+        try:
+            while not self._stop.is_set():
+                ip = ips_to_scan.get_nowait()
+                logger.info(f"Scanning {ip}")
+
+                victim_host = VictimHost(ip)
+
+                self._ping_ip(ip, victim_host)
+
+                # TODO: get ports from config
+                ports = [22, 445, 3389, 8008]
+                self._scan_tcp_ports(ip, ports, victim_host)
+
+                hosts_to_exploit.put(hosts_to_exploit)
+                self._telemetry_messenger.send_telemetry(ScanTelem(victim_host))
+
+        except queue.Empty:
+            logger.debug(
+                f"ips_to_scan queue is empty, scanning thread {threading.get_ident()} exiting"
+            )
+
+        logger.debug(f"Detected the stop signal, scanning thread {threading.get_ident()} exiting")
+
+    def _ping_ip(self, ip: str, victim_host: VictimHost):
+        (response_received, os) = self._puppet.ping(ip)
+
+        victim_host.icmp = response_received
+        if os is not None:
+            victim_host.os["type"] = os
+
+    def _scan_tcp_ports(self, ip: str, ports: List[int], victim_host: VictimHost):
+        for p in ports:
+            if self._stop.is_set():
+                break
+
+            port_scan_data = self._puppet.scan_tcp_port(ip, p)
+            if port_scan_data.status == PortStatus.OPEN:
+                victim_host.services[port_scan_data.service] = {}
+                victim_host.services[port_scan_data.service]["display_name"] = "unknown(TCP)"
+                victim_host.services[port_scan_data.service]["port"] = port_scan_data.port
+                if port_scan_data.banner is not None:
+                    victim_host.services[port_scan_data.service]["banner"] = port_scan_data.banner
 
     def _run_payload(self, payload: Tuple[str, Dict]):
         name = payload[0]
