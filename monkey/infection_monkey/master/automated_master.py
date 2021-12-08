@@ -1,6 +1,8 @@
 import logging
 import threading
 import time
+from queue import Queue
+from threading import Thread
 from typing import Any, Callable, Dict, List, Tuple
 
 from infection_monkey.i_control_channel import IControlChannel
@@ -149,6 +151,27 @@ class AutomatedMaster(IMaster):
         return True
 
     def _propagate(self, config: Dict):
+        logger.info("Attempting to propagate")
+
+        hosts_to_exploit = Queue()
+
+        scan_thread = _create_daemon_thread(target=self._scan_network)
+        exploit_thread = _create_daemon_thread(
+            target=self._exploit_targets, args=(hosts_to_exploit, scan_thread)
+        )
+
+        scan_thread.start()
+        exploit_thread.start()
+
+        scan_thread.join()
+        exploit_thread.join()
+
+        logger.info("Finished attempting to propagate")
+
+    def _scan_network(self):
+        pass
+
+    def _exploit_targets(self, hosts_to_exploit: Queue, scan_thread: Thread):
         pass
 
     def _run_payload(self, payload: Tuple[str, Dict]):
@@ -175,4 +198,4 @@ class AutomatedMaster(IMaster):
 
 
 def _create_daemon_thread(target: Callable[[Any], None], args: Tuple[Any] = ()):
-    return threading.Thread(target=target, args=args, daemon=True)
+    return Thread(target=target, args=args, daemon=True)
