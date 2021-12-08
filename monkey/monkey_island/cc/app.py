@@ -8,11 +8,7 @@ from werkzeug.exceptions import NotFound
 
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.database import database, mongo
-from monkey_island.cc.resources.agent_controls import (
-    StartedOnIsland,
-    StopAgentCheck,
-    StopAllAgents,
-)
+from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
@@ -172,7 +168,6 @@ def init_api_resources(api):
     api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
     api.add_resource(RemoteRun, "/api/remote-monkey")
     api.add_resource(VersionUpdate, "/api/version-update")
-    api.add_resource(StartedOnIsland, "/api/monkey_control/started_on_island")
     api.add_resource(StopAgentCheck, "/api/monkey_control/needs-to-stop/<int:monkey_guid>")
     api.add_resource(StopAllAgents, "/api/monkey_control/stop-all-agents")
     api.add_resource(ScoutSuiteAuth, "/api/scoutsuite_auth/<string:provider>")

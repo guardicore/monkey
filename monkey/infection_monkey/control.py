@@ -401,12 +401,3 @@ class ControlClient(object):
             )
         except requests.exceptions.RequestException:
             return False
-
-    @staticmethod
-    def report_start_on_island():
-        requests.post(  # noqa: DUO123
-            f"https://{WormConfiguration.current_server}/api/monkey_control/started_on_island",
-            data=json.dumps({"started_on_island": True}),
-            verify=False,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
-        )

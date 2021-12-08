@@ -15,7 +15,6 @@ from common.config_value_paths import (
     PBA_LINUX_FILENAME_PATH,
     PBA_WINDOWS_FILENAME_PATH,
     SSH_KEYS_PATH,
-    STARTED_ON_ISLAND_PATH,
     USER_LIST_PATH,
 )
 from monkey_island.cc.database import mongo
@@ -404,10 +403,6 @@ class ConfigService:
     @staticmethod
     def is_test_telem_export_enabled():
         return ConfigService.get_config_value(EXPORT_MONKEY_TELEMS_PATH)
-
-    @staticmethod
-    def set_started_on_island(value: bool):
-        ConfigService.set_config_value(STARTED_ON_ISLAND_PATH, value)
 
     @staticmethod
     def get_config_propagation_credentials_from_flat_config(config):

@@ -117,9 +117,6 @@ export default function UiSchema(props) {
       other_behaviors : {'ui:widget': 'hidden'}
     },
     internal: {
-      general: {
-        started_on_island: {'ui:widget': 'hidden'}
-      },
       classes: {
         finger_classes: {
           classNames: 'config-template-no-header',
