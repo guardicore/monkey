@@ -15,13 +15,6 @@ INTERNAL = {
                     "description": "Time to keep tunnel open before going down after last exploit "
                     "(in seconds)",
                 },
-                "started_on_island": {
-                    "title": "Started on island",
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Was exploitation started from island"
-                    "(did monkey with max depth ran on island)",
-                },
             },
         },
         "monkey": {

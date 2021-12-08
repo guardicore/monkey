@@ -172,7 +172,6 @@ def init_api_resources(api):
     api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
     api.add_resource(RemoteRun, "/api/remote-monkey")
     api.add_resource(VersionUpdate, "/api/version-update")
-    api.add_resource(StartedOnIsland, "/api/monkey_control/started_on_island")
     api.add_resource(StopAgentCheck, "/api/monkey_control/needs-to-stop/<int:monkey_guid>")
     api.add_resource(StopAllAgents, "/api/monkey_control/stop-all-agents")
     api.add_resource(ScoutSuiteAuth, "/api/scoutsuite_auth/<string:provider>")
