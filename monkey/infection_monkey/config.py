@@ -112,7 +112,6 @@ class Configuration(object):
     # depth of propagation
     depth = 2
     max_depth = None
-    started_on_island = False
     current_server = ""
 
     # Configuration servers to try to connect to, in this order.
