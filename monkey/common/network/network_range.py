@@ -54,6 +54,7 @@ class NetworkRange(object, metaclass=ABCMeta):
     def check_if_range(address_str):
         if -1 != address_str.find("-"):
             ips = address_str.split("-")
+            ips = [ip.strip() for ip in ips]
             try:
                 ipaddress.ip_address(ips[0]) and ipaddress.ip_address(ips[1])
             except ValueError:
