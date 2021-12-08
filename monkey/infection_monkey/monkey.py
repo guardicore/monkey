@@ -76,7 +76,7 @@ class InfectionMonkey:
 
         should_stop = ControlChannel(WormConfiguration.current_server, GUID).should_agent_stop()
         if should_stop:
-            logger.info("The Monkey Island has instructed this agent to stop.")
+            logger.info("The Monkey Island has instructed this agent to stop")
             return
 
         if InfectionMonkey._is_upgrade_to_64_needed():
