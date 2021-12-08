@@ -8,11 +8,7 @@ from werkzeug.exceptions import NotFound
 
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.database import database, mongo
-from monkey_island.cc.resources.agent_controls import (
-    StartedOnIsland,
-    StopAgentCheck,
-    StopAllAgents,
-)
+from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
