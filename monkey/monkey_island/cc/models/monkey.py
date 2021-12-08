@@ -110,7 +110,7 @@ class Monkey(Document):
         if self.has_parent():
             Monkey.objects(guid=self.parent[0][0]).first()
         else:
-            raise ParentNotFoundError
+            raise ParentNotFoundError(f"No parent was found for agent with GUID {self.guid}")
 
     def get_os(self):
         os = "unknown"

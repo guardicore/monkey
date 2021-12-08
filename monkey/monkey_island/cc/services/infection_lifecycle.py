@@ -41,10 +41,6 @@ def _is_monkey_killed_manually(monkey: Monkey) -> bool:
     return int(kill_timestamp) >= int(launch_timestamp)
 
 
-def init_agent_controls():
-    AgentControls().save()
-
-
 def get_completed_steps():
     is_any_exists = NodeService.is_any_monkey_exists()
     infection_done = NodeService.is_monkey_finished_running()

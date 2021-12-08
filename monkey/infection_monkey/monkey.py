@@ -74,11 +74,10 @@ class InfectionMonkey:
         if is_windows_os():
             T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
-        # TODO move this function
         should_stop = ControlChannel(WormConfiguration.current_server, GUID).should_agent_stop()
-        logger.info(f"Should monkey stop: {should_stop}")
         if should_stop:
-            sys.exit(1)
+            logger.info("The Monkey Island has instructed this agent to stop.")
+            return
 
         if InfectionMonkey._is_upgrade_to_64_needed():
             self._upgrade_to_64()
