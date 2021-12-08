@@ -8,7 +8,7 @@ from flask import request
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
 from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
-from monkey_island.cc.resources.utils.semaphores import AGENT_KILLING_SEMAPHORE
+from monkey_island.cc.resources.utils.semaphores import agent_killing_mutex
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.edge.edge import EdgeService
@@ -67,7 +67,7 @@ class Monkey(flask_restful.Resource):
     # Called on monkey wakeup to initialize local configuration
     @TestTelemStore.store_exported_telem
     def post(self, **kw):
-        with AGENT_KILLING_SEMAPHORE:
+        with agent_killing_mutex:
             monkey_json = json.loads(request.data)
             monkey_json["creds"] = []
             monkey_json["dead"] = False
