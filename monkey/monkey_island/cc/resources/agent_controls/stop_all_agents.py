@@ -5,7 +5,7 @@ from flask import make_response, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.utils.semaphores import AGENT_KILLING_SEMAPHORE
-from monkey_island.cc.services.infection_lifecycle import set_stop_all, was_monkey_killed
+from monkey_island.cc.services.infection_lifecycle import set_stop_all, should_agent_die
 
 
 class StopAllAgents(flask_restful.Resource):
@@ -20,4 +20,4 @@ class StopAllAgents(flask_restful.Resource):
                 return make_response({}, 400)
 
     def get(self, monkey_guid):
-        return {"stop_agent": was_monkey_killed(monkey_guid)}
+        return {"stop_agent": should_agent_die(monkey_guid)}

@@ -24,12 +24,12 @@ def set_stop_all(time: float):
 
 
 def should_agent_die(guid: int) -> bool:
-    monkey = Monkey.objects(guid=guid).first()
-    return _is_monkey_marked_dead(monkey) or _is_monkey_killed_manually()
+    monkey = Monkey.objects(guid=str(guid)).first()
+    return _is_monkey_marked_dead(monkey) or _is_monkey_killed_manually(monkey)
 
 
 def _is_monkey_marked_dead(monkey: Monkey) -> bool:
-    return monkey.config.alive
+    return not monkey.config.alive
 
 
 def _is_monkey_killed_manually(monkey: Monkey) -> bool:

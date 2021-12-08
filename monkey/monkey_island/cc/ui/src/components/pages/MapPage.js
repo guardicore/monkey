@@ -84,7 +84,7 @@ class MapPageComponent extends AuthComponent {
   }
 
   killAllMonkeys = () => {
-    this.authFetch('/api/agent_control/stop-all-agents',
+    this.authFetch('/api/monkey_control/stop-all-agents',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
