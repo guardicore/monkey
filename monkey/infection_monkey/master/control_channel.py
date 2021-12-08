@@ -6,7 +6,7 @@ import requests
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
-from monkey.infection_monkey.i_control_channel import IControlChannel
+from infection_monkey.i_control_channel import IControlChannel
 
 requests.packages.urllib3.disable_warnings()
 
@@ -23,8 +23,12 @@ class ControlChannel(IControlChannel):
             logger.error("Agent should stop because it can't connect to the C&C server.")
             return True
         try:
+            url = (
+                f"https://{self._control_channel_server}/api/monkey_control"
+                f"/needs-to-stop/{self._agent_id}"
+            )
             response = requests.get(  # noqa: DUO123
-                f"https://{self._control_channel_server}/api/monkey_control/needs-to-stop/{self._agent_id}",
+                url,
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
