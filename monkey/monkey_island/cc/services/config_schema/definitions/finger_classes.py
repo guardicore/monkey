@@ -22,13 +22,6 @@ FINGER_CLASSES = {
         },
         {
             "type": "string",
-            "enum": ["PingScanner"],
-            "title": "Ping Scanner",
-            "safe": True,
-            "info": "Tries to identify if host is alive and which OS it's running by ping scan.",
-        },
-        {
-            "type": "string",
             "enum": ["HTTPFinger"],
             "title": "HTTP Fingerprinter",
             "safe": True,

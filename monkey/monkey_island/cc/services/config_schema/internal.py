@@ -165,7 +165,6 @@ INTERNAL = {
                     "default": [
                         "SMBFinger",
                         "SSHFinger",
-                        "PingScanner",
                         "HTTPFinger",
                         "MySQLFinger",
                         "MSSQLFinger",

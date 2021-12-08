@@ -100,7 +100,6 @@
         "finger_classes": [
           "SMBFinger",
           "SSHFinger",
-          "PingScanner",
           "HTTPFinger",
           "MySQLFinger",
           "MSSQLFinger",
