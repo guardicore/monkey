@@ -3,6 +3,7 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
+from monkey_island.cc import app
 from monkey_island.cc.models import Report
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -100,6 +101,8 @@ EnvironmentCollector  # unused class (monkey/infection_monkey/system_info/collec
 ProcessListCollector  # unused class (monkey/infection_monkey/system_info/collectors/process_list_collector.py:18)
 _.coinit_flags  # unused attribute (monkey/infection_monkey/system_info/windows_info_collector.py:11)
 _.representations  # unused attribute (monkey/monkey_island/cc/app.py:180)
+_.representations  # unused attribute (monkey/monkey_island/cc/app.py:180)
+app.url_map.strict_slashes
 _.log_message  # unused method (monkey/infection_monkey/transport/http.py:188)
 _.log_message  # unused method (monkey/infection_monkey/transport/http.py:109)
 _.version_string  # unused method (monkey/infection_monkey/transport/http.py:148)

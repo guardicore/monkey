@@ -84,9 +84,14 @@ class MapPageComponent extends AuthComponent {
   }
 
   killAllMonkeys = () => {
-    this.authFetch('/api?action=killall')
+    this.authFetch('/api/monkey_control/stop-all-agents',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({kill_time: Date.now()})
+      })
       .then(res => res.json())
-      .then(res => this.setState({killPressed: (res.status === 'OK')}));
+      .then(res => {this.setState({killPressed: true}); console.log(res)});
   };
 
   renderKillDialogModal = () => {

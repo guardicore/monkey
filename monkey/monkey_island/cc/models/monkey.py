@@ -9,6 +9,7 @@ from mongoengine import (
     DoesNotExist,
     DynamicField,
     EmbeddedDocumentField,
+    FloatField,
     ListField,
     ReferenceField,
     StringField,
@@ -18,6 +19,10 @@ from monkey_island.cc.models.command_control_channel import CommandControlChanne
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
+
+
+class ParentNotFoundError(Exception):
+    """Raise when trying to get a parent of monkey that doesn't have one"""
 
 
 class Monkey(Document):
@@ -38,7 +43,7 @@ class Monkey(Document):
     description = StringField()
     hostname = StringField()
     ip_addresses = ListField(StringField())
-    launch_time = StringField()
+    launch_time = FloatField()
     keepalive = DateTimeField()
     modifytime = DateTimeField()
     # TODO make "parent" an embedded document, so this can be removed and the schema explained (
@@ -94,6 +99,18 @@ class Monkey(Document):
                 # Trying to dereference unknown document - the monkey is MIA.
                 monkey_is_dead = True
         return monkey_is_dead
+
+    def has_parent(self):
+        for p in self.parent:
+            if p[0] != self.guid:
+                return True
+        return False
+
+    def get_parent(self):
+        if self.has_parent():
+            return Monkey.objects(guid=self.parent[0][0]).first()
+        else:
+            raise ParentNotFoundError(f"No parent was found for agent with GUID {self.guid}")
 
     def get_os(self):
         os = "unknown"

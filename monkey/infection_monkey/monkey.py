@@ -8,8 +8,9 @@ import time
 import infection_monkey.tunnel as tunnel
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
-from infection_monkey.config import WormConfiguration
+from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.master.mock_master import MockMaster
 from infection_monkey.model import DELAY_DELETE_CMD
 from infection_monkey.network.firewall import app as firewall
@@ -73,8 +74,9 @@ class InfectionMonkey:
         if is_windows_os():
             T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
-        if InfectionMonkey._is_monkey_alive_by_config():
-            logger.info("Monkey marked 'not alive' from configuration.")
+        should_stop = ControlChannel(WormConfiguration.current_server, GUID).should_agent_stop()
+        if should_stop:
+            logger.info("The Monkey Island has instructed this agent to stop")
             return
 
         if InfectionMonkey._is_upgrade_to_64_needed():
@@ -125,10 +127,6 @@ class InfectionMonkey:
         self._opts.server = WormConfiguration.current_server
         logger.debug("default server set to: %s" % self._opts.server)
         return True
-
-    @staticmethod
-    def _is_monkey_alive_by_config():
-        return not WormConfiguration.alive
 
     @staticmethod
     def _is_upgrade_to_64_needed():

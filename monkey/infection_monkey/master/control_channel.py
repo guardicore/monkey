@@ -19,9 +19,12 @@ class ControlChannel(IControlChannel):
         self._control_channel_server = server
 
     def should_agent_stop(self) -> bool:
+        if not self._control_channel_server:
+            logger.error("Agent should stop because it can't connect to the C&C server.")
+            return True
         try:
             response = requests.get(  # noqa: DUO123
-                f"{self._control_channel_server}/api/monkey_control/{self._agent_id}",
+                f"https://{self._control_channel_server}/api/monkey_control/needs-to-stop/{self._agent_id}",
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,

@@ -1,7 +1,6 @@
 import json
 import logging
 import platform
-from datetime import datetime
 from pprint import pformat
 from socket import gethostname
 from urllib.parse import urljoin
@@ -12,12 +11,12 @@ from requests.exceptions import ConnectionError
 import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
-from common.common_consts.time_formats import DEFAULT_TIME_FORMAT
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
+from infection_monkey.utils import agent_process
 from infection_monkey.utils.environment import is_windows_os
 
 requests.packages.urllib3.disable_warnings()
@@ -52,7 +51,7 @@ class ControlClient(object):
             "description": " ".join(platform.uname()),
             "config": WormConfiguration.as_dict(),
             "parent": parent,
-            "launch_time": str(datetime.now().strftime(DEFAULT_TIME_FORMAT)),
+            "launch_time": agent_process.get_start_time(),
         }
 
         if ControlClient.proxies:

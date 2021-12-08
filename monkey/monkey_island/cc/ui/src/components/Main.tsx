@@ -20,7 +20,6 @@ import GettingStartedPage from './pages/GettingStartedPage';
 
 import 'normalize.css/normalize.css';
 import 'styles/App.css';
-import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import LoadingScreen from './ui-components/LoadingScreen';
 import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";

@@ -2,7 +2,6 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faHandPointLeft} from '@fortawesome/free-solid-svg-icons/faHandPointLeft'
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
-import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import download from 'downloadjs'
 import AuthComponent from '../../AuthComponent';
@@ -67,32 +66,6 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  forceKill(event, asset) {
-    let newConfig = asset.config;
-    newConfig['alive'] = !event.target.checked;
-    this.authFetch('/api/monkey/' + asset.guid,
-      {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({config: newConfig})
-      });
-  }
-
-  forceKillRow(asset) {
-    return (
-      <tr>
-        <th>
-          Force Kill&nbsp;
-          {this.generateToolTip('If this is on, monkey will die next time it communicates')}
-        </th>
-        <td>
-          <Toggle id={asset.id} checked={!asset.config.alive} icons={false} disabled={asset.dead}
-                  onChange={(e) => this.forceKill(e, asset)}/>
-
-        </td>
-      </tr>
-    );
-  }
 
   unescapeLog(st) {
     return st.substr(1, st.length - 2) // remove quotation marks on beginning and end of string.
@@ -193,7 +166,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.ipsRow(asset)}
           {this.servicesRow(asset)}
           {this.accessibleRow(asset)}
-          {this.forceKillRow(asset)}
           {this.downloadLogRow(asset)}
           </tbody>
         </table>
