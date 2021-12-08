@@ -80,3 +80,16 @@ def test_format_config_for_agent__pbas(flat_monkey_config):
     assert "PBA_linux_filename" not in flat_monkey_config
     assert "custom_PBA_windows_cmd" not in flat_monkey_config
     assert "PBA_windows_filename" not in flat_monkey_config
+
+
+def test_get_config_propagation_credentials_from_flat_config(flat_monkey_config):
+    expected_creds = {
+        "exploit_lm_hash_list": ["lm_hash_1", "lm_hash_2"],
+        "exploit_ntlm_hash_list": ["nt_hash_1", "nt_hash_2", "nt_hash_3"],
+        "exploit_password_list": ["test", "iloveyou", "12345"],
+        "exploit_ssh_keys": [{"private_key": "my_private_key", "public_key": "my_public_key"}],
+        "exploit_user_list": ["Administrator", "root", "user", "ubuntu"],
+    }
+
+    creds = ConfigService.get_config_propagation_credentials_from_flat_config(flat_monkey_config)
+    assert creds == expected_creds

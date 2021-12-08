@@ -8,6 +8,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - credentials.json file for storing Monkey Island user login information. #1206
+- "GET /api/propagation-credentials/<string:guid>" endpoint for agents to
+  retrieve updated credentials from the Island. #1538
 
 ### Changed
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and

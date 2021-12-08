@@ -56,7 +56,7 @@ class ControlChannel(IControlChannel):
     def get_credentials_for_propagation(self) -> dict:
         try:
             response = requests.get(  # noqa: DUO123
-                f"{self._control_channel_server}/api/propagationCredentials",
+                f"{self._control_channel_server}/api/propagation-credentials/{self._agent_id}",
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
@@ -67,3 +67,5 @@ class ControlChannel(IControlChannel):
         except Exception as e:
             # TODO: Evaluate how this exception is handled; don't just log and ignore it.
             logger.error(f"An error occurred while trying to connect to server. {e}")
+
+        return {}
