@@ -101,7 +101,6 @@
     "skip_exploit_if_file_exist": false,
     "smb_download_timeout": 300,
     "smb_service_name": "InfectionMonkey",
-    "started_on_island": false,
     "subnet_scan_list": [],
     "system_info_collector_classes": [
         "AwsCollector",
