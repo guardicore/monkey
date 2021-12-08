@@ -44,9 +44,11 @@ class NetworkRange(object, metaclass=ABCMeta):
         if not address_str:  # Empty string
             return None
         address_str = address_str.strip()
+        if address_str.endswith("/32"):
+            address_str = address_str[:-3]
         if NetworkRange.check_if_range(address_str):
             return IpRange(ip_range=address_str)
-        if -1 != address_str.find("/"):
+        if "/" in address_str:
             return CidrRange(cidr_range=address_str)
         return SingleIpRange(ip_address=address_str)
 
