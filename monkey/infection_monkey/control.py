@@ -13,11 +13,7 @@ import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from common.common_consts.time_formats import DEFAULT_TIME_FORMAT
-from common.common_consts.timeouts import (
-    LONG_REQUEST_TIMEOUT,
-    MEDIUM_REQUEST_TIMEOUT,
-    SHORT_REQUEST_TIMEOUT,
-)
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
@@ -404,33 +400,6 @@ class ControlClient(object):
                 stream=True,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
-        except requests.exceptions.RequestException:
-            return False
-
-    @staticmethod
-    def should_monkey_run(vulnerable_port: str) -> bool:
-        if (
-            vulnerable_port
-            and WormConfiguration.get_hop_distance_to_island() > 1
-            and ControlClient.can_island_see_port(vulnerable_port)
-            and WormConfiguration.started_on_island
-        ):
-            return False
-
-        return True
-
-    @staticmethod
-    def can_island_see_port(port):
-        try:
-            url = (
-                f"https://{WormConfiguration.current_server}/api/monkey_control"
-                f"/check_remote_port/{port}"
-            )
-            response = requests.get(  # noqa: DUO123
-                url, verify=False, timeout=SHORT_REQUEST_TIMEOUT
-            )
-            response = json.loads(response.content.decode())
-            return response["status"] == "port_visible"
         except requests.exceptions.RequestException:
             return False
 

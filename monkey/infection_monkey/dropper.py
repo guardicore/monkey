@@ -139,7 +139,6 @@ class MonkeyDrops(object):
             server=self.opts.server,
             depth=self.opts.depth,
             location=None,
-            vulnerable_port=self.opts.vulnerable_port,
         )
 
         if OperatingSystem.Windows == SystemInfoCollector.get_os():
