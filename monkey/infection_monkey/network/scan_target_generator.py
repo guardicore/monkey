@@ -12,6 +12,7 @@ def compile_scan_target_list(
 ) -> List[str]:
     scan_targets = _get_ips_from_ranges_to_scan(ranges_to_scan)
 
+    _remove_local_ips(scan_targets, local_ips)
     _remove_blocklisted_ips(scan_targets, blocklisted_ips)
 
     scan_target_list = list(scan_targets)
@@ -30,10 +31,18 @@ def _get_ips_from_ranges_to_scan(ranges_to_scan: List[str]) -> Set[str]:
     return scan_targets
 
 
+def _remove_local_ips(scan_targets: Set[str], local_ips: List[str]):
+    _remove_ips_from_scan_targets(scan_targets, local_ips)
+
+
 def _remove_blocklisted_ips(scan_targets: Set[str], blocked_ips: List[str]):
-    for blocked_ip in blocked_ips:
+    _remove_ips_from_scan_targets(scan_targets, blocked_ips)
+
+
+def _remove_ips_from_scan_targets(scan_targets: Set[str], ips_to_remove: List[str]):
+    for ip in ips_to_remove:
         try:
-            scan_targets.remove(blocked_ip)
+            scan_targets.remove(ip)
         except KeyError:
-            # We don't need to remove the blocked ip if it's already missing from the scan_targets
+            # We don't need to remove the ip if it's already missing from the scan_targets
             pass

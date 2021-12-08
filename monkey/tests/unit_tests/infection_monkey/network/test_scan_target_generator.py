@@ -103,3 +103,55 @@ def test_only_ip_blocklisted(ranges_to_scan):
     )
 
     assert len(scan_targets) == 0
+
+
+def test_local_ips_removed_from_targets():
+    local_ips = ["10.0.0.5", "10.0.0.32", "10.0.0.119", "192.168.1.33"]
+
+    scan_targets = compile_scan_target_list(
+        local_ips=local_ips,
+        ranges_to_scan=["10.0.0.0/24"],
+        inaccessible_subnets=[],
+        blocklisted_ips=[],
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 252
+    for ip in local_ips:
+        assert ip not in scan_targets
+
+
+@pytest.mark.parametrize("ranges_to_scan", [["10.0.0.5"], []])
+def test_only_scan_ip_is_local(ranges_to_scan):
+    local_ips = ["10.0.0.5", "10.0.0.32", "10.0.0.119", "192.168.1.33"]
+
+    scan_targets = compile_scan_target_list(
+        local_ips=local_ips,
+        ranges_to_scan=ranges_to_scan,
+        inaccessible_subnets=[],
+        blocklisted_ips=[],
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 0
+
+
+def test_local_ips_and_blocked_ips_removed_from_targets():
+    local_ips = ["10.0.0.5", "10.0.0.32", "10.0.0.119", "192.168.1.33"]
+    blocked_ips = ["10.0.0.63", "192.168.1.77", "0.0.0.0"]
+
+    scan_targets = compile_scan_target_list(
+        local_ips=local_ips,
+        ranges_to_scan=["10.0.0.0/24", "192.168.1.0/24"],
+        inaccessible_subnets=[],
+        blocklisted_ips=blocked_ips,
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == (2 * (256 - 1)) - len(local_ips) - (len(blocked_ips) - 1)
+
+    for ip in local_ips:
+        assert ip not in scan_targets
+
+    for ip in blocked_ips:
+        assert ip not in scan_targets
