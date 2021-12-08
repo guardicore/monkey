@@ -129,10 +129,6 @@ class InfectionMonkey:
         return True
 
     @staticmethod
-    def _is_monkey_alive_by_config():
-        return not WormConfiguration.alive
-
-    @staticmethod
     def _is_upgrade_to_64_needed():
         return WindowsUpgrader.should_upgrade()
 
