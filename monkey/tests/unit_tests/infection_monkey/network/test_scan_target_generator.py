@@ -63,3 +63,43 @@ def test_ip_range(ip_range):
 
     for i in range(25, 34):
         assert f"192.168.56.{i}" in scan_targets
+
+
+def test_no_duplicates():
+    scan_targets = compile_ranges_only(["192.168.56.0/29", "192.168.56.2", "192.168.56.4"])
+
+    assert len(scan_targets) == 7
+
+    for i in range(0, 7):
+        assert f"192.168.56.{i}" in scan_targets
+
+
+def test_blocklisted_ips():
+    blocklisted_ips = ["10.0.0.5", "10.0.0.32", "10.0.0.119", "192.168.1.33"]
+
+    scan_targets = compile_scan_target_list(
+        local_ips=[],
+        ranges_to_scan=["10.0.0.0/24"],
+        inaccessible_subnets=[],
+        blocklisted_ips=blocklisted_ips,
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 252
+    for blocked_ip in blocklisted_ips:
+        assert blocked_ip not in scan_targets
+
+
+@pytest.mark.parametrize("ranges_to_scan", [["10.0.0.5"], []])
+def test_only_ip_blocklisted(ranges_to_scan):
+    blocklisted_ips = ["10.0.0.5"]
+
+    scan_targets = compile_scan_target_list(
+        local_ips=[],
+        ranges_to_scan=ranges_to_scan,
+        inaccessible_subnets=[],
+        blocklisted_ips=blocklisted_ips,
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 0
