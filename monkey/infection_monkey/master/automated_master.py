@@ -16,6 +16,8 @@ from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.utils.timer import Timer
 
+from .threading_utils import create_daemon_thread
+
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
 SHUTDOWN_TIMEOUT = 5
@@ -36,8 +38,8 @@ class AutomatedMaster(IMaster):
         self._control_channel = control_channel
 
         self._stop = threading.Event()
-        self._master_thread = _create_daemon_thread(target=self._run_master_thread)
-        self._simulation_thread = _create_daemon_thread(target=self._run_simulation)
+        self._master_thread = create_daemon_thread(target=self._run_master_thread)
+        self._simulation_thread = create_daemon_thread(target=self._run_simulation)
 
     def start(self):
         logger.info("Starting automated breach and attack simulation")
@@ -93,7 +95,7 @@ class AutomatedMaster(IMaster):
     def _run_simulation(self):
         config = self._control_channel.get_config()
 
-        system_info_collector_thread = _create_daemon_thread(
+        system_info_collector_thread = create_daemon_thread(
             target=self._run_plugins,
             args=(
                 config["system_info_collector_classes"],
@@ -101,7 +103,7 @@ class AutomatedMaster(IMaster):
                 self._collect_system_info,
             ),
         )
-        pba_thread = _create_daemon_thread(
+        pba_thread = create_daemon_thread(
             target=self._run_plugins,
             args=(config["post_breach_actions"].items(), "post-breach action", self._run_pba),
         )
@@ -116,11 +118,11 @@ class AutomatedMaster(IMaster):
         # system_info_collector_thread.join()
 
         if self._can_propagate():
-            propagation_thread = _create_daemon_thread(target=self._propagate, args=(config,))
+            propagation_thread = create_daemon_thread(target=self._propagate, args=(config,))
             propagation_thread.start()
             propagation_thread.join()
 
-        payload_thread = _create_daemon_thread(
+        payload_thread = create_daemon_thread(
             target=self._run_plugins,
             args=(config["payloads"].items(), "payload", self._run_payload),
         )
@@ -159,10 +161,10 @@ class AutomatedMaster(IMaster):
 
         hosts_to_exploit = Queue()
 
-        scan_thread = _create_daemon_thread(
+        scan_thread = create_daemon_thread(
             target=self._scan_network, args=(config["network_scan"], hosts_to_exploit)
         )
-        exploit_thread = _create_daemon_thread(
+        exploit_thread = create_daemon_thread(
             target=self._exploit_targets, args=(hosts_to_exploit, scan_thread)
         )
 
@@ -188,7 +190,7 @@ class AutomatedMaster(IMaster):
 
         scan_threads = []
         for i in range(0, NUM_SCAN_THREADS):
-            t = _create_daemon_thread(
+            t = create_daemon_thread(
                 target=self._scan_ips, args=(ips_to_scan, scan_config, hosts_to_exploit)
             )
             t.start()
@@ -263,7 +265,3 @@ class AutomatedMaster(IMaster):
 
     def cleanup(self):
         pass
-
-
-def _create_daemon_thread(target: Callable[[Any], None], args: Tuple[Any] = ()):
-    return Thread(target=target, args=args, daemon=True)
