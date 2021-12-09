@@ -488,7 +488,7 @@ class ConfigService:
 
         formatted_tcp_scan_config = {}
 
-        formatted_tcp_scan_config["timeout"] = config[flat_tcp_timeout_field]
+        formatted_tcp_scan_config["timeout_ms"] = config[flat_tcp_timeout_field]
 
         ports = ConfigService._union_tcp_and_http_ports(
             config[flat_tcp_ports_field], config[flat_http_ports_field]
@@ -512,7 +512,7 @@ class ConfigService:
         flat_ping_timeout_field = "ping_scan_timeout"
 
         formatted_icmp_scan_config = {}
-        formatted_icmp_scan_config["timeout"] = config[flat_ping_timeout_field]
+        formatted_icmp_scan_config["timeout_ms"] = config[flat_ping_timeout_field]
 
         config.pop(flat_ping_timeout_field, None)
 
@@ -527,9 +527,7 @@ class ConfigService:
 
         formatted_scan_targets_config = {}
 
-        formatted_scan_targets_config[flat_blocked_ips_field] = config[
-            flat_blocked_ips_field
-        ]
+        formatted_scan_targets_config[flat_blocked_ips_field] = config[flat_blocked_ips_field]
         formatted_scan_targets_config[flat_inaccessible_subnets_field] = config[
             flat_inaccessible_subnets_field
         ]

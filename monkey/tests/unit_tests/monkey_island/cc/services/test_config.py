@@ -98,7 +98,7 @@ def test_get_config_propagation_credentials_from_flat_config(flat_monkey_config)
 def test_format_config_for_agent__network_scan(flat_monkey_config):
     expected_network_scan_config = {
         "tcp": {
-            "timeout": 3000,
+            "timeout_ms": 3000,
             "ports": [
                 22,
                 80,
@@ -116,7 +116,7 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
             ],
         },
         "icmp": {
-            "timeout": 1000,
+            "timeout_ms": 1000,
         },
         "targets": {
             "blocked_ips": ["192.168.1.1", "192.168.1.100"],

@@ -234,7 +234,7 @@ class AutomatedMaster(IMaster):
                 break
 
             # TODO: check units of timeout
-            port_scan_data = self._puppet.scan_tcp_port(ip, p, options["timeout"])
+            port_scan_data = self._puppet.scan_tcp_port(ip, p, options["timeout_ms"])
             if port_scan_data.status == PortStatus.OPEN:
                 victim_host.services[port_scan_data.service] = {}
                 victim_host.services[port_scan_data.service]["display_name"] = "unknown(TCP)"
