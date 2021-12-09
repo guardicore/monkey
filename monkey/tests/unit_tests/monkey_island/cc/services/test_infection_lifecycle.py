@@ -30,6 +30,14 @@ def create_monkey(launch_time):
     return monkey
 
 
+@pytest.mark.usefixtures("uses_database")
+def test_should_agent_die_no_kill_event():
+    monkey = create_monkey(launch_time=3)
+    kill_event = AgentControls()
+    kill_event.save()
+    assert not should_agent_die(monkey.guid)
+
+
 def create_kill_event(event_time):
     kill_event = AgentControls(last_stop_all=event_time)
     kill_event.save()

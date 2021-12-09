@@ -33,11 +33,13 @@ def _is_monkey_marked_dead(monkey: Monkey) -> bool:
 
 
 def _is_monkey_killed_manually(monkey: Monkey) -> bool:
+    kill_timestamp = AgentControls.objects.first().last_stop_all
+    if kill_timestamp is None:
+        return False
     if monkey.has_parent():
         launch_timestamp = monkey.get_parent().launch_time
     else:
         launch_timestamp = monkey.launch_time
-    kill_timestamp = AgentControls.objects.first().last_stop_all
     return int(kill_timestamp) >= int(launch_timestamp)
 
 
