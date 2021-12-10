@@ -2,7 +2,7 @@ import abc
 import threading
 from collections import namedtuple
 from enum import Enum
-from typing import Dict, Optional, Tuple
+from typing import Dict
 
 
 class PortStatus(Enum):
@@ -11,6 +11,7 @@ class PortStatus(Enum):
 
 
 ExploiterResultData = namedtuple("ExploiterResultData", ["result", "info", "attempts"])
+PingScanData = namedtuple("PingScanData", ["response_received", "os"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 PostBreachData = namedtuple("PostBreachData", ["command", "result"])
 
@@ -35,7 +36,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def ping(self, host: str, options: Dict) -> Tuple[bool, Optional[str]]:
+    def ping(self, host: str, options: Dict) -> PingScanData:
         """
         Sends a ping (ICMP packet) to a remote host
         :param str host: The domain name or IP address of a host

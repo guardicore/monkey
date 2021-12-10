@@ -61,11 +61,11 @@ class IPScanner:
         logger.debug(f"Detected the stop signal, scanning thread {threading.get_ident()} exiting")
 
     def _ping_ip(self, ip: str, victim_host: VictimHost, options: Dict):
-        (response_received, os) = self._puppet.ping(ip, options)
+        ping_scan_data = self._puppet.ping(ip, options)
 
-        victim_host.icmp = response_received
-        if os is not None:
-            victim_host.os["type"] = os
+        victim_host.icmp = ping_scan_data.response_received
+        if ping_scan_data.os is not None:
+            victim_host.os["type"] = ping_scan_data.os
 
     def _scan_tcp_ports(self, ip: str, victim_host: VictimHost, options: Dict, stop: Event):
         for p in options["ports"]:

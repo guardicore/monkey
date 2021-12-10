@@ -1,10 +1,11 @@
 import logging
 import threading
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     IPuppet,
+    PingScanData,
     PortScanData,
     PortStatus,
     PostBreachData,
@@ -155,21 +156,21 @@ class MockPuppet(IPuppet):
         else:
             return PostBreachData("pba command 2", ["pba result 2", False])
 
-    def ping(self, host: str, options: Dict) -> Tuple[bool, Optional[str]]:
+    def ping(self, host: str, options: Dict) -> PingScanData:
         logger.debug(f"run_ping({host})")
         if host == DOT_1:
-            return (True, "windows")
+            return PingScanData(True, "windows")
 
         if host == DOT_2:
-            return (False, None)
+            return PingScanData(False, None)
 
         if host == DOT_3:
-            return (True, "linux")
+            return PingScanData(True, "linux")
 
         if host == DOT_4:
-            return (False, None)
+            return PingScanData(False, None)
 
-        return (False, None)
+        return PingScanData(False, None)
 
     def scan_tcp_port(self, host: str, port: int, timeout: int = 3) -> PortScanData:
         logger.debug(f"run_scan_tcp_port({host}, {port}, {timeout})")
