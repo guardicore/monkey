@@ -49,13 +49,14 @@ class IPScanner:
 
                 results_callback(ip, ping_scan_data, port_scan_data)
 
+            logger.debug(
+                f"Detected the stop signal, scanning thread {threading.get_ident()} exiting"
+            )
+
         except queue.Empty:
             logger.debug(
                 f"ips_to_scan queue is empty, scanning thread {threading.get_ident()} exiting"
             )
-            return
-
-        logger.debug(f"Detected the stop signal, scanning thread {threading.get_ident()} exiting")
 
     def _scan_tcp_ports(self, ip: str, options: Dict, stop: Event):
         port_scan_data = {}

@@ -145,7 +145,7 @@ def test_scan_lots_of_ips(callback, scan_config, stop):
 
 
 def test_stop_after_callback(scan_config, stop):
-    def _callback(_, __, ___):
+    def _callback(*_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that niether thread continues to scan.
         _callback.barrier.wait()
@@ -164,7 +164,7 @@ def test_stop_after_callback(scan_config, stop):
 
 
 def test_interrupt_port_scanning(callback, scan_config, stop):
-    def stopable_scan_tcp_port(port, _, __):
+    def stopable_scan_tcp_port(port, *_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that niether thread scans any more ports
         stopable_scan_tcp_port.barrier.wait()
