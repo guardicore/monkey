@@ -279,4 +279,4 @@ class MockPuppet(IPuppet):
 
 
 def _get_empty_results(port: int):
-    return PortScanData(port, False, None, None)
+    return PortScanData(port, PortStatus.CLOSED, None, None)
