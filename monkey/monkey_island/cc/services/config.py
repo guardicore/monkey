@@ -419,7 +419,7 @@ class ConfigService:
         ConfigService._remove_credentials_from_flat_config(config)
         ConfigService._format_payloads_from_flat_config(config)
         ConfigService._format_pbas_from_flat_config(config)
-        ConfigService._format_network_scan_from_flat_config(config)
+        ConfigService._format_propagation_from_flat_config(config)
 
     @staticmethod
     def _remove_credentials_from_flat_config(config: Dict):
@@ -465,8 +465,22 @@ class ConfigService:
         config.pop(flat_windows_filename_field, None)
 
     @staticmethod
+    def _format_propagation_from_flat_config(config: Dict):
+        formatted_propagation_config = {"network_scan": {}, "targets": {}}
+
+        formatted_propagation_config[
+            "network_scan"
+        ] = ConfigService._format_network_scan_from_flat_config(config)
+
+        formatted_propagation_config["targets"] = ConfigService._format_targets_from_flat_config(
+            config
+        )
+
+        config["propagation"] = formatted_propagation_config
+
+    @staticmethod
     def _format_network_scan_from_flat_config(config: Dict):
-        formatted_network_scan_config = {"tcp": {}, "icmp": {}, "targets": {}}
+        formatted_network_scan_config = {"tcp": {}, "icmp": {}}
 
         formatted_network_scan_config["tcp"] = ConfigService._format_tcp_scan_from_flat_config(
             config
@@ -474,11 +488,8 @@ class ConfigService:
         formatted_network_scan_config["icmp"] = ConfigService._format_icmp_scan_from_flat_config(
             config
         )
-        formatted_network_scan_config[
-            "targets"
-        ] = ConfigService._format_scan_targets_from_flat_config(config)
 
-        config["network_scan"] = formatted_network_scan_config
+        return formatted_network_scan_config
 
     @staticmethod
     def _format_tcp_scan_from_flat_config(config: Dict):
@@ -519,7 +530,7 @@ class ConfigService:
         return formatted_icmp_scan_config
 
     @staticmethod
-    def _format_scan_targets_from_flat_config(config: Dict):
+    def _format_targets_from_flat_config(config: Dict):
         flat_blocked_ips_field = "blocked_ips"
         flat_inaccessible_subnets_field = "inaccessible_subnets"
         flat_local_network_scan_field = "local_network_scan"
