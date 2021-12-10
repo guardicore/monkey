@@ -5,14 +5,13 @@ from queue import Queue
 from threading import Event
 from typing import Callable, Dict, List
 
-from infection_monkey.i_puppet import IPuppet, PortStatus
-from infection_monkey.model.host import VictimHost
+from infection_monkey.i_puppet import IPuppet, PingScanData, PortScanData
 
 from .threading_utils import create_daemon_thread
 
 logger = logging.getLogger()
 
-Callback = Callable[[VictimHost], None]
+Callback = Callable[[str, PingScanData, Dict[int, PortScanData]], None]
 
 
 class IPScanner:
@@ -45,12 +44,10 @@ class IPScanner:
                 ip = ips.get_nowait()
                 logger.info(f"Scanning {ip}")
 
-                victim_host = VictimHost(ip)
+                ping_scan_data = self._puppet.ping(ip, options["icmp"])
+                port_scan_data = self._scan_tcp_ports(ip, options["tcp"], stop)
 
-                self._ping_ip(ip, victim_host, options["icmp"])
-                self._scan_tcp_ports(ip, victim_host, options["tcp"], stop)
-
-                results_callback(victim_host)
+                results_callback(ip, ping_scan_data, port_scan_data)
 
         except queue.Empty:
             logger.debug(
@@ -60,22 +57,12 @@ class IPScanner:
 
         logger.debug(f"Detected the stop signal, scanning thread {threading.get_ident()} exiting")
 
-    def _ping_ip(self, ip: str, victim_host: VictimHost, options: Dict):
-        ping_scan_data = self._puppet.ping(ip, options)
-
-        victim_host.icmp = ping_scan_data.response_received
-        if ping_scan_data.os is not None:
-            victim_host.os["type"] = ping_scan_data.os
-
-    def _scan_tcp_ports(self, ip: str, victim_host: VictimHost, options: Dict, stop: Event):
+    def _scan_tcp_ports(self, ip: str, options: Dict, stop: Event):
+        port_scan_data = {}
         for p in options["ports"]:
             if stop.is_set():
                 break
 
-            port_scan_data = self._puppet.scan_tcp_port(ip, p, options["timeout_ms"])
-            if port_scan_data.status == PortStatus.OPEN:
-                victim_host.services[port_scan_data.service] = {}
-                victim_host.services[port_scan_data.service]["display_name"] = "unknown(TCP)"
-                victim_host.services[port_scan_data.service]["port"] = port_scan_data.port
-                if port_scan_data.banner is not None:
-                    victim_host.services[port_scan_data.service]["banner"] = port_scan_data.banner
+            port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, options["timeout_ms"])
+
+        return port_scan_data

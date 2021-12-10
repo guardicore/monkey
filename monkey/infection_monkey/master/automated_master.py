@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, List, Tuple
 
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
-from infection_monkey.i_puppet import IPuppet
+from infection_monkey.i_puppet import IPuppet, PingScanData, PortScanData, PortStatus
 from infection_monkey.model.host import VictimHost
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
@@ -185,13 +185,34 @@ class AutomatedMaster(IMaster):
         ips_to_scan = [f"10.0.0.{i}" for i in range(1, 255)]
 
         scan_config = propagation_config["network_scan"]
-        self._ip_scanner.scan(ips_to_scan, scan_config, self._handle_scanned_host, self._stop)
+        self._ip_scanner.scan(ips_to_scan, scan_config, self._process_scan_results, self._stop)
 
         logger.info("Finished network scan")
 
-    def _handle_scanned_host(self, host: VictimHost):
-        self._hosts_to_exploit.put(host)
-        self._telemetry_messenger.send_telemetry(ScanTelem(host))
+    def _process_scan_results(
+        self, ip: str, ping_scan_data: PingScanData, port_scan_data: PortScanData
+    ):
+        victim_host = VictimHost(ip)
+        has_open_port = False
+
+        victim_host.icmp = ping_scan_data.response_received
+        if ping_scan_data.os is not None:
+            victim_host.os["type"] = ping_scan_data.os
+
+        for psd in port_scan_data.values():
+            if psd.status == PortStatus.OPEN:
+                has_open_port = True
+
+                victim_host.services[psd.service] = {}
+                victim_host.services[psd.service]["display_name"] = "unknown(TCP)"
+                victim_host.services[psd.service]["port"] = psd.port
+                if psd.banner is not None:
+                    victim_host.services[psd.service]["banner"] = psd.banner
+
+        if has_open_port:
+            self._hosts_to_exploit.put(victim_host)
+
+        self._telemetry_messenger.send_telemetry(ScanTelem(victim_host))
 
     def _exploit_targets(self, scan_thread: Thread):
         pass
