@@ -118,7 +118,7 @@ class AutomatedMaster(IMaster):
         # requires the output of PBAs, so we don't need to join on that thread here. We will join on
         # the PBA thread later in this function to prevent the simulation from ending while PBAs are
         # still running.
-        # system_info_collector_thread.join()
+        system_info_collector_thread.join()
 
         if self._can_propagate():
             propagation_thread = create_daemon_thread(
