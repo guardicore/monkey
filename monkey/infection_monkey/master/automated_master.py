@@ -121,7 +121,9 @@ class AutomatedMaster(IMaster):
         # system_info_collector_thread.join()
 
         if self._can_propagate():
-            propagation_thread = create_daemon_thread(target=self._propagate, args=(config,))
+            propagation_thread = create_daemon_thread(
+                target=self._propagate, args=(config["propagation"],)
+            )
             propagation_thread.start()
             propagation_thread.join()
 
@@ -160,14 +162,12 @@ class AutomatedMaster(IMaster):
         return True
 
     # TODO: Refactor propagation into its own class
-    def _propagate(self, config: Dict):
+    def _propagate(self, propagation_config: Dict):
         logger.info("Attempting to propagate")
 
         self._hosts_to_exploit = Queue()
 
-        scan_thread = create_daemon_thread(
-            target=self._scan_network, args=(config["network_scan"],)
-        )
+        scan_thread = create_daemon_thread(target=self._scan_network, args=(propagation_config,))
         exploit_thread = create_daemon_thread(target=self._exploit_targets, args=(scan_thread,))
 
         scan_thread.start()
@@ -178,19 +178,14 @@ class AutomatedMaster(IMaster):
 
         logger.info("Finished attempting to propagate")
 
-    def _scan_network(self, scan_config: Dict):
+    def _scan_network(self, propagation_config: Dict):
         logger.info("Starting network scan")
 
         # TODO: Generate list of IPs to scan
         ips_to_scan = [f"10.0.0.{i}" for i in range(1, 255)]
 
-        self._ip_scanner.scan(
-            ips_to_scan,
-            scan_config["icmp"],
-            scan_config["tcp"],
-            self._handle_scanned_host,
-            self._stop,
-        )
+        scan_config = propagation_config["network_scan"]
+        self._ip_scanner.scan(ips_to_scan, scan_config, self._handle_scanned_host, self._stop)
 
         logger.info("Finished network scan")
 

@@ -20,26 +20,14 @@ class IPScanner:
         self._puppet = puppet
         self._num_workers = num_workers
 
-    def scan(
-        self,
-        ips: List[str],
-        icmp_config: Dict,
-        tcp_config: Dict,
-        report_results_callback: Callback,
-        stop: Event,
-    ):
-        # Pre-fill a Queue with all IPs so that threads can safely exit when the queue is empty.
-        ips_to_scan = Queue()
-        for ip in ips:
-            ips_to_scan.put(ip)
+    def scan(self, ips_to_scan: List[str], options: Dict, results_callback: Callback, stop: Event):
+        # Pre-fill a Queue with all IPs to scan so that threads know they can safely exit when the
+        # queue is empty.
+        ips = Queue()
+        for ip in ips_to_scan:
+            ips.put(ip)
 
-        scan_ips_args = (
-            ips_to_scan,
-            icmp_config,
-            tcp_config,
-            report_results_callback,
-            stop,
-        )
+        scan_ips_args = (ips, options, results_callback, stop)
         scan_threads = []
         for i in range(0, self._num_workers):
             t = create_daemon_thread(target=self._scan_ips, args=scan_ips_args)
@@ -49,27 +37,20 @@ class IPScanner:
         for t in scan_threads:
             t.join()
 
-    def _scan_ips(
-        self,
-        ips_to_scan: Queue,
-        icmp_config: Dict,
-        tcp_config: Dict,
-        report_results_callback: Callback,
-        stop: Event,
-    ):
+    def _scan_ips(self, ips: Queue, options: Dict, results_callback: Callback, stop: Event):
         logger.debug(f"Starting scan thread -- Thread ID: {threading.get_ident()}")
 
         try:
             while not stop.is_set():
-                ip = ips_to_scan.get_nowait()
+                ip = ips.get_nowait()
                 logger.info(f"Scanning {ip}")
 
                 victim_host = VictimHost(ip)
 
-                self._ping_ip(ip, victim_host, icmp_config)
-                self._scan_tcp_ports(ip, victim_host, tcp_config, stop)
+                self._ping_ip(ip, victim_host, options["icmp"])
+                self._scan_tcp_ports(ip, victim_host, options["tcp"], stop)
 
-                report_results_callback(victim_host)
+                results_callback(victim_host)
 
         except queue.Empty:
             logger.debug(

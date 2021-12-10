@@ -18,24 +18,22 @@ class MockPuppet(MockPuppet):
 
 
 @pytest.fixture
-def tcp_scan_config():
+def scan_config():
     return {
-        "timeout_ms": 3000,
-        "ports": [
-            22,
-            445,
-            3389,
-            443,
-            8008,
-            3306,
-        ],
-    }
-
-
-@pytest.fixture
-def icmp_scan_config():
-    return {
-        "timeout_ms": 1000,
+        "tcp": {
+            "timeout_ms": 3000,
+            "ports": [
+                22,
+                445,
+                3389,
+                443,
+                8008,
+                3306,
+            ],
+        },
+        "icmp": {
+            "timeout_ms": 1000,
+        },
     }
 
 
@@ -80,22 +78,22 @@ def assert_host_down(victim_host):
     assert len(victim_host.services.keys()) == 0
 
 
-def test_scan_single_ip(callback, icmp_scan_config, tcp_scan_config, stop):
+def test_scan_single_ip(callback, scan_config, stop):
     ips = ["10.0.0.1"]
 
     ns = IPScanner(MockPuppet(), num_workers=1)
-    ns.scan(ips, icmp_scan_config, tcp_scan_config, callback, stop)
+    ns.scan(ips, scan_config, callback, stop)
 
     callback.assert_called_once()
 
     assert_dot_1(callback.call_args_list[0][0][0])
 
 
-def test_scan_multiple_ips(callback, icmp_scan_config, tcp_scan_config, stop):
+def test_scan_multiple_ips(callback, scan_config, stop):
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
 
     ns = IPScanner(MockPuppet(), num_workers=4)
-    ns.scan(ips, icmp_scan_config, tcp_scan_config, callback, stop)
+    ns.scan(ips, scan_config, callback, stop)
 
     assert callback.call_count == 4
 
@@ -105,7 +103,16 @@ def test_scan_multiple_ips(callback, icmp_scan_config, tcp_scan_config, stop):
     assert_host_down(callback.call_args_list[3][0][0])
 
 
-def test_stop_after_callback(icmp_scan_config, tcp_scan_config, stop):
+def test_scan_lots_of_ips(callback, scan_config, stop):
+    ips = [f"10.0.0.{i}" for i in range(0, 255)]
+
+    ns = IPScanner(MockPuppet(), num_workers=4)
+    ns.scan(ips, scan_config, callback, stop)
+
+    assert callback.call_count == 255
+
+
+def test_stop_after_callback(scan_config, stop):
     def _callback(_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that niether thread continues to scan.
@@ -119,12 +126,12 @@ def test_stop_after_callback(icmp_scan_config, tcp_scan_config, stop):
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
 
     ns = IPScanner(MockPuppet(), num_workers=2)
-    ns.scan(ips, icmp_scan_config, tcp_scan_config, stopable_callback, stop)
+    ns.scan(ips, scan_config, stopable_callback, stop)
 
     assert stopable_callback.call_count == 2
 
 
-def test_interrupt_port_scanning(callback, icmp_scan_config, tcp_scan_config, stop):
+def test_interrupt_port_scanning(callback, scan_config, stop):
     def stopable_scan_tcp_port(port, _, __):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that niether thread scans any more ports
@@ -141,6 +148,6 @@ def test_interrupt_port_scanning(callback, icmp_scan_config, tcp_scan_config, st
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
 
     ns = IPScanner(puppet, num_workers=2)
-    ns.scan(ips, icmp_scan_config, tcp_scan_config, callback, stop)
+    ns.scan(ips, scan_config, callback, stop)
 
     assert puppet.scan_tcp_port.call_count == 2
