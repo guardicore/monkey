@@ -2,7 +2,7 @@ import collections
 import copy
 import functools
 import logging
-from typing import Dict
+from typing import Dict, List
 
 from jsonschema import Draft4Validator, validators
 
@@ -419,6 +419,7 @@ class ConfigService:
         ConfigService._remove_credentials_from_flat_config(config)
         ConfigService._format_payloads_from_flat_config(config)
         ConfigService._format_pbas_from_flat_config(config)
+        ConfigService._format_propagation_from_flat_config(config)
 
     @staticmethod
     def _remove_credentials_from_flat_config(config: Dict):
@@ -462,3 +463,95 @@ class ConfigService:
         config.pop(flat_linux_filename_field, None)
         config.pop(flat_windows_command_field, None)
         config.pop(flat_windows_filename_field, None)
+
+    @staticmethod
+    def _format_propagation_from_flat_config(config: Dict):
+        formatted_propagation_config = {"network_scan": {}, "targets": {}}
+
+        formatted_propagation_config[
+            "network_scan"
+        ] = ConfigService._format_network_scan_from_flat_config(config)
+
+        formatted_propagation_config["targets"] = ConfigService._format_targets_from_flat_config(
+            config
+        )
+
+        config["propagation"] = formatted_propagation_config
+
+    @staticmethod
+    def _format_network_scan_from_flat_config(config: Dict):
+        formatted_network_scan_config = {"tcp": {}, "icmp": {}}
+
+        formatted_network_scan_config["tcp"] = ConfigService._format_tcp_scan_from_flat_config(
+            config
+        )
+        formatted_network_scan_config["icmp"] = ConfigService._format_icmp_scan_from_flat_config(
+            config
+        )
+
+        return formatted_network_scan_config
+
+    @staticmethod
+    def _format_tcp_scan_from_flat_config(config: Dict):
+        flat_http_ports_field = "HTTP_PORTS"
+        flat_tcp_timeout_field = "tcp_scan_timeout"
+        flat_tcp_ports_field = "tcp_target_ports"
+
+        formatted_tcp_scan_config = {}
+
+        formatted_tcp_scan_config["timeout_ms"] = config[flat_tcp_timeout_field]
+
+        ports = ConfigService._union_tcp_and_http_ports(
+            config[flat_tcp_ports_field], config[flat_http_ports_field]
+        )
+        formatted_tcp_scan_config["ports"] = ports
+
+        # Do not remove HTTP_PORTS field. Other components besides scanning need it.
+        config.pop(flat_tcp_timeout_field, None)
+        config.pop(flat_tcp_ports_field, None)
+
+        return formatted_tcp_scan_config
+
+    @staticmethod
+    def _union_tcp_and_http_ports(tcp_ports: List[int], http_ports: List[int]) -> List[int]:
+        combined_ports = list(set(tcp_ports) | set(http_ports))
+
+        return sorted(combined_ports)
+
+    @staticmethod
+    def _format_icmp_scan_from_flat_config(config: Dict):
+        flat_ping_timeout_field = "ping_scan_timeout"
+
+        formatted_icmp_scan_config = {}
+        formatted_icmp_scan_config["timeout_ms"] = config[flat_ping_timeout_field]
+
+        config.pop(flat_ping_timeout_field, None)
+
+        return formatted_icmp_scan_config
+
+    @staticmethod
+    def _format_targets_from_flat_config(config: Dict):
+        flat_blocked_ips_field = "blocked_ips"
+        flat_inaccessible_subnets_field = "inaccessible_subnets"
+        flat_local_network_scan_field = "local_network_scan"
+        flat_subnet_scan_list_field = "subnet_scan_list"
+
+        formatted_scan_targets_config = {}
+
+        formatted_scan_targets_config[flat_blocked_ips_field] = config[flat_blocked_ips_field]
+        formatted_scan_targets_config[flat_inaccessible_subnets_field] = config[
+            flat_inaccessible_subnets_field
+        ]
+        formatted_scan_targets_config[flat_local_network_scan_field] = config[
+            flat_local_network_scan_field
+        ]
+        formatted_scan_targets_config[flat_subnet_scan_list_field] = config[
+            flat_subnet_scan_list_field
+        ]
+
+        config.pop(flat_blocked_ips_field, None)
+        config.pop(flat_inaccessible_subnets_field, None)
+        config.pop(flat_local_network_scan_field, None)
+        config.pop(flat_subnet_scan_list_field, None)
+
+        return formatted_scan_targets_config

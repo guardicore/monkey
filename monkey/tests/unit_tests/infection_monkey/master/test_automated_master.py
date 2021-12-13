@@ -1,4 +1,5 @@
-from infection_monkey.master.automated_master import AutomatedMaster
+from infection_monkey.master import AutomatedMaster
+
 
 def test_terminate_without_start():
     m = AutomatedMaster(None, None, None)

@@ -13,7 +13,7 @@
     "aws_access_key_id": "",
     "aws_secret_access_key": "",
     "aws_session_token": "",
-    "blocked_ips": [],
+    "blocked_ips": ["192.168.1.1", "192.168.1.100"],
     "command_servers": [
         "10.197.94.72:5000"
     ],
@@ -65,13 +65,12 @@
     "finger_classes": [
         "SMBFinger",
         "SSHFinger",
-        "PingScanner",
         "HTTPFinger",
         "MySQLFinger",
         "MSSQLFinger",
         "ElasticFinger"
     ],
-    "inaccessible_subnets": [],
+    "inaccessible_subnets": ["10.0.0.0/24", "10.0.10.0/24"],
     "keep_tunnel_open_time": 60,
     "local_network_scan": true,
     "max_depth": null,
@@ -101,7 +100,7 @@
     "skip_exploit_if_file_exist": false,
     "smb_download_timeout": 300,
     "smb_service_name": "InfectionMonkey",
-    "subnet_scan_list": [],
+    "subnet_scan_list": ["192.168.1.50", "192.168.56.0/24", "10.0.33.0/30"],
     "system_info_collector_classes": [
         "AwsCollector",
         "ProcessListCollector",

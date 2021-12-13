@@ -66,10 +66,10 @@ class MockMaster(IMaster):
         for ip in ips:
             h = self._hosts[ip]
 
-            (response_received, os) = self._puppet.ping(ip)
-            h.icmp = response_received
-            if os is not None:
-                h.os["type"] = os
+            ping_scan_data = self._puppet.ping(ip, 1)
+            h.icmp = ping_scan_data.response_received
+            if ping_scan_data.os is not None:
+                h.os["type"] = ping_scan_data.os
 
             for p in ports:
                 port_scan_data = self._puppet.scan_tcp_port(ip, p)

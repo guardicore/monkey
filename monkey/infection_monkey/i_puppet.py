@@ -2,7 +2,7 @@ import abc
 import threading
 from collections import namedtuple
 from enum import Enum
-from typing import Dict, Optional, Tuple
+from typing import Dict
 
 
 class PortStatus(Enum):
@@ -11,6 +11,7 @@ class PortStatus(Enum):
 
 
 ExploiterResultData = namedtuple("ExploiterResultData", ["result", "info", "attempts"])
+PingScanData = namedtuple("PingScanData", ["response_received", "os"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 PostBreachData = namedtuple("PostBreachData", ["command", "result"])
 
@@ -35,22 +36,22 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def ping(self, host: str) -> Tuple[bool, Optional[str]]:
+    def ping(self, host: str, timeout: float) -> PingScanData:
         """
         Sends a ping (ICMP packet) to a remote host
         :param str host: The domain name or IP address of a host
-        :return: A tuple that contains whether or not the host responded and the host's inferred
-                 operating system
-        :rtype: Tuple[bool, Optional[str]]
+        :param float timeout: The maximum amount of time (in seconds) to wait for a response
+        :return: The data collected by attempting to ping the target host
+        :rtype: PingScanData
         """
 
     @abc.abstractmethod
-    def scan_tcp_port(self, host: str, port: int, timeout: int) -> PortScanData:
+    def scan_tcp_port(self, host: str, port: int, timeout: float) -> PortScanData:
         """
         Scans a TCP port on a remote host
         :param str host: The domain name or IP address of a host
         :param int port: A TCP port number to scan
-        :param int timeout: The maximum amount of time (in seconds) to wait for a response
+        :param float timeout: The maximum amount of time (in seconds) to wait for a response
         :return: The data collected by scanning the provided host:port combination
         :rtype: PortScanData
         """
