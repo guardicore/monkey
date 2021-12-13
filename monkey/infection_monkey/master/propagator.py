@@ -90,6 +90,10 @@ class Propagator:
     @staticmethod
     def _process_fingerprinter_results(victim_host: VictimHost, fingerprint_data: FingerprintData):
         for fd in fingerprint_data.values():
+            # TODO: This logic preserves the existing behavior prior to introducing IMaster and
+            #       IPuppet, but it is possibly flawed. Different fingerprinters may detect
+            #       different os types or versions, and this logic isn't sufficient to handle those
+            #       conflicts. Reevaluate this logic when we overhaul our scanners/fingerprinters.
             if fd.os_type is not None:
                 victim_host.os["type"] = fd.os_type
 
