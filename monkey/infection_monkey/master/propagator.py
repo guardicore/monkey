@@ -8,7 +8,7 @@ from infection_monkey.model.host import VictimHost
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.scan_telem import ScanTelem
 
-from . import IPScanner
+from . import IPScanner, IPScanResults
 from .threading_utils import create_daemon_thread
 
 logger = logging.getLogger()
@@ -51,18 +51,14 @@ class Propagator:
 
         logger.info("Finished network scan")
 
-    def _process_scan_results(
-        self,
-        ip: str,
-        ping_scan_data: PingScanData,
-        port_scan_data: Dict[int, PortScanData],
-        fingerprint_data: Dict[str, FingerprintData],
-    ):
+    def _process_scan_results(self, ip: str, scan_results: IPScanResults):
         victim_host = VictimHost(ip)
 
-        Propagator._process_ping_scan_results(victim_host, ping_scan_data)
-        has_open_port = Propagator._process_tcp_scan_results(victim_host, port_scan_data)
-        Propagator._process_fingerprinter_results(victim_host, fingerprint_data)
+        Propagator._process_ping_scan_results(victim_host, scan_results.ping_scan_data)
+        has_open_port = Propagator._process_tcp_scan_results(
+            victim_host, scan_results.port_scan_data
+        )
+        Propagator._process_fingerprinter_results(victim_host, scan_results.fingerprint_data)
 
         if has_open_port:
             self._hosts_to_exploit.put(victim_host)

@@ -51,7 +51,11 @@ def assert_port_status(port_scan_data, expected_open_ports: Set[int]):
             assert psd.status == PortStatus.CLOSED
 
 
-def assert_scan_results(ip, ping_scan_data, port_scan_data, fingerprint_data):
+def assert_scan_results(ip, scan_results):
+    ping_scan_data = scan_results.ping_scan_data
+    port_scan_data = scan_results.port_scan_data
+    fingerprint_data = scan_results.fingerprint_data
+
     if ip == "10.0.0.1":
         assert_scan_results_no_1(ping_scan_data, port_scan_data, fingerprint_data)
     elif ip == "10.0.0.3":
@@ -149,8 +153,8 @@ def test_scan_single_ip(callback, scan_config, stop):
 
     callback.assert_called_once()
 
-    (ip, ping_scan_data, port_scan_data, fingerprint_data) = callback.call_args_list[0][0]
-    assert_scan_results(ip, ping_scan_data, port_scan_data, fingerprint_data)
+    (ip, scan_results) = callback.call_args_list[0][0]
+    assert_scan_results(ip, scan_results)
 
 
 def test_scan_multiple_ips(callback, scan_config, stop):
@@ -161,17 +165,17 @@ def test_scan_multiple_ips(callback, scan_config, stop):
 
     assert callback.call_count == 4
 
-    (ip, ping_scan_data, port_scan_data, fingerprint_data) = callback.call_args_list[0][0]
-    assert_scan_results(ip, ping_scan_data, port_scan_data, fingerprint_data)
+    (ip, scan_results) = callback.call_args_list[0][0]
+    assert_scan_results(ip, scan_results)
 
-    (ip, ping_scan_data, port_scan_data, fingerprint_data) = callback.call_args_list[1][0]
-    assert_scan_results(ip, ping_scan_data, port_scan_data, fingerprint_data)
+    (ip, scan_results) = callback.call_args_list[1][0]
+    assert_scan_results(ip, scan_results)
 
-    (ip, ping_scan_data, port_scan_data, fingerprint_data) = callback.call_args_list[2][0]
-    assert_scan_results(ip, ping_scan_data, port_scan_data, fingerprint_data)
+    (ip, scan_results) = callback.call_args_list[2][0]
+    assert_scan_results(ip, scan_results)
 
-    (ip, ping_scan_data, port_scan_data, fingerprint_data) = callback.call_args_list[3][0]
-    assert_scan_results(ip, ping_scan_data, port_scan_data, fingerprint_data)
+    (ip, scan_results) = callback.call_args_list[3][0]
+    assert_scan_results(ip, scan_results)
 
 
 def test_scan_lots_of_ips(callback, scan_config, stop):

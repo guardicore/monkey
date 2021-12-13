@@ -1,11 +1,11 @@
 from threading import Event
 
 from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, PortStatus
-from infection_monkey.master import Propagator
+from infection_monkey.master import IPScanResults, Propagator
 
 empty_fingerprint_data = FingerprintData(None, None, {})
 
-dot_1_results = (
+dot_1_results = IPScanResults(
     PingScanData(True, "windows"),
     {
         22: PortScanData(22, PortStatus.CLOSED, None, None),
@@ -19,7 +19,7 @@ dot_1_results = (
     },
 )
 
-dot_3_results = (
+dot_3_results = IPScanResults(
     PingScanData(True, "linux"),
     {
         22: PortScanData(22, PortStatus.OPEN, "SSH BANNER", "tcp-22"),
@@ -42,7 +42,7 @@ dot_3_results = (
     },
 )
 
-dead_host_results = (
+dead_host_results = IPScanResults(
     PingScanData(False, None),
     {
         22: PortScanData(22, PortStatus.CLOSED, None, None),
@@ -79,11 +79,11 @@ class MockIPScanner:
     def scan(self, ips_to_scan, _, results_callback, stop):
         for ip in ips_to_scan:
             if ip.endswith(".1"):
-                results_callback(ip, *dot_1_results)
+                results_callback(ip, dot_1_results)
             elif ip.endswith(".3"):
-                results_callback(ip, *dot_3_results)
+                results_callback(ip, dot_3_results)
             else:
-                results_callback(ip, *dead_host_results)
+                results_callback(ip, dead_host_results)
 
 
 def test_scan_result_processing(telemetry_messenger_spy):

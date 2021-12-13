@@ -5,24 +5,15 @@ from queue import Queue
 from threading import Event
 from typing import Callable, Dict, List
 
-from infection_monkey.i_puppet import (
-    FingerprintData,
-    IPuppet,
-    PingScanData,
-    PortScanData,
-    PortStatus,
-)
+from infection_monkey.i_puppet import FingerprintData, IPuppet, PortScanData, PortStatus
 
+from . import IPScanResults
 from .threading_utils import create_daemon_thread
 
 logger = logging.getLogger()
 
 IP = str
-Port = int
-FingerprinterName = str
-Callback = Callable[
-    [IP, PingScanData, Dict[Port, PortScanData], Dict[FingerprinterName, FingerprintData]], None
-]
+Callback = Callable[[IP, IPScanResults], None]
 
 
 class IPScanner:
@@ -67,7 +58,8 @@ class IPScanner:
                     fingerprinters = options["fingerprinters"]
                     fingerprint_data = self._run_fingerprinters(ip, fingerprinters, stop)
 
-                results_callback(ip, ping_scan_data, port_scan_data, fingerprint_data)
+                scan_results = IPScanResults(ping_scan_data, port_scan_data, fingerprint_data)
+                results_callback(ip, scan_results)
 
             logger.debug(
                 f"Detected the stop signal, scanning thread {threading.get_ident()} exiting"
@@ -99,7 +91,9 @@ class IPScanner:
 
         return False
 
-    def _run_fingerprinters(self, ip: str, fingerprinters: List[str], stop: Event):
+    def _run_fingerprinters(
+        self, ip: str, fingerprinters: List[str], stop: Event
+    ) -> Dict[str, FingerprintData]:
         fingerprint_data = {}
 
         for f in fingerprinters:
