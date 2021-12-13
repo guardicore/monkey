@@ -50,7 +50,7 @@ def assert_port_status(port_scan_data, expected_open_ports: Set[int]):
             assert psd.status == PortStatus.CLOSED
 
 
-def assert_dot_1(ip, ping_scan_data, port_scan_data):
+def assert_scan_results_no_1(ip, ping_scan_data, port_scan_data):
     assert ip == "10.0.0.1"
 
     assert ping_scan_data.response_received is True
@@ -72,7 +72,7 @@ def assert_dot_1(ip, ping_scan_data, port_scan_data):
     assert_port_status(port_scan_data, {445, 3389})
 
 
-def assert_dot_3(ip, ping_scan_data, port_scan_data):
+def assert_scan_results_no_3(ip, ping_scan_data, port_scan_data):
     assert ip == "10.0.0.3"
 
     assert ping_scan_data.response_received is True
@@ -93,12 +93,12 @@ def assert_dot_3(ip, ping_scan_data, port_scan_data):
     assert_port_status(port_scan_data, {22, 443})
 
 
-def assert_host_down(ip, ping_scan_data, port_scan_data):
+def assert_scan_results_host_down(ip, ping_scan_data, port_scan_data):
     assert ip not in {"10.0.0.1", "10.0.0.3"}
 
     assert ping_scan_data.response_received is False
     assert len(port_scan_data.keys()) == 6
-    assert_port_status(port_scan_data, {})
+    assert_port_status(port_scan_data, set())
 
 
 def test_scan_single_ip(callback, scan_config, stop):
@@ -109,8 +109,8 @@ def test_scan_single_ip(callback, scan_config, stop):
 
     callback.assert_called_once()
 
-    print(type(callback.call_args_list[0][0]))
-    assert_dot_1(*(callback.call_args_list[0][0]))
+    (ip, ping_scan_data, port_scan_data) = callback.call_args_list[0][0]
+    assert_scan_results_no_1(ip, ping_scan_data, port_scan_data)
 
 
 def test_scan_multiple_ips(callback, scan_config, stop):
@@ -121,10 +121,17 @@ def test_scan_multiple_ips(callback, scan_config, stop):
 
     assert callback.call_count == 4
 
-    assert_dot_1(*(callback.call_args_list[0][0]))
-    assert_host_down(*(callback.call_args_list[1][0]))
-    assert_dot_3(*(callback.call_args_list[2][0]))
-    assert_host_down(*(callback.call_args_list[3][0]))
+    (ip, ping_scan_data, port_scan_data) = callback.call_args_list[0][0]
+    assert_scan_results_no_1(ip, ping_scan_data, port_scan_data)
+
+    (ip, ping_scan_data, port_scan_data) = callback.call_args_list[1][0]
+    assert_scan_results_host_down(ip, ping_scan_data, port_scan_data)
+
+    (ip, ping_scan_data, port_scan_data) = callback.call_args_list[2][0]
+    assert_scan_results_no_3(ip, ping_scan_data, port_scan_data)
+
+    (ip, ping_scan_data, port_scan_data) = callback.call_args_list[3][0]
+    assert_scan_results_host_down(ip, ping_scan_data, port_scan_data)
 
 
 def test_scan_lots_of_ips(callback, scan_config, stop):
@@ -139,7 +146,7 @@ def test_scan_lots_of_ips(callback, scan_config, stop):
 def test_stop_after_callback(scan_config, stop):
     def _callback(*_):
         # Block all threads here until 2 threads reach this barrier, then set stop
-        # and test that niether thread continues to scan.
+        # and test that neither thread continues to scan.
         _callback.barrier.wait()
         stop.set()
 
@@ -158,7 +165,7 @@ def test_stop_after_callback(scan_config, stop):
 def test_interrupt_port_scanning(callback, scan_config, stop):
     def stopable_scan_tcp_port(port, *_):
         # Block all threads here until 2 threads reach this barrier, then set stop
-        # and test that niether thread scans any more ports
+        # and test that neither thread scans any more ports
         stopable_scan_tcp_port.barrier.wait()
         stop.set()
 
