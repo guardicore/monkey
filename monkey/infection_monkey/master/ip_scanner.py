@@ -46,7 +46,10 @@ class IPScanner:
 
                 icmp_timeout = options["icmp"]["timeout_ms"] / 1000
                 ping_scan_data = self._puppet.ping(ip, icmp_timeout)
-                port_scan_data = self._scan_tcp_ports(ip, options["tcp"], stop)
+
+                tcp_timeout = options["tcp"]["timeout_ms"] / 1000
+                tcp_ports = options["tcp"]["ports"]
+                port_scan_data = self._scan_tcp_ports(ip, tcp_ports, tcp_timeout, stop)
 
                 results_callback(ip, ping_scan_data, port_scan_data)
 
@@ -59,14 +62,13 @@ class IPScanner:
                 f"ips_to_scan queue is empty, scanning thread {threading.get_ident()} exiting"
             )
 
-    def _scan_tcp_ports(self, ip: str, options: Dict, stop: Event):
-        tcp_timeout = options["timeout_ms"] / 1000
+    def _scan_tcp_ports(self, ip: str, ports: List[int], timeout: float, stop: Event):
         port_scan_data = {}
 
-        for p in options["ports"]:
+        for p in ports:
             if stop.is_set():
                 break
 
-            port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, tcp_timeout)
+            port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, timeout)
 
         return port_scan_data
