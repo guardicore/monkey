@@ -67,12 +67,10 @@ def assert_dot_1(ip, ping_scan_data, port_scan_data):
     psd_445 = port_scan_data[445]
     psd_3389 = port_scan_data[3389]
 
-    assert psd_445.status == PortStatus.OPEN
     assert psd_445.port == 445
     assert psd_445.banner == "SMB BANNER"
     assert psd_445.service == "tcp-445"
 
-    assert psd_3389.status == PortStatus.OPEN
     assert psd_3389.port == 3389
     assert psd_3389.banner == ""
     assert psd_3389.service == "tcp-3389"
