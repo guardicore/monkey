@@ -12,12 +12,6 @@ WINDOWS_OS = "windows"
 LINUX_OS = "linux"
 
 
-class MockPuppet(MockPuppet):
-    def __init__(self):
-        self.ping = MagicMock(side_effect=super().ping)
-        self.scan_tcp_port = MagicMock(side_effect=super().scan_tcp_port)
-
-
 @pytest.fixture
 def scan_config():
     return {

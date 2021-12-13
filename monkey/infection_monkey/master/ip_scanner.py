@@ -44,7 +44,8 @@ class IPScanner:
                 ip = ips.get_nowait()
                 logger.info(f"Scanning {ip}")
 
-                ping_scan_data = self._puppet.ping(ip, options["icmp"])
+                icmp_timeout = options["icmp"]["timeout_ms"] / 1000
+                ping_scan_data = self._puppet.ping(ip, icmp_timeout)
                 port_scan_data = self._scan_tcp_ports(ip, options["tcp"], stop)
 
                 results_callback(ip, ping_scan_data, port_scan_data)
@@ -59,11 +60,13 @@ class IPScanner:
             )
 
     def _scan_tcp_ports(self, ip: str, options: Dict, stop: Event):
+        tcp_timeout = options["timeout_ms"] / 1000
         port_scan_data = {}
+
         for p in options["ports"]:
             if stop.is_set():
                 break
 
-            port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, options["timeout_ms"])
+            port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, tcp_timeout)
 
         return port_scan_data
