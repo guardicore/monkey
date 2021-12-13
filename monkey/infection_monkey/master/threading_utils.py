@@ -1,6 +1,6 @@
 from threading import Thread
-from typing import Any, Callable, Tuple
+from typing import Callable, Tuple
 
 
-def create_daemon_thread(target: Callable[[Any], None], args: Tuple[Any] = ()):
+def create_daemon_thread(target: Callable[..., None], args: Tuple = ()):
     return Thread(target=target, args=args, daemon=True)

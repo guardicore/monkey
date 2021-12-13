@@ -52,7 +52,7 @@ class Propagator:
         logger.info("Finished network scan")
 
     def _process_scan_results(
-        self, ip: str, ping_scan_data: PingScanData, port_scan_data: PortScanData
+        self, ip: str, ping_scan_data: PingScanData, port_scan_data: Dict[int, PortScanData]
     ):
         victim_host = VictimHost(ip)
         has_open_port = False
