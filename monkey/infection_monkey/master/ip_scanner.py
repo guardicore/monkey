@@ -11,7 +11,9 @@ from .threading_utils import create_daemon_thread
 
 logger = logging.getLogger()
 
-Callback = Callable[[str, PingScanData, Dict[int, PortScanData]], None]
+IP = str
+Port = int
+Callback = Callable[[IP, PingScanData, Dict[Port, PortScanData]], None]
 
 
 class IPScanner:
