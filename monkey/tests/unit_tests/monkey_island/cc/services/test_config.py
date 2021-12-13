@@ -143,6 +143,13 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
         "icmp": {
             "timeout_ms": 1000,
         },
+        "fingerprinters": [
+            "SMBFinger",
+            "SSHFinger",
+            "HTTPFinger",
+            "MSSQLFinger",
+            "ElasticFinger",
+        ],
     }
     ConfigService.format_flat_config_for_agent(flat_monkey_config)
 
@@ -153,3 +160,4 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
     assert "tcp_scan_timeout" not in flat_monkey_config
     assert "tcp_target_ports" not in flat_monkey_config
     assert "ping_scan_timeout" not in flat_monkey_config
+    assert "finger_classes" not in flat_monkey_config
