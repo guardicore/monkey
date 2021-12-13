@@ -229,7 +229,7 @@ def test_interrupt_port_scanning(callback, scan_config, stop):
 
 
 def test_interrupt_fingerprinting(callback, scan_config, stop):
-    def stopable_fingerprint(port, *_):
+    def stopable_fingerprint(*_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that neither thread scans any more ports
         stopable_fingerprint.barrier.wait()

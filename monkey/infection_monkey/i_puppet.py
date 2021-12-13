@@ -58,11 +58,20 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def fingerprint(self, name: str, host: str) -> FingerprintData:
+    def fingerprint(
+        self,
+        name: str,
+        host: str,
+        ping_scan_data: PingScanData,
+        port_scan_data: Dict[int, PortScanData],
+    ) -> FingerprintData:
         """
         Runs a fingerprinter against a remote host
         :param str name: The name of the fingerprinter to run
         :param str host: The domain name or IP address of a host
+        :param PingScanData ping_scan_data: Data retrieved from the target host via ICMP
+        :param Dict[int, PortScanData] port_scan_data: Data retrieved from the target host via a TCP
+                                                       port scan
         :return: The data collected by running the fingerprinter on the specified host
         :rtype: FingerprintData
         """
