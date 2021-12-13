@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict, List, Tuple
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
+from infection_monkey.model import VictimHostFactory
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -27,6 +28,7 @@ class AutomatedMaster(IMaster):
         self,
         puppet: IPuppet,
         telemetry_messenger: ITelemetryMessenger,
+        victim_host_factory: VictimHostFactory,
         control_channel: IControlChannel,
     ):
         self._puppet = puppet
@@ -34,7 +36,7 @@ class AutomatedMaster(IMaster):
         self._control_channel = control_channel
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
-        self._propagator = Propagator(self._telemetry_messenger, ip_scanner)
+        self._propagator = Propagator(self._telemetry_messenger, ip_scanner, victim_host_factory)
 
         self._stop = threading.Event()
         self._master_thread = create_daemon_thread(target=self._run_master_thread)

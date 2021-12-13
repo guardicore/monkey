@@ -1,4 +1,5 @@
 from infection_monkey.model.host import VictimHost
+from infection_monkey.model.victim_host_factory import VictimHostFactory
 
 MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"

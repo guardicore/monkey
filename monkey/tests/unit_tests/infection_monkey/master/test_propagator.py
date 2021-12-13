@@ -2,6 +2,7 @@ from threading import Event
 
 from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, PortStatus
 from infection_monkey.master import IPScanResults, Propagator
+from infection_monkey.model import VictimHostFactory
 
 empty_fingerprint_data = FingerprintData(None, None, {})
 
@@ -87,7 +88,7 @@ class MockIPScanner:
 
 
 def test_scan_result_processing(telemetry_messenger_spy):
-    p = Propagator(telemetry_messenger_spy, MockIPScanner())
+    p = Propagator(telemetry_messenger_spy, MockIPScanner(), VictimHostFactory())
     p.propagate(
         {
             "targets": {"subnet_scan_list": ["10.0.0.1", "10.0.0.2", "10.0.0.3"]},

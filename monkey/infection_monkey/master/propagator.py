@@ -4,7 +4,7 @@ from threading import Event, Thread
 from typing import Dict
 
 from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, PortStatus
-from infection_monkey.model.host import VictimHost
+from infection_monkey.model import VictimHost, VictimHostFactory
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.scan_telem import ScanTelem
 
@@ -15,9 +15,15 @@ logger = logging.getLogger()
 
 
 class Propagator:
-    def __init__(self, telemetry_messenger: ITelemetryMessenger, ip_scanner: IPScanner):
+    def __init__(
+        self,
+        telemetry_messenger: ITelemetryMessenger,
+        ip_scanner: IPScanner,
+        victim_host_factory: VictimHostFactory,
+    ):
         self._telemetry_messenger = telemetry_messenger
         self._ip_scanner = ip_scanner
+        self._victim_host_factory = victim_host_factory
         self._hosts_to_exploit = None
 
     def propagate(self, propagation_config: Dict, stop: Event):
@@ -52,7 +58,7 @@ class Propagator:
         logger.info("Finished network scan")
 
     def _process_scan_results(self, ip: str, scan_results: IPScanResults):
-        victim_host = VictimHost(ip)
+        victim_host = self._victim_host_factory.build_victim_host(ip)
 
         Propagator._process_ping_scan_results(victim_host, scan_results.ping_scan_data)
         Propagator._process_tcp_scan_results(victim_host, scan_results.port_scan_data)
