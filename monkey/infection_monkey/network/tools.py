@@ -76,14 +76,13 @@ def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     return True, banner
 
 
-def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
+def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT):
     """
     Checks whether any of the given ports are open on a target IP.
     :param ip:  IP of host to attack
     :param ports: List of ports to attack. Must not be empty.
     :param timeout: Amount of time to wait for connection
-    :param get_banner: T/F if to get first packets from server
-    :return: list of open ports. If get_banner=True, then a matching list of banners.
+    :return: List of open ports.
     """
     sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(len(ports))]
     [s.setblocking(False) for s in sockets]
@@ -130,7 +129,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT, get_banner=False):
                 % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
             )
             banners = []
-            if get_banner and (len(connected_ports_sockets) != 0):
+            if len(connected_ports_sockets) != 0:
                 readable_sockets, _, _ = select.select(
                     [s[1] for s in connected_ports_sockets], [], [], 0
                 )

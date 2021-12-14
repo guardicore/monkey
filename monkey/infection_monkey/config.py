@@ -103,12 +103,6 @@ class Configuration(object):
     exploiter_classes = []
     system_info_collector_classes = []
 
-    # how many victims to look for in a single scan iteration
-    victims_max_find = 100
-
-    # how many victims to exploit before stopping
-    victims_max_exploit = 100
-
     # depth of propagation
     depth = 2
     max_depth = None
@@ -142,8 +136,6 @@ class Configuration(object):
     tcp_target_ports = [22, 2222, 445, 135, 3389, 80, 8080, 443, 8008, 3306, 9200]
     tcp_target_ports.extend(HTTP_PORTS)
     tcp_scan_timeout = 3000  # 3000 Milliseconds
-    tcp_scan_interval = 0  # in milliseconds
-    tcp_scan_get_banner = True
 
     # Ping Scanner
     ping_scan_timeout = 1000

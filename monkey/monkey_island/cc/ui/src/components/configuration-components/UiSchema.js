@@ -123,14 +123,6 @@ export default function UiSchema(props) {
           'ui:widget': AdvancedMultiSelect
         }
       },
-      monkey: {
-        alive: {
-          classNames: 'config-field-hidden'
-        },
-        aws_keys: {
-          classNames: 'config-field-hidden'
-        }
-      },
       exploits: {
         exploit_lm_hash_list:{
           items: {

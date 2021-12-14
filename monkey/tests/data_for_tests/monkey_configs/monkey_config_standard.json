@@ -47,8 +47,6 @@
         "keep_tunnel_open_time": 60
       },
       "monkey": {
-        "victims_max_find": 100,
-        "victims_max_exploit": 100,
         "alive": true,
         "aws_keys": {
           "aws_access_key_id": "",
@@ -88,9 +86,7 @@
             7001,
             8088
           ],
-          "tcp_scan_interval": 0,
-          "tcp_scan_timeout": 3000,
-          "tcp_scan_get_banner": true
+          "tcp_scan_timeout": 3000
         },
         "ping_scanner": {
           "ping_scan_timeout": 1000

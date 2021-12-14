@@ -1,5 +1,3 @@
-from monkey_island.cc.services.utils.typographic_symbols import WARNING_SIGN
-
 INTERNAL = {
     "title": "Internal",
     "type": "object",
@@ -21,24 +19,6 @@ INTERNAL = {
             "title": "Monkey",
             "type": "object",
             "properties": {
-                "victims_max_find": {
-                    "title": "Max victims to find",
-                    "type": "integer",
-                    "default": 100,
-                    "description": "Determines the maximum number of machines the monkey is "
-                    "allowed to scan",
-                },
-                "victims_max_exploit": {
-                    "title": "Max victims to exploit",
-                    "type": "integer",
-                    "default": 100,
-                    "description": "Determines the maximum number of machines the monkey"
-                    " is allowed to successfully exploit. "
-                    + WARNING_SIGN
-                    + " Note that setting this value too high may result in the "
-                    "monkey propagating to "
-                    "a high number of machines",
-                },
                 "alive": {
                     "title": "Alive",
                     "type": "boolean",
@@ -116,25 +96,12 @@ INTERNAL = {
                             "description": "List of TCP ports the monkey will check whether "
                             "they're open",
                         },
-                        "tcp_scan_interval": {
-                            "title": "TCP scan interval",
-                            "type": "integer",
-                            "default": 0,
-                            "description": "Time to sleep (in milliseconds) between scans",
-                        },
                         "tcp_scan_timeout": {
                             "title": "TCP scan timeout",
                             "type": "integer",
                             "default": 3000,
                             "description": "Maximum time (in milliseconds) "
                             "to wait for TCP response",
-                        },
-                        "tcp_scan_get_banner": {
-                            "title": "TCP scan - get banner",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether the TCP scan should try to get the "
-                            "banner",
                         },
                     },
                 },
