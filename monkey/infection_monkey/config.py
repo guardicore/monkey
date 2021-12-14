@@ -103,9 +103,6 @@ class Configuration(object):
     exploiter_classes = []
     system_info_collector_classes = []
 
-    # how many victims to exploit before stopping
-    victims_max_exploit = 100
-
     # depth of propagation
     depth = 2
     max_depth = None
