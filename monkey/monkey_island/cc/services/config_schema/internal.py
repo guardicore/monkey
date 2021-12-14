@@ -1,5 +1,3 @@
-from monkey_island.cc.services.utils.typographic_symbols import WARNING_SIGN
-
 INTERNAL = {
     "title": "Internal",
     "type": "object",
@@ -21,17 +19,6 @@ INTERNAL = {
             "title": "Monkey",
             "type": "object",
             "properties": {
-                "victims_max_exploit": {
-                    "title": "Max victims to exploit",
-                    "type": "integer",
-                    "default": 100,
-                    "description": "Determines the maximum number of machines the monkey"
-                    " is allowed to successfully exploit. "
-                    + WARNING_SIGN
-                    + " Note that setting this value too high may result in the "
-                    "monkey propagating to "
-                    "a high number of machines",
-                },
                 "alive": {
                     "title": "Alive",
                     "type": "boolean",
