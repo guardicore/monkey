@@ -106,7 +106,6 @@
         "MimikatzCollector"
     ],
     "tcp_scan_get_banner": true,
-    "tcp_scan_interval": 0,
     "tcp_scan_timeout": 3000,
     "tcp_target_ports": [
         22,

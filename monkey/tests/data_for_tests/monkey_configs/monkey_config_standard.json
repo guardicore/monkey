@@ -86,7 +86,6 @@
             7001,
             8088
           ],
-          "tcp_scan_interval": 0,
           "tcp_scan_timeout": 3000,
           "tcp_scan_get_banner": true
         },
