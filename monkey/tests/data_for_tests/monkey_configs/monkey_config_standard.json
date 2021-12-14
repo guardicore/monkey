@@ -86,8 +86,7 @@
             7001,
             8088
           ],
-          "tcp_scan_timeout": 3000,
-          "tcp_scan_get_banner": true
+          "tcp_scan_timeout": 3000
         },
         "ping_scanner": {
           "ping_scan_timeout": 1000
