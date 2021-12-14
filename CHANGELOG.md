@@ -36,6 +36,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - MITRE ATT&CK configuration screen. #1532
 - Propagation credentials from "GET /api/monkey/<string:guid>" endpoint. #1538
 - "GET /api/monkey_control/check_remote_port/<string:port>" endpoint. #1635
+- Max victims to find/exploit, TCP scan interval and TCP scan get banner internal options. #1597
 - MySQL fingerprinter. #1648
 
 ### Fixed
