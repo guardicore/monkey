@@ -294,7 +294,10 @@ class MockPuppet(IPuppet):
             },
         }
 
-        return successful_exploiters[host][name]
+        try:
+            return successful_exploiters[host][name]
+        except KeyError:
+            return ExploiterResultData(False, {}, [], f"{name} failed for host {host}")
 
     def run_payload(
         self, name: str, options: Dict, interrupt: threading.Event
