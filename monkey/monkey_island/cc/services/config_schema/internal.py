@@ -96,12 +96,6 @@ INTERNAL = {
                             "description": "List of TCP ports the monkey will check whether "
                             "they're open",
                         },
-                        "tcp_scan_interval": {
-                            "title": "TCP scan interval",
-                            "type": "integer",
-                            "default": 0,
-                            "description": "Time to sleep (in milliseconds) between scans",
-                        },
                         "tcp_scan_timeout": {
                             "title": "TCP scan timeout",
                             "type": "integer",
