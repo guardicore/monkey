@@ -29,8 +29,7 @@ The currently implemented Fingerprint modules are:
 2. [`SSHFinger`][ssh-finger] - Fingerprints target machines over SSH (port 22) and extracts the computer version and SSH banner.
 3. [`PingScanner`][ping-scanner] - Fingerprints target machine's TTL to differentiate between Linux and Windows hosts.
 4. [`HTTPFinger`][http-finger] - Detects HTTP/HTTPS services, using the ports listed in `HTTP_PORTS` in the configuration, will return the server type and if it supports SSL.
-5. [`MySQLFinger`][mysql-finger] - Fingerprints MySQL (port 3306) and will extract MySQL banner info - version, major/minor/build and capabilities.
-6. [`ElasticFinger`][elastic-finger] - Fingerprints ElasticSearch (port 9200) will extract the cluster name, node name and node version.
+5. [`ElasticFinger`][elastic-finger] - Fingerprints ElasticSearch (port 9200) and will extract the cluster name, node name and node version.
 
 ## Adding a scanner/fingerprinter
 
@@ -44,7 +43,6 @@ At this point, the Infection Monkey knows how to use the new scanner/fingerprint
  [http-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/httpfinger.py
  [host-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/__init__.py
  [host-scanner]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/__init__.py
- [mysql-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/mysqlfinger.py
  [ping-scanner]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/ping_scanner.py
  [smb-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/smbfinger.py
  [ssh-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/sshfinger.py

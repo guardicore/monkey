@@ -89,7 +89,6 @@ _.do_GET  # unused method (monkey/infection_monkey/exploit/weblogic.py:237)
 PowerShellExploiter  # (monkey\infection_monkey\exploit\powershell.py:27)
 ElasticFinger  # unused class (monkey/infection_monkey/network/elasticfinger.py:18)
 HTTPFinger  # unused class (monkey/infection_monkey/network/httpfinger.py:9)
-MySQLFinger  # unused class (monkey/infection_monkey/network/mysqlfinger.py:13)
 SSHFinger  # unused class (monkey/infection_monkey/network/sshfinger.py:15)
 ClearCommandHistory  # unused class (monkey/infection_monkey/post_breach/actions/clear_command_history.py:11)
 AccountDiscovery  # unused class (monkey/infection_monkey/post_breach/actions/discover_accounts.py:8)
@@ -187,9 +186,6 @@ WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_
 WINDOWS_TTL  # unused variable (monkey/infection_monkey/network/ping_scanner.py:17)
 wlist  # unused variable (monkey/infection_monkey/transport/tcp.py:28)
 wlist  # unused variable (monkey/infection_monkey/transport/http.py:176)
-charset  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:81)
-salt  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:78)
-thread_id  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:61)
 
 
 # leaving this since there's a TODO related to it
