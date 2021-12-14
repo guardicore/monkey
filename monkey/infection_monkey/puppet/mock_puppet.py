@@ -11,6 +11,7 @@ from infection_monkey.i_puppet import (
     PortStatus,
     PostBreachData,
 )
+from infection_monkey.puppet.plugin_type import PluginType
 
 DOT_1 = "10.0.0.1"
 DOT_2 = "10.0.0.2"
@@ -21,6 +22,9 @@ logger = logging.getLogger()
 
 
 class MockPuppet(IPuppet):
+    def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
+        logger.debug(f"load_plugin({plugin}, {plugin_type})")
+
     def run_sys_info_collector(self, name: str) -> Dict:
         logger.debug(f"run_sys_info_collector({name})")
         # TODO: More collectors
