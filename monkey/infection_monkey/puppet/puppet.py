@@ -10,14 +10,18 @@ from infection_monkey.i_puppet import (
     PortScanData,
     PostBreachData,
 )
+from infection_monkey.puppet.plugin_registry import PluginRegistry
 from infection_monkey.puppet.plugin_type import PluginType
 
 logger = logging.getLogger()
 
 
 class Puppet(IPuppet):
+    def __init__(self) -> None:
+        self._plugin_registry = PluginRegistry()
+
     def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
-        pass
+        self._plugin_registry.load_plugin(plugin, plugin_type)
 
     def run_sys_info_collector(self, name: str) -> Dict:
         pass
