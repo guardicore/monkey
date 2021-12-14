@@ -57,7 +57,8 @@ def test_middle_of_range_subnet():
 
 
 @pytest.mark.parametrize(
-    "ip_range", ["192.168.56.25-192.168.56.33", "192.168.56.25 - 192.168.56.33"]
+    "ip_range",
+    ["192.168.56.25-192.168.56.33", "192.168.56.25 - 192.168.56.33", "192.168.56.33-192.168.56.25"],
 )
 def test_ip_range(ip_range):
     scan_targets = compile_ranges_only([ip_range])
