@@ -196,29 +196,29 @@ def test_stop_after_callback(scan_config, stop):
 
     _callback.barrier = Barrier(2)
 
-    stopable_callback = MagicMock(side_effect=_callback)
+    stoppable_callback = MagicMock(side_effect=_callback)
 
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
 
     ns = IPScanner(MockPuppet(), num_workers=2)
-    ns.scan(ips, scan_config, stopable_callback, stop)
+    ns.scan(ips, scan_config, stoppable_callback, stop)
 
-    assert stopable_callback.call_count == 2
+    assert stoppable_callback.call_count == 2
 
 
 def test_interrupt_port_scanning(callback, scan_config, stop):
-    def stopable_scan_tcp_port(port, *_):
+    def stoppable_scan_tcp_port(port, *_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that neither thread scans any more ports
-        stopable_scan_tcp_port.barrier.wait()
+        stoppable_scan_tcp_port.barrier.wait()
         stop.set()
 
         return PortScanData(port, False, None, None)
 
-    stopable_scan_tcp_port.barrier = Barrier(2)
+    stoppable_scan_tcp_port.barrier = Barrier(2)
 
     puppet = MockPuppet()
-    puppet.scan_tcp_port = MagicMock(side_effect=stopable_scan_tcp_port)
+    puppet.scan_tcp_port = MagicMock(side_effect=stoppable_scan_tcp_port)
 
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
 
@@ -229,18 +229,18 @@ def test_interrupt_port_scanning(callback, scan_config, stop):
 
 
 def test_interrupt_fingerprinting(callback, scan_config, stop):
-    def stopable_fingerprint(*_):
+    def stoppable_fingerprint(*_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that neither thread scans any more ports
-        stopable_fingerprint.barrier.wait()
+        stoppable_fingerprint.barrier.wait()
         stop.set()
 
         return FingerprintData(None, None, {})
 
-    stopable_fingerprint.barrier = Barrier(2)
+    stoppable_fingerprint.barrier = Barrier(2)
 
     puppet = MockPuppet()
-    puppet.fingerprint = MagicMock(side_effect=stopable_fingerprint)
+    puppet.fingerprint = MagicMock(side_effect=stoppable_fingerprint)
 
     ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
 
