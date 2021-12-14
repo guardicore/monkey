@@ -1,6 +1,6 @@
 import logging
 from queue import Queue
-from threading import Event, Thread
+from threading import Event
 from typing import Dict
 
 from infection_monkey.i_puppet import (
@@ -46,7 +46,7 @@ class Propagator:
         )
         exploit_thread = create_daemon_thread(
             target=self._exploit_hosts,
-            args=(scan_thread, propagation_config, network_scan_completed, stop),
+            args=(propagation_config, network_scan_completed, stop),
         )
 
         scan_thread.start()
@@ -116,7 +116,6 @@ class Propagator:
 
     def _exploit_hosts(
         self,
-        scan_thread: Thread,
         propagation_config: Dict,
         network_scan_completed: Event,
         stop: Event,
