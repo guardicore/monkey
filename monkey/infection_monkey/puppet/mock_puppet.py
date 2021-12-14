@@ -280,8 +280,12 @@ class MockPuppet(IPuppet):
             "executed_cmds": [],
         }
         successful_exploiters = {
-            DOT_1: {"PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts)},
-            DOT_3: {"SSHExploiter": ExploiterResultData(False, info_ssh, attempts)},
+            DOT_1: {
+                "PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts, None)
+            },
+            DOT_3: {
+                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting")
+            },
         }
 
         return successful_exploiters[host][name]
