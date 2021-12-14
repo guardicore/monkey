@@ -21,13 +21,6 @@ INTERNAL = {
             "title": "Monkey",
             "type": "object",
             "properties": {
-                "victims_max_find": {
-                    "title": "Max victims to find",
-                    "type": "integer",
-                    "default": 100,
-                    "description": "Determines the maximum number of machines the monkey is "
-                    "allowed to scan",
-                },
                 "victims_max_exploit": {
                     "title": "Max victims to exploit",
                     "type": "integer",
