@@ -29,7 +29,7 @@ The currently implemented Fingerprint modules are:
 2. [`SSHFinger`][ssh-finger] - Fingerprints target machines over SSH (port 22) and extracts the computer version and SSH banner.
 3. [`PingScanner`][ping-scanner] - Fingerprints target machine's TTL to differentiate between Linux and Windows hosts.
 4. [`HTTPFinger`][http-finger] - Detects HTTP/HTTPS services, using the ports listed in `HTTP_PORTS` in the configuration, will return the server type and if it supports SSL.
-5. [`ElasticFinger`][elastic-finger] - Fingerprints ElasticSearch (port 9200) will extract the cluster name, node name and node version.
+5. [`ElasticFinger`][elastic-finger] - Fingerprints ElasticSearch (port 9200) and will extract the cluster name, node name and node version.
 
 ## Adding a scanner/fingerprinter
 
