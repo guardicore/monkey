@@ -101,7 +101,6 @@
           "SMBFinger",
           "SSHFinger",
           "HTTPFinger",
-          "MySQLFinger",
           "MSSQLFinger",
           "ElasticFinger"
         ]
