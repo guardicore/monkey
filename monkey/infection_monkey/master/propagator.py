@@ -139,7 +139,9 @@ class Propagator:
         if result.success:
             logger.info("Successfully propagated to {host} using {exploiter_name}")
         else:
-            logger.info(result.error_message)
+            logger.info(
+                f"Failed to propagate to {host} using {exploiter_name}: {result.error_message}"
+            )
 
         self._telemetry_messenger.send_telemetry(
             ExploitTelem(exploiter_name, host, result.success, result.info, result.attempts)
