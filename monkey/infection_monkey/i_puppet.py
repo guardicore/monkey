@@ -4,10 +4,16 @@ from collections import namedtuple
 from enum import Enum
 from typing import Dict
 
+from infection_monkey.puppet.plugin_type import PluginType
+
 
 class PortStatus(Enum):
     OPEN = 1
     CLOSED = 2
+
+
+class UnknownPluginError(Exception):
+    pass
 
 
 ExploiterResultData = namedtuple("ExploiterResultData", ["result", "info", "attempts"])
@@ -18,6 +24,14 @@ PostBreachData = namedtuple("PostBreachData", ["command", "result"])
 
 
 class IPuppet(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
+        """
+        Loads a plugin into the puppet.
+        :param object plugin: The plugin object to load
+        :param PluginType plugin_type: The type of plugin being loaded
+        """
+
     @abc.abstractmethod
     def run_sys_info_collector(self, name: str) -> Dict:
         """
