@@ -101,8 +101,9 @@ def test_format_config_for_agent__propagation(flat_monkey_config):
     ConfigService.format_flat_config_for_agent(flat_monkey_config)
 
     assert "propagation" in flat_monkey_config
-    assert "network_scan" in flat_monkey_config["propagation"]
     assert "targets" in flat_monkey_config["propagation"]
+    assert "network_scan" in flat_monkey_config["propagation"]
+    assert "exploiters" in flat_monkey_config["propagation"]
 
 
 def test_format_config_for_agent__propagation_targets(flat_monkey_config):
@@ -163,3 +164,31 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
     assert "tcp_target_ports" not in flat_monkey_config
     assert "ping_scan_timeout" not in flat_monkey_config
     assert "finger_classes" not in flat_monkey_config
+
+
+def test_format_config_for_agent__exploiters(flat_monkey_config):
+    expected_exploiters_config = {
+        "brute_force": [
+            {"name": "MSSQLExploiter", "propagator": True},
+            {"name": "PowerShellExploiter", "propagator": True},
+            {"name": "SSHExploiter", "propagator": True},
+            {"name": "SmbExploiter", "propagator": True},
+            {"name": "WmiExploiter", "propagator": True},
+        ],
+        "vulnerability": [
+            {"name": "DrupalExploiter", "propagator": True},
+            {"name": "ElasticGroovyExploiter", "propagator": True},
+            {"name": "HadoopExploiter", "propagator": True},
+            {"name": "ShellShockExploiter", "propagator": True},
+            {"name": "Struts2Exploiter", "propagator": True},
+            {"name": "WebLogicExploiter", "propagator": True},
+            {"name": "ZerologonExploiter", "propagator": False},
+        ],
+    }
+    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+
+    assert "propagation" in flat_monkey_config
+    assert "exploiters" in flat_monkey_config["propagation"]
+
+    assert flat_monkey_config["propagation"]["exploiters"] == expected_exploiters_config
+    assert "exploiter_classes" not in flat_monkey_config
