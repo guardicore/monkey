@@ -124,8 +124,8 @@ class Propagator:
 
         exploiter_config = propagation_config["exploiters"]
         self._exploiter.exploit_hosts(
-            self._hosts_to_exploit,
             exploiter_config,
+            self._hosts_to_exploit,
             self._process_exploit_attempts,
             network_scan_completed,
             stop,

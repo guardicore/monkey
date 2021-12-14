@@ -139,7 +139,7 @@ def test_scan_result_processing(telemetry_messenger_spy):
 
 class MockExploiter:
     def exploit_hosts(
-        self, hosts_to_exploit, exploiter_config, results_callback, scan_completed, stop
+        self, exploiter_config, hosts_to_exploit, results_callback, scan_completed, stop
     ):
         hte = []
         for _ in range(0, 2):
