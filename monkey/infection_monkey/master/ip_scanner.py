@@ -60,7 +60,7 @@ class IPScanner:
                 port_scan_data = self._scan_tcp_ports(ip, tcp_ports, tcp_timeout, stop)
 
                 fingerprint_data = {}
-                if IPScanner._found_open_port(port_scan_data):
+                if IPScanner.port_scan_found_open_port(port_scan_data):
                     fingerprinters = options["fingerprinters"]
                     fingerprint_data = self._run_fingerprinters(
                         ip, fingerprinters, ping_scan_data, port_scan_data, stop
@@ -92,12 +92,8 @@ class IPScanner:
         return port_scan_data
 
     @staticmethod
-    def _found_open_port(port_scan_data: Dict[int, PortScanData]):
-        for psd in port_scan_data.values():
-            if psd.status == PortStatus.OPEN:
-                return True
-
-        return False
+    def port_scan_found_open_port(port_scan_data: Dict[int, PortScanData]):
+        return any(psd.status == PortStatus.OPEN for psd in port_scan_data.values())
 
     def _run_fingerprinters(
         self,

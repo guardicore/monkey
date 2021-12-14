@@ -55,12 +55,10 @@ class Propagator:
         victim_host = VictimHost(ip)
 
         Propagator._process_ping_scan_results(victim_host, scan_results.ping_scan_data)
-        has_open_port = Propagator._process_tcp_scan_results(
-            victim_host, scan_results.port_scan_data
-        )
+        Propagator._process_tcp_scan_results(victim_host, scan_results.port_scan_data)
         Propagator._process_fingerprinter_results(victim_host, scan_results.fingerprint_data)
 
-        if has_open_port:
+        if IPScanner.port_scan_found_open_port(scan_results.port_scan_data):
             self._hosts_to_exploit.put(victim_host)
 
         self._telemetry_messenger.send_telemetry(ScanTelem(victim_host))
@@ -73,19 +71,13 @@ class Propagator:
 
     @staticmethod
     def _process_tcp_scan_results(victim_host: VictimHost, port_scan_data: PortScanData) -> bool:
-        has_open_port = False
-
         for psd in port_scan_data.values():
             if psd.status == PortStatus.OPEN:
-                has_open_port = True
-
                 victim_host.services[psd.service] = {}
                 victim_host.services[psd.service]["display_name"] = "unknown(TCP)"
                 victim_host.services[psd.service]["port"] = psd.port
                 if psd.banner is not None:
                     victim_host.services[psd.service]["banner"] = psd.banner
-
-        return has_open_port
 
     @staticmethod
     def _process_fingerprinter_results(victim_host: VictimHost, fingerprint_data: FingerprintData):
