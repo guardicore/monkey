@@ -29,14 +29,6 @@ FINGER_CLASSES = {
         },
         {
             "type": "string",
-            "enum": ["MySQLFinger"],
-            "title": "MySQL Fingerprinter",
-            "safe": True,
-            "info": "Checks if MySQL server is running and tries to get it's version.",
-            "attack_techniques": ["T1210"],
-        },
-        {
-            "type": "string",
             "enum": ["MSSQLFinger"],
             "title": "MSSQL Fingerprinter",
             "safe": True,

@@ -166,7 +166,6 @@ INTERNAL = {
                         "SMBFinger",
                         "SSHFinger",
                         "HTTPFinger",
-                        "MySQLFinger",
                         "MSSQLFinger",
                         "ElasticFinger",
                     ],
