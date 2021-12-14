@@ -1,3 +1,5 @@
+from itertools import chain
+
 import pytest
 
 from infection_monkey.network.scan_target_generator import (
@@ -191,9 +193,7 @@ def test_local_subnet_added():
 
     assert len(scan_targets) == 254
 
-    for ip in range(0, 5):
-        assert f"10.0.0.{ip} in scan_targets"
-    for ip in range(6, 255):
+    for ip in chain(range(0, 5), range(6, 255)):
         assert f"10.0.0.{ip} in scan_targets"
 
 
@@ -213,14 +213,10 @@ def test_multiple_local_subnets_added():
 
     assert len(scan_targets) == 2 * (255 - 1)
 
-    for ip in range(0, 5):
-        assert f"10.0.0.{ip} in scan_targets"
-    for ip in range(6, 255):
+    for ip in chain(range(0, 5), range(6, 255)):
         assert f"10.0.0.{ip} in scan_targets"
 
-    for ip in range(0, 99):
-        assert f"172.33.66.{ip} in scan_targets"
-    for ip in range(100, 255):
+    for ip in chain(range(0, 99), range(100, 255)):
         assert f"172.33.66.{ip} in scan_targets"
 
 
