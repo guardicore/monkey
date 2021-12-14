@@ -16,7 +16,7 @@ class UnknownPluginError(Exception):
     pass
 
 
-ExploiterResultData = namedtuple("ExploiterResultData", ["result", "info", "attempts"])
+ExploiterResultData = namedtuple("ExploiterResultData", ["success", "info", "attempts"])
 PingScanData = namedtuple("PingScanData", ["response_received", "os"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
