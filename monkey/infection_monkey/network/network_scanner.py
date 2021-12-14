@@ -1,5 +1,4 @@
 import logging
-import time
 from multiprocessing.dummy import Pool
 
 from common.network.network_range import NetworkRange
@@ -108,9 +107,6 @@ class NetworkScanner(object):
                 if victims_count >= max_find:
                     logger.debug("Found max needed victims (%d), stopping scan", max_find)
                     return
-            if WormConfiguration.tcp_scan_interval:
-                # time.sleep uses seconds, while config is in milliseconds
-                time.sleep(WormConfiguration.tcp_scan_interval / float(1000))
 
     @staticmethod
     def _is_any_ip_in_subnet(ip_addresses, subnet_str):
