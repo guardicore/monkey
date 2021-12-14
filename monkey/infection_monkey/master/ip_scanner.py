@@ -5,15 +5,21 @@ from queue import Queue
 from threading import Event
 from typing import Callable, Dict, List
 
-from infection_monkey.i_puppet import IPuppet, PingScanData, PortScanData
+from infection_monkey.i_puppet import (
+    FingerprintData,
+    IPuppet,
+    PingScanData,
+    PortScanData,
+    PortStatus,
+)
 
+from . import IPScanResults
 from .threading_utils import create_daemon_thread
 
 logger = logging.getLogger()
 
 IP = str
-Port = int
-Callback = Callable[[IP, PingScanData, Dict[Port, PortScanData]], None]
+Callback = Callable[[IP, IPScanResults], None]
 
 
 class IPScanner:
@@ -53,7 +59,15 @@ class IPScanner:
                 tcp_ports = options["tcp"]["ports"]
                 port_scan_data = self._scan_tcp_ports(ip, tcp_ports, tcp_timeout, stop)
 
-                results_callback(ip, ping_scan_data, port_scan_data)
+                fingerprint_data = {}
+                if IPScanner._found_open_port(port_scan_data):
+                    fingerprinters = options["fingerprinters"]
+                    fingerprint_data = self._run_fingerprinters(
+                        ip, fingerprinters, ping_scan_data, port_scan_data, stop
+                    )
+
+                scan_results = IPScanResults(ping_scan_data, port_scan_data, fingerprint_data)
+                results_callback(ip, scan_results)
 
             logger.debug(
                 f"Detected the stop signal, scanning thread {threading.get_ident()} exiting"
@@ -64,7 +78,9 @@ class IPScanner:
                 f"ips_to_scan queue is empty, scanning thread {threading.get_ident()} exiting"
             )
 
-    def _scan_tcp_ports(self, ip: str, ports: List[int], timeout: float, stop: Event):
+    def _scan_tcp_ports(
+        self, ip: str, ports: List[int], timeout: float, stop: Event
+    ) -> Dict[int, PortScanData]:
         port_scan_data = {}
 
         for p in ports:
@@ -74,3 +90,29 @@ class IPScanner:
             port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, timeout)
 
         return port_scan_data
+
+    @staticmethod
+    def _found_open_port(port_scan_data: Dict[int, PortScanData]):
+        for psd in port_scan_data.values():
+            if psd.status == PortStatus.OPEN:
+                return True
+
+        return False
+
+    def _run_fingerprinters(
+        self,
+        ip: str,
+        fingerprinters: List[str],
+        ping_scan_data: PingScanData,
+        port_scan_data: Dict[int, PortScanData],
+        stop: Event,
+    ) -> Dict[str, FingerprintData]:
+        fingerprint_data = {}
+
+        for f in fingerprinters:
+            if stop.is_set():
+                break
+
+            fingerprint_data[f] = self._puppet.fingerprint(f, ip, ping_scan_data, port_scan_data)
+
+        return fingerprint_data

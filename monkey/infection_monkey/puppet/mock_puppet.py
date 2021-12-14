@@ -4,6 +4,7 @@ from typing import Dict, Tuple
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
+    FingerprintData,
     IPuppet,
     PingScanData,
     PortScanData,
@@ -193,29 +194,43 @@ class MockPuppet(IPuppet):
 
         return _get_empty_results(port)
 
-    def fingerprint(self, name: str, host: str) -> Dict:
+    def fingerprint(
+        self,
+        name: str,
+        host: str,
+        ping_scan_data: PingScanData,
+        port_scan_data: Dict[int, PortScanData],
+    ) -> FingerprintData:
         logger.debug(f"fingerprint({name}, {host})")
+        empty_fingerprint_data = FingerprintData(None, None, {})
+
         dot_1_results = {
-            "SMBFinger": {
-                "os": {"type": "windows", "version": "vista"},
-                "services": {"tcp-445": {"name": "SSH", "os": "linux"}},
-            }
+            "SMBFinger": FingerprintData(
+                "windows", "vista", {"tcp-445": {"name": "smb_service_name"}}
+            )
         }
 
         dot_3_results = {
-            "SSHFinger": {"os": "linux", "services": {"tcp-22": {"name": "SSH"}}},
-            "HTTPFinger": {
-                "services": {"tcp-https": {"name": "http", "data": ("SERVER_HEADERS", DOT_3)}}
-            },
+            "SSHFinger": FingerprintData(
+                "linux", "ubuntu", {"tcp-22": {"name": "SSH", "banner": "SSH BANNER"}}
+            ),
+            "HTTPFinger": FingerprintData(
+                None,
+                None,
+                {
+                    "tcp-80": {"name": "http", "data": ("SERVER_HEADERS", False)},
+                    "tcp-443": {"name": "http", "data": ("SERVER_HEADERS_2", True)},
+                },
+            ),
         }
 
         if host == DOT_1:
-            return dot_1_results.get(name, {})
+            return dot_1_results.get(name, empty_fingerprint_data)
 
         if host == DOT_3:
-            return dot_3_results.get(name, {})
+            return dot_3_results.get(name, empty_fingerprint_data)
 
-        return {}
+        return empty_fingerprint_data
 
     def exploit_host(
         self, name: str, host: str, options: Dict, interrupt: threading.Event

@@ -181,8 +181,7 @@ class SMBFinger(HostFinger):
                 host.services[SMB_SERVICE]["name"] = service_client
                 if "version" not in host.os:
                     host.os["version"] = os_version
-                else:
-                    host.services[SMB_SERVICE]["os-version"] = os_version
+
                 return True
         except Exception as exc:
             logger.debug("Error getting smb fingerprint: %s", exc)

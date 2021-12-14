@@ -28,8 +28,7 @@ class SSHFinger(HostFinger):
                 os_version = banner.split(" ").pop().strip()
                 if "version" not in host.os:
                     host.os["version"] = os_version
-                else:
-                    host.services[service]["os-version"] = os_version
+
                 break
 
     def get_host_fingerprint(self, host):

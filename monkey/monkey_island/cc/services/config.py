@@ -488,6 +488,9 @@ class ConfigService:
         formatted_network_scan_config["icmp"] = ConfigService._format_icmp_scan_from_flat_config(
             config
         )
+        formatted_network_scan_config[
+            "fingerprinters"
+        ] = ConfigService._format_fingerprinters_from_flat_config(config)
 
         return formatted_network_scan_config
 
@@ -528,6 +531,15 @@ class ConfigService:
         config.pop(flat_ping_timeout_field, None)
 
         return formatted_icmp_scan_config
+
+    @staticmethod
+    def _format_fingerprinters_from_flat_config(config: Dict):
+        flat_fingerprinter_classes_field = "finger_classes"
+
+        formatted_fingerprinters = config[flat_fingerprinter_classes_field]
+        config.pop(flat_fingerprinter_classes_field)
+
+        return formatted_fingerprinters
 
     @staticmethod
     def _format_targets_from_flat_config(config: Dict):
