@@ -301,3 +301,104 @@ def test_local_network_interfaces_subnet_masks():
 
     for ip in [108, 110, 145, 146]:
         assert f"172.60.145.{ip}" in scan_targets
+
+
+def test_segmentation_targets():
+    local_network_interfaces = [NetworkInterface("172.60.145.109", "/24")]
+
+    inaccessible_subnets = ["172.60.145.108/30", "172.60.145.144/30"]
+
+    scan_targets = compile_scan_target_list(
+        local_network_interfaces=local_network_interfaces,
+        ranges_to_scan=[],
+        inaccessible_subnets=inaccessible_subnets,
+        blocklisted_ips=[],
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 3
+
+    for ip in [144, 145, 146]:
+        assert f"172.60.145.{ip}" in scan_targets
+
+
+def test_segmentation_clash_with_blocked():
+    local_network_interfaces = [
+        NetworkInterface("172.60.145.109", "/30"),
+    ]
+
+    inaccessible_subnets = ["172.60.145.108/30", "172.60.145.149/30"]
+
+    blocked = ["172.60.145.148", "172.60.145.149", "172.60.145.150"]
+
+    scan_targets = compile_scan_target_list(
+        local_network_interfaces=local_network_interfaces,
+        ranges_to_scan=[],
+        inaccessible_subnets=inaccessible_subnets,
+        blocklisted_ips=blocked,
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 0
+
+
+def test_segmentation_clash_with_targets():
+    local_network_interfaces = [
+        NetworkInterface("172.60.145.109", "/30"),
+    ]
+
+    inaccessible_subnets = ["172.60.145.108/30", "172.60.145.149/30"]
+
+    targets = ["172.60.145.149", "172.60.145.150"]
+
+    scan_targets = compile_scan_target_list(
+        local_network_interfaces=local_network_interfaces,
+        ranges_to_scan=targets,
+        inaccessible_subnets=inaccessible_subnets,
+        blocklisted_ips=[],
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 3
+
+    for ip in [148, 149, 150]:
+        assert f"172.60.145.{ip}" in scan_targets
+
+
+def test_segmentation_one_network():
+    local_network_interfaces = [
+        NetworkInterface("172.60.145.109", "/30"),
+    ]
+
+    inaccessible_subnets = ["172.60.145.1/24"]
+
+    targets = ["172.60.145.149/30"]
+
+    scan_targets = compile_scan_target_list(
+        local_network_interfaces=local_network_interfaces,
+        ranges_to_scan=targets,
+        inaccessible_subnets=inaccessible_subnets,
+        blocklisted_ips=[],
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 3
+
+
+def test_segmentation_inaccessible_networks():
+    local_network_interfaces = [
+        NetworkInterface("172.60.1.1", "/24"),
+        NetworkInterface("172.60.2.1", "/24"),
+    ]
+
+    inaccessible_subnets = ["172.60.144.1/24", "172.60.146.1/24"]
+
+    scan_targets = compile_scan_target_list(
+        local_network_interfaces=local_network_interfaces,
+        ranges_to_scan=[],
+        inaccessible_subnets=inaccessible_subnets,
+        blocklisted_ips=[],
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 0

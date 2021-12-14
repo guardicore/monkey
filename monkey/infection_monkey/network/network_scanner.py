@@ -41,6 +41,8 @@ class NetworkScanner(object):
         self._ranges += self._get_inaccessible_subnets_ips()
         logger.info("Base local networks to scan are: %r", self._ranges)
 
+    # TODO remove afret agent refactoring,
+    #  it's already handled in network.scan_target_generator._get_inaccessible_subnets_ips
     def _get_inaccessible_subnets_ips(self):
         """
         For each of the machine's IPs, checks if it's in one of the subnets specified in the
@@ -113,6 +115,8 @@ class NetworkScanner(object):
                 time.sleep(WormConfiguration.tcp_scan_interval / float(1000))
 
     @staticmethod
+    # TODO remove afret agent refactoring,
+    #  it's already handled in network.scan_target_generator._is_any_ip_in_subnet
     def _is_any_ip_in_subnet(ip_addresses, subnet_str):
         for ip_address in ip_addresses:
             if NetworkRange.get_range_obj(subnet_str).is_in_range(ip_address):
