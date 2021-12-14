@@ -47,7 +47,6 @@
         "keep_tunnel_open_time": 60
       },
       "monkey": {
-        "victims_max_exploit": 100,
         "alive": true,
         "aws_keys": {
           "aws_access_key_id": "",
