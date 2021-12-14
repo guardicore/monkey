@@ -281,10 +281,16 @@ class MockPuppet(IPuppet):
         }
         successful_exploiters = {
             DOT_1: {
-                "PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts, None)
+                "PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts, None),
+                "ZerologonExploiter": ExploiterResultData(False, {}, [], "Zerologon failed"),
+                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting"),
             },
             DOT_3: {
-                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting")
+                "PowerShellExploiter": ExploiterResultData(
+                    False, info_powershell, attempts, "PowerShell Exploiter Failed"
+                ),
+                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting"),
+                "ZerologonExploiter": ExploiterResultData(True, {}, [], None),
             },
         }
 

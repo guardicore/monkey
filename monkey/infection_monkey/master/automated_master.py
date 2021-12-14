@@ -12,13 +12,14 @@ from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.utils.timer import Timer
 
-from . import IPScanner, Propagator
+from . import Exploiter, IPScanner, Propagator
 from .threading_utils import create_daemon_thread
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
 SHUTDOWN_TIMEOUT = 5
 NUM_SCAN_THREADS = 16  # TODO: Adjust this to the optimal number of scan threads
+NUM_EXPLOIT_THREADS = 4  # TODO: Adjust this to the optimal number of exploit threads
 
 logger = logging.getLogger()
 
@@ -36,7 +37,10 @@ class AutomatedMaster(IMaster):
         self._control_channel = control_channel
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
-        self._propagator = Propagator(self._telemetry_messenger, ip_scanner, victim_host_factory)
+        exploiter = Exploiter(self._puppet, NUM_EXPLOIT_THREADS)
+        self._propagator = Propagator(
+            self._telemetry_messenger, ip_scanner, exploiter, victim_host_factory
+        )
 
         self._stop = threading.Event()
         self._master_thread = create_daemon_thread(target=self._run_master_thread)
