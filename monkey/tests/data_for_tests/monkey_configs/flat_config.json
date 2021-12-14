@@ -123,6 +123,5 @@
         8088
     ],
     "user_to_add": "Monkey_IUSER_SUPPORT",
-    "victims_max_exploit": 100,
-    "victims_max_find": 100
+    "victims_max_exploit": 100
 }
