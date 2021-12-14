@@ -103,9 +103,6 @@ class Configuration(object):
     exploiter_classes = []
     system_info_collector_classes = []
 
-    # how many victims to look for in a single scan iteration
-    victims_max_find = 100
-
     # how many victims to exploit before stopping
     victims_max_exploit = 100
 
