@@ -11,6 +11,7 @@ def mock_port(monkeypatch, PORT):
     monkeypatch.setattr("monkey_island.cc.services.config.ISLAND_PORT", PORT)
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_encryptor")
 def test_set_server_ips_in_config_command_servers(config, IPS, PORT):
     ConfigService.set_server_ips_in_config(config)
@@ -18,6 +19,7 @@ def test_set_server_ips_in_config_command_servers(config, IPS, PORT):
     assert config["internal"]["island_server"]["command_servers"] == expected_config_command_servers
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_encryptor")
 def test_set_server_ips_in_config_current_server(config, IPS, PORT):
     ConfigService.set_server_ips_in_config(config)

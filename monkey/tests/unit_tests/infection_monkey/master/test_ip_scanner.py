@@ -178,6 +178,7 @@ def test_scan_multiple_ips(callback, scan_config, stop):
     assert_scan_results(ip, scan_results)
 
 
+@pytest.mark.slow
 def test_scan_lots_of_ips(callback, scan_config, stop):
     ips = [f"10.0.0.{i}" for i in range(0, 255)]
 

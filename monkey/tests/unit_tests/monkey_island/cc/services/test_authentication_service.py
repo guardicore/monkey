@@ -85,6 +85,7 @@ def test_needs_registration__false(tmp_path):
     assert not a_s.needs_registration()
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize("error", [InvalidRegistrationCredentialsError, AlreadyRegisteredError])
 def test_register_new_user__fails(
     tmp_path, mock_reset_datastore_encryptor, mock_reset_database, error
@@ -116,6 +117,7 @@ def test_register_new_user__empty_password_fails(
     mock_reset_database.assert_not_called()
 
 
+@pytest.mark.slow
 def test_register_new_user(tmp_path, mock_reset_datastore_encryptor, mock_reset_database):
     mock_add_user = MagicMock()
     mock_user_datastore = MockUserDatastore(lambda: False, mock_add_user, None)
@@ -134,6 +136,7 @@ def test_register_new_user(tmp_path, mock_reset_datastore_encryptor, mock_reset_
     mock_reset_database.assert_called_once()
 
 
+@pytest.mark.slow
 def test_authenticate__success(tmp_path, mock_unlock_datastore_encryptor):
     mock_user_datastore = MockUserDatastore(
         lambda: True,
@@ -149,6 +152,7 @@ def test_authenticate__success(tmp_path, mock_unlock_datastore_encryptor):
     mock_unlock_datastore_encryptor.assert_called_once()
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize(
     ("username", "password"), [("wrong_username", PASSWORD), (USERNAME, "wrong_password")]
 )

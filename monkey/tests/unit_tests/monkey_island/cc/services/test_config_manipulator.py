@@ -4,6 +4,7 @@ from monkey_island.cc.services.config_manipulator import update_config_on_mode_s
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_encryptor")
 def test_update_config_on_mode_set_advanced(config, monkeypatch):
     monkeypatch.setattr("monkey_island.cc.services.config.ConfigService.get_config", lambda: config)
@@ -17,6 +18,7 @@ def test_update_config_on_mode_set_advanced(config, monkeypatch):
     assert manipulated_config == config
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_encryptor")
 def test_update_config_on_mode_set_ransomware(config, monkeypatch):
     monkeypatch.setattr("monkey_island.cc.services.config.ConfigService.get_config", lambda: config)

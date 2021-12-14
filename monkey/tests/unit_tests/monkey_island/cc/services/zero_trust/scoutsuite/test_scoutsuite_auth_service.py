@@ -16,6 +16,7 @@ class MockObject:
     pass
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "uses_encryptor")
 def test_is_aws_keys_setup(tmp_path):
     # Mock default configuration
