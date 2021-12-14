@@ -103,13 +103,6 @@ INTERNAL = {
                             "description": "Maximum time (in milliseconds) "
                             "to wait for TCP response",
                         },
-                        "tcp_scan_get_banner": {
-                            "title": "TCP scan - get banner",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether the TCP scan should try to get the "
-                            "banner",
-                        },
                     },
                 },
                 "ping_scanner": {
