@@ -111,7 +111,7 @@ class AutomatedMaster(IMaster):
                 self._control_channel.should_agent_stop, CHECK_FOR_STOP_AGENT_COUNT
             )
             if stop:
-                logger.debug('Received the "stop" signal from the Island')
+                logger.info('Received the "stop" signal from the Island')
                 self._stop.set()
         except IslandCommunicationError as e:
             logger.error(f"An error occurred while trying to check for agent stop: {e}")
