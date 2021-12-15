@@ -3,7 +3,7 @@ import threading
 import time
 from typing import Any, Callable, Dict, List, Tuple
 
-from infection_monkey.i_control_channel import IControlChannel
+from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
@@ -20,6 +20,8 @@ CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 
 SHUTDOWN_TIMEOUT = 5
 NUM_SCAN_THREADS = 16  # TODO: Adjust this to the optimal number of scan threads
 NUM_EXPLOIT_THREADS = 4  # TODO: Adjust this to the optimal number of exploit threads
+CHECK_FOR_STOP_AGENT_COUNT = 5
+CHECK_FOR_CONFIG_COUNT = 3
 
 logger = logging.getLogger()
 
@@ -85,23 +87,46 @@ class AutomatedMaster(IMaster):
 
         while self._master_thread_should_run():
             if timer.is_expired():
-                # TODO: Handle exceptions in _check_for_stop() once
-                #       ControlChannel.should_agent_stop() is refactored.
                 self._check_for_stop()
                 timer.reset()
 
             time.sleep(CHECK_FOR_TERMINATE_INTERVAL_SEC)
 
+    @staticmethod
+    def _try_communicate_with_island(fn: Callable[[], Any], max_tries: int):
+        tries = 0
+        while tries < max_tries:
+            try:
+                return fn()
+            except IslandCommunicationError as e:
+                tries += 1
+                logger.debug(f"{e}. Retries left: {max_tries-tries}")
+                if tries >= max_tries:
+                    raise e
+
     def _check_for_stop(self):
-        if self._control_channel.should_agent_stop():
-            logger.debug('Received the "stop" signal from the Island')
+        try:
+            stop = AutomatedMaster._try_communicate_with_island(
+                self._control_channel.should_agent_stop, CHECK_FOR_STOP_AGENT_COUNT
+            )
+            if stop:
+                logger.info('Received the "stop" signal from the Island')
+                self._stop.set()
+        except IslandCommunicationError as e:
+            logger.error(f"An error occurred while trying to check for agent stop: {e}")
             self._stop.set()
 
     def _master_thread_should_run(self):
         return (not self._stop.is_set()) and self._simulation_thread.is_alive()
 
     def _run_simulation(self):
-        config = self._control_channel.get_config()["config"]
+        try:
+            config = AutomatedMaster._try_communicate_with_island(
+                self._control_channel.get_config, CHECK_FOR_CONFIG_COUNT
+            )["config"]
+        except IslandCommunicationError as e:
+            logger.error(f"An error occurred while fetching configuration: {e}")
+            return
 
         system_info_collector_thread = create_daemon_thread(
             target=self._run_plugins,
@@ -136,14 +161,6 @@ class AutomatedMaster(IMaster):
         payload_thread.join()
 
         pba_thread.join()
-
-        # TODO: This code is just for testing in development. Remove when
-        # 		implementation of AutomatedMaster is finished.
-        while True:
-            time.sleep(2)
-            logger.debug("Simulation thread is finished sleeping")
-            if self._stop.is_set():
-                break
 
     def _collect_system_info(self, collector: str):
         system_info_telemetry = {}
