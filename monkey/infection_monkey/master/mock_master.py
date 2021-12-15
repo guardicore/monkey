@@ -124,7 +124,7 @@ class MockMaster(IMaster):
         self._telemetry_messenger.send_telemetry(FileEncryptionTelem(path, success, error))
         logger.info("Finished running payloads")
 
-    def terminate(self) -> None:
+    def terminate(self, block: bool = False) -> None:
         logger.info("Terminating MockMaster")
 
     def cleanup(self) -> None:

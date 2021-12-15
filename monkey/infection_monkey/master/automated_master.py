@@ -52,12 +52,15 @@ class AutomatedMaster(IMaster):
         self._master_thread.join()
         logger.info("The simulation has been shutdown.")
 
-    def terminate(self):
+    def terminate(self, block: bool = False):
         logger.info("Stopping automated breach and attack simulation")
         self._stop.set()
 
-        if self._master_thread.is_alive():
+        if self._master_thread.is_alive() and block:
             self._master_thread.join()
+            # We can only have confidence that the master terminated successfully if block is set
+            # and join() has returned.
+            logger.info("AutomatedMaster successfully terminated.")
 
     def _run_master_thread(self):
         self._simulation_thread.start()
