@@ -9,6 +9,10 @@ from typing import Tuple
 logger = logging.getLogger(__name__)
 
 
+class InvalidNetworkRangeError(Exception):
+    """Raise when invalid network range is provided"""
+
+
 class NetworkRange(object, metaclass=ABCMeta):
     def __init__(self, shuffle=True):
         self._shuffle = shuffle
@@ -52,6 +56,13 @@ class NetworkRange(object, metaclass=ABCMeta):
         if "/" in address_str:
             return CidrRange(cidr_range=address_str)
         return SingleIpRange(ip_address=address_str)
+
+    @staticmethod
+    def validate_range(address_str: str):
+        try:
+            NetworkRange.get_range_obj(address_str)
+        except (ValueError, OSError) as e:
+            raise InvalidNetworkRangeError(e)
 
     @staticmethod
     def check_if_range(address_str):
@@ -178,10 +189,9 @@ class SingleIpRange(NetworkRange):
                 ip = socket.gethostbyname(string_)
                 domain_name = string_
             except socket.error:
-                logger.error(
+                raise ValueError(
                     "Your specified host: {} is not found as a domain name and"
                     " it's not an IP address".format(string_)
                 )
-                return None, string_
         # If a string_ was entered instead of IP we presume that it was domain name and translate it
         return ip, domain_name

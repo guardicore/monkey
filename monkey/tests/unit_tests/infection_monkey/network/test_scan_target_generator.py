@@ -1,7 +1,9 @@
 from itertools import chain
 
 import pytest
+from network.scan_target_generator import _filter_invalid_ranges
 
+from common.network.network_range import InvalidNetworkRangeError
 from infection_monkey.network.scan_target_generator import (
     NetworkInterface,
     compile_scan_target_list,
@@ -399,3 +401,84 @@ def test_segmentation_inaccessible_networks():
     )
 
     assert len(scan_targets) == 0
+
+
+def test_invalid_inputs():
+    local_network_interfaces = [
+        NetworkInterface("172.60.999.109", "/30"),
+        NetworkInterface("172.60.145.109", "/30"),
+    ]
+
+    inaccessible_subnets = [
+        "172.60.145.1 - 172.60.145.1111",
+        "172.60.147.888/30" "172.60.147.8/30",
+        "172.60.147.148/30",
+    ]
+
+    targets = ["172.60.145.149/33", "1.-1.1.1", "1.a.2.2", "172.60.145.151/30"]
+
+    scan_targets = compile_scan_target_list(
+        local_network_interfaces=local_network_interfaces,
+        ranges_to_scan=targets,
+        inaccessible_subnets=inaccessible_subnets,
+        blocklisted_ips=[],
+        enable_local_network_scan=False,
+    )
+
+    assert len(scan_targets) == 3
+
+    for ip in [148, 149, 150]:
+        assert f"172.60.145.{ip}" in scan_targets
+
+
+def test_range_filtering():
+    invalid_ranges = [
+        # Invalid IP segment
+        "172.60.999.109",
+        "172.60.-1.109",
+        "172.60.999.109 - 172.60.1.109",
+        "172.60.999.109/32",
+        "172.60.999.109/24",
+        # Invalid CIDR
+        "172.60.1.109/33",
+        "172.60.1.109/-1",
+        # Typos
+        "172.60.9.109 -t 172.60.1.109",
+        "172.60..9.109",
+        "172.60,9.109",
+        " 172.60 .9.109 ",
+    ]
+
+    valid_ranges = [
+        " 172.60.9.109 ",
+        "172.60.9.109 - 172.60.1.109",
+        "172.60.9.109- 172.60.1.109",
+        "0.0.0.0",
+        "localhost"
+    ]
+
+    invalid_ranges.extend(valid_ranges)
+
+    remaining = _filter_invalid_ranges(invalid_ranges, "Test error:")
+    for _range in remaining:
+        assert _range in valid_ranges
+    assert len(remaining) == len(valid_ranges)
+
+
+def test_invalid_blocklisted_ip():
+    local_network_interfaces = [NetworkInterface("172.60.145.109", "/30")]
+
+    inaccessible_subnets = ["172.60.147.8/30", "172.60.147.148/30"]
+
+    targets = ["172.60.145.151/30"]
+
+    blocklisted = ["172.60.145.153", "172.60.145.753"]
+
+    with pytest.raises(InvalidNetworkRangeError):
+        compile_scan_target_list(
+            local_network_interfaces=local_network_interfaces,
+            ranges_to_scan=targets,
+            inaccessible_subnets=inaccessible_subnets,
+            blocklisted_ips=blocklisted,
+            enable_local_network_scan=False,
+        )

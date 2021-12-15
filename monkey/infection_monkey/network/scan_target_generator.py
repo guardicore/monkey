@@ -1,15 +1,16 @@
 import itertools
+import logging
 from collections import namedtuple
 from typing import List, Set
 
-from common.network.network_range import NetworkRange
+from common.network.network_range import InvalidNetworkRangeError, NetworkRange
 
-# TODO: Convert to class and validate the format of the address and netmask
-#       Example: address="192.168.1.1", netmask="/24"
 NetworkInterface = namedtuple("NetworkInterface", ("address", "netmask"))
 
 
-# TODO: Validate all parameters
+logger = logging.getLogger(__name__)
+
+
 def compile_scan_target_list(
     local_network_interfaces: List[NetworkInterface],
     ranges_to_scan: List[str],
@@ -17,6 +18,7 @@ def compile_scan_target_list(
     blocklisted_ips: List[str],
     enable_local_network_scan: bool,
 ) -> List[str]:
+
     scan_targets = _get_ips_from_ranges_to_scan(ranges_to_scan)
 
     if enable_local_network_scan:
@@ -40,15 +42,20 @@ def compile_scan_target_list(
 def _get_ips_from_ranges_to_scan(ranges_to_scan: List[str]) -> Set[str]:
     scan_targets = set()
 
+    ranges_to_scan = _filter_invalid_ranges(
+        ranges_to_scan, "Bad network range input for targets to scan:"
+    )
+
     network_ranges = [NetworkRange.get_range_obj(_range) for _range in ranges_to_scan]
     for _range in network_ranges:
         scan_targets.update(set(_range))
-
     return scan_targets
 
 
 def _get_ips_to_scan_from_local_interface(interfaces: List[NetworkInterface]) -> Set[str]:
     ranges = [f"{interface.address}{interface.netmask}" for interface in interfaces]
+
+    ranges = _filter_invalid_ranges(ranges, "Local network interface returns an invalid IP:")
     return _get_ips_from_ranges_to_scan(ranges)
 
 
@@ -58,6 +65,9 @@ def _remove_interface_ips(scan_targets: Set[str], interfaces: List[NetworkInterf
 
 
 def _remove_blocklisted_ips(scan_targets: Set[str], blocked_ips: List[str]):
+    filtered_blocked_ips = _filter_invalid_ranges(blocked_ips, "Invalid blocked IP provided:")
+    if not len(filtered_blocked_ips) == len(blocked_ips):
+        raise InvalidNetworkRangeError("Received an invalid blocked IP. Aborting just in case.")
     _remove_ips_from_scan_targets(scan_targets, blocked_ips)
 
 
@@ -76,6 +86,11 @@ def _get_segmentation_check_targets(
     subnets_to_scan = set()
     local_ips = [interface.address for interface in local_interfaces]
 
+    local_ips = _filter_invalid_ranges(local_ips, "Invalid local IP found: ")
+    inaccessible_subnets = _filter_invalid_ranges(
+        inaccessible_subnets, "Invalid segmentation scan target: "
+    )
+
     inaccessible_subnets = _convert_to_range_object(inaccessible_subnets)
     subnet_pairs = itertools.product(inaccessible_subnets, inaccessible_subnets)
 
@@ -85,6 +100,18 @@ def _get_segmentation_check_targets(
             subnets_to_scan.update(ips)
 
     return subnets_to_scan
+
+
+def _filter_invalid_ranges(ranges: List[str], error_msg: str) -> List[str]:
+    filtered = []
+    for target_range in ranges:
+        try:
+            NetworkRange.validate_range(target_range)
+        except InvalidNetworkRangeError as e:
+            logger.error(f"{error_msg} {e}")
+            continue
+        filtered.append(target_range)
+    return filtered
 
 
 def _convert_to_range_object(subnets: List[str]) -> List[NetworkRange]:
