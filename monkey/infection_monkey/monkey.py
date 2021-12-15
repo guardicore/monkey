@@ -4,16 +4,19 @@ import os
 import subprocess
 import sys
 import time
+from typing import List
 
 import infection_monkey.tunnel as tunnel
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.master.mock_master import MockMaster
-from infection_monkey.model import DELAY_DELETE_CMD
+from infection_monkey.model import DELAY_DELETE_CMD, VictimHostFactory
+from infection_monkey.network import NetworkInterface
 from infection_monkey.network.firewall import app as firewall
+from infection_monkey.network.info import get_local_network_interfaces
 from infection_monkey.puppet.mock_puppet import MockPuppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
@@ -35,7 +38,6 @@ logger = logging.getLogger(__name__)
 class InfectionMonkey:
     def __init__(self, args):
         logger.info("Monkey is initializing...")
-        self._master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
         # TODO Used in propagation phase to set the default server for the victim
@@ -151,7 +153,28 @@ class InfectionMonkey:
         StateTelem(is_done=False, version=get_version()).send()
         TunnelTelem().send()
 
+        local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+
+        self._build_master(local_network_interfaces)
+
         register_signal_handlers(self._master)
+
+    @staticmethod
+    def _get_local_network_interfaces():
+        local_network_interfaces = get_local_network_interfaces()
+        for i in local_network_interfaces:
+            logger.debug(f"Found local interface {i.address}{i.netmask}")
+
+        return local_network_interfaces
+
+    def _build_master(self, local_network_interfaces: List[NetworkInterface]):
+        self._master = AutomatedMaster(
+            MockPuppet(),
+            LegacyTelemetryMessengerAdapter(),
+            VictimHostFactory(),
+            ControlChannel(self._opts.server, GUID),
+            local_network_interfaces,
+        )
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
