@@ -19,7 +19,7 @@ def ransomware_payload(build_ransomware_payload, ransomware_payload_config):
 
 @pytest.fixture
 def build_ransomware_payload(
-    mock_file_encryptor, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
+    mock_file_encryptor, mock_file_selector, mock_leave_readme, telemetry_messenger_spy, monkeypatch
 ):
     def inner(
         config,
@@ -27,26 +27,43 @@ def build_ransomware_payload(
         file_selector=mock_file_selector,
         leave_readme=mock_leave_readme,
     ):
-        return RansomwarePayload(
-            config,
-            file_encryptor,
-            file_selector,
-            leave_readme,
-            telemetry_messenger_spy,
+        monkeypatch.setattr(
+            "infection_monkey.ransomware.ransomware_payload.build_file_encryptor",
+            lambda: file_encryptor,
         )
+        monkeypatch.setattr(
+            "infection_monkey.ransomware.ransomware_payload.build_file_selector",
+            lambda: file_selector,
+        )
+        monkeypatch.setattr(
+            "infection_monkey.ransomware.ransomware_payload.build_leave_readme",
+            lambda: leave_readme,
+        )
+        monkeypatch.setattr(
+            "infection_monkey.ransomware.ransomware_payload.build_telemetry_messenger",
+            lambda: telemetry_messenger_spy,
+        )
+        monkeypatch.setattr(
+            "infection_monkey.ransomware.ransomware_payload.RansomwareConfig", RansomwareConfigStub
+        )
+        return RansomwarePayload(config)
 
     return inner
 
 
 @pytest.fixture
 def ransomware_payload_config(ransomware_test_data):
-    class RansomwareConfigStub(RansomwareConfig):
-        def __init__(self, encryption_enabled, readme_enabled, target_directory):
-            self.encryption_enabled = encryption_enabled
-            self.readme_enabled = readme_enabled
-            self.target_directory = target_directory
+    return {
+        "encryption": {"enabled": True, "directories": ransomware_test_data},
+        "other_behaviors": {"readme": False},
+    }
 
-    return RansomwareConfigStub(True, False, ransomware_test_data)
+
+class RansomwareConfigStub(RansomwareConfig):
+    def __init__(self, config):
+        self.encryption_enabled = config["encryption"]["enabled"]
+        self.readme_enabled = config["other_behaviors"]["readme"]
+        self.target_directory = config["encryption"]["directories"]
 
 
 @pytest.fixture
@@ -68,19 +85,24 @@ def mock_leave_readme():
     return MagicMock()
 
 
+class MockInterrupt:
+    def is_set(self):
+        return False
+
+
 def test_files_selected_from_target_dir(
     ransomware_payload,
     ransomware_payload_config,
     mock_file_selector,
 ):
-    ransomware_payload.run_payload()
-    mock_file_selector.assert_called_with(ransomware_payload_config.target_directory)
+    ransomware_payload.run_payload(MockInterrupt())
+    mock_file_selector.assert_called_with(ransomware_payload_config["encryption"]["directories"])
 
 
 def test_all_selected_files_encrypted(
     ransomware_test_data, ransomware_payload, mock_file_encryptor
 ):
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
 
     assert mock_file_encryptor.call_count == 2
     mock_file_encryptor.assert_any_call(ransomware_test_data / ALL_ZEROS_PDF)
@@ -90,10 +112,10 @@ def test_all_selected_files_encrypted(
 def test_encryption_skipped_if_configured_false(
     build_ransomware_payload, ransomware_payload_config, mock_file_encryptor
 ):
-    ransomware_payload_config.encryption_enabled = False
+    ransomware_payload_config["encryption"]["enabled"] = False
 
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
 
     assert mock_file_encryptor.call_count == 0
 
@@ -101,17 +123,17 @@ def test_encryption_skipped_if_configured_false(
 def test_encryption_skipped_if_no_directory(
     build_ransomware_payload, ransomware_payload_config, mock_file_encryptor
 ):
-    ransomware_payload_config.encryption_enabled = True
-    ransomware_payload_config.target_directory = None
+    ransomware_payload_config["encryption"]["enabled"] = True
+    ransomware_payload_config["encryption"]["directories"] = None
 
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
 
     assert mock_file_encryptor.call_count == 0
 
 
 def test_telemetry_success(ransomware_payload, telemetry_messenger_spy):
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
 
     assert len(telemetry_messenger_spy.telemetries) == 2
     telem_1 = telemetry_messenger_spy.telemetries[0]
@@ -137,7 +159,7 @@ def test_telemetry_failure(
         config=ransomware_payload_config, file_encryptor=mfe, file_selector=mfs
     )
 
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
     telem = telemetry_messenger_spy.telemetries[0]
 
     assert file_not_exists in telem.get_data()["files"][0]["path"]
@@ -146,41 +168,41 @@ def test_telemetry_failure(
 
 
 def test_readme_false(build_ransomware_payload, ransomware_payload_config, mock_leave_readme):
-    ransomware_payload_config.readme_enabled = False
+    ransomware_payload_config["other_behaviors"]["readme"] = False
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
     mock_leave_readme.assert_not_called()
 
 
 def test_readme_true(
     build_ransomware_payload, ransomware_payload_config, mock_leave_readme, ransomware_test_data
 ):
-    ransomware_payload_config.readme_enabled = True
+    ransomware_payload_config["other_behaviors"]["readme"] = True
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
     mock_leave_readme.assert_called_with(README_SRC, ransomware_test_data / README_FILE_NAME)
 
 
 def test_no_readme_if_no_directory(
     build_ransomware_payload, ransomware_payload_config, mock_leave_readme
 ):
-    ransomware_payload_config.target_directory = None
-    ransomware_payload_config.readme_enabled = True
+    ransomware_payload_config["encryption"]["directories"] = None
+    ransomware_payload_config["other_behaviors"]["readme"] = True
 
     ransomware_payload = build_ransomware_payload(ransomware_payload_config)
 
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
     mock_leave_readme.assert_not_called()
 
 
 def test_leave_readme_exceptions_handled(build_ransomware_payload, ransomware_payload_config):
     leave_readme = MagicMock(side_effect=Exception("Test exception when leaving README"))
-    ransomware_payload_config.readme_enabled = True
+    ransomware_payload_config["other_behaviors"]["readme"] = True
     ransomware_payload = build_ransomware_payload(
         config=ransomware_payload_config, leave_readme=leave_readme
     )
 
     # Test will fail if exception is raised and not handled
-    ransomware_payload.run_payload()
+    ransomware_payload.run_payload(MockInterrupt())
