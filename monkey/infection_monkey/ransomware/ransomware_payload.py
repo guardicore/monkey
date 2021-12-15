@@ -30,7 +30,6 @@ class RansomwarePayload:
         self._readme_file_path = (
             self._target_directory / README_FILE_NAME if self._target_directory else None
         )
-        self._readme_incomplete = False
 
     def run_payload(self):
         if not self._target_directory:
@@ -67,26 +66,6 @@ class RansomwarePayload:
 
     def _leave_readme_in_target_directory(self):
         try:
-            self._readme_incomplete = True
             self._leave_readme(README_SRC, self._readme_file_path)
-            self._readme_incomplete = False
         except Exception as ex:
             logger.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
-
-    def cleanup(self):
-        # This cleanup function is only concerned with cleaning up and replacing *incomplete*
-        # README.txt files; its goal is not to ensure the existence of a README file. Therefore,
-        # only retry if a README.txt file actually exists.
-        if self._readme_incomplete and self._readme_file_path.exists():
-            logger.info(
-                "The process of leaving a README.txt was interrupted. Removing the corrupt file "
-                "and trying again."
-            )
-            try:
-                self._readme_file_path.unlink()
-                self._leave_readme_in_target_directory()
-            except Exception as ex:
-                logger.error(
-                    "An error occurred while trying to remove the corrupt or incomplete README.txt "
-                    f"file: {ex}"
-                )
