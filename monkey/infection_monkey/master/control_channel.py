@@ -4,7 +4,7 @@ import logging
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from common.utils.exceptions import ControlClientConnectionError
+from common.utils.exceptions import IslandCommunicationError
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.i_control_channel import IControlChannel
@@ -37,10 +37,14 @@ class ControlChannel(IControlChannel):
 
             response = json.loads(response.content.decode())
             return response["stop_agent"]
-        except Exception as e:
-            raise ControlClientConnectionError(
-                f"An error occurred while trying to connect to server: {e}"
-            )
+        except (
+            json.JSONDecodeError,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+            requests.exceptions.TooManyRedirects,
+            requests.exceptions.HTTPError,
+        ) as e:
+            raise IslandCommunicationError(e)
 
     def get_config(self) -> dict:
         try:
@@ -50,12 +54,17 @@ class ControlChannel(IControlChannel):
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
+            response.raise_for_status()
 
             return json.loads(response.content.decode())
-        except Exception as exc:
-            raise ControlClientConnectionError(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
+        except (
+            json.JSONDecodeError,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+            requests.exceptions.TooManyRedirects,
+            requests.exceptions.HTTPError,
+        ) as e:
+            raise IslandCommunicationError(e)
 
     def get_credentials_for_propagation(self) -> dict:
         try:

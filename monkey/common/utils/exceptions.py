@@ -58,5 +58,5 @@ class InvalidConfigurationError(Exception):
     """ Raise when configuration is invalid """
 
 
-class ControlClientConnectionError(Exception):
+class IslandCommunicationError(Exception):
     """Raise when unable to connect to control client"""
