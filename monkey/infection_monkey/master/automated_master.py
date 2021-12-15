@@ -87,8 +87,6 @@ class AutomatedMaster(IMaster):
 
         while self._master_thread_should_run():
             if timer.is_expired():
-                # TODO: Handle exceptions in _check_for_stop() once
-                #       ControlChannel.should_agent_stop() is refactored.
                 self._check_for_stop()
                 timer.reset()
 
@@ -163,14 +161,6 @@ class AutomatedMaster(IMaster):
         payload_thread.join()
 
         pba_thread.join()
-
-        # TODO: This code is just for testing in development. Remove when
-        # 		implementation of AutomatedMaster is finished.
-        while True:
-            time.sleep(2)
-            logger.debug("Simulation thread is finished sleeping")
-            if self._stop.is_set():
-                break
 
     def _collect_system_info(self, collector: str):
         system_info_telemetry = {}

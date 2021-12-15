@@ -1,4 +1,14 @@
+import time
+from unittest.mock import MagicMock
+
 from infection_monkey.master import AutomatedMaster
+from infection_monkey.master.automated_master import (
+    CHECK_FOR_CONFIG_COUNT,
+    CHECK_FOR_STOP_AGENT_COUNT,
+)
+from infection_monkey.master.control_channel import IslandCommunicationError
+
+INTERVAL = 0.001
 
 
 def test_terminate_without_start():
@@ -6,3 +16,52 @@ def test_terminate_without_start():
 
     # Test that call to terminate does not raise exception
     m.terminate()
+
+
+def test_stop_if_cant_get_config_from_island(monkeypatch):
+    cc = MagicMock()
+    cc.should_agent_stop = MagicMock(return_value=False)
+    cc.get_config = MagicMock(
+        side_effect=IslandCommunicationError("Failed to communicate with island")
+    )
+
+    monkeypatch.setattr(
+        "infection_monkey.master.automated_master.CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC",
+        INTERVAL,
+    )
+    monkeypatch.setattr(
+        "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
+    )
+    m = AutomatedMaster(None, None, None, cc)
+    m.start()
+
+    assert cc.get_config.call_count == CHECK_FOR_CONFIG_COUNT
+
+
+# NOTE: This test is a little bit brittle, and probably needs too much knowlegde of the internals
+#       of AutomatedMaster. For now, it works and it runs quickly. In the future, if we find that
+#       this test isn't valuable or it starts causing issues, we can just remove it.
+def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, automated_master_config):
+    cc = MagicMock()
+    cc.should_agent_stop = MagicMock(
+        side_effect=IslandCommunicationError("Failed to communicate with island")
+    )
+    # Ensure that should_agent_stop times out before get_config() returns to prevent the
+    # Propagator's sub-threads from hanging
+    cc.get_config = MagicMock(
+        return_value=automated_master_config,
+        side_effect=lambda: time.sleep(INTERVAL * (CHECK_FOR_STOP_AGENT_COUNT + 1)),
+    )
+
+    monkeypatch.setattr(
+        "infection_monkey.master.automated_master.CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC",
+        INTERVAL,
+    )
+    monkeypatch.setattr(
+        "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
+    )
+
+    m = AutomatedMaster(None, None, None, cc)
+    m.start()
+
+    assert cc.should_agent_stop.call_count == CHECK_FOR_STOP_AGENT_COUNT
