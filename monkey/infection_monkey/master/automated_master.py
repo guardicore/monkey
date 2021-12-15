@@ -98,7 +98,7 @@ class AutomatedMaster(IMaster):
         return (not self._stop.is_set()) and self._simulation_thread.is_alive()
 
     def _run_simulation(self):
-        config = self._control_channel.get_config()
+        config = self._control_channel.get_config()["config"]
 
         system_info_collector_thread = create_daemon_thread(
             target=self._run_plugins,
