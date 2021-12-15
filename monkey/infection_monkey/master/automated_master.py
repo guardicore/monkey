@@ -3,6 +3,7 @@ import threading
 import time
 from typing import Any, Callable, Dict, List, Tuple
 
+from common.utils.exceptions import ControlClientConnectionError
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -20,6 +21,7 @@ CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 
 SHUTDOWN_TIMEOUT = 5
 NUM_SCAN_THREADS = 16  # TODO: Adjust this to the optimal number of scan threads
 NUM_EXPLOIT_THREADS = 4  # TODO: Adjust this to the optimal number of exploit threads
+STOP_AGENT_TIMEOUT = 5
 
 logger = logging.getLogger()
 
@@ -45,6 +47,7 @@ class AutomatedMaster(IMaster):
         self._stop = threading.Event()
         self._master_thread = create_daemon_thread(target=self._run_master_thread)
         self._simulation_thread = create_daemon_thread(target=self._run_simulation)
+        self._failed_stop = 0
 
     def start(self):
         logger.info("Starting automated breach and attack simulation")
@@ -96,10 +99,11 @@ class AutomatedMaster(IMaster):
         try:
             if self._control_channel.should_agent_stop():
                 logger.debug('Received the "stop" signal from the Island')
+                self._failed_stop = 0
                 self._stop.set()
-        except Exception as e:
+        except ControlClientConnectionError as e:
             self._failed_stop += 1
-            if self._failed_stop > 5:
+            if self._failed_stop > STOP_AGENT_TIMEOUT:
                 logger.error(f"An error occurred while trying to check for agent stop: {e}")
                 self._stop.set()
 
@@ -110,7 +114,7 @@ class AutomatedMaster(IMaster):
 
         try:
             config = self._control_channel.get_config()["config"]
-        except Exception as e:
+        except ControlClientConnectionError as e:
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
 

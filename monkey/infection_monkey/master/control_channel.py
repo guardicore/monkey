@@ -4,6 +4,7 @@ import logging
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
+from common.utils.exceptions import ControlClientConnectionError
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.i_control_channel import IControlChannel
@@ -37,7 +38,9 @@ class ControlChannel(IControlChannel):
             response = json.loads(response.content.decode())
             return response["stop_agent"]
         except Exception as e:
-            raise Exception(f"An error occurred while trying to connect to server. {e}")
+            raise ControlClientConnectionError(
+                f"An error occurred while trying to connect to server: {e}"
+            )
 
     def get_config(self) -> dict:
         try:
@@ -50,7 +53,7 @@ class ControlChannel(IControlChannel):
 
             return json.loads(response.content.decode())
         except Exception as exc:
-            raise Exception(
+            raise ControlClientConnectionError(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
 
