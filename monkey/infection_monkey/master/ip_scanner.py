@@ -14,7 +14,7 @@ from infection_monkey.i_puppet import (
 )
 
 from . import IPScanResults
-from .threading_utils import create_daemon_thread
+from .threading_utils import run_worker_threads
 
 logger = logging.getLogger()
 
@@ -35,14 +35,7 @@ class IPScanner:
             ips.put(ip)
 
         scan_ips_args = (ips, options, results_callback, stop)
-        scan_threads = []
-        for i in range(0, self._num_workers):
-            t = create_daemon_thread(target=self._scan_ips, args=scan_ips_args)
-            t.start()
-            scan_threads.append(t)
-
-        for t in scan_threads:
-            t.join()
+        run_worker_threads(target=self._scan_ips, args=scan_ips_args, num_workers=self._num_workers)
 
     def _scan_ips(self, ips: Queue, options: Dict, results_callback: Callback, stop: Event):
         logger.debug(f"Starting scan thread -- Thread ID: {threading.get_ident()}")

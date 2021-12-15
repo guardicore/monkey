@@ -280,11 +280,24 @@ class MockPuppet(IPuppet):
             "executed_cmds": [],
         }
         successful_exploiters = {
-            DOT_1: {"PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts)},
-            DOT_3: {"SSHExploiter": ExploiterResultData(False, info_ssh, attempts)},
+            DOT_1: {
+                "PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts, None),
+                "ZerologonExploiter": ExploiterResultData(False, {}, [], "Zerologon failed"),
+                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting"),
+            },
+            DOT_3: {
+                "PowerShellExploiter": ExploiterResultData(
+                    False, info_powershell, attempts, "PowerShell Exploiter Failed"
+                ),
+                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting"),
+                "ZerologonExploiter": ExploiterResultData(True, {}, [], None),
+            },
         }
 
-        return successful_exploiters[host][name]
+        try:
+            return successful_exploiters[host][name]
+        except KeyError:
+            return ExploiterResultData(False, {}, [], f"{name} failed for host {host}")
 
     def run_payload(
         self, name: str, options: Dict, interrupt: threading.Event

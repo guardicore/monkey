@@ -55,6 +55,7 @@
         "ShellShockExploiter",
         "ElasticGroovyExploiter",
         "Struts2Exploiter",
+        "ZerologonExploiter",
         "WebLogicExploiter",
         "HadoopExploiter",
         "MSSQLExploiter",

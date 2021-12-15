@@ -475,6 +475,9 @@ class ConfigService:
         formatted_propagation_config["targets"] = ConfigService._format_targets_from_flat_config(
             config
         )
+        formatted_propagation_config[
+            "exploiters"
+        ] = ConfigService._format_exploiters_from_flat_config(config)
 
         config["propagation"] = formatted_propagation_config
 
@@ -567,3 +570,33 @@ class ConfigService:
         config.pop(flat_subnet_scan_list_field, None)
 
         return formatted_scan_targets_config
+
+    @staticmethod
+    def _format_exploiters_from_flat_config(config: Dict):
+        flat_config_exploiter_classes_field = "exploiter_classes"
+        brute_force_category = "brute_force"
+        vulnerability_category = "vulnerability"
+        brute_force_exploiters = {
+            "MSSQLExploiter",
+            "PowerShellExploiter",
+            "SSHExploiter",
+            "SmbExploiter",
+            "WmiExploiter",
+        }
+
+        formatted_exploiters_config = {"brute_force": [], "vulnerability": []}
+
+        for exploiter in sorted(config[flat_config_exploiter_classes_field]):
+            category = (
+                brute_force_category
+                if exploiter in brute_force_exploiters
+                else vulnerability_category
+            )
+
+            formatted_exploiters_config[category].append(
+                {"name": exploiter, "propagator": (exploiter != "ZerologonExploiter")}
+            )
+
+        config.pop(flat_config_exploiter_classes_field, None)
+
+        return formatted_exploiters_config

@@ -1,41 +1,60 @@
 import logging
 from queue import Queue
-from threading import Event, Thread
+from threading import Event
 from typing import Dict
 
-from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, PortStatus
-from infection_monkey.model.host import VictimHost
+from infection_monkey.i_puppet import (
+    ExploiterResultData,
+    FingerprintData,
+    PingScanData,
+    PortScanData,
+    PortStatus,
+)
+from infection_monkey.model import VictimHost, VictimHostFactory
+from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.scan_telem import ScanTelem
 
-from . import IPScanner, IPScanResults
+from . import Exploiter, IPScanner, IPScanResults
 from .threading_utils import create_daemon_thread
 
 logger = logging.getLogger()
 
 
 class Propagator:
-    def __init__(self, telemetry_messenger: ITelemetryMessenger, ip_scanner: IPScanner):
+    def __init__(
+        self,
+        telemetry_messenger: ITelemetryMessenger,
+        ip_scanner: IPScanner,
+        exploiter: Exploiter,
+        victim_host_factory: VictimHostFactory,
+    ):
         self._telemetry_messenger = telemetry_messenger
         self._ip_scanner = ip_scanner
+        self._exploiter = exploiter
+        self._victim_host_factory = victim_host_factory
         self._hosts_to_exploit = None
 
     def propagate(self, propagation_config: Dict, stop: Event):
         logger.info("Attempting to propagate")
 
+        network_scan_completed = Event()
         self._hosts_to_exploit = Queue()
 
         scan_thread = create_daemon_thread(
             target=self._scan_network, args=(propagation_config, stop)
         )
         exploit_thread = create_daemon_thread(
-            target=self._exploit_targets, args=(scan_thread, stop)
+            target=self._exploit_hosts,
+            args=(propagation_config, network_scan_completed, stop),
         )
 
         scan_thread.start()
         exploit_thread.start()
 
         scan_thread.join()
+        network_scan_completed.set()
+
         exploit_thread.join()
 
         logger.info("Finished attempting to propagate")
@@ -52,7 +71,7 @@ class Propagator:
         logger.info("Finished network scan")
 
     def _process_scan_results(self, ip: str, scan_results: IPScanResults):
-        victim_host = VictimHost(ip)
+        victim_host = self._victim_host_factory.build_victim_host(ip)
 
         Propagator._process_ping_scan_results(victim_host, scan_results.ping_scan_data)
         Propagator._process_tcp_scan_results(victim_host, scan_results.port_scan_data)
@@ -95,5 +114,35 @@ class Propagator:
             for service, details in fd.services.items():
                 victim_host.services.setdefault(service, {}).update(details)
 
-    def _exploit_targets(self, scan_thread: Thread, stop: Event):
-        pass
+    def _exploit_hosts(
+        self,
+        propagation_config: Dict,
+        network_scan_completed: Event,
+        stop: Event,
+    ):
+        logger.info("Exploiting victims")
+
+        exploiter_config = propagation_config["exploiters"]
+        self._exploiter.exploit_hosts(
+            exploiter_config,
+            self._hosts_to_exploit,
+            self._process_exploit_attempts,
+            network_scan_completed,
+            stop,
+        )
+
+        logger.info("Finished exploiting victims")
+
+    def _process_exploit_attempts(
+        self, exploiter_name: str, host: VictimHost, result: ExploiterResultData
+    ):
+        if result.success:
+            logger.info(f"Successfully propagated to {host} using {exploiter_name}")
+        else:
+            logger.info(
+                f"Failed to propagate to {host} using {exploiter_name}: {result.error_message}"
+            )
+
+        self._telemetry_messenger.send_telemetry(
+            ExploitTelem(exploiter_name, host, result.success, result.info, result.attempts)
+        )
