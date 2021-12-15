@@ -93,15 +93,26 @@ class AutomatedMaster(IMaster):
             time.sleep(CHECK_FOR_TERMINATE_INTERVAL_SEC)
 
     def _check_for_stop(self):
-        if self._control_channel.should_agent_stop():
-            logger.debug('Received the "stop" signal from the Island')
-            self._stop.set()
+        try:
+            if self._control_channel.should_agent_stop():
+                logger.debug('Received the "stop" signal from the Island')
+                self._stop.set()
+        except Exception as e:
+            self._failed_stop += 1
+            if self._failed_stop > 5:
+                logger.error(f"An error occurred while trying to check for agent stop: {e}")
+                self._stop.set()
 
     def _master_thread_should_run(self):
         return (not self._stop.is_set()) and self._simulation_thread.is_alive()
 
     def _run_simulation(self):
-        config = self._control_channel.get_config()["config"]
+
+        try:
+            config = self._control_channel.get_config()["config"]
+        except Exception as e:
+            logger.error(f"An error occurred while fetching configuration: {e}")
+            return
 
         system_info_collector_thread = create_daemon_thread(
             target=self._run_plugins,

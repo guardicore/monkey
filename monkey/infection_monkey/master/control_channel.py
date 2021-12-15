@@ -37,10 +37,7 @@ class ControlChannel(IControlChannel):
             response = json.loads(response.content.decode())
             return response["stop_agent"]
         except Exception as e:
-            # TODO: Evaluate how this exception is handled; don't just log and ignore it.
-            logger.error(f"An error occurred while trying to connect to server. {e}")
-
-        return True
+            raise Exception(f"An error occurred while trying to connect to server. {e}")
 
     def get_config(self) -> dict:
         try:
@@ -53,12 +50,9 @@ class ControlChannel(IControlChannel):
 
             return json.loads(response.content.decode())
         except Exception as exc:
-            # TODO: Evaluate how this exception is handled; don't just log and ignore it.
-            logger.warning(
+            raise Exception(
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
-
-        return {}
 
     def get_credentials_for_propagation(self) -> dict:
         try:
