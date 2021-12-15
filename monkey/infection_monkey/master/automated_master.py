@@ -94,7 +94,8 @@ class AutomatedMaster(IMaster):
 
             time.sleep(CHECK_FOR_TERMINATE_INTERVAL_SEC)
 
-    def _should_retry_task(self, fn: Callable[[], Any], max_tries: int):
+    @staticmethod
+    def _try_communicate_with_island(fn: Callable[[], Any], max_tries: int):
         tries = 0
         while tries < max_tries:
             try:
@@ -107,7 +108,7 @@ class AutomatedMaster(IMaster):
 
     def _check_for_stop(self):
         try:
-            stop = self._should_retry_task(
+            stop = AutomatedMaster._try_communicate_with_island(
                 self._control_channel.should_agent_stop, CHECK_FOR_STOP_AGENT_COUNT
             )
             if stop:
@@ -122,7 +123,7 @@ class AutomatedMaster(IMaster):
 
     def _run_simulation(self):
         try:
-            config = self._should_retry_task(
+            config = AutomatedMaster._try_communicate_with_island(
                 self._control_channel.get_config, CHECK_FOR_CONFIG_COUNT
             )["config"]
         except IslandCommunicationError as e:
