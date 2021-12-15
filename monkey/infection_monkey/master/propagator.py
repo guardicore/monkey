@@ -137,7 +137,7 @@ class Propagator:
         self, exploiter_name: str, host: VictimHost, result: ExploiterResultData
     ):
         if result.success:
-            logger.info("Successfully propagated to {host} using {exploiter_name}")
+            logger.info(f"Successfully propagated to {host} using {exploiter_name}")
         else:
             logger.info(
                 f"Failed to propagate to {host} using {exploiter_name}: {result.error_message}"
