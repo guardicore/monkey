@@ -3,8 +3,7 @@ import threading
 import time
 from typing import Any, Callable, Dict, List, Tuple
 
-from common.utils.exceptions import IslandCommunicationError
-from infection_monkey.i_control_channel import IControlChannel
+from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
@@ -22,7 +21,7 @@ SHUTDOWN_TIMEOUT = 5
 NUM_SCAN_THREADS = 16  # TODO: Adjust this to the optimal number of scan threads
 NUM_EXPLOIT_THREADS = 4  # TODO: Adjust this to the optimal number of exploit threads
 CHECK_FOR_STOP_AGENT_COUNT = 5
-CHECK_FOR_CONFIG_COUNT = 1
+CHECK_FOR_CONFIG_COUNT = 3
 
 logger = logging.getLogger()
 
@@ -48,8 +47,6 @@ class AutomatedMaster(IMaster):
         self._stop = threading.Event()
         self._master_thread = create_daemon_thread(target=self._run_master_thread)
         self._simulation_thread = create_daemon_thread(target=self._run_simulation)
-        self._failed_stop = 0
-        self._failed_config = 0
 
     def start(self):
         logger.info("Starting automated breach and attack simulation")

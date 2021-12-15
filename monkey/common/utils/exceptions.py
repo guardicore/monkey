@@ -56,7 +56,3 @@ class DomainControllerNameFetchError(FailedExploitationError):
 
 class InvalidConfigurationError(Exception):
     """ Raise when configuration is invalid """
-
-
-class IslandCommunicationError(Exception):
-    """Raise when unable to connect to control client"""

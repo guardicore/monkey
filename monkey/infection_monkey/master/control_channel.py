@@ -4,10 +4,9 @@ import logging
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from common.utils.exceptions import IslandCommunicationError
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
-from infection_monkey.i_control_channel import IControlChannel
+from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 
 requests.packages.urllib3.disable_warnings()
 
@@ -34,6 +33,7 @@ class ControlChannel(IControlChannel):
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
+            response.raise_for_status()
 
             response = json.loads(response.content.decode())
             return response["stop_agent"]
@@ -74,11 +74,15 @@ class ControlChannel(IControlChannel):
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
+            response.raise_for_status()
 
             response = json.loads(response.content.decode())["propagation_credentials"]
             return response
-        except Exception as e:
-            # TODO: Evaluate how this exception is handled; don't just log and ignore it.
-            logger.error(f"An error occurred while trying to connect to server. {e}")
-
-        return {}
+        except (
+            json.JSONDecodeError,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+            requests.exceptions.TooManyRedirects,
+            requests.exceptions.HTTPError,
+        ) as e:
+            raise IslandCommunicationError(e)
