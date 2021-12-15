@@ -52,7 +52,8 @@ class Puppet(IPuppet):
     def run_payload(
         self, name: str, options: Dict, interrupt: threading.Event
     ) -> Tuple[None, bool, str]:
-        pass
+        payload = self._plugin_registry.get_plugin(name, PluginType.PAYLOAD)
+        payload(options).run_payload(interrupt)
 
     def cleanup(self) -> None:
         pass

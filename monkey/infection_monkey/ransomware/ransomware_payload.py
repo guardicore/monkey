@@ -1,11 +1,17 @@
 import logging
+import threading
 from pathlib import Path
-from typing import Callable, List
+from typing import List
 
 from infection_monkey.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.ransomware.ransomware_config import RansomwareConfig
+from infection_monkey.ransomware.ransomware_parts_builder import (
+    build_file_encryptor,
+    build_file_selector,
+    build_leave_readme,
+    build_telemetry_messenger,
+)
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
-from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 logger = logging.getLogger(__name__)
 
@@ -13,25 +19,21 @@ logger = logging.getLogger(__name__)
 class RansomwarePayload:
     def __init__(
         self,
-        config: RansomwareConfig,
-        encrypt_file: Callable[[Path], None],
-        select_files: Callable[[Path], List[Path]],
-        leave_readme: Callable[[Path, Path], None],
-        telemetry_messenger: ITelemetryMessenger,
+        options: dict,
     ):
-        self._config = config
+        self._config = RansomwareConfig(options)
 
-        self._encrypt_file = encrypt_file
-        self._select_files = select_files
-        self._leave_readme = leave_readme
-        self._telemetry_messenger = telemetry_messenger
+        self._encrypt_file = build_file_encryptor()
+        self._select_files = build_file_selector()
+        self._leave_readme = build_leave_readme()
+        self._telemetry_messenger = build_telemetry_messenger()
 
         self._target_directory = self._config.target_directory
         self._readme_file_path = (
             self._target_directory / README_FILE_NAME if self._target_directory else None
         )
 
-    def run_payload(self):
+    def run_payload(self, interrupt: threading.Event):
         if not self._target_directory:
             return
 
@@ -39,7 +41,11 @@ class RansomwarePayload:
 
         if self._config.encryption_enabled:
             file_list = self._find_files()
-            self._encrypt_files(file_list)
+            self._encrypt_files(file_list, interrupt)
+
+        if interrupt.is_set():
+            logger.debug("Received a stop signal, skipping remaining tasks of ransomware payload")
+            return
 
         if self._config.readme_enabled:
             self._leave_readme_in_target_directory()
@@ -48,10 +54,16 @@ class RansomwarePayload:
         logger.info(f"Collecting files in {self._target_directory}")
         return sorted(self._select_files(self._target_directory))
 
-    def _encrypt_files(self, file_list: List[Path]):
+    def _encrypt_files(self, file_list: List[Path], interrupt: threading.Event):
         logger.info(f"Encrypting files in {self._target_directory}")
 
         for filepath in file_list:
+            if interrupt.is_set():
+                logger.debug(
+                    "Received a stop signal, skipping remaining files for encryption of "
+                    "ransomware payload"
+                )
+                return
             try:
                 logger.debug(f"Encrypting {filepath}")
                 self._encrypt_file(filepath)
