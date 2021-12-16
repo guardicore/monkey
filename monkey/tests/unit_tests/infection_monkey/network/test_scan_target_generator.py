@@ -6,7 +6,6 @@ from common.network.network_range import InvalidNetworkRangeError
 from infection_monkey.network.scan_target_generator import (
     NetworkAddress,
     NetworkInterface,
-    _filter_invalid_ranges,
     compile_scan_target_list,
 )
 
@@ -448,40 +447,6 @@ def test_invalid_inputs():
 
     for ip in [148, 149, 150]:
         assert NetworkAddress(f"172.60.145.{ip}", None) in scan_targets
-
-
-def test_range_filtering():
-    invalid_ranges = [
-        # Invalid IP segment
-        "172.60.999.109",
-        "172.60.-1.109",
-        "172.60.999.109 - 172.60.1.109",
-        "172.60.999.109/32",
-        "172.60.999.109/24",
-        # Invalid CIDR
-        "172.60.1.109/33",
-        "172.60.1.109/-1",
-        # Typos
-        "172.60.9.109 -t 172.60.1.109",
-        "172.60..9.109",
-        "172.60,9.109",
-        " 172.60 .9.109 ",
-    ]
-
-    valid_ranges = [
-        " 172.60.9.109 ",
-        "172.60.9.109 - 172.60.1.109",
-        "172.60.9.109- 172.60.1.109",
-        "0.0.0.0",
-        "localhost",
-    ]
-
-    invalid_ranges.extend(valid_ranges)
-
-    remaining = _filter_invalid_ranges(invalid_ranges, "Test error:")
-    for _range in remaining:
-        assert _range in valid_ranges
-    assert len(remaining) == len(valid_ranges)
 
 
 def test_invalid_blocklisted_ip():

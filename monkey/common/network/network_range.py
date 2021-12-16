@@ -4,7 +4,7 @@ import random
 import socket
 import struct
 from abc import ABCMeta, abstractmethod
-from typing import Tuple
+from typing import List, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,18 @@ class NetworkRange(object, metaclass=ABCMeta):
         if "/" in address_str:
             return CidrRange(cidr_range=address_str)
         return SingleIpRange(ip_address=address_str)
+
+    @staticmethod
+    def filter_invalid_ranges(ranges: List[str], error_msg: str) -> List[str]:
+        valid_ranges = []
+        for target_range in ranges:
+            try:
+                NetworkRange.validate_range(target_range)
+            except InvalidNetworkRangeError as e:
+                logger.error(f"{error_msg} {e}")
+                continue
+            valid_ranges.append(target_range)
+        return valid_ranges
 
     @staticmethod
     def validate_range(address_str: str):
