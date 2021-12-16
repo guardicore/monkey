@@ -91,7 +91,7 @@ def _remove_blocklisted_ips(
     scan_targets: List[NetworkAddress], blocked_ips: List[str]
 ) -> List[NetworkAddress]:
     filtered_blocked_ips = _filter_invalid_ranges(blocked_ips, "Invalid blocked IP provided:")
-    if not len(filtered_blocked_ips) == len(blocked_ips):
+    if len(filtered_blocked_ips) != len(blocked_ips):
         raise InvalidNetworkRangeError("Received an invalid blocked IP. Aborting just in case.")
     return _remove_ips_from_scan_targets(scan_targets, filtered_blocked_ips)
 
