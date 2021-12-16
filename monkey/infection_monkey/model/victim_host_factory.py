@@ -23,7 +23,8 @@ class VictimHostFactory:
         self.on_island = on_island
 
     def build_victim_host(self, network_address: NetworkAddress) -> VictimHost:
-        victim_host = VictimHost(network_address.ip, network_address.domain)
+        domain = network_address.domain or ""
+        victim_host = VictimHost(network_address.ip, domain)
 
         if self.tunnel:
             victim_host.default_tunnel = self.tunnel.get_tunnel_for_ip(victim_host.ip_addr)
