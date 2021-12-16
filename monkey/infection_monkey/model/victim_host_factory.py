@@ -28,19 +28,20 @@ class VictimHostFactory:
 
         if self.tunnel:
             victim_host.default_tunnel = self.tunnel.get_tunnel_for_ip(victim_host.ip_addr)
+
         if self.default_server:
-            if self.on_island:
-                victim_host.set_default_server(
-                    get_interface_to_target(victim_host.ip_addr)
-                    + (":" + self.default_port if self.default_port else "")
-                )
-            else:
-                victim_host.set_default_server(self.default_server)
-        logger.debug(
-            f"Default server for machine: {victim_host} set to {victim_host.default_server}"
-        )
-        logger.debug(
-            f"Default tunnel for machine: {victim_host} set to {victim_host.default_tunnel}"
-        )
+            victim_host.set_default_server(self._get_formatted_default_server(victim_host.ip_addr))
+
+        logger.debug(f"Default tunnel for {victim_host} set to {victim_host.default_tunnel}")
+        logger.debug(f"Default server for {victim_host} set to {victim_host.default_server}")
 
         return victim_host
+
+    def _get_formatted_default_server(self, ip: str):
+        if self.on_island:
+            default_server_port = f":{self.default_port}" if self.default_port else ""
+            interface = get_interface_to_target(ip)
+
+            return f"{interface}{default_server_port}"
+        else:
+            return self.default_server
