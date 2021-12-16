@@ -32,7 +32,7 @@ from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
-from infection_monkey.utils.signal_handler import register_signal_handlers
+from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 from infection_monkey.windows_upgrader import WindowsUpgrader
 
 logger = logging.getLogger(__name__)
@@ -214,6 +214,8 @@ class InfectionMonkey:
 
             if self._master:
                 self._master.cleanup()
+
+            reset_signal_handlers()
 
             if self._monkey_inbound_tunnel:
                 self._monkey_inbound_tunnel.stop()
