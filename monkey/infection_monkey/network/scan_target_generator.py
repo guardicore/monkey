@@ -99,13 +99,8 @@ def _remove_blocklisted_ips(
 def _remove_ips_from_scan_targets(
     scan_targets: List[NetworkAddress], ips_to_remove: List[str]
 ) -> List[NetworkAddress]:
-    for ip in ips_to_remove:
-        try:
-            scan_targets = [address for address in scan_targets if address.ip != ip]
-        except KeyError:
-            # We don't need to remove the ip if it's already missing from the scan_targets
-            pass
-    return scan_targets
+    ips_to_remove_set = set(ips_to_remove)
+    return [address for address in scan_targets if address.ip not in ips_to_remove_set]
 
 
 def _get_segmentation_check_targets(
