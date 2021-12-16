@@ -168,13 +168,29 @@ class InfectionMonkey:
         return local_network_interfaces
 
     def _build_master(self, local_network_interfaces: List[NetworkInterface]):
+        victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
+
         self._master = AutomatedMaster(
             MockPuppet(),
             LegacyTelemetryMessengerAdapter(),
-            VictimHostFactory(),
+            victim_host_factory,
             ControlChannel(self._default_server, GUID),
             local_network_interfaces,
         )
+
+    def _build_victim_host_factory(
+        self, local_network_interfaces: List[NetworkInterface]
+    ) -> VictimHostFactory:
+        on_island = self._running_on_island(local_network_interfaces)
+        logger.debug(f"This agent is running on the island: {on_island}")
+
+        return VictimHostFactory(
+            self._monkey_inbound_tunnel, self._default_server, self._default_server_port, on_island
+        )
+
+    def _running_on_island(self, local_network_interfaces: List[NetworkInterface]) -> bool:
+        server_ip = self._default_server.split(":")[0]
+        return server_ip in {interface.address for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
