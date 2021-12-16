@@ -178,7 +178,7 @@ class SingleIpRange(NetworkRange):
         :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
         """
         # The most common use case is to enter ip/range into "Scan IP/subnet list"
-        domain_name = ""
+        domain_name = None
 
         # Try casting user's input as IP
         try:

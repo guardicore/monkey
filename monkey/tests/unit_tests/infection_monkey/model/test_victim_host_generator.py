@@ -39,8 +39,3 @@ class TestVictimHostGenerator(TestCase):
         victims = list(generator.generate_victims_from_range(self.local_host_range))
         self.assertEqual(len(victims), 1)
         self.assertEqual(victims[0].domain_name, "localhost")
-
-        # don't generate for other victims
-        victims = list(generator.generate_victims_from_range(self.random_single_ip_range))
-        self.assertEqual(len(victims), 1)
-        self.assertEqual(victims[0].domain_name, "")
