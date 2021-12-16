@@ -25,10 +25,11 @@ PostBreachData = namedtuple("PostBreachData", ["command", "result"])
 
 class IPuppet(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
+    def load_plugin(self, plugin: object, plugin_name: str, plugin_type: PluginType) -> None:
         """
-        Loads a plugin into the puppet.
+        Loads a plugin into the puppet
         :param object plugin: The plugin object to load
+        :param str plugin_name: The plugin class name
         :param PluginType plugin_type: The type of plugin being loaded
         """
 

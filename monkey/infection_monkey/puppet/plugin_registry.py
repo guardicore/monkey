@@ -23,11 +23,11 @@ class PluginRegistry:
         """
         self._registry = {}
 
-    def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
+    def load_plugin(self, plugin: object, plugin_name: str, plugin_type: PluginType) -> None:
         self._registry.setdefault(plugin_type, {})
-        self._registry[plugin_type][plugin.__class__.__name__] = plugin
+        self._registry[plugin_type][plugin_name] = plugin
 
-        logger.debug(f"Plugin '{plugin.__class__.__name__}' loaded")
+        logger.debug(f"Plugin '{plugin_name}' loaded")
 
     def get_plugin(self, plugin_name: str, plugin_type: PluginType) -> Optional[object]:
         try:

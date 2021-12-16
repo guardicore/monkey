@@ -20,8 +20,8 @@ class Puppet(IPuppet):
     def __init__(self) -> None:
         self._plugin_registry = PluginRegistry()
 
-    def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
-        self._plugin_registry.load_plugin(plugin, plugin_type)
+    def load_plugin(self, plugin: object, plugin_name: str, plugin_type: PluginType) -> None:
+        self._plugin_registry.load_plugin(plugin, plugin_name, plugin_type)
 
     def run_sys_info_collector(self, name: str) -> Dict:
         pass
