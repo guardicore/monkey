@@ -89,7 +89,7 @@ class Propagator:
         )
 
     def _process_scan_results(self, address: NetworkAddress, scan_results: IPScanResults):
-        victim_host = self._victim_host_factory.build_victim_host(address.ip, address.domain)
+        victim_host = self._victim_host_factory.build_victim_host(address)
 
         Propagator._process_ping_scan_results(victim_host, scan_results.ping_scan_data)
         Propagator._process_tcp_scan_results(victim_host, scan_results.port_scan_data)

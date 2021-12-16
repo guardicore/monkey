@@ -4,7 +4,6 @@ import struct
 import time
 from threading import Thread
 
-from infection_monkey.model import VictimHost
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, local_ips
 from infection_monkey.network.tools import check_tcp_port, get_interface_to_target
@@ -188,14 +187,13 @@ class MonkeyTunnel(Thread):
         proxy.stop()
         proxy.join()
 
-    def set_tunnel_for_host(self, host):
-        assert isinstance(host, VictimHost)
+    def get_tunnel_for_ip(self, ip: str):
 
         if not self.local_port:
             return
 
-        ip_match = get_interface_to_target(host.ip_addr)
-        host.default_tunnel = "%s:%d" % (ip_match, self.local_port)
+        ip_match = get_interface_to_target(ip)
+        return "%s:%d" % (ip_match, self.local_port)
 
     def stop(self):
         self._stopped = True

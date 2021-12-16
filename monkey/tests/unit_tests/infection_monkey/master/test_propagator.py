@@ -11,9 +11,26 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 from infection_monkey.master import IPScanResults, Propagator
-from infection_monkey.model import VictimHostFactory
 from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
+from infection_monkey.model import VictimHost, VictimHostFactory
+from infection_monkey.network import NetworkAddress
+
+
+
+
+@pytest.fixture
+def mock_victim_host_factory():
+    class MockVictimHostFactory(VictimHostFactory):
+        def __init__(self):
+            pass
+
+        def build_victim_host(self, network_address: NetworkAddress) -> VictimHost:
+            domain = network_address.domain or ""
+            return VictimHost(network_address.ip, domain)
+
+    return MockVictimHostFactory()
+
 
 empty_fingerprint_data = FingerprintData(None, None, {})
 
@@ -111,9 +128,9 @@ class StubExploiter:
         pass
 
 
-def test_scan_result_processing(telemetry_messenger_spy, mock_ip_scanner):
+def test_scan_result_processing(telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory):
     p = Propagator(
-        telemetry_messenger_spy, mock_ip_scanner, StubExploiter(), VictimHostFactory(), []
+        telemetry_messenger_spy, mock_ip_scanner, StubExploiter(), mock_victim_host_factory, []
     )
     p.propagate(
         {
@@ -201,9 +218,11 @@ class MockExploiter:
                 )
 
 
-def test_exploiter_result_processing(telemetry_messenger_spy, mock_ip_scanner):
+def test_exploiter_result_processing(
+    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory
+):
     p = Propagator(
-        telemetry_messenger_spy, mock_ip_scanner, MockExploiter(), VictimHostFactory(), []
+        telemetry_messenger_spy, mock_ip_scanner, MockExploiter(), mock_victim_host_factory, []
     )
     p.propagate(
         {
@@ -240,13 +259,13 @@ def test_exploiter_result_processing(telemetry_messenger_spy, mock_ip_scanner):
                 assert data["result"]
 
 
-def test_scan_target_generation(telemetry_messenger_spy, mock_ip_scanner):
+def test_scan_target_generation(telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory):
     local_network_interfaces = [NetworkInterface("10.0.0.9", "/29")]
     p = Propagator(
         telemetry_messenger_spy,
         mock_ip_scanner,
         StubExploiter(),
-        VictimHostFactory(),
+        mock_victim_host_factory,
         local_network_interfaces,
     )
     p.propagate(
