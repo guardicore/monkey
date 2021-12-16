@@ -1,6 +1,8 @@
 import time
 from unittest.mock import MagicMock
 
+import pytest
+
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.automated_master import (
     CHECK_FOR_CONFIG_COUNT,
@@ -38,19 +40,29 @@ def test_stop_if_cant_get_config_from_island(monkeypatch):
     assert cc.get_config.call_count == CHECK_FOR_CONFIG_COUNT
 
 
+@pytest.fixture
+def sleep_and_return_config(automated_master_config):
+    # Ensure that should_agent_stop times out before get_config() returns to prevent the
+    # Propagator's sub-threads from hanging
+    get_config_sleep_time = INTERVAL * (CHECK_FOR_STOP_AGENT_COUNT + 1)
+
+    def _inner():
+        time.sleep(get_config_sleep_time)
+        return automated_master_config
+
+    return _inner
+
+
 # NOTE: This test is a little bit brittle, and probably needs too much knowlegde of the internals
 #       of AutomatedMaster. For now, it works and it runs quickly. In the future, if we find that
 #       this test isn't valuable or it starts causing issues, we can just remove it.
-def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, automated_master_config):
+def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, sleep_and_return_config):
     cc = MagicMock()
     cc.should_agent_stop = MagicMock(
         side_effect=IslandCommunicationError("Failed to communicate with island")
     )
-    # Ensure that should_agent_stop times out before get_config() returns to prevent the
-    # Propagator's sub-threads from hanging
     cc.get_config = MagicMock(
-        return_value=automated_master_config,
-        side_effect=lambda: time.sleep(INTERVAL * (CHECK_FOR_STOP_AGENT_COUNT + 1)),
+        side_effect=sleep_and_return_config,
     )
 
     monkeypatch.setattr(
