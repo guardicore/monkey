@@ -40,7 +40,7 @@ class InfectionMonkey:
         logger.info("Monkey is initializing...")
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        # TODO Used in propagation phase to set the default server for the victim
+        self._default_server = self._opts.server
         self._default_server_port = None
         # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
@@ -54,6 +54,7 @@ class InfectionMonkey:
         arg_parser.add_argument("-d", "--depth", type=int)
         opts, _ = arg_parser.parse_known_args(args)
         InfectionMonkey._log_arguments(opts)
+
         return opts
 
     @staticmethod
@@ -110,25 +111,24 @@ class InfectionMonkey:
 
     def _connect_to_island(self):
         # Sets island's IP and port for monkey to communicate to
-        if not self._is_default_server_set():
+        if self._current_server_is_set():
+            self._default_server = WormConfiguration.current_server
+            logger.debug("Default server set to: %s" % self._default_server)
+        else:
             raise Exception(
                 "Monkey couldn't find server with {} default tunnel.".format(self._opts.tunnel)
             )
+
         self._set_default_port()
 
         ControlClient.wakeup(parent=self._opts.parent)
         ControlClient.load_control_config()
 
-    def _is_default_server_set(self) -> bool:
-        """
-        Sets the default server for the Monkey to communicate back to.
-        :return
-        """
-        if not ControlClient.find_server(default_tunnel=self._opts.tunnel):
-            return False
-        self._opts.server = WormConfiguration.current_server
-        logger.debug("default server set to: %s" % self._opts.server)
-        return True
+    def _current_server_is_set(self) -> bool:
+        if ControlClient.find_server(default_tunnel=self._opts.tunnel):
+            return True
+
+        return False
 
     @staticmethod
     def _is_upgrade_to_64_needed():
@@ -172,7 +172,7 @@ class InfectionMonkey:
             MockPuppet(),
             LegacyTelemetryMessengerAdapter(),
             VictimHostFactory(),
-            ControlChannel(self._opts.server, GUID),
+            ControlChannel(self._default_server, GUID),
             local_network_interfaces,
         )
 
@@ -181,7 +181,7 @@ class InfectionMonkey:
 
     def _set_default_port(self):
         try:
-            self._default_server_port = self._opts.server.split(":")[1]
+            self._default_server_port = self._default_server.split(":")[1]
         except KeyError:
             self._default_server_port = ""
 
