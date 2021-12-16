@@ -7,6 +7,7 @@ from infection_monkey.i_control_channel import IControlChannel, IslandCommunicat
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
+from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
@@ -33,6 +34,7 @@ class AutomatedMaster(IMaster):
         telemetry_messenger: ITelemetryMessenger,
         victim_host_factory: VictimHostFactory,
         control_channel: IControlChannel,
+        local_network_interfaces: List[NetworkInterface],
     ):
         self._puppet = puppet
         self._telemetry_messenger = telemetry_messenger
@@ -41,7 +43,11 @@ class AutomatedMaster(IMaster):
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
         exploiter = Exploiter(self._puppet, NUM_EXPLOIT_THREADS)
         self._propagator = Propagator(
-            self._telemetry_messenger, ip_scanner, exploiter, victim_host_factory
+            self._telemetry_messenger,
+            ip_scanner,
+            exploiter,
+            victim_host_factory,
+            local_network_interfaces,
         )
 
         self._stop = threading.Event()

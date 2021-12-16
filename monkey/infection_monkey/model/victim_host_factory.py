@@ -5,8 +5,8 @@ class VictimHostFactory:
     def __init__(self):
         pass
 
-    def build_victim_host(self, ip: str):
-        victim_host = VictimHost(ip)
+    def build_victim_host(self, ip: str, domain: str):
+        victim_host = VictimHost(ip, domain)
 
         # TODO: Reimplement the below logic from the old monkey.py
         """

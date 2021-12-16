@@ -1,4 +1,7 @@
 from threading import Event
+from unittest.mock import MagicMock
+
+import pytest
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -9,6 +12,7 @@ from infection_monkey.i_puppet import (
 )
 from infection_monkey.master import IPScanResults, Propagator
 from infection_monkey.model import VictimHostFactory
+from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
 
 empty_fingerprint_data = FingerprintData(None, None, {})
@@ -83,15 +87,21 @@ dot_3_services = {
 }
 
 
-class MockIPScanner:
-    def scan(self, ips_to_scan, _, results_callback, stop):
-        for ip in ips_to_scan:
-            if ip.endswith(".1"):
-                results_callback(ip, dot_1_scan_results)
-            elif ip.endswith(".3"):
-                results_callback(ip, dot_3_scan_results)
+@pytest.fixture
+def mock_ip_scanner():
+    def scan(adresses_to_scan, _, results_callback, stop):
+        for address in adresses_to_scan:
+            if address.ip.endswith(".1"):
+                results_callback(address, dot_1_scan_results)
+            elif address.ip.endswith(".3"):
+                results_callback(address, dot_3_scan_results)
             else:
-                results_callback(ip, dead_host_scan_results)
+                results_callback(address, dead_host_scan_results)
+
+    ip_scanner = MagicMock()
+    ip_scanner.scan = MagicMock(side_effect=scan)
+
+    return ip_scanner
 
 
 class StubExploiter:
@@ -101,11 +111,18 @@ class StubExploiter:
         pass
 
 
-def test_scan_result_processing(telemetry_messenger_spy):
-    p = Propagator(telemetry_messenger_spy, MockIPScanner(), StubExploiter(), VictimHostFactory())
+def test_scan_result_processing(telemetry_messenger_spy, mock_ip_scanner):
+    p = Propagator(
+        telemetry_messenger_spy, mock_ip_scanner, StubExploiter(), VictimHostFactory(), []
+    )
     p.propagate(
         {
-            "targets": {"subnet_scan_list": ["10.0.0.1", "10.0.0.2", "10.0.0.3"]},
+            "targets": {
+                "subnet_scan_list": ["10.0.0.1", "10.0.0.2", "10.0.0.3"],
+                "local_network_scan": False,
+                "inaccessible_subnets": [],
+                "blocked_ips": [],
+            },
             "network_scan": {},  # This is empty since MockIPscanner ignores it
             "exploiters": {},  # This is empty since StubExploiter ignores it
         },
@@ -141,9 +158,12 @@ class MockExploiter:
     def exploit_hosts(
         self, exploiter_config, hosts_to_exploit, results_callback, scan_completed, stop
     ):
+        scan_completed.wait()
         hte = []
         for _ in range(0, 2):
             hte.append(hosts_to_exploit.get())
+
+        assert hosts_to_exploit.empty()
 
         for host in hte:
             if host.ip_addr.endswith(".1"):
@@ -157,7 +177,7 @@ class MockExploiter:
                     host,
                     ExploiterResultData(False, {}, {}, "SSH FAILED for .1"),
                 )
-            if host.ip_addr.endswith(".2"):
+            elif host.ip_addr.endswith(".2"):
                 results_callback(
                     "PowerShellExploiter",
                     host,
@@ -168,7 +188,7 @@ class MockExploiter:
                     host,
                     ExploiterResultData(False, {}, {}, "SSH FAILED for .2"),
                 )
-            if host.ip_addr.endswith(".3"):
+            elif host.ip_addr.endswith(".3"):
                 results_callback(
                     "PowerShellExploiter",
                     host,
@@ -181,11 +201,18 @@ class MockExploiter:
                 )
 
 
-def test_exploiter_result_processing(telemetry_messenger_spy):
-    p = Propagator(telemetry_messenger_spy, MockIPScanner(), MockExploiter(), VictimHostFactory())
+def test_exploiter_result_processing(telemetry_messenger_spy, mock_ip_scanner):
+    p = Propagator(
+        telemetry_messenger_spy, mock_ip_scanner, MockExploiter(), VictimHostFactory(), []
+    )
     p.propagate(
         {
-            "targets": {"subnet_scan_list": ["10.0.0.1", "10.0.0.2", "10.0.0.3"]},
+            "targets": {
+                "subnet_scan_list": ["10.0.0.1", "10.0.0.2", "10.0.0.3"],
+                "local_network_scan": False,
+                "inaccessible_subnets": [],
+                "blocked_ips": [],
+            },
             "network_scan": {},  # This is empty since MockIPscanner ignores it
             "exploiters": {},  # This is empty since MockExploiter ignores it
         },
@@ -211,3 +238,48 @@ def test_exploiter_result_processing(telemetry_messenger_spy):
                 assert not data["result"]
             else:
                 assert data["result"]
+
+
+def test_scan_target_generation(telemetry_messenger_spy, mock_ip_scanner):
+    local_network_interfaces = [NetworkInterface("10.0.0.9", "/29")]
+    p = Propagator(
+        telemetry_messenger_spy,
+        mock_ip_scanner,
+        StubExploiter(),
+        VictimHostFactory(),
+        local_network_interfaces,
+    )
+    p.propagate(
+        {
+            "targets": {
+                "subnet_scan_list": ["10.0.0.0/29", "172.10.20.30"],
+                "local_network_scan": True,
+                "blocked_ips": ["10.0.0.3"],
+                "inaccessible_subnets": ["10.0.0.128/30", "10.0.0.8/29"],
+            },
+            "network_scan": {},  # This is empty since MockIPscanner ignores it
+            "exploiters": {},  # This is empty since MockExploiter ignores it
+        },
+        Event(),
+    )
+    expected_ip_scan_list = [
+        "10.0.0.0",
+        "10.0.0.1",
+        "10.0.0.2",
+        "10.0.0.4",
+        "10.0.0.5",
+        "10.0.0.6",
+        "10.0.0.8",
+        "10.0.0.10",
+        "10.0.0.11",
+        "10.0.0.12",
+        "10.0.0.13",
+        "10.0.0.14",
+        "10.0.0.128",
+        "10.0.0.129",
+        "10.0.0.130",
+        "172.10.20.30",
+    ]
+
+    actual_ip_scan_list = [address.ip for address in mock_ip_scanner.scan.call_args_list[0][0][0]]
+    assert actual_ip_scan_list == expected_ip_scan_list
