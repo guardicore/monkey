@@ -1,13 +1,17 @@
 import itertools
 import socket
 import struct
+from ipaddress import IPv4Network
 from random import randint  # noqa: DUO102
+from typing import List
 
 import netifaces
 import psutil
 
 from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
+
+from . import NetworkInterface
 
 # Timeout for monkey connections
 TIMEOUT = 15
@@ -16,6 +20,14 @@ SIOCGIFADDR = 0x8915  # get PA address
 SIOCGIFNETMASK = 0x891B  # get network PA mask
 RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
+
+
+def get_local_network_interfaces() -> List[NetworkInterface]:
+    for i in get_host_subnets():
+        netmask_bits = IPv4Network(f"{i['addr']}/{i['netmask']}", strict=False).prefixlen
+        cidr_netmask = f"/{netmask_bits}"
+
+    return [NetworkInterface(i["addr"], cidr_netmask) for i in get_host_subnets()]
 
 
 def get_host_subnets():
