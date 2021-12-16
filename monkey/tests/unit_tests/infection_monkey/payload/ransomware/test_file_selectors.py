@@ -2,7 +2,7 @@ import os
 import shutil
 
 import pytest
-from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
+from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     HELLO_TXT,
     SHORTCUT_LNK,
@@ -12,8 +12,8 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 )
 from tests.utils import is_user_admin
 
-from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
-from infection_monkey.ransomware.ransomware_payload import README_SRC
+from infection_monkey.payload.ransomware.file_selectors import ProductionSafeTargetFileSelector
+from infection_monkey.payload.ransomware.ransomware_payload import README_SRC
 
 TARGETED_FILE_EXTENSIONS = [".pdf", ".txt"]
 
