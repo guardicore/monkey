@@ -1,11 +1,12 @@
 from itertools import chain
 
 import pytest
-from network.scan_target_generator import NetworkAddress, _filter_invalid_ranges
 
 from common.network.network_range import InvalidNetworkRangeError
 from infection_monkey.network.scan_target_generator import (
+    NetworkAddress,
     NetworkInterface,
+    _filter_invalid_ranges,
     compile_scan_target_list,
 )
 
