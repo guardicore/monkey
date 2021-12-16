@@ -38,13 +38,13 @@ def compile_scan_target_list(
 
 
 def _remove_redundant_targets(targets: List[NetworkAddress]) -> List[NetworkAddress]:
-    target_dict = {}
+    reverse_dns = {}
     for target in targets:
         domain_name = target.domain
         ip = target.ip
-        if ip not in target_dict or (target_dict[ip] is None and domain_name is not None):
-            target_dict[ip] = domain_name
-    return [NetworkAddress(key, value) for (key, value) in target_dict.items()]
+        if ip not in reverse_dns or (reverse_dns[ip] is None and domain_name is not None):
+            reverse_dns[ip] = domain_name
+    return [NetworkAddress(key, value) for (key, value) in reverse_dns.items()]
 
 
 def _range_to_addresses(range_obj: NetworkRange) -> List[NetworkAddress]:
@@ -111,7 +111,7 @@ def _remove_ips_from_scan_targets(
 def _get_segmentation_check_targets(
     inaccessible_subnets: List[str], local_interfaces: List[NetworkInterface]
 ) -> List[NetworkAddress]:
-    subnets_to_scan = []
+    ips_to_scan = []
     local_ips = [interface.address for interface in local_interfaces]
 
     local_ips = _filter_invalid_ranges(local_ips, "Invalid local IP found: ")
@@ -125,21 +125,21 @@ def _get_segmentation_check_targets(
     for (subnet1, subnet2) in subnet_pairs:
         if _is_segmentation_check_required(local_ips, subnet1, subnet2):
             ips = _get_ips_from_ranges_to_scan(subnet2)
-            subnets_to_scan.extend(ips)
+            ips_to_scan.extend(ips)
 
-    return subnets_to_scan
+    return ips_to_scan
 
 
 def _filter_invalid_ranges(ranges: List[str], error_msg: str) -> List[str]:
-    filtered = []
+    valid_ranges = []
     for target_range in ranges:
         try:
             NetworkRange.validate_range(target_range)
         except InvalidNetworkRangeError as e:
             logger.error(f"{error_msg} {e}")
             continue
-        filtered.append(target_range)
-    return filtered
+        valid_ranges.append(target_range)
+    return valid_ranges
 
 
 def _convert_to_range_object(subnets: List[str]) -> List[NetworkRange]:
