@@ -21,7 +21,7 @@ class Puppet(IPuppet):
         self._plugin_registry = PluginRegistry()
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
-        self._plugin_registry.load_plugin(plugin, plugin_name, plugin_type)
+        self._plugin_registry.load_plugin(plugin_name, plugin, plugin_type)
 
     def run_sys_info_collector(self, name: str) -> Dict:
         pass
@@ -50,7 +50,8 @@ class Puppet(IPuppet):
         pass
 
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
-        pass
+        payload = self._plugin_registry.get_plugin(name, PluginType.PAYLOAD)
+        payload.run(options, interrupt)
 
     def cleanup(self) -> None:
         pass
