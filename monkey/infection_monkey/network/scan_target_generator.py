@@ -1,5 +1,6 @@
 import itertools
 import logging
+import socket
 from collections import namedtuple
 from typing import List
 
@@ -32,7 +33,7 @@ def compile_scan_target_list(
     scan_targets = _remove_interface_ips(scan_targets, local_network_interfaces)
     scan_targets = _remove_blocklisted_ips(scan_targets, blocklisted_ips)
     scan_targets = _remove_redundant_targets(scan_targets)
-    scan_targets.sort()
+    scan_targets.sort(key=lambda network_address: socket.inet_aton(network_address.ip))
 
     return scan_targets
 

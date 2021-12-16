@@ -466,3 +466,18 @@ def test_invalid_blocklisted_ip():
             blocklisted_ips=blocklisted,
             enable_local_network_scan=False,
         )
+
+
+def test_sorted_scan_targets():
+    expected_results = [f"10.1.0.{i}" for i in range(0, 255)]
+    expected_results.extend([f"10.2.0.{i}" for i in range(0, 255)])
+    expected_results.extend([f"10.10.0.{i}" for i in range(0, 255)])
+    expected_results.extend([f"10.20.0.{i}" for i in range(0, 255)])
+
+    scan_targets = compile_scan_target_list(
+        [], ["10.1.0.0/24", "10.10.0.0/24", "10.20.0.0/24", "10.2.0.0/24"], [], [], False
+    )
+
+    actual_results = [network_address.ip for network_address in scan_targets]
+
+    assert expected_results == actual_results
