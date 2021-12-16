@@ -1,5 +1,5 @@
 class VictimHost(object):
-    def __init__(self, ip_addr, domain_name=""):
+    def __init__(self, ip_addr: str, domain_name: str = ""):
         self.ip_addr = ip_addr
         self.domain_name = str(domain_name)
         self.os = {}
