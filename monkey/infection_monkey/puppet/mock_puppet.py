@@ -7,11 +7,11 @@ from infection_monkey.i_puppet import (
     FingerprintData,
     IPuppet,
     PingScanData,
+    PluginType,
     PortScanData,
     PortStatus,
     PostBreachData,
 )
-from infection_monkey.puppet.plugin_type import PluginType
 
 DOT_1 = "10.0.0.1"
 DOT_2 = "10.0.0.2"

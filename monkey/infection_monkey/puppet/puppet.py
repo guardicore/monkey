@@ -7,11 +7,11 @@ from infection_monkey.i_puppet import (
     FingerprintData,
     IPuppet,
     PingScanData,
+    PluginType,
     PortScanData,
     PostBreachData,
 )
 from infection_monkey.puppet.plugin_registry import PluginRegistry
-from infection_monkey.puppet.plugin_type import PluginType
 
 logger = logging.getLogger()
 

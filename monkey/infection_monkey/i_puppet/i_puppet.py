@@ -4,7 +4,7 @@ from collections import namedtuple
 from enum import Enum
 from typing import Dict
 
-from infection_monkey.puppet.plugin_type import PluginType
+from . import PluginType
 
 
 class PortStatus(Enum):

@@ -1,7 +1,7 @@
 import threading
 from unittest.mock import MagicMock
 
-from infection_monkey.puppet.plugin_type import PluginType
+from infection_monkey.i_puppet import PluginType
 from infection_monkey.puppet.puppet import Puppet
 
 
