@@ -7,9 +7,9 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
     TEST_KEYBOARD_TXT,
 )
 
-from infection_monkey.ransomware.consts import README_FILE_NAME, README_SRC
-from infection_monkey.ransomware.ransomware_config import RansomwareConfig
-from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
+from infection_monkey.payload.ransomware.ransomware_config import RansomwareConfig
+from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 
 
 @pytest.fixture
