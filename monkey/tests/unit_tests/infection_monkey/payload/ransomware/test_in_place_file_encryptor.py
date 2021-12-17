@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
+from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     ALL_ZEROS_PDF_CLEARTEXT_SHA256,
     ALL_ZEROS_PDF_ENCRYPTED_SHA256,

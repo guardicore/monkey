@@ -2,7 +2,7 @@ from pathlib import PurePosixPath
 from unittest.mock import MagicMock
 
 import pytest
-from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
+from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     TEST_KEYBOARD_TXT,
 )

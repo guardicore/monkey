@@ -2,7 +2,7 @@ import os
 import shutil
 
 import pytest
-from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
+from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     HELLO_TXT,
     SHORTCUT_LNK,
