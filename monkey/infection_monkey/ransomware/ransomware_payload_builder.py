@@ -1,12 +1,6 @@
 import logging
 from pprint import pformat
 
-from infection_monkey.ransomware import readme_dropper
-from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
-from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
-from infection_monkey.ransomware.ransomware_config import RansomwareConfig
-from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
-from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
     BatchingTelemetryMessenger,
 )
@@ -14,6 +8,13 @@ from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter im
     LegacyTelemetryMessengerAdapter,
 )
 from infection_monkey.utils.bit_manipulators import flip_bits
+
+from . import readme_dropper
+from .file_selectors import ProductionSafeTargetFileSelector
+from .in_place_file_encryptor import InPlaceFileEncryptor
+from .ransomware_config import RansomwareConfig
+from .ransomware_payload import RansomwarePayload
+from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 
 EXTENSION = ".m0nk3y"
 CHUNK_SIZE = 4096 * 24

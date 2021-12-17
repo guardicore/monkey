@@ -2,10 +2,11 @@ import logging
 from pathlib import Path
 from typing import Callable, List
 
-from infection_monkey.ransomware.consts import README_FILE_NAME, README_SRC
-from infection_monkey.ransomware.ransomware_config import RansomwareConfig
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+
+from .consts import README_FILE_NAME, README_SRC
+from .ransomware_config import RansomwareConfig
 
 logger = logging.getLogger(__name__)
 
