@@ -12,13 +12,15 @@ from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import DELAY_DELETE_CMD, VictimHostFactory
 from infection_monkey.network import NetworkInterface
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_local_network_interfaces
-from infection_monkey.puppet.mock_puppet import MockPuppet
+from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
@@ -156,6 +158,20 @@ class InfectionMonkey:
 
         register_signal_handlers(self._master)
 
+    def _build_master(self):
+        local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+        puppet = InfectionMonkey._build_puppet()
+
+        victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
+
+        self._master = AutomatedMaster(
+            puppet,
+            LegacyTelemetryMessengerAdapter(),
+            victim_host_factory,
+            ControlChannel(self._default_server, GUID),
+            local_network_interfaces,
+        )
+
     @staticmethod
     def _get_local_network_interfaces():
         local_network_interfaces = get_local_network_interfaces()
@@ -164,18 +180,12 @@ class InfectionMonkey:
 
         return local_network_interfaces
 
-    def _build_master(self):
-        local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+    @staticmethod
+    def _build_puppet() -> IPuppet:
+        puppet = Puppet()
+        puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
 
-        victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
-
-        self._master = AutomatedMaster(
-            MockPuppet(),
-            LegacyTelemetryMessengerAdapter(),
-            victim_host_factory,
-            ControlChannel(self._default_server, GUID),
-            local_network_interfaces,
-        )
+        return puppet
 
     def _build_victim_host_factory(
         self, local_network_interfaces: List[NetworkInterface]
