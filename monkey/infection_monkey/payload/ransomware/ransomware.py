@@ -43,12 +43,8 @@ class Ransomware:
             file_list = self._find_files()
             self._encrypt_files(file_list, interrupt)
 
-        if interrupt.is_set():
-            logger.debug("Received a stop signal, skipping remaining tasks of ransomware payload")
-            return
-
         if self._config.readme_enabled:
-            self._leave_readme_in_target_directory()
+            self._leave_readme_in_target_directory(interrupt)
 
     def _find_files(self) -> List[Path]:
         logger.info(f"Collecting files in {self._target_directory}")
@@ -76,8 +72,12 @@ class Ransomware:
         encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
-    def _leave_readme_in_target_directory(self):
+    def _leave_readme_in_target_directory(self, interrupt: threading.Event):
         try:
+            if interrupt.is_set():
+                logger.debug("Received a stop signal, skipping leave readme")
+                return
+
             self._leave_readme(README_SRC, self._readme_file_path)
         except Exception as ex:
             logger.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")

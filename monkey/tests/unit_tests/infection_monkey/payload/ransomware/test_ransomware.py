@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
+    HELLO_TXT,
     TEST_KEYBOARD_TXT,
 )
 
@@ -69,6 +70,11 @@ def mock_leave_readme():
     return MagicMock()
 
 
+@pytest.fixture
+def interrupt():
+    return threading.Event()
+
+
 def test_files_selected_from_target_dir(
     ransomware,
     ransomware_options,
@@ -84,6 +90,38 @@ def test_all_selected_files_encrypted(ransomware_test_data, ransomware, mock_fil
     assert mock_file_encryptor.call_count == 2
     mock_file_encryptor.assert_any_call(ransomware_test_data / ALL_ZEROS_PDF)
     mock_file_encryptor.assert_any_call(ransomware_test_data / TEST_KEYBOARD_TXT)
+
+
+def test_interrupt_while_encrypting(
+    ransomware_test_data, interrupt, ransomware_options, build_ransomware
+):
+    selected_files = [
+        ransomware_test_data / ALL_ZEROS_PDF,
+        ransomware_test_data / HELLO_TXT,
+        ransomware_test_data / TEST_KEYBOARD_TXT,
+    ]
+    mfs = MagicMock(return_value=selected_files)
+
+    def _callback(file_path, *_):
+        # Block all threads here until 2 threads reach this barrier, then set stop
+        # and test that neither thread continues to scan.
+        if file_path.name == HELLO_TXT:
+            interrupt.set()
+
+    mfe = MagicMock(side_effect=_callback)
+
+    build_ransomware(ransomware_options, mfe, mfs).run(interrupt)
+
+    assert mfe.call_count == 2
+    mfe.assert_any_call(ransomware_test_data / ALL_ZEROS_PDF)
+    mfe.assert_any_call(ransomware_test_data / HELLO_TXT)
+
+
+def test_no_readme_after_interrupt(ransomware, interrupt, mock_leave_readme):
+    interrupt.set()
+    ransomware.run(interrupt)
+
+    mock_leave_readme.assert_not_called()
 
 
 def test_encryption_skipped_if_configured_false(
