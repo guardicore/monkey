@@ -1,3 +1,4 @@
+import threading
 from pathlib import PurePosixPath
 from unittest.mock import MagicMock
 
@@ -73,12 +74,12 @@ def test_files_selected_from_target_dir(
     ransomware_config,
     mock_file_selector,
 ):
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
     mock_file_selector.assert_called_with(ransomware_config.target_directory)
 
 
 def test_all_selected_files_encrypted(ransomware_test_data, ransomware, mock_file_encryptor):
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
 
     assert mock_file_encryptor.call_count == 2
     mock_file_encryptor.assert_any_call(ransomware_test_data / ALL_ZEROS_PDF)
@@ -91,7 +92,7 @@ def test_encryption_skipped_if_configured_false(
     ransomware_config.encryption_enabled = False
 
     ransomware = build_ransomware(ransomware_config)
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
 
     assert mock_file_encryptor.call_count == 0
 
@@ -103,13 +104,13 @@ def test_encryption_skipped_if_no_directory(
     ransomware_config.target_directory = None
 
     ransomware = build_ransomware(ransomware_config)
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
 
     assert mock_file_encryptor.call_count == 0
 
 
 def test_telemetry_success(ransomware, telemetry_messenger_spy):
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
 
     assert len(telemetry_messenger_spy.telemetries) == 2
     telem_1 = telemetry_messenger_spy.telemetries[0]
@@ -131,7 +132,7 @@ def test_telemetry_failure(build_ransomware, ransomware_config, telemetry_messen
     mfs = MagicMock(return_value=[PurePosixPath(file_not_exists)])
     ransomware = build_ransomware(config=ransomware_config, file_encryptor=mfe, file_selector=mfs)
 
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
     telem = telemetry_messenger_spy.telemetries[0]
 
     assert file_not_exists in telem.get_data()["files"][0]["path"]
@@ -143,7 +144,7 @@ def test_readme_false(build_ransomware, ransomware_config, mock_leave_readme):
     ransomware_config.readme_enabled = False
     ransomware = build_ransomware(ransomware_config)
 
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
     mock_leave_readme.assert_not_called()
 
 
@@ -151,7 +152,7 @@ def test_readme_true(build_ransomware, ransomware_config, mock_leave_readme, ran
     ransomware_config.readme_enabled = True
     ransomware = build_ransomware(ransomware_config)
 
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
     mock_leave_readme.assert_called_with(README_SRC, ransomware_test_data / README_FILE_NAME)
 
 
@@ -161,7 +162,7 @@ def test_no_readme_if_no_directory(build_ransomware, ransomware_config, mock_lea
 
     ransomware = build_ransomware(ransomware_config)
 
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
     mock_leave_readme.assert_not_called()
 
 
@@ -171,4 +172,4 @@ def test_leave_readme_exceptions_handled(build_ransomware, ransomware_config):
     ransomware = build_ransomware(config=ransomware_config, leave_readme=leave_readme)
 
     # Test will fail if exception is raised and not handled
-    ransomware.run_payload()
+    ransomware.run(threading.Event())
