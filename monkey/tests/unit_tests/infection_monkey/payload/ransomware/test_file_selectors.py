@@ -13,7 +13,7 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
 from tests.utils import is_user_admin
 
 from infection_monkey.payload.ransomware.file_selectors import ProductionSafeTargetFileSelector
-from infection_monkey.payload.ransomware.ransomware_payload import README_SRC
+from infection_monkey.payload.ransomware.ransomware import README_SRC
 
 TARGETED_FILE_EXTENSIONS = [".pdf", ".txt"]
 

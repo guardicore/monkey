@@ -11,7 +11,7 @@ from .ransomware_config import RansomwareConfig
 logger = logging.getLogger(__name__)
 
 
-class RansomwarePayload:
+class Ransomware:
     def __init__(
         self,
         config: RansomwareConfig,
