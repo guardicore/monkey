@@ -11,9 +11,9 @@ from infection_monkey.i_puppet import (
     PortScanData,
     PostBreachData,
 )
-from infection_monkey.puppet.plugin_registry import PluginRegistry
 
 from .mock_puppet import MockPuppet
+from .plugin_registry import PluginRegistry
 
 logger = logging.getLogger()
 
