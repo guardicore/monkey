@@ -7,7 +7,7 @@ from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 from .consts import README_FILE_NAME, README_SRC
-from .ransomware_config import RansomwareConfig
+from .ransomware_options import RansomwareOptions
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class Ransomware:
     def __init__(
         self,
-        config: RansomwareConfig,
+        config: RansomwareOptions,
         encrypt_file: Callable[[Path], None],
         select_files: Callable[[Path], List[Path]],
         leave_readme: Callable[[Path, Path], None],

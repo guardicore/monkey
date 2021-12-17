@@ -10,12 +10,12 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
 
 from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.payload.ransomware.ransomware import Ransomware
-from infection_monkey.payload.ransomware.ransomware_config import RansomwareConfig
+from infection_monkey.payload.ransomware.ransomware_options import RansomwareOptions
 
 
 @pytest.fixture
-def ransomware(build_ransomware, ransomware_config):
-    return build_ransomware(ransomware_config)
+def ransomware(build_ransomware, ransomware_options):
+    return build_ransomware(ransomware_options)
 
 
 @pytest.fixture
@@ -40,14 +40,14 @@ def build_ransomware(
 
 
 @pytest.fixture
-def ransomware_config(ransomware_test_data):
-    class RansomwareConfigStub(RansomwareConfig):
+def ransomware_options(ransomware_test_data):
+    class RansomwareOptionsStub(RansomwareOptions):
         def __init__(self, encryption_enabled, readme_enabled, target_directory):
             self.encryption_enabled = encryption_enabled
             self.readme_enabled = readme_enabled
             self.target_directory = target_directory
 
-    return RansomwareConfigStub(True, False, ransomware_test_data)
+    return RansomwareOptionsStub(True, False, ransomware_test_data)
 
 
 @pytest.fixture
@@ -71,11 +71,11 @@ def mock_leave_readme():
 
 def test_files_selected_from_target_dir(
     ransomware,
-    ransomware_config,
+    ransomware_options,
     mock_file_selector,
 ):
     ransomware.run(threading.Event())
-    mock_file_selector.assert_called_with(ransomware_config.target_directory)
+    mock_file_selector.assert_called_with(ransomware_options.target_directory)
 
 
 def test_all_selected_files_encrypted(ransomware_test_data, ransomware, mock_file_encryptor):
@@ -87,23 +87,23 @@ def test_all_selected_files_encrypted(ransomware_test_data, ransomware, mock_fil
 
 
 def test_encryption_skipped_if_configured_false(
-    build_ransomware, ransomware_config, mock_file_encryptor
+    build_ransomware, ransomware_options, mock_file_encryptor
 ):
-    ransomware_config.encryption_enabled = False
+    ransomware_options.encryption_enabled = False
 
-    ransomware = build_ransomware(ransomware_config)
+    ransomware = build_ransomware(ransomware_options)
     ransomware.run(threading.Event())
 
     assert mock_file_encryptor.call_count == 0
 
 
 def test_encryption_skipped_if_no_directory(
-    build_ransomware, ransomware_config, mock_file_encryptor
+    build_ransomware, ransomware_options, mock_file_encryptor
 ):
-    ransomware_config.encryption_enabled = True
-    ransomware_config.target_directory = None
+    ransomware_options.encryption_enabled = True
+    ransomware_options.target_directory = None
 
-    ransomware = build_ransomware(ransomware_config)
+    ransomware = build_ransomware(ransomware_options)
     ransomware.run(threading.Event())
 
     assert mock_file_encryptor.call_count == 0
@@ -124,13 +124,13 @@ def test_telemetry_success(ransomware, telemetry_messenger_spy):
     assert telem_2.get_data()["files"][0]["error"] == ""
 
 
-def test_telemetry_failure(build_ransomware, ransomware_config, telemetry_messenger_spy):
+def test_telemetry_failure(build_ransomware, ransomware_options, telemetry_messenger_spy):
     file_not_exists = "/file/not/exist"
     mfe = MagicMock(
         side_effect=FileNotFoundError(f"[Errno 2] No such file or directory: '{file_not_exists}'")
     )
     mfs = MagicMock(return_value=[PurePosixPath(file_not_exists)])
-    ransomware = build_ransomware(config=ransomware_config, file_encryptor=mfe, file_selector=mfs)
+    ransomware = build_ransomware(config=ransomware_options, file_encryptor=mfe, file_selector=mfs)
 
     ransomware.run(threading.Event())
     telem = telemetry_messenger_spy.telemetries[0]
@@ -140,36 +140,36 @@ def test_telemetry_failure(build_ransomware, ransomware_config, telemetry_messen
     assert "No such file or directory" in telem.get_data()["files"][0]["error"]
 
 
-def test_readme_false(build_ransomware, ransomware_config, mock_leave_readme):
-    ransomware_config.readme_enabled = False
-    ransomware = build_ransomware(ransomware_config)
+def test_readme_false(build_ransomware, ransomware_options, mock_leave_readme):
+    ransomware_options.readme_enabled = False
+    ransomware = build_ransomware(ransomware_options)
 
     ransomware.run(threading.Event())
     mock_leave_readme.assert_not_called()
 
 
-def test_readme_true(build_ransomware, ransomware_config, mock_leave_readme, ransomware_test_data):
-    ransomware_config.readme_enabled = True
-    ransomware = build_ransomware(ransomware_config)
+def test_readme_true(build_ransomware, ransomware_options, mock_leave_readme, ransomware_test_data):
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
 
     ransomware.run(threading.Event())
     mock_leave_readme.assert_called_with(README_SRC, ransomware_test_data / README_FILE_NAME)
 
 
-def test_no_readme_if_no_directory(build_ransomware, ransomware_config, mock_leave_readme):
-    ransomware_config.target_directory = None
-    ransomware_config.readme_enabled = True
+def test_no_readme_if_no_directory(build_ransomware, ransomware_options, mock_leave_readme):
+    ransomware_options.target_directory = None
+    ransomware_options.readme_enabled = True
 
-    ransomware = build_ransomware(ransomware_config)
+    ransomware = build_ransomware(ransomware_options)
 
     ransomware.run(threading.Event())
     mock_leave_readme.assert_not_called()
 
 
-def test_leave_readme_exceptions_handled(build_ransomware, ransomware_config):
+def test_leave_readme_exceptions_handled(build_ransomware, ransomware_options):
     leave_readme = MagicMock(side_effect=Exception("Test exception when leaving README"))
-    ransomware_config.readme_enabled = True
-    ransomware = build_ransomware(config=ransomware_config, leave_readme=leave_readme)
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(config=ransomware_options, leave_readme=leave_readme)
 
     # Test will fail if exception is raised and not handled
     ransomware.run(threading.Event())

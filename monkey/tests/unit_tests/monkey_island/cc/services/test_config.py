@@ -38,7 +38,7 @@ def test_format_config_for_agent__credentials_removed(flat_monkey_config):
 
 
 def test_format_config_for_agent__ransomware_payload(flat_monkey_config):
-    expected_ransomware_config = {
+    expected_ransomware_options = {
         "ransomware": {
             "encryption": {
                 "enabled": True,
@@ -54,7 +54,7 @@ def test_format_config_for_agent__ransomware_payload(flat_monkey_config):
     ConfigService.format_flat_config_for_agent(flat_monkey_config)
 
     assert "payloads" in flat_monkey_config
-    assert flat_monkey_config["payloads"] == expected_ransomware_config
+    assert flat_monkey_config["payloads"] == expected_ransomware_options
 
     assert "ransomware" not in flat_monkey_config
 
