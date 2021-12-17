@@ -4,7 +4,6 @@ from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet, PortStatus
 from infection_monkey.model.host import VictimHost
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
-from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.scan_telem import ScanTelem
@@ -119,9 +118,7 @@ class MockMaster(IMaster):
 
     def _run_payload(self):
         logger.info("Running payloads")
-        # TODO: modify what FileEncryptionTelem gets
-        path, success, error = self._puppet.run_payload("RansomwarePayload", {}, None)
-        self._telemetry_messenger.send_telemetry(FileEncryptionTelem(path, success, error))
+        self._puppet.run_payload("RansomwarePayload", {}, None)
         logger.info("Finished running payloads")
 
     def terminate(self, block: bool = False) -> None:

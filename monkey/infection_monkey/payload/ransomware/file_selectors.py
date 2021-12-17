@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import List, Set
 
 from common.utils.file_utils import get_file_sha256_hash
-from infection_monkey.ransomware.consts import README_FILE_NAME, README_SHA256_HASH
 from infection_monkey.utils.dir_utils import (
     file_extension_filter,
     filter_files,
@@ -10,6 +9,8 @@ from infection_monkey.utils.dir_utils import (
     is_not_shortcut_filter,
     is_not_symlink_filter,
 )
+
+from .consts import README_FILE_NAME, README_SHA256_HASH
 
 
 class ProductionSafeTargetFileSelector:

@@ -2,9 +2,9 @@ import abc
 import threading
 from collections import namedtuple
 from enum import Enum
-from typing import Dict, Tuple
+from typing import Dict
 
-from infection_monkey.puppet.plugin_type import PluginType
+from . import PluginType
 
 
 class PortStatus(Enum):
@@ -27,9 +27,10 @@ PostBreachData = namedtuple("PostBreachData", ["command", "result"])
 
 class IPuppet(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
+    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
         """
-        Loads a plugin into the puppet.
+        Loads a plugin into the puppet
+        :param str plugin_name: The plugin class name
         :param object plugin: The plugin object to load
         :param PluginType plugin_type: The type of plugin being loaded
         """
@@ -107,13 +108,13 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def run_payload(
-        self, name: str, options: Dict, interrupt: threading.Event
-    ) -> Tuple[None, bool, str]:
+    def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         """
         Runs a payload
         :param str name: The name of the payload to run
         :param Dict options: A dictionary containing options that modify the behavior of the payload
+        :param threading.Event interrupt: A threading.Event object that signals the payload to stop
+                                          executing and clean itself up.
         """
 
     @abc.abstractmethod
