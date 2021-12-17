@@ -188,7 +188,7 @@ class InfectionMonkey:
         )
 
     def _running_on_island(self, local_network_interfaces: List[NetworkInterface]) -> bool:
-        server_ip = self._default_server.split(":")[0]
+        server_ip, _ = address_to_ip_port(self._default_server)
         return server_ip in {interface.address for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
