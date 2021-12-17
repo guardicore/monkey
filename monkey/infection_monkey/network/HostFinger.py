@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 import infection_monkey.network
 from infection_monkey.config import WormConfiguration
-from infection_monkey.utils.plugins.plugin import Plugin
+from infection_monkey.utils.plugins import Plugin
 
 
 class HostFinger(Plugin):

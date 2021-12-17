@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
+from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     ALL_ZEROS_PDF_CLEARTEXT_SHA256,
     ALL_ZEROS_PDF_ENCRYPTED_SHA256,
@@ -11,7 +11,7 @@ from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import
 )
 
 from common.utils.file_utils import get_file_sha256_hash
-from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
+from infection_monkey.payload.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
 from infection_monkey.utils.bit_manipulators import flip_bits
 
 EXTENSION = ".m0nk3y"

@@ -4,8 +4,8 @@ import pytest
 from tests.utils import raise_
 
 from common.utils.file_utils import InvalidPath
-from infection_monkey.ransomware import ransomware_config
-from infection_monkey.ransomware.ransomware_config import RansomwareConfig
+from infection_monkey.payload.ransomware import ransomware_config
+from infection_monkey.payload.ransomware.ransomware_config import RansomwareConfig
 
 LINUX_DIR = "/tmp/test"
 WINDOWS_DIR = "C:\\tmp\\test"

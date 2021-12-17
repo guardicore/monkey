@@ -2,10 +2,10 @@ import logging
 from pathlib import Path
 from typing import Callable, List
 
-from infection_monkey.ransomware import readme_dropper
-from infection_monkey.ransomware.file_selectors import ProductionSafeTargetFileSelector
-from infection_monkey.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
-from infection_monkey.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
+from infection_monkey.payload.ransomware import readme_dropper
+from infection_monkey.payload.ransomware.file_selectors import ProductionSafeTargetFileSelector
+from infection_monkey.payload.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
+from infection_monkey.payload.ransomware.targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
     BatchingTelemetryMessenger,
 )

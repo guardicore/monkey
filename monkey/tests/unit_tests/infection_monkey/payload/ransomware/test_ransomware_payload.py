@@ -2,14 +2,14 @@ from pathlib import PurePosixPath
 from unittest.mock import MagicMock
 
 import pytest
-from tests.unit_tests.infection_monkey.ransomware.ransomware_target_files import (
+from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
     ALL_ZEROS_PDF,
     TEST_KEYBOARD_TXT,
 )
 
-from infection_monkey.ransomware.consts import README_FILE_NAME, README_SRC
-from infection_monkey.ransomware.ransomware_config import RansomwareConfig
-from infection_monkey.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
+from infection_monkey.payload.ransomware.ransomware_config import RansomwareConfig
+from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 
 
 @pytest.fixture
@@ -28,23 +28,24 @@ def build_ransomware_payload(
         leave_readme=mock_leave_readme,
     ):
         monkeypatch.setattr(
-            "infection_monkey.ransomware.ransomware_payload.build_file_encryptor",
+            "infection_monkey.payload.ransomware.ransomware_payload.build_file_encryptor",
             lambda: file_encryptor,
         )
         monkeypatch.setattr(
-            "infection_monkey.ransomware.ransomware_payload.build_file_selector",
+            "infection_monkey.payload.ransomware.ransomware_payload.build_file_selector",
             lambda: file_selector,
         )
         monkeypatch.setattr(
-            "infection_monkey.ransomware.ransomware_payload.build_leave_readme",
+            "infection_monkey.payload.ransomware.ransomware_payload.build_leave_readme",
             lambda: leave_readme,
         )
         monkeypatch.setattr(
-            "infection_monkey.ransomware.ransomware_payload.build_telemetry_messenger",
+            "infection_monkey.payload.ransomware.ransomware_payload.build_telemetry_messenger",
             lambda: telemetry_messenger_spy,
         )
         monkeypatch.setattr(
-            "infection_monkey.ransomware.ransomware_payload.RansomwareConfig", RansomwareConfigStub
+            "infection_monkey.payload.ransomware.ransomware_payload.RansomwareConfig",
+            RansomwareConfigStub,
         )
         return RansomwarePayload(config)
 

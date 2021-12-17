@@ -3,9 +3,9 @@ import threading
 from pathlib import Path
 from typing import List
 
-from infection_monkey.ransomware.consts import README_FILE_NAME, README_SRC
-from infection_monkey.ransomware.ransomware_config import RansomwareConfig
-from infection_monkey.ransomware.ransomware_parts_builder import (
+from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
+from infection_monkey.payload.ransomware.ransomware_config import RansomwareConfig
+from infection_monkey.payload.ransomware.ransomware_parts_builder import (
     build_file_encryptor,
     build_file_selector,
     build_leave_readme,

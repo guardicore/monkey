@@ -21,6 +21,8 @@ class Plugin(metaclass=ABCMeta):
     @staticmethod
     @abstractmethod
     def should_run(class_name: str) -> bool:
+        # TODO: Remove it as it is not responsibility of the Plugin itself
+        #  to check if it needs to run
         raise NotImplementedError()
 
     @classmethod
