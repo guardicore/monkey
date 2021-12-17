@@ -153,9 +153,7 @@ class InfectionMonkey:
         StateTelem(is_done=False, version=get_version()).send()
         TunnelTelem().send()
 
-        local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
-
-        self._build_master(local_network_interfaces)
+        self._build_master()
 
         register_signal_handlers(self._master)
 
@@ -167,7 +165,9 @@ class InfectionMonkey:
 
         return local_network_interfaces
 
-    def _build_master(self, local_network_interfaces: List[NetworkInterface]):
+    def _build_master(self):
+        local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
         self._master = AutomatedMaster(
