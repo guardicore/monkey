@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 import infection_monkey.payload
-from infection_monkey.utils.plugins.plugin import Plugin
+from infection_monkey.utils.plugins import Plugin
 
 
 class Payload(Plugin):

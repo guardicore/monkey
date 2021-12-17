@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 import infection_monkey.system_info.collectors
 from infection_monkey.config import WormConfiguration
-from infection_monkey.utils.plugins.plugin import Plugin
+from infection_monkey.utils.plugins import Plugin
 
 
 class SystemInfoCollector(Plugin, metaclass=ABCMeta):

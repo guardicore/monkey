@@ -7,7 +7,7 @@ from infection_monkey.config import WormConfiguration
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.plugins.plugin import Plugin
+from infection_monkey.utils.plugins import Plugin
 
 logger = logging.getLogger(__name__)
 

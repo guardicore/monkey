@@ -1,6 +1,6 @@
 import tests.unit_tests.infection_monkey.utils.plugins.pluginTests
 
-from infection_monkey.utils.plugins.plugin import Plugin
+from infection_monkey.utils.plugins import Plugin
 
 
 class PluginTester(Plugin):
