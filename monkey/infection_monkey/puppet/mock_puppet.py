@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, Tuple
+from typing import Dict
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -299,11 +299,8 @@ class MockPuppet(IPuppet):
         except KeyError:
             return ExploiterResultData(False, {}, [], f"{name} failed for host {host}")
 
-    def run_payload(
-        self, name: str, options: Dict, interrupt: threading.Event
-    ) -> Tuple[None, bool, str]:
+    def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         logger.debug(f"run_payload({name}, {options})")
-        return (None, True, "")
 
     def cleanup(self) -> None:
         print("Cleanup called!")

@@ -2,7 +2,7 @@ import abc
 import threading
 from collections import namedtuple
 from enum import Enum
-from typing import Dict, Tuple
+from typing import Dict
 
 from infection_monkey.puppet.plugin_type import PluginType
 
@@ -107,13 +107,13 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def run_payload(
-        self, name: str, options: Dict, interrupt: threading.Event
-    ) -> Tuple[None, bool, str]:
+    def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         """
         Runs a payload
         :param str name: The name of the payload to run
         :param Dict options: A dictionary containing options that modify the behavior of the payload
+        :param threading.Event interrupt: A threading.Event object that signals the payload to stop
+                                          executing and clean itself up.
         """
 
     @abc.abstractmethod

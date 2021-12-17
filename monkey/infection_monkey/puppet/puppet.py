@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, Tuple
+from typing import Dict
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -45,9 +45,7 @@ class Puppet(IPuppet):
     ) -> ExploiterResultData:
         pass
 
-    def run_payload(
-        self, name: str, options: Dict, interrupt: threading.Event
-    ) -> Tuple[None, bool, str]:
+    def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         pass
 
     def cleanup(self) -> None:
