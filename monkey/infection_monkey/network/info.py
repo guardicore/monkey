@@ -23,11 +23,13 @@ RTF_REJECT = 0x0200
 
 
 def get_local_network_interfaces() -> List[NetworkInterface]:
+    network_interfaces = []
     for i in get_host_subnets():
         netmask_bits = IPv4Network(f"{i['addr']}/{i['netmask']}", strict=False).prefixlen
         cidr_netmask = f"/{netmask_bits}"
+        network_interfaces.append(NetworkInterface(i["addr"], cidr_netmask))
 
-    return [NetworkInterface(i["addr"], cidr_netmask) for i in get_host_subnets()]
+    return network_interfaces
 
 
 def get_host_subnets():
