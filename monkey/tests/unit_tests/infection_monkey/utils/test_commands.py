@@ -96,9 +96,9 @@ def test_get_monkey_commandline_linux():
 
 def test_build_monkey_commandline():
     example_host = VictimHost(ip_addr="bla")
-    example_host.set_default_server("101010")
+    example_host.set_island_address("101010", "5000")
 
-    expected = f" -p {GUID} -s 101010 -d 0 -l /home/bla"
+    expected = f" -p {GUID} -s 101010:5000 -d 0 -l /home/bla"
     actual = build_monkey_commandline(target_host=example_host, depth=0, location="/home/bla")
 
     assert expected == actual

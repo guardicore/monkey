@@ -22,13 +22,13 @@ def mock_get_interface_to_target(monkeypatch):
 
 def test_factory_no_tunnel():
     factory = VictimHostFactory(
-        tunnel=None, default_server="192.168.56.1", default_port="5000", on_island=False
+        tunnel=None, island_ip="192.168.56.1", island_port="5000", on_island=False
     )
     network_address = NetworkAddress("192.168.56.2", None)
 
     victim = factory.build_victim_host(network_address)
 
-    assert victim.default_server == "192.168.56.1"
+    assert victim.default_server == "192.168.56.1:5000"
     assert victim.ip_addr == "192.168.56.2"
     assert victim.default_tunnel is None
     assert victim.domain_name == ""
@@ -36,13 +36,13 @@ def test_factory_no_tunnel():
 
 def test_factory_with_tunnel(mock_tunnel):
     factory = VictimHostFactory(
-        tunnel=mock_tunnel, default_server="192.168.56.1", default_port="5000", on_island=False
+        tunnel=mock_tunnel, island_ip="192.168.56.1", island_port="5000", on_island=False
     )
     network_address = NetworkAddress("192.168.56.2", None)
 
     victim = factory.build_victim_host(network_address)
 
-    assert victim.default_server == "192.168.56.1"
+    assert victim.default_server == "192.168.56.1:5000"
     assert victim.ip_addr == "192.168.56.2"
     assert victim.default_tunnel == "1.2.3.4:1234"
     assert victim.domain_name == ""
@@ -50,7 +50,7 @@ def test_factory_with_tunnel(mock_tunnel):
 
 def test_factory_on_island(mock_tunnel):
     factory = VictimHostFactory(
-        tunnel=mock_tunnel, default_server="192.168.56.1", default_port="99", on_island=True
+        tunnel=mock_tunnel, island_ip="192.168.56.1", island_port="99", on_island=True
     )
     network_address = NetworkAddress("192.168.56.2", "www.bogus.monkey")
 
@@ -65,7 +65,7 @@ def test_factory_on_island(mock_tunnel):
 @pytest.mark.parametrize("default_port", ["", None])
 def test_factory_no_port(mock_tunnel, default_port):
     factory = VictimHostFactory(
-        tunnel=mock_tunnel, default_server="192.168.56.1", default_port=default_port, on_island=True
+        tunnel=mock_tunnel, island_ip="192.168.56.1", island_port=default_port, on_island=True
     )
     network_address = NetworkAddress("192.168.56.2", "www.bogus.monkey")
 
@@ -75,9 +75,7 @@ def test_factory_no_port(mock_tunnel, default_port):
 
 
 def test_factory_no_default_server(mock_tunnel):
-    factory = VictimHostFactory(
-        tunnel=mock_tunnel, default_server=None, default_port="", on_island=True
-    )
+    factory = VictimHostFactory(tunnel=mock_tunnel, island_ip=None, island_port="", on_island=True)
     network_address = NetworkAddress("192.168.56.2", "www.bogus.monkey")
 
     victim = factory.build_victim_host(network_address)

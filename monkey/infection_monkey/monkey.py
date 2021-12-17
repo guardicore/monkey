@@ -7,6 +7,7 @@ import time
 from typing import List
 
 import infection_monkey.tunnel as tunnel
+from common.network.network_utils import address_to_ip_port
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID, WormConfiguration
@@ -40,8 +41,8 @@ class InfectionMonkey:
         logger.info("Monkey is initializing...")
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
         self._default_server = self._opts.server
-        self._default_server_port = None
         # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
 
@@ -119,8 +120,6 @@ class InfectionMonkey:
                 "Monkey couldn't find server with {} default tunnel.".format(self._opts.tunnel)
             )
 
-        self._set_default_port()
-
         ControlClient.wakeup(parent=self._opts.parent)
         ControlClient.load_control_config()
 
@@ -185,7 +184,7 @@ class InfectionMonkey:
         logger.debug(f"This agent is running on the island: {on_island}")
 
         return VictimHostFactory(
-            self._monkey_inbound_tunnel, self._default_server, self._default_server_port, on_island
+            self._monkey_inbound_tunnel, self._cmd_island_ip, self._cmd_island_port, on_island
         )
 
     def _running_on_island(self, local_network_interfaces: List[NetworkInterface]) -> bool:
@@ -194,12 +193,6 @@ class InfectionMonkey:
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
-
-    def _set_default_port(self):
-        try:
-            self._default_server_port = self._default_server.split(":")[1]
-        except KeyError:
-            self._default_server_port = ""
 
     def cleanup(self):
         logger.info("Monkey cleanup started")

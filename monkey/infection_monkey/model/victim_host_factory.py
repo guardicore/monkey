@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 
 from infection_monkey.model import VictimHost
 from infection_monkey.network import NetworkAddress
@@ -13,13 +13,13 @@ class VictimHostFactory:
     def __init__(
         self,
         tunnel: Optional[MonkeyTunnel],
-        default_server: Optional[str],
-        default_port: Optional[str],
+        island_ip: Optional[str],
+        island_port: Optional[str],
         on_island: bool,
     ):
         self.tunnel = tunnel
-        self.default_server = default_server
-        self.default_port = default_port
+        self.island_ip = island_ip
+        self.island_port = island_port
         self.on_island = on_island
 
     def build_victim_host(self, network_address: NetworkAddress) -> VictimHost:
@@ -29,19 +29,22 @@ class VictimHostFactory:
         if self.tunnel:
             victim_host.default_tunnel = self.tunnel.get_tunnel_for_ip(victim_host.ip_addr)
 
-        if self.default_server:
-            victim_host.set_default_server(self._get_formatted_default_server(victim_host.ip_addr))
+        if self.island_ip:
+            ip, port = self._choose_island_address(victim_host.ip_addr)
+            victim_host.set_island_address(ip, port)
 
         logger.debug(f"Default tunnel for {victim_host} set to {victim_host.default_tunnel}")
         logger.debug(f"Default server for {victim_host} set to {victim_host.default_server}")
 
         return victim_host
 
-    def _get_formatted_default_server(self, ip: str):
+    def _choose_island_address(self, victim_ip: str) -> Tuple[str, Optional[str]]:
+        # Victims need to connect back to the interface they can reach
+        # On island, choose the right interface to pass to children monkeys
         if self.on_island:
-            default_server_port = f":{self.default_port}" if self.default_port else ""
-            interface = get_interface_to_target(ip)
+            default_server_port = self.island_port if self.island_port else None
+            interface = get_interface_to_target(victim_ip)
 
-            return f"{interface}{default_server_port}"
+            return interface, default_server_port
         else:
-            return self.default_server
+            return self.island_ip, self.island_port
