@@ -4,16 +4,20 @@ import os
 import subprocess
 import sys
 import time
+from typing import List
 
 import infection_monkey.tunnel as tunnel
+from common.network.network_utils import address_to_ip_port
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.master.mock_master import MockMaster
-from infection_monkey.model import DELAY_DELETE_CMD
+from infection_monkey.model import DELAY_DELETE_CMD, VictimHostFactory
+from infection_monkey.network import NetworkInterface
 from infection_monkey.network.firewall import app as firewall
+from infection_monkey.network.info import get_local_network_interfaces
 from infection_monkey.puppet.mock_puppet import MockPuppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
@@ -35,11 +39,10 @@ logger = logging.getLogger(__name__)
 class InfectionMonkey:
     def __init__(self, args):
         logger.info("Monkey is initializing...")
-        self._master = MockMaster(MockPuppet(), LegacyTelemetryMessengerAdapter())
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        # TODO Used in propagation phase to set the default server for the victim
-        self._default_server_port = None
+        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
+        self._default_server = self._opts.server
         # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
 
@@ -52,6 +55,7 @@ class InfectionMonkey:
         arg_parser.add_argument("-d", "--depth", type=int)
         opts, _ = arg_parser.parse_known_args(args)
         InfectionMonkey._log_arguments(opts)
+
         return opts
 
     @staticmethod
@@ -108,25 +112,22 @@ class InfectionMonkey:
 
     def _connect_to_island(self):
         # Sets island's IP and port for monkey to communicate to
-        if not self._is_default_server_set():
+        if self._current_server_is_set():
+            self._default_server = WormConfiguration.current_server
+            logger.debug("Default server set to: %s" % self._default_server)
+        else:
             raise Exception(
                 "Monkey couldn't find server with {} default tunnel.".format(self._opts.tunnel)
             )
-        self._set_default_port()
 
         ControlClient.wakeup(parent=self._opts.parent)
         ControlClient.load_control_config()
 
-    def _is_default_server_set(self) -> bool:
-        """
-        Sets the default server for the Monkey to communicate back to.
-        :return
-        """
-        if not ControlClient.find_server(default_tunnel=self._opts.tunnel):
-            return False
-        self._opts.server = WormConfiguration.current_server
-        logger.debug("default server set to: %s" % self._opts.server)
-        return True
+    def _current_server_is_set(self) -> bool:
+        if ControlClient.find_server(default_tunnel=self._opts.tunnel):
+            return True
+
+        return False
 
     @staticmethod
     def _is_upgrade_to_64_needed():
@@ -151,16 +152,47 @@ class InfectionMonkey:
         StateTelem(is_done=False, version=get_version()).send()
         TunnelTelem().send()
 
+        self._build_master()
+
         register_signal_handlers(self._master)
+
+    @staticmethod
+    def _get_local_network_interfaces():
+        local_network_interfaces = get_local_network_interfaces()
+        for i in local_network_interfaces:
+            logger.debug(f"Found local interface {i.address}{i.netmask}")
+
+        return local_network_interfaces
+
+    def _build_master(self):
+        local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+
+        victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
+
+        self._master = AutomatedMaster(
+            MockPuppet(),
+            LegacyTelemetryMessengerAdapter(),
+            victim_host_factory,
+            ControlChannel(self._default_server, GUID),
+            local_network_interfaces,
+        )
+
+    def _build_victim_host_factory(
+        self, local_network_interfaces: List[NetworkInterface]
+    ) -> VictimHostFactory:
+        on_island = self._running_on_island(local_network_interfaces)
+        logger.debug(f"This agent is running on the island: {on_island}")
+
+        return VictimHostFactory(
+            self._monkey_inbound_tunnel, self._cmd_island_ip, self._cmd_island_port, on_island
+        )
+
+    def _running_on_island(self, local_network_interfaces: List[NetworkInterface]) -> bool:
+        server_ip, _ = address_to_ip_port(self._default_server)
+        return server_ip in {interface.address for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
-
-    def _set_default_port(self):
-        try:
-            self._default_server_port = self._opts.server.split(":")[1]
-        except KeyError:
-            self._default_server_port = ""
 
     def cleanup(self):
         logger.info("Monkey cleanup started")

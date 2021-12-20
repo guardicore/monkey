@@ -12,14 +12,14 @@ from infection_monkey.i_puppet import (
     PortScanData,
     PortStatus,
 )
+from infection_monkey.network import NetworkAddress
 
 from . import IPScanResults
 from .threading_utils import run_worker_threads
 
 logger = logging.getLogger()
 
-IP = str
-Callback = Callable[[IP, IPScanResults], None]
+Callback = Callable[[NetworkAddress, IPScanResults], None]
 
 
 class IPScanner:
@@ -27,22 +27,33 @@ class IPScanner:
         self._puppet = puppet
         self._num_workers = num_workers
 
-    def scan(self, ips_to_scan: List[str], options: Dict, results_callback: Callback, stop: Event):
+    def scan(
+        self,
+        addresses_to_scan: List[NetworkAddress],
+        options: Dict,
+        results_callback: Callback,
+        stop: Event,
+    ):
         # Pre-fill a Queue with all IPs to scan so that threads know they can safely exit when the
         # queue is empty.
-        ips = Queue()
-        for ip in ips_to_scan:
-            ips.put(ip)
+        addresses = Queue()
+        for address in addresses_to_scan:
+            addresses.put(address)
 
-        scan_ips_args = (ips, options, results_callback, stop)
-        run_worker_threads(target=self._scan_ips, args=scan_ips_args, num_workers=self._num_workers)
+        scan_ips_args = (addresses, options, results_callback, stop)
+        run_worker_threads(
+            target=self._scan_addresses, args=scan_ips_args, num_workers=self._num_workers
+        )
 
-    def _scan_ips(self, ips: Queue, options: Dict, results_callback: Callback, stop: Event):
+    def _scan_addresses(
+        self, addresses: Queue, options: Dict, results_callback: Callback, stop: Event
+    ):
         logger.debug(f"Starting scan thread -- Thread ID: {threading.get_ident()}")
 
         try:
             while not stop.is_set():
-                ip = ips.get_nowait()
+                address = addresses.get_nowait()
+                ip = address.ip
                 logger.info(f"Scanning {ip}")
 
                 icmp_timeout = options["icmp"]["timeout_ms"] / 1000
@@ -60,7 +71,7 @@ class IPScanner:
                     )
 
                 scan_results = IPScanResults(ping_scan_data, port_scan_data, fingerprint_data)
-                results_callback(ip, scan_results)
+                results_callback(address, scan_results)
 
             logger.debug(
                 f"Detected the stop signal, scanning thread {threading.get_ident()} exiting"

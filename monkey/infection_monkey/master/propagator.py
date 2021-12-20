@@ -1,7 +1,7 @@
 import logging
 from queue import Queue
 from threading import Event
-from typing import Dict
+from typing import Dict, List
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -11,6 +11,8 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 from infection_monkey.model import VictimHost, VictimHostFactory
+from infection_monkey.network import NetworkAddress, NetworkInterface
+from infection_monkey.network.scan_target_generator import compile_scan_target_list
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.scan_telem import ScanTelem
@@ -28,11 +30,13 @@ class Propagator:
         ip_scanner: IPScanner,
         exploiter: Exploiter,
         victim_host_factory: VictimHostFactory,
+        local_network_interfaces: List[NetworkInterface],
     ):
         self._telemetry_messenger = telemetry_messenger
         self._ip_scanner = ip_scanner
         self._exploiter = exploiter
         self._victim_host_factory = victim_host_factory
+        self._local_network_interfaces = local_network_interfaces
         self._hosts_to_exploit = None
 
     def propagate(self, propagation_config: Dict, stop: Event):
@@ -62,16 +66,30 @@ class Propagator:
     def _scan_network(self, propagation_config: Dict, stop: Event):
         logger.info("Starting network scan")
 
-        # TODO: Generate list of IPs to scan from propagation targets config
-        ips_to_scan = propagation_config["targets"]["subnet_scan_list"]
-
+        target_config = propagation_config["targets"]
         scan_config = propagation_config["network_scan"]
-        self._ip_scanner.scan(ips_to_scan, scan_config, self._process_scan_results, stop)
+
+        addresses_to_scan = self._compile_scan_target_list(target_config)
+        self._ip_scanner.scan(addresses_to_scan, scan_config, self._process_scan_results, stop)
 
         logger.info("Finished network scan")
 
-    def _process_scan_results(self, ip: str, scan_results: IPScanResults):
-        victim_host = self._victim_host_factory.build_victim_host(ip)
+    def _compile_scan_target_list(self, target_config: Dict) -> List[NetworkAddress]:
+        ranges_to_scan = target_config["subnet_scan_list"]
+        inaccessible_subnets = target_config["inaccessible_subnets"]
+        blocklisted_ips = target_config["blocked_ips"]
+        enable_local_network_scan = target_config["local_network_scan"]
+
+        return compile_scan_target_list(
+            self._local_network_interfaces,
+            ranges_to_scan,
+            inaccessible_subnets,
+            blocklisted_ips,
+            enable_local_network_scan,
+        )
+
+    def _process_scan_results(self, address: NetworkAddress, scan_results: IPScanResults):
+        victim_host = self._victim_host_factory.build_victim_host(address)
 
         Propagator._process_ping_scan_results(victim_host, scan_results.ping_scan_data)
         Propagator._process_tcp_scan_results(victim_host, scan_results.port_scan_data)

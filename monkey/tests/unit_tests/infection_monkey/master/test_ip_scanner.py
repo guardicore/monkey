@@ -6,6 +6,7 @@ import pytest
 
 from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
 from infection_monkey.master import IPScanner
+from infection_monkey.network import NetworkAddress
 from infection_monkey.puppet.mock_puppet import MockPuppet
 
 WINDOWS_OS = "windows"
@@ -51,20 +52,21 @@ def assert_port_status(port_scan_data, expected_open_ports: Set[int]):
             assert psd.status == PortStatus.CLOSED
 
 
-def assert_scan_results(ip, scan_results):
+def assert_scan_results(address, scan_results):
     ping_scan_data = scan_results.ping_scan_data
     port_scan_data = scan_results.port_scan_data
     fingerprint_data = scan_results.fingerprint_data
 
-    if ip == "10.0.0.1":
-        assert_scan_results_no_1(ping_scan_data, port_scan_data, fingerprint_data)
-    elif ip == "10.0.0.3":
-        assert_scan_results_no_3(ping_scan_data, port_scan_data, fingerprint_data)
+    if address.ip == "10.0.0.1":
+        assert_scan_results_no_1(address.domain, ping_scan_data, port_scan_data, fingerprint_data)
+    elif address.ip == "10.0.0.3":
+        assert_scan_results_no_3(address.domain, ping_scan_data, port_scan_data, fingerprint_data)
     else:
-        assert_scan_results_host_down(ip, ping_scan_data, port_scan_data, fingerprint_data)
+        assert_scan_results_host_down(address, ping_scan_data, port_scan_data, fingerprint_data)
 
 
-def assert_scan_results_no_1(ping_scan_data, port_scan_data, fingerprint_data):
+def assert_scan_results_no_1(domain, ping_scan_data, port_scan_data, fingerprint_data):
+    assert domain == "d1"
     assert ping_scan_data.response_received is True
     assert ping_scan_data.os == WINDOWS_OS
 
@@ -97,7 +99,9 @@ def assert_fingerprint_results_no_1(fingerprint_data):
     assert fingerprint_data["SMBFinger"].services["tcp-445"]["name"] == "smb_service_name"
 
 
-def assert_scan_results_no_3(ping_scan_data, port_scan_data, fingerprint_data):
+def assert_scan_results_no_3(domain, ping_scan_data, port_scan_data, fingerprint_data):
+    assert domain == "d3"
+
     assert ping_scan_data.response_received is True
     assert ping_scan_data.os == LINUX_OS
     assert len(port_scan_data.keys()) == 6
@@ -135,8 +139,9 @@ def assert_fingerprint_results_no_3(fingerprint_data):
     assert fingerprint_data["HTTPFinger"].services["tcp-443"]["data"] == ("SERVER_HEADERS_2", True)
 
 
-def assert_scan_results_host_down(ip, ping_scan_data, port_scan_data, fingerprint_data):
-    assert ip not in {"10.0.0.1", "10.0.0.3"}
+def assert_scan_results_host_down(address, ping_scan_data, port_scan_data, fingerprint_data):
+    assert address.ip not in {"10.0.0.1", "10.0.0.3"}
+    assert address.domain is None
 
     assert ping_scan_data.response_received is False
     assert len(port_scan_data.keys()) == 6
@@ -146,44 +151,49 @@ def assert_scan_results_host_down(ip, ping_scan_data, port_scan_data, fingerprin
 
 
 def test_scan_single_ip(callback, scan_config, stop):
-    ips = ["10.0.0.1"]
+    addresses = [NetworkAddress("10.0.0.1", "d1")]
 
     ns = IPScanner(MockPuppet(), num_workers=1)
-    ns.scan(ips, scan_config, callback, stop)
+    ns.scan(addresses, scan_config, callback, stop)
 
     callback.assert_called_once()
 
-    (ip, scan_results) = callback.call_args_list[0][0]
-    assert_scan_results(ip, scan_results)
+    (address, scan_results) = callback.call_args_list[0][0]
+    assert_scan_results(address, scan_results)
 
 
 def test_scan_multiple_ips(callback, scan_config, stop):
-    ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
+    addresses = [
+        NetworkAddress("10.0.0.1", "d1"),
+        NetworkAddress("10.0.0.2", None),
+        NetworkAddress("10.0.0.3", "d3"),
+        NetworkAddress("10.0.0.4", None),
+    ]
 
     ns = IPScanner(MockPuppet(), num_workers=4)
-    ns.scan(ips, scan_config, callback, stop)
+    ns.scan(addresses, scan_config, callback, stop)
 
     assert callback.call_count == 4
 
-    (ip, scan_results) = callback.call_args_list[0][0]
-    assert_scan_results(ip, scan_results)
+    (address, scan_results) = callback.call_args_list[0][0]
+    assert_scan_results(address, scan_results)
 
-    (ip, scan_results) = callback.call_args_list[1][0]
-    assert_scan_results(ip, scan_results)
+    (address, scan_results) = callback.call_args_list[1][0]
+    assert_scan_results(address, scan_results)
 
-    (ip, scan_results) = callback.call_args_list[2][0]
-    assert_scan_results(ip, scan_results)
+    (address, scan_results) = callback.call_args_list[2][0]
+    assert_scan_results(address, scan_results)
 
-    (ip, scan_results) = callback.call_args_list[3][0]
-    assert_scan_results(ip, scan_results)
+    (address, scan_results) = callback.call_args_list[3][0]
+    assert_scan_results(address, scan_results)
 
 
 @pytest.mark.slow
 def test_scan_lots_of_ips(callback, scan_config, stop):
-    ips = [f"10.0.0.{i}" for i in range(0, 255)]
+    addresses = [NetworkAddress(f"10.0.0.{i}", None) for i in range(0, 255)]
 
     ns = IPScanner(MockPuppet(), num_workers=4)
-    ns.scan(ips, scan_config, callback, stop)
+    ns.scan(addresses, scan_config, callback, stop)
 
     assert callback.call_count == 255
 
@@ -199,10 +209,15 @@ def test_stop_after_callback(scan_config, stop):
 
     stoppable_callback = MagicMock(side_effect=_callback)
 
-    ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
+    addresses = [
+        NetworkAddress("10.0.0.1", None),
+        NetworkAddress("10.0.0.2", None),
+        NetworkAddress("10.0.0.3", None),
+        NetworkAddress("10.0.0.4", None),
+    ]
 
     ns = IPScanner(MockPuppet(), num_workers=2)
-    ns.scan(ips, scan_config, stoppable_callback, stop)
+    ns.scan(addresses, scan_config, stoppable_callback, stop)
 
     assert stoppable_callback.call_count == 2
 
@@ -221,10 +236,15 @@ def test_interrupt_port_scanning(callback, scan_config, stop):
     puppet = MockPuppet()
     puppet.scan_tcp_port = MagicMock(side_effect=stoppable_scan_tcp_port)
 
-    ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
+    addresses = [
+        NetworkAddress("10.0.0.1", None),
+        NetworkAddress("10.0.0.2", None),
+        NetworkAddress("10.0.0.3", None),
+        NetworkAddress("10.0.0.4", None),
+    ]
 
     ns = IPScanner(puppet, num_workers=2)
-    ns.scan(ips, scan_config, callback, stop)
+    ns.scan(addresses, scan_config, callback, stop)
 
     assert puppet.scan_tcp_port.call_count == 2
 
@@ -243,9 +263,14 @@ def test_interrupt_fingerprinting(callback, scan_config, stop):
     puppet = MockPuppet()
     puppet.fingerprint = MagicMock(side_effect=stoppable_fingerprint)
 
-    ips = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4"]
+    addresses = [
+        NetworkAddress("10.0.0.1", None),
+        NetworkAddress("10.0.0.2", None),
+        NetworkAddress("10.0.0.3", None),
+        NetworkAddress("10.0.0.4", None),
+    ]
 
     ns = IPScanner(puppet, num_workers=2)
-    ns.scan(ips, scan_config, callback, stop)
+    ns.scan(addresses, scan_config, callback, stop)
 
     assert puppet.fingerprint.call_count == 2
