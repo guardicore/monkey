@@ -3,6 +3,7 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
+from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -181,6 +182,7 @@ Report.recommendations
 Report.glance
 Report.meta_info
 Report.meta
+LDAPServerFactory.buildProtocol
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
