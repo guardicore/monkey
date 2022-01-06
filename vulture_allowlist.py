@@ -5,6 +5,9 @@ Vulture doesn't mark these as dead again.
 """
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
+    ExploiterDescriptorEnum,
+)
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -67,6 +70,7 @@ MSSQL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_proce
 VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:45)
 DRUPAL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:48)
 POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
+ExploiterDescriptorEnum.LOG4SHELL
 _.do_POST  # unused method (monkey/monkey_island/cc/server_utils/bootloader_server.py:26)
 PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
 internet_access  # unused variable (monkey/monkey_island/cc/models/monkey.py:43)
