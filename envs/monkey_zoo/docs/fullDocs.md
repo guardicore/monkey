@@ -1201,6 +1201,62 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
+<th><p><span id="_Toc536021482" class="anchor"></span>Nr. <strong>3-49 Log4j Solr</strong></p>
+<p>(10.2.3.49)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 18.04LTS</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Apache Solr 8.11.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>8983</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: m0nk3y</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021482" class="anchor"></span>Nr. <strong>3-50 Log4j-solr</strong></p>
+<p>(10.2.3.50)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Apache solr 8.11.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Passw0rd!</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
 <th><p><span id="_Toc536021483" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
