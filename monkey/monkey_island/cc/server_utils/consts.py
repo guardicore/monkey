@@ -43,11 +43,6 @@ DEFAULT_START_MONGO_DB = True
 DEFAULT_CRT_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
 DEFAULT_KEY_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
 
-DEFAULT_CERTIFICATE_PATHS = {
-    "ssl_certificate_file": DEFAULT_CRT_PATH,
-    "ssl_certificate_key_file": DEFAULT_KEY_PATH,
-}
-
 GEVENT_EXCEPTION_LOG = "gevent_exceptions.log"
 
 ISLAND_PORT = 5000
