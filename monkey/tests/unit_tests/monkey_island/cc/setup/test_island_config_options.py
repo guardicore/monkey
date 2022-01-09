@@ -144,3 +144,29 @@ def assert_ssl_certificate_key_file_equals(config_file_contents, expected_ssl_ce
 def assert_island_config_option_equals(config_file_contents, option_name, expected_value):
     options = IslandConfigOptions(config_file_contents)
     assert getattr(options, option_name) == expected_value
+
+
+def test_start_mongo_overridden(patched_home_env):
+    config = IslandConfigOptions()
+    assert config.start_mongodb
+
+    config.update({"mongodb": {"start_mongodb": False}})
+    assert not config.start_mongodb
+
+
+def test_crt_path_overridden(patched_home_env):
+    expected_path = Path("/fake/file.crt")
+    config = IslandConfigOptions()
+    assert config.crt_path != expected_path
+
+    config.update({"ssl_certificate": {"ssl_certificate_file": str(expected_path)}})
+    assert config.crt_path == expected_path
+
+
+def test_key_path_overridden(patched_home_env):
+    expected_path = Path("/fake/file.key")
+    config = IslandConfigOptions()
+    assert config.key_path != expected_path
+
+    config.update({"ssl_certificate": {"ssl_certificate_key_file": str(expected_path)}})
+    assert config.key_path == expected_path
