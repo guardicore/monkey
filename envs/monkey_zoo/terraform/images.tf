@@ -77,6 +77,22 @@ data "google_compute_image" "powershell-3-45" {
   name = "powershell-3-45"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "log4j-solr-49" {
+  name = "log4j-solr-49"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "log4j-solr-50" {
+  name = "log4j-solr-50"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "log4j-tomcat-51" {
+  name = "log4j-tomcat-51"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "log4j-solr-50" {
+  name = "log4j-solr-50"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "weblogic-18" {
   name = "weblogic-18"
   project = local.monkeyzoo_project

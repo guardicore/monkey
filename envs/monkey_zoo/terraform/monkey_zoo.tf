@@ -418,6 +418,36 @@ resource "google_compute_instance_from_template" "log4j-solr-50" {
   }
 }
 
+resource "google_compute_instance_from_template" "log4j-tomcat-51" {
+  name = "${local.resource_prefix}log4j-tomcat-51"
+  source_instance_template = local.default_linux
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.log4j-tomcat-51.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    network_ip="10.2.3.51"
+  }
+}
+
+resource "google_compute_instance_from_template" "log4j-tomcat-52" {
+  name = "${local.resource_prefix}log4j-tomcat-52"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.log4j-tomcat-52.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    network_ip="10.2.3.52"
+  }
+}
+
 /* We need to alter monkey's behavior for this to upload 32-bit monkey instead of 64-bit (not yet developed)
 resource "google_compute_instance_from_template" "upgrader-17" {
   name = "${local.resource_prefix}upgrader-17"
