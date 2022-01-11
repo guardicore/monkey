@@ -129,7 +129,7 @@ INTERNAL = {
                             "type": "array",
                             "uniqueItems": True,
                             "items": {"type": "integer"},
-                            "default": [80, 8080, 443, 8008, 7001, 9200, 8983],
+                            "default": [80, 8080, 443, 8008, 7001, 9200, 8983, 9600],
                             "description": "List of ports the monkey will check if are being used "
                             "for HTTP",
                         },
