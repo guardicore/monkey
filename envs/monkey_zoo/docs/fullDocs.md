@@ -1317,6 +1317,66 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
+<th><p><span id="_Toc536021485" class="anchor"></span>Nr. <strong>3-55 Log4j Logstash</strong></p>
+<p>(10.2.3.55)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 18.04LTS</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Logstash 5.5.0</td>
+<td>Java 1.8.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>9600</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: logstash</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021486" class="anchor"></span>Nr. <strong>3-56 Log4j-logstash</strong></p>
+<p>(10.2.3.56)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Logstash 5.5.0</td>
+<td>Java 1.8.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>9600</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: 7;@K"kPTM</td>
+</tr>
+</tbody>
+</table>
+
+
+<table>
+<thead>
+<tr class="header">
 <th><p><span id="_Toc536021487" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
