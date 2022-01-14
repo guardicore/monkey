@@ -34,6 +34,7 @@ typing-extensions = "*"
 ldaptor = "*"
 
 [dev-packages]
+ldap3 = "*"
 
 [requires]
 python_version = "3.7"
