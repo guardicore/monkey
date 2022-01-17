@@ -12,6 +12,6 @@ class Log4jTomcat(ConfigTemplate):
         {
             "basic.exploiters.exploiter_classes": ["Log4ShellExploiter"],
             "basic_network.scope.depth": 2,
-            "basic_network.scope.subnet_scan_list": ["10.2.3.49", "10.2.3.50"],
+            "basic_network.scope.subnet_scan_list": ["10.2.3.51", "10.2.3.52"],
         }
     )
