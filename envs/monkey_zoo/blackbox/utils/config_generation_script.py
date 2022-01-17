@@ -6,6 +6,9 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
 from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
+from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
+from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
+from envs.monkey_zoo.blackbox.config_templates.log4j_tomcat import Log4jTomcat
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
 from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
@@ -53,6 +56,9 @@ CONFIG_TEMPLATES = [
     WmiPth,
     Zerologon,
     Drupal,
+    Log4jLogstash,
+    Log4jTomcat,
+    Log4jSolr
 ]
 
 
