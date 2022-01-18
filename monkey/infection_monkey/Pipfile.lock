@@ -87,19 +87,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:42dd9fcb9e033ab19c9dfaeaba745ef9d2db6efe4e9f1e1f547b3e3e0b1f4a82",
-                "sha256:e0247a901ba3b7ec51f232921764b7ad14f458ed91038a71df9da732e12bbbe1"
+                "sha256:0e2f8aa8ee71f144d8afbe9ff7d0bb40525b94535e0695bdb200687970c9f452",
+                "sha256:55c7004af4296648ee497417dfc454d9c39770c265f67e28e1c5f10e11f3b644"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.20.35"
+            "version": "==1.20.37"
         },
         "botocore": {
             "hashes": [
-                "sha256:4cbd668a28e489c8d1909f621684f070309b3ae990667094b344e6ea72337795",
-                "sha256:5be6ba6c5ea71c256da8a5023bf9c278847c4b90fdb40f2c4c3bdb21ca11ff28"
+                "sha256:9ea3eb6e507684900418ad100e5accd1d98979d41c49bacf15f970f0d72f75d4",
+                "sha256:f3077f1ca19e6ab6b7a84c61e01e136a97c7732078a8d806908aee44f1042f5f"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.23.35"
+            "version": "==1.23.37"
         },
         "certifi": {
             "hashes": [
@@ -217,7 +217,7 @@
                 "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b",
                 "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"
             ],
-            "markers": "platform_system == 'Windows' and sys_platform == 'win32' and platform_system == 'Windows'",
+            "markers": "sys_platform == 'win32'",
             "version": "==0.4.4"
         },
         "coloredlogs": {
@@ -535,7 +535,7 @@
                 "sha256:43e6dd9942dffd72661a2c4ef383ad7da1e6a3e968a927ad7a6083ab410a688b",
                 "sha256:7dc6ad46f05f545f900dd59e8dfb4e84a4827b97b3cfecb175ea0c7d247f6064"
             ],
-            "markers": "python_version >= '3.6'",
+            "markers": "python_version >= '3.5'",
             "version": "==8.12.0"
         },
         "msldap": {
@@ -618,12 +618,19 @@
             ],
             "version": "==1.7.4"
         },
+        "pefile": {
+            "hashes": [
+                "sha256:344a49e40a94e10849f0fe34dddc80f773a12b40675bf2f7be4b8be578bdd94a"
+            ],
+            "markers": "python_version >= '3.6'",
+            "version": "==2021.9.3"
+        },
         "policyuniverse": {
             "hashes": [
-                "sha256:184f854fc716754ff07cd9f601923d1ce30a6826617e7c2b252abebe76746b6d",
-                "sha256:44145447d473c37ff2776667b5e1018a00c0a493c16a0a489399521b3786a8be"
+                "sha256:116b808554d7ea75efc97b4cb904085546db45934ef315175cb4755c7a4489de",
+                "sha256:7440ac520bb791e0318e3d99f9b0e76b7b2b604e7160f1d8341ded060f9ff1cd"
             ],
-            "version": "==1.4.0.20210819"
+            "version": "==1.4.0.20220110"
         },
         "portend": {
             "hashes": [
@@ -809,7 +816,7 @@
         },
         "pyinstaller": {
             "git": "git://github.com/guardicore/pyinstaller",
-            "ref": "7c050ea0d6ca1e453045632ec57cf1afe79e15c5"
+            "ref": "913259a5cd2baece06b0eed3618eb75b1bc7fad6"
         },
         "pyinstaller-hooks-contrib": {
             "hashes": [
@@ -969,6 +976,13 @@
             "markers": "python_version < '3.10' and sys_platform == 'win32' and implementation_name == 'cpython'",
             "version": "==303"
         },
+        "pywin32-ctypes": {
+            "hashes": [
+                "sha256:24ffc3b341d457d48e8922352130cf2644024a4ff09762a2261fd34c36ee5942",
+                "sha256:9dc2d991b3479cc2df15930958b674a48a227d5361d413827a4cfd0b5876fc98"
+            ],
+            "version": "==0.2.0"
+        },
         "requests": {
             "hashes": [
                 "sha256:68d7c56fd5a8999887728ef304a6d12edc7be74f1cfa47714fc8b414525c9a61",
@@ -995,6 +1009,14 @@
                 "sha256:f0b0caac3d40627c3c04d7a51b6e06721857a0e10a8775f2d1d7e72901b3a7db"
             ],
             "version": "==21.1.0"
+        },
+        "setuptools": {
+            "hashes": [
+                "sha256:2404879cda71495fc4d5cbc445ed52fdaddf352b36e40be8dcc63147cb4edabe",
+                "sha256:68eb94073fc486091447fcb0501efd6560a0e5a1839ba249e5ff3c4c93f05f90"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==60.5.0"
         },
         "simplejson": {
             "hashes": [
@@ -1166,7 +1188,7 @@
                 "sha256:a2ad9c0f6d70f6e0e0d1f54b8582054c62d8a09f346b5ccaf55da68628ca10e1",
                 "sha256:a64624a25fc2d3663a2c5376c5291f3c7531e9c8051571de9ca9db8bf25746c2"
             ],
-            "markers": "platform_system == 'Windows'",
+            "markers": "python_version >= '3.6'",
             "version": "==0.0.9"
         },
         "winsys-3.x": {
@@ -1197,7 +1219,7 @@
                 "sha256:9f50f446828eb9d45b267433fd3e9da8d801f614129124863f9c51ebceafb87d",
                 "sha256:b47250dd24f92b7dd6a0a8fc5244da14608f3ca90a5efcd37a3b1642fac9a375"
             ],
-            "markers": "python_version < '3.10'",
+            "markers": "python_version >= '3.7'",
             "version": "==3.7.0"
         },
         "zope.interface": {
