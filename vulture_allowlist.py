@@ -5,9 +5,6 @@ Vulture doesn't mark these as dead again.
 """
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
-    ExploiterDescriptorEnum,
-)
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
