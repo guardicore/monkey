@@ -58,7 +58,7 @@ CONFIG_TEMPLATES = [
     Drupal,
     Log4jLogstash,
     Log4jTomcat,
-    Log4jSolr
+    Log4jSolr,
 ]
 
 
