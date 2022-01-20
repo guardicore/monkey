@@ -39,8 +39,10 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 3-50 Log4j Solr](#_Toc536021484)<br>
 [Nr. 3-51 Log4j Tomcat](#_Toc536021485)<br>
 [Nr. 3-52 Log4j Tomcat](#_Toc536021486)<br>
-[Nr. 250 MonkeyIsland](#_Toc536021487)<br>
-[Nr. 251 MonkeyIsland](#_Toc536021488)<br>
+[Nr. 3-55 Log4j Logstash](#_Toc536021487)<br>
+[Nr. 3-56 Log4j Logstash](#_Toc536021488)<br>
+[Nr. 250 MonkeyIsland](#_Toc536021489)<br>
+[Nr. 251 MonkeyIsland](#_Toc536021490)<br>
 [Network topography](#network-topography)<br>
 
 # Warning\!
@@ -505,7 +507,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>Accessible only trough Nr.9</td>
+<td>Accessible only through Nr.9</td>
 </tr>
 </tbody>
 </table>
@@ -541,7 +543,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>Accessible only trough Nr.10</td>
+<td>Accessible only through Nr.10</td>
 </tr>
 </tbody>
 </table>
@@ -573,7 +575,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>Accessible only trough Nr.10</td>
+<td>Accessible only through Nr.10</td>
 </tr>
 </tbody>
 </table>
@@ -1289,7 +1291,7 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021486" class="anchor"></span>Nr. <strong>3-52 Log4j-tomcat</strong></p>
+<th><p><span id="_Toc536021486" class="anchor"></span>Nr. <strong>3-52 Log4j Tomcat</strong></p>
 <p>(10.2.3.52)</p></th>
 <th>(Vulnerable)</th>
 </tr>
@@ -1317,7 +1319,7 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021485" class="anchor"></span>Nr. <strong>3-55 Log4j Logstash</strong></p>
+<th><p><span id="_Toc536021487" class="anchor"></span>Nr. <strong>3-55 Log4j Logstash</strong></p>
 <p>(10.2.3.55)</p></th>
 <th>(Vulnerable)</th>
 </tr>
@@ -1347,7 +1349,7 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021486" class="anchor"></span>Nr. <strong>3-56 Log4j-logstash</strong></p>
+<th><p><span id="_Toc536021488" class="anchor"></span>Nr. <strong>3-56 Log4j Logstash</strong></p>
 <p>(10.2.3.56)</p></th>
 <th>(Vulnerable)</th>
 </tr>
@@ -1377,7 +1379,7 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021487" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021489" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
 </tr>
@@ -1401,7 +1403,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="odd">
 <td>Notes:</td>
-<td>Only accessible trough GCP</td>
+<td>Only accessible through GCP</td>
 </tr>
 </tbody>
 </table>
@@ -1409,7 +1411,7 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021488" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021490" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
 <p>(10.2.2.251)</p></th>
 <th></th>
 </tr>
@@ -1433,7 +1435,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="odd">
 <td>Notes:</td>
-<td>Only accessible trough GCP</td>
+<td>Only accessible through GCP</td>
 </tr>
 </tbody>
 </table>
