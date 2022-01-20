@@ -30,11 +30,11 @@ On Windows, AppImage can be run in WSL.
 
 1. Make the AppImage package executable:
     ```bash
-    chmod u+x InfectionMonkey-v1.12.0.AppImage
+    chmod u+x InfectionMonkey-v1.13.0.AppImage
     ```
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v1.12.0.AppImage
+    ./InfectionMonkey-v1.13.0.AppImage
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
@@ -59,7 +59,7 @@ private certificate authority.
    `server_config.json` file.
 
     ```bash
-    ./InfectionMonkey-v1.12.0.AppImage --setup-only
+    ./InfectionMonkey-v1.13.0.AppImage --setup-only
     ```
 
 1. (Optional but recommended) Move your `.crt` and `.key` files to
@@ -95,7 +95,7 @@ private certificate authority.
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v1.12.0.AppImage
+    ./InfectionMonkey-v1.13.0.AppImage
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at
