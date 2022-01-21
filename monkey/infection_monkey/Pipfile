@@ -31,8 +31,10 @@ ScoutSuite = {git = "git://github.com/guardicode/ScoutSuite"}
 pyopenssl = "==19.0.0" # We can't build 32bit ubuntu12 binary with newer versions of pyopenssl
 pypsrp = "*"
 typing-extensions = "*"
+ldaptor = "*"
 
 [dev-packages]
+ldap3 = "*"
 
 [requires]
 python_version = "3.7"

@@ -17,6 +17,7 @@ BASIC = {
                         "SmbExploiter",
                         "WmiExploiter",
                         "SSHExploiter",
+                        "Log4ShellExploiter",
                         "ShellShockExploiter",
                         "SambaCryExploiter",
                         "ElasticGroovyExploiter",
