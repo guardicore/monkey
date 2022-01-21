@@ -5,6 +5,15 @@ file.
 The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Added
+- A new exploiter that allows propagation via the Log4Shell vulnerability
+ (CVE-2021-44228). #1663
+
+### Fixed
+- Exploiters attempting to start servers listening on privileged ports,
+  resulting in failed propagation. 8f53a5c
+
 ## [1.12.0] - 2021-10-27
 ### Added
 - A new exploiter that allows propagation via PowerShell Remoting. #1246
