@@ -117,7 +117,12 @@ def test_interrupt_while_encrypting(
     mfe.assert_any_call(ransomware_test_data / HELLO_TXT)
 
 
-def test_no_readme_after_interrupt(ransomware, interrupt, mock_leave_readme):
+def test_no_readme_after_interrupt(
+    ransomware_options, build_ransomware, interrupt, mock_leave_readme
+):
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
+
     interrupt.set()
     ransomware.run(interrupt)
 

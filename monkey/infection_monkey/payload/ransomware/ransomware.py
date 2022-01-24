@@ -71,11 +71,11 @@ class Ransomware:
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
     def _leave_readme_in_target_directory(self, interrupt: threading.Event):
-        try:
-            if interrupt.is_set():
-                logger.debug("Received a stop signal, skipping leave readme")
-                return
+        if interrupt.is_set():
+            logger.debug("Received a stop signal, skipping leave readme")
+            return
 
+        try:
             self._leave_readme(README_SRC, self._readme_file_path)
         except Exception as ex:
             logger.warning(f"An error occurred while attempting to leave a README.txt file: {ex}")
