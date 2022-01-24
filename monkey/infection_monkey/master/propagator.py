@@ -107,14 +107,13 @@ class Propagator:
             victim_host.os["type"] = ping_scan_data.os
 
     @staticmethod
-    def _process_tcp_scan_results(victim_host: VictimHost, port_scan_data: PortScanData) -> bool:
-        for psd in port_scan_data.values():
-            if psd.status == PortStatus.OPEN:
-                victim_host.services[psd.service] = {}
-                victim_host.services[psd.service]["display_name"] = "unknown(TCP)"
-                victim_host.services[psd.service]["port"] = psd.port
-                if psd.banner is not None:
-                    victim_host.services[psd.service]["banner"] = psd.banner
+    def _process_tcp_scan_results(victim_host: VictimHost, port_scan_data: PortScanData):
+        for psd in filter(lambda psd: psd.status == PortStatus.OPEN, port_scan_data.values()):
+            victim_host.services[psd.service] = {}
+            victim_host.services[psd.service]["display_name"] = "unknown(TCP)"
+            victim_host.services[psd.service]["port"] = psd.port
+            if psd.banner is not None:
+                victim_host.services[psd.service]["banner"] = psd.banner
 
     @staticmethod
     def _process_fingerprinter_results(victim_host: VictimHost, fingerprint_data: FingerprintData):
