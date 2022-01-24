@@ -11,7 +11,7 @@ from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
-from infection_monkey.utils.threading import create_daemon_thread
+from infection_monkey.utils.threading import create_daemon_thread, interruptable_iter
 from infection_monkey.utils.timer import Timer
 
 from . import Exploiter, IPScanner, Propagator
@@ -195,11 +195,8 @@ class AutomatedMaster(IMaster):
         logger.info(f"Running {plugin_type}s")
         logger.debug(f"Found {len(plugin)} {plugin_type}(s) to run")
 
-        for p in plugin:
-            if self._stop.is_set():
-                logger.debug(f"Received a stop signal, skipping remaining {plugin_type}s")
-                return
-
+        interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
+        for p in interruptable_iter(plugin, self._stop, interrupted_message):
             callback(p)
 
         logger.info(f"Finished running {plugin_type}s")

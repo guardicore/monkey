@@ -13,7 +13,7 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 from infection_monkey.network import NetworkAddress
-from infection_monkey.utils.threading import run_worker_threads
+from infection_monkey.utils.threading import interruptable_iter, run_worker_threads
 
 from . import IPScanResults
 
@@ -85,10 +85,7 @@ class IPScanner:
     ) -> Dict[int, PortScanData]:
         port_scan_data = {}
 
-        for p in ports:
-            if stop.is_set():
-                break
-
+        for p in interruptable_iter(ports, stop):
             port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, timeout)
 
         return port_scan_data
@@ -107,10 +104,7 @@ class IPScanner:
     ) -> Dict[str, FingerprintData]:
         fingerprint_data = {}
 
-        for f in fingerprinters:
-            if stop.is_set():
-                break
-
+        for f in interruptable_iter(fingerprinters, stop):
             fingerprint_data[f] = self._puppet.fingerprint(f, ip, ping_scan_data, port_scan_data)
 
         return fingerprint_data
