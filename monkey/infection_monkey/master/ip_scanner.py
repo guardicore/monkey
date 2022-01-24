@@ -49,25 +49,23 @@ class IPScanner:
         self, addresses: Queue, options: Dict, results_callback: Callback, stop: Event
     ):
         logger.debug(f"Starting scan thread -- Thread ID: {threading.get_ident()}")
+        icmp_timeout = options["icmp"]["timeout_ms"] / 1000
+        tcp_timeout = options["tcp"]["timeout_ms"] / 1000
+        tcp_ports = options["tcp"]["ports"]
 
         try:
             while not stop.is_set():
                 address = addresses.get_nowait()
-                ip = address.ip
-                logger.info(f"Scanning {ip}")
+                logger.info(f"Scanning {address.ip}")
 
-                icmp_timeout = options["icmp"]["timeout_ms"] / 1000
-                ping_scan_data = self._puppet.ping(ip, icmp_timeout)
-
-                tcp_timeout = options["tcp"]["timeout_ms"] / 1000
-                tcp_ports = options["tcp"]["ports"]
-                port_scan_data = self._scan_tcp_ports(ip, tcp_ports, tcp_timeout, stop)
+                ping_scan_data = self._puppet.ping(address.ip, icmp_timeout)
+                port_scan_data = self._scan_tcp_ports(address.ip, tcp_ports, tcp_timeout, stop)
 
                 fingerprint_data = {}
                 if IPScanner.port_scan_found_open_port(port_scan_data):
                     fingerprinters = options["fingerprinters"]
                     fingerprint_data = self._run_fingerprinters(
-                        ip, fingerprinters, ping_scan_data, port_scan_data, stop
+                        address.ip, fingerprinters, ping_scan_data, port_scan_data, stop
                     )
 
                 scan_results = IPScanResults(ping_scan_data, port_scan_data, fingerprint_data)
