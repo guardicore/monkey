@@ -13,9 +13,9 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 from infection_monkey.network import NetworkAddress
+from infection_monkey.utils.threading import run_worker_threads
 
 from . import IPScanResults
-from .threading_utils import run_worker_threads
 
 logger = logging.getLogger()
 

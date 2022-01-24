@@ -11,10 +11,10 @@ from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
+from infection_monkey.utils.threading import create_daemon_thread
 from infection_monkey.utils.timer import Timer
 
 from . import Exploiter, IPScanner, Propagator
-from .threading_utils import create_daemon_thread
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5

@@ -16,9 +16,9 @@ from infection_monkey.network.scan_target_generator import compile_scan_target_l
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.scan_telem import ScanTelem
+from infection_monkey.utils.threading import create_daemon_thread
 
 from . import Exploiter, IPScanner, IPScanResults
-from .threading_utils import create_daemon_thread
 
 logger = logging.getLogger()
 

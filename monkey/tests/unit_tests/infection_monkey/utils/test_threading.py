@@ -1,7 +1,7 @@
 import logging
 from threading import Event
 
-from infection_monkey.master.threading_utils import create_daemon_thread, interruptable_iter
+from infection_monkey.utils.threading import create_daemon_thread, interruptable_iter
 
 
 def test_create_daemon_thread():
