@@ -3,6 +3,7 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
+from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -66,6 +67,7 @@ MSSQL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_proce
 VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:45)
 DRUPAL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:48)
 POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
+ExploiterDescriptorEnum.LOG4SHELL
 _.do_POST  # unused method (monkey/monkey_island/cc/server_utils/bootloader_server.py:26)
 PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
 internet_access  # unused variable (monkey/monkey_island/cc/models/monkey.py:43)
@@ -181,6 +183,7 @@ Report.recommendations
 Report.glance
 Report.meta_info
 Report.meta
+LDAPServerFactory.buildProtocol
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
