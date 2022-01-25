@@ -27,8 +27,10 @@ pycryptodome = "*"  # Used in common/utils/shellcode_obfuscator.py
 altgraph = "*"  # Required for pyinstaller branch, without it agents fail to build
 pysmb = "*"
 "WinSys-3.x" = "*"
+ldaptor = "*"
 
 [dev-packages]
+ldap3 = "*"
 
 [requires]
 python_version = "3.7"

@@ -3,6 +3,7 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
+from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc import app
 from monkey_island.cc.models import Report
 
@@ -56,6 +57,7 @@ _.password_restored  # unused attribute (monkey/monkey_island/cc/services/report
 credential_type  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_report_info.py:18)
 password_restored  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_report_info.py:23)
 SSH  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:30)
+SAMBACRY  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:31)
 ELASTIC  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:32)
 MS08_067  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:35)
 SHELLSHOCK  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:36)
@@ -63,8 +65,10 @@ STRUTS2  # unused variable (monkey/monkey_island/cc/services/reporting/issue_pro
 WEBLOGIC  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:40)
 HADOOP  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:43)
 MSSQL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:44)
+VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:45)
 DRUPAL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:48)
 POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
+ExploiterDescriptorEnum.LOG4SHELL
 _.do_POST  # unused method (monkey/monkey_island/cc/server_utils/bootloader_server.py:26)
 PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
 internet_access  # unused variable (monkey/monkey_island/cc/models/monkey.py:43)
@@ -89,6 +93,7 @@ _.do_GET  # unused method (monkey/infection_monkey/exploit/weblogic.py:237)
 PowerShellExploiter  # (monkey\infection_monkey\exploit\powershell.py:27)
 ElasticFinger  # unused class (monkey/infection_monkey/network/elasticfinger.py:18)
 HTTPFinger  # unused class (monkey/infection_monkey/network/httpfinger.py:9)
+MySQLFinger  # unused class (monkey/infection_monkey/network/mysqlfinger.py:13)
 SSHFinger  # unused class (monkey/infection_monkey/network/sshfinger.py:15)
 ClearCommandHistory  # unused class (monkey/infection_monkey/post_breach/actions/clear_command_history.py:11)
 AccountDiscovery  # unused class (monkey/infection_monkey/post_breach/actions/discover_accounts.py:8)
@@ -97,11 +102,10 @@ Timestomping  # unused class (monkey/infection_monkey/post_breach/actions/timest
 SignedScriptProxyExecution  # unused class (monkey/infection_monkey/post_breach/actions/use_signed_scripts.py:15)
 AwsCollector  # unused class (monkey/infection_monkey/system_info/collectors/aws_collector.py:15)
 EnvironmentCollector  # unused class (monkey/infection_monkey/system_info/collectors/environment_collector.py:19)
+HostnameCollector  # unused class (monkey/infection_monkey/system_info/collectors/hostname_collector.py:10)
 ProcessListCollector  # unused class (monkey/infection_monkey/system_info/collectors/process_list_collector.py:18)
 _.coinit_flags  # unused attribute (monkey/infection_monkey/system_info/windows_info_collector.py:11)
 _.representations  # unused attribute (monkey/monkey_island/cc/app.py:180)
-_.representations  # unused attribute (monkey/monkey_island/cc/app.py:180)
-app.url_map.strict_slashes
 _.log_message  # unused method (monkey/infection_monkey/transport/http.py:188)
 _.log_message  # unused method (monkey/infection_monkey/transport/http.py:109)
 _.version_string  # unused method (monkey/infection_monkey/transport/http.py:148)
@@ -180,12 +184,16 @@ Report.recommendations
 Report.glance
 Report.meta_info
 Report.meta
+LDAPServerFactory.buildProtocol
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
 WINDOWS_TTL  # unused variable (monkey/infection_monkey/network/ping_scanner.py:17)
 wlist  # unused variable (monkey/infection_monkey/transport/tcp.py:28)
 wlist  # unused variable (monkey/infection_monkey/transport/http.py:176)
+charset  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:81)
+salt  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:78)
+thread_id  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:61)
 
 
 # leaving this since there's a TODO related to it
@@ -197,6 +205,7 @@ LOG_DIR_NAME  # unused variable (envs/monkey_zoo/blackbox/log_handlers/test_logs
 delete_logs  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:85)
 MongoQueryJSONEncoder  # unused class (envs/monkey_zoo/blackbox/utils/json_encoder.py:6)
 environment  # unused variable (monkey/monkey_island/cc/models/monkey.py:59)
+_.environment  # unused attribute (monkey/monkey_island/cc/services/telemetry/processing/system_info_collectors/environment.py:10)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)

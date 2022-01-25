@@ -122,14 +122,14 @@ else:
         return routes
 
 
-def get_free_tcp_port(min_range=1000, max_range=65535):
-    start_range = min(1, min_range)
+def get_free_tcp_port(min_range=1024, max_range=65535):
+    min_range = max(1, min_range)
     max_range = min(65535, max_range)
 
     in_use = [conn.laddr[1] for conn in psutil.net_connections()]
 
     for i in range(min_range, max_range):
-        port = randint(start_range, max_range)
+        port = randint(min_range, max_range)
 
         if port not in in_use:
             return port

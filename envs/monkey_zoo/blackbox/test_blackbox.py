@@ -11,6 +11,9 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
 from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
+from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
+from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
+from envs.monkey_zoo.blackbox.config_templates.log4j_tomcat import Log4jTomcat
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
 from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
@@ -198,7 +201,22 @@ class TestMonkeyBlackbox:
         TestMonkeyBlackbox.run_exploitation_test(island_client, Weblogic, "Weblogic_exploiter")
 
     def test_shellshock_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, ShellShock, "Shellschock_exploiter")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, ShellShock, "Shellshock_exploiter")
+
+    def test_log4j_solr_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, Log4jSolr, "Log4Shell_Solr_exploiter"
+        )
+
+    def test_log4j_tomcat_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, Log4jTomcat, "Log4Shell_tomcat_exploiter"
+        )
+
+    def test_log4j_logstash_exploiter(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, Log4jLogstash, "Log4Shell_logstash_exploiter"
+        )
 
     def test_tunneling(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(

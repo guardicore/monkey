@@ -23,18 +23,18 @@ installed, but the ones that we've tested are:
 - Ubuntu Focal 20.04
 - Ubuntu Hirsute 21.04
 
-On Windows, AppImage can be run in WSL.
+On Windows, AppImage can be run in WSL 2.
 
 
 ## Deployment
 
 1. Make the AppImage package executable:
     ```bash
-    chmod u+x InfectionMonkey-v1.12.0.AppImage
+    chmod u+x InfectionMonkey-v1.13.0.AppImage
     ```
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v1.12.0.AppImage
+    ./InfectionMonkey-v1.13.0.AppImage
     ```
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
@@ -52,7 +52,7 @@ You can configure the server by creating
 a [server configuration file](../../reference/server_configuration) and
 providing a path to it via command line parameters:
 
-`./InfectionMonkey-v1.12.0.AppImage --server-config="/path/to/server_config.json"`
+`./InfectionMonkey-v1.13.0.AppImage --server-config="/path/to/server_config.json"`
 
 ### Start Monkey Island with user-provided certificate
 
@@ -88,7 +88,7 @@ The server configuration file should look something like:
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v1.12.0.AppImage --server-config="/path/to/server_config.json"
+    ./InfectionMonkey-v1.13.0.AppImage --server-config="/path/to/server_config.json"
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at
@@ -109,7 +109,7 @@ The server configuration file should look something like:
 
 1. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
-    ./InfectionMonkey-v1.12.0.AppImage --server-config="/path/to/server_config.json"
+    ./InfectionMonkey-v1.13.0.AppImage --server-config="/path/to/server_config.json"
     ```
 
 1. Access the Monkey Island web UI by pointing your browser at
