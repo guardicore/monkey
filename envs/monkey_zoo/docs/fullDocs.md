@@ -33,8 +33,14 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 3-46 Powershell](#_Toc536021480)<br>
 [Nr. 3-47 Powershell](#_Toc536021481)<br>
 [Nr. 3-48 Powershell](#_Toc536021482)<br>
-[Nr. 250 MonkeyIsland](#_Toc536021483)<br>
-[Nr. 251 MonkeyIsland](#_Toc536021484)<br>
+[Nr. 3-49 Log4j Solr](#_Toc536021483)<br>
+[Nr. 3-50 Log4j Solr](#_Toc536021484)<br>
+[Nr. 3-51 Log4j Tomcat](#_Toc536021485)<br>
+[Nr. 3-52 Log4j Tomcat](#_Toc536021486)<br>
+[Nr. 3-55 Log4j Logstash](#_Toc536021487)<br>
+[Nr. 3-56 Log4j Logstash](#_Toc536021488)<br>
+[Nr. 250 MonkeyIsland](#_Toc536021489)<br>
+[Nr. 251 MonkeyIsland](#_Toc536021490)<br>
 [Network topography](#network-topography)<br>
 
 # Warning\!
@@ -419,7 +425,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>Accessible only trough Nr.9</td>
+<td>Accessible only through Nr.9</td>
 </tr>
 </tbody>
 </table>
@@ -455,7 +461,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>Accessible only trough Nr.10</td>
+<td>Accessible only through Nr.10</td>
 </tr>
 </tbody>
 </table>
@@ -487,7 +493,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>Accessible only trough Nr.10</td>
+<td>Accessible only through Nr.10</td>
 </tr>
 </tbody>
 </table>
@@ -1119,7 +1125,179 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021483" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021483" class="anchor"></span>Nr. <strong>3-49 Log4j Solr</strong></p>
+<p>(10.2.3.49)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 18.04LTS</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Apache Solr 8.11.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>8983</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: m0nk3y</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021484" class="anchor"></span>Nr. <strong>3-50 Log4j Solr</strong></p>
+<p>(10.2.3.50)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Apache solr 8.11.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>8983</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Passw0rd!</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021485" class="anchor"></span>Nr. <strong>3-51 Log4j Tomcat</strong></p>
+<p>(10.2.3.51)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 18.04LTS</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Apache Tomcat 8.0.36</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>8080</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021486" class="anchor"></span>Nr. <strong>3-52 Log4j Tomcat</strong></p>
+<p>(10.2.3.52)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Apache Tomcat 8.0.36</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>8080</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: Tomcat@22</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021487" class="anchor"></span>Nr. <strong>3-55 Log4j Logstash</strong></p>
+<p>(10.2.3.55)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 18.04LTS</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Logstash 5.5.0</td>
+<td>Java 1.8.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>9600</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: logstash</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021488" class="anchor"></span>Nr. <strong>3-56 Log4j Logstash</strong></p>
+<p>(10.2.3.56)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>Logstash 5.5.0</td>
+<td>Java 1.8.0</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port:</td>
+<td>9600</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: 7;@K"kPTM</td>
+</tr>
+</tbody>
+</table>
+
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021489" class="anchor"></span>Nr. <strong>250 MonkeyIsland</strong></p>
 <p>(10.2.2.250)</p></th>
 <th></th>
 </tr>
@@ -1143,7 +1321,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="odd">
 <td>Notes:</td>
-<td>Only accessible trough GCP</td>
+<td>Only accessible through GCP</td>
 </tr>
 </tbody>
 </table>
@@ -1151,7 +1329,7 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021484" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
+<th><p><span id="_Toc536021490" class="anchor"></span>Nr. <strong>251 MonkeyIsland</strong></p>
 <p>(10.2.2.251)</p></th>
 <th></th>
 </tr>
@@ -1175,7 +1353,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="odd">
 <td>Notes:</td>
-<td>Only accessible trough GCP</td>
+<td>Only accessible through GCP</td>
 </tr>
 </tbody>
 </table>

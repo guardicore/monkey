@@ -24,12 +24,7 @@ When ready, you can browse to the Infection Monkey running on the fresh deployme
 
 `https://{public-ip}:5000`
 
-You will be presented with a login page. Enter the username **monkey**, and the
-new EC2 instance's **instance ID** for your password. To find your instance ID,
-go to the EC2 console and select your instance. It should appear in the details
-pane below.
-
-![AWS instance ID](../../images/setup/aws/aws-instance-id.png "AWS instance ID")
+To login to the machine, use *ubuntu* username.
 
 ## Integration with AWS services
 

@@ -29,6 +29,7 @@ import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIs
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
 import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
 import {shellShockIssueOverview, shellShockIssueReport} from './security/issues/ShellShockIssue';
+import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
 import {ms08_067IssueOverview, ms08_067IssueReport} from './security/issues/MS08_067Issue';
 import {
   crossSegmentIssueOverview,
@@ -143,6 +144,11 @@ class ReportPageComponent extends AuthComponent {
       'ZerologonExploiter': {
         [this.issueContentTypes.OVERVIEW]: zerologonIssueOverview,
         [this.issueContentTypes.REPORT]: zerologonIssueReport,
+        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
+      },
+      'Log4ShellExploiter': {
+        [this.issueContentTypes.OVERVIEW]: log4shellIssueOverview,
+        [this.issueContentTypes.REPORT]: log4shellIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'zerologon_pass_restore_failed': {

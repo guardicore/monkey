@@ -26,5 +26,11 @@ GCP_TEST_MACHINE_LIST = {
         "powershell-3-46",
         "powershell-3-47",
         "powershell-3-48",
+        "log4j-logstash-55",
+        "log4j-logstash-56",
+        "log4j-solr-49",
+        "log4j-solr-50",
+        "log4j-tomcat-51",
+        "log4j-tomcat-52",
     ],
 }
