@@ -64,7 +64,7 @@ been signed by a private certificate authority.
         --interactive \
         --name monkey-island \
         --network=host \
-        guardicore/monkey-island:VERSION
+        guardicore/monkey-island:v1.13.0
     ```
 
 ### 3b. Start Monkey Island with user-provided certificate
@@ -91,7 +91,7 @@ any volumes associated with the previous version.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION --setup-only
+        guardicore/monkey-island:v1.13.0 --setup-only
     ```
 
 1. Move your `.crt` and `.key` files to `./monkey_island_data`.
@@ -134,7 +134,7 @@ any volumes associated with the previous version.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:VERSION
+        guardicore/monkey-island:v1.13.0
     ```
 
 ### 4. Accessing Monkey Island
