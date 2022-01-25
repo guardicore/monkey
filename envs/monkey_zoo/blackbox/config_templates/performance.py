@@ -26,6 +26,7 @@ class Performance(ConfigTemplate):
             "MSSQLExploiter",
             "PowerShellExploiter",
             "ZerologonExploiter",
+            "Log4ShellExploiter",
         ],
         "basic_network.network_analysis.inaccessible_subnets": [
             "10.2.2.0/30",
@@ -59,5 +60,11 @@ class Performance(ConfigTemplate):
             "10.2.2.23",
             "10.2.2.24",
             "10.2.2.25",
+            "10.2.3.55",
+            "10.2.3.56",
+            "10.2.3.49",
+            "10.2.3.50",
+            "10.2.3.51",
+            "10.2.3.52",
         ],
     }
