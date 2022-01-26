@@ -191,12 +191,12 @@ class AutomatedMaster(IMaster):
 
         self._puppet.run_payload(name, options, self._stop)
 
-    def _run_plugins(self, plugin: List[Any], plugin_type: str, callback: Callable[[Any], None]):
+    def _run_plugins(self, plugins: List[Any], plugin_type: str, callback: Callable[[Any], None]):
         logger.info(f"Running {plugin_type}s")
-        logger.debug(f"Found {len(plugin)} {plugin_type}(s) to run")
+        logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")
 
         interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
-        for p in interruptable_iter(plugin, self._stop, interrupted_message):
+        for p in interruptable_iter(plugins, self._stop, interrupted_message):
             callback(p)
 
         logger.info(f"Finished running {plugin_type}s")
