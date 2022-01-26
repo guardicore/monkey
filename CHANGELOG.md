@@ -15,6 +15,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
   include a timeout. #1577
 - The setup procedure for custom server_config.json files to be simpler. #1576
+- The order and content of Monkey Island's initialization logging to give
+  clearer instructions to the user and avoid confusion. #1684
 
 ### Removed
 - The VSFTPD exploiter. #1533

@@ -167,11 +167,17 @@ def _start_bootloader_server() -> Thread:
 
 
 def _log_init_info():
+    MonkeyDownload.log_executable_hashes()
+
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
+
+    _log_web_interface_access_urls()
+
+
+def _log_web_interface_access_urls():
+    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in local_ip_addresses()])
     logger.info(
-        "Listening on the following URLs: {}".format(
-            ", ".join(["https://{}:{}".format(x, ISLAND_PORT) for x in local_ip_addresses()])
-        )
+        "To access the web interface, navigate to one of the the following URLs using your "
+        f"browser: {web_interface_urls}"
     )
-    MonkeyDownload.log_executable_hashes()
