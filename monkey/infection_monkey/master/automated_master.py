@@ -182,7 +182,7 @@ class AutomatedMaster(IMaster):
         command, result = self._puppet.run_pba(name, options)
         self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
 
-    def _can_propagate(self):
+    def _can_propagate(self) -> bool:
         return True
 
     def _run_payload(self, payload: Tuple[str, Dict]):
