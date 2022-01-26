@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from types import MappingProxyType as ImmutableMapping
+from typing import Mapping
+
 from common.utils.file_utils import expand_path
 from monkey_island.cc.server_utils.consts import (
     DEFAULT_CRT_PATH,
@@ -19,10 +22,7 @@ _LOG_LEVEL = "log_level"
 
 
 class IslandConfigOptions:
-    def __init__(self, config_contents: dict = None):
-        if config_contents is None:
-            config_contents = {}
-
+    def __init__(self, config_contents: Mapping[str, Mapping] = ImmutableMapping({})):
         self.data_dir = DEFAULT_DATA_DIR
         self.log_level = DEFAULT_LOG_LEVEL
         self.start_mongodb = DEFAULT_START_MONGO_DB
@@ -33,7 +33,7 @@ class IslandConfigOptions:
 
         self.update(config_contents)
 
-    def update(self, config_contents: dict):
+    def update(self, config_contents: Mapping[str, Mapping]):
         self.data_dir = config_contents.get(_DATA_DIR, self.data_dir)
 
         self.log_level = config_contents.get(_LOG_LEVEL, self.log_level)

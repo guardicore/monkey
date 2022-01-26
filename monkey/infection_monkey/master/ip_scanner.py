@@ -13,9 +13,9 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 from infection_monkey.network import NetworkAddress
+from infection_monkey.utils.threading import interruptable_iter, run_worker_threads
 
 from . import IPScanResults
-from .threading_utils import run_worker_threads
 
 logger = logging.getLogger()
 
@@ -49,25 +49,23 @@ class IPScanner:
         self, addresses: Queue, options: Dict, results_callback: Callback, stop: Event
     ):
         logger.debug(f"Starting scan thread -- Thread ID: {threading.get_ident()}")
+        icmp_timeout = options["icmp"]["timeout_ms"] / 1000
+        tcp_timeout = options["tcp"]["timeout_ms"] / 1000
+        tcp_ports = options["tcp"]["ports"]
 
         try:
             while not stop.is_set():
                 address = addresses.get_nowait()
-                ip = address.ip
-                logger.info(f"Scanning {ip}")
+                logger.info(f"Scanning {address.ip}")
 
-                icmp_timeout = options["icmp"]["timeout_ms"] / 1000
-                ping_scan_data = self._puppet.ping(ip, icmp_timeout)
-
-                tcp_timeout = options["tcp"]["timeout_ms"] / 1000
-                tcp_ports = options["tcp"]["ports"]
-                port_scan_data = self._scan_tcp_ports(ip, tcp_ports, tcp_timeout, stop)
+                ping_scan_data = self._puppet.ping(address.ip, icmp_timeout)
+                port_scan_data = self._scan_tcp_ports(address.ip, tcp_ports, tcp_timeout, stop)
 
                 fingerprint_data = {}
                 if IPScanner.port_scan_found_open_port(port_scan_data):
                     fingerprinters = options["fingerprinters"]
                     fingerprint_data = self._run_fingerprinters(
-                        ip, fingerprinters, ping_scan_data, port_scan_data, stop
+                        address.ip, fingerprinters, ping_scan_data, port_scan_data, stop
                     )
 
                 scan_results = IPScanResults(ping_scan_data, port_scan_data, fingerprint_data)
@@ -87,10 +85,7 @@ class IPScanner:
     ) -> Dict[int, PortScanData]:
         port_scan_data = {}
 
-        for p in ports:
-            if stop.is_set():
-                break
-
+        for p in interruptable_iter(ports, stop):
             port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, timeout)
 
         return port_scan_data
@@ -109,10 +104,7 @@ class IPScanner:
     ) -> Dict[str, FingerprintData]:
         fingerprint_data = {}
 
-        for f in fingerprinters:
-            if stop.is_set():
-                break
-
+        for f in interruptable_iter(fingerprinters, stop):
             fingerprint_data[f] = self._puppet.fingerprint(f, ip, ping_scan_data, port_scan_data)
 
         return fingerprint_data

@@ -1,7 +1,7 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Tuple
 
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
@@ -11,10 +11,10 @@ from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
+from infection_monkey.utils.threading import create_daemon_thread, interruptable_iter
 from infection_monkey.utils.timer import Timer
 
 from . import Exploiter, IPScanner, Propagator
-from .threading_utils import create_daemon_thread
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
@@ -182,7 +182,7 @@ class AutomatedMaster(IMaster):
         command, result = self._puppet.run_pba(name, options)
         self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
 
-    def _can_propagate(self):
+    def _can_propagate(self) -> bool:
         return True
 
     def _run_payload(self, payload: Tuple[str, Dict]):
@@ -191,15 +191,14 @@ class AutomatedMaster(IMaster):
 
         self._puppet.run_payload(name, options, self._stop)
 
-    def _run_plugins(self, plugin: List[Any], plugin_type: str, callback: Callable[[Any], None]):
+    def _run_plugins(
+        self, plugins: Iterable[Any], plugin_type: str, callback: Callable[[Any], None]
+    ):
         logger.info(f"Running {plugin_type}s")
-        logger.debug(f"Found {len(plugin)} {plugin_type}(s) to run")
+        logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")
 
-        for p in plugin:
-            if self._stop.is_set():
-                logger.debug(f"Received a stop signal, skipping remaining {plugin_type}s")
-                return
-
+        interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
+        for p in interruptable_iter(plugins, self._stop, interrupted_message):
             callback(p)
 
         logger.info(f"Finished running {plugin_type}s")
