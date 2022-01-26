@@ -1,7 +1,7 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Tuple
 
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
@@ -191,7 +191,9 @@ class AutomatedMaster(IMaster):
 
         self._puppet.run_payload(name, options, self._stop)
 
-    def _run_plugins(self, plugins: List[Any], plugin_type: str, callback: Callable[[Any], None]):
+    def _run_plugins(
+        self, plugins: Iterable[Any], plugin_type: str, callback: Callable[[Any], None]
+    ):
         logger.info(f"Running {plugin_type}s")
         logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")
 
