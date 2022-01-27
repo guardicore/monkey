@@ -192,6 +192,9 @@ class SingleIpRange(NetworkRange):
         # The most common use case is to enter ip/range into "Scan IP/subnet list"
         domain_name = None
 
+        if " " in string_:
+            raise ValueError(f'"{string_}" is not a valid IP address or domain name.')
+
         # Try casting user's input as IP
         try:
             ip = ipaddress.ip_address(string_).exploded
