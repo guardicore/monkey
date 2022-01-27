@@ -11,12 +11,9 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 from infection_monkey.master import IPScanResults, Propagator
-from infection_monkey.network import NetworkInterface
-from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.model import VictimHost, VictimHostFactory
-from infection_monkey.network import NetworkAddress
-
-
+from infection_monkey.network import NetworkAddress, NetworkInterface
+from infection_monkey.telemetry.exploit_telem import ExploitTelem
 
 
 @pytest.fixture
