@@ -4,8 +4,11 @@ import {faHandPointLeft} from '@fortawesome/free-solid-svg-icons/faHandPointLeft
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
 import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
-import download from 'downloadjs'
 import AuthComponent from '../../AuthComponent';
+import {
+  AgentLogDownloadButton,
+  IslandLogDownloadButton
+} from '../../ui-components/LogDownloadButtons';
 
 class PreviewPaneComponent extends AuthComponent {
 
@@ -13,7 +16,7 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <OverlayTrigger placement="top"
                       overlay={<Tooltip id="tooltip">{text}</Tooltip>}
-                      delay={{ show: 250, hide: 400 }}>
+                      delay={{show: 250, hide: 400}}>
         <a><FontAwesomeIcon icon={faQuestionCircle} style={{'marginRight': '0.5em'}}/></a>
       </OverlayTrigger>
     );
@@ -94,43 +97,29 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  unescapeLog(st) {
-    return st.substr(1, st.length - 2) // remove quotation marks on beginning and end of string.
-      .replace(/\\n/g, '\n')
-      .replace(/\\r/g, '\r')
-      .replace(/\\t/g, '\t')
-      .replace(/\\b/g, '\b')
-      .replace(/\\f/g, '\f')
-      .replace(/\\"/g, '"')
-      .replace(/\\'/g, '\'')
-      .replace(/\\&/g, '&');
-  }
-
-  downloadLog(asset) {
-    this.authFetch('/api/log?id=' + asset.id)
-      .then(res => res.json())
-      .then(res => {
-        let timestamp = res['timestamp'];
-        timestamp = timestamp.substr(0, timestamp.indexOf('.'));
-        let filename = res['monkey_label'].split(':').join('-') + ' - ' + timestamp + '.log';
-        let logContent = this.unescapeLog(res['log']);
-        download(logContent, filename, 'text/plain');
-      });
-
-  }
-
-  downloadLogRow(asset) {
+  downloadLogsRow(asset) {
     return (
-      <tr>
-        <th>
-          Download Log
-        </th>
-        <td>
-          <a type='button'
-             className={asset.has_log ? 'btn btn-primary' : 'btn btn-primary disabled'}
-             onClick={() => this.downloadLog(asset)}>Download</a>
-        </td>
-      </tr>
+      <>
+        <tr>
+          <th>
+            Download Monkey Agent Log
+          </th>
+          <td>
+            <AgentLogDownloadButton url={'/api/log?id=' + asset.id}
+                               variant={asset.has_log ? undefined : 'disabled'}/>
+          </td>
+        </tr>
+        {(asset['group'].includes('island')) &&
+          <tr>
+            <th>
+              Download Island Server Log
+            </th>
+            <td>
+              <IslandLogDownloadButton url={'/api/log/island/download'} />
+            </td>
+          </tr>
+        }
+      </>
     );
   }
 
@@ -194,7 +183,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.servicesRow(asset)}
           {this.accessibleRow(asset)}
           {this.forceKillRow(asset)}
-          {this.downloadLogRow(asset)}
+          {this.downloadLogsRow(asset)}
           </tbody>
         </table>
         {this.exploitsTimeline(asset)}

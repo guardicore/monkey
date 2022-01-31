@@ -8,11 +8,13 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - credentials.json file for storing Monkey Island user login information. #1206
+- The ability to download the Monkey Island logs from the Infection Map page. #1640
 
 ### Changed
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
   include a timeout. #1577
 - The setup procedure for custom server_config.json files to be simpler. #1576
+- "Logs" page renamed to "Telemetries". #1640
 
 ### Removed
 - The VSFTPD exploiter. #1533
@@ -32,6 +34,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hostname system info collector. #1535
 - Max iterations and timeout between iterations config options. #1600
 - MITRE ATT&CK configuration screen. #1532
+- Island log download button from "Telemetries"(previously called "Logs") page. #1640
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
