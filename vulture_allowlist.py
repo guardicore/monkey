@@ -68,7 +68,6 @@ VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_proc
 DRUPAL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:48)
 POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
 ExploiterDescriptorEnum.LOG4SHELL
-_.do_POST  # unused method (monkey/monkey_island/cc/server_utils/bootloader_server.py:26)
 PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
 internet_access  # unused variable (monkey/monkey_island/cc/models/monkey.py:43)
 config_error  # unused variable (monkey/monkey_island/cc/models/monkey.py:53)
