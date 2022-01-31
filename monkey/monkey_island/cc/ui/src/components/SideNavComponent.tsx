@@ -91,7 +91,7 @@ const SideNavComponent = ({disabled,
         </NavLink></li>
         <li><NavLink to='/infection/telemetry'
         className={getNavLinkClass()}>
-          Logs
+          Telemetries
         </NavLink></li>
       </ul>
 
