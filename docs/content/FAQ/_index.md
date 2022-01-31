@@ -158,23 +158,21 @@ The Monkey performs queries out to the Internet on two separate occasions:
 
 ### Downloading logs
 
-Logs can be found in the Map page. Click on the machine you want to download logs from
-and press "Download log" button on the side panel.
-
-Island server logs are downloadable from island machine.
-
-Agent logs are downloadable from any exploited machine (where agents ran).
+Both Monkey Agent and Monkey Island logs can be found in the Infection Map page. Click on the
+machine from which you want to download logs and press the "Download log" button on the side panel.
+Note that you can only download the Monkey Island log by clicking on the Monkey Island machine in
+the Infection Map.
 
 ![How to download logs](/images/faq/log_download.jpg "How to download logs")
 
 ### Log locations
 
-If logs can't be downloaded through the UI,
-you can extract log files directly from the machine.
+If the logs can't be downloaded through the UI for any reason, you can collect the log files
+directly from the machine where an Agent or Monkey Island ran.
 
 #### Monkey Island server log
 
-Island's log file is located in the
+The Monkey Island's log file is located in the
 [data directory]({{< ref "/reference/data_directory" >}}).
 
 The log enables you to see which requests were requested from the server and extra logs from the backend logic. The log will contain entries like these:
