@@ -76,7 +76,6 @@
     "max_depth": null,
     "monkey_log_path_linux": "/tmp/user-1563",
     "monkey_log_path_windows": "%temp%\\~df1563.tmp",
-    "ms08_067_exploit_attempts": 5,
     "ping_scan_timeout": 1000,
     "post_breach_actions": [
         "CommunicateAsBackdoorUser",
@@ -120,6 +119,5 @@
         3306,
         7001,
         8088
-    ],
-    "user_to_add": "Monkey_IUSER_SUPPORT"
+    ]
 }

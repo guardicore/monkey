@@ -146,9 +146,6 @@ class Configuration(object):
 
     skip_exploit_if_file_exist = False
 
-    ms08_067_exploit_attempts = 5
-    user_to_add = "Monkey_IUSER_SUPPORT"
-
     ###########################
     # ransomware config
     ###########################

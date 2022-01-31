@@ -19,7 +19,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   clearer instructions to the user and avoid confusion. #1684
 
 ### Removed
-- The VSFTPD exploiter. #1533
+- VSFTPD exploiter. #1533
 - Manual agent run command for CMD. #1570
 - Sambacry exploiter. #1567
 - "Kill file" option in the config. #1536
@@ -40,6 +40,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/monkey_control/check_remote_port/<string:port>" endpoint. #1635
 - Max victims to find/exploit, TCP scan interval and TCP scan get banner internal options. #1597
 - MySQL fingerprinter. #1648
+- MS08-067 (Conficker) exploiter. #1677
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

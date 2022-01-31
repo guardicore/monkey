@@ -30,7 +30,6 @@ import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues
 import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
 import {shellShockIssueOverview, shellShockIssueReport} from './security/issues/ShellShockIssue';
 import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
-import {ms08_067IssueOverview, ms08_067IssueReport} from './security/issues/MS08_067Issue';
 import {
   crossSegmentIssueOverview,
   crossSegmentIssueReport,
@@ -134,11 +133,6 @@ class ReportPageComponent extends AuthComponent {
       'PowerShellExploiter': {
         [this.issueContentTypes.OVERVIEW]: powershellIssueOverview,
         [this.issueContentTypes.REPORT]: powershellIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'Ms08_067_Exploiter': {
-        [this.issueContentTypes.OVERVIEW]: ms08_067IssueOverview,
-        [this.issueContentTypes.REPORT]: ms08_067IssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ZerologonExploiter': {

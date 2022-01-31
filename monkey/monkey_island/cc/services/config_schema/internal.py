@@ -266,24 +266,6 @@ INTERNAL = {
                         }
                     },
                 },
-                "ms08_067": {
-                    "title": "MS08_067",
-                    "type": "object",
-                    "properties": {
-                        "ms08_067_exploit_attempts": {
-                            "title": "MS08_067 exploit attempts",
-                            "type": "integer",
-                            "default": 5,
-                            "description": "Number of attempts to exploit using MS08_067",
-                        },
-                        "user_to_add": {
-                            "title": "Remote user",
-                            "type": "string",
-                            "default": "Monkey_IUSER_SUPPORT",
-                            "description": "Username to add on successful exploit",
-                        },
-                    },
-                },
             },
             "smb_service": {
                 "title": "SMB service",
