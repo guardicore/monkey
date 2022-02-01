@@ -28,8 +28,6 @@ class NodeStates(Enum):
     MONKEY_WINDOWS_RUNNING = "monkey_windows_running"
     MONKEY_WINDOWS_STARTING = "monkey_windows_starting"
     MONKEY_LINUX_STARTING = "monkey_linux_starting"
-    MONKEY_WINDOWS_OLD = "monkey_windows_old"
-    MONKEY_LINUX_OLD = "monkey_linux_old"
 
     @staticmethod
     def get_by_keywords(keywords: List) -> NodeStates:
