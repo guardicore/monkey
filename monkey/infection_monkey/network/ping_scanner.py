@@ -1,79 +1,83 @@
 import logging
+import math
 import os
 import re
 import subprocess
 import sys
 
-import infection_monkey.config
-from infection_monkey.network.HostFinger import HostFinger
-from infection_monkey.network.HostScanner import HostScanner
+from infection_monkey.i_puppet import PingScanData
 
-PING_COUNT_FLAG = "-n" if "win32" == sys.platform else "-c"
-PING_TIMEOUT_FLAG = "-w" if "win32" == sys.platform else "-W"
-TTL_REGEX_STR = r"(?<=TTL\=)[0-9]+"
-LINUX_TTL = 64
-WINDOWS_TTL = 128
+TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
+LINUX_TTL = 64  # Windows TTL is 128
+PING_EXIT_TIMEOUT = 10
 
 logger = logging.getLogger(__name__)
 
 
-class PingScanner(HostScanner, HostFinger):
-    _SCANNED_SERVICE = ""
+def ping(host: str, timeout: float) -> PingScanData:
+    if "win32" == sys.platform:
+        timeout = math.floor(timeout * 1000)
 
-    def __init__(self):
-        self._timeout = infection_monkey.config.WormConfiguration.ping_scan_timeout
-        if not "win32" == sys.platform:
-            self._timeout /= 1000
+    ping_command_output = _run_ping_command(host, timeout)
 
-        self._devnull = open(os.devnull, "w")
-        self._ttl_regex = re.compile(TTL_REGEX_STR, re.IGNORECASE)
+    ping_scan_data = _process_ping_command_output(ping_command_output)
+    logger.debug(f"{host} - {ping_scan_data}")
 
-    def is_host_alive(self, host):
-        ping_cmd = self._build_ping_command(host.ip_addr)
-        logger.debug(f"Running ping command: {' '.join(ping_cmd)}")
+    return ping_scan_data
 
-        return 0 == subprocess.call(
-            ping_cmd,
-            stdout=self._devnull,
-            stderr=self._devnull,
-        )
 
-    def get_host_fingerprint(self, host):
-        ping_cmd = self._build_ping_command(host.ip_addr)
-        logger.debug(f"Running ping command: {' '.join(ping_cmd)}")
+def _run_ping_command(host: str, timeout: float) -> str:
+    ping_cmd = _build_ping_command(host, timeout)
+    logger.debug(f"Running ping command: {' '.join(ping_cmd)}")
 
-        # If stdout is not connected to a terminal (i.e. redirected to a pipe or file), the result
-        # of os.device_encoding(1) will be None. Setting errors="backslashreplace" prevents a crash
-        # in this case. See #1175 and #1403 for more information.
-        encoding = os.device_encoding(1)
-        sub_proc = subprocess.Popen(
-            ping_cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            encoding=encoding,
-            errors="backslashreplace",
-        )
+    # If stdout is not connected to a terminal (i.e. redirected to a pipe or file), the result
+    # of os.device_encoding(1) will be None. Setting errors="backslashreplace" prevents a crash
+    # in this case. See #1175 and #1403 for more information.
+    encoding = os.device_encoding(1)
+    sub_proc = subprocess.Popen(
+        ping_cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding=encoding,
+        errors="backslashreplace",
+    )
 
-        logger.debug(f"Retrieving ping command output using {encoding} encoding")
-        output = " ".join(sub_proc.communicate())
-        regex_result = self._ttl_regex.search(output)
-        if regex_result:
-            try:
-                ttl = int(regex_result.group(0))
-                if ttl <= LINUX_TTL:
-                    host.os["type"] = "linux"
-                else:  # as far we we know, could also be OSX/BSD but lets handle that when it
-                    # comes up.
-                    host.os["type"] = "windows"
+    logger.debug(f"Retrieving ping command output using {encoding} encoding")
 
-                host.icmp = True
+    try:
+        # The underlying ping command should timeout within the specified timeout. Setting the
+        # timeout parameter on communicate() is a failsafe mechanism for ensuring this does not
+        # block indefinitely.
+        output = " ".join(sub_proc.communicate(timeout=(timeout + PING_EXIT_TIMEOUT)))
+        logger.debug(output)
+    except subprocess.TimeoutExpired as te:
+        logger.error(te)
+        return ""
 
-                return True
-            except Exception as exc:
-                logger.debug("Error parsing ping fingerprint: %s", exc)
+    return output
 
-        return False
 
-    def _build_ping_command(self, ip_addr):
-        return ["ping", PING_COUNT_FLAG, "1", PING_TIMEOUT_FLAG, str(self._timeout), ip_addr]
+def _process_ping_command_output(ping_command_output: str) -> PingScanData:
+    ttl_match = TTL_REGEX.search(ping_command_output)
+    if not ttl_match:
+        return PingScanData(False, None)
+
+    # It should be impossible for this next line to raise any errors, since the TTL_REGEX won't
+    # match at all if the group isn't found or the contents of the group are not only digits.
+    ttl = int(ttl_match.group(1))
+
+    operating_system = None
+    if ttl <= LINUX_TTL:
+        operating_system = "linux"
+    else:  # as far we we know, could also be OSX/BSD, but lets handle that when it comes up.
+        operating_system = "windows"
+
+    return PingScanData(True, operating_system)
+
+
+def _build_ping_command(host: str, timeout: float):
+    ping_count_flag = "-n" if "win32" == sys.platform else "-c"
+    ping_timeout_flag = "-w" if "win32" == sys.platform else "-W"
+
+    return ["ping", ping_count_flag, "1", ping_timeout_flag, str(timeout), host]
