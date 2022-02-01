@@ -48,8 +48,6 @@ MONKEY_WINDOWS  # unused variable (monkey/monkey_island/cc/services/utils/node_s
 MONKEY_WINDOWS_RUNNING  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:28)
 MONKEY_WINDOWS_STARTING  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:29)
 MONKEY_LINUX_STARTING  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:30)
-MONKEY_WINDOWS_OLD  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:31)
-MONKEY_LINUX_OLD  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:32)
 _.credential_type  # unused attribute (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/processors/cred_exploit.py:19)
 _.credential_type  # unused attribute (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/processors/cred_exploit.py:22)
 _.credential_type  # unused attribute (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/processors/cred_exploit.py:25)
