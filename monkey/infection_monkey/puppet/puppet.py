@@ -2,6 +2,7 @@ import logging
 import threading
 from typing import Dict
 
+from infection_monkey import network
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
@@ -33,7 +34,7 @@ class Puppet(IPuppet):
         return self._mock_puppet.run_pba(name, options)
 
     def ping(self, host: str, timeout: float = 1) -> PingScanData:
-        return self._mock_puppet.ping(host, timeout)
+        return network.ping(host, timeout)
 
     def scan_tcp_port(self, host: str, port: int, timeout: float = 3) -> PortScanData:
         return self._mock_puppet.scan_tcp_port(host, port, timeout)
