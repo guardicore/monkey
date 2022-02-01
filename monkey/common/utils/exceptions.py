@@ -22,10 +22,6 @@ class IncorrectCredentialsError(Exception):
     """ Raise to indicate that authentication failed """
 
 
-class RulePathCreatorNotFound(Exception):
-    """ Raise to indicate that ScoutSuite rule doesn't have a path creator"""
-
-
 class InvalidAWSKeys(Exception):
     """ Raise to indicate that AWS API keys are invalid"""
 
