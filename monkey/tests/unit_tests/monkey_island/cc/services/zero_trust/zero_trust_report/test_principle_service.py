@@ -1,7 +1,6 @@
 import pytest
 from tests.unit_tests.monkey_island.cc.services.zero_trust.test_common.finding_data import (
     get_monkey_finding_dto,
-    get_scoutsuite_finding_dto,
 )
 
 from common.common_consts import zero_trust_consts
@@ -13,10 +12,9 @@ EXPECTED_DICT = {
     "test_pillar1": [
         {
             "principle": "Test principle description2",
-            "status": zero_trust_consts.STATUS_FAILED,
+            "status": zero_trust_consts.STATUS_PASSED,
             "tests": [
                 {"status": zero_trust_consts.STATUS_PASSED, "test": "You ran a test2"},
-                {"status": zero_trust_consts.STATUS_FAILED, "test": "You ran a test3"},
             ],
         }
     ],
@@ -28,10 +26,9 @@ EXPECTED_DICT = {
         },
         {
             "principle": "Test principle description2",
-            "status": zero_trust_consts.STATUS_FAILED,
+            "status": zero_trust_consts.STATUS_PASSED,
             "tests": [
                 {"status": zero_trust_consts.STATUS_PASSED, "test": "You ran a test2"},
-                {"status": zero_trust_consts.STATUS_FAILED, "test": "You ran a test3"},
             ],
         },
     ],
@@ -46,7 +43,7 @@ def test_get_principles_status():
 
     principles_to_tests = {
         "network_policies": ["segmentation"],
-        "endpoint_security": ["tunneling", "scoutsuite_service_security"],
+        "endpoint_security": ["tunneling"],
     }
     zero_trust_consts.PRINCIPLES_TO_TESTS = principles_to_tests
 
@@ -65,7 +62,6 @@ def test_get_principles_status():
     tests_map = {
         "segmentation": {"explanation": "You ran a test1"},
         "tunneling": {"explanation": "You ran a test2"},
-        "scoutsuite_service_security": {"explanation": "You ran a test3"},
     }
     zero_trust_consts.TESTS_MAP = tests_map
 
@@ -76,10 +72,6 @@ def test_get_principles_status():
     monkey_finding = get_monkey_finding_dto()
     monkey_finding.test = "tunneling"
     monkey_finding.save()
-
-    scoutsuite_finding = get_scoutsuite_finding_dto()
-    scoutsuite_finding.test = "scoutsuite_service_security"
-    scoutsuite_finding.save()
 
     expected = dict(EXPECTED_DICT)  # new mutable
 

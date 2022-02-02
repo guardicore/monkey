@@ -29,16 +29,16 @@ def test_get_pillars_grades():
 def _get_expected_pillar_grades() -> List[dict]:
     return [
         {
-            zero_trust_consts.STATUS_FAILED: 5,
+            zero_trust_consts.STATUS_FAILED: 3,
             zero_trust_consts.STATUS_VERIFY: 2,
-            zero_trust_consts.STATUS_PASSED: 1,
-            # 2 different tests of DATA pillar were executed in _save_findings()
-            zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(DATA) - 2,
+            zero_trust_consts.STATUS_PASSED: 0,
+            # 1 test of DATA pillar was executed in _save_findings()
+            zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(DATA) - 1,
             "pillar": "Data",
         },
         {
             zero_trust_consts.STATUS_FAILED: 0,
-            zero_trust_consts.STATUS_VERIFY: 2,
+            zero_trust_consts.STATUS_VERIFY: 1,
             zero_trust_consts.STATUS_PASSED: 0,
             # 1 test of PEOPLE pillar were executed in _save_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(PEOPLE) - 1,
@@ -46,7 +46,7 @@ def _get_expected_pillar_grades() -> List[dict]:
         },
         {
             zero_trust_consts.STATUS_FAILED: 0,
-            zero_trust_consts.STATUS_VERIFY: 2,
+            zero_trust_consts.STATUS_VERIFY: 1,
             zero_trust_consts.STATUS_PASSED: 0,
             # 1 different tests of NETWORKS pillar were executed in _save_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(NETWORKS) - 1,
@@ -55,7 +55,7 @@ def _get_expected_pillar_grades() -> List[dict]:
         {
             zero_trust_consts.STATUS_FAILED: 1,
             zero_trust_consts.STATUS_VERIFY: 0,
-            zero_trust_consts.STATUS_PASSED: 2,
+            zero_trust_consts.STATUS_PASSED: 0,
             # 1 different tests of DEVICES pillar were executed in _save_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(DEVICES) - 1,
             "pillar": "Devices",
