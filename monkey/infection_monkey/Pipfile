@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 cryptography = "==2.5" # We can't build 32bit ubuntu12 binary with newer versions of cryptography
 pyinstaller = "==4.2"
+setuptools = "<=60.6.0" # https://github.com/pypa/setuptools/issues/3072 and https://github.com/pyinstaller/pyinstaller/issues/6564
 impacket = ">=0.9"
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"

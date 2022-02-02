@@ -74,6 +74,7 @@ def get_hidden_imports():
     imports = ['_cffi_backend', '_mssql']
     if is_windows():
         imports.append('queue')
+        imports.append('pkg_resources.py2_warn')
     return imports
 
 
