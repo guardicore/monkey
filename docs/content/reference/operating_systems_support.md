@@ -44,21 +44,4 @@ Compatibility depends on GLIBC version (2.14+)[^1]. By default, these distributi
 
 We also provide a Dockerfile on our [website](http://infectionmonkey.com/) that lets the Monkey Island run inside a container.
 
-### Old machine bootloader
-
-Some **older machines** still have partial compatibility and will be exploited and reported, but the Infection Monkey agent can't run on them. In these cases, old machine bootloader (a small C program) will be run, which reports some minor info like network interface configuration, GLIBC version, OS, etc.
-
-**Old machine bootloader** also has a GLIBC 2.14+ requirement for Linux because the bootloader is included in the Pyinstaller bootloader, which uses Python 3.7 that in turn requires GLIBC 2.14+. If you think partial support for older machines is important, don't hesitate to open a new issue about it.
-
-**Old machine bootloader** runs on machines with:
-
-- Centos 7+
-- Debian 7+
-- Kali 2019+
-- Oracle 7+
-- Rhel 7+
-- Suse 12+
-- Ubuntu 14+
-- **Windows XP/Server 2003+**
-
 [^1]: The GLIBC >= 2.14 requirement exists because the Infection Monkey was built using this GLIBC version, and GLIBC is not backward compatible. We are also limited to the oldest GLIBC version compatible with Python 3.7.

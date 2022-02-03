@@ -228,7 +228,7 @@ class PreviewPaneComponent extends AuthComponent {
         info = this.scanInfo(this.props.item);
         break;
       case 'node':
-        if (this.props.item.group.includes('monkey') && this.props.item.group.includes('starting')) {
+        if (this.props.item.group.includes('monkey')) {
           info = this.assetInfo(this.props.item);
         } else if (this.props.item.group.includes('monkey', 'manual')) {
           info = this.infectedAssetInfo(this.props.item)

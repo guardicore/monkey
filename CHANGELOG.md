@@ -41,6 +41,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Max victims to find/exploit, TCP scan interval and TCP scan get banner internal options. #1597
 - MySQL fingerprinter. #1648
 - MS08-067 (Conficker) exploiter. #1677
+- Agent bootloader. #1676
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

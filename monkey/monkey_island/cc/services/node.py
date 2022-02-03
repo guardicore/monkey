@@ -1,6 +1,5 @@
 import socket
 from datetime import datetime, timedelta
-from typing import Dict
 
 from bson import ObjectId
 
@@ -10,7 +9,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
 from monkey_island.cc.services.edge.edge import EdgeService
-from monkey_island.cc.services.utils.network_utils import is_local_ips, local_ip_addresses
+from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 from monkey_island.cc.services.utils.node_states import NodeStates
 
 
@@ -208,59 +207,6 @@ class NodeService:
             }
         )
         return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
-
-    @staticmethod
-    def create_node_from_bootloader_telem(bootloader_telem: Dict, will_monkey_run: bool):
-        new_node_insert_result = mongo.db.node.insert_one(
-            {
-                "ip_addresses": bootloader_telem["ips"],
-                "domain_name": bootloader_telem["hostname"],
-                "will_monkey_run": will_monkey_run,
-                "exploited": False,
-                "creds": [],
-                "os": {
-                    "type": bootloader_telem["system"],
-                    "version": bootloader_telem["os_version"],
-                },
-            }
-        )
-        return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
-
-    @staticmethod
-    def get_or_create_node_from_bootloader_telem(
-        bootloader_telem: Dict, will_monkey_run: bool
-    ) -> Dict:
-        if is_local_ips(bootloader_telem["ips"]):
-            raise NodeCreationException("Bootloader ran on island, no need to create new node.")
-
-        new_node = mongo.db.node.find_one({"ip_addresses": {"$in": bootloader_telem["ips"]}})
-        # Temporary workaround to not create a node after monkey finishes
-        monkey_node = mongo.db.monkey.find_one({"ip_addresses": {"$in": bootloader_telem["ips"]}})
-        if monkey_node:
-            # Don't create new node, monkey node is already present
-            return monkey_node
-
-        if new_node is None:
-            new_node = NodeService.create_node_from_bootloader_telem(
-                bootloader_telem, will_monkey_run
-            )
-            if bootloader_telem["tunnel"]:
-                dst_node = NodeService.get_node_or_monkey_by_ip(bootloader_telem["tunnel"])
-            else:
-                dst_node = NodeService.get_monkey_island_node()
-            src_label = NodeService.get_label_for_endpoint(new_node["_id"])
-            dst_label = NodeService.get_label_for_endpoint(dst_node["id"])
-            edge = EdgeService.get_or_create_edge(
-                src_node_id=new_node["_id"],
-                dst_node_id=dst_node["id"],
-                src_label=src_label,
-                dst_label=dst_label,
-            )
-            edge.tunnel = bool(bootloader_telem["tunnel"])
-            edge.ip_address = bootloader_telem["ips"][0]
-            edge.group = NodeStates.get_by_keywords(["island"]).value
-            edge.save()
-        return new_node
 
     @staticmethod
     def get_or_create_node(ip_address, domain_name=""):

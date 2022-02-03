@@ -1,4 +1,4 @@
-from mongoengine import EmbeddedDocument, BooleanField
+from mongoengine import BooleanField, EmbeddedDocument
 
 
 class Config(EmbeddedDocument):

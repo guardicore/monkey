@@ -7,11 +7,7 @@ import urllib
 from logging import getLogger
 from urllib.parse import urlsplit
 
-import requests
-
-import infection_monkey.control
 import infection_monkey.monkeyfs as monkeyfs
-from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 
@@ -113,32 +109,6 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
     timeout = 30  # timeout with clients, set to None not to make persistent connection
-
-    def do_POST(self):
-        try:
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length).decode()
-            logger.info("Received bootloader's request: {}".format(post_data))
-            try:
-                dest_path = self.path
-                r = requests.post(  # noqa: DUO123
-                    url=dest_path,
-                    data=post_data,
-                    verify=False,
-                    proxies=infection_monkey.control.ControlClient.proxies,
-                    timeout=SHORT_REQUEST_TIMEOUT,
-                )
-                self.send_response(r.status_code)
-            except requests.exceptions.ConnectionError as e:
-                logger.error("Couldn't forward request to the island: {}".format(e))
-                self.send_response(404)
-            except Exception as e:
-                logger.error("Failed to forward bootloader request: {}".format(e))
-            finally:
-                self.end_headers()
-                self.wfile.write(r.content)
-        except Exception as e:
-            logger.error("Failed receiving bootloader telemetry: {}".format(e))
 
     def version_string(self):
         return ""
