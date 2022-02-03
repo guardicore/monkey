@@ -55,8 +55,7 @@ function RunOptions(props) {
     return InlineSelection(defaultContents, newProps);
   }
 
-  // TODO: Change function name
-  function shouldShowScoutsuite(islandMode){
+  function isNotRansomware(islandMode){
     return islandMode !== 'ransomware';
   }
 
@@ -73,7 +72,7 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-        {shouldShowScoutsuite(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
+        {isNotRansomware(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
       </>
     );
   }
