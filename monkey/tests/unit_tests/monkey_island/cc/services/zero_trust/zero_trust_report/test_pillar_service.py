@@ -32,7 +32,7 @@ def _get_expected_pillar_grades() -> List[dict]:
             zero_trust_consts.STATUS_FAILED: 3,
             zero_trust_consts.STATUS_VERIFY: 2,
             zero_trust_consts.STATUS_PASSED: 0,
-            # 1 test of DATA pillar was executed in _save_findings()
+            # 1 test of DATA pillar was executed in save_example_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(DATA) - 1,
             "pillar": "Data",
         },
@@ -40,7 +40,7 @@ def _get_expected_pillar_grades() -> List[dict]:
             zero_trust_consts.STATUS_FAILED: 0,
             zero_trust_consts.STATUS_VERIFY: 1,
             zero_trust_consts.STATUS_PASSED: 0,
-            # 1 test of PEOPLE pillar were executed in _save_findings()
+            # 1 test of PEOPLE pillar was executed in save_example_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(PEOPLE) - 1,
             "pillar": "People",
         },
@@ -48,7 +48,7 @@ def _get_expected_pillar_grades() -> List[dict]:
             zero_trust_consts.STATUS_FAILED: 0,
             zero_trust_consts.STATUS_VERIFY: 1,
             zero_trust_consts.STATUS_PASSED: 0,
-            # 1 different tests of NETWORKS pillar were executed in _save_findings()
+            # 1 test of NETWORKS pillar was executed in save_example_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(NETWORKS) - 1,
             "pillar": "Networks",
         },
@@ -56,7 +56,7 @@ def _get_expected_pillar_grades() -> List[dict]:
             zero_trust_consts.STATUS_FAILED: 1,
             zero_trust_consts.STATUS_VERIFY: 0,
             zero_trust_consts.STATUS_PASSED: 0,
-            # 1 different tests of DEVICES pillar were executed in _save_findings()
+            # 1 test of DEVICES pillar was executed in save_example_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(DEVICES) - 1,
             "pillar": "Devices",
         },
@@ -64,7 +64,7 @@ def _get_expected_pillar_grades() -> List[dict]:
             zero_trust_consts.STATUS_FAILED: 0,
             zero_trust_consts.STATUS_VERIFY: 0,
             zero_trust_consts.STATUS_PASSED: 0,
-            # 0 different tests of WORKLOADS pillar were executed in _save_findings()
+            # 0 tests of WORKLOADS pillar were executed in save_example_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(WORKLOADS),
             "pillar": "Workloads",
         },
@@ -72,7 +72,7 @@ def _get_expected_pillar_grades() -> List[dict]:
             zero_trust_consts.STATUS_FAILED: 0,
             zero_trust_consts.STATUS_VERIFY: 0,
             zero_trust_consts.STATUS_PASSED: 0,
-            # 0 different tests of VISIBILITY_ANALYTICS pillar were executed in _save_findings()
+            # 0 tests of VISIBILITY_ANALYTICS pillar were executed in save_example_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(VISIBILITY_ANALYTICS),
             "pillar": "Visibility & Analytics",
         },
@@ -80,7 +80,7 @@ def _get_expected_pillar_grades() -> List[dict]:
             zero_trust_consts.STATUS_FAILED: 0,
             zero_trust_consts.STATUS_VERIFY: 0,
             zero_trust_consts.STATUS_PASSED: 0,
-            # 0 different tests of AUTOMATION_ORCHESTRATION pillar were executed in _save_findings()
+            # 0 tests of AUTOMATION_ORCHESTRATION pillar were executed in save_example_findings()
             zero_trust_consts.STATUS_UNEXECUTED: _get_cnt_of_tests_in_pillar(
                 AUTOMATION_ORCHESTRATION
             ),
