@@ -30,8 +30,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
         <PrinciplesSection principles={this.state.principles}
                            pillarsToStatuses={this.state.pillars.pillarsToStatuses}/>
         <FindingsSection pillarsToStatuses={this.state.pillars.pillarsToStatuses}
-                         findings={this.state.findings}
-                         scoutsuite_data={this.state.scoutsuite_data}/>
+                         findings={this.state.findings}/>
       </div>;
     }
 
@@ -59,8 +58,7 @@ class ZeroTrustReportPageComponent extends AuthComponent {
   stillLoadingDataFromServer() {
     return typeof this.state.findings === 'undefined'
       || typeof this.state.pillars === 'undefined'
-      || typeof this.state.principles === 'undefined'
-      || typeof this.state.scoutsuite_data === 'undefined';
+      || typeof this.state.principles === 'undefined';
   }
 
 

@@ -4,7 +4,6 @@ import PaginatedTable from '../common/PaginatedTable';
 import * as PropTypes from 'prop-types';
 import PillarLabel from './PillarLabel';
 import EventsButton from './EventsButton';
-import ScoutSuiteRuleButton from './scoutsuite/ScoutSuiteRuleButton';
 
 const EVENTS_COLUMN_MAX_WIDTH = 180;
 const PILLARS_COLUMN_MAX_WIDTH = 260;
@@ -36,16 +35,11 @@ export class FindingsTable extends Component {
   ];
 
   getFindingDetails(finding) {
-    if ('scoutsuite_rules' in finding.details) {
-      return <ScoutSuiteRuleButton scoutsuite_rules={finding.details.scoutsuite_rules}
-                                   scoutsuite_data={this.props.scoutsuite_data}/>;
-    } else {
-      return <EventsButton finding_id={finding.finding_id}
-                           latest_events={finding.details.latest_events}
-                           oldest_events={finding.details.oldest_events}
-                           event_count={finding.details.event_count}
-                           exportFilename={'Events_' + finding.test_key}/>;
-    }
+    return <EventsButton finding_id={finding.finding_id}
+                         latest_events={finding.details.latest_events}
+                         oldest_events={finding.details.oldest_events}
+                         event_count={finding.details.event_count}
+                         exportFilename={'Events_' + finding.test_key}/>;
   }
 
   getFindingPillars(finding) {
