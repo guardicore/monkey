@@ -25,7 +25,6 @@ def main():
                  cipher=block_cipher
                  )
 
-    a.binaries += get_binaries()
     a.datas = process_datas(a.datas)
 
     pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
@@ -66,19 +65,11 @@ def process_datas(orig_datas):
     return datas
 
 
-def get_binaries():
-    return get_sc_binaries()
-
-
 def get_hidden_imports():
     imports = ['_cffi_backend', '_mssql']
     if is_windows():
         imports.append('queue')
     return imports
-
-
-def get_sc_binaries():
-    return [(x, get_bin_file_path(x), 'BINARY') for x in ['sc_monkey_runner32.so', 'sc_monkey_runner64.so']]
 
 
 def get_monkey_filename():
