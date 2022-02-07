@@ -538,10 +538,19 @@ class ConfigService:
     @staticmethod
     def _format_fingerprinters_from_flat_config(config: Dict):
         flat_fingerprinter_classes_field = "finger_classes"
+        flat_http_ports_field = "HTTP_PORTS"
 
-        formatted_fingerprinters = config[flat_fingerprinter_classes_field]
+        formatted_fingerprinters = [
+            {"name": f, "options": {}} for f in sorted(config[flat_fingerprinter_classes_field])
+        ]
+
+        if "HTTPFinger" in config[flat_fingerprinter_classes_field]:
+            for fp in formatted_fingerprinters:
+                if fp["name"] == "HTTPFinger":
+                    fp["options"] = {"http_ports": sorted(config[flat_http_ports_field])}
+                    break
+
         config.pop(flat_fingerprinter_classes_field)
-
         return formatted_fingerprinters
 
     @staticmethod
