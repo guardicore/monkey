@@ -49,7 +49,8 @@ class Puppet(IPuppet):
         port_scan_data: Dict[int, PortScanData],
         options: Dict,
     ) -> FingerprintData:
-        return self._mock_puppet.fingerprint(name, host, ping_scan_data, port_scan_data, options)
+        fingerprinter = self._plugin_registry.get_plugin(name, PluginType.FINGERPRINTER)
+        return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
 
     def exploit_host(
         self, name: str, host: str, options: Dict, interrupt: threading.Event

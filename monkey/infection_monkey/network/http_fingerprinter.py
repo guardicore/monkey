@@ -63,8 +63,12 @@ def _query_potential_http_server(host: str, port: int) -> Tuple[Optional[str], O
 
 def _get_server_from_headers(url: str) -> Optional[str]:
     try:
+        logger.debug(f"Sending request for headers to {url}")
         with closing(head(url, verify=False, timeout=1)) as req:  # noqa: DUO123
-            return req.headers.get("Server")
+            server = req.headers.get("Server")
+
+            logger.debug(f'Got server string "{server}" from {url}')
+            return server
     except Timeout:
         logger.debug(f"Timeout while requesting headers from {url}")
     except ConnectionError:  # Someone doesn't like us
@@ -76,5 +80,5 @@ def _get_server_from_headers(url: str) -> Optional[str]:
 def _get_open_http_ports(
     allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
 ) -> Iterable[int]:
-    open_ports = (psd.port for psd in port_scan_data.values() if psd.status == PortStatus.Open)
+    open_ports = (psd.port for psd in port_scan_data.values() if psd.status == PortStatus.OPEN)
     return (port for port in open_ports if port in allowed_http_ports)
