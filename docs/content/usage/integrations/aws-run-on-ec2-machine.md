@@ -10,7 +10,7 @@ tags: ["aws", "integration"]
 
 If your network is deployed on Amazon Web Services (with EC2 instances) and you'd like to run the Infection Monkey to test it, this page is for you. You can easily run the Infection Monkey on various instances within your network in a secure fashion, without feeding it credentials or running shell commands on the machines you want to test.
 
-The results will be exported to the AWS security hub automatically as well. To learn more about that topic, see the [Infection Monkey and AWS Security Hub documentation](https://github.com/guardicore/monkey/wiki/Infection-Monkey-and-AWS-Security-Hub).
+The results will be exported to the AWS Security Hub automatically as well. To learn more about that topic, see the [Infection Monkey and AWS Security Hub documentation](../aws-security-hub/).
 
 ![AWS EC2 logo](/images/usage/integrations/aws-ec2.svg?height=250px "AWS EC2 logo")
 
@@ -73,7 +73,7 @@ After you click on **Run on AWS machine of your choice** you can choose one of t
 
 ### Appendix A: Specific policy permissions required
 
-The IAM role will need to have, at minimum, the following specific permissions: 
+The IAM role will need to have, at minimum, the following specific permissions:
 
 #### For executing the Monkey on other machines - SSM
 
