@@ -206,6 +206,7 @@ class MockPuppet(IPuppet):
         host: str,
         ping_scan_data: PingScanData,
         port_scan_data: Dict[int, PortScanData],
+        options: Dict,
     ) -> FingerprintData:
         logger.debug(f"fingerprint({name}, {host})")
         empty_fingerprint_data = FingerprintData(None, None, {})
