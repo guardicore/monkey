@@ -85,6 +85,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT):
     :return: List of open ports.
     """
     sockets = [socket.socket(socket.AF_INET, socket.SOCK_STREAM) for _ in range(len(ports))]
+    # CR: Don't use list comprehensions if you don't need a list
     [s.setblocking(False) for s in sockets]
     possible_ports = []
     connected_ports_sockets = []
@@ -96,9 +97,13 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT):
                 connected_ports_sockets.append((port, sock))
                 possible_ports.append((port, sock))
                 continue
+            # BUG: I don't think a socket will ever connect successfully if this error is raised.
+            #      From the documentation: "Resource temporarily unavailable... It is a nonfatal
+            #      error, **and the operation should be retried later**." (emphasis mine). If the
+            #      operation is not retried later, I don't see the point in appending this to
+            #      possible_ports.
             if err == 10035:  # WSAEWOULDBLOCK is valid, see
-                # https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29
-                # .aspx?f=255&MSPPError=-2147217396
+                # https://msdn.microsoft.com/en-us/library/windows/desktop/ms740668%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
                 possible_ports.append((port, sock))
                 continue
             if err == 115:  # EINPROGRESS     115     /* Operation now in progress */
@@ -109,10 +114,13 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT):
         if len(possible_ports) != 0:
             timeout = int(round(timeout))  # clamp to integer, to avoid checking input
             sockets_to_try = possible_ports[:]
+            # BUG: If any sockets were added to connected_ports_sockets on line 94, this would
+            #      remove them.
             connected_ports_sockets = []
             while (timeout >= 0) and sockets_to_try:
                 sock_objects = [s[1] for s in sockets_to_try]
 
+                # BUG: Since timeout is 0, this could block indefinitely
                 _, writeable_sockets, _ = select.select(sock_objects, sock_objects, sock_objects, 0)
                 for s in writeable_sockets:
                     try:  # actual test
@@ -135,6 +143,8 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT):
                 )
                 # read first BANNER_READ bytes. We ignore errors because service might not send a
                 # decodable byte string.
+                # CR: Because of how black formats this, it is difficult to parse. Refactor to be
+                # easier to read.
                 banners = [
                     sock.recv(BANNER_READ).decode(errors="ignore")
                     if sock in readable_sockets
@@ -143,6 +153,7 @@ def check_tcp_ports(ip, ports, timeout=DEFAULT_TIMEOUT):
                 ]
                 pass
             # try to cleanup
+            # CR: Evaluate whether or not we should call shutdown() before close() on each socket.
             [s[1].close() for s in possible_ports]
             return [port for port, sock in connected_ports_sockets], banners
         else:
