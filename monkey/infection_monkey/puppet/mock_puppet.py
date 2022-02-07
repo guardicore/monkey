@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict
+from typing import Dict, List
 
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -177,8 +177,10 @@ class MockPuppet(IPuppet):
 
         return PingScanData(False, None)
 
-    def scan_tcp_port(self, host: str, port: int, timeout: int = 3) -> PortScanData:
-        logger.debug(f"run_scan_tcp_port({host}, {port}, {timeout})")
+    def scan_tcp_ports(
+        self, host: str, ports: List[int], timeout: float = 3
+    ) -> Dict[int, PortScanData]:
+        logger.debug(f"run_scan_tcp_port({host}, {ports}, {timeout})")
         dot_1_results = {
             22: PortScanData(22, PortStatus.CLOSED, None, None),
             445: PortScanData(445, PortStatus.OPEN, "SMB BANNER", "tcp-445"),
@@ -191,12 +193,12 @@ class MockPuppet(IPuppet):
         }
 
         if host == DOT_1:
-            return dot_1_results.get(port, _get_empty_results(port))
+            return {port: dot_1_results.get(port, _get_empty_results(port)) for port in ports}
 
         if host == DOT_3:
-            return dot_3_results.get(port, _get_empty_results(port))
+            return {port: dot_3_results.get(port, _get_empty_results(port)) for port in ports}
 
-        return _get_empty_results(port)
+        return {port: _get_empty_results(port) for port in ports}
 
     def fingerprint(
         self,

@@ -59,7 +59,7 @@ class IPScanner:
                 logger.info(f"Scanning {address.ip}")
 
                 ping_scan_data = self._puppet.ping(address.ip, icmp_timeout)
-                port_scan_data = self._scan_tcp_ports(address.ip, tcp_ports, tcp_timeout, stop)
+                port_scan_data = self._puppet.scan_tcp_ports(address.ip, tcp_ports, tcp_timeout)
 
                 fingerprint_data = {}
                 if IPScanner.port_scan_found_open_port(port_scan_data):
@@ -79,16 +79,6 @@ class IPScanner:
             logger.debug(
                 f"ips_to_scan queue is empty, scanning thread {threading.get_ident()} exiting"
             )
-
-    def _scan_tcp_ports(
-        self, ip: str, ports: List[int], timeout: float, stop: Event
-    ) -> Dict[int, PortScanData]:
-        port_scan_data = {}
-
-        for p in interruptable_iter(ports, stop):
-            port_scan_data[p] = self._puppet.scan_tcp_port(ip, p, timeout)
-
-        return port_scan_data
 
     @staticmethod
     def port_scan_found_open_port(port_scan_data: Dict[int, PortScanData]):

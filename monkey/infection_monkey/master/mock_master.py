@@ -70,14 +70,16 @@ class MockMaster(IMaster):
             if ping_scan_data.os is not None:
                 h.os["type"] = ping_scan_data.os
 
-            for p in ports:
-                port_scan_data = self._puppet.scan_tcp_port(ip, p)
-                if port_scan_data.status == PortStatus.OPEN:
-                    h.services[port_scan_data.service] = {}
-                    h.services[port_scan_data.service]["display_name"] = "unknown(TCP)"
-                    h.services[port_scan_data.service]["port"] = port_scan_data.port
-                    if port_scan_data.banner is not None:
-                        h.services[port_scan_data.service]["banner"] = port_scan_data.banner
+            ports_scan_data = self._puppet.scan_tcp_ports(ip, ports)
+
+            for psd in ports_scan_data.values():
+                logger.debug(f"The port {psd.port} is {psd.status}")
+                if psd.status == PortStatus.OPEN:
+                    h.services[psd.service] = {}
+                    h.services[psd.service]["display_name"] = "unknown(TCP)"
+                    h.services[psd.service]["port"] = psd.port
+                    if psd.banner is not None:
+                        h.services[psd.service]["banner"] = psd.banner
 
             self._telemetry_messenger.send_telemetry(ScanTelem(h))
         logger.info("Finished scanning network for potential victims")

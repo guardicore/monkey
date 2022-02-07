@@ -222,19 +222,20 @@ def test_stop_after_callback(scan_config, stop):
     assert stoppable_callback.call_count == 2
 
 
-def test_interrupt_port_scanning(callback, scan_config, stop):
-    def stoppable_scan_tcp_port(port, *_):
+def test_interrupt_before_fingerprinting(callback, scan_config, stop):
+    def stoppable_scan_tcp_ports(port, *_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that neither thread scans any more ports
-        stoppable_scan_tcp_port.barrier.wait()
+        stoppable_scan_tcp_ports.barrier.wait()
         stop.set()
 
-        return PortScanData(port, False, None, None)
+        return {port: PortScanData(port, False, None, None)}
 
-    stoppable_scan_tcp_port.barrier = Barrier(2)
+    stoppable_scan_tcp_ports.barrier = Barrier(2)
 
     puppet = MockPuppet()
-    puppet.scan_tcp_port = MagicMock(side_effect=stoppable_scan_tcp_port)
+    puppet.scan_tcp_ports = MagicMock(side_effect=stoppable_scan_tcp_ports)
+    puppet.fingerprint = MagicMock()
 
     addresses = [
         NetworkAddress("10.0.0.1", None),
@@ -246,7 +247,7 @@ def test_interrupt_port_scanning(callback, scan_config, stop):
     ns = IPScanner(puppet, num_workers=2)
     ns.scan(addresses, scan_config, callback, stop)
 
-    assert puppet.scan_tcp_port.call_count == 2
+    puppet.fingerprint.assert_not_called()
 
 
 def test_interrupt_fingerprinting(callback, scan_config, stop):

@@ -2,7 +2,7 @@ import abc
 import threading
 from collections import namedtuple
 from enum import Enum
-from typing import Dict
+from typing import Dict, List
 
 from . import PluginType
 
@@ -64,14 +64,16 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def scan_tcp_port(self, host: str, port: int, timeout: float) -> PortScanData:
+    def scan_tcp_ports(
+        self, host: str, ports: List[int], timeout: float = 3
+    ) -> Dict[int, PortScanData]:
         """
-        Scans a TCP port on a remote host
+        Scans a list of TCP ports on a remote host
         :param str host: The domain name or IP address of a host
-        :param int port: A TCP port number to scan
+        :param int ports: List of TCP port numbers to scan
         :param float timeout: The maximum amount of time (in seconds) to wait for a response
-        :return: The data collected by scanning the provided host:port combination
-        :rtype: PortScanData
+        :return: The data collected by scanning the provided host:ports combination
+        :rtype: Dict[int, PortScanData]
         """
 
     @abc.abstractmethod
