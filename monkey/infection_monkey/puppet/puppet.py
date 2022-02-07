@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict
+from typing import Dict, List
 
 from infection_monkey import network
 from infection_monkey.i_puppet import (
@@ -36,8 +36,10 @@ class Puppet(IPuppet):
     def ping(self, host: str, timeout: float = 1) -> PingScanData:
         return network.ping(host, timeout)
 
-    def scan_tcp_port(self, host: str, port: int, timeout: float = 3) -> PortScanData:
-        return self._mock_puppet.scan_tcp_port(host, port, timeout)
+    def scan_tcp_ports(
+        self, host: str, ports: List[int], timeout: float = 3
+    ) -> Dict[int, PortScanData]:
+        return self._mock_puppet.scan_tcp_ports(host, ports, timeout)
 
     def fingerprint(
         self,
