@@ -16,7 +16,7 @@ from infection_monkey.i_puppet import (
 logger = logging.getLogger(__name__)
 
 
-class HTTPFinger(IFingerprinter):
+class HTTPFingerprinter(IFingerprinter):
     """
     Goal is to recognise HTTP servers, where what we currently care about is apache.
     """
