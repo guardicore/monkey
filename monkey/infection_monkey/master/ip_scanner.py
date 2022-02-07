@@ -95,8 +95,8 @@ class IPScanner:
         fingerprint_data = {}
 
         for f in interruptable_iter(fingerprinters, stop):
-            fingerprint_data[f] = self._puppet.fingerprint(
-                f, ip, ping_scan_data, port_scan_data, {}
+            fingerprint_data[f["name"]] = self._puppet.fingerprint(
+                f["name"], ip, ping_scan_data, port_scan_data, f["options"]
             )
 
         return fingerprint_data
