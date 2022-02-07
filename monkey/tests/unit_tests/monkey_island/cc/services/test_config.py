@@ -147,14 +147,14 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
             "timeout_ms": 1000,
         },
         "fingerprinters": [
-            {"name": "ElasticFinger", "options": {}},
+            {"name": "elastic", "options": {}},
             {
-                "name": "HTTPFinger",
+                "name": "http",
                 "options": {"http_ports": [80, 443, 7001, 8008, 8080, 9200]},
             },
-            {"name": "MSSQLFinger", "options": {}},
-            {"name": "SMBFinger", "options": {}},
-            {"name": "SSHFinger", "options": {}},
+            {"name": "mssql", "options": {}},
+            {"name": "smb", "options": {}},
+            {"name": "ssh", "options": {}},
         ],
     }
     ConfigService.format_flat_config_for_agent(flat_monkey_config)

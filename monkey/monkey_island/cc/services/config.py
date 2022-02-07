@@ -2,6 +2,7 @@ import collections
 import copy
 import functools
 import logging
+import re
 from typing import Dict, List
 
 from jsonschema import Draft4Validator, validators
@@ -548,10 +549,15 @@ class ConfigService:
             for fp in formatted_fingerprinters:
                 if fp["name"] == "HTTPFinger":
                     fp["options"] = {"http_ports": sorted(config[flat_http_ports_field])}
-                    break
+
+                fp["name"] = ConfigService._translate_fingerprinter_name(fp["name"])
 
         config.pop(flat_fingerprinter_classes_field)
         return formatted_fingerprinters
+
+    @staticmethod
+    def _translate_fingerprinter_name(name: str):
+        return re.sub(r"Finger", "", name).lower()
 
     @staticmethod
     def _format_targets_from_flat_config(config: Dict):
