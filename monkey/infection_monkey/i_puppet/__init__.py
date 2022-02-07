@@ -9,3 +9,4 @@ from .i_puppet import (
     PostBreachData,
     UnknownPluginError,
 )
+from .i_fingerprinter import IFingerprinter

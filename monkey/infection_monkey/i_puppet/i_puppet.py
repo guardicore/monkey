@@ -86,7 +86,8 @@ class IPuppet(metaclass=abc.ABCMeta):
         options: Dict,
     ) -> FingerprintData:
         """
-        Runs a fingerprinter against a remote host
+        Runs a specific fingerprinter to attempt to gather detailed information about a host and its
+        services
         :param str name: The name of the fingerprinter to run
         :param str host: The domain name or IP address of a host
         :param PingScanData ping_scan_data: Data retrieved from the target host via ICMP
@@ -94,7 +95,7 @@ class IPuppet(metaclass=abc.ABCMeta):
                                                        port scan
         :param Dict options: A dictionary containing options that modify the behavior of the
                              fingerprinter
-        :return: The data collected by running the fingerprinter on the specified host
+        :return: Detailed information about the target host
         :rtype: FingerprintData
         """
 
