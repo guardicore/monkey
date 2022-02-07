@@ -24,7 +24,7 @@ class HTTPFingerprinter(IFingerprinter):
     def get_host_fingerprint(
         self,
         host: str,
-        ping_scan_data: PingScanData,
+        _: PingScanData,
         port_scan_data: Dict[int, PortScanData],
         options: Dict,
     ):
