@@ -28,7 +28,7 @@ class HTTPFingerprinter(IFingerprinter):
         _: PingScanData,
         port_scan_data: Dict[int, PortScanData],
         options: Dict,
-    ):
+    ) -> FingerprintData:
         services = {}
         http_ports = set(options.get("http_ports", []))
         ports_to_fingerprint = _get_open_http_ports(http_ports, port_scan_data)
