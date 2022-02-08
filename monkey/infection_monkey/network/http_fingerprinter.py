@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 class HTTPFingerprinter(IFingerprinter):
     """
-    Goal is to recognise HTTP servers, where what we currently care about is apache.
+    Queries potential HTTP(S) ports and attempt to determine the server software that handles the
+    HTTP requests.
     """
 
     def get_host_fingerprint(
@@ -51,7 +52,6 @@ def _query_potential_http_server(host: str, port: int) -> Tuple[Optional[str], O
     http = f"http://{host}:{port}"
     https = f"https://{host}:{port}"
 
-    # try http, we don't optimise for 443
     for url, ssl in ((https, True), (http, False)):  # start with https and downgrade
         server_header_contents = _get_server_from_headers(url)
 
