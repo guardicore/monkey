@@ -55,7 +55,7 @@ function RunOptions(props) {
     return InlineSelection(defaultContents, newProps);
   }
 
-  function isNotRansomware(islandMode){
+  function isNotRansomwareMode(islandMode){
     return islandMode !== 'ransomware';
   }
 
@@ -72,7 +72,7 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-        {isNotRansomware(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
+        {isNotRansomwareMode(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
       </>
     );
   }
