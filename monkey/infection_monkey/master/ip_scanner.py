@@ -3,7 +3,7 @@ import queue
 import threading
 from queue import Queue
 from threading import Event
-from typing import Callable, Dict, List
+from typing import Any, Callable, Dict, List
 
 from infection_monkey.i_puppet import (
     FingerprintData,
@@ -87,7 +87,7 @@ class IPScanner:
     def _run_fingerprinters(
         self,
         ip: str,
-        fingerprinters: List[str],
+        fingerprinters: List[Dict[str, Any]],
         ping_scan_data: PingScanData,
         port_scan_data: Dict[int, PortScanData],
         stop: Event,
@@ -95,6 +95,8 @@ class IPScanner:
         fingerprint_data = {}
 
         for f in interruptable_iter(fingerprinters, stop):
-            fingerprint_data[f] = self._puppet.fingerprint(f, ip, ping_scan_data, port_scan_data)
+            fingerprint_data[f["name"]] = self._puppet.fingerprint(
+                f["name"], ip, ping_scan_data, port_scan_data, f["options"]
+            )
 
         return fingerprint_data

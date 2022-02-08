@@ -2,7 +2,8 @@ import collections
 import copy
 import functools
 import logging
-from typing import Dict, List
+import re
+from typing import Any, Dict, List
 
 from jsonschema import Draft4Validator, validators
 
@@ -405,7 +406,7 @@ class ConfigService:
         return ConfigService.get_config_value(EXPORT_MONKEY_TELEMS_PATH)
 
     @staticmethod
-    def get_config_propagation_credentials_from_flat_config(config):
+    def get_config_propagation_credentials_from_flat_config(config) -> Dict[str, List[str]]:
         return {
             "exploit_user_list": config.get("exploit_user_list", []),
             "exploit_password_list": config.get("exploit_password_list", []),
@@ -482,8 +483,8 @@ class ConfigService:
         config["propagation"] = formatted_propagation_config
 
     @staticmethod
-    def _format_network_scan_from_flat_config(config: Dict):
-        formatted_network_scan_config = {"tcp": {}, "icmp": {}}
+    def _format_network_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
+        formatted_network_scan_config = {"tcp": {}, "icmp": {}, "fingerprinters": []}
 
         formatted_network_scan_config["tcp"] = ConfigService._format_tcp_scan_from_flat_config(
             config
@@ -498,7 +499,7 @@ class ConfigService:
         return formatted_network_scan_config
 
     @staticmethod
-    def _format_tcp_scan_from_flat_config(config: Dict):
+    def _format_tcp_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
         flat_http_ports_field = "HTTP_PORTS"
         flat_tcp_timeout_field = "tcp_scan_timeout"
         flat_tcp_ports_field = "tcp_target_ports"
@@ -525,7 +526,7 @@ class ConfigService:
         return sorted(combined_ports)
 
     @staticmethod
-    def _format_icmp_scan_from_flat_config(config: Dict):
+    def _format_icmp_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
         flat_ping_timeout_field = "ping_scan_timeout"
 
         formatted_icmp_scan_config = {}
@@ -536,16 +537,34 @@ class ConfigService:
         return formatted_icmp_scan_config
 
     @staticmethod
-    def _format_fingerprinters_from_flat_config(config: Dict):
+    def _format_fingerprinters_from_flat_config(config: Dict) -> List[Dict[str, Any]]:
         flat_fingerprinter_classes_field = "finger_classes"
+        flat_http_ports_field = "HTTP_PORTS"
 
-        formatted_fingerprinters = config[flat_fingerprinter_classes_field]
+        formatted_fingerprinters = [
+            {"name": f, "options": {}} for f in sorted(config[flat_fingerprinter_classes_field])
+        ]
+
+        if "HTTPFinger" in config[flat_fingerprinter_classes_field]:
+            for fp in formatted_fingerprinters:
+                if fp["name"] == "HTTPFinger":
+                    fp["options"] = {"http_ports": sorted(config[flat_http_ports_field])}
+
+                fp["name"] = ConfigService._translate_fingerprinter_name(fp["name"])
+
         config.pop(flat_fingerprinter_classes_field)
-
         return formatted_fingerprinters
 
     @staticmethod
-    def _format_targets_from_flat_config(config: Dict):
+    def _translate_fingerprinter_name(name: str) -> str:
+        # This translates names like "HTTPFinger" to "http". "HTTPFinger" is an old classname on the
+        # agent-side and is therefore unnecessarily couples the island to the fingerprinter's
+        # implementation within the agent. For the time being, fingerprinters will have names like
+        # "http", "ssh", "elastic", etc. This will be revisited when fingerprinters become plugins.
+        return re.sub(r"Finger", "", name).lower()
+
+    @staticmethod
+    def _format_targets_from_flat_config(config: Dict) -> Dict[str, Any]:
         flat_blocked_ips_field = "blocked_ips"
         flat_inaccessible_subnets_field = "inaccessible_subnets"
         flat_local_network_scan_field = "local_network_scan"
@@ -572,7 +591,7 @@ class ConfigService:
         return formatted_scan_targets_config
 
     @staticmethod
-    def _format_exploiters_from_flat_config(config: Dict):
+    def _format_exploiters_from_flat_config(config: Dict) -> Dict[str, List[Dict[str, Any]]]:
         flat_config_exploiter_classes_field = "exploiter_classes"
         brute_force_category = "brute_force"
         vulnerability_category = "vulnerability"

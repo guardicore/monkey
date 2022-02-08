@@ -30,7 +30,12 @@ def scan_config():
         "icmp": {
             "timeout_ms": 1000,
         },
-        "fingerprinters": {"HTTPFinger", "SMBFinger", "SSHFinger"},
+        "fingerprinters": [
+            {"name": "HTTPFinger", "options": {}},
+            {"name": "SMBFinger", "options": {}},
+            {"name": "SSHFinger", "options": {}},
+        ]
+
     }
 
 
