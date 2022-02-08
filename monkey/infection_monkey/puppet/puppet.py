@@ -39,7 +39,7 @@ class Puppet(IPuppet):
     def scan_tcp_ports(
         self, host: str, ports: List[int], timeout: float = 3
     ) -> Dict[int, PortScanData]:
-        return self._mock_puppet.scan_tcp_ports(host, ports, timeout)
+        return network.scan_tcp_ports(host, ports, timeout)
 
     def fingerprint(
         self,
