@@ -545,12 +545,11 @@ class ConfigService:
             {"name": f, "options": {}} for f in sorted(config[flat_fingerprinter_classes_field])
         ]
 
-        if "HTTPFinger" in config[flat_fingerprinter_classes_field]:
-            for fp in formatted_fingerprinters:
-                if fp["name"] == "HTTPFinger":
-                    fp["options"] = {"http_ports": sorted(config[flat_http_ports_field])}
+        for fp in formatted_fingerprinters:
+            if fp["name"] == "HTTPFinger":
+                fp["options"] = {"http_ports": sorted(config[flat_http_ports_field])}
 
-                fp["name"] = ConfigService._translate_fingerprinter_name(fp["name"])
+            fp["name"] = ConfigService._translate_fingerprinter_name(fp["name"])
 
         config.pop(flat_fingerprinter_classes_field)
         return formatted_fingerprinters
