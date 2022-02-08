@@ -557,6 +557,10 @@ class ConfigService:
 
     @staticmethod
     def _translate_fingerprinter_name(name: str) -> str:
+        # This translates names like "HTTPFinger" to "http". "HTTPFinger" is an old classname on the
+        # agent-side and is therefore unnecessarily couples the island to the fingerprinter's
+        # implementation within the agent. For the time being, fingerprinters will have names like
+        # "http", "ssh", "elastic", etc. This will be revisited when fingerprinters become plugins.
         return re.sub(r"Finger", "", name).lower()
 
     @staticmethod
