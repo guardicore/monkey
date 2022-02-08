@@ -17,6 +17,7 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import DELAY_DELETE_CMD, VictimHostFactory
 from infection_monkey.network import NetworkInterface
+from infection_monkey.network.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network.info import get_local_network_interfaces
@@ -184,7 +185,10 @@ class InfectionMonkey:
     @staticmethod
     def _build_puppet() -> IPuppet:
         puppet = Puppet()
+
+        puppet.load_plugin("elastic", ElasticSearchFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("http", HTTPFingerprinter(), PluginType.FINGERPRINTER)
+
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
 
         return puppet
