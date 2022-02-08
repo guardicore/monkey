@@ -1,4 +1,5 @@
 import logging
+import time
 
 from common.cloud.aws.aws_service import AwsService
 from common.cmd.aws.aws_cmd_result import AwsCmdResult
@@ -20,6 +21,7 @@ class AwsCmdRunner(CmdRunner):
         self.ssm = AwsService.get_client("ssm", region)
 
     def query_command(self, command_id):
+        time.sleep(2)
         return self.ssm.get_command_invocation(CommandId=command_id, InstanceId=self.instance_id)
 
     def get_command_result(self, command_info):
