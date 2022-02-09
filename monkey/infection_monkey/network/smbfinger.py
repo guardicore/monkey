@@ -62,7 +62,7 @@ class SMBNego(Packet):
         self.fields["bcc"] = struct.pack("<h", len(self.fields["data"].to_byte_string()))
 
 
-class SMBNegoFingerData(Packet):
+class SMBNegoFingerprintData(Packet):
     fields = odict(
         [
             ("separator1", b"\x02"),
@@ -89,7 +89,7 @@ class SMBNegoFingerData(Packet):
     )
 
 
-class SMBSessionFingerData(Packet):
+class SMBSessionFingerprintData(Packet):
     fields = odict(
         [
             ("wordcount", b"\x0c"),
@@ -127,7 +127,7 @@ class SMBSessionFingerData(Packet):
         self.fields["bcc1"] = struct.pack("<i", len(self.fields["Data"]))[:2]
 
 
-class SMBFinger(HostFinger):
+class SMBFingerprinter(HostFinger):
     _SCANNED_SERVICE = "SMB"
 
     def __init__(self):
@@ -145,7 +145,7 @@ class SMBFinger(HostFinger):
             self.init_service(host.services, SMB_SERVICE, SMB_PORT)
 
             h = SMBHeader(cmd=b"\x72", flag1=b"\x18", flag2=b"\x53\xc8")
-            n = SMBNego(data=SMBNegoFingerData())
+            n = SMBNego(data=SMBNegoFingerprintData())
             n.calculate()
 
             packet_ = h.to_byte_string() + n.to_byte_string()
@@ -155,7 +155,7 @@ class SMBFinger(HostFinger):
 
             if data[8:10] == b"\x72\x00":
                 header = SMBHeader(cmd=b"\x73", flag1=b"\x18", flag2=b"\x17\xc8", uid=b"\x00\x00")
-                body = SMBSessionFingerData()
+                body = SMBSessionFingerprintData()
                 body.calculate()
 
                 packet_ = header.to_byte_string() + body.to_byte_string()
