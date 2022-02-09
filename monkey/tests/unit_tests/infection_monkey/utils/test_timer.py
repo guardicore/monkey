@@ -67,3 +67,28 @@ def test_timer_reset(start_time, set_current_time, timeout):
 
     set_current_time(start_time + (2 * timeout))
     assert t.is_expired()
+
+
+def test_time_remaining(start_time, set_current_time):
+    timeout = 5
+
+    t = Timer()
+    t.set(timeout)
+
+    assert t.time_remaining == timeout
+
+    set_current_time(start_time + 2)
+    assert t.time_remaining == 3
+
+
+def test_time_remaining_is_zero(start_time, set_current_time):
+    timeout = 5
+
+    t = Timer()
+    t.set(timeout)
+
+    set_current_time(start_time + timeout)
+    assert t.time_remaining == 0
+
+    set_current_time(start_time + (2 * timeout))
+    assert t.time_remaining == 0
