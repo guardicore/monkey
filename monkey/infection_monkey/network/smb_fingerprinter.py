@@ -150,6 +150,10 @@ class SMBFingerprinter(IFingerprinter):
         }
         os_type = None
         os_version = None
+
+        if (SMB_PORT not in port_scan_data) or (port_scan_data[SMB_PORT].status != PortStatus.OPEN):
+            return FingerprintData(None, None, services)
+
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(0.7)
