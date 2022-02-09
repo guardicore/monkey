@@ -185,7 +185,6 @@ class InfectionMonkey:
     @staticmethod
     def _build_puppet() -> IPuppet:
         puppet = Puppet()
-
         puppet.load_plugin("elastic", ElasticSearchFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("http", HTTPFingerprinter(), PluginType.FINGERPRINTER)
 
