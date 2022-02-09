@@ -22,7 +22,6 @@ Flask-PyMongo = ">=2.3.0"
 Flask-RESTful = ">=0.3.8"
 Flask = ">=1.1"
 Werkzeug = ">=1.0.1"
-ScoutSuite = {git = "https://github.com/guardicode/ScoutSuite"}
 pyaescrypt = "*"
 python-dateutil = "*"
 cffi = "*"  # Without explicit install: ModuleNotFoundError: No module named '_cffi_backend'
