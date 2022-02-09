@@ -8,7 +8,6 @@ import {cloneDeep} from 'lodash';
 import {faCloud, faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
-import CloudOptions from './scoutsuite-setup/CloudOptions';
 
 const CONFIG_URL = '/api/configuration/island';
 
@@ -56,7 +55,7 @@ function RunOptions(props) {
     return InlineSelection(defaultContents, newProps);
   }
 
-  function shouldShowScoutsuite(islandMode){
+  function isNotRansomwareMode(islandMode){
     return islandMode !== 'ransomware';
   }
 
@@ -73,15 +72,7 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-        {shouldShowScoutsuite(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
-        {shouldShowScoutsuite(props.islandMode) && <NextSelectionButton title={'Cloud security scan'}
-                             description={'Explains how to enable cloud security scan.'}
-                             icon={faCloud}
-                             onButtonClick={() => {
-                               setComponent(CloudOptions,
-                                 {ips: ips, setComponent: setComponent})
-                             }}/>
-        }
+        {isNotRansomwareMode(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
       </>
     );
   }

@@ -4,7 +4,7 @@ date: 2020-07-14T08:09:53+03:00
 draft: false
 pre: '<i class="fas fa-laptop"></i> '
 weight: 10
-tags: ["setup", "reference", "windows", "linux"] 
+tags: ["setup", "reference", "windows", "linux"]
 ---
 
 The Infection Monkey project supports many popular OSes (but we are always interested in supporting more).

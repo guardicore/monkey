@@ -42,6 +42,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - MySQL fingerprinter. #1648
 - MS08-067 (Conficker) exploiter. #1677
 - Agent bootloader. #1676
+- Zero Trust integration with ScoutSuite. #1669
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

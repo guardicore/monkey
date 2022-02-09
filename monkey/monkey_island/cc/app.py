@@ -46,8 +46,6 @@ from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
-from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
-from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth import ScoutSuiteAuth
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
@@ -168,8 +166,6 @@ def init_api_resources(api):
     api.add_resource(VersionUpdate, "/api/version-update")
     api.add_resource(StopAgentCheck, "/api/monkey_control/needs-to-stop/<int:monkey_guid>")
     api.add_resource(StopAllAgents, "/api/monkey_control/stop-all-agents")
-    api.add_resource(ScoutSuiteAuth, "/api/scoutsuite_auth/<string:provider>")
-    api.add_resource(AWSKeys, "/api/aws_keys")
 
     # Resources used by black box tests
     api.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")

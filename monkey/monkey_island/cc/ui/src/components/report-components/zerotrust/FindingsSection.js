@@ -33,13 +33,10 @@ class FindingsSection extends Component {
         </p>
 
         <FindingsTable data={findingsByStatus[ZeroTrustStatuses.failed]}
-                       scoutsuite_data={this.props.scoutsuite_data}
                        status={ZeroTrustStatuses.failed}/>
         <FindingsTable data={findingsByStatus[ZeroTrustStatuses.verify]}
-                       scoutsuite_data={this.props.scoutsuite_data}
                        status={ZeroTrustStatuses.verify}/>
         <FindingsTable data={findingsByStatus[ZeroTrustStatuses.passed]}
-                       scoutsuite_data={this.props.scoutsuite_data}
                        status={ZeroTrustStatuses.passed}/>
       </div>
     );

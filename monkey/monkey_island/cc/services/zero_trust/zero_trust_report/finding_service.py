@@ -7,7 +7,6 @@ from common.common_consts import zero_trust_consts
 from common.utils.exceptions import UnknownFindingError
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
-from monkey_island.cc.models.zero_trust.scoutsuite_finding import ScoutSuiteFinding
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_details_service import (
     MonkeyZTDetailsService,
 )
@@ -55,7 +54,5 @@ class FindingService:
     def _get_finding_details(finding: Finding) -> Union[dict, SON]:
         if type(finding) == MonkeyFinding:
             return MonkeyZTDetailsService.fetch_details_for_display(finding.details.id)
-        elif type(finding) == ScoutSuiteFinding:
-            return finding.details.fetch().to_mongo()
         else:
             raise UnknownFindingError(f"Unknown finding type {str(type(finding))}")

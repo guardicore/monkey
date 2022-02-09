@@ -5,13 +5,10 @@ import sys
 
 
 
-from PyInstaller.utils.hooks import collect_data_files
-
 block_cipher = None
 
 
 def main():
-    print(collect_data_files('policyuniverse'))
     a = Analysis(['main.py'],
                  pathex=['..'],
                  hiddenimports=get_hidden_imports(),
