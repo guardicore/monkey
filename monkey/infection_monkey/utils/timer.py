@@ -25,7 +25,18 @@ class Timer:
                  TIMEOUT_SEC, False otherwise
         :rtype: bool
         """
-        return (time.time() - self._start_time) >= self._timeout_sec
+        return self.time_remaining == 0
+
+    @property
+    def time_remaining(self) -> float:
+        """
+        Return the amount of time remaining until the timer expires.
+        :return: The number of seconds until the timer expires. If the timer is expired, this
+                 function returns 0 (it will never return a negative number).
+        :rtype: float
+        """
+        time_remaining = self._timeout_sec - (time.time() - self._start_time)
+        return time_remaining if time_remaining > 0 else 0
 
     def reset(self):
         """
