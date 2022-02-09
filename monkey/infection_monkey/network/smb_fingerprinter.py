@@ -154,6 +154,8 @@ class SMBFingerprinter(IFingerprinter):
         if (SMB_PORT not in port_scan_data) or (port_scan_data[SMB_PORT].status != PortStatus.OPEN):
             return FingerprintData(None, None, services)
 
+        logger.debug(f"Fingerprinting potential SMB port {SMB_PORT} on {host}")
+
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(0.7)
@@ -187,6 +189,8 @@ class SMBFingerprinter(IFingerprinter):
                         for e in data[47 + length :].split(b"\x00\x00\x00")[:2]
                     ]
                 )
+
+                logger.debug(f'os_version: "{os_version}", service_client: "{service_client}"')
 
                 if os_version.lower() != "unix":
                     os_type = "windows"
