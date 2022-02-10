@@ -1,7 +1,7 @@
 import logging
 import select
 import socket
-from typing import Iterable, Mapping
+from typing import Iterable, Mapping, Tuple
 
 from infection_monkey.i_puppet import PortScanData, PortStatus
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_port_to_service
@@ -113,13 +113,28 @@ def _check_tcp_ports(
                     else:
                         open_ports[port] = ""
 
-            # try to cleanup
-            for s in possible_ports:
-                s[1].shutdown(socket.SHUT_RDWR)
-                s[1].close()
-
     except socket.error as exc:
         logger.warning("Exception when checking ports on host %s, Exception: %s", str(ip), exc)
 
-    finally:
-        return open_ports
+    _clean_up_sockets(possible_ports, connected_ports_sockets)
+
+    return open_ports
+
+
+def _clean_up_sockets(
+    possible_ports: Iterable[Tuple[int, socket.socket]],
+    connected_ports_sockets: Iterable[Tuple[int, socket.socket]],
+):
+    # Only call shutdown() on sockets we know to be connected
+    for port, s in connected_ports_sockets:
+        try:
+            s.shutdown(socket.SHUT_RDWR)
+        except socket.error as exc:
+            logger.warning(f"Error occurred while shutting down socket on port {port}: {exc}")
+
+    # Call close() for all sockets
+    for port, s in possible_ports:
+        try:
+            s.close()
+        except socket.error as exc:
+            logger.warning(f"Error occurred while closing socket on port {port}: {exc}")
