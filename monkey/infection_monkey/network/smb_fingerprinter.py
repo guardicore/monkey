@@ -1,11 +1,19 @@
 import logging
 import socket
 import struct
+from typing import Dict
 
 from odict import odict
 
-from infection_monkey.network.HostFinger import HostFinger
+from infection_monkey.i_puppet import (
+    FingerprintData,
+    IFingerprinter,
+    PingScanData,
+    PortScanData,
+    PortStatus,
+)
 
+SMB_DISPLAY_NAME = "SMB"
 SMB_PORT = 445
 SMB_SERVICE = "tcp-445"
 
@@ -62,7 +70,7 @@ class SMBNego(Packet):
         self.fields["bcc"] = struct.pack("<h", len(self.fields["data"].to_byte_string()))
 
 
-class SMBNegoFingerData(Packet):
+class SMBNegoFingerprintData(Packet):
     fields = odict(
         [
             ("separator1", b"\x02"),
@@ -89,7 +97,7 @@ class SMBNegoFingerData(Packet):
     )
 
 
-class SMBSessionFingerData(Packet):
+class SMBSessionFingerprintData(Packet):
     fields = odict(
         [
             ("wordcount", b"\x0c"),
@@ -127,25 +135,34 @@ class SMBSessionFingerData(Packet):
         self.fields["bcc1"] = struct.pack("<i", len(self.fields["Data"]))[:2]
 
 
-class SMBFinger(HostFinger):
-    _SCANNED_SERVICE = "SMB"
+class SMBFingerprinter(IFingerprinter):
+    def get_host_fingerprint(
+        self,
+        host: str,
+        _ping_scan_data: PingScanData,
+        port_scan_data: Dict[int, PortScanData],
+        _options: Dict,
+    ) -> FingerprintData:
+        services = {}
+        smb_service = {
+            "display_name": SMB_DISPLAY_NAME,
+            "port": SMB_PORT,
+        }
+        os_type = None
+        os_version = None
 
-    def __init__(self):
-        from infection_monkey.config import WormConfiguration
+        if (SMB_PORT not in port_scan_data) or (port_scan_data[SMB_PORT].status != PortStatus.OPEN):
+            return FingerprintData(None, None, services)
 
-        self._config = WormConfiguration
-
-    def get_host_fingerprint(self, host):
+        logger.debug(f"Fingerprinting potential SMB port {SMB_PORT} on {host}")
 
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(0.7)
-            s.connect((host.ip_addr, SMB_PORT))
-
-            self.init_service(host.services, SMB_SERVICE, SMB_PORT)
+            s.connect((host, SMB_PORT))
 
             h = SMBHeader(cmd=b"\x72", flag1=b"\x18", flag2=b"\x53\xc8")
-            n = SMBNego(data=SMBNegoFingerData())
+            n = SMBNego(data=SMBNegoFingerprintData())
             n.calculate()
 
             packet_ = h.to_byte_string() + n.to_byte_string()
@@ -155,7 +172,7 @@ class SMBFinger(HostFinger):
 
             if data[8:10] == b"\x72\x00":
                 header = SMBHeader(cmd=b"\x73", flag1=b"\x18", flag2=b"\x17\xc8", uid=b"\x00\x00")
-                body = SMBSessionFingerData()
+                body = SMBSessionFingerprintData()
                 body.calculate()
 
                 packet_ = header.to_byte_string() + body.to_byte_string()
@@ -173,17 +190,17 @@ class SMBFinger(HostFinger):
                     ]
                 )
 
+                logger.debug(f'os_version: "{os_version}", service_client: "{service_client}"')
+
                 if os_version.lower() != "unix":
-                    host.os["type"] = "windows"
+                    os_type = "windows"
                 else:
-                    host.os["type"] = "linux"
+                    os_type = "linux"
 
-                host.services[SMB_SERVICE]["name"] = service_client
-                if "version" not in host.os:
-                    host.os["version"] = os_version
+                smb_service["name"] = service_client
 
-                return True
+            services[SMB_SERVICE] = smb_service
         except Exception as exc:
             logger.debug("Error getting smb fingerprint: %s", exc)
 
-        return False
+        return FingerprintData(os_type, os_version, services)
