@@ -15,6 +15,8 @@ from infection_monkey.i_puppet import (
 
 logger = logging.getLogger(__name__)
 
+DISPLAY_NAME = "HTTP"
+
 
 class HTTPFingerprinter(IFingerprinter):
     """
@@ -38,7 +40,7 @@ class HTTPFingerprinter(IFingerprinter):
 
             if server_header_contents is not None:
                 services[f"tcp-{port}"] = {
-                    "display_name": "HTTP",
+                    "display_name": DISPLAY_NAME,
                     "port": port,
                     "name": "http",
                     "data": (server_header_contents, ssl),

@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 MSSQL_SERVICE = "MSSQL"
+DISPLAY_NAME = MSSQL_SERVICE
 SQL_BROWSER_DEFAULT_PORT = 1434
 _BUFFER_SIZE = 4096
 _MSSQL_SOCKET_TIMEOUT = 5
@@ -78,7 +79,7 @@ def _query_mssql_for_instance_data(host: str) -> Optional[bytes]:
 
 def _get_services_from_server_data(data: bytes) -> Dict[str, Any]:
     services = {MSSQL_SERVICE: {}}
-    services[MSSQL_SERVICE]["display_name"] = MSSQL_SERVICE
+    services[MSSQL_SERVICE]["display_name"] = DISPLAY_NAME
     services[MSSQL_SERVICE]["port"] = SQL_BROWSER_DEFAULT_PORT
 
     # Loop through the server data

@@ -13,7 +13,7 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 
-SMB_DISPLAY_NAME = "SMB"
+DISPLAY_NAME = "SMB"
 SMB_PORT = 445
 SMB_SERVICE = "tcp-445"
 
@@ -145,7 +145,7 @@ class SMBFingerprinter(IFingerprinter):
     ) -> FingerprintData:
         services = {}
         smb_service = {
-            "display_name": SMB_DISPLAY_NAME,
+            "display_name": DISPLAY_NAME,
             "port": SMB_PORT,
         }
         os_type = None

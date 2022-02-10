@@ -13,6 +13,7 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 
+DISPLAY_NAME = "ElasticSearch"
 ES_PORT = 9200
 ES_HTTP_TIMEOUT = 5
 logger = logging.getLogger(__name__)
@@ -54,7 +55,7 @@ def _query_elasticsearch(host: str) -> Dict[str, Any]:
 def _get_service_from_query_info(elasticsearch_info: Dict[str, Any]) -> Dict[str, Any]:
     try:
         return {
-            "display_name": "ElasticSearch",
+            "display_name": DISPLAY_NAME,
             "port": ES_PORT,
             "cluster_name": elasticsearch_info["cluster_name"],
             "name": elasticsearch_info["name"],
