@@ -89,13 +89,13 @@ class MockMaster(IMaster):
         machine_1 = self._hosts["10.0.0.1"]
         machine_3 = self._hosts["10.0.0.3"]
 
-        self._puppet.fingerprint("SMBFinger", machine_1, None, None)
+        self._puppet.fingerprint("SMBFinger", machine_1, None, None, None)
         self._telemetry_messenger.send_telemetry(ScanTelem(machine_1))
 
-        self._puppet.fingerprint("SMBFinger", machine_3, None, None)
+        self._puppet.fingerprint("SMBFinger", machine_3, None, None, None)
         self._telemetry_messenger.send_telemetry(ScanTelem(machine_3))
 
-        self._puppet.fingerprint("HTTPFinger", machine_3, None, None)
+        self._puppet.fingerprint("HTTPFinger", machine_3, None, None, None)
         self._telemetry_messenger.send_telemetry(ScanTelem(machine_3))
         logger.info("Finished running fingerprinters on potential victims")
 
