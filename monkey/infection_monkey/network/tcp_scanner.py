@@ -1,6 +1,7 @@
 import logging
 import select
 import socket
+import time
 from typing import Iterable, Mapping, Tuple
 
 from infection_monkey.i_puppet import PortScanData, PortStatus
@@ -8,6 +9,8 @@ from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_por
 from infection_monkey.utils.timer import Timer
 
 logger = logging.getLogger(__name__)
+
+POLL_INTERVAL = 0.5
 
 
 def scan_tcp_ports(
@@ -83,6 +86,10 @@ def _check_tcp_ports(
             timer.set(timeout)
 
             while (not timer.is_expired()) and sockets_to_try:
+                # The call to select() may return sockets that are writeable but not actually
+                # connected. Adding this sleep prevents excessive looping.
+                time.sleep(min(POLL_INTERVAL, timer.time_remaining))
+
                 sock_objects = [s[1] for s in sockets_to_try]
 
                 _, writeable_sockets, _ = select.select([], sock_objects, [], timer.time_remaining)
