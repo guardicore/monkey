@@ -36,7 +36,7 @@ class Timer:
         :rtype: float
         """
         time_remaining = self._timeout_sec - (time.time() - self._start_time)
-        return time_remaining if time_remaining > 0 else 0
+        return max(time_remaining, 0)
 
     def reset(self):
         """
