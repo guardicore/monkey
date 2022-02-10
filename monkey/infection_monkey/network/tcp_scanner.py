@@ -53,8 +53,8 @@ def _check_tcp_ports(
     for s in sockets:
         s.setblocking(False)
 
-    possible_ports = []
-    connected_ports_sockets = []
+    possible_ports = set()
+    connected_ports = set()
     open_ports = {}
 
     try:
@@ -64,19 +64,17 @@ def _check_tcp_ports(
         for sock, port in zip(sockets, ports_to_scan):
             err = sock.connect_ex((ip, port))
             if err == 0:  # immediate connect
-                connected_ports_sockets.append((port, sock))
-                possible_ports.append((port, sock))
-                continue
-            if err == 10035:  # WSAEWOULDBLOCK is valid.
+                connected_ports.add((port, sock))
+                possible_ports.add((port, sock))
+            elif err == 10035:  # WSAEWOULDBLOCK is valid.
                 # https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-connect
                 # says, "Use the select function to determine the completion of the connection
                 # request by checking to see if the socket is writable," which is being done below.
-                possible_ports.append((port, sock))
-                continue
-            if err == 115:  # EINPROGRESS     115     /* Operation now in progress */
-                possible_ports.append((port, sock))
-                continue
-            logger.warning("Failed to connect to port %s, error code is %d", port, err)
+                possible_ports.add((port, sock))
+            elif err == 115:  # EINPROGRESS     115     /* Operation now in progress */
+                possible_ports.add((port, sock))
+            else:
+                logger.warning("Failed to connect to port %s, error code is %d", port, err)
 
         if len(possible_ports) != 0:
             sockets_to_try = possible_ports.copy()
@@ -90,24 +88,25 @@ def _check_tcp_ports(
                 _, writeable_sockets, _ = select.select([], sock_objects, [], timer.time_remaining)
                 for s in writeable_sockets:
                     try:  # actual test
-                        connected_ports_sockets.append((s.getpeername()[1], s))
+                        connected_ports.add((s.getpeername()[1], s))
                     except socket.error:  # bad socket, select didn't filter it properly
                         pass
-                sockets_to_try = [s for s in sockets_to_try if s not in connected_ports_sockets]
+
+                sockets_to_try = sockets_to_try - connected_ports
 
             logger.debug(
                 "On host %s discovered the following ports %s"
-                % (str(ip), ",".join([str(s[0]) for s in connected_ports_sockets]))
+                % (str(ip), ",".join([str(s[0]) for s in connected_ports]))
             )
 
-            open_ports = {port: "" for port, _ in connected_ports_sockets}
-            if len(connected_ports_sockets) != 0:
+            open_ports = {port: "" for port, _ in connected_ports}
+            if len(connected_ports) != 0:
                 readable_sockets, _, _ = select.select(
-                    [s[1] for s in connected_ports_sockets], [], [], timer.time_remaining
+                    [s[1] for s in connected_ports], [], [], timer.time_remaining
                 )
                 # read first BANNER_READ bytes. We ignore errors because service might not send a
                 # decodable byte string.
-                for port, sock in connected_ports_sockets:
+                for port, sock in connected_ports:
                     if sock in readable_sockets:
                         open_ports[port] = sock.recv(BANNER_READ).decode(errors="ignore")
                     else:
@@ -116,7 +115,7 @@ def _check_tcp_ports(
     except socket.error as exc:
         logger.warning("Exception when checking ports on host %s, Exception: %s", str(ip), exc)
 
-    _clean_up_sockets(possible_ports, connected_ports_sockets)
+    _clean_up_sockets(possible_ports, connected_ports)
 
     return open_ports
 
