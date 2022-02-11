@@ -1,6 +1,5 @@
 from common.common_consts.system_info_collectors_names import (
     MIMIKATZ_COLLECTOR,
-    PROCESS_LIST_COLLECTOR,
 )
 
 MONKEY = {
@@ -71,6 +70,7 @@ MONKEY = {
                         "ScheduleJobs",
                         "Timestomping",
                         "AccountDiscovery",
+                        "ProcessListCollection",
                     ],
                 },
             },
@@ -85,7 +85,6 @@ MONKEY = {
                     "uniqueItems": True,
                     "items": {"$ref": "#/definitions/system_info_collector_classes"},
                     "default": [
-                        PROCESS_LIST_COLLECTOR,
                         MIMIKATZ_COLLECTOR,
                     ],
                 },

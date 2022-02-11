@@ -1,6 +1,5 @@
 from common.common_consts.system_info_collectors_names import (
     MIMIKATZ_COLLECTOR,
-    PROCESS_LIST_COLLECTOR,
 )
 
 SYSTEM_INFO_COLLECTOR_CLASSES = {
@@ -15,14 +14,6 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             "safe": True,
             "info": "Collects credentials from Windows credential manager.",
             "attack_techniques": ["T1003", "T1005"],
-        },
-        {
-            "type": "string",
-            "enum": [PROCESS_LIST_COLLECTOR],
-            "title": "Process List Collector",
-            "safe": True,
-            "info": "Collects a list of running processes on the machine.",
-            "attack_techniques": ["T1082"],
         },
     ],
 }
