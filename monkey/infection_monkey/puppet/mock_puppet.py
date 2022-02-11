@@ -12,6 +12,7 @@ from infection_monkey.i_puppet import (
     PortStatus,
     PostBreachData,
 )
+from infection_monkey.post_breach.actions.collect_processes_list import ProcessListCollection
 
 DOT_1 = "10.0.0.1"
 DOT_2 = "10.0.0.2"
@@ -158,6 +159,9 @@ class MockPuppet(IPuppet):
 
         if name == "AccountDiscovery":
             return PostBreachData("pba command 1", ["pba result 1", True])
+        elif name == "ProcessListCollection":
+            cmd, result = ProcessListCollection().run()
+            return PostBreachData(cmd, result)
         else:
             return PostBreachData("pba command 2", ["pba result 2", False])
 
