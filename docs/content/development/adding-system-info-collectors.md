@@ -39,7 +39,7 @@ class MyNewCollector(SystemInfoCollector):
 
 #### Implementation
 
-Override the `collect` method with your own implementation. See the `process_list_collector.py` System Info Collector for reference. You can log during collection as well.
+Override the `collect` method with your own implementation. See the `aws_collector.py` System Info Collector for reference. You can log during collection as well.
 
 ### Modify the Monkey Island
 
@@ -59,7 +59,7 @@ You'll need to add your Sytem Info Collector to the `monkey_island/cc/services/c
             "enum": [
                 "HostnameCollector"
             ],
-            "title": "Which Environment this machine is on (on prem/cloud)",
+            "title": "Which environment this machine is on (on prem/cloud)",
             "attack_techniques": []
         },
         {                               <=================================
@@ -96,6 +96,6 @@ Also, you can add the System Info Collector to be used by default by adding it t
 
 #### Telemetry processing
 
-1. Add a process function under `monkey_island/cc/telemetry/processing/system_info_collectors/{DATA_NAME_HERE}.py`. The function should parse the System Info Collector's result. See `processing/system_info_collectors/environment.py` for example.
+1. Add a process function under `monkey_island/cc/telemetry/processing/system_info_collectors/{DATA_NAME_HERE}.py`. The function should parse the System Info Collector's result. See `processing/system_info_collectors/aws.py` for example.
 
 2. Add that function to `SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS` under `monkey_island/cc/services/telemetry/processing/system_info_collectors/system_info_telemetry_dispatcher.py`.
