@@ -1,5 +1,4 @@
 from common.common_consts.system_info_collectors_names import (
-    AWS_COLLECTOR,
     MIMIKATZ_COLLECTOR,
     PROCESS_LIST_COLLECTOR,
 )
@@ -16,15 +15,6 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
             "safe": True,
             "info": "Collects credentials from Windows credential manager.",
             "attack_techniques": ["T1003", "T1005"],
-        },
-        {
-            "type": "string",
-            "enum": [AWS_COLLECTOR],
-            "title": "AWS Collector",
-            "safe": True,
-            "info": "If on AWS, collects more information about the AWS instance "
-            "currently running on.",
-            "attack_techniques": ["T1082"],
         },
         {
             "type": "string",

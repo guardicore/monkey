@@ -1,5 +1,4 @@
 from common.common_consts.system_info_collectors_names import (
-    AWS_COLLECTOR,
     MIMIKATZ_COLLECTOR,
     PROCESS_LIST_COLLECTOR,
 )
@@ -86,7 +85,6 @@ MONKEY = {
                     "uniqueItems": True,
                     "items": {"$ref": "#/definitions/system_info_collector_classes"},
                     "default": [
-                        AWS_COLLECTOR,
                         PROCESS_LIST_COLLECTOR,
                         MIMIKATZ_COLLECTOR,
                     ],

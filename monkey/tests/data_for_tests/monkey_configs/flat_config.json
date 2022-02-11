@@ -101,7 +101,6 @@
     "smb_service_name": "InfectionMonkey",
     "subnet_scan_list": ["192.168.1.50", "192.168.56.0/24", "10.0.33.0/30"],
     "system_info_collector_classes": [
-        "AwsCollector",
         "ProcessListCollector",
         "MimikatzCollector"
     ],

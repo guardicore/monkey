@@ -96,7 +96,6 @@ AccountDiscovery  # unused class (monkey/infection_monkey/post_breach/actions/di
 ModifyShellStartupFiles  # unused class (monkey/infection_monkey/post_breach/actions/modify_shell_startup_files.py:11)
 Timestomping  # unused class (monkey/infection_monkey/post_breach/actions/timestomping.py:6)
 SignedScriptProxyExecution  # unused class (monkey/infection_monkey/post_breach/actions/use_signed_scripts.py:15)
-AwsCollector  # unused class (monkey/infection_monkey/system_info/collectors/aws_collector.py:15)
 EnvironmentCollector  # unused class (monkey/infection_monkey/system_info/collectors/environment_collector.py:19)
 HostnameCollector  # unused class (monkey/infection_monkey/system_info/collectors/hostname_collector.py:10)
 ProcessListCollector  # unused class (monkey/infection_monkey/system_info/collectors/process_list_collector.py:18)
