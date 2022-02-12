@@ -16,7 +16,7 @@ def run_worker_threads(target: Callable[..., None], args: Tuple = (), num_worker
         t.join()
 
 
-def create_daemon_thread(target: Callable[..., None], args: Tuple = ()):
+def create_daemon_thread(target: Callable[..., None], args: Tuple = ()) -> Thread:
     return Thread(target=target, args=args, daemon=True)
 
 
