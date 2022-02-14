@@ -5,11 +5,11 @@ from monkey_island.cc.models.monkey import Monkey
 logger = logging.getLogger(__name__)
 
 
-def process_aws_telemetry(collector_results, monkey_guid):
-    relevant_monkey = Monkey.get_single_monkey_by_guid(monkey_guid)
+def process_aws_telemetry(telemetry_json):
+    relevant_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
 
-    if "instance_id" in collector_results:
-        instance_id = collector_results["instance_id"]
+    if "instance_id" in telemetry_json["data"]:
+        instance_id = telemetry_json["data"]["instance_id"]
         relevant_monkey.aws_instance_id = instance_id
         relevant_monkey.save()
         logger.debug(

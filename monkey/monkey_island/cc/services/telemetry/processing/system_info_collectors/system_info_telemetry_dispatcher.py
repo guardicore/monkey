@@ -1,10 +1,7 @@
 import logging
 import typing
 
-from common.common_consts.system_info_collectors_names import AWS_COLLECTOR, PROCESS_LIST_COLLECTOR
-from monkey_island.cc.services.telemetry.processing.system_info_collectors.aws import (
-    process_aws_telemetry,
-)
+from common.common_consts.system_info_collectors_names import PROCESS_LIST_COLLECTOR
 from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (
     check_antivirus_existence,
 )
@@ -12,7 +9,6 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence i
 logger = logging.getLogger(__name__)
 
 SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {
-    AWS_COLLECTOR: [process_aws_telemetry],
     PROCESS_LIST_COLLECTOR: [check_antivirus_existence],
 }
 

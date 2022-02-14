@@ -34,6 +34,7 @@ from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter im
 )
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
+from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
@@ -52,6 +53,7 @@ class InfectionMonkey:
         self._default_server = self._opts.server
         # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
+        self.telemetry_messenger = LegacyTelemetryMessengerAdapter()
 
     @staticmethod
     def _get_arguments(args):
@@ -84,6 +86,8 @@ class InfectionMonkey:
         # TODO: Reevaluate who is responsible to send this information
         if is_windows_os():
             T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
+
+        run_aws_environment_check(self.telemetry_messenger)
 
         should_stop = ControlChannel(WormConfiguration.current_server, GUID).should_agent_stop()
         if should_stop:
@@ -171,7 +175,7 @@ class InfectionMonkey:
 
         self._master = AutomatedMaster(
             puppet,
-            LegacyTelemetryMessengerAdapter(),
+            self.telemetry_messenger,
             victim_host_factory,
             ControlChannel(self._default_server, GUID),
             local_network_interfaces,

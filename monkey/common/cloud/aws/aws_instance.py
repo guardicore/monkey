@@ -12,6 +12,8 @@ ACCOUNT_ID_KEY = "accountId"
 
 logger = logging.getLogger(__name__)
 
+AWS_TIMEOUT = 2
+
 
 class AwsInstance(CloudInstance):
     """
@@ -28,12 +30,14 @@ class AwsInstance(CloudInstance):
 
         try:
             response = requests.get(
-                AWS_LATEST_METADATA_URI_PREFIX + "meta-data/instance-id", timeout=2
+                AWS_LATEST_METADATA_URI_PREFIX + "meta-data/instance-id",
+                timeout=AWS_TIMEOUT,
             )
             self.instance_id = response.text if response else None
             self.region = self._parse_region(
                 requests.get(
-                    AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone"
+                    AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone",
+                    timeout=AWS_TIMEOUT,
                 ).text
             )
         except (requests.RequestException, IOError) as e:
@@ -42,7 +46,8 @@ class AwsInstance(CloudInstance):
         try:
             self.account_id = self._extract_account_id(
                 requests.get(
-                    AWS_LATEST_METADATA_URI_PREFIX + "dynamic/instance-identity/document", timeout=2
+                    AWS_LATEST_METADATA_URI_PREFIX + "dynamic/instance-identity/document",
+                    timeout=AWS_TIMEOUT,
                 ).text
             )
         except (requests.RequestException, json.decoder.JSONDecodeError, IOError) as e:

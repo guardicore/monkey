@@ -147,7 +147,6 @@
       "system_info": {
         "system_info_collector_classes": [
           "environmentcollector",
-          "awscollector",
           "hostnamecollector",
           "processlistcollector",
           "mimikatzcollector"
