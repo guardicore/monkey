@@ -5,8 +5,7 @@ name = "pypi"
 
 [packages]
 cryptography = "==2.5" # We can't build 32bit ubuntu12 binary with newer versions of cryptography
-pyinstaller = "==4.2"
-setuptools = "<=60.6.0" # https://github.com/pypa/setuptools/issues/3072 and https://github.com/pyinstaller/pyinstaller/issues/6564
+pyinstaller = "==4.9"
 impacket = ">=0.9"
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"
@@ -24,6 +23,9 @@ typing-extensions = "*" # Allows us to use 3.9 typing features on 3.7 project
 pysmb = "*"
 "WinSys-3.x" = "*"
 ldaptor = "*"
+pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
+pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
 
 [dev-packages]
 ldap3 = "*"
