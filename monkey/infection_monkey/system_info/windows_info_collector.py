@@ -2,7 +2,7 @@ import logging
 import sys
 
 from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR
-from infection_monkey.system_info.windows_cred_collector.mimikatz_cred_collector import (
+from infection_monkey.credential_collectors.windows_cred_collector.mimikatz_cred_collector import (
     MimikatzCredentialCollector,
 )
 

@@ -1,5 +1,7 @@
 from typing import List
 
+import pypykatz_handler
+
 from infection_monkey.credential_collectors import (
     Credentials,
     ICredentialCollector,
@@ -7,10 +9,8 @@ from infection_monkey.credential_collectors import (
     Password,
     Username,
 )
-from infection_monkey.system_info.windows_cred_collector import pypykatz_handler
-from infection_monkey.system_info.windows_cred_collector.windows_credentials import (
-    WindowsCredentials,
-)
+
+from .windows_credentials import WindowsCredentials
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
