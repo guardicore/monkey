@@ -54,4 +54,4 @@ class ProcessListCollection(PBA):
                 }
                 continue
 
-        return self.command, (str(processes), success_state)
+        return self.command, (processes, success_state)
