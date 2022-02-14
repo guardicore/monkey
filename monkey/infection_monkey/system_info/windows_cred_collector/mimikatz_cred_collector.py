@@ -1,25 +1,38 @@
 from typing import List
 
+from infection_monkey.credential_collectors import (
+    Credentials,
+    ICredentialCollector,
+    NTHashes,
+    Password,
+    Username,
+)
 from infection_monkey.system_info.windows_cred_collector import pypykatz_handler
 from infection_monkey.system_info.windows_cred_collector.windows_credentials import (
     WindowsCredentials,
 )
 
 
-class MimikatzCredentialCollector(object):
-    @staticmethod
-    def get_creds():
+class MimikatzCredentialCollector(ICredentialCollector):
+    def collect_credentials(self) -> Credentials:
         creds = pypykatz_handler.get_windows_creds()
-        return MimikatzCredentialCollector.cred_list_to_cred_dict(creds)
+        return MimikatzCredentialCollector.to_credentials(creds)
 
     @staticmethod
-    def cred_list_to_cred_dict(creds: List[WindowsCredentials]):
-        cred_dict = {}
-        for cred in creds:
-            # TODO: This should be handled by the island, not the agent. There is already similar
-            #       code in monkey_island/cc/models/report/report_dal.py.
-            # Lets not use "." and "$" in keys, because it will confuse mongo.
-            # Ideally we should refactor island not to use a dict and simply parse credential list.
-            key = cred.username.replace(".", ",").replace("$", "")
-            cred_dict.update({key: cred.to_dict()})
-        return cred_dict
+    def to_credentials(win_creds: List[WindowsCredentials]) -> Credentials:
+        creds_obj = Credentials(identities=[], secrets=[])
+        for win_cred in win_creds:
+
+            if win_cred.username:
+                identity = Username(win_cred.username)
+                creds_obj.identities.append(identity)
+
+            if win_cred.password:
+                password = Password(win_cred.password)
+                creds_obj.secrets.append(password)
+
+            if win_cred.lm_hash or win_cred.ntlm_hash:
+                hashes = NTHashes(ntlm_hash=win_cred.ntlm_hash, lm_hash=win_cred.lm_hash)
+                creds_obj.secrets.append(hashes)
+
+        return creds_obj
