@@ -1,7 +1,5 @@
 from typing import List
 
-import pypykatz_handler
-
 from infection_monkey.credential_collectors import (
     Credentials,
     ICredentialCollector,
@@ -10,6 +8,7 @@ from infection_monkey.credential_collectors import (
     Username,
 )
 
+from . import pypykatz_handler
 from .windows_credentials import WindowsCredentials
 
 
