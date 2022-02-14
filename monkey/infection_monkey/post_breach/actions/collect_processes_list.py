@@ -8,11 +8,11 @@ from infection_monkey.post_breach.pba import PBA
 logger = logging.getLogger(__name__)
 
 # Linux doesn't have WindowsError
-applicable_exceptions = None
+applicable_exceptions = psutil.AccessDenied
 try:
     applicable_exceptions = (psutil.AccessDenied, WindowsError)
 except NameError:
-    applicable_exceptions = psutil.AccessDenied
+    pass
 
 
 class ProcessListCollection(PBA):
