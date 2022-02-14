@@ -16,6 +16,9 @@ except NameError:
 
 
 class ProcessListCollection(PBA):
+    # TODO: (?) Move all PBA consts into their classes
+    display_name = POST_BREACH_PROCESS_LIST_COLLECTION
+
     def __init__(self):
         super().__init__(POST_BREACH_PROCESS_LIST_COLLECTION)
 
@@ -51,4 +54,4 @@ class ProcessListCollection(PBA):
                 }
                 continue
 
-        return self.command, [str(processes), success_state]
+        return self.command, (str(processes), success_state)

@@ -176,6 +176,9 @@ class AutomatedMaster(IMaster):
         )
 
     def _run_pba(self, pba: Tuple[str, Dict]):
+        # TODO: This is the class's name right now. We need `display_name` (see the
+        #       ProcessListCollection PBA). This is shown in the Security report as the PBA
+        #       name and is checked against in the T1082's mongo query in the ATT&CK report.
         name = pba[0]
         options = pba[1]
 
