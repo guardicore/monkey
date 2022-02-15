@@ -14,7 +14,7 @@ from .windows_credentials import WindowsCredentials
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-    def collect_credentials(self) -> List[Credentials]:
+    def collect_credentials(self, options=None) -> List[Credentials]:
         creds = pypykatz_handler.get_windows_creds()
         return MimikatzCredentialCollector._to_credentials(creds)
 
