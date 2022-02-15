@@ -7,4 +7,3 @@ from ..credential_type import CredentialType
 @dataclass
 class ICredentialComponent(ABC):
     type: CredentialType
-    content: dict
