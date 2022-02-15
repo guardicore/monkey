@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 from infection_monkey.credential_collectors import (
     Credentials,
@@ -13,12 +13,12 @@ from .windows_credentials import WindowsCredentials
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-    def collect_credentials(self, options=None) -> List[Credentials]:
+    def collect_credentials(self, options=None) -> Iterable[Credentials]:
         creds = pypykatz_handler.get_windows_creds()
         return MimikatzCredentialCollector._to_credentials(creds)
 
     @staticmethod
-    def _to_credentials(win_creds: List[WindowsCredentials]) -> [Credentials]:
+    def _to_credentials(win_creds: Iterable[WindowsCredentials]) -> [Credentials]:
         all_creds = []
         for win_cred in win_creds:
             identities = []
