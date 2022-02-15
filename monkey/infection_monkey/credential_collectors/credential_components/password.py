@@ -1,9 +1,10 @@
+from dataclasses import dataclass, field
+
 from ..credential_type import CredentialType
 from .i_credential_component import ICredentialComponent
 
 
+@dataclass(frozen=True)
 class Password(ICredentialComponent):
-    type = CredentialType.PASSWORD
-
-    def __init__(self, password: str):
-        self.password = password
+    type: CredentialType = field(default=CredentialType.PASSWORD, init=False)
+    password: str

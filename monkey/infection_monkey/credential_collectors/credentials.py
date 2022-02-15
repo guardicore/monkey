@@ -1,11 +1,10 @@
-from typing import Iterable
+from dataclasses import dataclass
+from typing import Tuple
 
 from .credential_components.i_credential_component import ICredentialComponent
 
 
+@dataclass(frozen=True)
 class Credentials:
-    def __init__(
-        self, identities: Iterable[ICredentialComponent], secrets: Iterable[ICredentialComponent]
-    ):
-        self.identities = tuple(identities)
-        self.secrets = tuple(secrets)
+    identities: Tuple[ICredentialComponent]
+    secrets: Tuple[ICredentialComponent]

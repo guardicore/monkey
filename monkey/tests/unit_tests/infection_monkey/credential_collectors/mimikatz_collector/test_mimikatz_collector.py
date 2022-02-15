@@ -1,4 +1,4 @@
-from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
+from infection_monkey.credential_collectors import Credentials, LMHash, NTHash, Password, Username
 from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_cred_collector import (
     MimikatzCredentialCollector,
 )
@@ -18,27 +18,26 @@ def patch_pypykatz(win_creds: [WindowsCredentials], monkeypatch):
 def test_empty_results(monkeypatch):
     win_creds = [WindowsCredentials(username="", password="", ntlm_hash="", lm_hash="")]
     patch_pypykatz(win_creds, monkeypatch)
-    expected = []
-    collected = MimikatzCredentialCollector().collect_credentials()
-    assert expected == collected
+    expected_credentials = []
+    collected_credentials = MimikatzCredentialCollector().collect_credentials()
+    assert expected_credentials == collected_credentials
 
     patch_pypykatz([], monkeypatch)
-    collected = MimikatzCredentialCollector().collect_credentials()
-    assert [] == collected
+    collected_credentials = MimikatzCredentialCollector().collect_credentials()
+    assert not collected_credentials
 
 
 def test_pypykatz_result_parsing(monkeypatch):
     win_creds = [WindowsCredentials(username="user", password="secret", ntlm_hash="", lm_hash="")]
     patch_pypykatz(win_creds, monkeypatch)
 
-    # Expected credentials
     username = Username("user")
     password = Password("secret")
+    expected_credentials = Credentials([username], [password])
 
-    collected = MimikatzCredentialCollector().collect_credentials()
-    assert len(list(collected)) == 1
-    assert list(collected)[0].identities[0].__dict__ == username.__dict__
-    assert list(collected)[0].secrets[0].__dict__ == password.__dict__
+    collected_credentials = list(MimikatzCredentialCollector().collect_credentials())
+    assert len(collected_credentials) == 1
+    assert collected_credentials[0] == expected_credentials
 
 
 def test_pypykatz_result_parsing_duplicates(monkeypatch):
@@ -48,8 +47,8 @@ def test_pypykatz_result_parsing_duplicates(monkeypatch):
     ]
     patch_pypykatz(win_creds, monkeypatch)
 
-    collected = MimikatzCredentialCollector().collect_credentials()
-    assert len(list(collected)) == 2
+    collected_credentials = list(MimikatzCredentialCollector().collect_credentials())
+    assert len(collected_credentials) == 2
 
 
 def test_pypykatz_result_parsing_defaults(monkeypatch):
@@ -62,11 +61,11 @@ def test_pypykatz_result_parsing_defaults(monkeypatch):
     username = Username("user2")
     password = Password("secret2")
     lm_hash = LMHash("lm_hash")
+    expected_credentials = Credentials([username], [password, lm_hash])
 
-    collected = MimikatzCredentialCollector().collect_credentials()
-    assert list(collected)[0].identities[0].__dict__ == username.__dict__
-    assert list(collected)[0].secrets[0].__dict__ == password.__dict__
-    assert list(collected)[0].secrets[1].__dict__ == lm_hash.__dict__
+    collected_credentials = list(MimikatzCredentialCollector().collect_credentials())
+    assert len(collected_credentials) == 1
+    assert collected_credentials[0] == expected_credentials
 
 
 def test_pypykatz_result_parsing_no_identities(monkeypatch):
@@ -75,10 +74,10 @@ def test_pypykatz_result_parsing_no_identities(monkeypatch):
     ]
     patch_pypykatz(win_creds, monkeypatch)
 
-    # Expected credentials
-    nt_hash = NTHash("ntlm_hash")
     lm_hash = LMHash("lm_hash")
+    nt_hash = NTHash("ntlm_hash")
+    expected_credentials = Credentials([], [lm_hash, nt_hash])
 
-    collected = MimikatzCredentialCollector().collect_credentials()
-    assert list(collected)[0].secrets[0].__dict__ == lm_hash.__dict__
-    assert list(collected)[0].secrets[1].__dict__ == nt_hash.__dict__
+    collected_credentials = list(MimikatzCredentialCollector().collect_credentials())
+    assert len(collected_credentials) == 1
+    assert collected_credentials[0] == expected_credentials
