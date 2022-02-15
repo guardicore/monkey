@@ -2,9 +2,12 @@ from typing import List
 
 import pytest
 
-from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
-from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_cred_collector import (
+from infection_monkey.credential_collectors import (
+    LMHash,
     MimikatzCredentialCollector,
+    NTHash,
+    Password,
+    Username,
 )
 from infection_monkey.credential_collectors.mimikatz_collector.windows_credentials import (
     WindowsCredentials,
