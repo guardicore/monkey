@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 
-from ..credential_type import CredentialType
-from .i_credential_component import ICredentialComponent
+from infection_monkey.i_puppet import CredentialType, ICredentialComponent
 
 
 @dataclass(frozen=True)

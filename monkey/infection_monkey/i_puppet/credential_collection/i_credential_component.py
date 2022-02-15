@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from infection_monkey.credential_collectors.credential_type import CredentialType
+from .credential_type import CredentialType
 
 
 class ICredentialComponent(ABC):

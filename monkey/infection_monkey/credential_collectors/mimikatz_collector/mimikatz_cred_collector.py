@@ -1,13 +1,8 @@
 from typing import Iterable
 
-from infection_monkey.credential_collectors import (
-    Credentials,
-    ICredentialCollector,
-    LMHash,
-    NTHash,
-    Password,
-    Username,
-)
+from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
+from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
+
 from . import pypykatz_handler
 from .windows_credentials import WindowsCredentials
 
