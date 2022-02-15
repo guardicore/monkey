@@ -8,7 +8,6 @@ from infection_monkey.credential_collectors import (
     Password,
     Username,
 )
-
 from . import pypykatz_handler
 from .windows_credentials import WindowsCredentials
 
@@ -22,24 +21,24 @@ class MimikatzCredentialCollector(ICredentialCollector):
     def _to_credentials(win_creds: List[WindowsCredentials]) -> [Credentials]:
         all_creds = []
         for win_cred in win_creds:
-            creds_obj = Credentials(identities=[], secrets=[])
+            identities = []
+            secrets = []
             if win_cred.username:
                 identity = Username(win_cred.username)
-                creds_obj.identities.append(identity)
+                identities.append(identity)
 
             if win_cred.password:
                 password = Password(win_cred.password)
-                creds_obj.secrets.append(password)
+                secrets.append(password)
 
             if win_cred.lm_hash:
                 lm_hash = LMHash(lm_hash=win_cred.lm_hash)
-                creds_obj.secrets.append(lm_hash)
+                secrets.append(lm_hash)
 
             if win_cred.ntlm_hash:
                 lm_hash = NTHash(nt_hash=win_cred.ntlm_hash)
-                creds_obj.secrets.append(lm_hash)
+                secrets.append(lm_hash)
 
-            if creds_obj.identities != [] or creds_obj.secrets != []:
-                all_creds.append(creds_obj)
-
+            if identities != [] or secrets != []:
+                all_creds.append(Credentials(identities, secrets))
         return all_creds
