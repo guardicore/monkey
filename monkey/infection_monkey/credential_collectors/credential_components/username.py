@@ -6,5 +6,5 @@ from .i_credential_component import ICredentialComponent
 
 @dataclass(frozen=True)
 class Username(ICredentialComponent):
-    type: CredentialType = field(default=CredentialType.USERNAME, init=False)
+    credential_type: CredentialType = field(default=CredentialType.USERNAME, init=False)
     username: str

@@ -6,5 +6,5 @@ from infection_monkey.credential_collectors.credential_type import CredentialTyp
 class ICredentialComponent(ABC):
     @property
     @abstractmethod
-    def type(self) -> CredentialType:
+    def credential_type(self) -> CredentialType:
         pass
