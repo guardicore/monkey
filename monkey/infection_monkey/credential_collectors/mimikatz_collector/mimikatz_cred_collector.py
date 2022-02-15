@@ -13,15 +13,15 @@ from .windows_credentials import WindowsCredentials
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-    def collect_credentials(self) -> Credentials:
+    def collect_credentials(self) -> List[Credentials]:
         creds = pypykatz_handler.get_windows_creds()
         return MimikatzCredentialCollector.to_credentials(creds)
 
     @staticmethod
-    def to_credentials(win_creds: List[WindowsCredentials]) -> Credentials:
-        creds_obj = Credentials(identities=[], secrets=[])
+    def to_credentials(win_creds: List[WindowsCredentials]) -> [Credentials]:
+        all_creds = []
         for win_cred in win_creds:
-
+            creds_obj = Credentials(identities=[], secrets=[])
             if win_cred.username:
                 identity = Username(win_cred.username)
                 creds_obj.identities.append(identity)
@@ -34,4 +34,7 @@ class MimikatzCredentialCollector(ICredentialCollector):
                 hashes = NTHashes(ntlm_hash=win_cred.ntlm_hash, lm_hash=win_cred.lm_hash)
                 creds_obj.secrets.append(hashes)
 
-        return creds_obj
+            if creds_obj.identities != [] or creds_obj.secrets != []:
+                all_creds.append(creds_obj)
+
+        return all_creds
