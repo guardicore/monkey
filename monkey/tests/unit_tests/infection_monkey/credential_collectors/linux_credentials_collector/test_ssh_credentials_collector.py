@@ -1,94 +1,75 @@
-import os
-import pwd
-from pathlib import Path
-
-import pytest
-
-from infection_monkey.credential_collectors import SSHKeypair, Username
+from infection_monkey.credential_collectors import Credentials, SSHKeypair, Username
 from infection_monkey.credential_collectors.ssh_collector import SSHCollector
 
 
-@pytest.fixture
-def project_name(pytestconfig):
-    home_dir = str(Path.home())
-    return "/" / Path(str(pytestconfig.rootdir).replace(home_dir, ""))
-
-
-@pytest.fixture
-def ssh_test_dir(project_name):
-    return project_name / "monkey" / "tests" / "data_for_tests" / "ssh_info"
-
-
-@pytest.fixture
-def get_username():
-    return pwd.getpwuid(os.getuid()).pw_name
-
-
-@pytest.mark.skipif(os.name != "posix", reason="We run SSH only on Linux.")
-def test_ssh_credentials_collector_success(ssh_test_dir, get_username, monkeypatch):
+def patch_ssh_handler(ssh_creds, monkeypatch):
     monkeypatch.setattr(
-        "infection_monkey.credential_collectors.ssh_collector.SSHCollector.default_dirs",
-        [str(ssh_test_dir / "ssh_info_full")],
+        "infection_monkey.credential_collectors.ssh_collector.ssh_handler.get_ssh_info",
+        lambda: ssh_creds,
     )
 
-    ssh_credentials = SSHCollector().collect_credentials()
 
-    assert len(ssh_credentials.identities) == 1
-    assert type(ssh_credentials.identities[0]) == Username
-    assert "username" in ssh_credentials.identities[0].content
-    assert ssh_credentials.identities[0].content["username"] == get_username
+def test_ssh_credentials_empty_results(monkeypatch):
+    patch_ssh_handler([], monkeypatch)
+    collected = SSHCollector().collect_credentials()
+    assert [] == collected
 
-    assert len(ssh_credentials.secrets) == 1
-    assert type(ssh_credentials.secrets[0]) == SSHKeypair
+    ssh_creds = [
+        {"name": "", "home_dir": "", "public_key": None, "private_key": None, "known_hosts": None}
+    ]
+    patch_ssh_handler(ssh_creds, monkeypatch)
+    expected = []
+    collected = SSHCollector().collect_credentials()
+    assert expected == collected
 
-    assert len(ssh_credentials.secrets[0].content) == 3
-    assert (
-        ssh_credentials.secrets[0]
-        .content["private_key"]
-        .startswith("-----BEGIN OPENSSH PRIVATE KEY-----")
+
+def test_ssh_info_result_parsing(monkeypatch):
+
+    ssh_creds = [
+        {
+            "name": "ubuntu",
+            "home_dir": "/home/ubuntu",
+            "public_key": "SomePublicKeyUbuntu",
+            "private_key": "ExtremelyGoodPrivateKey",
+            "known_hosts": "MuchKnownHosts",
+        },
+        {
+            "name": "mcus",
+            "home_dir": "/home/mcus",
+            "public_key": "AnotherPublicKey",
+            "private_key": "NotSoGoodPrivateKey",
+            "known_hosts": None,
+        },
+        {
+            "name": "",
+            "home_dir": "/",
+            "public_key": None,
+            "private_key": None,
+            "known_hosts": "VeryGoodHosts1",
+        },
+    ]
+    patch_ssh_handler(ssh_creds, monkeypatch)
+
+    # Expected credentials
+    username = Username("ubuntu")
+    username2 = Username("mcus")
+
+    ssh_keypair1 = SSHKeypair(
+        {
+            "public_key": "SomePublicKeyUbuntu",
+            "private_key": "ExtremelyGoodPrivateKey",
+            "known_hosts": "MuchKnownHosts",
+        }
     )
-    assert (
-        ssh_credentials.secrets[0]
-        .content["public_key"]
-        .startswith("ssh-ed25519 something-public-here")
+    ssh_keypair2 = SSHKeypair(
+        {"public_key": "AnotherPublicKey", "private_key": "NotSoGoodPrivateKey"}
     )
-    assert ssh_credentials.secrets[0].content["known_hosts"].startswith("|1|really+known+host")
+    ssh_keypair3 = SSHKeypair({"known_hosts": "VeryGoodHosts"})
 
-
-@pytest.mark.skipif(os.name != "posix", reason="We run SSH only on Linux.")
-def test_no_ssh_credentials(monkeypatch):
-    monkeypatch.setattr(
-        "infection_monkey.credential_collectors.ssh_collector.SSHCollector.default_dirs", []
-    )
-
-    ssh_credentials = SSHCollector().collect_credentials()
-
-    assert len(ssh_credentials.identities) == 0
-    assert len(ssh_credentials.secrets) == 0
-
-
-@pytest.mark.skipif(os.name != "posix", reason="We run SSH only on Linux.")
-def test_ssh_collector_partial_credentials(monkeypatch, ssh_test_dir):
-    monkeypatch.setattr(
-        "infection_monkey.credential_collectors.ssh_collector.SSHCollector.default_dirs",
-        [str(ssh_test_dir / "ssh_info_partial")],
-    )
-
-    ssh_credentials = SSHCollector().collect_credentials()
-
-    assert len(ssh_credentials.secrets[0].content) == 3
-    assert ssh_credentials.secrets[0].content["private_key"] is None
-    assert ssh_credentials.secrets[0].content["known_hosts"] is None
-
-
-@pytest.mark.skipif(os.name != "posix", reason="We run SSH only on Linux.")
-def test_ssh_collector_no_public_key(monkeypatch, ssh_test_dir):
-    monkeypatch.setattr(
-        "infection_monkey.credential_collectors.ssh_collector.SSHCollector.default_dirs",
-        [str(ssh_test_dir / "ssh_info_no_public_key")],
-    )
-
-    ssh_credentials = SSHCollector().collect_credentials()
-
-    assert len(ssh_credentials.identities) == 0
-    assert len(ssh_credentials.secrets) == 0
+    expected = [
+        Credentials(identities=[username], secrets=[ssh_keypair1]),
+        Credentials(identities=[username2], secrets=[ssh_keypair2]),
+        Credentials(identities=[], secrets=[ssh_keypair3]),
+    ]
+    collected = SSHCollector().collect_credentials()
+    assert expected == collected
