@@ -1,3 +1,5 @@
+import pytest
+
 from infection_monkey.credential_collectors import Credentials, LMHash, NTHash, Password, Username
 from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_cred_collector import (
     MimikatzCredentialCollector,
@@ -15,15 +17,12 @@ def patch_pypykatz(win_creds: [WindowsCredentials], monkeypatch):
     )
 
 
-def test_empty_results(monkeypatch):
-    win_creds = [WindowsCredentials(username="", password="", ntlm_hash="", lm_hash="")]
+@pytest.mark.parametrize(
+    "win_creds", [([WindowsCredentials(username="", password="", ntlm_hash="", lm_hash="")]), ([])]
+)
+def test_empty_results(monkeypatch, win_creds):
     patch_pypykatz(win_creds, monkeypatch)
-    expected_credentials = []
-    collected_credentials = MimikatzCredentialCollector().collect_credentials()
-    assert expected_credentials == collected_credentials
-
-    patch_pypykatz([], monkeypatch)
-    collected_credentials = MimikatzCredentialCollector().collect_credentials()
+    collected_credentials = list(MimikatzCredentialCollector().collect_credentials())
     assert not collected_credentials
 
 
