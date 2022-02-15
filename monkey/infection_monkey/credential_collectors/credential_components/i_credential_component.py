@@ -1,9 +1,10 @@
-from abc import ABC
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 
-from ..credential_type import CredentialType
+from infection_monkey.credential_collectors.credential_type import CredentialType
 
 
-@dataclass
 class ICredentialComponent(ABC):
-    type: CredentialType
+    @property
+    @abstractmethod
+    def type(self) -> CredentialType:
+        pass

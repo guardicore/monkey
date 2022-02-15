@@ -3,6 +3,7 @@ from .i_credential_component import ICredentialComponent
 
 
 class NTHash(ICredentialComponent):
+    type = CredentialType.NT_HASH
+
     def __init__(self, nt_hash: str):
-        super().__init__(type=CredentialType.NTLM_HASH)
         self.nt_hash = nt_hash

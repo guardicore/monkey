@@ -3,6 +3,7 @@ from .i_credential_component import ICredentialComponent
 
 
 class Username(ICredentialComponent):
+    type = CredentialType.USERNAME
+
     def __init__(self, username: str):
-        super().__init__(type=CredentialType.USERNAME)
         self.username = username

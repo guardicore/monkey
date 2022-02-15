@@ -3,6 +3,7 @@ from .i_credential_component import ICredentialComponent
 
 
 class Password(ICredentialComponent):
+    type = CredentialType.PASSWORD
+
     def __init__(self, password: str):
-        super().__init__(type=CredentialType.PASSWORD)
         self.password = password
