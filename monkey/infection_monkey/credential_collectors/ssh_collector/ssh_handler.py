@@ -31,12 +31,10 @@ def _get_home_dirs() -> Iterable[Dict]:
 def _get_ssh_struct(name: str, home_dir: str) -> Dict:
     """
     Construct the SSH info. It consisted of: name, home_dir,
-    public_key, private_key and known_hosts.
+    public_key and private_key.
 
     public_key: contents of *.pub file (public key)
     private_key: contents of * file (private key)
-    known_hosts: contents of known_hosts file(all the servers keys are good for,
-    possibly hashed)
 
     :param name: username of user, for whom the keys belong
     :param home_dir: users home directory
@@ -49,7 +47,6 @@ def _get_ssh_struct(name: str, home_dir: str) -> Dict:
         "home_dir": home_dir,
         "public_key": None,
         "private_key": None,
-        "known_hosts": None,
     }
 
 
@@ -88,15 +85,6 @@ def _get_ssh_files(usr_info: Iterable[Dict]) -> Iterable[Dict]:
                                             continue
                                 except (IOError, OSError):
                                     pass
-                            # By default, known hosts file is called 'known_hosts'
-                            known_hosts = os.path.join(current_path, "known_hosts")
-                            if os.path.exists(known_hosts):
-                                try:
-                                    with open(known_hosts) as f:
-                                        info["known_hosts"] = f.read()
-                                        logger.info("Found known_hosts in %s" % known_hosts)
-                                except (IOError, OSError):
-                                    pass
                             # If private key found don't search more
                             if info["private_key"]:
                                 break
@@ -104,9 +92,5 @@ def _get_ssh_files(usr_info: Iterable[Dict]) -> Iterable[Dict]:
                             pass
                 except OSError:
                     pass
-    usr_info = [
-        info
-        for info in usr_info
-        if info["private_key"] or info["known_hosts"] or info["public_key"]
-    ]
+    usr_info = [info for info in usr_info if info["private_key"] or info["public_key"]]
     return usr_info

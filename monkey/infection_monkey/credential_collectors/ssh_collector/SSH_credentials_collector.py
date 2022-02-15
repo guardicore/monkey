@@ -35,7 +35,7 @@ class SSHCollector(ICredentialCollector):
                 credentials_obj.identities.append(Username(info["name"]))
 
             ssh_keypair = {}
-            for key in ["public_key", "private_key", "known_hosts"]:
+            for key in ["public_key", "private_key"]:
                 if key in info and info.get(key) is not None:
                     ssh_keypair[key] = info[key]
 
