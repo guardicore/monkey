@@ -9,3 +9,4 @@ class TelemCategoryEnum:
     ATTACK = "attack"
     FILE_ENCRYPTION = "file_encryption"
     AWS_INFO = "aws_info"
+    CREDENTIALS = "credentials"
