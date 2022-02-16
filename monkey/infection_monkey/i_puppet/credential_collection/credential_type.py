@@ -6,3 +6,4 @@ class CredentialType(Enum):
     PASSWORD = 2
     NT_HASH = 3
     LM_HASH = 4
+    SSH_KEYPAIR = 5
