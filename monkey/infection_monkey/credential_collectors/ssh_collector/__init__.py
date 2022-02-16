@@ -1,1 +1,1 @@
-from .SSH_credentials_collector import SSHCollector
+from .ssh_credential_collector import SSHCredentialCollector

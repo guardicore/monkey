@@ -1,12 +1,9 @@
 import logging
 from typing import Dict, Iterable, List
 
-from infection_monkey.credential_collectors import (
-    SSHKeypair,
-    Username,
-)
-from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
+from infection_monkey.credential_collectors import SSHKeypair, Username
 from infection_monkey.credential_collectors.ssh_collector import ssh_handler
+from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
 
 logger = logging.getLogger(__name__)
 
@@ -26,17 +23,17 @@ class SSHCredentialCollector(ICredentialCollector):
     @staticmethod
     def _to_credentials(ssh_info: Iterable[Dict]) -> List[Credentials]:
         ssh_credentials = []
-        identities = []
-        secrets = []
 
         for info in ssh_info:
+            identities = []
+            secrets = []
 
-            if "name" in info and info["name"] != "":
+            if info.get("name", ""):
                 identities.append(Username(info["name"]))
 
             ssh_keypair = {}
             for key in ["public_key", "private_key"]:
-                if key in info and info.get(key) is not None:
+                if info.get(key) is not None:
                     ssh_keypair[key] = info[key]
 
             if len(ssh_keypair):
