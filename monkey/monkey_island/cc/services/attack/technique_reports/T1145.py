@@ -1,6 +1,10 @@
+import logging
+
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
+
+logger = logging.getLogger(__name__)
 
 
 class T1145(AttackTechnique):
@@ -12,19 +16,39 @@ class T1145(AttackTechnique):
 
     # Gets data about ssh keys found
     query = [
+        {"$match": {"telem_category": "attack", "data.technique": tech_id}},
         {
-            "$match": {
-                "telem_category": "system_info",
-                "data.ssh_info": {"$elemMatch": {"private_key": {"$exists": True}}},
+            "$lookup": {
+                "from": "monkey",
+                "localField": "monkey_guid",
+                "foreignField": "guid",
+                "as": "monkey",
             }
         },
         {
             "$project": {
-                "_id": 0,
-                "machine": {"hostname": "$data.hostname", "ips": "$data.network_info.networks"},
-                "ssh_info": "$data.ssh_info",
+                "monkey": {"$arrayElemAt": ["$monkey", 0]},
+                "status": "$data.status",
+                "name": "$data.name",
+                "home_dir": "$data.home_dir",
             }
         },
+        {
+            "$addFields": {
+                "_id": 0,
+                "machine": {"hostname": "$monkey.hostname", "ips": "$monkey.ip_addresses"},
+                "monkey": 0,
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "machine": "$machine",
+                    "ssh_info": {"name": "$name", "home_dir": "$home_dir"},
+                }
+            }
+        },
+        {"$replaceRoot": {"newRoot": "$_id"}},
     ]
 
     @staticmethod
