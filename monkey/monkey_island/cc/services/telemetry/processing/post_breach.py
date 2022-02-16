@@ -16,15 +16,13 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_backdo
 EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 
-def process_communicate_as_backdoor_user_telemetry(telemetry_json):
-    current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
+def process_communicate_as_backdoor_user_telemetry(telemetry_json, current_monkey):
     message = telemetry_json["data"]["result"][0]
     success = telemetry_json["data"]["result"][1]
     check_new_user_communication(current_monkey, success, message)
 
 
-def process_process_list_collection_telemetry(telemetry_json):
-    current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
+def process_process_list_collection_telemetry(telemetry_json, current_monkey):
     check_antivirus_existence(telemetry_json, current_monkey)
 
 
@@ -59,7 +57,10 @@ def process_post_breach_telemetry(telemetry_json):
 
     post_breach_action_name = telemetry_json["data"]["name"]
     if post_breach_action_name in POST_BREACH_TELEMETRY_PROCESSING_FUNCS:
-        POST_BREACH_TELEMETRY_PROCESSING_FUNCS[post_breach_action_name](telemetry_json)
+        current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
+        POST_BREACH_TELEMETRY_PROCESSING_FUNCS[post_breach_action_name](
+            telemetry_json, current_monkey
+        )
 
     telemetry_json["data"] = convert_telem_data_to_list(telemetry_json["data"])
 
