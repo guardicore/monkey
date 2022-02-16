@@ -104,7 +104,6 @@
             }
         },
         "system_info_collector_classes": [
-            "ProcessListCollector",
             "MimikatzCollector"
         ]
     }
