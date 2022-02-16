@@ -8,7 +8,7 @@ class T1082(AttackTechnique):
     tech_id = "T1082"
     relevant_systems = ["Linux", "Windows"]
     unscanned_msg = "Monkey didn't gather any system info on the network."
-    scanned_msg = ""
+    scanned_msg = "Monkey tried gathering system info on the network but failed."
     used_msg = "Monkey gathered system info from machines in the network."
     # TODO: Remove the second item from this list after the TODO in `_run_pba()` in
     #       `automated_master.py` is resolved.
@@ -89,14 +89,27 @@ class T1082(AttackTechnique):
             system_info_data = list(
                 mongo.db.telemetry.aggregate(T1082.query_for_system_info_collectors)
             )
-            pba_data = list(mongo.db.telemetry.aggregate(T1082.query_for_pbas))
-            technique_data = system_info_data + pba_data
+            system_info_status = (
+                ScanStatus.USED.value if system_info_data else ScanStatus.UNSCANNED.value
+            )
 
-            if technique_data:
-                status = ScanStatus.USED.value
-            else:
-                status = ScanStatus.UNSCANNED.value
-            return (status, technique_data)
+            pba_data = list(mongo.db.telemetry.aggregate(T1082.query_for_pbas))
+            successful_PBAs = mongo.db.telemetry.count(
+                {
+                    "$and": [
+                        {"$or": [{"data.name": pba_name} for pba_name in T1082.pba_names]},
+                        {"$or": [{"data.os": os} for os in T1082.relevant_systems]},
+                        {"data.result.1": True},
+                    ]
+                }
+            )
+            pba_status = ScanStatus.USED.value if successful_PBAs else ScanStatus.SCANNED.value
+
+            technique_data = system_info_data + pba_data
+            # ScanStatus values are in order of precedence; used > scanned > unscanned
+            technique_status = max(system_info_status, pba_status)
+
+            return (technique_status, technique_data)
 
         status, technique_data = get_technique_status_and_data()
         data = {"title": T1082.technique_title()}
