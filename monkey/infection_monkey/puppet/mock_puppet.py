@@ -30,7 +30,7 @@ class MockPuppet(IPuppet):
     def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
         logger.debug(f"run_credential_collector({name})")
 
-        if name == "SSHCredentialCollector":
+        if name == "SSHCollector":
             # TODO: Replace Passwords with SSHKeypair after it is implemented
             ssh_credentials = Credentials(
                 [Username("m0nk3y")],

@@ -34,11 +34,11 @@ class MockMaster(IMaster):
     def _run_credential_collectors(self):
         logger.info("Running credential collectors")
 
-        windows_credentials = self._puppet.run_credential_collector("MimikatzCredentialCollector")
+        windows_credentials = self._puppet.run_credential_collector("MimikatzCollector")
         if windows_credentials:
             self._telemetry_messenger.send_telemetry(CredentialsTelem(windows_credentials))
 
-        ssh_credentials = self._puppet.run_sys_info_collector("SSHCredentialCollector")
+        ssh_credentials = self._puppet.run_sys_info_collector("SSHCollector")
         if ssh_credentials:
             self._telemetry_messenger.send_telemetry(CredentialsTelem(ssh_credentials))
 
