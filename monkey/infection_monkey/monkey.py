@@ -12,6 +12,7 @@ from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.credential_collectors import MimikatzCredentialCollector
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
@@ -192,6 +193,12 @@ class InfectionMonkey:
     @staticmethod
     def _build_puppet() -> IPuppet:
         puppet = Puppet()
+
+        puppet.load_plugin(
+            "MimikatzCollector",
+            MimikatzCredentialCollector(),
+            PluginType.CREDENTIAL_COLLECTOR,
+        )
 
         puppet.load_plugin("elastic", ElasticSearchFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("http", HTTPFingerprinter(), PluginType.FINGERPRINTER)
