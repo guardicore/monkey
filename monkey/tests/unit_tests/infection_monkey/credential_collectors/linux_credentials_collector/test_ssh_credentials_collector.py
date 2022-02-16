@@ -52,10 +52,8 @@ def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger):
     username2 = Username("mcus")
     username3 = Username("guest")
 
-    ssh_keypair1 = SSHKeypair(
-        {"public_key": "SomePublicKeyUbuntu", "private_key": "ExtremelyGoodPrivateKey"}
-    )
-    ssh_keypair2 = SSHKeypair({"public_key": "AnotherPublicKey"})
+    ssh_keypair1 = SSHKeypair("ExtremelyGoodPrivateKey", "SomePublicKeyUbuntu")
+    ssh_keypair2 = SSHKeypair("", "AnotherPublicKey")
 
     expected = [
         Credentials(identities=[username], secrets=[ssh_keypair1]),

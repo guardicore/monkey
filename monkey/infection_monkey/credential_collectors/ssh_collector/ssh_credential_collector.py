@@ -41,7 +41,11 @@ class SSHCredentialCollector(ICredentialCollector):
                     ssh_keypair[key] = info[key]
 
             if len(ssh_keypair):
-                secrets.append(SSHKeypair(ssh_keypair))
+                secrets.append(
+                    SSHKeypair(
+                        ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
+                    )
+                )
 
             if identities != [] or secrets != []:
                 ssh_credentials.append(Credentials(identities, secrets))
