@@ -6,6 +6,7 @@ from typing import Dict, Iterable
 
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
+from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,9 @@ def _get_ssh_files(usr_info: Iterable[Dict]) -> Iterable[Dict]:
                                             logger.info("Found private key in %s" % private)
                                             T1005Telem(
                                                 ScanStatus.USED, "SSH key", "Path: %s" % private
+                                            ).send()
+                                            T1145Telem(
+                                                ScanStatus.USED, info["name"], info["home_dir"]
                                             ).send()
                                         else:
                                             continue
