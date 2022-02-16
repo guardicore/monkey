@@ -8,6 +8,7 @@ from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+from infection_monkey.utils.environment import is_windows_os
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,12 @@ DEFAULT_DIRS = ["/.ssh/", "/"]
 
 
 def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
+    if is_windows_os():
+        logger.debug(
+            "Skipping SSH credentials collection because the operating system is not Linux"
+        )
+        return []
+
     home_dirs = _get_home_dirs()
     ssh_info = _get_ssh_files(home_dirs, telemetry_messenger)
 
