@@ -1,6 +1,7 @@
 from common.common_consts.system_info_collectors_names import (
     MIMIKATZ_COLLECTOR,
     PROCESS_LIST_COLLECTOR,
+    SSH_COLLECTOR,
 )
 
 MONKEY = {
@@ -87,6 +88,7 @@ MONKEY = {
                     "default": [
                         PROCESS_LIST_COLLECTOR,
                         MIMIKATZ_COLLECTOR,
+                        SSH_COLLECTOR,
                     ],
                 },
             },
