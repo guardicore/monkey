@@ -1,11 +1,9 @@
 import logging
 import typing
 
-from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (
-    check_antivirus_existence,
-)
 
 logger = logging.getLogger(__name__)
+
 
 SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {}
 

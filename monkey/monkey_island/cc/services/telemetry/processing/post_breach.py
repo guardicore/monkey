@@ -1,8 +1,14 @@
 import copy
 
-from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
+from common.common_consts.post_breach_consts import (
+    POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER,
+    POST_BREACH_PROCESS_LIST_COLLECTION,
+)
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (
+    check_antivirus_existence,
+)
 from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_backdoor_user import (
     check_new_user_communication,
 )
@@ -17,8 +23,17 @@ def process_communicate_as_backdoor_user_telemetry(telemetry_json):
     check_new_user_communication(current_monkey, success, message)
 
 
+def process_process_list_collection_telemetry(telemetry_json):
+    current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
+    check_antivirus_existence(telemetry_json, current_monkey)
+
+
 POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
     POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER: process_communicate_as_backdoor_user_telemetry,
+    # TODO: Remove line 31 and un-comment line 32 after the TODO in `_run_pba()` in
+    #       `automated_master.py` is resolved.
+    "ProcessListCollection": process_process_list_collection_telemetry,
+    # POST_BREACH_PROCESS_LIST_COLLECTION: process_process_list_collection_telemetry,
 }
 
 
