@@ -1,9 +1,14 @@
 import binascii
+import logging
 from typing import Any, Dict, List, NewType
 
 from pypykatz.pypykatz import pypykatz
 
+from infection_monkey.utils.environment import is_windows_os
+
 from .windows_credentials import WindowsCredentials
+
+logger = logging.getLogger(__name__)
 
 CREDENTIAL_TYPES = [
     "msv_creds",
@@ -19,6 +24,10 @@ PypykatzCredential = NewType("PypykatzCredential", Dict)
 
 
 def get_windows_creds() -> List[WindowsCredentials]:
+    if not is_windows_os():
+        logger.debug("Skipping pypykatz because the operating system is not Windows")
+        return []
+
     pypy_handle = pypykatz.go_live()
     logon_data = pypy_handle.to_dict()
     windows_creds = _parse_pypykatz_results(logon_data)
