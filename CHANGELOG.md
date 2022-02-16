@@ -17,6 +17,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The setup procedure for custom server_config.json files to be simpler. #1576
 - The order and content of Monkey Island's initialization logging to give
   clearer instructions to the user and avoid confusion. #1684
+- The process list collection system info collector to now be a post-breach action. #1697
 
 ### Removed
 - VSFTPD exploiter. #1533
