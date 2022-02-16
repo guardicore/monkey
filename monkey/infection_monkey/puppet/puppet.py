@@ -32,7 +32,7 @@ class Puppet(IPuppet):
         credential_collector = self._plugin_registry.get_plugin(
             name, PluginType.CREDENTIAL_COLLECTOR
         )
-        return list(credential_collector.collect_credentials(options))
+        return credential_collector.collect_credentials(options)
 
     def run_pba(self, name: str, options: Dict) -> PostBreachData:
         return self._mock_puppet.run_pba(name, options)

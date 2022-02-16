@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, Sequence
 
 from infection_monkey.credential_collectors import SSHKeypair, Username
 from infection_monkey.credential_collectors.ssh_collector import ssh_handler
@@ -17,7 +17,7 @@ class SSHCredentialCollector(ICredentialCollector):
     def __init__(self, telemetry_messenger: ITelemetryMessenger):
         self._telemetry_messenger = telemetry_messenger
 
-    def collect_credentials(self, _options=None) -> List[Credentials]:
+    def collect_credentials(self, _options=None) -> Sequence[Credentials]:
         logger.info("Started scanning for SSH credentials")
         ssh_info = ssh_handler.get_ssh_info(self._telemetry_messenger)
         logger.info("Finished scanning for SSH credentials")
@@ -25,7 +25,7 @@ class SSHCredentialCollector(ICredentialCollector):
         return SSHCredentialCollector._to_credentials(ssh_info)
 
     @staticmethod
-    def _to_credentials(ssh_info: Iterable[Dict]) -> List[Credentials]:
+    def _to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
         ssh_credentials = []
 
         for info in ssh_info:

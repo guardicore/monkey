@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Sequence
 
 from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
 from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
@@ -8,12 +8,12 @@ from .windows_credentials import WindowsCredentials
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-    def collect_credentials(self, options=None) -> Iterable[Credentials]:
+    def collect_credentials(self, options=None) -> Sequence[Credentials]:
         creds = pypykatz_handler.get_windows_creds()
         return MimikatzCredentialCollector._to_credentials(creds)
 
     @staticmethod
-    def _to_credentials(win_creds: Iterable[WindowsCredentials]) -> [Credentials]:
+    def _to_credentials(win_creds: Sequence[WindowsCredentials]) -> [Credentials]:
         all_creds = []
         for win_cred in win_creds:
             identities = []

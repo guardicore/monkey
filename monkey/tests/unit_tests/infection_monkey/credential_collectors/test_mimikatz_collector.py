@@ -1,4 +1,4 @@
-from typing import List
+from typing import Sequence
 
 import pytest
 
@@ -23,8 +23,8 @@ def patch_pypykatz(win_creds: [WindowsCredentials], monkeypatch):
     )
 
 
-def collect_credentials() -> List[Credentials]:
-    return list(MimikatzCredentialCollector().collect_credentials())
+def collect_credentials() -> Sequence[Credentials]:
+    return MimikatzCredentialCollector().collect_credentials()
 
 
 @pytest.mark.parametrize(
