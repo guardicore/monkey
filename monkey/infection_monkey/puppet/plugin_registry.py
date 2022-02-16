@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from infection_monkey.i_puppet import PluginType, UnknownPluginError
 
@@ -28,7 +27,7 @@ class PluginRegistry:
 
         logger.debug(f"Plugin '{plugin_name}' loaded")
 
-    def get_plugin(self, plugin_name: str, plugin_type: PluginType) -> Optional[object]:
+    def get_plugin(self, plugin_name: str, plugin_type: PluginType) -> object:
         try:
             plugin = self._registry[plugin_type][plugin_name]
         except KeyError:
