@@ -1,3 +1,4 @@
+import threading
 from functools import wraps
 
 from .timer import Timer
@@ -29,14 +30,16 @@ def request_cache(ttl: float):
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            if wrapper.timer.is_expired():
-                wrapper.cached_value = fn(*args, **kwargs)
-                wrapper.timer.set(ttl)
+            with wrapper.lock:
+                if wrapper.timer.is_expired():
+                    wrapper.cached_value = fn(*args, **kwargs)
+                    wrapper.timer.set(ttl)
 
             return wrapper.cached_value
 
         wrapper.cached_value = None
         wrapper.timer = Timer()
+        wrapper.lock = threading.Lock()
 
         return wrapper
 
