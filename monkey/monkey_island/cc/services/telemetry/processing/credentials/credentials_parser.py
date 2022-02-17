@@ -23,17 +23,21 @@ IDENTITY_PROCESSORS = {
 
 
 def parse_credentials(credentials: dict):
-    for credential in credentials["credentials"]:
-        if is_ssh_keypair(credentials):
-            IDENTITY_PROCESSORS[CredentialsType.SSH_KEYPAIR](credential, credentials["monkey_guid"])
+
+    for credential in credentials["data"]:
+        if is_ssh_keypair(credential):
+            SECRET_PROCESSORS[CredentialsType.SSH_KEYPAIR](credential, credentials["monkey_guid"])
         else:
             for identity in credential["identities"]:
-                IDENTITY_PROCESSORS[identity["type"]](identity)
+                IDENTITY_PROCESSORS[identity["credential_type"]](identity)
             for secret in credential["secrets"]:
-                SECRET_PROCESSORS[secret["type"]](secret)
+                SECRET_PROCESSORS[secret["credential_type"]](secret)
 
 
-def is_ssh_keypair(credentials: dict) -> bool:
+def is_ssh_keypair(credential: dict) -> bool:
     return bool(
-        filter(credentials["secrets"], lambda secret: secret["type"] == CredentialsType.SSH_KEYPAIR)
+        filter(
+            lambda secret: secret["credential_type"] == CredentialsType.SSH_KEYPAIR,
+            credential["secrets"],
+        )
     )
