@@ -56,7 +56,7 @@ class T1082(AttackTechnique):
         {"$replaceRoot": {"newRoot": "$_id"}},
     ]
 
-    query_for_pbas = [
+    query_for_running_processes_list = [
         {
             "$match": {
                 "$and": [
@@ -93,7 +93,7 @@ class T1082(AttackTechnique):
                 ScanStatus.USED.value if system_info_data else ScanStatus.UNSCANNED.value
             )
 
-            pba_data = list(mongo.db.telemetry.aggregate(T1082.query_for_pbas))
+            pba_data = list(mongo.db.telemetry.aggregate(T1082.query_for_running_processes_list))
             successful_PBAs = mongo.db.telemetry.count(
                 {
                     "$and": [
