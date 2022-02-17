@@ -2,11 +2,9 @@ import logging
 
 from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
 from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.system_info_collectors.system_info_telemetry_dispatcher import (  # noqa: E501
     SystemInfoTelemetryDispatcher,
 )
-from monkey_island.cc.services.wmi_handler import WMIHandler
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +14,6 @@ def process_system_info_telemetry(telemetry_json):
     telemetry_processing_stages = [
         process_ssh_info,
         process_credential_info,
-        process_wmi_info,
         dispatcher.dispatch_collector_results_to_relevant_processors,
     ]
 
@@ -96,12 +93,3 @@ def add_system_info_creds_to_config(creds):
             ConfigService.creds_add_lm_hash(creds[user]["lm_hash"])
         if "ntlm_hash" in creds[user] and creds[user]["ntlm_hash"]:
             ConfigService.creds_add_ntlm_hash(creds[user]["ntlm_hash"])
-
-
-def process_wmi_info(telemetry_json):
-    users_secrets = {}
-
-    if "wmi" in telemetry_json["data"]:
-        monkey_id = NodeService.get_monkey_by_guid(telemetry_json["monkey_guid"]).get("_id")
-        wmi_handler = WMIHandler(monkey_id, telemetry_json["data"]["wmi"], users_secrets)
-        wmi_handler.process_and_handle_wmi_info()
