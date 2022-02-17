@@ -1,6 +1,4 @@
-from common.common_consts.system_info_collectors_names import (
-    MIMIKATZ_COLLECTOR,
-)
+from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR, SSH_COLLECTOR
 
 SYSTEM_INFO_COLLECTOR_CLASSES = {
     "title": "System Information Collectors",
@@ -10,10 +8,18 @@ SYSTEM_INFO_COLLECTOR_CLASSES = {
         {
             "type": "string",
             "enum": [MIMIKATZ_COLLECTOR],
-            "title": "Mimikatz Collector",
+            "title": "Mimikatz Credentials Collector",
             "safe": True,
             "info": "Collects credentials from Windows credential manager.",
             "attack_techniques": ["T1003", "T1005"],
+        },
+        {
+            "type": "string",
+            "enum": [SSH_COLLECTOR],
+            "title": "SSH Credentials Collector",
+            "safe": True,
+            "info": "Searches users' home directories and collects SSH keypairs.",
+            "attack_techniques": ["T1005", "T1145"],
         },
     ],
 }

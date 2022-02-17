@@ -2,9 +2,9 @@ import abc
 import threading
 from collections import namedtuple
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Sequence
 
-from . import PluginType
+from . import Credentials, PluginType
 
 
 class PortStatus(Enum):
@@ -36,12 +36,14 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def run_sys_info_collector(self, name: str) -> Dict:
+    def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
         """
-        Runs a system info collector
-        :param str name: The name of the system info collector to run
-        :return: A dictionary containing the information collected from the system
-        :rtype: Dict
+        Runs a credential collector
+        :param str name: The name of the credential collector to run
+        :param Dict options: A dictionary containing options that modify the behavior of the
+                             Credential collector
+        :return: A sequence of Credentials that have been collected from the system
+        :rtype: Sequence[Credentials]
         """
 
     @abc.abstractmethod

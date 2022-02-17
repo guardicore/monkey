@@ -8,9 +8,9 @@ from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network import NetworkInterface
+from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 from infection_monkey.utils.threading import create_daemon_thread, interruptable_iter
 from infection_monkey.utils.timer import Timer
 
@@ -134,12 +134,12 @@ class AutomatedMaster(IMaster):
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
 
-        system_info_collector_thread = create_daemon_thread(
+        credential_collector_thread = create_daemon_thread(
             target=self._run_plugins,
             args=(
                 config["system_info_collector_classes"],
-                "system info collector",
-                self._collect_system_info,
+                "credential collector",
+                self._collect_credentials,
             ),
         )
         pba_thread = create_daemon_thread(
@@ -147,14 +147,14 @@ class AutomatedMaster(IMaster):
             args=(config["post_breach_actions"].items(), "post-breach action", self._run_pba),
         )
 
-        system_info_collector_thread.start()
+        credential_collector_thread.start()
         pba_thread.start()
 
         # Future stages of the simulation require the output of the system info collectors. Nothing
         # requires the output of PBAs, so we don't need to join on that thread here. We will join on
         # the PBA thread later in this function to prevent the simulation from ending while PBAs are
         # still running.
-        system_info_collector_thread.join()
+        credential_collector_thread.join()
 
         if self._can_propagate():
             self._propagator.propagate(config["propagation"], self._stop)
@@ -168,12 +168,13 @@ class AutomatedMaster(IMaster):
 
         pba_thread.join()
 
-    def _collect_system_info(self, collector: str):
-        system_info_telemetry = {}
-        system_info_telemetry[collector] = self._puppet.run_sys_info_collector(collector)
-        self._telemetry_messenger.send_telemetry(
-            SystemInfoTelem({"collectors": system_info_telemetry})
-        )
+    def _collect_credentials(self, collector: str):
+        credentials = self._puppet.run_credential_collector(collector, {})
+
+        if credentials:
+            self._telemetry_messenger.send_telemetry(CredentialsTelem(credentials))
+        else:
+            logger.debug(f"No credentials were collected by {collector}")
 
     def _run_pba(self, pba: Tuple[str, Dict]):
         # TODO: This is the class's name right now. We need `display_name` (see the

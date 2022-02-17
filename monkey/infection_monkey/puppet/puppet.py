@@ -1,9 +1,10 @@
 import logging
 import threading
-from typing import Dict, List
+from typing import Dict, List, Sequence
 
 from infection_monkey import network
 from infection_monkey.i_puppet import (
+    Credentials,
     ExploiterResultData,
     FingerprintData,
     IPuppet,
@@ -27,8 +28,11 @@ class Puppet(IPuppet):
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
         self._plugin_registry.load_plugin(plugin_name, plugin, plugin_type)
 
-    def run_sys_info_collector(self, name: str) -> Dict:
-        return self._mock_puppet.run_sys_info_collector(name)
+    def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
+        credential_collector = self._plugin_registry.get_plugin(
+            name, PluginType.CREDENTIAL_COLLECTOR
+        )
+        return credential_collector.collect_credentials(options)
 
     def run_pba(self, name: str, options: Dict) -> PostBreachData:
         return self._mock_puppet.run_pba(name, options)

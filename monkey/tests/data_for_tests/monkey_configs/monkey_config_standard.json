@@ -146,8 +146,8 @@
       },
       "system_info": {
         "system_info_collector_classes": [
-          "hostnamecollector",
-          "mimikatzcollector"
+          "MimikatzCollector",
+          "SSHCollector"
         ]
       }
     }

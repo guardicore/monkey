@@ -1,6 +1,4 @@
-from common.common_consts.system_info_collectors_names import (
-    MIMIKATZ_COLLECTOR,
-)
+from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR, SSH_COLLECTOR
 
 MONKEY = {
     "title": "Monkey",
@@ -86,6 +84,7 @@ MONKEY = {
                     "items": {"$ref": "#/definitions/system_info_collector_classes"},
                     "default": [
                         MIMIKATZ_COLLECTOR,
+                        SSH_COLLECTOR,
                     ],
                 },
             },

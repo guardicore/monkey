@@ -12,6 +12,10 @@ from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.credential_collectors import (
+    MimikatzCredentialCollector,
+    SSHCredentialCollector,
+)
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
@@ -169,7 +173,7 @@ class InfectionMonkey:
 
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
-        puppet = InfectionMonkey._build_puppet()
+        puppet = self._build_puppet()
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
@@ -189,9 +193,19 @@ class InfectionMonkey:
 
         return local_network_interfaces
 
-    @staticmethod
-    def _build_puppet() -> IPuppet:
+    def _build_puppet(self) -> IPuppet:
         puppet = Puppet()
+
+        puppet.load_plugin(
+            "MimikatzCollector",
+            MimikatzCredentialCollector(),
+            PluginType.CREDENTIAL_COLLECTOR,
+        )
+        puppet.load_plugin(
+            "SSHCollector",
+            SSHCredentialCollector(self.telemetry_messenger),
+            PluginType.CREDENTIAL_COLLECTOR,
+        )
 
         puppet.load_plugin("elastic", ElasticSearchFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("http", HTTPFingerprinter(), PluginType.FINGERPRINTER)

@@ -104,7 +104,8 @@
             }
         },
         "system_info_collector_classes": [
-            "MimikatzCollector"
+            "MimikatzCollector",
+            "SSHCollector"
         ]
     }
 }

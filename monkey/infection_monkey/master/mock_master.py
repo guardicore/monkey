@@ -3,11 +3,11 @@ import logging
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet, PortStatus
 from infection_monkey.model.host import VictimHost
+from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.telemetry.scan_telem import ScanTelem
-from infection_monkey.telemetry.system_info_telem import SystemInfoTelem
 
 logger = logging.getLogger()
 
@@ -31,18 +31,18 @@ class MockMaster(IMaster):
         self._exploit()
         self._run_payload()
 
-    def _run_sys_info_collectors(self):
-        logger.info("Running system info collectors")
-        system_info_telemetry = {}
-        system_info_telemetry["ProcessListCollector"] = self._puppet.run_sys_info_collector(
-            "ProcessListCollector"
-        )
-        self._telemetry_messenger.send_telemetry(
-            SystemInfoTelem({"collectors": system_info_telemetry})
-        )
-        system_info = self._puppet.run_sys_info_collector("LinuxInfoCollector")
-        self._telemetry_messenger.send_telemetry(SystemInfoTelem(system_info))
-        logger.info("Finished running system info collectors")
+    def _run_credential_collectors(self):
+        logger.info("Running credential collectors")
+
+        windows_credentials = self._puppet.run_credential_collector("MimikatzCollector")
+        if windows_credentials:
+            self._telemetry_messenger.send_telemetry(CredentialsTelem(windows_credentials))
+
+        ssh_credentials = self._puppet.run_sys_info_collector("SSHCollector")
+        if ssh_credentials:
+            self._telemetry_messenger.send_telemetry(CredentialsTelem(ssh_credentials))
+
+        logger.info("Finished running credential collectors")
 
     def _run_pbas(self):
 
