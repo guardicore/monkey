@@ -159,9 +159,6 @@ class MockPuppet(IPuppet):
 
         if name == "AccountDiscovery":
             return PostBreachData("pba command 1", ["pba result 1", True])
-        elif name == "ProcessListCollection":
-            cmd, result = ProcessListCollection().run()
-            return PostBreachData(cmd, result)
         else:
             return PostBreachData("pba command 2", ["pba result 2", False])
 
