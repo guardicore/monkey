@@ -2,22 +2,22 @@ import logging
 
 from common.common_consts.telem_categories import TelemCategoryEnum
 from monkey_island.cc.services.telemetry.processing.aws_info import process_aws_telemetry
+from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import\
+    parse_credentials
 from monkey_island.cc.services.telemetry.processing.exploit import process_exploit_telemetry
 from monkey_island.cc.services.telemetry.processing.post_breach import process_post_breach_telemetry
 from monkey_island.cc.services.telemetry.processing.scan import process_scan_telemetry
 from monkey_island.cc.services.telemetry.processing.state import process_state_telemetry
-from monkey_island.cc.services.telemetry.processing.system_info import process_system_info_telemetry
 from monkey_island.cc.services.telemetry.processing.tunnel import process_tunnel_telemetry
 
 logger = logging.getLogger(__name__)
 
 TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
-    TelemCategoryEnum.CREDENTIALS: process_credentials_telemetry,
+    TelemCategoryEnum.CREDENTIALS: parse_credentials,
     TelemCategoryEnum.TUNNEL: process_tunnel_telemetry,
     TelemCategoryEnum.STATE: process_state_telemetry,
     TelemCategoryEnum.EXPLOIT: process_exploit_telemetry,
     TelemCategoryEnum.SCAN: process_scan_telemetry,
-    TelemCategoryEnum.SYSTEM_INFO: process_system_info_telemetry,
     TelemCategoryEnum.POST_BREACH: process_post_breach_telemetry,
     TelemCategoryEnum.AWS_INFO: process_aws_telemetry,
     # `lambda *args, **kwargs: None` is a no-op.
