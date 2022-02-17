@@ -17,7 +17,7 @@ def process_ssh_key(credentials: dict, monkey_guid: str):
         )
 
     for ssh_key in credentials["secrets"]:
-        if not ssh_key["type"] == CredentialsType.SSH_KEYPAIR:
+        if not ssh_key["credential_type"] == CredentialsType.SSH_KEYPAIR.name:
             raise SSHKeyProcessingError("SSH credentials contain secrets that are not keypairs")
 
         if not ssh_key["public_key"] or not ssh_key["private_key"]:
@@ -26,6 +26,8 @@ def process_ssh_key(credentials: dict, monkey_guid: str):
         # TODO SSH key should be associated with IP that monkey exploited
         ip = Monkey.get_single_monkey_by_guid(monkey_guid).ip_addresses[0]
         username = credentials["identities"][0]["username"]
+
+        encrypt_system_info_ssh_keys(ssh_key)
 
         ConfigService.ssh_add_keys(
             user=username,
