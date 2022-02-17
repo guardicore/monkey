@@ -1,10 +1,4 @@
 from .plugin_type import PluginType
-from .credential_collection import (
-    Credentials,
-    CredentialType,
-    ICredentialCollector,
-    ICredentialComponent,
-)
 from .i_puppet import (
     IPuppet,
     ExploiterResultData,
@@ -16,3 +10,8 @@ from .i_puppet import (
     UnknownPluginError,
 )
 from .i_fingerprinter import IFingerprinter
+from .credential_collection import (
+    Credentials,
+    ICredentialCollector,
+    ICredentialComponent,
+)
