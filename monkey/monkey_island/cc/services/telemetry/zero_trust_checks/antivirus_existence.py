@@ -1,7 +1,6 @@
 import json
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
-from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.services.telemetry.zero_trust_checks.known_anti_viruses import (
     ANTI_VIRUS_KNOWN_PROCESS_NAMES,
@@ -11,9 +10,7 @@ from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_serv
 )
 
 
-def check_antivirus_existence(process_list_json, monkey_guid):
-    current_monkey = Monkey.get_single_monkey_by_guid(monkey_guid)
-
+def check_antivirus_existence(telemetry_json, current_monkey):
     process_list_event = Event.create_event(
         title="Process list",
         message="Monkey on {} scanned the process list".format(current_monkey.hostname),
@@ -21,7 +18,7 @@ def check_antivirus_existence(process_list_json, monkey_guid):
     )
     events = [process_list_event]
 
-    av_processes = filter_av_processes(process_list_json["process_list"])
+    av_processes = filter_av_processes(telemetry_json["data"]["result"][0])
 
     for process in av_processes:
         events.append(

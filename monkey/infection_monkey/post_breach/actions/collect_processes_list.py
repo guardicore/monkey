@@ -2,31 +2,36 @@ import logging
 
 import psutil
 
-from common.common_consts.system_info_collectors_names import PROCESS_LIST_COLLECTOR
-from infection_monkey.system_info.system_info_collector import SystemInfoCollector
+from common.common_consts.post_breach_consts import POST_BREACH_PROCESS_LIST_COLLECTION
+from infection_monkey.post_breach.pba import PBA
 
 logger = logging.getLogger(__name__)
 
 # Linux doesn't have WindowsError
+applicable_exceptions = psutil.AccessDenied
 try:
-    WindowsError
+    applicable_exceptions = (psutil.AccessDenied, WindowsError)
 except NameError:
-    # noinspection PyShadowingBuiltins
-    WindowsError = psutil.AccessDenied
+    pass
 
 
-class ProcessListCollector(SystemInfoCollector):
+class ProcessListCollection(PBA):
+    # TODO: (?) Move all PBA consts into their classes
+    display_name = POST_BREACH_PROCESS_LIST_COLLECTION
+
     def __init__(self):
-        super().__init__(name=PROCESS_LIST_COLLECTOR)
+        super().__init__(POST_BREACH_PROCESS_LIST_COLLECTION)
 
-    def collect(self) -> dict:
+    def run(self):
         """
-        Adds process information from the host to the system information.
+        Collects process information from the host.
         Currently lists process name, ID, parent ID, command line
         and the full image path of each process.
         """
         logger.debug("Reading process list")
+
         processes = {}
+        success_state = False
         for process in psutil.process_iter():
             try:
                 processes[process.pid] = {
@@ -36,10 +41,10 @@ class ProcessListCollector(SystemInfoCollector):
                     "cmdline": " ".join(process.cmdline()),
                     "full_image_path": process.exe(),
                 }
-            except (psutil.AccessDenied, WindowsError):
-                # we may be running as non root and some processes are impossible to acquire in
-                # Windows/Linux.
-                # In this case we'll just add what we know.
+                success_state = True
+            except applicable_exceptions:
+                # We may be running as non root and some processes are impossible to acquire in
+                # Windows/Linux. In this case, we'll just add what we know.
                 processes[process.pid] = {
                     "name": "null",
                     "pid": process.pid,
@@ -49,4 +54,4 @@ class ProcessListCollector(SystemInfoCollector):
                 }
                 continue
 
-        return {"process_list": processes}
+        return self.command, (processes, success_state)

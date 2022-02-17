@@ -37,9 +37,9 @@ class T1082 extends React.Component {
         {this.props.data.status === ScanStatus.USED ?
           <ReactTable
             columns={T1082.getSystemInfoColumns()}
-            data={this.props.data.system_info}
+            data={this.props.data.technique_data}
             showPagination={false}
-            defaultPageSize={this.props.data.system_info.length}
+            defaultPageSize={this.props.data.technique_data.length}
           /> : ''}
         <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>

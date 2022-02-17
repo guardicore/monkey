@@ -94,5 +94,13 @@ POST_BREACH_ACTIONS = {
             "info": "Attempts to clear the command history.",
             "attack_techniques": ["T1146"],
         },
+        {
+            "type": "string",
+            "enum": ["ProcessListCollection"],
+            "title": "Process List Collector",
+            "safe": True,
+            "info": "Collects a list of running processes on the machine.",
+            "attack_techniques": ["T1082"],
+        },
     ],
 }

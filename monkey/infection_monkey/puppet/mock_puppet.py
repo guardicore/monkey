@@ -12,6 +12,7 @@ from infection_monkey.i_puppet import (
     PortStatus,
     PostBreachData,
 )
+from infection_monkey.post_breach.actions.collect_processes_list import ProcessListCollection
 
 DOT_1 = "10.0.0.1"
 DOT_2 = "10.0.0.2"

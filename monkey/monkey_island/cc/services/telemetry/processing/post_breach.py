@@ -1,8 +1,14 @@
 import copy
 
-from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
+from common.common_consts.post_breach_consts import (
+    POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER,
+    POST_BREACH_PROCESS_LIST_COLLECTION,
+)
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (
+    check_antivirus_existence,
+)
 from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_backdoor_user import (
     check_new_user_communication,
 )
@@ -10,15 +16,22 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.communicate_as_backdo
 EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
 
-def process_communicate_as_backdoor_user_telemetry(telemetry_json):
-    current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
+def process_communicate_as_backdoor_user_telemetry(telemetry_json, current_monkey):
     message = telemetry_json["data"]["result"][0]
     success = telemetry_json["data"]["result"][1]
     check_new_user_communication(current_monkey, success, message)
 
 
+def process_process_list_collection_telemetry(telemetry_json, current_monkey):
+    check_antivirus_existence(telemetry_json, current_monkey)
+
+
 POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
     POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER: process_communicate_as_backdoor_user_telemetry,
+    # TODO: Remove the line below and un-comment the next one after the TODO in `_run_pba()` in
+    #       `automated_master.py` is resolved.
+    "ProcessListCollection": process_process_list_collection_telemetry,
+    # POST_BREACH_PROCESS_LIST_COLLECTION: process_process_list_collection_telemetry,
 }
 
 
@@ -44,7 +57,10 @@ def process_post_breach_telemetry(telemetry_json):
 
     post_breach_action_name = telemetry_json["data"]["name"]
     if post_breach_action_name in POST_BREACH_TELEMETRY_PROCESSING_FUNCS:
-        POST_BREACH_TELEMETRY_PROCESSING_FUNCS[post_breach_action_name](telemetry_json)
+        current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
+        POST_BREACH_TELEMETRY_PROCESSING_FUNCS[post_breach_action_name](
+            telemetry_json, current_monkey
+        )
 
     telemetry_json["data"] = convert_telem_data_to_list(telemetry_json["data"])
 

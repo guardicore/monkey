@@ -1,16 +1,11 @@
 import logging
 import typing
 
-from common.common_consts.system_info_collectors_names import PROCESS_LIST_COLLECTOR
-from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (
-    check_antivirus_existence,
-)
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {
-    PROCESS_LIST_COLLECTOR: [check_antivirus_existence],
-}
+
+SYSTEM_INFO_COLLECTOR_TO_TELEMETRY_PROCESSORS = {}
 
 
 class SystemInfoTelemetryDispatcher(object):
