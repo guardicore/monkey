@@ -24,6 +24,7 @@ PypykatzCredential = NewType("PypykatzCredential", Dict)
 
 
 def get_windows_creds() -> List[WindowsCredentials]:
+    # TODO: Remove this check when this is turned into a plugin.
     if not is_windows_os():
         logger.debug("Skipping pypykatz because the operating system is not Windows")
         return []

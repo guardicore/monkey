@@ -16,6 +16,7 @@ DEFAULT_DIRS = ["/.ssh/", "/"]
 
 
 def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
+    # TODO: Remove this check when this is turned into a plugin.
     if is_windows_os():
         logger.debug(
             "Skipping SSH credentials collection because the operating system is not Linux"
