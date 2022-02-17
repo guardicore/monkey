@@ -12,6 +12,7 @@ from monkey_island.cc.services.telemetry.processing.tunnel import process_tunnel
 logger = logging.getLogger(__name__)
 
 TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
+    TelemCategoryEnum.CREDENTIALS: process_credentials_telemetry,
     TelemCategoryEnum.TUNNEL: process_tunnel_telemetry,
     TelemCategoryEnum.STATE: process_state_telemetry,
     TelemCategoryEnum.EXPLOIT: process_exploit_telemetry,

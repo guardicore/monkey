@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 
-from infection_monkey.i_puppet import CredentialType, ICredentialComponent
+from common.common_consts.credentials_type import CredentialsType
+from infection_monkey.i_puppet import ICredentialComponent
 
 
 @dataclass(frozen=True)
 class SSHKeypair(ICredentialComponent):
-    credential_type: CredentialType = field(default=CredentialType.SSH_KEYPAIR, init=False)
+    credential_type: CredentialsType = field(default=CredentialsType.SSH_KEYPAIR, init=False)
     private_key: str
     public_key: str

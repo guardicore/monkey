@@ -1,9 +1,10 @@
 from dataclasses import dataclass, field
 
-from infection_monkey.i_puppet import CredentialType, ICredentialComponent
+from common.common_consts.credentials_type import CredentialsType
+from infection_monkey.i_puppet import ICredentialComponent
 
 
 @dataclass(frozen=True)
 class Password(ICredentialComponent):
-    credential_type: CredentialType = field(default=CredentialType.PASSWORD, init=False)
+    credential_type: CredentialsType = field(default=CredentialsType.PASSWORD, init=False)
     password: str
