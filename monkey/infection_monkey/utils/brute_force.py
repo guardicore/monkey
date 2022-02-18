@@ -1,4 +1,4 @@
-from itertools import product
+from itertools import chain, product
 from typing import Any, Iterable, Tuple
 
 
@@ -18,11 +18,8 @@ def generate_username_password_or_ntlm_hash_combinations(
     Returns all combinations of the configurations users and passwords or lm/ntlm hashes
     :return:
     """
-    cred_list = []
-    for cred in product(usernames, passwords, [""], [""]):
-        cred_list.append(cred)
-    for cred in product(usernames, [""], lm_hashes, [""]):
-        cred_list.append(cred)
-    for cred in product(usernames, [""], [""], nt_hashes):
-        cred_list.append(cred)
-    return cred_list
+    return chain(
+        product(usernames, passwords, [""], [""]),
+        product(usernames, [""], lm_hashes, [""]),
+        product(usernames, [""], [""], nt_hashes),
+    )
