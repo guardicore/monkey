@@ -14,7 +14,7 @@ INTERVAL = 0.001
 
 
 def test_terminate_without_start():
-    m = AutomatedMaster(None, None, None, None, [])
+    m = AutomatedMaster(None, None, None, MagicMock(), [])
 
     # Test that call to terminate does not raise exception
     m.terminate()

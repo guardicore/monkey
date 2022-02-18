@@ -41,7 +41,9 @@ class AutomatedMaster(IMaster):
         self._control_channel = control_channel
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
-        exploiter = Exploiter(self._puppet, NUM_EXPLOIT_THREADS)
+        exploiter = Exploiter(
+            self._puppet, NUM_EXPLOIT_THREADS, self._control_channel.get_credentials_for_propagation
+        )
         self._propagator = Propagator(
             self._telemetry_messenger,
             ip_scanner,
