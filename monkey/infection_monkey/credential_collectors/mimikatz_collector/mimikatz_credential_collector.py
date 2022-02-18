@@ -1,3 +1,4 @@
+import logging
 from typing import Sequence
 
 from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
@@ -6,10 +7,15 @@ from infection_monkey.i_puppet.credential_collection import Credentials, ICreden
 from . import pypykatz_handler
 from .windows_credentials import WindowsCredentials
 
+logger = logging.getLogger(__name__)
+
 
 class MimikatzCredentialCollector(ICredentialCollector):
+
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
+        logger.info("Attempting to collect windows credentials with pypykatz.")
         creds = pypykatz_handler.get_windows_creds()
+        logger.info(f"Pypykatz gathered {len(creds)} credentials.")
         return MimikatzCredentialCollector._to_credentials(creds)
 
     @staticmethod
