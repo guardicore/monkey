@@ -13,7 +13,7 @@ odict = "==1.7.0"
 paramiko = ">=2.7.1"
 psutil = ">=5.7.0"
 pymssql = "==2.1.5"
-pypykatz = "==0.3.12"
+pypykatz = "==0.5.2"
 requests = ">=2.24"
 urllib3 = "==1.26.5"
 WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
