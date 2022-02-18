@@ -171,21 +171,26 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
 
 def test_format_config_for_agent__exploiters(flat_monkey_config):
     expected_exploiters_config = {
+        "options": {
+            "dropper_target_path_linux": "/tmp/monkey",
+            "dropper_target_path_win_32": r"C:\Windows\temp\monkey32.exe",
+            "dropper_target_path_win_64": r"C:\Windows\temp\monkey64.exe",
+        },
         "brute_force": [
-            {"name": "MSSQLExploiter"},
-            {"name": "PowerShellExploiter"},
-            {"name": "SSHExploiter"},
-            {"name": "SmbExploiter"},
-            {"name": "WmiExploiter"},
+            {"name": "MSSQLExploiter", "options": {}},
+            {"name": "PowerShellExploiter", "options": {}},
+            {"name": "SSHExploiter", "options": {}},
+            {"name": "SmbExploiter", "options": {}},
+            {"name": "WmiExploiter", "options": {}},
         ],
         "vulnerability": [
-            {"name": "DrupalExploiter"},
-            {"name": "ElasticGroovyExploiter"},
-            {"name": "HadoopExploiter"},
-            {"name": "ShellShockExploiter"},
-            {"name": "Struts2Exploiter"},
-            {"name": "WebLogicExploiter"},
-            {"name": "ZerologonExploiter"},
+            {"name": "DrupalExploiter", "options": {}},
+            {"name": "ElasticGroovyExploiter", "options": {}},
+            {"name": "HadoopExploiter", "options": {}},
+            {"name": "ShellShockExploiter", "options": {}},
+            {"name": "Struts2Exploiter", "options": {}},
+            {"name": "WebLogicExploiter", "options": {}},
+            {"name": "ZerologonExploiter", "options": {}},
         ],
     }
     ConfigService.format_flat_config_for_agent(flat_monkey_config)
