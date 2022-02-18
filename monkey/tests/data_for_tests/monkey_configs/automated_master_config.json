@@ -46,20 +46,20 @@
             },
             "exploiters": {
                 "brute_force": [
-                    {"name": "MSSQLExploiter", "propagator": true},
-                    {"name": "PowerShellExploiter", "propagator": true},
-                    {"name": "SmbExploiter", "propagator": true},
-                    {"name": "SSHExploiter", "propagator": true},
-                    {"name": "WmiExploiter", "propagator": true}
+                    {"name": "MSSQLExploiter"},
+                    {"name": "PowerShellExploiter"},
+                    {"name": "SmbExploiter"},
+                    {"name": "SSHExploiter"},
+                    {"name": "WmiExploiter"}
                 ],
                 "vulnerability": [
-                    {"name": "DrupalExploiter", "propagator": true},
-                    {"name": "ElasticGroovyExploiter", "propagator": true},
-                    {"name": "HadoopExploiter", "propagator": true},
-                    {"name": "ShellShockExploiter", "propagator": true},
-                    {"name": "Struts2Exploiter", "propagator": true},
-                    {"name": "WebLogicExploiter", "propagator": true},
-                    {"name": "ZerologonExploiter", "propagator": false}
+                    {"name": "DrupalExploiter"},
+                    {"name": "ElasticGroovyExploiter"},
+                    {"name": "HadoopExploiter"},
+                    {"name": "ShellShockExploiter"},
+                    {"name": "Struts2Exploiter"},
+                    {"name": "WebLogicExploiter"},
+                    {"name": "ZerologonExploiter"}
                 ]
             }
         },

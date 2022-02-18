@@ -611,9 +611,7 @@ class ConfigService:
                 else vulnerability_category
             )
 
-            formatted_exploiters_config[category].append(
-                {"name": exploiter, "propagator": (exploiter != "ZerologonExploiter")}
-            )
+            formatted_exploiters_config[category].append({"name": exploiter})
 
         config.pop(flat_config_exploiter_classes_field, None)
 

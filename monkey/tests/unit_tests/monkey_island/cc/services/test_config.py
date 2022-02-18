@@ -172,20 +172,20 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
 def test_format_config_for_agent__exploiters(flat_monkey_config):
     expected_exploiters_config = {
         "brute_force": [
-            {"name": "MSSQLExploiter", "propagator": True},
-            {"name": "PowerShellExploiter", "propagator": True},
-            {"name": "SSHExploiter", "propagator": True},
-            {"name": "SmbExploiter", "propagator": True},
-            {"name": "WmiExploiter", "propagator": True},
+            {"name": "MSSQLExploiter"},
+            {"name": "PowerShellExploiter"},
+            {"name": "SSHExploiter"},
+            {"name": "SmbExploiter"},
+            {"name": "WmiExploiter"},
         ],
         "vulnerability": [
-            {"name": "DrupalExploiter", "propagator": True},
-            {"name": "ElasticGroovyExploiter", "propagator": True},
-            {"name": "HadoopExploiter", "propagator": True},
-            {"name": "ShellShockExploiter", "propagator": True},
-            {"name": "Struts2Exploiter", "propagator": True},
-            {"name": "WebLogicExploiter", "propagator": True},
-            {"name": "ZerologonExploiter", "propagator": False},
+            {"name": "DrupalExploiter"},
+            {"name": "ElasticGroovyExploiter"},
+            {"name": "HadoopExploiter"},
+            {"name": "ShellShockExploiter"},
+            {"name": "Struts2Exploiter"},
+            {"name": "WebLogicExploiter"},
+            {"name": "ZerologonExploiter"},
         ],
     }
     ConfigService.format_flat_config_for_agent(flat_monkey_config)
