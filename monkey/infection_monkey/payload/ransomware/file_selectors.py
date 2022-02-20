@@ -1,7 +1,7 @@
+import filecmp
 from pathlib import Path
 from typing import List, Set
 
-from common.utils.file_utils import get_file_sha256_hash
 from infection_monkey.utils.dir_utils import (
     file_extension_filter,
     filter_files,
@@ -10,7 +10,7 @@ from infection_monkey.utils.dir_utils import (
     is_not_symlink_filter,
 )
 
-from .consts import README_FILE_NAME, README_SHA256_HASH
+from .consts import README_FILE_NAME, README_SRC
 
 
 class ProductionSafeTargetFileSelector:
@@ -33,4 +33,4 @@ def _is_not_ransomware_readme_filter(filepath: Path) -> bool:
     if filepath.name != README_FILE_NAME:
         return True
 
-    return get_file_sha256_hash(filepath) != README_SHA256_HASH
+    return not filecmp.cmp(filepath, README_SRC)
