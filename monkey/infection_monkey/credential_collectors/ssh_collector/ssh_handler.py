@@ -1,7 +1,11 @@
 import glob
 import logging
 import os
-import pwd
+
+try:  # can't import on Windows
+    import pwd
+except ModuleNotFoundError:
+    pass
 from typing import Dict, Iterable
 
 from common.utils.attack_utils import ScanStatus
