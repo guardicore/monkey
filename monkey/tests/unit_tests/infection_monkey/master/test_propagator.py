@@ -254,14 +254,14 @@ def test_exploiter_result_processing(
 
         if ip.endswith(".1"):
             if data["exploiter"].startswith("PowerShell"):
-                assert data["result"]
+                assert data["propagation_result"]
             else:
-                assert not data["result"]
+                assert not data["propagation_result"]
         elif ip.endswith(".3"):
             if data["exploiter"].startswith("PowerShell"):
-                assert not data["result"]
+                assert not data["propagation_result"]
             else:
-                assert data["result"]
+                assert data["propagation_result"]
 
 
 def test_scan_target_generation(telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory):
