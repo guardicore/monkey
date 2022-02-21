@@ -141,12 +141,6 @@ class Configuration(object):
     ping_scan_timeout = 1000
 
     ###########################
-    # exploiters config
-    ###########################
-
-    skip_exploit_if_file_exist = False
-
-    ###########################
     # ransomware config
     ###########################
 

@@ -252,20 +252,6 @@ INTERNAL = {
                     "items": {"type": "string"},
                     "description": "List of SSH key pairs to use, when trying to ssh into servers",
                 },
-                "general": {
-                    "title": "General",
-                    "type": "object",
-                    "properties": {
-                        "skip_exploit_if_file_exist": {
-                            "title": "Skip exploit if file exists",
-                            "type": "boolean",
-                            "default": False,
-                            "description": "Determines whether the monkey should skip the exploit "
-                            "if the monkey's file"
-                            " is already on the remote machine",
-                        }
-                    },
-                },
             },
             "smb_service": {
                 "title": "SMB service",
