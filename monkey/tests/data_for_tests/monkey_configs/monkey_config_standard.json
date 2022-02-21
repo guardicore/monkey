@@ -118,10 +118,7 @@
       "exploits": {
         "exploit_lm_hash_list": [],
         "exploit_ntlm_hash_list": [],
-        "exploit_ssh_keys": [],
-        "general": {
-          "skip_exploit_if_file_exist": false
-        }
+        "exploit_ssh_keys": []
       },
       "testing": {
         "export_monkey_telems": false
