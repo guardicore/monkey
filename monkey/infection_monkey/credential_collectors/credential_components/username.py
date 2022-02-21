@@ -6,5 +6,5 @@ from infection_monkey.i_puppet import ICredentialComponent
 
 @dataclass(frozen=True)
 class Username(ICredentialComponent):
-    credential_type: CredentialsType = field(default=CredentialsType.USERNAME, init=False)
+    credential_type: CredentialsType = field(default=CredentialsType.USERNAME.value, init=False)
     username: str

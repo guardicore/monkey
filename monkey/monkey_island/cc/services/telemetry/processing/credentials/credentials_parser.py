@@ -11,14 +11,14 @@ from .secrets.ssh_key_processor import process_ssh_key
 logger = logging.getLogger(__name__)
 
 SECRET_PROCESSORS = {
-    CredentialsType.PASSWORD: process_password,
-    CredentialsType.NT_HASH: process_nt_hash,
-    CredentialsType.LM_HASH: process_lm_hash,
-    CredentialsType.SSH_KEYPAIR: process_ssh_key,
+    CredentialsType.PASSWORD.value: process_password,
+    CredentialsType.NT_HASH.value: process_nt_hash,
+    CredentialsType.LM_HASH.value: process_lm_hash,
+    CredentialsType.SSH_KEYPAIR.value: process_ssh_key,
 }
 
 IDENTITY_PROCESSORS = {
-    CredentialsType.USERNAME: process_username,
+    CredentialsType.USERNAME.value: process_username,
 }
 
 
@@ -26,7 +26,7 @@ def parse_credentials(credentials: dict):
 
     for credential in credentials["data"]:
         if is_ssh_keypair(credential):
-            SECRET_PROCESSORS[CredentialsType.SSH_KEYPAIR](credential, credentials["monkey_guid"])
+            SECRET_PROCESSORS[CredentialsType.SSH_KEYPAIR.value](credential, credentials["monkey_guid"])
         else:
             for identity in credential["identities"]:
                 IDENTITY_PROCESSORS[identity["credential_type"]](identity)
@@ -39,6 +39,6 @@ def is_ssh_keypair(credential: dict) -> bool:
         [
             secret
             for secret in credential["secrets"]
-            if secret["credential_type"] == CredentialsType.SSH_KEYPAIR
+            if secret["credential_type"] == CredentialsType.SSH_KEYPAIR.value
         ]
     )
