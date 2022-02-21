@@ -602,7 +602,20 @@ class ConfigService:
             "WmiExploiter",
         }
 
-        formatted_exploiters_config = {"brute_force": [], "vulnerability": []}
+        exploit_options = {}
+
+        for dropper_target in [
+            "dropper_target_path_linux",
+            "dropper_target_path_win_32",
+            "dropper_target_path_win_64",
+        ]:
+            exploit_options[dropper_target] = config.get(dropper_target, "")
+
+        formatted_exploiters_config = {
+            "options": exploit_options,
+            "brute_force": [],
+            "vulnerability": [],
+        }
 
         for exploiter in sorted(config[flat_config_exploiter_classes_field]):
             category = (
@@ -611,7 +624,7 @@ class ConfigService:
                 else vulnerability_category
             )
 
-            formatted_exploiters_config[category].append({"name": exploiter})
+            formatted_exploiters_config[category].append({"name": exploiter, "options": {}})
 
         config.pop(flat_config_exploiter_classes_field, None)
 
