@@ -102,7 +102,7 @@ class MockMaster(IMaster):
     def _exploit(self):
         logger.info("Exploiting victims")
         (
-            exploit_result,
+            exploitation_result,
             propagation_result,
             os,
             info,
@@ -114,7 +114,7 @@ class MockMaster(IMaster):
             ExploitTelem(
                 "PowerShellExploiter",
                 self._hosts["10.0.0.1"],
-                exploit_result,
+                exploitation_result,
                 propagation_result,
                 info,
                 attempts,
@@ -122,7 +122,7 @@ class MockMaster(IMaster):
         )
 
         (
-            exploit_result,
+            exploitation_result,
             propagation_result,
             os,
             info,
@@ -134,7 +134,7 @@ class MockMaster(IMaster):
             ExploitTelem(
                 "SSHExploiter",
                 self._hosts["10.0.0.3"],
-                exploit_result,
+                exploitation_result,
                 propagation_result,
                 info,
                 attempts,

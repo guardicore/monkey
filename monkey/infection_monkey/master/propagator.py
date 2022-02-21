@@ -155,7 +155,7 @@ class Propagator:
     ):
         if result.propagation_success:
             logger.info(f"Successfully propagated to {host} using {exploiter_name}")
-        elif result.exploit_success:
+        elif result.exploitation_success:
             logger.info(
                 f"Successfully exploited (but did not propagate to) {host} using {exploiter_name}"
             )
@@ -169,7 +169,7 @@ class Propagator:
             ExploitTelem(
                 exploiter_name,
                 host,
-                result.exploit_success,
+                result.exploitation_success,
                 result.propagation_success,
                 result.info,
                 result.attempts,
