@@ -177,25 +177,43 @@ class MockPuppet(IPuppet):
             "vulnerable_ports": [22],
             "executed_cmds": [],
         }
+        os_windows = "windows"
+        os_linux = "linux"
+
         successful_exploiters = {
             DOT_1: {
-                "PowerShellExploiter": ExploiterResultData(True, info_powershell, attempts, None),
-                "ZerologonExploiter": ExploiterResultData(False, {}, [], "Zerologon failed"),
-                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting"),
+                "PowerShellExploiter": ExploiterResultData(
+                    True, True, os_windows, info_powershell, attempts, None
+                ),
+                "ZerologonExploiter": ExploiterResultData(
+                    False, False, os_windows, {}, [], "Zerologon failed"
+                ),
+                "SSHExploiter": ExploiterResultData(
+                    False, False, os_linux, info_ssh, attempts, "Failed exploiting"
+                ),
             },
             DOT_3: {
                 "PowerShellExploiter": ExploiterResultData(
-                    False, info_powershell, attempts, "PowerShell Exploiter Failed"
+                    False,
+                    False,
+                    os_windows,
+                    info_powershell,
+                    attempts,
+                    "PowerShell Exploiter Failed",
                 ),
-                "SSHExploiter": ExploiterResultData(False, info_ssh, attempts, "Failed exploiting"),
-                "ZerologonExploiter": ExploiterResultData(True, {}, [], None),
+                "SSHExploiter": ExploiterResultData(
+                    False, False, os_linux, info_ssh, attempts, "Failed exploiting"
+                ),
+                "ZerologonExploiter": ExploiterResultData(True, False, os_windows, {}, [], None),
             },
         }
 
         try:
             return successful_exploiters[host][name]
         except KeyError:
-            return ExploiterResultData(False, {}, [], f"{name} failed for host {host}")
+            return ExploiterResultData(
+                False, False, os_linux, {}, [], f"{name} failed for host {host}"
+            )
 
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         logger.debug(f"run_payload({name}, {options})")
