@@ -36,8 +36,9 @@ def parse_credentials(credentials: dict):
 
 def is_ssh_keypair(credential: dict) -> bool:
     return bool(
-        filter(
-            lambda secret: secret["credential_type"] == CredentialsType.SSH_KEYPAIR,
-            credential["secrets"],
-        )
+        [
+            secret
+            for secret in credential["secrets"]
+            if secret["credential_type"] == CredentialsType.SSH_KEYPAIR
+        ]
     )
