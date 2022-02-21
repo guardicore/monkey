@@ -100,6 +100,10 @@ dot_3_services = {
     },
 }
 
+os_windows = "windows"
+
+os_linux = "linux"
+
 
 @pytest.fixture
 def mock_ip_scanner():
@@ -184,34 +188,38 @@ class MockExploiter:
                 results_callback(
                     "PowerShellExploiter",
                     host,
-                    ExploiterResultData(True, {}, {}, None),
+                    ExploiterResultData(True, True, os_windows, {}, {}, None),
                 )
                 results_callback(
                     "SSHExploiter",
                     host,
-                    ExploiterResultData(False, {}, {}, "SSH FAILED for .1"),
+                    ExploiterResultData(False, False, os_linux, {}, {}, "SSH FAILED for .1"),
                 )
             elif host.ip_addr.endswith(".2"):
                 results_callback(
                     "PowerShellExploiter",
                     host,
-                    ExploiterResultData(False, {}, {}, "POWERSHELL FAILED for .2"),
+                    ExploiterResultData(
+                        False, False, os_windows, {}, {}, "POWERSHELL FAILED for .2"
+                    ),
                 )
                 results_callback(
                     "SSHExploiter",
                     host,
-                    ExploiterResultData(False, {}, {}, "SSH FAILED for .2"),
+                    ExploiterResultData(False, False, os_linux, {}, {}, "SSH FAILED for .2"),
                 )
             elif host.ip_addr.endswith(".3"):
                 results_callback(
                     "PowerShellExploiter",
                     host,
-                    ExploiterResultData(False, {}, {}, "POWERSHELL FAILED for .3"),
+                    ExploiterResultData(
+                        False, False, os_windows, {}, {}, "POWERSHELL FAILED for .3"
+                    ),
                 )
                 results_callback(
                     "SSHExploiter",
                     host,
-                    ExploiterResultData(True, {}, {}, None),
+                    ExploiterResultData(True, True, os_linux, {}, {}, None),
                 )
 
 
