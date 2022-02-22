@@ -17,7 +17,8 @@ class UnknownPluginError(Exception):
 
 
 ExploiterResultData = namedtuple(
-    "ExploiterResultData", ["success", "info", "attempts", "error_message"]
+    "ExploiterResultData",
+    ["exploitation_success", "propagation_success", "os", "info", "attempts", "error_message"],
 )
 PingScanData = namedtuple("PingScanData", ["response_received", "os"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])

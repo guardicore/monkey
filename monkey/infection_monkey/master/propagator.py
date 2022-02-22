@@ -153,13 +153,16 @@ class Propagator:
     def _process_exploit_attempts(
         self, exploiter_name: str, host: VictimHost, result: ExploiterResultData
     ):
-        if result.success:
+        if result.propagation_success:
             logger.info(f"Successfully propagated to {host} using {exploiter_name}")
+        elif result.exploitation_success:
+            logger.info(
+                f"Successfully exploited (but did not propagate to) {host} using {exploiter_name}"
+            )
         else:
             logger.info(
-                f"Failed to propagate to {host} using {exploiter_name}: {result.error_message}"
+                f"Failed to exploit or propagate to {host} using {exploiter_name}: "
+                f"{result.error_message}"
             )
 
-        self._telemetry_messenger.send_telemetry(
-            ExploitTelem(exploiter_name, host, result.success, result.info, result.attempts)
-        )
+        self._telemetry_messenger.send_telemetry(ExploitTelem(exploiter_name, host, result))
