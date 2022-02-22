@@ -16,7 +16,7 @@ from monkey_island.cc.services.telemetry.processing.credentials.credentials_pars
     parse_credentials,
 )
 
-MIMIKATZ_TELEM_TEMPLATE = {
+CREDENTIAL_TELEM_TEMPLATE = {
     "monkey_guid": "272405690278083",
     "telem_category": "credentials",
     "timestamp": datetime(2022, 2, 18, 11, 51, 15, 338953),
@@ -25,16 +25,16 @@ MIMIKATZ_TELEM_TEMPLATE = {
 }
 
 fake_username = "m0nk3y_user"
-mimikatz_telem_usernames = deepcopy(MIMIKATZ_TELEM_TEMPLATE)
-mimikatz_telem_usernames["data"] = [
+cred_telem_usernames = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
+cred_telem_usernames["data"] = [
     {"identities": [{"username": fake_username, "credential_type": "username"}], "secrets": []}
 ]
 
 fake_nt_hash = "c1c58f96cdf212b50837bc11a00be47c"
 fake_lm_hash = "299BD128C1101FD6"
 fake_password = "trytostealthis"
-mimikatz_telem = deepcopy(MIMIKATZ_TELEM_TEMPLATE)
-mimikatz_telem["data"] = [
+cred_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
+cred_telem["data"] = [
     {
         "identities": [{"username": fake_username, "credential_type": "username"}],
         "secrets": [
@@ -45,8 +45,8 @@ mimikatz_telem["data"] = [
     }
 ]
 
-mimikatz_empty_telem = deepcopy(MIMIKATZ_TELEM_TEMPLATE)
-mimikatz_empty_telem["data"] = [{"identities": [], "secrets": []}]
+cred_empty_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
+cred_empty_telem["data"] = [{"identities": [], "secrets": []}]
 
 
 @pytest.fixture
@@ -59,15 +59,15 @@ def fake_mongo(monkeypatch):
 
 
 @pytest.mark.usefixtures("uses_database")
-def test_mimikatz_username_parsing(fake_mongo):
-    parse_credentials(mimikatz_telem_usernames)
+def test_cred_username_parsing(fake_mongo):
+    parse_credentials(cred_telem_usernames)
     config = ConfigService.get_config(should_decrypt=True)
     assert fake_username in dpath.util.get(config, USER_LIST_PATH)
 
 
 @pytest.mark.usefixtures("uses_database")
-def test_mimikatz_telemetry_parsing(fake_mongo):
-    parse_credentials(mimikatz_telem)
+def test_cred_telemetry_parsing(fake_mongo):
+    parse_credentials(cred_telem)
     config = ConfigService.get_config(should_decrypt=True)
     assert fake_username in dpath.util.get(config, USER_LIST_PATH)
     assert fake_nt_hash in dpath.util.get(config, NTLM_HASH_LIST_PATH)
@@ -76,14 +76,14 @@ def test_mimikatz_telemetry_parsing(fake_mongo):
 
 
 @pytest.mark.usefixtures("uses_database")
-def test_empty_mimikatz_telemetry_parsing(fake_mongo):
+def test_empty_cred_telemetry_parsing(fake_mongo):
     default_config = deepcopy(ConfigService.get_config(should_decrypt=True))
     default_usernames = dpath.util.get(default_config, USER_LIST_PATH)
     default_nt_hashes = dpath.util.get(default_config, NTLM_HASH_LIST_PATH)
     default_lm_hashes = dpath.util.get(default_config, LM_HASH_LIST_PATH)
     default_passwords = dpath.util.get(default_config, PASSWORD_LIST_PATH)
 
-    parse_credentials(mimikatz_empty_telem)
+    parse_credentials(cred_empty_telem)
     config = ConfigService.get_config(should_decrypt=True)
 
     assert default_usernames == dpath.util.get(config, USER_LIST_PATH)
