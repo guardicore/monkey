@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from infection_monkey.i_puppet import PortScanData, PortStatus
-from infection_monkey.network.mssql_fingerprinter import (
+from infection_monkey.network_scanning.mssql_fingerprinter import (
     MSSQL_SERVICE,
     SQL_BROWSER_DEFAULT_PORT,
     MSSQLFingerprinter,
@@ -36,7 +36,7 @@ def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
         b"IsClustered;No;Version;11.1.1111.111;tcp;1433;np;blah_blah;;"
     )
     monkeypatch.setattr(
-        "infection_monkey.network.mssql_fingerprinter._query_mssql_for_instance_data",
+        "infection_monkey.network_scanning.mssql_fingerprinter._query_mssql_for_instance_data",
         lambda _: successful_server_response,
     )
 
@@ -69,7 +69,7 @@ def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
 )
 def test_mssql_no_response_from_server(monkeypatch, fingerprinter, mock_query_function):
     monkeypatch.setattr(
-        "infection_monkey.network.mssql_fingerprinter._query_mssql_for_instance_data",
+        "infection_monkey.network_scanning.mssql_fingerprinter._query_mssql_for_instance_data",
         mock_query_function,
     )
 
@@ -89,7 +89,7 @@ def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
         b"Pellentesque ultrices ornare libero, ;;"
     )
     monkeypatch.setattr(
-        "infection_monkey.network.mssql_fingerprinter._query_mssql_for_instance_data",
+        "infection_monkey.network_scanning.mssql_fingerprinter._query_mssql_for_instance_data",
         lambda _: mangled_server_response,
     )
 

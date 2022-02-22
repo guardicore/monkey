@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.network import ping
+from infection_monkey.network_scanning import ping
 
 LINUX_SUCCESS_OUTPUT = """
 PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.

@@ -1,6 +1,7 @@
 import itertools
 import socket
 import struct
+from collections import namedtuple
 from ipaddress import IPv4Network
 from random import randint  # noqa: DUO102
 from typing import List
@@ -11,8 +12,6 @@ import psutil
 from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
 
-from . import NetworkInterface
-
 # Timeout for monkey connections
 TIMEOUT = 15
 LOOPBACK_NAME = b"lo"
@@ -20,6 +19,9 @@ SIOCGIFADDR = 0x8915  # get PA address
 SIOCGIFNETMASK = 0x891B  # get network PA mask
 RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
+
+NetworkInterface = namedtuple("NetworkInterface", ("address", "netmask"))
+NetworkAddress = namedtuple("NetworkAddress", ("ip", "domain"))
 
 
 def get_local_network_interfaces() -> List[NetworkInterface]:

@@ -1,13 +1,10 @@
 import itertools
 import logging
 import socket
-from collections import namedtuple
 from typing import List
 
 from common.network.network_range import InvalidNetworkRangeError, NetworkRange
-
-NetworkInterface = namedtuple("NetworkInterface", ("address", "netmask"))
-NetworkAddress = namedtuple("NetworkAddress", ("ip", "domain"))
+from infection_monkey.network import NetworkAddress, NetworkInterface
 
 logger = logging.getLogger(__name__)
 

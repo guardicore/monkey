@@ -1,7 +1,7 @@
 import pytest
 
 from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
-from infection_monkey.network.ssh_fingerprinter import SSHFingerprinter
+from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 
 
 @pytest.fixture

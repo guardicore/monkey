@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from infection_monkey.i_puppet import PortScanData, PortStatus
-from infection_monkey.network.http_fingerprinter import HTTPFingerprinter
+from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 
 OPTIONS = {"http_ports": [80, 443, 8080, 9200]}
 
@@ -24,7 +24,7 @@ def mock_get_server_from_headers():
 @pytest.fixture(autouse=True)
 def patch_get_server_from_headers(monkeypatch, mock_get_server_from_headers):
     monkeypatch.setattr(
-        "infection_monkey.network.http_fingerprinter._get_server_from_headers",
+        "infection_monkey.network_scanning.http_fingerprinter._get_server_from_headers",
         mock_get_server_from_headers,
     )
 

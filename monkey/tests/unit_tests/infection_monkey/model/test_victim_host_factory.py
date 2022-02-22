@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from infection_monkey.model import VictimHostFactory
-from infection_monkey.network.scan_target_generator import NetworkAddress
+from infection_monkey.network import NetworkAddress
 
 
 @pytest.fixture
