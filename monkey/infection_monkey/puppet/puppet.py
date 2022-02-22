@@ -13,6 +13,7 @@ from infection_monkey.i_puppet import (
     PortScanData,
     PostBreachData,
 )
+from infection_monkey.model import VictimHost
 
 from ..telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from .mock_puppet import MockPuppet
@@ -58,9 +59,8 @@ class Puppet(IPuppet):
         fingerprinter = self._plugin_registry.get_plugin(name, PluginType.FINGERPRINTER)
         return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
 
-    # TODO: host should be VictimHost, at the moment it can't because of circular dependency
     def exploit_host(
-        self, name: str, host: object, options: Dict, interrupt: threading.Event
+        self, name: str, host: VictimHost, options: Dict, interrupt: threading.Event
     ) -> ExploiterResultData:
         exploiter = self._plugin_registry.get_plugin(name, PluginType.EXPLOITER)
         return exploiter.exploit_host(host, self._telemetry_messenger, options)
