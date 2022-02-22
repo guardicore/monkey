@@ -1,4 +1,4 @@
-from common.common_consts.credentials_type import CredentialsType
+from common.common_consts.credentials_type import CredentialComponentType
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
 from monkey_island.cc.services.config import ConfigService
@@ -17,7 +17,7 @@ def process_ssh_key(credentials: dict, monkey_guid: str):
         )
 
     for ssh_key in credentials["secrets"]:
-        if not ssh_key["credential_type"] == CredentialsType.SSH_KEYPAIR.value:
+        if not ssh_key["credential_type"] == CredentialComponentType.SSH_KEYPAIR.value:
             raise SSHKeyProcessingError("SSH credentials contain secrets that are not keypairs")
 
         if not ssh_key["public_key"] or not ssh_key["private_key"]:

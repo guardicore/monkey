@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class CredentialsType(Enum):
+class CredentialComponentType(Enum):
     USERNAME = "username"
     PASSWORD = "password"
     NT_HASH = "nt_hash"
