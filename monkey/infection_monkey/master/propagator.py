@@ -165,13 +165,4 @@ class Propagator:
                 f"{result.error_message}"
             )
 
-        self._telemetry_messenger.send_telemetry(
-            ExploitTelem(
-                exploiter_name,
-                host,
-                result.exploitation_success,
-                result.propagation_success,
-                result.info,
-                result.attempts,
-            )
-        )
+        self._telemetry_messenger.send_telemetry(ExploitTelem(exploiter_name, host, result))

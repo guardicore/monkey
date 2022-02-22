@@ -101,44 +101,16 @@ class MockMaster(IMaster):
 
     def _exploit(self):
         logger.info("Exploiting victims")
-        (
-            exploitation_result,
-            propagation_result,
-            os,
-            info,
-            attempts,
-            error_message,
-        ) = self._puppet.exploit_host("PowerShellExploiter", "10.0.0.1", {}, None)
-        logger.info(f"Attempts for exploiting {attempts}")
+        result = self._puppet.exploit_host("PowerShellExploiter", "10.0.0.1", {}, None)
+        logger.info(f"Attempts for exploiting {result.attempts}")
         self._telemetry_messenger.send_telemetry(
-            ExploitTelem(
-                "PowerShellExploiter",
-                self._hosts["10.0.0.1"],
-                exploitation_result,
-                propagation_result,
-                info,
-                attempts,
-            )
+            ExploitTelem("PowerShellExploiter", self._hosts["10.0.0.1"], result)
         )
 
-        (
-            exploitation_result,
-            propagation_result,
-            os,
-            info,
-            attempts,
-            error_message,
-        ) = self._puppet.exploit_host("SSHExploiter", "10.0.0.3", {}, None)
-        logger.info(f"Attempts for exploiting {attempts}")
+        result = self._puppet.exploit_host("SSHExploiter", "10.0.0.3", {}, None)
+        logger.info(f"Attempts for exploiting {result.attempts}")
         self._telemetry_messenger.send_telemetry(
-            ExploitTelem(
-                "SSHExploiter",
-                self._hosts["10.0.0.3"],
-                exploitation_result,
-                propagation_result,
-                info,
-                attempts,
-            )
+            ExploitTelem("SSHExploiter", self._hosts["10.0.0.3"], result)
         )
         logger.info("Finished exploiting victims")
 
