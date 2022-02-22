@@ -1,11 +1,6 @@
 import glob
 import logging
 import os
-
-try:  # can't import on Windows
-    import pwd
-except ModuleNotFoundError:
-    pass
 from typing import Dict, Iterable
 
 from common.utils.attack_utils import ScanStatus
@@ -34,6 +29,8 @@ def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
 
 
 def _get_home_dirs() -> Iterable[Dict]:
+    import pwd
+
     root_dir = _get_ssh_struct("root", "")
     home_dirs = [
         _get_ssh_struct(x.pw_name, x.pw_dir) for x in pwd.getpwall() if x.pw_dir.startswith("/home")
