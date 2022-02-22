@@ -94,7 +94,7 @@ NODE_DICT = {
     "dead": True,
     "exploits": [
         {
-            "result": True,
+            "exploitation_result": True,
             "exploiter": "DrupalExploiter",
             "info": {
                 "display_name": "Drupal Server",
@@ -109,7 +109,7 @@ NODE_DICT = {
             "origin": "MonkeyIsland : 192.168.56.1",
         },
         {
-            "result": True,
+            "exploitation_result": True,
             "exploiter": "ElasticGroovyExploiter",
             "info": {
                 "display_name": "Elastic search",
@@ -130,8 +130,8 @@ NODE_DICT_DUPLICATE_EXPLOITS = deepcopy(NODE_DICT)
 NODE_DICT_DUPLICATE_EXPLOITS["exploits"][1] = NODE_DICT_DUPLICATE_EXPLOITS["exploits"][0]
 
 NODE_DICT_FAILED_EXPLOITS = deepcopy(NODE_DICT)
-NODE_DICT_FAILED_EXPLOITS["exploits"][0]["result"] = False
-NODE_DICT_FAILED_EXPLOITS["exploits"][1]["result"] = False
+NODE_DICT_FAILED_EXPLOITS["exploits"][0]["exploitation_result"] = False
+NODE_DICT_FAILED_EXPLOITS["exploits"][1]["exploitation_result"] = False
 
 
 @pytest.fixture
