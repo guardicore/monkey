@@ -102,16 +102,19 @@ class IPuppet(metaclass=abc.ABCMeta):
         :rtype: FingerprintData
         """
 
+    # TODO: host should be VictimHost, at the moment it can't because of circular dependency
     @abc.abstractmethod
     def exploit_host(
-        self, name: str, host: str, options: Dict, interrupt: threading.Event
+        self, name: str, host: object, options: Dict, interrupt: threading.Event
     ) -> ExploiterResultData:
         """
         Runs an exploiter against a remote host
         :param str name: The name of the exploiter to run
-        :param str host: The domain name or IP address of a host
+        :param object host: The domain name or IP address of a host
         :param Dict options: A dictionary containing options that modify the behavior of the
                              exploiter
+        :param threading.Event interrupt: A threading.Event object that signals the exploit to stop
+                                          executing and clean itself up.
         :return: True if exploitation was successful, False otherwise
         :rtype: ExploiterResultData
         """

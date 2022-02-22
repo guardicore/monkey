@@ -134,8 +134,9 @@ class MockPuppet(IPuppet):
 
         return empty_fingerprint_data
 
+    # TODO: host should be VictimHost, at the moment it can't because of circular dependency
     def exploit_host(
-        self, name: str, host: str, options: Dict, interrupt: threading.Event
+        self, name: str, host: object, options: Dict, interrupt: threading.Event
     ) -> ExploiterResultData:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
         attempts = [
@@ -209,7 +210,7 @@ class MockPuppet(IPuppet):
         }
 
         try:
-            return successful_exploiters[host][name]
+            return successful_exploiters[host.ip_addr][name]
         except KeyError:
             return ExploiterResultData(
                 False, False, os_linux, {}, [], f"{name} failed for host {host}"
