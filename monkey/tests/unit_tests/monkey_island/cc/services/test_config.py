@@ -175,6 +175,7 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
             "dropper_target_path_linux": "/tmp/monkey",
             "dropper_target_path_win_32": r"C:\Windows\temp\monkey32.exe",
             "dropper_target_path_win_64": r"C:\Windows\temp\monkey64.exe",
+            "http_ports": [80, 443, 7001, 8008, 8080, 9200],
         },
         "brute_force": [
             {"name": "MSSQLExploiter", "options": {}},

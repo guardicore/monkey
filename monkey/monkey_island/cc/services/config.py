@@ -611,6 +611,8 @@ class ConfigService:
         ]:
             exploit_options[dropper_target] = config.get(dropper_target, "")
 
+        exploit_options["http_ports"] = sorted(config["HTTP_PORTS"])
+
         formatted_exploiters_config = {
             "options": exploit_options,
             "brute_force": [],
