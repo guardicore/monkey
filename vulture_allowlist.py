@@ -57,7 +57,6 @@ password_restored  # unused variable (monkey/monkey_island/cc/services/reporting
 SSH  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:30)
 SAMBACRY  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:31)
 ELASTIC  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:32)
-SHELLSHOCK  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:36)
 STRUTS2  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:39)
 WEBLOGIC  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:40)
 HADOOP  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:43)
