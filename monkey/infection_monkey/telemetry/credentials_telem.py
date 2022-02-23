@@ -17,6 +17,9 @@ class CredentialsTelem(BaseTelem):
         """
         self._credentials = credentials
 
+    def send(self, log_data=True):
+        super().send(log_data=False)
+
     def get_data(self) -> Dict:
         # TODO: At a later time we can consider factoring this into a Serializer class or similar.
         return json.loads(json.dumps(self._credentials, default=_serialize))

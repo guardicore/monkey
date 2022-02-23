@@ -1,9 +1,12 @@
 from dataclasses import dataclass, field
 
-from infection_monkey.i_puppet import CredentialType, ICredentialComponent
+from common.common_consts.credential_component_type import CredentialComponentType
+from infection_monkey.i_puppet import ICredentialComponent
 
 
 @dataclass(frozen=True)
 class LMHash(ICredentialComponent):
-    credential_type: CredentialType = field(default=CredentialType.LM_HASH, init=False)
+    credential_type: CredentialComponentType = field(
+        default=CredentialComponentType.LM_HASH.value, init=False
+    )
     lm_hash: str
