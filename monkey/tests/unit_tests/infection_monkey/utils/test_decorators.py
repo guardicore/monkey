@@ -58,7 +58,7 @@ def mock_timer(monkeypatch):
 
 
 def test_request_cache(mock_timer):
-    mock_request = MagicMock(side_effect=lambda: time.time())
+    mock_request = MagicMock(side_effect=lambda: time.perf_counter_ns())
 
     @request_cache(10)
     def make_request():
