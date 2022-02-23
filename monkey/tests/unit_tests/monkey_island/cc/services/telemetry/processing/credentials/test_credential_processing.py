@@ -27,7 +27,7 @@ CREDENTIAL_TELEM_TEMPLATE = {
 fake_username = "m0nk3y_user"
 cred_telem_usernames = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 cred_telem_usernames["data"] = [
-    {"identities": [{"username": fake_username, "credential_type": "username"}], "secrets": []}
+    {"identities": [{"username": fake_username, "credential_type": "USERNAME"}], "secrets": []}
 ]
 
 fake_nt_hash = "c1c58f96cdf212b50837bc11a00be47c"
@@ -36,11 +36,11 @@ fake_password = "trytostealthis"
 cred_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 cred_telem["data"] = [
     {
-        "identities": [{"username": fake_username, "credential_type": "username"}],
+        "identities": [{"username": fake_username, "credential_type": "USERNAME"}],
         "secrets": [
-            {"nt_hash": fake_nt_hash, "credential_type": "nt_hash"},
-            {"lm_hash": fake_lm_hash, "credential_type": "lm_hash"},
-            {"password": fake_password, "credential_type": "password"},
+            {"nt_hash": fake_nt_hash, "credential_type": "NT_HASH"},
+            {"lm_hash": fake_lm_hash, "credential_type": "LM_HASH"},
+            {"password": fake_password, "credential_type": "PASSWORD"},
         ],
     }
 ]

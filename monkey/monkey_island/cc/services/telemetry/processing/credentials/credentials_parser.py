@@ -11,19 +11,21 @@ from .secrets.password_processor import process_password
 logger = logging.getLogger(__name__)
 
 SECRET_PROCESSORS = {
-    CredentialComponentType.PASSWORD.value: process_password,
-    CredentialComponentType.NT_HASH.value: process_nt_hash,
-    CredentialComponentType.LM_HASH.value: process_lm_hash,
+    CredentialComponentType.PASSWORD: process_password,
+    CredentialComponentType.NT_HASH: process_nt_hash,
+    CredentialComponentType.LM_HASH: process_lm_hash,
 }
 
 IDENTITY_PROCESSORS = {
-    CredentialComponentType.USERNAME.value: process_username,
+    CredentialComponentType.USERNAME: process_username,
 }
 
 
 def parse_credentials(credentials: Mapping):
     for credential in credentials["data"]:
         for identity in credential["identities"]:
-            IDENTITY_PROCESSORS[identity["credential_type"]](identity)
+            credential_type = CredentialComponentType[identity["credential_type"]]
+            IDENTITY_PROCESSORS[credential_type](identity)
         for secret in credential["secrets"]:
-            SECRET_PROCESSORS[secret["credential_type"]](secret)
+            credential_type = CredentialComponentType[secret["credential_type"]]
+            SECRET_PROCESSORS[credential_type](secret)
