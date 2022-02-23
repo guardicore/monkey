@@ -17,6 +17,7 @@ from infection_monkey.credential_collectors import (
     SSHCredentialCollector,
 )
 from infection_monkey.exploit import ExploiterWrapper
+from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
@@ -222,6 +223,7 @@ class InfectionMonkey:
             exploit_wrapper.wrap(SSHExploiter),
             PluginType.EXPLOITER,
         )
+        puppet.load_plugin("HadoopExploiter", HadoopExploiter(), PluginType.EXPLOITER)
 
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
 
