@@ -7,6 +7,6 @@ from infection_monkey.i_puppet import ICredentialComponent
 @dataclass(frozen=True)
 class Password(ICredentialComponent):
     credential_type: CredentialComponentType = field(
-        default=CredentialComponentType.PASSWORD.value, init=False
+        default=CredentialComponentType.PASSWORD, init=False
     )
     password: str
