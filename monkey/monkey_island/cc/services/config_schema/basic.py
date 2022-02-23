@@ -18,7 +18,6 @@ BASIC = {
                         "WmiExploiter",
                         "SSHExploiter",
                         "Log4ShellExploiter",
-                        "ShellShockExploiter",
                         "ElasticGroovyExploiter",
                         "Struts2Exploiter",
                         "WebLogicExploiter",

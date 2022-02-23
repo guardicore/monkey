@@ -28,7 +28,6 @@ import {drupalIssueOverview, drupalIssueReport} from './security/issues/DrupalIs
 import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
 import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
-import {shellShockIssueOverview, shellShockIssueReport} from './security/issues/ShellShockIssue';
 import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
 import {
   crossSegmentIssueOverview,
@@ -123,11 +122,6 @@ class ReportPageComponent extends AuthComponent {
       'ElasticGroovyExploiter': {
         [this.issueContentTypes.OVERVIEW]: elasticIssueOverview,
         [this.issueContentTypes.REPORT]: elasticIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'ShellShockExploiter': {
-        [this.issueContentTypes.OVERVIEW]: shellShockIssueOverview,
-        [this.issueContentTypes.REPORT]: shellShockIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'PowerShellExploiter': {
