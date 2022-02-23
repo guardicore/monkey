@@ -24,7 +24,7 @@ CREDENTIAL_COMPONENT_PROCESSORS = {
 
 def parse_credentials(telemetry_dict: Mapping):
     credentials = [
-        Credentials.from_dict(credential, telemetry_dict["monkey_guid"])
+        Credentials.from_mapping(credential, telemetry_dict["monkey_guid"])
         for credential in telemetry_dict["data"]
     ]
 

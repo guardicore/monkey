@@ -15,13 +15,13 @@ class SSHKeyProcessingError(ValueError):
 def process_ssh_key(keypair: Mapping, credentials: Credentials):
     if len(credentials.identities) != 1:
         raise SSHKeyProcessingError(
-            f"SSH credentials have {len(credentials.identities)}" f" users associated with " f"it!"
+            f"SSH credentials have {len(credentials.identities)} users associated with it!"
         )
 
     if not _contains_both_keys(keypair):
-        raise SSHKeyProcessingError("Private or public key missing!")
+        raise SSHKeyProcessingError("Private or public key missing")
 
-    # TODO SSH key should be associated with IP that monkey exploited
+    # TODO investigate if IP is needed at all
     ip = Monkey.get_single_monkey_by_guid(credentials.monkey_guid).ip_addresses[0]
     username = credentials.identities[0]["username"]
 

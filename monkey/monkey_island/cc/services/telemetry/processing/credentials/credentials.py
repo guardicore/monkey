@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Sequence, Mapping, Any
 
 
 @dataclass(frozen=True)
 class Credentials:
-    identities: Sequence[dict]
-    secrets: Sequence[dict]
+    identities: Sequence[Mapping]
+    secrets: Sequence[Mapping]
     monkey_guid: str
 
     @staticmethod
-    def from_dict(cred_dict: dict, monkey_guid: str) -> Credentials:
+    def from_mapping(cred_dict: Mapping[str, Any], monkey_guid: str) -> Credentials:
         return Credentials(
             identities=cred_dict["identities"],
             secrets=cred_dict["secrets"],
