@@ -1,7 +1,9 @@
-from common.common_consts.credentials_type import CredentialComponentType
+from typing import Mapping
+
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
 from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.services.telemetry.processing.credentials import Credentials
 
 
 class SSHKeyProcessingError(ValueError):
@@ -10,33 +12,38 @@ class SSHKeyProcessingError(ValueError):
         super().__init__(self.msg)
 
 
-def process_ssh_key(credentials: dict, monkey_guid: str):
-    if len(credentials["identities"]) != 1:
+def process_ssh_key(keypair: Mapping, credentials: Credentials):
+    if len(credentials.identities) != 1:
         raise SSHKeyProcessingError(
-            f'SSH credentials have {len(credentials["identities"])}' f" users associated with it!"
+            f"SSH credentials have {len(credentials.identities)}" f" users associated with " f"it!"
         )
 
-    for ssh_key in credentials["secrets"]:
-        if not ssh_key["credential_type"] == CredentialComponentType.SSH_KEYPAIR.value:
-            raise SSHKeyProcessingError("SSH credentials contain secrets that are not keypairs")
+    if not _contains_both_keys(keypair):
+        raise SSHKeyProcessingError("Private or public key missing!")
 
-        if not ssh_key["public_key"] or not ssh_key["private_key"]:
-            raise SSHKeyProcessingError("Private or public key missing!")
+    # TODO SSH key should be associated with IP that monkey exploited
+    ip = Monkey.get_single_monkey_by_guid(credentials.monkey_guid).ip_addresses[0]
+    username = credentials.identities[0]["username"]
 
-        # TODO SSH key should be associated with IP that monkey exploited
-        ip = Monkey.get_single_monkey_by_guid(monkey_guid).ip_addresses[0]
-        username = credentials["identities"][0]["username"]
+    encrypted_keys = _encrypt_ssh_keys(keypair)
 
-        encrypt_system_info_ssh_keys(ssh_key)
-
-        ConfigService.ssh_add_keys(
-            user=username,
-            public_key=ssh_key["public_key"],
-            private_key=ssh_key["private_key"],
-            ip=ip,
-        )
+    ConfigService.ssh_add_keys(
+        user=username,
+        public_key=encrypted_keys["public_key"],
+        private_key=encrypted_keys["private_key"],
+        ip=ip,
+    )
 
 
-def encrypt_system_info_ssh_keys(ssh_key: dict):
+def _contains_both_keys(ssh_key: Mapping) -> bool:
+    try:
+        return ssh_key["public_key"] and ssh_key["private_key"]
+    except KeyError:
+        return False
+
+
+def _encrypt_ssh_keys(ssh_key: Mapping) -> Mapping:
+    encrypted_keys = {}
     for field in ["public_key", "private_key"]:
-        ssh_key[field] = get_datastore_encryptor().encrypt(ssh_key[field])
+        encrypted_keys[field] = get_datastore_encryptor().encrypt(ssh_key[field])
+    return encrypted_keys
