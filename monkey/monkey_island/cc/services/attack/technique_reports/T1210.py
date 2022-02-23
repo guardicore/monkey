@@ -61,7 +61,7 @@ class T1210(AttackTechnique):
     def get_exploited_services():
         results = mongo.db.telemetry.aggregate(
             [
-                {"$match": {"telem_category": "exploit", "data.result": True}},
+                {"$match": {"telem_category": "exploit", "data.exploitation_result": True}},
                 {
                     "$group": {
                         "_id": {"ip_addr": "$data.machine.ip_addr"},

@@ -1,12 +1,19 @@
 import threading
 from unittest.mock import MagicMock
 
+import pytest
+
 from infection_monkey.i_puppet import PluginType
 from infection_monkey.puppet.puppet import Puppet
 
 
-def test_puppet_run_payload_success(monkeypatch):
-    p = Puppet()
+@pytest.fixture
+def mock_telemetry_messenger():
+    return MagicMock()
+
+
+def test_puppet_run_payload_success(monkeypatch, mock_telemetry_messenger):
+    p = Puppet(mock_telemetry_messenger)
 
     payload = MagicMock()
     payload_name = "PayloadOne"
@@ -17,8 +24,8 @@ def test_puppet_run_payload_success(monkeypatch):
     payload.run.assert_called_once()
 
 
-def test_puppet_run_multiple_payloads(monkeypatch):
-    p = Puppet()
+def test_puppet_run_multiple_payloads(monkeypatch, mock_telemetry_messenger):
+    p = Puppet(mock_telemetry_messenger)
 
     payload_1 = MagicMock()
     payload1_name = "PayloadOne"

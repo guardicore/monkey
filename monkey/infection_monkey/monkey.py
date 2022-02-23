@@ -16,6 +16,7 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
+from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
@@ -194,7 +195,7 @@ class InfectionMonkey:
         return local_network_interfaces
 
     def _build_puppet(self) -> IPuppet:
-        puppet = Puppet()
+        puppet = Puppet(self.telemetry_messenger)
 
         puppet.load_plugin(
             "MimikatzCollector",
@@ -212,6 +213,8 @@ class InfectionMonkey:
         puppet.load_plugin("mssql", MSSQLFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("smb", SMBFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
+
+        puppet.load_plugin("SSHExploiter", SSHExploiter(), PluginType.EXPLOITER)
 
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
 
