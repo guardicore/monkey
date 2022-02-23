@@ -12,7 +12,6 @@ from envs.monkey_zoo.blackbox.config_templates.log4j_tomcat import Log4jTomcat
 from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
 from envs.monkey_zoo.blackbox.config_templates.performance import Performance
 from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
-from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
@@ -45,7 +44,6 @@ CONFIG_TEMPLATES = [
     Mssql,
     Performance,
     PowerShell,
-    ShellShock,
     SmbMimikatz,
     SmbPth,
     Ssh,

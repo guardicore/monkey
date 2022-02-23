@@ -17,7 +17,6 @@ GCP_TEST_MACHINE_LIST = {
         "tunneling-12",
         "weblogic-18",
         "weblogic-19",
-        "shellshock-8",
         "zerologon-25",
         "drupal-28",
     ],

@@ -20,7 +20,6 @@ from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
 from envs.monkey_zoo.blackbox.config_templates.powershell_credentials_reuse import (
     PowerShellCredentialsReuse,
 )
-from envs.monkey_zoo.blackbox.config_templates.shellshock import ShellShock
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
@@ -199,9 +198,6 @@ class TestMonkeyBlackbox:
 
     def test_weblogic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Weblogic, "Weblogic_exploiter")
-
-    def test_shellshock_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, ShellShock, "Shellshock_exploiter")
 
     def test_log4j_solr_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
