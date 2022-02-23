@@ -1,7 +1,7 @@
 import pytest
 
 from infection_monkey.i_puppet import PortStatus
-from infection_monkey.network import scan_tcp_ports
+from infection_monkey.network_scanning import scan_tcp_ports
 
 PORTS_TO_SCAN = [22, 80, 8080, 143, 445, 2222]
 
@@ -11,7 +11,7 @@ OPEN_PORTS_DATA = {22: "SSH-banner", 80: "", 2222: "SSH2-banner"}
 @pytest.fixture
 def patch_check_tcp_ports(monkeypatch, open_ports_data):
     monkeypatch.setattr(
-        "infection_monkey.network.tcp_scanner._check_tcp_ports",
+        "infection_monkey.network_scanning.tcp_scanner._check_tcp_ports",
         lambda *_: open_ports_data,
     )
 

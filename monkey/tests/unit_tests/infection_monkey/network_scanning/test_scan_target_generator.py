@@ -3,11 +3,8 @@ from itertools import chain
 import pytest
 
 from common.network.network_range import InvalidNetworkRangeError
-from infection_monkey.network.scan_target_generator import (
-    NetworkAddress,
-    NetworkInterface,
-    compile_scan_target_list,
-)
+from infection_monkey.network import NetworkAddress, NetworkInterface
+from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list
 
 
 def compile_ranges_only(ranges):

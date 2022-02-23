@@ -2,7 +2,7 @@ import logging
 import threading
 from typing import Dict, List, Sequence
 
-from infection_monkey import network
+from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     Credentials,
     ExploiterResultData,
@@ -13,6 +13,7 @@ from infection_monkey.i_puppet import (
     PortScanData,
     PostBreachData,
 )
+from infection_monkey.model import VictimHost
 
 from ..telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from .mock_puppet import MockPuppet
@@ -40,12 +41,12 @@ class Puppet(IPuppet):
         return self._mock_puppet.run_pba(name, options)
 
     def ping(self, host: str, timeout: float = 1) -> PingScanData:
-        return network.ping(host, timeout)
+        return network_scanning.ping(host, timeout)
 
     def scan_tcp_ports(
         self, host: str, ports: List[int], timeout: float = 3
     ) -> Dict[int, PortScanData]:
-        return network.scan_tcp_ports(host, ports, timeout)
+        return network_scanning.scan_tcp_ports(host, ports, timeout)
 
     def fingerprint(
         self,
@@ -58,9 +59,8 @@ class Puppet(IPuppet):
         fingerprinter = self._plugin_registry.get_plugin(name, PluginType.FINGERPRINTER)
         return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
 
-    # TODO: host should be VictimHost, at the moment it can't because of circular dependency
     def exploit_host(
-        self, name: str, host: object, options: Dict, interrupt: threading.Event
+        self, name: str, host: VictimHost, options: Dict, interrupt: threading.Event
     ) -> ExploiterResultData:
         exploiter = self._plugin_registry.get_plugin(name, PluginType.EXPLOITER)
         return exploiter.exploit_host(host, self._telemetry_messenger, options)

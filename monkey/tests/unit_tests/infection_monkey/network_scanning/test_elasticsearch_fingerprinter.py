@@ -4,7 +4,10 @@ import pytest
 
 from common.common_consts.network_consts import ES_SERVICE
 from infection_monkey.i_puppet import PortScanData, PortStatus
-from infection_monkey.network.elasticsearch_fingerprinter import ES_PORT, ElasticSearchFingerprinter
+from infection_monkey.network_scanning.elasticsearch_fingerprinter import (
+    ES_PORT,
+    ElasticSearchFingerprinter,
+)
 
 PORT_SCAN_DATA_OPEN = {ES_PORT: PortScanData(ES_PORT, PortStatus.OPEN, "", f"tcp-{ES_PORT}")}
 PORT_SCAN_DATA_CLOSED = {ES_PORT: PortScanData(ES_PORT, PortStatus.CLOSED, "", f"tcp-{ES_PORT}")}
@@ -26,7 +29,7 @@ def test_successful(monkeypatch, fingerprinter):
         "version": {"number": "1.0.0"},
     }
     monkeypatch.setattr(
-        "infection_monkey.network.elasticsearch_fingerprinter._query_elasticsearch",
+        "infection_monkey.network_scanning.elasticsearch_fingerprinter._query_elasticsearch",
         lambda _: successful_server_response,
     )
 
@@ -49,7 +52,7 @@ def test_successful(monkeypatch, fingerprinter):
 def test_fingerprinting_skipped_if_port_closed(monkeypatch, fingerprinter, port_scan_data):
     mock_query_elasticsearch = MagicMock()
     monkeypatch.setattr(
-        "infection_monkey.network.elasticsearch_fingerprinter._query_elasticsearch",
+        "infection_monkey.network_scanning.elasticsearch_fingerprinter._query_elasticsearch",
         mock_query_elasticsearch,
     )
 
@@ -70,7 +73,7 @@ def test_fingerprinting_skipped_if_port_closed(monkeypatch, fingerprinter, port_
 )
 def test_no_response_from_server(monkeypatch, fingerprinter, mock_query_function):
     monkeypatch.setattr(
-        "infection_monkey.network.elasticsearch_fingerprinter._query_elasticsearch",
+        "infection_monkey.network_scanning.elasticsearch_fingerprinter._query_elasticsearch",
         mock_query_function,
     )
 
