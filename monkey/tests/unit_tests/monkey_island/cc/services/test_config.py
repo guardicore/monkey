@@ -187,7 +187,6 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
             {"name": "DrupalExploiter", "options": {}},
             {"name": "ElasticGroovyExploiter", "options": {}},
             {"name": "HadoopExploiter", "options": {}},
-            {"name": "ShellShockExploiter", "options": {}},
             {"name": "Struts2Exploiter", "options": {}},
             {"name": "WebLogicExploiter", "options": {}},
             {"name": "ZerologonExploiter", "options": {}},

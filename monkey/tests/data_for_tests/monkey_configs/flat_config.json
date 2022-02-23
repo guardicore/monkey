@@ -52,7 +52,6 @@
         "SmbExploiter",
         "WmiExploiter",
         "SSHExploiter",
-        "ShellShockExploiter",
         "ElasticGroovyExploiter",
         "Struts2Exploiter",
         "ZerologonExploiter",
