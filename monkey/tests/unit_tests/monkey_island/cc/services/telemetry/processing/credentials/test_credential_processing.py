@@ -27,7 +27,7 @@ fake_special_username = "$m0nk3y.user"
 cred_telem_special_usernames = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 cred_telem_special_usernames["data"] = [
     {
-        "identities": [{"username": fake_special_username, "credential_type": "username"}],
+        "identities": [{"username": fake_special_username, "credential_type": "USERNAME"}],
         "secrets": [],
     }
 ]

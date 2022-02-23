@@ -17,7 +17,7 @@ fake_monkey_guid = "272405690278083"
 fake_ip_address = "192.168.56.1"
 
 fake_private_key = "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAACmFlczI1N\n"
-fake_partial_secret = {"private_key": fake_private_key, "credential_type": "ssh_keypair"}
+fake_partial_secret = {"private_key": fake_private_key, "credential_type": "SSH_KEYPAIR"}
 
 fake_username = "ubuntu"
 fake_public_key = (
@@ -27,9 +27,9 @@ fake_public_key = (
 fake_secret_full = {
     "private_key": fake_private_key,
     "public_key": fake_public_key,
-    "credential_type": "ssh_keypair",
+    "credential_type": "SSH_KEYPAIR",
 }
-fake_identity = {"username": fake_username, "credential_type": "username"}
+fake_identity = {"username": fake_username, "credential_type": "USERNAME"}
 
 ssh_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 ssh_telem["data"] = [{"identities": [fake_identity], "secrets": [fake_secret_full]}]
