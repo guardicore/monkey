@@ -1,4 +1,5 @@
 import logging
+from itertools import chain
 from typing import Mapping
 
 from common.common_consts.credential_component_type import CredentialComponentType
@@ -12,14 +13,11 @@ from .secrets.ssh_key_processor import process_ssh_key
 
 logger = logging.getLogger(__name__)
 
-SECRET_PROCESSORS = {
-    CredentialComponentType.PASSWORD: process_password,
-    CredentialComponentType.NT_HASH: process_nt_hash,
+CREDENTIAL_COMPONENT_PROCESSORS = {
     CredentialComponentType.LM_HASH: process_lm_hash,
+    CredentialComponentType.NT_HASH: process_nt_hash,
+    CredentialComponentType.PASSWORD: process_password,
     CredentialComponentType.SSH_KEYPAIR: process_ssh_key,
-}
-
-IDENTITY_PROCESSORS = {
     CredentialComponentType.USERNAME: process_username,
 }
 
@@ -31,9 +29,6 @@ def parse_credentials(telemetry_dict: Mapping):
     ]
 
     for credential in credentials:
-        for identity in credential.identities:
-            credential_type = CredentialComponentType[identity["credential_type"]]
-            IDENTITY_PROCESSORS[credential_type](identity, credential)
-        for secret in credential.secrets:
-            credential_type = CredentialComponentType[secret["credential_type"]]
-            SECRET_PROCESSORS[credential_type](secret, credential)
+        for cred_comp in chain(credential.identities, credential.secrets):
+            credential_type = CredentialComponentType[cred_comp["credential_type"]]
+            CREDENTIAL_COMPONENT_PROCESSORS[credential_type](cred_comp, credential)
