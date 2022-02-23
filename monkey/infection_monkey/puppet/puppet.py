@@ -15,7 +15,6 @@ from infection_monkey.i_puppet import (
 )
 from infection_monkey.model import VictimHost
 
-from ..telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from .mock_puppet import MockPuppet
 from .plugin_registry import PluginRegistry
 
@@ -23,10 +22,9 @@ logger = logging.getLogger()
 
 
 class Puppet(IPuppet):
-    def __init__(self, telemetry_messenger: ITelemetryMessenger) -> None:
+    def __init__(self) -> None:
         self._mock_puppet = MockPuppet()
         self._plugin_registry = PluginRegistry()
-        self._telemetry_messenger = telemetry_messenger
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
         self._plugin_registry.load_plugin(plugin_name, plugin, plugin_type)
@@ -63,7 +61,7 @@ class Puppet(IPuppet):
         self, name: str, host: VictimHost, options: Dict, interrupt: threading.Event
     ) -> ExploiterResultData:
         exploiter = self._plugin_registry.get_plugin(name, PluginType.EXPLOITER)
-        return exploiter.exploit_host(host, self._telemetry_messenger, options)
+        return exploiter.exploit_host(host, options)
 
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         payload = self._plugin_registry.get_plugin(name, PluginType.PAYLOAD)
