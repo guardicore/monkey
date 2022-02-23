@@ -24,10 +24,10 @@ IDENTITY_PROCESSORS = {
 }
 
 
-def parse_credentials(credentials_dict: Mapping):
+def parse_credentials(telemetry_dict: Mapping):
     credentials = [
-        Credentials(credential["identities"], credential["secrets"])
-        for credential in credentials_dict["data"]
+        Credentials.from_dict(credential, telemetry_dict["monkey_guid"])
+        for credential in telemetry_dict["data"]
     ]
 
     for credential in credentials:

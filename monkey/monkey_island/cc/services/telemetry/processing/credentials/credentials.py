@@ -8,7 +8,12 @@ from typing import Sequence
 class Credentials:
     identities: Sequence[dict]
     secrets: Sequence[dict]
+    monkey_guid: str
 
     @staticmethod
-    def from_dict(cred_dict: dict) -> Credentials:
-        return Credentials(identities=cred_dict["identities"], secrets=cred_dict["secrets"])
+    def from_dict(cred_dict: dict, monkey_guid: str) -> Credentials:
+        return Credentials(
+            identities=cred_dict["identities"],
+            secrets=cred_dict["secrets"],
+            monkey_guid=monkey_guid,
+        )
