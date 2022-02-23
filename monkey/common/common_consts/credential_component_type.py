@@ -1,9 +1,9 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class CredentialComponentType(Enum):
-    USERNAME = "username"
-    PASSWORD = "password"
-    NT_HASH = "nt_hash"
-    LM_HASH = "lm_hash"
-    SSH_KEYPAIR = "ssh_keypair"
+    USERNAME = auto()
+    PASSWORD = auto()
+    NT_HASH = auto()
+    LM_HASH = auto()
+    SSH_KEYPAIR = auto()
