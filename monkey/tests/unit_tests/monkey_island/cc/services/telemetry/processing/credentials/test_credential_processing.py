@@ -30,6 +30,15 @@ cred_telem_usernames["data"] = [
     {"identities": [{"username": fake_username, "credential_type": "USERNAME"}], "secrets": []}
 ]
 
+fake_special_username = "$m0nk3y.user"
+cred_telem_special_usernames = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
+cred_telem_special_usernames["data"] = [
+    {
+        "identities": [{"username": fake_special_username, "credential_type": "username"}],
+        "secrets": [],
+    }
+]
+
 fake_nt_hash = "c1c58f96cdf212b50837bc11a00be47c"
 fake_lm_hash = "299BD128C1101FD6"
 fake_password = "trytostealthis"
@@ -63,6 +72,13 @@ def test_cred_username_parsing(fake_mongo):
     parse_credentials(cred_telem_usernames)
     config = ConfigService.get_config(should_decrypt=True)
     assert fake_username in dpath.util.get(config, USER_LIST_PATH)
+
+
+@pytest.mark.usefixtures("uses_database")
+def test_cred_special_username_parsing(fake_mongo):
+    parse_credentials(cred_telem_special_usernames)
+    config = ConfigService.get_config(should_decrypt=True)
+    assert fake_special_username in dpath.util.get(config, USER_LIST_PATH)
 
 
 @pytest.mark.usefixtures("uses_database")
