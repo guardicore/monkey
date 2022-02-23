@@ -1,8 +1,9 @@
 import abc
 import threading
 from collections import namedtuple
+from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Sequence
+from typing import Dict, Iterable, List, Mapping, Sequence
 
 from . import Credentials, PluginType
 
@@ -16,10 +17,16 @@ class UnknownPluginError(Exception):
     pass
 
 
-ExploiterResultData = namedtuple(
-    "ExploiterResultData",
-    ["exploitation_success", "propagation_success", "os", "info", "attempts", "error_message"],
-)
+@dataclass
+class ExploiterResultData:
+    exploitation_success: bool = False
+    propagation_success: bool = False
+    os: str = ""
+    info: Mapping = None
+    attempts: Iterable = None
+    error_message: str = ""
+
+
 PingScanData = namedtuple("PingScanData", ["response_received", "os"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
