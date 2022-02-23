@@ -26,7 +26,7 @@ You can take a look at [our roadmap](https://github.com/guardicore/monkey/projec
 
 The best way to find weak spots in a network is by attacking it. The [*Adding Exploits*](./adding-exploits/) page will help you add exploits.
 
-It's important to note that the Infection Monkey must be absolutely reliable. Otherwise, no one will use it, so avoid memory corruption exploits unless they're rock solid and focus on the logical vulns such as Shellshock.
+It's important to note that the Infection Monkey must be absolutely reliable. Otherwise, no one will use it, so avoid memory corruption exploits unless they're rock solid and focus on the logical vulns such as Hadoop.
 
 ### Analysis plugins 🔬
 

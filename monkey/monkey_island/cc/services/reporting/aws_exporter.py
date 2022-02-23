@@ -68,7 +68,6 @@ class AWSExporter(Exporter):
                 CredentialType.PASSWORD.value: AWSExporter._handle_ssh_issue,
                 CredentialType.KEY.value: AWSExporter._handle_ssh_key_issue,
             },
-            ExploiterDescriptorEnum.SHELLSHOCK.value.class_name: AWSExporter._handle_shellshock_issue,  # noqa:E501
             "tunnel": AWSExporter._handle_tunnel_issue,
             ExploiterDescriptorEnum.ELASTIC.value.class_name: AWSExporter._handle_elastic_issue,
             ExploiterDescriptorEnum.SMB.value.class_name: {
@@ -290,23 +289,6 @@ class AWSExporter(Exporter):
             "passwords.",
             recommendation="These users are sharing access password: {0}.".format(
                 issue["shared_with"]
-            ),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_shellshock_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Machines are vulnerable to 'Shellshock'",
-            description="Update your Bash to a ShellShock-patched version.",
-            recommendation="The machine {0} ({1}) is vulnerable to a ShellShock attack. "
-            "The attack was made possible because the HTTP server running on "
-            "TCP port {2} was vulnerable to a "
-            "shell injection attack on the paths: {3}.".format(
-                issue["machine"], issue["ip_address"], issue["port"], issue["paths"]
             ),
             instance_arn=instance_arn,
             instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,

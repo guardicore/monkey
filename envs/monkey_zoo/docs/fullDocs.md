@@ -11,7 +11,6 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 3 Hadoop](#_Toc526517183)<br>
 [Nr. 4 Elastic](#_Toc526517184)<br>
 [Nr. 5 Elastic](#_Toc526517185)<br>
-[Nr. 8 Shellshock](#_Toc536021461)<br>
 [Nr. 9 Tunneling M1](#_Toc536021462)<br>
 [Nr. 10 Tunneling M2](#_Toc536021463)<br>
 [Nr. 11 SSH key steal](#_Toc526517190)<br>
@@ -322,38 +321,6 @@ Update all requirements using deployment script:<br>
 <tr class="even">
 <td>Notes:</td>
 <td><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_index_and_query_a_document.html">Quick</a> tutorial on how to add entries (was useful when setting up).</td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021461" class="anchor"></span>Nr. <strong>8</strong> Shellshock</p>
-<p>(10.2.2.8)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 12.04 LTS x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>Apache2, bash 4.2.</td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>80</td>
-</tr>
-<tr class="even">
-<td>Scan results:</td>
-<td>Machine exploited using Shellshock exploiter</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
-<td>Vulnerable app is under /cgi-bin/test.cgi</td>
 </tr>
 </tbody>
 </table>
