@@ -16,7 +16,6 @@ class Performance(ConfigTemplate):
             "SmbExploiter",
             "WmiExploiter",
             "SSHExploiter",
-            "ElasticGroovyExploiter",
             "Struts2Exploiter",
             "WebLogicExploiter",
             "HadoopExploiter",

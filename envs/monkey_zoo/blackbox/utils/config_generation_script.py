@@ -4,7 +4,6 @@ from typing import Type
 
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
-from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
 from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
@@ -39,7 +38,6 @@ island_client = MonkeyIslandClient(args.island_ip)
 
 
 CONFIG_TEMPLATES = [
-    Elastic,
     Hadoop,
     Mssql,
     Performance,

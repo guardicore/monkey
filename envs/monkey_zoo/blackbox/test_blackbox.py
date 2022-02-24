@@ -9,7 +9,6 @@ from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import Communicat
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
-from envs.monkey_zoo.blackbox.config_templates.elastic import Elastic
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
 from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
@@ -190,9 +189,6 @@ class TestMonkeyBlackbox:
     def test_drupal_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Drupal, "Drupal_exploiter")
 
-    def test_elastic_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Elastic, "Elastic_exploiter")
-
     def test_struts_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Struts2, "Struts2_exploiter")
 
@@ -256,7 +252,7 @@ class TestMonkeyBlackbox:
     )
     def test_report_generation_performance(self, island_client, quick_performance_tests):
         """
-        This test includes the SSH + Elastic + Hadoop + MSSQL machines all in one test
+        This test includes the SSH + Hadoop + MSSQL machines all in one test
         for a total of 8 machines including the Monkey Island.
 
         Is has 2 analyzers - the regular one which checks all the Monkeys
