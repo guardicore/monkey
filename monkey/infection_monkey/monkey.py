@@ -223,7 +223,9 @@ class InfectionMonkey:
             exploit_wrapper.wrap(SSHExploiter),
             PluginType.EXPLOITER,
         )
-        puppet.load_plugin("HadoopExploiter", HadoopExploiter(), PluginType.EXPLOITER)
+        puppet.load_plugin(
+            "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER
+        )
 
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
 
