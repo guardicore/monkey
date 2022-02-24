@@ -65,8 +65,6 @@ def get_monkey_dest_path(url_to_monkey):
     try:
         if "linux" in url_to_monkey:
             return WormConfiguration.dropper_target_path_linux
-        elif "windows-32" in url_to_monkey:
-            return WormConfiguration.dropper_target_path_win_32
         elif "windows-64" in url_to_monkey:
             return WormConfiguration.dropper_target_path_win_64
         else:
