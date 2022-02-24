@@ -82,7 +82,7 @@ class TelemetryFeed(flask_restful.Resource):
     def get_exploit_telem_brief(telem):
         target = telem["data"]["machine"]["ip_addr"]
         exploiter = telem["data"]["exploiter"]
-        result = telem["data"]["result"]
+        result = telem["data"]["exploitation_result"]
         if result:
             return "Monkey successfully exploited %s using the %s exploiter." % (target, exploiter)
         else:
