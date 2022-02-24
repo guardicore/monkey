@@ -27,7 +27,6 @@
     "dropper_log_path_windows": "%temp%\\~df1562.tmp",
     "dropper_set_date": true,
     "dropper_target_path_linux": "/tmp/monkey",
-    "dropper_target_path_win_32": "C:\\Windows\\temp\\monkey32.exe",
     "dropper_target_path_win_64": "C:\\Windows\\temp\\monkey64.exe",
     "exploit_lm_hash_list": ["lm_hash_1", "lm_hash_2"],
     "exploit_ntlm_hash_list": ["nt_hash_1", "nt_hash_2", "nt_hash_3"],
