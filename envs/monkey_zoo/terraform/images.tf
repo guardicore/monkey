@@ -7,14 +7,6 @@ data "google_compute_image" "hadoop-3" {
   name = "hadoop-3"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "elastic-4" {
-  name = "elastic-4"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "elastic-5" {
-  name = "elastic-5"
-  project = local.monkeyzoo_project
-}
 data "google_compute_image" "tunneling-9" {
   name = "tunneling-9"
   project = local.monkeyzoo_project
