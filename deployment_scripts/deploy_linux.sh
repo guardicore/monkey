@@ -202,8 +202,7 @@ if ! exists npm; then
 fi
 
 pushd "$ISLAND_PATH/cc/ui" || handle_error
-npm install sass-loader node-sass webpack --save-dev
-npm update
+npm ci
 
 log_message "Generating front end"
 npm run dist
