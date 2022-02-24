@@ -186,7 +186,6 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
         ],
         "vulnerability": [
             {"name": "DrupalExploiter", "options": {}},
-            {"name": "ElasticGroovyExploiter", "options": {}},
             {"name": "HadoopExploiter", "options": {}},
             {"name": "Struts2Exploiter", "options": {}},
             {"name": "WebLogicExploiter", "options": {}},

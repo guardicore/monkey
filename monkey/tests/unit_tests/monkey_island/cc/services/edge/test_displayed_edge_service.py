@@ -27,9 +27,9 @@ SCAN_DATA_MOCK = [
 EXPLOIT_DATA_MOCK = [
     {
         "result": True,
-        "exploiter": "ElasticGroovyExploiter",
+        "exploiter": "ZerologonExploiter",
         "info": {
-            "display_name": "Elastic search",
+            "display_name": "Zerologon",
             "started": "2020-05-11T08:59:38.105Z",
             "finished": "2020-05-11T08:59:38.106Z",
             "vulnerable_urls": [],

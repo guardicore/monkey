@@ -9,8 +9,6 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Machines](#machines)<br>
 [Nr. 2 Hadoop](#_Toc526517182)<br>
 [Nr. 3 Hadoop](#_Toc526517183)<br>
-[Nr. 4 Elastic](#_Toc526517184)<br>
-[Nr. 5 Elastic](#_Toc526517185)<br>
 [Nr. 9 Tunneling M1](#_Toc536021462)<br>
 [Nr. 10 Tunneling M2](#_Toc536021463)<br>
 [Nr. 11 SSH key steal](#_Toc526517190)<br>
@@ -247,80 +245,6 @@ Update all requirements using deployment script:<br>
 <tr class="even">
 <td>Notes:</td>
 <td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517184" class="anchor"></span>Nr. <strong>4</strong> Elastic</p>
-<p>(10.2.2.4)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.elastic.co/downloads/past-releases/elasticsearch-1-4-2">Elastic 1.4.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>9200</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Scan results:</td>
-<td>Machine exploited using Elastic exploiter</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_index_and_query_a_document.html">Quick</a> tutorial on how to add entries (was useful when setting up).</td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517185" class="anchor"></span>Nr. <strong>5</strong> Elastic</p>
-<p>(10.2.2.5)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.elastic.co/downloads/past-releases/elasticsearch-1-4-2">Elastic 1.4.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>9200</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Scan results:</td>
-<td>Machine exploited using Elastic exploiter</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_index_and_query_a_document.html">Quick</a> tutorial on how to add entries (was useful when setting up).</td>
 </tr>
 </tbody>
 </table>

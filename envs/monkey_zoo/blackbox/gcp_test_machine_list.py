@@ -2,8 +2,6 @@ GCP_TEST_MACHINE_LIST = {
     "europe-west3-a": [
         "sshkeys-11",
         "sshkeys-12",
-        "elastic-4",
-        "elastic-5",
         "hadoop-2",
         "hadoop-3",
         "mssql-16",

@@ -54,7 +54,6 @@
                 ],
                 "vulnerability": [
                     {"name": "DrupalExploiter"},
-                    {"name": "ElasticGroovyExploiter"},
                     {"name": "HadoopExploiter"},
                     {"name": "ShellShockExploiter"},
                     {"name": "Struts2Exploiter"},

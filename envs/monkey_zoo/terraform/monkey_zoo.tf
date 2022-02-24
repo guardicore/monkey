@@ -76,36 +76,6 @@ resource "google_compute_instance_from_template" "hadoop-3" {
   }
 }
 
-resource "google_compute_instance_from_template" "elastic-4" {
-  name = "${local.resource_prefix}elastic-4"
-  source_instance_template = local.default_ubuntu
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.elastic-4.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.4"
-  }
-}
-
-resource "google_compute_instance_from_template" "elastic-5" {
-  name = "${local.resource_prefix}elastic-5"
-  source_instance_template = local.default_windows
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.elastic-5.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.5"
-  }
-}
-
 resource "google_compute_instance_from_template" "tunneling-9" {
   name = "${local.resource_prefix}tunneling-9"
   source_instance_template = local.default_ubuntu

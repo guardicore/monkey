@@ -46,6 +46,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Agent bootloader. #1676
 - Zero Trust integration with ScoutSuite. #1669
 - ShellShock exploiter. #1733
+- ElasticGroovy exploiter. #1732
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

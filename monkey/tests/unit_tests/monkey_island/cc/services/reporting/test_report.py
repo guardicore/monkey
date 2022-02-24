@@ -110,9 +110,9 @@ NODE_DICT = {
         },
         {
             "exploitation_result": True,
-            "exploiter": "ElasticGroovyExploiter",
+            "exploiter": "ZerologonExploiter",
             "info": {
-                "display_name": "Elastic search",
+                "display_name": "Zerologon",
                 "started": datetime.datetime(2021, 2, 19, 9, 0, 15, 16000),
                 "finished": datetime.datetime(2021, 2, 19, 9, 0, 15, 17000),
                 "vulnerable_urls": [],
