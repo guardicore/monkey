@@ -174,14 +174,6 @@ INTERNAL = {
                     "description": "Determines where should the dropper place the monkey on a "
                     "Linux machine",
                 },
-                "dropper_target_path_win_32": {
-                    "title": "Dropper target path on Windows (32bit)",
-                    "type": "string",
-                    "default": "C:\\Windows\\temp\\monkey32.exe",
-                    "description": "Determines where should the dropper place the monkey on a "
-                    "Windows machine "
-                    "(32bit)",
-                },
                 "dropper_target_path_win_64": {
                     "title": "Dropper target path on Windows (64bit)",
                     "type": "string",
