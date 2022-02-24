@@ -69,7 +69,6 @@ class AWSExporter(Exporter):
                 CredentialType.KEY.value: AWSExporter._handle_ssh_key_issue,
             },
             "tunnel": AWSExporter._handle_tunnel_issue,
-            ExploiterDescriptorEnum.ELASTIC.value.class_name: AWSExporter._handle_elastic_issue,
             ExploiterDescriptorEnum.SMB.value.class_name: {
                 CredentialType.PASSWORD.value: AWSExporter._handle_smb_password_issue,
                 CredentialType.HASH.value: AWSExporter._handle_smb_pth_issue,
@@ -241,21 +240,6 @@ class AWSExporter(Exporter):
             "over the SSH protocol with private key {ssh_key}.".format(
                 machine=issue["machine"], ip_address=issue["ip_address"], ssh_key=issue["ssh_key"]
             ),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_elastic_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Elastic Search servers are vulnerable to CVE-2015-1427",
-            description="Update your Elastic Search server to version 1.4.3 and up.",
-            recommendation="The machine {0}({1}) is vulnerable to an Elastic Groovy attack. "
-            "The attack was made "
-            "possible because the Elastic Search server was not patched "
-            "against CVE-2015-1427.".format(issue["machine"], issue["ip_address"]),
             instance_arn=instance_arn,
             instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
         )

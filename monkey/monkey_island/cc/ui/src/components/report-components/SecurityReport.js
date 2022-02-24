@@ -27,7 +27,6 @@ import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue
 import {drupalIssueOverview, drupalIssueReport} from './security/issues/DrupalIssue';
 import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
-import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
 import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
 import {
   crossSegmentIssueOverview,
@@ -117,11 +116,6 @@ class ReportPageComponent extends AuthComponent {
           [this.credentialTypes.PASSWORD]: shhIssueReport,
           [this.credentialTypes.KEY]: sshKeysReport
         },
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'ElasticGroovyExploiter': {
-        [this.issueContentTypes.OVERVIEW]: elasticIssueOverview,
-        [this.issueContentTypes.REPORT]: elasticIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'PowerShellExploiter': {
