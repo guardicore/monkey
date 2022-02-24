@@ -93,7 +93,7 @@ log_message "Cloning files from git"
 branch=${2:-"develop"}
 log_message "Branch selected: ${branch}"
 if [[ ! -d "$monkey_home/monkey" ]]; then # If not already cloned
-  git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
+  git clone --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
 fi
 
 # Create folders
