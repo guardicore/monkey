@@ -6,12 +6,14 @@ from tests.unit_tests.monkey_island.cc.services.telemetry.processing.credentials
     CREDENTIAL_TELEM_TEMPLATE,
 )
 
+from common.common_consts.credential_component_type import CredentialComponentType
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
     PASSWORD_LIST_PATH,
     USER_LIST_PATH,
 )
+from monkey_island.cc.models import StolenCredentials
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
     parse_credentials,
@@ -51,21 +53,21 @@ cred_empty_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 cred_empty_telem["data"] = [{"identities": [], "secrets": []}]
 
 
-@pytest.mark.usefixtures("uses_database", "fake_mongo")
+@pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_cred_username_parsing():
     parse_credentials(cred_telem_usernames)
     config = ConfigService.get_config(should_decrypt=True)
     assert fake_username in dpath.util.get(config, USER_LIST_PATH)
 
 
-@pytest.mark.usefixtures("uses_database", "fake_mongo")
+@pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_cred_special_username_parsing():
     parse_credentials(cred_telem_special_usernames)
     config = ConfigService.get_config(should_decrypt=True)
     assert fake_special_username in dpath.util.get(config, USER_LIST_PATH)
 
 
-@pytest.mark.usefixtures("uses_database", "fake_mongo")
+@pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_cred_telemetry_parsing():
     parse_credentials(cred_telem)
     config = ConfigService.get_config(should_decrypt=True)
@@ -75,7 +77,20 @@ def test_cred_telemetry_parsing():
     assert fake_password in dpath.util.get(config, PASSWORD_LIST_PATH)
 
 
-@pytest.mark.usefixtures("uses_database", "fake_mongo")
+@pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
+def test_cred_storage_in_db():
+    parse_credentials(cred_telem)
+    cred_docs = list(StolenCredentials.objects())
+    assert len(cred_docs) == 1
+
+    stolen_creds = cred_docs[0]
+    assert fake_username == stolen_creds.identities[0]["username"]
+    assert CredentialComponentType.PASSWORD.name in stolen_creds.secrets
+    assert CredentialComponentType.LM_HASH.name in stolen_creds.secrets
+    assert CredentialComponentType.NT_HASH.name in stolen_creds.secrets
+
+
+@pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_empty_cred_telemetry_parsing():
     default_config = deepcopy(ConfigService.get_config(should_decrypt=True))
     default_usernames = dpath.util.get(default_config, USER_LIST_PATH)

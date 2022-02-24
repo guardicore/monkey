@@ -23,5 +23,4 @@ from .dict_encryptor import (
     FieldNotFoundError,
 )
 from .field_encryptors.i_field_encryptor import IFieldEncryptor
-from .field_encryptors.mimikatz_results_encryptor import MimikatzResultsEncryptor
 from .field_encryptors.string_list_encryptor import StringListEncryptor

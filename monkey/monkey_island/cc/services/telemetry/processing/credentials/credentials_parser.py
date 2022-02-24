@@ -3,6 +3,7 @@ from itertools import chain
 from typing import Mapping
 
 from common.common_consts.credential_component_type import CredentialComponentType
+from monkey_island.cc.models import StolenCredentials
 
 from .credentials import Credentials
 from .identities.username_processor import process_username
@@ -29,6 +30,12 @@ def parse_credentials(telemetry_dict: Mapping):
     ]
 
     for credential in credentials:
+        _store_in_db(credential)
         for cred_comp in chain(credential.identities, credential.secrets):
             credential_type = CredentialComponentType[cred_comp["credential_type"]]
             CREDENTIAL_COMPONENT_PROCESSORS[credential_type](cred_comp, credential)
+
+
+def _store_in_db(credentials: Credentials):
+    stolen_cred_doc = StolenCredentials.from_credentials(credentials)
+    stolen_cred_doc.save()

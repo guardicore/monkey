@@ -1,9 +1,11 @@
 import logging
 
 from common.common_consts.telem_categories import TelemCategoryEnum
+from monkey_island.cc.models.telemetries import save_telemetry
 from monkey_island.cc.services.telemetry.processing.aws_info import process_aws_telemetry
-from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import\
-    parse_credentials
+from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
+    parse_credentials,
+)
 from monkey_island.cc.services.telemetry.processing.exploit import process_exploit_telemetry
 from monkey_island.cc.services.telemetry.processing.post_breach import process_post_breach_telemetry
 from monkey_island.cc.services.telemetry.processing.scan import process_scan_telemetry
@@ -25,6 +27,10 @@ TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
     TelemCategoryEnum.TUNNEL: process_tunnel_telemetry,
 }
 
+# Don't save credential telemetries in telemetries collection.
+# Credentials are stored in StolenCredentials documents
+UNSAVED_TELEMETRIES = [TelemCategoryEnum.CREDENTIALS]
+
 
 def process_telemetry(telemetry_json):
     try:
@@ -33,6 +39,10 @@ def process_telemetry(telemetry_json):
             TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[telem_category](telemetry_json)
         else:
             logger.info("Got unknown type of telemetry: %s" % telem_category)
+
+        if telem_category not in UNSAVED_TELEMETRIES:
+            save_telemetry(telemetry_json)
+
     except Exception as ex:
         logger.error(
             "Exception caught while processing telemetry. Info: {}".format(ex), exc_info=True

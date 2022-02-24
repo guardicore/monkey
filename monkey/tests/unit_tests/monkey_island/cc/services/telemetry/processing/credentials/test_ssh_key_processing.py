@@ -4,17 +4,14 @@ import dpath.util
 import pytest
 from tests.unit_tests.monkey_island.cc.services.telemetry.processing.credentials.conftest import (
     CREDENTIAL_TELEM_TEMPLATE,
+    fake_ip_address,
 )
 
 from common.config_value_paths import SSH_KEYS_PATH, USER_LIST_PATH
-from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
     parse_credentials,
 )
-
-fake_monkey_guid = "272405690278083"
-fake_ip_address = "192.168.56.1"
 
 fake_private_key = "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAACmFlczI1N\n"
 fake_partial_secret = {"private_key": fake_private_key, "credential_type": "SSH_KEYPAIR"}
@@ -33,12 +30,6 @@ fake_identity = {"username": fake_username, "credential_type": "USERNAME"}
 
 ssh_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 ssh_telem["data"] = [{"identities": [fake_identity], "secrets": [fake_secret_full]}]
-
-
-@pytest.fixture
-def insert_fake_monkey():
-    monkey = Monkey(guid=fake_monkey_guid, ip_addresses=[fake_ip_address])
-    monkey.save()
 
 
 @pytest.mark.usefixtures("uses_encryptor", "uses_database", "fake_mongo", "insert_fake_monkey")
