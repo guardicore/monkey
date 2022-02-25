@@ -69,7 +69,6 @@ class Monkey(flask_restful.Resource):
     def post(self, **kw):
         with agent_killing_mutex:
             monkey_json = json.loads(request.data)
-            monkey_json["creds"] = []
             monkey_json["dead"] = False
             if "keepalive" in monkey_json:
                 monkey_json["keepalive"] = dateutil.parser.parse(monkey_json["keepalive"])
@@ -163,8 +162,6 @@ class Monkey(flask_restful.Resource):
                 EdgeService.update_all_dst_nodes(
                     old_dst_node_id=node_id, new_dst_node_id=new_monkey_id
                 )
-                for creds in existing_node["creds"]:
-                    NodeService.add_credentials_to_monkey(new_monkey_id, creds)
                 mongo.db.node.remove({"_id": node_id})
 
             return {"id": new_monkey_id}

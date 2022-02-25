@@ -202,7 +202,6 @@ class NodeService:
                 "ip_addresses": [ip_address],
                 "domain_name": domain_name,
                 "exploited": False,
-                "creds": [],
                 "os": {"type": "unknown", "version": "unknown"},
             }
         )
@@ -317,14 +316,6 @@ class NodeService:
     @staticmethod
     def is_monkey_finished_running():
         return NodeService.is_any_monkey_exists() and not NodeService.is_any_monkey_alive()
-
-    @staticmethod
-    def add_credentials_to_monkey(monkey_id, creds):
-        mongo.db.monkey.update({"_id": monkey_id}, {"$push": {"creds": creds}})
-
-    @staticmethod
-    def add_credentials_to_node(node_id, creds):
-        mongo.db.node.update({"_id": node_id}, {"$push": {"creds": creds}})
 
     @staticmethod
     def get_node_or_monkey_by_ip(ip_address):
