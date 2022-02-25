@@ -53,28 +53,6 @@ def fake_mongo(monkeypatch):
 
 @pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "uses_encryptor")
-def test_telemetry_encryption():
-    secret_keys = ["password", "lm_hash", "ntlm_hash"]
-
-    save_telemetry(MOCK_TELEMETRY)
-
-    encrypted_telemetry = Telemetry.objects.first()
-    for user in MOCK_CREDENTIALS.keys():
-        assert encrypted_telemetry["data"]["credentials"][user]["username"] == user
-
-        for s in secret_keys:
-            assert encrypted_telemetry["data"]["credentials"][user][s] != MOCK_CREDENTIALS[user][s]
-
-    decrypted_telemetry = get_telemetry_by_query({})[0]
-    for user in MOCK_CREDENTIALS.keys():
-        assert decrypted_telemetry["data"]["credentials"][user]["username"] == user
-
-        for s in secret_keys:
-            assert decrypted_telemetry["data"]["credentials"][user][s] == MOCK_CREDENTIALS[user][s]
-
-
-@pytest.mark.slow
-@pytest.mark.usefixtures("uses_database", "uses_encryptor")
 def test_no_encryption_needed():
     # Make sure telemetry save doesn't break when telemetry doesn't need encryption
     save_telemetry(MOCK_NO_ENCRYPTION_NEEDED_TELEMETRY)
