@@ -29,11 +29,8 @@ def get_target_monkey(host):
 
     if not monkey_path:
         if host.os.get("type") == platform.system().lower():
-            # if exe not found, and we have the same arch or arch is unknown and we are 32bit,
-            # use our exe
-            if (not host.os.get("machine") and sys.maxsize < 2 ** 32) or host.os.get(
-                "machine", ""
-            ).lower() == platform.machine().lower():
+            # if exe not found, and we have the same arch, use our exe
+            if host.os.get("machine", "").lower() == platform.machine().lower():
                 monkey_path = sys.executable
 
     return monkey_path
@@ -54,7 +51,7 @@ def get_monkey_depth():
 def get_monkey_dest_path(url_to_monkey):
     """
     Gets destination path from monkey's source url.
-    :param url_to_monkey: Hosted monkey's url. egz : http://localserver:9999/monkey/windows-32.exe
+    :param url_to_monkey: Hosted monkey's url. egz : http://localserver:9999/monkey/windows-64.exe
     :return: Corresponding monkey path from configuration
     """
     from infection_monkey.config import WormConfiguration
