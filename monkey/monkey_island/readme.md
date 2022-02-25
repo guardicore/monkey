@@ -45,8 +45,6 @@
 
 1. Put Infection Monkey binaries inside monkey_island/cc/binaries (binaries can be found in releases on github or build from source)
     monkey-linux-64 - monkey binary for linux 64bit
-    monkey-linux-32 - monkey binary for linux 32bit
-    monkey-windows-32.exe - monkey binary for windows 32bit
     monkey-windows-64.exe - monkey binary for windows 64bit
 
 1. Install npm
@@ -95,15 +93,10 @@
 
     monkey-linux-64 - monkey binary for linux 64bit
 
-    monkey-linux-32 - monkey binary for linux 32bit
-
-    monkey-windows-32.exe - monkey binary for windows 32bit
-
     monkey-windows-64.exe - monkey binary for windows 64bit
 
     Also, if you're going to run monkeys on local machine execute:
     - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-64`
-    - `chmod 755 ./monkey_island/cc/binaries/monkey-linux-32`
 
 1. Setup MongoDB (Use one of the two following options):
     - Download MongoDB and extract it to monkey/monkey_island/bin/mongodb:
