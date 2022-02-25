@@ -209,9 +209,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Adding binaries"
         $binaries = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\binaries")
         New-Item -ItemType directory -path $binaries -ErrorAction SilentlyContinue
-        $webClient.DownloadFile($LINUX_32_BINARY_URL, (Join-Path -Path $binaries -ChildPath $LINUX_32_BINARY_PATH))
         $webClient.DownloadFile($LINUX_64_BINARY_URL, (Join-Path -Path $binaries -ChildPath $LINUX_64_BINARY_PATH))
-        $webClient.DownloadFile($WINDOWS_32_BINARY_URL, (Join-Path -Path $binaries -ChildPath $WINDOWS_32_BINARY_PATH))
         $webClient.DownloadFile($WINDOWS_64_BINARY_URL, (Join-Path -Path $binaries -ChildPath $WINDOWS_64_BINARY_PATH))
     }
 
