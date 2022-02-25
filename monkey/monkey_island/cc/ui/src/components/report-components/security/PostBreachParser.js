@@ -46,7 +46,7 @@ function aggregateMultipleResultsPba(results) {
   }
 
   function modifyProcessListCollectionResult(result) {
-    result[0] = "Found " + Object.keys(result[0]).length.toString() + " running processes";
+    result[0] = 'Found ' + Object.keys(result[0]).length.toString() + ' running processes';
   }
 
   // check for pbas with multiple results and aggregate their results
