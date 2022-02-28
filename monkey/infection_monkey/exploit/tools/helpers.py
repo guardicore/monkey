@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,15 @@ def get_target_monkey(host):
         return None
 
     if host.os.get("type") == platform.system().lower():
-        return sys.executable
+        try:
+            # When running from source, sys.executable will be "python", not an agent.
+            if "monkey" in Path(sys.executable).name:
+                return sys.executable
+        except Exception as ex:
+            logger.warning(
+                "Unable to retrieve this executable's path, downloading executable from the island "
+                f"instead: {ex}"
+            )
 
     return ControlClient.download_monkey_exe(host)
 
