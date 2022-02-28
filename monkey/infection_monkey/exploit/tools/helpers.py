@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -12,24 +11,10 @@ def try_get_target_monkey(host):
 
 
 def get_target_monkey(host):
-    import platform
-    import sys
-
     from infection_monkey.control import ControlClient
 
     if not host.os.get("type"):
         return None
-
-    if host.os.get("type") == platform.system().lower():
-        try:
-            # When running from source, sys.executable will be "python", not an agent.
-            if "monkey" in Path(sys.executable).name:
-                return sys.executable
-        except Exception as ex:
-            logger.warning(
-                "Unable to retrieve this executable's path, downloading executable from the island "
-                f"instead: {ex}"
-            )
 
     return ControlClient.download_monkey_exe(host)
 
