@@ -13,7 +13,7 @@ import infection_monkey.tunnel as tunnel
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.config import GUID, WormConfiguration
-from infection_monkey.network.info import local_ips
+from infection_monkey.network.info import get_host_subnets, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
 from infection_monkey.utils import agent_process
@@ -48,6 +48,7 @@ class ControlClient(object):
             "guid": GUID,
             "hostname": hostname,
             "ip_addresses": local_ips(),
+            "networks": get_host_subnets(),
             "description": " ".join(platform.uname()),
             "config": WormConfiguration.as_dict(),
             "parent": parent,
