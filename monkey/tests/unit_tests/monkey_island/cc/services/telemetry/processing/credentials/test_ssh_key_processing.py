@@ -32,6 +32,7 @@ ssh_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 ssh_telem["data"] = [{"identities": [fake_identity], "secrets": [fake_secret_full]}]
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_encryptor", "uses_database", "fake_mongo", "insert_fake_monkey")
 def test_ssh_credential_parsing():
     parse_credentials(ssh_telem)

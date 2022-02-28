@@ -158,18 +158,18 @@ def test_get_stolen_creds_exploit(fake_mongo):
 
 @pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "uses_encryptor")
-def test_get_stolen_creds_system_info(fake_mongo):
+def test_get_stolen_creds_from_db(fake_mongo):
     fake_mongo.db.monkey.insert_one(MONKEY_TELEM)
     save_telemetry(SYSTEM_INFO_TELEMETRY_TELEM)
 
     stolen_creds_system_info = ReportService.get_stolen_creds()
-    expected_stolen_creds_system_info = [
+    expected_stolen_creds_from_db = [
         {"origin": HOSTNAME, "type": "Clear Password", "username": USER},
         {"origin": HOSTNAME, "type": "LM hash", "username": USER},
         {"origin": HOSTNAME, "type": "NTLM hash", "username": USER},
     ]
 
-    assert expected_stolen_creds_system_info == stolen_creds_system_info
+    assert expected_stolen_creds_from_db == stolen_creds_system_info
 
 
 @pytest.mark.usefixtures("uses_database")

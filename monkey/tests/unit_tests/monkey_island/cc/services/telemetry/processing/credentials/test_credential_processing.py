@@ -53,6 +53,7 @@ cred_empty_telem = deepcopy(CREDENTIAL_TELEM_TEMPLATE)
 cred_empty_telem["data"] = [{"identities": [], "secrets": []}]
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_cred_username_parsing():
     parse_credentials(cred_telem_usernames)
@@ -60,6 +61,7 @@ def test_cred_username_parsing():
     assert fake_username in dpath.util.get(config, USER_LIST_PATH)
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_cred_special_username_parsing():
     parse_credentials(cred_telem_special_usernames)
@@ -67,6 +69,7 @@ def test_cred_special_username_parsing():
     assert fake_special_username in dpath.util.get(config, USER_LIST_PATH)
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_cred_telemetry_parsing():
     parse_credentials(cred_telem)
@@ -77,6 +80,7 @@ def test_cred_telemetry_parsing():
     assert fake_password in dpath.util.get(config, PASSWORD_LIST_PATH)
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_cred_storage_in_db():
     parse_credentials(cred_telem)
@@ -90,6 +94,7 @@ def test_cred_storage_in_db():
     assert CredentialComponentType.NT_HASH.name in stolen_creds.secrets
 
 
+@pytest.mark.slow
 @pytest.mark.usefixtures("uses_database", "fake_mongo", "insert_fake_monkey")
 def test_empty_cred_telemetry_parsing():
     default_config = deepcopy(ConfigService.get_config(should_decrypt=True))
