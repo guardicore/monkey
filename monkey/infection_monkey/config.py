@@ -101,7 +101,6 @@ class Configuration(object):
 
     finger_classes = []
     exploiter_classes = []
-    system_info_collector_classes = []
 
     # depth of propagation
     depth = 2

@@ -93,8 +93,8 @@ class TelemetryFeed(flask_restful.Resource):
         return "Monkey discovered machine %s." % telem["data"]["machine"]["ip_addr"]
 
     @staticmethod
-    def get_systeminfo_telem_brief(telem):
-        return "Monkey collected system information."
+    def get_credentials_telem_brief(_):
+        return "Monkey collected stole some credentials."
 
     @staticmethod
     def get_trace_telem_brief(telem):
@@ -118,7 +118,7 @@ TELEM_PROCESS_DICT = {
     TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
     TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
     TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,
-    TelemCategoryEnum.SYSTEM_INFO: TelemetryFeed.get_systeminfo_telem_brief,
+    TelemCategoryEnum.CREDENTIALS: TelemetryFeed.get_credentials_telem_brief,
     TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
     TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief,
 }

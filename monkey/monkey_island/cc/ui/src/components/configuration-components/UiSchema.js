@@ -94,8 +94,8 @@ export default function UiSchema(props) {
           'ui:emptyValue': ''
         }
       },
-      system_info: {
-        system_info_collector_classes: {
+      credential_collectors: {
+        credential_collector_classes: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }

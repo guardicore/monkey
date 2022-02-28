@@ -16,9 +16,9 @@ function getPluginDescriptors(schema, config) {
       selectedPlugins: config.monkey.post_breach.post_breach_actions
     },
     {
-      name: 'SystemInfoCollectors',
-      allPlugins: schema.definitions.system_info_collector_classes.anyOf,
-      selectedPlugins: config.monkey.system_info.system_info_collector_classes
+      name: 'CredentialCollectors',
+      allPlugins: schema.definitions.credential_collector_classes.anyOf,
+      selectedPlugins: config.monkey.credential_collectors.credential_collector_classes
     }
   ]);
 }
