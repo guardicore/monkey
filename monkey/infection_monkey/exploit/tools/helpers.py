@@ -16,24 +16,13 @@ def get_target_monkey(host):
 
     from infection_monkey.control import ControlClient
 
-    if host.monkey_exe:
-        return host.monkey_exe
-
     if not host.os.get("type"):
         return None
 
-    monkey_path = ControlClient.download_monkey_exe(host)
+    if host.os.get("type") == platform.system().lower():
+        return sys.executable
 
-    if host.os.get("machine") and monkey_path:
-        host.monkey_exe = monkey_path
-
-    if not monkey_path:
-        if host.os.get("type") == platform.system().lower():
-            # if exe not found, and we have the same arch, use our exe
-            if host.os.get("machine", "").lower() == platform.machine().lower():
-                monkey_path = sys.executable
-
-    return monkey_path
+    return ControlClient.download_monkey_exe(host)
 
 
 def get_target_monkey_by_os(is_windows, is_32bit):
