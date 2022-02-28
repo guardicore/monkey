@@ -42,6 +42,7 @@ class Monkey(Document):
     description = StringField()
     hostname = StringField()
     ip_addresses = ListField(StringField())
+    networks = ListField()
     launch_time = FloatField()
     keepalive = DateTimeField()
     modifytime = DateTimeField()

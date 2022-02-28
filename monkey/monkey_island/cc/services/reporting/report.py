@@ -160,16 +160,11 @@ class ReportService:
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
-        network_info = mongo.db.telemetry.find_one(
-            {"telem_category": "system_info", "monkey_guid": monkey_guid},
-            {"data.network_info.networks": 1},
-        )
-        if network_info is None or not network_info["data"]:
-            return []
+        networks = Monkey.objects.get(guid=monkey_guid).networks
 
         return [
-            ipaddress.ip_interface(str(network["addr"] + "/" + network["netmask"])).network
-            for network in network_info["data"]["network_info"]["networks"]
+            ipaddress.ip_interface(f"{network['addr']}/{network['netmask']}").network
+            for network in networks
         ]
 
     @staticmethod
