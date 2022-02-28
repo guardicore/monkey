@@ -14,7 +14,7 @@ class PowerShellCredentialsReuse(ConfigTemplate):
                 "10.2.3.46",
             ],
             "basic_network.scope.depth": 2,
-            "internal.classes.finger_classes": ["PingScanner"],
+            "internal.classes.finger_classes": [],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
             "internal.network.tcp_scanner.tcp_target_ports": [],
         }

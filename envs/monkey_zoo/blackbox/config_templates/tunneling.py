@@ -28,7 +28,6 @@ class Tunneling(ConfigTemplate):
             "basic.credentials.exploit_user_list": ["Administrator", "m0nk3y", "user"],
             "internal.classes.finger_classes": [
                 "SSHFinger",
-                "PingScanner",
                 "HTTPFinger",
                 "SMBFinger",
             ],

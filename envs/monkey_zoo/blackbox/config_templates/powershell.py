@@ -21,7 +21,7 @@ class PowerShell(ConfigTemplate):
             "basic.credentials.exploit_password_list": ["Passw0rd!"],
             "basic_network.scope.depth": 2,
             "basic.credentials.exploit_user_list": ["m0nk3y", "m0nk3y-user"],
-            "internal.classes.finger_classes": ["PingScanner"],
+            "internal.classes.finger_classes": [],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
             "internal.network.tcp_scanner.tcp_target_ports": [],
             "internal.exploits.exploit_ntlm_hash_list": [
