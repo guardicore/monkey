@@ -9,7 +9,7 @@ class Drupal(ConfigTemplate):
 
     config_values.update(
         {
-            "internal.classes.finger_classes": ["PingScanner", "HTTPFinger"],
+            "internal.classes.finger_classes": ["HTTPFinger"],
             "basic.exploiters.exploiter_classes": ["DrupalExploiter"],
             "basic_network.scope.subnet_scan_list": ["10.2.2.28"],
             "internal.network.tcp_scanner.HTTP_PORTS": [80],
