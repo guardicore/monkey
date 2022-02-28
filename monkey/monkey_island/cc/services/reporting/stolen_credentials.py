@@ -16,11 +16,7 @@ def get_stolen_creds() -> Sequence[Mapping]:
 
 
 def extract_ssh_keys(credentials: Sequence[Mapping]) -> Sequence[Mapping]:
-    ssh_keys = []
-    for credential in credentials:
-        if credential["_type"] == CredentialComponentType.SSH_KEYPAIR.name:
-            ssh_keys.append(credential)
-    return ssh_keys
+    return [c for c in credentials if c["_type"] == CredentialComponentType.SSH_KEYPAIR.name]
 
 
 def _fetch_from_db() -> Sequence[StolenCredentials]:
@@ -53,7 +49,4 @@ def _format_creds_for_reporting(credentials: Sequence[StolenCredentials]):
 
 
 def _get_username(credentials: StolenCredentials) -> str:
-    if credentials.identities:
-        return credentials.identities[0]["username"]
-    else:
-        return ""
+    return credentials.identities[0]["username"] if credentials.identities else ""
