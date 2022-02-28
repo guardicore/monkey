@@ -46,6 +46,7 @@ from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
+from monkey.infection_monkey.exploit.log4shell import Log4ShellExploiter
 
 logger = logging.getLogger(__name__)
 
@@ -212,6 +213,9 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER
+        )
+        puppet.load_plugin(
+            "Log4ShellExploiter", exploit_wrapper.wrap(Log4ShellExploiter), PluginType.EXPLOITER
         )
 
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
