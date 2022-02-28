@@ -14,7 +14,6 @@ HOST_AS_DICT = {
     "os": {},
     "services": {},
     "icmp": False,
-    "monkey_exe": None,
     "default_tunnel": None,
     "default_server": None,
 }

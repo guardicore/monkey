@@ -13,59 +13,21 @@ logger = logging.getLogger(__name__)
 MONKEY_DOWNLOADS = [
     {
         "type": "linux",
-        "machine": "x86_64",
-        "filename": "monkey-linux-64",
-    },
-    {
-        "type": "linux",
-        "machine": "i686",
-        "filename": "monkey-linux-32",
-    },
-    {
-        "type": "linux",
-        "machine": "i386",
-        "filename": "monkey-linux-32",
-    },
-    {
-        "type": "linux",
         "filename": "monkey-linux-64",
     },
     {
         "type": "windows",
-        "machine": "x86",
-        "filename": "monkey-windows-32.exe",
-    },
-    {
-        "type": "windows",
-        "machine": "amd64",
         "filename": "monkey-windows-64.exe",
-    },
-    {
-        "type": "windows",
-        "machine": "64",
-        "filename": "monkey-windows-64.exe",
-    },
-    {
-        "type": "windows",
-        "machine": "32",
-        "filename": "monkey-windows-32.exe",
-    },
-    {
-        "type": "windows",
-        "filename": "monkey-windows-32.exe",
     },
 ]
 
 
-def get_monkey_executable(host_os, machine):
+def get_monkey_executable(host_os):
     for download in MONKEY_DOWNLOADS:
-        if host_os == download.get("type") and machine == download.get("machine"):
-            logger.info("Monkey exec found for os: {0} and machine: {1}".format(host_os, machine))
+        if host_os == download.get("type"):
+            logger.info(f"Monkey exec found for os: {host_os}")
             return download
-    logger.warning(
-        "No monkey executables could be found for the host os or machine or both: host_os: {"
-        "0}, machine: {1}".format(host_os, machine)
-    )
+    logger.warning(f"No monkey executables could be found for the host os: {host_os}")
     return None
 
 
@@ -80,7 +42,7 @@ class MonkeyDownload(flask_restful.Resource):
         host_json = json.loads(request.data)
         host_os = host_json.get("os")
         if host_os:
-            result = get_monkey_executable(host_os.get("type"), host_os.get("machine"))
+            result = get_monkey_executable(host_os.get("type"))
 
             if result:
                 # change resulting from new base path

@@ -8,7 +8,6 @@ class VictimHost(object):
         self.os = {}
         self.services = {}
         self.icmp = False
-        self.monkey_exe = None
         self.default_tunnel = None
         self.default_server = None
 
@@ -42,7 +41,6 @@ class VictimHost(object):
         for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
         victim += "] ICMP: %s " % (self.icmp)
-        victim += "target monkey: %s" % self.monkey_exe
         return victim
 
     def set_island_address(self, ip: str, port: Optional[str]):

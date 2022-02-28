@@ -25,7 +25,7 @@ class LocalMonkeyRunService:
     @staticmethod
     def run_local_monkey():
         # get the monkey executable suitable to run on the server
-        result = get_monkey_executable(platform.system().lower(), platform.machine().lower())
+        result = get_monkey_executable(platform.system().lower())
         if not result:
             return False, "OS Type not found"
 
