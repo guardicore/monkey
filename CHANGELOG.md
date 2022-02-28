@@ -56,6 +56,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ### Security
+- Change SSH exploiter so that it does not set the permissions of the agent
+  binary in /tmp on the target system to 777, as this could allow a malicious
+  actor with local access to escalate their privileges. #1750
 ## [1.13.0] - 2022-01-25
 ### Added
 - A new exploiter that allows propagation via the Log4Shell vulnerability
