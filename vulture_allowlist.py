@@ -94,7 +94,6 @@ Timestomping  # unused class (monkey/infection_monkey/post_breach/actions/timest
 SignedScriptProxyExecution  # unused class (monkey/infection_monkey/post_breach/actions/use_signed_scripts.py:15)
 EnvironmentCollector  # unused class (monkey/infection_monkey/system_info/collectors/environment_collector.py:19)
 HostnameCollector  # unused class (monkey/infection_monkey/system_info/collectors/hostname_collector.py:10)
-_.coinit_flags  # unused attribute (monkey/infection_monkey/system_info/windows_info_collector.py:11)
 _.representations  # unused attribute (monkey/monkey_island/cc/app.py:180)
 _.log_message  # unused method (monkey/infection_monkey/transport/http.py:188)
 _.log_message  # unused method (monkey/infection_monkey/transport/http.py:109)
@@ -106,7 +105,6 @@ binaries  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-pyps
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.exploit.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.network.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.post_breach.actions.py:4)
-hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.system_info.collectors.py:4)
 _.wShowWindow  # unused attribute (monkey/infection_monkey/monkey.py:345)
 _.dwFlags  # unused attribute (monkey/infection_monkey/monkey.py:344)
 _.do_get  # unused method (monkey/infection_monkey/exploit/zerologon_utils/remote_shell.py:79)
@@ -157,10 +155,6 @@ wlist  # unused variable (monkey/infection_monkey/transport/http.py:176)
 charset  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:81)
 salt  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:78)
 thread_id  # unused variable (monkey/infection_monkey/network/mysqlfinger.py:61)
-
-
-# leaving this since there's a TODO related to it
-_.get_wmi_info  # unused method (monkey/infection_monkey/system_info/windows_info_collector.py:63)
 
 
 # potentially unused (there may also be unit tests referencing these)

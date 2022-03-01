@@ -139,7 +139,7 @@ class AutomatedMaster(IMaster):
         credential_collector_thread = create_daemon_thread(
             target=self._run_plugins,
             args=(
-                config["system_info_collector_classes"],
+                config["credential_collector_classes"],
                 "credential collector",
                 self._collect_credentials,
             ),

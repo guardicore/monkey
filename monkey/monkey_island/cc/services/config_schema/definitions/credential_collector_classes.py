@@ -1,8 +1,8 @@
-from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR, SSH_COLLECTOR
+from common.common_consts.credential_collector_names import MIMIKATZ_COLLECTOR, SSH_COLLECTOR
 
-SYSTEM_INFO_COLLECTOR_CLASSES = {
-    "title": "System Information Collectors",
-    "description": "Click on a system info collector to find out what it collects.",
+CREDENTIAL_COLLECTOR_CLASSES = {
+    "title": "Credential Collectors",
+    "description": "Click on a credential collector to find out what it collects.",
     "type": "string",
     "anyOf": [
         {

@@ -1,4 +1,4 @@
-from common.common_consts.system_info_collectors_names import MIMIKATZ_COLLECTOR, SSH_COLLECTOR
+from common.common_consts.credential_collector_names import MIMIKATZ_COLLECTOR, SSH_COLLECTOR
 
 MONKEY = {
     "title": "Monkey",
@@ -73,15 +73,15 @@ MONKEY = {
                 },
             },
         },
-        "system_info": {
-            "title": "System info",
+        "credential_collectors": {
+            "title": "Credential collection",
             "type": "object",
             "properties": {
-                "system_info_collector_classes": {
-                    "title": "System info collectors",
+                "credential_collector_classes": {
+                    "title": "Credential collectors",
                     "type": "array",
                     "uniqueItems": True,
-                    "items": {"$ref": "#/definitions/system_info_collector_classes"},
+                    "items": {"$ref": "#/definitions/credential_collector_classes"},
                     "default": [
                         MIMIKATZ_COLLECTOR,
                         SSH_COLLECTOR,
