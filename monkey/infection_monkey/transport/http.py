@@ -1,5 +1,4 @@
 import http.server
-import os.path
 import select
 import socket
 import threading
@@ -7,7 +6,6 @@ import urllib
 from logging import getLogger
 from urllib.parse import urlsplit
 
-import infection_monkey.monkeyfs as monkeyfs
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
 
@@ -16,7 +14,8 @@ logger = getLogger(__name__)
 
 class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
-    filename = ""
+    victim_os = ""
+    agent_repository = None
 
     def version_string(self):
         return "Microsoft-IIS/7.5."
@@ -46,7 +45,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 total += chunk
                 start_range += chunk
 
-            if f.tell() == monkeyfs.getsize(self.filename):
+            if f.tell() == len(f.getbuffer()):
                 if self.report_download(self.client_address):
                     self.close_connection = 1
 
@@ -59,15 +58,15 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             f.close()
 
     def send_head(self):
-        if self.path != "/" + urllib.parse.quote(os.path.basename(self.filename)):
+        if self.path != "/" + urllib.parse.quote(self.victim_os):
             self.send_error(500, "")
             return None, 0, 0
         try:
-            f = monkeyfs.open(self.filename, "rb")
+            f = self.agent_repository.get_agent_binary(self.victim_os)
         except IOError:
             self.send_error(404, "File not found")
             return None, 0, 0
-        size = monkeyfs.getsize(self.filename)
+        size = len(f.getbuffer())
         start_range = 0
         end_range = size
 
@@ -169,10 +168,21 @@ class LockedHTTPServer(threading.Thread):
     # Seconds to wait until server stops
     STOP_TIMEOUT = 5
 
-    def __init__(self, local_ip, local_port, filename, lock, max_downloads=1):
+    def __init__(
+        self,
+        local_ip,
+        local_port,
+        victim_os,
+        dropper_target_path,
+        agent_repository,
+        lock,
+        max_downloads=1,
+    ):
         self._local_ip = local_ip
         self._local_port = local_port
-        self._filename = filename
+        self._victim_os = victim_os
+        self._dropper_target_path = dropper_target_path
+        self._agent_repository = agent_repository
         self.max_downloads = max_downloads
         self.downloads = 0
         self._stopped = False
@@ -185,7 +195,8 @@ class LockedHTTPServer(threading.Thread):
             from common.utils.attack_utils import ScanStatus
             from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 
-            filename = self._filename
+            victim_os = self._victim_os
+            agent_repository = self._agent_repository
 
             @staticmethod
             def report_download(dest=None):
@@ -194,7 +205,7 @@ class LockedHTTPServer(threading.Thread):
                     TempHandler.ScanStatus.USED,
                     get_interface_to_target(dest[0]),
                     dest[0],
-                    self._filename,
+                    self._dropper_target_path,
                 ).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
