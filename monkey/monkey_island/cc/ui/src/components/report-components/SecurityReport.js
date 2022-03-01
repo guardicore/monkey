@@ -556,7 +556,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{marginBottom: '20px'}}>
-          <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
+          <StolenPasswords data={this.state.report.glance.stolen_creds}/>
         </div>
         <div>
           <StrongUsers data={this.state.report.glance.strong_users}/>
