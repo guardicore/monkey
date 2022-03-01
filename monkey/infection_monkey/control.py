@@ -8,7 +8,6 @@ from urllib.parse import urljoin
 import requests
 from requests.exceptions import ConnectionError
 
-import infection_monkey.monkeyfs as monkeyfs
 import infection_monkey.tunnel as tunnel
 from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
@@ -259,22 +258,6 @@ class ControlClient(object):
         return not WormConfiguration.alive
 
     @staticmethod
-    def download_monkey_exe(host):
-        filename, size = ControlClient.get_monkey_exe_filename_and_size_by_host(host)
-        if filename is None:
-            return None
-        return ControlClient.download_monkey_exe_by_filename(filename, size)
-
-    @staticmethod
-    def download_monkey_exe_by_os(is_windows, is_32bit):
-        filename, size = ControlClient.get_monkey_exe_filename_and_size_by_host_dict(
-            ControlClient.spoof_host_os_info(is_windows, is_32bit)
-        )
-        if filename is None:
-            return None
-        return ControlClient.download_monkey_exe_by_filename(filename, size)
-
-    @staticmethod
     def spoof_host_os_info(is_windows, is_32bit):
         if is_windows:
             os = "windows"
@@ -290,70 +273,6 @@ class ControlClient(object):
                 arch = "x86_64"
 
         return {"os": {"type": os, "machine": arch}}
-
-    @staticmethod
-    def download_monkey_exe_by_filename(filename, size):
-        if not WormConfiguration.current_server:
-            return None
-        try:
-            dest_file = monkeyfs.virtual_path(filename)
-            if (monkeyfs.isfile(dest_file)) and (size == monkeyfs.getsize(dest_file)):
-                return dest_file
-            else:
-                download = requests.get(  # noqa: DUO123
-                    "https://%s/api/monkey/download/%s"
-                    % (WormConfiguration.current_server, filename),
-                    verify=False,
-                    proxies=ControlClient.proxies,
-                    timeout=MEDIUM_REQUEST_TIMEOUT,
-                )
-
-                with monkeyfs.open(dest_file, "wb") as file_obj:
-                    for chunk in download.iter_content(chunk_size=DOWNLOAD_CHUNK):
-                        if chunk:
-                            file_obj.write(chunk)
-                    file_obj.flush()
-                if size == monkeyfs.getsize(dest_file):
-                    return dest_file
-
-        except Exception as exc:
-            logger.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
-
-    @staticmethod
-    def get_monkey_exe_filename_and_size_by_host(host):
-        return ControlClient.get_monkey_exe_filename_and_size_by_host_dict(host.as_dict())
-
-    @staticmethod
-    def get_monkey_exe_filename_and_size_by_host_dict(host_dict):
-        if not WormConfiguration.current_server:
-            return None, None
-        try:
-            reply = requests.post(  # noqa: DUO123
-                "https://%s/api/monkey/download" % (WormConfiguration.current_server,),
-                data=json.dumps(host_dict),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=LONG_REQUEST_TIMEOUT,
-            )
-            if 200 == reply.status_code:
-                result_json = reply.json()
-                filename = result_json.get("filename")
-                if not filename:
-                    return None, None
-                size = result_json.get("size")
-                return filename, size
-            else:
-                return None, None
-
-        except Exception as exc:
-            logger.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
-
-        return None, None
 
     @staticmethod
     def create_control_tunnel():

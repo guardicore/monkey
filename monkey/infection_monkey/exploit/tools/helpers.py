@@ -11,18 +11,13 @@ def try_get_target_monkey(host):
 
 
 def get_target_monkey(host):
-    from infection_monkey.control import ControlClient
-
-    if not host.os.get("type"):
-        return None
-
-    return ControlClient.download_monkey_exe(host)
+    raise NotImplementedError("get_target_monkey() has been retired. Use IAgentRepository instead.")
 
 
 def get_target_monkey_by_os(is_windows, is_32bit):
-    from infection_monkey.control import ControlClient
-
-    return ControlClient.download_monkey_exe_by_os(is_windows, is_32bit)
+    raise NotImplementedError(
+        "get_target_monkey_by_os() has been retired. Use IAgentRepository instead."
+    )
 
 
 def get_monkey_depth():
