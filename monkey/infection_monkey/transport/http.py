@@ -157,50 +157,6 @@ class HTTPConnectProxyHandler(http.server.BaseHTTPRequestHandler):
         )
 
 
-class HTTPServer(threading.Thread):
-    def __init__(self, local_ip, local_port, filename, max_downloads=1):
-        self._local_ip = local_ip
-        self._local_port = local_port
-        self._filename = filename
-        self.max_downloads = max_downloads
-        self.downloads = 0
-        self._stopped = False
-        threading.Thread.__init__(self)
-
-    def run(self):
-        class TempHandler(FileServHTTPRequestHandler):
-            from common.utils.attack_utils import ScanStatus
-            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
-
-            filename = self._filename
-
-            @staticmethod
-            def report_download(dest=None):
-                logger.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
-                TempHandler.T1105Telem(
-                    TempHandler.ScanStatus.USED,
-                    get_interface_to_target(dest[0]),
-                    dest[0],
-                    self._filename,
-                ).send()
-                self.downloads += 1
-                if not self.downloads < self.max_downloads:
-                    return True
-                return False
-
-        httpd = http.server.HTTPServer((self._local_ip, self._local_port), TempHandler)
-        httpd.timeout = 0.5  # this is irrelevant?
-
-        while not self._stopped and self.downloads < self.max_downloads:
-            httpd.handle_request()
-
-        self._stopped = True
-
-    def stop(self, timeout=60):
-        self._stopped = True
-        self.join(timeout)
-
-
 class LockedHTTPServer(threading.Thread):
     """
     Same as HTTPServer used for file downloads just with locks to avoid racing conditions.
