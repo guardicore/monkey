@@ -114,11 +114,11 @@ class TelemetryFeed(flask_restful.Resource):
 
 
 TELEM_PROCESS_DICT = {
-    TelemCategoryEnum.TUNNEL: TelemetryFeed.get_tunnel_telem_brief,
-    TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
-    TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
-    TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,
     TelemCategoryEnum.CREDENTIALS: TelemetryFeed.get_credentials_telem_brief,
-    TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
+    TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
     TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief,
+    TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,
+    TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
+    TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
+    TelemCategoryEnum.TUNNEL: TelemetryFeed.get_tunnel_telem_brief,
 }
