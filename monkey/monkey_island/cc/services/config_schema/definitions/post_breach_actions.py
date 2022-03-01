@@ -100,7 +100,6 @@ POST_BREACH_ACTIONS = {
             "title": "Process List Collector",
             "safe": True,
             "info": "Collects a list of running processes on the machine.",
-            "attack_techniques": ["T1082"],
         },
     ],
 }

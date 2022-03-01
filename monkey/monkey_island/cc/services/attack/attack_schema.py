@@ -249,21 +249,11 @@ SCHEMA = {
                     "hostname, or other logical identifier on a network for lateral"
                     " movement.",
                 },
-                "T1082": {
-                    "title": "System information discovery",
-                    "type": "bool",
-                    "link": "https://attack.mitre.org/techniques/T1082",
-                    "depends_on": ["T1016", "T1005"],
-                    "description": "An adversary may attempt to get detailed information about the "
-                    "operating system and hardware, including version, patches, "
-                    "hotfixes, "
-                    "service packs, and architecture.",
-                },
                 "T1016": {
                     "title": "System network configuration discovery",
                     "type": "bool",
                     "link": "https://attack.mitre.org/techniques/T1016",
-                    "depends_on": ["T1005", "T1082"],
+                    "depends_on": ["T1005"],
                     "description": "Adversaries will likely look for details about the network "
                     "configuration "
                     "and settings of systems they access or through information "
@@ -322,7 +312,7 @@ SCHEMA = {
                     "title": "Data from local system",
                     "type": "bool",
                     "link": "https://attack.mitre.org/techniques/T1005",
-                    "depends_on": ["T1016", "T1082"],
+                    "depends_on": ["T1016"],
                     "description": "Sensitive data can be collected from local system sources, "
                     "such as the file system "
                     "or databases of information residing on the system prior to "

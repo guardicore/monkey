@@ -47,6 +47,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Zero Trust integration with ScoutSuite. #1669
 - ShellShock exploiter. #1733
 - ElasticGroovy exploiter. #1732
+- T1082 attack technique report. #1754
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
