@@ -2,7 +2,7 @@ import logging
 import socket
 import struct
 import time
-from threading import Thread
+from threading import Event, Thread
 
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, local_ips
@@ -109,18 +109,27 @@ def quit_tunnel(address, timeout=DEFAULT_TIMEOUT):
 
 
 class MonkeyTunnel(Thread):
-    def __init__(self, proxy_class, target_addr=None, target_port=None, timeout=DEFAULT_TIMEOUT):
+    def __init__(
+        self,
+        proxy_class,
+        keep_tunnel_open_time,
+        target_addr=None,
+        target_port=None,
+        timeout=DEFAULT_TIMEOUT,
+    ):
         self._target_addr = target_addr
         self._target_port = target_port
         self._proxy_class = proxy_class
+        self._keep_tunnel_open_time = keep_tunnel_open_time
         self._broad_sock = None
         self._timeout = timeout
-        self._stopped = False
+        self._stopped = Event()
         self._clients = []
         self.local_port = None
         super(MonkeyTunnel, self).__init__()
         self.daemon = True
         self.l_ips = None
+        self._wait_for_exploited_machines = Event()
 
     def run(self):
         self._broad_sock = _set_multicast_socket(self._timeout)
@@ -146,7 +155,7 @@ class MonkeyTunnel(Thread):
         )
         proxy.start()
 
-        while not self._stopped:
+        while not self._stopped.is_set():
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
                 if b"?" == search:
@@ -195,5 +204,17 @@ class MonkeyTunnel(Thread):
         ip_match = get_interface_to_target(ip)
         return "%s:%d" % (ip_match, self.local_port)
 
+    def set_wait_for_exploited_machines(self):
+        self._wait_for_exploited_machines.set()
+
     def stop(self):
-        self._stopped = True
+        self._wait_for_exploited_machine_connection()
+        self._stopped.set()
+
+    def _wait_for_exploited_machine_connection(self):
+        if self._wait_for_exploited_machines.is_set():
+            logger.info(
+                f"Waiting {self._keep_tunnel_open_time} seconds for exploited machines to connect "
+                "to the tunnel."
+            )
+            time.sleep(self._keep_tunnel_open_time)

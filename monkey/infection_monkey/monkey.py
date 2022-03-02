@@ -3,7 +3,6 @@ import logging
 import os
 import subprocess
 import sys
-import time
 from typing import List
 
 import infection_monkey.tunnel as tunnel
@@ -36,6 +35,9 @@ from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
+from infection_monkey.telemetry.messengers.exploit_intercepting_telemetry_messenger import (
+    ExploitInterceptingTelemetryMessenger,
+)
 from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
     LegacyTelemetryMessengerAdapter,
 )
@@ -164,9 +166,13 @@ class InfectionMonkey:
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
+        telemetry_messenger = ExploitInterceptingTelemetryMessenger(
+            self.telemetry_messenger, self._monkey_inbound_tunnel
+        )
+
         self._master = AutomatedMaster(
             puppet,
-            self.telemetry_messenger,
+            telemetry_messenger,
             victim_host_factory,
             ControlChannel(self._default_server, GUID),
             local_network_interfaces,
@@ -237,7 +243,6 @@ class InfectionMonkey:
 
     def cleanup(self):
         logger.info("Monkey cleanup started")
-        self._wait_for_exploited_machine_connection()
         try:
             if self._master:
                 self._master.cleanup()
@@ -269,19 +274,6 @@ class InfectionMonkey:
             InfectionMonkey._self_delete()
 
         logger.info("Monkey is shutting down")
-
-    def _wait_for_exploited_machine_connection(self):
-        # TODO check for actual exploitation
-        machines_exploited = False
-        # if host was exploited, before continue to closing the tunnel ensure the exploited
-        # host had its chance to
-        # connect to the tunnel
-        if machines_exploited:
-            time_to_sleep = WormConfiguration.keep_tunnel_open_time
-            logger.info(
-                "Sleeping %d seconds for exploited machines to connect to tunnel", time_to_sleep
-            )
-            time.sleep(time_to_sleep)
 
     @staticmethod
     def _close_tunnel():

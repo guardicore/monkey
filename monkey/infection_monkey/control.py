@@ -292,7 +292,12 @@ class ControlClient(object):
             proxy_class = HTTPConnectProxy
             target_addr, target_port = None, None
 
-        return tunnel.MonkeyTunnel(proxy_class, target_addr=target_addr, target_port=target_port)
+        return tunnel.MonkeyTunnel(
+            proxy_class,
+            keep_tunnel_open_time=WormConfiguration.keep_tunnel_open_time,
+            target_addr=target_addr,
+            target_port=target_port,
+        )
 
     @staticmethod
     def get_pba_file(filename):
