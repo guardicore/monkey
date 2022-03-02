@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactTable from 'react-table';
-import marked from 'marked';
+import {marked} from 'marked';
 
 
 class MitigationsComponent extends React.Component {
