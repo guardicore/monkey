@@ -24,7 +24,7 @@ os: linux
 
 install:
 # Python
-- pip install pipenv
+- pip install pipenv --upgrade
 # Install island and monkey requirements as they are needed by UT's
 - pushd monkey/monkey_island
 - pipenv sync --dev  # This installs dependencies from lock
