@@ -200,10 +200,10 @@ class InfectionMonkey:
         puppet.load_plugin("smb", SMBFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
-        agent_repoitory = CachingAgentRepository(
+        agent_repository = CachingAgentRepository(
             f"https://{self._default_server}", ControlClient.proxies
         )
-        exploit_wrapper = ExploiterWrapper(self.telemetry_messenger, agent_repoitory)
+        exploit_wrapper = ExploiterWrapper(self.telemetry_messenger, agent_repository)
 
         puppet.load_plugin(
             "SSHExploiter",
