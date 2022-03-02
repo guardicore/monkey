@@ -1,16 +1,20 @@
-import os
 import shutil
 import tempfile
 
-MONKEY_DIR_NAME = "monkey_dir"
+MONKEY_DIR_PREFIX = "monkey_dir_"
+_monkey_dir = None
 
 
+# TODO: Check if we even need this. Individual plugins can just use tempfile.mkdtemp() or
+#       tempfile.mkftemp() if they need to.
 def create_monkey_dir():
     """
     Creates directory for monkey and related files
     """
-    if not os.path.exists(get_monkey_dir_path()):
-        os.mkdir(get_monkey_dir_path())
+    global _monkey_dir
+
+    _monkey_dir = tempfile.mkdtemp(prefix=MONKEY_DIR_PREFIX, dir=tempfile.gettempdir())
+    return _monkey_dir
 
 
 def remove_monkey_dir():
@@ -26,4 +30,4 @@ def remove_monkey_dir():
 
 
 def get_monkey_dir_path():
-    return os.path.join(tempfile.gettempdir(), MONKEY_DIR_NAME)
+    return _monkey_dir
