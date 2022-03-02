@@ -19,6 +19,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The order and content of Monkey Island's initialization logging to give
   clearer instructions to the user and avoid confusion. #1684
 - The process list collection system info collector to now be a post-breach action. #1697
+- The "/api/monkey/download" endpoint to accept an OS and return a file. #1675
 
 ### Removed
 - VSFTPD exploiter. #1533
@@ -47,6 +48,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Zero Trust integration with ScoutSuite. #1669
 - ShellShock exploiter. #1733
 - ElasticGroovy exploiter. #1732
+- 32-bit agents. #1675
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
