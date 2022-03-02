@@ -10,7 +10,7 @@ class Mssql(ConfigTemplate):
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": ["MSSQLExploiter"],
-            "internal.classes.finger_classes": ["PingScanner"],
+            "internal.classes.finger_classes": [],
             "basic_network.scope.subnet_scan_list": ["10.2.2.16"],
             "basic.credentials.exploit_password_list": [
                 "Password1!",

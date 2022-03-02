@@ -13,7 +13,7 @@ class SmbMimikatz(ConfigTemplate):
             "basic_network.scope.subnet_scan_list": ["10.2.2.14", "10.2.2.15"],
             "basic.credentials.exploit_password_list": ["Password1!", "Ivrrw5zEzs"],
             "basic.credentials.exploit_user_list": ["Administrator", "m0nk3y", "user"],
-            "internal.classes.finger_classes": ["SMBFinger", "PingScanner", "HTTPFinger"],
+            "internal.classes.finger_classes": ["SMBFinger", "HTTPFinger"],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
             "internal.network.tcp_scanner.tcp_target_ports": [445],
             "monkey.system_info.system_info_collector_classes": [

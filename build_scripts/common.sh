@@ -42,9 +42,7 @@ download_monkey_agent_binaries() {
   load_monkey_binary_config
 
   mkdir -p "${island_binaries_path}" || handle_error
-  curl -L -o "${island_binaries_path}/${LINUX_32_BINARY_NAME}" "${LINUX_32_BINARY_URL}"
   curl -L -o "${island_binaries_path}/${LINUX_64_BINARY_NAME}" "${LINUX_64_BINARY_URL}"
-  curl -L -o "${island_binaries_path}/${WINDOWS_32_BINARY_NAME}" "${WINDOWS_32_BINARY_URL}"
   curl -L -o "${island_binaries_path}/${WINDOWS_64_BINARY_NAME}" "${WINDOWS_64_BINARY_URL}"
 }
 

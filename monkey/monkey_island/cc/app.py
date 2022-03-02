@@ -134,8 +134,7 @@ def init_api_resources(api):
     api.add_resource(ConfigurationImport, "/api/configuration/import")
     api.add_resource(
         MonkeyDownload,
-        "/api/monkey/download",
-        "/api/monkey/download/<string:path>",
+        "/api/monkey/download/<string:host_os>",
     )
     api.add_resource(NetMap, "/api/netmap")
     api.add_resource(Edge, "/api/netmap/edge")

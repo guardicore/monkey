@@ -16,7 +16,7 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.exploit import ExploiterWrapper
+from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
@@ -46,7 +46,6 @@ from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
-from infection_monkey.windows_upgrader import WindowsUpgrader
 
 logger = logging.getLogger(__name__)
 
@@ -101,11 +100,6 @@ class InfectionMonkey:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
-        if InfectionMonkey._is_upgrade_to_64_needed():
-            self._upgrade_to_64()
-            logger.info("32 bit Agent can't run on 64 bit system.")
-            return
-
         self._setup()
         self._master.start()
 
@@ -146,16 +140,6 @@ class InfectionMonkey:
             return True
 
         return False
-
-    @staticmethod
-    def _is_upgrade_to_64_needed():
-        return WindowsUpgrader.should_upgrade()
-
-    def _upgrade_to_64(self):
-        self._singleton.unlock()
-        logger.info("32bit monkey running on 64bit Windows. Upgrading.")
-        WindowsUpgrader.upgrade(self._opts)
-        logger.info("Finished upgrading from 32bit to 64bit.")
 
     def _setup(self):
         logger.debug("Starting the setup phase.")
@@ -216,7 +200,10 @@ class InfectionMonkey:
         puppet.load_plugin("smb", SMBFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
-        exploit_wrapper = ExploiterWrapper(self.telemetry_messenger)
+        agent_repoitory = CachingAgentRepository(
+            f"https://{self._default_server}", ControlClient.proxies
+        )
+        exploit_wrapper = ExploiterWrapper(self.telemetry_messenger, agent_repoitory)
 
         puppet.load_plugin(
             "SSHExploiter",
@@ -252,10 +239,6 @@ class InfectionMonkey:
         logger.info("Monkey cleanup started")
         self._wait_for_exploited_machine_connection()
         try:
-            if self._is_upgrade_to_64_needed():
-                logger.debug("Cleanup not needed for 32 bit agent on 64 bit system(it didn't run)")
-                return
-
             if self._master:
                 self._master.cleanup()
 

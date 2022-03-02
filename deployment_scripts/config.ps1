@@ -12,12 +12,8 @@ $PYTHON_URL = "https://www.python.org/ftp/python/3.7.7/python-3.7.7-amd64.exe"
 
 
 # Monkey binaries
-$LINUX_32_BINARY_URL = $MONKEY_DOWNLOAD_URL + "monkey-linux-32"
-$LINUX_32_BINARY_PATH = "monkey-linux-32"
 $LINUX_64_BINARY_URL = $MONKEY_DOWNLOAD_URL + "monkey-linux-64"
 $LINUX_64_BINARY_PATH = "monkey-linux-64"
-$WINDOWS_32_BINARY_URL = $MONKEY_DOWNLOAD_URL + "monkey-windows-32.exe"
-$WINDOWS_32_BINARY_PATH = "monkey-windows-32.exe"
 $WINDOWS_64_BINARY_URL = $MONKEY_DOWNLOAD_URL + "monkey-windows-64.exe"
 $WINDOWS_64_BINARY_PATH = "monkey-windows-64.exe"
 

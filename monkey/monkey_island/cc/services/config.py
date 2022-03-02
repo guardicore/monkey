@@ -606,7 +606,6 @@ class ConfigService:
 
         for dropper_target in [
             "dropper_target_path_linux",
-            "dropper_target_path_win_32",
             "dropper_target_path_win_64",
         ]:
             exploit_options[dropper_target] = config.get(dropper_target, "")

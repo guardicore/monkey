@@ -19,6 +19,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The order and content of Monkey Island's initialization logging to give
   clearer instructions to the user and avoid confusion. #1684
 - The process list collection system info collector to now be a post-breach action. #1697
+- The "/api/monkey/download" endpoint to accept an OS and return a file. #1675
 
 ### Removed
 - VSFTPD exploiter. #1533
@@ -48,6 +49,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - ShellShock exploiter. #1733
 - ElasticGroovy exploiter. #1732
 - T1082 attack technique report. #1754
+- 32-bit agents. #1675
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
@@ -57,6 +59,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 ### Security
+- Change SSH exploiter so that it does not set the permissions of the agent
+  binary in /tmp on the target system to 777, as this could allow a malicious
+  actor with local access to escalate their privileges. #1750
+
 ## [1.13.0] - 2022-01-25
 ### Added
 - A new exploiter that allows propagation via the Log4Shell vulnerability

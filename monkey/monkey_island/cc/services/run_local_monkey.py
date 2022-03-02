@@ -5,8 +5,8 @@ import stat
 import subprocess
 from shutil import copyfile
 
-from monkey_island.cc.resources.monkey_download import get_monkey_executable
-from monkey_island.cc.server_utils.consts import ISLAND_PORT, MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.resources.monkey_download import get_agent_executable_path
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 logger = logging.getLogger(__name__)
@@ -25,12 +25,13 @@ class LocalMonkeyRunService:
     @staticmethod
     def run_local_monkey():
         # get the monkey executable suitable to run on the server
-        result = get_monkey_executable(platform.system().lower(), platform.machine().lower())
-        if not result:
-            return False, "OS Type not found"
+        try:
+            src_path = get_agent_executable_path(platform.system().lower())
+        except Exception as ex:
+            logger.error(f"Error running agent from island: {ex}")
+            return False, str(ex)
 
-        src_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
-        dest_path = os.path.join(LocalMonkeyRunService.DATA_DIR, result["filename"])
+        dest_path = LocalMonkeyRunService.DATA_DIR / src_path.name
 
         # copy the executable to temp path (don't run the monkey from its current location as it may
         # delete itself)

@@ -43,10 +43,6 @@ def is_windows():
     return platform.system().find("Windows") >= 0
 
 
-def is_32_bit():
-    return sys.maxsize <= 2 ** 32
-
-
 def get_bin_folder():
     return os.path.join('.', 'bin')
 
@@ -73,15 +69,10 @@ def get_hidden_imports():
 def get_monkey_filename():
     name = 'monkey-'
     if is_windows():
-        name = name + "windows-"
+        name = name + "windows-64.exe"
     else:
-        name = name + "linux-"
-    if is_32_bit():
-        name = name + "32"
-    else:
-        name = name + "64"
-    if is_windows():
-        name = name + ".exe"
+        name = name + "linux-64"
+
     return name
 
 
