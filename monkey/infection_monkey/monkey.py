@@ -18,6 +18,7 @@ from infection_monkey.credential_collectors import (
 )
 from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
+from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
@@ -43,10 +44,13 @@ from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.monkey_dir import get_monkey_dir_path, remove_monkey_dir
+from infection_monkey.utils.monkey_dir import (
+    create_monkey_dir,
+    get_monkey_dir_path,
+    remove_monkey_dir,
+)
 from infection_monkey.utils.monkey_log_path import get_monkey_log_path
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
-from monkey.infection_monkey.exploit.log4shell import Log4ShellExploiter
 
 logger = logging.getLogger(__name__)
 
@@ -144,6 +148,8 @@ class InfectionMonkey:
 
     def _setup(self):
         logger.debug("Starting the setup phase.")
+
+        create_monkey_dir()
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
