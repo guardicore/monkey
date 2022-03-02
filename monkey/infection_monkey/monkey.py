@@ -16,7 +16,7 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.exploit import ExploiterWrapper
+from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
@@ -200,7 +200,10 @@ class InfectionMonkey:
         puppet.load_plugin("smb", SMBFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
-        exploit_wrapper = ExploiterWrapper(self.telemetry_messenger)
+        agent_repoitory = CachingAgentRepository(
+            f"https://{self._default_server}", ControlClient.proxies
+        )
+        exploit_wrapper = ExploiterWrapper(self.telemetry_messenger, agent_repoitory)
 
         puppet.load_plugin(
             "SSHExploiter",
