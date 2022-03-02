@@ -123,7 +123,7 @@ class MonkeyTunnel(Thread):
         self._keep_tunnel_open_time = keep_tunnel_open_time
         self._broad_sock = None
         self._timeout = timeout
-        self._stopped = False
+        self._stopped = Event()
         self._clients = []
         self.local_port = None
         super(MonkeyTunnel, self).__init__()
@@ -155,7 +155,7 @@ class MonkeyTunnel(Thread):
         )
         proxy.start()
 
-        while not self._stopped:
+        while not self._stopped.is_set():
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
                 if b"?" == search:
@@ -209,7 +209,7 @@ class MonkeyTunnel(Thread):
 
     def stop(self):
         self._wait_for_exploited_machine_connection()
-        self._stopped = True
+        self._stopped.set()
 
     def _wait_for_exploited_machine_connection(self):
         if self._wait_for_exploited_machines.is_set():
