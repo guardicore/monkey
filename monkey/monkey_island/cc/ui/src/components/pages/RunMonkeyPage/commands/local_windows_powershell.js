@@ -1,7 +1,7 @@
 function getAgentDownloadCommand(ip) {
   return `$execCmd = @"\r\n`
     + `[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {\`$true};`
-    + `(New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/monkey-windows-64.exe',`
+    + `(New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/windows',`
     + `"""$env:TEMP\\monkey.exe""");Start-Process -FilePath '$env:TEMP\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`
     + `\r\n"@; \r\n`
     + `Start-Process -FilePath powershell.exe -ArgumentList $execCmd`;
