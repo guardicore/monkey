@@ -51,7 +51,9 @@ class MonkeyDownload(flask_restful.Resource):
 def get_agent_executable_path(host_os: str) -> Path:
     try:
         agent_path = get_executable_full_path(AGENTS[host_os])
-        logger.debug(f"Monkey exec found for os: {host_os}, {agent_path}")
+        logger.debug(f'Local path for {host_os} executable is "{agent_path}"')
+        if not agent_path.is_file():
+            logger.error(f"File {agent_path} not found")
 
         return agent_path
     except KeyError:
