@@ -7,25 +7,27 @@ from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprint
 
 OPTIONS = {"http_ports": [80, 443, 8080, 9200]}
 
-PYTHON_SERVER_HEADER = "SimpleHTTP/0.6 Python/3.6.9"
-APACHE_SERVER_HEADER = "Apache/Server/Header"
+PYTHON_SERVER_HEADER = {"Server": "SimpleHTTP/0.6 Python/3.6.9"}
+APACHE_SERVER_HEADER = {"Server": "Apache/Server/Header"}
+NO_SERVER_HEADER = {"Not_Server": "No Header for you"}
 
 SERVER_HEADERS = {
     "https://127.0.0.1:443": PYTHON_SERVER_HEADER,
     "http://127.0.0.1:8080": APACHE_SERVER_HEADER,
+    "http://127.0.0.1:1080": NO_SERVER_HEADER,
 }
 
 
 @pytest.fixture
-def mock_get_server_from_headers():
-    return MagicMock(side_effect=lambda port: SERVER_HEADERS.get(port, None))
+def mock_get_http_headers():
+    return MagicMock(side_effect=lambda url: SERVER_HEADERS.get(url, None))
 
 
 @pytest.fixture(autouse=True)
-def patch_get_server_from_headers(monkeypatch, mock_get_server_from_headers):
+def patch_get_http_headers(monkeypatch, mock_get_http_headers):
     monkeypatch.setattr(
         "infection_monkey.network_scanning.http_fingerprinter._get_server_from_headers",
-        mock_get_server_from_headers,
+        mock_get_http_headers,
     )
 
 

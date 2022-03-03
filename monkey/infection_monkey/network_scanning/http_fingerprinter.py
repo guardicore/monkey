@@ -1,8 +1,8 @@
 import logging
 from contextlib import closing
-from typing import Dict, Iterable, Optional, Set, Tuple
+from typing import Dict, Iterable, Optional, Set, Tuple, Any
 
-from requests import head
+from requests import head, Response
 from requests.exceptions import ConnectionError, Timeout
 
 from infection_monkey.i_puppet import (
@@ -25,11 +25,11 @@ class HTTPFingerprinter(IFingerprinter):
     """
 
     def get_host_fingerprint(
-        self,
-        host: str,
-        _: PingScanData,
-        port_scan_data: Dict[int, PortScanData],
-        options: Dict,
+            self,
+            host: str,
+            _: PingScanData,
+            port_scan_data: Dict[int, PortScanData],
+            options: Dict,
     ) -> FingerprintData:
         services = {}
         http_ports = set(options.get("http_ports", []))
@@ -55,22 +55,27 @@ def _query_potential_http_server(host: str, port: int) -> Tuple[Optional[str], O
     https = f"https://{host}:{port}"
 
     for url, ssl in ((https, True), (http, False)):  # start with https and downgrade
-        server_header_contents = _get_server_from_headers(url)
+        server_header = _get_server_from_headers(url)
 
-        if server_header_contents is not None:
-            return (server_header_contents, ssl)
+        if server_header is not None:
+            return server_header, ssl
 
-    return (None, None)
+    return None, None
 
 
 def _get_server_from_headers(url: str) -> Optional[str]:
+    headers = _get_http_headers(url)
+    if headers:
+        return headers.get("Server", "")
+
+    return None
+
+
+def _get_http_headers(url: str) -> Optional[Dict[str, Any]]:
     try:
         logger.debug(f"Sending request for headers to {url}")
-        with closing(head(url, verify=False, timeout=1)) as req:  # noqa: DUO123
-            server = req.headers.get("Server")
-
-            logger.debug(f'Got server string "{server}" from {url}')
-            return server
+        with closing(head(url, verify=False, timeout=1)) as response:  # noqa: DUO123
+            return response.headers
     except Timeout:
         logger.debug(f"Timeout while requesting headers from {url}")
     except ConnectionError:  # Someone doesn't like us
@@ -80,7 +85,7 @@ def _get_server_from_headers(url: str) -> Optional[str]:
 
 
 def _get_open_http_ports(
-    allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
+        allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
 ) -> Iterable[int]:
     open_ports = (psd.port for psd in port_scan_data.values() if psd.status == PortStatus.OPEN)
     return (port for port in open_ports if port in allowed_http_ports)
