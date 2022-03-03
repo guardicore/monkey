@@ -90,6 +90,10 @@ class AutomatedMaster(IMaster):
             logger.warning("Forcefully killing the simulation")
 
     def _wait_for_master_stop_condition(self):
+        logger.debug(
+            "Checking for the stop signal from the island every "
+            f"{CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC} seconds."
+        )
         timer = Timer()
         timer.set(CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC)
 
