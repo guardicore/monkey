@@ -25,11 +25,11 @@ class HTTPFingerprinter(IFingerprinter):
     """
 
     def get_host_fingerprint(
-            self,
-            host: str,
-            _: PingScanData,
-            port_scan_data: Dict[int, PortScanData],
-            options: Dict,
+        self,
+        host: str,
+        _: PingScanData,
+        port_scan_data: Dict[int, PortScanData],
+        options: Dict,
     ) -> FingerprintData:
         services = {}
         http_ports = set(options.get("http_ports", []))
@@ -85,7 +85,7 @@ def _get_http_headers(url: str) -> Optional[Dict[str, Any]]:
 
 
 def _get_open_http_ports(
-        allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
+    allowed_http_ports: Set, port_scan_data: Dict[int, PortScanData]
 ) -> Iterable[int]:
     open_ports = (psd.port for psd in port_scan_data.values() if psd.status == PortStatus.OPEN)
     return (port for port in open_ports if port in allowed_http_ports)
