@@ -13,5 +13,5 @@ class T1107Telem(AttackTelem):
 
     def get_data(self):
         data = super(T1107Telem, self).get_data()
-        data.update({"path": self.path})
+        data.update({"path": str(self.path)})
         return data
