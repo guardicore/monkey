@@ -18,7 +18,7 @@ def create_monkey_dir() -> Path:
     return _monkey_dir
 
 
-def remove_monkey_dir():
+def remove_monkey_dir() -> bool:
     """
     Removes monkey's root directory
     :return True if removed without errors and False otherwise
