@@ -18,6 +18,7 @@ from infection_monkey.utils.commands import (
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
+from infection_monkey.utils.environment import is_windows_os
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -140,7 +141,7 @@ class MonkeyDrops(object):
             location=None,
         )
 
-        if OperatingSystem.Windows == SystemInfoCollector.get_os():
+        if is_windows_os():
             monkey_commandline = get_monkey_commandline_windows(
                 self._config["destination_path"], monkey_options
             )
