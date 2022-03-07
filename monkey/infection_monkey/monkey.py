@@ -68,6 +68,7 @@ class InfectionMonkey:
         # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
         self.telemetry_messenger = LegacyTelemetryMessengerAdapter()
+        self._current_depth = self._opts.depth
 
     @staticmethod
     def _get_arguments(args):
@@ -93,7 +94,6 @@ class InfectionMonkey:
 
         logger.info("Monkey is starting...")
 
-        self._set_propagation_depth(self._opts)
         self._add_default_server_to_config(self._opts.server)
         self._connect_to_island()
 
@@ -110,14 +110,6 @@ class InfectionMonkey:
 
         self._setup()
         self._master.start()
-
-    @staticmethod
-    def _set_propagation_depth(options):
-        if options.depth is not None:
-            WormConfiguration._depth_from_commandline = True
-            WormConfiguration.depth = options.depth
-            logger.debug("Setting propagation depth from command line")
-        logger.debug(f"Set propagation depth to {WormConfiguration.depth}")
 
     @staticmethod
     def _add_default_server_to_config(default_server: str):
@@ -179,6 +171,7 @@ class InfectionMonkey:
         )
 
         self._master = AutomatedMaster(
+            self._current_depth,
             puppet,
             telemetry_messenger,
             victim_host_factory,

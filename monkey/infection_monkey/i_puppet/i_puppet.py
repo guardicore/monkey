@@ -114,12 +114,18 @@ class IPuppet(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def exploit_host(
-        self, name: str, host: VictimHost, options: Dict, interrupt: threading.Event
+        self,
+        name: str,
+        host: VictimHost,
+        current_depth: int,
+        options: Dict,
+        interrupt: threading.Event,
     ) -> ExploiterResultData:
         """
         Runs an exploiter against a remote host
         :param str name: The name of the exploiter to run
         :param VictimHost host: A VictimHost object representing the target to exploit
+        :param int current_depth: The current propagation depth
         :param Dict options: A dictionary containing options that modify the behavior of the
                              exploiter
         :param threading.Event interrupt: A threading.Event object that signals the exploit to stop

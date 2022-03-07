@@ -58,10 +58,15 @@ class Puppet(IPuppet):
         return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
 
     def exploit_host(
-        self, name: str, host: VictimHost, options: Dict, interrupt: threading.Event
+        self,
+        name: str,
+        host: VictimHost,
+        current_depth: int,
+        options: Dict,
+        interrupt: threading.Event,
     ) -> ExploiterResultData:
         exploiter = self._plugin_registry.get_plugin(name, PluginType.EXPLOITER)
-        return exploiter.exploit_host(host, options)
+        return exploiter.exploit_host(host, current_depth, options)
 
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         payload = self._plugin_registry.get_plugin(name, PluginType.PAYLOAD)

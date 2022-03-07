@@ -124,7 +124,13 @@ def mock_ip_scanner():
 
 class StubExploiter:
     def exploit_hosts(
-        self, hosts_to_exploit, exploiter_config, results_callback, scan_completed, stop
+        self,
+        exploiters_to_run,
+        hosts_to_exploit,
+        current_depth,
+        results_callback,
+        scan_completed,
+        stop,
     ):
         pass
 
@@ -144,6 +150,7 @@ def test_scan_result_processing(telemetry_messenger_spy, mock_ip_scanner, mock_v
             "network_scan": {},  # This is empty since MockIPscanner ignores it
             "exploiters": {},  # This is empty since StubExploiter ignores it
         },
+        1,
         Event(),
     )
 
@@ -174,7 +181,13 @@ def test_scan_result_processing(telemetry_messenger_spy, mock_ip_scanner, mock_v
 
 class MockExploiter:
     def exploit_hosts(
-        self, exploiter_config, hosts_to_exploit, results_callback, scan_completed, stop
+        self,
+        exploiters_to_run,
+        hosts_to_exploit,
+        current_depth,
+        results_callback,
+        scan_completed,
+        stop,
     ):
         scan_completed.wait()
         hte = []
@@ -240,6 +253,7 @@ def test_exploiter_result_processing(
             "network_scan": {},  # This is empty since MockIPscanner ignores it
             "exploiters": {},  # This is empty since MockExploiter ignores it
         },
+        1,
         Event(),
     )
 
@@ -284,6 +298,7 @@ def test_scan_target_generation(telemetry_messenger_spy, mock_ip_scanner, mock_v
             "network_scan": {},  # This is empty since MockIPscanner ignores it
             "exploiters": {},  # This is empty since MockExploiter ignores it
         },
+        1,
         Event(),
     )
     expected_ip_scan_list = [
