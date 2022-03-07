@@ -1,7 +1,7 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, Iterable, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
@@ -30,12 +30,14 @@ logger = logging.getLogger()
 class AutomatedMaster(IMaster):
     def __init__(
         self,
+        current_depth: Optional[int],
         puppet: IPuppet,
         telemetry_messenger: ITelemetryMessenger,
         victim_host_factory: VictimHostFactory,
         control_channel: IControlChannel,
         local_network_interfaces: List[NetworkInterface],
     ):
+        self._current_depth = current_depth
         self._puppet = puppet
         self._telemetry_messenger = telemetry_messenger
         self._control_channel = control_channel
@@ -162,7 +164,9 @@ class AutomatedMaster(IMaster):
         # still running.
         credential_collector_thread.join()
 
-        current_depth = config["depth"]
+        current_depth = self._current_depth if self._current_depth is not None else config["depth"]
+        logger.info(f"Current depth is {current_depth}")
+
         if self._can_propagate() and current_depth > 0:
             self._propagator.propagate(config["propagation"], current_depth, self._stop)
 
