@@ -28,9 +28,6 @@ class Configuration(object):
                 continue
             if key in LOCAL_CONFIG_VARS:
                 continue
-            if self._depth_from_commandline and key == "depth":
-                self.max_depth = value
-                continue
             if hasattr(self, key):
                 setattr(self, key, value)
             else:
@@ -69,9 +66,6 @@ class Configuration(object):
             result[key] = value
 
         return result
-
-    # Used to keep track of our depth if manually specified
-    _depth_from_commandline = False
 
     ###########################
     # logging config
