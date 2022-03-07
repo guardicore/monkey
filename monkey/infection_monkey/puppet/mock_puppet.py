@@ -137,7 +137,12 @@ class MockPuppet(IPuppet):
 
     # TODO: host should be VictimHost, at the moment it can't because of circular dependency
     def exploit_host(
-        self, name: str, host: VictimHost, options: Dict, interrupt: threading.Event
+        self,
+        name: str,
+        host: VictimHost,
+        current_depth: int,
+        options: Dict,
+        interrupt: threading.Event,
     ) -> ExploiterResultData:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
         attempts = [

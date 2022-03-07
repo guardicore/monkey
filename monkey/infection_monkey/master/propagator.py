@@ -39,7 +39,7 @@ class Propagator:
         self._local_network_interfaces = local_network_interfaces
         self._hosts_to_exploit = None
 
-    def propagate(self, propagation_config: Dict, stop: Event):
+    def propagate(self, propagation_config: Dict, current_depth: int, stop: Event):
         logger.info("Attempting to propagate")
 
         network_scan_completed = Event()
@@ -50,7 +50,7 @@ class Propagator:
         )
         exploit_thread = create_daemon_thread(
             target=self._exploit_hosts,
-            args=(propagation_config, network_scan_completed, stop),
+            args=(propagation_config, current_depth, network_scan_completed, stop),
         )
 
         scan_thread.start()
@@ -134,6 +134,7 @@ class Propagator:
     def _exploit_hosts(
         self,
         propagation_config: Dict,
+        current_depth: int,
         network_scan_completed: Event,
         stop: Event,
     ):
@@ -143,6 +144,7 @@ class Propagator:
         self._exploiter.exploit_hosts(
             exploiter_config,
             self._hosts_to_exploit,
+            current_depth,
             self._process_exploit_attempts,
             network_scan_completed,
             stop,

@@ -101,13 +101,13 @@ class MockMaster(IMaster):
 
     def _exploit(self):
         logger.info("Exploiting victims")
-        result = self._puppet.exploit_host("PowerShellExploiter", "10.0.0.1", {}, None)
+        result = self._puppet.exploit_host("PowerShellExploiter", "10.0.0.1", 0, {}, None)
         logger.info(f"Attempts for exploiting {result.attempts}")
         self._telemetry_messenger.send_telemetry(
             ExploitTelem("PowerShellExploiter", self._hosts["10.0.0.1"], result)
         )
 
-        result = self._puppet.exploit_host("SSHExploiter", "10.0.0.3", {}, None)
+        result = self._puppet.exploit_host("SSHExploiter", "10.0.0.3", 0, {}, None)
         logger.info(f"Attempts for exploiting {result.attempts}")
         self._telemetry_messenger.send_telemetry(
             ExploitTelem("SSHExploiter", self._hosts["10.0.0.3"], result)

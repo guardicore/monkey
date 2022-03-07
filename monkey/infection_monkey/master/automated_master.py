@@ -162,8 +162,9 @@ class AutomatedMaster(IMaster):
         # still running.
         credential_collector_thread.join()
 
-        if self._can_propagate() and config["depth"] > 0:
-            self._propagator.propagate(config["propagation"], self._stop)
+        current_depth = config["depth"]
+        if self._can_propagate() and current_depth > 0:
+            self._propagator.propagate(config["propagation"], current_depth, self._stop)
 
         payload_thread = create_daemon_thread(
             target=self._run_plugins,
