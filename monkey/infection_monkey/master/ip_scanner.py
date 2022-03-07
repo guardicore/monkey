@@ -58,6 +58,7 @@ class IPScanner:
                 address = addresses.get_nowait()
                 logger.info(f"Scanning {address.ip}")
 
+                # TODO: Catch exceptions to prevent thread from crashing
                 ping_scan_data = self._puppet.ping(address.ip, icmp_timeout)
                 port_scan_data = self._puppet.scan_tcp_ports(address.ip, tcp_ports, tcp_timeout)
 

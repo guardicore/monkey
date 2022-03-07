@@ -209,6 +209,7 @@ class AutomatedMaster(IMaster):
 
         interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
         for p in interruptable_iter(plugins, self._stop, interrupted_message):
+            # TODO: Catch exceptions to prevent thread from crashing
             callback(p)
 
         logger.info(f"Finished running {plugin_type}s")
