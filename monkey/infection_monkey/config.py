@@ -151,20 +151,6 @@ class Configuration(object):
         """
         return product(self.exploit_user_list, self.exploit_ssh_keys)
 
-    def get_exploit_user_password_or_hash_product(self):
-        """
-        Returns all combinations of the configurations users and passwords or lm/ntlm hashes
-        :return:
-        """
-        cred_list = []
-        for cred in product(self.exploit_user_list, self.exploit_password_list, [""], [""]):
-            cred_list.append(cred)
-        for cred in product(self.exploit_user_list, [""], [""], self.exploit_ntlm_hash_list):
-            cred_list.append(cred)
-        for cred in product(self.exploit_user_list, [""], self.exploit_lm_hash_list, [""]):
-            cred_list.append(cred)
-        return cred_list
-
     @staticmethod
     def hash_sensitive_data(sensitive_data):
         """
