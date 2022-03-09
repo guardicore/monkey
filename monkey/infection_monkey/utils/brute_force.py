@@ -3,7 +3,7 @@ from typing import Any, Iterable, List, Tuple
 
 
 def generate_identity_secret_pairs(
-        identities: Iterable, secrets: Iterable
+    identities: Iterable, secrets: Iterable
 ) -> Iterable[Tuple[Any, Any]]:
     """
     Generates all possible combinations of identities and secrets (e.g. usernames and passwords).
@@ -16,10 +16,10 @@ def generate_identity_secret_pairs(
 
 
 def generate_username_password_or_ntlm_hash_combinations(
-        usernames: Iterable[str],
-        passwords: Iterable[str],
-        lm_hashes: Iterable[str],
-        nt_hashes: Iterable[str],
+    usernames: Iterable[str],
+    passwords: Iterable[str],
+    lm_hashes: Iterable[str],
+    nt_hashes: Iterable[str],
 ) -> Iterable[Tuple[str, str, str, str]]:
     """
     Generates all possible combinations of the following: username/password, username/lm_hash,
@@ -41,13 +41,12 @@ def generate_username_password_or_ntlm_hash_combinations(
 
 
 def generate_brute_force_combinations(options: dict):
-    return generate_username_password_or_ntlm_hash_combinations(usernames=options["credentials"]["exploit_user_list"],
-                                                                passwords=options["credentials"][
-                                                                    "exploit_password_list"],
-                                                                lm_hashes=options["credentials"][
-                                                                    "exploit_lm_hash_list"],
-                                                                nt_hashes=options["credentials"][
-                                                                    "exploit_ntlm_hash_list"])
+    return generate_username_password_or_ntlm_hash_combinations(
+        usernames=options["credentials"]["exploit_user_list"],
+        passwords=options["credentials"]["exploit_password_list"],
+        lm_hashes=options["credentials"]["exploit_lm_hash_list"],
+        nt_hashes=options["credentials"]["exploit_ntlm_hash_list"],
+    )
 
 
 # Expects a list of username, password, lm hash and nt hash in that order
