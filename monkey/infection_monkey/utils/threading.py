@@ -1,14 +1,19 @@
 import logging
+from itertools import count
 from threading import Event, Thread
-from typing import Any, Callable, Iterable, Tuple
+from typing import Any, Callable, Iterable, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
 
-def run_worker_threads(target: Callable[..., None], args: Tuple = (), num_workers: int = 2):
+def run_worker_threads(
+    target: Callable[..., None], name_prefix: str = None, args: Tuple = (), num_workers: int = 2
+):
     worker_threads = []
+    counter = run_worker_threads.counters.setdefault(name_prefix, count(start=1))
     for i in range(0, num_workers):
-        t = create_daemon_thread(target=target, args=args)
+        name = None if name_prefix is None else f"{name_prefix}-{next(counter)}"
+        t = create_daemon_thread(target=target, name=name, args=args)
         t.start()
         worker_threads.append(t)
 
@@ -16,8 +21,13 @@ def run_worker_threads(target: Callable[..., None], args: Tuple = (), num_worker
         t.join()
 
 
-def create_daemon_thread(target: Callable[..., None], args: Tuple = ()) -> Thread:
-    return Thread(target=target, args=args, daemon=True)
+run_worker_threads.counters = {}
+
+
+def create_daemon_thread(
+    target: Callable[..., None], name: Optional[str] = None, args: Tuple = ()
+) -> Thread:
+    return Thread(target=target, name=name, args=args, daemon=True)
 
 
 def interruptable_iter(
