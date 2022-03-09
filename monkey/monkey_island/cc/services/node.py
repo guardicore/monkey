@@ -129,9 +129,7 @@ class NodeService:
         if "group" in node and node["group"]:
             return node["group"]
 
-        if node.get("exploited"):
-            node_type = "exploited"
-        elif node.get("propagated"):
+        if node.get("propagated"):
             node_type = "propagated"
         else:
             node_type = "clean"
