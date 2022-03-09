@@ -179,10 +179,18 @@ It's also possible to change the default log level by editing `log_level` value 
 
 ### Infection Monkey agent logs
 
-The Infection Monkey agent log file can be found in the following paths on machines where it was executed:
+The Infection Monkey agent log file can be found under directories specified for temporary files on the machines where it was executed.
+The list of directories that the log file can be find in are:
 
-- Path on Linux: `/tmp/user-1563`
-- Path on Windows: `%temp%\\~df1563.tmp`
+1. The directory named by the TMPDIR environment variable.
+2. The directory named by the TEMP environment variable.
+3. The directory named by the TMP environment variable.
+4. A platform-specific location:
+   - On Windows, the directories `C:\TEMP`, `C:\TMP`, `\TEMP`, and `\TMP`, in that order.
+   - On all other platforms, the directories `/tmp`, `/var/tmp`, and `/usr/tmp`, in that order.
+5. As a last resort, the current working directory.
+
+Infection Monkey log file name is constructed to the following pattern: `infection-monkey-agent-<random_string>-<timestamp>.log`
 
 The logs contain information about the internals of the Infection Monkey agent's execution. The log will contain entries like these:
 
@@ -206,9 +214,9 @@ The logs contain information about the internals of the Infection Monkey agent's
 
 The Infection Monkey leaves hardly any trace on the target system. It will leave:
 
-- Log files in the following locations:
-  - Path on Linux: `/tmp/user-1563`
-  - Path on Windows: `%temp%\\~df1563.tmp`
+- Log files under [directories]({{< ref "/faq/#infection-monkey-agent-logs">}}) for temporary files:
+  - Path on Linux: `/tmp/infection-monky-agent-<random_string>-<timestamp>.log`
+  - Path on Windows: `%temp%\\infection-monky-agent-<random_string>-<timestamp>.log`
 
 ### What's the Infection Monkey Agent's impact on system resources usage?
 
