@@ -1,5 +1,5 @@
 from itertools import chain, product
-from typing import Any, Iterable, Tuple
+from typing import Any, Iterable, List, Tuple
 
 
 def generate_identity_secret_pairs(
@@ -38,3 +38,16 @@ def generate_username_password_or_ntlm_hash_combinations(
         product(usernames, [""], lm_hashes, [""]),
         product(usernames, [""], [""], nt_hashes),
     )
+
+
+# Expects a list of username, password, lm hash and nt hash in that order
+def get_credential_string(creds: List) -> str:
+    cred_strs = [
+        (creds[0], "username"),
+        (creds[1], "password"),
+        (creds[2], "lm hash"),
+        (creds[3], "nt hash"),
+    ]
+
+    present_creds = [cred[1] for cred in cred_strs if cred[0]]
+    return ", ".join(present_creds)
