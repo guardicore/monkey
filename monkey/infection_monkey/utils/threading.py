@@ -7,7 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 def run_worker_threads(
-    target: Callable[..., None], name_prefix: str = None, args: Tuple = (), num_workers: int = 2
+    target: Callable[..., None],
+    name_prefix: Optional[str] = None,
+    args: Tuple = (),
+    num_workers: int = 2,
 ):
     worker_threads = []
     counter = run_worker_threads.counters.setdefault(name_prefix, count(start=1))
