@@ -1,21 +1,21 @@
 import logging
 from itertools import count
 from threading import Event, Thread
-from typing import Any, Callable, Iterable, Optional, Tuple
+from typing import Any, Callable, Iterable, Tuple
 
 logger = logging.getLogger(__name__)
 
 
 def run_worker_threads(
     target: Callable[..., None],
-    name_prefix: Optional[str] = None,
+    name_prefix: str,
     args: Tuple = (),
     num_workers: int = 2,
 ):
     worker_threads = []
     counter = run_worker_threads.counters.setdefault(name_prefix, count(start=1))
     for i in range(0, num_workers):
-        name = None if name_prefix is None else f"{name_prefix}-{next(counter)}"
+        name = f"{name_prefix}-{next(counter)}"
         t = create_daemon_thread(target=target, name=name, args=args)
         t.start()
         worker_threads.append(t)
@@ -27,9 +27,7 @@ def run_worker_threads(
 run_worker_threads.counters = {}
 
 
-def create_daemon_thread(
-    target: Callable[..., None], name: Optional[str] = None, args: Tuple = ()
-) -> Thread:
+def create_daemon_thread(target: Callable[..., None], name: str, args: Tuple = ()) -> Thread:
     return Thread(target=target, name=name, args=args, daemon=True)
 
 
