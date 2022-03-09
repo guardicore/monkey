@@ -188,29 +188,29 @@ INTERNAL = {
             "title": "Logging",
             "type": "object",
             "properties": {
-                "dropper_log_path_linux": {
-                    "title": "Dropper log file path on Linux",
+                "dropper_log_directory_linux": {
+                    "title": "Dropper log directory path on Linux",
                     "type": "string",
-                    "default": "/tmp/user-1562",
-                    "description": "The fullpath of the dropper log file on Linux",
+                    "default": "/tmp/",
+                    "description": "The directory path of the dropper log file on Linux",
                 },
-                "dropper_log_path_windows": {
-                    "title": "Dropper log file path on Windows",
+                "dropper_log_directory_windows": {
+                    "title": "Dropper log directory path on Windows",
                     "type": "string",
-                    "default": "%temp%\\~df1562.tmp",
-                    "description": "The fullpath of the dropper log file on Windows",
+                    "default": "%temp%\\",
+                    "description": "The directory path of the dropper log file on Windows",
                 },
-                "monkey_log_path_linux": {
-                    "title": "Monkey log file path on Linux",
+                "monkey_log_directory_linux": {
+                    "title": "Monkey log directory path on Linux",
                     "type": "string",
-                    "default": "/tmp/user-1563",
-                    "description": "The fullpath of the monkey log file on Linux",
+                    "default": "/tmp/",
+                    "description": "The directory path of the monkey log file on Linux",
                 },
-                "monkey_log_path_windows": {
-                    "title": "Monkey log file path on Windows",
+                "monkey_log_directory_windows": {
+                    "title": "Monkey log directory path on Windows",
                     "type": "string",
-                    "default": "%temp%\\~df1563.tmp",
-                    "description": "The fullpath of the monkey log file on Windows",
+                    "default": "%temp%\\",
+                    "description": "The directory path of the monkey log file on Windows",
                 },
             },
         },

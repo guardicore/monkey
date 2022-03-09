@@ -107,10 +107,10 @@
         "dropper_target_path_win_64": "C:\\Windows\\temp\\monkey64.exe"
       },
       "logging": {
-        "dropper_log_path_linux": "/tmp/user-1562",
-        "dropper_log_path_windows": "%temp%\\~df1562.tmp",
-        "monkey_log_path_linux": "/tmp/user-1563",
-        "monkey_log_path_windows": "%temp%\\~df1563.tmp"
+        "dropper_log_directory_linux": "/tmp/",
+        "dropper_log_directory_windows": "%temp%\\",
+        "monkey_log_directory_linux": "/tmp/",
+        "monkey_log_directory_windows": "%temp%\\"
       },
       "exploits": {
         "exploit_lm_hash_list": [],

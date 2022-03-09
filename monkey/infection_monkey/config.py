@@ -71,10 +71,10 @@ class Configuration(object):
     # logging config
     ###########################
 
-    dropper_log_path_windows = "%temp%\\~df1562.tmp"
-    dropper_log_path_linux = "/tmp/user-1562"
-    monkey_log_path_windows = "%temp%\\~df1563.tmp"
-    monkey_log_path_linux = "/tmp/user-1563"
+    dropper_log_directory_linux = "/tmp/"
+    dropper_log_directory_windows = "%temp%\\"
+    monkey_log_directory_linux = "/tmp/"
+    monkey_log_directory_windows = "%temp%\\"
 
     ###########################
     # dropper config
