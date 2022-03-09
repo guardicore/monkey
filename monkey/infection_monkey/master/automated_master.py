@@ -55,8 +55,12 @@ class AutomatedMaster(IMaster):
         )
 
         self._stop = threading.Event()
-        self._master_thread = create_daemon_thread(target=self._run_master_thread)
-        self._simulation_thread = create_daemon_thread(target=self._run_simulation)
+        self._master_thread = create_daemon_thread(
+            target=self._run_master_thread, name="AutomatedMasterThread"
+        )
+        self._simulation_thread = create_daemon_thread(
+            target=self._run_simulation, name="SimulationThread"
+        )
 
     def start(self):
         logger.info("Starting automated breach and attack simulation")
@@ -144,6 +148,7 @@ class AutomatedMaster(IMaster):
 
         credential_collector_thread = create_daemon_thread(
             target=self._run_plugins,
+            name="CredentialCollectorThread",
             args=(
                 config["credential_collector_classes"],
                 "credential collector",
@@ -152,6 +157,7 @@ class AutomatedMaster(IMaster):
         )
         pba_thread = create_daemon_thread(
             target=self._run_plugins,
+            name="PBAThread",
             args=(config["post_breach_actions"].items(), "post-breach action", self._run_pba),
         )
 
@@ -172,6 +178,7 @@ class AutomatedMaster(IMaster):
 
         payload_thread = create_daemon_thread(
             target=self._run_plugins,
+            name="PayloadThread",
             args=(config["payloads"].items(), "payload", self._run_payload),
         )
         payload_thread.start()

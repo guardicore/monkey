@@ -42,7 +42,10 @@ class IPScanner:
 
         scan_ips_args = (addresses, options, results_callback, stop)
         run_worker_threads(
-            target=self._scan_addresses, args=scan_ips_args, num_workers=self._num_workers
+            target=self._scan_addresses,
+            name_prefix="ScanThread",
+            args=scan_ips_args,
+            num_workers=self._num_workers,
         )
 
     def _scan_addresses(
