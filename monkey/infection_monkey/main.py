@@ -25,7 +25,7 @@ LOG_CONFIG = {
     "disable_existing_loggers": False,
     "formatters": {
         "standard": {
-            "format": "%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%("
+            "format": "%(asctime)s [%(process)d:%(threadName)s:%(levelname)s] %(module)s.%("
             "funcName)s.%(lineno)d: %(message)s"
         },
     },
