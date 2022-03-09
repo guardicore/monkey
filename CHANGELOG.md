@@ -20,6 +20,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   clearer instructions to the user and avoid confusion. #1684
 - The process list collection system info collector to now be a post-breach action. #1697
 - The "/api/monkey/download" endpoint to accept an OS and return a file. #1675
+- Log messages to contain human-readable thread names. #1766
 
 ### Removed
 - VSFTPD exploiter. #1533
