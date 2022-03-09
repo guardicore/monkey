@@ -180,8 +180,8 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
             {"name": "MSSQLExploiter", "options": {}},
             {"name": "PowerShellExploiter", "options": {}},
             {"name": "SSHExploiter", "options": {}},
-            {"name": "SmbExploiter", "options": {}},
-            {"name": "WmiExploiter", "options": {}},
+            {"name": "SmbExploiter", "options": {"smb_download_timeout": 300}},
+            {"name": "WmiExploiter", "options": {"smb_download_timeout": 300}},
         ],
         "vulnerability": [
             {"name": "DrupalExploiter", "options": {}},

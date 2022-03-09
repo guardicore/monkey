@@ -126,7 +126,7 @@ class MonkeyTunnel(Thread):
         self._stopped = Event()
         self._clients = []
         self.local_port = None
-        super(MonkeyTunnel, self).__init__()
+        super(MonkeyTunnel, self).__init__(name="MonkeyTunnelThread")
         self.daemon = True
         self.l_ips = None
         self._wait_for_exploited_machines = Event()

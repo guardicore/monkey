@@ -19,6 +19,7 @@ from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
+from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
@@ -213,16 +214,13 @@ class InfectionMonkey:
         exploit_wrapper = ExploiterWrapper(self.telemetry_messenger, agent_repository)
 
         puppet.load_plugin(
-            "SSHExploiter",
-            exploit_wrapper.wrap(SSHExploiter),
-            PluginType.EXPLOITER,
-        )
-        puppet.load_plugin(
             "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER
         )
         puppet.load_plugin(
             "Log4ShellExploiter", exploit_wrapper.wrap(Log4ShellExploiter), PluginType.EXPLOITER
         )
+        puppet.load_plugin("SSHExploiter", exploit_wrapper.wrap(SSHExploiter), PluginType.EXPLOITER)
+        puppet.load_plugin("WmiExploiter", exploit_wrapper.wrap(WmiExploiter), PluginType.EXPLOITER)
 
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
 

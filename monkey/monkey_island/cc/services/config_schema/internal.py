@@ -252,7 +252,7 @@ INTERNAL = {
                     "smb_download_timeout": {
                         "title": "SMB download timeout",
                         "type": "integer",
-                        "default": 300,
+                        "default": 30,
                         "description": "Timeout (in seconds) for SMB download operation (used in "
                         "various exploits using SMB)",
                     },

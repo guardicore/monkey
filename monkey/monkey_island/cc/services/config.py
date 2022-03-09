@@ -629,4 +629,18 @@ class ConfigService:
 
         config.pop(flat_config_exploiter_classes_field, None)
 
-        return formatted_exploiters_config
+        return ConfigService._add_smb_download_timeout_to_exploiters(
+            config, formatted_exploiters_config
+        )
+
+    @staticmethod
+    def _add_smb_download_timeout_to_exploiters(
+        flat_config: Dict, formatted_config: Dict
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        new_config = copy.deepcopy(formatted_config)
+        uses_smb_timeout = {"SmbExploiter", "WmiExploiter"}
+
+        for exploiter in filter(lambda e: e["name"] in uses_smb_timeout, new_config["brute_force"]):
+            exploiter["options"]["smb_download_timeout"] = flat_config["smb_download_timeout"]
+
+        return new_config

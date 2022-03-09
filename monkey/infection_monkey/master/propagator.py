@@ -46,10 +46,11 @@ class Propagator:
         self._hosts_to_exploit = Queue()
 
         scan_thread = create_daemon_thread(
-            target=self._scan_network, args=(propagation_config, stop)
+            target=self._scan_network, name="PropagatorScanThread", args=(propagation_config, stop)
         )
         exploit_thread = create_daemon_thread(
             target=self._exploit_hosts,
+            name="PropagatorExploitThread",
             args=(propagation_config, current_depth, network_scan_completed, stop),
         )
 
