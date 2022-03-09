@@ -29,6 +29,6 @@ def _report_aws_environment(telemetry_messenger: LegacyTelemetryMessengerAdapter
 def run_aws_environment_check(telemetry_messenger: LegacyTelemetryMessengerAdapter):
     logger.info("AWS environment check initiated.")
     aws_environment_thread = create_daemon_thread(
-        target=_report_aws_environment, args=(telemetry_messenger,)
+        target=_report_aws_environment, name="AWSEnvironmentThread", args=(telemetry_messenger,)
     )
     aws_environment_thread.start()
