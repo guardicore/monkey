@@ -68,15 +68,6 @@ class Configuration(object):
         return result
 
     ###########################
-    # logging config
-    ###########################
-
-    dropper_log_directory_linux = "/tmp/"
-    dropper_log_directory_windows = "%temp%\\"
-    monkey_log_directory_linux = "/tmp/"
-    monkey_log_directory_windows = "%temp%\\"
-
-    ###########################
     # dropper config
     ###########################
 
