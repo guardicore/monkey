@@ -11,6 +11,8 @@ class NodeStates(Enum):
     CLEAN_WINDOWS = "clean_windows"
     EXPLOITED_LINUX = "exploited_linux"
     EXPLOITED_WINDOWS = "exploited_windows"
+    PROPAGATED_LINUX = "propagated_linux"
+    PROPAGATED_WINDOWS = "propagated_windows"
     ISLAND = "island"
     ISLAND_MONKEY_LINUX = "island_monkey_linux"
     ISLAND_MONKEY_LINUX_RUNNING = "island_monkey_linux_running"

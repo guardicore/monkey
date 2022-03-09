@@ -128,8 +128,16 @@ class NodeService:
     def get_node_group(node) -> str:
         if "group" in node and node["group"]:
             return node["group"]
-        node_type = "exploited" if node.get("exploited") else "clean"
+
+        if node.get("exploited"):
+            node_type = "exploited"
+        elif node.get("propagated"):
+            node_type = "propagated"
+        else:
+            node_type = "clean"
+
         node_os = NodeService.get_node_os(node)
+
         return NodeStates.get_by_keywords([node_type, node_os]).value
 
     @staticmethod
@@ -202,6 +210,7 @@ class NodeService:
                 "ip_addresses": [ip_address],
                 "domain_name": domain_name,
                 "exploited": False,
+                "propagated": False,
                 "os": {"type": "unknown", "version": "unknown"},
             }
         )
@@ -287,6 +296,10 @@ class NodeService:
     @staticmethod
     def set_node_exploited(node_id):
         mongo.db.node.update({"_id": node_id}, {"$set": {"exploited": True}})
+
+    @staticmethod
+    def set_node_propagated(node_id):
+        mongo.db.node.update({"_id": node_id}, {"$set": {"propagated": True}})
 
     @staticmethod
     def update_dead_monkeys():
