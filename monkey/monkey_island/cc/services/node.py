@@ -173,10 +173,6 @@ class NodeService:
         }
 
     @staticmethod
-    def set_node_group(node_id: str, node_group: NodeStates):
-        mongo.db.node.update({"_id": node_id}, {"$set": {"group": node_group.value}}, upsert=False)
-
-    @staticmethod
     def unset_all_monkey_tunnels(monkey_id):
         mongo.db.monkey.update({"_id": monkey_id}, {"$unset": {"tunnel": ""}}, upsert=False)
 
