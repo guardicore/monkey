@@ -96,7 +96,7 @@ class Monkey(flask_restful.Resource):
                     for x in mongo.db.telemetry.find(
                         {
                             "telem_category": {"$eq": "exploit"},
-                            "data.result": {"$eq": True},
+                            "data.exploitation_result": {"$eq": True},
                             "data.machine.ip_addr": {"$in": monkey_json["ip_addresses"]},
                             "monkey_guid": {"$eq": parent},
                         }
@@ -117,7 +117,7 @@ class Monkey(flask_restful.Resource):
                     for x in mongo.db.telemetry.find(
                         {
                             "telem_category": {"$eq": "exploit"},
-                            "data.result": {"$eq": True},
+                            "data.exploitation_result": {"$eq": True},
                             "data.machine.ip_addr": {"$in": monkey_json["ip_addresses"]},
                         }
                     )
