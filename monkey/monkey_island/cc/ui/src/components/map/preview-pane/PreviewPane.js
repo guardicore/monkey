@@ -111,7 +111,6 @@ class PreviewPaneComponent extends AuthComponent {
     if (asset.exploits.length === 0) {
       return (<div/>);
     }
-
     return (
       <div>
         <h4 style={{'marginTop': '2em'}}>
@@ -121,7 +120,7 @@ class PreviewPaneComponent extends AuthComponent {
         <ul className='timeline'>
           {asset.exploits.map(exploit =>
             <li key={exploit.timestamp}>
-              <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
+              <div className={'bullet ' + (exploit.exploitation_result ? 'bad' : '')}/>
               <div>{new Date(exploit.timestamp).toLocaleString()}</div>
               <div>{exploit.origin}</div>
               <div>{exploit.exploiter}</div>
