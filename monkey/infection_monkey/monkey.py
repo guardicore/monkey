@@ -289,7 +289,7 @@ class InfectionMonkey:
     @staticmethod
     def _send_log():
         monkey_log_path = get_agent_log_path()
-        if os.path.exists(monkey_log_path):
+        if monkey_log_path.is_file():
             with open(monkey_log_path, "r") as f:
                 log = f.read()
         else:
