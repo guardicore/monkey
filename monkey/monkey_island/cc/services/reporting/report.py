@@ -142,7 +142,7 @@ class ReportService:
     @staticmethod
     def get_exploits() -> List[dict]:
         query = [
-            {"$match": {"telem_category": "exploit", "data.result": True}},
+            {"$match": {"telem_category": "exploit", "data.exploitation_result": True}},
             {
                 "$group": {
                     "_id": {"ip_address": "$data.machine.ip_addr"},
