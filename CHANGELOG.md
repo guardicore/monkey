@@ -52,7 +52,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - ElasticGroovy exploiter. #1732
 - T1082 attack technique report. #1754
 - 32-bit agents. #1675
-- Logging config options. #1761
+- Log path config options. #1761
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
