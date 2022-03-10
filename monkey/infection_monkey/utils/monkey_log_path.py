@@ -2,11 +2,12 @@ import os
 import sys
 import tempfile
 import time
-from functools import lru_cache
+from functools import lru_cache, partial
 
 
+# Cache the result of the call so that subsequent calls always return the same result
 @lru_cache(maxsize=None)
-def get_log_path(monkey_arg: str):
+def _get_log_path(monkey_arg: str) -> str:
     return (
         os.path.expandvars(_generate_random_log_filepath(monkey_arg))
         if sys.platform == "win32"
@@ -21,3 +22,7 @@ def _generate_random_log_filepath(monkey_arg: str) -> str:
     _, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
 
     return monkey_log_path
+
+
+get_agent_log_path = partial(_get_log_path, "monkey")
+get_dropper_log_path = partial(_get_log_path, "dropper")
