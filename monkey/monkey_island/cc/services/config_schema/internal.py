@@ -184,36 +184,6 @@ INTERNAL = {
                 },
             },
         },
-        "logging": {
-            "title": "Logging",
-            "type": "object",
-            "properties": {
-                "dropper_log_path_linux": {
-                    "title": "Dropper log file path on Linux",
-                    "type": "string",
-                    "default": "/tmp/user-1562",
-                    "description": "The fullpath of the dropper log file on Linux",
-                },
-                "dropper_log_path_windows": {
-                    "title": "Dropper log file path on Windows",
-                    "type": "string",
-                    "default": "%temp%\\~df1562.tmp",
-                    "description": "The fullpath of the dropper log file on Windows",
-                },
-                "monkey_log_path_linux": {
-                    "title": "Monkey log file path on Linux",
-                    "type": "string",
-                    "default": "/tmp/user-1563",
-                    "description": "The fullpath of the monkey log file on Linux",
-                },
-                "monkey_log_path_windows": {
-                    "title": "Monkey log file path on Windows",
-                    "type": "string",
-                    "default": "%temp%\\~df1563.tmp",
-                    "description": "The fullpath of the monkey log file on Windows",
-                },
-            },
-        },
         "exploits": {
             "title": "Exploits",
             "type": "object",

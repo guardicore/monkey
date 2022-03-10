@@ -1,20 +1,19 @@
-import os
-import sys
-
-from infection_monkey.config import WormConfiguration
-
-
-def get_monkey_log_path():
-    return (
-        os.path.expandvars(WormConfiguration.monkey_log_path_windows)
-        if sys.platform == "win32"
-        else WormConfiguration.monkey_log_path_linux
-    )
+import tempfile
+import time
+from functools import lru_cache, partial
+from pathlib import Path
 
 
-def get_dropper_log_path():
-    return (
-        os.path.expandvars(WormConfiguration.dropper_log_path_windows)
-        if sys.platform == "win32"
-        else WormConfiguration.dropper_log_path_linux
-    )
+# Cache the result of the call so that subsequent calls always return the same result
+@lru_cache(maxsize=None)
+def _get_log_path(monkey_arg: str) -> Path:
+    prefix = f"infection-monkey-{monkey_arg}-"
+    suffix = f"-{time.strftime('%Y-%m-%d-%H-%M-%S', time.gmtime())}.log"
+
+    _, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
+
+    return Path(monkey_log_path)
+
+
+get_agent_log_path = partial(_get_log_path, "monkey")
+get_dropper_log_path = partial(_get_log_path, "dropper")

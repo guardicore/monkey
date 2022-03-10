@@ -5,7 +5,6 @@ import {Nav} from 'react-bootstrap';
 const sectionOrder = [
   'network',
   'island_server',
-  'logging',
   'exploits',
   'dropper',
   'classes',
