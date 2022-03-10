@@ -116,6 +116,7 @@ def main():
     )
 
     logger.info(f"version: {get_version()}")
+    logger.info(f"writing log file to {log_path}")
 
     monkey = monkey_cls(monkey_args)
 
