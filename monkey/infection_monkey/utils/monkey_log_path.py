@@ -15,5 +15,5 @@ def _get_log_path(monkey_arg: str) -> Path:
     return Path(monkey_log_path)
 
 
-get_agent_log_path = partial(_get_log_path, "monkey")
+get_agent_log_path = partial(_get_log_path, "agent")
 get_dropper_log_path = partial(_get_log_path, "dropper")
