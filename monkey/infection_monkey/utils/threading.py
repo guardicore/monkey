@@ -15,7 +15,7 @@ def run_worker_threads(
     worker_threads = []
     counter = run_worker_threads.counters.setdefault(name_prefix, count(start=1))
     for i in range(0, num_workers):
-        name = f"{name_prefix}-{next(counter)}"
+        name = f"{name_prefix}-{next(counter):02d}"
         t = create_daemon_thread(target=target, name=name, args=args)
         t.start()
         worker_threads.append(t)

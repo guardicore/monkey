@@ -66,10 +66,10 @@ def test_worker_thread_names():
     run_worker_threads(target=add_thread_name_to_list, name_prefix="B", num_workers=2)
     run_worker_threads(target=add_thread_name_to_list, name_prefix="A", num_workers=2)
 
-    assert "A-1" in thread_names
-    assert "A-2" in thread_names
-    assert "A-3" in thread_names
-    assert "A-4" in thread_names
-    assert "B-1" in thread_names
-    assert "B-2" in thread_names
+    assert "A-01" in thread_names
+    assert "A-02" in thread_names
+    assert "A-03" in thread_names
+    assert "A-04" in thread_names
+    assert "B-01" in thread_names
+    assert "B-02" in thread_names
     assert len(thread_names) == 6
