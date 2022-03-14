@@ -223,7 +223,9 @@ class InfectionMonkey:
         )
         puppet.load_plugin("SSHExploiter", exploit_wrapper.wrap(SSHExploiter), PluginType.EXPLOITER)
         puppet.load_plugin("WmiExploiter", exploit_wrapper.wrap(WmiExploiter), PluginType.EXPLOITER)
-        puppet.load_plugin("MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), PluginType.EXPLOITER)
+        puppet.load_plugin(
+            "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), PluginType.EXPLOITER
+        )
         puppet.load_plugin(
             "ZerologonExploiter",
             exploit_wrapper.wrap(ZerologonExploiter),
