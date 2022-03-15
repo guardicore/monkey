@@ -21,7 +21,6 @@ from infection_monkey.utils.environment import is_windows_os
 requests.packages.urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
-DOWNLOAD_CHUNK = 1024
 
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
