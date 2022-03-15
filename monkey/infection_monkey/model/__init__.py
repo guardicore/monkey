@@ -43,8 +43,6 @@ CHMOD_MONKEY = "chmod +x %(monkey_path)s"
 RUN_MONKEY = "%(monkey_path)s %(monkey_type)s %(parameters)s"
 # Commands used to check for architecture and if machine is exploitable
 CHECK_COMMAND = "echo %s" % ID_STRING
-# Architecture checking commands
-GET_ARCH_WINDOWS = "wmic os get osarchitecture"  # can't remove, powershell exploiter uses
 
 HADOOP_WINDOWS_COMMAND = (
     "powershell -NoLogo -Command \"if (!(Test-Path '%(monkey_path)s')) { "
