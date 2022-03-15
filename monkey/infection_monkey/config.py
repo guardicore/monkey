@@ -136,12 +136,6 @@ class Configuration(object):
         """
         return product(self.exploit_user_list, self.exploit_password_list)
 
-    def get_exploit_user_ssh_key_pairs(self):
-        """
-        :return: All combinations of the configurations users and ssh pairs
-        """
-        return product(self.exploit_user_list, self.exploit_ssh_keys)
-
     @staticmethod
     def hash_sensitive_data(sensitive_data):
         """
