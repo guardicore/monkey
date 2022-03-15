@@ -13,7 +13,6 @@ from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
 
 # Timeout for monkey connections
-TIMEOUT = 15
 LOOPBACK_NAME = b"lo"
 SIOCGIFADDR = 0x8915  # get PA address
 SIOCGIFNETMASK = 0x891B  # get network PA mask
