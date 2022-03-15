@@ -18,6 +18,7 @@ from infection_monkey.credential_collectors import (
 from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
+from infection_monkey.exploit.mssqlexec import MSSQLExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
@@ -222,6 +223,9 @@ class InfectionMonkey:
         )
         puppet.load_plugin("SSHExploiter", exploit_wrapper.wrap(SSHExploiter), PluginType.EXPLOITER)
         puppet.load_plugin("WmiExploiter", exploit_wrapper.wrap(WmiExploiter), PluginType.EXPLOITER)
+        puppet.load_plugin(
+            "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), PluginType.EXPLOITER
+        )
         puppet.load_plugin(
             "ZerologonExploiter",
             exploit_wrapper.wrap(ZerologonExploiter),
