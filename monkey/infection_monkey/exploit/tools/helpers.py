@@ -19,12 +19,6 @@ def get_target_monkey(host):
     raise NotImplementedError("get_target_monkey() has been retired. Use IAgentRepository instead.")
 
 
-def get_target_monkey_by_os(is_windows, is_32bit):
-    raise NotImplementedError(
-        "get_target_monkey_by_os() has been retired. Use IAgentRepository instead."
-    )
-
-
 def get_random_file_suffix() -> str:
     character_set = list(string.ascii_letters + string.digits + "_" + "-")
     # random.SystemRandom can block indefinitely in Linux
