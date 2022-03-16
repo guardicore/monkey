@@ -47,7 +47,7 @@ class LocalMonkeyRunService:
             ip = local_ip_addresses()[0]
             port = ISLAND_PORT
 
-            args = [dest_path, "m0nk3y", "-s", f"{ip}:{port}"]
+            args = [str(dest_path), "m0nk3y", "-s", f"{ip}:{port}"]
             subprocess.Popen(args, cwd=LocalMonkeyRunService.DATA_DIR)
         except Exception as exc:
             logger.error("popen failed", exc_info=True)

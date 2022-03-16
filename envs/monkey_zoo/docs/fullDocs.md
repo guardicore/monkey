@@ -924,7 +924,8 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>User: m0nk3y, Password: Passw0rd!<br>User: m0nk3y-user, No Password.</td>
+<td>User: m0nk3y, Password: Passw0rd!<br>User: m0nk3y-user, No Password.<br>
+Accessibale through Island using m0nk3y-user.</td>
 </tr>
 </tbody>
 </table>
@@ -952,7 +953,8 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>User: m0nk3y, Password: Passw0rd!</td>
+<td>User: m0nk3y, Password: Passw0rd!<br>
+Accessiable through cached credentials (Windows Island)</td>
 </tr>
 </tbody>
 </table>
@@ -980,7 +982,8 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>User: m0nk3y, Password: Xk8VDTsC</td>
+<td>User: m0nk3y, Password: Xk8VDTsC<br>
+Accessiable through the Island using NTLM hash</td>
 </tr>
 </tbody>
 </table>
@@ -1008,7 +1011,8 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>User: m0nk3y, Password: Passw0rd!</td>
+<td>User: m0nk3y, Password: Passw0rd!<br>
+Accessiable only through <strong>3-45 Powershell</strong> using credentials reuse</td>
 </tr>
 </tbody>
 </table>
