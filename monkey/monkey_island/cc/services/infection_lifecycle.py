@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def set_stop_all(time: float):
     for monkey in Monkey.objects():
-        monkey.config.alive = False
+        monkey.config.should_stop = True
         monkey.save()
     agent_controls = AgentControls.objects.first()
     agent_controls.last_stop_all = time
@@ -25,11 +25,11 @@ def set_stop_all(time: float):
 
 def should_agent_die(guid: int) -> bool:
     monkey = Monkey.objects(guid=str(guid)).first()
-    return _is_monkey_marked_dead(monkey) or _is_monkey_killed_manually(monkey)
+    return _should_agent_stop(monkey) or _is_monkey_killed_manually(monkey)
 
 
-def _is_monkey_marked_dead(monkey: Monkey) -> bool:
-    return not monkey.config.alive
+def _should_agent_stop(monkey: Monkey) -> bool:
+    return monkey.config.should_stop
 
 
 def _is_monkey_killed_manually(monkey: Monkey) -> bool:

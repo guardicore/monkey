@@ -249,7 +249,7 @@ class NodeService:
 
         # Cancel the force kill once monkey died
         if is_dead:
-            props_to_set["config.alive"] = True
+            props_to_set["config.should_stop"] = False
 
         mongo.db.monkey.update({"guid": monkey["guid"]}, {"$set": props_to_set}, upsert=False)
 
