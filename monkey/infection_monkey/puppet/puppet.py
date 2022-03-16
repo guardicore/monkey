@@ -66,7 +66,7 @@ class Puppet(IPuppet):
         interrupt: threading.Event,
     ) -> ExploiterResultData:
         exploiter = self._plugin_registry.get_plugin(name, PluginType.EXPLOITER)
-        return exploiter.exploit_host(host, current_depth, options)
+        return exploiter.exploit_host(host, current_depth, options, interrupt)
 
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         payload = self._plugin_registry.get_plugin(name, PluginType.PAYLOAD)
