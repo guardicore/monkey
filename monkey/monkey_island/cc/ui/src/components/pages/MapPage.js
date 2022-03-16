@@ -88,10 +88,11 @@ class MapPageComponent extends AuthComponent {
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({kill_time: Date.now()})
+        // Python uses seconds, Date.now uses milliseconds, so convert
+        body: JSON.stringify({kill_time: Date.now() / 1000})
       })
       .then(res => res.json())
-      .then(res => {this.setState({killPressed: true}); console.log(res)});
+      .then(res => {this.setState({killPressed: true})});
   };
 
   renderKillDialogModal = () => {

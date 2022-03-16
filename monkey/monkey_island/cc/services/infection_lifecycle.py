@@ -29,7 +29,12 @@ def should_agent_die(guid: int) -> bool:
 
 
 def _should_agent_stop(monkey: Monkey) -> bool:
-    return monkey.config.should_stop
+    if monkey.config.should_stop:
+        # Only stop the agent once, to allow further runs on that machine
+        monkey.config.should_stop = False
+        monkey.save()
+        return True
+    return False
 
 
 def _is_monkey_killed_manually(monkey: Monkey) -> bool:
