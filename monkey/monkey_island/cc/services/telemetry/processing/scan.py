@@ -1,3 +1,5 @@
+from typing import Mapping
+
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.node import NodeService
@@ -13,6 +15,9 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import (
 
 
 def process_scan_telemetry(telemetry_json):
+    if not _host_responded(telemetry_json["data"]["machine"]):
+        return
+
     update_edges_and_nodes_based_on_scan_telemetry(telemetry_json)
     check_open_data_endpoints(telemetry_json)
 
@@ -38,3 +43,11 @@ def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):
             )
         label = NodeService.get_label_for_endpoint(node["_id"])
         edge.update_label(node["_id"], label)
+
+
+def _host_responded(machine_state: Mapping) -> bool:
+    return machine_state["icmp"] or _has_open_ports(machine_state)
+
+
+def _has_open_ports(machine_state: Mapping) -> bool:
+    return len(machine_state["services"].keys()) > 0
