@@ -1,5 +1,5 @@
 import socket
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from bson import ObjectId
 
@@ -294,22 +294,6 @@ class NodeService:
     @staticmethod
     def set_node_propagated(node_id):
         mongo.db.node.update({"_id": node_id}, {"$set": {"propagated": True}})
-
-    @staticmethod
-    def update_dead_monkeys():
-        # Update dead monkeys only if no living monkey transmitted keepalive in the last 10 minutes
-        if mongo.db.monkey.find_one(
-            {"dead": {"$ne": True}, "keepalive": {"$gte": datetime.now() - timedelta(minutes=10)}}
-        ):
-            return
-
-        # config.alive is changed to true to cancel the force kill of dead monkeys
-        mongo.db.monkey.update(
-            {"keepalive": {"$lte": datetime.now() - timedelta(minutes=10)}, "dead": {"$ne": True}},
-            {"$set": {"dead": True, "config.alive": True, "modifytime": datetime.now()}},
-            upsert=False,
-            multi=True,
-        )
 
     @staticmethod
     def is_any_monkey_alive():

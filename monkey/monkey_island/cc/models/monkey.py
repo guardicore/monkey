@@ -44,7 +44,6 @@ class Monkey(Document):
     ip_addresses = ListField(StringField())
     networks = ListField()
     launch_time = FloatField()
-    keepalive = DateTimeField()
     modifytime = DateTimeField()
     # TODO make "parent" an embedded document, so this can be removed and the schema explained (
     #  and validated) verbosely.

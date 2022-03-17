@@ -12,7 +12,6 @@ from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 class LocalRun(flask_restful.Resource):
     @jwt_required
     def get(self):
-        NodeService.update_dead_monkeys()
         island_monkey = NodeService.get_monkey_island_monkey()
         if island_monkey is not None:
             is_monkey_running = not Monkey.get_single_monkey_by_id(island_monkey["_id"]).is_dead()

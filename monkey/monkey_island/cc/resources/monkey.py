@@ -1,7 +1,6 @@
 import json
 from datetime import datetime
 
-import dateutil.parser
 import flask_restful
 from flask import request
 
@@ -21,7 +20,6 @@ class Monkey(flask_restful.Resource):
 
     # Used by monkey. can't secure.
     def get(self, guid=None, config_format=None, **kw):
-        NodeService.update_dead_monkeys()  # refresh monkeys status
         if not guid:
             guid = request.args.get("guid")
 
@@ -45,10 +43,6 @@ class Monkey(flask_restful.Resource):
         monkey_json = json.loads(request.data)
         update = {"$set": {"modifytime": datetime.now()}}
         monkey = NodeService.get_monkey_by_guid(guid)
-        if "keepalive" in monkey_json:
-            update["$set"]["keepalive"] = dateutil.parser.parse(monkey_json["keepalive"])
-        else:
-            update["$set"]["keepalive"] = datetime.now()
         if "config" in monkey_json:
             update["$set"]["config"] = monkey_json["config"]
         if "config_error" in monkey_json:
@@ -70,10 +64,6 @@ class Monkey(flask_restful.Resource):
         with agent_killing_mutex:
             monkey_json = json.loads(request.data)
             monkey_json["dead"] = False
-            if "keepalive" in monkey_json:
-                monkey_json["keepalive"] = dateutil.parser.parse(monkey_json["keepalive"])
-            else:
-                monkey_json["keepalive"] = datetime.now()
 
             monkey_json["modifytime"] = datetime.now()
 
