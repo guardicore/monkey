@@ -21,7 +21,6 @@ from infection_monkey.utils.environment import is_windows_os
 requests.packages.urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
-DOWNLOAD_CHUNK = 1024
 
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
@@ -134,28 +133,6 @@ class ControlClient(object):
             ControlClient.proxies["https"] = f"{proxy_address}:{proxy_port}"
 
     @staticmethod
-    def keepalive():
-        if not WormConfiguration.current_server:
-            return
-        try:
-            monkey = {}
-            if ControlClient.proxies:
-                monkey["tunnel"] = ControlClient.proxies.get("https")
-            requests.patch(  # noqa: DUO123
-                "https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
-                data=json.dumps(monkey),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
-        except Exception as exc:
-            logger.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
-            return {}
-
-    @staticmethod
     def send_telemetry(telem_category, json_data: str):
         if not WormConfiguration.current_server:
             logger.error(
@@ -252,28 +229,6 @@ class ControlClient(object):
                 "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
             )
             return {}
-
-    @staticmethod
-    def check_for_stop():
-        ControlClient.load_control_config()
-        return not WormConfiguration.alive
-
-    @staticmethod
-    def spoof_host_os_info(is_windows, is_32bit):
-        if is_windows:
-            os = "windows"
-            if is_32bit:
-                arch = "x86"
-            else:
-                arch = "amd64"
-        else:
-            os = "linux"
-            if is_32bit:
-                arch = "i686"
-            else:
-                arch = "x86_64"
-
-        return {"os": {"type": os, "machine": arch}}
 
     @staticmethod
     def create_control_tunnel():

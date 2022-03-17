@@ -12,32 +12,6 @@ BANNER_READ = 1024
 logger = logging.getLogger(__name__)
 
 
-def struct_unpack_tracker(data, index, fmt):
-    """
-    Unpacks a struct from the specified index according to specified format.
-    Returns the data and the next index
-    :param data:  Buffer
-    :param index: Position index
-    :param fmt: Struct format
-    :return: (Data, new index)
-    """
-    unpacked = struct.unpack_from(fmt, data, index)
-    return unpacked, struct.calcsize(fmt)
-
-
-def struct_unpack_tracker_string(data, index):
-    """
-    Unpacks a null terminated string from the specified index
-    Returns the data and the next index
-    :param data:  Buffer
-    :param index: Position index
-    :return: (Data, new index)
-    """
-    ascii_len = data[index:].find(b"\0")
-    fmt = "%ds" % ascii_len
-    return struct_unpack_tracker(data, index, fmt)
-
-
 def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     """
     Checks if a given TCP port is open

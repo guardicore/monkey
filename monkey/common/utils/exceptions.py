@@ -18,10 +18,6 @@ class IncorrectCredentialsError(Exception):
     """ Raise to indicate that authentication failed """
 
 
-class InvalidAWSKeys(Exception):
-    """ Raise to indicate that AWS API keys are invalid"""
-
-
 class NoInternetError(Exception):
     """ Raise to indicate problems caused when no internet connection is present"""
 

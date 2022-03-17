@@ -83,9 +83,6 @@ class Configuration(object):
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
     alive = True
 
-    finger_classes = []
-    exploiter_classes = []
-
     # depth of propagation
     depth = 2
     max_depth = None
@@ -96,51 +93,12 @@ class Configuration(object):
 
     keep_tunnel_open_time = 60
 
-    ###########################
-    # scanners config
-    ###########################
-
-    # Auto detect and scan local subnets
-    local_network_scan = True
-
-    subnet_scan_list = []
-    inaccessible_subnets = []
-
-    blocked_ips = []
-
-    # TCP Scanner
-    HTTP_PORTS = [
-        80,
-        8080,
-        443,
-        8008,  # HTTP alternate
-        7001,  # Oracle Weblogic default server port
-    ]
-    tcp_target_ports = [22, 2222, 445, 135, 3389, 80, 8080, 443, 8008, 3306, 9200]
-    tcp_target_ports.extend(HTTP_PORTS)
-    tcp_scan_timeout = 3000  # 3000 Milliseconds
-
-    # Ping Scanner
-    ping_scan_timeout = 1000
-
-    ###########################
-    # ransomware config
-    ###########################
-
-    ransomware = ""
-
     def get_exploit_user_password_pairs(self):
         """
         Returns all combinations of the configurations users and passwords
         :return:
         """
         return product(self.exploit_user_list, self.exploit_password_list)
-
-    def get_exploit_user_ssh_key_pairs(self):
-        """
-        :return: All combinations of the configurations users and ssh pairs
-        """
-        return product(self.exploit_user_list, self.exploit_ssh_keys)
 
     @staticmethod
     def hash_sensitive_data(sensitive_data):
@@ -159,11 +117,6 @@ class Configuration(object):
     exploit_password_list = ["Password1!", "1234", "password", "12345678"]
     exploit_lm_hash_list = []
     exploit_ntlm_hash_list = []
-    exploit_ssh_keys = []
-
-    aws_access_key_id = ""
-    aws_secret_access_key = ""
-    aws_session_token = ""
 
     # smb/wmi exploiter
     smb_download_timeout = 30  # timeout in seconds

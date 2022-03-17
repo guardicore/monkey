@@ -146,6 +146,7 @@ Report.glance
 Report.meta_info
 Report.meta
 LDAPServerFactory.buildProtocol
+get_file_sha256_hash
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
@@ -166,6 +167,7 @@ _.environment  # unused attribute (monkey/monkey_island/cc/services/telemetry/pr
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:35)
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)
+architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_repository.py:25)
 
 # TODO: Reevaluate these as the agent refactor progresses
 run_sys_info_collector

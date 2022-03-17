@@ -7,6 +7,5 @@ class TelemCategoryEnum:
     POST_BREACH = "post_breach"
     SCAN = "scan"
     STATE = "state"
-    SYSTEM_INFO = "system_info"
     TRACE = "trace"
     TUNNEL = "tunnel"
