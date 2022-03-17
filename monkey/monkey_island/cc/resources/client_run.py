@@ -15,7 +15,6 @@ class ClientRun(flask_restful.Resource):
             monkey = NodeService.get_monkey_island_monkey()
         else:
             monkey = NodeService.get_monkey_by_ip(client_ip)
-        NodeService.update_dead_monkeys()
         if monkey is not None:
             is_monkey_running = not monkey["dead"]
         else:
