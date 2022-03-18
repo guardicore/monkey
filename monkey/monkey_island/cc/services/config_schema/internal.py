@@ -19,11 +19,10 @@ INTERNAL = {
             "title": "Monkey",
             "type": "object",
             "properties": {
-                "alive": {
-                    "title": "Alive",
+                "should_stop": {
                     "type": "boolean",
-                    "default": True,
-                    "description": "Is the monkey alive",
+                    "default": False,
+                    "description": "Was stop command issued for this monkey",
                 },
                 "aws_keys": {
                     "type": "object",

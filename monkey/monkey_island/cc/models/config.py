@@ -8,6 +8,6 @@ class Config(EmbeddedDocument):
     See https://mongoengine-odm.readthedocs.io/apireference.html#mongoengine.FieldDoesNotExist
     """
 
-    alive = BooleanField()
+    should_stop = BooleanField()
     meta = {"strict": False}
     pass
