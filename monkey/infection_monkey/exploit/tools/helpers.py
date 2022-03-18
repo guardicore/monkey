@@ -26,12 +26,6 @@ def get_random_file_suffix() -> str:
     return random_string
 
 
-def get_monkey_depth():
-    from infection_monkey.config import WormConfiguration
-
-    return WormConfiguration.depth
-
-
 def get_agent_dest_path(host: VictimHost, options: Mapping[str, Any]) -> str:
     if host.os["type"] == "windows":
         return options["dropper_target_path_win_64"]
