@@ -225,13 +225,6 @@ INTERNAL = {
                         "description": "Timeout (in seconds) for SMB download operation (used in "
                         "various exploits using SMB)",
                     },
-                    "smb_service_name": {
-                        "title": "SMB service name",
-                        "type": "string",
-                        "default": "InfectionMonkey",
-                        "description": "Name of the SMB service that will be set up to download "
-                        "monkey",
-                    },
                 },
             },
         },

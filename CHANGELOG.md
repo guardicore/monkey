@@ -53,6 +53,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - T1082 attack technique report. #1754
 - 32-bit agents. #1675
 - Log path config options. #1761
+- "smb_service_name" option. #1741
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

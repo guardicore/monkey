@@ -120,7 +120,6 @@ class Configuration(object):
 
     # smb/wmi exploiter
     smb_download_timeout = 30  # timeout in seconds
-    smb_service_name = "InfectionMonkey"
 
     ###########################
     # post breach actions
