@@ -190,17 +190,18 @@ class MockPuppet(IPuppet):
         successful_exploiters = {
             DOT_1: {
                 "PowerShellExploiter": ExploiterResultData(
-                    True, True, os_windows, info_powershell, attempts, None
+                    True, True, False, os_windows, info_powershell, attempts, None
                 ),
                 "ZerologonExploiter": ExploiterResultData(
-                    False, False, os_windows, {}, [], "Zerologon failed"
+                    False, False, False, os_windows, {}, [], "Zerologon failed"
                 ),
                 "SSHExploiter": ExploiterResultData(
-                    False, False, os_linux, info_ssh, attempts, "Failed exploiting"
+                    False, False, False, os_linux, info_ssh, attempts, "Failed exploiting"
                 ),
             },
             DOT_3: {
                 "PowerShellExploiter": ExploiterResultData(
+                    False,
                     False,
                     False,
                     os_windows,
@@ -209,9 +210,11 @@ class MockPuppet(IPuppet):
                     "PowerShell Exploiter Failed",
                 ),
                 "SSHExploiter": ExploiterResultData(
-                    False, False, os_linux, info_ssh, attempts, "Failed exploiting"
+                    False, False, False, os_linux, info_ssh, attempts, "Failed exploiting"
                 ),
-                "ZerologonExploiter": ExploiterResultData(True, False, os_windows, {}, [], None),
+                "ZerologonExploiter": ExploiterResultData(
+                    True, False, False, os_windows, {}, [], None
+                ),
             },
         }
 
@@ -219,7 +222,7 @@ class MockPuppet(IPuppet):
             return successful_exploiters[host.ip_addr][name]
         except KeyError:
             return ExploiterResultData(
-                False, False, os_linux, {}, [], f"{name} failed for host {host}"
+                False, False, False, os_linux, {}, [], f"{name} failed for host {host}"
             )
 
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
