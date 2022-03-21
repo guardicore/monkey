@@ -71,7 +71,8 @@ def reset_signal_handlers():
     if is_windows_os():
         import win32api
 
-        win32api.SetConsoleCtrlHandler(_signal_handler, False)
+        if _signal_handler:
+            win32api.SetConsoleCtrlHandler(_signal_handler, False)
     else:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
