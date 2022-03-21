@@ -192,7 +192,7 @@ of directories to find an appropriate place to store the log:
    - On all other platforms, the directories `/tmp`, `/var/tmp`, and `/usr/tmp`, in that order.
 5. As a last resort, the current working directory.
 
-Infection Monkey log file name is constructed to the following pattern: `infection-monkey-agent-<random_string>-<timestamp>.log`
+Infection Monkey log file name is constructed to the following pattern: `infection-monkey-agent-<TIMESTAMP>-<RANDOM_STRING>.log`
 
 The logs contain information about the internals of the Infection Monkey agent's execution. The log will contain entries like these:
 
@@ -217,8 +217,8 @@ The logs contain information about the internals of the Infection Monkey agent's
 The Infection Monkey leaves hardly any trace on the target system. It will leave:
 
 - Log files in [temporary directories]({{< ref "/faq/#infection-monkey-agent-logs">}}):
-  - Path on Linux: `/tmp/infection-monky-agent-<random_string>-<timestamp>.log`
-  - Path on Windows: `%temp%\\infection-monky-agent-<random_string>-<timestamp>.log`
+  - Path on Linux: `/tmp/infection-monky-agent-<TIMESTAMP>-<RANDOM_STRING>.log`
+  - Path on Windows: `%temp%\\infection-monky-agent-<TIMESTAMP>-<RANDOM_STRING>.log`
 
 ### What's the Infection Monkey Agent's impact on system resources usage?
 

@@ -7,8 +7,9 @@ from pathlib import Path
 # Cache the result of the call so that subsequent calls always return the same result
 @lru_cache(maxsize=None)
 def _get_log_path(monkey_arg: str) -> Path:
-    prefix = f"infection-monkey-{monkey_arg}-"
-    suffix = f"-{time.strftime('%Y-%m-%d-%H-%M-%S', time.gmtime())}.log"
+    timestamp = time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())
+    prefix = f"infection-monkey-{monkey_arg}-{timestamp}-"
+    suffix = ".log"
 
     _, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
 
