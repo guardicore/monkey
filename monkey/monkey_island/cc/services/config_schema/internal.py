@@ -213,24 +213,17 @@ INTERNAL = {
                     "items": {"type": "string"},
                     "description": "List of SSH key pairs to use, when trying to ssh into servers",
                 },
-            },
-            "smb_service": {
-                "title": "SMB service",
-                "type": "object",
-                "properties": {
-                    "smb_download_timeout": {
-                        "title": "SMB download timeout",
-                        "type": "integer",
-                        "default": 30,
-                        "description": "Timeout (in seconds) for SMB download operation (used in "
-                        "various exploits using SMB)",
-                    },
-                    "smb_service_name": {
-                        "title": "SMB service name",
-                        "type": "string",
-                        "default": "InfectionMonkey",
-                        "description": "Name of the SMB service that will be set up to download "
-                        "monkey",
+                "smb_service": {
+                    "title": "SMB service",
+                    "type": "object",
+                    "properties": {
+                        "smb_download_timeout": {
+                            "title": "SMB download timeout",
+                            "type": "integer",
+                            "default": 30,
+                            "description": "Timeout (in seconds) for SMB download operation (used "
+                            "in various exploits using SMB)",
+                        },
                     },
                 },
             },

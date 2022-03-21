@@ -35,7 +35,7 @@ The currently implemented Fingerprint modules are:
 
 To add a new scanner/fingerprinter, create a new class that inherits from [`HostScanner`][host-scanner] or [`HostFinger`][host-finger] (depending on the interface). The class should be under the network module and imported under [`network/__init__.py`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/network/__init__.py).
 
-To use the new scanner/fingerprinter by default, two files need to be changed - [`infection_monkey/config.py`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/config.py) and [`infection_monkey/example.conf`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/example.conf) to add references to the new class.
+To use the new scanner/fingerprinter by default, modify [`infection_monkey/config.py`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/config.py) to add references to the new class.
 
 At this point, the Infection Monkey knows how to use the new scanner/fingerprinter but to make it easy to use, the UI needs to be updated. The relevant UI file is [`monkey_island/cc/services/config.py`](https://github.com/guardicore/monkey/blob/master/monkey/monkey_island/cc/services/config.py).
 

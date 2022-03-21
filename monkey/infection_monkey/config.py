@@ -1,9 +1,7 @@
-import hashlib
 import os
 import sys
 import uuid
 from abc import ABCMeta
-from itertools import product
 
 GUID = str(uuid.getnode())
 
@@ -74,8 +72,6 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = "/bin/sh"
-    dropper_target_path_win_64 = r"C:\Windows\temp\monkey64.exe"
-    dropper_target_path_linux = "/tmp/monkey"
 
     ###########################
     # monkey config
@@ -92,35 +88,6 @@ class Configuration(object):
     command_servers = ["192.0.2.0:5000"]
 
     keep_tunnel_open_time = 60
-
-    def get_exploit_user_password_pairs(self):
-        """
-        Returns all combinations of the configurations users and passwords
-        :return:
-        """
-        return product(self.exploit_user_list, self.exploit_password_list)
-
-    @staticmethod
-    def hash_sensitive_data(sensitive_data):
-        """
-        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data
-        plain-text, as the log is
-        saved on client machines plain-text.
-
-        :param sensitive_data: the data to hash.
-        :return: the hashed data.
-        """
-        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
-        return password_hashed
-
-    exploit_user_list = ["Administrator", "root", "user"]
-    exploit_password_list = ["Password1!", "1234", "password", "12345678"]
-    exploit_lm_hash_list = []
-    exploit_ntlm_hash_list = []
-
-    # smb/wmi exploiter
-    smb_download_timeout = 30  # timeout in seconds
-    smb_service_name = "InfectionMonkey"
 
     ###########################
     # post breach actions
