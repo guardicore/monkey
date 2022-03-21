@@ -74,6 +74,7 @@ class InfectionMonkey:
         self._monkey_inbound_tunnel = None
         self.telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
+        self._master = None
 
     @staticmethod
     def _get_arguments(args):
