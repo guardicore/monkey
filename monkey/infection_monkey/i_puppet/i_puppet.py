@@ -24,6 +24,7 @@ class UnknownPluginError(Exception):
 class ExploiterResultData:
     exploitation_success: bool = False
     propagation_success: bool = False
+    interrupted: bool = False
     os: str = ""
     info: Mapping = None
     attempts: Iterable = None

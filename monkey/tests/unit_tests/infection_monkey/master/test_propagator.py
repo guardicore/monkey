@@ -201,38 +201,38 @@ class MockExploiter:
                 results_callback(
                     "PowerShellExploiter",
                     host,
-                    ExploiterResultData(True, True, os_windows, {}, {}, None),
+                    ExploiterResultData(True, True, False, os_windows, {}, {}, None),
                 )
                 results_callback(
                     "SSHExploiter",
                     host,
-                    ExploiterResultData(False, False, os_linux, {}, {}, "SSH FAILED for .1"),
+                    ExploiterResultData(False, False, False, os_linux, {}, {}, "SSH FAILED for .1"),
                 )
             elif host.ip_addr.endswith(".2"):
                 results_callback(
                     "PowerShellExploiter",
                     host,
                     ExploiterResultData(
-                        False, False, os_windows, {}, {}, "POWERSHELL FAILED for .2"
+                        False, False, False, os_windows, {}, {}, "POWERSHELL FAILED for .2"
                     ),
                 )
                 results_callback(
                     "SSHExploiter",
                     host,
-                    ExploiterResultData(False, False, os_linux, {}, {}, "SSH FAILED for .2"),
+                    ExploiterResultData(False, False, False, os_linux, {}, {}, "SSH FAILED for .2"),
                 )
             elif host.ip_addr.endswith(".3"):
                 results_callback(
                     "PowerShellExploiter",
                     host,
                     ExploiterResultData(
-                        False, False, os_windows, {}, {}, "POWERSHELL FAILED for .3"
+                        False, False, False, os_windows, {}, {}, "POWERSHELL FAILED for .3"
                     ),
                 )
                 results_callback(
                     "SSHExploiter",
                     host,
-                    ExploiterResultData(True, True, os_linux, {}, {}, None),
+                    ExploiterResultData(True, True, False, os_linux, {}, {}, None),
                 )
 
 
