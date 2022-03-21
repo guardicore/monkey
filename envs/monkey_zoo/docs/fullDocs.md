@@ -1062,7 +1062,7 @@ Accessibale through Island using m0nk3y-user.</td>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>User: m0nk3y, Password: Passw0rd!<br>
+<td>User: m0nk3y, Password: nPj8rbc3<br>
 Accessiable through cached credentials (Windows Island)</td>
 </tr>
 </tbody>
