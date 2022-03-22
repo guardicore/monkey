@@ -31,14 +31,14 @@ def create_daemon_thread(target: Callable[..., None], name: str, args: Tuple = (
     return Thread(target=target, name=name, args=args, daemon=True)
 
 
-def interruptable_iter(
+def interruptible_iter(
     iterator: Iterable, interrupt: Event, log_message: str = None, log_level: int = logging.DEBUG
 ) -> Any:
     """
     Wraps an iterator so that the iterator can be interrupted if the `interrupt` Event is set. This
-    is a convinient way to make loops interruptable and avoids the need to add an `if` to each and
+    is a convinient way to make loops interruptible and avoids the need to add an `if` to each and
     every loop.
-    :param Iterable iterator: An iterator that will be made interruptable.
+    :param Iterable iterator: An iterator that will be made interruptible.
     :param Event interrupt: A `threading.Event` that, if set, will prevent the remainder of the
                             iterator's items from being processed.
     :param str log_message: A message to be logged if the iterator is interrupted. If `log_message`

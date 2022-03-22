@@ -3,7 +3,7 @@ from threading import Event, current_thread
 
 from infection_monkey.utils.threading import (
     create_daemon_thread,
-    interruptable_iter,
+    interruptible_iter,
     run_worker_threads,
 )
 
@@ -18,10 +18,10 @@ def test_create_daemon_thread_naming():
     assert thread.name == "test"
 
 
-def test_interruptable_iter():
+def test_interruptible_iter():
     interrupt = Event()
     items_from_iterator = []
-    test_iterator = interruptable_iter(range(0, 10), interrupt, "Test iterator was interrupted")
+    test_iterator = interruptible_iter(range(0, 10), interrupt, "Test iterator was interrupted")
 
     for i in test_iterator:
         items_from_iterator.append(i)
@@ -31,10 +31,10 @@ def test_interruptable_iter():
     assert items_from_iterator == [0, 1, 2, 3]
 
 
-def test_interruptable_iter_not_interrupted():
+def test_interruptible_iter_not_interrupted():
     interrupt = Event()
     items_from_iterator = []
-    test_iterator = interruptable_iter(range(0, 5), interrupt, "Test iterator was interrupted")
+    test_iterator = interruptible_iter(range(0, 5), interrupt, "Test iterator was interrupted")
 
     for i in test_iterator:
         items_from_iterator.append(i)
@@ -42,10 +42,10 @@ def test_interruptable_iter_not_interrupted():
     assert items_from_iterator == [0, 1, 2, 3, 4]
 
 
-def test_interruptable_iter_interrupted_before_used():
+def test_interruptible_iter_interrupted_before_used():
     interrupt = Event()
     items_from_iterator = []
-    test_iterator = interruptable_iter(
+    test_iterator = interruptible_iter(
         range(0, 5), interrupt, "Test iterator was interrupted", logging.INFO
     )
 

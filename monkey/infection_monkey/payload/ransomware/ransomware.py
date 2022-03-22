@@ -5,7 +5,7 @@ from typing import Callable, List
 
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-from infection_monkey.utils.threading import interruptable_iter
+from infection_monkey.utils.threading import interruptible_iter
 
 from .consts import README_FILE_NAME, README_SRC
 from .ransomware_options import RansomwareOptions
@@ -57,7 +57,7 @@ class Ransomware:
         interrupted_message = (
             "Received a stop signal, skipping remaining files for encryption of ransomware payload"
         )
-        for filepath in interruptable_iter(file_list, interrupt, interrupted_message):
+        for filepath in interruptible_iter(file_list, interrupt, interrupted_message):
             try:
                 logger.debug(f"Encrypting {filepath}")
                 self._encrypt_file(filepath)

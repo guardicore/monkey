@@ -11,7 +11,7 @@ from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.utils.threading import create_daemon_thread, interruptable_iter
+from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 from infection_monkey.utils.timer import Timer
 
 from . import Exploiter, IPScanner, Propagator
@@ -220,7 +220,7 @@ class AutomatedMaster(IMaster):
         logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")
 
         interrupted_message = f"Received a stop signal, skipping remaining {plugin_type}s"
-        for p in interruptable_iter(plugins, self._stop, interrupted_message):
+        for p in interruptible_iter(plugins, self._stop, interrupted_message):
             # TODO: Catch exceptions to prevent thread from crashing
             callback(p)
 
