@@ -23,7 +23,7 @@ class PowerShell(ConfigTemplate):
             "basic.credentials.exploit_user_list": ["m0nk3y", "m0nk3y-user"],
             "internal.classes.finger_classes": [],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
-            "internal.network.tcp_scanner.tcp_target_ports": [],
+            "internal.network.tcp_scanner.tcp_target_ports": [5985, 5986],
             "internal.exploits.exploit_ntlm_hash_list": [
                 "d0f0132b308a0c4e5d1029cc06f48692",
             ],
