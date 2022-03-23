@@ -1,8 +1,12 @@
+from pathlib import Path
+from typing import Union
+
+from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.victim_host_telem import AttackTelem
 
 
 class T1105Telem(AttackTelem):
-    def __init__(self, status, src, dst, filename):
+    def __init__(self, status: ScanStatus, src: str, dst: str, filename: Union[Path, str]):
         """
         T1105 telemetry.
         :param status: ScanStatus of technique
@@ -11,7 +15,7 @@ class T1105Telem(AttackTelem):
         :param filename: Uploaded file's name
         """
         super(T1105Telem, self).__init__("T1105", status)
-        self.filename = filename
+        self.filename = str(filename)
         self.src = src
         self.dst = dst
 
