@@ -28,7 +28,7 @@ def test_get_agent_dest_path_randomness():
     path1 = get_agent_dest_path(host, options)
     path2 = get_agent_dest_path(host, options)
 
-    assert not path1 == path2
+    assert path1 != path2
 
 
 def test_get_agent_dest_path_str_place():
