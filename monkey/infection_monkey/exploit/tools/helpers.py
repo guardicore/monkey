@@ -31,8 +31,6 @@ def get_agent_dest_path(host: VictimHost, options: Mapping[str, Any]) -> Path:
 #  Useful to avoid duplicate file paths
 def _add_random_suffix(path: Path) -> Path:
     stem = path.name.split(".")[0]
-    suffixes = path.suffixes
     stem = f"{stem}-{get_random_file_suffix()}"
-    rand_filename = "".join([stem, *suffixes])
-    path = path.with_name(rand_filename)
-    return path
+    rand_filename = "".join([stem, *path.suffixes])
+    return path.with_name(rand_filename)
