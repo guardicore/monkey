@@ -9,7 +9,6 @@ impacket = ">=0.9"
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"
 odict = "==1.7.0"
-paramiko = {git = "https://github.com/VakarisZ/paramiko"}  # Change to official once https://github.com/paramiko/paramiko/issues/2009 is closed
 psutil = ">=5.7.0"
 pymssql = "==2.1.5"
 pypykatz = "==0.5.2"
@@ -24,6 +23,7 @@ ldaptor = "*"
 pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
 pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
 pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+paramiko = {editable = true, ref = "2.10.3-monkey1", git = "https://github.com/VakarisZ/paramiko.git"}
 
 [dev-packages]
 ldap3 = "*"
