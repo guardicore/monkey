@@ -51,7 +51,7 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
 )
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
-DEFAULT_TIMEOUT_SECONDS = 5 * 60
+DEFAULT_TIMEOUT_SECONDS = 2 * 60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
@@ -215,7 +215,7 @@ class TestMonkeyBlackbox:
 
     def test_tunneling(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
-            island_client, Tunneling, "Tunneling_exploiter", 15 * 60
+            island_client, Tunneling, "Tunneling_exploiter", 3 * 60
         )
 
     def test_wmi_and_mimikatz_exploiters(self, island_client):
