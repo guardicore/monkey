@@ -91,10 +91,6 @@ data "google_compute_image" "weblogic-19" {
   name = "weblogic-19"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "smb-20" {
-  name = "smb-20"
-  project = local.monkeyzoo_project
-}
 data "google_compute_image" "scan-21" {
   name = "scan-21"
   project = local.monkeyzoo_project
