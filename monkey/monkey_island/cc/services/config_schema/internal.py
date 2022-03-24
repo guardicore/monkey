@@ -91,6 +91,8 @@ INTERNAL = {
                                 3306,
                                 7001,
                                 8088,
+                                5985,
+                                5986,
                             ],
                             "description": "List of TCP ports the monkey will check whether "
                             "they're open",
