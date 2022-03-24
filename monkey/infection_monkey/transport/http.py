@@ -227,6 +227,6 @@ class LockedHTTPServer(threading.Thread):
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
         httpd = http.server.HTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
-        httpd.timeout = 30
+        httpd.timeout = 10
         while not self._stopped:
             httpd.handle_request()
