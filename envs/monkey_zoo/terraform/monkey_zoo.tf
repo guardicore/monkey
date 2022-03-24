@@ -450,21 +450,6 @@ resource "google_compute_instance_from_template" "weblogic-19" {
   }
 }
 
-resource "google_compute_instance_from_template" "smb-20" {
-  name = "${local.resource_prefix}smb-20"
-  source_instance_template = local.default_windows
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.smb-20.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.20"
-  }
-}
-
 resource "google_compute_instance_from_template" "scan-21" {
   name = "${local.resource_prefix}scan-21"
   source_instance_template = local.default_ubuntu

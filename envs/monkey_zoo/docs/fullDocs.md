@@ -20,7 +20,6 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 17 Upgrader](#_Toc536021470)<br>
 [Nr. 18 WebLogic](#_Toc526517180)<br>
 [Nr. 19 WebLogic](#_Toc526517181)<br>
-[Nr. 20 SMB](#_Toc536021473)<br>
 [Nr. 21 Scan](#_Toc526517196)<br>
 [Nr. 22 Scan](#_Toc526517197)<br>
 [Nr. 23 Struts2](#_Toc536021476)<br>
@@ -701,42 +700,6 @@ Update all requirements using deployment script:<br>
 <tr class="odd">
 <td>Server’s config:</td>
 <td>Default</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021473" class="anchor"></span>Nr. <strong>20</strong> SMB</p>
-<p>(10.2.2.20)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td>Default service’s port:</td>
-<td>445</td>
-</tr>
-<tr class="even">
-<td>Root password:</td>
-<td>YbS,&lt;tpS.2av</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td><a href="https://social.technet.microsoft.com/Forums/windows/en-US/8160d62b-0f5d-48a3-9fe9-5cd319837917/how-te-reenable-smb1-in-windows1o?forum=win10itprogeneral">SMB</a> turned on</td>
 </tr>
 <tr class="even">
 <td>Notes:</td>
