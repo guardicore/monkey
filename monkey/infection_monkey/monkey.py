@@ -120,13 +120,8 @@ class InfectionMonkey:
     @staticmethod
     def _add_default_server_to_config(default_server: str):
         if default_server:
-            if default_server not in WormConfiguration.command_servers:
-                logger.debug("Added default server: %s" % default_server)
-                WormConfiguration.command_servers.insert(0, default_server)
-            else:
-                logger.debug(
-                    "Default server: %s is already in command servers list" % default_server
-                )
+            logger.debug("Added default server: %s" % default_server)
+            WormConfiguration.command_servers.insert(0, default_server)
 
     def _connect_to_island(self):
         # Sets island's IP and port for monkey to communicate to
@@ -302,9 +297,7 @@ class InfectionMonkey:
 
     @staticmethod
     def _close_tunnel():
-        tunnel_address = (
-            ControlClient.proxies.get("https", "").replace("https://", "").split(":")[0]
-        )
+        tunnel_address = ControlClient.proxies.get("https", "").replace("http://", "").split(":")[0]
         if tunnel_address:
             logger.info("Quitting tunnel %s", tunnel_address)
             tunnel.quit_tunnel(tunnel_address)
