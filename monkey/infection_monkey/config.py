@@ -85,7 +85,7 @@ class Configuration(object):
     current_server = ""
 
     # Configuration servers to try to connect to, in this order.
-    command_servers = ["192.0.2.0:5000"]
+    command_servers = []
 
     keep_tunnel_open_time = 60
 
