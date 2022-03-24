@@ -1,1 +1,2 @@
 from .i_credentials_store import ICredentialsStore
+from .credentials_store import CredentialsStore
