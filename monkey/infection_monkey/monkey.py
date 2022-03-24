@@ -297,9 +297,7 @@ class InfectionMonkey:
 
     @staticmethod
     def _close_tunnel():
-        tunnel_address = (
-            ControlClient.proxies.get("https", "").replace("https://", "").split(":")[0]
-        )
+        tunnel_address = ControlClient.proxies.get("https", "").replace("http://", "").split(":")[0]
         if tunnel_address:
             logger.info("Quitting tunnel %s", tunnel_address)
             tunnel.quit_tunnel(tunnel_address)
