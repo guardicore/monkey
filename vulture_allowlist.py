@@ -147,6 +147,7 @@ Report.meta_info
 Report.meta
 LDAPServerFactory.buildProtocol
 get_file_sha256_hash
+strict_slashes  # unused attribute (monkey/monkey_island/cc/app.py:96)
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
