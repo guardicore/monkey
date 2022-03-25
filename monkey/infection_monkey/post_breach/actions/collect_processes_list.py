@@ -3,6 +3,7 @@ import logging
 import psutil
 
 from common.common_consts.post_breach_consts import POST_BREACH_PROCESS_LIST_COLLECTION
+from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
 
 logger = logging.getLogger(__name__)
@@ -16,9 +17,6 @@ except NameError:
 
 
 class ProcessListCollection(PBA):
-    # TODO: (?) Move all PBA consts into their classes
-    display_name = POST_BREACH_PROCESS_LIST_COLLECTION
-
     def __init__(self):
         super().__init__(POST_BREACH_PROCESS_LIST_COLLECTION)
 
@@ -54,4 +52,5 @@ class ProcessListCollection(PBA):
                 }
                 continue
 
-        return self.command, (processes, success_state)
+        # No command here; used psutil
+        return PostBreachData(self.name, "", (processes, success_state))
