@@ -60,6 +60,9 @@ class Ransomware:
         for filepath in interruptible_iter(files_to_encrypt, interrupt, interrupted_message):
             try:
                 logger.debug(f"Encrypting {filepath}")
+
+                # Note that encrypting a single file is not interruptible. This is so that we avoid
+                # leaving half-encrypted files on the user's system.
                 self._encrypt_file(filepath)
                 self._send_telemetry(filepath, True, "")
             except Exception as ex:
