@@ -5,7 +5,7 @@ from typing import Callable, Iterable
 
 from infection_monkey.telemetry.file_encryption_telem import FileEncryptionTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-from infection_monkey.utils.threading import interruptible_iter
+from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
 from .consts import README_FILE_NAME, README_SRC
 from .ransomware_options import RansomwareOptions
@@ -47,7 +47,7 @@ class Ransomware:
             self._encrypt_files(files_to_encrypt, interrupt)
 
         if self._config.readme_enabled:
-            self._leave_readme_in_target_directory(interrupt)
+            self._leave_readme_in_target_directory(interrupt=interrupt)
 
     def _find_files(self) -> Iterable[Path]:
         logger.info(f"Collecting files in {self._target_directory}")
@@ -72,11 +72,8 @@ class Ransomware:
         encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
-    def _leave_readme_in_target_directory(self, interrupt: threading.Event):
-        if interrupt.is_set():
-            logger.debug("Received a stop signal, skipping leave readme")
-            return
-
+    @interruptible_function(msg="Received a stop signal, skipping leave readme")
+    def _leave_readme_in_target_directory(self, *, interrupt: threading.Event):
         try:
             self._leave_readme(README_SRC, self._readme_file_path)  # type: ignore
         except Exception as ex:
