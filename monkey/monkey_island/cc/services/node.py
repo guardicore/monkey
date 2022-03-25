@@ -340,7 +340,3 @@ class NodeService:
             return Monkey.get_label_by_id(endpoint_id)
         else:
             return NodeService.get_node_label(NodeService.get_node_by_id(endpoint_id))
-
-
-class NodeCreationException(Exception):
-    pass
