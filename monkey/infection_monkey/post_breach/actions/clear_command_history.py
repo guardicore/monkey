@@ -1,11 +1,11 @@
 import subprocess
 
 from common.common_consts.post_breach_consts import POST_BREACH_CLEAR_CMD_HISTORY
+from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.clear_command_history.clear_command_history import (
     get_commands_to_clear_command_history,
 )
 from infection_monkey.post_breach.pba import PBA
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 
 
 class ClearCommandHistory(PBA):
@@ -15,7 +15,8 @@ class ClearCommandHistory(PBA):
     def run(self):
         results = [pba.run() for pba in self.clear_command_history_PBA_list()]
         if results:
-            PostBreachTelem(self, results).send()
+            # Note: `self.command` is empty here
+            return PostBreachData(self.name, self.command, results)
 
     def clear_command_history_PBA_list(self):
         return self.CommandHistoryPBAGenerator().get_clear_command_history_pbas()
