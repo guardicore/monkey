@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.post_breach.actions.users_custom_pba import UsersPBA
+from infection_monkey.post_breach.custom_pba.users_custom_pba import UsersPBA
 
 MONKEY_DIR_PATH = "/dir/to/monkey/"
 CUSTOM_LINUX_CMD = "command-for-linux"

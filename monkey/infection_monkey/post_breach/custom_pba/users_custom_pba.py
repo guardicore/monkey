@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Any, Mapping
 
 from common.common_consts.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from common.utils.attack_utils import ScanStatus
@@ -24,32 +25,32 @@ class UsersPBA(PBA):
     Defines user's configured post breach action.
     """
 
-    def __init__(self, telemetry_messenger: ITelemetryMessenger):
+    def __init__(self, options: Mapping[str, Any], telemetry_messenger: ITelemetryMessenger):
         super(UsersPBA, self).__init__(telemetry_messenger, POST_BREACH_FILE_EXECUTION)
         self.filename = ""
 
-        if not is_windows_os():
-            # Add linux commands to PBA's
-            if WormConfiguration.PBA_linux_filename:
-                self.filename = WormConfiguration.PBA_linux_filename
-                if WormConfiguration.custom_PBA_linux_cmd:
-                    # Add change dir command, because user will try to access his file
-                    self.command = (
-                        DIR_CHANGE_LINUX % get_monkey_dir_path()
-                    ) + WormConfiguration.custom_PBA_linux_cmd
-            elif WormConfiguration.custom_PBA_linux_cmd:
-                self.command = WormConfiguration.custom_PBA_linux_cmd
-        else:
+        if is_windows_os():
             # Add windows commands to PBA's
-            if WormConfiguration.PBA_windows_filename:
-                self.filename = WormConfiguration.PBA_windows_filename
-                if WormConfiguration.custom_PBA_windows_cmd:
+            if options["windows_filename"]:
+                self.filename = options["windows_filename"]
+                if options["windows_command"]:
                     # Add change dir command, because user will try to access his file
-                    self.command = (
-                        DIR_CHANGE_WINDOWS % get_monkey_dir_path()
-                    ) + WormConfiguration.custom_PBA_windows_cmd
-            elif WormConfiguration.custom_PBA_windows_cmd:
-                self.command = WormConfiguration.custom_PBA_windows_cmd
+                    self.command = (DIR_CHANGE_WINDOWS % get_monkey_dir_path()) + options[
+                        "windows_command"
+                    ]
+            elif options["windows_command"]:
+                self.command = options["windows_command"]
+        else:
+            # Add linux commands to PBA's
+            if options["linux_filename"]:
+                self.filename = options["linux_filename"]
+                if options["linux_command"]:
+                    # Add change dir command, because user will try to access his file
+                    self.command = (DIR_CHANGE_LINUX % get_monkey_dir_path()) + options[
+                        "linux_command"
+                    ]
+            elif options["linux_command"]:
+                self.command = options["linux_command"]
 
     def _execute_default(self):
         if self.filename:
@@ -57,12 +58,12 @@ class UsersPBA(PBA):
         return super(UsersPBA, self)._execute_default()
 
     @staticmethod
-    def should_run(class_name):
+    def should_run(options):
         if not is_windows_os():
-            if WormConfiguration.PBA_linux_filename or WormConfiguration.custom_PBA_linux_cmd:
+            if options["linux_filename"] or options["linux_command"]:
                 return True
         else:
-            if WormConfiguration.PBA_windows_filename or WormConfiguration.custom_PBA_windows_cmd:
+            if options["windows_filename"] or options["windows_command"]:
                 return True
         return False
 

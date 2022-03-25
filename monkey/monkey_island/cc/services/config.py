@@ -452,7 +452,7 @@ class ConfigService:
         for pba in config.get("post_breach_actions", []):
             formatted_pbas_config[pba] = {}
 
-        formatted_pbas_config["Custom"] = {
+        config["custom_pbas"] = {
             "linux_command": config.get(flat_linux_command_field, ""),
             "linux_filename": config.get(flat_linux_filename_field, ""),
             "windows_command": config.get(flat_windows_command_field, ""),
