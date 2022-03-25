@@ -1,8 +1,10 @@
 import logging
 from threading import Event, current_thread
+from typing import Any
 
 from infection_monkey.utils.threading import (
     create_daemon_thread,
+    interruptible_function,
     interruptible_iter,
     run_worker_threads,
 )
@@ -73,3 +75,55 @@ def test_worker_thread_names():
     assert "B-01" in thread_names
     assert "B-02" in thread_names
     assert len(thread_names) == 6
+
+
+class MockFunction:
+    def __init__(self):
+        self._call_count = 0
+
+    @property
+    def call_count(self):
+        return self._call_count
+
+    @property
+    def return_value(self):
+        return 42
+
+    def __call__(self, *_, interrupt: Event) -> Any:
+        self._call_count += 1
+
+        return self.return_value
+
+
+def test_interruptible_decorator_calls_decorated_function():
+    fn = MockFunction()
+    int_fn = interruptible_function()(fn)
+
+    return_value = int_fn(interrupt=Event())
+
+    assert return_value == fn.return_value
+    assert fn.call_count == 1
+
+
+def test_interruptible_decorator_skips_decorated_function():
+    fn = MockFunction()
+    int_fn = interruptible_function()(fn)
+    interrupt = Event()
+    interrupt.set()
+
+    return_value = int_fn(interrupt=interrupt)
+
+    assert return_value is None
+    assert fn.call_count == 0
+
+
+def test_interruptible_decorator_returns_default_value_on_interrupt():
+    fn = MockFunction()
+    int_fn = interruptible_function(default_return_value=777)(fn)
+    interrupt = Event()
+    interrupt.set()
+
+    return_value = int_fn(interrupt=interrupt)
+
+    assert return_value == 777
+    assert fn.call_count == 0
