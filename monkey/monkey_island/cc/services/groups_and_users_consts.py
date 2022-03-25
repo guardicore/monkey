@@ -2,4 +2,3 @@
 
 
 USERTYPE = 1
-GROUPTYPE = 2
