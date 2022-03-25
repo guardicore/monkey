@@ -56,9 +56,7 @@ class Ransomware:
     def _encrypt_files(self, files_to_encrypt: Iterable[Path], interrupt: threading.Event):
         logger.info(f"Encrypting files in {self._target_directory}")
 
-        interrupted_message = (
-            "Received a stop signal, skipping remaining files for encryption of ransomware payload"
-        )
+        interrupted_message = "Received a stop signal, skipping encryption of remaining files"
         for filepath in interruptible_iter(files_to_encrypt, interrupt, interrupted_message):
             try:
                 logger.debug(f"Encrypting {filepath}")
