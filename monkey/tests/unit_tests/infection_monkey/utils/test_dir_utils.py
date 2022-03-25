@@ -38,7 +38,7 @@ def test_get_all_regular_files_in_directory__no_files(tmp_path, monkeypatch):
     add_subdirs_to_dir(tmp_path)
 
     expected_return_value = []
-    assert get_all_regular_files_in_directory(tmp_path) == expected_return_value
+    assert list(get_all_regular_files_in_directory(tmp_path)) == expected_return_value
 
 
 def test_get_all_regular_files_in_directory__has_files(tmp_path, monkeypatch):
@@ -63,7 +63,7 @@ def test_filter_files__no_results(tmp_path):
     add_files_to_dir(tmp_path)
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
-    filtered_files = filter_files(files_in_dir, [lambda _: False])
+    filtered_files = list(filter_files(files_in_dir, [lambda _: False]))
 
     assert len(filtered_files) == 0
 
@@ -109,8 +109,8 @@ def test_is_not_symlink_filter(tmp_path):
     link_path = tmp_path / "symlink.test"
     link_path.symlink_to(files[0], target_is_directory=False)
 
-    files_in_dir = get_all_regular_files_in_directory(tmp_path)
-    filtered_files = filter_files(files_in_dir, [is_not_symlink_filter])
+    files_in_dir = list(get_all_regular_files_in_directory(tmp_path))
+    filtered_files = list(filter_files(files_in_dir, [is_not_symlink_filter]))
 
     assert link_path in files_in_dir
     assert len(filtered_files) == len(FILES)
@@ -121,7 +121,7 @@ def test_is_not_shortcut_filter(tmp_path):
     add_files_to_dir(tmp_path)
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
-    filtered_files = filter_files(files_in_dir, [is_not_shortcut_filter])
+    filtered_files = list(filter_files(files_in_dir, [is_not_shortcut_filter]))
 
     assert len(filtered_files) == len(FILES) - 1
     assert SHORTCUT not in [f.name for f in filtered_files]
