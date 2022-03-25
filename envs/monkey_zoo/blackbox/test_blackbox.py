@@ -51,7 +51,7 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
 )
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
-DEFAULT_TIMEOUT_SECONDS = 5 * 60
+DEFAULT_TIMEOUT_SECONDS = 2 * 60
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
@@ -186,12 +186,15 @@ class TestMonkeyBlackbox:
     def test_smb_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")
 
+    @pytest.mark.skip(reason="Drupal exploiter is deprecated")
     def test_drupal_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Drupal, "Drupal_exploiter")
 
+    @pytest.mark.skip(reason="Struts2 exploiter is deprecated")
     def test_struts_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Struts2, "Struts2_exploiter")
 
+    @pytest.mark.skip(reason="Weblogic exploiter is deprecated")
     def test_weblogic_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Weblogic, "Weblogic_exploiter")
 
@@ -212,7 +215,7 @@ class TestMonkeyBlackbox:
 
     def test_tunneling(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
-            island_client, Tunneling, "Tunneling_exploiter", 15 * 60
+            island_client, Tunneling, "Tunneling_exploiter", 3 * 60
         )
 
     def test_wmi_and_mimikatz_exploiters(self, island_client):

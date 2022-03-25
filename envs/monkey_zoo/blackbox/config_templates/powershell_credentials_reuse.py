@@ -16,6 +16,6 @@ class PowerShellCredentialsReuse(ConfigTemplate):
             "basic_network.scope.depth": 2,
             "internal.classes.finger_classes": [],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
-            "internal.network.tcp_scanner.tcp_target_ports": [],
+            "internal.network.tcp_scanner.tcp_target_ports": [5985, 5986],
         }
     )
