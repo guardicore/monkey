@@ -50,12 +50,12 @@ class MockMaster(IMaster):
 
         logger.info("Running post breach actions")
         name = "AccountDiscovery"
-        command, result = self._puppet.run_pba(name, {})
-        self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
+        display_name, command, result = self._puppet.run_pba(name, {})
+        self._telemetry_messenger.send_telemetry(PostBreachTelem(display_name, command, result))
 
         name = "CommunicateAsBackdoorUser"
-        command, result = self._puppet.run_pba(name, {})
-        self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
+        display_name, command, result = self._puppet.run_pba(name, {})
+        self._telemetry_messenger.send_telemetry(PostBreachTelem(display_name, command, result))
         logger.info("Finished running post breach actions")
 
     def _scan_victims(self):

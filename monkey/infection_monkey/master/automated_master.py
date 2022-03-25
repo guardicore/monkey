@@ -195,14 +195,11 @@ class AutomatedMaster(IMaster):
             logger.debug(f"No credentials were collected by {collector}")
 
     def _run_pba(self, pba: Tuple[str, Dict]):
-        # TODO: This is the class's name right now. We need `display_name` (see the
-        #       ProcessListCollection PBA). This is shown in the Security report as the PBA
-        #       name and is checked against in the T1082's mongo query in the ATT&CK report.
         name = pba[0]
         options = pba[1]
 
-        command, result = self._puppet.run_pba(name, options)
-        self._telemetry_messenger.send_telemetry(PostBreachTelem(name, command, result))
+        display_name, command, result = self._puppet.run_pba(name, options)
+        self._telemetry_messenger.send_telemetry(PostBreachTelem(display_name, command, result))
 
     def _can_propagate(self) -> bool:
         return True

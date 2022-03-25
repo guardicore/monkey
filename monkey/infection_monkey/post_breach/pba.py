@@ -1,30 +1,19 @@
 import logging
 import subprocess
 
-import infection_monkey.post_breach.actions
 from common.utils.attack_utils import ScanStatus
-from infection_monkey.config import WormConfiguration
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.plugins.plugin import Plugin
 
 logger = logging.getLogger(__name__)
 
 
-class PBA(Plugin):
+class PBA:
     """
     Post breach action object. Can be extended to support more than command execution on target
     machine.
     """
-
-    @staticmethod
-    def base_package_name():
-        return infection_monkey.post_breach.actions.__package__
-
-    @staticmethod
-    def base_package_file():
-        return infection_monkey.post_breach.actions.__file__
 
     def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
         """
@@ -34,14 +23,6 @@ class PBA(Plugin):
         """
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
-
-    @staticmethod
-    def should_run(class_name):
-        """
-        Decides if post breach action is enabled in config
-        :return: True if it needs to be ran, false otherwise
-        """
-        return class_name in WormConfiguration.post_breach_actions
 
     def run(self):
         """

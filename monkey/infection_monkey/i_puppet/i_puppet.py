@@ -34,7 +34,7 @@ class ExploiterResultData:
 PingScanData = namedtuple("PingScanData", ["response_received", "os"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
-PostBreachData = namedtuple("PostBreachData", ["command", "result"])
+PostBreachData = namedtuple("PostBreachData", ["display_name", "command", "result"])
 
 
 class IPuppet(metaclass=abc.ABCMeta):
