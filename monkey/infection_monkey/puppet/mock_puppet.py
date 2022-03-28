@@ -163,8 +163,8 @@ class MockPuppet(IPuppet):
                 "ssh_key": host,
             },
         ]
-        info_powershell = {
-            "display_name": "PowerShell",
+        info_wmi = {
+            "display_name": "WMI",
             "started": "2021-11-25T15:57:06.307696",
             "finished": "2021-11-25T15:58:33.788238",
             "vulnerable_urls": [],
@@ -189,14 +189,14 @@ class MockPuppet(IPuppet):
 
         successful_exploiters = {
             DOT_1: {
-                "PowerShellExploiter": ExploiterResultData(
-                    True, True, False, os_windows, info_powershell, attempts, None
-                ),
                 "ZerologonExploiter": ExploiterResultData(
                     False, False, False, os_windows, {}, [], "Zerologon failed"
                 ),
                 "SSHExploiter": ExploiterResultData(
                     False, False, False, os_linux, info_ssh, attempts, "Failed exploiting"
+                ),
+                "WmiExploiter": ExploiterResultData(
+                    True, True, False, os_windows, info_wmi, attempts, None
                 ),
             },
             DOT_3: {
@@ -205,7 +205,7 @@ class MockPuppet(IPuppet):
                     False,
                     False,
                     os_windows,
-                    info_powershell,
+                    info_wmi,
                     attempts,
                     "PowerShell Exploiter Failed",
                 ),
