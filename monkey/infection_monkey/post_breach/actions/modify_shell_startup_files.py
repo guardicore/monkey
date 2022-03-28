@@ -29,7 +29,7 @@ class ModifyShellStartupFiles(PBA):
             ]
         # `command` is empty here since multiple commands were run and the results
         # were aggregated to send the telemetry just once
-        return PostBreachData(self.name, "", results).send()
+        yield PostBreachData(self.name, "", results).send()
 
     def modify_shell_startup_PBA_list(self):
         return self.ShellStartupPBAGenerator().get_modify_shell_startup_pbas()

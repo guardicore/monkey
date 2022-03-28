@@ -35,7 +35,7 @@ class PBA:
                 T1064Telem(
                     ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action."
                 ).send()
-            return PostBreachData(self.name, self.command, result)
+            yield PostBreachData(self.name, self.command, result)
         else:
             logger.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
 

@@ -16,7 +16,7 @@ class ClearCommandHistory(PBA):
         results = [pba.run() for pba in self.clear_command_history_PBA_list()]
         if results:
             # Note: `self.command` is empty here
-            return PostBreachData(self.name, self.command, results)
+            yield PostBreachData(self.name, self.command, results)
 
     def clear_command_history_PBA_list(self):
         return self.CommandHistoryPBAGenerator().get_clear_command_history_pbas()
