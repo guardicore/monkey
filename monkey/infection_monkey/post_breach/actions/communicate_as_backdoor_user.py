@@ -5,8 +5,8 @@ import string
 import subprocess
 
 from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
+from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.auto_new_user_factory import create_auto_new_user
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.new_user_error import NewUserError
@@ -49,11 +49,16 @@ class CommunicateAsBackdoorUser(PBA):
                     )
                 )
                 exit_status = new_user.run_as(http_request_commandline)
-                self.send_result_telemetry(exit_status, http_request_commandline, username)
+                result = self._get_result_for_telemetry(
+                    exit_status, http_request_commandline, username
+                )
+                # `command` is empty here; we could get the command from `new_user` but that
+                # doesn't work either since Windows doesn't use a command, it uses win32 modules
+                return PostBreachData(self.name, "", result)
         except subprocess.CalledProcessError as e:
-            PostBreachTelem(self, (e.output.decode(), False)).send()
+            return PostBreachData(self.name, "", (e.output.decode(), False))
         except NewUserError as e:
-            PostBreachTelem(self, (str(e), False)).send()
+            return PostBreachData(self.name, "", (str(e), False))
 
     @staticmethod
     def get_random_new_user_name():
@@ -79,28 +84,25 @@ class CommunicateAsBackdoorUser(PBA):
                 format_string = "wget -O/dev/null -q {url} --method=HEAD --timeout=10"
         return format_string.format(url=url)
 
-    def send_result_telemetry(self, exit_status, commandline, username):
+    def _get_result_for_telemetry(self, exit_status, commandline, username):
         """
-        Parses the result of the command and sends telemetry accordingly.
+        Parses the result of the command and returns it to be sent as telemetry from the master.
 
         :param exit_status: In both Windows and Linux, 0 exit code indicates success.
         :param commandline: Exact commandline which was executed, for reporting back.
         :param username: Username from which the command was executed, for reporting back.
         """
         if exit_status == 0:
-            PostBreachTelem(
-                self, (CREATED_PROCESS_AS_USER_SUCCESS_FORMAT.format(commandline, username), True)
-            ).send()
+            result = (CREATED_PROCESS_AS_USER_SUCCESS_FORMAT.format(commandline, username), True)
         else:
-            PostBreachTelem(
-                self,
-                (
-                    CREATED_PROCESS_AS_USER_FAILED_FORMAT.format(
-                        commandline, username, exit_status, twos_complement(exit_status)
-                    ),
-                    False,
+            result = (
+                CREATED_PROCESS_AS_USER_FAILED_FORMAT.format(
+                    commandline, username, exit_status, twos_complement(exit_status)
                 ),
-            ).send()
+                False,
+            )
+
+        return result
 
 
 def twos_complement(exit_status):
