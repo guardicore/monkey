@@ -1,2 +1,2 @@
 from .i_credentials_store import ICredentialsStore
-from .credentials_store import CredentialsStore
+from .aggregating_credentials_store import AggregatingCredentialsStore
