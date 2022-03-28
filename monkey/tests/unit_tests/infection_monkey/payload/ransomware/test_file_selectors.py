@@ -24,7 +24,7 @@ def file_selector():
 
 
 def test_select_targeted_files_only(ransomware_test_data, file_selector):
-    selected_files = file_selector(ransomware_test_data)
+    selected_files = list(file_selector(ransomware_test_data))
 
     assert len(selected_files) == 2
     assert (ransomware_test_data / ALL_ZEROS_PDF) in selected_files

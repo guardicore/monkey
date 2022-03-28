@@ -58,10 +58,12 @@ def mock_file_encryptor():
 
 @pytest.fixture
 def mock_file_selector(ransomware_test_data):
-    selected_files = [
-        ransomware_test_data / ALL_ZEROS_PDF,
-        ransomware_test_data / TEST_KEYBOARD_TXT,
-    ]
+    selected_files = iter(
+        [
+            ransomware_test_data / ALL_ZEROS_PDF,
+            ransomware_test_data / TEST_KEYBOARD_TXT,
+        ]
+    )
     return MagicMock(return_value=selected_files)
 
 

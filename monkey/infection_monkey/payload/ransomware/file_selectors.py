@@ -1,6 +1,6 @@
 import filecmp
 from pathlib import Path
-from typing import List, Set
+from typing import Iterable, Set
 
 from infection_monkey.utils.dir_utils import (
     file_extension_filter,
@@ -17,7 +17,7 @@ class ProductionSafeTargetFileSelector:
     def __init__(self, targeted_file_extensions: Set[str]):
         self._targeted_file_extensions = targeted_file_extensions
 
-    def __call__(self, target_dir: Path) -> List[Path]:
+    def __call__(self, target_dir: Path) -> Iterable[Path]:
         file_filters = [
             file_extension_filter(self._targeted_file_extensions),
             is_not_shortcut_filter,
