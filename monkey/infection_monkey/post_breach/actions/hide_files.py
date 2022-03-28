@@ -1,6 +1,6 @@
 from common.common_consts.post_breach_consts import POST_BREACH_HIDDEN_FILES
+from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.hidden_files import (
     cleanup_hidden_files,
@@ -29,10 +29,12 @@ class HiddenFiles(PBA):
                 linux_cmd=" ".join(linux_cmds),
                 windows_cmd=windows_cmds,
             )
-            super(HiddenFiles, self).run()
+            yield super(HiddenFiles, self).run()
+
         if is_windows_os():  # use winAPI
             result, status = get_winAPI_to_hide_files()
-            PostBreachTelem(self, (result, status)).send()
+            # no command here, used WinAPI
+            yield PostBreachData(self.name, "", (result, status))
 
         # cleanup hidden files and folders
         cleanup_hidden_files(is_windows_os())
