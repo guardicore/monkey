@@ -1,5 +1,5 @@
 import abc
-from typing import Iterable
+from typing import Iterable, Mapping
 
 from infection_monkey.i_puppet import Credentials
 
@@ -13,7 +13,7 @@ class ICredentialsStore(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def get_credentials(self) -> None:
+    def get_credentials(self) -> Mapping:
         """
         Method that retrieves credentials from the store
         :return: Credentials that can be used for propagation

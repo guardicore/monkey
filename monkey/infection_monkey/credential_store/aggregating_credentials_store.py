@@ -41,6 +41,7 @@ class AggregatingCredentialsStore(ICredentialsStore):
         try:
             propagation_credentials = self._control_channel.get_credentials_for_propagation()
             self._aggregate_credentials(propagation_credentials)
+            return self.stored_credentials
         except Exception as ex:
             self.stored_credentials = {}
             logger.error(f"Error while attempting to retrieve credentials for propagation: {ex}")
