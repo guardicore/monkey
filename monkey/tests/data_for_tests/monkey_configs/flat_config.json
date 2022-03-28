@@ -55,7 +55,8 @@
         "HadoopExploiter",
         "MSSQLExploiter",
         "DrupalExploiter",
-        "PowerShellExploiter"
+        "PowerShellExploiter",
+        "Log4ShellExploiter"
     ],
     "export_monkey_telems": false,
     "finger_classes": [
