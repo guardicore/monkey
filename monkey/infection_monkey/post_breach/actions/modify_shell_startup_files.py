@@ -1,11 +1,11 @@
 import subprocess
 
 from common.common_consts.post_breach_consts import POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
+from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.shell_startup_files.shell_startup_files_modification import (
     get_commands_to_modify_shell_startup_files,
 )
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 
 
 class ModifyShellStartupFiles(PBA):
@@ -27,7 +27,9 @@ class ModifyShellStartupFiles(PBA):
                     False,
                 )
             ]
-        PostBreachTelem(self, results).send()
+        # `command` is empty here since multiple commands were run and the results
+        # were aggregated to send the telemetry just once
+        return PostBreachData(self.name, "", results).send()
 
     def modify_shell_startup_PBA_list(self):
         return self.ShellStartupPBAGenerator().get_modify_shell_startup_pbas()
