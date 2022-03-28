@@ -15,6 +15,7 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
+from infection_monkey.credential_store import AggregatingCredentialsStore
 from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
@@ -54,6 +55,9 @@ from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
+from infection_monkey.telemetry.messengers.credentials_intercepting_telemetry_messenger import (
+    CredentialsInterceptingTelemetryMessenger,
+)
 from infection_monkey.telemetry.messengers.exploit_intercepting_telemetry_messenger import (
     ExploitInterceptingTelemetryMessenger,
 )
@@ -183,14 +187,25 @@ class InfectionMonkey:
         telemetry_messenger = ExploitInterceptingTelemetryMessenger(
             self.telemetry_messenger, self._monkey_inbound_tunnel
         )
+        control_channel = ControlChannel(self._default_server, GUID)
+
+        credentials_store = AggregatingCredentialsStore(control_channel)
+
+        telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
+            ExploitInterceptingTelemetryMessenger(
+                self.telemetry_messenger, self._monkey_inbound_tunnel
+            ),
+            credentials_store,
+        )
 
         self._master = AutomatedMaster(
             self._current_depth,
             puppet,
             telemetry_messenger,
             victim_host_factory,
-            ControlChannel(self._default_server, GUID),
+            control_channel,
             local_network_interfaces,
+            credentials_store,
         )
 
     @staticmethod

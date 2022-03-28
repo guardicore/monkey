@@ -3,6 +3,7 @@ import threading
 import time
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
+from infection_monkey.credential_store import ICredentialsStore
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -36,6 +37,7 @@ class AutomatedMaster(IMaster):
         victim_host_factory: VictimHostFactory,
         control_channel: IControlChannel,
         local_network_interfaces: List[NetworkInterface],
+        credentials_store: ICredentialsStore,
     ):
         self._current_depth = current_depth
         self._puppet = puppet
@@ -43,9 +45,8 @@ class AutomatedMaster(IMaster):
         self._control_channel = control_channel
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
-        exploiter = Exploiter(
-            self._puppet, NUM_EXPLOIT_THREADS, self._control_channel.get_credentials_for_propagation
-        )
+
+        exploiter = Exploiter(self._puppet, NUM_EXPLOIT_THREADS, credentials_store.get_credentials)
         self._propagator = Propagator(
             self._telemetry_messenger,
             ip_scanner,
