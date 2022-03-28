@@ -24,7 +24,7 @@ class SignedScriptProxyExecution(PBA):
                 original_comspec = subprocess.check_output(  # noqa: DUO116
                     "if defined COMSPEC echo %COMSPEC%", shell=True
                 ).decode()
-            return super().run()
+            yield super().run()
         except Exception as e:
             logger.warning(
                 f"An exception occurred on running PBA "

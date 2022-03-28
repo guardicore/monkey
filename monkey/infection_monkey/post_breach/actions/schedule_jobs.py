@@ -23,4 +23,4 @@ class ScheduleJobs(PBA):
     def run(self):
         post_breach_data = super(ScheduleJobs, self).run()
         remove_scheduled_jobs()
-        return post_breach_data
+        yield post_breach_data
