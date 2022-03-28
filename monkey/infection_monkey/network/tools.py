@@ -4,9 +4,10 @@ import socket
 import struct
 import sys
 
+from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from infection_monkey.network.info import get_routes
 
-DEFAULT_TIMEOUT = 10
+DEFAULT_TIMEOUT = CONNECTION_TIMEOUT
 BANNER_READ = 1024
 
 logger = logging.getLogger(__name__)
