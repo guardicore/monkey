@@ -7,15 +7,20 @@ from infection_monkey.post_breach.signed_script_proxy.signed_script_proxy import
     cleanup_changes,
     get_commands_to_proxy_execution_using_signed_script,
 )
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 
 logger = logging.getLogger(__name__)
 
 
 class SignedScriptProxyExecution(PBA):
-    def __init__(self):
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
         windows_cmds = get_commands_to_proxy_execution_using_signed_script()
-        super().__init__(POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC, windows_cmd=" ".join(windows_cmds))
+        super().__init__(
+            telemetry_messenger,
+            POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC,
+            windows_cmd=" ".join(windows_cmds),
+        )
 
     def run(self):
         original_comspec = ""

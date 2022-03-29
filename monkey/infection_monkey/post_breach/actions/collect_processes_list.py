@@ -5,6 +5,7 @@ import psutil
 from common.common_consts.post_breach_consts import POST_BREACH_PROCESS_LIST_COLLECTION
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +18,8 @@ except NameError:
 
 
 class ProcessListCollection(PBA):
-    def __init__(self):
-        super().__init__(POST_BREACH_PROCESS_LIST_COLLECTION)
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
+        super().__init__(telemetry_messenger, POST_BREACH_PROCESS_LIST_COLLECTION)
 
     def run(self):
         """

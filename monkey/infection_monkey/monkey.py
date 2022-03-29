@@ -248,26 +248,56 @@ class InfectionMonkey:
         )
 
         puppet.load_plugin(
-            "CommunicateAsBackdoorUser", CommunicateAsBackdoorUser, PluginType.POST_BREACH_ACTION
+            "CommunicateAsBackdoorUser",
+            CommunicateAsBackdoorUser(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
-            "ModifyShellStartupFiles", ModifyShellStartupFiles, PluginType.POST_BREACH_ACTION
-        )
-        puppet.load_plugin("HiddenFiles", HiddenFiles, PluginType.POST_BREACH_ACTION)
-        puppet.load_plugin("TrapCommand", CommunicateAsBackdoorUser, PluginType.POST_BREACH_ACTION)
-        puppet.load_plugin("ChangeSetuidSetgid", ChangeSetuidSetgid, PluginType.POST_BREACH_ACTION)
-        puppet.load_plugin("ScheduleJobs", ScheduleJobs, PluginType.POST_BREACH_ACTION)
-        puppet.load_plugin("Timestomping", Timestomping, PluginType.POST_BREACH_ACTION)
-        puppet.load_plugin("AccountDiscovery", AccountDiscovery, PluginType.POST_BREACH_ACTION)
-        puppet.load_plugin(
-            "ProcessListCollection", ProcessListCollection, PluginType.POST_BREACH_ACTION
-        )
-        puppet.load_plugin("TrapCommand", TrapCommand, PluginType.POST_BREACH_ACTION)
-        puppet.load_plugin(
-            "SignedScriptProxyExecution", SignedScriptProxyExecution, PluginType.POST_BREACH_ACTION
+            "ModifyShellStartupFiles",
+            ModifyShellStartupFiles(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
-            "ClearCommandHistory", ClearCommandHistory, PluginType.POST_BREACH_ACTION
+            "HiddenFiles", HiddenFiles(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+        )
+        puppet.load_plugin(
+            "TrapCommand",
+            CommunicateAsBackdoorUser(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
+        )
+        puppet.load_plugin(
+            "ChangeSetuidSetgid",
+            ChangeSetuidSetgid(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
+        )
+        puppet.load_plugin(
+            "ScheduleJobs", ScheduleJobs(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+        )
+        puppet.load_plugin(
+            "Timestomping", Timestomping(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+        )
+        puppet.load_plugin(
+            "AccountDiscovery",
+            AccountDiscovery(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
+        )
+        puppet.load_plugin(
+            "ProcessListCollection",
+            ProcessListCollection(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
+        )
+        puppet.load_plugin(
+            "TrapCommand", TrapCommand(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+        )
+        puppet.load_plugin(
+            "SignedScriptProxyExecution",
+            SignedScriptProxyExecution(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
+        )
+        puppet.load_plugin(
+            "ClearCommandHistory",
+            ClearCommandHistory(self.telemetry_messenger),
+            PluginType.POST_BREACH_ACTION,
         )
 
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
