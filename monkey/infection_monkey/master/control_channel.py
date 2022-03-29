@@ -7,13 +7,11 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
-from infection_monkey.utils.decorators import request_cache
+from infection_monkey.typing import PropagationCredentials
 
 requests.packages.urllib3.disable_warnings()
 
 logger = logging.getLogger(__name__)
-
-CREDENTIALS_POLL_PERIOD_SEC = 30
 
 
 class ControlChannel(IControlChannel):
@@ -69,8 +67,7 @@ class ControlChannel(IControlChannel):
         ) as e:
             raise IslandCommunicationError(e)
 
-    @request_cache(CREDENTIALS_POLL_PERIOD_SEC)
-    def get_credentials_for_propagation(self) -> dict:
+    def get_credentials_for_propagation(self) -> PropagationCredentials:
         propagation_credentials_url = (
             f"https://{self._control_channel_server}/api/propagation-credentials/{self._agent_id}"
         )

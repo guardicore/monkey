@@ -5,10 +5,13 @@ from common.common_consts.credential_component_type import CredentialComponentTy
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_puppet import Credentials
 from infection_monkey.typing import PropagationCredentials
+from infection_monkey.utils.decorators import request_cache
 
 from .i_credentials_store import ICredentialsStore
 
 logger = logging.getLogger(__name__)
+
+CREDENTIALS_POLL_PERIOD_SEC = 30
 
 
 class AggregatingCredentialsStore(ICredentialsStore):
@@ -52,7 +55,7 @@ class AggregatingCredentialsStore(ICredentialsStore):
 
     def get_credentials(self) -> PropagationCredentials:
         try:
-            propagation_credentials = self._control_channel.get_credentials_for_propagation()
+            propagation_credentials = self._get_credentials_from_control_channel()
 
             # Needs to be reworked when exploiters accepts sequence of Credentials
             self._aggregate_credentials(propagation_credentials)
@@ -61,6 +64,10 @@ class AggregatingCredentialsStore(ICredentialsStore):
         except Exception as ex:
             self._stored_credentials = {}
             logger.error(f"Error while attempting to retrieve credentials for propagation: {ex}")
+
+    @request_cache(CREDENTIALS_POLL_PERIOD_SEC)
+    def _get_credentials_from_control_channel(self) -> PropagationCredentials:
+        return self._control_channel.get_credentials_for_propagation()
 
     def _aggregate_credentials(self, credentials_to_aggr: Mapping):
         for cred_attr, credentials_values in credentials_to_aggr.items():
