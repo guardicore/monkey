@@ -14,6 +14,10 @@ def flip_bits(data: bytes) -> bytes:
         #       Remove the flip_bits_in_single_byte() function and rework the
         #       unit tests so that we still have a high-degree of confidence
         #       that this code is correct.
+        #
+        #       EDIT: I believe PyPy will attempt to inline functions
+        #       automatically. I don't know that CPython makes any such
+        #       optimizations.
         flipped_bits[i] = flip_bits_in_single_byte(byte)
 
     return bytes(flipped_bits)
