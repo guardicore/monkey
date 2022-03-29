@@ -15,6 +15,7 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
+from infection_monkey.credential_store import AggregatingCredentialsStore, ICredentialsStore
 from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
@@ -54,6 +55,9 @@ from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
+from infection_monkey.telemetry.messengers.credentials_intercepting_telemetry_messenger import (
+    CredentialsInterceptingTelemetryMessenger,
+)
 from infection_monkey.telemetry.messengers.exploit_intercepting_telemetry_messenger import (
     ExploitInterceptingTelemetryMessenger,
 )
@@ -84,7 +88,7 @@ class InfectionMonkey:
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
         self._default_server = self._opts.server
         self._monkey_inbound_tunnel = None
-        self.telemetry_messenger = LegacyTelemetryMessengerAdapter()
+        self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
 
@@ -119,7 +123,7 @@ class InfectionMonkey:
         if is_windows_os():
             T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
-        run_aws_environment_check(self.telemetry_messenger)
+        run_aws_environment_check(self._telemetry_messenger)
 
         should_stop = ControlChannel(WormConfiguration.current_server, GUID).should_agent_stop()
         if should_stop:
@@ -175,12 +179,23 @@ class InfectionMonkey:
 
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
-        puppet = self._build_puppet()
+
+        control_channel = ControlChannel(self._default_server, GUID)
+        credentials_store = AggregatingCredentialsStore(control_channel)
+
+        puppet = self._build_puppet(credentials_store)
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
         telemetry_messenger = ExploitInterceptingTelemetryMessenger(
-            self.telemetry_messenger, self._monkey_inbound_tunnel
+            self._telemetry_messenger, self._monkey_inbound_tunnel
+        )
+
+        telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
+            ExploitInterceptingTelemetryMessenger(
+                self._telemetry_messenger, self._monkey_inbound_tunnel
+            ),
+            credentials_store,
         )
 
         self._master = AutomatedMaster(
@@ -188,8 +203,9 @@ class InfectionMonkey:
             puppet,
             telemetry_messenger,
             victim_host_factory,
-            ControlChannel(self._default_server, GUID),
+            control_channel,
             local_network_interfaces,
+            credentials_store,
         )
 
     @staticmethod
@@ -200,7 +216,7 @@ class InfectionMonkey:
 
         return local_network_interfaces
 
-    def _build_puppet(self) -> IPuppet:
+    def _build_puppet(self, credentials_store: ICredentialsStore) -> IPuppet:
         puppet = Puppet()
 
         puppet.load_plugin(
@@ -210,7 +226,7 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             "SSHCollector",
-            SSHCredentialCollector(self.telemetry_messenger),
+            SSHCredentialCollector(self._telemetry_messenger),
             PluginType.CREDENTIAL_COLLECTOR,
         )
 
@@ -223,7 +239,7 @@ class InfectionMonkey:
         agent_repository = CachingAgentRepository(
             f"https://{self._default_server}", ControlClient.proxies
         )
-        exploit_wrapper = ExploiterWrapper(self.telemetry_messenger, agent_repository)
+        exploit_wrapper = ExploiterWrapper(self._telemetry_messenger, agent_repository)
 
         puppet.load_plugin(
             "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER
@@ -240,62 +256,67 @@ class InfectionMonkey:
         puppet.load_plugin(
             "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), PluginType.EXPLOITER
         )
+
+        zerologon_telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
+            self._telemetry_messenger, credentials_store
+        )
+        zerologon_wrapper = ExploiterWrapper(zerologon_telemetry_messenger, agent_repository)
         puppet.load_plugin(
             "ZerologonExploiter",
-            exploit_wrapper.wrap(ZerologonExploiter),
+            zerologon_wrapper.wrap(ZerologonExploiter),
             PluginType.EXPLOITER,
         )
 
         puppet.load_plugin(
             "CommunicateAsBackdoorUser",
-            CommunicateAsBackdoorUser(self.telemetry_messenger),
+            CommunicateAsBackdoorUser(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
             "ModifyShellStartupFiles",
-            ModifyShellStartupFiles(self.telemetry_messenger),
+            ModifyShellStartupFiles(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
-            "HiddenFiles", HiddenFiles(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+            "HiddenFiles", HiddenFiles(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
         )
         puppet.load_plugin(
             "TrapCommand",
-            CommunicateAsBackdoorUser(self.telemetry_messenger),
+            CommunicateAsBackdoorUser(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
             "ChangeSetuidSetgid",
-            ChangeSetuidSetgid(self.telemetry_messenger),
+            ChangeSetuidSetgid(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
-            "ScheduleJobs", ScheduleJobs(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+            "ScheduleJobs", ScheduleJobs(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
         )
         puppet.load_plugin(
-            "Timestomping", Timestomping(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+            "Timestomping", Timestomping(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
         )
         puppet.load_plugin(
             "AccountDiscovery",
-            AccountDiscovery(self.telemetry_messenger),
+            AccountDiscovery(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
             "ProcessListCollection",
-            ProcessListCollection(self.telemetry_messenger),
+            ProcessListCollection(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
-            "TrapCommand", TrapCommand(self.telemetry_messenger), PluginType.POST_BREACH_ACTION
+            "TrapCommand", TrapCommand(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
         )
         puppet.load_plugin(
             "SignedScriptProxyExecution",
-            SignedScriptProxyExecution(self.telemetry_messenger),
+            SignedScriptProxyExecution(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
             "ClearCommandHistory",
-            ClearCommandHistory(self.telemetry_messenger),
+            ClearCommandHistory(self._telemetry_messenger),
             PluginType.POST_BREACH_ACTION,
         )
 

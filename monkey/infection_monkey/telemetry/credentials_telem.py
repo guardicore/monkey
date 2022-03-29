@@ -17,6 +17,10 @@ class CredentialsTelem(BaseTelem):
         """
         self._credentials = credentials
 
+    @property
+    def credentials(self) -> Iterable[Credentials]:
+        return iter(self._credentials)
+
     def send(self, log_data=True):
         super().send(log_data=False)
 
