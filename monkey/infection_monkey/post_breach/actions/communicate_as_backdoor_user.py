@@ -90,13 +90,6 @@ class CommunicateAsBackdoorUser(PBA):
 
     @staticmethod
     def _get_result_for_telemetry(exit_status, commandline, username):
-        """
-        Parses the result of the command and returns it to be sent as telemetry from the master.
-
-        :param exit_status: In both Windows and Linux, 0 exit code indicates success.
-        :param commandline: Exact commandline which was executed, for reporting back.
-        :param username: Username from which the command was executed, for reporting back.
-        """
         if exit_status == 0:
             result = (CREATED_PROCESS_AS_USER_SUCCESS_FORMAT.format(commandline, username), True)
         else:
