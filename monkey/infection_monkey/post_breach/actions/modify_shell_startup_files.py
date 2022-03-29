@@ -27,8 +27,8 @@ class ModifyShellStartupFiles(PBA):
                     False,
                 )
             ]
-        # `command` is empty here since multiple commands were run and the results
-        # were aggregated to send the telemetry just once
+        # `command` is empty here since multiple commands were run through objects of the nested
+        # class. The results of each of those were aggregated to send the telemetry just once.
         self.pba_data.append(PostBreachData(self.name, self.command, results))
         return self.pba_data
 
