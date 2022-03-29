@@ -18,8 +18,8 @@ class SignedScriptProxyExecution(PBA):
         super().__init__(POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC, windows_cmd=" ".join(windows_cmds))
 
     def run(self):
+        original_comspec = ""
         try:
-            original_comspec = ""
             if is_windows_os():
                 original_comspec = subprocess.check_output(  # noqa: DUO116
                     "if defined COMSPEC echo %COMSPEC%", shell=True

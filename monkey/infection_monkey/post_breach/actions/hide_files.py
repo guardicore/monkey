@@ -34,7 +34,7 @@ class HiddenFiles(PBA):
         if is_windows_os():  # use winAPI
             result, status = get_winAPI_to_hide_files()
             # no command here, used WinAPI
-            self.pba_data.append(PostBreachData(self.name, "", (result, status)))
+            self.pba_data.append(PostBreachData(self.name, self.command, (result, status)))
 
         # cleanup hidden files and folders
         cleanup_hidden_files(is_windows_os())

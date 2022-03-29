@@ -49,16 +49,18 @@ class CommunicateAsBackdoorUser(PBA):
                     )
                 )
                 exit_status = new_user.run_as(http_request_commandline)
-                result = self._get_result_for_telemetry(
+                result = CommunicateAsBackdoorUser._get_result_for_telemetry(
                     exit_status, http_request_commandline, username
                 )
                 # `command` is empty here; we could get the command from `new_user` but that
                 # doesn't work either since Windows doesn't use a command, it uses win32 modules
-                self.pba_data.append(PostBreachData(self.name, "", result))
+                self.pba_data.append(PostBreachData(self.name, self.command, result))
         except subprocess.CalledProcessError as e:
-            self.pba_data.append(PostBreachData(self.name, "", (e.output.decode(), False)))
+            self.pba_data.append(
+                PostBreachData(self.name, self.command, (e.output.decode(), False))
+            )
         except NewUserError as e:
-            self.pba_data.append(PostBreachData(self.name, "", (str(e), False)))
+            self.pba_data.append(PostBreachData(self.name, self.command, (str(e), False)))
         finally:
             return self.pba_data
 
@@ -86,7 +88,8 @@ class CommunicateAsBackdoorUser(PBA):
                 format_string = "wget -O/dev/null -q {url} --method=HEAD --timeout=10"
         return format_string.format(url=url)
 
-    def _get_result_for_telemetry(self, exit_status, commandline, username):
+    @staticmethod
+    def _get_result_for_telemetry(exit_status, commandline, username):
         """
         Parses the result of the command and returns it to be sent as telemetry from the master.
 

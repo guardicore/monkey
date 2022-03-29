@@ -29,14 +29,16 @@ class ModifyShellStartupFiles(PBA):
             ]
         # `command` is empty here since multiple commands were run and the results
         # were aggregated to send the telemetry just once
-        self.pba_data.append(PostBreachData(self.name, "", results))
+        self.pba_data.append(PostBreachData(self.name, self.command, results))
         return self.pba_data
 
-    def modify_shell_startup_PBA_list(self):
-        return self.ShellStartupPBAGenerator().get_modify_shell_startup_pbas()
+    @classmethod
+    def modify_shell_startup_PBA_list(cls):
+        return cls.ShellStartupPBAGenerator.get_modify_shell_startup_pbas()
 
     class ShellStartupPBAGenerator:
-        def get_modify_shell_startup_pbas(self):
+        @classmethod
+        def get_modify_shell_startup_pbas(cls):
             (cmds_for_linux, shell_startup_files_for_linux, usernames_for_linux), (
                 cmds_for_windows,
                 shell_startup_files_per_user_for_windows,
@@ -46,14 +48,14 @@ class ModifyShellStartupFiles(PBA):
 
             for startup_file_per_user in shell_startup_files_per_user_for_windows:
                 windows_cmds = " ".join(cmds_for_windows).format(startup_file_per_user)
-                pbas.append(self.ModifyShellStartupFile(linux_cmds="", windows_cmds=windows_cmds))
+                pbas.append(cls.ModifyShellStartupFile(linux_cmds="", windows_cmds=windows_cmds))
 
             for username in usernames_for_linux:
                 for shell_startup_file in shell_startup_files_for_linux:
                     linux_cmds = (
                         " ".join(cmds_for_linux).format(shell_startup_file).format(username)
                     )
-                    pbas.append(self.ModifyShellStartupFile(linux_cmds=linux_cmds, windows_cmds=""))
+                    pbas.append(cls.ModifyShellStartupFile(linux_cmds=linux_cmds, windows_cmds=""))
 
             return pbas
 
