@@ -2,7 +2,6 @@ from unittest.mock import MagicMock
 
 from infection_monkey.credential_collectors import Password, SSHKeypair, Username
 from infection_monkey.i_puppet import Credentials
-from infection_monkey.telemetry.base_telem import BaseTelem
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.credentials_intercepting_telemetry_messenger import (
     CredentialsInterceptingTelemetryMessenger,
@@ -20,17 +19,6 @@ TELEM_CREDENTIALS = [
 ]
 
 
-class TestTelem(BaseTelem):
-    telem_category = None
-    __test__ = False
-
-    def __init__(self):
-        pass
-
-    def get_data(self):
-        return {}
-
-
 class MockCredentialsTelem(CredentialsTelem):
     def __init(self, credentials):
         super().__init__(credentials)
@@ -39,7 +27,7 @@ class MockCredentialsTelem(CredentialsTelem):
         return {}
 
 
-def test_credentials_generic_telemetry():
+def test_credentials_generic_telemetry(TestTelem):
     mock_telemetry_messenger = MagicMock()
     mock_credentials_store = MagicMock()
 

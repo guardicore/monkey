@@ -21,19 +21,21 @@ CONTROL_CHANNEL_CREDENTIALS = {
     ],
 }
 
-
-PROPAGATION_CREDENTIALS = {
-    "exploit_user_list": ["user1", "user3"],
-    "exploit_password_list": ["abcdefg", "root"],
-    "exploit_ssh_keys": [{"public_key": "some_public_key", "private_key": "some_private_key"}],
-}
-
-CREDENTIALS_COLLECTION = [
+TEST_CREDENTIALS = [
     Credentials(
         [Username("user1"), Username("user3")],
         [
             Password("abcdefg"),
             Password("root"),
+            SSHKeypair(public_key="some_public_key_1", private_key="some_private_key_1"),
+        ],
+    )
+]
+
+SSH_KEYS_CREDENTIALS = [
+    Credentials(
+        [Username("root")],
+        [
             SSHKeypair(public_key="some_public_key", private_key="some_private_key"),
         ],
     )
@@ -67,7 +69,8 @@ def test_get_credentials_from_store(aggregating_credentials_store):
 
 
 def test_add_credentials_to_store(aggregating_credentials_store):
-    aggregating_credentials_store.add_credentials(CREDENTIALS_COLLECTION)
+    aggregating_credentials_store.add_credentials(TEST_CREDENTIALS)
+    aggregating_credentials_store.add_credentials(SSH_KEYS_CREDENTIALS)
 
     actual_stored_credentials = aggregating_credentials_store.get_credentials()
 
@@ -89,5 +92,4 @@ def test_add_credentials_to_store(aggregating_credentials_store):
         ]
     )
 
-    for ssh_keypair in actual_stored_credentials["exploit_ssh_keys"]:
-        assert ssh_keypair in CONTROL_CHANNEL_CREDENTIALS["exploit_ssh_keys"]
+    assert len(actual_stored_credentials["exploit_ssh_keys"]) == 3

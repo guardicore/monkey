@@ -36,16 +36,16 @@ class AggregatingCredentialsStore(ICredentialsStore):
 
             for secret in credentials.secrets:
                 if secret.credential_type is CredentialComponentType.PASSWORD:
-                    self._stored_credentials.setdefault("exploit_password_list", set()).update(
-                        [secret.password]
+                    self._stored_credentials.setdefault("exploit_password_list", set()).add(
+                        secret.password
                     )
                 elif secret.credential_type is CredentialComponentType.LM_HASH:
-                    self._stored_credentials.setdefault("exploit_lm_hash_list", set()).update(
-                        [secret.lm_hash]
+                    self._stored_credentials.setdefault("exploit_lm_hash_list", set()).add(
+                        secret.lm_hash
                     )
                 elif secret.credential_type is CredentialComponentType.NT_HASH:
-                    self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).update(
-                        [secret.nt_hash]
+                    self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).add(
+                        secret.nt_hash
                     )
                 elif secret.credential_type is CredentialComponentType.SSH_KEYPAIR:
                     self._set_attribute(
@@ -78,7 +78,6 @@ class AggregatingCredentialsStore(ICredentialsStore):
             return
 
         if isinstance(credentials_values[0], dict):
-            self._stored_credentials[attribute_to_be_set] = []
             self._stored_credentials.setdefault(attribute_to_be_set, []).extend(credentials_values)
             self._stored_credentials[attribute_to_be_set] = [
                 dict(s_c)
