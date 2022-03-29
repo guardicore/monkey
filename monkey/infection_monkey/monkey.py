@@ -89,6 +89,7 @@ class InfectionMonkey:
         self._default_server = self._opts.server
         # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
+        self._credentials_store = None
         self.telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
@@ -189,13 +190,13 @@ class InfectionMonkey:
         )
         control_channel = ControlChannel(self._default_server, GUID)
 
-        credentials_store = AggregatingCredentialsStore(control_channel)
+        self._credentials_store = AggregatingCredentialsStore(control_channel)
 
         telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
             ExploitInterceptingTelemetryMessenger(
                 self.telemetry_messenger, self._monkey_inbound_tunnel
             ),
-            credentials_store,
+            self._credentials_store,
         )
 
         self._master = AutomatedMaster(
@@ -205,7 +206,7 @@ class InfectionMonkey:
             victim_host_factory,
             control_channel,
             local_network_interfaces,
-            credentials_store,
+            self._credentials_store,
         )
 
     @staticmethod
@@ -256,9 +257,14 @@ class InfectionMonkey:
         puppet.load_plugin(
             "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), PluginType.EXPLOITER
         )
+
+        zerologon_telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
+            self.telemetry_messenger, self._credentials_store
+        )
+        zerologon_wrapper = ExploiterWrapper(zerologon_telemetry_messenger, agent_repository)
         puppet.load_plugin(
             "ZerologonExploiter",
-            exploit_wrapper.wrap(ZerologonExploiter),
+            zerologon_wrapper.wrap(ZerologonExploiter),
             PluginType.EXPLOITER,
         )
 
