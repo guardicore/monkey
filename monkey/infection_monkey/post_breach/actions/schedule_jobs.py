@@ -21,6 +21,6 @@ class ScheduleJobs(PBA):
         )
 
     def run(self):
-        post_breach_data = super(ScheduleJobs, self).run()
+        super(ScheduleJobs, self).run()
         remove_scheduled_jobs()
-        yield post_breach_data
+        return self.pba_data

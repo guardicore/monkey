@@ -53,4 +53,5 @@ class ProcessListCollection(PBA):
                 continue
 
         # No command here; used psutil
-        yield PostBreachData(self.name, "", (processes, success_state))
+        self.pba_data.append(PostBreachData(self.name, "", (processes, success_state)))
+        return self.pba_data

@@ -54,11 +54,13 @@ class CommunicateAsBackdoorUser(PBA):
                 )
                 # `command` is empty here; we could get the command from `new_user` but that
                 # doesn't work either since Windows doesn't use a command, it uses win32 modules
-                yield PostBreachData(self.name, "", result)
+                self.pba_data.append(PostBreachData(self.name, "", result))
         except subprocess.CalledProcessError as e:
-            yield PostBreachData(self.name, "", (e.output.decode(), False))
+            self.pba_data.append(PostBreachData(self.name, "", (e.output.decode(), False)))
         except NewUserError as e:
-            yield PostBreachData(self.name, "", (str(e), False))
+            self.pba_data.append(PostBreachData(self.name, "", (str(e), False)))
+        finally:
+            return self.pba_data
 
     @staticmethod
     def get_random_new_user_name():

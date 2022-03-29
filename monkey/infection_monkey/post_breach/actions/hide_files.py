@@ -29,12 +29,14 @@ class HiddenFiles(PBA):
                 linux_cmd=" ".join(linux_cmds),
                 windows_cmd=windows_cmds,
             )
-            yield super(HiddenFiles, self).run()
+            super(HiddenFiles, self).run()
 
         if is_windows_os():  # use winAPI
             result, status = get_winAPI_to_hide_files()
             # no command here, used WinAPI
-            yield PostBreachData(self.name, "", (result, status))
+            self.pba_data.append(PostBreachData(self.name, "", (result, status)))
 
         # cleanup hidden files and folders
         cleanup_hidden_files(is_windows_os())
+
+        return self.pba_data
