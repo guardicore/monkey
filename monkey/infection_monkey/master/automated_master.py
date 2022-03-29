@@ -90,9 +90,6 @@ class AutomatedMaster(IMaster):
             logger.warning("Timed out waiting for the simulation to stop")
             # Since the master thread and all child threads are daemon threads, they will be
             # forcefully killed when the program exits.
-            # TODO: Daemon threads to not die when the parent THREAD does, but when the parent
-            #       PROCESS does. This could lead to conflicts between threads that refuse to die
-            #       and the cleanup() function. Come up with a solution.
             logger.warning("Forcefully killing the simulation")
 
     def _wait_for_master_stop_condition(self):
