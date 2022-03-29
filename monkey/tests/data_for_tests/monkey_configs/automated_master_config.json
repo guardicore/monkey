@@ -45,20 +45,21 @@
                 ]
             },
             "exploiters": {
+                "options": {},
                 "brute_force": [
-                    {"name": "MSSQLExploiter"},
-                    {"name": "PowerShellExploiter"},
-                    {"name": "SmbExploiter"},
-                    {"name": "SSHExploiter"},
-                    {"name": "WmiExploiter"}
+                    {"name": "MSSQLExploiter", "supported_os": ["windows"], "options": {}},
+                    {"name": "PowerShellExploiter", "supported_os": ["windows"], "options": {}},
+                    {"name": "SmbExploiter", "supported_os": ["windows"], "options": {}},
+                    {"name": "SSHExploiter", "supported_os": ["linux"], "options": {}},
+                    {"name": "WmiExploiter", "supported_os": ["windows"], "options": {}}
                 ],
                 "vulnerability": [
-                    {"name": "DrupalExploiter"},
-                    {"name": "HadoopExploiter"},
-                    {"name": "ShellShockExploiter"},
-                    {"name": "Struts2Exploiter"},
-                    {"name": "WebLogicExploiter"},
-                    {"name": "ZerologonExploiter"}
+                    {"name": "DrupalExploiter", "supported_os": ["linux", "windows"], "options": {}},
+                    {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
+                    {"name": "ShellShockExploiter", "supported_os": ["linux"], "options": {}},
+                    {"name": "Struts2Exploiter", "supported_os": ["linux", "windows"], "options": {}},
+                    {"name": "WebLogicExploiter", "supported_os": ["linux", "windows"], "options": {}},
+                    {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}}
                 ]
             }
         },
@@ -102,7 +103,7 @@
                 "other_behaviors": {"readme": true}
             }
         },
-        "system_info_collector_classes": [
+        "credential_collector_classes": [
             "MimikatzCollector",
             "SSHCollector"
         ]

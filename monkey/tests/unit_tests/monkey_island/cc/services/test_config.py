@@ -177,18 +177,27 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
             "http_ports": [80, 443, 7001, 8008, 8080, 9200],
         },
         "brute_force": [
-            {"name": "MSSQLExploiter", "options": {}},
-            {"name": "PowerShellExploiter", "options": {}},
-            {"name": "SSHExploiter", "options": {}},
-            {"name": "SmbExploiter", "options": {"smb_download_timeout": 300}},
-            {"name": "WmiExploiter", "options": {"smb_download_timeout": 300}},
+            {"name": "MSSQLExploiter", "supported_os": ["windows"], "options": {}},
+            {"name": "PowerShellExploiter", "supported_os": ["windows"], "options": {}},
+            {"name": "SSHExploiter", "supported_os": ["linux"], "options": {}},
+            {
+                "name": "SmbExploiter",
+                "supported_os": ["windows"],
+                "options": {"smb_download_timeout": 300},
+            },
+            {
+                "name": "WmiExploiter",
+                "supported_os": ["windows"],
+                "options": {"smb_download_timeout": 300},
+            },
         ],
         "vulnerability": [
-            {"name": "DrupalExploiter", "options": {}},
-            {"name": "HadoopExploiter", "options": {}},
-            {"name": "Struts2Exploiter", "options": {}},
-            {"name": "WebLogicExploiter", "options": {}},
-            {"name": "ZerologonExploiter", "options": {}},
+            {"name": "DrupalExploiter", "supported_os": [], "options": {}},
+            {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
+            {"name": "Log4ShellExploiter", "supported_os": ["linux", "windows"], "options": {}},
+            {"name": "Struts2Exploiter", "supported_os": [], "options": {}},
+            {"name": "WebLogicExploiter", "supported_os": [], "options": {}},
+            {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}},
         ],
     }
     ConfigService.format_flat_config_for_agent(flat_monkey_config)
