@@ -181,6 +181,10 @@ class InfectionMonkey:
 
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+
+        control_channel = ControlChannel(self._default_server, GUID)
+        self._credentials_store = AggregatingCredentialsStore(control_channel)
+
         puppet = self._build_puppet()
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
@@ -188,9 +192,6 @@ class InfectionMonkey:
         telemetry_messenger = ExploitInterceptingTelemetryMessenger(
             self.telemetry_messenger, self._monkey_inbound_tunnel
         )
-        control_channel = ControlChannel(self._default_server, GUID)
-
-        self._credentials_store = AggregatingCredentialsStore(control_channel)
 
         telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
             ExploitInterceptingTelemetryMessenger(
