@@ -34,15 +34,18 @@
             "lines": [
                 " ",
                 " class AccountDiscovery(PBA):",
-                "     def __init__(self):",
+                "     def __init__(self, telemetry_messenger: ITelemetryMessenger):",
                 "*        linux_cmds, windows_cmds = get_commands_to_discover_accounts()",
                 "+        # SWIMMER: Implement here!",
                 "*        super().__init__(",
                 "+        pass",
-                "*            POST_BREACH_ACCOUNT_DISCOVERY, linux_cmd=\" \".join(linux_cmds), windows_cmd=windows_cmds",
+                "*            telemetry_messenger,",
+                "*            POST_BREACH_ACCOUNT_DISCOVERY,",
+                "*            linux_cmd=\" \".join(linux_cmds),",
+                "*            windows_cmd=windows_cmds,",
                 "*        )"
             ],
-            "firstLineNumber": 7,
+            "firstLineNumber": 8,
             "path": "monkey/infection_monkey/post_breach/actions/discover_accounts.py",
             "comments": []
         },
@@ -65,7 +68,7 @@
                 "             \"type\": \"string\",",
                 "             \"enum\": [\"ClearCommandHistory\"],"
             ],
-            "firstLineNumber": 80,
+            "firstLineNumber": 78,
             "path": "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py",
             "comments": []
         },
@@ -77,11 +80,11 @@
     "symbols": {},
     "file_version": "2.0.3",
     "meta": {
-        "app_version": "0.5.7-0",
+        "app_version": "0.6.6-2",
         "file_blobs": {
-            "monkey/common/common_consts/post_breach_consts.py": "01d31448269e5581dbe0176c289f7dd36cc5854f",
-            "monkey/infection_monkey/post_breach/actions/discover_accounts.py": "8fdebd0df97655e4cba3aebcdcf3c5ed1d1b6cbd",
-            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "88a3e8cb59fb0d1c07c9487bcb4eaab7b8087d84"
+            "monkey/common/common_consts/post_breach_consts.py": "19b6c4f19b7223f115976a0050ca04ab97e52f8e",
+            "monkey/infection_monkey/post_breach/actions/discover_accounts.py": "a153cf5b6185c9771414fc5ae49d441efc7294b6",
+            "monkey/monkey_island/cc/services/config_schema/definitions/post_breach_actions.py": "d6831ed63b17f327d719a05840d7e51202fa5ccb"
         }
     }
 }
