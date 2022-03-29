@@ -6,8 +6,8 @@ import requests
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
-from infection_monkey.typing import PropagationCredentials
 
 requests.packages.urllib3.disable_warnings()
 

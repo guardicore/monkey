@@ -2,9 +2,9 @@ import logging
 from typing import Any, Iterable, Mapping
 
 from common.common_consts.credential_component_type import CredentialComponentType
+from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.i_puppet import Credentials
-from infection_monkey.typing import PropagationCredentials
 from infection_monkey.utils.decorators import request_cache
 
 from .i_credentials_store import ICredentialsStore
