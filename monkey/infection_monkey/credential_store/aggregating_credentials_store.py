@@ -48,22 +48,27 @@ class AggregatingCredentialsStore(ICredentialsStore):
 
     def _aggregate_credentials(self, credentials_to_aggr: Mapping):
         for cred_attr, credentials_values in credentials_to_aggr.items():
-            if credentials_values:
-                self._set_attribute(cred_attr, credentials_values)
+            self._set_attribute(cred_attr, credentials_values)
 
     def _set_attribute(self, attribute_to_be_set, credentials_values):
         if attribute_to_be_set not in self.stored_credentials:
             self.stored_credentials[attribute_to_be_set] = []
 
-        if isinstance(credentials_values[0], dict):
-            self.stored_credentials.setdefault(attribute_to_be_set, []).extend(credentials_values)
-            self.stored_credentials[attribute_to_be_set] = [
-                dict(s_c)
-                for s_c in set(
-                    frozenset(d_c.items()) for d_c in self.stored_credentials[attribute_to_be_set]
+        if credentials_values:
+            if isinstance(credentials_values[0], dict):
+                self.stored_credentials.setdefault(attribute_to_be_set, []).extend(
+                    credentials_values
                 )
-            ]
-        else:
-            self.stored_credentials[attribute_to_be_set] = sorted(
-                list(set(self.stored_credentials[attribute_to_be_set]).union(credentials_values))
-            )
+                self.stored_credentials[attribute_to_be_set] = [
+                    dict(s_c)
+                    for s_c in set(
+                        frozenset(d_c.items())
+                        for d_c in self.stored_credentials[attribute_to_be_set]
+                    )
+                ]
+            else:
+                self.stored_credentials[attribute_to_be_set] = sorted(
+                    list(
+                        set(self.stored_credentials[attribute_to_be_set]).union(credentials_values)
+                    )
+                )
