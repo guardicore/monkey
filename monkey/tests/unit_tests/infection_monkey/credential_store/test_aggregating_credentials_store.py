@@ -6,7 +6,7 @@ from infection_monkey.credential_collectors import Password, SSHKeypair, Usernam
 from infection_monkey.credential_store import AggregatingCredentialsStore
 from infection_monkey.i_puppet import Credentials
 
-DEFAULT_CREDENTIALS = {
+CONTROL_CHANNEL_CREDENTIALS = {
     "exploit_user_list": ["Administrator", "root", "user1"],
     "exploit_password_list": ["123456", "123456789", "password", "root"],
     "exploit_lm_hash_list": ["aasdf23asd1fdaasadasdfas"],
@@ -28,7 +28,7 @@ PROPAGATION_CREDENTIALS = {
     "exploit_ssh_keys": [{"public_key": "some_public_key", "private_key": "some_private_key"}],
 }
 
-TELEM_CREDENTIALS = [
+CREDENTIALS_COLLECTION = [
     Credentials(
         [Username("user1"), Username("user3")],
         [
@@ -43,58 +43,51 @@ TELEM_CREDENTIALS = [
 @pytest.fixture
 def aggregating_credentials_store() -> AggregatingCredentialsStore:
     control_channel = MagicMock()
-    control_channel.get_credentials_for_propagation.return_value = DEFAULT_CREDENTIALS
+    control_channel.get_credentials_for_propagation.return_value = CONTROL_CHANNEL_CREDENTIALS
     return AggregatingCredentialsStore(control_channel)
 
 
 def test_get_credentials_from_store(aggregating_credentials_store):
-    aggregating_credentials_store.get_credentials()
+    actual_stored_credentials = aggregating_credentials_store.get_credentials()
 
-    actual_stored_credentials = aggregating_credentials_store.stored_credentials
+    print(actual_stored_credentials)
 
-    assert (
-        actual_stored_credentials["exploit_user_list"] == DEFAULT_CREDENTIALS["exploit_user_list"]
+    assert actual_stored_credentials["exploit_user_list"] == set(
+        CONTROL_CHANNEL_CREDENTIALS["exploit_user_list"]
     )
-    assert (
-        actual_stored_credentials["exploit_password_list"]
-        == DEFAULT_CREDENTIALS["exploit_password_list"]
+    assert actual_stored_credentials["exploit_password_list"] == set(
+        CONTROL_CHANNEL_CREDENTIALS["exploit_password_list"]
     )
-    assert (
-        actual_stored_credentials["exploit_ntlm_hash_list"]
-        == DEFAULT_CREDENTIALS["exploit_ntlm_hash_list"]
+    assert actual_stored_credentials["exploit_ntlm_hash_list"] == set(
+        CONTROL_CHANNEL_CREDENTIALS["exploit_ntlm_hash_list"]
     )
 
     for ssh_keypair in actual_stored_credentials["exploit_ssh_keys"]:
-        assert ssh_keypair in DEFAULT_CREDENTIALS["exploit_ssh_keys"]
+        assert ssh_keypair in CONTROL_CHANNEL_CREDENTIALS["exploit_ssh_keys"]
 
 
-def test_add_credentials_to_empty_store(aggregating_credentials_store):
-    aggregating_credentials_store.add_credentials(TELEM_CREDENTIALS)
+def test_add_credentials_to_store(aggregating_credentials_store):
+    aggregating_credentials_store.add_credentials(CREDENTIALS_COLLECTION)
 
-    assert aggregating_credentials_store.stored_credentials == PROPAGATION_CREDENTIALS
+    actual_stored_credentials = aggregating_credentials_store.get_credentials()
 
-
-def test_add_credentials_to_full_store(aggregating_credentials_store):
-
-    aggregating_credentials_store.get_credentials()
-
-    aggregating_credentials_store.add_credentials(TELEM_CREDENTIALS)
-
-    actual_stored_credentials = aggregating_credentials_store.stored_credentials
-
-    assert actual_stored_credentials["exploit_user_list"] == [
-        "Administrator",
-        "root",
-        "user1",
-        "user3",
-    ]
-    assert actual_stored_credentials["exploit_password_list"] == [
-        "123456",
-        "123456789",
-        "abcdefg",
-        "password",
-        "root",
-    ]
+    assert actual_stored_credentials["exploit_user_list"] == set(
+        [
+            "Administrator",
+            "root",
+            "user1",
+            "user3",
+        ]
+    )
+    assert actual_stored_credentials["exploit_password_list"] == set(
+        [
+            "123456",
+            "123456789",
+            "abcdefg",
+            "password",
+            "root",
+        ]
+    )
 
     for ssh_keypair in actual_stored_credentials["exploit_ssh_keys"]:
-        assert ssh_keypair in DEFAULT_CREDENTIALS["exploit_ssh_keys"]
+        assert ssh_keypair in CONTROL_CHANNEL_CREDENTIALS["exploit_ssh_keys"]
