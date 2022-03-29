@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, List, Sequence
+from typing import Dict, Iterable, List, Sequence
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from infection_monkey import network_scanning
@@ -36,7 +36,7 @@ class Puppet(IPuppet):
         )
         return credential_collector.collect_credentials(options)
 
-    def run_pba(self, name: str, options: Dict) -> PostBreachData:
+    def run_pba(self, name: str, options: Dict) -> Iterable[PostBreachData]:
         return self._mock_puppet.run_pba(name, options)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:

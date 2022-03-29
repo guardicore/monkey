@@ -59,12 +59,12 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def run_pba(self, name: str, options: Dict) -> PostBreachData:
+    def run_pba(self, name: str, options: Dict) -> Iterable[PostBreachData]:
         """
         Runs a post-breach action (PBA)
         :param str name: The name of the post-breach action to run
         :param Dict options: A dictionary containing options that modify the behavior of the PBA
-        :rtype: PostBreachData
+        :rtype: Iterable[PostBreachData]
         """
 
     @abc.abstractmethod
