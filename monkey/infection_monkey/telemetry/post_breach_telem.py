@@ -8,20 +8,15 @@ from infection_monkey.utils.environment import is_windows_os
 
 
 class PostBreachTelem(BaseTelem):
-    def __init__(self, name: str, post_breach_data: PostBreachData) -> None:
-        """
-        Default post breach telemetry constructor
-        :param name: Name of post breach action
-        :param command: Command used as PBA
-        :param result: Result of PBA
-        """
+
+    telem_category = TelemCategoryEnum.POST_BREACH
+
+    def __init__(self, post_breach_data: PostBreachData) -> None:
         super(PostBreachTelem, self).__init__()
-        self.name = name
+        self.name = post_breach_data.display_name
         self.command = post_breach_data.command
         self.result = post_breach_data.result
         self.hostname, self.ip = PostBreachTelem._get_hostname_and_ip()
-
-    telem_category = TelemCategoryEnum.POST_BREACH
 
     def get_data(self) -> Dict:
         return {
