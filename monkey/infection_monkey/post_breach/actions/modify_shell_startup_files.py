@@ -6,6 +6,7 @@ from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.shell_startup_files.shell_startup_files_modification import (
     get_commands_to_modify_shell_startup_files,
 )
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 
 class ModifyShellStartupFiles(PBA):
@@ -15,8 +16,8 @@ class ModifyShellStartupFiles(PBA):
     and profile.ps1 in windows.
     """
 
-    def __init__(self):
-        super().__init__(name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION)
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
+        super().__init__(telemetry_messenger, name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION)
 
     def run(self):
         results = [pba.run() for pba in self.modify_shell_startup_PBA_list()]

@@ -1,6 +1,7 @@
 from common.common_consts.post_breach_consts import POST_BREACH_HIDDEN_FILES
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.hidden_files import (
     cleanup_hidden_files,
@@ -17,8 +18,8 @@ class HiddenFiles(PBA):
     This PBA attempts to create hidden files and folders.
     """
 
-    def __init__(self):
-        super(HiddenFiles, self).__init__(name=POST_BREACH_HIDDEN_FILES)
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
+        super(HiddenFiles, self).__init__(telemetry_messenger, name=POST_BREACH_HIDDEN_FILES)
 
     def run(self):
         # create hidden files and folders

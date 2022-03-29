@@ -7,6 +7,7 @@ import subprocess
 from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.auto_new_user_factory import create_auto_new_user
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.new_user_error import NewUserError
@@ -33,9 +34,9 @@ class CommunicateAsBackdoorUser(PBA):
     are created.
     """
 
-    def __init__(self):
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
         super(CommunicateAsBackdoorUser, self).__init__(
-            name=POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
+            telemetry_messenger, name=POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
         )
 
     def run(self):

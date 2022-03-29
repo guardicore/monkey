@@ -8,6 +8,7 @@ from infection_monkey.control import ControlClient
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path
 
@@ -23,8 +24,8 @@ class UsersPBA(PBA):
     Defines user's configured post breach action.
     """
 
-    def __init__(self):
-        super(UsersPBA, self).__init__(POST_BREACH_FILE_EXECUTION)
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
+        super(UsersPBA, self).__init__(telemetry_messenger, POST_BREACH_FILE_EXECUTION)
         self.filename = ""
 
         if not is_windows_os():

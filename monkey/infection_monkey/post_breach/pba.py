@@ -6,7 +6,6 @@ from common.utils.attack_utils import ScanStatus
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 
 logger = logging.getLogger(__name__)
@@ -18,7 +17,9 @@ class PBA:
     machine.
     """
 
-    def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
+    def __init__(
+        self, telemetry_messenger: ITelemetryMessenger, name="unknown", linux_cmd="", windows_cmd=""
+    ):
         """
         :param name: Name of post breach action.
         :param linux_cmd: Command that will be executed on breached machine
@@ -27,6 +28,7 @@ class PBA:
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
         self.pba_data = []
+        self.telemetry_messenger = telemetry_messenger
 
     def run(self) -> Iterable[PostBreachData]:
         """

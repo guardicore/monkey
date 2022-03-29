@@ -6,20 +6,21 @@ from infection_monkey.post_breach.clear_command_history.clear_command_history im
     get_commands_to_clear_command_history,
 )
 from infection_monkey.post_breach.pba import PBA
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 
 class ClearCommandHistory(PBA):
-    def __init__(self):
-        super().__init__(name=POST_BREACH_CLEAR_CMD_HISTORY)
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
+        super().__init__(telemetry_messenger, name=POST_BREACH_CLEAR_CMD_HISTORY)
 
     def run(self):
-        results = [pba.run() for pba in self.clear_command_history_PBA_list()]
+        results = [pba.run() for pba in self.clear_command_history_pba_list()]
         if results:
             # `self.command` is empty here
             self.pba_data.append(PostBreachData(self.name, self.command, results))
             return self.pba_data
 
-    def clear_command_history_PBA_list(self):
+    def clear_command_history_pba_list(self):
         return self.CommandHistoryPBAGenerator().get_clear_command_history_pbas()
 
     class CommandHistoryPBAGenerator:
