@@ -83,7 +83,6 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
         self._default_server = self._opts.server
-        # TODO used in propogation phase
         self._monkey_inbound_tunnel = None
         self.telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
