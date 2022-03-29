@@ -5,6 +5,8 @@ from typing import Iterable
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
+from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 
 logger = logging.getLogger(__name__)
@@ -34,9 +36,12 @@ class PBA:
             exec_funct = self._execute_default
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
-                T1064Telem(
-                    ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action."
-                ).send()
+                self.telemetry_messenger.send_telemetry(
+                    T1064Telem(
+                        ScanStatus.USED,
+                        f"Scripts were used to execute {self.name} post breach action.",
+                    )
+                )
             self.pba_data.append(PostBreachData(self.name, self.command, result))
             return self.pba_data
         else:

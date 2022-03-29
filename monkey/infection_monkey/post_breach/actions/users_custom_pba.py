@@ -65,8 +65,7 @@ class UsersPBA(PBA):
                 return True
         return False
 
-    @staticmethod
-    def download_pba_file(dst_dir, filename):
+    def download_pba_file(self, dst_dir, filename):
         """
         Handles post breach action file download
         :param dst_dir: Destination directory
@@ -84,12 +83,14 @@ class UsersPBA(PBA):
         if not status:
             status = ScanStatus.USED
 
-        T1105Telem(
-            status,
-            WormConfiguration.current_server.split(":")[0],
-            get_interface_to_target(WormConfiguration.current_server.split(":")[0]),
-            filename,
-        ).send()
+        self._telemetry_messenger.send_telemetry(
+            T1105Telem(
+                status,
+                WormConfiguration.current_server.split(":")[0],
+                get_interface_to_target(WormConfiguration.current_server.split(":")[0]),
+                filename,
+            )
+        )
 
         if status == ScanStatus.SCANNED:
             return False
