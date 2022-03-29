@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from infection_monkey.post_breach.actions.users_custom_pba import UsersPBA
@@ -43,7 +45,7 @@ def mock_UsersPBA_linux_custom_file_and_cmd(set_os_linux, fake_monkey_dir_path, 
         "infection_monkey.config.WormConfiguration.PBA_linux_filename",
         CUSTOM_LINUX_FILENAME,
     )
-    return UsersPBA()
+    return UsersPBA(MagicMock())
 
 
 def test_command_linux_custom_file_and_cmd(
@@ -63,7 +65,7 @@ def mock_UsersPBA_windows_custom_file_and_cmd(set_os_windows, fake_monkey_dir_pa
         "infection_monkey.config.WormConfiguration.PBA_windows_filename",
         CUSTOM_WINDOWS_FILENAME,
     )
-    return UsersPBA()
+    return UsersPBA(MagicMock())
 
 
 def test_command_windows_custom_file_and_cmd(
@@ -80,7 +82,7 @@ def mock_UsersPBA_linux_custom_file(set_os_linux, fake_monkey_dir_path, monkeypa
         "infection_monkey.config.WormConfiguration.PBA_linux_filename",
         CUSTOM_LINUX_FILENAME,
     )
-    return UsersPBA()
+    return UsersPBA(MagicMock())
 
 
 def test_command_linux_custom_file(mock_UsersPBA_linux_custom_file):
@@ -95,7 +97,7 @@ def mock_UsersPBA_windows_custom_file(set_os_windows, fake_monkey_dir_path, monk
         "infection_monkey.config.WormConfiguration.PBA_windows_filename",
         CUSTOM_WINDOWS_FILENAME,
     )
-    return UsersPBA()
+    return UsersPBA(MagicMock())
 
 
 def test_command_windows_custom_file(mock_UsersPBA_windows_custom_file):
@@ -110,7 +112,7 @@ def mock_UsersPBA_linux_custom_cmd(set_os_linux, fake_monkey_dir_path, monkeypat
         CUSTOM_LINUX_CMD,
     )
     monkeypatch.setattr("infection_monkey.config.WormConfiguration.PBA_linux_filename", None)
-    return UsersPBA()
+    return UsersPBA(MagicMock())
 
 
 def test_command_linux_custom_cmd(mock_UsersPBA_linux_custom_cmd):
@@ -125,7 +127,7 @@ def mock_UsersPBA_windows_custom_cmd(set_os_windows, fake_monkey_dir_path, monke
         CUSTOM_WINDOWS_CMD,
     )
     monkeypatch.setattr("infection_monkey.config.WormConfiguration.PBA_windows_filename", None)
-    return UsersPBA()
+    return UsersPBA(MagicMock())
 
 
 def test_command_windows_custom_cmd(mock_UsersPBA_windows_custom_cmd):
