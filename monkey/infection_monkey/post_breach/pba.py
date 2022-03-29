@@ -1,9 +1,10 @@
 import logging
 import subprocess
+from typing import Iterable
 
 from common.utils.attack_utils import ScanStatus
+from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.environment import is_windows_os
 
 logger = logging.getLogger(__name__)
@@ -23,8 +24,9 @@ class PBA:
         """
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
+        self.pba_data = []
 
-    def run(self):
+    def run(self) -> Iterable[PostBreachData]:
         """
         Runs post breach action command
         """
@@ -35,7 +37,8 @@ class PBA:
                 T1064Telem(
                     ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action."
                 ).send()
-            PostBreachTelem(self, result).send()
+            self.pba_data.append(PostBreachData(self.name, self.command, result))
+            return self.pba_data
         else:
             logger.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
 

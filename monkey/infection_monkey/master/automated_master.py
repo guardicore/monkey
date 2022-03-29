@@ -198,8 +198,14 @@ class AutomatedMaster(IMaster):
         name = pba[0]
         options = pba[1]
 
-        result = self._puppet.run_pba(name, options)
-        self._telemetry_messenger.send_telemetry(PostBreachTelem(result))
+        # TEMPORARY; TO AVOID ERRORS SINCE THIS ISN'T IMPLEMENTED YET
+        if name == "Custom":
+            return
+
+        for pba_data in self._puppet.run_pba(name, options):
+            self._telemetry_messenger.send_telemetry(
+                PostBreachTelem(pba_data.display_name, pba_data.command, pba_data.result)
+            )
 
     def _can_propagate(self) -> bool:
         return True

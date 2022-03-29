@@ -23,3 +23,4 @@ class ScheduleJobs(PBA):
     def run(self):
         super(ScheduleJobs, self).run()
         remove_scheduled_jobs()
+        return self.pba_data
