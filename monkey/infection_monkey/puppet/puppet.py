@@ -37,7 +37,8 @@ class Puppet(IPuppet):
         return credential_collector.collect_credentials(options)
 
     def run_pba(self, name: str, options: Dict) -> Iterable[PostBreachData]:
-        return self._mock_puppet.run_pba(name, options)
+        pba = self._plugin_registry.get_plugin(name, PluginType.POST_BREACH_ACTION)
+        return pba.run(options)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
         return network_scanning.ping(host, timeout)

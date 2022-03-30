@@ -1,3 +1,5 @@
+from typing import Dict
+
 from common.common_consts.post_breach_consts import POST_BREACH_JOB_SCHEDULING
 from infection_monkey.post_breach.job_scheduling.job_scheduling import (
     get_commands_to_schedule_jobs,
@@ -22,7 +24,7 @@ class ScheduleJobs(PBA):
             windows_cmd=windows_cmds,
         )
 
-    def run(self):
-        super(ScheduleJobs, self).run()
+    def run(self, options: Dict):
+        super(ScheduleJobs, self).run(options)
         remove_scheduled_jobs()
         return self.pba_data

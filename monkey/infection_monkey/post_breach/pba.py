@@ -1,6 +1,6 @@
 import logging
 import subprocess
-from typing import Iterable
+from typing import Dict, Iterable
 
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.i_puppet.i_puppet import PostBreachData
@@ -30,7 +30,7 @@ class PBA:
         self.pba_data = []
         self.telemetry_messenger = telemetry_messenger
 
-    def run(self) -> Iterable[PostBreachData]:
+    def run(self, options: Dict) -> Iterable[PostBreachData]:
         """
         Runs post breach action command
         """
@@ -45,9 +45,10 @@ class PBA:
                     )
                 )
             self.pba_data.append(PostBreachData(self.name, self.command, result))
-            return self.pba_data
         else:
             logger.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
+
+        return self.pba_data
 
     def is_script(self):
         """

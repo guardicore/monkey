@@ -1,4 +1,5 @@
 import subprocess
+from typing import Dict
 
 from common.common_consts.post_breach_consts import POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
 from infection_monkey.i_puppet.i_puppet import PostBreachData
@@ -19,7 +20,7 @@ class ModifyShellStartupFiles(PBA):
     def __init__(self, telemetry_messenger: ITelemetryMessenger):
         super().__init__(telemetry_messenger, name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION)
 
-    def run(self):
+    def run(self, options: Dict):
         results = [pba.run() for pba in self.modify_shell_startup_PBA_list()]
         if not results:
             results = [
@@ -63,6 +64,7 @@ class ModifyShellStartupFiles(PBA):
         class ModifyShellStartupFile(PBA):
             def __init__(self, linux_cmds, windows_cmds):
                 super().__init__(
+                    telemetry_messenger=None,
                     name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
                     linux_cmd=linux_cmds,
                     windows_cmd=windows_cmds,
