@@ -5,10 +5,7 @@ export default function parsePbaResults(results) {
 
 const SHELL_STARTUP_NAME = 'Modify shell startup file';
 const CMD_HISTORY_NAME = 'Clear command history';
-// TODO: Remove line 10 and un-comment line 11 after the TODO in `_run_pba()` in
-//       `automated_master.py` is resolved.
-const PROCESS_LIST_COLLECTION = 'ProcessListCollection';
-// const PROCESS_LIST_COLLECTION = 'Process list collection';
+const PROCESS_LIST_COLLECTION = 'Collect running processes';
 
 const multipleResultsPbas = [SHELL_STARTUP_NAME, CMD_HISTORY_NAME]
 
@@ -53,7 +50,7 @@ function aggregateMultipleResultsPba(results) {
   for (let i = 0; i < results.length; i++) {
     if (multipleResultsPbas.includes(results[i].name))
       aggregateResults(results[i]);
-    if (results[i].name === PROCESS_LIST_COLLECTION)
+    if ((results[i].name === PROCESS_LIST_COLLECTION) && (typeof results[i].result[0] !== "string"))
       modifyProcessListCollectionResult(results[i].result);
   }
 
