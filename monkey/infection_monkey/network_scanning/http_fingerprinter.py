@@ -1,8 +1,8 @@
 import logging
 from contextlib import closing
-from typing import Dict, Iterable, Optional, Set, Tuple, Any
+from typing import Any, Dict, Iterable, Optional, Set, Tuple
 
-from requests import head, Response
+from requests import head
 from requests.exceptions import ConnectionError, Timeout
 
 from infection_monkey.i_puppet import (
