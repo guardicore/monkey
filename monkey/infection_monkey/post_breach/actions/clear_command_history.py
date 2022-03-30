@@ -46,7 +46,11 @@ class ClearCommandHistory(PBA):
 
         class ClearCommandHistoryFile(PBA):
             def __init__(self, linux_cmds):
-                super().__init__(name=POST_BREACH_CLEAR_CMD_HISTORY, linux_cmd=linux_cmds)
+                super().__init__(
+                    self.telemetry_messenger,
+                    name=POST_BREACH_CLEAR_CMD_HISTORY,
+                    linux_cmd=linux_cmds,
+                )
 
             def run(self):
                 if self.command:

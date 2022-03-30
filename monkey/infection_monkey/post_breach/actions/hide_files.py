@@ -28,6 +28,7 @@ class HiddenFiles(PBA):
         for function_to_get_commands in HIDDEN_FSO_CREATION_COMMANDS:
             linux_cmds, windows_cmds = function_to_get_commands()
             super(HiddenFiles, self).__init__(
+                self.telemetry_messenger,
                 name=POST_BREACH_HIDDEN_FILES,
                 linux_cmd=" ".join(linux_cmds),
                 windows_cmd=windows_cmds,
