@@ -457,6 +457,8 @@ class ConfigService:
             "linux_filename": config.get(flat_linux_filename_field, ""),
             "windows_command": config.get(flat_windows_command_field, ""),
             "windows_filename": config.get(flat_windows_filename_field, ""),
+            # Current server is used for attack telemetry
+            "current_server": config.get("current_server"),
         }
 
         config["post_breach_actions"] = formatted_pbas_config

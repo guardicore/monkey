@@ -4,7 +4,6 @@ import time
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
 
 from infection_monkey.credential_store import ICredentialsStore
-from common.common_consts.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -155,7 +154,7 @@ class AutomatedMaster(IMaster):
             ),
         )
         pba_thread = create_daemon_thread(
-            target=self._run_PBAs,
+            target=self._run_pbas,
             name="PBAThread",
             args=(config["post_breach_actions"].items(), self._run_pba, config["custom_pbas"]),
         )
@@ -197,10 +196,6 @@ class AutomatedMaster(IMaster):
         name = pba[0]
         options = pba[1]
 
-        # TEMPORARY; TO AVOID ERRORS SINCE THIS ISN'T IMPLEMENTED YET
-        if name == "Custom":
-            return
-
         for pba_data in self._puppet.run_pba(name, options):
             self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
 
@@ -213,14 +208,12 @@ class AutomatedMaster(IMaster):
 
         self._puppet.run_payload(name, options, self._stop)
 
-    def _run_PBAs(
+    def _run_pbas(
         self, plugins: Iterable[Any], callback: Callable[[Any], None], custom_pba_options: Mapping
     ):
         self._run_plugins(plugins, "post-breach action", callback)
 
-        command, result = self._puppet.run_custom_pba(custom_pba_options)
-        telem = PostBreachTelem(POST_BREACH_FILE_EXECUTION, command, result)
-        self._telemetry_messenger.send_telemetry(telem)
+        self._run_plugins([("CustomPBA", custom_pba_options)], "post-breach action", callback)
 
     def _run_plugins(
         self, plugins: Iterable[Any], plugin_type: str, callback: Callable[[Any], None]

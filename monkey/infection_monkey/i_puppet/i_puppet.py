@@ -3,7 +3,7 @@ import threading
 from collections import namedtuple
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Iterable, List, Mapping, Sequence
+from typing import Dict, Iterable, List, Mapping, Sequence
 
 from infection_monkey.model import VictimHost
 
@@ -65,14 +65,6 @@ class IPuppet(metaclass=abc.ABCMeta):
         :param str name: The name of the post-breach action to run
         :param Dict options: A dictionary containing options that modify the behavior of the PBA
         :rtype: Iterable[PostBreachData]
-        """
-
-    @abc.abstractmethod
-    def run_custom_pba(self, options: Mapping[str, Any]) -> PostBreachData:
-        """
-        Runs a user configured post breach action (PBA)
-        :param Dict options: A dictionary containing options that modify the behavior of the PBA
-        :rtype: PostBreachData
         """
 
     @abc.abstractmethod

@@ -1,11 +1,11 @@
 import logging
 import os
-from typing import Any, Mapping
+from typing import Dict, Iterable
 
 from common.common_consts.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from common.utils.attack_utils import ScanStatus
-from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.i_puppet import PostBreachData
 from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
@@ -25,9 +25,17 @@ class UsersPBA(PBA):
     Defines user's configured post breach action.
     """
 
-    def __init__(self, options: Mapping[str, Any], telemetry_messenger: ITelemetryMessenger):
+    def __init__(self, telemetry_messenger: ITelemetryMessenger):
         super(UsersPBA, self).__init__(telemetry_messenger, POST_BREACH_FILE_EXECUTION)
         self.filename = ""
+
+    def run(self, options: Dict) -> Iterable[PostBreachData]:
+        self._set_options(options)
+        return super().run(options)
+
+    def _set_options(self, options: Dict):
+        # Required for attack telemetry
+        self.current_server = options["current_server"]
 
         if is_windows_os():
             # Add windows commands to PBA's
@@ -54,7 +62,7 @@ class UsersPBA(PBA):
 
     def _execute_default(self):
         if self.filename:
-            UsersPBA.download_pba_file(get_monkey_dir_path(), self.filename)
+            self.download_pba_file(get_monkey_dir_path(), self.filename)
         return super(UsersPBA, self)._execute_default()
 
     @staticmethod
@@ -85,11 +93,11 @@ class UsersPBA(PBA):
         if not status:
             status = ScanStatus.USED
 
-        self._telemetry_messenger.send_telemetry(
+        self.telemetry_messenger.send_telemetry(
             T1105Telem(
                 status,
-                WormConfiguration.current_server.split(":")[0],
-                get_interface_to_target(WormConfiguration.current_server.split(":")[0]),
+                self.current_server.split(":")[0],
+                get_interface_to_target(self.current_server.split(":")[0]),
                 filename,
             )
         )

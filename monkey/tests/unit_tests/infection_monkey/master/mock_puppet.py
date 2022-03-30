@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Any, Dict, Iterable, List, Mapping, Sequence
+from typing import Dict, Iterable, List, Sequence
 
 from infection_monkey.credential_collectors import LMHash, Password, SSHKeypair, Username
 from infection_monkey.i_puppet import (
@@ -56,9 +56,6 @@ class MockPuppet(IPuppet):
             return [PostBreachData(name, "pba command 1", ["pba result 1", True])]
         else:
             return [PostBreachData(name, "pba command 2", ["pba result 2", False])]
-
-    def run_custom_pba(self, options: Mapping[str, Any]) -> PostBreachData:
-        pass
 
     def ping(self, host: str, timeout: float = 1) -> PingScanData:
         logger.debug(f"run_ping({host}, {timeout})")
