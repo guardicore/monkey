@@ -16,7 +16,6 @@ from infection_monkey.i_puppet import (
 )
 from infection_monkey.model import VictimHost
 
-from .mock_puppet import MockPuppet
 from .plugin_registry import PluginRegistry
 
 logger = logging.getLogger()
@@ -24,7 +23,6 @@ logger = logging.getLogger()
 
 class Puppet(IPuppet):
     def __init__(self) -> None:
-        self._mock_puppet = MockPuppet()
         self._plugin_registry = PluginRegistry()
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
