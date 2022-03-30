@@ -4,8 +4,7 @@ from datetime import datetime
 import mongoengine
 import pytest
 
-from monkey_island.cc.models.telemetries import get_telemetry_by_query, save_telemetry
-from monkey_island.cc.models.telemetries.telemetry import Telemetry
+from monkey_island.cc.models.telemetries import save_telemetry
 
 MOCK_CREDENTIALS = {
     "M0nk3y": {

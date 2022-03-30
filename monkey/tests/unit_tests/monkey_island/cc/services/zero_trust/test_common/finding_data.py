@@ -2,11 +2,7 @@ from tests.unit_tests.monkey_island.cc.services.zero_trust.test_common.monkey_fi
     get_monkey_details_dto,
 )
 
-from common.common_consts.zero_trust_consts import (
-    STATUS_FAILED,
-    STATUS_PASSED,
-    TEST_ENDPOINT_SECURITY_EXISTS,
-)
+from common.common_consts.zero_trust_consts import STATUS_PASSED, TEST_ENDPOINT_SECURITY_EXISTS
 from monkey_island.cc.models.zero_trust.finding import Finding
 from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 
