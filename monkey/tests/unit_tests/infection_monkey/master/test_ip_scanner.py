@@ -3,11 +3,11 @@ from typing import Set
 from unittest.mock import MagicMock
 
 import pytest
+from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 
 from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
-from infection_monkey.puppet.mock_puppet import MockPuppet
 
 WINDOWS_OS = "windows"
 LINUX_OS = "linux"
@@ -34,8 +34,7 @@ def scan_config():
             {"name": "HTTPFinger", "options": {}},
             {"name": "SMBFinger", "options": {}},
             {"name": "SSHFinger", "options": {}},
-        ]
-
+        ],
     }
 
 
