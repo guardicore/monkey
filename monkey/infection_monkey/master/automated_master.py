@@ -9,13 +9,13 @@ from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network import NetworkInterface
+from infection_monkey.post_breach.custom_pba import CustomPBA
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 from infection_monkey.utils.timer import Timer
 
-from ..post_breach.custom_pba.custom_pba import CustomPBA
 from . import Exploiter, IPScanner, Propagator
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
