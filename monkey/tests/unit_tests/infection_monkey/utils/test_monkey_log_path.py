@@ -2,6 +2,7 @@ import pytest
 
 from infection_monkey.utils.monkey_log_path import get_agent_log_path, get_dropper_log_path
 
+
 def delete_log_file(log_path):
     if log_path.is_file():
         log_path.unlink()
