@@ -171,15 +171,3 @@ _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)
 architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_repository.py:25)
-
-# TODO: Reevaluate these as the agent refactor progresses
-run_sys_info_collector
-ping
-scan_tcp_port
-fingerprint
-interrupt
-MockPuppet
-ControlChannel
-should_agent_stop
-get_credentials_for_propagation
-register_signal_handlers
