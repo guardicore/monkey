@@ -65,16 +65,6 @@ class CustomPBA(PBA):
             self.download_pba_file(get_monkey_dir_path(), self.filename)
         return super(CustomPBA, self)._execute_default()
 
-    @staticmethod
-    def should_run(options):
-        if not is_windows_os():
-            if options["linux_filename"] or options["linux_command"]:
-                return True
-        else:
-            if options["windows_filename"] or options["windows_command"]:
-                return True
-        return False
-
     def download_pba_file(self, dst_dir, filename):
         """
         Handles post breach action file download
