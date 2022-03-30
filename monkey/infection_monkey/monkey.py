@@ -187,10 +187,6 @@ class InfectionMonkey:
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
-        telemetry_messenger = ExploitInterceptingTelemetryMessenger(
-            self._telemetry_messenger, self._monkey_inbound_tunnel
-        )
-
         telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
             ExploitInterceptingTelemetryMessenger(
                 self._telemetry_messenger, self._monkey_inbound_tunnel
