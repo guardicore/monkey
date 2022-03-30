@@ -15,6 +15,7 @@ from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 from infection_monkey.utils.timer import Timer
 
+from ..post_breach.custom_pba.custom_pba import CustomPBA
 from . import Exploiter, IPScanner, Propagator
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
@@ -213,7 +214,8 @@ class AutomatedMaster(IMaster):
     ):
         self._run_plugins(plugins, "post-breach action", callback)
 
-        self._run_plugins([("CustomPBA", custom_pba_options)], "post-breach action", callback)
+        if CustomPBA.should_run(custom_pba_options):
+            self._run_plugins([("CustomPBA", custom_pba_options)], "post-breach action", callback)
 
     def _run_plugins(
         self, plugins: Iterable[Any], plugin_type: str, callback: Callable[[Any], None]
