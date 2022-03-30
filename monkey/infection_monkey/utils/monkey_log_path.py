@@ -1,3 +1,4 @@
+import os
 import tempfile
 import time
 from functools import lru_cache, partial
@@ -11,7 +12,8 @@ def _get_log_path(monkey_arg: str) -> Path:
     prefix = f"infection-monkey-{monkey_arg}-{timestamp}-"
     suffix = ".log"
 
-    _, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
+    handle, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
+    os.close(handle)
 
     return Path(monkey_log_path)
 
