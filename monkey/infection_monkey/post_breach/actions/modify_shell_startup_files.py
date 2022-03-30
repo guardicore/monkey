@@ -64,7 +64,7 @@ class ModifyShellStartupFiles(PBA):
         class ModifyShellStartupFile(PBA):
             def __init__(self, linux_cmds, windows_cmds):
                 super().__init__(
-                    self.telemetry_messenger,
+                    telemetry_messenger=None,
                     name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION,
                     linux_cmd=linux_cmds,
                     windows_cmd=windows_cmds,
