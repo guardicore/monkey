@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
         creds = pypykatz_handler.get_windows_creds()
