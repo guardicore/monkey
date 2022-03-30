@@ -149,6 +149,7 @@ Report.meta
 LDAPServerFactory.buildProtocol
 get_file_sha256_hash
 strict_slashes  # unused attribute (monkey/monkey_island/cc/app.py:96)
+post_breach_actions  # unused variable (monkey\infection_monkey\config.py:95)
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
 WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
@@ -170,16 +171,3 @@ _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)
 architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_repository.py:25)
-
-# TODO: Reevaluate these as the agent refactor progresses
-run_sys_info_collector
-ping
-scan_tcp_port
-fingerprint
-interrupt
-MockPuppet
-ControlChannel
-should_agent_stop
-get_credentials_for_propagation
-MockMaster
-register_signal_handlers
