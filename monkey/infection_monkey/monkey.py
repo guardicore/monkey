@@ -51,7 +51,7 @@ from infection_monkey.post_breach.actions.schedule_jobs import ScheduleJobs
 from infection_monkey.post_breach.actions.timestomping import Timestomping
 from infection_monkey.post_breach.actions.use_signed_scripts import SignedScriptProxyExecution
 from infection_monkey.post_breach.actions.use_trap_command import TrapCommand
-from infection_monkey.post_breach.custom_pba.users_custom_pba import UsersPBA
+from infection_monkey.post_breach.custom_pba.custom_pba import CustomPBA
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
@@ -317,7 +317,7 @@ class InfectionMonkey:
             PluginType.POST_BREACH_ACTION,
         )
         puppet.load_plugin(
-            "CustomPBA", UsersPBA(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
+            "CustomPBA", CustomPBA(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
         )
 
         puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)

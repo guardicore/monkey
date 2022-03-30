@@ -20,13 +20,13 @@ DIR_CHANGE_WINDOWS = "cd %s & "
 DIR_CHANGE_LINUX = "cd %s ; "
 
 
-class UsersPBA(PBA):
+class CustomPBA(PBA):
     """
     Defines user's configured post breach action.
     """
 
     def __init__(self, telemetry_messenger: ITelemetryMessenger):
-        super(UsersPBA, self).__init__(telemetry_messenger, POST_BREACH_FILE_EXECUTION)
+        super(CustomPBA, self).__init__(telemetry_messenger, POST_BREACH_FILE_EXECUTION)
         self.filename = ""
 
     def run(self, options: Dict) -> Iterable[PostBreachData]:
@@ -63,7 +63,7 @@ class UsersPBA(PBA):
     def _execute_default(self):
         if self.filename:
             self.download_pba_file(get_monkey_dir_path(), self.filename)
-        return super(UsersPBA, self)._execute_default()
+        return super(CustomPBA, self)._execute_default()
 
     @staticmethod
     def should_run(options):
