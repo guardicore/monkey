@@ -1,4 +1,5 @@
 import logging
+from typing import Dict
 
 import psutil
 
@@ -21,7 +22,7 @@ class ProcessListCollection(PBA):
     def __init__(self, telemetry_messenger: ITelemetryMessenger):
         super().__init__(telemetry_messenger, POST_BREACH_PROCESS_LIST_COLLECTION)
 
-    def run(self):
+    def run(self, options: Dict):
         """
         Collects process information from the host.
         Currently lists process name, ID, parent ID, command line

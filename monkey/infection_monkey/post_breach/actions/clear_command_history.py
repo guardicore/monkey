@@ -1,4 +1,5 @@
 import subprocess
+from typing import Dict
 
 from common.common_consts.post_breach_consts import POST_BREACH_CLEAR_CMD_HISTORY
 from infection_monkey.i_puppet.i_puppet import PostBreachData
@@ -13,7 +14,7 @@ class ClearCommandHistory(PBA):
     def __init__(self, telemetry_messenger: ITelemetryMessenger):
         super().__init__(telemetry_messenger, name=POST_BREACH_CLEAR_CMD_HISTORY)
 
-    def run(self):
+    def run(self, options: Dict):
         results = [pba.run() for pba in self.clear_command_history_pba_list()]
         if results:
             # `self.command` is empty here

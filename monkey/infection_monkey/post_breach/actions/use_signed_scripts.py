@@ -1,5 +1,6 @@
 import logging
 import subprocess
+from typing import Dict
 
 from common.common_consts.post_breach_consts import POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC
 from infection_monkey.post_breach.pba import PBA
@@ -22,14 +23,14 @@ class SignedScriptProxyExecution(PBA):
             windows_cmd=" ".join(windows_cmds),
         )
 
-    def run(self):
+    def run(self, options: Dict):
         original_comspec = ""
         try:
             if is_windows_os():
                 original_comspec = subprocess.check_output(  # noqa: DUO116
                     "if defined COMSPEC echo %COMSPEC%", shell=True
                 ).decode()
-            super().run()
+            super().run(options)
             return self.pba_data
         except Exception as e:
             logger.warning(
