@@ -66,12 +66,6 @@ def test_format_config_for_agent__pbas(flat_monkey_config):
         "ScheduleJobs": {},
         "Timestomping": {},
         "AccountDiscovery": {},
-        "Custom": {
-            "linux_command": "bash test.sh",
-            "windows_command": "powershell test.ps1",
-            "linux_filename": "test.sh",
-            "windows_filename": "test.ps1",
-        },
     }
     ConfigService.format_flat_config_for_agent(flat_monkey_config)
 
@@ -82,6 +76,19 @@ def test_format_config_for_agent__pbas(flat_monkey_config):
     assert "PBA_linux_filename" not in flat_monkey_config
     assert "custom_PBA_windows_cmd" not in flat_monkey_config
     assert "PBA_windows_filename" not in flat_monkey_config
+
+
+def test_format_config_for_custom_pbas(flat_monkey_config):
+    custom_config = {
+        "linux_command": "bash test.sh",
+        "windows_command": "powershell test.ps1",
+        "linux_filename": "test.sh",
+        "windows_filename": "test.ps1",
+        "current_server": "10.197.94.72:5000",
+    }
+    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+
+    assert flat_monkey_config["custom_pbas"] == custom_config
 
 
 def test_get_config_propagation_credentials_from_flat_config(flat_monkey_config):
