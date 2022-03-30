@@ -1,7 +1,8 @@
 import subprocess
-from typing import Dict
+from typing import Dict, Iterable, Tuple
 
 from common.common_consts.post_breach_consts import POST_BREACH_CLEAR_CMD_HISTORY
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.clear_command_history.clear_command_history import (
     get_commands_to_clear_command_history,
@@ -14,7 +15,7 @@ class ClearCommandHistory(PBA):
     def __init__(self, telemetry_messenger: ITelemetryMessenger):
         super().__init__(telemetry_messenger, name=POST_BREACH_CLEAR_CMD_HISTORY)
 
-    def run(self, options: Dict):
+    def run(self, options: Dict) -> Iterable[PostBreachData]:
         results = [pba.run() for pba in self.clear_command_history_pba_list()]
         if results:
             # `self.command` is empty here
@@ -22,11 +23,11 @@ class ClearCommandHistory(PBA):
 
         return self.pba_data
 
-    def clear_command_history_pba_list(self):
+    def clear_command_history_pba_list(self) -> Iterable[PBA]:
         return self.CommandHistoryPBAGenerator().get_clear_command_history_pbas()
 
     class CommandHistoryPBAGenerator:
-        def get_clear_command_history_pbas(self):
+        def get_clear_command_history_pbas(self) -> Iterable[PBA]:
             (
                 cmds_for_linux,
                 command_history_files_for_linux,
@@ -52,13 +53,18 @@ class ClearCommandHistory(PBA):
                     linux_cmd=linux_cmds,
                 )
 
-            def run(self):
+            def run(self) -> Tuple[str, bool]:
                 if self.command:
                     try:
                         output = subprocess.check_output(  # noqa: DUO116
-                            self.command, stderr=subprocess.STDOUT, shell=True
+                            self.command,
+                            stderr=subprocess.STDOUT,
+                            shell=True,
+                            timeout=LONG_REQUEST_TIMEOUT,
                         ).decode()
                         return output, True
-                    except subprocess.CalledProcessError as e:
+                    except subprocess.CalledProcessError as err:
                         # Return error output of the command
-                        return e.output.decode(), False
+                        return err.output.decode(), False
+                    except subprocess.TimeoutExpired as err:
+                        return str(err), False
