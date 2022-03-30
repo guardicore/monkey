@@ -18,7 +18,7 @@
             "type": "snippet",
             "path": "monkey/infection_monkey/post_breach/actions/schedule_jobs.py",
             "comments": [],
-            "firstLineNumber": 13,
+            "firstLineNumber": 15,
             "lines": [
                 "     \"\"\"",
                 " ",
@@ -34,8 +34,8 @@
                 "*            windows_cmd=windows_cmds,",
                 "*        )",
                 "*",
-                "*    def run(self):",
-                "*        super(ScheduleJobs, self).run()",
+                "*    def run(self, options: Dict):",
+                "*        super(ScheduleJobs, self).run(options)",
                 "*        remove_scheduled_jobs()"
             ]
         },
@@ -49,7 +49,7 @@
     "meta": {
         "app_version": "0.6.6-2",
         "file_blobs": {
-            "monkey/infection_monkey/post_breach/actions/schedule_jobs.py": "8aeb0b42d69f7930afb4f4fb1962a65849e05934"
+            "monkey/infection_monkey/post_breach/actions/schedule_jobs.py": "4ab023e35fa4424f0c6583233f5b056c7b1cad51"
         }
     }
 }
