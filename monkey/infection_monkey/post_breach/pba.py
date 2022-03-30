@@ -45,9 +45,10 @@ class PBA:
                     )
                 )
             self.pba_data.append(PostBreachData(self.name, self.command, result))
-            return self.pba_data
         else:
             logger.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
+
+        return self.pba_data
 
     def is_script(self):
         """
