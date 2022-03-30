@@ -90,15 +90,6 @@ class Configuration(object):
     keep_tunnel_open_time = 60
 
     ###########################
-    # post breach actions
-    ###########################
-    post_breach_actions = []
-    custom_PBA_linux_cmd = ""
-    custom_PBA_windows_cmd = ""
-    PBA_linux_filename = None
-    PBA_windows_filename = None
-
-    ###########################
     # testing configuration
     ###########################
     export_monkey_telems = False
