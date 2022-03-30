@@ -28,10 +28,7 @@ def process_process_list_collection_telemetry(telemetry_json, current_monkey):
 
 POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
     POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER: process_communicate_as_backdoor_user_telemetry,
-    # TODO: Remove the line below and un-comment the next one after the TODO in `_run_pba()` in
-    #       `automated_master.py` is resolved.
-    "ProcessListCollection": process_process_list_collection_telemetry,
-    # POST_BREACH_PROCESS_LIST_COLLECTION: process_process_list_collection_telemetry,
+    POST_BREACH_PROCESS_LIST_COLLECTION: process_process_list_collection_telemetry,
 }
 
 
