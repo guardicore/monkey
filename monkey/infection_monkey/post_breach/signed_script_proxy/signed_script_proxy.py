@@ -1,5 +1,6 @@
 import subprocess
 
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.post_breach.signed_script_proxy.windows.signed_script_proxy import (
     get_windows_commands_to_delete_temp_comspec,
     get_windows_commands_to_proxy_execution_using_signed_script,
@@ -16,6 +17,10 @@ def get_commands_to_proxy_execution_using_signed_script():
 def cleanup_changes(original_comspec):
     if is_windows_os():
         subprocess.run(  # noqa: DUO116
-            get_windows_commands_to_reset_comspec(original_comspec), shell=True
+            get_windows_commands_to_reset_comspec(original_comspec),
+            shell=True,
+            timeout=SHORT_REQUEST_TIMEOUT,
         )
-        subprocess.run(get_windows_commands_to_delete_temp_comspec(), shell=True)  # noqa: DUO116
+        subprocess.run(  # noqa: DUO116
+            get_windows_commands_to_delete_temp_comspec(), shell=True, timeout=SHORT_REQUEST_TIMEOUT
+        )
