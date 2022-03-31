@@ -1,6 +1,7 @@
 import subprocess
 from pathlib import Path
 
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.utils.environment import is_windows_os
 
 MODIFY_POWERSHELL_STARTUP_SCRIPT = Path(__file__).parent / "modify_powershell_startup_file.ps1"
@@ -16,7 +17,9 @@ def get_windows_commands_to_modify_shell_startup_files():
 
     # get list of usernames
     USERS = (
-        subprocess.check_output("dir C:\\Users /b", shell=True)  # noqa: DUO116
+        subprocess.check_output(  # noqa: DUO116
+            "dir C:\\Users /b", shell=True, timeout=MEDIUM_REQUEST_TIMEOUT
+        )
         .decode()
         .split("\r\n")[:-1]
     )

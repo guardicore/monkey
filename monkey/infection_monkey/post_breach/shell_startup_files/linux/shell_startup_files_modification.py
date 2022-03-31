@@ -1,5 +1,6 @@
 import subprocess
 
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.utils.environment import is_windows_os
 
 
@@ -12,7 +13,9 @@ def get_linux_commands_to_modify_shell_startup_files():
     # get list of usernames
     USERS = (
         subprocess.check_output(  # noqa: DUO116
-            "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1", shell=True
+            "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1",
+            shell=True,
+            timeout=MEDIUM_REQUEST_TIMEOUT,
         )
         .decode()
         .split("\n")[:-1]
