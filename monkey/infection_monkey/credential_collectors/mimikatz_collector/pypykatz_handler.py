@@ -29,7 +29,11 @@ def get_windows_creds() -> List[WindowsCredentials]:
         logger.debug("Skipping pypykatz because the operating system is not Windows")
         return []
 
-    pypy_handle = pypykatz.go_live()
+    try:
+        pypy_handle = pypykatz.go_live()
+    except Exception as err:
+        logger.info(f"Credential gathering with pypykatz failed: {err}")
+        return []
     logon_data = pypy_handle.to_dict()
     windows_creds = _parse_pypykatz_results(logon_data)
     return windows_creds
