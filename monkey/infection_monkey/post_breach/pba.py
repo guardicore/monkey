@@ -2,6 +2,7 @@ import logging
 import subprocess
 from typing import Dict, Iterable
 
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
@@ -18,7 +19,7 @@ class PBA:
     """
 
     def __init__(
-        self, telemetry_messenger: ITelemetryMessenger, name="unknown", linux_cmd="", windows_cmd=""
+        self, telemetry_messenger: ITelemetryMessenger, name="unknown", linux_cmd="", windows_cmd="", timeout: int = LONG_REQUEST_TIMEOUT
     ):
         """
         :param name: Name of post breach action.
@@ -29,6 +30,7 @@ class PBA:
         self.name = name
         self.pba_data = []
         self.telemetry_messenger = telemetry_messenger
+        self.timeout = timeout
 
     def run(self, options: Dict) -> Iterable[PostBreachData]:
         """
@@ -73,7 +75,7 @@ class PBA:
         """
         try:
             output = subprocess.check_output(  # noqa: DUO116
-                self.command, stderr=subprocess.STDOUT, shell=True
+                self.command, stderr=subprocess.STDOUT, shell=True, timeout=self.timeout
             ).decode()
             return output, True
         except subprocess.CalledProcessError as e:
