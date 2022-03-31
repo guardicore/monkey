@@ -32,7 +32,6 @@ class MockPuppet(IPuppet):
         logger.debug(f"run_credential_collector({name})")
 
         if name == "SSHCollector":
-            # TODO: Replace Passwords with SSHKeypair after it is implemented
             ssh_credentials = Credentials(
                 [Username("m0nk3y")],
                 [
@@ -135,7 +134,6 @@ class MockPuppet(IPuppet):
 
         return empty_fingerprint_data
 
-    # TODO: host should be VictimHost, at the moment it can't because of circular dependency
     def exploit_host(
         self,
         name: str,
