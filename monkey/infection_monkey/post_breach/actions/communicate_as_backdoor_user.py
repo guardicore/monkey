@@ -75,20 +75,19 @@ class CommunicateAsBackdoorUser(PBA):
     @staticmethod
     def get_commandline_for_http_request(url, is_windows=is_windows_os()):
         if is_windows:
-            format_string = (
-                'powershell.exe -command "[Net.ServicePointManager]::SecurityProtocol = ['
-                "Net.SecurityProtocolType]::Tls12; "
-                'Invoke-WebRequest {url} -UseBasicParsing -method HEAD"'
+            return (
+                f'powershell.exe -command "[Net.ServicePointManager]::SecurityProtocol = ['
+                f"Net.SecurityProtocolType]::Tls12; "
+                f'Invoke-WebRequest {url} -UseBasicParsing -method HEAD"'
             )
         else:
             # if curl works, we're good.
             # If curl doesn't exist or fails and wget work, we're good.
             # And if both don't exist: we'll call it a win.
             if shutil.which("curl") is not None:
-                format_string = "curl {url} --head --max-time 10"
+                return f"curl {url} --head"
             else:
-                format_string = "wget -O/dev/null -q {url} --method=HEAD --timeout=10"
-        return format_string.format(url=url)
+                return f"wget -O/dev/null -q {url} --method=HEAD"
 
     @staticmethod
     def _get_result_for_telemetry(exit_status, commandline, username):
