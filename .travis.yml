@@ -80,7 +80,7 @@ script:
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
-- curl -L https://github.com/swimmio/SwimmReleases/releases/latest/download/packed-swimm-linux-cli --output swimm-cli
+- curl -L https://releases.swimm.io/ci/latest/packed-swimm-linux-cli --output swimm-cli
 - chmod u+x swimm-cli
 - ./swimm-cli --version
 - ./swimm-cli verify
