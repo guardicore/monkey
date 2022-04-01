@@ -1,3 +1,4 @@
+import math
 import subprocess
 from unittest.mock import MagicMock
 
@@ -172,4 +173,4 @@ def test_linux_timeout(assert_expected_timeout):
     timeout_flag = "-W"
     timeout = 1.42379
 
-    assert_expected_timeout(timeout_flag, timeout, str(timeout))
+    assert_expected_timeout(timeout_flag, timeout, str(math.ceil(timeout)))
