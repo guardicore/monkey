@@ -3,6 +3,7 @@ import subprocess
 from typing import Dict
 
 from common.common_consts.post_breach_consts import POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_TIMEOUT
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.signed_script_proxy.signed_script_proxy import (
     cleanup_changes,
@@ -21,6 +22,7 @@ class SignedScriptProxyExecution(PBA):
             telemetry_messenger,
             POST_BREACH_SIGNED_SCRIPT_PROXY_EXEC,
             windows_cmd=" ".join(windows_cmds),
+            timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
     def run(self, options: Dict):
@@ -28,7 +30,7 @@ class SignedScriptProxyExecution(PBA):
         try:
             if is_windows_os():
                 original_comspec = subprocess.check_output(  # noqa: DUO116
-                    "if defined COMSPEC echo %COMSPEC%", shell=True
+                    "if defined COMSPEC echo %COMSPEC%", shell=True, timeout=SHORT_REQUEST_TIMEOUT
                 ).decode()
             super().run(options)
             return self.pba_data
