@@ -80,4 +80,5 @@ def _build_ping_command(host: str, timeout: float):
     ping_count_flag = "-n" if "win32" == sys.platform else "-c"
     ping_timeout_flag = "-w" if "win32" == sys.platform else "-W"
 
-    return ["ping", ping_count_flag, "1", ping_timeout_flag, str(timeout), host]
+    # on older version of ping the timeout must be an integer, thus we use ceil
+    return ["ping", ping_count_flag, "1", ping_timeout_flag, str(math.ceil(timeout)), host]
