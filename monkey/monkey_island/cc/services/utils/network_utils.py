@@ -14,14 +14,13 @@ if sys.platform == "win32":
         local_hostname = socket.gethostname()
         return socket.gethostbyname_ex(local_hostname)[2]
 
-
 else:
     import fcntl
 
     def local_ips():
         result = []
         try:
-            is_64bits = sys.maxsize > 2 ** 32
+            is_64bits = sys.maxsize > 2**32
             struct_size = 40 if is_64bits else 32
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             max_possible = 8  # initial value

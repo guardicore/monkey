@@ -66,7 +66,6 @@ if is_windows_os():
     def get_routes():
         raise NotImplementedError()
 
-
 else:
     from fcntl import ioctl
 
