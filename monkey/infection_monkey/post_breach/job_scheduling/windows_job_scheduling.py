@@ -6,9 +6,9 @@ SCHEDULED_TASK_COMMAND = r"C:\windows\system32\cmd.exe"
 # /T1053.005.md
 
 
-def get_windows_commands_to_schedule_jobs():
+def get_windows_commands_to_schedule_jobs() -> str:
     return f"schtasks /Create /SC monthly /F /TN {SCHEDULED_TASK_NAME} /TR {SCHEDULED_TASK_COMMAND}"
 
 
-def get_windows_commands_to_remove_scheduled_jobs():
+def get_windows_commands_to_remove_scheduled_jobs() -> str:
     return f"schtasks /Delete /TN {SCHEDULED_TASK_NAME} /F > nul 2>&1"
