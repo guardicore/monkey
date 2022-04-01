@@ -53,7 +53,7 @@ class ReportMatrixComponent extends React.Component {
   }
 
   renderTechnique(technique) {
-    if (technique == null || typeof technique === undefined) {
+    if (technique == null || typeof technique === 'undefined') {
       return (<div/>)
     } else {
       return (
