@@ -84,6 +84,6 @@ class ModifyShellStartupFiles(PBA):
                         return output, True
                     except subprocess.CalledProcessError as err:
                         # Return error output of the command
-                        return err.output.decode(), False
+                        return str(err), False
                     except subprocess.TimeoutExpired as err:
-                        return err.output.decode(), False
+                        return str(err), False
