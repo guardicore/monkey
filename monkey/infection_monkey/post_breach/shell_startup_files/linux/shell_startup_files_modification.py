@@ -1,29 +1,37 @@
+import logging
 import subprocess
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.utils.environment import is_windows_os
+
+logger = logging.getLogger(__name__)
 
 
 def get_linux_commands_to_modify_shell_startup_files():
     if is_windows_os():
         return "", [], []
 
-    HOME_DIR = "/home/"
+    home_dir = "/home/"
+    command = "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1"
 
     # get list of usernames
-    USERS = (
-        subprocess.check_output(  # noqa: DUO116
-            "cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1",
-            shell=True,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
+    try:
+        users = (
+            subprocess.check_output(  # noqa: DUO116
+                command,
+                shell=True,
+                timeout=MEDIUM_REQUEST_TIMEOUT,
+            )
+            .decode()
+            .split("\n")[:-1]
         )
-        .decode()
-        .split("\n")[:-1]
-    )
+    except subprocess.TimeoutExpired:
+        logger.error(f"Command {command} timed out")
+        return "", [], []
 
     # get list of paths of different shell startup files with place for username
-    STARTUP_FILES = [
-        file_path.format(HOME_DIR)
+    startup_files = [
+        file_path.format(home_dir)
         for file_path in [
             "{0}{{0}}/.profile",  # bash, dash, ksh, sh
             "{0}{{0}}/.bashrc",  # bash
@@ -45,6 +53,6 @@ def get_linux_commands_to_modify_shell_startup_files():
             "tee -a {0} &&",  # append to file
             "sed -i '$d' {0}",  # remove last line of file (undo changes)
         ],
-        STARTUP_FILES,
-        USERS,
+        startup_files,
+        users,
     )

@@ -2,6 +2,7 @@ import subprocess
 from typing import Dict
 
 from common.common_consts.post_breach_consts import POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.shell_startup_files.shell_startup_files_modification import (
@@ -21,7 +22,7 @@ class ModifyShellStartupFiles(PBA):
         super().__init__(telemetry_messenger, name=POST_BREACH_SHELL_STARTUP_FILE_MODIFICATION)
 
     def run(self, options: Dict):
-        results = [pba.run() for pba in self.modify_shell_startup_PBA_list()]
+        results = [pba.run(options) for pba in self.modify_shell_startup_PBA_list()]
         if not results:
             results = [
                 (
@@ -70,14 +71,19 @@ class ModifyShellStartupFiles(PBA):
                     windows_cmd=windows_cmds,
                 )
 
-            def run(self):
+            def run(self, options):
                 if self.command:
                     try:
                         output = subprocess.check_output(  # noqa: DUO116
-                            self.command, stderr=subprocess.STDOUT, shell=True
+                            self.command,
+                            stderr=subprocess.STDOUT,
+                            shell=True,
+                            timeout=LONG_REQUEST_TIMEOUT,
                         ).decode()
 
                         return output, True
-                    except subprocess.CalledProcessError as e:
+                    except subprocess.CalledProcessError as err:
                         # Return error output of the command
-                        return e.output.decode(), False
+                        return err.output.decode(), False
+                    except subprocess.TimeoutExpired as err:
+                        return err.output.decode(), False
