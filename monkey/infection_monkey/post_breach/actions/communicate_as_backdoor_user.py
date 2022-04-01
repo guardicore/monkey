@@ -105,4 +105,4 @@ class CommunicateAsBackdoorUser(PBA):
 
 
 def twos_complement(exit_status):
-    return hex(exit_status & (2 ** 32 - 1))
+    return hex(exit_status & (2**32 - 1))
