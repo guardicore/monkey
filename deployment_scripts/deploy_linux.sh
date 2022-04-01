@@ -192,7 +192,7 @@ chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
 # Update node
 if ! exists npm; then
   log_message "Installing nodejs"
-  node_src=https://deb.nodesource.com/setup_12.x
+  node_src=https://deb.nodesource.com/setup_16.x
   if exists curl; then
     curl -sL $node_src | sudo -E bash -
   else
