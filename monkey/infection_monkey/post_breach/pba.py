@@ -19,7 +19,12 @@ class PBA:
     """
 
     def __init__(
-        self, telemetry_messenger: ITelemetryMessenger, name="unknown", linux_cmd="", windows_cmd="", timeout: int = LONG_REQUEST_TIMEOUT
+        self,
+        telemetry_messenger: ITelemetryMessenger,
+        name="unknown",
+        linux_cmd="",
+        windows_cmd="",
+        timeout: int = LONG_REQUEST_TIMEOUT,
     ):
         """
         :param name: Name of post breach action.
@@ -78,9 +83,10 @@ class PBA:
                 self.command, stderr=subprocess.STDOUT, shell=True, timeout=self.timeout
             ).decode()
             return output, True
-        except subprocess.CalledProcessError as e:
-            # Return error output of the command
-            return e.output.decode(), False
+        except subprocess.CalledProcessError as err:
+            return err.output.decode(), False
+        except subprocess.TimeoutExpired as err:
+            return str(err), False
 
     @staticmethod
     def choose_command(linux_cmd, windows_cmd):
