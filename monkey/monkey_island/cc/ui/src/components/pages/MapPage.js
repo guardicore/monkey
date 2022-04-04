@@ -92,7 +92,7 @@ class MapPageComponent extends AuthComponent {
         body: JSON.stringify({kill_time: Date.now() / 1000.0})
       })
       .then(res => res.json())
-      .then(_res => {this.setState({killPressed: true})});
+      .then(() => {this.setState({killPressed: true})});
   };
 
   renderKillDialogModal = () => {
