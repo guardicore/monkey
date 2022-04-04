@@ -62,7 +62,9 @@ The Infection Monkey agent shuts off either when it can't find new victims or it
 
 ## How long does it take to stop all running Infection Monkey agents?
 
-When <b>Kill All Monkeys</b> is pressed, the agents try to finish execution safely  which can take up to maximum 2 minutes.
+On the Infection Map page, when <b>Kill All Monkeys</b> is pressed, the agents
+try to finish execution safely. This can take up to 2 minutes, but will be much
+shorter on average.
 
 ## Is the Infection Monkey a malware/virus?
 
