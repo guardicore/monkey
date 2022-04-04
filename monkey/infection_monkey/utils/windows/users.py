@@ -50,9 +50,12 @@ class AutoNewWindowsUser(AutoNewUser):
 
         windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
         logger.debug("Trying to add {} with commands {}".format(self.username, str(windows_cmds)))
-        _ = subprocess.check_output(
-            windows_cmds, stderr=subprocess.STDOUT, timeout=SHORT_REQUEST_TIMEOUT
-        )
+        try:
+            _ = subprocess.check_output(
+                windows_cmds, stderr=subprocess.STDOUT, timeout=SHORT_REQUEST_TIMEOUT
+            )
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as err:
+            logger.error(f"An exception occurred when creating a new windows user: {str(err)}")
 
     def __enter__(self):
         try:
