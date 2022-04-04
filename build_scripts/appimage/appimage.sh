@@ -7,6 +7,9 @@ APPIMAGE_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
 APPDIR="$APPIMAGE_DIR/squashfs-root"
 BUILD_DIR="$APPDIR/usr/src"
 
+SYSTEMD_UNIT_FILENAME="monkey.service"
+SYSTEMD_DIR="/lib/systemd/system"
+
 ICON_PATH="$BUILD_DIR/monkey_island/cc/ui/src/images/monkey-icon.svg"
 MONGO_PATH="$BUILD_DIR/monkey_island/bin/mongodb"
 
@@ -103,9 +106,22 @@ remove_python_appdir_artifacts() {
   rm "$APPDIR"/AppRun
 }
 
+setup_sysd_unit() {
+  # Fill placeholders
+  sed -e "s|{PLACEHOLDER_APPIMAGE_PATH}|$1|g" \
+      -e "s|{PLACEHOLDER_UNAME}|$(whoami)|g" \
+      "${APPIMAGE_DIR}/${SYSTEMD_UNIT_FILENAME}.template" > "${APPIMAGE_DIR}/${SYSTEMD_UNIT_FILENAME}"
+  sudo mv "${APPIMAGE_DIR}/${SYSTEMD_UNIT_FILENAME}" "${SYSTEMD_DIR}/${SYSTEMD_UNIT_FILENAME}"
+
+  # Enable on boot
+  sudo systemctl enable "${SYSTEMD_UNIT_FILENAME}"
+  sudo systemctl daemon-reload
+}
+
 build_package() {
   local commit_id=$2
   local dist_dir=$3
+  local create_unit=$4
 
   log_message "Building AppImage"
 
@@ -126,6 +142,9 @@ build_package() {
 
   dst_name="InfectionMonkey-$version.AppImage"
   move_package_to_dist_dir $dist_dir $dst_name
+  if $create_unit ; then
+    setup_sysd_unit "$dist_dir/$dst_name"
+  fi
 
   popd
 }

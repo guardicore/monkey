@@ -9,6 +9,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - credentials.json file for storing Monkey Island user login information. #1206
 - The ability to download the Monkey Island logs from the Infection Map page. #1640
+- AppImage build flag `--unit` to create systemd service that runs on boot. #1552
 
 ### Changed
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and

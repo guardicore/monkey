@@ -1,0 +1,11 @@
+[Unit]
+Description=Infection Monkey AppImage Runner
+After=network.target
+
+[Service]
+User={PLACEHOLDER_UNAME}
+Type=simple
+ExecStart={PLACEHOLDER_APPIMAGE_PATH}
+
+[Install]
+WantedBy=multi-user.target

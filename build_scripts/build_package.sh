@@ -49,6 +49,8 @@ echo_help() {
   echo "                               (Default: develop)"
   echo ""
   echo "--package                      Which package to build (\"appimage\" or \"docker.\")"
+  echo "--unit                         Create an AppImage systemd service that will run on boot."
+  echo "                               If used with docker package, it will have no effect."
 
   exit 0
 }
@@ -107,6 +109,7 @@ install_build_prereqs() {
 
 agent_binary_dir=""
 as_root=false
+create_unit=false
 branch="develop"
 monkey_repo="$DEFAULT_REPO_MONKEY_HOME"
 monkey_version=""
@@ -123,6 +126,10 @@ while (( "$#" )); do
       ;;
     --as-root)
       as_root=true
+      shift
+      ;;
+    --unit)
+      create_unit=true
       shift
       ;;
     --branch)
@@ -199,7 +206,7 @@ install_package_specific_build_prereqs "$WORKSPACE"
 
 setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type"
 commit_id=$(get_commit_id "$monkey_repo")
-build_package "$monkey_version" "$commit_id" "$DIST_DIR"
+build_package "$monkey_version" "$commit_id" "$DIST_DIR" "$create_unit"
 
 log_message "Finished building package: $package"
 exit 0
