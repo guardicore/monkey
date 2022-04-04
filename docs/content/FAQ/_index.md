@@ -11,6 +11,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [I updated to a new version of the Infection Monkey and I'm being asked to delete my existing data directory. Why?](#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why)
 - [How can I use an old data directory?](#how-can-i-use-an-old-data-directory)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
+- [After pressing <b>Kill All Monkeys</b>, how long does it take to stop all running Infection Monkey agents?](#after-pressing-kill-all-monkeys-how-long-does-it-take-to-stop-all-running-infection-monkey-agents)
 - [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
 - [Reset the Monkey Island password](#reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
@@ -58,6 +59,10 @@ ref "/reference/data_directory" >}}).
 ## How long does a single Infection Monkey agent run? Is there a time limit?
 
 The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
+
+## After pressing <b>Kill All Monkeys</b>, how long does it take to stop all running Infection Monkey agents?
+
+When <b>Kill All Monkeys</b> is pressed, the agents try to finish execution safely  which can take up to maximum 2 minutes.
 
 ## Is the Infection Monkey a malware/virus?
 
