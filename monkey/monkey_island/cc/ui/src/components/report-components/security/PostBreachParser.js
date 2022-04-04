@@ -50,7 +50,7 @@ function aggregateMultipleResultsPba(results) {
   for (let i = 0; i < results.length; i++) {
     if (multipleResultsPbas.includes(results[i].name))
       aggregateResults(results[i]);
-    if ((results[i].name === PROCESS_LIST_COLLECTION) && (typeof results[i].result[0] !== "string"))
+    if ((results[i].name === PROCESS_LIST_COLLECTION) && (typeof results[i].result[0] !== 'string'))
       modifyProcessListCollectionResult(results[i].result);
   }
 
