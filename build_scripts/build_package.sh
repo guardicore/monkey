@@ -1,7 +1,7 @@
 WORKSPACE=${WORKSPACE:-$HOME}
 DEFAULT_REPO_MONKEY_HOME=$WORKSPACE/git/monkey
 MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
-NODE_SRC=https://deb.nodesource.com/setup_12.x
+NODE_SRC=https://deb.nodesource.com/setup_16.x
 BUILD_SCRIPTS_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
 DIST_DIR="$BUILD_SCRIPTS_DIR/dist"
 
