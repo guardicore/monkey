@@ -103,7 +103,7 @@ class MapPageComponent extends AuthComponent {
             <div className="text-center">Are you sure you want to kill all monkeys?</div>
           </h2>
           <p style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-            This might take a few moments...
+            This might take up to <b>2 minutes</b>...
           </p>
           <div className="text-center">
             <button type="button" className="btn btn-danger btn-lg" style={{margin: '5px'}}
