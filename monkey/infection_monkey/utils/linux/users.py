@@ -3,6 +3,7 @@ import logging
 import shlex
 import subprocess
 
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.utils.auto_new_user import AutoNewUser
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,12 @@ class AutoNewLinuxUser(AutoNewUser):
         logger.debug(
             "Trying to add {} with commands {}".format(self.username, str(commands_to_add_user))
         )
-        _ = subprocess.check_output(commands_to_add_user, stderr=subprocess.STDOUT)
+        try:
+            _ = subprocess.check_output(
+                commands_to_add_user, stderr=subprocess.STDOUT, timeout=SHORT_REQUEST_TIMEOUT
+            )
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as err:
+            logger.error(f"An exception occurred when creating a new linux user: {str(err)}")
 
     def __enter__(self):
         return self  # No initialization/logging on needed in Linux
@@ -52,7 +58,12 @@ class AutoNewLinuxUser(AutoNewUser):
         command_as_new_user = shlex.split(
             "sudo -u {username} {command}".format(username=self.username, command=command)
         )
-        return subprocess.call(command_as_new_user)
+        try:
+            return subprocess.call(command_as_new_user, timeout=SHORT_REQUEST_TIMEOUT)
+        except subprocess.TimeoutExpired as err:
+            logger.error(
+                f"An exception occurred when running a command as a new linux user: {str(err)}"
+            )
 
     def __exit__(self, _exc_type, value, traceback):
         # delete the user.
@@ -62,4 +73,9 @@ class AutoNewLinuxUser(AutoNewUser):
                 self.username, str(commands_to_delete_user)
             )
         )
-        _ = subprocess.check_output(commands_to_delete_user, stderr=subprocess.STDOUT)
+        try:
+            _ = subprocess.check_output(
+                commands_to_delete_user, stderr=subprocess.STDOUT, timeout=SHORT_REQUEST_TIMEOUT
+            )
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as err:
+            logger.error(f"An exception occurred when deleting the new linux user: {str(err)}")

@@ -1,6 +1,7 @@
 import logging
 import subprocess
 
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from infection_monkey.utils.auto_new_user import AutoNewUser
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.new_user_error import NewUserError
@@ -49,7 +50,12 @@ class AutoNewWindowsUser(AutoNewUser):
 
         windows_cmds = get_windows_commands_to_add_user(self.username, self.password, True)
         logger.debug("Trying to add {} with commands {}".format(self.username, str(windows_cmds)))
-        _ = subprocess.check_output(windows_cmds, stderr=subprocess.STDOUT)
+        try:
+            _ = subprocess.check_output(
+                windows_cmds, stderr=subprocess.STDOUT, timeout=SHORT_REQUEST_TIMEOUT
+            )
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as err:
+            logger.error(f"An exception occurred when creating a new windows user: {str(err)}")
 
     def __enter__(self):
         try:
@@ -124,7 +130,9 @@ class AutoNewWindowsUser(AutoNewUser):
                     self.username, str(commands_to_deactivate_user)
                 )
             )
-            _ = subprocess.check_output(commands_to_deactivate_user, stderr=subprocess.STDOUT)
+            _ = subprocess.check_output(
+                commands_to_deactivate_user, stderr=subprocess.STDOUT, timeout=SHORT_REQUEST_TIMEOUT
+            )
         except Exception as err:
             raise NewUserError("Can't deactivate user {}. Info: {}".format(self.username, err))
 
@@ -136,6 +144,8 @@ class AutoNewWindowsUser(AutoNewUser):
                     self.username, str(commands_to_delete_user)
                 )
             )
-            _ = subprocess.check_output(commands_to_delete_user, stderr=subprocess.STDOUT)
+            _ = subprocess.check_output(
+                commands_to_delete_user, stderr=subprocess.STDOUT, timeout=SHORT_REQUEST_TIMEOUT
+            )
         except Exception as err:
             raise NewUserError("Can't delete user {}. Info: {}".format(self.username, err))
