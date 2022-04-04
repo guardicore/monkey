@@ -22,7 +22,7 @@ The first argument is an empty directory (script can create one). The second arg
 
 - `.\deploy_windows.ps1` (Sets up monkey in current directory under .\infection_monkey)
 - `.\deploy_windows.ps1 -monkey_home "C:\test"` (Sets up monkey in C:\test)
-- `.\deploy_windows.ps1 -branch "master"` (Sets up master branch instead of develop in current dir)
+- `.\deploy_windows.ps1 -branch 'master'` (Sets up master branch instead of develop in current dir)
 
 You may also pass in an optional `agents=$false` parameter to disable downloading the latest agent binaries.
 
