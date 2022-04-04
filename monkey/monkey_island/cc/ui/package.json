@@ -53,7 +53,7 @@
     "null-loader": "^0.1.1",
     "rimraf": "^2.7.1",
     "sass": "^1.42.1",
-    "sass-loader": "^7.3.1",
+    "sass-loader": "^12.6.0",
     "snyk": "^1.733.0",
     "style-loader": "^0.22.1",
     "stylelint": "^13.13.1",
