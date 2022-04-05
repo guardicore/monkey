@@ -1,4 +1,4 @@
-import Particles from "react-tsparticles";
+import Particles from 'react-tsparticles';
 import {particleParams} from '../../styles/components/particle-component/ParticleBackgroundParams';
 import React from 'react';
 
