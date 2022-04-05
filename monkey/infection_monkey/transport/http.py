@@ -7,7 +7,11 @@ from logging import getLogger
 from urllib.parse import urlsplit
 
 from infection_monkey.network.tools import get_interface_to_target
-from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
+from infection_monkey.transport.base import (
+    PROXY_TIMEOUT,
+    TransportProxyBase,
+    update_last_serve_time,
+)
 
 logger = getLogger(__name__)
 
@@ -227,6 +231,6 @@ class LockedHTTPServer(threading.Thread):
 class HTTPConnectProxy(TransportProxyBase):
     def run(self):
         httpd = http.server.HTTPServer((self.local_host, self.local_port), HTTPConnectProxyHandler)
-        httpd.timeout = 10
+        httpd.timeout = PROXY_TIMEOUT
         while not self._stopped:
             httpd.handle_request()
