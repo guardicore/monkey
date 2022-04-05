@@ -35,7 +35,7 @@ def fake_monkey():
     return monkey.id
 
 
-@pytest.mark.usefixture("uses_database")
+@pytest.mark.usefixtures("uses_database")
 def test_get_credentials(fake_monkey):
     StolenCredentials(
         identities=fake_credentials["identities"],
