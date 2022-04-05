@@ -9,7 +9,7 @@ INTERNAL = {
                 "keep_tunnel_open_time": {
                     "title": "Keep tunnel open time",
                     "type": "integer",
-                    "default": 60,
+                    "default": 30,
                     "description": "Time to keep tunnel open before going down after last exploit "
                     "(in seconds)",
                 },
