@@ -17,7 +17,7 @@ def _run_netsh_cmd(command, args):
         ),
         timeout=SHORT_REQUEST_TIMEOUT,
     )
-    return output.strip().lower().endswith("ok.")
+    return output.strip().lower().endswith(b"ok.")
 
 
 class FirewallApp(object):
