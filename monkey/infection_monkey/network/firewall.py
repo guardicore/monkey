@@ -65,7 +65,7 @@ class WinAdvFirewall(FirewallApp):
         return None
 
     def add_firewall_rule(
-        self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs
+        self, name="MonkeyRule", direction="in", action="allow", program=sys.executable, **kwargs
     ):
         netsh_args = {"name": name, "dir": direction, "action": action, "program": program}
         netsh_args.update(kwargs)
