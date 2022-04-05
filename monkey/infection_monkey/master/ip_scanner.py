@@ -61,16 +61,30 @@ class IPScanner:
                 address = addresses.get_nowait()
                 logger.info(f"Scanning {address.ip}")
 
-                # TODO: Catch exceptions to prevent thread from crashing
-                ping_scan_data = self._puppet.ping(address.ip, icmp_timeout)
-                port_scan_data = self._puppet.scan_tcp_ports(address.ip, tcp_ports, tcp_timeout)
+                try:
+                    ping_scan_data = self._puppet.ping(address.ip, icmp_timeout)
+                except Exception as ex:
+                    logger.debug(f"Exception encountered when pinging {address.ip}: {str(ex)}")
+
+                try:
+                    port_scan_data = self._puppet.scan_tcp_ports(address.ip, tcp_ports, tcp_timeout)
+                except Exception as ex:
+                    logger.debug(
+                        f"Exception encountered when scanning TCP ports on {address.ip}: {str(ex)}"
+                    )
 
                 fingerprint_data = {}
                 if IPScanner.port_scan_found_open_port(port_scan_data):
                     fingerprinters = options["fingerprinters"]
-                    fingerprint_data = self._run_fingerprinters(
-                        address.ip, fingerprinters, ping_scan_data, port_scan_data, stop
-                    )
+                    try:
+                        fingerprint_data = self._run_fingerprinters(
+                            address.ip, fingerprinters, ping_scan_data, port_scan_data, stop
+                        )
+                    except Exception as ex:
+                        logger.debug(
+                            f"Exception encountered running fingerprinters on {address.ip}: "
+                            f"{str(ex)}"
+                        )
 
                 scan_results = IPScanResults(ping_scan_data, port_scan_data, fingerprint_data)
                 results_callback(address, scan_results)
