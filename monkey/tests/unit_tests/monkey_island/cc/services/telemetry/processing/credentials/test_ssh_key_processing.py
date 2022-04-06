@@ -4,7 +4,6 @@ import dpath.util
 import pytest
 from tests.unit_tests.monkey_island.cc.services.telemetry.processing.credentials.conftest import (
     CREDENTIAL_TELEM_TEMPLATE,
-    fake_ip_address,
 )
 
 from common.config_value_paths import SSH_KEYS_PATH, USER_LIST_PATH
@@ -41,6 +40,4 @@ def test_ssh_credential_parsing():
     assert len(ssh_keypairs) == 1
     assert ssh_keypairs[0]["private_key"] == fake_private_key
     assert ssh_keypairs[0]["public_key"] == fake_public_key
-    assert ssh_keypairs[0]["user"] == fake_username
-    assert ssh_keypairs[0]["ip"] == fake_ip_address
     assert fake_username in dpath.util.get(config, USER_LIST_PATH)
