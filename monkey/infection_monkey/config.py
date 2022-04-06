@@ -87,7 +87,7 @@ class Configuration(object):
     # Configuration servers to try to connect to, in this order.
     command_servers = []
 
-    keep_tunnel_open_time = 60
+    keep_tunnel_open_time = 30
 
     ###########################
     # testing configuration

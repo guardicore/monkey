@@ -3,16 +3,20 @@ import socket
 from logging import getLogger
 from threading import Thread
 
-from infection_monkey.transport.base import TransportProxyBase, update_last_serve_time
+from infection_monkey.transport.base import (
+    PROXY_TIMEOUT,
+    TransportProxyBase,
+    update_last_serve_time,
+)
 
 READ_BUFFER_SIZE = 8192
-DEFAULT_TIMEOUT = 10
+SOCKET_READ_TIMEOUT = 10
 
 logger = getLogger(__name__)
 
 
 class SocketsPipe(Thread):
-    def __init__(self, source, dest, timeout=DEFAULT_TIMEOUT):
+    def __init__(self, source, dest, timeout=SOCKET_READ_TIMEOUT):
         Thread.__init__(self)
         self.source = source
         self.dest = dest
@@ -51,7 +55,7 @@ class TcpProxy(TransportProxyBase):
         pipes = []
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         l_socket.bind((self.local_host, self.local_port))
-        l_socket.settimeout(DEFAULT_TIMEOUT)
+        l_socket.settimeout(PROXY_TIMEOUT)
         l_socket.listen(5)
 
         while not self._stopped:

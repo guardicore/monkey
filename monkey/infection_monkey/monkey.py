@@ -343,6 +343,7 @@ class InfectionMonkey:
 
     def cleanup(self):
         logger.info("Monkey cleanup started")
+        deleted = None
         try:
             if self._master:
                 self._master.cleanup()
@@ -357,7 +358,7 @@ class InfectionMonkey:
                 firewall.remove_firewall_rule()
                 firewall.close()
 
-            InfectionMonkey._self_delete()
+            deleted = InfectionMonkey._self_delete()
 
             InfectionMonkey._send_log()
 
@@ -365,13 +366,12 @@ class InfectionMonkey:
                 is_done=True, version=get_version()
             ).send()  # Signal the server (before closing the tunnel)
 
-            # TODO: Determine how long between when we
-            #  send telemetry and the monkey actually exits
             InfectionMonkey._close_tunnel()
             self._singleton.unlock()
         except Exception as e:
             logger.error(f"An error occurred while cleaning up the monkey agent: {e}")
-            InfectionMonkey._self_delete()
+            if deleted is None:
+                InfectionMonkey._self_delete()
 
         logger.info("Monkey is shutting down")
 
@@ -400,9 +400,10 @@ class InfectionMonkey:
         ControlClient.send_log(log)
 
     @staticmethod
-    def _self_delete():
+    def _self_delete() -> bool:
         status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
         T1107Telem(status, get_monkey_dir_path()).send()
+        deleted = False
 
         if -1 == sys.executable.find("python"):
             try:
@@ -421,11 +422,14 @@ class InfectionMonkey:
                         close_fds=True,
                         startupinfo=startupinfo,
                     )
+                    deleted = True
                 else:
                     os.remove(sys.executable)
                     status = ScanStatus.USED
+                    deleted = True
             except Exception as exc:
                 logger.error("Exception in self delete: %s", exc)
                 status = ScanStatus.SCANNED
             if status:
                 T1107Telem(status, sys.executable).send()
+            return deleted
