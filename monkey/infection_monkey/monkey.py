@@ -366,8 +366,6 @@ class InfectionMonkey:
                 is_done=True, version=get_version()
             ).send()  # Signal the server (before closing the tunnel)
 
-            # TODO: Determine how long between when we
-            #  send telemetry and the monkey actually exits
             InfectionMonkey._close_tunnel()
             self._singleton.unlock()
         except Exception as e:
