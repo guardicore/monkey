@@ -185,20 +185,12 @@ class ConfigService:
         )
 
     @staticmethod
-    def ssh_add_keys(public_key, private_key, user, ip):
-        if not ConfigService.ssh_key_exists(
-            ConfigService.get_config_value(SSH_KEYS_PATH, False, False), user, ip
-        ):
-            ConfigService.add_item_to_config_set_if_dont_exist(
-                SSH_KEYS_PATH,
-                {"public_key": public_key, "private_key": private_key, "user": user, "ip": ip},
-                # SSH keys already encrypted in process_ssh_info()
-                should_encrypt=False,
-            )
-
-    @staticmethod
-    def ssh_key_exists(keys, user, ip):
-        return [key for key in keys if key["user"] == user and key["ip"] == ip]
+    def ssh_add_keys(public_key, private_key):
+        ConfigService.add_item_to_config_set_if_dont_exist(
+            SSH_KEYS_PATH,
+            {"public_key": public_key, "private_key": private_key},
+            should_encrypt=True,
+        )
 
     def _filter_none_values(data):
         if isinstance(data, dict):
