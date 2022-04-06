@@ -15,13 +15,11 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
     "serve": "node server.js --env=dev",
     "serve:dist": "node server.js --env=dist",
-    "start": "webpack-dev-server --mode development --open --history-api-fallback --port 8000 --host local-ip",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "start": "webpack-dev-server --mode development --open --history-api-fallback --port 8000 --host local-ip"
   },
   "repository": "",
   "keywords": [],
-  "author": "Guardicore",
+  "author": "Akamai",
   "browserslist": [
     "> 0.25%",
     "not dead"
@@ -54,7 +52,6 @@
     "rimraf": "^2.7.1",
     "sass": "^1.42.1",
     "sass-loader": "^12.6.0",
-    "snyk": "^1.733.0",
     "style-loader": "^0.22.1",
     "stylelint": "^13.13.1",
     "ts-loader": "^8.3.0",
