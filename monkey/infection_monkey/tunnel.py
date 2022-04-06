@@ -193,7 +193,7 @@ class MonkeyTunnel(Thread):
             except socket.timeout:
                 continue
 
-        timer.set(self._calculate_timeout())
+            timer.set(self._calculate_timeout())
 
         logger.info("Closing tunnel")
         self._broad_sock.close()
