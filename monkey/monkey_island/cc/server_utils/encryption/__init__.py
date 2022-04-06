@@ -24,3 +24,4 @@ from .dict_encryptor import (
 )
 from .field_encryptors.i_field_encryptor import IFieldEncryptor
 from .field_encryptors.string_list_encryptor import StringListEncryptor
+from .field_encryptors.string_encryptor import StringEncryptor
