@@ -9,6 +9,7 @@ Add any further explanations here.
 * [ ] Is the TravisCI build passing?
 * [ ] Was the CHANGELOG.md updated to reflect the changes?
 * [ ] Was the documentation framework updated to reflect the changes?
+* [ ] Have you checked that you haven't introduced any duplicate code?
 
 ## Testing Checklist
 
