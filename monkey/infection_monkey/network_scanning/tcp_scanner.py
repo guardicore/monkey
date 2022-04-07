@@ -11,11 +11,20 @@ from infection_monkey.utils.timer import Timer
 logger = logging.getLogger(__name__)
 
 POLL_INTERVAL = 0.5
+EMPTY_PORT_SCAN = {-1: PortScanData(-1, PortStatus.CLOSED, None, None)}
 
 
-def scan_tcp_ports(
+def try_scan_tcp_ports(
     host: str, ports_to_scan: Iterable[int], timeout: float
 ) -> Mapping[int, PortScanData]:
+    try:
+        return _scan_tcp_ports(host, ports_to_scan, timeout)
+    except Exception:
+        logging.exception("Unhandled exception occurred while trying to scan tcp ports")
+        return EMPTY_PORT_SCAN
+
+
+def _scan_tcp_ports(host: str, ports_to_scan: Iterable[int], timeout: float):
     open_ports = _check_tcp_ports(host, ports_to_scan, timeout)
 
     return _build_port_scan_data(ports_to_scan, open_ports)

@@ -227,8 +227,11 @@ class AutomatedMaster(IMaster):
         for p in interruptible_iter(plugins, self._stop, interrupted_message):
             try:
                 callback(p)
-            except Exception as ex:
-                logger.debug(f"Exception encountered when running {plugin_type} {p}: {str(ex)}")
+            except Exception:
+                logging.exception(
+                    f"Got unhandled exception when running {plugin_type} plugin {p}. "
+                    f"Plugin was passed to {callback}"
+                )
 
         logger.info(f"Finished running {plugin_type}s")
 

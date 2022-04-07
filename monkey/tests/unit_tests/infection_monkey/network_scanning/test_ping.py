@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.network_scanning import ping
+from infection_monkey.network_scanning import _ping
 
 LINUX_SUCCESS_OUTPUT = """
 PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
@@ -87,7 +87,7 @@ def set_os_windows(monkeypatch):
 @pytest.mark.usefixtures("set_os_linux")
 def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output):
     patch_subprocess_running_ping_with_ping_output(LINUX_SUCCESS_OUTPUT)
-    result = ping("192.168.1.1", 1.0)
+    result = _ping("192.168.1.1", 1.0)
 
     assert result.response_received
     assert result.os == "linux"
@@ -96,7 +96,7 @@ def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output):
 @pytest.mark.usefixtures("set_os_linux")
 def test_linux_ping_no_response(patch_subprocess_running_ping_with_ping_output):
     patch_subprocess_running_ping_with_ping_output(LINUX_NO_RESPONSE_OUTPUT)
-    result = ping("192.168.1.1", 1.0)
+    result = _ping("192.168.1.1", 1.0)
 
     assert not result.response_received
     assert result.os is None
@@ -105,7 +105,7 @@ def test_linux_ping_no_response(patch_subprocess_running_ping_with_ping_output):
 @pytest.mark.usefixtures("set_os_windows")
 def test_windows_ping_success(patch_subprocess_running_ping_with_ping_output):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_SUCCESS_OUTPUT)
-    result = ping("192.168.1.1", 1.0)
+    result = _ping("192.168.1.1", 1.0)
 
     assert result.response_received
     assert result.os == "windows"
@@ -114,7 +114,7 @@ def test_windows_ping_success(patch_subprocess_running_ping_with_ping_output):
 @pytest.mark.usefixtures("set_os_windows")
 def test_windows_ping_no_response(patch_subprocess_running_ping_with_ping_output):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_NO_RESPONSE_OUTPUT)
-    result = ping("192.168.1.1", 1.0)
+    result = _ping("192.168.1.1", 1.0)
 
     assert not result.response_received
     assert result.os is None
@@ -122,7 +122,7 @@ def test_windows_ping_no_response(patch_subprocess_running_ping_with_ping_output
 
 def test_malformed_ping_command_response(patch_subprocess_running_ping_with_ping_output):
     patch_subprocess_running_ping_with_ping_output(MALFORMED_OUTPUT)
-    result = ping("192.168.1.1", 1.0)
+    result = _ping("192.168.1.1", 1.0)
 
     assert not result.response_received
     assert result.os is None
@@ -130,7 +130,7 @@ def test_malformed_ping_command_response(patch_subprocess_running_ping_with_ping
 
 @pytest.mark.usefixtures("patch_subprocess_running_ping_to_raise_timeout_expired")
 def test_timeout_expired():
-    result = ping("192.168.1.1", 1.0)
+    result = _ping("192.168.1.1", 1.0)
 
     assert not result.response_received
     assert result.os is None
@@ -147,7 +147,7 @@ def ping_command_spy(monkeypatch):
 @pytest.fixture
 def assert_expected_timeout(ping_command_spy):
     def inner(timeout_flag, timeout_input, expected_timeout):
-        ping("192.168.1.1", timeout_input)
+        _ping("192.168.1.1", timeout_input)
 
         assert ping_command_spy.call_args is not None
 
