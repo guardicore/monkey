@@ -59,6 +59,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Struts2 exploiter. #1869
 - Drupal exploiter. #1869
 - WebLogic exploiter. #1869
+- The /api/t1216-pba/download endpoint. #1864
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

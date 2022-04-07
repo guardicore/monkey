@@ -6,7 +6,6 @@ import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
-from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
@@ -41,7 +40,6 @@ from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
-from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.version_update import VersionUpdate
@@ -153,7 +151,6 @@ def init_api_resources(api):
     api.add_resource(Log, "/api/log")
     api.add_resource(IslandLog, "/api/log/island/download")
     api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
-    api.add_resource(T1216PBAFileDownload, T1216_PBA_FILE_DOWNLOAD_PATH)
     api.add_resource(
         FileUpload,
         "/api/fileUpload/<string:file_type>",
