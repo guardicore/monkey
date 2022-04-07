@@ -21,7 +21,13 @@ from common.config_value_paths import (
 )
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
-from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
+from monkey_island.cc.server_utils.encryption import (
+    SensitiveField,
+    StringEncryptor,
+    decrypt_dict,
+    encrypt_dict,
+    get_datastore_encryptor,
+)
 from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode
@@ -39,6 +45,11 @@ ENCRYPTED_CONFIG_VALUES = [
     AWS_KEYS_PATH + ["aws_access_key_id"],
     AWS_KEYS_PATH + ["aws_secret_access_key"],
     AWS_KEYS_PATH + ["aws_session_token"],
+]
+
+SENSITIVE_SSH_KEY_FIELDS = [
+    SensitiveField(path="private_key", field_encryptor=StringEncryptor),
+    SensitiveField(path="public_key", field_encryptor=StringEncryptor),
 ]
 
 
@@ -94,7 +105,12 @@ class ConfigService:
                 if isinstance(config, str):
                     config = get_datastore_encryptor().decrypt(config)
                 elif isinstance(config, list):
-                    config = [get_datastore_encryptor().decrypt(x) for x in config]
+                    if config:
+                        if isinstance(config[0], str):
+                            config = [get_datastore_encryptor().decrypt(x) for x in config]
+                        elif isinstance(config[0], dict) and "public_key" in config[0]:
+                            config = [decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, x) for x in config]
+
         return config
 
     @staticmethod
@@ -132,7 +148,10 @@ class ConfigService:
         if item_value in items_from_config:
             return
         if should_encrypt:
-            item_value = get_datastore_encryptor().encrypt(item_value)
+            if isinstance(item_value, dict):
+                item_value = encrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item_value)
+            else:
+                item_value = get_datastore_encryptor().encrypt(item_value)
         mongo.db.config.update(
             {"name": "newconfig"}, {"$addToSet": {item_key: item_value}}, upsert=False
         )
@@ -348,7 +367,7 @@ class ConfigService:
                     and "public_key" in flat_config[key][0]
                 ):
                     flat_config[key] = [
-                        ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]
+                        decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item) for item in flat_config[key]
                     ]
                 else:
                     flat_config[key] = [
@@ -375,9 +394,9 @@ class ConfigService:
                     # Check if array of shh key pairs and then decrypt
                     if isinstance(config_arr[i], dict) and "public_key" in config_arr[i]:
                         config_arr[i] = (
-                            ConfigService.decrypt_ssh_key_pair(config_arr[i])
+                            decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, config_arr[i])
                             if is_decrypt
-                            else ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                            else encrypt_dict(SENSITIVE_SSH_KEY_FIELDS, config_arr[i])
                         )
                     else:
                         config_arr[i] = (
@@ -391,16 +410,6 @@ class ConfigService:
                     if is_decrypt
                     else get_datastore_encryptor().encrypt(config_arr)
                 )
-
-    @staticmethod
-    def decrypt_ssh_key_pair(pair, encrypt=False):
-        if encrypt:
-            pair["public_key"] = get_datastore_encryptor().encrypt(pair["public_key"])
-            pair["private_key"] = get_datastore_encryptor().encrypt(pair["private_key"])
-        else:
-            pair["public_key"] = get_datastore_encryptor().decrypt(pair["public_key"])
-            pair["private_key"] = get_datastore_encryptor().decrypt(pair["private_key"])
-        return pair
 
     @staticmethod
     def is_test_telem_export_enabled():
