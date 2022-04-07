@@ -64,13 +64,13 @@ class IPScanner:
                 try:
                     ping_scan_data = self._puppet.ping(address.ip, icmp_timeout)
                 except Exception as ex:
-                    logger.debug(f"Exception encountered when pinging {address.ip}: {str(ex)}")
+                    logger.warning(f"Exception encountered when pinging {address.ip}: {str(ex)}")
                     ping_scan_data = PingScanData(False, None)
 
                 try:
                     port_scan_data = self._puppet.scan_tcp_ports(address.ip, tcp_ports, tcp_timeout)
                 except Exception as ex:
-                    logger.debug(
+                    logger.warning(
                         f"Exception encountered when scanning TCP ports on {address.ip}: {str(ex)}"
                     )
                     port_scan_data = {-1: PortScanData(-1, PortStatus.CLOSED, None, None)}
@@ -83,7 +83,7 @@ class IPScanner:
                             address.ip, fingerprinters, ping_scan_data, port_scan_data, stop
                         )
                     except Exception as ex:
-                        logger.debug(
+                        logger.warning(
                             f"Exception encountered running fingerprinters on {address.ip}: "
                             f"{str(ex)}"
                         )
