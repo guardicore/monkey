@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 
-from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
+from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, PortStatus
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
 
@@ -200,6 +200,47 @@ def test_scan_lots_of_ips(callback, scan_config, stop):
     ns.scan(addresses, scan_config, callback, stop)
 
     assert callback.call_count == 255
+
+
+def test_exception_in_pinging(callback, scan_config, stop):
+    addresses = [NetworkAddress("10.0.0.1", "d1")]
+
+    puppet = MockPuppet()
+    puppet.ping = MagicMock(side_effect=Exception("Exception raised during pinging."))
+
+    ns = IPScanner(puppet, num_workers=1)
+    ns.scan(addresses, scan_config, callback, stop)
+
+    (_, scan_results) = callback.call_args_list[0][0]
+    assert scan_results.ping_scan_data == PingScanData(False, None)
+
+
+def test_exception_in_port_scanning(callback, scan_config, stop):
+    addresses = [NetworkAddress("10.0.0.1", "d1")]
+
+    puppet = MockPuppet()
+    puppet.scan_tcp_ports = MagicMock(
+        side_effect=Exception("Exception raised when scanning TCP ports.")
+    )
+
+    ns = IPScanner(puppet, num_workers=1)
+    ns.scan(addresses, scan_config, callback, stop)
+
+    (_, scan_results) = callback.call_args_list[0][0]
+    assert scan_results.port_scan_data == {-1: PortScanData(-1, PortStatus.CLOSED, None, None)}
+
+
+def test_exception_in_fingerprinting(callback, scan_config, stop):
+    addresses = [NetworkAddress("10.0.0.1", "d1")]
+
+    puppet = MockPuppet()
+    puppet.fingerprint = MagicMock(side_effect=Exception("Exception raised during fingerprinting."))
+
+    ns = IPScanner(puppet, num_workers=1)
+    ns.scan(addresses, scan_config, callback, stop)
+
+    (_, scan_results) = callback.call_args_list[0][0]
+    assert scan_results.fingerprint_data == FingerprintData(None, None, {})
 
 
 def test_stop_after_callback(scan_config, stop):
