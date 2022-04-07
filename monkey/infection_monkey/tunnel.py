@@ -200,8 +200,11 @@ class MonkeyTunnel(Thread):
         proxy.stop()
         proxy.join()
 
-    def _calculate_timeout(self):
-        return QUIT_TIMEOUT - (time.time() - get_last_serve_time())
+    def _calculate_timeout(self) -> float:
+        try:
+            return QUIT_TIMEOUT - (time.time() - get_last_serve_time())
+        except TypeError:  # get_last_serve_time() may return None
+            return 0.0
 
     def get_tunnel_for_ip(self, ip: str):
 
