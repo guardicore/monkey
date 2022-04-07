@@ -38,6 +38,7 @@ pytest-cov = "*"
 isort = "==5.10.1"
 coverage = "*"
 vulture = "==2.3"
+tqdm = "*"  # Used in BB tests
 
 [requires]
 python_version = "3.7"
