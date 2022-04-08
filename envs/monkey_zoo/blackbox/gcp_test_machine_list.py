@@ -16,7 +16,6 @@ GCP_TEST_MACHINE_LIST = {
         "weblogic-18",
         "weblogic-19",
         "zerologon-25",
-        "drupal-28",
     ],
     "europe-west1-b": [
         "powershell-3-45",
