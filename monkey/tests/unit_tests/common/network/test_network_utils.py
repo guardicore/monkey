@@ -1,13 +1,4 @@
-from unittest import TestCase
-
-from common.network.network_utils import address_to_ip_port, remove_port
-
-
-class TestNetworkUtils(TestCase):
-    def test_remove_port_from_url(self):
-        assert remove_port("https://google.com:80") == "https://google.com"
-        assert remove_port("https://8.8.8.8:65336") == "https://8.8.8.8"
-        assert remove_port("ftp://ftpserver.com:21/hello/world") == "ftp://ftpserver.com"
+from common.network.network_utils import address_to_ip_port
 
 
 def test_address_to_ip_port():
