@@ -8,8 +8,7 @@
           "Struts2Exploiter",
           "WebLogicExploiter",
           "HadoopExploiter",
-          "MSSQLExploiter",
-          "DrupalExploiter"
+          "MSSQLExploiter"
         ]
       },
       "credentials": {
