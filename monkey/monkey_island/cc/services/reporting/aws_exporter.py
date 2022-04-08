@@ -81,7 +81,6 @@ class AWSExporter(Exporter):
             "shared_passwords_domain": AWSExporter._handle_shared_passwords_domain_issue,
             "shared_admins_domain": AWSExporter._handle_shared_admins_domain_issue,
             "strong_users_on_crit": AWSExporter._handle_strong_users_on_crit_issue,
-            ExploiterDescriptorEnum.WEBLOGIC.value.class_name: AWSExporter._handle_weblogic_issue,
             ExploiterDescriptorEnum.HADOOP.value.class_name: AWSExporter._handle_hadoop_issue,
         }
 
@@ -381,27 +380,6 @@ class AWSExporter(Exporter):
             "classifying it as a critical "
             "machine. These users has access to it:{threatening_users}.".format(
                 services=issue["services"], threatening_users=issue["threatening_users"]
-            ),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_weblogic_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Oracle WebLogic servers are vulnerable to remote code execution.",
-            description="Install Oracle critical patch updates. Or update to the latest "
-            "version. "
-            "Vulnerable versions are 10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and "
-            "12.2.1.2.0.",
-            recommendation="Oracle WebLogic server at {machine} ({ip_address}) is vulnerable "
-            "to remote code execution attack."
-            "The attack was made possible due to incorrect permission "
-            "assignment in Oracle Fusion Middleware "
-            "(subcomponent: WLS Security).".format(
-                machine=issue["machine"], ip_address=issue["ip_address"]
             ),
             instance_arn=instance_arn,
             instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
