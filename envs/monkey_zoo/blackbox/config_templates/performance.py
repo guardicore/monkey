@@ -16,7 +16,6 @@ class Performance(ConfigTemplate):
             "SmbExploiter",
             "WmiExploiter",
             "SSHExploiter",
-            "WebLogicExploiter",
             "HadoopExploiter",
             "MSSQLExploiter",
             "PowerShellExploiter",

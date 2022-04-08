@@ -22,7 +22,6 @@ from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
 from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
 from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
@@ -183,10 +182,6 @@ class TestMonkeyBlackbox:
 
     def test_smb_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")
-
-    @pytest.mark.skip(reason="Weblogic exploiter is deprecated")
-    def test_weblogic_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Weblogic, "Weblogic_exploiter")
 
     def test_log4j_solr_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(

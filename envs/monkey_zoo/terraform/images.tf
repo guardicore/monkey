@@ -83,14 +83,6 @@ data "google_compute_image" "log4j-logstash-56" {
   name = "log4j-logstash-56"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "weblogic-18" {
-  name = "weblogic-18"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "weblogic-19" {
-  name = "weblogic-19"
-  project = local.monkeyzoo_project
-}
 data "google_compute_image" "scan-21" {
   name = "scan-21"
   project = local.monkeyzoo_project

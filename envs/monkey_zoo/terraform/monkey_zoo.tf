@@ -400,56 +400,6 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
   }
 }
 
-/* We need to alter monkey's behavior for this to upload 32-bit monkey instead of 64-bit (not yet developed)
-resource "google_compute_instance_from_template" "upgrader-17" {
-  name = "${local.resource_prefix}upgrader-17"
-  source_instance_template = "${local.default_windows}"
-  boot_disk{
-    initialize_params {
-      image = "${data.google_compute_image.upgrader-17.self_link}"
-    }
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.17"
-    access_config {
-      // Cheaper, non-premium routing
-      network_tier = "STANDARD"
-    }
-  }
-}
-*/
-
-resource "google_compute_instance_from_template" "weblogic-18" {
-  name = "${local.resource_prefix}weblogic-18"
-  source_instance_template = local.default_ubuntu
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.weblogic-18.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.18"
-  }
-}
-
-resource "google_compute_instance_from_template" "weblogic-19" {
-  name = "${local.resource_prefix}weblogic-19"
-  source_instance_template = local.default_windows
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.weblogic-19.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.19"
-  }
-}
-
 resource "google_compute_instance_from_template" "scan-21" {
   name = "${local.resource_prefix}scan-21"
   source_instance_template = local.default_ubuntu

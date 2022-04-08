@@ -14,7 +14,6 @@ from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
 from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
 from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
@@ -44,7 +43,6 @@ CONFIG_TEMPLATES = [
     SmbPth,
     Ssh,
     Tunneling,
-    Weblogic,
     WmiMimikatz,
     WmiPth,
     Zerologon,
