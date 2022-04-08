@@ -22,7 +22,6 @@ from envs.monkey_zoo.blackbox.config_templates.powershell_credentials_reuse impo
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
-from envs.monkey_zoo.blackbox.config_templates.struts2 import Struts2
 from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
 from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
@@ -189,10 +188,6 @@ class TestMonkeyBlackbox:
     @pytest.mark.skip(reason="Drupal exploiter is deprecated")
     def test_drupal_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Drupal, "Drupal_exploiter")
-
-    @pytest.mark.skip(reason="Struts2 exploiter is deprecated")
-    def test_struts_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Struts2, "Struts2_exploiter")
 
     @pytest.mark.skip(reason="Weblogic exploiter is deprecated")
     def test_weblogic_exploiter(self, island_client):

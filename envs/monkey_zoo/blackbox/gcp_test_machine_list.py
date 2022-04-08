@@ -7,8 +7,6 @@ GCP_TEST_MACHINE_LIST = {
         "mssql-16",
         "mimikatz-14",
         "mimikatz-15",
-        "struts2-23",
-        "struts2-24",
         "tunneling-9",
         "tunneling-10",
         "tunneling-11",

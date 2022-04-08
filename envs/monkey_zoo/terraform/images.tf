@@ -99,14 +99,6 @@ data "google_compute_image" "scan-22" {
   name = "scan-22"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "struts2-23" {
-  name = "struts2-23"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "struts2-24" {
-  name = "struts2-24"
-  project = local.monkeyzoo_project
-}
 data "google_compute_image" "zerologon-25" {
   name = "zerologon-25"
   project = local.monkeyzoo_project

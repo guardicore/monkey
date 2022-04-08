@@ -22,8 +22,6 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 19 WebLogic](#_Toc526517181)<br>
 [Nr. 21 Scan](#_Toc526517196)<br>
 [Nr. 22 Scan](#_Toc526517197)<br>
-[Nr. 23 Struts2](#_Toc536021476)<br>
-[Nr. 24 Struts2](#_Toc536021477)<br>
 [Nr. 25 Zerologon](#_Toc536021478)<br>
 [Nr. 3-45 Powershell](#_Toc536021479)<br>
 [Nr. 3-46 Powershell](#_Toc536021480)<br>
@@ -771,74 +769,6 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021476" class="anchor"></span>Nr. <strong>23</strong> Struts2</p>
-<p>(10.2.2.23)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p>struts2 2.3.15.1,</p>
-<p>tomcat 9.0.0.M9</p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>8080</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021477" class="anchor"></span>Nr. <strong>24</strong> Struts2</p>
-<p>(10.2.2.24)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p>struts2 2.3.15.1,</p>
-<p>tomcat 9.0.0.M9</p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>8080</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
 <td></td>
 </tr>
 </tbody>
