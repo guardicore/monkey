@@ -13,7 +13,8 @@ class Timer:
     def set(self, timeout_sec: float):
         """
         Set a timer
-        :param float timeout_sec: A fractional number of seconds to set the timeout for.
+        :param float timeout_sec: A nonnegative floating point number expressing the number of
+                                  seconds to set the timeout for.
         """
         self._timeout_sec = timeout_sec
         self._start_time = time.time()
