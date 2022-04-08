@@ -18,6 +18,8 @@ from infection_monkey.model import VictimHost
 
 from .plugin_registry import PluginRegistry
 
+EMPTY_FINGERPRINT = PingScanData(False, None)
+
 logger = logging.getLogger()
 
 
@@ -54,8 +56,14 @@ class Puppet(IPuppet):
         port_scan_data: Dict[int, PortScanData],
         options: Dict,
     ) -> FingerprintData:
-        fingerprinter = self._plugin_registry.get_plugin(name, PluginType.FINGERPRINTER)
-        return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
+        try:
+            fingerprinter = self._plugin_registry.get_plugin(name, PluginType.FINGERPRINTER)
+            return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
+        except Exception:
+            logger.exception(
+                f"Unhandled exception occurred " f"while trying to run {name} fingerprinter"
+            )
+            return EMPTY_FINGERPRINT
 
     def exploit_host(
         self,

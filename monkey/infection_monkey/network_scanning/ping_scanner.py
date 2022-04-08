@@ -6,16 +6,26 @@ import subprocess
 import sys
 
 from infection_monkey.i_puppet import PingScanData
+from infection_monkey.utils.environment import is_windows_os
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
 LINUX_TTL = 64  # Windows TTL is 128
 PING_EXIT_TIMEOUT = 10
+EMPTY_PING_SCAN = PingScanData(False, None)
 
 logger = logging.getLogger(__name__)
 
 
 def ping(host: str, timeout: float) -> PingScanData:
-    if "win32" == sys.platform:
+    try:
+        return _ping(host, timeout)
+    except Exception:
+        logger.exception("Unhandled exception occurred while running ping")
+        return EMPTY_PING_SCAN
+
+
+def _ping(host: str, timeout: float) -> PingScanData:
+    if is_windows_os():
         timeout = math.floor(timeout * 1000)
 
     ping_command_output = _run_ping_command(host, timeout)

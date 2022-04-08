@@ -1,7 +1,10 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from infection_monkey.i_puppet import PortStatus
 from infection_monkey.network_scanning import scan_tcp_ports
+from infection_monkey.network_scanning.tcp_scanner import EMPTY_PORT_SCAN
 
 PORTS_TO_SCAN = [22, 80, 8080, 143, 445, 2222]
 
@@ -36,7 +39,6 @@ def test_tcp_successful(monkeypatch, patch_check_tcp_ports, open_ports_data):
 
 @pytest.mark.parametrize("open_ports_data", [{}])
 def test_tcp_empty_response(monkeypatch, patch_check_tcp_ports, open_ports_data):
-
     port_scan_data = scan_tcp_ports("127.0.0.1", PORTS_TO_SCAN, 0)
 
     assert len(port_scan_data) == 6
@@ -48,7 +50,14 @@ def test_tcp_empty_response(monkeypatch, patch_check_tcp_ports, open_ports_data)
 
 @pytest.mark.parametrize("open_ports_data", [OPEN_PORTS_DATA])
 def test_tcp_no_ports_to_scan(monkeypatch, patch_check_tcp_ports, open_ports_data):
-
     port_scan_data = scan_tcp_ports("127.0.0.1", [], 0)
 
     assert len(port_scan_data) == 0
+
+
+def test_exception_handling(monkeypatch):
+    monkeypatch.setattr(
+        "infection_monkey.network_scanning.tcp_scanner._scan_tcp_ports",
+        MagicMock(side_effect=Exception),
+    )
+    assert scan_tcp_ports("abc", [123], 123) == EMPTY_PORT_SCAN

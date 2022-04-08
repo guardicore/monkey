@@ -1,8 +1,8 @@
 import threading
 from unittest.mock import MagicMock
 
-from infection_monkey.i_puppet import PluginType
-from infection_monkey.puppet.puppet import Puppet
+from infection_monkey.i_puppet import PingScanData, PluginType
+from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
 def test_puppet_run_payload_success():
@@ -41,3 +41,9 @@ def test_puppet_run_multiple_payloads():
 
     p.run_payload(payload3_name, {}, threading.Event())
     payload_3.run.assert_called_once()
+
+
+def test_fingerprint_exception_handling(monkeypatch):
+    p = Puppet()
+    p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
+    assert p.fingerprint("", "", PingScanData("windows", False), {}, {}) == EMPTY_FINGERPRINT

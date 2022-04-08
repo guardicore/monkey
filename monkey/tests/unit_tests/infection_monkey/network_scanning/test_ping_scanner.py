@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from infection_monkey.network_scanning import ping
+from infection_monkey.network_scanning.ping_scanner import EMPTY_PING_SCAN
 
 LINUX_SUCCESS_OUTPUT = """
 PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
@@ -174,3 +175,10 @@ def test_linux_timeout(assert_expected_timeout):
     timeout = 1.42379
 
     assert_expected_timeout(timeout_flag, timeout, str(math.ceil(timeout)))
+
+
+def test_exception_handling(monkeypatch):
+    monkeypatch.setattr(
+        "infection_monkey.network_scanning.ping_scanner._ping", MagicMock(side_effect=Exception)
+    )
+    assert ping("abc", 10) == EMPTY_PING_SCAN
