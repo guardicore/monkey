@@ -61,7 +61,6 @@ WEBLOGIC  # unused variable (monkey/monkey_island/cc/services/reporting/issue_pr
 HADOOP  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:43)
 MSSQL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:44)
 VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:45)
-DRUPAL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:48)
 POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
 ExploiterDescriptorEnum.LOG4SHELL
 PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
