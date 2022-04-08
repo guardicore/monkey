@@ -20,7 +20,6 @@ import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {smbPasswordReport, smbPthReport} from './security/issues/SmbIssue';
-import {struts2IssueOverview, struts2IssueReport} from './security/issues/Struts2Issue';
 import {webLogicIssueOverview, webLogicIssueReport} from './security/issues/WebLogicIssue';
 import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
 import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
@@ -76,11 +75,6 @@ class ReportPageComponent extends AuthComponent {
           [this.credentialTypes.PASSWORD]: smbPasswordReport,
           [this.credentialTypes.HASH]: smbPthReport
         },
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'Struts2Exploiter': {
-        [this.issueContentTypes.OVERVIEW]: struts2IssueOverview,
-        [this.issueContentTypes.REPORT]: struts2IssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'WebLogicExploiter': {
