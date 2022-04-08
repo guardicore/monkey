@@ -57,7 +57,6 @@
                     {"name": "DrupalExploiter", "supported_os": ["linux", "windows"], "options": {}},
                     {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
                     {"name": "ShellShockExploiter", "supported_os": ["linux"], "options": {}},
-                    {"name": "Struts2Exploiter", "supported_os": ["linux", "windows"], "options": {}},
                     {"name": "WebLogicExploiter", "supported_os": ["linux", "windows"], "options": {}},
                     {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}}
                 ]
