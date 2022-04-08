@@ -201,7 +201,6 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
         "vulnerability": [
             {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
             {"name": "Log4ShellExploiter", "supported_os": ["linux", "windows"], "options": {}},
-            {"name": "WebLogicExploiter", "supported_os": [], "options": {}},
             {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}},
         ],
     }

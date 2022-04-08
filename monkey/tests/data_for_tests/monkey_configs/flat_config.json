@@ -50,7 +50,6 @@
         "WmiExploiter",
         "SSHExploiter",
         "ZerologonExploiter",
-        "WebLogicExploiter",
         "HadoopExploiter",
         "MSSQLExploiter",
         "PowerShellExploiter",
