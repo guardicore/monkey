@@ -2,25 +2,32 @@
 
 set -e
 
-SCRIPT_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
-SYSTEMD_UNIT_FILENAME="monkey-appimage.service"
+SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
+SYSTEMD_UNIT_FILENAME="infection-monkey.service"
 SYSTEMD_DIR="/lib/systemd/system"
 MONKEY_BIN="/opt/infection-monkey/bin"
 APPIMAGE_NAME="InfectionMonkey.appimage"
 
 echo_help() {
-  echo "usage: install-infection-monkey-service.sh [--user <NAME> --appimage <PATH>] [--help] [--uninstall]"
+  echo "Installs Infection Monkey service to run on boot"
   echo ""
-  echo "Installs Infection Monkey AppImage and systemd unit to run on boot"
-  echo "--user                          User to run the AppImage as"
-  echo "--appimage                      Path to the AppImage"
-  echo "--uninstall                     Uninstall Infection Monkey AppImage systemd service"
+  echo "Usage:"
+  echo "    install-infection-monkey-service.sh --user <NAME> --appimage <PATH>"
+  echo "    install-infection-monkey-service.sh --uninstall"
+  echo "    install-infection-monkey-service.sh -h|--help"
+  echo ""
+  echo "Options:"
+  echo "    --user                      User to run the service as"
+  echo "    --appimage               	Path to AppImage"
+  echo "    --uninstall                 Uninstall Infection Monkey service"
 }
 
-service_install() {
+install_service() {
+  move_appimage "$2"
+
   cat > "${SCRIPT_DIR}/${SYSTEMD_UNIT_FILENAME}" << EOF
 [Unit]
-Description=Infection Monkey AppImage Runner
+Description=Infection Monkey Runner
 After=network.target
 
 [Service]
@@ -33,15 +40,13 @@ WantedBy=multi-user.target
 EOF
 
   sudo mv "${SCRIPT_DIR}/${SYSTEMD_UNIT_FILENAME}" "${SYSTEMD_DIR}/${SYSTEMD_UNIT_FILENAME}"
-
-  # Enable on boot
   sudo systemctl enable "${SYSTEMD_UNIT_FILENAME}" &>/dev/null
-  sudo systemctl daemon-reload
+
+  echo -e "The Infection Monkey service has been installed and will start on boot.\n\
+Run 'systemctl start infection-monkey' to start the service now."
 }
 
-service_uninstall() {
-  echo "Uninstalling Infection Monkey AppImage systemd service..."
-
+uninstall_service() {
   if [ -f "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
     sudo rm -f "${MONKEY_BIN}/${APPIMAGE_NAME}"
   fi
@@ -53,7 +58,31 @@ service_uninstall() {
     sudo systemctl daemon-reload
   fi
 
-  exit 0
+  echo "The Infection Monkey service has been uninstalled"
+}
+
+user_can_execute() {
+  sudo -u "$1" test -x "$2"
+}
+
+move_appimage() {
+  sudo mkdir -p "${MONKEY_BIN}"
+
+  if [ "$1" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
+    sudo cp "$appimage_path" "${MONKEY_BIN}/${APPIMAGE_NAME}"
+  fi
+}
+
+user_exists() {
+  id -u "$1" &>/dev/null
+}
+
+assert_flag() {
+  if [ -z "$2" ] ; then
+    echo "Error: missing flag '$1'"
+    echo_help
+    exit 1
+  fi
 }
 
 has_sudo() {
@@ -69,6 +98,7 @@ exit_if_missing_argument() {
   fi
 }
 
+do_uninstall=false
 uname=""
 appimage_path=""
 
@@ -87,7 +117,8 @@ while (( "$#" )); do
       shift 2
       ;;
     --uninstall)
-      service_uninstall
+      do_uninstall=true
+      shift
       ;;
     -h|--help)
       echo_help
@@ -106,33 +137,31 @@ Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
-# input sanity
-if [ -z "$uname" ] || [ -z "$appimage_path" ] ; then
-  echo "Error: missing flags"
-  echo_help
+if $do_uninstall ; then
+  uninstall_service
+  exit 0
+fi
+
+assert_flag "--user" "$uname"
+assert_flag "--appimage" "$appimage_path"
+
+if ! user_exists "$uname" ; then
+  echo "Error: User '$uname' does not exist"
   exit 1
 fi
 
-# specified user exists
-if ! id -u "$uname" &>/dev/null ; then
-  echo "Error: User does not exist '${uname}'"
-  exit 1
-fi
-
-# appimage path exists
-if [ ! -f "${appimage_path}" ] ; then
-  if [ ! -f "${SCRIPT_DIR}/${appimage_path}" ] ; then
-    echo "Error: AppImage path does not exist: '${appimage_path}'"
+if [ ! -f "$appimage_path" ] ; then
+  if [ ! -f "${SCRIPT_DIR}/$appimage_path" ] ; then
+    echo "Error: AppImage '$appimage_path' does not exist"
     exit 1
   fi
-  appimage_path="${SCRIPT_DIR}/${appimage_path}"
+  appimage_path="${SCRIPT_DIR}/$appimage_path"
 fi
 
-# move appimge to dst dir
-sudo mkdir -p "${MONKEY_BIN}"
-if [ "$appimage_path" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
-  sudo cp "$appimage_path" "${MONKEY_BIN}/${APPIMAGE_NAME}"
+if ! user_can_execute "$uname" "$appimage_path" ; then
+  echo "Error: User '$uname' does not have execute permission on '$appimage_path'"
+  exit 1
 fi
 
-service_install "${uname}"
-echo "Installation done. "
+install_service "$uname" "$appimage_path"
+
