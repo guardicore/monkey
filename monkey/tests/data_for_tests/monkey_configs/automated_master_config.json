@@ -56,7 +56,6 @@
                 "vulnerability": [
                     {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
                     {"name": "ShellShockExploiter", "supported_os": ["linux"], "options": {}},
-                    {"name": "WebLogicExploiter", "supported_os": ["linux", "windows"], "options": {}},
                     {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}}
                 ]
             }

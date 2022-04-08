@@ -5,7 +5,6 @@
           "SmbExploiter",
           "WmiExploiter",
           "SSHExploiter",
-          "WebLogicExploiter",
           "HadoopExploiter",
           "MSSQLExploiter"
         ]
