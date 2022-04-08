@@ -11,8 +11,6 @@ GCP_TEST_MACHINE_LIST = {
         "tunneling-10",
         "tunneling-11",
         "tunneling-12",
-        "weblogic-18",
-        "weblogic-19",
         "zerologon-25",
     ],
     "europe-west1-b": [

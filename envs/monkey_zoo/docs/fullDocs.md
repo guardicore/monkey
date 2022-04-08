@@ -18,8 +18,6 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 15 Mimikatz](#_Toc536021468)<br>
 [Nr. 16 MsSQL](#_Toc536021469)<br>
 [Nr. 17 Upgrader](#_Toc536021470)<br>
-[Nr. 18 WebLogic](#_Toc526517180)<br>
-[Nr. 19 WebLogic](#_Toc526517181)<br>
 [Nr. 21 Scan](#_Toc526517196)<br>
 [Nr. 22 Scan](#_Toc526517197)<br>
 [Nr. 25 Zerologon](#_Toc536021478)<br>
@@ -626,80 +624,6 @@ Update all requirements using deployment script:<br>
 <td><a href="https://social.technet.microsoft.com/Forums/windows/en-US/8160d62b-0f5d-48a3-9fe9-5cd319837917/how-te-reenable-smb1-in-windows1o?forum=win10itprogeneral">Turn on SMB</a></td>
 </tr>
 <tr class="odd">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517180" class="anchor"></span>Nr. <strong>18</strong> WebLogic</p>
-<p>(10.2.2.18)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.oracle.com/technetwork/middleware/weblogic/downloads/wls-main-097127.html">Oracle WebLogic server 12.2.1.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>7001</td>
-</tr>
-<tr class="even">
-<td>Admin domain credentials:</td>
-<td>weblogic : B74Ot0c4</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517181" class="anchor"></span>Nr. <strong>19</strong> WebLogic</p>
-<p>(10.2.2.19)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.oracle.com/technetwork/middleware/weblogic/downloads/wls-main-097127.html">Oracle WebLogic server 12.2.1.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>7001</td>
-</tr>
-<tr class="even">
-<td>Admin servers credentials:</td>
-<td>weblogic : =ThS2d=m(`B</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="even">
 <td>Notes:</td>
 <td></td>
 </tr>
