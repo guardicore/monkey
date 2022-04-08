@@ -18,7 +18,6 @@ BASIC = {
                         "WmiExploiter",
                         "SSHExploiter",
                         "Log4ShellExploiter",
-                        "WebLogicExploiter",
                         "HadoopExploiter",
                         "MSSQLExploiter",
                         "PowerShellExploiter",
