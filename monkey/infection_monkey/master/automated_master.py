@@ -228,7 +228,7 @@ class AutomatedMaster(IMaster):
             try:
                 callback(p)
             except Exception:
-                logging.exception(
+                logger.exception(
                     f"Got unhandled exception when running {plugin_type} plugin {p}. "
                     f"Plugin was passed to {callback}"
                 )

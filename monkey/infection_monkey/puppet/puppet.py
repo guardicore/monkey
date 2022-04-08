@@ -41,12 +41,12 @@ class Puppet(IPuppet):
         return pba.run(options)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
-        return network_scanning.try_ping(host, timeout)
+        return network_scanning.ping(host, timeout)
 
     def scan_tcp_ports(
         self, host: str, ports: List[int], timeout: float = CONNECTION_TIMEOUT
     ) -> Dict[int, PortScanData]:
-        return network_scanning.try_scan_tcp_ports(host, ports, timeout)
+        return network_scanning.scan_tcp_ports(host, ports, timeout)
 
     def fingerprint(
         self,
@@ -60,7 +60,7 @@ class Puppet(IPuppet):
             fingerprinter = self._plugin_registry.get_plugin(name, PluginType.FINGERPRINTER)
             return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
         except Exception:
-            logging.exception(
+            logger.exception(
                 f"Unhandled exception occurred " f"while trying to run {name} fingerprinter"
             )
             return EMPTY_FINGERPRINT

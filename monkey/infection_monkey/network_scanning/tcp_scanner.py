@@ -14,13 +14,13 @@ POLL_INTERVAL = 0.5
 EMPTY_PORT_SCAN = {-1: PortScanData(-1, PortStatus.CLOSED, None, None)}
 
 
-def try_scan_tcp_ports(
+def scan_tcp_ports(
     host: str, ports_to_scan: Iterable[int], timeout: float
 ) -> Mapping[int, PortScanData]:
     try:
         return _scan_tcp_ports(host, ports_to_scan, timeout)
     except Exception:
-        logging.exception("Unhandled exception occurred while trying to scan tcp ports")
+        logger.exception("Unhandled exception occurred while trying to scan tcp ports")
         return EMPTY_PORT_SCAN
 
 

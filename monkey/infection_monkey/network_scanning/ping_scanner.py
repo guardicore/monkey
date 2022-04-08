@@ -16,11 +16,11 @@ EMPTY_PING_SCAN = PingScanData(False, None)
 logger = logging.getLogger(__name__)
 
 
-def try_ping(host: str, timeout: float) -> PingScanData:
+def ping(host: str, timeout: float) -> PingScanData:
     try:
         return _ping(host, timeout)
     except Exception:
-        logging.exception("Unhandled exception occurred while running ping")
+        logger.exception("Unhandled exception occurred while running ping")
         return EMPTY_PING_SCAN
 
 
