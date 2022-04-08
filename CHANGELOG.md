@@ -58,6 +58,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "smb_service_name" option. #1741
 - Struts2 exploiter. #1869
 - Drupal exploiter. #1869
+- WebLogic exploiter. #1869
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
