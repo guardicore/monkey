@@ -6,7 +6,7 @@ SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 SYSTEMD_UNIT_FILENAME="infection-monkey.service"
 SYSTEMD_DIR="/lib/systemd/system"
 MONKEY_BIN="/opt/infection-monkey/bin"
-APPIMAGE_NAME="InfectionMonkey.appimage"
+APPIMAGE_NAME="InfectionMonkey.AppImage"
 
 echo_help() {
   echo "Installs the Infection Monkey service to run on boot."
