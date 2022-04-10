@@ -14,7 +14,6 @@ from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
 from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
-from envs.monkey_zoo.blackbox.config_templates.struts2 import Struts2
 from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
 from envs.monkey_zoo.blackbox.config_templates.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
@@ -45,7 +44,6 @@ CONFIG_TEMPLATES = [
     SmbMimikatz,
     SmbPth,
     Ssh,
-    Struts2,
     Tunneling,
     Weblogic,
     WmiMimikatz,

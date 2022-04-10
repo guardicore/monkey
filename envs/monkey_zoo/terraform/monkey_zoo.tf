@@ -480,36 +480,6 @@ resource "google_compute_instance_from_template" "scan-22" {
   }
 }
 
-resource "google_compute_instance_from_template" "struts2-23" {
-  name = "${local.resource_prefix}struts2-23"
-  source_instance_template = local.default_ubuntu
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.struts2-23.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.23"
-  }
-}
-
-resource "google_compute_instance_from_template" "struts2-24" {
-  name = "${local.resource_prefix}struts2-24"
-  source_instance_template = local.default_windows
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.struts2-24.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.24"
-  }
-}
-
 resource "google_compute_instance_from_template" "zerologon-25" {
   name = "${local.resource_prefix}zerologon-25"
   source_instance_template = local.default_windows

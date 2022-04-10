@@ -49,7 +49,6 @@
         "SmbExploiter",
         "WmiExploiter",
         "SSHExploiter",
-        "Struts2Exploiter",
         "ZerologonExploiter",
         "WebLogicExploiter",
         "HadoopExploiter",

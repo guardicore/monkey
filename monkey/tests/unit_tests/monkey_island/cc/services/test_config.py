@@ -202,7 +202,6 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
             {"name": "DrupalExploiter", "supported_os": [], "options": {}},
             {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
             {"name": "Log4ShellExploiter", "supported_os": ["linux", "windows"], "options": {}},
-            {"name": "Struts2Exploiter", "supported_os": [], "options": {}},
             {"name": "WebLogicExploiter", "supported_os": [], "options": {}},
             {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}},
         ],

@@ -81,7 +81,6 @@ class AWSExporter(Exporter):
             "shared_passwords_domain": AWSExporter._handle_shared_passwords_domain_issue,
             "shared_admins_domain": AWSExporter._handle_shared_admins_domain_issue,
             "strong_users_on_crit": AWSExporter._handle_strong_users_on_crit_issue,
-            ExploiterDescriptorEnum.STRUTS2.value.class_name: AWSExporter._handle_struts2_issue,
             ExploiterDescriptorEnum.WEBLOGIC.value.class_name: AWSExporter._handle_weblogic_issue,
             ExploiterDescriptorEnum.HADOOP.value.class_name: AWSExporter._handle_hadoop_issue,
         }
@@ -382,24 +381,6 @@ class AWSExporter(Exporter):
             "classifying it as a critical "
             "machine. These users has access to it:{threatening_users}.".format(
                 services=issue["services"], threatening_users=issue["threatening_users"]
-            ),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_struts2_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Struts2 servers are vulnerable to remote code execution.",
-            description="Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.",
-            recommendation="Struts2 server at {machine} ({ip_address}) is vulnerable to "
-            "remote code execution attack."
-            "The attack was made possible because the server is using an old "
-            "version of Jakarta based file "
-            "upload Multipart parser.".format(
-                machine=issue["machine"], ip_address=issue["ip_address"]
             ),
             instance_arn=instance_arn,
             instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
