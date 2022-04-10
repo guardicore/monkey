@@ -63,7 +63,7 @@ uninstall_service() {
 }
 
 move_appimage() {
-  sudo mkdir -p "${MONKEY_BIN}"
+  sudo mkdir --mode=0755 -p "${MONKEY_BIN}"
 
   if [ "$1" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
     umask 022
