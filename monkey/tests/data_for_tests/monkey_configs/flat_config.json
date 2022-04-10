@@ -53,7 +53,6 @@
         "WebLogicExploiter",
         "HadoopExploiter",
         "MSSQLExploiter",
-        "DrupalExploiter",
         "PowerShellExploiter",
         "Log4ShellExploiter"
     ],

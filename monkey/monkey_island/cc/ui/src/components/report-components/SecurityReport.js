@@ -23,7 +23,6 @@ import {smbPasswordReport, smbPthReport} from './security/issues/SmbIssue';
 import {webLogicIssueOverview, webLogicIssueReport} from './security/issues/WebLogicIssue';
 import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
 import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
-import {drupalIssueOverview, drupalIssueReport} from './security/issues/DrupalIssue';
 import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
 import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
@@ -90,11 +89,6 @@ class ReportPageComponent extends AuthComponent {
       'MSSQLExploiter': {
         [this.issueContentTypes.OVERVIEW]: mssqlIssueOverview,
         [this.issueContentTypes.REPORT]: mssqlIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'DrupalExploiter': {
-        [this.issueContentTypes.OVERVIEW]: drupalIssueOverview,
-        [this.issueContentTypes.REPORT]: drupalIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'WmiExploiter': {

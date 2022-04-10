@@ -21,7 +21,6 @@ BASIC = {
                         "WebLogicExploiter",
                         "HadoopExploiter",
                         "MSSQLExploiter",
-                        "DrupalExploiter",
                         "PowerShellExploiter",
                     ],
                 }

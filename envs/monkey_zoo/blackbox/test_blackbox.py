@@ -8,7 +8,6 @@ from typing_extensions import Type
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.config_templates.drupal import Drupal
 from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
 from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
@@ -184,10 +183,6 @@ class TestMonkeyBlackbox:
 
     def test_smb_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")
-
-    @pytest.mark.skip(reason="Drupal exploiter is deprecated")
-    def test_drupal_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Drupal, "Drupal_exploiter")
 
     @pytest.mark.skip(reason="Weblogic exploiter is deprecated")
     def test_weblogic_exploiter(self, island_client):
