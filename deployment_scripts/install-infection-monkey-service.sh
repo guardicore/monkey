@@ -66,9 +66,8 @@ move_appimage() {
 
   if [ "$1" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
     sudo cp "$appimage_path" "${MONKEY_BIN}/${APPIMAGE_NAME}"
+    sudo chmod a+x "${MONKEY_BIN}/${APPIMAGE_NAME}"
   fi
-
-  sudo chmod a+x "${MONKEY_BIN}/${APPIMAGE_NAME}"
 }
 
 user_exists() {
