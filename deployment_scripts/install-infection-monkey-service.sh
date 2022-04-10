@@ -77,7 +77,7 @@ user_exists() {
 
 assert_parameter_supplied() {
   if [ -z "$2" ] ; then
-    echo "Error: missing flag '$1'"
+    echo "Error: missing required parameter '$1'"
     echo_help
     exit 1
   fi
@@ -91,7 +91,7 @@ has_sudo() {
 
 exit_if_missing_argument() {
   if [ -z "$2" ] || [ "${2:0:1}" == "-" ]; then
-    echo "Error: Argument for $1 is missing" >&2
+    echo "Error: Argument for parameter '$1' is missing" >&2
     exit 1
   fi
 }
