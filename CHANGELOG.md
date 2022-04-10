@@ -11,6 +11,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/propagation-credentials/<string:guid>" endpoint for agents to
   retrieve updated credentials from the Island. #1538
 - SSHCollector as a configurable System info Collector. #1606
+- deployment_scrips/install-infection-monkey-service.sh to install an AppImage
+  as a service. #1552
 
 ### Changed
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
