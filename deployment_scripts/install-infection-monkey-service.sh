@@ -9,17 +9,17 @@ MONKEY_BIN="/opt/infection-monkey/bin"
 APPIMAGE_NAME="InfectionMonkey.appimage"
 
 echo_help() {
-  echo "Installs Infection Monkey service to run on boot"
+  echo "Installs the Infection Monkey service to run on boot."
   echo ""
   echo "Usage:"
-  echo "    install-infection-monkey-service.sh --user <NAME> --appimage <PATH>"
+  echo "    install-infection-monkey-service.sh --user <USERNAME> --appimage <PATH>"
   echo "    install-infection-monkey-service.sh --uninstall"
   echo "    install-infection-monkey-service.sh -h|--help"
   echo ""
   echo "Options:"
   echo "    --user                      User to run the service as"
-  echo "    --appimage               	Path to AppImage"
-  echo "    --uninstall                 Uninstall Infection Monkey service"
+  echo "    --appimage                  Path to AppImage"
+  echo "    --uninstall                 Uninstall the Infection Monkey service"
 }
 
 install_service() {
@@ -156,4 +156,3 @@ if [ ! -f "$appimage_path" ] ; then
 fi
 
 install_service "$uname" "$appimage_path"
-
