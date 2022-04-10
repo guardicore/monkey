@@ -61,23 +61,21 @@ uninstall_service() {
   echo "The Infection Monkey service has been uninstalled"
 }
 
-user_can_execute() {
-  sudo -u "$1" test -x "$2"
-}
-
 move_appimage() {
   sudo mkdir -p "${MONKEY_BIN}"
 
   if [ "$1" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
     sudo cp "$appimage_path" "${MONKEY_BIN}/${APPIMAGE_NAME}"
   fi
+
+  sudo chmod a+x "${MONKEY_BIN}/${APPIMAGE_NAME}"
 }
 
 user_exists() {
   id -u "$1" &>/dev/null
 }
 
-assert_flag() {
+assert_parameter_supplied() {
   if [ -z "$2" ] ; then
     echo "Error: missing flag '$1'"
     echo_help
@@ -142,8 +140,8 @@ if $do_uninstall ; then
   exit 0
 fi
 
-assert_flag "--user" "$uname"
-assert_flag "--appimage" "$appimage_path"
+assert_parameter_supplied "--user" "$uname"
+assert_parameter_supplied "--appimage" "$appimage_path"
 
 if ! user_exists "$uname" ; then
   echo "Error: User '$uname' does not exist"
@@ -156,11 +154,6 @@ if [ ! -f "$appimage_path" ] ; then
     exit 1
   fi
   appimage_path="${SCRIPT_DIR}/$appimage_path"
-fi
-
-if ! user_can_execute "$uname" "$appimage_path" ; then
-  echo "Error: User '$uname' does not have execute permission on '$appimage_path'"
-  exit 1
 fi
 
 install_service "$uname" "$appimage_path"
