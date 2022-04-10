@@ -65,8 +65,9 @@ move_appimage() {
   sudo mkdir -p "${MONKEY_BIN}"
 
   if [ "$1" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
+    umask 022
     sudo cp "$appimage_path" "${MONKEY_BIN}/${APPIMAGE_NAME}"
-    sudo chmod a+x "${MONKEY_BIN}/${APPIMAGE_NAME}"
+    sudo chmod 755 "${MONKEY_BIN}/${APPIMAGE_NAME}"
   fi
 }
 
