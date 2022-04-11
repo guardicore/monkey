@@ -3,13 +3,11 @@ import logging
 import platform
 from pprint import pformat
 from socket import gethostname
-from urllib.parse import urljoin
 
 import requests
 from requests.exceptions import ConnectionError
 
 import infection_monkey.tunnel as tunnel
-from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.network.info import get_host_subnets, local_ips
@@ -262,22 +260,6 @@ class ControlClient(object):
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=LONG_REQUEST_TIMEOUT,
-            )
-        except requests.exceptions.RequestException:
-            return False
-
-    @staticmethod
-    def get_T1216_pba_file():
-        try:
-            return requests.get(  # noqa: DUO123
-                urljoin(
-                    f"https://{WormConfiguration.current_server}/",
-                    T1216_PBA_FILE_DOWNLOAD_PATH,
-                ),
-                verify=False,
-                proxies=ControlClient.proxies,
-                stream=True,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except requests.exceptions.RequestException:
             return False

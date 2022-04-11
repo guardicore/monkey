@@ -26,7 +26,9 @@ class CustomPBA(PBA):
     """
 
     def __init__(self, telemetry_messenger: ITelemetryMessenger):
-        super(CustomPBA, self).__init__(telemetry_messenger, POST_BREACH_FILE_EXECUTION)
+        super(CustomPBA, self).__init__(
+            telemetry_messenger, POST_BREACH_FILE_EXECUTION, timeout=None
+        )
         self.filename = ""
 
     def run(self, options: Dict) -> Iterable[PostBreachData]:

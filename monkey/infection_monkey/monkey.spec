@@ -55,6 +55,8 @@ def process_datas(orig_datas):
     datas = orig_datas
     if is_windows():
         datas = [i for i in datas if i[0].find('Include') < 0]
+    else:
+        datas = [i for i in datas if not i[0].endswith("T1216_random_executable.exe")]
     return datas
 
 

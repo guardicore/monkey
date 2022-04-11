@@ -7,6 +7,7 @@ from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.post_breach.signed_script_proxy.signed_script_proxy import (
     cleanup_changes,
+    copy_executable_to_cwd,
     get_commands_to_proxy_execution_using_signed_script,
 )
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
@@ -29,6 +30,7 @@ class SignedScriptProxyExecution(PBA):
         original_comspec = ""
         try:
             if is_windows_os():
+                copy_executable_to_cwd()
                 original_comspec = subprocess.check_output(  # noqa: DUO116
                     "if defined COMSPEC echo %COMSPEC%", shell=True, timeout=SHORT_REQUEST_TIMEOUT
                 ).decode()

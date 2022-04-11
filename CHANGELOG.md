@@ -59,12 +59,15 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Struts2 exploiter. #1869
 - Drupal exploiter. #1869
 - WebLogic exploiter. #1869
+- The /api/t1216-pba/download endpoint. #1864
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
 - Windows "run as a user" powershell command for manual agent runs. #1570
 - A bug in the "Signed Script Proxy Execution" PBA that downloaded the exe on Linux
   systems as well. #1557
+- A bug where T1216_random_executable.exe was copied to disk even if the signed
+  script proxy execution PBA was disabled. #1864
 
 
 ### Security
