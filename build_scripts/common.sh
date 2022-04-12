@@ -74,11 +74,18 @@ generate_ssl_cert() {
 
 build_frontend() {
   local ui_dir="$1/monkey_island/cc/ui"
+  local is_release_build=$2
   pushd "$ui_dir" || handle_error
 
   log_message "Generating front end"
   npm ci
-  npm run dist
+  if [ "$is_release_build" == true ]; then
+    log_message "Running production front end build"
+    npm run dist
+  else
+    log_message "Running development front end build"
+    npm run dev
+  fi
 
   popd || handle_error
 

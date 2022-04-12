@@ -28,6 +28,7 @@ setup_build_dir() {
   local agent_binary_dir=$1
   local monkey_repo=$2
   local deployment_type=$3
+  local is_release_build=$4
 
   pushd $APPIMAGE_DIR
 
@@ -44,7 +45,7 @@ setup_build_dir() {
   install_mongodb
 
   generate_ssl_cert "$BUILD_DIR"
-  build_frontend "$BUILD_DIR"
+  build_frontend "$BUILD_DIR" "$is_release_build"
 
   remove_python_appdir_artifacts
 
