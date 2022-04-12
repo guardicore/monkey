@@ -9,6 +9,7 @@ const smp = new SpeedMeasurePlugin({ disable: isProduction });
 
 
 module.exports = smp.wrap({
+  mode : isProduction ? 'production' : 'development',
   cache: {
     type: 'filesystem',
     memoryCacheUnaffected: true
@@ -78,7 +79,7 @@ module.exports = smp.wrap({
       }
     ]
   },
-  devtool: isProduction ? 'source-map' : 'eval',
+  devtool: isProduction ? 'source-map' : 'eval-source-map',
   plugins: [
     new ForkTsCheckerWebpackPlugin({
       typescript: {
