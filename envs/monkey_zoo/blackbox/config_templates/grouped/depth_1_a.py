@@ -13,6 +13,7 @@ class Depth1A(ConfigTemplate):
     # MSSQL
     # SMB password stealing and brute force
     # SSH password and key brute-force, key stealing
+    # Powershell credential reuse (powershell login with empty password)
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": [
@@ -21,6 +22,7 @@ class Depth1A(ConfigTemplate):
                 "MSSQLExploiter",
                 "SmbExploiter",
                 "SSHExploiter",
+                "PowerShellExploiter",
             ],
             "basic_network.scope.subnet_scan_list": [
                 "10.2.2.2",
@@ -36,6 +38,7 @@ class Depth1A(ConfigTemplate):
                 "10.2.2.15",
                 "10.2.2.11",
                 "10.2.2.12",
+                "10.2.3.46",
             ],
             "basic.credentials.exploit_password_list": ["Ivrrw5zEzs", "Xk8VDTsC", "^NgDvY59~8"],
             "basic.credentials.exploit_user_list": ["m0nk3y"],
