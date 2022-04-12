@@ -3,20 +3,9 @@ import pathlib
 from typing import Type
 
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
-from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
-from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
-from envs.monkey_zoo.blackbox.config_templates.log4j_tomcat import Log4jTomcat
-from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
-from envs.monkey_zoo.blackbox.config_templates.performance import Performance
-from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
-from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
-from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
-from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
-from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
-from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
-from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_b import Depth1B
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_4_a import Depth4A
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
@@ -34,22 +23,7 @@ args = parser.parse_args()
 island_client = MonkeyIslandClient(args.island_ip)
 
 
-CONFIG_TEMPLATES = [
-    Hadoop,
-    Mssql,
-    Performance,
-    PowerShell,
-    SmbMimikatz,
-    SmbPth,
-    Ssh,
-    Tunneling,
-    WmiMimikatz,
-    WmiPth,
-    Zerologon,
-    Log4jLogstash,
-    Log4jTomcat,
-    Log4jSolr,
-]
+CONFIG_TEMPLATES = [Depth1A, Depth1B, Depth4A]
 
 
 def generate_templates():
