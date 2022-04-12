@@ -10,10 +10,6 @@ const smp = new SpeedMeasurePlugin({ disable: isProduction });
 
 module.exports = smp.wrap({
   mode : isProduction ? 'production' : 'development',
-  cache: {
-    type: 'filesystem',
-    memoryCacheUnaffected: true
-  },
   module: {
     rules: [
       { test: /\.tsx?$/,
