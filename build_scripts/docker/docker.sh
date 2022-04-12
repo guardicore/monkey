@@ -9,6 +9,7 @@ install_package_specific_build_prereqs() {
 setup_build_dir() {
   local agent_binary_dir=$1
   local monkey_repo=$2
+  local is_release_build=$4
   local build_dir=$DOCKER_DIR/monkey
 
   mkdir "$build_dir"
@@ -22,7 +23,7 @@ setup_build_dir() {
 
   generate_ssl_cert "$build_dir"
 
-  build_frontend "$build_dir"
+  build_frontend "$build_dir" "$is_release_build"
 }
 
 copy_entrypoint_to_build_dir() {
