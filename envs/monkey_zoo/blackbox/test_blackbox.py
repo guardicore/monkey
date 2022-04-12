@@ -8,39 +8,14 @@ from typing_extensions import Type
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
-from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
-from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
-from envs.monkey_zoo.blackbox.config_templates.log4j_tomcat import Log4jTomcat
-from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
-from envs.monkey_zoo.blackbox.config_templates.performance import Performance
-from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
-from envs.monkey_zoo.blackbox.config_templates.powershell_credentials_reuse import (
-    PowerShellCredentialsReuse,
-)
-from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
-from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
-from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
-from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
-from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
-from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_b import Depth1B
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_4_a import Depth4A
 from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
-from envs.monkey_zoo.blackbox.tests.performance.map_generation import MapGenerationTest
-from envs.monkey_zoo.blackbox.tests.performance.map_generation_from_telemetries import (
-    MapGenerationFromTelemetryTest,
-)
-from envs.monkey_zoo.blackbox.tests.performance.report_generation import ReportGenerationTest
-from envs.monkey_zoo.blackbox.tests.performance.report_generation_from_telemetries import (
-    ReportGenerationFromTelemetryTest,
-)
-from envs.monkey_zoo.blackbox.tests.performance.telemetry_performance_test import (
-    TelemetryPerformanceTest,
-)
 from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
     initialize_gcp_client,
     start_machines,
@@ -153,72 +128,17 @@ class TestMonkeyBlackbox:
     def get_log_dir_path():
         return os.path.abspath(LOG_DIR_PATH)
 
-    def test_ssh_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Ssh, "SSH_exploiter_and_keys")
+    def test_depth_1_a(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth1A, "Depth1A test suite")
 
-    def test_hadoop_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Hadoop, "Hadoop_exploiter", 6 * 60)
-
-    def test_mssql_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Mssql, "MSSQL_exploiter")
-
-    def test_powershell_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, PowerShell, "PowerShell_Remoting_exploiter"
-        )
-
-    @pytest.mark.skip_powershell_reuse
-    def test_powershell_exploiter_credentials_reuse(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client,
-            PowerShellCredentialsReuse,
-            "PowerShell_Remoting_exploiter_credentials_reuse",
-        )
-
-    def test_smb_and_mimikatz_exploiters(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, SmbMimikatz, "SMB_exploiter_mimikatz"
-        )
-
-    def test_smb_pth(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")
-
-    def test_log4j_solr_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, Log4jSolr, "Log4Shell_Solr_exploiter"
-        )
-
-    def test_log4j_tomcat_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, Log4jTomcat, "Log4Shell_tomcat_exploiter"
-        )
-
-    def test_log4j_logstash_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, Log4jLogstash, "Log4Shell_logstash_exploiter"
-        )
-
-    def test_tunneling(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, Tunneling, "Tunneling_exploiter", 3 * 60
-        )
-
-    def test_wmi_and_mimikatz_exploiters(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, WmiMimikatz, "WMI_exploiter,_mimikatz"
-        )
-
-    def test_wmi_pth(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, WmiPth, "WMI_PTH")
-
-    def test_zerologon_exploiter(self, island_client):
+    def test_depth_1_b(self, island_client):
         test_name = "Zerologon_exploiter"
         expected_creds = [
             "Administrator",
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
-        raw_config = IslandConfigParser.get_raw_config(Zerologon, island_client)
+        raw_config = IslandConfigParser.get_raw_config(Depth1B, island_client)
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client, IslandConfigParser.get_ips_of_targets(raw_config)
@@ -235,47 +155,5 @@ class TestMonkeyBlackbox:
             log_handler=log_handler,
         ).run()
 
-    @pytest.mark.skip(
-        reason="Perfomance test that creates env from fake telemetries is faster, use that instead."
-    )
-    def test_report_generation_performance(self, island_client, quick_performance_tests):
-        """
-        This test includes the SSH + Hadoop + MSSQL machines all in one test
-        for a total of 8 machines including the Monkey Island.
-
-        Is has 2 analyzers - the regular one which checks all the Monkeys
-        and the Timing one which checks how long the report took to execute
-        """
-        if not quick_performance_tests:
-            TestMonkeyBlackbox.run_performance_test(
-                ReportGenerationTest, island_client, Performance, timeout_in_seconds=10 * 60
-            )
-        else:
-            LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
-            assert False
-
-    @pytest.mark.skip(
-        reason="Perfomance test that creates env from fake telemetries is faster, use that instead."
-    )
-    def test_map_generation_performance(self, island_client, quick_performance_tests):
-        if not quick_performance_tests:
-            TestMonkeyBlackbox.run_performance_test(
-                MapGenerationTest, island_client, "PERFORMANCE.conf", timeout_in_seconds=10 * 60
-            )
-        else:
-            LOGGER.error("This test doesn't support 'quick_performance_tests' option.")
-            assert False
-
-    @pytest.mark.run_performance_tests
-    def test_report_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
-        ReportGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
-
-    @pytest.mark.run_performance_tests
-    def test_map_generation_from_fake_telemetries(self, island_client, quick_performance_tests):
-        MapGenerationFromTelemetryTest(island_client, quick_performance_tests).run()
-
-    @pytest.mark.run_performance_tests
-    def test_telem_performance(self, island_client, quick_performance_tests):
-        TelemetryPerformanceTest(
-            island_client, quick_performance_tests
-        ).test_telemetry_performance()
+    def test_depth_4_a(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth4A, "Depth4A test suite")
