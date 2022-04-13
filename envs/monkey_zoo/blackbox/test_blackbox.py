@@ -102,30 +102,6 @@ class TestMonkeyBlackbox:
         ).run()
 
     @staticmethod
-    def run_performance_test(
-        performance_test_class,
-        island_client,
-        config_template,
-        timeout_in_seconds,
-        break_on_timeout=False,
-    ):
-        raw_config = IslandConfigParser.get_raw_config(config_template, island_client)
-        log_handler = TestLogsHandler(
-            performance_test_class.TEST_NAME, island_client, TestMonkeyBlackbox.get_log_dir_path()
-        )
-        analyzers = [
-            CommunicationAnalyzer(island_client, IslandConfigParser.get_ips_of_targets(raw_config))
-        ]
-        performance_test_class(
-            island_client=island_client,
-            raw_config=raw_config,
-            analyzers=analyzers,
-            timeout=timeout_in_seconds,
-            log_handler=log_handler,
-            break_on_timeout=break_on_timeout,
-        ).run()
-
-    @staticmethod
     def get_log_dir_path():
         return os.path.abspath(LOG_DIR_PATH)
 
