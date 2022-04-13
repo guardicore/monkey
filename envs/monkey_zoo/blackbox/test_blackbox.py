@@ -23,7 +23,7 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
 )
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
-DEFAULT_TIMEOUT_SECONDS = 2 * 60
+DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
 LOG_DIR_PATH = "./logs"
 logging.basicConfig(level=logging.INFO)
