@@ -7,7 +7,7 @@ group: travis_latest
 language: python
 
 env:
-  - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv
+  - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j4
 
 cache:
   - pip
@@ -24,6 +24,7 @@ os: linux
 
 install:
 # Python
+- nproc
 - pip install pipenv --upgrade
 # Install island and monkey requirements as they are needed by UT's
 - pushd monkey/monkey_island
