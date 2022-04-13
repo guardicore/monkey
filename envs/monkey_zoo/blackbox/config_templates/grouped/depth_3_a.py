@@ -4,7 +4,7 @@ from envs.monkey_zoo.blackbox.config_templates.base_template import BaseTemplate
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 
 
-class Depth4A(ConfigTemplate):
+class Depth3A(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
 
     # Tests:
@@ -33,16 +33,13 @@ class Depth4A(ConfigTemplate):
                 "Passw0rd!",
                 "3Q=(Ge(+&w]*",
                 "`))jU7L(w}",
-                "t67TC5ZDmz" "Ivrrw5zEzs",
+                "t67TC5ZDmz",
+                "Ivrrw5zEzs",
             ],
             "basic_network.scope.depth": 3,
             "internal.general.keep_tunnel_open_time": 20,
             "basic.credentials.exploit_user_list": ["m0nk3y", "m0nk3y-user"],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
-            "internal.exploits.exploit_ntlm_hash_list": [
-                "5da0889ea2081aa79f6852294cba4a5e",
-                "50c9987a6bf1ac59398df9f911122c9b",
-            ],
-            "internal.network.tcp_scanner.tcp_target_ports": [5985, 5986, 22, 135],
+            "internal.exploits.exploit_ntlm_hash_list": ["d0f0132b308a0c4e5d1029cc06f48692"],
         }
     )

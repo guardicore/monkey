@@ -5,7 +5,7 @@ from typing import Type
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_b import Depth1B
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_4_a import Depth4A
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
@@ -23,7 +23,7 @@ args = parser.parse_args()
 island_client = MonkeyIslandClient(args.island_ip)
 
 
-CONFIG_TEMPLATES = [Depth1A, Depth1B, Depth4A]
+CONFIG_TEMPLATES = [Depth1A, Depth1B, Depth3A]
 
 
 def generate_templates():
