@@ -7,7 +7,7 @@ group: travis_latest
 language: python
 
 env:
-  - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j4
+  - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
 
 cache:
   - pip
@@ -20,6 +20,8 @@ python:
 - 3.7
 
 os: linux
+vm:
+  size: x-large
 
 
 install:
