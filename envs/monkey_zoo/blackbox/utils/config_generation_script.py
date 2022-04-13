@@ -6,6 +6,9 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_2_a import Depth2A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
+from envs.monkey_zoo.blackbox.config_templates.single_tests.powershell_credentials_reuse import (
+    PowerShellCredentialsReuse,
+)
 from envs.monkey_zoo.blackbox.config_templates.single_tests.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.single_tests.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.single_tests.zerologon import Zerologon
@@ -25,8 +28,15 @@ parser.add_argument(
 args = parser.parse_args()
 island_client = MonkeyIslandClient(args.island_ip)
 
-
-CONFIG_TEMPLATES = [Depth1A, Depth2A, Depth3A, Zerologon, SmbPth, WmiMimikatz]
+CONFIG_TEMPLATES = [
+    Depth1A,
+    Depth2A,
+    Depth3A,
+    Zerologon,
+    SmbPth,
+    WmiMimikatz,
+    PowerShellCredentialsReuse,
+]
 
 
 def generate_templates():

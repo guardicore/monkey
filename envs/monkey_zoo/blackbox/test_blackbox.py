@@ -11,6 +11,9 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_2_a import Depth2A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
+from envs.monkey_zoo.blackbox.config_templates.single_tests.powershell_credentials_reuse import (
+    PowerShellCredentialsReuse,
+)
 from envs.monkey_zoo.blackbox.config_templates.single_tests.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.single_tests.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.single_tests.zerologon import Zerologon
@@ -115,6 +118,15 @@ class TestMonkeyBlackbox:
 
     def test_depth_3_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Depth3A, "Depth4A test suite")
+
+    # Not grouped because can only be ran on windows
+    @pytest.mark.skip_powershell_reuse
+    def test_powershell_exploiter_credentials_reuse(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client,
+            PowerShellCredentialsReuse,
+            "PowerShell_Remoting_exploiter_credentials_reuse",
+        )
 
     # Not grouped because it's slow
     def test_zerologon_exploiter(self, island_client):

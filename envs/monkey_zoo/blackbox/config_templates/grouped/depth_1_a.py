@@ -11,7 +11,6 @@ class Depth1A(ConfigTemplate):
     # Log4shell (10.2.3.55, 10.2.3.56, 10.2.3.49, 10.2.3.50, 10.2.3.51, 10.2.3.52)
     # MSSQL (10.2.2.16)
     # SMB mimikatz password stealing and brute force (10.2.2.14 and 10.2.2.15)
-    # Powershell credential reuse (powershell login with empty password) (10.2.3.46)
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": [
@@ -20,7 +19,6 @@ class Depth1A(ConfigTemplate):
                 "MSSQLExploiter",
                 "SmbExploiter",
                 "SSHExploiter",
-                "PowerShellExploiter",
             ],
             "basic_network.scope.subnet_scan_list": [
                 "10.2.2.2",
@@ -34,7 +32,6 @@ class Depth1A(ConfigTemplate):
                 "10.2.2.16",
                 "10.2.2.14",
                 "10.2.2.15",
-                "10.2.3.46",
             ],
             "basic.credentials.exploit_password_list": ["Ivrrw5zEzs", "Xk8VDTsC"],
             "basic.credentials.exploit_user_list": ["m0nk3y"],
