@@ -11,6 +11,7 @@ env:
 
 cache:
   - pip: true
+  - npm: true
   - directories:
     - "$HOME/.npm"
     - $PIP_CACHE_DIR
