@@ -8,9 +8,9 @@ class Depth3A(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
 
     # Tests:
-    # Powershell
-    # Tunneling (SSH brute force)
-    # WMI mimikatz password stealing
+    # Powershell (10.2.3.45, 10.2.3.46, 10.2.3.47, 10.2.3.48)
+    # Tunneling (SSH brute force) (10.2.2.9, 10.2.1.10, 10.2.0.12, 10.2.0.11)
+    # WMI pass the hash (10.2.2.15)
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": [

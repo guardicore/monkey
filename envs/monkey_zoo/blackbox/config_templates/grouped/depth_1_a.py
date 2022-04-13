@@ -8,12 +8,11 @@ class Depth1A(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
     # TODO ADD SMB PTH machine
     # Tests:
-    # Hadoop
-    # Log4shell
-    # MSSQL
-    # SMB password stealing and brute force
-    # SSH password and key brute-force, key stealing
-    # Powershell credential reuse (powershell login with empty password)
+    # Hadoop (10.2.2.2, 10.2.2.3)
+    # Log4shell (10.2.3.55, 10.2.3.56, 10.2.3.49, 10.2.3.50, 10.2.3.51, 10.2.3.52)
+    # MSSQL (10.2.2.16)
+    # SMB mimikatz password stealing and brute force (10.2.2.14 and 10.2.2.15)
+    # Powershell credential reuse (powershell login with empty password) (10.2.3.46)
     config_values.update(
         {
             "basic.exploiters.exploiter_classes": [

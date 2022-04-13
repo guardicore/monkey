@@ -7,7 +7,7 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 class Depth1B(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
     # Tests:
-    # WMI + credential stealing
+    # WMI password login and mimikatz credential stealing (10.2.2.14 and 10.2.2.15)
     # Zerologon
     config_values.update(
         {
