@@ -10,7 +10,7 @@ env:
   - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
 
 cache:
-  - pip
+  - pip: true
   - directories:
     - "$HOME/.npm"
     - $PIP_CACHE_DIR
