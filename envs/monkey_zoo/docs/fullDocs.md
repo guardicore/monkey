@@ -771,7 +771,9 @@ Accessibale through Island using m0nk3y-user.</td>
 <tr class="even">
 <td>Notes:</td>
 <td>User: m0nk3y, Password: Passw0rd!<br>
-Accessiable through cached credentials (Windows Island)</td>
+Accessible using the same m0nk3y user from island, in other words powershell exploiter can exploit
+this machine without credentials as long as the user running the agent is the same on both
+machines</td>
 </tr>
 </tbody>
 </table>
