@@ -39,8 +39,10 @@ class Depth3A(ConfigTemplate):
             "internal.general.keep_tunnel_open_time": 20,
             "basic.credentials.exploit_user_list": ["m0nk3y", "m0nk3y-user"],
             "internal.network.tcp_scanner.HTTP_PORTS": [],
-            "internal.exploits.exploit_ntlm_hash_list": ["d0f0132b308a0c4e5d1029cc06f48692",
-                                                         "5da0889ea2081aa79f6852294cba4a5e",
-                                                         "50c9987a6bf1ac59398df9f911122c9b"],
+            "internal.exploits.exploit_ntlm_hash_list": [
+                "d0f0132b308a0c4e5d1029cc06f48692",
+                "5da0889ea2081aa79f6852294cba4a5e",
+                "50c9987a6bf1ac59398df9f911122c9b",
+            ],
         }
     )
