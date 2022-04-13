@@ -9,9 +9,11 @@ from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import Communicat
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_b import Depth1B
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_2_a import Depth2A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
+from envs.monkey_zoo.blackbox.config_templates.single_tests.smb_pth import SmbPth
+from envs.monkey_zoo.blackbox.config_templates.single_tests.wmi_mimikatz import WmiMimikatz
+from envs.monkey_zoo.blackbox.config_templates.single_tests.zerologon import Zerologon
 from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
@@ -108,14 +110,21 @@ class TestMonkeyBlackbox:
     def test_depth_1_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Depth1A, "Depth1A test suite")
 
-    def test_depth_1_b(self, island_client):
+    def test_depth_2_a(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth2A, "Depth2A test suite")
+
+    def test_depth_3_a(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth3A, "Depth4A test suite")
+
+    # Not grouped because it's slow
+    def test_zerologon_exploiter(self, island_client):
         test_name = "Zerologon_exploiter"
         expected_creds = [
             "Administrator",
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
-        raw_config = IslandConfigParser.get_raw_config(Depth1B, island_client)
+        raw_config = IslandConfigParser.get_raw_config(Zerologon, island_client)
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client, IslandConfigParser.get_ips_of_targets(raw_config)
@@ -132,8 +141,13 @@ class TestMonkeyBlackbox:
             log_handler=log_handler,
         ).run()
 
-    def test_depth_2_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth2A, "Depth2A test suite")
+    # Not grouped because conflicts with SMB.
+    # Consider grouping when more depth 1 exploiters collide with group depth_1_a
+    def test_wmi_and_mimikatz_exploiters(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, WmiMimikatz, "WMI_exploiter,_mimikatz"
+        )
 
-    def test_depth_3_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth3A, "Depth4A test suite")
+    # Not grouped because it's depth 1 but conflicts with SMB exploiter in group depth_1_a
+    def test_smb_pth(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")

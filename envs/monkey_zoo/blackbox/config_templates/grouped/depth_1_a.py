@@ -6,7 +6,6 @@ from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemp
 
 class Depth1A(ConfigTemplate):
     config_values = copy(BaseTemplate.config_values)
-    # TODO ADD SMB PTH machine
     # Tests:
     # Hadoop (10.2.2.2, 10.2.2.3)
     # Log4shell (10.2.3.55, 10.2.3.56, 10.2.3.49, 10.2.3.50, 10.2.3.51, 10.2.3.52)
