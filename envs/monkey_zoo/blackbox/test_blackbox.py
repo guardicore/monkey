@@ -10,6 +10,7 @@ from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnaly
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_b import Depth1B
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_2_a import Depth2A
 from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
 from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
@@ -154,6 +155,9 @@ class TestMonkeyBlackbox:
             timeout=DEFAULT_TIMEOUT_SECONDS,
             log_handler=log_handler,
         ).run()
+
+    def test_depth_2_a(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth2A, "Depth2A test suite")
 
     def test_depth_3_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Depth3A, "Depth4A test suite")

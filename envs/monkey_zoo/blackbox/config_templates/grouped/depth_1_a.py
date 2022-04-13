@@ -36,11 +36,9 @@ class Depth1A(ConfigTemplate):
                 "10.2.2.16",
                 "10.2.2.14",
                 "10.2.2.15",
-                "10.2.2.11",
-                "10.2.2.12",
                 "10.2.3.46",
             ],
-            "basic.credentials.exploit_password_list": ["Ivrrw5zEzs", "Xk8VDTsC", "^NgDvY59~8"],
+            "basic.credentials.exploit_password_list": ["Ivrrw5zEzs", "Xk8VDTsC"],
             "basic.credentials.exploit_user_list": ["m0nk3y"],
             "monkey.system_info.system_info_collector_classes": [
                 "MimikatzCollector",
