@@ -19,11 +19,11 @@ class Depth3A(ConfigTemplate):
                 "WmiExploiter",
             ],
             "basic_network.scope.subnet_scan_list": [
+                "10.2.2.9",
                 "10.2.3.45",
                 "10.2.3.46",
                 "10.2.3.47",
                 "10.2.3.48",
-                "10.2.2.9",
                 "10.2.1.10",
                 "10.2.0.12",
                 "10.2.0.11",
