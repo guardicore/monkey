@@ -11,6 +11,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [I updated to a new version of the Infection Monkey and I'm being asked to delete my existing data directory. Why?](#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why)
 - [How can I use an old data directory?](#how-can-i-use-an-old-data-directory)
 - [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
+- [How long does it take to stop all running Infection Monkey agents?](#how-long-does-it-take-to-stop-all-running-infection-monkey-agents)
 - [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
 - [Reset the Monkey Island password](#reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
@@ -58,6 +59,12 @@ ref "/reference/data_directory" >}}).
 ## How long does a single Infection Monkey agent run? Is there a time limit?
 
 The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
+
+## How long does it take to stop all running Infection Monkey agents?
+
+On the Infection Map page, when <b>Kill All Monkeys</b> is pressed, the agents
+try to finish execution safely. This can take up to 2 minutes, but will be much
+shorter on average.
 
 ## Is the Infection Monkey a malware/virus?
 
@@ -189,10 +196,20 @@ It's also possible to change the default log level by editing `log_level` value 
 
 #### Infection Monkey agent logs
 
-The Infection Monkey agent log file can be found in the following paths on machines where it was executed:
+The Infection Monkey agent log file can be found in directories specified for
+temporary files on the machines where it was executed. In most cases, this will
+be `/tmp` on Linux and `%temp%` on Windows. The agent searches a standard list
+of directories to find an appropriate place to store the log:
 
-- Path on Linux: `/tmp/user-1563`
-- Path on Windows: `%temp%\\~df1563.tmp`
+1. The directory named by the `TMPDIR` environment variable.
+2. The directory named by the `TEMP` environment variable.
+3. The directory named by the `TMP` environment variable.
+4. A platform-specific location:
+   - On Windows, the directories `C:\TEMP`, `C:\TMP`, `\TEMP`, and `\TMP`, in that order.
+   - On all other platforms, the directories `/tmp`, `/var/tmp`, and `/usr/tmp`, in that order.
+5. As a last resort, the current working directory.
+
+Infection Monkey log file name is constructed to the following pattern: `infection-monkey-agent-<TIMESTAMP>-<RANDOM_STRING>.log`
 
 The logs contain information about the internals of the Infection Monkey agent's execution. The log will contain entries like these:
 
@@ -216,9 +233,9 @@ The logs contain information about the internals of the Infection Monkey agent's
 
 The Infection Monkey leaves hardly any trace on the target system. It will leave:
 
-- Log files in the following locations:
-  - Path on Linux: `/tmp/user-1563`
-  - Path on Windows: `%temp%\\~df1563.tmp`
+- Log files in [temporary directories]({{< ref "/faq/#infection-monkey-agent-logs">}}):
+  - Path on Linux: `/tmp/infection-monky-agent-<TIMESTAMP>-<RANDOM_STRING>.log`
+  - Path on Windows: `%temp%\\infection-monky-agent-<TIMESTAMP>-<RANDOM_STRING>.log`
 
 ### What's the Infection Monkey Agent's impact on system resources usage?
 

@@ -4,35 +4,29 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-cryptography = "==2.5" # We can't build 32bit ubuntu12 binary with newer versions of cryptography
-pyinstaller = {git = "git://github.com/guardicore/pyinstaller"}
-pyinstaller-hooks-contrib = "==2021.1" # Required to build docker with our pyinstaller branch
+pyinstaller = "==4.9"
 impacket = ">=0.9"
-importlib-metadata = "==4.0.1" # Required to build docker with our pyinstaller branch
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"
 odict = "==1.7.0"
-paramiko = ">=2.7.1"
 psutil = ">=5.7.0"
 pymssql = "==2.1.5"
-pypykatz = "==0.3.12"
+pypykatz = "==0.5.2"
 requests = ">=2.24"
 urllib3 = "==1.26.5"
 WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
-ScoutSuite = {git = "git://github.com/guardicode/ScoutSuite"}
-pyopenssl = "==19.0.0" # We can't build 32bit ubuntu12 binary with newer versions of pyopenssl
 pypsrp = "*"
 typing-extensions = "*" # Allows us to use 3.9 typing features on 3.7 project
-pycryptodome = "*"  # Used in common/utils/shellcode_obfuscator.py
-altgraph = "*"  # Required for pyinstaller branch, without it agents fail to build
 pysmb = "*"
 "WinSys-3.x" = "*"
 ldaptor = "*"
+pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
+pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/VakarisZ/paramiko.git"}
 
 [dev-packages]
 ldap3 = "*"
-pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"}
-pefile = {version = "*", sys_platform = "== 'win32'"}
 
 [requires]
 python_version = "3.7"

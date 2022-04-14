@@ -22,25 +22,10 @@ FINGER_CLASSES = {
         },
         {
             "type": "string",
-            "enum": ["PingScanner"],
-            "title": "Ping Scanner",
-            "safe": True,
-            "info": "Tries to identify if host is alive and which OS it's running by ping scan.",
-        },
-        {
-            "type": "string",
             "enum": ["HTTPFinger"],
             "title": "HTTP Fingerprinter",
             "safe": True,
             "info": "Checks if host has HTTP/HTTPS ports open.",
-        },
-        {
-            "type": "string",
-            "enum": ["MySQLFinger"],
-            "title": "MySQL Fingerprinter",
-            "safe": True,
-            "info": "Checks if MySQL server is running and tries to get it's version.",
-            "attack_techniques": ["T1210"],
         },
         {
             "type": "string",

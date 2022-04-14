@@ -10,7 +10,7 @@ TEST_USER = "test_user"
 
 @pytest.fixture
 def subprocess_check_output_spy(monkeypatch):
-    def mock_check_output(command, stderr):
+    def mock_check_output(command, stderr, timeout):
         mock_check_output.command = command
 
     mock_check_output.command = ""

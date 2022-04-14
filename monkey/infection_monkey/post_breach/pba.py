@@ -1,32 +1,31 @@
 import logging
 import subprocess
+from typing import Dict, Iterable
 
-import infection_monkey.post_breach.actions
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.utils.attack_utils import ScanStatus
-from infection_monkey.config import WormConfiguration
+from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
-from infection_monkey.utils.plugins.plugin import Plugin
 
 logger = logging.getLogger(__name__)
 
 
-class PBA(Plugin):
+class PBA:
     """
     Post breach action object. Can be extended to support more than command execution on target
     machine.
     """
 
-    @staticmethod
-    def base_package_name():
-        return infection_monkey.post_breach.actions.__package__
-
-    @staticmethod
-    def base_package_file():
-        return infection_monkey.post_breach.actions.__file__
-
-    def __init__(self, name="unknown", linux_cmd="", windows_cmd=""):
+    def __init__(
+        self,
+        telemetry_messenger: ITelemetryMessenger,
+        name="unknown",
+        linux_cmd="",
+        windows_cmd="",
+        timeout: int = LONG_REQUEST_TIMEOUT,
+    ):
         """
         :param name: Name of post breach action.
         :param linux_cmd: Command that will be executed on breached machine
@@ -34,16 +33,11 @@ class PBA(Plugin):
         """
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
+        self.pba_data = []
+        self.telemetry_messenger = telemetry_messenger
+        self.timeout = timeout
 
-    @staticmethod
-    def should_run(class_name):
-        """
-        Decides if post breach action is enabled in config
-        :return: True if it needs to be ran, false otherwise
-        """
-        return class_name in WormConfiguration.post_breach_actions
-
-    def run(self):
+    def run(self, options: Dict) -> Iterable[PostBreachData]:
         """
         Runs post breach action command
         """
@@ -51,12 +45,17 @@ class PBA(Plugin):
             exec_funct = self._execute_default
             result = exec_funct()
             if self.scripts_were_used_successfully(result):
-                T1064Telem(
-                    ScanStatus.USED, f"Scripts were used to execute {self.name} post breach action."
-                ).send()
-            PostBreachTelem(self, result).send()
+                self.telemetry_messenger.send_telemetry(
+                    T1064Telem(
+                        ScanStatus.USED,
+                        f"Scripts were used to execute {self.name} post breach action.",
+                    )
+                )
+            self.pba_data.append(PostBreachData(self.name, self.command, result))
         else:
             logger.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")
+
+        return self.pba_data
 
     def is_script(self):
         """
@@ -81,12 +80,13 @@ class PBA(Plugin):
         """
         try:
             output = subprocess.check_output(  # noqa: DUO116
-                self.command, stderr=subprocess.STDOUT, shell=True
+                self.command, stderr=subprocess.STDOUT, shell=True, timeout=self.timeout
             ).decode()
             return output, True
-        except subprocess.CalledProcessError as e:
-            # Return error output of the command
-            return e.output.decode(), False
+        except subprocess.CalledProcessError as err:
+            return err.output.decode(), False
+        except subprocess.TimeoutExpired as err:
+            return str(err), False
 
     @staticmethod
     def choose_command(linux_cmd, windows_cmd):

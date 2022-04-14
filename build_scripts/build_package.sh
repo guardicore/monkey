@@ -1,7 +1,7 @@
 WORKSPACE=${WORKSPACE:-$HOME}
 DEFAULT_REPO_MONKEY_HOME=$WORKSPACE/git/monkey
 MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
-NODE_SRC=https://deb.nodesource.com/setup_12.x
+NODE_SRC=https://deb.nodesource.com/setup_16.x
 BUILD_SCRIPTS_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
 DIST_DIR="$BUILD_SCRIPTS_DIR/dist"
 
@@ -196,8 +196,13 @@ fi
 install_build_prereqs
 install_package_specific_build_prereqs "$WORKSPACE"
 
+is_release_build=false
+# Monkey version is empty on release build
+if [ ! -z "$monkey_version" ]; then
+    is_release_build=true
+fi
 
-setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type"
+setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type" "$is_release_build"
 commit_id=$(get_commit_id "$monkey_repo")
 build_package "$monkey_version" "$commit_id" "$DIST_DIR"
 

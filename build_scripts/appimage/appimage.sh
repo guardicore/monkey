@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LINUXDEPLOY_URL="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-PYTHON_VERSION="3.7.12"
+PYTHON_VERSION="3.7.13"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
 APPIMAGE_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
 APPDIR="$APPIMAGE_DIR/squashfs-root"
@@ -28,6 +28,7 @@ setup_build_dir() {
   local agent_binary_dir=$1
   local monkey_repo=$2
   local deployment_type=$3
+  local is_release_build=$4
 
   pushd $APPIMAGE_DIR
 
@@ -44,7 +45,7 @@ setup_build_dir() {
   install_mongodb
 
   generate_ssl_cert "$BUILD_DIR"
-  build_frontend "$BUILD_DIR"
+  build_frontend "$BUILD_DIR" "$is_release_build"
 
   remove_python_appdir_artifacts
 

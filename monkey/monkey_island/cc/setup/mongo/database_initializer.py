@@ -32,7 +32,7 @@ def _try_store_mitigations_on_mongo():
     mitigation_collection_name = AttackMitigations.COLLECTION_NAME
     try:
         mongo.db.validate_collection(mitigation_collection_name)
-        if mongo.db.attack_mitigations.count() == 0:
+        if mongo.db.attack_mitigations.count_documents({}) == 0:
             raise errors.OperationFailure(
                 "Mitigation collection empty. Try dropping the collection and running again"
             )

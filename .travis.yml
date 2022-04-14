@@ -7,10 +7,11 @@ group: travis_latest
 language: python
 
 env:
-  - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv
+  - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
 
 cache:
-  - pip
+  - pip: true
+  - npm: true
   - directories:
     - "$HOME/.npm"
     - $PIP_CACHE_DIR
@@ -20,10 +21,13 @@ python:
 - 3.7
 
 os: linux
+vm:
+  size: x-large
 
 
 install:
 # Python
+- nproc
 - pip install pipenv --upgrade
 # Install island and monkey requirements as they are needed by UT's
 - pushd monkey/monkey_island
@@ -37,7 +41,7 @@ install:
 - node --version
 - npm --version
 - nvm --version
-- nvm install 12
+- nvm install 16
 - nvm use node
 - npm i -g eslint
 - node --version
@@ -65,7 +69,8 @@ script:
 
 ## Run unit tests and generate coverage data
 - cd monkey  # This is our source dir
-- python -m pytest --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
+- pip install pytest-xdist
+- python -m pytest -n auto --cov=. # Have to use `python -m pytest` instead of `pytest` to add "{$builddir}/monkey/monkey" to sys.path.
 
 # Check JS code. The npm install must happen AFTER the flake8 because the node_modules folder will cause a lot of errors.
 - cd monkey_island/cc/ui
@@ -80,7 +85,7 @@ script:
 
 # verify swimm
 - cd $TRAVIS_BUILD_DIR
-- curl -L https://github.com/swimmio/SwimmReleases/releases/latest/download/packed-swimm-linux-cli --output swimm-cli
+- curl -L https://releases.swimm.io/ci/latest/packed-swimm-linux-cli --output swimm-cli
 - chmod u+x swimm-cli
 - ./swimm-cli --version
 - ./swimm-cli verify

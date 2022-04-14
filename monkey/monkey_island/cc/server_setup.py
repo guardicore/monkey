@@ -3,7 +3,6 @@ import json
 import logging
 import sys
 from pathlib import Path
-from threading import Thread
 
 import gevent.hub
 from gevent.pywsgi import WSGIServer
@@ -22,7 +21,6 @@ from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
-from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
 from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,
@@ -137,8 +135,6 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
         logger.warning("Setup only flag passed. Exiting.")
         return
 
-    bootloader_server_thread = _start_bootloader_server()
-
     logger.info(
         f"Using certificate path: {config_options.crt_path}, and key path: "
         f"{config_options.key_path}."
@@ -155,23 +151,19 @@ def _start_island_server(should_setup_only, config_options: IslandConfigOptions)
     _log_init_info()
     http_server.serve_forever()
 
-    bootloader_server_thread.join()
-
-
-def _start_bootloader_server() -> Thread:
-    bootloader_server_thread = Thread(target=BootloaderHttpServer().serve_forever, daemon=True)
-
-    bootloader_server_thread.start()
-
-    return bootloader_server_thread
-
 
 def _log_init_info():
+    MonkeyDownload.log_executable_hashes()
+
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
+
+    _log_web_interface_access_urls()
+
+
+def _log_web_interface_access_urls():
+    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in local_ip_addresses()])
     logger.info(
-        "Listening on the following URLs: {}".format(
-            ", ".join(["https://{}:{}".format(x, ISLAND_PORT) for x in local_ip_addresses()])
-        )
+        "To access the web interface, navigate to one of the the following URLs using your "
+        f"browser: {web_interface_urls}"
     )
-    MonkeyDownload.log_executable_hashes()

@@ -12,13 +12,13 @@ from ctypes import c_char_p
 
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from infection_monkey.config import WormConfiguration
-from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
+from infection_monkey.utils.environment import is_windows_os
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -55,7 +55,6 @@ class MonkeyDrops(object):
             "destination_path": self.opts.location,
         }
 
-    def initialize(self):
         logger.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
     def start(self):
@@ -140,10 +139,9 @@ class MonkeyDrops(object):
             server=self.opts.server,
             depth=self.opts.depth,
             location=None,
-            vulnerable_port=self.opts.vulnerable_port,
         )
 
-        if OperatingSystem.Windows == SystemInfoCollector.get_os():
+        if is_windows_os():
             monkey_commandline = get_monkey_commandline_windows(
                 self._config["destination_path"], monkey_options
             )

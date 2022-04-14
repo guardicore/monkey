@@ -20,17 +20,11 @@ import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {smbPasswordReport, smbPthReport} from './security/issues/SmbIssue';
-import {struts2IssueOverview, struts2IssueReport} from './security/issues/Struts2Issue';
-import {webLogicIssueOverview, webLogicIssueReport} from './security/issues/WebLogicIssue';
 import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
 import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
-import {drupalIssueOverview, drupalIssueReport} from './security/issues/DrupalIssue';
 import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
 import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
-import {elasticIssueOverview, elasticIssueReport} from './security/issues/ElasticIssue';
-import {shellShockIssueOverview, shellShockIssueReport} from './security/issues/ShellShockIssue';
 import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
-import {ms08_067IssueOverview, ms08_067IssueReport} from './security/issues/MS08_067Issue';
 import {
   crossSegmentIssueOverview,
   crossSegmentIssueReport,
@@ -81,16 +75,6 @@ class ReportPageComponent extends AuthComponent {
         },
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
-      'Struts2Exploiter': {
-        [this.issueContentTypes.OVERVIEW]: struts2IssueOverview,
-        [this.issueContentTypes.REPORT]: struts2IssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'WebLogicExploiter': {
-        [this.issueContentTypes.OVERVIEW]: webLogicIssueOverview,
-        [this.issueContentTypes.REPORT]: webLogicIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
       'HadoopExploiter': {
         [this.issueContentTypes.OVERVIEW]: hadoopIssueOverview,
         [this.issueContentTypes.REPORT]: hadoopIssueReport,
@@ -99,11 +83,6 @@ class ReportPageComponent extends AuthComponent {
       'MSSQLExploiter': {
         [this.issueContentTypes.OVERVIEW]: mssqlIssueOverview,
         [this.issueContentTypes.REPORT]: mssqlIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'DrupalExploiter': {
-        [this.issueContentTypes.OVERVIEW]: drupalIssueOverview,
-        [this.issueContentTypes.REPORT]: drupalIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'WmiExploiter': {
@@ -121,24 +100,9 @@ class ReportPageComponent extends AuthComponent {
         },
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
-      'ElasticGroovyExploiter': {
-        [this.issueContentTypes.OVERVIEW]: elasticIssueOverview,
-        [this.issueContentTypes.REPORT]: elasticIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'ShellShockExploiter': {
-        [this.issueContentTypes.OVERVIEW]: shellShockIssueOverview,
-        [this.issueContentTypes.REPORT]: shellShockIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
       'PowerShellExploiter': {
         [this.issueContentTypes.OVERVIEW]: powershellIssueOverview,
         [this.issueContentTypes.REPORT]: powershellIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'Ms08_067_Exploiter': {
-        [this.issueContentTypes.OVERVIEW]: ms08_067IssueOverview,
-        [this.issueContentTypes.REPORT]: ms08_067IssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'ZerologonExploiter': {
@@ -574,7 +538,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{marginBottom: '20px'}}>
-          <StolenPasswords data={this.state.report.glance.stolen_creds.concat(this.state.report.glance.ssh_keys)}/>
+          <StolenPasswords data={this.state.report.glance.stolen_creds}/>
         </div>
         <div>
           <StrongUsers data={this.state.report.glance.strong_users}/>

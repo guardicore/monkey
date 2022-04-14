@@ -1,7 +1,9 @@
+from typing import Iterable
+
 TEMP_CRON = "$HOME/monkey-schedule-jobs"
 
 
-def get_linux_commands_to_schedule_jobs():
+def get_linux_commands_to_schedule_jobs() -> Iterable[str]:
     return [
         f"touch {TEMP_CRON} &&",
         f"crontab -l > {TEMP_CRON} &&",

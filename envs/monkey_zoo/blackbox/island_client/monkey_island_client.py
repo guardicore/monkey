@@ -1,6 +1,6 @@
 import json
 import logging
-from time import sleep
+import time
 from typing import Union
 
 from bson import json_util
@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def avoid_race_condition(func):
-    sleep(SLEEP_BETWEEN_REQUESTS_SECONDS)
+    time.sleep(SLEEP_BETWEEN_REQUESTS_SECONDS)
     return func
 
 
@@ -48,10 +48,15 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def kill_all_monkeys(self):
-        if self.requests.get("api", {"action": "killall"}).ok:
+        response = self.requests.post_json(
+            "api/monkey_control/stop-all-agents", data={"kill_time": time.time()}
+        )
+        if response.ok:
             LOGGER.info("Killing all monkeys after the test.")
         else:
             LOGGER.error("Failed to kill all monkeys.")
+            LOGGER.error(response.status_code)
+            LOGGER.error(response.content)
             assert False
 
     @avoid_race_condition

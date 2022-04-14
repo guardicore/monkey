@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from infection_monkey.i_puppet import PostBreachData
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 
 HOSTNAME = "hostname"
@@ -20,10 +21,9 @@ class StubSomePBA:
 
 @pytest.fixture
 def post_breach_telem_test_instance(monkeypatch):
-    PBA = StubSomePBA()
     monkeypatch.setattr(PostBreachTelem, "_get_hostname_and_ip", lambda: (HOSTNAME, IP))
     monkeypatch.setattr(PostBreachTelem, "_get_os", lambda: OS)
-    return PostBreachTelem(PBA, RESULT)
+    return PostBreachTelem(PostBreachData(PBA_NAME, PBA_COMMAND, RESULT))
 
 
 def test_post_breach_telem_send(post_breach_telem_test_instance, spy_send_telemetry):

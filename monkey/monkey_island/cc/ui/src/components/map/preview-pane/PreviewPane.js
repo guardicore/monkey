@@ -2,7 +2,6 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faHandPointLeft} from '@fortawesome/free-solid-svg-icons/faHandPointLeft'
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
-import Toggle from 'react-toggle';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import AuthComponent from '../../AuthComponent';
 import {
@@ -70,33 +69,6 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  forceKill(event, asset) {
-    let newConfig = asset.config;
-    newConfig['alive'] = !event.target.checked;
-    this.authFetch('/api/monkey/' + asset.guid,
-      {
-        method: 'PATCH',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({config: newConfig})
-      });
-  }
-
-  forceKillRow(asset) {
-    return (
-      <tr>
-        <th>
-          Force Kill&nbsp;
-          {this.generateToolTip('If this is on, monkey will die next time it communicates')}
-        </th>
-        <td>
-          <Toggle id={asset.id} checked={!asset.config.alive} icons={false} disabled={asset.dead}
-                  onChange={(e) => this.forceKill(e, asset)}/>
-
-        </td>
-      </tr>
-    );
-  }
-
   downloadLogsRow(asset) {
     return (
       <>
@@ -123,11 +95,11 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
+
   exploitsTimeline(asset) {
     if (asset.exploits.length === 0) {
       return (<div/>);
     }
-
     return (
       <div>
         <h4 style={{'marginTop': '2em'}}>
@@ -137,7 +109,7 @@ class PreviewPaneComponent extends AuthComponent {
         <ul className='timeline'>
           {asset.exploits.map(exploit =>
             <li key={exploit.timestamp}>
-              <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
+              <div className={'bullet ' + (exploit.exploitation_result ? 'bad' : '')}/>
               <div>{new Date(exploit.timestamp).toLocaleString()}</div>
               <div>{exploit.origin}</div>
               <div>{exploit.exploiter}</div>
@@ -182,7 +154,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.ipsRow(asset)}
           {this.servicesRow(asset)}
           {this.accessibleRow(asset)}
-          {this.forceKillRow(asset)}
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
@@ -245,7 +216,7 @@ class PreviewPaneComponent extends AuthComponent {
         info = this.scanInfo(this.props.item);
         break;
       case 'node':
-        if (this.props.item.group.includes('monkey') && this.props.item.group.includes('starting')) {
+        if (this.props.item.group.includes('monkey')) {
           info = this.assetInfo(this.props.item);
         } else if (this.props.item.group.includes('monkey', 'manual')) {
           info = this.infectedAssetInfo(this.props.item)

@@ -2,13 +2,13 @@ import logging
 import socket
 import struct
 import time
-from threading import Thread
+from threading import Event, Thread
 
-from infection_monkey.model import VictimHost
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, local_ips
 from infection_monkey.network.tools import check_tcp_port, get_interface_to_target
 from infection_monkey.transport.base import get_last_serve_time
+from infection_monkey.utils.timer import Timer
 
 logger = logging.getLogger(__name__)
 
@@ -110,18 +110,27 @@ def quit_tunnel(address, timeout=DEFAULT_TIMEOUT):
 
 
 class MonkeyTunnel(Thread):
-    def __init__(self, proxy_class, target_addr=None, target_port=None, timeout=DEFAULT_TIMEOUT):
+    def __init__(
+        self,
+        proxy_class,
+        keep_tunnel_open_time,
+        target_addr=None,
+        target_port=None,
+        timeout=DEFAULT_TIMEOUT,
+    ):
         self._target_addr = target_addr
         self._target_port = target_port
         self._proxy_class = proxy_class
+        self._keep_tunnel_open_time = keep_tunnel_open_time
         self._broad_sock = None
         self._timeout = timeout
-        self._stopped = False
+        self._stopped = Event()
         self._clients = []
         self.local_port = None
-        super(MonkeyTunnel, self).__init__()
+        super(MonkeyTunnel, self).__init__(name="MonkeyTunnelThread")
         self.daemon = True
         self.l_ips = None
+        self._wait_for_exploited_machines = Event()
 
     def run(self):
         self._broad_sock = _set_multicast_socket(self._timeout)
@@ -147,7 +156,7 @@ class MonkeyTunnel(Thread):
         )
         proxy.start()
 
-        while not self._stopped:
+        while not self._stopped.is_set():
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
                 if b"?" == search:
@@ -173,7 +182,9 @@ class MonkeyTunnel(Thread):
 
         # wait till all of the tunnel clients has been disconnected, or no one used the tunnel in
         # QUIT_TIMEOUT seconds
-        while self._clients and (time.time() - get_last_serve_time() < QUIT_TIMEOUT):
+        timer = Timer()
+        timer.set(self._calculate_timeout())
+        while self._clients and not timer.is_expired():
             try:
                 search, address = self._broad_sock.recvfrom(BUFFER_READ)
                 if b"-" == search:
@@ -182,19 +193,38 @@ class MonkeyTunnel(Thread):
             except socket.timeout:
                 continue
 
+            timer.set(self._calculate_timeout())
+
         logger.info("Closing tunnel")
         self._broad_sock.close()
         proxy.stop()
         proxy.join()
 
-    def set_tunnel_for_host(self, host):
-        assert isinstance(host, VictimHost)
+    def _calculate_timeout(self) -> float:
+        try:
+            return QUIT_TIMEOUT - (time.time() - get_last_serve_time())
+        except TypeError:  # get_last_serve_time() may return None
+            return 0.0
+
+    def get_tunnel_for_ip(self, ip: str):
 
         if not self.local_port:
             return
 
-        ip_match = get_interface_to_target(host.ip_addr)
-        host.default_tunnel = "%s:%d" % (ip_match, self.local_port)
+        ip_match = get_interface_to_target(ip)
+        return "%s:%d" % (ip_match, self.local_port)
+
+    def set_wait_for_exploited_machines(self):
+        self._wait_for_exploited_machines.set()
 
     def stop(self):
-        self._stopped = True
+        self._wait_for_exploited_machine_connection()
+        self._stopped.set()
+
+    def _wait_for_exploited_machine_connection(self):
+        if self._wait_for_exploited_machines.is_set():
+            logger.info(
+                f"Waiting {self._keep_tunnel_open_time} seconds for exploited machines to connect "
+                "to the tunnel."
+            )
+            time.sleep(self._keep_tunnel_open_time)

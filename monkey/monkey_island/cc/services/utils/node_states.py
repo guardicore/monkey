@@ -9,15 +9,13 @@ class NodeStates(Enum):
     CLEAN_UNKNOWN = "clean_unknown"
     CLEAN_LINUX = "clean_linux"
     CLEAN_WINDOWS = "clean_windows"
-    EXPLOITED_LINUX = "exploited_linux"
-    EXPLOITED_WINDOWS = "exploited_windows"
+    PROPAGATED_LINUX = "propagated_linux"
+    PROPAGATED_WINDOWS = "propagated_windows"
     ISLAND = "island"
     ISLAND_MONKEY_LINUX = "island_monkey_linux"
     ISLAND_MONKEY_LINUX_RUNNING = "island_monkey_linux_running"
-    ISLAND_MONKEY_LINUX_STARTING = "island_monkey_linux_starting"
     ISLAND_MONKEY_WINDOWS = "island_monkey_windows"
     ISLAND_MONKEY_WINDOWS_RUNNING = "island_monkey_windows_running"
-    ISLAND_MONKEY_WINDOWS_STARTING = "island_monkey_windows_starting"
     MANUAL_LINUX = "manual_linux"
     MANUAL_LINUX_RUNNING = "manual_linux_running"
     MANUAL_WINDOWS = "manual_windows"
@@ -26,10 +24,6 @@ class NodeStates(Enum):
     MONKEY_LINUX_RUNNING = "monkey_linux_running"
     MONKEY_WINDOWS = "monkey_windows"
     MONKEY_WINDOWS_RUNNING = "monkey_windows_running"
-    MONKEY_WINDOWS_STARTING = "monkey_windows_starting"
-    MONKEY_LINUX_STARTING = "monkey_linux_starting"
-    MONKEY_WINDOWS_OLD = "monkey_windows_old"
-    MONKEY_LINUX_OLD = "monkey_linux_old"
 
     @staticmethod
     def get_by_keywords(keywords: List) -> NodeStates:

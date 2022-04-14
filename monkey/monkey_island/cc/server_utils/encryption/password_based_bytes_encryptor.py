@@ -56,8 +56,8 @@ class PasswordBasedBytesEncryptor(IEncryptor):
 
 
 class InvalidCredentialsError(Exception):
-    """ Raised when password for decryption is invalid """
+    """Raised when password for decryption is invalid"""
 
 
 class InvalidCiphertextError(Exception):
-    """ Raised when ciphertext is corrupted """
+    """Raised when ciphertext is corrupted"""

@@ -5,6 +5,7 @@ export default function parsePbaResults(results) {
 
 const SHELL_STARTUP_NAME = 'Modify shell startup file';
 const CMD_HISTORY_NAME = 'Clear command history';
+const PROCESS_LIST_COLLECTION = 'Collect running processes';
 
 const multipleResultsPbas = [SHELL_STARTUP_NAME, CMD_HISTORY_NAME]
 
@@ -41,10 +42,17 @@ function aggregateMultipleResultsPba(results) {
     }
   }
 
+  function modifyProcessListCollectionResult(result) {
+    result[0] = 'Found ' + Object.keys(result[0]).length.toString() + ' running processes';
+  }
+
   // check for pbas with multiple results and aggregate their results
-  for (let i = 0; i < results.length; i++)
+  for (let i = 0; i < results.length; i++) {
     if (multipleResultsPbas.includes(results[i].name))
       aggregateResults(results[i]);
+    if ((results[i].name === PROCESS_LIST_COLLECTION) && (typeof results[i].result[0] !== 'string'))
+      modifyProcessListCollectionResult(results[i].result);
+  }
 
   // if no modifications were made to the results, i.e. if no pbas had mutiple results, return `results` as it is
   let noResultsModifications = true;

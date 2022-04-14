@@ -16,7 +16,6 @@ from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
-from monkey_island.cc.models.telemetries import get_telemetry_by_query
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
@@ -26,21 +25,20 @@ from monkey_island.cc.services.reporting.exploitations.manual_exploitation impor
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
 )
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (  # noqa: E501
-    ExploiterDescriptorEnum,
-)
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import (  # noqa: E501
-    CredentialType,
-)
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import (  # noqa: E501
-    ExploiterReportInfo,
-)
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
     safe_generate_regular_report,
 )
+from monkey_island.cc.services.reporting.stolen_credentials import (
+    extract_ssh_keys,
+    get_stolen_creds,
+)
 from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
+
+from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
+from .issue_processing.exploit_processing.processors.cred_exploit import CredentialType
+from .issue_processing.exploit_processing.processors.exploit import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
 
@@ -134,104 +132,6 @@ class ReportService:
         return nodes
 
     @staticmethod
-    def get_stolen_creds():
-        creds = []
-
-        stolen_system_info_creds = ReportService._get_credentials_from_system_info_telems()
-        creds.extend(stolen_system_info_creds)
-
-        stolen_exploit_creds = ReportService._get_credentials_from_exploit_telems()
-        creds.extend(stolen_exploit_creds)
-
-        logger.info("Stolen creds generated for reporting")
-        return creds
-
-    @staticmethod
-    def _get_credentials_from_system_info_telems():
-        formatted_creds = []
-        for telem in get_telemetry_by_query(
-            {"telem_category": "system_info", "data.credentials": {"$exists": True}},
-            {"data.credentials": 1, "monkey_guid": 1},
-        ):
-            creds = telem["data"]["credentials"]
-            origin = NodeService.get_monkey_by_guid(telem["monkey_guid"])["hostname"]
-            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds, origin))
-        return formatted_creds
-
-    @staticmethod
-    def _get_credentials_from_exploit_telems():
-        formatted_creds = []
-        for telem in mongo.db.telemetry.find(
-            {"telem_category": "exploit", "data.info.credentials": {"$exists": True}},
-            {"data.info.credentials": 1, "data.machine": 1, "monkey_guid": 1},
-        ):
-            creds = telem["data"]["info"]["credentials"]
-            domain_name = telem["data"]["machine"]["domain_name"]
-            ip = telem["data"]["machine"]["ip_addr"]
-            origin = domain_name if domain_name else ip
-            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds, origin))
-        return formatted_creds
-
-    @staticmethod
-    def _format_creds_for_reporting(telem, monkey_creds, origin):
-        creds = []
-        CRED_TYPE_DICT = {
-            "password": "Clear Password",
-            "lm_hash": "LM hash",
-            "ntlm_hash": "NTLM hash",
-        }
-        if len(monkey_creds) == 0:
-            return []
-
-        for user in monkey_creds:
-            for cred_type in CRED_TYPE_DICT:
-                if cred_type not in monkey_creds[user] or not monkey_creds[user][cred_type]:
-                    continue
-                username = (
-                    monkey_creds[user]["username"] if "username" in monkey_creds[user] else user
-                )
-                cred_row = {
-                    "username": username,
-                    "type": CRED_TYPE_DICT[cred_type],
-                    "origin": origin,
-                }
-                if cred_row not in creds:
-                    creds.append(cred_row)
-        return creds
-
-    @staticmethod
-    def get_ssh_keys():
-        """
-        Return private ssh keys found as credentials
-        :return: List of credentials
-        """
-        creds = []
-        for telem in mongo.db.telemetry.find(
-            {"telem_category": "system_info", "data.ssh_info": {"$exists": True}},
-            {"data.ssh_info": 1, "monkey_guid": 1},
-        ):
-            origin = NodeService.get_monkey_by_guid(telem["monkey_guid"])["hostname"]
-            if telem["data"]["ssh_info"]:
-                # Pick out all ssh keys not yet included in creds
-                ssh_keys = [
-                    {
-                        "username": key_pair["name"],
-                        "type": "Clear SSH private key",
-                        "origin": origin,
-                    }
-                    for key_pair in telem["data"]["ssh_info"]
-                    if key_pair["private_key"]
-                    and {
-                        "username": key_pair["name"],
-                        "type": "Clear SSH private key",
-                        "origin": origin,
-                    }
-                    not in creds
-                ]
-                creds.extend(ssh_keys)
-        return creds
-
-    @staticmethod
     def process_exploit(exploit) -> ExploiterReportInfo:
         exploiter_type = exploit["data"]["exploiter"]
         exploiter_descriptor = ExploiterDescriptorEnum.get_by_class_name(exploiter_type)
@@ -242,7 +142,7 @@ class ReportService:
     @staticmethod
     def get_exploits() -> List[dict]:
         query = [
-            {"$match": {"telem_category": "exploit", "data.result": True}},
+            {"$match": {"telem_category": "exploit", "data.exploitation_result": True}},
             {
                 "$group": {
                     "_id": {"ip_address": "$data.machine.ip_addr"},
@@ -260,16 +160,11 @@ class ReportService:
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
-        network_info = mongo.db.telemetry.find_one(
-            {"telem_category": "system_info", "monkey_guid": monkey_guid},
-            {"data.network_info.networks": 1},
-        )
-        if network_info is None or not network_info["data"]:
-            return []
+        networks = Monkey.objects.get(guid=monkey_guid).networks
 
         return [
-            ipaddress.ip_interface(str(network["addr"] + "/" + network["netmask"])).network
-            for network in network_info["data"]["network_info"]["networks"]
+            ipaddress.ip_interface(f"{network['addr']}/{network['netmask']}").network
+            for network in networks
         ]
 
     @staticmethod
@@ -564,6 +459,7 @@ class ReportService:
         issue_set = ReportService.get_issue_set(issues, config_users, config_passwords)
         cross_segment_issues = ReportService.get_cross_segment_issues()
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
+        stolen_creds = get_stolen_creds()
 
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(get_monkey_exploited())
@@ -585,8 +481,8 @@ class ReportService:
             "glance": {
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
-                "stolen_creds": ReportService.get_stolen_creds(),
-                "ssh_keys": ReportService.get_ssh_keys(),
+                "stolen_creds": stolen_creds,
+                "ssh_keys": extract_ssh_keys(stolen_creds),
                 "strong_users": PTHReportService.get_strong_users_on_crit_details(),
             },
             "recommendations": {"issues": issues, "domain_issues": domain_issues},

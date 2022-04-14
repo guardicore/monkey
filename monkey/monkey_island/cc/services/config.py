@@ -2,6 +2,9 @@ import collections
 import copy
 import functools
 import logging
+import re
+from itertools import chain
+from typing import Any, Dict, List
 
 from jsonschema import Draft4Validator, validators
 
@@ -14,12 +17,17 @@ from common.config_value_paths import (
     PBA_LINUX_FILENAME_PATH,
     PBA_WINDOWS_FILENAME_PATH,
     SSH_KEYS_PATH,
-    STARTED_ON_ISLAND_PATH,
     USER_LIST_PATH,
 )
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
-from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
+from monkey_island.cc.server_utils.encryption import (
+    SensitiveField,
+    StringEncryptor,
+    decrypt_dict,
+    encrypt_dict,
+    get_datastore_encryptor,
+)
 from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode
@@ -37,6 +45,11 @@ ENCRYPTED_CONFIG_VALUES = [
     AWS_KEYS_PATH + ["aws_access_key_id"],
     AWS_KEYS_PATH + ["aws_secret_access_key"],
     AWS_KEYS_PATH + ["aws_session_token"],
+]
+
+SENSITIVE_SSH_KEY_FIELDS = [
+    SensitiveField(path="private_key", field_encryptor=StringEncryptor),
+    SensitiveField(path="public_key", field_encryptor=StringEncryptor),
 ]
 
 
@@ -92,7 +105,12 @@ class ConfigService:
                 if isinstance(config, str):
                     config = get_datastore_encryptor().decrypt(config)
                 elif isinstance(config, list):
-                    config = [get_datastore_encryptor().decrypt(x) for x in config]
+                    if config:
+                        if isinstance(config[0], str):
+                            config = [get_datastore_encryptor().decrypt(x) for x in config]
+                        elif isinstance(config[0], dict) and "public_key" in config[0]:
+                            config = [decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, x) for x in config]
+
         return config
 
     @staticmethod
@@ -130,7 +148,10 @@ class ConfigService:
         if item_value in items_from_config:
             return
         if should_encrypt:
-            item_value = get_datastore_encryptor().encrypt(item_value)
+            if isinstance(item_value, dict):
+                item_value = encrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item_value)
+            else:
+                item_value = get_datastore_encryptor().encrypt(item_value)
         mongo.db.config.update(
             {"name": "newconfig"}, {"$addToSet": {item_key: item_value}}, upsert=False
         )
@@ -164,20 +185,12 @@ class ConfigService:
         )
 
     @staticmethod
-    def ssh_add_keys(public_key, private_key, user, ip):
-        if not ConfigService.ssh_key_exists(
-            ConfigService.get_config_value(SSH_KEYS_PATH, False, False), user, ip
-        ):
-            ConfigService.add_item_to_config_set_if_dont_exist(
-                SSH_KEYS_PATH,
-                {"public_key": public_key, "private_key": private_key, "user": user, "ip": ip},
-                # SSH keys already encrypted in process_ssh_info()
-                should_encrypt=False,
-            )
-
-    @staticmethod
-    def ssh_key_exists(keys, user, ip):
-        return [key for key in keys if key["user"] == user and key["ip"] == ip]
+    def ssh_add_keys(public_key, private_key):
+        ConfigService.add_item_to_config_set_if_dont_exist(
+            SSH_KEYS_PATH,
+            {"public_key": public_key, "private_key": private_key},
+            should_encrypt=True,
+        )
 
     def _filter_none_values(data):
         if isinstance(data, dict):
@@ -346,7 +359,7 @@ class ConfigService:
                     and "public_key" in flat_config[key][0]
                 ):
                     flat_config[key] = [
-                        ConfigService.decrypt_ssh_key_pair(item) for item in flat_config[key]
+                        decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item) for item in flat_config[key]
                     ]
                 else:
                     flat_config[key] = [
@@ -373,9 +386,9 @@ class ConfigService:
                     # Check if array of shh key pairs and then decrypt
                     if isinstance(config_arr[i], dict) and "public_key" in config_arr[i]:
                         config_arr[i] = (
-                            ConfigService.decrypt_ssh_key_pair(config_arr[i])
+                            decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, config_arr[i])
                             if is_decrypt
-                            else ConfigService.decrypt_ssh_key_pair(config_arr[i], True)
+                            else encrypt_dict(SENSITIVE_SSH_KEY_FIELDS, config_arr[i])
                         )
                     else:
                         config_arr[i] = (
@@ -391,19 +404,268 @@ class ConfigService:
                 )
 
     @staticmethod
-    def decrypt_ssh_key_pair(pair, encrypt=False):
-        if encrypt:
-            pair["public_key"] = get_datastore_encryptor().encrypt(pair["public_key"])
-            pair["private_key"] = get_datastore_encryptor().encrypt(pair["private_key"])
-        else:
-            pair["public_key"] = get_datastore_encryptor().decrypt(pair["public_key"])
-            pair["private_key"] = get_datastore_encryptor().decrypt(pair["private_key"])
-        return pair
-
-    @staticmethod
     def is_test_telem_export_enabled():
         return ConfigService.get_config_value(EXPORT_MONKEY_TELEMS_PATH)
 
     @staticmethod
-    def set_started_on_island(value: bool):
-        ConfigService.set_config_value(STARTED_ON_ISLAND_PATH, value)
+    def get_config_propagation_credentials_from_flat_config(config) -> Dict[str, List[str]]:
+        return {
+            "exploit_user_list": config.get("exploit_user_list", []),
+            "exploit_password_list": config.get("exploit_password_list", []),
+            "exploit_lm_hash_list": config.get("exploit_lm_hash_list", []),
+            "exploit_ntlm_hash_list": config.get("exploit_ntlm_hash_list", []),
+            "exploit_ssh_keys": config.get("exploit_ssh_keys", []),
+        }
+
+    @staticmethod
+    def format_flat_config_for_agent(config: Dict):
+        ConfigService._remove_credentials_from_flat_config(config)
+        ConfigService._format_payloads_from_flat_config(config)
+        ConfigService._format_pbas_from_flat_config(config)
+        ConfigService._format_propagation_from_flat_config(config)
+
+    @staticmethod
+    def _remove_credentials_from_flat_config(config: Dict):
+        fields_to_remove = {
+            "exploit_lm_hash_list",
+            "exploit_ntlm_hash_list",
+            "exploit_password_list",
+            "exploit_ssh_keys",
+            "exploit_user_list",
+        }
+
+        for field in fields_to_remove:
+            config.pop(field, None)
+
+    @staticmethod
+    def _format_payloads_from_flat_config(config: Dict):
+        config.setdefault("payloads", {})["ransomware"] = config["ransomware"]
+        config.pop("ransomware", None)
+
+    @staticmethod
+    def _format_pbas_from_flat_config(config: Dict):
+        flat_linux_command_field = "custom_PBA_linux_cmd"
+        flat_linux_filename_field = "PBA_linux_filename"
+        flat_windows_command_field = "custom_PBA_windows_cmd"
+        flat_windows_filename_field = "PBA_windows_filename"
+
+        formatted_pbas_config = {}
+        for pba in config.get("post_breach_actions", []):
+            formatted_pbas_config[pba] = {}
+
+        config["custom_pbas"] = {
+            "linux_command": config.get(flat_linux_command_field, ""),
+            "linux_filename": config.get(flat_linux_filename_field, ""),
+            "windows_command": config.get(flat_windows_command_field, ""),
+            "windows_filename": config.get(flat_windows_filename_field, ""),
+            # Current server is used for attack telemetry
+            "current_server": config.get("current_server"),
+        }
+
+        config["post_breach_actions"] = formatted_pbas_config
+
+        config.pop(flat_linux_command_field, None)
+        config.pop(flat_linux_filename_field, None)
+        config.pop(flat_windows_command_field, None)
+        config.pop(flat_windows_filename_field, None)
+
+    @staticmethod
+    def _format_propagation_from_flat_config(config: Dict):
+        formatted_propagation_config = {"network_scan": {}, "targets": {}}
+
+        formatted_propagation_config[
+            "network_scan"
+        ] = ConfigService._format_network_scan_from_flat_config(config)
+
+        formatted_propagation_config["targets"] = ConfigService._format_targets_from_flat_config(
+            config
+        )
+        formatted_propagation_config[
+            "exploiters"
+        ] = ConfigService._format_exploiters_from_flat_config(config)
+
+        config["propagation"] = formatted_propagation_config
+
+    @staticmethod
+    def _format_network_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
+        formatted_network_scan_config = {"tcp": {}, "icmp": {}, "fingerprinters": []}
+
+        formatted_network_scan_config["tcp"] = ConfigService._format_tcp_scan_from_flat_config(
+            config
+        )
+        formatted_network_scan_config["icmp"] = ConfigService._format_icmp_scan_from_flat_config(
+            config
+        )
+        formatted_network_scan_config[
+            "fingerprinters"
+        ] = ConfigService._format_fingerprinters_from_flat_config(config)
+
+        return formatted_network_scan_config
+
+    @staticmethod
+    def _format_tcp_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
+        flat_http_ports_field = "HTTP_PORTS"
+        flat_tcp_timeout_field = "tcp_scan_timeout"
+        flat_tcp_ports_field = "tcp_target_ports"
+
+        formatted_tcp_scan_config = {}
+
+        formatted_tcp_scan_config["timeout_ms"] = config[flat_tcp_timeout_field]
+
+        ports = ConfigService._union_tcp_and_http_ports(
+            config[flat_tcp_ports_field], config[flat_http_ports_field]
+        )
+        formatted_tcp_scan_config["ports"] = ports
+
+        # Do not remove HTTP_PORTS field. Other components besides scanning need it.
+        config.pop(flat_tcp_timeout_field, None)
+        config.pop(flat_tcp_ports_field, None)
+
+        return formatted_tcp_scan_config
+
+    @staticmethod
+    def _union_tcp_and_http_ports(tcp_ports: List[int], http_ports: List[int]) -> List[int]:
+        combined_ports = list(set(tcp_ports) | set(http_ports))
+
+        return sorted(combined_ports)
+
+    @staticmethod
+    def _format_icmp_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
+        flat_ping_timeout_field = "ping_scan_timeout"
+
+        formatted_icmp_scan_config = {}
+        formatted_icmp_scan_config["timeout_ms"] = config[flat_ping_timeout_field]
+
+        config.pop(flat_ping_timeout_field, None)
+
+        return formatted_icmp_scan_config
+
+    @staticmethod
+    def _format_fingerprinters_from_flat_config(config: Dict) -> List[Dict[str, Any]]:
+        flat_fingerprinter_classes_field = "finger_classes"
+        flat_http_ports_field = "HTTP_PORTS"
+
+        formatted_fingerprinters = [
+            {"name": f, "options": {}} for f in sorted(config[flat_fingerprinter_classes_field])
+        ]
+
+        for fp in formatted_fingerprinters:
+            if fp["name"] == "HTTPFinger":
+                fp["options"] = {"http_ports": sorted(config[flat_http_ports_field])}
+
+            fp["name"] = ConfigService._translate_fingerprinter_name(fp["name"])
+
+        config.pop(flat_fingerprinter_classes_field)
+        return formatted_fingerprinters
+
+    @staticmethod
+    def _translate_fingerprinter_name(name: str) -> str:
+        # This translates names like "HTTPFinger" to "http". "HTTPFinger" is an old classname on the
+        # agent-side and is therefore unnecessarily couples the island to the fingerprinter's
+        # implementation within the agent. For the time being, fingerprinters will have names like
+        # "http", "ssh", "elastic", etc. This will be revisited when fingerprinters become plugins.
+        return re.sub(r"Finger", "", name).lower()
+
+    @staticmethod
+    def _format_targets_from_flat_config(config: Dict) -> Dict[str, Any]:
+        flat_blocked_ips_field = "blocked_ips"
+        flat_inaccessible_subnets_field = "inaccessible_subnets"
+        flat_local_network_scan_field = "local_network_scan"
+        flat_subnet_scan_list_field = "subnet_scan_list"
+
+        formatted_scan_targets_config = {}
+
+        formatted_scan_targets_config[flat_blocked_ips_field] = config[flat_blocked_ips_field]
+        formatted_scan_targets_config[flat_inaccessible_subnets_field] = config[
+            flat_inaccessible_subnets_field
+        ]
+        formatted_scan_targets_config[flat_local_network_scan_field] = config[
+            flat_local_network_scan_field
+        ]
+        formatted_scan_targets_config[flat_subnet_scan_list_field] = config[
+            flat_subnet_scan_list_field
+        ]
+
+        config.pop(flat_blocked_ips_field, None)
+        config.pop(flat_inaccessible_subnets_field, None)
+        config.pop(flat_local_network_scan_field, None)
+        config.pop(flat_subnet_scan_list_field, None)
+
+        return formatted_scan_targets_config
+
+    @staticmethod
+    def _format_exploiters_from_flat_config(config: Dict) -> Dict[str, List[Dict[str, Any]]]:
+        flat_config_exploiter_classes_field = "exploiter_classes"
+        brute_force_category = "brute_force"
+        vulnerability_category = "vulnerability"
+        brute_force_exploiters = {
+            "MSSQLExploiter",
+            "PowerShellExploiter",
+            "SSHExploiter",
+            "SmbExploiter",
+            "WmiExploiter",
+        }
+
+        exploit_options = {}
+
+        for dropper_target in [
+            "dropper_target_path_linux",
+            "dropper_target_path_win_64",
+        ]:
+            exploit_options[dropper_target] = config.get(dropper_target, "")
+
+        exploit_options["http_ports"] = sorted(config["HTTP_PORTS"])
+
+        formatted_exploiters_config = {
+            "options": exploit_options,
+            "brute_force": [],
+            "vulnerability": [],
+        }
+
+        for exploiter in sorted(config[flat_config_exploiter_classes_field]):
+            category = (
+                brute_force_category
+                if exploiter in brute_force_exploiters
+                else vulnerability_category
+            )
+
+            formatted_exploiters_config[category].append({"name": exploiter, "options": {}})
+
+        config.pop(flat_config_exploiter_classes_field, None)
+
+        formatted_exploiters_config = ConfigService._add_smb_download_timeout_to_exploiters(
+            config, formatted_exploiters_config
+        )
+        return ConfigService._add_supported_os_to_exploiters(formatted_exploiters_config)
+
+    @staticmethod
+    def _add_smb_download_timeout_to_exploiters(
+        flat_config: Dict, formatted_config: Dict
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        new_config = copy.deepcopy(formatted_config)
+        uses_smb_timeout = {"SmbExploiter", "WmiExploiter"}
+
+        for exploiter in filter(lambda e: e["name"] in uses_smb_timeout, new_config["brute_force"]):
+            exploiter["options"]["smb_download_timeout"] = flat_config["smb_download_timeout"]
+
+        return new_config
+
+    @staticmethod
+    def _add_supported_os_to_exploiters(
+        formatted_config: Dict,
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        supported_os = {
+            "HadoopExploiter": ["linux", "windows"],
+            "Log4ShellExploiter": ["linux", "windows"],
+            "MSSQLExploiter": ["windows"],
+            "PowerShellExploiter": ["windows"],
+            "SSHExploiter": ["linux"],
+            "SmbExploiter": ["windows"],
+            "WmiExploiter": ["windows"],
+            "ZerologonExploiter": ["windows"],
+        }
+        new_config = copy.deepcopy(formatted_config)
+        for exploiter in chain(new_config["brute_force"], new_config["vulnerability"]):
+            exploiter["supported_os"] = supported_os.get(exploiter["name"], [])
+
+        return new_config

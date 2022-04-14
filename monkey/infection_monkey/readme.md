@@ -26,7 +26,8 @@ The monkey is a PyInstaller compressed python archives.
 1. To build the final exe:
     - `cd monkey\infection_monkey`
     - `build_windows.bat`
-    - output is placed under `dist\monkey32.exe` or `dist\monkey64.exe` depending on your version of Python
+
+    Output is placed under `dist\monkey64.exe`.
 
 ## Linux
 
@@ -51,7 +52,7 @@ Tested on Ubuntu 16.04.
     - `chmod +x build_linux.sh`
     - `pipenv run ./build_linux.sh`
 
-    output is placed under `dist/monkey32` or `dist/monkey64` depending on your version of python
+    Output is placed under `dist/monkey64`.
 
 ### Troubleshooting
 

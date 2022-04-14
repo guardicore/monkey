@@ -78,7 +78,7 @@ class EdgeService(Edge):
     def update_based_on_exploit(self, exploit: Dict):
         self.exploits.append(exploit)
         self.save()
-        if exploit["result"]:
+        if exploit["exploitation_result"]:
             self.set_exploited()
 
     def set_exploited(self):

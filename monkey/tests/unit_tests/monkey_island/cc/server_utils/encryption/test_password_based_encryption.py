@@ -13,8 +13,6 @@ from monkey_island.cc.server_utils.encryption import (
 # Mark all tests in this module as slow
 pytestmark = pytest.mark.slow
 
-MONKEY_CONFIGS_DIR_PATH = "monkey_configs"
-STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME = "monkey_config_standard.json"
 PASSWORD = "hello123"
 INCORRECT_PASSWORD = "goodbye321"
 

@@ -93,7 +93,7 @@ log_message "Cloning files from git"
 branch=${2:-"develop"}
 log_message "Branch selected: ${branch}"
 if [[ ! -d "$monkey_home/monkey" ]]; then # If not already cloned
-  git clone --single-branch --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
+  git clone --recurse-submodules -b "$branch" "${MONKEY_GIT_URL}" "${monkey_home}" 2>&1 || handle_error
 fi
 
 # Create folders
@@ -161,20 +161,15 @@ agents=${3:-true}
 if [ "$agents" = true ] ; then
   log_message "Downloading binaries"
   if exists wget; then
-    wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_32_BINARY_URL}
     wget -c -N -P ${ISLAND_BINARIES_PATH} ${LINUX_64_BINARY_URL}
-    wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_32_BINARY_URL}
     wget -c -N -P ${ISLAND_BINARIES_PATH} ${WINDOWS_64_BINARY_URL}
   else
-    curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-32 ${LINUX_32_BINARY_URL}
     curl -o ${ISLAND_BINARIES_PATH}\monkey-linux-64 ${LINUX_64_BINARY_URL}
-    curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-32.exe ${WINDOWS_32_BINARY_URL}
     curl -o ${ISLAND_BINARIES_PATH}\monkey-windows-64.exe ${WINDOWS_64_BINARY_URL}
   fi
 fi
 
 # Allow them to be executed
-chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_32_BINARY_NAME"
 chmod a+x "$ISLAND_BINARIES_PATH/$LINUX_64_BINARY_NAME"
 
 # If a user haven't installed mongo manually check if we can install it with our script
@@ -197,7 +192,7 @@ chmod u+x "${ISLAND_PATH}"/linux/create_certificate.sh
 # Update node
 if ! exists npm; then
   log_message "Installing nodejs"
-  node_src=https://deb.nodesource.com/setup_12.x
+  node_src=https://deb.nodesource.com/setup_16.x
   if exists curl; then
     curl -sL $node_src | sudo -E bash -
   else
@@ -207,8 +202,7 @@ if ! exists npm; then
 fi
 
 pushd "$ISLAND_PATH/cc/ui" || handle_error
-npm install sass-loader node-sass webpack --save-dev
-npm update
+npm ci
 
 log_message "Generating front end"
 npm run dist

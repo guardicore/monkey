@@ -1,21 +1,35 @@
 import itertools
 import socket
 import struct
+from collections import namedtuple
+from ipaddress import IPv4Network
 from random import randint  # noqa: DUO102
+from typing import List
 
 import netifaces
 import psutil
 
-from common.network.network_range import CidrRange
 from infection_monkey.utils.environment import is_windows_os
 
 # Timeout for monkey connections
-TIMEOUT = 15
 LOOPBACK_NAME = b"lo"
 SIOCGIFADDR = 0x8915  # get PA address
 SIOCGIFNETMASK = 0x891B  # get network PA mask
 RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
+
+NetworkInterface = namedtuple("NetworkInterface", ("address", "netmask"))
+NetworkAddress = namedtuple("NetworkAddress", ("ip", "domain"))
+
+
+def get_local_network_interfaces() -> List[NetworkInterface]:
+    network_interfaces = []
+    for i in get_host_subnets():
+        netmask_bits = IPv4Network(f"{i['addr']}/{i['netmask']}", strict=False).prefixlen
+        cidr_netmask = f"/{netmask_bits}"
+        network_interfaces.append(NetworkInterface(i["addr"], cidr_netmask))
+
+    return network_interfaces
 
 
 def get_host_subnets():
@@ -51,7 +65,6 @@ if is_windows_os():
 
     def get_routes():
         raise NotImplementedError()
-
 
 else:
     from fcntl import ioctl
@@ -121,19 +134,3 @@ def get_free_tcp_port(min_range=1024, max_range=65535):
             return port
 
     return None
-
-
-def get_interfaces_ranges():
-    """
-    Returns a list of IPs accessible in the host in each network interface, in the subnet.
-    Limits to a single class C if the network is larger
-    :return: List of IPs, marked as strings.
-    """
-    res = []
-    ifs = get_host_subnets()
-    for net_interface in ifs:
-        address_str = net_interface["addr"]
-        netmask_str = net_interface["netmask"]
-        # limit subnet scans to class C only
-        res.append(CidrRange(cidr_range="%s/%s" % (address_str, netmask_str)))
-    return res

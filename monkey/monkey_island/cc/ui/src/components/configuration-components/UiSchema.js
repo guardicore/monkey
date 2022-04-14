@@ -94,8 +94,8 @@ export default function UiSchema(props) {
           'ui:emptyValue': ''
         }
       },
-      system_info: {
-        system_info_collector_classes: {
+      credential_collectors: {
+        credential_collector_classes: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }
@@ -117,21 +117,10 @@ export default function UiSchema(props) {
       other_behaviors : {'ui:widget': 'hidden'}
     },
     internal: {
-      general: {
-        started_on_island: {'ui:widget': 'hidden'}
-      },
       classes: {
         finger_classes: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
-        }
-      },
-      monkey: {
-        alive: {
-          classNames: 'config-field-hidden'
-        },
-        aws_keys: {
-          classNames: 'config-field-hidden'
         }
       },
       exploits: {

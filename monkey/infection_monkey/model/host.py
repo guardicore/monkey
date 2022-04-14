@@ -1,11 +1,13 @@
+from typing import Optional
+
+
 class VictimHost(object):
-    def __init__(self, ip_addr, domain_name=""):
+    def __init__(self, ip_addr: str, domain_name: str = ""):
         self.ip_addr = ip_addr
         self.domain_name = str(domain_name)
         self.os = {}
         self.services = {}
         self.icmp = False
-        self.monkey_exe = None
         self.default_tunnel = None
         self.default_server = None
 
@@ -39,8 +41,7 @@ class VictimHost(object):
         for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
         victim += "] ICMP: %s " % (self.icmp)
-        victim += "target monkey: %s" % self.monkey_exe
         return victim
 
-    def set_default_server(self, default_server):
-        self.default_server = default_server
+    def set_island_address(self, ip: str, port: Optional[str]):
+        self.default_server = f"{ip}:{port}" if port else f"{ip}"

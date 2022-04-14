@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class AttackTechnique(object, metaclass=abc.ABCMeta):
-    """ Abstract class for ATT&CK report components """
+    """Abstract class for ATT&CK report components"""
 
     config_schema_per_attack_technique = None
 

@@ -20,11 +20,9 @@ def test_build_monkey_commandline_explicitly_arguments():
         "0",
         "-l",
         "C:\\windows\\abc",
-        "-vp",
-        "80",
     ]
     actual = build_monkey_commandline_explicitly(
-        "101010", "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc", "80"
+        "101010", "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc"
     )
 
     assert expected == actual
@@ -98,11 +96,9 @@ def test_get_monkey_commandline_linux():
 
 def test_build_monkey_commandline():
     example_host = VictimHost(ip_addr="bla")
-    example_host.set_default_server("101010")
+    example_host.set_island_address("101010", "5000")
 
-    expected = f" -p {GUID} -s 101010 -d 0 -l /home/bla -vp 80"
-    actual = build_monkey_commandline(
-        target_host=example_host, depth=0, vulnerable_port="80", location="/home/bla"
-    )
+    expected = f" -p {GUID} -s 101010:5000 -d 0 -l /home/bla"
+    actual = build_monkey_commandline(target_host=example_host, depth=0, location="/home/bla")
 
     assert expected == actual

@@ -9,9 +9,6 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Machines](#machines)<br>
 [Nr. 2 Hadoop](#_Toc526517182)<br>
 [Nr. 3 Hadoop](#_Toc526517183)<br>
-[Nr. 4 Elastic](#_Toc526517184)<br>
-[Nr. 5 Elastic](#_Toc526517185)<br>
-[Nr. 8 Shellshock](#_Toc536021461)<br>
 [Nr. 9 Tunneling M1](#_Toc536021462)<br>
 [Nr. 10 Tunneling M2](#_Toc536021463)<br>
 [Nr. 11 SSH key steal](#_Toc526517190)<br>
@@ -21,13 +18,8 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 15 Mimikatz](#_Toc536021468)<br>
 [Nr. 16 MsSQL](#_Toc536021469)<br>
 [Nr. 17 Upgrader](#_Toc536021470)<br>
-[Nr. 18 WebLogic](#_Toc526517180)<br>
-[Nr. 19 WebLogic](#_Toc526517181)<br>
-[Nr. 20 SMB](#_Toc536021473)<br>
 [Nr. 21 Scan](#_Toc526517196)<br>
 [Nr. 22 Scan](#_Toc526517197)<br>
-[Nr. 23 Struts2](#_Toc536021476)<br>
-[Nr. 24 Struts2](#_Toc536021477)<br>
 [Nr. 25 Zerologon](#_Toc536021478)<br>
 [Nr. 3-45 Powershell](#_Toc536021479)<br>
 [Nr. 3-46 Powershell](#_Toc536021480)<br>
@@ -248,112 +240,6 @@ Update all requirements using deployment script:<br>
 <tr class="even">
 <td>Notes:</td>
 <td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517184" class="anchor"></span>Nr. <strong>4</strong> Elastic</p>
-<p>(10.2.2.4)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.elastic.co/downloads/past-releases/elasticsearch-1-4-2">Elastic 1.4.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>9200</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Scan results:</td>
-<td>Machine exploited using Elastic exploiter</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_index_and_query_a_document.html">Quick</a> tutorial on how to add entries (was useful when setting up).</td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517185" class="anchor"></span>Nr. <strong>5</strong> Elastic</p>
-<p>(10.2.2.5)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.elastic.co/downloads/past-releases/elasticsearch-1-4-2">Elastic 1.4.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>9200</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Scan results:</td>
-<td>Machine exploited using Elastic exploiter</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td><a href="https://www.elastic.co/guide/en/elasticsearch/reference/1.4/_index_and_query_a_document.html">Quick</a> tutorial on how to add entries (was useful when setting up).</td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021461" class="anchor"></span>Nr. <strong>8</strong> Shellshock</p>
-<p>(10.2.2.8)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 12.04 LTS x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>Apache2, bash 4.2.</td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>80</td>
-</tr>
-<tr class="even">
-<td>Scan results:</td>
-<td>Machine exploited using Shellshock exploiter</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
-<td>Vulnerable app is under /cgi-bin/test.cgi</td>
 </tr>
 </tbody>
 </table>
@@ -747,116 +633,6 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc526517180" class="anchor"></span>Nr. <strong>18</strong> WebLogic</p>
-<p>(10.2.2.18)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.oracle.com/technetwork/middleware/weblogic/downloads/wls-main-097127.html">Oracle WebLogic server 12.2.1.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>7001</td>
-</tr>
-<tr class="even">
-<td>Admin domain credentials:</td>
-<td>weblogic : B74Ot0c4</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc526517181" class="anchor"></span>Nr. <strong>19</strong> WebLogic</p>
-<p>(10.2.2.19)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p><a href="https://www.oracle.com/technetwork/middleware/weblogic/downloads/wls-main-097127.html">Oracle WebLogic server 12.2.1.2</a></p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>7001</td>
-</tr>
-<tr class="even">
-<td>Admin servers credentials:</td>
-<td>weblogic : =ThS2d=m(`B</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021473" class="anchor"></span>Nr. <strong>20</strong> SMB</p>
-<p>(10.2.2.20)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td>Default service’s port:</td>
-<td>445</td>
-</tr>
-<tr class="even">
-<td>Root password:</td>
-<td>YbS,&lt;tpS.2av</td>
-</tr>
-<tr class="odd">
-<td>Server’s config:</td>
-<td><a href="https://social.technet.microsoft.com/Forums/windows/en-US/8160d62b-0f5d-48a3-9fe9-5cd319837917/how-te-reenable-smb1-in-windows1o?forum=win10itprogeneral">SMB</a> turned on</td>
-</tr>
-<tr class="even">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
 <th><p><span id="_Toc526517196" class="anchor"></span>Nr. <strong>21</strong> Scan</p>
 <p>(10.2.2.21)</p></th>
 <th>(Secure)</th>
@@ -917,74 +693,6 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021476" class="anchor"></span>Nr. <strong>23</strong> Struts2</p>
-<p>(10.2.2.23)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Ubuntu 16.04.05 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p>struts2 2.3.15.1,</p>
-<p>tomcat 9.0.0.M9</p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>8080</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-<table>
-<thead>
-<tr class="header">
-<th><p><span id="_Toc536021477" class="anchor"></span>Nr. <strong>24</strong> Struts2</p>
-<p>(10.2.2.24)</p></th>
-<th>(Vulnerable)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>OS:</td>
-<td><strong>Windows 10 x64</strong></td>
-</tr>
-<tr class="even">
-<td>Software:</td>
-<td><p>JDK,</p>
-<p>struts2 2.3.15.1,</p>
-<p>tomcat 9.0.0.M9</p></td>
-</tr>
-<tr class="odd">
-<td>Default server’s port:</td>
-<td>8080</td>
-</tr>
-<tr class="even">
-<td>Server’s config:</td>
-<td>Default</td>
-</tr>
-<tr class="odd">
-<td>Notes:</td>
 <td></td>
 </tr>
 </tbody>
@@ -1063,7 +771,9 @@ Accessibale through Island using m0nk3y-user.</td>
 <tr class="even">
 <td>Notes:</td>
 <td>User: m0nk3y, Password: nPj8rbc3<br>
-Accessiable through cached credentials (Windows Island)</td>
+Accessible using the same m0nk3y user from island, in other words powershell exploiter can exploit
+this machine without credentials as long as the user running the agent is the same on both
+machines</td>
 </tr>
 </tbody>
 </table>

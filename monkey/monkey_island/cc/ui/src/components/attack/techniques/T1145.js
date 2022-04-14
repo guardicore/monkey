@@ -10,13 +10,13 @@ class T1145 extends React.Component {
     super(props);
   }
 
-  static renderSSHKeys(keys) {
-    let output = [];
-    keys.forEach(function (keyInfo) {
-      output.push(<div key={keyInfo['name'] + keyInfo['home_dir']}>
-        SSH key pair used by <b>{keyInfo['name']}</b> user found in {keyInfo['home_dir']}</div>)
-    });
-    return (<div>{output}</div>);
+  static renderSSHKey(key) {
+    return (
+      <div>
+        <div key={key['name'] + key['home_dir']}>
+          SSH key pair used by <b>{key['name']}</b> user found in {key['home_dir']}
+        </div>
+      </div>);
   }
 
   static getKeysInfoColumns() {
@@ -31,7 +31,7 @@ class T1145 extends React.Component {
         {
           Header: 'Keys found',
           id: 'keys',
-          accessor: x => T1145.renderSSHKeys(x.ssh_info),
+          accessor: x => T1145.renderSSHKey(x.ssh_info),
           style: {'whiteSpace': 'unset'}
         }
       ]

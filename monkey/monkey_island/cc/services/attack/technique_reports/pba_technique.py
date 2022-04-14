@@ -7,7 +7,7 @@ from monkey_island.cc.services.attack.technique_reports import AttackTechnique
 
 
 class PostBreachTechnique(AttackTechnique, metaclass=abc.ABCMeta):
-    """ Class for ATT&CK report components of post-breach actions """
+    """Class for ATT&CK report components of post-breach actions"""
 
     @property
     @abc.abstractmethod

@@ -68,9 +68,7 @@ class AWSExporter(Exporter):
                 CredentialType.PASSWORD.value: AWSExporter._handle_ssh_issue,
                 CredentialType.KEY.value: AWSExporter._handle_ssh_key_issue,
             },
-            ExploiterDescriptorEnum.SHELLSHOCK.value.class_name: AWSExporter._handle_shellshock_issue,  # noqa:E501
             "tunnel": AWSExporter._handle_tunnel_issue,
-            ExploiterDescriptorEnum.ELASTIC.value.class_name: AWSExporter._handle_elastic_issue,
             ExploiterDescriptorEnum.SMB.value.class_name: {
                 CredentialType.PASSWORD.value: AWSExporter._handle_smb_password_issue,
                 CredentialType.HASH.value: AWSExporter._handle_smb_pth_issue,
@@ -83,8 +81,6 @@ class AWSExporter(Exporter):
             "shared_passwords_domain": AWSExporter._handle_shared_passwords_domain_issue,
             "shared_admins_domain": AWSExporter._handle_shared_admins_domain_issue,
             "strong_users_on_crit": AWSExporter._handle_strong_users_on_crit_issue,
-            ExploiterDescriptorEnum.STRUTS2.value.class_name: AWSExporter._handle_struts2_issue,
-            ExploiterDescriptorEnum.WEBLOGIC.value.class_name: AWSExporter._handle_weblogic_issue,
             ExploiterDescriptorEnum.HADOOP.value.class_name: AWSExporter._handle_hadoop_issue,
         }
 
@@ -247,21 +243,6 @@ class AWSExporter(Exporter):
         )
 
     @staticmethod
-    def _handle_elastic_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Elastic Search servers are vulnerable to CVE-2015-1427",
-            description="Update your Elastic Search server to version 1.4.3 and up.",
-            recommendation="The machine {0}({1}) is vulnerable to an Elastic Groovy attack. "
-            "The attack was made "
-            "possible because the Elastic Search server was not patched "
-            "against CVE-2015-1427.".format(issue["machine"], issue["ip_address"]),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
     def _handle_island_cross_segment_issue(issue, instance_arn):
 
         return AWSExporter._build_generic_finding(
@@ -290,23 +271,6 @@ class AWSExporter(Exporter):
             "passwords.",
             recommendation="These users are sharing access password: {0}.".format(
                 issue["shared_with"]
-            ),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_shellshock_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Machines are vulnerable to 'Shellshock'",
-            description="Update your Bash to a ShellShock-patched version.",
-            recommendation="The machine {0} ({1}) is vulnerable to a ShellShock attack. "
-            "The attack was made possible because the HTTP server running on "
-            "TCP port {2} was vulnerable to a "
-            "shell injection attack on the paths: {3}.".format(
-                issue["machine"], issue["ip_address"], issue["port"], issue["paths"]
             ),
             instance_arn=instance_arn,
             instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
@@ -416,45 +380,6 @@ class AWSExporter(Exporter):
             "classifying it as a critical "
             "machine. These users has access to it:{threatening_users}.".format(
                 services=issue["services"], threatening_users=issue["threatening_users"]
-            ),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_struts2_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Struts2 servers are vulnerable to remote code execution.",
-            description="Upgrade Struts2 to version 2.3.32 or 2.5.10.1 or any later versions.",
-            recommendation="Struts2 server at {machine} ({ip_address}) is vulnerable to "
-            "remote code execution attack."
-            "The attack was made possible because the server is using an old "
-            "version of Jakarta based file "
-            "upload Multipart parser.".format(
-                machine=issue["machine"], ip_address=issue["ip_address"]
-            ),
-            instance_arn=instance_arn,
-            instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,
-        )
-
-    @staticmethod
-    def _handle_weblogic_issue(issue, instance_arn):
-
-        return AWSExporter._build_generic_finding(
-            severity=10,
-            title="Oracle WebLogic servers are vulnerable to remote code execution.",
-            description="Install Oracle critical patch updates. Or update to the latest "
-            "version. "
-            "Vulnerable versions are 10.3.6.0.0, 12.1.3.0.0, 12.2.1.1.0 and "
-            "12.2.1.2.0.",
-            recommendation="Oracle WebLogic server at {machine} ({ip_address}) is vulnerable "
-            "to remote code execution attack."
-            "The attack was made possible due to incorrect permission "
-            "assignment in Oracle Fusion Middleware "
-            "(subcomponent: WLS Security).".format(
-                machine=issue["machine"], ip_address=issue["ip_address"]
             ),
             instance_arn=instance_arn,
             instance_id=issue["aws_instance_id"] if "aws_instance_id" in issue else None,

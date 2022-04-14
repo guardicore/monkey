@@ -8,16 +8,27 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 ### Added
 - credentials.json file for storing Monkey Island user login information. #1206
+- "GET /api/propagation-credentials/<string:guid>" endpoint for agents to
+  retrieve updated credentials from the Island. #1538
+- SSHCollector as a configurable System info Collector. #1606
+- deployment_scrips/install-infection-monkey-service.sh to install an AppImage
+  as a service. #1552
 - The ability to download the Monkey Island logs from the Infection Map page. #1640
 
 ### Changed
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
   include a timeout. #1577
 - The setup procedure for custom server_config.json files to be simpler. #1576
+- The order and content of Monkey Island's initialization logging to give
+  clearer instructions to the user and avoid confusion. #1684
+- The process list collection system info collector to now be a post-breach action. #1697
+- The "/api/monkey/download" endpoint to accept an OS and return a file. #1675
+- Log messages to contain human-readable thread names. #1766
+- The log file name to `infection-monkey-agent-<TIMESTAMP>-<RANDOM_STRING>.log`. #1761
 - "Logs" page renamed to "Telemetries". #1640
 
 ### Removed
-- The VSFTPD exploiter. #1533
+- VSFTPD exploiter. #1533
 - Manual agent run command for CMD. #1570
 - Sambacry exploiter. #1567, #1693
 - "Kill file" option in the config. #1536
@@ -34,6 +45,23 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Hostname system info collector. #1535
 - Max iterations and timeout between iterations config options. #1600
 - MITRE ATT&CK configuration screen. #1532
+- Propagation credentials from "GET /api/monkey/<string:guid>" endpoint. #1538
+- "GET /api/monkey_control/check_remote_port/<string:port>" endpoint. #1635
+- Max victims to find/exploit, TCP scan interval and TCP scan get banner internal options. #1597
+- MySQL fingerprinter. #1648
+- MS08-067 (Conficker) exploiter. #1677
+- Agent bootloader. #1676
+- Zero Trust integration with ScoutSuite. #1669
+- ShellShock exploiter. #1733
+- ElasticGroovy exploiter. #1732
+- T1082 attack technique report. #1754
+- 32-bit agents. #1675
+- Log path config options. #1761
+- "smb_service_name" option. #1741
+- Struts2 exploiter. #1869
+- Drupal exploiter. #1869
+- WebLogic exploiter. #1869
+- The /api/t1216-pba/download endpoint. #1864
 - Island log download button from "Telemetries"(previously called "Logs") page. #1640
 
 ### Fixed
@@ -41,9 +69,14 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Windows "run as a user" powershell command for manual agent runs. #1570
 - A bug in the "Signed Script Proxy Execution" PBA that downloaded the exe on Linux
   systems as well. #1557
+- A bug where T1216_random_executable.exe was copied to disk even if the signed
+  script proxy execution PBA was disabled. #1864
+
 
 ### Security
-
+- Change SSH exploiter so that it does not set the permissions of the agent
+  binary in /tmp on the target system to 777, as this could allow a malicious
+  actor with local access to escalate their privileges. #1750
 
 ## [1.13.0] - 2022-01-25
 ### Added
@@ -53,6 +86,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Exploiters attempting to start servers listening on privileged ports,
   resulting in failed propagation. 8f53a5c
+
 
 ## [1.12.0] - 2021-10-27
 ### Added

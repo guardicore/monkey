@@ -6,10 +6,9 @@ import dateutil
 import flask_restful
 from flask import request
 
-from common.common_consts.telem_categories import TelemCategoryEnum
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey import Monkey
-from monkey_island.cc.models.telemetries import get_telemetry_by_query, save_telemetry
+from monkey_island.cc.models.telemetries import get_telemetry_by_query
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.services.node import NodeService
@@ -61,8 +60,6 @@ class Telemetry(flask_restful.Resource):
 
         process_telemetry(telemetry_json)
 
-        save_telemetry(telemetry_json)
-
         return {}, 201
 
     @staticmethod
@@ -80,10 +77,5 @@ class Telemetry(flask_restful.Resource):
                 monkey_label = telem_monkey_guid
             x["monkey"] = monkey_label
             objects.append(x)
-            if x["telem_category"] == TelemCategoryEnum.SYSTEM_INFO and "credentials" in x["data"]:
-                for user in x["data"]["credentials"]:
-                    if -1 != user.find(","):
-                        new_user = user.replace(",", ".")
-                        x["data"]["credentials"][new_user] = x["data"]["credentials"].pop(user)
 
         return objects

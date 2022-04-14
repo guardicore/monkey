@@ -1,9 +1,7 @@
-import hashlib
 import os
 import sys
 import uuid
 from abc import ABCMeta
-from itertools import product
 
 GUID = str(uuid.getnode())
 
@@ -27,9 +25,6 @@ class Configuration(object):
             if key.startswith("_"):
                 continue
             if key in LOCAL_CONFIG_VARS:
-                continue
-            if self._depth_from_commandline and key == "depth":
-                self.max_depth = value
                 continue
             if hasattr(self, key):
                 setattr(self, key, value)
@@ -70,18 +65,6 @@ class Configuration(object):
 
         return result
 
-    # Used to keep track of our depth if manually specified
-    _depth_from_commandline = False
-
-    ###########################
-    # logging config
-    ###########################
-
-    dropper_log_path_windows = "%temp%\\~df1562.tmp"
-    dropper_log_path_linux = "/tmp/user-1562"
-    monkey_log_path_windows = "%temp%\\~df1563.tmp"
-    monkey_log_path_linux = "/tmp/user-1563"
-
     ###########################
     # dropper config
     ###########################
@@ -89,151 +72,27 @@ class Configuration(object):
     dropper_set_date = True
     dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
     dropper_date_reference_path_linux = "/bin/sh"
-    dropper_target_path_win_32 = r"C:\Windows\temp\monkey32.exe"
-    dropper_target_path_win_64 = r"C:\Windows\temp\monkey64.exe"
-    dropper_target_path_linux = "/tmp/monkey"
 
     ###########################
     # monkey config
     ###########################
     # sets whether or not the monkey is alive. if false will stop scanning and exploiting
-    alive = True
-
-    finger_classes = []
-    exploiter_classes = []
-    system_info_collector_classes = []
-
-    # how many victims to look for in a single scan iteration
-    victims_max_find = 100
-
-    # how many victims to exploit before stopping
-    victims_max_exploit = 100
+    should_stop = False
 
     # depth of propagation
     depth = 2
     max_depth = None
-    started_on_island = False
     current_server = ""
 
     # Configuration servers to try to connect to, in this order.
-    command_servers = ["192.0.2.0:5000"]
+    command_servers = []
 
-    keep_tunnel_open_time = 60
-
-    ###########################
-    # scanners config
-    ###########################
-
-    # Auto detect and scan local subnets
-    local_network_scan = True
-
-    subnet_scan_list = []
-    inaccessible_subnets = []
-
-    blocked_ips = []
-
-    # TCP Scanner
-    HTTP_PORTS = [
-        80,
-        8080,
-        443,
-        8008,  # HTTP alternate
-        7001,  # Oracle Weblogic default server port
-    ]
-    tcp_target_ports = [22, 2222, 445, 135, 3389, 80, 8080, 443, 8008, 3306, 9200]
-    tcp_target_ports.extend(HTTP_PORTS)
-    tcp_scan_timeout = 3000  # 3000 Milliseconds
-    tcp_scan_interval = 0  # in milliseconds
-    tcp_scan_get_banner = True
-
-    # Ping Scanner
-    ping_scan_timeout = 1000
-
-    ###########################
-    # exploiters config
-    ###########################
-
-    skip_exploit_if_file_exist = False
-
-    ms08_067_exploit_attempts = 5
-    user_to_add = "Monkey_IUSER_SUPPORT"
-
-    ###########################
-    # ransomware config
-    ###########################
-
-    ransomware = ""
-
-    def get_exploit_user_password_pairs(self):
-        """
-        Returns all combinations of the configurations users and passwords
-        :return:
-        """
-        return product(self.exploit_user_list, self.exploit_password_list)
-
-    def get_exploit_user_ssh_key_pairs(self):
-        """
-        :return: All combinations of the configurations users and ssh pairs
-        """
-        return product(self.exploit_user_list, self.exploit_ssh_keys)
-
-    def get_exploit_user_password_or_hash_product(self):
-        """
-        Returns all combinations of the configurations users and passwords or lm/ntlm hashes
-        :return:
-        """
-        cred_list = []
-        for cred in product(self.exploit_user_list, self.exploit_password_list, [""], [""]):
-            cred_list.append(cred)
-        for cred in product(self.exploit_user_list, [""], [""], self.exploit_ntlm_hash_list):
-            cred_list.append(cred)
-        for cred in product(self.exploit_user_list, [""], self.exploit_lm_hash_list, [""]):
-            cred_list.append(cred)
-        return cred_list
-
-    @staticmethod
-    def hash_sensitive_data(sensitive_data):
-        """
-        Hash sensitive data (e.g. passwords). Used so the log won't contain sensitive data
-        plain-text, as the log is
-        saved on client machines plain-text.
-
-        :param sensitive_data: the data to hash.
-        :return: the hashed data.
-        """
-        password_hashed = hashlib.sha512(sensitive_data.encode()).hexdigest()
-        return password_hashed
-
-    exploit_user_list = ["Administrator", "root", "user"]
-    exploit_password_list = ["Password1!", "1234", "password", "12345678"]
-    exploit_lm_hash_list = []
-    exploit_ntlm_hash_list = []
-    exploit_ssh_keys = []
-
-    aws_access_key_id = ""
-    aws_secret_access_key = ""
-    aws_session_token = ""
-
-    # smb/wmi exploiter
-    smb_download_timeout = 300  # timeout in seconds
-    smb_service_name = "InfectionMonkey"
-
-    ###########################
-    # post breach actions
-    ###########################
-    post_breach_actions = []
-    custom_PBA_linux_cmd = ""
-    custom_PBA_windows_cmd = ""
-    PBA_linux_filename = None
-    PBA_windows_filename = None
+    keep_tunnel_open_time = 30
 
     ###########################
     # testing configuration
     ###########################
     export_monkey_telems = False
-
-    def get_hop_distance_to_island(self):
-        return self.max_depth - self.depth
 
 
 WormConfiguration = Configuration()

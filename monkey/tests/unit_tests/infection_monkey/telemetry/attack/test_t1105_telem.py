@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -16,7 +17,8 @@ def T1105_telem_test_instance():
     return T1105Telem(STATUS, SRC_IP, DST_IP, FILENAME)
 
 
-def test_T1105_send(T1105_telem_test_instance, spy_send_telemetry):
+@pytest.mark.parametrize("filename", [Path(FILENAME), FILENAME])
+def test_T1105_send(T1105_telem_test_instance, spy_send_telemetry, filename):
     T1105_telem_test_instance.send()
     expected_data = {
         "status": STATUS.value,

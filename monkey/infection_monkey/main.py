@@ -16,7 +16,7 @@ from infection_monkey.config import EXTERNAL_CONFIG_FILE, WormConfiguration
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
-from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
+from infection_monkey.utils.monkey_log_path import get_agent_log_path, get_dropper_log_path
 
 logger = None
 
@@ -25,7 +25,7 @@ LOG_CONFIG = {
     "disable_existing_loggers": False,
     "formatters": {
         "standard": {
-            "format": "%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%("
+            "format": "%(asctime)s [%(process)d:%(threadName)s:%(levelname)s] %(module)s.%("
             "funcName)s.%(lineno)d: %(message)s"
         },
     },
@@ -80,7 +80,7 @@ def main():
 
     try:
         if MONKEY_ARG == monkey_mode:
-            log_path = get_monkey_log_path()
+            log_path = get_agent_log_path()
             monkey_cls = InfectionMonkey
         elif DROPPER_ARG == monkey_mode:
             log_path = get_dropper_log_path()
@@ -116,13 +116,12 @@ def main():
     )
 
     logger.info(f"version: {get_version()}")
+    logger.info(f"writing log file to {log_path}")
 
     monkey = monkey_cls(monkey_args)
-    monkey.initialize()
 
     try:
         monkey.start()
-
         return True
     except Exception as e:
         logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))

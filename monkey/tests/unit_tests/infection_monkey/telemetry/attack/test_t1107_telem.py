@@ -1,11 +1,13 @@
 import json
+from pathlib import Path
 
 import pytest
 
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 
-PATH = "path/to/file.txt"
+# Convert to path to fix path separators for current os
+PATH = str(Path("path/to/file.txt"))
 STATUS = ScanStatus.USED
 
 
@@ -20,3 +22,8 @@ def test_T1107_send(T1107_telem_test_instance, spy_send_telemetry):
     expected_data = json.dumps(expected_data, cls=T1107_telem_test_instance.json_encoder)
     assert spy_send_telemetry.data == expected_data
     assert spy_send_telemetry.telem_category == "attack"
+
+
+def test_T1107_send__path(spy_send_telemetry):
+    T1107Telem(STATUS, Path(PATH)).send()
+    assert json.loads(spy_send_telemetry.data)["path"] == PATH

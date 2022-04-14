@@ -6,8 +6,8 @@ import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
-from common.common_consts.api_url_consts import T1216_PBA_FILE_DOWNLOAD_PATH
 from monkey_island.cc.database import database, mongo
+from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
@@ -17,7 +17,6 @@ from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyB
 from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
     TelemetryBlackboxEndpoint,
 )
-from monkey_island.cc.resources.bootloader import Bootloader
 from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.configuration_export import ConfigurationExport
 from monkey_island.cc.resources.configuration_import import ConfigurationImport
@@ -30,26 +29,21 @@ from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
-from monkey_island.cc.resources.monkey_configuration import MonkeyConfiguration
-from monkey_island.cc.resources.monkey_control.remote_port_check import RemotePortCheck
-from monkey_island.cc.resources.monkey_control.started_on_island import StartedOnIsland
 from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
+from monkey_island.cc.resources.propagation_credentials import PropagationCredentials
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
-from monkey_island.cc.resources.T1216_pba_file_download import T1216PBAFileDownload
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.version_update import VersionUpdate
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
-from monkey_island.cc.resources.zero_trust.scoutsuite_auth.aws_keys import AWSKeys
-from monkey_island.cc.resources.zero_trust.scoutsuite_auth.scoutsuite_auth import ScoutSuiteAuth
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
@@ -97,6 +91,7 @@ def init_app_config(app, mongo_url):
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
+    app.url_map.strict_slashes = False
     app.json_encoder = CustomJSONEncoder
 
 
@@ -121,28 +116,27 @@ def init_api_resources(api):
     api.add_resource(Root, "/api")
     api.add_resource(Registration, "/api/registration")
     api.add_resource(Authenticate, "/api/auth")
-    api.add_resource(Monkey, "/api/monkey", "/api/monkey/", "/api/monkey/<string:guid>")
-    api.add_resource(Bootloader, "/api/bootloader/<string:os>")
-    api.add_resource(LocalRun, "/api/local-monkey", "/api/local-monkey/")
-    api.add_resource(ClientRun, "/api/client-monkey", "/api/client-monkey/")
     api.add_resource(
-        Telemetry, "/api/telemetry", "/api/telemetry/", "/api/telemetry/<string:monkey_guid>"
+        Monkey,
+        "/api/monkey",
+        "/api/monkey/<string:guid>",
+        "/api/monkey/<string:guid>/<string:config_format>",
     )
+    api.add_resource(LocalRun, "/api/local-monkey")
+    api.add_resource(ClientRun, "/api/client-monkey")
+    api.add_resource(Telemetry, "/api/telemetry", "/api/telemetry/<string:monkey_guid>")
 
     api.add_resource(IslandMode, "/api/island-mode")
-    api.add_resource(MonkeyConfiguration, "/api/configuration", "/api/configuration/")
-    api.add_resource(IslandConfiguration, "/api/configuration/island", "/api/configuration/island/")
+    api.add_resource(IslandConfiguration, "/api/configuration/island")
     api.add_resource(ConfigurationExport, "/api/configuration/export")
     api.add_resource(ConfigurationImport, "/api/configuration/import")
     api.add_resource(
         MonkeyDownload,
-        "/api/monkey/download",
-        "/api/monkey/download/",
-        "/api/monkey/download/<string:path>",
+        "/api/monkey/download/<string:host_os>",
     )
-    api.add_resource(NetMap, "/api/netmap", "/api/netmap/")
-    api.add_resource(Edge, "/api/netmap/edge", "/api/netmap/edge/")
-    api.add_resource(Node, "/api/netmap/node", "/api/netmap/node/")
+    api.add_resource(NetMap, "/api/netmap")
+    api.add_resource(Edge, "/api/netmap/edge")
+    api.add_resource(Node, "/api/netmap/node")
     api.add_resource(NodeStates, "/api/netmap/nodeStates")
 
     api.add_resource(SecurityReport, "/api/report/security")
@@ -153,23 +147,21 @@ def init_api_resources(api):
     api.add_resource(MonkeyExploitation, "/api/exploitations/monkey")
 
     api.add_resource(ZeroTrustFindingEvent, "/api/zero-trust/finding-event/<string:finding_id>")
-    api.add_resource(TelemetryFeed, "/api/telemetry-feed", "/api/telemetry-feed/")
-    api.add_resource(Log, "/api/log", "/api/log/")
-    api.add_resource(IslandLog, "/api/log/island/download", "/api/log/island/download/")
+    api.add_resource(TelemetryFeed, "/api/telemetry-feed")
+    api.add_resource(Log, "/api/log")
+    api.add_resource(IslandLog, "/api/log/island/download")
     api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
-    api.add_resource(T1216PBAFileDownload, T1216_PBA_FILE_DOWNLOAD_PATH)
     api.add_resource(
         FileUpload,
         "/api/fileUpload/<string:file_type>",
         "/api/fileUpload/<string:file_type>?load=<string:filename>",
         "/api/fileUpload/<string:file_type>?restore=<string:filename>",
     )
-    api.add_resource(RemoteRun, "/api/remote-monkey", "/api/remote-monkey/")
-    api.add_resource(VersionUpdate, "/api/version-update", "/api/version-update/")
-    api.add_resource(RemotePortCheck, "/api/monkey_control/check_remote_port/<string:port>")
-    api.add_resource(StartedOnIsland, "/api/monkey_control/started_on_island")
-    api.add_resource(ScoutSuiteAuth, "/api/scoutsuite_auth/<string:provider>")
-    api.add_resource(AWSKeys, "/api/aws_keys")
+    api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
+    api.add_resource(RemoteRun, "/api/remote-monkey")
+    api.add_resource(VersionUpdate, "/api/version-update")
+    api.add_resource(StopAgentCheck, "/api/monkey_control/needs-to-stop/<int:monkey_guid>")
+    api.add_resource(StopAllAgents, "/api/monkey_control/stop-all-agents")
 
     # Resources used by black box tests
     api.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")

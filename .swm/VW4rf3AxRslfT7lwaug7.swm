@@ -18,23 +18,24 @@
             "type": "snippet",
             "path": "monkey/infection_monkey/post_breach/actions/schedule_jobs.py",
             "comments": [],
-            "firstLineNumber": 12,
+            "firstLineNumber": 15,
             "lines": [
                 "     \"\"\"",
                 " ",
-                "     def __init__(self):",
+                "     def __init__(self, telemetry_messenger: ITelemetryMessenger):",
                 "*        linux_cmds, windows_cmds = get_commands_to_schedule_jobs()",
                 "+        pass",
                 "*",
                 "+        # Swimmer: IMPLEMENT HERE!",
                 "*        super(ScheduleJobs, self).__init__(",
+                "*            telemetry_messenger,",
                 "*            name=POST_BREACH_JOB_SCHEDULING,",
                 "*            linux_cmd=\" \".join(linux_cmds),",
                 "*            windows_cmd=windows_cmds,",
                 "*        )",
                 "*",
-                "*    def run(self):",
-                "*        super(ScheduleJobs, self).run()",
+                "*    def run(self, options: Dict):",
+                "*        super(ScheduleJobs, self).run(options)",
                 "*        remove_scheduled_jobs()"
             ]
         },
@@ -44,11 +45,11 @@
         }
     ],
     "symbols": {},
-    "file_version": "2.0.1",
+    "file_version": "2.0.3",
     "meta": {
-        "app_version": "0.4.1-1",
+        "app_version": "0.6.6-2",
         "file_blobs": {
-            "monkey/infection_monkey/post_breach/actions/schedule_jobs.py": "e7845968a0c27d2eba71a8889645fe88491cb2a8"
+            "monkey/infection_monkey/post_breach/actions/schedule_jobs.py": "4ab023e35fa4424f0c6583233f5b056c7b1cad51"
         }
     }
 }

@@ -1,6 +1,7 @@
 from typing import List
 
 from bson import ObjectId
+from gevent.lock import BoundedSemaphore
 
 from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
@@ -9,6 +10,10 @@ from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFind
 
 
 class MonkeyZTFindingService:
+
+    # Required to synchronize db state between different threads
+    _finding_lock = BoundedSemaphore()
+
     @staticmethod
     def create_or_add_to_existing(test: str, status: str, events: List[Event]):
         """
@@ -20,16 +25,17 @@ class MonkeyZTFindingService:
         the query - this is not
         when this function should be used.
         """
-        existing_findings = list(MonkeyFinding.objects(test=test, status=status))
-        assert len(existing_findings) < 2, "More than one finding exists for {}:{}".format(
-            test, status
-        )
+        with MonkeyZTFindingService._finding_lock:
+            existing_findings = list(MonkeyFinding.objects(test=test, status=status))
+            assert len(existing_findings) < 2, "More than one finding exists for {}:{}".format(
+                test, status
+            )
 
-        if len(existing_findings) == 0:
-            MonkeyZTFindingService.create_new_finding(test, status, events)
-        else:
-            # Now we know for sure this is the only one
-            MonkeyZTFindingService.add_events(existing_findings[0], events)
+            if len(existing_findings) == 0:
+                MonkeyZTFindingService.create_new_finding(test, status, events)
+            else:
+                # Now we know for sure this is the only one
+                MonkeyZTFindingService.add_events(existing_findings[0], events)
 
     @staticmethod
     def create_new_finding(test: str, status: str, events: List[Event]):

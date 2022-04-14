@@ -1,5 +1,3 @@
-from monkey_island.cc.services.utils.typographic_symbols import WARNING_SIGN
-
 INTERNAL = {
     "title": "Internal",
     "type": "object",
@@ -11,16 +9,9 @@ INTERNAL = {
                 "keep_tunnel_open_time": {
                     "title": "Keep tunnel open time",
                     "type": "integer",
-                    "default": 60,
+                    "default": 30,
                     "description": "Time to keep tunnel open before going down after last exploit "
                     "(in seconds)",
-                },
-                "started_on_island": {
-                    "title": "Started on island",
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Was exploitation started from island"
-                    "(did monkey with max depth ran on island)",
                 },
             },
         },
@@ -28,29 +19,10 @@ INTERNAL = {
             "title": "Monkey",
             "type": "object",
             "properties": {
-                "victims_max_find": {
-                    "title": "Max victims to find",
-                    "type": "integer",
-                    "default": 100,
-                    "description": "Determines the maximum number of machines the monkey is "
-                    "allowed to scan",
-                },
-                "victims_max_exploit": {
-                    "title": "Max victims to exploit",
-                    "type": "integer",
-                    "default": 100,
-                    "description": "Determines the maximum number of machines the monkey"
-                    " is allowed to successfully exploit. "
-                    + WARNING_SIGN
-                    + " Note that setting this value too high may result in the "
-                    "monkey propagating to "
-                    "a high number of machines",
-                },
-                "alive": {
-                    "title": "Alive",
+                "should_stop": {
                     "type": "boolean",
-                    "default": True,
-                    "description": "Is the monkey alive",
+                    "default": False,
+                    "description": "Was stop command issued for this monkey",
                 },
                 "aws_keys": {
                     "type": "object",
@@ -119,15 +91,11 @@ INTERNAL = {
                                 3306,
                                 7001,
                                 8088,
+                                5985,
+                                5986,
                             ],
                             "description": "List of TCP ports the monkey will check whether "
                             "they're open",
-                        },
-                        "tcp_scan_interval": {
-                            "title": "TCP scan interval",
-                            "type": "integer",
-                            "default": 0,
-                            "description": "Time to sleep (in milliseconds) between scans",
                         },
                         "tcp_scan_timeout": {
                             "title": "TCP scan timeout",
@@ -135,13 +103,6 @@ INTERNAL = {
                             "default": 3000,
                             "description": "Maximum time (in milliseconds) "
                             "to wait for TCP response",
-                        },
-                        "tcp_scan_get_banner": {
-                            "title": "TCP scan - get banner",
-                            "type": "boolean",
-                            "default": True,
-                            "description": "Determines whether the TCP scan should try to get the "
-                            "banner",
                         },
                     },
                 },
@@ -172,9 +133,7 @@ INTERNAL = {
                     "default": [
                         "SMBFinger",
                         "SSHFinger",
-                        "PingScanner",
                         "HTTPFinger",
-                        "MySQLFinger",
                         "MSSQLFinger",
                         "ElasticFinger",
                     ],
@@ -216,14 +175,6 @@ INTERNAL = {
                     "description": "Determines where should the dropper place the monkey on a "
                     "Linux machine",
                 },
-                "dropper_target_path_win_32": {
-                    "title": "Dropper target path on Windows (32bit)",
-                    "type": "string",
-                    "default": "C:\\Windows\\temp\\monkey32.exe",
-                    "description": "Determines where should the dropper place the monkey on a "
-                    "Windows machine "
-                    "(32bit)",
-                },
                 "dropper_target_path_win_64": {
                     "title": "Dropper target path on Windows (64bit)",
                     "type": "string",
@@ -231,36 +182,6 @@ INTERNAL = {
                     "description": "Determines where should the dropper place the monkey on a "
                     "Windows machine "
                     "(64 bit)",
-                },
-            },
-        },
-        "logging": {
-            "title": "Logging",
-            "type": "object",
-            "properties": {
-                "dropper_log_path_linux": {
-                    "title": "Dropper log file path on Linux",
-                    "type": "string",
-                    "default": "/tmp/user-1562",
-                    "description": "The fullpath of the dropper log file on Linux",
-                },
-                "dropper_log_path_windows": {
-                    "title": "Dropper log file path on Windows",
-                    "type": "string",
-                    "default": "%temp%\\~df1562.tmp",
-                    "description": "The fullpath of the dropper log file on Windows",
-                },
-                "monkey_log_path_linux": {
-                    "title": "Monkey log file path on Linux",
-                    "type": "string",
-                    "default": "/tmp/user-1563",
-                    "description": "The fullpath of the monkey log file on Linux",
-                },
-                "monkey_log_path_windows": {
-                    "title": "Monkey log file path on Windows",
-                    "type": "string",
-                    "default": "%temp%\\~df1563.tmp",
-                    "description": "The fullpath of the monkey log file on Windows",
                 },
             },
         },
@@ -294,56 +215,17 @@ INTERNAL = {
                     "items": {"type": "string"},
                     "description": "List of SSH key pairs to use, when trying to ssh into servers",
                 },
-                "general": {
-                    "title": "General",
+                "smb_service": {
+                    "title": "SMB service",
                     "type": "object",
                     "properties": {
-                        "skip_exploit_if_file_exist": {
-                            "title": "Skip exploit if file exists",
-                            "type": "boolean",
-                            "default": False,
-                            "description": "Determines whether the monkey should skip the exploit "
-                            "if the monkey's file"
-                            " is already on the remote machine",
-                        }
-                    },
-                },
-                "ms08_067": {
-                    "title": "MS08_067",
-                    "type": "object",
-                    "properties": {
-                        "ms08_067_exploit_attempts": {
-                            "title": "MS08_067 exploit attempts",
+                        "smb_download_timeout": {
+                            "title": "SMB download timeout",
                             "type": "integer",
-                            "default": 5,
-                            "description": "Number of attempts to exploit using MS08_067",
+                            "default": 30,
+                            "description": "Timeout (in seconds) for SMB download operation (used "
+                            "in various exploits using SMB)",
                         },
-                        "user_to_add": {
-                            "title": "Remote user",
-                            "type": "string",
-                            "default": "Monkey_IUSER_SUPPORT",
-                            "description": "Username to add on successful exploit",
-                        },
-                    },
-                },
-            },
-            "smb_service": {
-                "title": "SMB service",
-                "type": "object",
-                "properties": {
-                    "smb_download_timeout": {
-                        "title": "SMB download timeout",
-                        "type": "integer",
-                        "default": 300,
-                        "description": "Timeout (in seconds) for SMB download operation (used in "
-                        "various exploits using SMB)",
-                    },
-                    "smb_service_name": {
-                        "title": "SMB service name",
-                        "type": "string",
-                        "default": "InfectionMonkey",
-                        "description": "Name of the SMB service that will be set up to download "
-                        "monkey",
                     },
                 },
             },

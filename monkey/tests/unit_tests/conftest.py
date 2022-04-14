@@ -1,6 +1,7 @@
-import os
+import json
 import sys
 from pathlib import Path
+from typing import Callable, Dict
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
@@ -11,7 +12,7 @@ sys.path.insert(0, MONKEY_BASE_PATH)
 
 @pytest.fixture(scope="session")
 def data_for_tests_dir(pytestconfig):
-    return Path(os.path.join(pytestconfig.rootdir, "monkey", "tests", "data_for_tests"))
+    return Path(pytestconfig.rootdir) / "monkey" / "tests" / "data_for_tests"
 
 
 @pytest.fixture(scope="session")
@@ -39,3 +40,17 @@ def monkeypatch_session():
     monkeypatch_ = MonkeyPatch()
     yield monkeypatch_
     monkeypatch_.undo()
+
+
+@pytest.fixture
+def monkey_configs_dir(data_for_tests_dir) -> Path:
+    return data_for_tests_dir / "monkey_configs"
+
+
+@pytest.fixture
+def load_monkey_config(data_for_tests_dir) -> Callable[[str], Dict]:
+    def inner(filename: str) -> Dict:
+        config_path = data_for_tests_dir / "monkey_configs" / filename
+        return json.loads(open(config_path, "r").read())
+
+    return inner

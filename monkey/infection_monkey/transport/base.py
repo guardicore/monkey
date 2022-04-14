@@ -2,6 +2,7 @@ import time
 from threading import Thread
 
 g_last_served = None
+PROXY_TIMEOUT = 2.5
 
 
 class TransportProxyBase(Thread):

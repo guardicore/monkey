@@ -16,7 +16,7 @@ The agent (which we sometimes refer to as the Infection Monkey) is a single Pyth
 
 In order to compile the Infection Monkey for distribution by the Monkey Island, you'll need to run the instructions listed in the [`readme.txt`](https://github.com/guardicore/monkey/blob/master/monkey/infection_monkey/readme.txt) on each supported environment.
 
-This means setting up an environment with Linux 32/64-bit with Python installed and a Windows 64-bit machine with developer tools, along with 32/64-bit Python versions.
+This means setting up an environment with Linux 64-bit with Python installed and a Windows 64-bit machine with developer tools, along with 64-bit Python versions.
 
 ## The Monkey Island
 
