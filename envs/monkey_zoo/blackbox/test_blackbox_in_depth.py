@@ -8,7 +8,6 @@ from typing_extensions import Type
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.config_templates.single_tests.drupal import Drupal
 from envs.monkey_zoo.blackbox.config_templates.single_tests.hadoop import Hadoop
 from envs.monkey_zoo.blackbox.config_templates.single_tests.log4j_logstash import Log4jLogstash
 from envs.monkey_zoo.blackbox.config_templates.single_tests.log4j_solr import Log4jSolr
@@ -22,9 +21,7 @@ from envs.monkey_zoo.blackbox.config_templates.single_tests.powershell_credentia
 from envs.monkey_zoo.blackbox.config_templates.single_tests.smb_mimikatz import SmbMimikatz
 from envs.monkey_zoo.blackbox.config_templates.single_tests.smb_pth import SmbPth
 from envs.monkey_zoo.blackbox.config_templates.single_tests.ssh import Ssh
-from envs.monkey_zoo.blackbox.config_templates.single_tests.struts2 import Struts2
 from envs.monkey_zoo.blackbox.config_templates.single_tests.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.config_templates.single_tests.weblogic import Weblogic
 from envs.monkey_zoo.blackbox.config_templates.single_tests.wmi_mimikatz import WmiMimikatz
 from envs.monkey_zoo.blackbox.config_templates.single_tests.wmi_pth import WmiPth
 from envs.monkey_zoo.blackbox.config_templates.single_tests.zerologon import Zerologon
@@ -185,18 +182,6 @@ class TestMonkeyBlackbox:
 
     def test_smb_pth(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, SmbPth, "SMB_PTH")
-
-    @pytest.mark.skip(reason="Drupal exploiter is deprecated")
-    def test_drupal_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Drupal, "Drupal_exploiter")
-
-    @pytest.mark.skip(reason="Struts2 exploiter is deprecated")
-    def test_struts_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Struts2, "Struts2_exploiter")
-
-    @pytest.mark.skip(reason="Weblogic exploiter is deprecated")
-    def test_weblogic_exploiter(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Weblogic, "Weblogic_exploiter")
 
     def test_log4j_solr_exploiter(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
