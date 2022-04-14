@@ -3,20 +3,15 @@ import pathlib
 from typing import Type
 
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.config_templates.hadoop import Hadoop
-from envs.monkey_zoo.blackbox.config_templates.log4j_logstash import Log4jLogstash
-from envs.monkey_zoo.blackbox.config_templates.log4j_solr import Log4jSolr
-from envs.monkey_zoo.blackbox.config_templates.log4j_tomcat import Log4jTomcat
-from envs.monkey_zoo.blackbox.config_templates.mssql import Mssql
-from envs.monkey_zoo.blackbox.config_templates.performance import Performance
-from envs.monkey_zoo.blackbox.config_templates.powershell import PowerShell
-from envs.monkey_zoo.blackbox.config_templates.smb_mimikatz import SmbMimikatz
-from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
-from envs.monkey_zoo.blackbox.config_templates.ssh import Ssh
-from envs.monkey_zoo.blackbox.config_templates.tunneling import Tunneling
-from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
-from envs.monkey_zoo.blackbox.config_templates.wmi_pth import WmiPth
-from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_2_a import Depth2A
+from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
+from envs.monkey_zoo.blackbox.config_templates.single_tests.powershell_credentials_reuse import (
+    PowerShellCredentialsReuse,
+)
+from envs.monkey_zoo.blackbox.config_templates.single_tests.smb_pth import SmbPth
+from envs.monkey_zoo.blackbox.config_templates.single_tests.wmi_mimikatz import WmiMimikatz
+from envs.monkey_zoo.blackbox.config_templates.single_tests.zerologon import Zerologon
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
@@ -33,22 +28,14 @@ parser.add_argument(
 args = parser.parse_args()
 island_client = MonkeyIslandClient(args.island_ip)
 
-
 CONFIG_TEMPLATES = [
-    Hadoop,
-    Mssql,
-    Performance,
-    PowerShell,
-    SmbMimikatz,
-    SmbPth,
-    Ssh,
-    Tunneling,
-    WmiMimikatz,
-    WmiPth,
+    Depth1A,
+    Depth2A,
+    Depth3A,
     Zerologon,
-    Log4jLogstash,
-    Log4jTomcat,
-    Log4jSolr,
+    SmbPth,
+    WmiMimikatz,
+    PowerShellCredentialsReuse,
 ]
 
 
