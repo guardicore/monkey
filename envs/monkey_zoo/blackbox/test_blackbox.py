@@ -117,7 +117,7 @@ class TestMonkeyBlackbox:
         TestMonkeyBlackbox.run_exploitation_test(island_client, Depth2A, "Depth2A test suite")
 
     def test_depth_3_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth3A, "Depth4A test suite")
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth3A, "Depth3A test suite")
 
     # Not grouped because can only be ran on windows
     @pytest.mark.skip_powershell_reuse
