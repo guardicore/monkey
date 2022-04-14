@@ -110,11 +110,13 @@ class TestMonkeyBlackbox:
     def get_log_dir_path():
         return os.path.abspath(LOG_DIR_PATH)
 
-    def test_depth_1_a(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth1A, "Depth1A test suite")
-
+    # If test_depth_1_a() is run first, some test will fail because machines are not yet fully
+    # booted. Running test_depth_2_a() first gives slow VMs extra time to boot.
     def test_depth_2_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Depth2A, "Depth2A test suite")
+
+    def test_depth_1_a(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(island_client, Depth1A, "Depth1A test suite")
 
     def test_depth_3_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(island_client, Depth3A, "Depth3A test suite")
