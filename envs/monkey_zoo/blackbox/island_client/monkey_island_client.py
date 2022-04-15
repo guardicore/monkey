@@ -49,7 +49,7 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def kill_all_monkeys(self):
         response = self.requests.post_json(
-            "api/monkey_control/stop-all-agents", data={"kill_time": time.time()}
+            "api/monkey-control/stop-all-agents", data={"kill_time": time.time()}
         )
         if response.ok:
             LOGGER.info("Killing all monkeys after the test.")
