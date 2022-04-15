@@ -131,7 +131,8 @@ class RemoteRunAwsService:
         return (
             r"wget --no-check-certificate https://"
             + island_ip
-            + r":5000/api/monkey/download/monkey-linux-"
+            + r":5000/api/agent/download/linux "
+            + r"-O monkey-linux-"
             + bit_text
             + r"; chmod +x monkey-linux-"
             + bit_text
@@ -148,9 +149,8 @@ class RemoteRunAwsService:
             r"[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {"
             r"$true}; (New-Object System.Net.WebClient).DownloadFile('https://"
             + island_ip
-            + r":5000/api/monkey/download/monkey-windows-"
-            + bit_text
-            + r".exe','.\\monkey.exe'); "
+            + r":5000/api/agent/download/windows'"
+            + r"'.\\monkey.exe'); "
             r";Start-Process -FilePath '.\\monkey.exe' "
             r"-ArgumentList 'm0nk3y -s " + island_ip + r":5000'; "
         )

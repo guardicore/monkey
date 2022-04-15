@@ -118,9 +118,9 @@ def init_api_resources(api):
     api.add_resource(Authenticate, "/api/auth")
     api.add_resource(
         Monkey,
-        "/api/monkey",
-        "/api/monkey/<string:guid>",
-        "/api/monkey/<string:guid>/<string:config_format>",
+        "/api/agent",
+        "/api/agent/<string:guid>",
+        "/api/agent/<string:guid>/<string:config_format>",
     )
     api.add_resource(LocalRun, "/api/local-monkey")
     api.add_resource(ClientRun, "/api/client-monkey")
@@ -132,7 +132,7 @@ def init_api_resources(api):
     api.add_resource(ConfigurationImport, "/api/configuration/import")
     api.add_resource(
         MonkeyDownload,
-        "/api/monkey/download/<string:host_os>",
+        "/api/agent/download/<string:host_os>",
     )
     api.add_resource(NetMap, "/api/netmap")
     api.add_resource(Edge, "/api/netmap/edge")

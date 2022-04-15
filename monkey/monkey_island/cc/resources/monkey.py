@@ -26,7 +26,7 @@ class Monkey(flask_restful.Resource):
         if guid:
             monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
             # TODO: When the "legacy" format is no longer needed, update this logic and remove the
-            #       "/api/monkey/<string:guid>/<string:config_format>" route. Also considering not
+            #       "/api/agent/<string:guid>/<string:config_format>" route. Also considering not
             #       flattening the config in the first place.
             if config_format == "legacy":
                 ConfigService.decrypt_flat_config(monkey_json["config"])
