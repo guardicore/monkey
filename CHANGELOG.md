@@ -26,6 +26,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Log messages to contain human-readable thread names. #1766
 - The log file name to `infection-monkey-agent-<TIMESTAMP>-<RANDOM_STRING>.log`. #1761
 - "Logs" page renamed to "Telemetries". #1640
+- The "/api/fileUpload" endpoint to "/api/file-upload". #1888
+- The "/api/test/clear_caches" endpoint to "/api/test/clear-caches". #1888
+- The "/api/netmap/nodeStates" endpoint to "/api/netmap/node-states". #1888
+- All "/api/monkey_control" endpoints to "/api/monkey-control". #1888
 
 ### Removed
 - VSFTPD exploiter. #1533
