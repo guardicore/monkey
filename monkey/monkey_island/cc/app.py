@@ -165,7 +165,7 @@ def init_api_resources(api):
 
     # Resources used by black box tests
     api.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")
-    api.add_resource(ClearCaches, "/api/test/clear_caches")
+    api.add_resource(ClearCaches, "/api/test/clear-caches")
     api.add_resource(LogBlackboxEndpoint, "/api/test/log")
     api.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
 

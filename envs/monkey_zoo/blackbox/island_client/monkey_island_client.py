@@ -117,6 +117,6 @@ class MonkeyIslandClient(object):
         :raises: If error (by error code), raises the error
         :return: The response
         """
-        response = self.requests.get("api/test/clear_caches")
+        response = self.requests.get("api/test/clear-caches")
         response.raise_for_status()
         return response
