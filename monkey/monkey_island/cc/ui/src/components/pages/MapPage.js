@@ -40,7 +40,7 @@ class MapPageComponent extends AuthComponent {
   }
 
   getNodeStateListFromServer = () => {
-    this.authFetch('/api/netmap/nodeStates')
+    this.authFetch('/api/netmap/node-states')
       .then(res => res.json())
       .then(res => {
         this.setState({nodeStateList: res.node_states});

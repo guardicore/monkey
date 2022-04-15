@@ -137,7 +137,7 @@ def init_api_resources(api):
     api.add_resource(NetMap, "/api/netmap")
     api.add_resource(Edge, "/api/netmap/edge")
     api.add_resource(Node, "/api/netmap/node")
-    api.add_resource(NodeStates, "/api/netmap/nodeStates")
+    api.add_resource(NodeStates, "/api/netmap/node-states")
 
     api.add_resource(SecurityReport, "/api/report/security")
     api.add_resource(ZeroTrustReport, "/api/report/zero-trust/<string:report_data>")
