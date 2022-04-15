@@ -153,9 +153,9 @@ def init_api_resources(api):
     api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
     api.add_resource(
         FileUpload,
-        "/api/fileUpload/<string:file_type>",
-        "/api/fileUpload/<string:file_type>?load=<string:filename>",
-        "/api/fileUpload/<string:file_type>?restore=<string:filename>",
+        "/api/file-upload/<string:file_type>",
+        "/api/file-upload/<string:file_type>?load=<string:filename>",
+        "/api/file-upload/<string:file_type>?restore=<string:filename>",
     )
     api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
     api.add_resource(RemoteRun, "/api/remote-monkey")

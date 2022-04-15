@@ -38,7 +38,7 @@ def mock_get_config_value(monkeypatch):
 @pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
 def test_pba_file_upload_post(flask_client, pba_os, monkeypatch, mock_set_config_value):
     resp = flask_client.post(
-        f"/api/fileUpload/{pba_os}",
+        f"/api/file-upload/{pba_os}",
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
@@ -48,7 +48,7 @@ def test_pba_file_upload_post(flask_client, pba_os, monkeypatch, mock_set_config
 
 def test_pba_file_upload_post__invalid(flask_client, monkeypatch, mock_set_config_value):
     resp = flask_client.post(
-        "/api/fileUpload/bogus",
+        "/api/file-upload/bogus",
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
@@ -66,7 +66,7 @@ def test_pba_file_upload_post__internal_server_error(
     )
 
     resp = flask_client.post(
-        f"/api/fileUpload/{pba_os}",
+        f"/api/file-upload/{pba_os}",
         data=TEST_FILE,
         content_type="multipart/form-data; boundary=---------------------------1",
         follow_redirects=True,
@@ -78,7 +78,7 @@ def test_pba_file_upload_post__internal_server_error(
 def test_pba_file_upload_get__file_not_found(
     flask_client, pba_os, monkeypatch, mock_get_config_value
 ):
-    resp = flask_client.get(f"/api/fileUpload/{pba_os}?load=bogus_mogus.py")
+    resp = flask_client.get(f"/api/file-upload/{pba_os}?load=bogus_mogus.py")
     assert resp.status_code == 404
 
 
@@ -87,22 +87,22 @@ def test_pba_file_upload_endpoint(
     flask_client, pba_os, monkeypatch, mock_get_config_value, mock_set_config_value
 ):
     resp_post = flask_client.post(
-        f"/api/fileUpload/{pba_os}",
+        f"/api/file-upload/{pba_os}",
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
     )
 
-    resp_get = flask_client.get(f"/api/fileUpload/{pba_os}?load=test.py")
+    resp_get = flask_client.get(f"/api/file-upload/{pba_os}?load=test.py")
     assert resp_get.status_code == 200
     assert resp_get.data.decode() == "m0nk3y"
     # Closing the response closes the file handle, else it can't be deleted
     resp_get.close()
 
     resp_delete = flask_client.delete(
-        f"/api/fileUpload/{pba_os}", data="test.py", content_type="text/plain;"
+        f"/api/file-upload/{pba_os}", data="test.py", content_type="text/plain;"
     )
-    resp_get_del = flask_client.get(f"/api/fileUpload/{pba_os}?load=test.py")
+    resp_get_del = flask_client.get(f"/api/file-upload/{pba_os}?load=test.py")
     assert resp_post.status_code == 200
 
     assert resp_delete.status_code == 200
@@ -114,14 +114,14 @@ def test_pba_file_upload_endpoint__invalid(
     flask_client, monkeypatch, mock_set_config_value, mock_get_config_value
 ):
     resp_post = flask_client.post(
-        "/api/fileUpload/bogus",
+        "/api/file-upload/bogus",
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
     )
-    resp_get = flask_client.get("/api/fileUpload/bogus?load=test.py")
+    resp_get = flask_client.get("/api/file-upload/bogus?load=test.py")
     resp_delete = flask_client.delete(
-        "/api/fileUpload/bogus", data="test.py", content_type="text/plain;"
+        "/api/file-upload/bogus", data="test.py", content_type="text/plain;"
     )
     assert resp_post.status_code == 422
     assert resp_get.status_code == 422
