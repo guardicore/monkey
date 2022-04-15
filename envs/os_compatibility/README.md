@@ -2,9 +2,9 @@
 
 ## About
 
-OS compatibility is an environment on AWS that 
+OS compatibility is an environment on AWS that
 is designed to test monkey binary compatibility on
-different operating systems. 
+different operating systems.
 This environment is deployed using terraform scripts
 located in this directory.
 
@@ -33,7 +33,7 @@ terraform apply
 1. Launch os_compat_ISLAND machine and upload your binaries/update island. Reset island environment.
 2. Launch/Reboot all other os_compat test machines (Can be filtered with tag "Purpose: os_compat_instance")
 3. Wait until machines boot and run monkey
-4. Launch `test_compatibility.py` pytest script with island ip parameter 
+4. Launch `test_compatibility.py` pytest script with island ip parameter
 (e.g. `test_compatibility.py --island 111.111.111.111:5000`)
 
 ## Machines
@@ -68,13 +68,13 @@ Example commands:
 ```cmd
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue
-Invoke-WebRequest -Uri 'https://10.0.0.251:5000/api/monkey/download/monkey-windows-64.exe' -OutFile 'C:\windows\temp\monkey-windows-64.exe' -UseBasicParsing
+Invoke-WebRequest -Uri 'https://10.0.0.251:5000/api/agent/download/windows' -OutFile 'C:\windows\temp\monkey-windows-64.exe' -UseBasicParsing
 C:\windows\temp\monkey-windows-64.exe m0nk3y -s 10.0.0.251:5000
 ```
 
  - Bash:
 ```shell script
-wget --no-check-certificate -q https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -O ./monkey-linux-64 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -k -o monkey-linux-64
+wget --no-check-certificate -q https://10.0.0.251:5000/api/agent/download/linux -O ./monkey-linux-64 || curl https://10.0.0.251:5000/api/agent/download/linux -k -o monkey-linux-64
 chmod +x ./monkey-linux-64
 ./monkey-linux-64 m0nk3y -s 10.0.0.251:5000
 ```
