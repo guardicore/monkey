@@ -137,7 +137,7 @@ def init_api_resources(api):
     api.add_resource(NetMap, "/api/netmap")
     api.add_resource(Edge, "/api/netmap/edge")
     api.add_resource(Node, "/api/netmap/node")
-    api.add_resource(NodeStates, "/api/netmap/nodeStates")
+    api.add_resource(NodeStates, "/api/netmap/node-states")
 
     api.add_resource(SecurityReport, "/api/report/security")
     api.add_resource(ZeroTrustReport, "/api/report/zero-trust/<string:report_data>")
@@ -153,19 +153,19 @@ def init_api_resources(api):
     api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
     api.add_resource(
         FileUpload,
-        "/api/fileUpload/<string:file_type>",
-        "/api/fileUpload/<string:file_type>?load=<string:filename>",
-        "/api/fileUpload/<string:file_type>?restore=<string:filename>",
+        "/api/file-upload/<string:file_type>",
+        "/api/file-upload/<string:file_type>?load=<string:filename>",
+        "/api/file-upload/<string:file_type>?restore=<string:filename>",
     )
     api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
     api.add_resource(RemoteRun, "/api/remote-monkey")
     api.add_resource(VersionUpdate, "/api/version-update")
-    api.add_resource(StopAgentCheck, "/api/monkey_control/needs-to-stop/<int:monkey_guid>")
-    api.add_resource(StopAllAgents, "/api/monkey_control/stop-all-agents")
+    api.add_resource(StopAgentCheck, "/api/monkey-control/needs-to-stop/<int:monkey_guid>")
+    api.add_resource(StopAllAgents, "/api/monkey-control/stop-all-agents")
 
     # Resources used by black box tests
     api.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")
-    api.add_resource(ClearCaches, "/api/test/clear_caches")
+    api.add_resource(ClearCaches, "/api/test/clear-caches")
     api.add_resource(LogBlackboxEndpoint, "/api/test/log")
     api.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
 

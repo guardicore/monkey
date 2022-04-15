@@ -20,8 +20,8 @@ import HtmlFieldDescription from '../configuration-components/HtmlFieldDescripti
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 
 const CONFIG_URL = '/api/configuration/island';
-export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
-export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
+export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
+export const API_PBA_WINDOWS = '/api/file-upload/PBAwindows';
 
 class ConfigurePageComponent extends AuthComponent {
 

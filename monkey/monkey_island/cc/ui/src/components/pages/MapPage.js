@@ -40,7 +40,7 @@ class MapPageComponent extends AuthComponent {
   }
 
   getNodeStateListFromServer = () => {
-    this.authFetch('/api/netmap/nodeStates')
+    this.authFetch('/api/netmap/node-states')
       .then(res => res.json())
       .then(res => {
         this.setState({nodeStateList: res.node_states});
@@ -84,7 +84,7 @@ class MapPageComponent extends AuthComponent {
   }
 
   killAllMonkeys = () => {
-    this.authFetch('/api/monkey_control/stop-all-agents',
+    this.authFetch('/api/monkey-control/stop-all-agents',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
