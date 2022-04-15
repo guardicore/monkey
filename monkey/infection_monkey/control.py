@@ -22,11 +22,6 @@ logger = logging.getLogger(__name__)
 
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
-# random number greater than 5,
-# to prevent the monkey from just waiting forever to try and connect to an island before going
-# elsewhere.
-TIMEOUT_IN_SECONDS = 15
-
 
 class ControlClient(object):
     proxies = {}
@@ -60,7 +55,7 @@ class ControlClient(object):
             headers={"content-type": "application/json"},
             verify=False,
             proxies=ControlClient.proxies,
-            timeout=20,
+            timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
     @staticmethod
@@ -86,7 +81,7 @@ class ControlClient(object):
                     f"https://{server}/api?action=is-up",
                     verify=False,
                     proxies=ControlClient.proxies,
-                    timeout=TIMEOUT_IN_SECONDS,
+                    timeout=MEDIUM_REQUEST_TIMEOUT,
                 )
                 WormConfiguration.current_server = current_server
                 break
