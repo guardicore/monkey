@@ -25,7 +25,7 @@ class ControlChannel(IControlChannel):
             return True
         try:
             url = (
-                f"https://{self._control_channel_server}/api/monkey_control"
+                f"https://{self._control_channel_server}/api/monkey-control"
                 f"/needs-to-stop/{self._agent_id}"
             )
             response = requests.get(  # noqa: DUO123
