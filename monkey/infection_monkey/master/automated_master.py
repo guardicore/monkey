@@ -21,8 +21,8 @@ from .option_parsing import custom_pba_is_enabled
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
 SHUTDOWN_TIMEOUT = 5
-NUM_SCAN_THREADS = 16  # TODO: Adjust this to the optimal number of scan threads
-NUM_EXPLOIT_THREADS = 4  # TODO: Adjust this to the optimal number of exploit threads
+NUM_SCAN_THREADS = 16
+NUM_EXPLOIT_THREADS = 6
 CHECK_FOR_STOP_AGENT_COUNT = 5
 CHECK_FOR_CONFIG_COUNT = 3
 
