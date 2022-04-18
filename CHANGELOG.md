@@ -67,6 +67,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - WebLogic exploiter. #1869
 - The /api/t1216-pba/download endpoint. #1864
 - Island log download button from "Telemetries"(previously called "Logs") page. #1640
+- "/api/client-monkey" endpoint. #1889
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

@@ -17,7 +17,6 @@ from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyB
 from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
     TelemetryBlackboxEndpoint,
 )
-from monkey_island.cc.resources.client_run import ClientRun
 from monkey_island.cc.resources.configuration_export import ConfigurationExport
 from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
@@ -123,7 +122,6 @@ def init_api_resources(api):
         "/api/monkey/<string:guid>/<string:config_format>",
     )
     api.add_resource(LocalRun, "/api/local-monkey")
-    api.add_resource(ClientRun, "/api/client-monkey")
     api.add_resource(Telemetry, "/api/telemetry", "/api/telemetry/<string:monkey_guid>")
 
     api.add_resource(IslandMode, "/api/island-mode")
