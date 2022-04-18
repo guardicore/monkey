@@ -185,9 +185,9 @@ The Monkey Island's log file is located in the
 The log enables you to see which requests were requested from the server and extra logs from the backend logic. The log will contain entries like these:
 
 ```log
-2019-07-23 10:52:23,927 - wsgi.py:374 -       _log() - INFO - 200 GET /api/local-monkey (10.15.1.75) 17.54ms
-2019-07-23 10:52:23,989 - client_run.py:23 -        get() - INFO - Monkey is not running
-2019-07-23 10:52:24,027 - report.py:580 - get_domain_issues() - INFO - Domain issues generated for reporting
+2022-04-18 13:48:43,914 - pywsgi.py:1226 -      write() - INFO - 192.168.56.1 - - [2022-04-18 13:48:43] "GET /api/agent/download/windows HTTP/1.1" 200 21470665 0.293586
+2022-04-18 13:48:49,970 - pywsgi.py:1226 -      write() - INFO - 192.168.56.1 - - [2022-04-18 13:48:49] "GET /api/island-mode HTTP/1.1" 200 128 0.003426
+2022-04-18 13:48:49,988 - report.py:355 - get_domain_issues() - INFO - Domain issues generated for reporting
 ```
 
 It's also possible to change the default log level by editing `log_level` value in a [server configuration file](../../reference/server_configuration).
