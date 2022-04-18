@@ -137,6 +137,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.ipsRow(asset)}
           {this.servicesRow(asset)}
           {this.accessibleRow(asset)}
+          {this.downloadLogsRow(asset)}
           </tbody>
         </table>
         {this.exploitsTimeline(asset)}
