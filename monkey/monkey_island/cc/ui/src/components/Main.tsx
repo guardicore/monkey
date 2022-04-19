@@ -6,7 +6,7 @@ import ConfigurePage from './pages/ConfigurePage.js';
 import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
 import MapPage from './pages/MapPage';
 import TelemetryPage from './pages/TelemetryPage';
-import StartOverPage from './pages/StartOverPage';
+import StartOverPage from './pages/ResetPage';
 import ReportPage from './pages/ReportPage';
 import LicensePage from './pages/LicensePage';
 import AuthComponent from './AuthComponent';

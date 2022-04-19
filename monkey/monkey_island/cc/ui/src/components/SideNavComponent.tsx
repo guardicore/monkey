@@ -78,7 +78,7 @@ const SideNavComponent = ({disabled,
         <li>
           <NavLink to={Routes.StartOverPage} className={getNavLinkClass()}>
             <span className='number'><FontAwesomeIcon icon={faUndo} style={{'marginLeft': '-1px'}}/></span>
-            Start Over
+            Reset
           </NavLink>
         </li>
       </ul>

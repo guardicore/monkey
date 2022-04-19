@@ -8,7 +8,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 
-class StartOverPageComponent extends AuthComponent {
+class ResetPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
 
@@ -43,7 +43,7 @@ class StartOverPageComponent extends AuthComponent {
                         allMonkeysAreDead={this.state.allMonkeysAreDead}
                         onVerify={this.cleanup}
                         onClose={this.closeModal}/>
-        <h1 className="page-title">Start Over</h1>
+        <h1 className="page-title">Reset</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p>
             If you are finished and want to start over with a fresh configuration, erase the logs and clear the map
@@ -101,4 +101,4 @@ class StartOverPageComponent extends AuthComponent {
   };
 }
 
-export default StartOverPageComponent;
+export default ResetPageComponent;

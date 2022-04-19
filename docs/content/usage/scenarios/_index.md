@@ -20,8 +20,8 @@ Choosing the "Custom" scenario will allow you to fine-tune your simulation and a
 
 ![Choose scenario](/images/usage/scenarios/choose-scenario.png "Choose a scenario")
 
-To exit a scenario and select another one, click on "Start Over".
-
+To exit a scenario and select another one, click on "Reset".
+<!--- TODO fix the screenshot --->
 ![Start over](/images/usage/scenarios/start-over.png "Start over")
 
 ## Section contents
