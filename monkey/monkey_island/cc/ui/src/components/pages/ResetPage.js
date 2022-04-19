@@ -2,7 +2,7 @@ import React from 'react';
 import {Col, Button} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import AuthComponent from '../AuthComponent';
-import StartOverModal from '../ui-components/StartOverModal';
+import IslandResetModal from '../ui-components/IslandResetModal';
 import '../../styles/pages/StartOverPage.scss';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
@@ -38,11 +38,11 @@ class ResetPageComponent extends AuthComponent {
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
            className={'main'}>
-        <StartOverModal cleaned={this.state.cleaned}
-                        showCleanDialog={this.state.showCleanDialog}
-                        allMonkeysAreDead={this.state.allMonkeysAreDead}
-                        onVerify={this.cleanup}
-                        onClose={this.closeModal}/>
+        <IslandResetModal cleaned={this.state.cleaned}
+                          showCleanDialog={this.state.showCleanDialog}
+                          allMonkeysAreDead={this.state.allMonkeysAreDead}
+                          onVerify={this.cleanup}
+                          onClose={this.closeModal}/>
         <h1 className="page-title">Reset</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p>

@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 
-class StartOverModal extends React.PureComponent {
+class IslandResetModal extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -73,4 +73,4 @@ class StartOverModal extends React.PureComponent {
   }
 }
 
-export default StartOverModal;
+export default IslandResetModal;
