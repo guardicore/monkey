@@ -79,7 +79,7 @@ class CmdRunner(object):
         curr_time = init_time
 
         results = []
-
+        # TODO: Use timer.Timer
         while (curr_time - init_time < timeout) and (len(commands) != 0):
             for command in list(
                 commands
@@ -95,9 +95,8 @@ class CmdRunner(object):
         for command, result in results:
             if not result.is_success:
                 logger.error(
-                    "The following command failed: `%s`. status code: %s",
-                    str(command[1]),
-                    str(result.status_code),
+                    f"The command with id: {str(command.cmd_id)} failed. "
+                    f"Status code: {str(result.status_code)}"
                 )
 
         return results
