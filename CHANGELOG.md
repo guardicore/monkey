@@ -76,6 +76,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   systems as well. #1557
 - A bug where T1216_random_executable.exe was copied to disk even if the signed
   script proxy execution PBA was disabled. #1864
+- Unnecessary collection of kerberos credentials. #1771
 
 
 ### Security
