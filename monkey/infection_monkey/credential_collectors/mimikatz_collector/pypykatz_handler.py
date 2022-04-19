@@ -16,7 +16,6 @@ CREDENTIAL_TYPES = [
     "ssp_creds",
     "livessp_creds",
     "dpapi_creds",
-    "kerberos_creds",
     "credman_creds",
     "tspkg_creds",
 ]
