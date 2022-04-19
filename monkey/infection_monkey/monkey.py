@@ -415,7 +415,7 @@ class InfectionMonkey:
                     startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
                     startupinfo.wShowWindow = SW_HIDE
                     subprocess.Popen(
-                        DELAY_DELETE_CMD % {"file_path": sys.executable},
+                        DELAY_DELETE_CMD % {"file_path": sys.executable, "exe_pid": os.getpid()},
                         stdin=None,
                         stdout=None,
                         stderr=None,
