@@ -50,7 +50,7 @@ class ControlChannel(IControlChannel):
     def get_config(self) -> dict:
         try:
             response = requests.get(  # noqa: DUO123
-                "https://%s/api/monkey/%s" % (WormConfiguration.current_server, self._agent_id),
+                "https://%s/api/agent/%s" % (WormConfiguration.current_server, self._agent_id),
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,

@@ -50,7 +50,7 @@ class ControlClient(object):
             monkey["tunnel"] = ControlClient.proxies.get("https")
 
         requests.post(  # noqa: DUO123
-            "https://%s/api/monkey" % (WormConfiguration.current_server,),
+            "https://%s/api/agent" % (WormConfiguration.current_server,),
             data=json.dumps(monkey),
             headers={"content-type": "application/json"},
             verify=False,
@@ -173,7 +173,7 @@ class ControlClient(object):
             return
         try:
             reply = requests.get(  # noqa: DUO123
-                "https://%s/api/monkey/%s/legacy" % (WormConfiguration.current_server, GUID),
+                "https://%s/api/agent/%s/legacy" % (WormConfiguration.current_server, GUID),
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
@@ -210,7 +210,7 @@ class ControlClient(object):
             return
         try:
             requests.patch(  # noqa: DUO123
-                "https://%s/api/monkey/%s" % (WormConfiguration.current_server, GUID),
+                "https://%s/api/agent/%s" % (WormConfiguration.current_server, GUID),
                 data=json.dumps({"config_error": True}),
                 headers={"content-type": "application/json"},
                 verify=False,

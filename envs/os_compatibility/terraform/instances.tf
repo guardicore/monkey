@@ -47,36 +47,9 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="userdata.txt"
 #!/bin/bash
 rm ./monkey-linux-64
-wget --no-check-certificate -q https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -O ./monkey-linux-64 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-64 -k -o monkey-linux-64
+wget --no-check-certificate -q https://10.0.0.251:5000/api/agent/download/linux -O ./monkey-linux-64 || curl https://10.0.0.251:5000/api/agent/download/linux -k -o monkey-linux-64
 chmod +x ./monkey-linux-64
 ./monkey-linux-64 m0nk3y -s 10.0.0.251:5000
---//
-EOF
-
-  user_data_linux_32 = <<EOF
-Content-Type: multipart/mixed; boundary="//"
-MIME-Version: 1.0
-
---//
-Content-Type: text/cloud-config; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="cloud-config.txt"
-
-#cloud-config
-cloud_final_modules:
-- [scripts-user, always]
-
---//
-Content-Type: text/x-shellscript; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="userdata.txt"
-#!/bin/bash
-rm ./monkey-linux-32
-wget --no-check-certificate -q https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 -O ./monkey-linux-32 || curl https://10.0.0.251:5000/api/monkey/download/monkey-linux-32 -k -o monkey-linux-32
-chmod +x ./monkey-linux-32
-./monkey-linux-32 m0nk3y -s 10.0.0.251:5000
 --//
 EOF
 
@@ -95,29 +68,8 @@ add-type @"
 "@
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue
-Invoke-WebRequest -Uri 'https://10.0.0.251:5000/api/monkey/download/monkey-windows-64.exe' -OutFile 'C:\windows\temp\monkey-windows-64.exe' -UseBasicParsing
+Invoke-WebRequest -Uri 'https://10.0.0.251:5000/api/agent/download/windows' -OutFile 'C:\windows\temp\monkey-windows-64.exe' -UseBasicParsing
 C:\windows\temp\monkey-windows-64.exe m0nk3y -s 10.0.0.251:5000
-</powershell>
-<persist>true</persist>
-EOF
-
-  user_data_windows_32 = <<EOF
-<powershell>
-add-type @"
-    using System.Net;
-    using System.Security.Cryptography.X509Certificates;
-    public class TrustAllCertsPolicy : ICertificatePolicy {
-        public bool CheckValidationResult(
-            ServicePoint srvPoint, X509Certificate certificate,
-            WebRequest request, int certificateProblem) {
-            return true;
-        }
-    }
-"@
-[System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue
-Invoke-WebRequest -Uri 'https://10.0.0.251:5000/api/monkey/download/monkey-windows-32.exe' -OutFile 'C:\windows\temp\monkey-windows-32.exe' -UseBasicParsing
-C:\windows\temp\monkey-windows-32.exe m0nk3y -s 10.0.0.251:5000
 </powershell>
 <persist>true</persist>
 EOF
