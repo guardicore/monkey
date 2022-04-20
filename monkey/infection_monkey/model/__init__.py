@@ -28,19 +28,6 @@ MONKEY_CMDLINE_DETACHED_WINDOWS = "%s start cmd /c %%(monkey_path)s %s" % (
     CMD_PREFIX,
     MONKEY_ARG,
 )
-# Time for delay deleting monkey executable
-DELAY_SECONDS = 5
-# Command that returns 1 if the process is running and 0 otherwise
-CHECK_RUNNING_MONKEY_CMD = 'tasklist /fi "PID eq %(exe_pid)s" ^| find /C "%(exe_pid)s"'
-DELETE_FILE_AND_EXIT = "del /f /q %(file_path)s & exit"
-# Command that checks for running monkey process 20 times
-# If the monkey is running it sleeps for 'delay_seconds'
-# If the monkey is not running it deletes the executable and exits the loop
-DELAY_DELETE_CMD = (
-    f'cmd /c (for /l %%i in (1,1,20) do (for /F "delims=" %%j IN '
-    f'(\'{CHECK_RUNNING_MONKEY_CMD}\') DO if "%%j"=="1" (timeout {DELAY_SECONDS}) else '
-    f"({DELETE_FILE_AND_EXIT})) ) > NUL 2>&1"
-)
 
 # Commands used for downloading monkeys
 POWERSHELL_HTTP_UPLOAD = (

@@ -29,7 +29,7 @@ from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.model import DELAY_DELETE_CMD, VictimHostFactory
+from infection_monkey.model import VictimHostFactory
 from infection_monkey.network import NetworkInterface
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_local_network_interfaces
@@ -428,19 +428,48 @@ class InfectionMonkey:
 
     @staticmethod
     def _self_delete_windows():
-        from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
+        delay_delete_cmd = InfectionMonkey._build_windows_delete_command()
 
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
-        startupinfo.wShowWindow = SW_HIDE
+        startupinfo = InfectionMonkey._get_startup_info()
         subprocess.Popen(
-            DELAY_DELETE_CMD % {"file_path": sys.executable, "exe_pid": os.getpid()},
+            delay_delete_cmd,
             stdin=None,
             stdout=None,
             stderr=None,
             close_fds=True,
             startupinfo=startupinfo,
         )
+
+    @staticmethod
+    def _build_windows_delete_command() -> str:
+        # Time for delay deleting monkey executable
+        delay_seconds = 5
+
+        monkey_pid = os.getpid()
+        monkey_file_path = sys.executable
+        # Command that returns 1 if the process is running and 0 otherwise
+        check_running_monkey_cmd = f'tasklist /fi "PID eq {monkey_pid}" ^| find /C "{monkey_pid}"'
+        delete_file_and_exit_cmd = f"del /f /q {monkey_file_path} & exit"
+        # Command that checks for running monkey process 20 times
+        # If the monkey is running it sleeps for 'delay_seconds'
+        # If the monkey is not running it deletes the executable and exits the loop
+        delay_delete_cmd = (
+            f'cmd /c (for /l %i in (1,1,20) do (for /F "delims=" %j IN '
+            f'(\'{check_running_monkey_cmd}\') DO if "%j"=="1" (timeout {delay_seconds}) else '
+            f"({delete_file_and_exit_cmd})) ) > NUL 2>&1"
+        )
+
+        return delay_delete_cmd
+
+    @staticmethod
+    def _get_startup_info():
+        from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
+
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = SW_HIDE
+
+        return startupinfo
 
     @staticmethod
     def _self_delete_linux():
