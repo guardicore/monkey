@@ -429,8 +429,8 @@ class InfectionMonkey:
     @staticmethod
     def _self_delete_windows():
         delay_delete_cmd = InfectionMonkey._build_windows_delete_command()
-
         startupinfo = InfectionMonkey._get_startup_info()
+
         subprocess.Popen(
             delay_delete_cmd,
             stdin=None,
@@ -442,14 +442,15 @@ class InfectionMonkey:
 
     @staticmethod
     def _build_windows_delete_command() -> str:
-        # Time for delay deleting monkey executable
-        delay_seconds = 5
-
         monkey_pid = os.getpid()
         monkey_file_path = sys.executable
+
+        # Time for delay deleting monkey executable
+        delay_seconds = 5
         # Command that returns 1 if the process is running and 0 otherwise
         check_running_monkey_cmd = f'tasklist /fi "PID eq {monkey_pid}" ^| find /C "{monkey_pid}"'
         delete_file_and_exit_cmd = f"del /f /q {monkey_file_path} & exit"
+
         # Command that checks for running monkey process 20 times
         # If the monkey is running it sleeps for 'delay_seconds'
         # If the monkey is not running it deletes the executable and exits the loop
