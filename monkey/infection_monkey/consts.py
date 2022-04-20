@@ -1,0 +1,1 @@
+USERNAME_PREFIX = "somenewuser"

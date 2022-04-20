@@ -6,6 +6,7 @@ import subprocess
 from typing import Dict
 
 from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
+from infection_monkey.consts import USERNAME_PREFIX
 from infection_monkey.i_puppet.i_puppet import PostBreachData
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
@@ -22,8 +23,6 @@ CREATED_PROCESS_AS_USER_SUCCESS_FORMAT = (
 CREATED_PROCESS_AS_USER_FAILED_FORMAT = (
     "Created process '{}' as user '{}', but the process failed (exit status {}:{})."
 )
-
-USERNAME_PREFIX = "somenewuser"
 
 logger = logging.getLogger(__name__)
 
