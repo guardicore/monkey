@@ -1,6 +1,7 @@
 import logging
 from typing import Sequence
 
+from infection_monkey.consts import USERNAME_PREFIX
 from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
 from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
 
@@ -23,7 +24,11 @@ class MimikatzCredentialCollector(ICredentialCollector):
         for win_cred in win_creds:
             identities = []
             secrets = []
-            if win_cred.username:
+
+            # Mimikatz picks up users created by the Monkey even if they're successfully deleted
+            # since it picks up creds from the registry. The newly created users are not removed
+            # from the registry until a reboot of the system, hence this check.
+            if win_cred.username and not win_cred.username.startswith(USERNAME_PREFIX):
                 identity = Username(win_cred.username)
                 identities.append(identity)
 
