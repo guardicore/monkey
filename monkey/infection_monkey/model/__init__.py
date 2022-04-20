@@ -5,6 +5,9 @@ MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
 ID_STRING = "M0NK3Y3XPL0ITABLE"
 
+# Username prefix for users created by Infection Monkey
+USERNAME_PREFIX = "somenewuser"
+
 # CMD prefix for windows commands
 CMD_EXE = "cmd.exe"
 CMD_CARRY_OUT = "/c"
