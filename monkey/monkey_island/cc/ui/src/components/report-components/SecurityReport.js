@@ -413,7 +413,9 @@ class ReportPageComponent extends AuthComponent {
              <span className="badge badge-warning">
                {threatCount} threats
              </span>:
+             <ul>
               {this.getImmediateThreatsOverviews()}
+            </ul>
             </>
           }
         </div>
