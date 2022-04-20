@@ -442,25 +442,26 @@ class InfectionMonkey:
 
     @staticmethod
     def _build_windows_delete_command() -> str:
-        monkey_pid = os.getpid()
-        monkey_file_path = sys.executable
+        agent_pid = os.getpid()
+        agent_file_path = sys.executable
 
-        # Time for delay deleting monkey executable
-        delay_seconds = 5
-        # Command that returns 1 if the process is running and 0 otherwise
-        check_running_monkey_cmd = f'tasklist /fi "PID eq {monkey_pid}" ^| find /C "{monkey_pid}"'
-        delete_file_and_exit_cmd = f"del /f /q {monkey_file_path} & exit"
+        # Returns 1 if the process is running and 0 otherwise
+        check_running_agent_cmd = f'tasklist /fi "PID eq {agent_pid}" ^| find /C "{agent_pid}"'
 
-        # Command that checks for running monkey process 20 times
-        # If the monkey is running it sleeps for 'delay_seconds'
-        # If the monkey is not running it deletes the executable and exits the loop
-        delay_delete_cmd = (
+        sleep_seconds = 5
+        delete_file_and_exit_cmd = f"del /f /q {agent_file_path} & exit"
+
+        # Checks if the agent process is still running.
+        # If the agent is still running, it sleeps for 'sleep_seconds' before checking again.
+        # If the agent is not running, it deletes the executable and exits the loop.
+        # The check runs up to 20 times to give the agent ample time to shutdown.
+        delete_agent_cmd = (
             f'cmd /c (for /l %i in (1,1,20) do (for /F "delims=" %j IN '
-            f'(\'{check_running_monkey_cmd}\') DO if "%j"=="1" (timeout {delay_seconds}) else '
+            f'(\'{check_running_agent_cmd}\') DO if "%j"=="1" (timeout {sleep_seconds}) else '
             f"({delete_file_and_exit_cmd})) ) > NUL 2>&1"
         )
 
-        return delay_delete_cmd
+        return delete_agent_cmd
 
     @staticmethod
     def _get_startup_info():
