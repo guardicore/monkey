@@ -1,10 +1,9 @@
 import logging
 from typing import Sequence
 
-from model import USERNAME_PREFIX
-
 from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
 from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
+from infection_monkey.model import USERNAME_PREFIX
 
 from . import pypykatz_handler
 from .windows_credentials import WindowsCredentials

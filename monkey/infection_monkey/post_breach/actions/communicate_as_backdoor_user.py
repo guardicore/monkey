@@ -5,10 +5,9 @@ import string
 import subprocess
 from typing import Dict
 
-from model import USERNAME_PREFIX
-
 from common.common_consts.post_breach_consts import POST_BREACH_COMMUNICATE_AS_BACKDOOR_USER
 from infection_monkey.i_puppet.i_puppet import PostBreachData
+from infection_monkey.model import USERNAME_PREFIX
 from infection_monkey.post_breach.pba import PBA
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.auto_new_user_factory import create_auto_new_user
