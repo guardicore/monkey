@@ -28,10 +28,6 @@ MONKEY_CMDLINE_DETACHED_WINDOWS = "%s start cmd /c %%(monkey_path)s %s" % (
     CMD_PREFIX,
     MONKEY_ARG,
 )
-DELAY_DELETE_CMD = (
-    "cmd /c (for /l %%i in (1,0,2) do (ping -n 60 127.0.0.1 & del /f /q %(file_path)s & "
-    "if not exist %(file_path)s exit)) > NUL 2>&1 "
-)
 
 # Commands used for downloading monkeys
 POWERSHELL_HTTP_UPLOAD = (

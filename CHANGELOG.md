@@ -79,7 +79,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   script proxy execution PBA was disabled. #1864
 - Unnecessary collection of kerberos credentials. #1771
 - A bug where bogus users were collected by Mimikatz and added to the config. #1860
-
+- A bug where windows executable was not self deleting. #1763
 
 ### Security
 - Change SSH exploiter so that it does not set the permissions of the agent

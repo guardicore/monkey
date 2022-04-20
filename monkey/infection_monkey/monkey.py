@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+from pathlib import Path
 from typing import List
 
 import infection_monkey.tunnel as tunnel
@@ -28,7 +29,7 @@ from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.model import DELAY_DELETE_CMD, VictimHostFactory
+from infection_monkey.model import VictimHostFactory
 from infection_monkey.network import NetworkInterface
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_local_network_interfaces
@@ -401,35 +402,77 @@ class InfectionMonkey:
 
     @staticmethod
     def _self_delete() -> bool:
+        InfectionMonkey._remove_monkey_dir()
+
+        if "python" in Path(sys.executable).name:
+            return False
+
+        try:
+            if "win32" == sys.platform:
+                InfectionMonkey._self_delete_windows()
+            else:
+                InfectionMonkey._self_delete_linux()
+
+            T1107Telem(ScanStatus.USED, sys.executable).send()
+            return True
+        except Exception as exc:
+            logger.error("Exception in self delete: %s", exc)
+            T1107Telem(ScanStatus.SCANNED, sys.executable).send()
+
+        return False
+
+    @staticmethod
+    def _remove_monkey_dir():
         status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
         T1107Telem(status, get_monkey_dir_path()).send()
-        deleted = False
 
-        if -1 == sys.executable.find("python"):
-            try:
-                status = None
-                if "win32" == sys.platform:
-                    from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
+    @staticmethod
+    def _self_delete_windows():
+        delay_delete_cmd = InfectionMonkey._build_windows_delete_command()
+        startupinfo = InfectionMonkey._get_startup_info()
 
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
-                    startupinfo.wShowWindow = SW_HIDE
-                    subprocess.Popen(
-                        DELAY_DELETE_CMD % {"file_path": sys.executable},
-                        stdin=None,
-                        stdout=None,
-                        stderr=None,
-                        close_fds=True,
-                        startupinfo=startupinfo,
-                    )
-                    deleted = True
-                else:
-                    os.remove(sys.executable)
-                    status = ScanStatus.USED
-                    deleted = True
-            except Exception as exc:
-                logger.error("Exception in self delete: %s", exc)
-                status = ScanStatus.SCANNED
-            if status:
-                T1107Telem(status, sys.executable).send()
-            return deleted
+        subprocess.Popen(
+            delay_delete_cmd,
+            stdin=None,
+            stdout=None,
+            stderr=None,
+            close_fds=True,
+            startupinfo=startupinfo,
+        )
+
+    @staticmethod
+    def _build_windows_delete_command() -> str:
+        agent_pid = os.getpid()
+        agent_file_path = sys.executable
+
+        # Returns 1 if the process is running and 0 otherwise
+        check_running_agent_cmd = f'tasklist /fi "PID eq {agent_pid}" ^| find /C "{agent_pid}"'
+
+        sleep_seconds = 5
+        delete_file_and_exit_cmd = f"del /f /q {agent_file_path} & exit"
+
+        # Checks if the agent process is still running.
+        # If the agent is still running, it sleeps for 'sleep_seconds' before checking again.
+        # If the agent is not running, it deletes the executable and exits the loop.
+        # The check runs up to 20 times to give the agent ample time to shutdown.
+        delete_agent_cmd = (
+            f'cmd /c (for /l %i in (1,1,20) do (for /F "delims=" %j IN '
+            f'(\'{check_running_agent_cmd}\') DO if "%j"=="1" (timeout {sleep_seconds}) else '
+            f"({delete_file_and_exit_cmd})) ) > NUL 2>&1"
+        )
+
+        return delete_agent_cmd
+
+    @staticmethod
+    def _get_startup_info():
+        from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
+
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = SW_HIDE
+
+        return startupinfo
+
+    @staticmethod
+    def _self_delete_linux():
+        os.remove(sys.executable)
