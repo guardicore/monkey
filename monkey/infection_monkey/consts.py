@@ -1,1 +1,0 @@
-USERNAME_PREFIX = "somenewuser"

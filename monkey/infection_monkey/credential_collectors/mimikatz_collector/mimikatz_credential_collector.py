@@ -1,7 +1,8 @@
 import logging
 from typing import Sequence
 
-from infection_monkey.consts import USERNAME_PREFIX
+from model import USERNAME_PREFIX
+
 from infection_monkey.credential_collectors import LMHash, NTHash, Password, Username
 from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
 
