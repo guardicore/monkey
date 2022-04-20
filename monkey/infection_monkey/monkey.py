@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+from pathlib import Path
 from typing import List
 
 import infection_monkey.tunnel as tunnel
@@ -401,35 +402,46 @@ class InfectionMonkey:
 
     @staticmethod
     def _self_delete() -> bool:
+        InfectionMonkey._remove_monkey_dir()
+
+        if "python" in Path(sys.executable).name:
+            return False
+
+        try:
+            if "win32" == sys.platform:
+                InfectionMonkey._self_delete_windows()
+            else:
+                InfectionMonkey._self_delete_linux()
+
+            T1107Telem(ScanStatus.USED, sys.executable).send()
+            return True
+        except Exception as exc:
+            logger.error("Exception in self delete: %s", exc)
+            T1107Telem(ScanStatus.SCANNED, sys.executable).send()
+
+        return False
+
+    @staticmethod
+    def _remove_monkey_dir():
         status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
         T1107Telem(status, get_monkey_dir_path()).send()
-        deleted = False
 
-        if -1 == sys.executable.find("python"):
-            try:
-                status = None
-                if "win32" == sys.platform:
-                    from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
+    @staticmethod
+    def _self_delete_windows():
+        from subprocess import CREATE_NEW_CONSOLE, STARTF_USESHOWWINDOW, SW_HIDE
 
-                    startupinfo = subprocess.STARTUPINFO()
-                    startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
-                    startupinfo.wShowWindow = SW_HIDE
-                    subprocess.Popen(
-                        DELAY_DELETE_CMD % {"file_path": sys.executable, "exe_pid": os.getpid()},
-                        stdin=None,
-                        stdout=None,
-                        stderr=None,
-                        close_fds=True,
-                        startupinfo=startupinfo,
-                    )
-                    deleted = True
-                else:
-                    os.remove(sys.executable)
-                    status = ScanStatus.USED
-                    deleted = True
-            except Exception as exc:
-                logger.error("Exception in self delete: %s", exc)
-                status = ScanStatus.SCANNED
-            if status:
-                T1107Telem(status, sys.executable).send()
-            return deleted
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags = CREATE_NEW_CONSOLE | STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = SW_HIDE
+        subprocess.Popen(
+            DELAY_DELETE_CMD % {"file_path": sys.executable, "exe_pid": os.getpid()},
+            stdin=None,
+            stdout=None,
+            stderr=None,
+            close_fds=True,
+            startupinfo=startupinfo,
+        )
+
+    @staticmethod
+    def _self_delete_linux():
+        os.remove(sys.executable)
