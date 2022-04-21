@@ -16,6 +16,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The ability to download the Monkey Island logs from the Infection Map page. #1640
 
 ### Changed
+- Reset workflow. Now it's possible to delete data gathered by agents without 
+  resetting the configuration and reset procedure requires less clicks. #957
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
   include a timeout. #1577
 - The setup procedure for custom server_config.json files to be simpler. #1576
