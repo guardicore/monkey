@@ -34,7 +34,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 - VSFTPD exploiter. #1533
-- Manual agent run command for CMD. #1570
+- Manual agent run command for CMD. #1556
 - Sambacry exploiter. #1567, #1693
 - "Kill file" option in the config. #1536
 - Netstat collector, because network connection information wasn't used anywhere. #1535
@@ -59,7 +59,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Zero Trust integration with ScoutSuite. #1669
 - ShellShock exploiter. #1733
 - ElasticGroovy exploiter. #1732
-- T1082 attack technique report. #1754
+- T1082 attack technique report. #1695
 - 32-bit agents. #1675
 - Log path config options. #1761
 - "smb_service_name" option. #1741
@@ -72,7 +72,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
-- Windows "run as a user" powershell command for manual agent runs. #1570
+- Windows "run as a user" powershell command for manual agent runs. #1556
 - A bug in the "Signed Script Proxy Execution" PBA that downloaded the exe on Linux
   systems as well. #1557
 - A bug where T1216_random_executable.exe was copied to disk even if the signed
@@ -80,7 +80,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Unnecessary collection of kerberos credentials. #1771
 - A bug where bogus users were collected by Mimikatz and added to the config. #1860
 - A bug where windows executable was not self deleting. #1763
-- Incorrect line number in the telemetry overview window on the Map page. #1905
+- Incorrect line number in the telemetry overview window on the Map page. #1850
 
 ### Security
 - Change SSH exploiter so that it does not set the permissions of the agent
