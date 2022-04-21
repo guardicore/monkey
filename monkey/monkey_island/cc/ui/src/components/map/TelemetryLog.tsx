@@ -12,11 +12,11 @@ const TelemetryLog = (props: { onStatusChange: Function }) => {
   let [telemetryUpdateInProgress, setTelemetryUpdateInProgress] = useState(false);
   let [telemetry, setTelemetry] = useState([]);
   let [lastTelemetryTimestamp, setLastTelemetryTimestamp] = useState(null);
-  let [isScrolledUp, setIsScrolledUp] = useState(false);
+  let isScrolledUp = useRef(false);
   let [telemetryLines, setTelemetryLines] = useState(0);
   let [telemetryCurrentLine, setTelemetryCurrentLine] = useState(0);
 
-  let scrollTop = 0;
+  let scrollTop = useRef(0);
   const telemetryConsole = useRef(null);
 
   useEffect(() => {
@@ -44,9 +44,11 @@ const TelemetryLog = (props: { onStatusChange: Function }) => {
           props.onStatusChange();
 
           let telemConsoleRef = telemetryConsole.current;
-          if (!isScrolledUp) {
+          // we handle the lines again so if we have scrolled, we will have updated counter
+          handleTemeletryLine(telemConsoleRef);
+          if (!isScrolledUp.current) {
             telemConsoleRef.scrollTop = telemConsoleRef.scrollHeight - telemConsoleRef.clientHeight;
-            scrollTop = telemConsoleRef.scrollTop;
+            scrollTop.current = telemConsoleRef.scrollTop;
           }
         }
       });
@@ -54,11 +56,14 @@ const TelemetryLog = (props: { onStatusChange: Function }) => {
 
   function handleScroll(e) {
     let element = e.target;
+    isScrolledUp.current = element.scrollTop < scrollTop.current;
+    handleTemeletryLine(element);
+  }
 
+  function handleTemeletryLine(element) {
     let telemetryStyle = window.getComputedStyle(element);
     let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''));
 
-    setIsScrolledUp((element.scrollTop < scrollTop));
     // Zooming in or out doesn't change the number of lines that are visible at once i.e. 5.
     setTelemetryCurrentLine(Math.trunc(element.scrollTop / telemetryLineHeight) + 5);
     setTelemetryLines(Math.trunc(element.scrollHeight / telemetryLineHeight));

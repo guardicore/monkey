@@ -81,6 +81,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A bug where bogus users were collected by Mimikatz and added to the config. #1860
 - A bug where windows executable was not self deleting. #1763
 - Incorrect line number in the telemetry overview window on the Map page. #1850
+- Automatic jumping to the bottom in the telemetry overview windows. #1850
 
 ### Security
 - Change SSH exploiter so that it does not set the permissions of the agent
