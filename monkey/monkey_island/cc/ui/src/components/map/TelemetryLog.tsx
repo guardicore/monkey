@@ -59,7 +59,8 @@ const TelemetryLog = (props: { onStatusChange: Function }) => {
     let telemetryLineHeight = parseInt((telemetryStyle.lineHeight).replace('px', ''));
 
     setIsScrolledUp((element.scrollTop < scrollTop));
-    setTelemetryCurrentLine(Math.trunc(element.scrollTop / telemetryLineHeight) + 1);
+    // Zooming in or out doesn't change the number of lines that are visible at once i.e. 5.
+    setTelemetryCurrentLine(Math.trunc(element.scrollTop / telemetryLineHeight) + 5);
     setTelemetryLines(Math.trunc(element.scrollHeight / telemetryLineHeight));
   }
 
