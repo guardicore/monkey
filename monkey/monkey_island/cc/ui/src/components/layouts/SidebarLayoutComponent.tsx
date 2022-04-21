@@ -9,6 +9,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   completedSteps = null,
                                   defaultReport = '',
                                   sideNavHeader = (<></>),
+                                  onStatusChange = () => {},
                                   ...other
                                 }) => (
   <Route {...other} render={() => {
@@ -18,9 +19,10 @@ const SidebarLayoutComponent = ({component: Component,
           <SideNavComponent disabled={sideNavDisabled}
                             completedSteps={completedSteps}
                             defaultReport={defaultReport}
-                            header={sideNavHeader}/>
+                            header={sideNavHeader}
+                            onStatusChange={onStatusChange}/>
         </Col>}
-        <Component {...other} />
+        <Component onStatusChange={onStatusChange} {...other} />
       </Row>)
   }}/>
 )

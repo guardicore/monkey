@@ -6,7 +6,6 @@ import ConfigurePage from './pages/ConfigurePage.js';
 import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
 import MapPage from './pages/MapPage';
 import TelemetryPage from './pages/TelemetryPage';
-import StartOverPage from './pages/ResetPage';
 import ReportPage from './pages/ReportPage';
 import LicensePage from './pages/LicensePage';
 import AuthComponent from './AuthComponent';
@@ -47,7 +46,6 @@ export const Routes = {
   RunMonkeyPage: '/run-monkey',
   MapPage: '/infection/map',
   TelemetryPage: '/infection/telemetry',
-  StartOverPage: '/start-over',
   LicensePage: '/license'
 }
 
@@ -232,8 +230,6 @@ class AppComponent extends AuthComponent {
               <SidebarLayoutComponent component={MapPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.TelemetryPage,
               <SidebarLayoutComponent component={TelemetryPage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(Routes.StartOverPage,
-              <SidebarLayoutComponent component={StartOverPage} {...defaultSideNavProps}/>)}
             {this.redirectToReport()}
             {this.renderRoute(Routes.SecurityReport,
               <SidebarLayoutComponent component={ReportPage}
