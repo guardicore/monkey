@@ -21,6 +21,14 @@ CONTROL_CHANNEL_CREDENTIALS = {
     ],
 }
 
+EMPTY_CHANNEL_CREDENTIALS = {
+    "exploit_user_list": [],
+    "exploit_password_list": [],
+    "exploit_lm_hash_list": [],
+    "exploit_ntlm_hash_list": [],
+    "exploit_ssh_keys": [],
+}
+
 TEST_CREDENTIALS = [
     Credentials(
         [Username("user1"), Username("user3")],
@@ -51,8 +59,6 @@ def aggregating_credentials_store() -> AggregatingCredentialsStore:
 
 def test_get_credentials_from_store(aggregating_credentials_store):
     actual_stored_credentials = aggregating_credentials_store.get_credentials()
-
-    print(actual_stored_credentials)
 
     assert actual_stored_credentials["exploit_user_list"] == set(
         CONTROL_CHANNEL_CREDENTIALS["exploit_user_list"]
@@ -93,3 +99,17 @@ def test_add_credentials_to_store(aggregating_credentials_store):
     )
 
     assert len(actual_stored_credentials["exploit_ssh_keys"]) == 3
+
+
+def test_all_keys_if_credentials_empty():
+    control_channel = MagicMock()
+    control_channel.get_credentials_for_propagation.return_value = EMPTY_CHANNEL_CREDENTIALS
+    credentials_store = AggregatingCredentialsStore(control_channel)
+
+    actual_stored_credentials = credentials_store.get_credentials()
+    print(type(actual_stored_credentials))
+
+    assert "exploit_user_list" in actual_stored_credentials
+    assert "exploit_password_list" in actual_stored_credentials
+    assert "exploit_ntlm_hash_list" in actual_stored_credentials
+    assert "exploit_ssh_keys" in actual_stored_credentials
