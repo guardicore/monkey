@@ -109,8 +109,17 @@ class TelemetryFeed(flask_restful.Resource):
         )
 
     @staticmethod
-    def should_show_brief(telem):
-        return telem["telem_category"] in TELEM_PROCESS_DICT
+    def should_show_brief(telem) -> bool:
+        should_process_telem = SHOULD_PROCESS_TELEM.get(telem["telem_category"], lambda _: True)
+        return telem["telem_category"] in TELEM_PROCESS_DICT and should_process_telem(telem)
+
+    @staticmethod
+    def should_process_scan_telem(telem) -> bool:
+        return TelemetryFeed._machine_responded(telem["data"]["machine"])
+
+    @staticmethod
+    def _machine_responded(machine) -> bool:
+        return machine["icmp"] and len(machine["services"].keys()) > 0
 
 
 TELEM_PROCESS_DICT = {
@@ -122,3 +131,6 @@ TELEM_PROCESS_DICT = {
     TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
     TelemCategoryEnum.TUNNEL: TelemetryFeed.get_tunnel_telem_brief,
 }
+
+
+SHOULD_PROCESS_TELEM = {TelemCategoryEnum.SCAN: TelemetryFeed.should_process_scan_telem}
