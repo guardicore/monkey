@@ -2,7 +2,7 @@ import os
 import stat
 
 import pytest
-from tests.monkey_island.utils import assert_windows_permissions
+from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
 from monkey_island.cc.server_utils.file_utils import (
     create_secure_directory,
@@ -39,12 +39,8 @@ def test_create_secure_directory__no_parent_dir(test_path_nested):
 @pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
 def test_create_secure_directory__perm_linux(test_path):
     create_secure_directory(test_path)
-    st = os.stat(test_path)
 
-    expected_mode = stat.S_IRWXU
-    actual_mode = st.st_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
-
-    assert expected_mode == actual_mode
+    assert_linux_permissions(test_path)
 
 
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
