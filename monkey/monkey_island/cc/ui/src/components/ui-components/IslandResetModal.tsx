@@ -39,7 +39,7 @@ const IslandResetModal = (props: Props) => {
           !props.allMonkeysAreDead ?
             <div className='alert alert-warning'>
               <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
-              Can't reset the Island while Monkey agents are still running!
+              Please stop all running agents before attempting to reset the Island.
             </div>
             :
             showModalButtons()
