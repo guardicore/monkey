@@ -151,7 +151,7 @@ class TestMonkeyBlackbox:
             island_client=island_client,
             raw_config=raw_config,
             analyzers=[zero_logon_analyzer, communication_analyzer],
-            timeout=DEFAULT_TIMEOUT_SECONDS,
+            timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         ).run()
 
