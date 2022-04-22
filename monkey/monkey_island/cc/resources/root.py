@@ -19,6 +19,8 @@ class Root(flask_restful.Resource):
 
         if not action:
             return self.get_server_info()
+        elif action == "delete-agent-data":
+            return jwt_required(Database.reset_db)(reset_config=False)
         elif action == "reset":
             return jwt_required(Database.reset_db)()
         elif action == "is-up":

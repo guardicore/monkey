@@ -12,8 +12,11 @@ import Logo from "../logo/LogoComponent";
 const monkeyIcon = require('../../images/monkey-icon.svg')
 const infectionMonkey = require('../../images/infection-monkey.svg')
 
-const LandingPageComponent = (props) => {
+type Props = {
+  onStatusChange: () => void
+}
 
+const LandingPageComponent = (props: Props) => {
   return (
     <>
       <ParticleBackground/>
