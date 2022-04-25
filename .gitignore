@@ -101,3 +101,6 @@ venv/
 
 # Hugo
 .hugo_build.lock
+
+# mypy
+.mypy_cache
