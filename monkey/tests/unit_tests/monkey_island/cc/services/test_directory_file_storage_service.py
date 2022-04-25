@@ -106,3 +106,16 @@ def test_remove_all_files(tmp_path):
 
     for file in tmp_path.iterdir():
         assert False, f"{tmp_path} was expected to be empty, but contained files"
+
+
+def test_remove_all_files__skip_directories(tmp_path):
+    test_dir = tmp_path / "test_dir"
+    test_dir.mkdir()
+    for filename in ["1.txt", "2.txt", "3.txt"]:
+        (tmp_path / filename).touch()
+
+    fss = DirectoryFileStorageService(tmp_path)
+    fss.delete_all_files()
+
+    for file in tmp_path.iterdir():
+        assert file.name == test_dir.name

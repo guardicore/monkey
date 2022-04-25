@@ -50,5 +50,5 @@ class DirectoryFileStorageService(IFileStorageService):
         return self._storage_directory / safe_file_name
 
     def delete_all_files(self):
-        for file in self._storage_directory.iterdir():
+        for file in filter(lambda f: f.is_file(), self._storage_directory.iterdir()):
             file.unlink()
