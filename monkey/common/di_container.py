@@ -44,20 +44,31 @@ class DIContainer:
         """
         args = []
 
-        # TODO: Need to handle keyword-only arguments, defaults, varars, etc.
+        # TODO: Need to handle keyword-only arguments, defaults, varargs, etc.
         for arg_type in inspect.getfullargspec(type_).annotations.values():
-            new_instance = self._resolve_instance(arg_type)
-            args.append(new_instance)
+            instance = self._resolve_arg_type(arg_type)
+            args.append(instance)
 
         return type_(*args)
 
-    def _resolve_instance(self, arg_type: Type):
+    def _resolve_arg_type(self, arg_type: Type[T]) -> T:
         if arg_type in self._type_registry:
-            return self._type_registry[arg_type]()
+            return self._resolve_type(arg_type)
         elif arg_type in self._instance_registry:
-            return self._instance_registry[arg_type]
+            return self._resolve_instance(arg_type)
 
         raise ValueError(f'Failed to resolve unknown type "{arg_type.__name__}"')
+
+    def _resolve_type(self, arg_type: Type[T]) -> T:
+        try:
+            return self._type_registry[arg_type]()
+        except TypeError:
+            # arg_type has dependencies that must be resolved. Recursively call resolve() to
+            # construct an instance of arg_type with all of the requesite dependencies injected.
+            return self.resolve(self._type_registry[arg_type])
+
+    def _resolve_instance(self, arg_type: Type[T]) -> T:
+        return self._instance_registry[arg_type]
 
     def release(self, interface: Type[T]):
         """
