@@ -129,7 +129,7 @@ def _configure_gevent_exception_handling(data_dir):
 
 def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
     populate_exporter_list()
-    app = init_app(mongo_setup.MONGO_URL)
+    app = init_app(mongo_setup.MONGO_URL, Path(config_options.data_dir))
 
     if should_setup_only:
         logger.warning("Setup only flag passed. Exiting.")

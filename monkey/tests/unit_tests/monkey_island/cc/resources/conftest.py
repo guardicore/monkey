@@ -10,14 +10,14 @@ from monkey_island.cc.services.representations import output_json
 
 
 @pytest.fixture
-def flask_client(monkeypatch_session):
+def flask_client(monkeypatch_session, tmp_path):
     monkeypatch_session.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
 
-    with mock_init_app().test_client() as client:
+    with mock_init_app(tmp_path).test_client() as client:
         yield client
 
 
-def mock_init_app():
+def mock_init_app(data_dir):
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "test_key"
 
@@ -25,7 +25,7 @@ def mock_init_app():
     api.representations = {"application/json": output_json}
 
     monkey_island.cc.app.init_app_url_rules(app)
-    monkey_island.cc.app.init_api_resources(api)
+    monkey_island.cc.app.init_api_resources(api, data_dir)
 
     flask_jwt_extended.JWTManager(app)
 

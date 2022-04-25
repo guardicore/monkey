@@ -1,6 +1,7 @@
 import os
 import uuid
 from datetime import timedelta
+from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
@@ -111,7 +112,7 @@ def init_app_url_rules(app):
     app.add_url_rule("/<path:static_path>", "serve_static_file", serve_static_file)
 
 
-def init_api_resources(api):
+def init_api_resources(api, data_dir: Path):
     api.add_resource(Root, "/api")
     api.add_resource(Registration, "/api/registration")
     api.add_resource(Authenticate, "/api/auth")
@@ -168,7 +169,7 @@ def init_api_resources(api):
     api.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
 
 
-def init_app(mongo_url):
+def init_app(mongo_url, data_dir: Path):
     app = Flask(__name__)
 
     api = flask_restful.Api(app)
@@ -177,6 +178,6 @@ def init_app(mongo_url):
     init_app_config(app, mongo_url)
     init_app_services(app)
     init_app_url_rules(app)
-    init_api_resources(api)
+    init_api_resources(api, data_dir)
 
     return app
