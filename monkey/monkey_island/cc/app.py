@@ -47,6 +47,7 @@ from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFinding
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
+from monkey_island.cc.services import DirectoryFileStorageService
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
 
@@ -149,7 +150,11 @@ def init_api_resources(api, data_dir: Path):
     api.add_resource(TelemetryFeed, "/api/telemetry-feed")
     api.add_resource(Log, "/api/log")
     api.add_resource(IslandLog, "/api/log/island/download")
-    api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
+    api.add_resource(
+        PBAFileDownload,
+        "/api/pba/download/<string:filename>",
+        resource_class_kwargs={"file_storage_service": DirectoryFileStorageService(data_dir)},
+    )
     api.add_resource(
         FileUpload,
         "/api/file-upload/<string:file_type>",
