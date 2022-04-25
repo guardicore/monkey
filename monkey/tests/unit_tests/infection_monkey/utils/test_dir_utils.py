@@ -1,66 +1,22 @@
 import os
 
 import pytest
-from tests.utils import is_user_admin
+from tests.utils import add_files_to_dir, is_user_admin
 
+from common.utils.file_utils import get_all_regular_files_in_directory
 from infection_monkey.utils.dir_utils import (
     file_extension_filter,
     filter_files,
-    get_all_regular_files_in_directory,
     is_not_shortcut_filter,
     is_not_symlink_filter,
 )
 
 SHORTCUT = "shortcut.lnk"
 FILES = ["file.jpg.zip", "file.xyz", "1.tar", "2.tgz", "2.png", "2.mpg", SHORTCUT]
-SUBDIRS = ["subdir1", "subdir2"]
-
-
-def add_subdirs_to_dir(parent_dir):
-    subdirs = [parent_dir / s for s in SUBDIRS]
-
-    for subdir in subdirs:
-        subdir.mkdir()
-
-    return subdirs
-
-
-def add_files_to_dir(parent_dir):
-    files = [parent_dir / f for f in FILES]
-
-    for f in files:
-        f.touch()
-
-    return files
-
-
-def test_get_all_regular_files_in_directory__no_files(tmp_path, monkeypatch):
-    add_subdirs_to_dir(tmp_path)
-
-    expected_return_value = []
-    assert list(get_all_regular_files_in_directory(tmp_path)) == expected_return_value
-
-
-def test_get_all_regular_files_in_directory__has_files(tmp_path, monkeypatch):
-    add_subdirs_to_dir(tmp_path)
-    files = add_files_to_dir(tmp_path)
-
-    expected_return_value = sorted(files)
-    assert sorted(get_all_regular_files_in_directory(tmp_path)) == expected_return_value
-
-
-def test_get_all_regular_files_in_directory__subdir_has_files(tmp_path, monkeypatch):
-    subdirs = add_subdirs_to_dir(tmp_path)
-    add_files_to_dir(subdirs[0])
-
-    files = add_files_to_dir(tmp_path)
-
-    expected_return_value = sorted(files)
-    assert sorted(get_all_regular_files_in_directory(tmp_path)) == expected_return_value
 
 
 def test_filter_files__no_results(tmp_path):
-    add_files_to_dir(tmp_path)
+    add_files_to_dir(tmp_path, FILES)
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
     filtered_files = list(filter_files(files_in_dir, [lambda _: False]))
@@ -69,7 +25,7 @@ def test_filter_files__no_results(tmp_path):
 
 
 def test_filter_files__all_true(tmp_path):
-    files = add_files_to_dir(tmp_path)
+    files = add_files_to_dir(tmp_path, FILES)
     expected_return_value = sorted(files)
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
@@ -79,7 +35,7 @@ def test_filter_files__all_true(tmp_path):
 
 
 def test_filter_files__multiple_filters(tmp_path):
-    files = add_files_to_dir(tmp_path)
+    files = add_files_to_dir(tmp_path, FILES)
     expected_return_value = sorted(files[4:6])
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
@@ -93,7 +49,7 @@ def test_filter_files__multiple_filters(tmp_path):
 def test_file_extension_filter(tmp_path):
     valid_extensions = {".zip", ".xyz"}
 
-    files = add_files_to_dir(tmp_path)
+    files = add_files_to_dir(tmp_path, FILES)
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
     filtered_files = filter_files(files_in_dir, [file_extension_filter(valid_extensions)])
@@ -105,7 +61,7 @@ def test_file_extension_filter(tmp_path):
     os.name == "nt" and not is_user_admin(), reason="Test requires admin rights on Windows"
 )
 def test_is_not_symlink_filter(tmp_path):
-    files = add_files_to_dir(tmp_path)
+    files = add_files_to_dir(tmp_path, FILES)
     link_path = tmp_path / "symlink.test"
     link_path.symlink_to(files[0], target_is_directory=False)
 
@@ -118,7 +74,7 @@ def test_is_not_symlink_filter(tmp_path):
 
 
 def test_is_not_shortcut_filter(tmp_path):
-    add_files_to_dir(tmp_path)
+    add_files_to_dir(tmp_path, FILES)
 
     files_in_dir = get_all_regular_files_in_directory(tmp_path)
     filtered_files = list(filter_files(files_in_dir, [is_not_shortcut_filter]))

@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from typing import BinaryIO
 
+from common.utils.file_utils import get_all_regular_files_in_directory
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
 from . import IFileStorageService
@@ -50,5 +51,5 @@ class DirectoryFileStorageService(IFileStorageService):
         return self._storage_directory / safe_file_name
 
     def delete_all_files(self):
-        for file in filter(lambda f: f.is_file(), self._storage_directory.iterdir()):
+        for file in get_all_regular_files_in_directory(self._storage_directory):
             file.unlink()

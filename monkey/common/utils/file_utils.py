@@ -1,6 +1,7 @@
 import hashlib
 import os
 from pathlib import Path
+from typing import Iterable
 
 
 class InvalidPath(Exception):
@@ -21,3 +22,7 @@ def get_file_sha256_hash(filepath: Path):
             sha256.update(block)
 
     return sha256.hexdigest()
+
+
+def get_all_regular_files_in_directory(dir_path: Path) -> Iterable[Path]:
+    return filter(lambda f: f.is_file(), dir_path.iterdir())
