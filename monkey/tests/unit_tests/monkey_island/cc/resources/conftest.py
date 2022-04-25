@@ -9,7 +9,7 @@ import monkey_island.cc.resources.island_mode
 from monkey_island.cc.services.representations import output_json
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def flask_client(monkeypatch_session):
     monkeypatch_session.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
 
