@@ -150,17 +150,22 @@ def init_api_resources(api, data_dir: Path):
     api.add_resource(TelemetryFeed, "/api/telemetry-feed")
     api.add_resource(Log, "/api/log")
     api.add_resource(IslandLog, "/api/log/island/download")
+
+    # This is temporary until we get DI all worked out.
+    file_storage_service = DirectoryFileStorageService(data_dir / "custom_pbas")
     api.add_resource(
         PBAFileDownload,
         "/api/pba/download/<string:filename>",
-        resource_class_kwargs={"file_storage_service": DirectoryFileStorageService(data_dir)},
+        resource_class_kwargs={"file_storage_service": file_storage_service},
     )
     api.add_resource(
         FileUpload,
         "/api/file-upload/<string:file_type>",
         "/api/file-upload/<string:file_type>?load=<string:filename>",
         "/api/file-upload/<string:file_type>?restore=<string:filename>",
+        resource_class_kwargs={"file_storage_service": file_storage_service},
     )
+
     api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
     api.add_resource(RemoteRun, "/api/remote-monkey")
     api.add_resource(VersionUpdate, "/api/version-update")

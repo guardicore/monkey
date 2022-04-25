@@ -1,7 +1,7 @@
 def test_file_download_endpoint(tmp_path, flask_client):
     file_contents = "HelloWorld!"
     file_name = "test_file"
-    (tmp_path / file_name).write_text(file_contents)
+    (tmp_path / "custom_pbas" / file_name).write_text(file_contents)
 
     resp = flask_client.get(f"/api/pba/download/{file_name}")
 
