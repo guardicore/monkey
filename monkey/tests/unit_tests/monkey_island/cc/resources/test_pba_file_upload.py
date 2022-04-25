@@ -2,7 +2,6 @@ import pytest
 from tests.utils import raise_
 
 from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE
-from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
 TEST_FILE = b"""-----------------------------1
 Content-Disposition: form-data; name="filepond"
@@ -14,11 +13,6 @@ Content-Type: text/x-python
 
 m0nk3y
 -----------------------------1--"""
-
-
-@pytest.fixture(autouse=True)
-def custom_pba_directory(tmpdir):
-    PostBreachFilesService.initialize(tmpdir)
 
 
 @pytest.fixture
