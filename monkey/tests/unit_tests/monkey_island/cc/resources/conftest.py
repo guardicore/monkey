@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 import flask_jwt_extended
 import flask_restful
 import pytest
@@ -10,14 +12,27 @@ from monkey_island.cc.services.representations import output_json
 
 
 @pytest.fixture
-def flask_client(monkeypatch_session, tmp_path):
+def flask_client(monkeypatch_session):
     monkeypatch_session.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
 
-    with mock_init_app(tmp_path).test_client() as client:
+    container = MagicMock()
+    container.resolve_dependencies.return_value = []
+
+    with mock_init_app(container).test_client() as client:
         yield client
 
 
-def mock_init_app(data_dir):
+@pytest.fixture
+def build_flask_client(monkeypatch_session):
+    def inner(container):
+        monkeypatch_session.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
+
+        return mock_init_app(container).test_client()
+
+    return inner
+
+
+def mock_init_app(container):
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "test_key"
 
@@ -25,7 +40,8 @@ def mock_init_app(data_dir):
     api.representations = {"application/json": output_json}
 
     monkey_island.cc.app.init_app_url_rules(app)
-    monkey_island.cc.app.init_api_resources(api, data_dir)
+    flask_resource_manager = monkey_island.cc.app.FlaskResourceManager(api, container)
+    monkey_island.cc.app.init_api_resources(flask_resource_manager)
 
     flask_jwt_extended.JWTManager(app)
 

@@ -1,9 +1,16 @@
+import io
+from typing import BinaryIO
+
 import pytest
 from tests.utils import raise_
 
+from common import DIContainer
 from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE
+from monkey_island.cc.services import IFileStorageService
 
-TEST_FILE = b"""-----------------------------1
+TEST_FILE_CONTENTS = b"m0nk3y"
+TEST_FILE = (
+    b"""-----------------------------1
 Content-Disposition: form-data; name="filepond"
 
 {}
@@ -11,8 +18,11 @@ Content-Disposition: form-data; name="filepond"
 Content-Disposition: form-data; name="filepond"; filename="test.py"
 Content-Type: text/x-python
 
-m0nk3y
+"""
+    + TEST_FILE_CONTENTS
+    + b"""
 -----------------------------1--"""
+)
 
 
 @pytest.fixture
@@ -27,6 +37,35 @@ def mock_get_config_value(monkeypatch):
     monkeypatch.setattr(
         "monkey_island.cc.services.config.ConfigService.get_config_value", lambda _: "test.py"
     )
+
+
+class MockFileStorageService(IFileStorageService):
+    def __init__(self):
+        self._file = None
+
+    def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
+        self._file = io.BytesIO(file_contents.read())
+
+    def open_file(self, unsafe_file_name: str) -> BinaryIO:
+        if self._file is None:
+            # TODO: Add FileRetrievalError
+            raise OSError()
+        return self._file
+
+    def delete_file(self, unsafe_file_name: str):
+        self._file = None
+
+    def delete_all_files(self):
+        self.delete_file("")
+
+
+@pytest.fixture
+def flask_client(build_flask_client, tmp_path):
+    container = DIContainer()
+    container.register(IFileStorageService, MockFileStorageService)
+
+    with build_flask_client(container) as flask_client:
+        yield flask_client
 
 
 @pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
@@ -89,7 +128,7 @@ def test_pba_file_upload_endpoint(
 
     resp_get = flask_client.get(f"/api/file-upload/{pba_os}?load=test.py")
     assert resp_get.status_code == 200
-    assert resp_get.data.decode() == "m0nk3y"
+    assert resp_get.data == TEST_FILE_CONTENTS
     # Closing the response closes the file handle, else it can't be deleted
     resp_get.close()
 
