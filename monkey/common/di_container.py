@@ -37,7 +37,8 @@ class DIContainer:
     def resolve(self, type_: Type[T]) -> T:
         """
         Resolves all dependencies and returns a new instance of `type_` using constructor dependency
-        injection.
+        injection. Note that only positional arguments are resolved. Varargs, keyword-only args, and
+        default values are ignored.
 
         :param type_: A type (class) to construct.
         :return: An instance of `type_`
@@ -49,7 +50,6 @@ class DIContainer:
 
         args = []
 
-        # TODO: Need to handle keyword-only arguments, defaults, varargs, etc.
         for arg_type in inspect.getfullargspec(type_).annotations.values():
             instance = self._resolve_type(arg_type)
             args.append(instance)
