@@ -40,7 +40,7 @@ def mock_init_app(container):
     api.representations = {"application/json": output_json}
 
     monkey_island.cc.app.init_app_url_rules(app)
-    flask_resource_manager = monkey_island.cc.app.FlaskResourceManager(api, container)
+    flask_resource_manager = monkey_island.cc.app.FlaskDIWrapper(api, container)
     monkey_island.cc.app.init_api_resources(flask_resource_manager)
 
     flask_jwt_extended.JWTManager(app)
