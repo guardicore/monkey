@@ -94,7 +94,7 @@ def test_pba_file_upload_post__internal_server_error(
     flask_client, pba_os, monkeypatch, mock_set_config_value
 ):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.pba_file_upload.FileUpload.upload_pba_file",
+        "monkey_island.cc.resources.pba_file_upload.FileUpload._upload_pba_file",
         lambda x, y: raise_(Exception()),
     )
 

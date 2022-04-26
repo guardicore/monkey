@@ -30,7 +30,6 @@ class FileUpload(flask_restful.Resource):
 
     # TODO: Fix references/coupling to filepond
     # TODO: Replace "file_type" with "target_os" or similar
-    # TODO: Prefix private functions with "_"
     # TODO: Add comment explaining why this is basically a duplicate of the endpoint in the
     #       PBAFileDownload resource.
     @jwt_required
@@ -40,7 +39,7 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file to send, linux or windows
         :return: Returns file contents
         """
-        if self.is_pba_file_type_supported(file_type):
+        if self._is_pba_file_type_supported(file_type):
             return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         # Verify that file_name is indeed a file from config
@@ -67,10 +66,10 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was received, linux or windows
         :return: Returns flask response object with uploaded file's filename
         """
-        if self.is_pba_file_type_supported(file_type):
+        if self._is_pba_file_type_supported(file_type):
             return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
-        filename = self.upload_pba_file(
+        filename = self._upload_pba_file(
             # TODO: This "filepond" string can be changed to be more generic in the `react-filepond`
             # component.
             request.files["filepond"],
@@ -80,7 +79,7 @@ class FileUpload(flask_restful.Resource):
         response = Response(response=filename, status=200, mimetype="text/plain")
         return response
 
-    def upload_pba_file(self, file_storage: FileStorage, is_linux=True):
+    def _upload_pba_file(self, file_storage: FileStorage, is_linux=True):
         """
         Uploads PBA file to island's file system
         :param request_: Request object containing PBA file
@@ -103,7 +102,7 @@ class FileUpload(flask_restful.Resource):
         :param file_type: Type indicates which file was deleted, linux of windows
         :return: Empty response
         """
-        if self.is_pba_file_type_supported(file_type):
+        if self._is_pba_file_type_supported(file_type):
             return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         filename_path = (
@@ -117,5 +116,5 @@ class FileUpload(flask_restful.Resource):
         return make_response({}, 200)
 
     @staticmethod
-    def is_pba_file_type_supported(file_type: str) -> bool:
+    def _is_pba_file_type_supported(file_type: str) -> bool:
         return file_type not in {LINUX_PBA_TYPE, WINDOWS_PBA_TYPE}
