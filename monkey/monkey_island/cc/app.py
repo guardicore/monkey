@@ -1,12 +1,13 @@
 import os
 import uuid
 from datetime import timedelta
-from pathlib import Path
+from typing import Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
+from common import DIContainer
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
@@ -47,7 +48,6 @@ from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFinding
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
-from monkey_island.cc.services import DirectoryFileStorageService
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
 
@@ -113,73 +113,90 @@ def init_app_url_rules(app):
     app.add_url_rule("/<path:static_path>", "serve_static_file", serve_static_file)
 
 
-def init_api_resources(api, data_dir: Path):
-    api.add_resource(Root, "/api")
-    api.add_resource(Registration, "/api/registration")
-    api.add_resource(Authenticate, "/api/auth")
-    api.add_resource(
+# TODO: Come up with a better name than FlaskResourceManager
+class FlaskResourceManager:
+    def __init__(self, api: flask_restful.Api, container: DIContainer):
+        self._api = api
+        self._container = container
+
+    def add_resource(self, resource: Type[flask_restful.Resource], *urls: str):
+        dependencies = self._container.resolve_dependencies(resource)
+        self._api.add_resource(resource, *urls, resource_class_args=dependencies)
+
+
+def init_api_resources(flask_resource_manager: FlaskResourceManager):
+    flask_resource_manager.add_resource(Root, "/api")
+    flask_resource_manager.add_resource(Registration, "/api/registration")
+    flask_resource_manager.add_resource(Authenticate, "/api/auth")
+    flask_resource_manager.add_resource(
         Monkey,
         "/api/agent",
         "/api/agent/<string:guid>",
         "/api/agent/<string:guid>/<string:config_format>",
     )
-    api.add_resource(LocalRun, "/api/local-monkey")
-    api.add_resource(Telemetry, "/api/telemetry", "/api/telemetry/<string:monkey_guid>")
+    flask_resource_manager.add_resource(LocalRun, "/api/local-monkey")
+    flask_resource_manager.add_resource(
+        Telemetry, "/api/telemetry", "/api/telemetry/<string:monkey_guid>"
+    )
 
-    api.add_resource(IslandMode, "/api/island-mode")
-    api.add_resource(IslandConfiguration, "/api/configuration/island")
-    api.add_resource(ConfigurationExport, "/api/configuration/export")
-    api.add_resource(ConfigurationImport, "/api/configuration/import")
-    api.add_resource(
+    flask_resource_manager.add_resource(IslandMode, "/api/island-mode")
+    flask_resource_manager.add_resource(IslandConfiguration, "/api/configuration/island")
+    flask_resource_manager.add_resource(ConfigurationExport, "/api/configuration/export")
+    flask_resource_manager.add_resource(ConfigurationImport, "/api/configuration/import")
+    flask_resource_manager.add_resource(
         MonkeyDownload,
         "/api/agent/download/<string:host_os>",
     )
-    api.add_resource(NetMap, "/api/netmap")
-    api.add_resource(Edge, "/api/netmap/edge")
-    api.add_resource(Node, "/api/netmap/node")
-    api.add_resource(NodeStates, "/api/netmap/node-states")
+    flask_resource_manager.add_resource(NetMap, "/api/netmap")
+    flask_resource_manager.add_resource(Edge, "/api/netmap/edge")
+    flask_resource_manager.add_resource(Node, "/api/netmap/node")
+    flask_resource_manager.add_resource(NodeStates, "/api/netmap/node-states")
 
-    api.add_resource(SecurityReport, "/api/report/security")
-    api.add_resource(ZeroTrustReport, "/api/report/zero-trust/<string:report_data>")
-    api.add_resource(AttackReport, "/api/report/attack")
-    api.add_resource(RansomwareReport, "/api/report/ransomware")
-    api.add_resource(ManualExploitation, "/api/exploitations/manual")
-    api.add_resource(MonkeyExploitation, "/api/exploitations/monkey")
+    flask_resource_manager.add_resource(SecurityReport, "/api/report/security")
+    flask_resource_manager.add_resource(
+        ZeroTrustReport, "/api/report/zero-trust/<string:report_data>"
+    )
+    flask_resource_manager.add_resource(AttackReport, "/api/report/attack")
+    flask_resource_manager.add_resource(RansomwareReport, "/api/report/ransomware")
+    flask_resource_manager.add_resource(ManualExploitation, "/api/exploitations/manual")
+    flask_resource_manager.add_resource(MonkeyExploitation, "/api/exploitations/monkey")
 
-    api.add_resource(ZeroTrustFindingEvent, "/api/zero-trust/finding-event/<string:finding_id>")
-    api.add_resource(TelemetryFeed, "/api/telemetry-feed")
-    api.add_resource(Log, "/api/log")
-    api.add_resource(IslandLog, "/api/log/island/download")
+    flask_resource_manager.add_resource(
+        ZeroTrustFindingEvent, "/api/zero-trust/finding-event/<string:finding_id>"
+    )
+    flask_resource_manager.add_resource(TelemetryFeed, "/api/telemetry-feed")
+    flask_resource_manager.add_resource(Log, "/api/log")
+    flask_resource_manager.add_resource(IslandLog, "/api/log/island/download")
 
-    # This is temporary until we get DI all worked out.
-    file_storage_service = DirectoryFileStorageService(data_dir / "custom_pbas")
-    api.add_resource(
+    flask_resource_manager.add_resource(
         PBAFileDownload,
         "/api/pba/download/<string:filename>",
-        resource_class_kwargs={"file_storage_service": file_storage_service},
     )
-    api.add_resource(
+    flask_resource_manager.add_resource(
         FileUpload,
         "/api/file-upload/<string:file_type>",
         "/api/file-upload/<string:file_type>?load=<string:filename>",
         "/api/file-upload/<string:file_type>?restore=<string:filename>",
-        resource_class_kwargs={"file_storage_service": file_storage_service},
     )
 
-    api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
-    api.add_resource(RemoteRun, "/api/remote-monkey")
-    api.add_resource(VersionUpdate, "/api/version-update")
-    api.add_resource(StopAgentCheck, "/api/monkey-control/needs-to-stop/<int:monkey_guid>")
-    api.add_resource(StopAllAgents, "/api/monkey-control/stop-all-agents")
+    flask_resource_manager.add_resource(
+        PropagationCredentials, "/api/propagation-credentials/<string:guid>"
+    )
+    flask_resource_manager.add_resource(RemoteRun, "/api/remote-monkey")
+    flask_resource_manager.add_resource(VersionUpdate, "/api/version-update")
+    flask_resource_manager.add_resource(
+        StopAgentCheck, "/api/monkey-control/needs-to-stop/<int:monkey_guid>"
+    )
+    flask_resource_manager.add_resource(StopAllAgents, "/api/monkey-control/stop-all-agents")
 
     # Resources used by black box tests
-    api.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")
-    api.add_resource(ClearCaches, "/api/test/clear-caches")
-    api.add_resource(LogBlackboxEndpoint, "/api/test/log")
-    api.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
+    flask_resource_manager.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")
+    flask_resource_manager.add_resource(ClearCaches, "/api/test/clear-caches")
+    flask_resource_manager.add_resource(LogBlackboxEndpoint, "/api/test/log")
+    flask_resource_manager.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
 
 
-def init_app(mongo_url, data_dir: Path):
+def init_app(mongo_url: str, container: DIContainer):
     app = Flask(__name__)
 
     api = flask_restful.Api(app)
@@ -188,6 +205,8 @@ def init_app(mongo_url, data_dir: Path):
     init_app_config(app, mongo_url)
     init_app_services(app)
     init_app_url_rules(app)
-    init_api_resources(api, data_dir)
+
+    flask_resource_manager = FlaskResourceManager(api, container)
+    init_api_resources(flask_resource_manager)
 
     return app

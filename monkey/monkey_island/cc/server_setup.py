@@ -16,6 +16,7 @@ MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
+from common import DIContainer  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -47,7 +48,7 @@ def run_monkey_island():
     _exit_on_invalid_config_options(config_options)
 
     _configure_logging(config_options)
-    _initialize_globals(config_options.data_dir)
+    container = _initialize_globals(config_options.data_dir)
 
     mongo_db_process = None
     if config_options.start_mongodb:
@@ -56,7 +57,7 @@ def run_monkey_island():
     _connect_to_mongodb(mongo_db_process)
 
     _configure_gevent_exception_handling(config_options.data_dir)
-    _start_island_server(island_args.setup_only, config_options)
+    _start_island_server(island_args.setup_only, config_options, container)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
@@ -88,8 +89,8 @@ def _configure_logging(config_options):
     setup_logging(config_options.data_dir, config_options.log_level)
 
 
-def _initialize_globals(data_dir: Path):
-    initialize_services(data_dir)
+def _initialize_globals(data_dir: Path) -> DIContainer:
+    return initialize_services(data_dir)
 
 
 def _start_mongodb(data_dir: Path) -> MongoDbProcess:
@@ -127,9 +128,11 @@ def _configure_gevent_exception_handling(data_dir):
     hub.handle_error = GeventHubErrorHandler(hub, logger)
 
 
-def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
+def _start_island_server(
+    should_setup_only: bool, config_options: IslandConfigOptions, container: DIContainer
+):
     populate_exporter_list()
-    app = init_app(mongo_setup.MONGO_URL, Path(config_options.data_dir))
+    app = init_app(mongo_setup.MONGO_URL, container)
 
     if should_setup_only:
         logger.warning("Setup only flag passed. Exiting.")
