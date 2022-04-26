@@ -250,3 +250,13 @@ def test_resolve_registered_instance(container):
     service_a_actual_instance = container.resolve(IServiceA)
 
     assert id(service_a_actual_instance) == id(service_a_instance)
+
+
+def test_resolve_dependencies(container):
+    container.register(IServiceA, ServiceA)
+    container.register(IServiceB, ServiceB)
+
+    dependencies = container.resolve_dependencies(TestClass3)
+
+    assert isinstance(dependencies[0], ServiceA)
+    assert isinstance(dependencies[1], ServiceB)

@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, MutableMapping, Type, TypeVar
+from typing import Any, MutableMapping, Sequence, Type, TypeVar
 
 T = TypeVar("T")
 
@@ -40,7 +40,7 @@ class DIContainer:
         injection. Note that only positional arguments are resolved. Varargs, keyword-only args, and
         default values are ignored.
 
-        :param type_: A type (class) to construct.
+        :param type_: A type (class) to construct
         :return: An instance of `type_`
         """
         try:
@@ -48,13 +48,25 @@ class DIContainer:
         except ValueError:
             pass
 
+        args = self.resolve_dependencies(type_)
+        return type_(*args)
+
+    def resolve_dependencies(self, type_: Type[T]) -> Sequence[Any]:
+        """
+        Resolves all dependencies of type_ and returns a Sequence of objects that correspond type_'s
+        dependencies. Note that only positional arguments are resolved. Varargs, keyword-only args,
+        and default values are ignored.
+
+        :param type_: A type (class) to resolve dependencies for
+        :return: An Sequence of dependencies to be injected into type_'s constructor
+        """
         args = []
 
         for arg_type in inspect.getfullargspec(type_).annotations.values():
             instance = self._resolve_type(arg_type)
             args.append(instance)
 
-        return type_(*args)
+        return tuple(args)
 
     def _resolve_type(self, type_: Type[T]) -> T:
         if type_ in self._type_registry:
