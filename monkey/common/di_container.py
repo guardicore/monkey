@@ -42,24 +42,29 @@ class DIContainer:
         :param type_: A type (class) to construct.
         :return: An instance of `type_`
         """
+        try:
+            return self._resolve_type(type_)
+        except ValueError:
+            pass
+
         args = []
 
         # TODO: Need to handle keyword-only arguments, defaults, varargs, etc.
         for arg_type in inspect.getfullargspec(type_).annotations.values():
-            instance = self._resolve_arg_type(arg_type)
+            instance = self._resolve_type(arg_type)
             args.append(instance)
 
         return type_(*args)
 
-    def _resolve_arg_type(self, arg_type: Type[T]) -> T:
-        if arg_type in self._type_registry:
-            return self._resolve_type(arg_type)
-        elif arg_type in self._instance_registry:
-            return self._resolve_instance(arg_type)
+    def _resolve_type(self, type_: Type[T]) -> T:
+        if type_ in self._type_registry:
+            return self._construct_new_instance(type_)
+        elif type_ in self._instance_registry:
+            return self._retrieve_registered_instance(type_)
 
-        raise ValueError(f'Failed to resolve unknown type "{arg_type.__name__}"')
+        raise ValueError(f'Failed to resolve unknown type "{type_.__name__}"')
 
-    def _resolve_type(self, arg_type: Type[T]) -> T:
+    def _construct_new_instance(self, arg_type: Type[T]) -> T:
         try:
             return self._type_registry[arg_type]()
         except TypeError:
@@ -67,7 +72,7 @@ class DIContainer:
             # construct an instance of arg_type with all of the requesite dependencies injected.
             return self.resolve(self._type_registry[arg_type])
 
-    def _resolve_instance(self, arg_type: Type[T]) -> T:
+    def _retrieve_registered_instance(self, arg_type: Type[T]) -> T:
         return self._instance_registry[arg_type]
 
     def release(self, interface: Type[T]):

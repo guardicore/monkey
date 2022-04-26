@@ -6,7 +6,9 @@ from common import DIContainer
 
 
 class IServiceA(metaclass=abc.ABCMeta):
-    pass
+    @abc.abstractmethod
+    def do_something(self):
+        pass
 
 
 class IServiceB(metaclass=abc.ABCMeta):
@@ -14,7 +16,8 @@ class IServiceB(metaclass=abc.ABCMeta):
 
 
 class ServiceA(IServiceA):
-    pass
+    def do_something(self):
+        pass
 
 
 class ServiceB(IServiceB):
@@ -117,7 +120,8 @@ def test_unregistered_type():
 
 def test_type_registration_overwritten(container):
     class ServiceA2(IServiceA):
-        pass
+        def do_something(self):
+            pass
 
     container.register(IServiceA, ServiceA)
     container.register(IServiceA, ServiceA2)
@@ -229,3 +233,20 @@ def test_recursive_resolution__depth_3(container):
     assert isinstance(test5.service_d.service_b, ServiceB)
     assert isinstance(test5.service_d.service_c, ServiceC)
     assert isinstance(test5.service_d.service_c.service_a, ServiceA)
+
+
+def test_resolve_registered_interface(container):
+    container.register(IServiceA, ServiceA)
+
+    resolved_instance = container.resolve(IServiceA)
+
+    assert isinstance(resolved_instance, ServiceA)
+
+
+def test_resolve_registered_instance(container):
+    service_a_instance = ServiceA()
+    container.register_instance(IServiceA, service_a_instance)
+
+    service_a_actual_instance = container.resolve(IServiceA)
+
+    assert id(service_a_actual_instance) == id(service_a_instance)
