@@ -4,7 +4,7 @@ from typing import BinaryIO
 import pytest
 
 from common import DIContainer
-from monkey_island.cc.services import IFileStorageService
+from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 FILE_NAME = "test_file"
 FILE_CONTENTS = b"HelloWorld!"
@@ -19,7 +19,7 @@ class MockFileStorageService(IFileStorageService):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         if unsafe_file_name != FILE_NAME:
-            raise OSError()
+            raise FileRetrievalError()
 
         return self._file
 

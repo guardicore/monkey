@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services import IFileStorageService
+from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__file__)
@@ -53,8 +53,8 @@ class FileUpload(flask_restful.Resource):
 
             # `send_file()` handles the closing of the open file.
             return send_file(file, mimetype="application/octet-stream")
-        except OSError as ex:
-            error_msg = f"Failed to open file {filename}: {ex}"
+        except FileRetrievalError as err:
+            error_msg = f"Failed to open file {filename}: {err}"
             logger.error(error_msg)
             return make_response({"error": error_msg}, 404)
 

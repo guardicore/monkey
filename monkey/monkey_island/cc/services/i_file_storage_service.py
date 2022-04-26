@@ -2,6 +2,10 @@ import abc
 from typing import BinaryIO
 
 
+class FileRetrievalError(ValueError):
+    pass
+
+
 class IFileStorageService(metaclass=abc.ABCMeta):
     """
     A service that allows the storage and retrieval of individual files.
@@ -25,6 +29,7 @@ class IFileStorageService(metaclass=abc.ABCMeta):
         :param unsafe_file_name: An unsanitized file name that identifies the file to be opened
         :return: A file-like object providing access to the file's contents
         :rtype: io.BinaryIO
+        :raises FileRetrievalError: if the file cannot be opened
         """
         pass
 

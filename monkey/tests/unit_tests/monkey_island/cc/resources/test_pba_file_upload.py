@@ -6,7 +6,7 @@ from tests.utils import raise_
 
 from common import DIContainer
 from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE
-from monkey_island.cc.services import IFileStorageService
+from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 TEST_FILE_CONTENTS = b"m0nk3y"
 TEST_FILE = (
@@ -48,8 +48,7 @@ class MockFileStorageService(IFileStorageService):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         if self._file is None:
-            # TODO: Add FileRetrievalError
-            raise OSError()
+            raise FileRetrievalError()
         return self._file
 
     def delete_file(self, unsafe_file_name: str):

@@ -1,4 +1,4 @@
-from .i_file_storage_service import IFileStorageService
+from .i_file_storage_service import IFileStorageService, FileRetrievalError
 from .directory_file_storage_service import DirectoryFileStorageService
 
 from .authentication.authentication_service import AuthenticationService

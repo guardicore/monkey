@@ -5,10 +5,10 @@ import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
 from monkey_island.cc.server_utils.file_utils import is_windows_os
-from monkey_island.cc.services import DirectoryFileStorageService
+from monkey_island.cc.services import DirectoryFileStorageService, FileRetrievalError
 
 
-def test_error_if_file(tmp_path):
+def test_error_if_storage_directory_is_file(tmp_path):
     new_file = tmp_path / "new_file.txt"
     new_file.write_text("HelloWorld!")
 
@@ -126,3 +126,10 @@ def test_remove_nonexistant_file(tmp_path):
 
     # This test will fail if this call raises an exception.
     fss.delete_file("nonexistant_file.txt")
+
+
+def test_open_nonexistant_file(tmp_path):
+    fss = DirectoryFileStorageService(tmp_path)
+
+    with pytest.raises(FileRetrievalError):
+        fss.open_file("nonexistant_file.txt")

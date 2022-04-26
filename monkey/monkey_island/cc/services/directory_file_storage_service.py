@@ -5,7 +5,7 @@ from typing import BinaryIO
 from common.utils.file_utils import get_all_regular_files_in_directory
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
-from . import IFileStorageService
+from . import FileRetrievalError, IFileStorageService
 
 
 class DirectoryFileStorageService(IFileStorageService):
@@ -35,7 +35,11 @@ class DirectoryFileStorageService(IFileStorageService):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         safe_file_path = self._get_safe_file_path(unsafe_file_name)
-        return open(safe_file_path, "rb")
+
+        try:
+            return open(safe_file_path, "rb")
+        except OSError as err:
+            raise FileRetrievalError(f"Failed to retrieve file {safe_file_path}: {err}") from err
 
     def delete_file(self, unsafe_file_name: str):
         safe_file_path = self._get_safe_file_path(unsafe_file_name)

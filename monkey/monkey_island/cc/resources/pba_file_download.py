@@ -3,7 +3,7 @@ import logging
 import flask_restful
 from flask import make_response, send_file
 
-from monkey_island.cc.services import IFileStorageService
+from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 logger = logging.getLogger(__file__)
 
@@ -23,7 +23,7 @@ class PBAFileDownload(flask_restful.Resource):
 
             # `send_file()` handles the closing of the open file.
             return send_file(file, mimetype="application/octet-stream")
-        except OSError as ex:
-            error_msg = f"Failed to open file {filename}: {ex}"
+        except FileRetrievalError as err:
+            error_msg = f"Failed to open file {filename}: {err}"
             logger.error(error_msg)
             return make_response({"error": error_msg}, 404)
