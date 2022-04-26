@@ -119,3 +119,10 @@ def test_remove_all_files__skip_directories(tmp_path):
 
     for file in tmp_path.iterdir():
         assert file.name == test_dir.name
+
+
+def test_remove_nonexistant_file(tmp_path):
+    fss = DirectoryFileStorageService(tmp_path)
+
+    # This test will fail if this call raises an exception.
+    fss.delete_file("nonexistant_file.txt")

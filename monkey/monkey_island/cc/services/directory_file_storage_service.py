@@ -40,7 +40,10 @@ class DirectoryFileStorageService(IFileStorageService):
     def delete_file(self, unsafe_file_name: str):
         safe_file_path = self._get_safe_file_path(unsafe_file_name)
 
-        safe_file_path.unlink()
+        try:
+            safe_file_path.unlink()
+        except FileNotFoundError:
+            pass
 
     def _get_safe_file_path(self, unsafe_file_name: str):
         # Remove any path information from the file name.
