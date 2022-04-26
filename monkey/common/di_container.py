@@ -25,6 +25,13 @@ class DIContainer:
         :param interface: An interface or abstract base class that other classes depend upon
         :param concrete_type: A type (class) that implements `interface`
         """
+        if not inspect.isclass(concrete_type):
+            raise TypeError(
+                "Expected a class, but received an instance of type "
+                f'"{concrete_type.__class__.__name__}"; Pass a class, not an instance, to '
+                "register(), or use register_instance() instead."
+            )
+
         self._type_registry[interface] = concrete_type
         DIContainer._del_key(self._instance_registry, interface)
 

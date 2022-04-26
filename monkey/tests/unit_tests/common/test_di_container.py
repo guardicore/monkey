@@ -260,3 +260,9 @@ def test_resolve_dependencies(container):
 
     assert isinstance(dependencies[0], ServiceA)
     assert isinstance(dependencies[1], ServiceB)
+
+
+def test_register_instance_as_type(container):
+    service_a_instance = ServiceA()
+    with pytest.raises(TypeError):
+        container.register(IServiceA, service_a_instance)
