@@ -45,10 +45,13 @@ class DirectoryFileStorageService(IFileStorageService):
     def _get_safe_file_path(self, unsafe_file_name: str):
         # Remove any path information from the file name.
         safe_file_name = Path(unsafe_file_name).resolve().name
+        safe_file_path = (self._storage_directory / safe_file_name).resolve()
 
-        # TODO: Add super paranoid check
+        # This is a paranoid check to avoid directory traversal attacks.
+        if self._storage_directory.resolve() not in safe_file_path.parents:
+            raise ValueError(f"The file named {unsafe_file_name} can not be safely retrieved")
 
-        return self._storage_directory / safe_file_name
+        return safe_file_path
 
     def delete_all_files(self):
         for file in get_all_regular_files_in_directory(self._storage_directory):
