@@ -3,6 +3,7 @@ import os
 import platform
 import stat
 import subprocess
+from pathlib import Path
 from shutil import copyfile
 
 from monkey_island.cc.resources.monkey_download import get_agent_executable_path
@@ -19,7 +20,7 @@ class LocalMonkeyRunService:
     # static/singleton hybrids. At the moment, this requires invasive refactoring that's
     # not a priority.
     @classmethod
-    def initialize(cls, data_dir):
+    def initialize(cls, data_dir: Path):
         cls.DATA_DIR = data_dir
 
     @staticmethod
