@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import bcrypt
 
 from common.utils.exceptions import (
@@ -23,7 +25,7 @@ class AuthenticationService:
     # static/singleton hybrids. At the moment, this requires invasive refactoring that's
     # not a priority.
     @classmethod
-    def initialize(cls, data_dir: str, user_datastore: IUserDatastore):
+    def initialize(cls, data_dir: Path, user_datastore: IUserDatastore):
         cls.DATA_DIR = data_dir
         cls.user_datastore = user_datastore
 
