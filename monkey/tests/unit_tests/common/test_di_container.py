@@ -191,6 +191,8 @@ class ServiceC(IServiceC):
 
 
 class TestClass4:
+    __test__ = False
+
     def __init__(self, service_c: IServiceC):
         self.service_c = service_c
 
@@ -217,6 +219,8 @@ class ServiceD(IServiceD):
 
 
 class TestClass5:
+    __test__ = False
+
     def __init__(self, service_d: IServiceD):
         self.service_d = service_d
 
