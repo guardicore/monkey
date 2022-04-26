@@ -4,6 +4,10 @@ from typing import Any, MutableMapping, Sequence, Type, TypeVar
 T = TypeVar("T")
 
 
+class UnregisteredTypeError(ValueError):
+    pass
+
+
 class DIContainer:
     """
     A dependency injection (DI) container that uses type annotations to resolve and inject
@@ -45,7 +49,7 @@ class DIContainer:
         """
         try:
             return self._resolve_type(type_)
-        except ValueError:
+        except UnregisteredTypeError:
             pass
 
         args = self.resolve_dependencies(type_)
@@ -74,7 +78,7 @@ class DIContainer:
         elif type_ in self._instance_registry:
             return self._retrieve_registered_instance(type_)
 
-        raise ValueError(f'Failed to resolve unknown type "{type_.__name__}"')
+        raise UnregisteredTypeError(f'Failed to resolve unregistered type "{type_.__name__}"')
 
     def _construct_new_instance(self, arg_type: Type[T]) -> T:
         try:
