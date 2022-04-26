@@ -174,9 +174,9 @@ def init_api_resources(flask_resource_manager: FlaskResourceManager):
     )
     flask_resource_manager.add_resource(
         FileUpload,
-        "/api/file-upload/<string:file_type>",
-        "/api/file-upload/<string:file_type>?load=<string:filename>",
-        "/api/file-upload/<string:file_type>?restore=<string:filename>",
+        "/api/file-upload/<string:target_os>",
+        "/api/file-upload/<string:target_os>?load=<string:filename>",
+        "/api/file-upload/<string:target_os>?restore=<string:filename>",
     )
 
     flask_resource_manager.add_resource(
