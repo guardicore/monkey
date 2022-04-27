@@ -54,6 +54,7 @@ class DirectoryFileStorageService(IFileStorageService):
             logger.debug(f"Deleting {safe_file_path}")
             safe_file_path.unlink()
         except FileNotFoundError:
+            # This method is idempotent.
             pass
 
     def _get_safe_file_path(self, unsafe_file_name: str):

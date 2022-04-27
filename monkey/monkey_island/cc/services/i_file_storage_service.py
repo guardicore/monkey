@@ -38,6 +38,9 @@ class IFileStorageService(metaclass=abc.ABCMeta):
         """
         Delete a file
 
+        This method will delete the file specified by `unsafe_file_name`. This operation is
+        idempotent and will succeed if the file to be deleted does not exist.
+
         :param unsafe_file_name: An unsanitized file name that identifies the file to be deleted
         """
         pass
