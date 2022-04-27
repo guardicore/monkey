@@ -29,7 +29,12 @@ class DIContainer:
             raise TypeError(
                 "Expected a class, but received an instance of type "
                 f'"{concrete_type.__class__.__name__}"; Pass a class, not an instance, to '
-                "register(), or use register_instance() instead."
+                "register(), or use register_instance() instead"
+            )
+
+        if not issubclass(concrete_type, interface):
+            raise TypeError(
+                f'Class "{concrete_type.__name__}" is not a subclass of {interface.__name__}'
             )
 
         self._type_registry[interface] = concrete_type
@@ -42,6 +47,12 @@ class DIContainer:
         :param interface: An interface or abstract base class that other classes depend upon
         :param instance: An instance (object) of a type that implements `interface`
         """
+        if not isinstance(instance, interface):
+            raise TypeError(
+                f'The provided instance of type "{instance.__class__.__name__}" '
+                f"is not an instance of {interface.__name__}"
+            )
+
         self._instance_registry[interface] = instance
         DIContainer._del_key(self._type_registry, interface)
 

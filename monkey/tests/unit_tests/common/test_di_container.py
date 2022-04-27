@@ -270,3 +270,14 @@ def test_register_instance_as_type(container):
     service_a_instance = ServiceA()
     with pytest.raises(TypeError):
         container.register(IServiceA, service_a_instance)
+
+
+def test_register_conflicting_type(container):
+    with pytest.raises(TypeError):
+        container.register(IServiceA, ServiceB)
+
+
+def test_register_instance_with_conflicting_type(container):
+    service_b_instance = ServiceB()
+    with pytest.raises(TypeError):
+        container.register_instance(IServiceA, service_b_instance)
