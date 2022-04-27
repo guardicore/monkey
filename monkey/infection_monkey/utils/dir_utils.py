@@ -2,10 +2,6 @@ from pathlib import Path
 from typing import Callable, Iterable, Set
 
 
-def get_all_regular_files_in_directory(dir_path: Path) -> Iterable[Path]:
-    return filter_files(dir_path.iterdir(), [lambda f: f.is_file()])
-
-
 def filter_files(
     files: Iterable[Path], file_filters: Iterable[Callable[[Path], bool]]
 ) -> Iterable[Path]:

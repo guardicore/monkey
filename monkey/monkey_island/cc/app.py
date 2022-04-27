@@ -1,11 +1,13 @@
 import os
 import uuid
 from datetime import timedelta
+from typing import Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
+from common import DIContainer
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
@@ -111,7 +113,17 @@ def init_app_url_rules(app):
     app.add_url_rule("/<path:static_path>", "serve_static_file", serve_static_file)
 
 
-def init_api_resources(api):
+class FlaskDIWrapper:
+    def __init__(self, api: flask_restful.Api, container: DIContainer):
+        self._api = api
+        self._container = container
+
+    def add_resource(self, resource: Type[flask_restful.Resource], *urls: str):
+        dependencies = self._container.resolve_dependencies(resource)
+        self._api.add_resource(resource, *urls, resource_class_args=dependencies)
+
+
+def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(Root, "/api")
     api.add_resource(Registration, "/api/registration")
     api.add_resource(Authenticate, "/api/auth")
@@ -148,13 +160,18 @@ def init_api_resources(api):
     api.add_resource(TelemetryFeed, "/api/telemetry-feed")
     api.add_resource(Log, "/api/log")
     api.add_resource(IslandLog, "/api/log/island/download")
-    api.add_resource(PBAFileDownload, "/api/pba/download/<string:filename>")
+
+    api.add_resource(
+        PBAFileDownload,
+        "/api/pba/download/<string:filename>",
+    )
     api.add_resource(
         FileUpload,
-        "/api/file-upload/<string:file_type>",
-        "/api/file-upload/<string:file_type>?load=<string:filename>",
-        "/api/file-upload/<string:file_type>?restore=<string:filename>",
+        "/api/file-upload/<string:target_os>",
+        "/api/file-upload/<string:target_os>?load=<string:filename>",
+        "/api/file-upload/<string:target_os>?restore=<string:filename>",
     )
+
     api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
     api.add_resource(RemoteRun, "/api/remote-monkey")
     api.add_resource(VersionUpdate, "/api/version-update")
@@ -168,7 +185,7 @@ def init_api_resources(api):
     api.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
 
 
-def init_app(mongo_url):
+def init_app(mongo_url: str, container: DIContainer):
     app = Flask(__name__)
 
     api = flask_restful.Api(app)
@@ -177,6 +194,8 @@ def init_app(mongo_url):
     init_app_config(app, mongo_url)
     init_app_services(app)
     init_app_url_rules(app)
-    init_api_resources(api)
+
+    flask_resource_manager = FlaskDIWrapper(api, container)
+    init_api_resources(flask_resource_manager)
 
     return app

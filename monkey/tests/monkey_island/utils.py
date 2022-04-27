@@ -7,6 +7,9 @@ if is_windows_os():
     FULL_CONTROL = 2032127
     ACE_ACCESS_MODE_GRANT_ACCESS = win32security.GRANT_ACCESS
     ACE_INHERIT_OBJECT_AND_CONTAINER = 3
+else:
+    import os
+    import stat
 
 
 def _get_acl_and_sid_from_path(path: str):
@@ -33,3 +36,12 @@ def assert_windows_permissions(path: str):
     assert ace_sid == user_sid
     assert ace_permissions == FULL_CONTROL and ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS
     assert ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER
+
+
+def assert_linux_permissions(path: str):
+    st = os.stat(path)
+
+    expected_mode = stat.S_IRWXU
+    actual_mode = st.st_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+
+    assert expected_mode == actual_mode

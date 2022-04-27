@@ -2,10 +2,10 @@ import filecmp
 from pathlib import Path
 from typing import Iterable, Set
 
+from common.utils.file_utils import get_all_regular_files_in_directory
 from infection_monkey.utils.dir_utils import (
     file_extension_filter,
     filter_files,
-    get_all_regular_files_in_directory,
     is_not_shortcut_filter,
     is_not_symlink_filter,
 )
