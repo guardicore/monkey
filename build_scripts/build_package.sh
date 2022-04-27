@@ -196,14 +196,19 @@ fi
 install_build_prereqs
 install_package_specific_build_prereqs "$WORKSPACE"
 
+commit_id=$(get_commit_id "$monkey_repo")
+
 is_release_build=false
 # Monkey version is empty on release build
 if [ ! -z "$monkey_version" ]; then
     is_release_build=true
+    echo -n "" > "$monkey_repo/monkey/common/BUILD"
+else
+    echo $commit_id > "$monkey_repo/monkey/common/BUILD"
 fi
 
 setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type" "$is_release_build"
-commit_id=$(get_commit_id "$monkey_repo")
+
 build_package "$monkey_version" "$commit_id" "$DIST_DIR"
 
 log_message "Finished building package: $package"
