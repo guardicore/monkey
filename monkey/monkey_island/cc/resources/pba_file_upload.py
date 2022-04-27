@@ -1,4 +1,3 @@
-import copy
 import logging
 from http import HTTPStatus
 
@@ -43,10 +42,9 @@ class FileUpload(flask_restful.Resource):
 
         # Verify that file_name is indeed a file from config
         if target_os == LINUX_PBA_TYPE:
-            # TODO: Make these paths Tuples so we don't need to copy them
-            filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
+            filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
         else:
-            filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
+            filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
 
         try:
             file = self._file_storage_service.open_file(filename)
