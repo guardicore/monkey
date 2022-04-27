@@ -26,8 +26,10 @@ class FileUpload(flask_restful.Resource):
     def __init__(self, file_storage_service: IFileStorageService):
         self._file_storage_service = file_storage_service
 
-    # TODO: Add comment explaining why this is basically a duplicate of the endpoint in the
-    #       PBAFileDownload resource.
+    # This endpoint is basically a duplicate of PBAFileDownload.get(). They serve slightly different
+    # purposes. This endpoint is authenticated, whereas the one in PBAFileDownload can not be (at
+    # the present time). In the future, consider whether or not they should be merged, or if they
+    # serve truly distinct purposes
     @jwt_required
     def get(self, target_os):
         """
