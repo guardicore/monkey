@@ -48,7 +48,7 @@ def run_monkey_island():
     _exit_on_invalid_config_options(config_options)
 
     _configure_logging(config_options)
-    container = _initialize_globals(config_options.data_dir)
+    container = _initialize_di_container(config_options.data_dir)
 
     mongo_db_process = None
     if config_options.start_mongodb:
@@ -89,7 +89,7 @@ def _configure_logging(config_options):
     setup_logging(config_options.data_dir, config_options.log_level)
 
 
-def _initialize_globals(data_dir: Path) -> DIContainer:
+def _initialize_di_container(data_dir: Path) -> DIContainer:
     return initialize_services(data_dir)
 
 
