@@ -1,4 +1,5 @@
 import logging
+from threading import Lock
 
 from common.cloud.aws.aws_instance import AwsInstance
 from common.cloud.aws.aws_service import AwsService
@@ -7,6 +8,7 @@ from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
 
 logger = logging.getLogger(__name__)
+aws_lock = Lock()
 
 
 class RemoteRunAwsService:
@@ -23,15 +25,8 @@ class RemoteRunAwsService:
         :return: None
         """
         if RemoteRunAwsService.aws_instance is None:
-            RemoteRunAwsService.try_init_aws_instance()
-
-    @staticmethod
-    def try_init_aws_instance():
-        # noinspection PyBroadException
-        try:
-            RemoteRunAwsService.aws_instance = AwsInstance()
-        except Exception:
-            logger.error("Failed init aws instance. Exception info: ", exc_info=True)
+            with aws_lock:
+                RemoteRunAwsService.aws_instance = AwsInstance()
 
     @staticmethod
     def run_aws_monkeys(instances, island_ip):
@@ -53,7 +48,8 @@ class RemoteRunAwsService:
 
     @staticmethod
     def is_running_on_aws():
-        return RemoteRunAwsService.aws_instance.is_instance()
+        with aws_lock:
+            return RemoteRunAwsService.aws_instance.is_instance()
 
     @staticmethod
     def update_aws_region_authless():
