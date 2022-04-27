@@ -1,6 +1,7 @@
 import os
 import uuid
 from datetime import timedelta
+from threading import Thread
 from typing import Type
 
 import flask_restful
@@ -104,8 +105,8 @@ def init_app_services(app):
         database.init()
 
     # If running on AWS, this will initialize the instance data, which is used "later" in the
-    # execution of the island.
-    RemoteRunAwsService.init()
+    # execution of the island. Run on a daemon thread since it's slow.
+    Thread(target=RemoteRunAwsService.init, name="AWS check thread", daemon=True).start()
 
 
 def init_app_url_rules(app):
