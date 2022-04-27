@@ -13,7 +13,10 @@ with open(build_file_path, "r") as build_file:
 
 
 def get_version(build=BUILD):
-    return f"{MAJOR}.{MINOR}.{PATCH}+{build}"
+    if build:
+        return f"{MAJOR}.{MINOR}.{PATCH}+{build}"
+    else:
+        return f"{MAJOR}.{MINOR}.{PATCH}"
 
 
 def print_version():
