@@ -66,7 +66,7 @@ class DirectoryFileStorageService(IFileStorageService):
         if self._storage_directory.resolve() not in safe_file_path.parents:
             raise ValueError(f"The file named {unsafe_file_name} can not be safely retrieved")
 
-        logger.debug(f"Unsafe file name {unsafe_file_name} sanitized: {safe_file_path}")
+        logger.debug(f"Untrusted file name {unsafe_file_name} sanitized: {safe_file_path}")
         return safe_file_path
 
     def delete_all_files(self):

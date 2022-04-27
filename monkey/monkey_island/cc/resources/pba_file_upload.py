@@ -1,11 +1,9 @@
-import copy
 import logging
 from http import HTTPStatus
 
 import flask_restful
 from flask import Response, make_response, request, send_file
-from werkzeug.datastructures import FileStorage
-from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename as sanitize_filename
 
 from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
 from monkey_island.cc.resources.auth.auth import jwt_required
@@ -22,19 +20,20 @@ WINDOWS_PBA_TYPE = "PBAwindows"
 
 class FileUpload(flask_restful.Resource):
     """
-    File upload endpoint used to exchange files with filepond component on the front-end
+    File upload endpoint used to send/receive Custom PBA files
     """
 
     def __init__(self, file_storage_service: IFileStorageService):
         self._file_storage_service = file_storage_service
 
-    # TODO: Fix references/coupling to filepond
-    # TODO: Add comment explaining why this is basically a duplicate of the endpoint in the
-    #       PBAFileDownload resource.
+    # This endpoint is basically a duplicate of PBAFileDownload.get(). They serve slightly different
+    # purposes. This endpoint is authenticated, whereas the one in PBAFileDownload can not be (at
+    # the present time). In the future, consider whether or not they should be merged, or if they
+    # serve truly distinct purposes
     @jwt_required
     def get(self, target_os):
         """
-        Sends file to filepond
+        Sends file to the requester
         :param target_os: Indicates which file to send, linux or windows
         :return: Returns file contents
         """
@@ -43,10 +42,9 @@ class FileUpload(flask_restful.Resource):
 
         # Verify that file_name is indeed a file from config
         if target_os == LINUX_PBA_TYPE:
-            # TODO: Make these paths Tuples so we don't need to copy them
-            filename = ConfigService.get_config_value(copy.deepcopy(PBA_LINUX_FILENAME_PATH))
+            filename = ConfigService.get_config_value(PBA_LINUX_FILENAME_PATH)
         else:
-            filename = ConfigService.get_config_value(copy.deepcopy(PBA_WINDOWS_FILENAME_PATH))
+            filename = ConfigService.get_config_value(PBA_WINDOWS_FILENAME_PATH)
 
         try:
             file = self._file_storage_service.open_file(filename)
@@ -61,38 +59,24 @@ class FileUpload(flask_restful.Resource):
     @jwt_required
     def post(self, target_os):
         """
-        Receives user's uploaded file from filepond
+        Receives user's uploaded file
         :param target_os: Type indicates which file was received, linux or windows
         :return: Returns flask response object with uploaded file's filename
         """
         if self._is_target_os_supported(target_os):
             return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
-        filename = self._upload_pba_file(
-            # TODO: This "filepond" string can be changed to be more generic in the `react-filepond`
-            # component.
-            request.files["filepond"],
-            (target_os == LINUX_PBA_TYPE),
-        )
+        file_storage = next(request.files.values())  # For now, assume there's only one file
+        safe_filename = sanitize_filename(file_storage.filename)
 
-        response = Response(response=filename, status=200, mimetype="text/plain")
-        return response
-
-    def _upload_pba_file(self, file_storage: FileStorage, is_linux=True):
-        """
-        Uploads PBA file to island's file system
-        :param request_: Request object containing PBA file
-        :param is_linux: Boolean indicating if this file is for windows or for linux
-        :return: filename string
-        """
-        filename = secure_filename(file_storage.filename)
-        self._file_storage_service.save_file(filename, file_storage.stream)
-
+        self._file_storage_service.save_file(safe_filename, file_storage.stream)
         ConfigService.set_config_value(
-            (PBA_LINUX_FILENAME_PATH if is_linux else PBA_WINDOWS_FILENAME_PATH), filename
+            (PBA_LINUX_FILENAME_PATH if target_os == LINUX_PBA_TYPE else PBA_WINDOWS_FILENAME_PATH),
+            safe_filename,
         )
 
-        return filename
+        response = Response(response=safe_filename, status=200, mimetype="text/plain")
+        return response
 
     @jwt_required
     def delete(self, target_os):
