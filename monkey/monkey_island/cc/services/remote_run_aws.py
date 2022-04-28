@@ -1,5 +1,5 @@
 import logging
-from threading import Lock
+from threading import Event
 
 from common.cloud.aws.aws_instance import AwsInstance
 from common.cloud.aws.aws_service import AwsService
@@ -8,7 +8,8 @@ from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
 
 logger = logging.getLogger(__name__)
-aws_lock = Lock()
+AWS_INFO_FETCH_TIMEOUT = 10  # Seconds
+aws_info_fetch_done = Event()
 
 
 class RemoteRunAwsService:
@@ -25,8 +26,8 @@ class RemoteRunAwsService:
         :return: None
         """
         if RemoteRunAwsService.aws_instance is None:
-            with aws_lock:
-                RemoteRunAwsService.aws_instance = AwsInstance()
+            RemoteRunAwsService.aws_instance = AwsInstance()
+            aws_info_fetch_done.set()
 
     @staticmethod
     def run_aws_monkeys(instances, island_ip):
@@ -48,8 +49,8 @@ class RemoteRunAwsService:
 
     @staticmethod
     def is_running_on_aws():
-        with aws_lock:
-            return RemoteRunAwsService.aws_instance.is_instance
+        aws_info_fetch_done.wait(AWS_INFO_FETCH_TIMEOUT)
+        return RemoteRunAwsService.aws_instance.is_instance
 
     @staticmethod
     def update_aws_region_authless():
