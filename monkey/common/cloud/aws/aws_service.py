@@ -63,7 +63,7 @@ class AwsService(object):
         :return: All visible instances from this instance
         """
         current_instance = AwsInstance()
-        local_ssm_client = boto3.client("ssm", current_instance.get_region())
+        local_ssm_client = boto3.client("ssm", current_instance.region)
         try:
             response = local_ssm_client.describe_instance_information()
 

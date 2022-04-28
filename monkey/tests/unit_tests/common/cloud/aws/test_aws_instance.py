@@ -77,16 +77,16 @@ def test_is_instance_good_data(good_data_mock_instance):
     assert good_data_mock_instance.is_instance
 
 
-def test_get_instance_id_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
+def test_instance_id_good_data(good_data_mock_instance):
+    assert good_data_mock_instance.instance_id == EXPECTED_INSTANCE_ID
 
 
-def test_get_region_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.get_region() == EXPECTED_REGION
+def test_region_good_data(good_data_mock_instance):
+    assert good_data_mock_instance.region == EXPECTED_REGION
 
 
-def test_get_account_id_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.get_account_id() == EXPECTED_ACCOUNT_ID
+def test_account_id_good_data(good_data_mock_instance):
+    assert good_data_mock_instance.account_id == EXPECTED_ACCOUNT_ID
 
 
 # 'region' bad data
@@ -105,16 +105,16 @@ def test_is_instance_bad_region_data(bad_region_data_mock_instance):
     assert bad_region_data_mock_instance.is_instance
 
 
-def test_get_instance_id_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
+def test_instance_id_bad_region_data(bad_region_data_mock_instance):
+    assert bad_region_data_mock_instance.instance_id == EXPECTED_INSTANCE_ID
 
 
-def test_get_region_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.get_region() is None
+def test_region_bad_region_data(bad_region_data_mock_instance):
+    assert bad_region_data_mock_instance.region is None
 
 
-def test_get_account_id_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.get_account_id() == EXPECTED_ACCOUNT_ID
+def test_account_id_bad_region_data(bad_region_data_mock_instance):
+    assert bad_region_data_mock_instance.account_id == EXPECTED_ACCOUNT_ID
 
 
 # 'account_id' bad data
@@ -133,16 +133,16 @@ def test_is_instance_bad_account_id_data(bad_account_id_data_mock_instance):
     assert bad_account_id_data_mock_instance.is_instance
 
 
-def test_get_instance_id_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert bad_account_id_data_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
+def test_instance_id_bad_account_id_data(bad_account_id_data_mock_instance):
+    assert bad_account_id_data_mock_instance.instance_id == EXPECTED_INSTANCE_ID
 
 
-def test_get_region_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert bad_account_id_data_mock_instance.get_region() == EXPECTED_REGION
+def test_region_bad_account_id_data(bad_account_id_data_mock_instance):
+    assert bad_account_id_data_mock_instance.region == EXPECTED_REGION
 
 
-def test_get_account_id_data_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert bad_account_id_data_mock_instance.get_account_id() is None
+def test_account_id_data_bad_account_id_data(bad_account_id_data_mock_instance):
+    assert bad_account_id_data_mock_instance.account_id is None
 
 
 # 'instance_id' bad requests
@@ -164,18 +164,18 @@ def test_is_instance_bad_instance_id_request(bad_instance_id_request_mock_instan
 
 
 @pytest.mark.parametrize("instance_id_exception", [requests.RequestException, IOError])
-def test_get_instance_id_bad_instance_id_request(bad_instance_id_request_mock_instance):
-    assert bad_instance_id_request_mock_instance.get_instance_id() is None
+def test_instance_id_bad_instance_id_request(bad_instance_id_request_mock_instance):
+    assert bad_instance_id_request_mock_instance.instance_id is None
 
 
 @pytest.mark.parametrize("instance_id_exception", [requests.RequestException, IOError])
-def test_get_region_bad_instance_id_request(bad_instance_id_request_mock_instance):
-    assert bad_instance_id_request_mock_instance.get_region() is None
+def test_region_bad_instance_id_request(bad_instance_id_request_mock_instance):
+    assert bad_instance_id_request_mock_instance.region is None
 
 
 @pytest.mark.parametrize("instance_id_exception", [requests.RequestException, IOError])
-def test_get_account_id_bad_instance_id_request(bad_instance_id_request_mock_instance):
-    assert bad_instance_id_request_mock_instance.get_account_id() == EXPECTED_ACCOUNT_ID
+def test_account_id_bad_instance_id_request(bad_instance_id_request_mock_instance):
+    assert bad_instance_id_request_mock_instance.account_id == EXPECTED_ACCOUNT_ID
 
 
 # 'region' bad requests
@@ -197,18 +197,18 @@ def test_is_instance_bad_region_request(bad_region_request_mock_instance):
 
 
 @pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
-def test_get_instance_id_bad_region_request(bad_region_request_mock_instance):
-    assert bad_region_request_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
+def test_instance_id_bad_region_request(bad_region_request_mock_instance):
+    assert bad_region_request_mock_instance.instance_id == EXPECTED_INSTANCE_ID
 
 
 @pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
-def test_get_region_bad_region_request(bad_region_request_mock_instance):
-    assert bad_region_request_mock_instance.get_region() is None
+def test_region_bad_region_request(bad_region_request_mock_instance):
+    assert bad_region_request_mock_instance.region is None
 
 
 @pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
-def test_get_account_id_bad_region_request(bad_region_request_mock_instance):
-    assert bad_region_request_mock_instance.get_account_id() == EXPECTED_ACCOUNT_ID
+def test_account_id_bad_region_request(bad_region_request_mock_instance):
+    assert bad_region_request_mock_instance.account_id == EXPECTED_ACCOUNT_ID
 
 
 # 'account_id' bad requests
@@ -230,18 +230,18 @@ def test_is_instance_bad_account_id_request(bad_account_id_request_mock_instance
 
 
 @pytest.mark.parametrize("account_id_exception", [requests.RequestException, IOError])
-def test_get_instance_id_bad_account_id_request(bad_account_id_request_mock_instance):
-    assert bad_account_id_request_mock_instance.get_instance_id() == EXPECTED_INSTANCE_ID
+def test_instance_id_bad_account_id_request(bad_account_id_request_mock_instance):
+    assert bad_account_id_request_mock_instance.instance_id == EXPECTED_INSTANCE_ID
 
 
 @pytest.mark.parametrize("account_id_exception", [requests.RequestException, IOError])
-def test_get_region_bad_account_id_request(bad_account_id_request_mock_instance):
-    assert bad_account_id_request_mock_instance.get_region() == EXPECTED_REGION
+def test_region_bad_account_id_request(bad_account_id_request_mock_instance):
+    assert bad_account_id_request_mock_instance.region == EXPECTED_REGION
 
 
 @pytest.mark.parametrize("account_id_exception", [requests.RequestException, IOError])
-def test_get_account_id_bad_account_id_request(bad_account_id_request_mock_instance):
-    assert bad_account_id_request_mock_instance.get_account_id() is None
+def test_account_id_bad_account_id_request(bad_account_id_request_mock_instance):
+    assert bad_account_id_request_mock_instance.account_id is None
 
 
 # not found request
@@ -268,13 +268,13 @@ def test_is_instance_not_found_request(not_found_request_mock_instance):
     assert not_found_request_mock_instance.is_instance is False
 
 
-def test_get_instance_id_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.get_instance_id() is None
+def test_instance_id_not_found_request(not_found_request_mock_instance):
+    assert not_found_request_mock_instance.instance_id is None
 
 
-def test_get_region_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.get_region() is None
+def test_region_not_found_request(not_found_request_mock_instance):
+    assert not_found_request_mock_instance.region is None
 
 
-def test_get_account_id_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.get_account_id() is None
+def test_account_id_not_found_request(not_found_request_mock_instance):
+    assert not_found_request_mock_instance.account_id is None

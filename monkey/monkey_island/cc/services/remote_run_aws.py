@@ -57,7 +57,7 @@ class RemoteRunAwsService:
         """
         Updates the AWS region without auth params (via IAM role)
         """
-        AwsService.set_region(RemoteRunAwsService.aws_instance._region)
+        AwsService.set_region(RemoteRunAwsService.aws_instance.region)
 
     @staticmethod
     def _run_aws_monkey_cmd_async(instance_id, is_linux, island_ip):

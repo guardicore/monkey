@@ -21,7 +21,7 @@ def _report_aws_environment(telemetry_messenger: LegacyTelemetryMessengerAdapter
 
     if _running_on_aws(aws_instance):
         logger.info("Machine is an AWS instance")
-        telemetry_messenger.send_telemetry(AWSInstanceTelemetry(aws_instance.get_instance_id()))
+        telemetry_messenger.send_telemetry(AWSInstanceTelemetry(aws_instance.instance_id))
     else:
         logger.info("Machine is NOT an AWS instance")
 

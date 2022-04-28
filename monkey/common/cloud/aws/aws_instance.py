@@ -33,15 +33,23 @@ class AwsInstance(CloudInstance):
     __metaclass__ = Singleton
 
     def __init__(self):
-        self._is_instance, instance_info = AwsInstance._fetch_instance_info()
-
-        self._instance_id = instance_info.instance_id
-        self._region = instance_info.region
-        self._account_id = instance_info.account_id
+        self._is_instance, self._instance_info = AwsInstance._fetch_instance_info()
 
     @property
     def is_instance(self) -> bool:
         return self._is_instance
+
+    @property
+    def instance_id(self) -> str:
+        return self._instance_info.instance_id
+
+    @property
+    def region(self) -> str:
+        return self._instance_info.region
+
+    @property
+    def account_id(self) -> str:
+        return self._instance_info.account_id
 
     @staticmethod
     def _fetch_instance_info() -> Tuple[bool, AwsInstanceInfo]:
@@ -93,12 +101,6 @@ class AwsInstance(CloudInstance):
         else:
             return None
 
-    def get_instance_id(self):
-        return self._instance_id
-
-    def get_region(self):
-        return self._region
-
     @staticmethod
     def _extract_account_id(instance_identity_document_response):
         """
@@ -117,4 +119,4 @@ class AwsInstance(CloudInstance):
         :return:    the AWS account ID which "owns" this instance.
         See https://docs.aws.amazon.com/general/latest/gr/acct-identifiers.html
         """
-        return self._account_id
+        return self.account_id

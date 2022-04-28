@@ -36,7 +36,7 @@ class AWSExporter(Exporter):
             return True
 
         # Not suppressing error here on purpose.
-        current_aws_region = AwsInstance().get_region()
+        current_aws_region = AwsInstance().region
 
         for machine in issues_list:
             for issue in issues_list[machine]:
