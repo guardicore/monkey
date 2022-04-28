@@ -2,7 +2,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import requests
 
@@ -29,6 +29,7 @@ class AwsInstance(CloudInstance):
     """
     Class which gives useful information about the current instance you're on.
     """
+
     __metaclass__ = Singleton
 
     def __init__(self):
@@ -45,20 +46,19 @@ class AwsInstance(CloudInstance):
     def _fetch_instance_info() -> Tuple[bool, AwsInstanceInfo]:
         try:
             response = requests.get(
-                    AWS_LATEST_METADATA_URI_PREFIX + "meta-data/instance-id",
-                    timeout=AWS_TIMEOUT,
-                    )
+                AWS_LATEST_METADATA_URI_PREFIX + "meta-data/instance-id",
+                timeout=AWS_TIMEOUT,
+            )
             if not response:
                 return False, AwsInstanceInfo()
 
             info = AwsInstanceInfo()
             info.instance_id = response.text if response else False
             info.region = AwsInstance._parse_region(
-                    requests.get(
-                            AWS_LATEST_METADATA_URI_PREFIX +
-                            "meta-data/placement/availability-zone",
-                            timeout=AWS_TIMEOUT,
-                            ).text
+                requests.get(
+                    AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone",
+                    timeout=AWS_TIMEOUT,
+                ).text
             )
         except (requests.RequestException, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
@@ -66,16 +66,14 @@ class AwsInstance(CloudInstance):
 
         try:
             info.account_id = AwsInstance._extract_account_id(
-                    requests.get(
-                            AWS_LATEST_METADATA_URI_PREFIX +
-                            "dynamic/instance-identity/document",
-                            timeout=AWS_TIMEOUT,
-                            ).text
+                requests.get(
+                    AWS_LATEST_METADATA_URI_PREFIX + "dynamic/instance-identity/document",
+                    timeout=AWS_TIMEOUT,
+                ).text
             )
         except (requests.RequestException, json.decoder.JSONDecodeError, IOError) as e:
             logger.debug(
-                    "Failed init of AwsInstance while getting dynamic instance data: {}".format(
-                        e)
+                "Failed init of AwsInstance while getting dynamic instance data: {}".format(e)
             )
             return False, AwsInstanceInfo()
 
