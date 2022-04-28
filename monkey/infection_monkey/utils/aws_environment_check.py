@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def _running_on_aws(aws_instance: AwsInstance) -> bool:
-    return aws_instance.is_instance()
+    return aws_instance.is_instance
 
 
 def _report_aws_environment(telemetry_messenger: LegacyTelemetryMessengerAdapter):

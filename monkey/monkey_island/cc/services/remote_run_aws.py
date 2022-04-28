@@ -49,14 +49,14 @@ class RemoteRunAwsService:
     @staticmethod
     def is_running_on_aws():
         with aws_lock:
-            return RemoteRunAwsService.aws_instance.is_instance()
+            return RemoteRunAwsService.aws_instance.is_instance
 
     @staticmethod
     def update_aws_region_authless():
         """
         Updates the AWS region without auth params (via IAM role)
         """
-        AwsService.set_region(RemoteRunAwsService.aws_instance.region)
+        AwsService.set_region(RemoteRunAwsService.aws_instance._region)
 
     @staticmethod
     def _run_aws_monkey_cmd_async(instance_id, is_linux, island_ip):
