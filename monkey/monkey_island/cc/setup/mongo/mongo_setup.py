@@ -31,12 +31,12 @@ def start_mongodb(data_dir: Path) -> MongoDbProcess:
     return mongo_db_process
 
 
-def _create_db_dir(db_dir_parent_path) -> str:
-    db_dir = os.path.join(db_dir_parent_path, DB_DIR_NAME)
+def _create_db_dir(db_dir_parent_path: Path) -> str:
+    db_dir = db_dir_parent_path / DB_DIR_NAME
     logger.info(f"Database content directory: {db_dir}.")
 
     create_secure_directory(db_dir)
-    return db_dir
+    return str(db_dir)
 
 
 def register_mongo_shutdown_callback(mongo_db_process: MongoDbProcess):
