@@ -12,22 +12,22 @@ from monkey_island.cc.server_utils.file_utils import (
 
 
 @pytest.fixture
-def test_path_nested(tmpdir):
-    path = os.path.join(tmpdir, "test1", "test2", "test3")
+def test_path_nested(tmp_path):
+    path = tmp_path / "test1" / "test2" / "test3"
     return path
 
 
 @pytest.fixture
-def test_path(tmpdir):
+def test_path(tmp_path):
     test_path = "test1"
-    path = os.path.join(tmpdir, test_path)
+    path = tmp_path / test_path
 
     return path
 
 
 def test_create_secure_directory__already_exists(test_path):
-    os.mkdir(test_path)
-    assert os.path.isdir(test_path)
+    test_path.mkdir()
+    assert test_path.is_dir()
     create_secure_directory(test_path)
 
 

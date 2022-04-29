@@ -20,7 +20,7 @@ def setup_data_dir(data_dir_path: Path):
     if _is_data_dir_old(data_dir_path):
         logger.info("Version in data directory does not match the Island's version.")
         _handle_old_data_directory(data_dir_path)
-    create_secure_directory(str(data_dir_path))
+    create_secure_directory(data_dir_path)
     write_version(data_dir_path)
     logger.info(f"Data directory set up in {data_dir_path}.")
 

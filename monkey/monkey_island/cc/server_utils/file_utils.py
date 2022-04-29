@@ -3,6 +3,7 @@ import os
 import platform
 import stat
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Generator
 
 logger = logging.getLogger(__name__)
@@ -20,32 +21,32 @@ if is_windows_os():
     import monkey_island.cc.server_utils.windows_permissions as windows_permissions
 
 
-def create_secure_directory(path: str):
-    if not os.path.isdir(path):
+def create_secure_directory(path: Path):
+    if not path.is_dir():
         if is_windows_os():
             _create_secure_directory_windows(path)
         else:
             _create_secure_directory_linux(path)
 
 
-def _create_secure_directory_linux(path: str):
+def _create_secure_directory_linux(path: Path):
     try:
         # Don't split directory creation and permission setting
         # because it will temporarily create an accessible directory which anyone can use.
-        os.mkdir(path, mode=stat.S_IRWXU)
+        path.mkdir(mode=stat.S_IRWXU)
 
     except Exception as ex:
         logger.error(f'Could not create a directory at "{path}": {str(ex)}')
         raise ex
 
 
-def _create_secure_directory_windows(path: str):
+def _create_secure_directory_windows(path: Path):
     try:
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
             windows_permissions.get_security_descriptor_for_owner_only_perms()
         )
-        win32file.CreateDirectory(path, security_attributes)
+        win32file.CreateDirectory(str(path), security_attributes)
 
     except Exception as ex:
         logger.error(f'Could not create a directory at "{path}": {str(ex)}')
