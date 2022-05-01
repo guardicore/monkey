@@ -38,6 +38,7 @@ setup_build_dir() {
 
   copy_monkey_island_to_build_dir "$monkey_repo/monkey" "$BUILD_DIR"
   copy_server_config_to_build_dir
+  copy_infection_monkey_service_to_build_dir
   modify_deployment "$deployment_type" "$BUILD_DIR"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$BUILD_DIR"
 
@@ -64,8 +65,12 @@ setup_python_37_appdir() {
   rm "$PYTHON_APPIMAGE"
 }
 
+copy_infection_monkey_service_to_build_dir() {
+  cp "$APPIMAGE_DIR"/install-infection-monkey-service.sh "$APPDIR"
+}
+
 copy_server_config_to_build_dir() {
-    cp "$APPIMAGE_DIR"/server_config.json.standard "$BUILD_DIR"/monkey_island/cc/server_config.json
+  cp "$APPIMAGE_DIR"/server_config.json.standard "$BUILD_DIR"/monkey_island/cc/server_config.json
 }
 
 install_monkey_island_python_dependencies() {
