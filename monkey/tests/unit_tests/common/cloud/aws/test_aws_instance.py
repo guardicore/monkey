@@ -1,3 +1,5 @@
+from types import MappingProxyType
+
 import pytest
 import requests
 import requests_mock
@@ -37,14 +39,9 @@ EXPECTED_ACCOUNT_ID = "123456789012"
 
 
 def get_test_aws_instance(
-    text=None,
-    exception=None,
+    text=MappingProxyType({"instance_id": None, "region": None, "account_id": None}),
+    exception=MappingProxyType({"instance_id": None, "region": None, "account_id": None}),
 ):
-    if text is None:
-        text = {"instance_id": None, "region": None, "account_id": None}
-    if exception is None:
-        exception = {"instance_id": None, "region": None, "account_id": None}
-
     with requests_mock.Mocker() as m:
         # request made to get instance_id
         url = f"{AWS_LATEST_METADATA_URI_PREFIX}meta-data/instance-id"
