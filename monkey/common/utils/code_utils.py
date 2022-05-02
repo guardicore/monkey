@@ -1,8 +1,3 @@
-# abstract, static method decorator
-# noinspection PyPep8Naming
-from weakref import WeakValueDictionary
-
-
 class abstractstatic(staticmethod):
     __slots__ = ()
 
@@ -14,7 +9,7 @@ class abstractstatic(staticmethod):
 
 
 class Singleton(type):
-    _instances = WeakValueDictionary()
+    _instances = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
