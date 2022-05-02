@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from threading import Thread
 
 import gevent.hub
 from gevent.pywsgi import WSGIServer
@@ -131,7 +132,8 @@ def _configure_gevent_exception_handling(data_dir):
 def _start_island_server(
     should_setup_only: bool, config_options: IslandConfigOptions, container: DIContainer
 ):
-    populate_exporter_list()
+    # AWS exporter takes a long time to load
+    Thread(target=populate_exporter_list, name="Report exporter list", daemon=True).start()
     app = init_app(mongo_setup.MONGO_URL, container)
 
     if should_setup_only:

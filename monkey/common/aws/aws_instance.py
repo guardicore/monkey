@@ -1,10 +1,10 @@
 import json
 import logging
 import re
+from dataclasses import dataclass
+from typing import Optional, Tuple
 
 import requests
-
-from common.cloud.instance import CloudInstance
 
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = "http://{0}/latest/".format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)
@@ -15,26 +15,50 @@ logger = logging.getLogger(__name__)
 AWS_TIMEOUT = 2
 
 
-class AwsInstance(CloudInstance):
+@dataclass
+class AwsInstanceInfo:
+    instance_id: Optional[str] = None
+    region: Optional[str] = None
+    account_id: Optional[str] = None
+
+
+class AwsInstance:
     """
     Class which gives useful information about the current instance you're on.
     """
 
-    def is_instance(self):
-        return self.instance_id is not None
-
     def __init__(self):
-        self.instance_id = None
-        self.region = None
-        self.account_id = None
+        self._is_instance, self._instance_info = AwsInstance._fetch_instance_info()
 
+    @property
+    def is_instance(self) -> bool:
+        return self._is_instance
+
+    @property
+    def instance_id(self) -> str:
+        return self._instance_info.instance_id
+
+    @property
+    def region(self) -> str:
+        return self._instance_info.region
+
+    @property
+    def account_id(self) -> str:
+        return self._instance_info.account_id
+
+    @staticmethod
+    def _fetch_instance_info() -> Tuple[bool, AwsInstanceInfo]:
         try:
             response = requests.get(
                 AWS_LATEST_METADATA_URI_PREFIX + "meta-data/instance-id",
                 timeout=AWS_TIMEOUT,
             )
-            self.instance_id = response.text if response else None
-            self.region = self._parse_region(
+            if not response:
+                return False, AwsInstanceInfo()
+
+            info = AwsInstanceInfo()
+            info.instance_id = response.text if response else False
+            info.region = AwsInstance._parse_region(
                 requests.get(
                     AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone",
                     timeout=AWS_TIMEOUT,
@@ -42,9 +66,10 @@ class AwsInstance(CloudInstance):
             )
         except (requests.RequestException, IOError) as e:
             logger.debug("Failed init of AwsInstance while getting metadata: {}".format(e))
+            return False, AwsInstanceInfo()
 
         try:
-            self.account_id = self._extract_account_id(
+            info.account_id = AwsInstance._extract_account_id(
                 requests.get(
                     AWS_LATEST_METADATA_URI_PREFIX + "dynamic/instance-identity/document",
                     timeout=AWS_TIMEOUT,
@@ -54,6 +79,9 @@ class AwsInstance(CloudInstance):
             logger.debug(
                 "Failed init of AwsInstance while getting dynamic instance data: {}".format(e)
             )
+            return False, AwsInstanceInfo()
+
+        return True, info
 
     @staticmethod
     def _parse_region(region_url_response):
@@ -67,12 +95,6 @@ class AwsInstance(CloudInstance):
             return finding[0]
         else:
             return None
-
-    def get_instance_id(self):
-        return self.instance_id
-
-    def get_region(self):
-        return self.region
 
     @staticmethod
     def _extract_account_id(instance_identity_document_response):

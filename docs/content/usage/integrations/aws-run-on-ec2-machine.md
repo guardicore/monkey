@@ -50,6 +50,10 @@ If your EC2 instances don't have the _SSM agent_ installed, they will not be abl
 
 See [Amazon's documentation about working with SSM agents](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) for more details on how to check if you have an SSM agent and how to manually install one if you don't yet have it.
 
+### Firewall rules
+
+Make sure that all machines that will run the Monkey agent can access the Island(port 5000).
+
 ## Usage
 
 ### Running the Infection Monkey

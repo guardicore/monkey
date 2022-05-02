@@ -1,38 +1,13 @@
 import logging
 
-from common.cloud.aws.aws_instance import AwsInstance
-from common.cloud.aws.aws_service import AwsService
-from common.cmd.aws.aws_cmd_runner import AwsCmdRunner
 from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
+from monkey_island.cc.server_utils.aws_cmd_runner import AwsCmdRunner
 
 logger = logging.getLogger(__name__)
 
 
 class RemoteRunAwsService:
-    aws_instance = None
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def init():
-        """
-        Initializes service. Subsequent calls to this function have no effect.
-        Must be called at least once (in entire monkey lifetime) before usage of functions
-        :return: None
-        """
-        if RemoteRunAwsService.aws_instance is None:
-            RemoteRunAwsService.try_init_aws_instance()
-
-    @staticmethod
-    def try_init_aws_instance():
-        # noinspection PyBroadException
-        try:
-            RemoteRunAwsService.aws_instance = AwsInstance()
-        except Exception:
-            logger.error("Failed init aws instance. Exception info: ", exc_info=True)
-
     @staticmethod
     def run_aws_monkeys(instances, island_ip):
         """
@@ -50,17 +25,6 @@ class RemoteRunAwsService:
             ),
             lambda _, result: result.is_success,
         )
-
-    @staticmethod
-    def is_running_on_aws():
-        return RemoteRunAwsService.aws_instance.is_instance()
-
-    @staticmethod
-    def update_aws_region_authless():
-        """
-        Updates the AWS region without auth params (via IAM role)
-        """
-        AwsService.set_region(RemoteRunAwsService.aws_instance.region)
 
     @staticmethod
     def _run_aws_monkey_cmd_async(instance_id, is_linux, island_ip):

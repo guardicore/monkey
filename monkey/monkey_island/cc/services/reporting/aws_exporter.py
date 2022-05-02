@@ -5,7 +5,7 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import UnknownServiceError
 
-from common.cloud.aws.aws_instance import AwsInstance
+from monkey_island.cc.services import aws_service
 from monkey_island.cc.services.reporting.exporter import Exporter
 
 __authors__ = ["maor.rayzin", "shay.nehmad"]
@@ -35,8 +35,7 @@ class AWSExporter(Exporter):
             logger.info("No issues were found by the monkey, no need to send anything")
             return True
 
-        # Not suppressing error here on purpose.
-        current_aws_region = AwsInstance().get_region()
+        current_aws_region = aws_service.get_region()
 
         for machine in issues_list:
             for issue in issues_list[machine]:
@@ -90,7 +89,7 @@ class AWSExporter(Exporter):
         )
         instance_arn = "arn:aws:ec2:" + str(region) + ":instance:{instance_id}"
         # Not suppressing error here on purpose.
-        account_id = AwsInstance().get_account_id()
+        account_id = aws_service.get_account_id()
         logger.debug("aws account id acquired: {}".format(account_id))
 
         aws_finding = {
