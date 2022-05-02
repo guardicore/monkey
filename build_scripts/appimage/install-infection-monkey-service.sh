@@ -2,6 +2,7 @@
 
 set -e
 
+SCRIPT_NAME="$(basename "${APPIMAGE}")"
 SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 SYSTEMD_UNIT_FILENAME="infection-monkey.service"
 SYSTEMD_DIR="/lib/systemd/system"
@@ -12,18 +13,17 @@ echo_help() {
   echo "Installs the Infection Monkey service to run on boot."
   echo ""
   echo "Usage:"
-  echo "    install-infection-monkey-service.sh --user <USERNAME> --appimage <PATH>"
-  echo "    install-infection-monkey-service.sh --uninstall"
-  echo "    install-infection-monkey-service.sh -h|--help"
+  echo "    ${SCRIPT_NAME} service --user <USERNAME>"
+  echo "    ${SCRIPT_NAME} service --uninstall"
+  echo "    ${SCRIPT_NAME} service -h|--help"
   echo ""
   echo "Options:"
-  echo "    --user                      User to run the service as"
-  echo "    --appimage                  Path to AppImage"
-  echo "    --uninstall                 Uninstall the Infection Monkey service"
+  echo "    --user                      Install Infection Monkey service and run as User"
+  echo "    --uninstall                 Uninstall Infection Monkey service"
 }
 
 install_service() {
-  move_appimage "$2"
+  move_appimage
 
   cat > "${SCRIPT_DIR}/${SYSTEMD_UNIT_FILENAME}" << EOF
 [Unit]
@@ -65,9 +65,9 @@ uninstall_service() {
 move_appimage() {
   sudo mkdir --mode=0755 -p "${MONKEY_BIN}"
 
-  if [ "$1" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
+  if [ "${APPIMAGE}" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
     umask 022
-    sudo cp "$appimage_path" "${MONKEY_BIN}/${APPIMAGE_NAME}"
+    sudo cp "${APPIMAGE}" "${MONKEY_BIN}/${APPIMAGE_NAME}"
     sudo chmod 755 "${MONKEY_BIN}/${APPIMAGE_NAME}"
   fi
 }
@@ -100,21 +100,16 @@ exit_if_missing_argument() {
 
 do_uninstall=false
 uname=""
-appimage_path=""
 
 while (( "$#" )); do
   case "$1" in
     --user)
       exit_if_missing_argument "$1" "$2"
-
       uname=$2
       shift 2
       ;;
-    --appimage)
-      exit_if_missing_argument "$1" "$2"
-
-      appimage_path=$2
-      shift 2
+    --install)
+      shift
       ;;
     --uninstall)
       do_uninstall=true
@@ -137,25 +132,21 @@ Run \`sudo -v\`, enter your password, and then re-run this script."
   exit 1
 fi
 
+if [ -z "${APPIMAGE}" ] ; then
+  echo "Error: Missing 'APPIMAGE' environment variable. Try installing the Infection Monkey service through the AppImage"
+  exit 1
+fi
+
 if $do_uninstall ; then
   uninstall_service
   exit 0
 fi
 
 assert_parameter_supplied "--user" "$uname"
-assert_parameter_supplied "--appimage" "$appimage_path"
 
 if ! user_exists "$uname" ; then
   echo "Error: User '$uname' does not exist"
   exit 1
 fi
 
-if [ ! -f "$appimage_path" ] ; then
-  if [ ! -f "${SCRIPT_DIR}/$appimage_path" ] ; then
-    echo "Error: AppImage '$appimage_path' does not exist"
-    exit 1
-  fi
-  appimage_path="${SCRIPT_DIR}/$appimage_path"
-fi
-
-install_service "$uname" "$appimage_path"
+install_service "$uname"
