@@ -67,6 +67,11 @@ def get_region():
 
 
 @wait_init_done
+def get_account_id():
+    return aws_instance.account_id
+
+
+@wait_init_done
 def get_client(client_type):
     return boto3.client(client_type, region_name=aws_instance.region)
 
