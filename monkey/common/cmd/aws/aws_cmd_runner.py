@@ -1,7 +1,7 @@
 import logging
 import time
 
-from common.aws.aws_service import AwsService
+from common.aws import aws_service
 from common.cmd.aws.aws_cmd_result import AwsCmdResult
 from common.cmd.cmd_runner import CmdRunner
 from common.cmd.cmd_status import CmdStatus
@@ -18,7 +18,7 @@ class AwsCmdRunner(CmdRunner):
         super(AwsCmdRunner, self).__init__(is_linux)
         self.instance_id = instance_id
         self.region = region
-        self.ssm = AwsService.get_client("ssm", region)
+        self.ssm = aws_service.get_client("ssm", region)
 
     def query_command(self, command_id):
         time.sleep(2)

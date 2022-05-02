@@ -6,8 +6,6 @@ from typing import Optional, Tuple
 
 import requests
 
-from common.utils.code_utils import Singleton
-
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
 AWS_LATEST_METADATA_URI_PREFIX = "http://{0}/latest/".format(AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS)
 ACCOUNT_ID_KEY = "accountId"
@@ -28,8 +26,6 @@ class AwsInstance:
     """
     Class which gives useful information about the current instance you're on.
     """
-
-    __metaclass__ = Singleton
 
     def __init__(self):
         self._is_instance, self._instance_info = AwsInstance._fetch_instance_info()

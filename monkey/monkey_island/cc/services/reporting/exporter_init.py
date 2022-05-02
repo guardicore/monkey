@@ -1,6 +1,6 @@
 import logging
 
-from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
+from common.aws import aws_service
 from monkey_island.cc.services.reporting.aws_exporter import AWSExporter
 from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 
@@ -22,8 +22,7 @@ def populate_exporter_list():
 def try_add_aws_exporter_to_manager(manager):
     # noinspection PyBroadException
     try:
-        RemoteRunAwsService.init()
-        if RemoteRunAwsService.is_running_on_aws():
+        if aws_service.is_on_aws():
             manager.add_exporter_to_list(AWSExporter)
     except Exception:
         logger.error("Failed adding aws exporter to manager. Exception info:", exc_info=True)

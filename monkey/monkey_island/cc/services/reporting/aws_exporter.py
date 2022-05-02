@@ -5,6 +5,7 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import UnknownServiceError
 
+from common.aws import aws_service
 from common.aws.aws_instance import AwsInstance
 from monkey_island.cc.services.reporting.exporter import Exporter
 
@@ -35,8 +36,7 @@ class AWSExporter(Exporter):
             logger.info("No issues were found by the monkey, no need to send anything")
             return True
 
-        # Not suppressing error here on purpose.
-        current_aws_region = AwsInstance().region
+        current_aws_region = aws_service.get_region()
 
         for machine in issues_list:
             for issue in issues_list[machine]:

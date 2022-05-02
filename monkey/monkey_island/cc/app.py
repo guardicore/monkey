@@ -1,7 +1,6 @@
 import os
 import uuid
 from datetime import timedelta
-from threading import Thread
 from typing import Type
 
 import flask_restful
@@ -49,7 +48,6 @@ from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFinding
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
-from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -103,10 +101,6 @@ def init_app_services(app):
 
     with app.app_context():
         database.init()
-
-    # If running on AWS, this will initialize the instance data, which is used "later" in the
-    # execution of the island. Run on a daemon thread since it's slow.
-    Thread(target=RemoteRunAwsService.init, name="AWS check thread", daemon=True).start()
 
 
 def init_app_url_rules(app):

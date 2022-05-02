@@ -1,34 +1,13 @@
 import logging
-from threading import Event
 
-from common.aws.aws_instance import AwsInstance
-from common.aws.aws_service import AwsService
 from common.cmd.aws.aws_cmd_runner import AwsCmdRunner
 from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
 
 logger = logging.getLogger(__name__)
-AWS_INFO_FETCH_TIMEOUT = 10  # Seconds
-aws_info_fetch_done = Event()
 
 
 class RemoteRunAwsService:
-    aws_instance = None
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def init():
-        """
-        Initializes service. Subsequent calls to this function have no effect.
-        Must be called at least once (in entire monkey lifetime) before usage of functions
-        :return: None
-        """
-        if RemoteRunAwsService.aws_instance is None:
-            RemoteRunAwsService.aws_instance = AwsInstance()
-            aws_info_fetch_done.set()
-
     @staticmethod
     def run_aws_monkeys(instances, island_ip):
         """
@@ -46,18 +25,6 @@ class RemoteRunAwsService:
             ),
             lambda _, result: result.is_success,
         )
-
-    @staticmethod
-    def is_running_on_aws():
-        aws_info_fetch_done.wait(AWS_INFO_FETCH_TIMEOUT)
-        return RemoteRunAwsService.aws_instance.is_instance
-
-    @staticmethod
-    def update_aws_region_authless():
-        """
-        Updates the AWS region without auth params (via IAM role)
-        """
-        AwsService.set_region(RemoteRunAwsService.aws_instance.region)
 
     @staticmethod
     def _run_aws_monkey_cmd_async(instance_id, is_linux, island_ip):
