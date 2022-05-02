@@ -1,6 +1,6 @@
 import logging
 
-from common.aws import aws_service
+from monkey_island.cc.services import aws_service
 from monkey_island.cc.services.reporting.aws_exporter import AWSExporter
 from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 

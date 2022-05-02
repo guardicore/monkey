@@ -2,8 +2,7 @@ from pathlib import Path
 from threading import Thread
 
 from common import DIContainer
-from common.aws import aws_service
-from monkey_island.cc.services import DirectoryFileStorageService, IFileStorageService
+from monkey_island.cc.services import DirectoryFileStorageService, IFileStorageService, aws_service
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 

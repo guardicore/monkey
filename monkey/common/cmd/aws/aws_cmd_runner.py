@@ -1,10 +1,10 @@
 import logging
 import time
 
-from common.aws import aws_service
 from common.cmd.aws.aws_cmd_result import AwsCmdResult
 from common.cmd.cmd_runner import CmdRunner
 from common.cmd.cmd_status import CmdStatus
+from monkey_island.cc.services import aws_service
 
 logger = logging.getLogger(__name__)
 
