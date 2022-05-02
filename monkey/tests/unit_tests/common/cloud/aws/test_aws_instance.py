@@ -2,7 +2,7 @@ import pytest
 import requests
 import requests_mock
 
-from common.cloud.aws.aws_instance import AWS_LATEST_METADATA_URI_PREFIX, AwsInstance
+from common.aws.aws_instance import AWS_LATEST_METADATA_URI_PREFIX, AwsInstance
 
 INSTANCE_ID_RESPONSE = "i-1234567890abcdef0"
 

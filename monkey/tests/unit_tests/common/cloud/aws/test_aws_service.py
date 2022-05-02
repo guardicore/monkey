@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 
-from common.cloud.aws.aws_service import filter_instance_data_from_aws_response
+from common.aws.aws_service import filter_instance_data_from_aws_response
 
 
 class TestAwsService(TestCase):

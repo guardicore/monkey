@@ -5,7 +5,7 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import UnknownServiceError
 
-from common.cloud.aws.aws_instance import AwsInstance
+from common.aws.aws_instance import AwsInstance
 from monkey_island.cc.services.reporting.exporter import Exporter
 
 __authors__ = ["maor.rayzin", "shay.nehmad"]

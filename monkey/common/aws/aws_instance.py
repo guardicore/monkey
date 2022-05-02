@@ -6,7 +6,6 @@ from typing import Optional, Tuple
 
 import requests
 
-from common.cloud.instance import CloudInstance
 from common.utils.code_utils import Singleton
 
 AWS_INSTANCE_METADATA_LOCAL_IP_ADDRESS = "169.254.169.254"
@@ -25,7 +24,7 @@ class AwsInstanceInfo:
     account_id: Optional[str] = None
 
 
-class AwsInstance(CloudInstance):
+class AwsInstance:
     """
     Class which gives useful information about the current instance you're on.
     """

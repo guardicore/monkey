@@ -4,7 +4,7 @@ import flask_restful
 from botocore.exceptions import ClientError, NoCredentialsError
 from flask import jsonify, make_response, request
 
-from common.cloud.aws.aws_service import AwsService
+from common.aws.aws_service import AwsService
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services.remote_run_aws import RemoteRunAwsService
 

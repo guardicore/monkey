@@ -1,8 +1,8 @@
 import logging
 from threading import Event
 
-from common.cloud.aws.aws_instance import AwsInstance
-from common.cloud.aws.aws_service import AwsService
+from common.aws.aws_instance import AwsInstance
+from common.aws.aws_service import AwsService
 from common.cmd.aws.aws_cmd_runner import AwsCmdRunner
 from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner

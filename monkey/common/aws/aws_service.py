@@ -3,7 +3,7 @@ import logging
 import boto3
 import botocore
 
-from common.cloud.aws.aws_instance import AwsInstance
+from common.aws.aws_instance import AwsInstance
 
 INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
 INSTANCE_ID_KEY = "InstanceId"
