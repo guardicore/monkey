@@ -1,6 +1,6 @@
 import logging
 
-from common.aws import aws_service
+from common.aws.aws_instance import AwsInstance
 from infection_monkey.telemetry.aws_instance_telem import AWSInstanceTelemetry
 from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
     LegacyTelemetryMessengerAdapter,
@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 def _report_aws_environment(telemetry_messenger: LegacyTelemetryMessengerAdapter):
     logger.info("Collecting AWS info")
 
-    aws_instance = aws_service.initialize()
+    aws_instance = AwsInstance()
 
-    if aws_service.is_on_aws():
+    if aws_instance.is_instance:
         logger.info("Machine is an AWS instance")
         telemetry_messenger.send_telemetry(AWSInstanceTelemetry(aws_instance.instance_id))
     else:
