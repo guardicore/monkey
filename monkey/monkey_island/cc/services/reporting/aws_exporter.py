@@ -5,7 +5,6 @@ from datetime import datetime
 import boto3
 from botocore.exceptions import UnknownServiceError
 
-from common.aws.aws_instance import AwsInstance
 from monkey_island.cc.services import aws_service
 from monkey_island.cc.services.reporting.exporter import Exporter
 
@@ -90,7 +89,7 @@ class AWSExporter(Exporter):
         )
         instance_arn = "arn:aws:ec2:" + str(region) + ":instance:{instance_id}"
         # Not suppressing error here on purpose.
-        account_id = AwsInstance().get_account_id()
+        account_id = aws_service.get_account_id()
         logger.debug("aws account id acquired: {}".format(account_id))
 
         aws_finding = {
