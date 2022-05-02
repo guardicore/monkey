@@ -1,8 +1,8 @@
 import logging
 
-from common.cmd.aws.aws_cmd_runner import AwsCmdRunner
 from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
+from monkey_island.cc.server_utils.aws_cmd_runner import AwsCmdRunner
 
 logger = logging.getLogger(__name__)
 
