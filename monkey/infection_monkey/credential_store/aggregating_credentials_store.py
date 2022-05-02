@@ -11,7 +11,7 @@ from .i_credentials_store import ICredentialsStore
 
 logger = logging.getLogger(__name__)
 
-CREDENTIALS_POLL_PERIOD_SEC = 30
+CREDENTIALS_POLL_PERIOD_SEC = 10
 
 
 class AggregatingCredentialsStore(ICredentialsStore):
