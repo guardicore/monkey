@@ -915,7 +915,11 @@ Accessiable only through <strong>3-45 Powershell</strong> using credentials reus
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td></td>
+<td>The jvm's `java.security.egd` variable should be set to `/dev/urandom`,
+otherwise the tomcat service can take a very long time to start. Set this by
+editing `/usr/tomcat/bin/catalina.sh` and modifying the `JAVA_OPTS` vairable.
+See https://jfrog.com/knowledge-base/tomcat-takes-forever-to-start-what-can-i-do/
+for more details.</td>
 </tr>
 </tbody>
 </table>
