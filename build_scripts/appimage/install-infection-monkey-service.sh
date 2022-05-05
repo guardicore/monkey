@@ -154,6 +154,13 @@ if $do_uninstall ; then
 fi
 
 if $do_install ; then
+    if [ -z "$username" ] ; then
+        echo "You must supply a username."
+        echo ""
+        echo_help
+        exit 1
+    fi
+
     install_service "$username"
     exit 0
 fi
