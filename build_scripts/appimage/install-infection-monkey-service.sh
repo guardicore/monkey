@@ -99,13 +99,13 @@ exit_if_missing_argument() {
 }
 
 do_uninstall=false
-uname=""
+username=""
 
 while (( "$#" )); do
   case "$1" in
     --user)
       exit_if_missing_argument "$1" "$2"
-      uname=$2
+      username=$2
       shift 2
       ;;
     --install)
@@ -142,11 +142,11 @@ if $do_uninstall ; then
   exit 0
 fi
 
-assert_parameter_supplied "--user" "$uname"
+assert_parameter_supplied "--user" "$username"
 
-if ! user_exists "$uname" ; then
-  echo "Error: User '$uname' does not exist"
+if ! user_exists "$username" ; then
+  echo "Error: User '$username' does not exist"
   exit 1
 fi
 
-install_service "$uname"
+install_service "$username"
