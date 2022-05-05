@@ -99,6 +99,7 @@ exit_if_missing_argument() {
 }
 
 do_uninstall=false
+do_install=false
 username=""
 
 while (( "$#" )); do
@@ -109,6 +110,7 @@ while (( "$#" )); do
       shift 2
       ;;
     --install)
+      do_install=true
       shift
       ;;
     --uninstall)
@@ -135,6 +137,11 @@ fi
 if [ -z "${APPIMAGE}" ] ; then
   echo "Error: Missing 'APPIMAGE' environment variable. Try installing the Infection Monkey service through the AppImage"
   exit 1
+fi
+
+if $do_install && $do_uninstall ; then
+    echo "The --install and --uninstall flags are mutually exclusive."
+    exit 1
 fi
 
 if $do_uninstall ; then
