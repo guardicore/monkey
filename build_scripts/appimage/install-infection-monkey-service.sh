@@ -9,6 +9,13 @@ SYSTEMD_DIR="/lib/systemd/system"
 MONKEY_BIN="/opt/infection-monkey/bin"
 APPIMAGE_NAME="InfectionMonkey.AppImage"
 
+die() {
+    echo "$1" >&2
+    echo ""
+    echo_help
+    exit 1
+}
+
 echo_help() {
   echo "Installs the Infection Monkey service to run on boot."
   echo ""
@@ -82,8 +89,7 @@ user_exists() {
 
 exit_if_user_doesnt_exist() {
     if ! user_exists "$1" ; then
-      echo "Error: User '$1' does not exist"
-      exit 1
+      die "Error: User '$1' does not exist."
     fi
 }
 
@@ -95,9 +101,7 @@ has_sudo() {
 
 exit_if_missing_argument() {
   if [ -z "$2" ] || [ "${2:0:1}" == "-" ]; then
-    echo "Error: Argument for parameter '$1' is missing" >&2
-    echo_help
-    exit 1
+    die "Error: Argument for parameter '$1' is missing."
   fi
 }
 
@@ -126,26 +130,22 @@ while (( "$#" )); do
       exit 0
       ;;
     *)
-      echo "Error: Unsupported parameter $1" >&2
-      exit 1
+      die "Error: Unsupported parameter $1."
       ;;
   esac
 done
 
 if ! has_sudo; then
-  echo "Error: You need root permissions for some of this script operations. \
+  die "Error: You need root permissions for some of this script operations. \
 Run \`sudo -v\`, enter your password, and then re-run this script."
-  exit 1
 fi
 
 if [ -z "${APPIMAGE}" ] ; then
-  echo "Error: Missing 'APPIMAGE' environment variable. Try installing the Infection Monkey service through the AppImage"
-  exit 1
+  die "Error: Missing 'APPIMAGE' environment variable. Try installing the Infection Monkey service through the AppImage"
 fi
 
 if $do_install && $do_uninstall ; then
-    echo "The --install and --uninstall flags are mutually exclusive."
-    exit 1
+    die "Error: The --install and --uninstall flags are mutually exclusive."
 fi
 
 if $do_uninstall ; then
@@ -155,15 +155,11 @@ fi
 
 if $do_install ; then
     if [ -z "$username" ] ; then
-        echo "You must supply a username."
-        echo ""
-        echo_help
-        exit 1
+        die "Error: You must supply a username."
     fi
 
     install_service "$username"
     exit 0
 fi
 
-echo "You must specify either the --install or --uninstall flag"
-exit 1
+die "Error:You must specify either the --install or --uninstall flag."
