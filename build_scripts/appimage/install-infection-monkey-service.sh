@@ -32,6 +32,16 @@ install_service() {
 Run 'systemctl start infection-monkey' to start the service now."
 }
 
+move_appimage() {
+  sudo mkdir --mode=0755 -p "${MONKEY_BIN}"
+
+  if [ "${APPIMAGE}" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
+    umask 022
+    sudo cp "${APPIMAGE}" "${MONKEY_BIN}/${APPIMAGE_NAME}"
+    sudo chmod 755 "${MONKEY_BIN}/${APPIMAGE_NAME}"
+  fi
+}
+
 install_systemd_unit() {
   umask 077
   cat > "${TMP_SYSTEMD_UNIT}" << EOF
@@ -65,16 +75,6 @@ uninstall_service() {
   fi
 
   echo "The Infection Monkey service has been uninstalled"
-}
-
-move_appimage() {
-  sudo mkdir --mode=0755 -p "${MONKEY_BIN}"
-
-  if [ "${APPIMAGE}" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
-    umask 022
-    sudo cp "${APPIMAGE}" "${MONKEY_BIN}/${APPIMAGE_NAME}"
-    sudo chmod 755 "${MONKEY_BIN}/${APPIMAGE_NAME}"
-  fi
 }
 
 user_exists() {
