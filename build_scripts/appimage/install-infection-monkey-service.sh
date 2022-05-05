@@ -77,15 +77,6 @@ user_exists() {
   id -u "$1" &>/dev/null
 }
 
-# s/parameter/argument
-assert_parameter_supplied() {
-  if [ -z "$2" ] ; then
-    echo "Error: missing required parameter '$1'"
-    echo_help
-    exit 1
-  fi
-}
-
 has_sudo() {
   # 0 true, 1 false
   sudo -nv > /dev/null 2>&1
@@ -152,8 +143,6 @@ if $do_uninstall ; then
 fi
 
 if $do_install ; then
-    assert_parameter_supplied "--user" "$username"
-
     if ! user_exists "$username" ; then
       echo "Error: User '$username' does not exist"
       exit 1
