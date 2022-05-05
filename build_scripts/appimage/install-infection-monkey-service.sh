@@ -25,6 +25,7 @@ echo_help() {
 
 install_service() {
   move_appimage
+  umask 077
 
   cat > "${SCRIPT_DIR}/${SYSTEMD_UNIT_FILENAME}" << EOF
 [Unit]
@@ -40,7 +41,6 @@ ExecStart="${MONKEY_BIN}/${APPIMAGE_NAME}"
 WantedBy=multi-user.target
 EOF
 
-  umask 077
   sudo mv "${SCRIPT_DIR}/${SYSTEMD_UNIT_FILENAME}" "${SYSTEMD_DIR}/${SYSTEMD_UNIT_FILENAME}"
   sudo systemctl enable "${SYSTEMD_UNIT_FILENAME}" &>/dev/null
 
