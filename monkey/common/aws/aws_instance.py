@@ -108,10 +108,3 @@ class AWSInstance:
         :return: The account id
         """
         return json.loads(instance_identity_document_response)[ACCOUNT_ID_KEY]
-
-    def get_account_id(self):
-        """
-        :return:    the AWS account ID which "owns" this instance.
-        See https://docs.aws.amazon.com/general/latest/gr/acct-identifiers.html
-        """
-        return self.account_id
