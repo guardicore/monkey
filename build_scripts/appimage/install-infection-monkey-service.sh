@@ -27,9 +27,8 @@ install_service() {
   copy_appimage
   install_systemd_unit "$1"
 
-
-  echo -e "The Infection Monkey service has been installed and will start on boot.\n\
-Run 'systemctl start infection-monkey' to start the service now."
+  echo "The Infection Monkey service has been installed and will start on boot."
+  echo "Run 'systemctl start infection-monkey' to start the service now."
 }
 
 copy_appimage() {
