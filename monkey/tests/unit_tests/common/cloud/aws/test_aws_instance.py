@@ -4,7 +4,7 @@ import pytest
 import requests
 import requests_mock
 
-from common.aws.aws_instance import AWS_LATEST_METADATA_URI_PREFIX, AwsInstance
+from common.aws.aws_instance import AWS_LATEST_METADATA_URI_PREFIX, AWSInstance
 
 INSTANCE_ID_RESPONSE = "i-1234567890abcdef0"
 
@@ -59,7 +59,7 @@ def get_test_aws_instance(
             url, exc=exception["account_id"]
         )
 
-        test_aws_instance_object = AwsInstance()
+        test_aws_instance_object = AWSInstance()
         return test_aws_instance_object
 
 
@@ -204,7 +204,7 @@ def not_found_request_mock_instance():
         url = f"{AWS_LATEST_METADATA_URI_PREFIX}dynamic/instance-identity/document"
         m.get(url)
 
-        not_found_aws_instance_object = AwsInstance()
+        not_found_aws_instance_object = AWSInstance()
         yield not_found_aws_instance_object
         del not_found_aws_instance_object
 

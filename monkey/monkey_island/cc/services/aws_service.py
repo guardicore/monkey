@@ -6,7 +6,7 @@ from typing import Callable, Optional
 import boto3
 import botocore
 
-from common.aws.aws_instance import AwsInstance
+from common.aws.aws_instance import AWSInstance
 
 INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
 INSTANCE_ID_KEY = "InstanceId"
@@ -29,14 +29,14 @@ def filter_instance_data_from_aws_response(response):
     ]
 
 
-aws_instance: Optional[AwsInstance] = None
+aws_instance: Optional[AWSInstance] = None
 AWS_INFO_FETCH_TIMEOUT = 10.0  # Seconds
 init_done = Event()
 
 
 def initialize():
     global aws_instance
-    aws_instance = AwsInstance()
+    aws_instance = AWSInstance()
     init_done.set()
 
 
