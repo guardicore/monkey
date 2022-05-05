@@ -83,14 +83,14 @@ uninstall_service() {
   echo "The Infection Monkey service has been uninstalled"
 }
 
-user_exists() {
-  id -u "$1" &>/dev/null
-}
-
 exit_if_user_doesnt_exist() {
     if ! user_exists "$1" ; then
       die "Error: User '$1' does not exist."
     fi
+}
+
+user_exists() {
+  id -u "$1" &>/dev/null
 }
 
 has_sudo() {
