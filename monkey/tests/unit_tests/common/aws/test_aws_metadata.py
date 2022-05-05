@@ -4,7 +4,7 @@ import pytest
 import requests
 import requests_mock
 
-from common.aws.aws_instance import AWS_LATEST_METADATA_URI_PREFIX, AWSInstance
+from common.aws.aws_metadata import AWS_LATEST_METADATA_URI_PREFIX, fetch_aws_instance_metadata
 
 INSTANCE_ID_RESPONSE = "i-1234567890abcdef0"
 
@@ -59,8 +59,7 @@ def get_test_aws_instance(
             url, exc=exception["account_id"]
         )
 
-        test_aws_instance_object = AWSInstance()
-        return test_aws_instance_object
+        return fetch_aws_instance_metadata()
 
 
 # all good data
@@ -77,20 +76,16 @@ def good_data_mock_instance():
     del instance
 
 
-def test_is_instance_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.is_instance
-
-
 def test_instance_id_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.instance_id == EXPECTED_INSTANCE_ID
+    assert good_data_mock_instance[0] == EXPECTED_INSTANCE_ID
 
 
 def test_region_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.region == EXPECTED_REGION
+    assert good_data_mock_instance[1] == EXPECTED_REGION
 
 
 def test_account_id_good_data(good_data_mock_instance):
-    assert good_data_mock_instance.account_id == EXPECTED_ACCOUNT_ID
+    assert good_data_mock_instance[2] == EXPECTED_ACCOUNT_ID
 
 
 # 'region' bad data
@@ -107,20 +102,16 @@ def bad_region_data_mock_instance():
     del instance
 
 
-def test_is_instance_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.is_instance
-
-
 def test_instance_id_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.instance_id == EXPECTED_INSTANCE_ID
+    assert bad_region_data_mock_instance[0] == EXPECTED_INSTANCE_ID
 
 
 def test_region_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.region is None
+    assert bad_region_data_mock_instance[1] is None
 
 
 def test_account_id_bad_region_data(bad_region_data_mock_instance):
-    assert bad_region_data_mock_instance.account_id == EXPECTED_ACCOUNT_ID
+    assert bad_region_data_mock_instance[2] == EXPECTED_ACCOUNT_ID
 
 
 # 'account_id' bad data
@@ -137,20 +128,16 @@ def bad_account_id_data_mock_instance():
     del instance
 
 
-def test_is_instance_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert not bad_account_id_data_mock_instance.is_instance
-
-
 def test_instance_id_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert bad_account_id_data_mock_instance.instance_id is None
+    assert bad_account_id_data_mock_instance[0] is None
 
 
 def test_region_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert bad_account_id_data_mock_instance.region is None
+    assert bad_account_id_data_mock_instance[1] is None
 
 
 def test_account_id_data_bad_account_id_data(bad_account_id_data_mock_instance):
-    assert bad_account_id_data_mock_instance.account_id is None
+    assert bad_account_id_data_mock_instance[2] is None
 
 
 # 'region' bad requests
@@ -169,23 +156,18 @@ def bad_region_request_mock_instance(region_exception):
 
 
 @pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
-def test_is_instance_bad_region_request(bad_region_request_mock_instance):
-    assert not bad_region_request_mock_instance.is_instance
-
-
-@pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
 def test_instance_id_bad_region_request(bad_region_request_mock_instance):
-    assert bad_region_request_mock_instance.instance_id is None
+    assert bad_region_request_mock_instance[0] is None
 
 
 @pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
 def test_region_bad_region_request(bad_region_request_mock_instance):
-    assert bad_region_request_mock_instance.region is None
+    assert bad_region_request_mock_instance[1] is None
 
 
 @pytest.mark.parametrize("region_exception", [requests.RequestException, IOError])
 def test_account_id_bad_region_request(bad_region_request_mock_instance):
-    assert bad_region_request_mock_instance.account_id is None
+    assert bad_region_request_mock_instance[2] is None
 
 
 # not found request
@@ -204,22 +186,16 @@ def not_found_request_mock_instance():
         url = f"{AWS_LATEST_METADATA_URI_PREFIX}dynamic/instance-identity/document"
         m.get(url)
 
-        not_found_aws_instance_object = AWSInstance()
-        yield not_found_aws_instance_object
-        del not_found_aws_instance_object
-
-
-def test_is_instance_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.is_instance is False
+        return fetch_aws_instance_metadata()
 
 
 def test_instance_id_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.instance_id is None
+    assert not_found_request_mock_instance[0] is None
 
 
 def test_region_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.region is None
+    assert not_found_request_mock_instance[1] is None
 
 
 def test_account_id_not_found_request(not_found_request_mock_instance):
-    assert not_found_request_mock_instance.account_id is None
+    assert not_found_request_mock_instance[2] is None
