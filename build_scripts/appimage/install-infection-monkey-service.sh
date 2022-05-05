@@ -77,6 +77,13 @@ user_exists() {
   id -u "$1" &>/dev/null
 }
 
+exit_if_user_doesnt_exist() {
+    if ! user_exists "$1" ; then
+      echo "Error: User '$1' does not exist"
+      exit 1
+    fi
+}
+
 has_sudo() {
   # 0 true, 1 false
   sudo -nv > /dev/null 2>&1
@@ -99,6 +106,7 @@ while (( "$#" )); do
   case "$1" in
     --user)
       exit_if_missing_argument "$1" "$2"
+      exit_if_user_doesnt_exist "$2"
       username=$2
       shift 2
       ;;
@@ -143,11 +151,6 @@ if $do_uninstall ; then
 fi
 
 if $do_install ; then
-    if ! user_exists "$username" ; then
-      echo "Error: User '$username' does not exist"
-      exit 1
-    fi
-
     install_service "$username"
     exit 0
 fi
