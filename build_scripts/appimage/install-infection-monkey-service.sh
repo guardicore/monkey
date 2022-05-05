@@ -13,12 +13,13 @@ echo_help() {
   echo "Installs the Infection Monkey service to run on boot."
   echo ""
   echo "Usage:"
-  echo "    ${SCRIPT_NAME} service --user <USERNAME>"
+  echo "    ${SCRIPT_NAME} service --install --user <USERNAME>"
   echo "    ${SCRIPT_NAME} service --uninstall"
   echo "    ${SCRIPT_NAME} service -h|--help"
   echo ""
   echo "Options:"
-  echo "    --user                      Install Infection Monkey service and run as User"
+  echo "    --install                   Install the Infection Monkey service"
+  echo "    --user                      Configure the Infection Monkey service to run as a specific user"
   echo "    --uninstall                 Uninstall Infection Monkey service"
 }
 
@@ -76,6 +77,7 @@ user_exists() {
   id -u "$1" &>/dev/null
 }
 
+# s/parameter/argument
 assert_parameter_supplied() {
   if [ -z "$2" ] ; then
     echo "Error: missing required parameter '$1'"
@@ -149,11 +151,17 @@ if $do_uninstall ; then
   exit 0
 fi
 
-assert_parameter_supplied "--user" "$username"
+if $do_install ; then
+    assert_parameter_supplied "--user" "$username"
 
-if ! user_exists "$username" ; then
-  echo "Error: User '$username' does not exist"
-  exit 1
+    if ! user_exists "$username" ; then
+      echo "Error: User '$username' does not exist"
+      exit 1
+    fi
+
+    install_service "$username"
+    exit 0
 fi
 
-install_service "$username"
+echo "You must specify either the --install or --uninstall flag"
+exit 1
