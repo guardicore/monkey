@@ -24,7 +24,7 @@ echo_help() {
 }
 
 install_service() {
-  move_appimage
+  copy_appimage
   install_systemd_unit "$1"
 
 
@@ -32,7 +32,7 @@ install_service() {
 Run 'systemctl start infection-monkey' to start the service now."
 }
 
-move_appimage() {
+copy_appimage() {
   sudo mkdir --mode=0755 -p "${MONKEY_BIN}"
 
   if [ "${APPIMAGE}" != "${MONKEY_BIN}/${APPIMAGE_NAME}" ] ; then
