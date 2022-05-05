@@ -25,7 +25,14 @@ echo_help() {
 
 install_service() {
   move_appimage
+  install_systemd_unit "$1"
 
+
+  echo -e "The Infection Monkey service has been installed and will start on boot.\n\
+Run 'systemctl start infection-monkey' to start the service now."
+}
+
+install_systemd_unit() {
   umask 077
   cat > "${TMP_SYSTEMD_UNIT}" << EOF
 [Unit]
@@ -43,9 +50,6 @@ EOF
 
   sudo mv "${TMP_SYSTEMD_UNIT}" "${SYSTEMD_DIR}/${SYSTEMD_UNIT_FILENAME}"
   sudo systemctl enable "${SYSTEMD_UNIT_FILENAME}" &>/dev/null
-
-  echo -e "The Infection Monkey service has been installed and will start on boot.\n\
-Run 'systemctl start infection-monkey' to start the service now."
 }
 
 uninstall_service() {
