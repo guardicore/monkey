@@ -3,8 +3,8 @@
 set -e
 
 SCRIPT_NAME="$(basename "${APPIMAGE}")"
-SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 SYSTEMD_UNIT_FILENAME="infection-monkey.service"
+TMP_SYSTEMD_UNIT="${PWD}/${SYSTEMD_UNIT_FILENAME}"
 SYSTEMD_DIR="/lib/systemd/system"
 MONKEY_BIN="/opt/infection-monkey/bin"
 APPIMAGE_NAME="InfectionMonkey.AppImage"
@@ -25,9 +25,9 @@ echo_help() {
 
 install_service() {
   move_appimage
-  umask 077
 
-  cat > "${SCRIPT_DIR}/${SYSTEMD_UNIT_FILENAME}" << EOF
+  umask 077
+  cat > "${TMP_SYSTEMD_UNIT}" << EOF
 [Unit]
 Description=Infection Monkey Runner
 After=network.target
@@ -41,7 +41,7 @@ ExecStart="${MONKEY_BIN}/${APPIMAGE_NAME}"
 WantedBy=multi-user.target
 EOF
 
-  sudo mv "${SCRIPT_DIR}/${SYSTEMD_UNIT_FILENAME}" "${SYSTEMD_DIR}/${SYSTEMD_UNIT_FILENAME}"
+  sudo mv "${TMP_SYSTEMD_UNIT}" "${SYSTEMD_DIR}/${SYSTEMD_UNIT_FILENAME}"
   sudo systemctl enable "${SYSTEMD_UNIT_FILENAME}" &>/dev/null
 
   echo -e "The Infection Monkey service has been installed and will start on boot.\n\
