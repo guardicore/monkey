@@ -1,6 +1,6 @@
 import logging
 
-from common.aws.aws_instance import AWSInstance
+from common.aws import AWSInstance
 from infection_monkey.telemetry.aws_instance_telem import AWSInstanceTelemetry
 from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
     LegacyTelemetryMessengerAdapter,
