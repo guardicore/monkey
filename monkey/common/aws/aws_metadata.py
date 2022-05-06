@@ -14,10 +14,6 @@ logger = logging.getLogger(__name__)
 AWS_TIMEOUT = 2
 
 
-class UnknownAWSInstanceIDError(Exception):
-    """Raised if the AWS Instance ID could not be determined"""
-
-
 def fetch_aws_instance_metadata() -> Tuple[Optional[str], Optional[str], Optional[str]]:
     instance_id = None
     region = None
@@ -31,7 +27,6 @@ def fetch_aws_instance_metadata() -> Tuple[Optional[str], Optional[str], Optiona
         requests.RequestException,
         IOError,
         json.decoder.JSONDecodeError,
-        UnknownAWSInstanceIDError,
     ) as err:
         logger.debug(f"Failed init of AWSInstance while getting metadata: {err}")
         return (None, None, None)
@@ -45,20 +40,19 @@ def _fetch_aws_instance_id() -> Optional[str]:
         url,
         timeout=AWS_TIMEOUT,
     )
-
-    if not response:
-        raise UnknownAWSInstanceIDError(f"Failed fetch the AWS Instance ID from {url}")
+    response.raise_for_status()
 
     return response.text
 
 
 def _fetch_aws_region() -> Optional[str]:
-    return _parse_region(
-        requests.get(
-            AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone",
-            timeout=AWS_TIMEOUT,
-        ).text
+    response = requests.get(
+        AWS_LATEST_METADATA_URI_PREFIX + "meta-data/placement/availability-zone",
+        timeout=AWS_TIMEOUT,
     )
+    response.raise_for_status()
+
+    return _parse_region(response.text)
 
 
 def _parse_region(region_url_response: str) -> Optional[str]:
@@ -83,9 +77,10 @@ def _fetch_account_id() -> str:
     ../dynamic/instance-identity/document
     :return: The account id
     """
-    instance_identity_document = requests.get(
+    response = requests.get(
         AWS_LATEST_METADATA_URI_PREFIX + "dynamic/instance-identity/document",
         timeout=AWS_TIMEOUT,
-    ).text
+    )
+    response.raise_for_status()
 
-    return json.loads(instance_identity_document)[ACCOUNT_ID_KEY]
+    return json.loads(response.text)[ACCOUNT_ID_KEY]

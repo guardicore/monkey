@@ -199,3 +199,13 @@ def test_region_not_found_request(not_found_request_mock_instance):
 
 def test_account_id_not_found_request(not_found_request_mock_instance):
     assert not_found_request_mock_instance[2] is None
+
+
+def test_instance_id_4xx_error_code():
+    with requests_mock.Mocker() as m:
+        # request made to get instance_id
+        url = f"{AWS_LATEST_METADATA_URI_PREFIX}meta-data/instance-id"
+        m.get(url, text="1234", status_code=404)
+
+        result = fetch_aws_instance_metadata()
+        assert result[0] is None
