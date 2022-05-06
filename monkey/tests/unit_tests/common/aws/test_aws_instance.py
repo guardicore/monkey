@@ -29,8 +29,15 @@ def test_is_instance__true():
     assert aws_instance.is_instance
 
 
-def test_is_instance__false(patch_fetch_metadata):
+def test_is_instance__false_none(patch_fetch_metadata):
     patch_fetch_metadata(None, "", "")
+    aws_instance = AWSInstance()
+
+    assert not aws_instance.is_instance
+
+
+def test_is_instance__false_empty_str(patch_fetch_metadata):
+    patch_fetch_metadata("", "", "")
     aws_instance = AWSInstance()
 
     assert not aws_instance.is_instance

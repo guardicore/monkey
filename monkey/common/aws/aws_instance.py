@@ -34,7 +34,7 @@ class AWSInstance:
     @property
     def is_instance(self) -> bool:
         self._wait_for_initialization_to_complete()
-        return self._instance_id is not None
+        return self._instance_id
 
     @property
     def instance_id(self) -> str:
