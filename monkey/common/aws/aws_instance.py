@@ -1,6 +1,6 @@
 import threading
 
-from common.aws.aws_metadata import fetch_aws_instance_metadata
+from .aws_metadata import fetch_aws_instance_metadata
 
 AWS_FETCH_METADATA_TIMEOUT = 10.0  # Seconds
 
