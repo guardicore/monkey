@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, Iterable, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 import boto3
 import botocore
@@ -17,20 +17,37 @@ logger = logging.getLogger(__name__)
 
 class AWSService:
     def __init__(self, aws_instance: AWSInstance):
+        """
+        :param aws_instance: An AWSInstance object representing the AWS instance that the Island is
+                             running on
+        """
         self._aws_instance = aws_instance
 
     def island_is_running_on_aws(self) -> bool:
+        """
+        :return: True if the island is running on an AWS instance. False otherwise.
+        :rtype: bool
+        """
         return self._aws_instance.is_instance
 
     @property
     def island_aws_instance(self) -> AWSInstance:
+        """
+        :return: an AWSInstance object representing the AWS instance that the Island is running on.
+        :rtype: AWSInstance
+        """
         return self._aws_instance
 
-    def get_managed_instances(self) -> Sequence[Dict[str, str]]:
+    def get_managed_instances(self) -> Sequence[Mapping[str, str]]:
+        """
+        :return: A sequence of mappings, where each Mapping represents a managed AWS instance that
+                 is accessible from the Island.
+        :rtype: Sequence[Mapping[str, str]]
+        """
         raw_managed_instances_info = self._get_raw_managed_instances()
         return _filter_relevant_instance_info(raw_managed_instances_info)
 
-    def _get_raw_managed_instances(self) -> Sequence[Dict[str, Any]]:
+    def _get_raw_managed_instances(self) -> Sequence[Mapping[str, Any]]:
         """
         Get the information for all instances with the relevant roles.
 
@@ -57,7 +74,18 @@ class AWSService:
         pass
 
 
-def _filter_relevant_instance_info(raw_managed_instances_info: Sequence[Dict[str, Any]]):
+def _filter_relevant_instance_info(raw_managed_instances_info: Sequence[Mapping[str, Any]]):
+    """
+    Consume raw instance data from the AWS API and return only those fields that are relevant for
+    Infection Monkey.
+
+    :param raw_managed_instances_info: The output of
+                                       DescribeInstanceInformation["InstanceInformation"] from the
+                                       AWS API
+    :return: A sequence of mappings, where each Mapping represents a managed AWS instance that
+             is accessible from the Island.
+    :rtype: Sequence[Mapping[str, str]]
+    """
     return [
         {
             "instance_id": managed_instance[INSTANCE_ID_KEY],
