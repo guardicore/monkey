@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Iterable, Optional
 
 import boto3
 import botocore
@@ -25,6 +25,13 @@ class AWSService:
     @property
     def island_aws_instance(self) -> AWSInstance:
         return self._aws_instance
+
+    def run_agent_on_managed_instances(self, instance_ids: Iterable[str]):
+        for id_ in instance_ids:
+            self._run_agent_on_managed_instance(id_)
+
+    def _run_agent_on_managed_instance(self, instance_id: str):
+        pass
 
 
 def filter_instance_data_from_aws_response(response):
