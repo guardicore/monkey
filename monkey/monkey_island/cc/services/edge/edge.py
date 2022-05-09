@@ -21,18 +21,17 @@ class EdgeService(Edge):
 
     @staticmethod
     def get_or_create_edge(src_node_id, dst_node_id, src_label, dst_label) -> EdgeService:
-        lock.acquire()
-        edge = None
-        try:
-            edge = EdgeService.objects.get(src_node_id=src_node_id, dst_node_id=dst_node_id)
-        except DoesNotExist:
-            edge = EdgeService(src_node_id=src_node_id, dst_node_id=dst_node_id)
-        finally:
-            if edge:
-                edge.update_label(node_id=src_node_id, label=src_label)
-                edge.update_label(node_id=dst_node_id, label=dst_label)
-        lock.release()
-        return edge
+        with lock:
+            edge = None
+            try:
+                edge = EdgeService.objects.get(src_node_id=src_node_id, dst_node_id=dst_node_id)
+            except DoesNotExist:
+                edge = EdgeService(src_node_id=src_node_id, dst_node_id=dst_node_id)
+            finally:
+                if edge:
+                    edge.update_label(node_id=src_node_id, label=src_label)
+                    edge.update_label(node_id=dst_node_id, label=dst_label)
+            return edge
 
     @staticmethod
     def get_by_dst_node(dst_node_id: ObjectId) -> List[EdgeService]:
