@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable, Optional
+from typing import Any, Dict, Iterable, Sequence
 
 import boto3
 import botocore
@@ -26,6 +26,29 @@ class AWSService:
     def island_aws_instance(self) -> AWSInstance:
         return self._aws_instance
 
+    def get_managed_instances(self) -> Sequence[Dict[str, str]]:
+        raw_managed_instances_info = self._get_raw_managed_instances()
+        return _filter_instance_info_from_aws_response(raw_managed_instances_info)
+
+    def _get_raw_managed_instances(self) -> Sequence[Dict[str, Any]]:
+        """
+        Get the information for all instances with the relevant roles.
+
+        This function will assume that it's running on an EC2 instance with the correct IAM role.
+        See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam
+        -role for details.
+
+        :raises: botocore.exceptions.ClientError if can't describe local instance information.
+        :return: All visible instances from this instance
+        """
+        local_ssm_client = boto3.client("ssm", self.island_aws_instance.region)
+        try:
+            response = local_ssm_client.describe_instance_information()
+            return response[INSTANCE_INFORMATION_LIST_KEY]
+        except botocore.exceptions.ClientError as err:
+            logger.warning("AWS client error while trying to get manage dinstances: {err}")
+            raise err
+
     def run_agent_on_managed_instances(self, instance_ids: Iterable[str]):
         for id_ in instance_ids:
             self._run_agent_on_managed_instance(id_)
@@ -34,59 +57,13 @@ class AWSService:
         pass
 
 
-def filter_instance_data_from_aws_response(response):
+def _filter_instance_info_from_aws_response(raw_managed_instances_info: Sequence[Dict[str, Any]]):
     return [
         {
-            "instance_id": x[INSTANCE_ID_KEY],
-            "name": x[COMPUTER_NAME_KEY],
-            "os": x[PLATFORM_TYPE_KEY].lower(),
-            "ip_address": x[IP_ADDRESS_KEY],
+            "instance_id": managed_instance[INSTANCE_ID_KEY],
+            "name": managed_instance[COMPUTER_NAME_KEY],
+            "os": managed_instance[PLATFORM_TYPE_KEY].lower(),
+            "ip_address": managed_instance[IP_ADDRESS_KEY],
         }
-        for x in response[INSTANCE_INFORMATION_LIST_KEY]
+        for managed_instance in raw_managed_instances_info
     ]
-
-
-aws_instance: Optional[AWSInstance] = None
-
-
-def initialize():
-    global aws_instance
-    aws_instance = AWSInstance()
-
-
-def is_on_aws():
-    return aws_instance.is_instance
-
-
-def get_region():
-    return aws_instance.region
-
-
-def get_account_id():
-    return aws_instance.account_id
-
-
-def get_client(client_type):
-    return boto3.client(client_type, region_name=aws_instance.region)
-
-
-def get_instances():
-    """
-    Get the information for all instances with the relevant roles.
-
-    This function will assume that it's running on an EC2 instance with the correct IAM role.
-    See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#iam
-    -role for details.
-
-    :raises: botocore.exceptions.ClientError if can't describe local instance information.
-    :return: All visible instances from this instance
-    """
-    local_ssm_client = boto3.client("ssm", aws_instance.region)
-    try:
-        response = local_ssm_client.describe_instance_information()
-
-        filtered_instances_data = filter_instance_data_from_aws_response(response)
-        return filtered_instances_data
-    except botocore.exceptions.ClientError as e:
-        logger.warning("AWS client error while trying to get instances: " + e)
-        raise e
