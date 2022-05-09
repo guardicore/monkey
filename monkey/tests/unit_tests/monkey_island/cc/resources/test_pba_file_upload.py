@@ -2,9 +2,9 @@ import io
 from typing import BinaryIO
 
 import pytest
+from tests.common import StubDIContainer
 from tests.utils import raise_
 
-from common import DIContainer
 from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE
 from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
@@ -65,7 +65,7 @@ def file_storage_service():
 
 @pytest.fixture
 def flask_client(build_flask_client, file_storage_service):
-    container = DIContainer()
+    container = StubDIContainer()
     container.register_instance(IFileStorageService, file_storage_service)
 
     with build_flask_client(container) as flask_client:
