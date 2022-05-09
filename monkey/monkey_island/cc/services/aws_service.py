@@ -1,12 +1,10 @@
 import logging
-from functools import wraps
-from threading import Event
-from typing import Callable, Optional
+from typing import Optional
 
 import boto3
 import botocore
 
-from common.aws.aws_instance import AwsInstance
+from common.aws.aws_instance import AWSInstance
 
 INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
 INSTANCE_ID_KEY = "InstanceId"
@@ -29,54 +27,30 @@ def filter_instance_data_from_aws_response(response):
     ]
 
 
-aws_instance: Optional[AwsInstance] = None
-AWS_INFO_FETCH_TIMEOUT = 10.0  # Seconds
-init_done = Event()
+aws_instance: Optional[AWSInstance] = None
 
 
 def initialize():
     global aws_instance
-    aws_instance = AwsInstance()
-    init_done.set()
+    aws_instance = AWSInstance()
 
 
-def wait_init_done(fnc: Callable):
-    @wraps(fnc)
-    def inner():
-        awaited = init_done.wait(AWS_INFO_FETCH_TIMEOUT)
-        if not awaited:
-            logger.error(
-                f"AWS service couldn't initialize in time! "
-                f"Current timeout is {AWS_INFO_FETCH_TIMEOUT}, "
-                f"but AWS info took longer to fetch from metadata server."
-            )
-            return
-        fnc()
-
-    return inner
-
-
-@wait_init_done
 def is_on_aws():
     return aws_instance.is_instance
 
 
-@wait_init_done
 def get_region():
     return aws_instance.region
 
 
-@wait_init_done
 def get_account_id():
     return aws_instance.account_id
 
 
-@wait_init_done
 def get_client(client_type):
     return boto3.client(client_type, region_name=aws_instance.region)
 
 
-@wait_init_done
 def get_instances():
     """
     Get the information for all instances with the relevant roles.
