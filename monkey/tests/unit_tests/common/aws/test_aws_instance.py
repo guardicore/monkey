@@ -26,21 +26,21 @@ def patch_fetch_metadata_default_values(patch_fetch_metadata):
 def test_is_instance__true():
     aws_instance = AWSInstance()
 
-    assert aws_instance.is_instance
+    assert aws_instance.is_instance is True
 
 
 def test_is_instance__false_none(patch_fetch_metadata):
     patch_fetch_metadata(None, "", "")
     aws_instance = AWSInstance()
 
-    assert not aws_instance.is_instance
+    assert aws_instance.is_instance is False
 
 
 def test_is_instance__false_empty_str(patch_fetch_metadata):
     patch_fetch_metadata("", "", "")
     aws_instance = AWSInstance()
 
-    assert not aws_instance.is_instance
+    assert aws_instance.is_instance is False
 
 
 def test_instance_id():
