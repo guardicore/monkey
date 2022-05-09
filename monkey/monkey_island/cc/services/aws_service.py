@@ -28,7 +28,7 @@ class AWSService:
 
     def get_managed_instances(self) -> Sequence[Dict[str, str]]:
         raw_managed_instances_info = self._get_raw_managed_instances()
-        return _filter_instance_info_from_aws_response(raw_managed_instances_info)
+        return _filter_relevant_instance_info(raw_managed_instances_info)
 
     def _get_raw_managed_instances(self) -> Sequence[Dict[str, Any]]:
         """
@@ -57,7 +57,7 @@ class AWSService:
         pass
 
 
-def _filter_instance_info_from_aws_response(raw_managed_instances_info: Sequence[Dict[str, Any]]):
+def _filter_relevant_instance_info(raw_managed_instances_info: Sequence[Dict[str, Any]]):
     return [
         {
             "instance_id": managed_instance[INSTANCE_ID_KEY],
