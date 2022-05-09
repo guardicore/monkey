@@ -1,21 +1,15 @@
 import logging
 import time
 
-from common.cmd.cmd_runner import CmdRunner
-from common.cmd.cmd_status import CmdStatus
-from monkey_island.cc.server_utils.aws_cmd_result import AwsCmdResult
-from monkey_island.cc.services import aws_service
-
 logger = logging.getLogger(__name__)
 
 
-class AwsCmdRunner(CmdRunner):
+class AWSCommandRunner():
     """
     Class for running commands on a remote AWS machine
     """
 
     def __init__(self, is_linux, instance_id, region=None):
-        super(AwsCmdRunner, self).__init__(is_linux)
         self.instance_id = instance_id
         self.region = region
         self.ssm = aws_service.get_client("ssm", region)

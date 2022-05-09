@@ -2,7 +2,7 @@ import logging
 
 from common.cmd.cmd import Cmd
 from common.cmd.cmd_runner import CmdRunner
-from monkey_island.cc.server_utils.aws_cmd_runner import AwsCmdRunner
+from monkey_island.cc.services.aws.aws_command_runner import AWSCommandRunner
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ class RemoteRunAwsService:
 
     @staticmethod
     def _run_aws_cmd_async(instance_id, is_linux, cmd_line):
-        cmd_runner = AwsCmdRunner(is_linux, instance_id)
+        cmd_runner = AWSCommandRunner(is_linux, instance_id)
         return Cmd(cmd_runner, cmd_runner.run_command_async(cmd_line))
 
     @staticmethod
