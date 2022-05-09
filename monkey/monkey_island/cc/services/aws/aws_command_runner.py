@@ -11,6 +11,7 @@ STATUS_CHECK_SLEEP_TIME = 1
 logger = logging.getLogger(__name__)
 
 
+# TODO: Make sure the return type is compatible with what RemoteRun is expecting. Add typehint.
 def start_infection_monkey_agent(
     aws_client: botocore.client.BaseClient, target_instance_id: str, target_os: str, island_ip: str
 ):
@@ -20,6 +21,8 @@ def start_infection_monkey_agent(
     command = _get_run_agent_command(target_os, island_ip)
     command_id = _run_command_async(aws_client, target_instance_id, target_os, command)
     _wait_for_command_to_complete(aws_client, target_instance_id, command_id)
+
+    # TODO: Return result
 
 
 def _get_run_agent_command(target_os: str, island_ip: str):
