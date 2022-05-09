@@ -4,9 +4,9 @@ import socket
 import time
 from typing import Iterable, Mapping, Tuple
 
+from common.utils import Timer
 from infection_monkey.i_puppet import PortScanData, PortStatus
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_port_to_service
-from infection_monkey.utils.timer import Timer
 
 logger = logging.getLogger(__name__)
 

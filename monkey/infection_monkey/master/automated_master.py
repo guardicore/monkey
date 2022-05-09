@@ -3,6 +3,7 @@ import threading
 import time
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
 
+from common.utils import Timer
 from infection_monkey.credential_store import ICredentialsStore
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
@@ -13,7 +14,6 @@ from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
-from infection_monkey.utils.timer import Timer
 
 from . import Exploiter, IPScanner, Propagator
 from .option_parsing import custom_pba_is_enabled
