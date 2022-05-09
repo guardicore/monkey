@@ -24,11 +24,7 @@ class AWSInstance:
         fetch_thread.start()
 
     def _fetch_aws_instance_metadata(self):
-        metadata = fetch_aws_instance_metadata()
-        self._instance_id = metadata[0]
-        self._region = metadata[1]
-        self._account_id = metadata[2]
-
+        (self._instance_id, self._region, self._account_id) = fetch_aws_instance_metadata()
         self._initialization_complete.set()
 
     @property
