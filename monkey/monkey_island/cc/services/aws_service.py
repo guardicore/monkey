@@ -15,6 +15,18 @@ IP_ADDRESS_KEY = "IPAddress"
 logger = logging.getLogger(__name__)
 
 
+class AWSService:
+    def __init__(self, aws_instance: AWSInstance):
+        self._aws_instance = aws_instance
+
+    def island_is_running_on_aws(self) -> bool:
+        return self._aws_instance.is_instance
+
+    @property
+    def island_aws_instance(self) -> AWSInstance:
+        return self._aws_instance
+
+
 def filter_instance_data_from_aws_response(response):
     return [
         {
