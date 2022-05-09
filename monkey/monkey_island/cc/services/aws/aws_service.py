@@ -58,9 +58,9 @@ class AWSService:
         :raises: botocore.exceptions.ClientError if can't describe local instance information.
         :return: All visible instances from this instance
         """
-        local_ssm_client = boto3.client("ssm", self.island_aws_instance.region)
+        ssm_client = boto3.client("ssm", self.island_aws_instance.region)
         try:
-            response = local_ssm_client.describe_instance_information()
+            response = ssm_client.describe_instance_information()
             return response[INSTANCE_INFORMATION_LIST_KEY]
         except botocore.exceptions.ClientError as err:
             logger.warning("AWS client error while trying to get manage dinstances: {err}")
