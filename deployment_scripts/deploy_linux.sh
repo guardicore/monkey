@@ -205,7 +205,7 @@ pushd "$ISLAND_PATH/cc/ui" || handle_error
 npm ci
 
 log_message "Generating front end"
-npm run dist
+npm run dev
 popd || handle_error
 
 # Making dir for binaries
