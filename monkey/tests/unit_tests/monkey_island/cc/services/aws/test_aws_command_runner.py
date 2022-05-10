@@ -5,6 +5,8 @@ import pytest
 from monkey_island.cc.services.aws.aws_command_runner import (
     LINUX_DOCUMENT_NAME,
     WINDOWS_DOCUMENT_NAME,
+    AWSCommandResults,
+    AWSCommandStatus,
     start_infection_monkey_agent,
 )
 
@@ -143,14 +145,14 @@ def successful_mock_client(send_command_response, success_response):
     return aws_client
 
 
-def test_correct_instance_id(successful_mock_client, send_command_response, success_response):
+def test_correct_instance_id(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
     assert successful_mock_client.send_command.call_args.kwargs["InstanceIds"] == [INSTANCE_ID]
 
 
-def test_linux_doc_name(successful_mock_client, send_command_response, success_response):
+def test_linux_doc_name(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
@@ -159,7 +161,7 @@ def test_linux_doc_name(successful_mock_client, send_command_response, success_r
     )
 
 
-def test_windows_doc_name(successful_mock_client, send_command_response, success_response):
+def test_windows_doc_name(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "windows", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
@@ -169,7 +171,7 @@ def test_windows_doc_name(successful_mock_client, send_command_response, success
     )
 
 
-def test_linux_command(successful_mock_client, send_command_response, success_response):
+def test_linux_command(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
@@ -178,7 +180,7 @@ def test_linux_command(successful_mock_client, send_command_response, success_re
     )
 
 
-def test_windows_command(successful_mock_client, send_command_response, success_response):
+def test_windows_command(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "windows", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
@@ -188,27 +190,24 @@ def test_windows_command(successful_mock_client, send_command_response, success_
     )
 
 
-def test_in_progress_no_timeout(send_command_response, in_progress_response, success_response):
+def test_multiple_status_queries(send_command_response, in_progress_response, success_response):
     aws_client = MagicMock()
     aws_client.send_command = MagicMock(return_value=send_command_response)
     aws_client.get_command_invocation = MagicMock(
         side_effect=[in_progress_response, in_progress_response, success_response]
     )
 
-    # If this test fails, an exception will be raised
-    start_infection_monkey_agent(aws_client, INSTANCE_ID, "windows", ISLAND_IP)
+    command_results = start_infection_monkey_agent(aws_client, INSTANCE_ID, "windows", ISLAND_IP)
+    assert command_results.status == AWSCommandStatus.SUCCESS
 
 
-# TODO: Address this test case
-"""
 def test_in_progress_timeout(send_command_response, in_progress_response):
     aws_client = MagicMock()
     aws_client.send_command = MagicMock(return_value=send_command_response)
     aws_client.get_command_invocation = MagicMock(return_value=in_progress_response)
 
-    with pytest.raises(Exception):
-        start_infection_monkey_agent(aws_client, INSTANCE_ID, "windows", ISLAND_IP)
-"""
+    command_results = start_infection_monkey_agent(aws_client, INSTANCE_ID, "windows", ISLAND_IP)
+    assert command_results.status == AWSCommandStatus.IN_PROGRESS
 
 
 def test_failed_command(send_command_response, error_response):
@@ -216,5 +215,18 @@ def test_failed_command(send_command_response, error_response):
     aws_client.send_command = MagicMock(return_value=send_command_response)
     aws_client.get_command_invocation = MagicMock(return_value=error_response)
 
-    with pytest.raises(Exception):
-        start_infection_monkey_agent(aws_client, INSTANCE_ID, "windows", ISLAND_IP)
+    command_results = start_infection_monkey_agent(aws_client, INSTANCE_ID, "windows", ISLAND_IP)
+    assert command_results.status == AWSCommandStatus.ERROR
+
+
+@pytest.mark.parametrize(
+    "status, success",
+    [
+        (AWSCommandStatus.SUCCESS, True),
+        (AWSCommandStatus.IN_PROGRESS, False),
+        (AWSCommandStatus.ERROR, False),
+    ],
+)
+def test_command_resuls_status(status, success):
+    results = AWSCommandResults(0, "", "", status)
+    assert results.success == success

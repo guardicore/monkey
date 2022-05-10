@@ -1,5 +1,7 @@
 import logging
 import time
+from dataclasses import dataclass
+from enum import Enum, auto
 
 import botocore
 
@@ -13,18 +15,34 @@ WINDOWS_DOCUMENT_NAME = "AWS-RunPowerShellScript"
 logger = logging.getLogger(__name__)
 
 
-# TODO: Make sure the return type is compatible with what RemoteRun is expecting. Add typehint.
+class AWSCommandStatus(Enum):
+    SUCCESS = auto()
+    IN_PROGRESS = auto()
+    ERROR = auto()
+
+
+@dataclass(frozen=True)
+class AWSCommandResults:
+    response_code: int
+    stdout: str
+    stderr: str
+    status: AWSCommandStatus
+
+    @property
+    def success(self):
+        return self.status == AWSCommandStatus.SUCCESS
+
+
 def start_infection_monkey_agent(
     aws_client: botocore.client.BaseClient, target_instance_id: str, target_os: str, island_ip: str
-):
+) -> AWSCommandResults:
     """
     Run a command on a remote AWS instance
     """
     command = _get_run_agent_command(target_os, island_ip)
     command_id = _run_command_async(aws_client, target_instance_id, target_os, command)
-    _wait_for_command_to_complete(aws_client, target_instance_id, command_id)
 
-    # TODO: Return result
+    return _wait_for_command_to_complete(aws_client, target_instance_id, command_id)
 
 
 def _get_run_agent_command(target_os: str, island_ip: str):
@@ -85,44 +103,44 @@ def _run_command_async(
     return command_id
 
 
-class AWSCommandError(Exception):
-    pass
-
-
 def _wait_for_command_to_complete(
     aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str
-):
+) -> AWSCommandResults:
     timer = Timer()
     timer.set(REMOTE_COMMAND_TIMEOUT)
 
     while not timer.is_expired():
         time.sleep(STATUS_CHECK_SLEEP_TIME)
 
-        command_result = aws_client.get_command_invocation(
-            CommandId=command_id, InstanceId=target_instance_id
-        )
-        command_status = command_result["Status"]
+        command_results = _fetch_command_results(aws_client, target_instance_id, command_id)
+        logger.debug(f"Command {command_id} status: {command_results.status.name}")
 
-        logger.debug(f"Command {command_id} status: {command_status}")
+        if command_results.status != AWSCommandStatus.IN_PROGRESS:
+            return command_results
 
-        if command_status == "Success":
-            break
-
-        if command_status != "InProgress":
-            # TODO: Create an exception for this occasion and raise it with useful information.
-            raise AWSCommandError(
-                f"AWS command failed." f" Command invocation contents: {command_result}"
-            )
+    return command_results
 
 
 def _fetch_command_results(
     aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str
-):
-    command_results = aws_client.ssm.get_command_invocation(
+) -> AWSCommandResults:
+    command_results = aws_client.get_command_invocation(
         CommandId=command_id, InstanceId=target_instance_id
     )
-    # TODO: put these into a dataclass and return
-    # self.is_successful(command_info, True)
-    # command_results["ResponseCode"]
-    # command_results["StandardOutputContent"]
-    # command_results["StandardErrorContent"]
+    command_status = command_results["Status"]
+    logger.debug(f"Command {command_id} status: {command_status}")
+
+    aws_command_result_status = None
+    if command_status == "Success":
+        aws_command_result_status = AWSCommandStatus.SUCCESS
+    elif command_status == "InProgress":
+        aws_command_result_status = AWSCommandStatus.IN_PROGRESS
+    else:
+        aws_command_result_status = AWSCommandStatus.ERROR
+
+    return AWSCommandResults(
+        command_results["ResponseCode"],
+        command_results["StandardOutputContent"],
+        command_results["StandardErrorContent"],
+        aws_command_result_status,
+    )

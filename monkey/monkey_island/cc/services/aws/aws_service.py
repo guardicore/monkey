@@ -6,7 +6,7 @@ import botocore
 
 from common.aws.aws_instance import AWSInstance
 
-from .aws_command_runner import start_infection_monkey_agent
+from .aws_command_runner import AWSCommandResults, start_infection_monkey_agent
 
 INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
 INSTANCE_ID_KEY = "InstanceId"
@@ -68,15 +68,14 @@ class AWSService:
             logger.warning("AWS client error while trying to get manage dinstances: {err}")
             raise err
 
-    # TODO: Determine the return type
     def run_agents_on_managed_instances(
         self, instances: Iterable[Mapping[str, str]], island_ip: str
-    ):
+    ) -> Sequence[AWSCommandResults]:
         """
         Run an agent on one or more managed AWS instances.
         :param instances: An iterable of instances that the agent will be run on
         :param island_ip: The IP address of the Island to pass to the new agents
-        :return: Mapping with 'instance_id' as a key the agent's status as a value
+        :return: A sequence of AWSCommandResults
         """
 
         results = []
@@ -88,7 +87,9 @@ class AWSService:
 
         return results
 
-    def _run_agent_on_managed_instance(self, instance_id: str, os: str, island_ip: str):
+    def _run_agent_on_managed_instance(
+        self, instance_id: str, os: str, island_ip: str
+    ) -> AWSCommandResults:
         ssm_client = boto3.client("ssm", self.island_aws_instance.region)
         return start_infection_monkey_agent(ssm_client, instance_id, os, island_ip)
 

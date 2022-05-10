@@ -167,3 +167,5 @@ _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py
 _.instance_name  # unused attribute (monkey/common/cloud/azure/azure_instance.py:64)
 GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)
 architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_repository.py:25)
+
+response_code  # unused variable (monkey/monkey_island/cc/services/aws/aws_command_runner.py:26)
