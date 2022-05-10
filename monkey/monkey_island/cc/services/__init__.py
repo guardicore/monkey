@@ -3,3 +3,5 @@ from .directory_file_storage_service import DirectoryFileStorageService
 
 from .authentication.authentication_service import AuthenticationService
 from .authentication.json_file_user_datastore import JsonFileUserDatastore
+
+from .aws_service import AWSService
