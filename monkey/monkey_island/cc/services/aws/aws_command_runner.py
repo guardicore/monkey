@@ -69,13 +69,13 @@ def _run_command_async(
     doc_name = "AWS-RunShellScript" if target_os == "linux" else "AWS-RunPowerShellScript"
 
     logger.debug(f'Running command on {target_instance_id} -- {doc_name}: "{command}"')
-    command_response = aws_client.ssm.send_command(
+    command_response = aws_client.send_command(
         DocumentName=doc_name,
         Parameters={"commands": [command]},
         InstanceIds=[target_instance_id],
     )
 
-    command_id = command_response["CommandId"]
+    command_id = command_response["Command"]["CommandId"]
     logger.debug(
         f"Started command on AWS instance {target_instance_id} with command ID {command_id}"
     )
@@ -93,7 +93,7 @@ def _wait_for_command_to_complete(
         sleep_time = min((timer.time_remaining - STATUS_CHECK_SLEEP_TIME), STATUS_CHECK_SLEEP_TIME)
         time.sleep(sleep_time)
 
-        command_status = aws_client.ssm.get_command_invocation(
+        command_status = aws_client.get_command_invocation(
             CommandId=command_id, InstanceId=target_instance_id
         )["Status"]
         logger.debug(f"Command {command_id} status: {command_status}")
