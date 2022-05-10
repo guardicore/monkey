@@ -85,6 +85,10 @@ def _run_command_async(
     return command_id
 
 
+class AWSCommandError(Exception):
+    pass
+
+
 def _wait_for_command_to_complete(
     aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str
 ):
@@ -94,9 +98,11 @@ def _wait_for_command_to_complete(
     while not timer.is_expired():
         time.sleep(STATUS_CHECK_SLEEP_TIME)
 
-        command_status = aws_client.get_command_invocation(
+        command_result = aws_client.get_command_invocation(
             CommandId=command_id, InstanceId=target_instance_id
-        )["Status"]
+        )
+        command_status = command_result["Status"]
+
         logger.debug(f"Command {command_id} status: {command_status}")
 
         if command_status == "Success":
@@ -104,4 +110,19 @@ def _wait_for_command_to_complete(
 
         if command_status != "InProgress":
             # TODO: Create an exception for this occasion and raise it with useful information.
-            raise Exception("COMMAND FAILED")
+            raise AWSCommandError(
+                f"AWS command failed." f" Command invocation contents: {command_result}"
+            )
+
+
+def _fetch_command_results(
+    aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str
+):
+    command_results = aws_client.ssm.get_command_invocation(
+        CommandId=command_id, InstanceId=target_instance_id
+    )
+    # TODO: put these into a dataclass and return
+    # self.is_successful(command_info, True)
+    # command_results["ResponseCode"]
+    # command_results["StandardOutputContent"]
+    # command_results["StandardErrorContent"]
