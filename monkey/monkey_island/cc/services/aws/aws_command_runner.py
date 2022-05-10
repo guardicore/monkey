@@ -7,6 +7,8 @@ from common.utils import Timer
 
 REMOTE_COMMAND_TIMEOUT = 5
 STATUS_CHECK_SLEEP_TIME = 1
+LINUX_DOCUMENT_NAME = "AWS-RunShellScript"
+WINDOWS_DOCUMENT_NAME = "AWS-RunPowerShellScript"
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +68,7 @@ def _get_run_monkey_cmd_windows_line(island_ip):
 def _run_command_async(
     aws_client: botocore.client.BaseClient, target_instance_id: str, target_os: str, command: str
 ):
-    doc_name = "AWS-RunShellScript" if target_os == "linux" else "AWS-RunPowerShellScript"
+    doc_name = LINUX_DOCUMENT_NAME if target_os == "linux" else WINDOWS_DOCUMENT_NAME
 
     logger.debug(f'Running command on {target_instance_id} -- {doc_name}: "{command}"')
     command_response = aws_client.send_command(
