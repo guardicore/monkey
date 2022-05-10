@@ -92,8 +92,7 @@ def _wait_for_command_to_complete(
     timer.set(REMOTE_COMMAND_TIMEOUT)
 
     while not timer.is_expired():
-        sleep_time = min((timer.time_remaining - STATUS_CHECK_SLEEP_TIME), STATUS_CHECK_SLEEP_TIME)
-        time.sleep(sleep_time)
+        time.sleep(STATUS_CHECK_SLEEP_TIME)
 
         command_status = aws_client.get_command_invocation(
             CommandId=command_id, InstanceId=target_instance_id
