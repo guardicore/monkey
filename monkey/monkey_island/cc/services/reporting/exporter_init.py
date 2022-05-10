@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def populate_exporter_list():
     manager = ReportExporterManager()
-    try_add_aws_exporter_to_manager(manager)
+    # try_add_aws_exporter_to_manager(manager)
 
     if len(manager.get_exporters_list()) != 0:
         logger.debug(
