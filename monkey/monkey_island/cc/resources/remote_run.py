@@ -1,4 +1,5 @@
 import json
+from typing import Sequence
 
 import flask_restful
 from botocore.exceptions import ClientError, NoCredentialsError
@@ -6,6 +7,7 @@ from flask import jsonify, make_response, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.services import AWSService
+from monkey_island.cc.services.aws import AWSCommandResults
 
 CLIENT_ERROR_FORMAT = (
     "ClientError, error message: '{}'. Probably, the IAM role that has been associated with the "
@@ -21,7 +23,7 @@ class RemoteRun(flask_restful.Resource):
     def __init__(self, aws_service: AWSService):
         self._aws_service = aws_service
 
-    def run_aws_monkeys(self, request_body):
+    def run_aws_monkeys(self, request_body) -> Sequence[AWSCommandResults]:
         instances = request_body.get("instances")
         island_ip = request_body.get("island_ip")
 
