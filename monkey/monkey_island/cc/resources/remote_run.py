@@ -51,27 +51,26 @@ class RemoteRun(flask_restful.Resource):
     @jwt_required
     def post(self):
         body = json.loads(request.data)
-        resp = {}
         if body.get("type") == "aws":
-            result = self.run_aws_monkeys(body)
-            result = self._get_encodable_results(result)
-            resp["result"] = result
-            return jsonify(resp)
+            results = self.run_aws_monkeys(body)
+            return RemoteRun._encode_results(results)
 
         # default action
         return make_response({"error": "Invalid action"}, 500)
 
     @staticmethod
-    def _get_encodable_results(results: Sequence[AWSCommandResults]) -> str:
-        results_copy = []
-        for result in results:
-            results_copy.append(
-                AWSCommandResults(
-                    result.instance_id,
-                    result.response_code,
-                    result.stdout,
-                    result.stderr,
-                    result.status.name.lower(),
-                )
-            )
-        return results_copy
+    def _encode_results(results: Sequence[AWSCommandResults]):
+        result = list(map(RemoteRun._aws_command_results_to_encodable_dict, results))
+        response = {"result": result}
+
+        return jsonify(response)
+
+    @staticmethod
+    def _aws_command_results_to_encodable_dict(aws_command_results: AWSCommandResults):
+        return {
+            "instance_id": aws_command_results.instance_id,
+            "response_code": aws_command_results.response_code,
+            "stdout": aws_command_results.stdout,
+            "stderr": aws_command_results.stderr,
+            "status": aws_command_results.status.name.lower(),
+        }
