@@ -84,15 +84,13 @@ class AWSService:
         results_queue = Queue()
         command_threads = []
         for i in instances:
-            command_threads.append(
-                Thread(
-                    target=self._run_agent_on_managed_instance,
-                    args=(results_queue, i["instance_id"], i["os"], island_ip),
-                    daemon=True,
-                )
+            t = Thread(
+                target=self._run_agent_on_managed_instance,
+                args=(results_queue, i["instance_id"], i["os"], island_ip),
+                daemon=True,
             )
-
-        [thread.start() for thread in command_threads]
+            t.start()
+            command_threads.append(t)
 
         for thread in command_threads:
             thread.join()
