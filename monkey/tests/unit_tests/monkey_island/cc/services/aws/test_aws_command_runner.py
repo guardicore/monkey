@@ -1,3 +1,4 @@
+from itertools import chain, repeat
 from unittest.mock import MagicMock
 
 import pytest
@@ -189,7 +190,7 @@ def test_multiple_status_queries(send_command_response, in_progress_response, su
     aws_client = MagicMock()
     aws_client.send_command = MagicMock(return_value=send_command_response)
     aws_client.get_command_invocation = MagicMock(
-        side_effect=[in_progress_response, in_progress_response, success_response]
+        side_effect=chain([in_progress_response, in_progress_response], repeat(success_response))
     )
 
     command_results = start_infection_monkey_agent(aws_client, INSTANCE_ID, "windows", ISLAND_IP)
