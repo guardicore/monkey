@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Iterable, Set
 
 from common.utils.file_utils import get_all_regular_files_in_directory
-from infection_monkey.utils.dir_utils import (
+from infection_monkey.utils.file_utils import (
     file_extension_filter,
     filter_files,
     is_not_shortcut_filter,
