@@ -4,11 +4,11 @@ import struct
 import time
 from threading import Event, Thread
 
+from common.utils import Timer
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, local_ips
 from infection_monkey.network.tools import check_tcp_port, get_interface_to_target
 from infection_monkey.transport.base import get_last_serve_time
-from infection_monkey.utils.timer import Timer
 
 logger = logging.getLogger(__name__)
 

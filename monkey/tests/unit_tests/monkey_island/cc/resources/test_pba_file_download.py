@@ -2,8 +2,8 @@ import io
 from typing import BinaryIO
 
 import pytest
+from tests.common import StubDIContainer
 
-from common import DIContainer
 from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 FILE_NAME = "test_file"
@@ -31,8 +31,8 @@ class MockFileStorageService(IFileStorageService):
 
 
 @pytest.fixture
-def flask_client(build_flask_client, tmp_path):
-    container = DIContainer()
+def flask_client(build_flask_client):
+    container = StubDIContainer()
     container.register(IFileStorageService, MockFileStorageService)
 
     with build_flask_client(container) as flask_client:

@@ -1,11 +1,17 @@
 import logging
+from queue import Queue
+from threading import Thread
 from typing import Any, Iterable, Mapping, Sequence
 
 import boto3
 import botocore
 
 from common.aws.aws_instance import AWSInstance
+from common.utils.code_utils import queue_to_list
 
+from .aws_command_runner import AWSCommandResults, start_infection_monkey_agent
+
+DEFAULT_REMOTE_COMMAND_TIMEOUT = 5
 INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
 INSTANCE_ID_KEY = "InstanceId"
 COMPUTER_NAME_KEY = "ComputerName"
@@ -58,20 +64,52 @@ class AWSService:
         :raises: botocore.exceptions.ClientError if can't describe local instance information.
         :return: All visible instances from this instance
         """
-        local_ssm_client = boto3.client("ssm", self.island_aws_instance.region)
+        ssm_client = boto3.client("ssm", self.island_aws_instance.region)
         try:
-            response = local_ssm_client.describe_instance_information()
+            response = ssm_client.describe_instance_information()
             return response[INSTANCE_INFORMATION_LIST_KEY]
         except botocore.exceptions.ClientError as err:
             logger.warning("AWS client error while trying to get manage dinstances: {err}")
             raise err
 
-    def run_agent_on_managed_instances(self, instance_ids: Iterable[str]):
-        for id_ in instance_ids:
-            self._run_agent_on_managed_instance(id_)
+    def run_agents_on_managed_instances(
+        self,
+        instances: Iterable[Mapping[str, str]],
+        island_ip: str,
+        timeout: float = DEFAULT_REMOTE_COMMAND_TIMEOUT,
+    ) -> Sequence[AWSCommandResults]:
+        """
+        Run an agent on one or more managed AWS instances.
+        :param instances: An iterable of instances that the agent will be run on
+        :param island_ip: The IP address of the Island to pass to the new agents
+        :param timeout: The maximum number of seconds to wait for the agents to start
+        :return: A sequence of AWSCommandResults
+        """
 
-    def _run_agent_on_managed_instance(self, instance_id: str):
-        pass
+        results_queue = Queue()
+        command_threads = []
+        for i in instances:
+            t = Thread(
+                target=self._run_agent_on_managed_instance,
+                args=(results_queue, i["instance_id"], i["os"], island_ip, timeout),
+                daemon=True,
+            )
+            t.start()
+            command_threads.append(t)
+
+        for thread in command_threads:
+            thread.join()
+
+        return queue_to_list(results_queue)
+
+    def _run_agent_on_managed_instance(
+        self, results_queue: Queue, instance_id: str, os: str, island_ip: str, timeout: float
+    ):
+        ssm_client = boto3.client("ssm", self.island_aws_instance.region)
+        command_results = start_infection_monkey_agent(
+            ssm_client, instance_id, os, island_ip, timeout
+        )
+        results_queue.put(command_results)
 
 
 def _filter_relevant_instance_info(raw_managed_instances_info: Sequence[Mapping[str, Any]]):

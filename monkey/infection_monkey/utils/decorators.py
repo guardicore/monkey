@@ -1,7 +1,7 @@
 import threading
 from functools import wraps
 
-from .timer import Timer
+from common.utils import Timer
 
 
 def request_cache(ttl: float):

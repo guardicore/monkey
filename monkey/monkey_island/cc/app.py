@@ -9,6 +9,7 @@ from werkzeug.exceptions import NotFound
 
 from common import DIContainer
 from monkey_island.cc.database import database, mongo
+from monkey_island.cc.resources import RemoteRun
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
@@ -38,7 +39,6 @@ from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
 from monkey_island.cc.resources.propagation_credentials import PropagationCredentials
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
-from monkey_island.cc.resources.remote_run import RemoteRun
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.telemetry import Telemetry
