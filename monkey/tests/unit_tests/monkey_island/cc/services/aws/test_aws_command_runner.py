@@ -228,5 +228,5 @@ def test_failed_command(send_command_response, error_response):
     ],
 )
 def test_command_resuls_status(status, success):
-    results = AWSCommandResults(0, "", "", status)
+    results = AWSCommandResults(INSTANCE_ID, 0, "", "", status)
     assert results.success == success

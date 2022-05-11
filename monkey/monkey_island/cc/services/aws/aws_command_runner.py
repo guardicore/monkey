@@ -23,6 +23,7 @@ class AWSCommandStatus(Enum):
 
 @dataclass(frozen=True)
 class AWSCommandResults:
+    instance_id: str
     response_code: int
     stdout: str
     stderr: str
@@ -137,6 +138,7 @@ def _fetch_command_results(
         aws_command_result_status = AWSCommandStatus.ERROR
 
     return AWSCommandResults(
+        target_instance_id,
         command_results["ResponseCode"],
         command_results["StandardOutputContent"],
         command_results["StandardErrorContent"],

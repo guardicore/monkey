@@ -67,7 +67,11 @@ class RemoteRun(flask_restful.Resource):
         for result in results:
             results_copy.append(
                 AWSCommandResults(
-                    result.response_code, result.stdout, result.stderr, result.status.name.lower()
+                    result.instance_id,
+                    result.response_code,
+                    result.stdout,
+                    result.stderr,
+                    result.status.name.lower(),
                 )
             )
         return results_copy
