@@ -497,7 +497,7 @@ class ReportService:
             "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
         }
         save_report(report)
-        aws_exporter.handle_report(report, ReportService._aws_service.island_aws_instance())
+        aws_exporter.handle_report(report, ReportService._aws_service.island_aws_instance)
         return report
 
     @staticmethod
