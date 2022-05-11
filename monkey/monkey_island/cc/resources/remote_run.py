@@ -23,12 +23,6 @@ class RemoteRun(flask_restful.Resource):
     def __init__(self, aws_service: AWSService):
         self._aws_service = aws_service
 
-    def run_aws_monkeys(self, request_body) -> Sequence[AWSCommandResults]:
-        instances = request_body.get("instances")
-        island_ip = request_body.get("island_ip")
-
-        return self._aws_service.run_agents_on_managed_instances(instances, island_ip)
-
     @jwt_required
     def get(self):
         action = request.args.get("action")
@@ -57,6 +51,12 @@ class RemoteRun(flask_restful.Resource):
 
         # default action
         return make_response({"error": "Invalid action"}, 500)
+
+    def run_aws_monkeys(self, request_body) -> Sequence[AWSCommandResults]:
+        instances = request_body.get("instances")
+        island_ip = request_body.get("island_ip")
+
+        return self._aws_service.run_agents_on_managed_instances(instances, island_ip)
 
     @staticmethod
     def _encode_results(results: Sequence[AWSCommandResults]):
