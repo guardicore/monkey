@@ -31,7 +31,7 @@ class MockFileStorageService(IFileStorageService):
 
 
 @pytest.fixture
-def flask_client(build_flask_client, tmp_path):
+def flask_client(build_flask_client):
     container = StubDIContainer()
     container.register(IFileStorageService, MockFileStorageService)
 
