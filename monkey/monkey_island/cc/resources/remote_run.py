@@ -54,8 +54,20 @@ class RemoteRun(flask_restful.Resource):
         resp = {}
         if body.get("type") == "aws":
             result = self.run_aws_monkeys(body)
+            result = self._get_encodable_results(result)
             resp["result"] = result
             return jsonify(resp)
 
         # default action
         return make_response({"error": "Invalid action"}, 500)
+
+    @staticmethod
+    def _get_encodable_results(results: Sequence[AWSCommandResults]) -> str:
+        results_copy = []
+        for result in results:
+            results_copy.append(
+                AWSCommandResults(
+                    result.response_code, result.stdout, result.stderr, result.status.name.lower()
+                )
+            )
+        return results_copy
