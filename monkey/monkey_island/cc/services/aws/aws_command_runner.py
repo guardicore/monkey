@@ -42,7 +42,8 @@ def start_infection_monkey_agent(
     command = _get_run_agent_command(target_os, island_ip)
     command_id = _run_command_async(aws_client, target_instance_id, target_os, command)
 
-    return _wait_for_command_to_complete(aws_client, target_instance_id, command_id)
+    _wait_for_command_to_complete(aws_client, target_instance_id, command_id)
+    return _fetch_command_results(aws_client, target_instance_id, command_id)
 
 
 def _get_run_agent_command(target_os: str, island_ip: str):
@@ -105,7 +106,7 @@ def _run_command_async(
 
 def _wait_for_command_to_complete(
     aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str
-) -> AWSCommandResults:
+):
     timer = Timer()
     timer.set(REMOTE_COMMAND_TIMEOUT)
 
@@ -116,9 +117,7 @@ def _wait_for_command_to_complete(
         logger.debug(f"Command {command_id} status: {command_results.status.name}")
 
         if command_results.status != AWSCommandStatus.IN_PROGRESS:
-            return command_results
-
-    return command_results
+            return
 
 
 def _fetch_command_results(
@@ -130,7 +129,6 @@ def _fetch_command_results(
     command_status = command_results["Status"]
     logger.debug(f"Command {command_id} status: {command_status}")
 
-    aws_command_result_status = None
     if command_status == "Success":
         aws_command_result_status = AWSCommandStatus.SUCCESS
     elif command_status == "InProgress":
