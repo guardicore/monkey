@@ -1,3 +1,5 @@
+from pathlib import WindowsPath
+
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 
 if is_windows_os():
@@ -12,16 +14,16 @@ else:
     import stat
 
 
-def _get_acl_and_sid_from_path(path: str):
+def _get_acl_and_sid_from_path(path: WindowsPath):
     sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
     security_descriptor = win32security.GetNamedSecurityInfo(
-        path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
+        str(path), win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
     )
     acl = security_descriptor.GetSecurityDescriptorDacl()
     return acl, sid
 
 
-def assert_windows_permissions(path: str):
+def assert_windows_permissions(path: WindowsPath):
     acl, user_sid = _get_acl_and_sid_from_path(path)
 
     assert acl.GetAceCount() == 1
