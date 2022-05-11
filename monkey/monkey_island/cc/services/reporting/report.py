@@ -26,7 +26,6 @@ from monkey_island.cc.services.reporting.exploitations.monkey_exploitation impor
     get_monkey_exploited,
 )
 from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
     safe_generate_regular_report,
 )
@@ -36,6 +35,8 @@ from monkey_island.cc.services.reporting.stolen_credentials import (
 )
 from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
 
+from .. import AWSService
+from . import aws_exporter
 from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
 from .issue_processing.exploit_processing.processors.cred_exploit import CredentialType
 from .issue_processing.exploit_processing.processors.exploit import ExploiterReportInfo
@@ -44,10 +45,17 @@ logger = logging.getLogger(__name__)
 
 
 class ReportService:
+
+    _aws_service = None
+
     class DerivedIssueEnum:
         WEAK_PASSWORD = "weak_password"
         STOLEN_CREDS = "stolen_creds"
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
+
+    @classmethod
+    def initialize(cls, aws_service: AWSService):
+        cls._aws_service = aws_service
 
     @staticmethod
     def get_first_monkey_time():
@@ -488,8 +496,8 @@ class ReportService:
             "recommendations": {"issues": issues, "domain_issues": domain_issues},
             "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
         }
-        ReportExporterManager().export(report)
         save_report(report)
+        aws_exporter.handle_report(report, ReportService._aws_service.island_aws_instance())
         return report
 
     @staticmethod

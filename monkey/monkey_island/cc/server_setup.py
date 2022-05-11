@@ -3,7 +3,6 @@ import json
 import logging
 import sys
 from pathlib import Path
-from threading import Thread
 
 import gevent.hub
 from gevent.pywsgi import WSGIServer
@@ -29,7 +28,6 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
 )
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
-from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
@@ -132,8 +130,6 @@ def _configure_gevent_exception_handling(data_dir):
 def _start_island_server(
     should_setup_only: bool, config_options: IslandConfigOptions, container: DIContainer
 ):
-    # AWS exporter takes a long time to load
-    Thread(target=populate_exporter_list, name="Report exporter list", daemon=True).start()
     app = init_app(mongo_setup.MONGO_URL, container)
 
     if should_setup_only:
