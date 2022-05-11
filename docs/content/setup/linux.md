@@ -46,6 +46,20 @@ do, see the [FAQ]({{< ref
 >}}) for more information.
 {{% /notice %}}
 
+## Running the Infection Monkey as a service on boot
+
+The Infection Monkey can be installed as a service and run on boot by running the AppImage package
+with the following parameters. This requires root permissions, so run `sudo -v` and enter your
+password before running the script, if required.
+```bash
+./InfectionMonkey-v1.13.0.AppImage service --install --user <USERNAME>
+```
+
+To uninstall it, run:
+```bash
+./InfectionMonkey-v1.13.0.AppImage service --uninstall
+```
+
 ## Configuring the server
 
 You can configure the server by creating
