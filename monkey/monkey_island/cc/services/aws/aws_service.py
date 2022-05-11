@@ -92,6 +92,8 @@ class AWSService:
                 )
             )
 
+        [thread.start() for thread in command_threads]
+
         for thread in command_threads:
             thread.join()
 
