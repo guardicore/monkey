@@ -149,45 +149,40 @@ def test_correct_instance_id(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
-    assert successful_mock_client.send_command.call_args.kwargs["InstanceIds"] == [INSTANCE_ID]
+    call_args_kwargs = successful_mock_client.send_command.call_args[1]
+    assert call_args_kwargs["InstanceIds"] == [INSTANCE_ID]
 
 
 def test_linux_doc_name(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
-    assert (
-        successful_mock_client.send_command.call_args.kwargs["DocumentName"] == LINUX_DOCUMENT_NAME
-    )
+    call_args_kwargs = successful_mock_client.send_command.call_args[1]
+    assert call_args_kwargs["DocumentName"] == LINUX_DOCUMENT_NAME
 
 
 def test_windows_doc_name(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "windows", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
-    assert (
-        successful_mock_client.send_command.call_args.kwargs["DocumentName"]
-        == WINDOWS_DOCUMENT_NAME
-    )
+    call_args_kwargs = successful_mock_client.send_command.call_args[1]
+    assert call_args_kwargs["DocumentName"] == WINDOWS_DOCUMENT_NAME
 
 
 def test_linux_command(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "linux", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
-    assert (
-        "wget" in successful_mock_client.send_command.call_args.kwargs["Parameters"]["commands"][0]
-    )
+    call_args_kwargs = successful_mock_client.send_command.call_args[1]
+    assert "wget" in call_args_kwargs["Parameters"]["commands"][0]
 
 
 def test_windows_command(successful_mock_client):
     start_infection_monkey_agent(successful_mock_client, INSTANCE_ID, "windows", ISLAND_IP)
 
     successful_mock_client.send_command.assert_called_once()
-    assert (
-        "DownloadFile"
-        in successful_mock_client.send_command.call_args.kwargs["Parameters"]["commands"][0]
-    )
+    call_args_kwargs = successful_mock_client.send_command.call_args[1]
+    assert "DownloadFile" in call_args_kwargs["Parameters"]["commands"][0]
 
 
 def test_multiple_status_queries(send_command_response, in_progress_response, success_response):
