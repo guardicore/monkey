@@ -7,7 +7,6 @@ import botocore
 
 from common.utils import Timer
 
-REMOTE_COMMAND_TIMEOUT = 5
 STATUS_CHECK_SLEEP_TIME = 1
 LINUX_DOCUMENT_NAME = "AWS-RunShellScript"
 WINDOWS_DOCUMENT_NAME = "AWS-RunPowerShellScript"
@@ -35,7 +34,11 @@ class AWSCommandResults:
 
 
 def start_infection_monkey_agent(
-    aws_client: botocore.client.BaseClient, target_instance_id: str, target_os: str, island_ip: str
+    aws_client: botocore.client.BaseClient,
+    target_instance_id: str,
+    target_os: str,
+    island_ip: str,
+    timeout: float,
 ) -> AWSCommandResults:
     """
     Run a command on a remote AWS instance
@@ -43,7 +46,7 @@ def start_infection_monkey_agent(
     command = _get_run_agent_command(target_os, island_ip)
     command_id = _run_command_async(aws_client, target_instance_id, target_os, command)
 
-    _wait_for_command_to_complete(aws_client, target_instance_id, command_id)
+    _wait_for_command_to_complete(aws_client, target_instance_id, command_id, timeout)
     return _fetch_command_results(aws_client, target_instance_id, command_id)
 
 
@@ -106,10 +109,10 @@ def _run_command_async(
 
 
 def _wait_for_command_to_complete(
-    aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str
+    aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str, timeout: float
 ):
     timer = Timer()
-    timer.set(REMOTE_COMMAND_TIMEOUT)
+    timer.set(timeout)
 
     while not timer.is_expired():
         time.sleep(STATUS_CHECK_SLEEP_TIME)

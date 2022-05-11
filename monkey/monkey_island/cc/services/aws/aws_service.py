@@ -11,6 +11,7 @@ from common.utils.code_utils import queue_to_list
 
 from .aws_command_runner import AWSCommandResults, start_infection_monkey_agent
 
+DEFAULT_REMOTE_COMMAND_TIMEOUT = 5
 INSTANCE_INFORMATION_LIST_KEY = "InstanceInformationList"
 INSTANCE_ID_KEY = "InstanceId"
 COMPUTER_NAME_KEY = "ComputerName"
@@ -72,12 +73,16 @@ class AWSService:
             raise err
 
     def run_agents_on_managed_instances(
-        self, instances: Iterable[Mapping[str, str]], island_ip: str
+        self,
+        instances: Iterable[Mapping[str, str]],
+        island_ip: str,
+        timeout: float = DEFAULT_REMOTE_COMMAND_TIMEOUT,
     ) -> Sequence[AWSCommandResults]:
         """
         Run an agent on one or more managed AWS instances.
         :param instances: An iterable of instances that the agent will be run on
         :param island_ip: The IP address of the Island to pass to the new agents
+        :param timeout: The maximum number of seconds to wait for the agents to start
         :return: A sequence of AWSCommandResults
         """
 
@@ -86,7 +91,7 @@ class AWSService:
         for i in instances:
             t = Thread(
                 target=self._run_agent_on_managed_instance,
-                args=(results_queue, i["instance_id"], i["os"], island_ip),
+                args=(results_queue, i["instance_id"], i["os"], island_ip, timeout),
                 daemon=True,
             )
             t.start()
@@ -98,10 +103,12 @@ class AWSService:
         return queue_to_list(results_queue)
 
     def _run_agent_on_managed_instance(
-        self, results_queue: Queue, instance_id: str, os: str, island_ip: str
+        self, results_queue: Queue, instance_id: str, os: str, island_ip: str, timeout: float
     ):
         ssm_client = boto3.client("ssm", self.island_aws_instance.region)
-        command_results = start_infection_monkey_agent(ssm_client, instance_id, os, island_ip)
+        command_results = start_infection_monkey_agent(
+            ssm_client, instance_id, os, island_ip, timeout
+        )
         results_queue.put(command_results)
 
 
