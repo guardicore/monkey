@@ -3,7 +3,7 @@ import logging
 import os
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, WindowsPath
 from typing import List
 
 import infection_monkey.tunnel as tunnel
@@ -70,6 +70,7 @@ from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.monkey_dir import (
     create_monkey_dir,
     get_monkey_dir_path,
@@ -410,6 +411,9 @@ class InfectionMonkey:
 
         try:
             if "win32" == sys.platform:
+                mark_file_for_deletion_on_windows(
+                    WindowsPath(sys.executable), UsageEnum.AGENT_WINAPI
+                )
                 InfectionMonkey._self_delete_windows()
             else:
                 InfectionMonkey._self_delete_linux()

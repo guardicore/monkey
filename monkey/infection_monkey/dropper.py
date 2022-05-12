@@ -1,5 +1,4 @@
 import argparse
-import ctypes
 import filecmp
 import logging
 import os
@@ -8,17 +7,17 @@ import shutil
 import subprocess
 import sys
 import time
-from ctypes import c_char_p
+from pathlib import WindowsPath
 
-from common.utils.attack_utils import ScanStatus, UsageEnum
+from common.utils.attack_utils import UsageEnum
 from infection_monkey.config import WormConfiguration
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
@@ -198,23 +197,9 @@ class MonkeyDrops(object):
                     )
 
                     # mark the file for removal on next boot
-                    dropper_source_path_ctypes = c_char_p(self._config["source_path"].encode())
-                    if 0 == ctypes.windll.kernel32.MoveFileExA(
-                        dropper_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
-                    ):
-                        logger.debug(
-                            "Error marking source file '%s' for deletion on next boot (error "
-                            "%d)",
-                            self._config["source_path"],
-                            ctypes.windll.kernel32.GetLastError(),
-                        )
-                    else:
-                        logger.debug(
-                            "Dropper source file '%s' is marked for deletion on next boot",
-                            self._config["source_path"],
-                        )
-                        T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
-
+                    mark_file_for_deletion_on_windows(
+                        WindowsPath(self._config["source_path"]), UsageEnum.DROPPER_WINAPI
+                    )
             logger.info("Dropper cleanup complete")
         except AttributeError:
             logger.error("Invalid configuration options. Failing")
