@@ -2,10 +2,10 @@ import queue
 import threading
 from typing import Dict
 
+from common.utils import Timer
 from infection_monkey.telemetry.i_batchable_telem import IBatchableTelem
 from infection_monkey.telemetry.i_telem import ITelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-from infection_monkey.utils.timer import Timer
 
 DEFAULT_PERIOD = 5
 WAKES_PER_PERIOD = 4

@@ -1,1 +1,1 @@
-from .di_container import DIContainer
+from .di_container import DIContainer, UnregisteredTypeError

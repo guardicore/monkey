@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.utils import Timer
 from infection_monkey.utils.decorators import request_cache
-from infection_monkey.utils.timer import Timer
 
 
 class MockTimer(Timer):

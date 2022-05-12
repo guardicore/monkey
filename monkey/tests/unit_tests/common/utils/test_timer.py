@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from infection_monkey.utils.timer import Timer
+from common.utils import Timer
 
 
 @pytest.fixture
