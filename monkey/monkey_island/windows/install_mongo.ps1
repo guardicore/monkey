@@ -3,7 +3,7 @@ param(
     [String]$binDir
 )
 
-$MONGODB_URL = "https://downloads.mongodb.org/win32/mongodb-win32-x86_64-2012plus-v4.2-latest.zip"
+$MONGODB_URL = "https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.20.zip"
 $TEMP_MONGODB_ZIP = ".\mongodb.zip"
 
 
