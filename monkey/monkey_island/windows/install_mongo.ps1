@@ -4,7 +4,7 @@ param(
 )
 
 $MONGODB_URL = "https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.20.zip"
-$TEMP_MONGODB_ZIP = ".\mongodb.zip"
+$TEMP_MONGODB_ZIP = (Join-Path -path $(Get-Location) -ChildPath ".\mongodb.zip")
 
 
 if (!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "mongodb")))
@@ -20,6 +20,8 @@ if (!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "mongodb")))
         $mongodb_folder_name = Get-ChildItem -Path $binDir | Where-Object -FilterScript {
             ($_.Name -like "mongodb*")
         } | Select-Object -ExpandProperty Name
+
+        Write-Output $mongodb_folder_name
 
         # Move mongod file and license file from extracted folder to mongodb folder
         New-Item -ItemType directory -Path (Join-Path -Path $binDir -ChildPath "mongodb")
