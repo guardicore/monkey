@@ -74,7 +74,7 @@ function AWSInstanceTable(props) {
       if (isSelected(instId)) {
         color = '#ffed9f';
       } else if (runResult) {
-        color = runResult.status === "error" ? '#f00000' : '#00f01b'
+        color = runResult.status === 'error' ? '#f00000' : '#00f01b'
       }
     }
 
