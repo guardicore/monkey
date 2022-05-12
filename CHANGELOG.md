@@ -33,6 +33,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The "/api/netmap/nodeStates" endpoint to "/api/netmap/node-states". #1888
 - All "/api/monkey_control" endpoints to "/api/monkey-control". #1888
 - All "/api/monkey" endpoints to "/api/agent". #1888
+- Update MongoDB version to 4.4.x. #1924
 
 ### Removed
 - VSFTPD exploiter. #1533
