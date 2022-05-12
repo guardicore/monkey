@@ -67,10 +67,6 @@ class RemoteRun(flask_restful.Resource):
 
     @staticmethod
     def _aws_command_results_to_encodable_dict(aws_command_results: AWSCommandResults):
-        return {
-            "instance_id": aws_command_results.instance_id,
-            "response_code": aws_command_results.response_code,
-            "stdout": aws_command_results.stdout,
-            "stderr": aws_command_results.stderr,
-            "status": aws_command_results.status.name.lower(),
-        }
+        res_dict = aws_command_results.__dict__
+        res_dict["status"] = res_dict["status"].name.lower()
+        return res_dict
