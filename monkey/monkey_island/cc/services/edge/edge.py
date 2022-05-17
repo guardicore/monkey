@@ -65,6 +65,9 @@ class EdgeService(Edge):
         except DoesNotExist:
             return []
 
+    # TODO it's not entirelly clear why the tunnel is unset in
+    #  monkey/monkey_island/cc/services/telemetry/processing/tunnel.py:15
+    # Either way this can be done by fetching, modifying and saving
     def disable_tunnel(self):
         self.tunnel = False
         self.save()
