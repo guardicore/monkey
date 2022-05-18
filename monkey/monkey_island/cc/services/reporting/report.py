@@ -57,6 +57,7 @@ class ReportService:
     def initialize(cls, aws_service: AWSService):
         cls._aws_service = aws_service
 
+    # This should pull from Simulation entity
     @staticmethod
     def get_first_monkey_time():
         return (
@@ -88,6 +89,7 @@ class ReportService:
 
         return st
 
+    # This shoud be replaced by a query to edges and get tunnel edges?
     @staticmethod
     def get_tunnels():
         return [
@@ -103,6 +105,7 @@ class ReportService:
             for tunnel in mongo.db.monkey.find({"tunnel": {"$exists": True}}, {"tunnel": 1})
         ]
 
+    # This should be replaced by machine query for "scanned" status
     @staticmethod
     def get_scanned():
         formatted_nodes = []
@@ -110,6 +113,8 @@ class ReportService:
         nodes = ReportService.get_all_displayed_nodes()
 
         for node in nodes:
+            # This information should be evident from the map, not sure a table/list is a good way
+            # to display it anyways
             nodes_that_can_access_current_node = node["accessible_from_nodes_hostnames"]
             formatted_nodes.append(
                 {

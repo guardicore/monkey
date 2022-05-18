@@ -21,6 +21,8 @@ class NetEdgeService:
     def _get_standard_net_edges():
         return [DisplayedEdgeService.edge_to_net_edge(x) for x in EdgeService.get_all_edges()]
 
+    # If we save the island machine as a standard machine, we won't need these
+    # methods
     @staticmethod
     def _get_uninfected_island_net_edges():
         edges = []
