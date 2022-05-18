@@ -60,6 +60,7 @@ class TestTelemStore:
         TestTelemStore.TELEMS_EXPORTED = True
         logger.info("Telemetries exported!")
 
+    # Should be private
     @staticmethod
     def get_unique_file_path_for_export_telem(target_dir: str, test_telem: ExportedTelem):
         telem_filename = TestTelemStore._get_filename_by_export_telem(test_telem)
