@@ -32,6 +32,8 @@ def get_report() -> dict:
     return _decode_dot_char_before_mongo_insert(decrypt_dict(sensitive_fields, report_dict))
 
 
+# TODO remove this unnecessary encoding. I think these are legacy methods from back in the day
+# when usernames were used as keys. If not, we shouldn't use unknown data as keys.
 def _encode_dot_char_before_mongo_insert(report_dict):
     """
     mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.'

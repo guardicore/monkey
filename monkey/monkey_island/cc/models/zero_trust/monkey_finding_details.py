@@ -7,6 +7,7 @@ from mongoengine import Document, EmbeddedDocumentListField
 from monkey_island.cc.models.zero_trust.event import Event
 
 
+# TODO just move events to the finding and remove this collection
 class MonkeyFindingDetails(Document):
     # SCHEMA
     events = EmbeddedDocumentListField(document_type=Event, required=False)
