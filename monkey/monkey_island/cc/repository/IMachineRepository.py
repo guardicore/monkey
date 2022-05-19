@@ -9,6 +9,7 @@ class IMachineRepository(ABC):
 
     # TODO define Machine object(ORM model)
     # TODO define or re-use machine state.
+    # TODO investigate where should the state be stored in edge or both edge and machine
     def get_machines(
         self,
         id: Optional[str] = None,
