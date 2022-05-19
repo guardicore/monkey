@@ -98,7 +98,7 @@ clone_monkey_repo() {
 
 install_build_prereqs() {
   sudo apt-get update
-  sudo apt-get upgrade -y
+  sudo apt-get upgrade -y -o Dpkg::Options::="--force-confold"
 
   # monkey island prereqs
   sudo apt-get install -y curl libcurl4 openssl git build-essential moreutils
