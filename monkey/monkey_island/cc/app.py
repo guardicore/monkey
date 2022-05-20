@@ -1,11 +1,12 @@
 import os
 import uuid
 from datetime import timedelta
-from typing import Type
+from typing import Sequence, Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
+from werkzeug.routing import Map
 
 from common import DIContainer
 from monkey_island.cc.database import database, mongo
@@ -25,6 +26,7 @@ from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
 from monkey_island.cc.resources.island_logs import IslandLog
 from monkey_island.cc.resources.island_mode import IslandMode
@@ -109,13 +111,35 @@ def init_app_url_rules(app):
 
 
 class FlaskDIWrapper:
+    class URLAlreadyExistsError(Exception):
+        pass
+
     def __init__(self, api: flask_restful.Api, container: DIContainer):
         self._api = api
         self._container = container
 
-    def add_resource(self, resource: Type[flask_restful.Resource], *urls: str):
+    def add_resource(self, resource: Type[IResource]):
         dependencies = self._container.resolve_dependencies(resource)
-        self._api.add_resource(resource, *urls, resource_class_args=dependencies)
+        FlaskDIWrapper._check_for_duplicate_urls(self._api.app.url_map, resource.urls)
+        self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
+
+    @staticmethod
+    def _check_for_duplicate_urls(url_map: Map, urls: Sequence[str]):
+        for url in urls:
+            if FlaskDIWrapper._is_url_added(url_map, url):
+                raise FlaskDIWrapper.URLAlreadyExistsError(
+                    f"URL {url} has already been registered!"
+                )
+
+    @staticmethod
+    def _is_url_added(url_map: Map, url_to_add: str) -> bool:
+        return bool(
+            [
+                registered_url
+                for registered_url in url_map.iter_rules()
+                if str(registered_url).strip("/") == url_to_add.strip("/")
+            ]
+        )
 
 
 def init_api_resources(api: FlaskDIWrapper):
