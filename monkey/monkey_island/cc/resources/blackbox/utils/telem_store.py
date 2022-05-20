@@ -15,7 +15,7 @@ MAX_SAME_CATEGORY_TELEMS = 10000
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
+# TODO this will break with the IRepository implementation. Remove it
 class TestTelemStore:
     TELEMS_EXPORTED = False
 
