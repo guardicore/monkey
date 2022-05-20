@@ -1,7 +1,7 @@
 from abc import ABC
 
 
-class INetMapRepository(ABC):
+class INetworkMapRepository(ABC):
 
     # TODO Define NetMap object
     def get_map(self) -> NetMap:

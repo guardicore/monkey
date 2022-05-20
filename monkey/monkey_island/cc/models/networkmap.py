@@ -7,11 +7,11 @@ from typing import Mapping, Sequence
 # Not sure how compatible this will be with ORM objects though,
 # might require more complex casting logic
 @dataclass
-class Netmap:
-    nodes: Mapping[str, Sequence[Arch]]
+class NetworkMap:
+    nodes: Mapping[str, Sequence[Arc]]
 
 
 @dataclass
-class Arch:
+class Arc:
     dst_machine: Machine
     status: str
