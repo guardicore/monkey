@@ -9,6 +9,7 @@ from jwt import PyJWTError
 
 from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
@@ -21,12 +22,14 @@ def init_jwt(app):
     )
 
 
-class Authenticate(flask_restful.Resource):
+class Authenticate(flask_restful.Resource, IResource):
     """
     Resource for user authentication. The user provides the username and password and we
     give them a JWT.
     See `AuthService.js` file for the frontend counterpart for this code.
     """
+
+    urls = ["/api/auth"]
 
     def post(self):
         """

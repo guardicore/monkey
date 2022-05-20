@@ -3,12 +3,15 @@ import logging
 import flask_restful
 
 from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.island_logs import IslandLogService
 
 logger = logging.getLogger(__name__)
 
 
-class IslandLog(flask_restful.Resource):
+class IslandLog(flask_restful.Resource, IResource):
+    urls = ["/api/log/island/download"]
+
     @jwt_required
     def get(self):
         try:

@@ -6,6 +6,7 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from flask import jsonify, make_response, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services import AWSService
 from monkey_island.cc.services.aws import AWSCommandResults
 
@@ -19,7 +20,9 @@ NO_CREDS_ERROR_FORMAT = (
 )
 
 
-class RemoteRun(flask_restful.Resource):
+class RemoteRun(flask_restful.Resource, IResource):
+    urls = ["/api/remote-monkey"]
+
     def __init__(self, aws_service: AWSService):
         self._aws_service = aws_service
 

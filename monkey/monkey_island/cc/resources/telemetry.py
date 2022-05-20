@@ -11,13 +11,16 @@ from monkey_island.cc.models.monkey import Monkey
 from monkey_island.cc.models.telemetries import get_telemetry_by_query
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 
 logger = logging.getLogger(__name__)
 
 
-class Telemetry(flask_restful.Resource):
+class Telemetry(flask_restful.Resource, IResource):
+    urls = ["/api/telemetry", "/api/telemetry/<string:monkey_guid>"]
+
     @jwt_required
     def get(self, **kw):
         monkey_guid = request.args.get("monkey_guid")

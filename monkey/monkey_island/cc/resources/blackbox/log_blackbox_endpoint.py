@@ -4,9 +4,12 @@ from flask import request
 
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.i_resource import IResource
 
 
-class LogBlackboxEndpoint(flask_restful.Resource):
+class LogBlackboxEndpoint(flask_restful.Resource, IResource):
+    urls = ["/api/test/log"]
+
     @jwt_required
     def get(self):
         find_query = json_util.loads(request.args.get("find_query"))

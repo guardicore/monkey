@@ -5,6 +5,7 @@ import flask_restful
 from flask import make_response, request
 
 from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.config_manipulator import update_config_on_mode_set
 from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode, set_mode
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
@@ -12,7 +13,9 @@ from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 logger = logging.getLogger(__name__)
 
 
-class IslandMode(flask_restful.Resource):
+class IslandMode(flask_restful.Resource, IResource):
+    urls = ["/api/island-mode"]
+
     @jwt_required
     def post(self):
         try:

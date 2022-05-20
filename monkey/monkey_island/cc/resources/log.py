@@ -7,11 +7,14 @@ from flask import request
 from monkey_island.cc.database import mongo
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.log import LogService
 from monkey_island.cc.services.node import NodeService
 
 
-class Log(flask_restful.Resource):
+class Log(flask_restful.Resource, IResource):
+    urls = ["/api/log"]
+
     @jwt_required
     def get(self):
         monkey_id = request.args.get("id")
