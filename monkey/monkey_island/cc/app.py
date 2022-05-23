@@ -1,12 +1,11 @@
 import os
 import uuid
 from datetime import timedelta
-from typing import Sequence, Type
+from typing import Iterable, Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
-from werkzeug.routing import Map
 
 from common import DIContainer
 from monkey_island.cc.database import database, mongo
@@ -117,29 +116,22 @@ class FlaskDIWrapper:
     def __init__(self, api: flask_restful.Api, container: DIContainer):
         self._api = api
         self._container = container
+        self._registered_urls = set()
 
     def add_resource(self, resource: Type[IResource]):
+        self._register_unique_urls(resource.urls)
+
         dependencies = self._container.resolve_dependencies(resource)
-        FlaskDIWrapper._check_for_duplicate_urls(self._api.app.url_map, resource.urls)
         self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
 
-    @staticmethod
-    def _check_for_duplicate_urls(url_map: Map, urls: Sequence[str]):
-        for url in urls:
-            if FlaskDIWrapper._is_url_added(url_map, url):
+    def _register_unique_urls(self, urls: Iterable[str]):
+        for url in map(lambda x: x.rstrip("/"), urls):
+            if url in self._registered_urls:
                 raise FlaskDIWrapper.URLAlreadyExistsError(
                     f"URL {url} has already been registered!"
                 )
 
-    @staticmethod
-    def _is_url_added(url_map: Map, url_to_add: str) -> bool:
-        return bool(
-            [
-                registered_url
-                for registered_url in url_map.iter_rules()
-                if str(registered_url).strip("/") == url_to_add.strip("/")
-            ]
-        )
+            self._registered_urls.add(url)
 
 
 def init_api_resources(api: FlaskDIWrapper):
