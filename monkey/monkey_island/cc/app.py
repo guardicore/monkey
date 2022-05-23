@@ -111,7 +111,7 @@ def init_app_url_rules(app):
 
 
 class FlaskDIWrapper:
-    class URLAlreadyExistsError(Exception):
+    class DuplicateURLError(Exception):
         pass
 
     url_parameter_regex = re.compile(r"<.*?:.*?>")
@@ -119,22 +119,20 @@ class FlaskDIWrapper:
     def __init__(self, api: flask_restful.Api, container: DIContainer):
         self._api = api
         self._container = container
-        self._registered_urls = set()
+        self._reserved_urls = set()
 
     def add_resource(self, resource: Type[IResource]):
-        self._register_unique_urls(resource.urls)
+        self._reserve_urls(resource.urls)
 
         dependencies = self._container.resolve_dependencies(resource)
         self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
 
-    def _register_unique_urls(self, urls: Iterable[str]):
+    def _reserve_urls(self, urls: Iterable[str]):
         for url in map(FlaskDIWrapper._format_url, urls):
-            if url in self._registered_urls:
-                raise FlaskDIWrapper.URLAlreadyExistsError(
-                    f"URL {url} has already been registered!"
-                )
+            if url in self._reserved_urls:
+                raise FlaskDIWrapper.DuplicateURLError(f"URL {url} has already been registered!")
 
-            self._registered_urls.add(url)
+            self._reserved_urls.add(url)
 
     @staticmethod
     def _format_url(url: str):
