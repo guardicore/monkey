@@ -14,15 +14,6 @@ from monkey_island.cc.services.aws.aws_command_runner import (
 TIMEOUT = 0.03
 INSTANCE_ID = "BEEFFACE"
 ISLAND_IP = "127.0.0.1"
-"""
-            "commands": [
-                "wget --no-check-certificate "
-                "https://172.31.32.78:5000/api/agent/download/linux "
-                "-O monkey-linux-64; chmod +x "
-                "monkey-linux-64; ./monkey-linux-64 "
-                "m0nk3y -s 172.31.32.78:5000"
-            ]
-            """
 
 
 @pytest.fixture
