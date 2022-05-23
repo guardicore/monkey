@@ -138,7 +138,7 @@ class FlaskDIWrapper:
 
     @staticmethod
     def _format_url(url: str):
-        new_url = url.rstrip("/")
+        new_url = url.strip("/")
         return FlaskDIWrapper.url_parameter_regex.sub("<PARAMETER_PLACEHOLDER>", new_url)
 
 
