@@ -29,7 +29,7 @@ def create_empty_tmp_file(tmpdir: str) -> Callable:
     return inner
 
 
-def mock_flask_resource_manager(container):
+def init_mock_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = "test_key"
 
@@ -37,6 +37,11 @@ def mock_flask_resource_manager(container):
     api.representations = {"application/json": output_json}
 
     monkey_island.cc.app.init_app_url_rules(app)
+    return app, api
+
+
+def mock_flask_resource_manager(container):
+    _, api = init_mock_app()
     flask_resource_manager = monkey_island.cc.app.FlaskDIWrapper(api, container)
 
     return flask_resource_manager
