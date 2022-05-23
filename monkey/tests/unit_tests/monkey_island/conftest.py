@@ -1,11 +1,14 @@
 import os
+import re
 from collections.abc import Callable
+from typing import Set
 
 import flask_restful
 import pytest
 from flask import Flask
 
 import monkey_island
+from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.representations import output_json
 
 
@@ -37,3 +40,27 @@ def mock_flask_resource_manager(container):
     flask_resource_manager = monkey_island.cc.app.FlaskDIWrapper(api, container)
 
     return flask_resource_manager
+
+
+def get_url_for_resource(resource: IResource, **kwargs):
+    chosen_url = None
+    for url in resource.urls:
+        if _get_url_keywords(url) == set(kwargs.keys()):
+            chosen_url = url
+    if not chosen_url:
+        raise Exception(
+            f"Resource {resource} doesn't contain a url that matches {kwargs} keywords."
+        )
+
+    for key, value in kwargs.items():
+        reg_pattern = f"<.*:{key}>"
+        chosen_url = re.sub(pattern=reg_pattern, repl=value, string=chosen_url)
+
+    return chosen_url
+
+
+def _get_url_keywords(url: str) -> Set[str]:
+    # Match pattern <something:keyword>, but only put "keyword" in a group
+    reg_pattern = "(?:<.*?:)(.*?)(?:>)"
+    reg_matches = re.finditer(reg_pattern, url)
+    return set([match.groups()[0] for match in reg_matches])

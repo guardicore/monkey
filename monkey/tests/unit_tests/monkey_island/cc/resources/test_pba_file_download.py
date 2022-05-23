@@ -3,7 +3,9 @@ from typing import BinaryIO
 
 import pytest
 from tests.common import StubDIContainer
+from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
+from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 FILE_NAME = "test_file"
@@ -40,7 +42,8 @@ def flask_client(build_flask_client):
 
 
 def test_file_download_endpoint(tmp_path, flask_client):
-    resp = flask_client.get(f"/api/pba/download/{FILE_NAME}")
+    download_url = get_url_for_resource(PBAFileDownload, filename=FILE_NAME)
+    resp = flask_client.get(download_url)
 
     assert resp.status_code == 200
     assert next(resp.response) == FILE_CONTENTS
@@ -48,7 +51,8 @@ def test_file_download_endpoint(tmp_path, flask_client):
 
 def test_file_download_endpoint_404(tmp_path, flask_client):
     nonexistant_file_name = "nonexistant_file"
+    download_url = get_url_for_resource(PBAFileDownload, filename=nonexistant_file_name)
 
-    resp = flask_client.get(f"/api/pba/download/{nonexistant_file_name}")
+    resp = flask_client.get(download_url)
 
     assert resp.status_code == 404
