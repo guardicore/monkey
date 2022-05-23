@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 from datetime import timedelta
 from typing import Iterable, Type
@@ -113,6 +114,8 @@ class FlaskDIWrapper:
     class URLAlreadyExistsError(Exception):
         pass
 
+    url_parameter_regex = re.compile(r"<.*?:.*?>")
+
     def __init__(self, api: flask_restful.Api, container: DIContainer):
         self._api = api
         self._container = container
@@ -125,13 +128,18 @@ class FlaskDIWrapper:
         self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
 
     def _register_unique_urls(self, urls: Iterable[str]):
-        for url in map(lambda x: x.rstrip("/"), urls):
+        for url in map(FlaskDIWrapper._format_url, urls):
             if url in self._registered_urls:
                 raise FlaskDIWrapper.URLAlreadyExistsError(
                     f"URL {url} has already been registered!"
                 )
 
             self._registered_urls.add(url)
+
+    @staticmethod
+    def _format_url(url: str):
+        new_url = url.rstrip("/")
+        return FlaskDIWrapper.url_parameter_regex.sub("<PARAMETER_PLACEHOLDER>", new_url)
 
 
 def init_api_resources(api: FlaskDIWrapper):

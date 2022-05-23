@@ -35,6 +35,24 @@ def test_duplicate_urls(resource_mng):
         resource_mng.add_resource(resource2)
 
 
+def test_duplicate_urls__parameters(resource_mng):
+    resource1 = get_mock_resource("res1", ["/url/<string:param1>"])
+    resource2 = get_mock_resource("res2", ["/url/<string:param2>"])
+
+    resource_mng.add_resource(resource1)
+    with pytest.raises(FlaskDIWrapper.URLAlreadyExistsError):
+        resource_mng.add_resource(resource2)
+
+
+def test_duplicate_urls__multiple_parameters(resource_mng):
+    resource1 = get_mock_resource("res1", ["/url/<string:agent_name>/<string:param>"])
+    resource2 = get_mock_resource("res2", ["/url/<int:agent_id>/<string:param>"])
+
+    resource_mng.add_resource(resource1)
+    with pytest.raises(FlaskDIWrapper.URLAlreadyExistsError):
+        resource_mng.add_resource(resource2)
+
+
 def test_adding_resources(resource_mng):
     resource = get_mock_resource("res1", ["/url"])
 
