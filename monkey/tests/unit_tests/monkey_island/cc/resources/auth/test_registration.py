@@ -4,8 +4,9 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.utils.exceptions import AlreadyRegisteredError, InvalidRegistrationCredentialsError
+from monkey_island.cc.resources.auth.registration import Registration
 
-REGISTRATION_URL = "/api/registration"
+REGISTRATION_URL = Registration.urls[0]
 
 USERNAME = "test_user"
 PASSWORD = "test_password"

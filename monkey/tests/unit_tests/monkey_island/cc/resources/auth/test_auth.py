@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.utils.exceptions import IncorrectCredentialsError
+from monkey_island.cc.resources.auth.auth import Authenticate
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
@@ -22,7 +23,7 @@ def mock_authentication_service(monkeypatch):
 
 @pytest.fixture
 def make_auth_request(flask_client):
-    url = "/api/auth"
+    url = Authenticate.urls[0]
 
     def inner(request_body):
         return flask_client.post(url, data=request_body, follow_redirects=True)

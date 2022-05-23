@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from tests.common import StubDIContainer
 
+from monkey_island.cc.resources import RemoteRun
 from monkey_island.cc.services import AWSService
 from monkey_island.cc.services.aws import AWSCommandResults, AWSCommandStatus
 
@@ -23,18 +24,18 @@ def flask_client(build_flask_client, mock_aws_service):
 
 
 def test_get_invalid_action(flask_client):
-    response = flask_client.get("/api/remote-monkey?action=INVALID")
+    response = flask_client.get(f"{RemoteRun.urls[0]}?action=INVALID")
     assert response.text.rstrip() == "{}"
 
 
 def test_get_no_action(flask_client):
-    response = flask_client.get("/api/remote-monkey")
+    response = flask_client.get(RemoteRun.urls[0])
     assert response.text.rstrip() == "{}"
 
 
 def test_get_not_aws(flask_client, mock_aws_service):
     mock_aws_service.island_is_running_on_aws = MagicMock(return_value=False)
-    response = flask_client.get("/api/remote-monkey?action=list_aws")
+    response = flask_client.get(f"{RemoteRun.urls[0]}?action=list_aws")
     assert response.text.rstrip() == '{"is_aws":false}'
 
 
@@ -47,7 +48,7 @@ def test_get_instances(flask_client, mock_aws_service):
     mock_aws_service.island_is_running_on_aws = MagicMock(return_value=True)
     mock_aws_service.get_managed_instances = MagicMock(return_value=instances)
 
-    response = flask_client.get("/api/remote-monkey?action=list_aws")
+    response = flask_client.get(f"{RemoteRun.urls[0]}?action=list_aws")
 
     assert json.loads(response.text)["instances"] == instances
     assert json.loads(response.text)["is_aws"] is True
@@ -57,12 +58,12 @@ def test_get_instances(flask_client, mock_aws_service):
 
 
 def test_post_no_type(flask_client):
-    response = flask_client.post("/api/remote-monkey", data="{}")
+    response = flask_client.post(RemoteRun.urls[0], data="{}")
     assert response.status_code == 500
 
 
 def test_post_invalid_type(flask_client):
-    response = flask_client.post("/api/remote-monkey", data='{"type": "INVALID"}')
+    response = flask_client.post(RemoteRun.urls[0], data='{"type": "INVALID"}')
     assert response.status_code == 500
 
 
@@ -103,6 +104,6 @@ def test_post(flask_client, mock_aws_service):
         },
     ]
 
-    response = flask_client.post("/api/remote-monkey", data=request_body)
+    response = flask_client.post(RemoteRun.urls[0], data=request_body)
 
     assert json.loads(response.text)["result"] == expected_result
