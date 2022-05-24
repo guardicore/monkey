@@ -6,6 +6,20 @@ Vulture doesn't mark these as dead again.
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc import app
 from monkey_island.cc.models import Report
+from monkey_island.cc.models.networkmap import Arc, NetworkMap
+from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
+from monkey_island.cc.repository.IAgentRepository import IAgentRepository
+from monkey_island.cc.repository.IAttackRepository import IAttackRepository
+from monkey_island.cc.repository.IConfigRepository import IConfigRepository
+from monkey_island.cc.repository.ILogRepository import ILogRepository
+from monkey_island.cc.repository.IMachineRepository import IMachineRepository
+from monkey_island.cc.repository.INetworkMapRepository import INetworkMapRepository
+from monkey_island.cc.repository.IReportRepository import IReportRepository
+from monkey_island.cc.repository.ISimulationRepository import ISimulationRepository
+from monkey_island.cc.repository.IStolenCredentials import IStolenCredentialsRepository
+from monkey_island.cc.repository.ITelemetryRepository import ITelemetryRepository
+from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
+from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -169,3 +183,38 @@ GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)
 architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_repository.py:25)
 
 response_code  # unused variable (monkey/monkey_island/cc/services/aws/aws_command_runner.py:26)
+
+# TODO DELETE AFTER RESOURCE REFACTORING
+NetworkMap
+Arc.dst_machine
+IMitigationsRepository.get_mitigations
+IMitigationsRepository.save_mitigations
+IAgentRepository.save_agent
+IAgentRepository.get_agents
+agent
+IAttackRepository.get_attack_report
+IAttackRepository.save_attack_report
+IAttackRepository.get_mitigation_by_technique
+IAttackRepository.save_mitigations
+IConfigRepository.set_config
+IConfigRepository.set_config_field
+IConfigRepository.get_config_field
+ILogRepository.get_logs
+ILogRepository.save_log
+ILogRepository.delete_log
+IMachineRepository.save_machine
+IMachineRepository.get_machines
+INetworkMapRepository.get_map
+INetworkMapRepository.save_netmap
+IReportRepository
+ISimulationRepository.save_simulation
+ISimulationRepository.get_simulation
+IStolenCredentialsRepository.get_stolen_credentials
+IStolenCredentialsRepository.save_stolen_credentials
+ITelemetryRepository.get_telemetries
+IEventRepository.get_events
+IFindingRepository.get_findings
+key_list
+simulation
+stolen_credentials
+netmap
