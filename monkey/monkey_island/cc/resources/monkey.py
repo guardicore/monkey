@@ -61,6 +61,11 @@ class Monkey(flask_restful.Resource):
     # Called on monkey wakeup to initialize local configuration
     @TestTelemStore.store_exported_telem
     def post(self, **kw):
+
+        # TODO: Why is it the registration of an agent coupled to exploit telemetry? It's hard to
+        #       understand why an agent registering itself should be so complicated. Is it because
+        #       agent state (dead) and config are conflated? Figure out why this thing is so
+        #       complicated. Then simplify it.
         with agent_killing_mutex:
             monkey_json = json.loads(request.data)
             monkey_json["dead"] = False
