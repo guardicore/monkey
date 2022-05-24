@@ -40,6 +40,10 @@ class Monkey(flask_restful.Resource):
     # Used by monkey. can't secure.
     @TestTelemStore.store_exported_telem
     def patch(self, guid):
+
+        # TODO: This endpoint appears to be doing 3 things, although only one of them is used
+        # (config_error). The WormConfiguration will be removed in #1960. We should consider
+        # removing this endpoint
         monkey_json = json.loads(request.data)
         update = {"$set": {"modifytime": datetime.now()}}
         monkey = NodeService.get_monkey_by_guid(guid)
