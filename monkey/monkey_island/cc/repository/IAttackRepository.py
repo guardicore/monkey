@@ -4,7 +4,7 @@ from typing import Sequence
 from monkey_island.cc.models.attack import Mitigation
 
 
-class IRepository(ABC):
+class IAttackRepository(ABC):
     # Att&ck just add not implemented raises
     ######################################
     # This will likely stay the same as mitigations are external data
