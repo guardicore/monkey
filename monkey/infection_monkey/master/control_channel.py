@@ -4,7 +4,6 @@ import logging
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from infection_monkey.config import WormConfiguration
 from infection_monkey.control import ControlClient
 from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
@@ -50,7 +49,7 @@ class ControlChannel(IControlChannel):
     def get_config(self) -> dict:
         try:
             response = requests.get(  # noqa: DUO123
-                "https://%s/api/agent/%s" % (WormConfiguration.current_server, self._agent_id),
+                f"https://{self._control_channel_server}/api/agent/{self._agent_id}",
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
