@@ -15,7 +15,7 @@ MAX_SAME_CATEGORY_TELEMS = 10000
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
+# TODO this will break with the IRepository implementation. Remove it
 class TestTelemStore:
     TELEMS_EXPORTED = False
 
@@ -60,6 +60,7 @@ class TestTelemStore:
         TestTelemStore.TELEMS_EXPORTED = True
         logger.info("Telemetries exported!")
 
+    # Should be private
     @staticmethod
     def get_unique_file_path_for_export_telem(target_dir: str, test_telem: ExportedTelem):
         telem_filename = TestTelemStore._get_filename_by_export_telem(test_telem)

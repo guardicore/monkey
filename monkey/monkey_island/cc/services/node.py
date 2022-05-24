@@ -80,6 +80,11 @@ class NodeService:
             domain_name = " (" + node["domain_name"] + ")"
         return node["os"]["version"] + " : " + node["ip_addresses"][0] + domain_name
 
+    # A lot of methods like these duplicate between monkey and node.
+    # That's a result of poor entity model, because both nodes and monkeys
+    # store the same information. It's best to extract the machine specific data
+    # to "Machine" entity (like IP's and os) and agent specific data to "Agent" (like alive,
+    # parent, etc)
     @staticmethod
     def get_monkey_os(monkey):
         os = "unknown"
@@ -183,15 +188,15 @@ class NodeService:
         tunnel_host_id = NodeService.get_monkey_by_ip(tunnel_host_ip)["_id"]
         NodeService.unset_all_monkey_tunnels(monkey_id)
         mongo.db.monkey.update(
-            {"_id": monkey_id}, {"$set": {"tunnel": tunnel_host_id}}, upsert=False
+                {"_id": monkey_id}, {"$set": {"tunnel": tunnel_host_id}}, upsert=False
         )
         monkey_label = NodeService.get_label_for_endpoint(monkey_id)
         tunnel_host_label = NodeService.get_label_for_endpoint(tunnel_host_id)
         tunnel_edge = EdgeService.get_or_create_edge(
-            src_node_id=monkey_id,
-            dst_node_id=tunnel_host_id,
-            src_label=monkey_label,
-            dst_label=tunnel_host_label,
+                src_node_id=monkey_id,
+                dst_node_id=tunnel_host_id,
+                src_label=monkey_label,
+                dst_label=tunnel_host_label,
         )
         tunnel_edge.tunnel = True
         tunnel_edge.ip_address = tunnel_host_ip
@@ -200,13 +205,13 @@ class NodeService:
     @staticmethod
     def insert_node(ip_address, domain_name=""):
         new_node_insert_result = mongo.db.node.insert_one(
-            {
-                "ip_addresses": [ip_address],
-                "domain_name": domain_name,
-                "exploited": False,
-                "propagated": False,
-                "os": {"type": "unknown", "version": "unknown"},
-            }
+                {
+                    "ip_addresses": [ip_address],
+                    "domain_name": domain_name,
+                    "exploited": False,
+                    "propagated": False,
+                    "os": {"type": "unknown", "version": "unknown"},
+                }
         )
         return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
 
@@ -221,6 +226,11 @@ class NodeService:
     def get_monkey_by_id(monkey_id):
         return mongo.db.monkey.find_one({"_id": ObjectId(monkey_id)})
 
+    # GUID is generated from uuid.getnode() and represents machine it was ran on
+    # All monkeys that ran on the same machine will have the same GUID, but
+    # we can just store the monkeys on the same machine document/have one to many relationship
+    # GUID could be stored on machine to uniquely identify the same machine even after the
+    # ip, domain name or other changes. Not entirely sure it's necessary
     @staticmethod
     def get_monkey_by_guid(monkey_guid):
         return mongo.db.monkey.find_one({"guid": monkey_guid})
@@ -237,10 +247,12 @@ class NodeService:
     def get_node_by_id(node_id):
         return mongo.db.node.find_one({"_id": ObjectId(node_id)})
 
+    # This is only used to determine if report is the latest or if we need to
+    # generate a new one. This info should end up in Simulation entity instead.
     @staticmethod
     def update_monkey_modify_time(monkey_id):
         mongo.db.monkey.update(
-            {"_id": monkey_id}, {"$set": {"modifytime": datetime.now()}}, upsert=False
+                {"_id": monkey_id}, {"$set": {"modifytime": datetime.now()}}, upsert=False
         )
 
     @staticmethod
@@ -256,9 +268,11 @@ class NodeService:
     @staticmethod
     def add_communication_info(monkey, info):
         mongo.db.monkey.update(
-            {"guid": monkey["guid"]}, {"$set": {"command_control_channel": info}}, upsert=False
+                {"guid": monkey["guid"]}, {"$set": {"command_control_channel": info}}, upsert=False
         )
 
+    # TODO this returns a mock island agent
+    # It's better to just initialize the island machine on reset I think
     @staticmethod
     def get_monkey_island_monkey():
         ip_addresses = local_ip_addresses()
@@ -329,7 +343,7 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(
-            mongo.db.monkey.find_one({"_id": node_id}, {"hostname": 1})
+                mongo.db.monkey.find_one({"_id": node_id}, {"hostname": 1})
         )
 
     @staticmethod

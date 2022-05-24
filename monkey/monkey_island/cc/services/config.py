@@ -70,6 +70,9 @@ class ConfigService:
         :param is_island: If True, will include island specific configuration parameters.
         :return: The entire global config.
         """
+
+        # is_initial_config and should_decrypt are only there to compare if we are on the
+        # default configuration or did user modified it already
         config = (
             mongo.db.config.find_one({"name": "initial" if is_initial_config else "newconfig"})
             or {}
@@ -95,9 +98,12 @@ class ConfigService:
         :return: The value of the requested config key.
         """
         config_key = functools.reduce(lambda x, y: x + "." + y, config_key_as_arr)
+
+        # This should just call get_config from repository. If None, then call get_default prob
         config = mongo.db.config.find_one(
             {"name": "initial" if is_initial_config else "newconfig"}, {config_key: 1}
         )
+
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
         if should_decrypt:
@@ -141,6 +147,7 @@ class ConfigService:
     def get_config_schema():
         return SCHEMA
 
+    # Not added to interface because it's doable by get_config_field + set_config_field
     @staticmethod
     def add_item_to_config_set_if_dont_exist(item_path_array, item_value, should_encrypt):
         item_key = ".".join(item_path_array)

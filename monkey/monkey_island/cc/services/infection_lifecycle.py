@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def set_stop_all(time: float):
+    # This will use Agent and Simulation repositories
     for monkey in Monkey.objects():
         monkey.config.should_stop = True
         monkey.save()
