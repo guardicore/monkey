@@ -9,6 +9,7 @@ from monkey_island.cc.services.config import ConfigService
 
 
 class ConfigurationExport(AbstractResource):
+    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/configuration/export"]
 
     @jwt_required

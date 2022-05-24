@@ -18,6 +18,8 @@ WINDOWS_PBA_TYPE = "PBAwindows"
 
 
 class FileUpload(AbstractResource):
+    # API Spec: FileUpload -> CustomPBAFile or something to make it more RESTful. Change endpoint
+    # accordingly.
     """
     File upload endpoint used to send/receive Custom PBA files
     """
@@ -80,6 +82,7 @@ class FileUpload(AbstractResource):
             safe_filename,
         )
 
+        # API Spec: HTTP status code should be 201
         response = Response(response=safe_filename, status=200, mimetype="text/plain")
         return response
 
@@ -101,6 +104,7 @@ class FileUpload(AbstractResource):
             self._file_storage_service.delete_file(filename)
             ConfigService.set_config_value(filename_path, "")
 
+        # API Spec: HTTP status code should be 204
         return make_response({}, 200)
 
     @staticmethod

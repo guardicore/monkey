@@ -183,6 +183,7 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(StopAllAgents)
 
     # Resources used by black box tests
+    # API Spec: Fix all the following endpoints, see comments in the resource classes
     api.add_resource(MonkeyBlackboxEndpoint)
     api.add_resource(ClearCaches)
     api.add_resource(LogBlackboxEndpoint)

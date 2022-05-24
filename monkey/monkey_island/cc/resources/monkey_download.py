@@ -20,6 +20,7 @@ class UnsupportedOSError(Exception):
 
 
 class MonkeyDownload(AbstractResource):
+    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/agent/download/<string:host_os>"]
 
     # Used by monkey. can't secure.

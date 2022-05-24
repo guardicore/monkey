@@ -12,6 +12,7 @@ from monkey_island.cc.services.node import NodeService
 
 
 class Log(AbstractResource):
+    # API Spec: What log? Agent log?
     urls = ["/api/log"]
 
     @jwt_required

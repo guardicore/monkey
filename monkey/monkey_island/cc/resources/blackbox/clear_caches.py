@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class ClearCaches(AbstractResource):
+    # API Spec: Action, not a resource; RPC-style endpoint?
     urls = ["/api/test/clear-caches"]
     """
     Used for timing tests - we want to get actual execution time of functions in BlackBox without
@@ -34,6 +35,8 @@ class ClearCaches(AbstractResource):
 
         if ReportService.is_report_generated() or AttackReportService.is_report_generated():
             logger.error(NOT_ALL_REPORTS_DELETED)
+            # API Spec: Why is this 500? 500 should be returned in case an exception occurs on the
+            # server. 40x makes more sense.
             flask_restful.abort(500, error_info=NOT_ALL_REPORTS_DELETED)
 
         return {"success": "true"}

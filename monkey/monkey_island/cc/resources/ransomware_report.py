@@ -6,6 +6,7 @@ from monkey_island.cc.services.ransomware import ransomware_report
 
 
 class RansomwareReport(AbstractResource):
+    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/report/ransomware"]
 
     @jwt_required

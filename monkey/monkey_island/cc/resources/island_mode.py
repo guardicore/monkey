@@ -13,6 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 class IslandMode(AbstractResource):
+    # API Spec: Should these be RPC-style endpoints?
+    # POST is not updating/creating a "resource" but setting a property of the Island.
+    # Perhaps /api/setMode and /api/getMode would be more appropriate.
     urls = ["/api/island-mode"]
 
     @jwt_required
@@ -30,9 +33,13 @@ class IslandMode(AbstractResource):
                     "Using default advanced configuration."
                 )
 
+            # API Spec: RESTful way is to return an identifier of the updated/newly created
+            # resource but it doesn't make sense here which brings me back to the comment on
+            # lines 16-18.
             return make_response({}, 200)
         except (AttributeError, json.decoder.JSONDecodeError):
             return make_response({}, 400)
+        # API Spec: Check if HTTP codes make sense
         except ValueError:
             return make_response({}, 422)
 

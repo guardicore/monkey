@@ -9,6 +9,7 @@ logger = logging.getLogger(__file__)
 
 
 class PBAFileDownload(AbstractResource):
+    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/pba/download/<string:filename>"]
     """
     File download endpoint used by monkey to download user's PBA file

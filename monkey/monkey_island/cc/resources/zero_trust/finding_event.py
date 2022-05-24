@@ -8,6 +8,8 @@ from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_serv
 
 
 class ZeroTrustFindingEvent(AbstractResource):
+    # API Spec: Why is the endpoint separated? Why not just
+    # "/api/zero-trust-finding-event/<string:finding_id>"?
     urls = ["/api/zero-trust/finding-event/<string:finding_id>"]
 
     @jwt_required

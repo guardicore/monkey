@@ -39,6 +39,7 @@ class TelemetryFeed(AbstractResource):
             }
         except KeyError as err:
             logger.error("Failed parsing telemetries. Error: {0}.".format(err))
+            # API Spec: Should return HTTP status code 404 (?)
             return {"telemetries": [], "timestamp": datetime.now().isoformat()}
 
     @staticmethod

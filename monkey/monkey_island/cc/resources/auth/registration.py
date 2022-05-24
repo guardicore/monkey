@@ -23,5 +23,6 @@ class Registration(AbstractResource):
         try:
             AuthenticationService.register_new_user(username, password)
             return make_response({"error": ""}, 200)
+        # API Spec: HTTP status code for AlreadyRegisteredError should be 409 (CONFLICT)
         except (InvalidRegistrationCredentialsError, AlreadyRegisteredError) as e:
             return make_response({"error": str(e)}, 400)

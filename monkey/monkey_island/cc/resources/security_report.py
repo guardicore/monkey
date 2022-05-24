@@ -4,6 +4,7 @@ from monkey_island.cc.services.reporting.report import ReportService
 
 
 class SecurityReport(AbstractResource):
+    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/report/security"]
 
     @jwt_required

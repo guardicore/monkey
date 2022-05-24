@@ -7,6 +7,7 @@ from monkey_island.cc.services.attack.attack_schema import SCHEMA
 
 
 class AttackReport(AbstractResource):
+    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/report/attack"]
 
     @jwt_required

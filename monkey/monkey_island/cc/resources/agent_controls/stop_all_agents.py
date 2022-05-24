@@ -9,6 +9,7 @@ from monkey_island.cc.services.infection_lifecycle import set_stop_all, should_a
 
 
 class StopAllAgents(AbstractResource):
+    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/monkey-control/stop-all-agents"]
 
     @jwt_required
@@ -21,5 +22,6 @@ class StopAllAgents(AbstractResource):
             else:
                 return make_response({}, 400)
 
+    # API Spec: This is the exact same thing as what's in StopAgentCheck
     def get(self, monkey_guid):
         return {"stop_agent": should_agent_die(monkey_guid)}

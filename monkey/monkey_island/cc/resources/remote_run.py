@@ -20,6 +20,9 @@ NO_CREDS_ERROR_FORMAT = (
 
 
 class RemoteRun(AbstractResource):
+    # API Spec: POST request is an action, it's not updating/creating any resource.
+    # GET makes sense. The resource should be split up since these two use cases don't
+    # really go together.
     urls = ["/api/remote-monkey"]
 
     def __init__(self, aws_service: AWSService):
@@ -35,9 +38,11 @@ class RemoteRun(AbstractResource):
                 try:
                     resp["instances"] = self._aws_service.get_managed_instances()
                 except NoCredentialsError as e:
+                    # API Spec: HTTP status code should be 401
                     resp["error"] = NO_CREDS_ERROR_FORMAT.format(e)
                     return jsonify(resp)
                 except ClientError as e:
+                    # API Spec: HTTP status code should not be 200
                     resp["error"] = CLIENT_ERROR_FORMAT.format(e)
                     return jsonify(resp)
             return jsonify(resp)
@@ -49,9 +54,13 @@ class RemoteRun(AbstractResource):
         body = json.loads(request.data)
         if body.get("type") == "aws":
             results = self.run_aws_monkeys(body)
+            # API Spec: POST should return identifier or updated/newly created resource, not some
+            # kind of data. That's more of a GET thing.
             return RemoteRun._encode_results(results)
 
         # default action
+        # API Spec: Why is this 500? 500 should be returned in case an exception occurs on the
+        # server. 40x makes more sense.
         return make_response({"error": "Invalid action"}, 500)
 
     def run_aws_monkeys(self, request_body) -> Sequence[AWSCommandResults]:

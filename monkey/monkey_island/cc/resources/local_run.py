@@ -10,7 +10,8 @@ from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
 
 class LocalRun(AbstractResource):
-
+    # API Spec: This should be an RPC-style API i.e. two endpoints -
+    # "/api/getLocalMonkeyRunningStatus" and "/api/startLocalMonkey"
     urls = ["/api/local-monkey"]
 
     @jwt_required
@@ -28,7 +29,10 @@ class LocalRun(AbstractResource):
         body = json.loads(request.data)
         if body.get("action") == "run":
             local_run = LocalMonkeyRunService.run_local_monkey()
+            # API Spec: Feels weird to return "error_text" even when "is_running" is True
             return jsonify(is_running=local_run[0], error_text=local_run[1])
 
         # default action
+        # API Spec: Why is this 500? 500 should be returned in case an exception occurs on the
+        # server. 40x makes more sense.
         return make_response({"error": "Invalid action"}, 500)
