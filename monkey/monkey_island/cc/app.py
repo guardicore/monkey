@@ -155,6 +155,8 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(IslandConfiguration)
     api.add_resource(ConfigurationExport)
     api.add_resource(ConfigurationImport)
+    # Rename to /api/agent-binary, because information about agent runs
+    # and binary files are different resources
     api.add_resource(MonkeyDownload)
     api.add_resource(NetMap)
     api.add_resource(Edge)
@@ -173,12 +175,16 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(Log)
     api.add_resource(IslandLog)
 
+    # These two should have the same url syntax
     api.add_resource(PBAFileDownload)
     api.add_resource(FileUpload)
 
     api.add_resource(PropagationCredentials)
+    # API Spec: Should use RPC convention
     api.add_resource(RemoteRun)
+    # Rename to /version-info
     api.add_resource(VersionUpdate)
+    # API Spec: Fix endpoint (see comment in StopAgentCheck)
     api.add_resource(StopAgentCheck)
     api.add_resource(StopAllAgents)
 
