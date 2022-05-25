@@ -11,6 +11,7 @@ from werkzeug.exceptions import NotFound
 from common import DIContainer
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import RemoteRun
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
@@ -26,7 +27,6 @@ from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
 from monkey_island.cc.resources.island_logs import IslandLog
 from monkey_island.cc.resources.island_mode import IslandMode
@@ -121,7 +121,9 @@ class FlaskDIWrapper:
         self._container = container
         self._reserved_urls = set()
 
-    def add_resource(self, resource: Type[IResource]):
+    def add_resource(self, resource: Type[AbstractResource]):
+        assert "urls" in resource.__dict__, f"Resource {resource} has no defined URLs"
+
         self._reserve_urls(resource.urls)
 
         dependencies = self._container.resolve_dependencies(resource)

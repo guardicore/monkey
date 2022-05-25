@@ -1,12 +1,11 @@
-import flask_restful
 from flask import request
 
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.node import NodeService
 
 
-class Node(flask_restful.Resource, IResource):
+class Node(AbstractResource):
     urls = ["/api/netmap/node"]
 
     @jwt_required

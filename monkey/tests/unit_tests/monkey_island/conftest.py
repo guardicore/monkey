@@ -8,7 +8,7 @@ import pytest
 from flask import Flask
 
 import monkey_island
-from monkey_island.cc.resources.i_resource import IResource
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.services.representations import output_json
 
 
@@ -47,7 +47,7 @@ def mock_flask_resource_manager(container):
     return flask_resource_manager
 
 
-def get_url_for_resource(resource: IResource, **kwargs):
+def get_url_for_resource(resource: AbstractResource, **kwargs):
     chosen_url = None
     for url in resource.urls:
         if _get_url_keywords(url) == set(kwargs.keys()):

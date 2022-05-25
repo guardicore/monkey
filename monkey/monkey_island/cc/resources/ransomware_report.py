@@ -1,12 +1,11 @@
-import flask_restful
 from flask import jsonify
 
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.ransomware import ransomware_report
 
 
-class RansomwareReport(flask_restful.Resource, IResource):
+class RansomwareReport(AbstractResource):
     urls = ["/api/report/ransomware"]
 
     @jwt_required

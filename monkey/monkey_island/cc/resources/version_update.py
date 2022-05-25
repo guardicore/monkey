@@ -1,15 +1,13 @@
 import logging
 
-import flask_restful
-
 from common.version import get_version
-from monkey_island.cc.resources.i_resource import IResource
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.services.version_update import VersionUpdateService
 
 logger = logging.getLogger(__name__)
 
 
-class VersionUpdate(flask_restful.Resource, IResource):
+class VersionUpdate(AbstractResource):
     urls = ["/api/version-update"]
 
     def __init__(self):

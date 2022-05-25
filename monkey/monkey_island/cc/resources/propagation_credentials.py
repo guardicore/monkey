@@ -1,11 +1,9 @@
-import flask_restful
-
 from monkey_island.cc.database import mongo
-from monkey_island.cc.resources.i_resource import IResource
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.services.config import ConfigService
 
 
-class PropagationCredentials(flask_restful.Resource, IResource):
+class PropagationCredentials(AbstractResource):
     urls = ["/api/propagation-credentials/<string:guid>"]
 
     def get(self, guid: str):

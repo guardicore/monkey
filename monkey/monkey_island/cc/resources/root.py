@@ -1,11 +1,10 @@
 import logging
 
-import flask_restful
 from flask import jsonify, make_response, request
 
 from monkey_island.cc.database import mongo
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.infection_lifecycle import get_completed_steps
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
@@ -13,7 +12,7 @@ from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 logger = logging.getLogger(__name__)
 
 
-class Root(IResource, flask_restful.Resource):
+class Root(AbstractResource):
 
     urls = ["/api"]
 

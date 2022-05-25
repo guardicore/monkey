@@ -1,13 +1,12 @@
 import json
 from datetime import datetime
 
-import flask_restful
 from flask import request
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.resources.utils.semaphores import agent_killing_mutex
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.services.config import ConfigService
@@ -17,7 +16,7 @@ from monkey_island.cc.services.node import NodeService
 # TODO: separate logic from interface
 
 
-class Monkey(flask_restful.Resource, IResource):
+class Monkey(AbstractResource):
     urls = [
         "/api/agent",
         "/api/agent/<string:guid>",

@@ -3,22 +3,21 @@ import logging
 from datetime import datetime
 
 import dateutil
-import flask_restful
 from flask import request
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey import Monkey
 from monkey_island.cc.models.telemetries import get_telemetry_by_query
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.auth import jwt_required
 from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 
 logger = logging.getLogger(__name__)
 
 
-class Telemetry(flask_restful.Resource, IResource):
+class Telemetry(AbstractResource):
     urls = ["/api/telemetry", "/api/telemetry/<string:monkey_guid>"]
 
     @jwt_required

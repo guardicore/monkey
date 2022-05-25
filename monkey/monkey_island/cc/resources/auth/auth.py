@@ -1,15 +1,11 @@
 import logging
-from functools import wraps
 
 import flask_jwt_extended
-import flask_restful
 from flask import make_response, request
-from flask_jwt_extended.exceptions import JWTExtendedException
-from jwt import PyJWTError
 
 from common.utils.exceptions import IncorrectCredentialsError
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
@@ -22,7 +18,7 @@ def init_jwt(app):
     )
 
 
-class Authenticate(flask_restful.Resource, IResource):
+class Authenticate(AbstractResource):
     """
     Resource for user authentication. The user provides the username and password and we
     give them a JWT.

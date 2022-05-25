@@ -1,17 +1,16 @@
 import logging
 
-import flask_restful
 from flask import make_response, request
 
 from common.utils.exceptions import AlreadyRegisteredError, InvalidRegistrationCredentialsError
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
 
 
-class Registration(flask_restful.Resource, IResource):
+class Registration(AbstractResource):
 
     urls = ["/api/registration"]
 

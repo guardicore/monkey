@@ -1,15 +1,14 @@
 import logging
 
-import flask_restful
 from flask import make_response, send_file
 
-from monkey_island.cc.resources.i_resource import IResource
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 logger = logging.getLogger(__file__)
 
 
-class PBAFileDownload(flask_restful.Resource, IResource):
+class PBAFileDownload(AbstractResource):
     urls = ["/api/pba/download/<string:filename>"]
     """
     File download endpoint used by monkey to download user's PBA file

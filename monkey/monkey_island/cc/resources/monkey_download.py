@@ -2,10 +2,9 @@ import hashlib
 import logging
 from pathlib import Path
 
-import flask_restful
 from flask import make_response, send_from_directory
 
-from monkey_island.cc.resources.i_resource import IResource
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 
 logger = logging.getLogger(__name__)
@@ -20,7 +19,7 @@ class UnsupportedOSError(Exception):
     pass
 
 
-class MonkeyDownload(flask_restful.Resource, IResource):
+class MonkeyDownload(AbstractResource):
     urls = ["/api/agent/download/<string:host_os>"]
 
     # Used by monkey. can't secure.

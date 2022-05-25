@@ -1,13 +1,12 @@
-import flask_restful
 from bson import json_util
 from flask import request
 
 from monkey_island.cc.database import mongo
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.resources.i_resource import IResource
 
 
-class MonkeyBlackboxEndpoint(flask_restful.Resource, IResource):
+class MonkeyBlackboxEndpoint(AbstractResource):
     urls = ["/api/test/monkey"]
 
     @jwt_required

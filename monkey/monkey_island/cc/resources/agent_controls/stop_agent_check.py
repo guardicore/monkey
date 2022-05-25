@@ -1,10 +1,8 @@
-import flask_restful
-
-from monkey_island.cc.resources.i_resource import IResource
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.services.infection_lifecycle import should_agent_die
 
 
-class StopAgentCheck(flask_restful.Resource, IResource):
+class StopAgentCheck(AbstractResource):
     urls = ["/api/monkey-control/needs-to-stop/<int:monkey_guid>"]
 
     def get(self, monkey_guid: int):

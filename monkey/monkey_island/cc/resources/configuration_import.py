@@ -3,12 +3,11 @@ import logging
 from dataclasses import dataclass
 from json.decoder import JSONDecodeError
 
-import flask_restful
 from flask import request
 
 from common.utils.exceptions import InvalidConfigurationError
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.resources.i_resource import IResource
 from monkey_island.cc.server_utils.encryption import (
     InvalidCiphertextError,
     InvalidCredentialsError,
@@ -39,7 +38,7 @@ class ResponseContents:
         return self.__dict__
 
 
-class ConfigurationImport(flask_restful.Resource, IResource):
+class ConfigurationImport(AbstractResource):
     urls = ["/api/configuration/import"]
     SUCCESS = False
 
