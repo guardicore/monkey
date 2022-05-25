@@ -163,6 +163,7 @@ class SingleIpRange(NetworkRange):
         """
         We have to check if we have an IP to return, because user could have entered invalid
         domain name and no IP was found
+
         :return: IP if there is one
         """
         if self.ip_found():
@@ -177,6 +178,7 @@ class SingleIpRange(NetworkRange):
     def ip_found(self):
         """
         Checks if we could translate domain name entered into IP address
+
         :return: True if dns found domain name and false otherwise
         """
         return self._ip_address
@@ -186,6 +188,7 @@ class SingleIpRange(NetworkRange):
         """
         Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name
         and ip
+
         :param string_: String that was entered in "Scan IP/subnet list"
         :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
         """

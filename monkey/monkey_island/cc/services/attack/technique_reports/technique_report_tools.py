@@ -4,6 +4,7 @@ from monkey_island.cc.server_utils.encryption import get_datastore_encryptor
 def parse_creds(attempt):
     """
     Parses used credentials into a string
+
     :param attempt: login attempt from database
     :return: string with username and used password/hash
     """
@@ -22,6 +23,7 @@ def parse_creds(attempt):
 def censor_password(password, plain_chars=3, secret_chars=5):
     """
     Decrypts and obfuscates password by changing characters to *
+
     :param password: Password or string to obfuscate
     :param plain_chars: How many plain-text characters should be kept at the start of the string
     :param secret_chars: How many * symbols should be used to hide the remainder of the password
@@ -33,14 +35,15 @@ def censor_password(password, plain_chars=3, secret_chars=5):
     return password[0:plain_chars] + "*" * secret_chars
 
 
-def censor_hash(hash_, plain_chars=5):
+def censor_hash(str_hash, plain_chars=5):
     """
     Decrypts and obfuscates hash by only showing a part of it
-    :param hash_: Hash to obfuscate
+
+    :param str_hash: Hash to obfuscate
     :param plain_chars: How many chars of hash should be shown
     :return: Obfuscated string
     """
-    if not hash_:
+    if not str_hash:
         return ""
-    hash_ = get_datastore_encryptor().decrypt(hash_)
-    return hash_[0:plain_chars] + " ..."
+    str_hash = get_datastore_encryptor().decrypt(str_hash)
+    return str_hash[0:plain_chars] + " ..."

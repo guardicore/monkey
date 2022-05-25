@@ -52,3 +52,4 @@ repos:
     rev: v2.3
     hooks:
       - id: vulture
+        exclude: "monkey/monkey_island/docs/source/conf.py"

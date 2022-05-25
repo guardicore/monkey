@@ -63,11 +63,12 @@ class ConfigService:
     def get_config(is_initial_config=False, should_decrypt=True, is_island=False):
         """
         Gets the entire global config.
-        :param is_initial_config: If True, the initial config will be returned instead of the
-        current config.
-        :param should_decrypt: If True, all config values which are set as encrypted will be
-        decrypted.
-        :param is_island: If True, will include island specific configuration parameters.
+
+        :param is_initial_config: If True, the initial config will be returned instead of the \
+         current config. \
+        :param should_decrypt: If True, all config values which are set as encrypted will be \
+         decrypted. \
+        :param is_island: If True, will include island specific configuration parameters. \
         :return: The entire global config.
         """
         config = (
@@ -86,10 +87,11 @@ class ConfigService:
     def get_config_value(config_key_as_arr, is_initial_config=False, should_decrypt=True):
         """
         Get a specific config value.
-        :param config_key_as_arr: The config key as an array. e.g. ['basic', 'credentials',
-        'exploit_password_list'].
-        :param is_initial_config: If True, returns the value of the initial config instead of the
-        current config.
+
+        :param config_key_as_arr: The config key as an array.
+         e.g. ['basic', 'credentials','exploit_password_list'].
+        :param is_initial_config: If True, returns the value of the
+         initial config instead of the current config.
         :param should_decrypt: If True, the value of the config key will be decrypted
                                (if it's in the list of encrypted config values).
         :return: The value of the requested config key.

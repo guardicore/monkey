@@ -13,6 +13,7 @@ class Timer:
     def set(self, timeout_sec: float):
         """
         Set a timer
+
         :param float timeout_sec: A nonnegative floating point number expressing the number of
                                   seconds to set the timeout for.
         """
@@ -22,6 +23,7 @@ class Timer:
     def is_expired(self):
         """
         Check whether or not the timer has expired
+
         :return: True if the elapsed time since set(TIMEOUT_SEC) was called is greater than
                  TIMEOUT_SEC, False otherwise
         :rtype: bool
@@ -32,6 +34,7 @@ class Timer:
     def time_remaining(self) -> float:
         """
         Return the amount of time remaining until the timer expires.
+
         :return: The number of seconds until the timer expires. If the timer is expired, this
                  function returns 0 (it will never return a negative number).
         :rtype: float

@@ -1,0 +1,21 @@
+/* Sidebar header (and topbar for mobile) */
+.wy-side-nav-search, .wy-nav-top {
+    background: #facc00;
+}
+
+.wy-nav-content {
+    max-width: 1200px !important;
+}
+
+h1 {
+    font-family: "Novacento Sans Wide", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    color: #222;
+    font-weight: 200;
+    font-size: 3.25rem;
+}
+
+h2, h3, h4, h5 {
+    color: #AD8B00 !important;
+}

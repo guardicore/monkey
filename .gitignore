@@ -59,7 +59,7 @@ coverage.xml
 *.log
 
 # Sphinx documentation
-docs/_build/
+/monkey/monkey_island/docs/source/_autosummary
 
 # PyBuilder
 target/

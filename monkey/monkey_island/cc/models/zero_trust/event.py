@@ -7,16 +7,14 @@ import common.common_consts.zero_trust_consts as zero_trust_consts
 
 class Event(EmbeddedDocument):
     """
-    This model represents a single event within a Finding (it is an EmbeddedDocument within
-    Finding). It is meant to
-    hold a detail of the Finding.
+    This model represents a single event within a Finding (it is an EmbeddedDocument within \
+    Finding). It is meant to hold a detail of the Finding.
 
-    This class has 2 main section:
-        *   The schema section defines the DB fields in the document. This is the data of the
-        object.
-        *   The logic section defines complex questions we can ask about a single document which
-        are asked multiple
-            times, or complex action we will perform - somewhat like an API.
+    This class has 2 main section: \
+        *   The schema section defines the DB fields in the document. This is the data of the \
+        object. \
+        *   The logic section defines complex questions we can ask about a single document which \
+        are asked multiple times, or complex action we will perform - somewhat like an API.
     """
 
     # SCHEMA

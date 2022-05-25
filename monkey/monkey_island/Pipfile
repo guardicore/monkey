@@ -39,6 +39,9 @@ isort = "==5.10.1"
 coverage = "*"
 vulture = "==2.3"
 tqdm = "*"  # Used in BB tests
+sphinx = "*"  # Used in documentation
+sphinx_rtd_theme = "*"
+sphinx_autodoc_typehints = "*"
 
 [requires]
 python_version = "3.7"

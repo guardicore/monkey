@@ -10,6 +10,7 @@ class UsageTechnique(AttackTechnique, metaclass=abc.ABCMeta):
     def parse_usages(usage):
         """
         Parses data from database and translates usage enums into strings
+
         :param usage: Usage telemetry that contains fields: {'usage': 'SMB', 'status': 1}
         :return: usage string
         """
@@ -26,6 +27,7 @@ class UsageTechnique(AttackTechnique, metaclass=abc.ABCMeta):
     def get_usage_data(cls):
         """
         Gets data of usage attack telemetries
+
         :return: parsed list of usages from attack telemetries of usage type
         """
         data = list(mongo.db.telemetry.aggregate(cls.get_usage_query()))
@@ -35,7 +37,7 @@ class UsageTechnique(AttackTechnique, metaclass=abc.ABCMeta):
     def get_usage_query(cls):
         """
         :return: Query that parses attack telemetries for a simple report component
-        (gets machines and attack technique usage).
+         (gets machines and attack technique usage).
         """
         return [
             {"$match": {"telem_category": "attack", "data.technique": cls.tech_id}},

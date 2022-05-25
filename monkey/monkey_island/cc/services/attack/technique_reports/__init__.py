@@ -24,6 +24,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def unscanned_msg(self):
         """
+
         :return: Message that will be displayed in case attack technique was not scanned.
         """
         ...
@@ -32,6 +33,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def scanned_msg(self):
         """
+
         :return: Message that will be displayed in case attack technique was scanned.
         """
         ...
@@ -40,6 +42,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def used_msg(self):
         """
+
         :return: Message that will be displayed in case attack technique was used by the scanner.
         """
         ...
@@ -48,6 +51,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def tech_id(self):
         """
+
         :return: Id of attack technique. E.g. T1003
         """
         ...
@@ -56,8 +60,8 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def relevant_systems(self) -> List[str]:
         """
-        :return: systems on which the technique is relevant
-                 (examples: 1. "Trap Command" PBA (technique T1154) is Linux only.
+        :return: systems on which the technique is relevant \
+                 (examples: 1. "Trap Command" PBA (technique T1154) is Linux only. \
                             2. "Job Scheduling" PBA has different techniques for Windows and Linux.
         """
         ...
@@ -66,6 +70,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     @abstractstatic
     def get_report_data():
         """
+
         :return: Report data aggregated from the database.
         """
         ...
@@ -74,6 +79,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def technique_status(cls):
         """
         Gets the status of a certain attack technique.
+
         :return: ScanStatus numeric value
         """
         if mongo.db.telemetry.find_one(
@@ -99,6 +105,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def get_message_and_status(cls, status):
         """
         Returns a dict with attack technique's message and status.
+
         :param status: Enum from common/attack_utils.py integer value
         :return: Dict with message and status
         """
@@ -108,6 +115,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def get_message_by_status(cls, status):
         """
         Picks a message to return based on status.
+
         :param status: Enum from common/attack_utils.py integer value
         :return: message string
         """
@@ -169,8 +177,9 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
     def get_tech_base_data(cls):
         """
         Gathers basic attack technique data into a dict.
+
         :return: dict E.g. {'message': 'Brute force used', 'status': 2, 'title': 'T1110 Brute
-        force'}
+         force'}
         """
         data = {}
         status = cls.technique_status()
@@ -200,6 +209,7 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
 def get_technique(technique_id):
     """
     Gets technique by id
+
     :param technique_id: E.g. T1210
     :return: Technique object or None if technique is not found
     """

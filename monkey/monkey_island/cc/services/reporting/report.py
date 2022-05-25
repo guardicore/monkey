@@ -206,13 +206,11 @@ class ReportService:
     @staticmethod
     def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
         """
-        Gets list of cross segment issues of a single machine. Meaning a machine has an interface
-        for each of the
-        subnets.
-        :param source_subnet_range:   The subnet range which shouldn't be able to access
-        target_subnet.
-        :param target_subnet_range:   The subnet range which shouldn't be accessible from
-        source_subnet.
+        Gets list of cross segment issues of a single machine.
+        Meaning a machine has an interface for each of the subnets
+
+        :param source_subnet_range: The subnet range which shouldn't be able to access target_subnet
+        :param target_subnet_range: The subnet range which shouldn't be accessible fromsource_subnet
         :return:
         """
         cross_segment_issues = []
@@ -251,9 +249,9 @@ class ReportService:
     def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
         """
         Gets list of cross segment issues from source_subnet to target_subnet.
-        :param scans:           List of all scan telemetry entries. Must have monkey_guid,
-        ip_addr and services.
-                                This should be a PyMongo cursor object.
+
+        :param scans: List of all scan telemetry entries. Must have monkey_guid,ip_addr and
+         services. This should be a PyMongo cursor object.
         :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
         :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
         :return:
@@ -294,11 +292,11 @@ class ReportService:
     def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
         """
         Gets list of cross segment issues within given subnet_group.
-        :param scans:           List of all scan telemetry entries. Must have monkey_guid,
-        ip_addr and services.
-                                This should be a PyMongo cursor object.
-        :param subnet_group:    List of subnets which shouldn't be accessible from each other.
-        :return:                Cross segment issues regarding the subnets in the group.
+
+        :param scans: List of all scan telemetry entries. Must have monkey_guid,
+         ip_addr and services. This should be a PyMongo cursor object.
+        :param subnet_group: List of subnets which shouldn't be accessible from each other.
+        :return: Cross segment issues regarding the subnets in the group.
         """
         cross_segment_issues = []
 
@@ -545,6 +543,7 @@ class ReportService:
     def delete_saved_report_if_exists():
         """
         This function clears the saved report from the DB.
+
         :raises RuntimeError if deletion failed
         """
         delete_result = mongo.db.report.delete_many({})
