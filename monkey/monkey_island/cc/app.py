@@ -1,7 +1,8 @@
 import os
+import re
 import uuid
 from datetime import timedelta
-from typing import Type
+from typing import Iterable, Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
@@ -10,6 +11,7 @@ from werkzeug.exceptions import NotFound
 from common import DIContainer
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import RemoteRun
+from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
@@ -109,75 +111,82 @@ def init_app_url_rules(app):
 
 
 class FlaskDIWrapper:
+    class DuplicateURLError(Exception):
+        pass
+
+    url_parameter_regex = re.compile(r"<.*?:.*?>")
+
     def __init__(self, api: flask_restful.Api, container: DIContainer):
         self._api = api
         self._container = container
+        self._reserved_urls = set()
 
-    def add_resource(self, resource: Type[flask_restful.Resource], *urls: str):
+    def add_resource(self, resource: Type[AbstractResource]):
+        if len(resource.urls) == 0:
+            raise ValueError(f"Resource {resource.__name__} has no defined URLs")
+
+        self._reserve_urls(resource.urls)
+
         dependencies = self._container.resolve_dependencies(resource)
-        self._api.add_resource(resource, *urls, resource_class_args=dependencies)
+        self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
+
+    def _reserve_urls(self, urls: Iterable[str]):
+        for url in map(FlaskDIWrapper._format_url, urls):
+            if url in self._reserved_urls:
+                raise FlaskDIWrapper.DuplicateURLError(f"URL {url} has already been registered!")
+
+            self._reserved_urls.add(url)
+
+    @staticmethod
+    def _format_url(url: str):
+        new_url = url.strip("/")
+        return FlaskDIWrapper.url_parameter_regex.sub("<PARAMETER_PLACEHOLDER>", new_url)
 
 
 def init_api_resources(api: FlaskDIWrapper):
-    api.add_resource(Root, "/api")
-    api.add_resource(Registration, "/api/registration")
-    api.add_resource(Authenticate, "/api/auth")
-    api.add_resource(
-        Monkey,
-        "/api/agent",
-        "/api/agent/<string:guid>",
-        "/api/agent/<string:guid>/<string:config_format>",
-    )
-    api.add_resource(LocalRun, "/api/local-monkey")
-    api.add_resource(Telemetry, "/api/telemetry", "/api/telemetry/<string:monkey_guid>")
+    api.add_resource(Root)
+    api.add_resource(Registration)
+    api.add_resource(Authenticate)
+    api.add_resource(Monkey)
+    api.add_resource(LocalRun)
+    api.add_resource(Telemetry)
 
-    api.add_resource(IslandMode, "/api/island-mode")
-    api.add_resource(IslandConfiguration, "/api/configuration/island")
-    api.add_resource(ConfigurationExport, "/api/configuration/export")
-    api.add_resource(ConfigurationImport, "/api/configuration/import")
-    api.add_resource(
-        MonkeyDownload,
-        "/api/agent/download/<string:host_os>",
-    )
-    api.add_resource(NetMap, "/api/netmap")
-    api.add_resource(Edge, "/api/netmap/edge")
-    api.add_resource(Node, "/api/netmap/node")
-    api.add_resource(NodeStates, "/api/netmap/node-states")
+    api.add_resource(IslandMode)
+    api.add_resource(IslandConfiguration)
+    api.add_resource(ConfigurationExport)
+    api.add_resource(ConfigurationImport)
+    api.add_resource(MonkeyDownload)
+    api.add_resource(NetMap)
+    api.add_resource(Edge)
+    api.add_resource(Node)
+    api.add_resource(NodeStates)
 
-    api.add_resource(SecurityReport, "/api/report/security")
-    api.add_resource(ZeroTrustReport, "/api/report/zero-trust/<string:report_data>")
-    api.add_resource(AttackReport, "/api/report/attack")
-    api.add_resource(RansomwareReport, "/api/report/ransomware")
-    api.add_resource(ManualExploitation, "/api/exploitations/manual")
-    api.add_resource(MonkeyExploitation, "/api/exploitations/monkey")
+    api.add_resource(SecurityReport)
+    api.add_resource(ZeroTrustReport)
+    api.add_resource(AttackReport)
+    api.add_resource(RansomwareReport)
+    api.add_resource(ManualExploitation)
+    api.add_resource(MonkeyExploitation)
 
-    api.add_resource(ZeroTrustFindingEvent, "/api/zero-trust/finding-event/<string:finding_id>")
-    api.add_resource(TelemetryFeed, "/api/telemetry-feed")
-    api.add_resource(Log, "/api/log")
-    api.add_resource(IslandLog, "/api/log/island/download")
+    api.add_resource(ZeroTrustFindingEvent)
+    api.add_resource(TelemetryFeed)
+    api.add_resource(Log)
+    api.add_resource(IslandLog)
 
-    api.add_resource(
-        PBAFileDownload,
-        "/api/pba/download/<string:filename>",
-    )
-    api.add_resource(
-        FileUpload,
-        "/api/file-upload/<string:target_os>",
-        "/api/file-upload/<string:target_os>?load=<string:filename>",
-        "/api/file-upload/<string:target_os>?restore=<string:filename>",
-    )
+    api.add_resource(PBAFileDownload)
+    api.add_resource(FileUpload)
 
-    api.add_resource(PropagationCredentials, "/api/propagation-credentials/<string:guid>")
-    api.add_resource(RemoteRun, "/api/remote-monkey")
-    api.add_resource(VersionUpdate, "/api/version-update")
-    api.add_resource(StopAgentCheck, "/api/monkey-control/needs-to-stop/<int:monkey_guid>")
-    api.add_resource(StopAllAgents, "/api/monkey-control/stop-all-agents")
+    api.add_resource(PropagationCredentials)
+    api.add_resource(RemoteRun)
+    api.add_resource(VersionUpdate)
+    api.add_resource(StopAgentCheck)
+    api.add_resource(StopAllAgents)
 
     # Resources used by black box tests
-    api.add_resource(MonkeyBlackboxEndpoint, "/api/test/monkey")
-    api.add_resource(ClearCaches, "/api/test/clear-caches")
-    api.add_resource(LogBlackboxEndpoint, "/api/test/log")
-    api.add_resource(TelemetryBlackboxEndpoint, "/api/test/telemetry")
+    api.add_resource(MonkeyBlackboxEndpoint)
+    api.add_resource(ClearCaches)
+    api.add_resource(LogBlackboxEndpoint)
+    api.add_resource(TelemetryBlackboxEndpoint)
 
 
 def init_app(mongo_url: str, container: DIContainer):

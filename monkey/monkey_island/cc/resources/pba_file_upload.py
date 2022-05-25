@@ -1,27 +1,32 @@
 import logging
 from http import HTTPStatus
 
-import flask_restful
 from flask import Response, make_response, request, send_file
 from werkzeug.utils import secure_filename as sanitize_filename
 
 from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__file__)
-
 
 # Front end uses these strings to identify which files to work with (linux or windows)
 LINUX_PBA_TYPE = "PBAlinux"
 WINDOWS_PBA_TYPE = "PBAwindows"
 
 
-class FileUpload(flask_restful.Resource):
+class FileUpload(AbstractResource):
     """
     File upload endpoint used to send/receive Custom PBA files
     """
+
+    urls = [
+        "/api/file-upload/<string:target_os>",
+        "/api/file-upload/<string:target_os>?load=<string:filename>",
+        "/api/file-upload/<string:target_os>?restore=<string:filename>",
+    ]
 
     def __init__(self, file_storage_service: IFileStorageService):
         self._file_storage_service = file_storage_service

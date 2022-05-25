@@ -1,14 +1,16 @@
 import json
 
-import flask_restful
 from flask import request
 
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.server_utils.encryption import PasswordBasedStringEncryptor
 from monkey_island.cc.services.config import ConfigService
 
 
-class ConfigurationExport(flask_restful.Resource):
+class ConfigurationExport(AbstractResource):
+    urls = ["/api/configuration/export"]
+
     @jwt_required
     def post(self):
         data = json.loads(request.data)

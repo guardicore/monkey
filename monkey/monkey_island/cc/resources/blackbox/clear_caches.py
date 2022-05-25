@@ -2,7 +2,8 @@ import logging
 
 import flask_restful
 
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.attack.attack_report import AttackReportService
 from monkey_island.cc.services.reporting.report import ReportService
 
@@ -11,7 +12,8 @@ NOT_ALL_REPORTS_DELETED = "Not all reports have been cleared from the DB!"
 logger = logging.getLogger(__name__)
 
 
-class ClearCaches(flask_restful.Resource):
+class ClearCaches(AbstractResource):
+    urls = ["/api/test/clear-caches"]
     """
     Used for timing tests - we want to get actual execution time of functions in BlackBox without
     caching -

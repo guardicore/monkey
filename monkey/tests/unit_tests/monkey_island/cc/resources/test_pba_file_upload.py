@@ -3,9 +3,10 @@ from typing import BinaryIO
 
 import pytest
 from tests.common import StubDIContainer
+from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 from tests.utils import raise_
 
-from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE
+from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE, FileUpload
 from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 TEST_FILE_CONTENTS = b"m0nk3y"
@@ -74,8 +75,9 @@ def flask_client(build_flask_client, file_storage_service):
 
 @pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
 def test_pba_file_upload_post(flask_client, pba_os, mock_set_config_value):
+    url = get_url_for_resource(FileUpload, target_os=pba_os)
     resp = flask_client.post(
-        f"/api/file-upload/{pba_os}",
+        url,
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
@@ -84,8 +86,9 @@ def test_pba_file_upload_post(flask_client, pba_os, mock_set_config_value):
 
 
 def test_pba_file_upload_post__invalid(flask_client, mock_set_config_value):
+    url = get_url_for_resource(FileUpload, target_os="bogus")
     resp = flask_client.post(
-        "/api/file-upload/bogus",
+        url,
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
@@ -98,9 +101,10 @@ def test_pba_file_upload_post__internal_server_error(
     flask_client, pba_os, mock_set_config_value, file_storage_service
 ):
     file_storage_service.save_file = lambda x, y: raise_(Exception())
+    url = get_url_for_resource(FileUpload, target_os=pba_os)
 
     resp = flask_client.post(
-        f"/api/file-upload/{pba_os}",
+        url,
         data=TEST_FILE,
         content_type="multipart/form-data; boundary=---------------------------1",
         follow_redirects=True,
@@ -110,7 +114,8 @@ def test_pba_file_upload_post__internal_server_error(
 
 @pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
 def test_pba_file_upload_get__file_not_found(flask_client, pba_os, mock_get_config_value):
-    resp = flask_client.get(f"/api/file-upload/{pba_os}?load=bogus_mogus.py")
+    url = get_url_for_resource(FileUpload, target_os=pba_os, filename="bobug_mogus.py")
+    resp = flask_client.get(url)
     assert resp.status_code == 404
 
 
@@ -118,23 +123,24 @@ def test_pba_file_upload_get__file_not_found(flask_client, pba_os, mock_get_conf
 def test_pba_file_upload_endpoint(
     flask_client, pba_os, mock_get_config_value, mock_set_config_value
 ):
+
+    url_with_os = get_url_for_resource(FileUpload, target_os=pba_os)
     resp_post = flask_client.post(
-        f"/api/file-upload/{pba_os}",
+        url_with_os,
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
     )
 
-    resp_get = flask_client.get(f"/api/file-upload/{pba_os}?load=test.py")
+    url_with_filename = get_url_for_resource(FileUpload, target_os=pba_os, filename="test.py")
+    resp_get = flask_client.get(url_with_filename)
     assert resp_get.status_code == 200
     assert resp_get.data == TEST_FILE_CONTENTS
     # Closing the response closes the file handle, else it can't be deleted
     resp_get.close()
 
-    resp_delete = flask_client.delete(
-        f"/api/file-upload/{pba_os}", data="test.py", content_type="text/plain;"
-    )
-    resp_get_del = flask_client.get(f"/api/file-upload/{pba_os}?load=test.py")
+    resp_delete = flask_client.delete(url_with_os, data="test.py", content_type="text/plain;")
+    resp_get_del = flask_client.get(url_with_filename)
     assert resp_post.status_code == 200
 
     assert resp_delete.status_code == 200
@@ -145,16 +151,20 @@ def test_pba_file_upload_endpoint(
 def test_pba_file_upload_endpoint__invalid(
     flask_client, mock_set_config_value, mock_get_config_value
 ):
+
+    url_with_os = get_url_for_resource(FileUpload, target_os="bogus")
     resp_post = flask_client.post(
-        "/api/file-upload/bogus",
+        url_with_os,
         data=TEST_FILE,
         content_type="multipart/form-data; " "boundary=---------------------------" "1",
         follow_redirects=True,
     )
-    resp_get = flask_client.get("/api/file-upload/bogus?load=test.py")
-    resp_delete = flask_client.delete(
-        "/api/file-upload/bogus", data="test.py", content_type="text/plain;"
+
+    url_with_filename = get_url_for_resource(
+        FileUpload, target_os="bogus", filename="bobug_mogus.py"
     )
+    resp_get = flask_client.get(url_with_filename)
+    resp_delete = flask_client.delete(url_with_os, data="test.py", content_type="text/plain;")
     assert resp_post.status_code == 422
     assert resp_get.status_code == 422
     assert resp_delete.status_code == 422
