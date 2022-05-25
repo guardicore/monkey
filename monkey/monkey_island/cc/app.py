@@ -122,7 +122,8 @@ class FlaskDIWrapper:
         self._reserved_urls = set()
 
     def add_resource(self, resource: Type[AbstractResource]):
-        assert "urls" in resource.__dict__, f"Resource {resource} has no defined URLs"
+        if len(resource.urls) == 0:
+            raise ValueError(f"Resource {resource.__name__} has no defined URLs")
 
         self._reserve_urls(resource.urls)
 
