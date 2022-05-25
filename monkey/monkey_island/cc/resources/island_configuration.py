@@ -3,7 +3,7 @@ import json
 from flask import abort, jsonify, request
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.config import ConfigService
 
 

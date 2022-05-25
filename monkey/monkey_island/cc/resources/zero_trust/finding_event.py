@@ -1,7 +1,7 @@
 import json
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import (
     MonkeyZTFindingService,
 )

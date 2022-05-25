@@ -4,7 +4,7 @@ import logging
 from flask import make_response, request
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.config_manipulator import update_config_on_mode_set
 from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode, set_mode
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum

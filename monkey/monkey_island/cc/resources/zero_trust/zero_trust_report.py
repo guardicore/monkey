@@ -4,7 +4,7 @@ import flask_restful
 from flask import jsonify
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.zero_trust.zero_trust_report.finding_service import FindingService
 from monkey_island.cc.services.zero_trust.zero_trust_report.pillar_service import PillarService
 from monkey_island.cc.services.zero_trust.zero_trust_report.principle_service import (

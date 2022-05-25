@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename as sanitize_filename
 
 from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 from monkey_island.cc.services.config import ConfigService
 
