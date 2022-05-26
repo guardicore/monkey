@@ -18,8 +18,7 @@ WINDOWS_PBA_TYPE = "PBAwindows"
 
 
 class FileUpload(AbstractResource):
-    # API Spec: FileUpload -> CustomPBAFile or something to make it more RESTful. Change endpoint
-    # accordingly.
+    # API Spec: FileUpload -> PBAFileUpload. Change endpoint accordingly.
     """
     File upload endpoint used to send/receive Custom PBA files
     """

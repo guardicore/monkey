@@ -21,7 +21,8 @@ class IslandConfiguration(AbstractResource):
     @jwt_required
     def post(self):
         config_json = json.loads(request.data)
-        # API Spec: Resetting config is an action; separate RPC-style endpoint for this?
+        # API Spec: Makes more sense to have a PATCH request for this since the resource,
+        # i.e. the configuration, is being updated.
         if "reset" in config_json:
             ConfigService.reset_config()
         else:
@@ -31,4 +32,5 @@ class IslandConfiguration(AbstractResource):
         # RESTfulness of a POST request is to return an identifier of the updated/newly created
         # resource. Since there's only one thing we're updating (and not multiple "resources"),
         # should this also be an RPC-style endpoint (/api/resetConfig and /api/updateConfig)?
+        # Simplest way it to just send a GET request after this to get the updated config.
         return self.get()

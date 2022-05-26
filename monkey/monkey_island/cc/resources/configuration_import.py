@@ -39,7 +39,7 @@ class ResponseContents:
 
 
 class ConfigurationImport(AbstractResource):
-    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
+    # API Spec: Should probably be merged with IslandConfiguration
     urls = ["/api/configuration/import"]
     SUCCESS = False
 

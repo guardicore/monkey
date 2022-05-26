@@ -55,7 +55,7 @@ class RemoteRun(AbstractResource):
         if body.get("type") == "aws":
             results = self.run_aws_monkeys(body)
             # API Spec: POST should return identifier or updated/newly created resource, not some
-            # kind of data. That's more of a GET thing.
+            # kind of data. That's a GET thing.
             return RemoteRun._encode_results(results)
 
         # default action

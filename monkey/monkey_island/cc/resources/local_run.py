@@ -10,10 +10,11 @@ from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
 
 class LocalRun(AbstractResource):
-    # API Spec: This should be an RPC-style API i.e. two endpoints -
-    # "/api/getLocalMonkeyRunningStatus" and "/api/startLocalMonkey"
     urls = ["/api/local-monkey"]
 
+    # API Spec: Both of these methods should be separated to their own resources
+
+    # API Spec: This should be a REST endpoint, /api/monkeys or something
     @jwt_required
     def get(self):
         island_monkey = NodeService.get_monkey_island_monkey()
@@ -24,6 +25,7 @@ class LocalRun(AbstractResource):
 
         return jsonify(is_running=is_monkey_running)
 
+    # API Spec: This should be an RPC-style endpoint
     @jwt_required
     def post(self):
         body = json.loads(request.data)

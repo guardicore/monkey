@@ -17,7 +17,6 @@ REPORT_DATA_PRINCIPLES_STATUS = "principles"
 
 
 class ZeroTrustReport(AbstractResource):
-    # API Spec: This is an action and there's no "resource"; RPC-style endpoint?
     urls = ["/api/report/zero-trust/<string:report_data>"]
 
     @jwt_required
