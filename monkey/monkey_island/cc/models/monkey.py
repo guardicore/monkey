@@ -1,5 +1,6 @@
 """
 Define a Document Schema for the Monkey document.
+
 """
 import ring
 from mongoengine import (
@@ -28,11 +29,10 @@ class ParentNotFoundError(Exception):
 class Monkey(Document):
     """
     This class has 2 main section:
-        *   The schema section defines the DB fields in the document. This is the data of the
-        object.
-        *   The logic section defines complex questions we can ask about a single document which
-        are asked multiple
-            times, somewhat like an API.
+    *   The schema section defines the DB fields in the document. This is the
+    data of the object.
+    *   The logic section defines complex questions we can ask about a single
+    document which are asked multiple times, somewhat like an API.
     """
 
     # SCHEMA

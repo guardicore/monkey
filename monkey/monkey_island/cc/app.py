@@ -190,6 +190,12 @@ def init_api_resources(api: FlaskDIWrapper):
 
 
 def init_app(mongo_url: str, container: DIContainer):
+    """
+    Simple docstirng for init_app
+
+    :param mongo_url: A url
+    :param container: Dependency injection container
+    """
     app = Flask(__name__)
 
     api = flask_restful.Api(app)

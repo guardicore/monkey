@@ -9,14 +9,17 @@ class ConfigSchemaPerAttackTechnique:
         self, schema: Dict
     ) -> Dict[str, Dict[str, List[str]]]:
         """
-        :return: dictionary mapping each attack technique to relevant config fields; example -
-                {
-                    "T1003": {
-                        "System Info Collectors": [
-                            "Mimikatz collector",
-                        ]
-                    }
-                }
+        example: \
+                { \
+                    "T1003": { \
+                        "System Info Collectors": [ \
+                            "Mimikatz collector", \
+                        ] \
+                    } \
+                } \
+
+        :return: dictionary mapping each attack technique to relevant config \
+        fields
         """
         self._crawl_config_schema_definitions_for_reverse_schema(schema)
         self._crawl_config_schema_properties_for_reverse_schema(schema)

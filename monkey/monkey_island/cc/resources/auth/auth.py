@@ -21,20 +21,22 @@ def init_jwt(app):
 
 class Authenticate(AbstractResource):
     """
-    Resource for user authentication. The user provides the username and password and we
-    give them a JWT.
-    See `AuthService.js` file for the frontend counterpart for this code.
+    Resource for user authentication. The user provides the username and password and we \
+    give them a JWT. \
+    See `AuthService.js` file for the frontend counterpart for this code. \
+
     """
 
     urls = ["/api/auth"]
 
     def post(self):
         """
-        Example request:
-        {
-            "username": "my_user",
-            "password": "my_password"
-        }
+        Example request: \
+        { \
+            "username": "my_user", \
+            "password": "my_password" \
+        } \
+
         """
         username, password = get_username_password_from_request(request)
 

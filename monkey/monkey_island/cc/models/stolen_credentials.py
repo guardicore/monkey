@@ -9,11 +9,11 @@ from monkey_island.cc.services.telemetry.processing.credentials import Credentia
 class StolenCredentials(Document):
     """
     This class has 2 main section:
-        *   The schema section defines the DB fields in the document. This is the data of the
-        object.
-        *   The logic section defines complex questions we can ask about a single document which
-        are asked multiple
-            times, somewhat like an API.
+    *   The schema section defines the DB fields in the document. This is the
+    data of the object.
+    *   The logic section defines complex questions we can ask about a single document
+    which are asked multiple times, somewhat like an API.
+
     """
 
     # SCHEMA

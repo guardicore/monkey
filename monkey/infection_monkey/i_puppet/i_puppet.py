@@ -42,6 +42,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
         """
         Loads a plugin into the puppet
+
         :param str plugin_name: The plugin class name
         :param object plugin: The plugin object to load
         :param PluginType plugin_type: The type of plugin being loaded
@@ -51,6 +52,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
         """
         Runs a credential collector
+
         :param str name: The name of the credential collector to run
         :param Dict options: A dictionary containing options that modify the behavior of the
                              Credential collector
@@ -62,6 +64,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     def run_pba(self, name: str, options: Dict) -> Iterable[PostBreachData]:
         """
         Runs a post-breach action (PBA)
+
         :param str name: The name of the post-breach action to run
         :param Dict options: A dictionary containing options that modify the behavior of the PBA
         :rtype: Iterable[PostBreachData]
@@ -71,6 +74,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     def ping(self, host: str, timeout: float) -> PingScanData:
         """
         Sends a ping (ICMP packet) to a remote host
+
         :param str host: The domain name or IP address of a host
         :param float timeout: The maximum amount of time (in seconds) to wait for a response
         :return: The data collected by attempting to ping the target host
@@ -83,6 +87,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     ) -> Dict[int, PortScanData]:
         """
         Scans a list of TCP ports on a remote host
+
         :param str host: The domain name or IP address of a host
         :param int ports: List of TCP port numbers to scan
         :param float timeout: The maximum amount of time (in seconds) to wait for a response
@@ -102,6 +107,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         """
         Runs a specific fingerprinter to attempt to gather detailed information about a host and its
         services
+
         :param str name: The name of the fingerprinter to run
         :param str host: The domain name or IP address of a host
         :param PingScanData ping_scan_data: Data retrieved from the target host via ICMP
@@ -124,6 +130,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     ) -> ExploiterResultData:
         """
         Runs an exploiter against a remote host
+
         :param str name: The name of the exploiter to run
         :param VictimHost host: A VictimHost object representing the target to exploit
         :param int current_depth: The current propagation depth
@@ -139,6 +146,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
         """
         Runs a payload
+
         :param str name: The name of the payload to run
         :param Dict options: A dictionary containing options that modify the behavior of the payload
         :param threading.Event interrupt: A threading.Event object that signals the payload to stop

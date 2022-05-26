@@ -20,10 +20,10 @@ class DIContainer:
 
     def register(self, interface: Type[T], concrete_type: Type[T]):
         """
-        Register a concrete type that satisfies a given interface.
+        Register a concrete `type` that satisfies a given interface.
 
         :param interface: An interface or abstract base class that other classes depend upon
-        :param concrete_type: A type (class) that implements `interface`
+        :param concrete_type: A `type` (class) that implements `interface`
         """
         if not inspect.isclass(concrete_type):
             raise TypeError(
@@ -45,7 +45,7 @@ class DIContainer:
         Register a concrete instance that satisfies a given interface.
 
         :param interface: An interface or abstract base class that other classes depend upon
-        :param instance: An instance (object) of a type that implements `interface`
+        :param instance: An instance (object) of a `type` that implements `interface`
         """
         if not isinstance(instance, interface):
             raise TypeError(
@@ -62,8 +62,8 @@ class DIContainer:
         injection. Note that only positional arguments are resolved. Varargs, keyword-only args, and
         default values are ignored.
 
-        :param type_: A type (class) to construct
-        :return: An instance of `type_`
+        :param **type_**: A `type` (class) to construct
+        :return: An instance of **type_**
         """
         try:
             return self._resolve_type(type_)
@@ -75,12 +75,12 @@ class DIContainer:
 
     def resolve_dependencies(self, type_: Type[T]) -> Sequence[Any]:
         """
-        Resolves all dependencies of type_ and returns a Sequence of objects that correspond type_'s
-        dependencies. Note that only positional arguments are resolved. Varargs, keyword-only args,
-        and default values are ignored.
+        Resolves all dependencies of `type_` and returns a Sequence of objects
+        that correspond `type_`'s dependencies. Note that only positional
+        arguments are resolved. Varargs, keyword-only args, and default values are ignored.
 
-        :param type_: A type (class) to resolve dependencies for
-        :return: An Sequence of dependencies to be injected into type_'s constructor
+        :param **type_**: A type (class) to resolve dependencies for
+        :return: An Sequence of dependencies to be injected into `type_`'s constructor
         """
         args = []
 
