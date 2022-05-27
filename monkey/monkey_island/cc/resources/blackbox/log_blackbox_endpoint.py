@@ -7,6 +7,7 @@ from monkey_island.cc.resources.request_authentication import jwt_required
 
 
 class LogBlackboxEndpoint(AbstractResource):
+    # API Spec: Rename to noun, BlackboxTestsLogs or something
     urls = ["/api/test/log"]
 
     @jwt_required

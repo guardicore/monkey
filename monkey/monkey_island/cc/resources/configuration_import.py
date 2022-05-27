@@ -39,6 +39,7 @@ class ResponseContents:
 
 
 class ConfigurationImport(AbstractResource):
+    # API Spec: Should probably be merged with IslandConfiguration
     urls = ["/api/configuration/import"]
     SUCCESS = False
 
@@ -56,11 +57,13 @@ class ConfigurationImport(AbstractResource):
                     config_schema=ConfigService.get_config_schema(),
                     import_status=ImportStatuses.UNSAFE_OPTION_VERIFICATION_REQUIRED,
                 ).form_response()
+        # API Spec: HTTP status code should be 401 here
         except InvalidCredentialsError:
             return ResponseContents(
                 import_status=ImportStatuses.INVALID_CREDENTIALS,
                 message="Invalid credentials provided",
             ).form_response()
+        # API Spec: HTTP status code should be 400 (or something else) here
         except InvalidConfigurationError:
             return ResponseContents(
                 import_status=ImportStatuses.INVALID_CONFIGURATION,

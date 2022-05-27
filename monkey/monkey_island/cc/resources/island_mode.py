@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class IslandMode(AbstractResource):
+    # API Spec: Instead of POST, this could just be PATCH
     urls = ["/api/island-mode"]
 
     @jwt_required
@@ -33,6 +34,7 @@ class IslandMode(AbstractResource):
             return make_response({}, 200)
         except (AttributeError, json.decoder.JSONDecodeError):
             return make_response({}, 400)
+        # API Spec: Check if HTTP codes make sense
         except ValueError:
             return make_response({}, 422)
 

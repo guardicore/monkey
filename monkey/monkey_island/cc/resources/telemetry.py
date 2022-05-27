@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class Telemetry(AbstractResource):
+    # API Spec: Resource name should be plural
     urls = ["/api/telemetry", "/api/telemetry/<string:monkey_guid>"]
 
     @jwt_required
@@ -62,6 +63,7 @@ class Telemetry(AbstractResource):
 
         process_telemetry(telemetry_json)
 
+        # API Spec: RESTful way is to return an identifier of the updated/newly created resource
         return {}, 201
 
     @staticmethod

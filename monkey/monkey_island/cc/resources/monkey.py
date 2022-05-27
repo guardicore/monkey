@@ -17,9 +17,11 @@ from monkey_island.cc.services.node import NodeService
 
 
 class Monkey(AbstractResource):
+    # API Spec: Resource name should be plural
     urls = [
         "/api/agent",
         "/api/agent/<string:guid>",
+        # API Spec: Resource names should alternate with IDs (/api/agents/123/config-format/xyz)
         "/api/agent/<string:guid>/<string:config_format>",
     ]
 
@@ -64,6 +66,7 @@ class Monkey(AbstractResource):
         ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
         update["$set"]["ttl_ref"] = ttl.id
 
+        # API Spec: What is this returning? Check that it follows rules.
         return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
 
     # Used by monkey. can't secure.

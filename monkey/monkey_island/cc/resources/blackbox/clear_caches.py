@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class ClearCaches(AbstractResource):
+    # API Spec: Action, not a resource; RPC-style endpoint?
     urls = ["/api/test/clear-caches"]
     """
     Used for timing tests - we want to get actual execution time of functions in BlackBox without

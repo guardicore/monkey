@@ -173,6 +173,7 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(Log)
     api.add_resource(IslandLog)
 
+    # API Spec: These two should be the same resource, GET for download and POST for upload
     api.add_resource(PBAFileDownload)
     api.add_resource(FileUpload)
 
@@ -183,6 +184,9 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(StopAllAgents)
 
     # Resources used by black box tests
+    # API Spec: Fix all the following endpoints, see comments in the resource classes
+    # Note: Preferably, the API will provide a rich feature set and allow access to all of the
+    #       necessary data. This would make these endpoints obsolete.
     api.add_resource(MonkeyBlackboxEndpoint)
     api.add_resource(ClearCaches)
     api.add_resource(LogBlackboxEndpoint)
