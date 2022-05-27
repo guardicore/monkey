@@ -155,7 +155,7 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(IslandConfiguration)
     api.add_resource(ConfigurationExport)
     api.add_resource(ConfigurationImport)
-    # API Spec: Rename to /api/agent-binary, because information about agent runs
+    # API Spec: Rename to /api/agent-binaries, because information about agent runs
     # and binary files are different resources
     api.add_resource(MonkeyDownload)
     api.add_resource(NetMap)
@@ -175,7 +175,7 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(Log)
     api.add_resource(IslandLog)
 
-    # API Spec: These two should have the same url syntax
+    # API Spec: These two should be the same resource, GET for download and POST for upload
     api.add_resource(PBAFileDownload)
     api.add_resource(FileUpload)
 
