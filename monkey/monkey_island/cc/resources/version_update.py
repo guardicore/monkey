@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class VersionUpdate(AbstractResource):
+    # API Spec: Rename to /version-info
     urls = ["/api/version-update"]
 
     def __init__(self):
