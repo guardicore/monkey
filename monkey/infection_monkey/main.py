@@ -1,5 +1,4 @@
 import argparse
-import json
 import logging
 import logging.config
 import os
@@ -12,7 +11,7 @@ from pprint import pformat
 # noinspection PyUnresolvedReferences
 import infection_monkey.post_breach  # noqa: F401
 from common.version import get_version
-from infection_monkey.config import EXTERNAL_CONFIG_FILE, WormConfiguration
+from infection_monkey.config import WormConfiguration
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
@@ -45,44 +44,27 @@ LOG_CONFIG = {
 def main():
     global logger
 
-    if 2 > len(sys.argv):
-        return True
     freeze_support()  # required for multiprocessing + pyinstaller on windows
-    monkey_mode = sys.argv[1]
-
-    if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):
-        return True
-
-    config_file = EXTERNAL_CONFIG_FILE
 
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("-c", "--config")
-    opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
-    if opts.config:
-        config_file = opts.config
-    if os.path.isfile(config_file):
-        # using print because config can also change log locations
-        print("Loading config from %s." % config_file)
-        try:
-            with open(config_file) as config_fo:
-                json_dict = json.load(config_fo)
-                WormConfiguration.from_kv(json_dict)
-        except ValueError as e:
-            print("Error loading config: %s, using default" % (e,))
-    else:
-        print(
-            "Config file wasn't supplied and default path: %s wasn't found, using internal "
-            "default" % (config_file,)
-        )
+    arg_parser.add_argument(
+        "mode",
+        choices=[MONKEY_ARG, DROPPER_ARG],
+        help=f"'{MONKEY_ARG}' mode will run the agent in the current session/terminal."
+        f"'{DROPPER_ARG}' will detach the agent from the current session "
+        f"and will start it on a separate process.",
+    )
+    mode_args, mode_specific_args = arg_parser.parse_known_args()
+    mode = mode_args.mode
 
     formatted_config = pformat(WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
     print(f"Loaded Configuration:\n{formatted_config}")
 
     try:
-        if MONKEY_ARG == monkey_mode:
+        if MONKEY_ARG == mode:
             log_path = get_agent_log_path()
             monkey_cls = InfectionMonkey
-        elif DROPPER_ARG == monkey_mode:
+        elif DROPPER_ARG == mode:
             log_path = get_dropper_log_path()
             monkey_cls = MonkeyDrops
         else:
@@ -118,7 +100,7 @@ def main():
     logger.info(f"version: {get_version()}")
     logger.info(f"writing log file to {log_path}")
 
-    monkey = monkey_cls(monkey_args)
+    monkey = monkey_cls(mode_specific_args)
 
     try:
         monkey.start()

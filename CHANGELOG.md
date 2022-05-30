@@ -73,6 +73,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Island log download button from "Telemetries"(previously called "Logs") page. #1640
 - "/api/client-monkey" endpoint. #1889
 - "+dev" from version numbers. #1553
+- agent's "--config" argument. #906
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
