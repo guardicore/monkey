@@ -1,5 +1,4 @@
 import argparse
-import json
 import logging
 import logging.config
 import os
@@ -12,7 +11,7 @@ from pprint import pformat
 # noinspection PyUnresolvedReferences
 import infection_monkey.post_breach  # noqa: F401
 from common.version import get_version
-from infection_monkey.config import EXTERNAL_CONFIG_FILE, WormConfiguration
+from infection_monkey.config import WormConfiguration
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
@@ -53,27 +52,8 @@ def main():
     if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):
         return True
 
-    config_file = EXTERNAL_CONFIG_FILE
-
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("-c", "--config")
-    opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
-    if opts.config:
-        config_file = opts.config
-    if os.path.isfile(config_file):
-        # using print because config can also change log locations
-        print("Loading config from %s." % config_file)
-        try:
-            with open(config_file) as config_fo:
-                json_dict = json.load(config_fo)
-                WormConfiguration.from_kv(json_dict)
-        except ValueError as e:
-            print("Error loading config: %s, using default" % (e,))
-    else:
-        print(
-            "Config file wasn't supplied and default path: %s wasn't found, using internal "
-            "default" % (config_file,)
-        )
+    _, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
 
     formatted_config = pformat(WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
     print(f"Loaded Configuration:\n{formatted_config}")
