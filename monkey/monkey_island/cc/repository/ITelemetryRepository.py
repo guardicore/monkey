@@ -14,7 +14,7 @@ class ITelemetryRepository(ABC):
     def get_telemetries(
         self,
         id: Optional[str] = None,
-        type: Optional[TelemetryType] = None,
+        type: Optional[TelemetryType] = None,  # noqa: F821
         monkey_id: Optional[str] = None,
     ) -> Sequence[Telemetry]:
         pass

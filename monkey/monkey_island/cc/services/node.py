@@ -188,15 +188,15 @@ class NodeService:
         tunnel_host_id = NodeService.get_monkey_by_ip(tunnel_host_ip)["_id"]
         NodeService.unset_all_monkey_tunnels(monkey_id)
         mongo.db.monkey.update(
-                {"_id": monkey_id}, {"$set": {"tunnel": tunnel_host_id}}, upsert=False
+            {"_id": monkey_id}, {"$set": {"tunnel": tunnel_host_id}}, upsert=False
         )
         monkey_label = NodeService.get_label_for_endpoint(monkey_id)
         tunnel_host_label = NodeService.get_label_for_endpoint(tunnel_host_id)
         tunnel_edge = EdgeService.get_or_create_edge(
-                src_node_id=monkey_id,
-                dst_node_id=tunnel_host_id,
-                src_label=monkey_label,
-                dst_label=tunnel_host_label,
+            src_node_id=monkey_id,
+            dst_node_id=tunnel_host_id,
+            src_label=monkey_label,
+            dst_label=tunnel_host_label,
         )
         tunnel_edge.tunnel = True
         tunnel_edge.ip_address = tunnel_host_ip
@@ -205,13 +205,13 @@ class NodeService:
     @staticmethod
     def insert_node(ip_address, domain_name=""):
         new_node_insert_result = mongo.db.node.insert_one(
-                {
-                    "ip_addresses": [ip_address],
-                    "domain_name": domain_name,
-                    "exploited": False,
-                    "propagated": False,
-                    "os": {"type": "unknown", "version": "unknown"},
-                }
+            {
+                "ip_addresses": [ip_address],
+                "domain_name": domain_name,
+                "exploited": False,
+                "propagated": False,
+                "os": {"type": "unknown", "version": "unknown"},
+            }
         )
         return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
 
@@ -252,7 +252,7 @@ class NodeService:
     @staticmethod
     def update_monkey_modify_time(monkey_id):
         mongo.db.monkey.update(
-                {"_id": monkey_id}, {"$set": {"modifytime": datetime.now()}}, upsert=False
+            {"_id": monkey_id}, {"$set": {"modifytime": datetime.now()}}, upsert=False
         )
 
     @staticmethod
@@ -268,7 +268,7 @@ class NodeService:
     @staticmethod
     def add_communication_info(monkey, info):
         mongo.db.monkey.update(
-                {"guid": monkey["guid"]}, {"$set": {"command_control_channel": info}}, upsert=False
+            {"guid": monkey["guid"]}, {"$set": {"command_control_channel": info}}, upsert=False
         )
 
     # TODO this returns a mock island agent
@@ -343,7 +343,7 @@ class NodeService:
     @staticmethod
     def get_hostname_by_id(node_id):
         return NodeService.get_node_hostname(
-                mongo.db.monkey.find_one({"_id": node_id}, {"hostname": 1})
+            mongo.db.monkey.find_one({"_id": node_id}, {"hostname": 1})
         )
 
     @staticmethod

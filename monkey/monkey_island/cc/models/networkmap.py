@@ -8,10 +8,10 @@ from typing import Mapping, Sequence
 # might require more complex casting logic
 @dataclass
 class NetworkMap:
-    nodes: Mapping[str, Sequence[Arc]]
+    nodes: Mapping[str, Sequence[Arc]]  # noqa: F821
 
 
 @dataclass
 class Arc:
-    dst_machine: Machine
+    dst_machine: Machine  # noqa: F821
     status: str
