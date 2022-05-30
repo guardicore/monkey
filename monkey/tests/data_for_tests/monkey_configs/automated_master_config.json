@@ -69,7 +69,6 @@
             "windows_command": ""
         },
         "depth": 2,
-        "dropper_set_date": true,
         "exploit_lm_hash_list": ["DEADBEEF", "FACADE"],
         "exploit_ntlm_hash_list": ["BEADED", "ACCEDE", "DECADE"],
         "exploit_password_list": ["p1", "p2", "p3"],

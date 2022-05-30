@@ -97,9 +97,6 @@
         ]
       },
       "dropper": {
-        "dropper_set_date": true,
-        "dropper_date_reference_path_windows": "%windir%\\system32\\kernel32.dll",
-        "dropper_date_reference_path_linux": "/bin/sh",
         "dropper_target_path_linux": "/tmp/monkey",
         "dropper_target_path_win_64": "C:\\Windows\\temp\\monkey64.exe"
       },
