@@ -46,8 +46,7 @@ class MonkeyDrops(object):
         arg_parser.add_argument("-d", "--depth", type=int)
         arg_parser.add_argument("-l", "--location")
         arg_parser.add_argument("-vp", "--vulnerable-port")
-        self.monkey_args = args[1:]
-        self.opts, _ = arg_parser.parse_known_args(args)
+        self.opts = arg_parser.parse_args(args)
 
         self._config = {
             "source_path": os.path.abspath(sys.argv[0]),

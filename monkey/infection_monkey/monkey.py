@@ -102,7 +102,7 @@ class InfectionMonkey:
         arg_parser.add_argument("-t", "--tunnel")
         arg_parser.add_argument("-s", "--server")
         arg_parser.add_argument("-d", "--depth", type=int)
-        opts, _ = arg_parser.parse_known_args(args)
+        opts = arg_parser.parse_args(args)
         InfectionMonkey._log_arguments(opts)
 
         return opts
