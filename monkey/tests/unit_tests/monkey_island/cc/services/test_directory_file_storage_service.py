@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
-from monkey_island.cc.repository import FileRetrievalError, FileSystemStorage
+from monkey_island.cc.repository import FileRetrievalError, LocalStorageFileRepository
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 
 
@@ -13,13 +13,13 @@ def test_error_if_storage_directory_is_file(tmp_path):
     new_file.write_text("HelloWorld!")
 
     with pytest.raises(ValueError):
-        FileSystemStorage(new_file)
+        LocalStorageFileRepository(new_file)
 
 
 def test_directory_created(tmp_path):
     new_dir = tmp_path / "new_dir"
 
-    FileSystemStorage(new_dir)
+    LocalStorageFileRepository(new_dir)
 
     assert new_dir.exists() and new_dir.is_dir()
 
@@ -28,7 +28,7 @@ def test_directory_created(tmp_path):
 def test_directory_permissions__linux(tmp_path):
     new_dir = tmp_path / "new_dir"
 
-    FileSystemStorage(new_dir)
+    LocalStorageFileRepository(new_dir)
 
     assert_linux_permissions(new_dir)
 
@@ -37,7 +37,7 @@ def test_directory_permissions__linux(tmp_path):
 def test_directory_permissions__windows(tmp_path):
     new_dir = tmp_path / "new_dir"
 
-    FileSystemStorage(new_dir)
+    LocalStorageFileRepository(new_dir)
 
     assert_windows_permissions(new_dir)
 
@@ -47,7 +47,7 @@ def save_file(tmp_path, file_path_prefix=""):
     file_contents = "Hello World!"
     expected_file_path = tmp_path / file_name
 
-    fss = FileSystemStorage(tmp_path)
+    fss = LocalStorageFileRepository(tmp_path)
     fss.save_file(Path(file_path_prefix) / file_name, io.BytesIO(file_contents.encode()))
 
     assert expected_file_path.is_file()
@@ -60,7 +60,7 @@ def delete_file(tmp_path, file_path_prefix=""):
     file.touch()
     assert file.is_file()
 
-    fss = FileSystemStorage(tmp_path)
+    fss = LocalStorageFileRepository(tmp_path)
     fss.delete_file(Path(file_path_prefix) / file_name)
 
     assert not file.exists()
@@ -72,7 +72,7 @@ def open_file(tmp_path, file_path_prefix=""):
     expected_file_path = tmp_path / file_name
     expected_file_path.write_text(expected_file_contents)
 
-    fss = FileSystemStorage(tmp_path)
+    fss = LocalStorageFileRepository(tmp_path)
     with fss.open_file(Path(file_path_prefix) / file_name) as f:
         actual_file_contents = f.read()
 
@@ -101,7 +101,7 @@ def test_remove_all_files(tmp_path):
     for filename in ["1.txt", "2.txt", "3.txt"]:
         (tmp_path / filename).touch()
 
-    fss = FileSystemStorage(tmp_path)
+    fss = LocalStorageFileRepository(tmp_path)
     fss.delete_all_files()
 
     for file in tmp_path.iterdir():
@@ -114,7 +114,7 @@ def test_remove_all_files__skip_directories(tmp_path):
     for filename in ["1.txt", "2.txt", "3.txt"]:
         (tmp_path / filename).touch()
 
-    fss = FileSystemStorage(tmp_path)
+    fss = LocalStorageFileRepository(tmp_path)
     fss.delete_all_files()
 
     for file in tmp_path.iterdir():
@@ -122,14 +122,14 @@ def test_remove_all_files__skip_directories(tmp_path):
 
 
 def test_remove_nonexistant_file(tmp_path):
-    fss = FileSystemStorage(tmp_path)
+    fss = LocalStorageFileRepository(tmp_path)
 
     # This test will fail if this call raises an exception.
     fss.delete_file("nonexistant_file.txt")
 
 
 def test_open_nonexistant_file(tmp_path):
-    fss = FileSystemStorage(tmp_path)
+    fss = LocalStorageFileRepository(tmp_path)
 
     with pytest.raises(FileRetrievalError):
         fss.open_file("nonexistant_file.txt")

@@ -4,13 +4,13 @@ import os
 import pytest
 from tests.utils import raise_
 
-from monkey_island.cc.repository import FileSystemStorage
+from monkey_island.cc.repository import LocalStorageFileRepository
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
 
 @pytest.fixture
 def file_storage_service(tmp_path):
-    return FileSystemStorage(tmp_path)
+    return LocalStorageFileRepository(tmp_path)
 
 
 @pytest.fixture(autouse=True)

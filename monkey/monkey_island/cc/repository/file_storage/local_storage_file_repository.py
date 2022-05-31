@@ -11,7 +11,7 @@ from .i_file_repository import FileRetrievalError, IFileRepository
 logger = logging.getLogger(__name__)
 
 
-class FileSystemStorage(IFileRepository):
+class LocalStorageFileRepository(IFileRepository):
     """
     A implementation of IFileStorageService that reads and writes files from/to the local
     filesystem.
