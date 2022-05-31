@@ -8,16 +8,16 @@ from monkey_island.cc import app
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
-from monkey_island.cc.repository.IAgentRepository import IAgentRepository
-from monkey_island.cc.repository.IAttackRepository import IAttackRepository
-from monkey_island.cc.repository.IConfigRepository import IConfigRepository
-from monkey_island.cc.repository.ILogRepository import ILogRepository
-from monkey_island.cc.repository.IMachineRepository import IMachineRepository
-from monkey_island.cc.repository.INetworkMapRepository import INetworkMapRepository
-from monkey_island.cc.repository.IReportRepository import IReportRepository
-from monkey_island.cc.repository.ISimulationRepository import ISimulationRepository
+from monkey_island.cc.repository.i_agent_repository import IAgentRepository
+from monkey_island.cc.repository.i_attack_repository import IAttackRepository
+from monkey_island.cc.repository.i_config_repository import IConfigRepository
+from monkey_island.cc.repository.i_log_repository import ILogRepository
+from monkey_island.cc.repository.i_machine_repository import IMachineRepository
+from monkey_island.cc.repository.i_network_map_repository import INetworkMapRepository
+from monkey_island.cc.repository.i_report_repository import IReportRepository
+from monkey_island.cc.repository.i_simulation_repository import ISimulationRepository
+from monkey_island.cc.repository.i_telemetry_repository import ITelemetryRepository
 from monkey_island.cc.repository.IStolenCredentials import IStolenCredentialsRepository
-from monkey_island.cc.repository.ITelemetryRepository import ITelemetryRepository
 from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
 
