@@ -140,27 +140,6 @@ INTERNAL = {
                 }
             },
         },
-        "dropper": {
-            "title": "Dropper",
-            "type": "object",
-            "properties": {
-                "dropper_target_path_linux": {
-                    "title": "Dropper target path on Linux",
-                    "type": "string",
-                    "default": "/tmp/monkey",
-                    "description": "Determines where should the dropper place the monkey on a "
-                    "Linux machine",
-                },
-                "dropper_target_path_win_64": {
-                    "title": "Dropper target path on Windows (64bit)",
-                    "type": "string",
-                    "default": "C:\\Windows\\temp\\monkey64.exe",
-                    "description": "Determines where should the dropper place the monkey on a "
-                    "Windows machine "
-                    "(64 bit)",
-                },
-            },
-        },
         "exploits": {
             "title": "Exploits",
             "type": "object",
