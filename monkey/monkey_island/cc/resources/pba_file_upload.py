@@ -5,9 +5,9 @@ from flask import Response, make_response, request, send_file
 from werkzeug.utils import secure_filename as sanitize_filename
 
 from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
+from monkey_island.cc.repository import FileRetrievalError, IFileRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__file__)
@@ -29,8 +29,8 @@ class FileUpload(AbstractResource):
         "/api/file-upload/<string:target_os>?restore=<string:filename>",
     ]
 
-    def __init__(self, file_storage_service: IFileStorageService):
-        self._file_storage_service = file_storage_service
+    def __init__(self, file_storage_repository: IFileRepository):
+        self._file_storage_service = file_storage_repository
 
     # This endpoint is basically a duplicate of PBAFileDownload.get(). They serve slightly different
     # purposes. This endpoint is authenticated, whereas the one in PBAFileDownload can not be (at

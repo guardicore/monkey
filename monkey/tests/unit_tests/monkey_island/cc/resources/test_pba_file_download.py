@@ -5,14 +5,14 @@ import pytest
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
+from monkey_island.cc.repository import FileRetrievalError, IFileRepository
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
-from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 FILE_NAME = "test_file"
 FILE_CONTENTS = b"HelloWorld!"
 
 
-class MockFileStorageService(IFileStorageService):
+class MockFileRepository(IFileRepository):
     def __init__(self):
         self._file = io.BytesIO(FILE_CONTENTS)
 
@@ -35,7 +35,7 @@ class MockFileStorageService(IFileStorageService):
 @pytest.fixture
 def flask_client(build_flask_client):
     container = StubDIContainer()
-    container.register(IFileStorageService, MockFileStorageService)
+    container.register(IFileRepository, MockFileRepository)
 
     with build_flask_client(container) as flask_client:
         yield flask_client

@@ -6,7 +6,7 @@ class FileRetrievalError(ValueError):
     pass
 
 
-class IFileStorageService(metaclass=abc.ABCMeta):
+class IFileRepository(metaclass=abc.ABCMeta):
     """
     A service that allows the storage and retrieval of individual files.
     """
