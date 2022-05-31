@@ -1,6 +1,6 @@
 import logging
 
-from monkey_island.cc.services import IFileStorageService
+from monkey_island.cc.repository import IFileRepository
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class PostBreachFilesService:
     # static/singleton hybrids. At the moment, this requires invasive refactoring that's
     # not a priority.
     @classmethod
-    def initialize(cls, file_storage_service: IFileStorageService):
+    def initialize(cls, file_storage_service: IFileRepository):
         cls._file_storage_service = file_storage_service
 
     @classmethod

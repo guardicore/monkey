@@ -6,12 +6,12 @@ from typing import BinaryIO
 from common.utils.file_utils import get_all_regular_files_in_directory
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
-from . import FileRetrievalError, IFileStorageService
+from .i_file_repository import FileRetrievalError, IFileRepository
 
 logger = logging.getLogger(__name__)
 
 
-class DirectoryFileStorageService(IFileStorageService):
+class FilesystemStorage(IFileRepository):
     """
     A implementation of IFileStorageService that reads and writes files from/to the local
     filesystem.

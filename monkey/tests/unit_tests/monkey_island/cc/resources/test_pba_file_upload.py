@@ -6,8 +6,8 @@ from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 from tests.utils import raise_
 
+from monkey_island.cc.repository import FileRetrievalError, IFileRepository
 from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE, FileUpload
-from monkey_island.cc.services import FileRetrievalError, IFileStorageService
 
 TEST_FILE_CONTENTS = b"m0nk3y"
 TEST_FILE = (
@@ -40,7 +40,7 @@ def mock_get_config_value(monkeypatch):
     )
 
 
-class MockFileStorageService(IFileStorageService):
+class MockFileStorageService(IFileRepository):
     def __init__(self):
         self._file = None
 
@@ -67,7 +67,7 @@ def file_storage_service():
 @pytest.fixture
 def flask_client(build_flask_client, file_storage_service):
     container = StubDIContainer()
-    container.register_instance(IFileStorageService, file_storage_service)
+    container.register_instance(IFileRepository, file_storage_service)
 
     with build_flask_client(container) as flask_client:
         yield flask_client
