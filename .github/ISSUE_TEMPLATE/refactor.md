@@ -9,8 +9,8 @@ assignees: ''
 
 # Refactor
 
-## Component to be refactored
+## Component(s) to be refactored
 
-    *
+-
 
 ## Explanation
