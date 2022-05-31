@@ -12,7 +12,7 @@ FILE_NAME = "test_file"
 FILE_CONTENTS = b"HelloWorld!"
 
 
-class MockFileStorageService(IFileRepository):
+class MockFileRepository(IFileRepository):
     def __init__(self):
         self._file = io.BytesIO(FILE_CONTENTS)
 
@@ -35,7 +35,7 @@ class MockFileStorageService(IFileRepository):
 @pytest.fixture
 def flask_client(build_flask_client):
     container = StubDIContainer()
-    container.register(IFileRepository, MockFileStorageService)
+    container.register(IFileRepository, MockFileRepository)
 
     with build_flask_client(container) as flask_client:
         yield flask_client

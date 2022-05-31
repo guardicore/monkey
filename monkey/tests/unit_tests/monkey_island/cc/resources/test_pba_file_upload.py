@@ -40,7 +40,7 @@ def mock_get_config_value(monkeypatch):
     )
 
 
-class MockFileStorageService(IFileRepository):
+class MockFileRepository(IFileRepository):
     def __init__(self):
         self._file = None
 
@@ -60,14 +60,14 @@ class MockFileStorageService(IFileRepository):
 
 
 @pytest.fixture
-def file_storage_service():
-    return MockFileStorageService()
+def file_repository():
+    return MockFileRepository()
 
 
 @pytest.fixture
-def flask_client(build_flask_client, file_storage_service):
+def flask_client(build_flask_client, file_repository):
     container = StubDIContainer()
-    container.register_instance(IFileRepository, file_storage_service)
+    container.register_instance(IFileRepository, file_repository)
 
     with build_flask_client(container) as flask_client:
         yield flask_client
@@ -98,9 +98,9 @@ def test_pba_file_upload_post__invalid(flask_client, mock_set_config_value):
 
 @pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
 def test_pba_file_upload_post__internal_server_error(
-    flask_client, pba_os, mock_set_config_value, file_storage_service
+    flask_client, pba_os, mock_set_config_value, file_repository
 ):
-    file_storage_service.save_file = lambda x, y: raise_(Exception())
+    file_repository.save_file = lambda x, y: raise_(Exception())
     url = get_url_for_resource(FileUpload, target_os=pba_os)
 
     resp = flask_client.post(
