@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 RAND_SUFFIX_LEN = 8
 
 # Where to upload agent binaries on victims
-AGENT_BINARY_PATH_LINUX = "/tmp/monkey"
-AGENT_BINARY_PATH_WIN64 = r"C:\Windows\temp\monkey64.exe"
+AGENT_BINARY_PATH_LINUX = PurePosixPath("/tmp/monkey")
+AGENT_BINARY_PATH_WIN64 = PureWindowsPath(r"C:\Windows\temp\monkey64.exe")
 
 
 def get_agent_dst_path(host: VictimHost) -> PurePath:

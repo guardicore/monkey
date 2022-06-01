@@ -20,8 +20,11 @@ from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
+
+    DATE_REFERENCE_PATH_WINDOWS = os.path.expandvars(WindowsPath(r"%windir%\system32\kernel32.dll"))
 else:
     DETACHED_PROCESS = 0
+    DATE_REFERENCE_PATH_LINUX = PosixPath("/bin/sh")
 
 # Linux doesn't have WindowsError
 try:
@@ -34,8 +37,6 @@ except NameError:
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
-DATE_REFERENCE_PATH_WINDOWS = WindowsPath(r"%windir%\system32\kernel32.dll")
-DATE_REFERENCE_PATH_LINUX = PosixPath("/bin/sh")
 
 
 class MonkeyDrops(object):
@@ -112,7 +113,7 @@ class MonkeyDrops(object):
                 return False
 
         if sys.platform == "win32":
-            dropper_date_reference_path = os.path.expandvars(DATE_REFERENCE_PATH_WINDOWS)
+            dropper_date_reference_path = DATE_REFERENCE_PATH_WINDOWS
         else:
             dropper_date_reference_path = DATE_REFERENCE_PATH_LINUX
 
