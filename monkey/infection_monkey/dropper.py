@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import sys
 import time
-from pathlib import WindowsPath
+from pathlib import PosixPath, WindowsPath
 
 from common.utils.attack_utils import UsageEnum
 from infection_monkey.utils.commands import (
@@ -34,8 +34,8 @@ except NameError:
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
-DATE_REFERENCE_PATH_WINDOWS = r"%windir%\system32\kernel32.dll"
-DATE_REFERENCE_PATH_LINUX = "/bin/sh"
+DATE_REFERENCE_PATH_WINDOWS = WindowsPath(r"%windir%\system32\kernel32.dll")
+DATE_REFERENCE_PATH_LINUX = PosixPath("/bin/sh")
 
 
 class MonkeyDrops(object):
@@ -115,14 +115,19 @@ class MonkeyDrops(object):
             dropper_date_reference_path = os.path.expandvars(DATE_REFERENCE_PATH_WINDOWS)
         else:
             dropper_date_reference_path = DATE_REFERENCE_PATH_LINUX
+
+        try:
+            ref_stat = os.stat(dropper_date_reference_path)
+        except OSError:
+            logger.warning(
+                "Cannot set reference date using '%s', file not found",
+                dropper_date_reference_path,
+            )
+        else:
             try:
-                ref_stat = os.stat(dropper_date_reference_path)
                 os.utime(self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime))
             except OSError:
-                logger.warning(
-                    "Cannot set reference date using '%s', file not found",
-                    dropper_date_reference_path,
-                )
+                logger.warning("Cannot set reference date to destination file")
 
         monkey_options = build_monkey_commandline_explicitly(
             parent=self.opts.parent,
