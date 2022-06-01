@@ -19,11 +19,6 @@ INTERNAL = {
             "title": "Monkey",
             "type": "object",
             "properties": {
-                "should_stop": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Was stop command issued for this monkey",
-                },
                 "aws_keys": {
                     "type": "object",
                     "properties": {

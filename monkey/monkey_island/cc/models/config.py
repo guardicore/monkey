@@ -1,4 +1,4 @@
-from mongoengine import BooleanField, EmbeddedDocument
+from mongoengine import EmbeddedDocument
 
 
 class Config(EmbeddedDocument):
@@ -11,6 +11,5 @@ class Config(EmbeddedDocument):
     See https://mongoengine-odm.readthedocs.io/apireference.html#mongoengine.FieldDoesNotExist
     """
 
-    should_stop = BooleanField()
     meta = {"strict": False}
     pass
