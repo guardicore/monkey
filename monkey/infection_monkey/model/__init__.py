@@ -5,10 +5,6 @@ MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
 ID_STRING = "M0NK3Y3XPL0ITABLE"
 
-# Dropper target paths
-DROPPER_TARGET_PATH_LINUX = "/tmp/monkey"
-DROPPER_TARGET_PATH_WIN64 = r"C:\Windows\temp\monkey64.exe"
-
 # Username prefix for users created by Infection Monkey
 USERNAME_PREFIX = "somenewuser"
 

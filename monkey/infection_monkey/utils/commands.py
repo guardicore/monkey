@@ -1,6 +1,11 @@
 from infection_monkey.config import GUID
+from infection_monkey.exploit.tools.helpers import AGENT_BINARY_PATH_LINUX, AGENT_BINARY_PATH_WIN64
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
 from infection_monkey.model.host import VictimHost
+
+# Dropper target paths
+DROPPER_TARGET_PATH_LINUX = AGENT_BINARY_PATH_LINUX
+DROPPER_TARGET_PATH_WIN64 = AGENT_BINARY_PATH_WIN64
 
 
 def build_monkey_commandline(target_host: VictimHost, depth: int, location: str = None) -> str:
