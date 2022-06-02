@@ -68,13 +68,13 @@ Example commands:
 ```cmd
 [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 Set-MpPreference -DisableRealtimeMonitoring $true -ErrorAction SilentlyContinue
-Invoke-WebRequest -Uri 'https://10.0.0.251:5000/api/agent/download/windows' -OutFile 'C:\windows\temp\monkey-windows-64.exe' -UseBasicParsing
+Invoke-WebRequest -Uri 'https://10.0.0.251:5000/api/agent-binaries/windows' -OutFile 'C:\windows\temp\monkey-windows-64.exe' -UseBasicParsing
 C:\windows\temp\monkey-windows-64.exe m0nk3y -s 10.0.0.251:5000
 ```
 
  - Bash:
 ```shell script
-wget --no-check-certificate -q https://10.0.0.251:5000/api/agent/download/linux -O ./monkey-linux-64 || curl https://10.0.0.251:5000/api/agent/download/linux -k -o monkey-linux-64
+wget --no-check-certificate -q https://10.0.0.251:5000/api/agent-binaries/linux -O ./monkey-linux-64 || curl https://10.0.0.251:5000/api/agent-binaries/linux -k -o monkey-linux-64
 chmod +x ./monkey-linux-64
 ./monkey-linux-64 m0nk3y -s 10.0.0.251:5000
 ```
