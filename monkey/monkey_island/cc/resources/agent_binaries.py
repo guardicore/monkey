@@ -20,9 +20,7 @@ class UnsupportedOSError(Exception):
 
 
 class AgentBinaries(AbstractResource):
-    # API Spec: Rename to /api/agent-binaries, because information about agent runs
-    # and binary files are different resources
-    urls = ["/api/agent/download/<string:host_os>"]
+    urls = ["/api/agent-binaries/<string:host_os>"]
 
     # Used by monkey. can't secure.
     def get(self, host_os):
