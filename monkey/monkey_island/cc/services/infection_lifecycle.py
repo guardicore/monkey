@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def set_stop_all(time: float):
     # This will use Agent and Simulation repositories
     for monkey in Monkey.objects():
-        monkey.config.should_stop = True
+        monkey.should_stop = True
         monkey.save()
     agent_controls = AgentControls.objects.first()
     agent_controls.last_stop_all = time
@@ -30,9 +30,9 @@ def should_agent_die(guid: int) -> bool:
 
 
 def _should_agent_stop(monkey: Monkey) -> bool:
-    if monkey.config.should_stop:
+    if monkey.should_stop:
         # Only stop the agent once, to allow further runs on that machine
-        monkey.config.should_stop = False
+        monkey.should_stop = False
         monkey.save()
         return True
     return False

@@ -38,6 +38,7 @@ class Monkey(Document):
     # SCHEMA
     guid = StringField(required=True)
     config = EmbeddedDocumentField("Config")
+    should_stop = BooleanField()
     dead = BooleanField()
     description = StringField()
     hostname = StringField()

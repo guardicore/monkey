@@ -72,8 +72,6 @@ class Configuration(object):
     ###########################
     # monkey config
     ###########################
-    # sets whether or not the monkey is alive. if false will stop scanning and exploiting
-    should_stop = False
 
     # depth of propagation
     depth = 2

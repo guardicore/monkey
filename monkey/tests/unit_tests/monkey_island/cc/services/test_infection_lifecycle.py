@@ -10,21 +10,23 @@ from monkey_island.cc.services.infection_lifecycle import should_agent_die
 @pytest.mark.usefixtures("uses_database")
 def test_should_agent_die_by_config(monkeypatch):
     monkey = Monkey(guid=str(uuid.uuid4()))
-    monkey.config = Config(should_stop=True)
+    monkey.config = Config()
+    monkey.should_stop = True
     monkey.save()
     assert should_agent_die(monkey.guid)
 
     monkeypatch.setattr(
         "monkey_island.cc.services.infection_lifecycle._is_monkey_killed_manually", lambda _: False
     )
-    monkey.config.should_stop = True
+    monkey.should_stop = True
     monkey.save()
     assert not should_agent_die(monkey.guid)
 
 
 def create_monkey(launch_time):
     monkey = Monkey(guid=str(uuid.uuid4()))
-    monkey.config = Config(should_stop=False)
+    monkey.config = Config()
+    monkey.should_stop = False
     monkey.launch_time = launch_time
     monkey.save()
     return monkey
