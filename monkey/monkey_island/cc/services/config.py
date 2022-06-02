@@ -617,12 +617,6 @@ class ConfigService:
 
         exploit_options = {}
 
-        for dropper_target in [
-            "dropper_target_path_linux",
-            "dropper_target_path_win_64",
-        ]:
-            exploit_options[dropper_target] = config.get(dropper_target, "")
-
         exploit_options["http_ports"] = sorted(config["HTTP_PORTS"])
 
         formatted_exploiters_config = {

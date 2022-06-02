@@ -135,51 +135,6 @@ INTERNAL = {
                 }
             },
         },
-        "dropper": {
-            "title": "Dropper",
-            "type": "object",
-            "properties": {
-                "dropper_set_date": {
-                    "title": "Dropper sets date",
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Determines whether the dropper should set the monkey's file "
-                    "date to be the same as"
-                    " another file",
-                },
-                "dropper_date_reference_path_windows": {
-                    "title": "Dropper date reference path (Windows)",
-                    "type": "string",
-                    "default": "%windir%\\system32\\kernel32.dll",
-                    "description": "Determines which file the dropper should copy the date from if "
-                    "it's configured to do"
-                    " so on Windows (use fullpath)",
-                },
-                "dropper_date_reference_path_linux": {
-                    "title": "Dropper date reference path (Linux)",
-                    "type": "string",
-                    "default": "/bin/sh",
-                    "description": "Determines which file the dropper should copy the date from if "
-                    "it's configured to do"
-                    " so on Linux (use fullpath)",
-                },
-                "dropper_target_path_linux": {
-                    "title": "Dropper target path on Linux",
-                    "type": "string",
-                    "default": "/tmp/monkey",
-                    "description": "Determines where should the dropper place the monkey on a "
-                    "Linux machine",
-                },
-                "dropper_target_path_win_64": {
-                    "title": "Dropper target path on Windows (64bit)",
-                    "type": "string",
-                    "default": "C:\\Windows\\temp\\monkey64.exe",
-                    "description": "Determines where should the dropper place the monkey on a "
-                    "Windows machine "
-                    "(64 bit)",
-                },
-            },
-        },
         "exploits": {
             "title": "Exploits",
             "type": "object",

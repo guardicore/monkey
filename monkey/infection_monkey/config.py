@@ -62,14 +62,6 @@ class Configuration(object):
         return result
 
     ###########################
-    # dropper config
-    ###########################
-
-    dropper_set_date = True
-    dropper_date_reference_path_windows = r"%windir%\system32\kernel32.dll"
-    dropper_date_reference_path_linux = "/bin/sh"
-
-    ###########################
     # monkey config
     ###########################
 

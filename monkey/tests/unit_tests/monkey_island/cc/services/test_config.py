@@ -179,8 +179,6 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
 def test_format_config_for_agent__exploiters(flat_monkey_config):
     expected_exploiters_config = {
         "options": {
-            "dropper_target_path_linux": "/tmp/monkey",
-            "dropper_target_path_win_64": r"C:\Windows\temp\monkey64.exe",
             "http_ports": [80, 443, 7001, 8008, 8080, 9200],
         },
         "brute_force": [

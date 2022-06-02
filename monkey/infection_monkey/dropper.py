@@ -7,10 +7,9 @@ import shutil
 import subprocess
 import sys
 import time
-from pathlib import WindowsPath
+from pathlib import PosixPath, WindowsPath
 
 from common.utils.attack_utils import UsageEnum
-from infection_monkey.config import WormConfiguration
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
@@ -21,8 +20,11 @@ from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
+
+    DATE_REFERENCE_PATH_WINDOWS = os.path.expandvars(WindowsPath(r"%windir%\system32\kernel32.dll"))
 else:
     DETACHED_PROCESS = 0
+    DATE_REFERENCE_PATH_LINUX = PosixPath("/bin/sh")
 
 # Linux doesn't have WindowsError
 try:
@@ -109,27 +111,23 @@ class MonkeyDrops(object):
 
                 return False
 
-        if WormConfiguration.dropper_set_date:
-            if sys.platform == "win32":
-                dropper_date_reference_path = os.path.expandvars(
-                    WormConfiguration.dropper_date_reference_path_windows
-                )
-            else:
-                dropper_date_reference_path = WormConfiguration.dropper_date_reference_path_linux
+        if sys.platform == "win32":
+            dropper_date_reference_path = DATE_REFERENCE_PATH_WINDOWS
+        else:
+            dropper_date_reference_path = DATE_REFERENCE_PATH_LINUX
+
+        try:
+            ref_stat = os.stat(dropper_date_reference_path)
+        except OSError:
+            logger.warning(
+                "Cannot set reference date using '%s', file not found",
+                dropper_date_reference_path,
+            )
+        else:
             try:
-                ref_stat = os.stat(dropper_date_reference_path)
+                os.utime(self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime))
             except OSError:
-                logger.warning(
-                    "Cannot set reference date using '%s', file not found",
-                    dropper_date_reference_path,
-                )
-            else:
-                try:
-                    os.utime(
-                        self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime)
-                    )
-                except OSError:
-                    logger.warning("Cannot set reference date to destination file")
+                logger.warning("Cannot set reference date to destination file")
 
         monkey_options = build_monkey_commandline_explicitly(
             parent=self.opts.parent,
