@@ -12,6 +12,7 @@ from common import DIContainer
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import RemoteRun
 from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.agent_binaries import AgentBinaries
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
@@ -33,7 +34,6 @@ from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
-from monkey_island.cc.resources.monkey_download import MonkeyDownload
 from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
@@ -155,7 +155,7 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(IslandConfiguration)
     api.add_resource(ConfigurationExport)
     api.add_resource(ConfigurationImport)
-    api.add_resource(MonkeyDownload)
+    api.add_resource(AgentBinaries)
     api.add_resource(NetMap)
     api.add_resource(Edge)
     api.add_resource(Node)

@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 from shutil import copyfile
 
-from monkey_island.cc.resources.monkey_download import get_agent_executable_path
+from monkey_island.cc.resources.agent_binaries import get_agent_executable_path
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 

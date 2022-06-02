@@ -19,7 +19,7 @@ class UnsupportedOSError(Exception):
     pass
 
 
-class MonkeyDownload(AbstractResource):
+class AgentBinaries(AbstractResource):
     # API Spec: Rename to /api/agent-binaries, because information about agent runs
     # and binary files are different resources
     urls = ["/api/agent/download/<string:host_os>"]
