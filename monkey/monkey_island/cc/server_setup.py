@@ -21,7 +21,7 @@ from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
-from monkey_island.cc.resources.agent_binaries import AgentBinaries  # noqa: E402
+from monkey_island.cc.resources import AgentBinaries  # noqa: E402
 from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,

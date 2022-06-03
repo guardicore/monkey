@@ -10,9 +10,8 @@ from werkzeug.exceptions import NotFound
 
 from common import DIContainer
 from monkey_island.cc.database import database, mongo
-from monkey_island.cc.resources import RemoteRun
+from monkey_island.cc.resources import AgentBinaries, RemoteRun
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.agent_binaries import AgentBinaries
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
