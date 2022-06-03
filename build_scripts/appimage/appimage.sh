@@ -110,16 +110,10 @@ remove_python_appdir_artifacts() {
 }
 
 build_package() {
-  local commit_id=$2
-  local dist_dir=$3
+  local version=$1
+  local dist_dir=$2
 
   log_message "Building AppImage"
-
-  if [ -n "$1" ]; then
-    local version="v$1"
-  else
-    local version="$commit_id"
-  fi
 
   pushd "$APPIMAGE_DIR"
   ARCH="x86_64" linuxdeploy \
@@ -138,4 +132,10 @@ build_package() {
 
 move_package_to_dist_dir() {
     mv Infection*Monkey*.AppImage "$1/$2"
+}
+
+cleanup() {
+  echo "Cleaning appimage build dirs"
+
+  rm -rf "$APPIMAGE_DIR/squashfs-root"
 }
