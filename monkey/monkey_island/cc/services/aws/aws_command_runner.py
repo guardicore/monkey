@@ -60,7 +60,7 @@ def _get_run_agent_command(target_os: str, island_ip: str):
 def _get_run_monkey_cmd_linux_line(island_ip):
     binary_name = "monkey-linux-64"
 
-    download_url = f"https://{island_ip}:5000/api/agent/download/linux"
+    download_url = f"https://{island_ip}:5000/api/agent-binaries/linux"
     download_cmd = f"wget --no-check-certificate {download_url} -O {binary_name}"
 
     chmod_cmd = f"chmod +x {binary_name}"
@@ -76,7 +76,7 @@ def _get_run_monkey_cmd_windows_line(island_ip):
         "[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}"
     )
 
-    download_url = f"https://{island_ip}:5000/api/agent/download/windows"
+    download_url = f"https://{island_ip}:5000/api/agent-binaries/windows"
     download_cmd = (
         f"(New-Object System.Net.WebClient).DownloadFile('{download_url}', '{agent_exe_path}')"
     )
