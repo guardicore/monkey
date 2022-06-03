@@ -57,6 +57,8 @@ build_package() {
 
   move_package_to_dist_dir $tgz_name $dist_dir
 
+  clean_stale_images "$docker_image_name"
+
   popd
 }
 
@@ -74,4 +76,11 @@ build_docker_image_tgz() {
 
 move_package_to_dist_dir() {
     mv "$1" "$2/"
+}
+
+clean_stale_images() {
+   echo "Cleaning images"
+
+   sudo docker rmi $1
+   sudo docker image prune --force
 }
