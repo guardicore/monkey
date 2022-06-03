@@ -1,4 +1,5 @@
 DOCKER_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
+DOCKER_IMAGE_NAME="guardicore/monkey-island"
 
 source "$DOCKER_DIR/../common.sh"
 
@@ -37,27 +38,17 @@ copy_server_config_to_build_dir() {
 
 build_package() {
   local version=$1
-  local commit_id=$2
-  local dist_dir=$3
+  local dist_dir=$2
   pushd ./docker
 
-  if [ -n "$1" ]; then
-    version="v$version"
-  else
-    version="$commit_id"
-  fi
-
-  docker_image_name="guardicore/monkey-island:$version"
   tar_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tar"
 
-  build_docker_image_tar "$docker_image_name" "$tar_name"
+  build_docker_image_tar "$DOCKER_IMAGE_NAME:$version" "$tar_name"
 
   tgz_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tgz"
   build_docker_image_tgz "$tar_name" "$tgz_name"
 
   move_package_to_dist_dir $tgz_name $dist_dir
-
-  clean_stale_images "$docker_image_name"
 
   popd
 }
@@ -78,9 +69,10 @@ move_package_to_dist_dir() {
     mv "$1" "$2/"
 }
 
-clean_stale_images() {
-   echo "Cleaning images"
+cleanup() {
+   local tag=$1
+   echo "Cleaning docker images"
 
-   sudo docker rmi $1
+   sudo docker rmi "$DOCKER_IMAGE_NAME:$tag"
    sudo docker image prune --force
 }

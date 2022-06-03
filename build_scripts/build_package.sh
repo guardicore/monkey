@@ -105,6 +105,17 @@ install_build_prereqs() {
   install_nodejs
 }
 
+format_version() {
+  local unformatted_version=$1
+  local commit_id=$2
+
+  if [ -n "$unformatted_version" ]; then
+      echo "v$monkey_version"
+  else
+      echo "$commit_id"
+  fi
+}
+
 agent_binary_dir=""
 as_root=false
 branch="develop"
@@ -209,7 +220,11 @@ fi
 
 setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type" "$is_release_build"
 
-build_package "$monkey_version" "$commit_id" "$DIST_DIR"
+monkey_version=$(format_version "$monkey_version" "$commit_id")
+
+build_package "$monkey_version" "$DIST_DIR"
+
+cleanup "$monkey_version"
 
 log_message "Finished building package: $package"
 exit 0
