@@ -20,12 +20,12 @@ class UnsupportedOSError(Exception):
 
 
 class AgentBinaries(AbstractResource):
-    urls = ["/api/agent-binaries/<string:host_os>"]
+    urls = ["/api/agent-binaries/<string:os>"]
 
     # Used by monkey. can't secure.
-    def get(self, host_os):
+    def get(self, os):
         try:
-            path = get_agent_executable_path(host_os)
+            path = get_agent_executable_path(os)
             return send_from_directory(path.parent, path.name)
         except UnsupportedOSError as ex:
             logger.error(ex)
@@ -49,19 +49,17 @@ class AgentBinaries(AbstractResource):
                 logger.debug(f"No monkey executable for {filepath}")
 
 
-def get_agent_executable_path(host_os: str) -> Path:
+def get_agent_executable_path(os: str) -> Path:
     try:
-        agent_path = get_executable_full_path(AGENTS[host_os])
-        logger.debug(f'Local path for {host_os} executable is "{agent_path}"')
+        agent_path = get_executable_full_path(AGENTS[os])
+        logger.debug(f'Local path for {os} executable is "{agent_path}"')
         if not agent_path.is_file():
             logger.error(f"File {agent_path} not found")
 
         return agent_path
     except KeyError:
-        logger.warning(f"No monkey executables could be found for the host os: {host_os}")
-        raise UnsupportedOSError(
-            f'No Agents are available for unsupported operating system "{host_os}"'
-        )
+        logger.warning(f"No monkey executables could be found for the host os: {os}")
+        raise UnsupportedOSError(f'No Agents are available for unsupported operating system "{os}"')
 
 
 def get_executable_full_path(executable_filename: str) -> Path:
