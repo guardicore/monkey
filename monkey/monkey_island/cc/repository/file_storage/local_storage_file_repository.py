@@ -44,7 +44,6 @@ class LocalStorageFileRepository(IFileRepository):
             logger.debug(f"Opening {safe_file_path}")
             return open(safe_file_path, "rb")
         except OSError as err:
-            logger.error(err)
             raise FileRetrievalError(f"Failed to retrieve file {safe_file_path}: {err}") from err
 
     def delete_file(self, unsafe_file_name: str):
