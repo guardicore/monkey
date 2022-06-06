@@ -2,6 +2,10 @@ import abc
 from typing import BinaryIO
 
 
+class AgentRetrivalError(IOError):
+    pass
+
+
 class IAgentBinaryRepository(metaclass=abc.ABCMeta):
     """
     A repository that retrieves the agent binaries

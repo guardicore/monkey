@@ -1,2 +1,2 @@
 from .file_storage import FileRetrievalError, IFileRepository, LocalStorageFileRepository
-from .i_agent_binary_repository import IAgentBinaryRepository
+from .i_agent_binary_repository import IAgentBinaryRepository, AgentRetrivalError
