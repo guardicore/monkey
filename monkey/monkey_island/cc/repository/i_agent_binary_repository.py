@@ -2,7 +2,7 @@ import abc
 from typing import BinaryIO
 
 
-class AgentRetrivalError(IOError):
+class AgentRetrievalError(IOError):
     pass
 
 
