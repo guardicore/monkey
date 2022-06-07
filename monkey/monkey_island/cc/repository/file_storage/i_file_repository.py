@@ -2,7 +2,7 @@ import abc
 from typing import BinaryIO
 
 
-class FileRetrievalError(ValueError):
+class FileRetrievalError(RuntimeError):
     pass
 
 
