@@ -25,6 +25,9 @@ Werkzeug = ">=1.0.1"
 pyaescrypt = "*"
 python-dateutil = "*"
 cffi = "*"  # Without explicit install: ModuleNotFoundError: No module named '_cffi_backend'
+pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
+pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
 
 [dev-packages]
 virtualenv = ">=20.0.26"
