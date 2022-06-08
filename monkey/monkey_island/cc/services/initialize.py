@@ -1,9 +1,12 @@
+import logging
 from pathlib import Path
 
 from common import DIContainer
 from common.aws import AWSInstance
+from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
+    AgentRetrievalError,
     IAgentBinaryRepository,
     IFileRepository,
     LocalStorageFileRepository,
@@ -15,6 +18,8 @@ from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
 from . import AuthenticationService, JsonFileUserDatastore
 from .reporting.report import ReportService
+
+logger = logging.getLogger(__name__)
 
 AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 
@@ -40,4 +45,32 @@ def initialize_services(data_dir: Path) -> DIContainer:
 
 def _build_agent_binary_repository():
     file_repository = LocalStorageFileRepository(AGENT_BINARIES_PATH)
-    return AgentBinaryRepository(file_repository)
+    agent_binary_repository = AgentBinaryRepository(file_repository)
+
+    _log_agent_binary_hashes(agent_binary_repository)
+
+    return agent_binary_repository
+
+
+def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
+    """
+    Logs all the hashes of the agent executables for debbuging ease
+
+    :param agent_binary_repository: Used to retrieve the agent binaries
+    """
+    agent_binaries = {
+        "Linux": agent_binary_repository.get_linux_binary,
+        "Windows": agent_binary_repository.get_windows_binary,
+    }
+    agent_hashes = {}
+
+    for os, get_agent_binary in agent_binaries.items():
+        try:
+            agent_binary = get_agent_binary()
+            binary_sha256_hash = get_binary_io_sha256_hash(agent_binary)
+            agent_hashes[os] = binary_sha256_hash
+        except AgentRetrievalError as err:
+            logger.error(f"No agent available for {os}: {err}")
+
+    for os, binary_sha256_hash in agent_hashes.items():
+        logger.info(f"{os} agent: SHA-256 hash: {binary_sha256_hash}")

@@ -1,4 +1,3 @@
-import hashlib
 import logging
 from pathlib import Path
 
@@ -30,23 +29,6 @@ class AgentBinaries(AbstractResource):
         except UnsupportedOSError as ex:
             logger.error(ex)
             return make_response({"error": str(ex)}, 404)
-
-    @staticmethod
-    def log_executable_hashes():
-        """
-        Logs all the hashes of the monkey executables for debugging ease (can check what Monkey
-        version you have etc.).
-        """
-        filenames = set(AGENTS.values())
-        for filename in filenames:
-            filepath = get_executable_full_path(filename)
-            if filepath.is_file():
-                with open(filepath, "rb") as monkey_exec_file:
-                    file_contents = monkey_exec_file.read()
-                    file_sha256_hash = hashlib.sha256(file_contents).hexdigest()
-                    logger.debug(f"{filename} SHA-256 hash: {file_sha256_hash}")
-            else:
-                logger.debug(f"No monkey executable for {filepath}")
 
 
 def get_agent_executable_path(os: str) -> Path:
