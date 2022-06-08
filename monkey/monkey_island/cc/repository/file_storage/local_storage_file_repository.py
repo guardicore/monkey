@@ -44,6 +44,10 @@ class LocalStorageFileRepository(IFileRepository):
             logger.debug(f"Opening {safe_file_path}")
             return open(safe_file_path, "rb")
         except OSError as err:
+            # TODO: The interface should make a destinction between file not found and an error when
+            #       retrieving a file that should exist. The built-in `FileNotFoundError` is not
+            #       sufficient because it inherits from `OSError` and the interface does not
+            #       guarantee that the file is stored on the local file system.
             raise FileRetrievalError(f"Failed to retrieve file {safe_file_path}: {err}") from err
 
     def delete_file(self, unsafe_file_name: str):
