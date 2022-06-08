@@ -10,20 +10,18 @@ class AgentBinaryRepository(IAgentBinaryRepository):
     def __init__(self, file_repository: IFileRepository):
         self._file_repository = file_repository
 
-    def get_linux_binary(self) -> BinaryIO:
+    def __get_binary(self, filename) -> BinaryIO:
         try:
-            agent_binary = self._file_repository.open_file(LINUX_AGENT_FILE_NAME)
+            agent_binary = self._file_repository.open_file(filename)
             return agent_binary
         except FileRetrivalError as err:
             raise AgentRetrivalError(
-                f"An error occurred while retrieving the Linux agent binary: {err}"
+                f"An error occurred while retrieving the {filename}"
+                f" agent binary from {self._file_repository}: {err}"
             )
 
+    def get_linux_binary(self) -> BinaryIO:
+        self.__get_binary(LINUX_AGENT_FILE_NAME)
+
     def get_windows_binary(self) -> BinaryIO:
-        try:
-            agent_binary = self._file_repository.open_file(WINDOWS_AGENT_FILE_NAME)
-            return agent_binary
-        except FileRetrivalError as err:
-            raise AgentRetrivalError(
-                f"An error occurred while retrieving the Windows agent binary: {err}"
-            )
+        self.__get_binary(WINDOWS_AGENT_FILE_NAME)
