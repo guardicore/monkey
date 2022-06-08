@@ -21,28 +21,11 @@ class Monkey(AbstractResource):
     urls = [
         "/api/agent",
         "/api/agent/<string:guid>",
-        # API Spec: Resource names should alternate with IDs (/api/agents/123/config-format/xyz)
-        "/api/agent/<string:guid>/<string:config_format>",
     ]
 
     # Used by monkey. can't secure.
-    def get(self, guid=None, config_format=None, **kw):
-        if not guid:
-            guid = request.args.get("guid")
-
-        if guid:
-            monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
-            # TODO: When the "legacy" format is no longer needed, update this logic and remove the
-            #       "/api/agent/<string:guid>/<string:config_format>" route. Also considering not
-            #       flattening the config in the first place.
-            if config_format == "legacy":
-                ConfigService.decrypt_flat_config(monkey_json["config"])
-            else:
-                ConfigService.format_flat_config_for_agent(monkey_json["config"])
-
-            return monkey_json
-
-        return {}
+    def get(self):
+        return {"config": ConfigService.format_flat_config_for_agent()}
 
     # Used by monkey. can't secure.
     @TestTelemStore.store_exported_telem
@@ -54,8 +37,6 @@ class Monkey(AbstractResource):
         monkey_json = json.loads(request.data)
         update = {"$set": {"modifytime": datetime.now()}}
         monkey = NodeService.get_monkey_by_guid(guid)
-        if "config" in monkey_json:
-            update["$set"]["config"] = monkey_json["config"]
         if "config_error" in monkey_json:
             update["$set"]["config_error"] = monkey_json["config_error"]
 
@@ -88,11 +69,6 @@ class Monkey(AbstractResource):
 
             # if new monkey telem, change config according to "new monkeys" config.
             db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
-
-            # Update monkey configuration
-            new_config = ConfigService.get_flat_config(False, False)
-            monkey_json["config"] = monkey_json.get("config", {})
-            monkey_json["config"].update(new_config)
 
             # try to find new monkey parent
             parent = monkey_json.get("parent")

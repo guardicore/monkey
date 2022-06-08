@@ -427,11 +427,13 @@ class ConfigService:
         }
 
     @staticmethod
-    def format_flat_config_for_agent(config: Dict):
+    def format_flat_config_for_agent():
+        config = ConfigService.get_flat_config()
         ConfigService._remove_credentials_from_flat_config(config)
         ConfigService._format_payloads_from_flat_config(config)
         ConfigService._format_pbas_from_flat_config(config)
         ConfigService._format_propagation_from_flat_config(config)
+        return config
 
     @staticmethod
     def _remove_credentials_from_flat_config(config: Dict):
