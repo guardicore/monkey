@@ -65,8 +65,6 @@ class Monkey(AbstractResource):
 
             monkey_json["modifytime"] = datetime.now()
 
-            ConfigService.save_initial_config_if_needed()
-
             # if new monkey telem, change config according to "new monkeys" config.
             db_monkey = mongo.db.monkey.find_one({"guid": monkey_json["guid"]})
 
