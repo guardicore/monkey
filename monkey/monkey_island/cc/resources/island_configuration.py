@@ -15,7 +15,7 @@ class IslandConfiguration(AbstractResource):
     def get(self):
         return jsonify(
             schema=ConfigService.get_config_schema(),
-            configuration=ConfigService.get_config(False, True, True),
+            configuration=ConfigService.get_config(True, True),
         )
 
     @jwt_required

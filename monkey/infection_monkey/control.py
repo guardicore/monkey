@@ -41,7 +41,6 @@ class ControlClient(object):
             "ip_addresses": local_ips(),
             "networks": get_host_subnets(),
             "description": " ".join(platform.uname()),
-            "config": WormConfiguration.as_dict(),
             "parent": parent,
             "launch_time": agent_process.get_start_time(),
         }
@@ -50,7 +49,7 @@ class ControlClient(object):
             monkey["tunnel"] = ControlClient.proxies.get("https")
 
         requests.post(  # noqa: DUO123
-            "https://%s/api/agent" % (WormConfiguration.current_server,),
+            f"https://{WormConfiguration.current_server}/api/agent",
             data=json.dumps(monkey),
             headers={"content-type": "application/json"},
             verify=False,
@@ -173,7 +172,7 @@ class ControlClient(object):
             return
         try:
             reply = requests.get(  # noqa: DUO123
-                "https://%s/api/agent/%s/legacy" % (WormConfiguration.current_server, GUID),
+                f"https://{WormConfiguration.current_server}/api/agent/",
                 verify=False,
                 proxies=ControlClient.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
@@ -210,7 +209,7 @@ class ControlClient(object):
             return
         try:
             requests.patch(  # noqa: DUO123
-                "https://%s/api/agent/%s" % (WormConfiguration.current_server, GUID),
+                f"https://{WormConfiguration.current_server}/api/agent/{GUID}",
                 data=json.dumps({"config_error": True}),
                 headers={"content-type": "application/json"},
                 verify=False,

@@ -60,12 +60,10 @@ class ConfigService:
         pass
 
     @staticmethod
-    def get_config(is_initial_config=False, should_decrypt=True, is_island=False):
+    def get_config(should_decrypt=True, is_island=False):
         """
         Gets the entire global config.
 
-        :param is_initial_config: If True, the initial config will be returned instead of the \
-         current config. \
         :param should_decrypt: If True, all config values which are set as encrypted will be \
          decrypted. \
         :param is_island: If True, will include island specific configuration parameters. \
@@ -74,12 +72,8 @@ class ConfigService:
 
         # is_initial_config and should_decrypt are only there to compare if we are on the
         # default configuration or did user modified it already
-        config = (
-            mongo.db.config.find_one({"name": "initial" if is_initial_config else "newconfig"})
-            or {}
-        )
-        for field in ("name", "_id"):
-            config.pop(field, None)
+        config = mongo.db.config.find_one() or {}
+        config.pop("_id", None)
         if should_decrypt and len(config) > 0:
             ConfigService.decrypt_config(config)
         if not is_island:
@@ -87,14 +81,12 @@ class ConfigService:
         return config
 
     @staticmethod
-    def get_config_value(config_key_as_arr, is_initial_config=False, should_decrypt=True):
+    def get_config_value(config_key_as_arr, should_decrypt=True):
         """
         Get a specific config value.
 
         :param config_key_as_arr: The config key as an array.
          e.g. ['basic', 'credentials','exploit_password_list'].
-        :param is_initial_config: If True, returns the value of the
-         initial config instead of the current config.
         :param should_decrypt: If True, the value of the config key will be decrypted
                                (if it's in the list of encrypted config values).
         :return: The value of the requested config key.
@@ -102,9 +94,7 @@ class ConfigService:
         config_key = functools.reduce(lambda x, y: x + "." + y, config_key_as_arr)
 
         # This should just call get_config from repository. If None, then call get_default prob
-        config = mongo.db.config.find_one(
-            {"name": "initial" if is_initial_config else "newconfig"}, {config_key: 1}
-        )
+        config = mongo.db.config.find_one({}, {config_key: 1})
 
         for config_key_part in config_key_as_arr:
             config = config[config_key_part]
@@ -124,11 +114,11 @@ class ConfigService:
     @staticmethod
     def set_config_value(config_key_as_arr, value):
         mongo_key = ".".join(config_key_as_arr)
-        mongo.db.config.update({"name": "newconfig"}, {"$set": {mongo_key: value}})
+        mongo.db.config.update({}, {"$set": {mongo_key: value}})
 
     @staticmethod
-    def get_flat_config(is_initial_config=False, should_decrypt=True):
-        config_json = ConfigService.get_config(is_initial_config, should_decrypt)
+    def get_flat_config(should_decrypt=True):
+        config_json = ConfigService.get_config(should_decrypt)
         flat_config_json = {}
         for i in config_json:
             if i == "ransomware":
@@ -153,7 +143,7 @@ class ConfigService:
     @staticmethod
     def add_item_to_config_set_if_dont_exist(item_path_array, item_value, should_encrypt):
         item_key = ".".join(item_path_array)
-        items_from_config = ConfigService.get_config_value(item_path_array, False, should_encrypt)
+        items_from_config = ConfigService.get_config_value(item_path_array, should_encrypt)
         if item_value in items_from_config:
             return
         if should_encrypt:
@@ -161,13 +151,7 @@ class ConfigService:
                 item_value = encrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item_value)
             else:
                 item_value = get_datastore_encryptor().encrypt(item_value)
-        mongo.db.config.update(
-            {"name": "newconfig"}, {"$addToSet": {item_key: item_value}}, upsert=False
-        )
-
-        mongo.db.monkey.update(
-            {}, {"$addToSet": {"config." + item_key.split(".")[-1]: item_value}}, multi=True
-        )
+        mongo.db.config.update({}, {"$addToSet": {item_key: item_value}})
 
     @staticmethod
     def creds_add_username(username):
@@ -225,7 +209,7 @@ class ConfigService:
             except KeyError:
                 logger.error("Bad configuration file was submitted.")
                 return False
-        mongo.db.config.update({"name": "newconfig"}, {"$set": config_json}, upsert=True)
+        mongo.db.config.update({}, {"$set": config_json}, upsert=True)
         logger.info("monkey config was updated")
         return True
 
@@ -294,17 +278,6 @@ class ConfigService:
         )
 
     @staticmethod
-    def save_initial_config_if_needed():
-        if mongo.db.config.find_one({"name": "initial"}) is not None:
-            return
-
-        initial_config = mongo.db.config.find_one({"name": "newconfig"})
-        initial_config["name"] = "initial"
-        initial_config.pop("_id")
-        mongo.db.config.insert(initial_config)
-        logger.info("Monkey config was inserted to mongo and saved")
-
-    @staticmethod
     def _extend_config_with_default(validator_class):
         validate_properties = validator_class.VALIDATORS["properties"]
 
@@ -349,34 +322,6 @@ class ConfigService:
     @staticmethod
     def encrypt_config(config):
         ConfigService._encrypt_or_decrypt_config(config, False)
-
-    @staticmethod
-    def decrypt_flat_config(flat_config, is_island=False):
-        """
-        Same as decrypt_config but for a flat configuration
-        """
-        keys = [config_arr_as_array[-1] for config_arr_as_array in ENCRYPTED_CONFIG_VALUES]
-
-        for key in keys:
-            if isinstance(flat_config[key], collections.Sequence) and not isinstance(
-                flat_config[key], str
-            ):
-                # Check if we are decrypting ssh key pair
-                if (
-                    flat_config[key]
-                    and isinstance(flat_config[key][0], dict)
-                    and "public_key" in flat_config[key][0]
-                ):
-                    flat_config[key] = [
-                        decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item) for item in flat_config[key]
-                    ]
-                else:
-                    flat_config[key] = [
-                        get_datastore_encryptor().decrypt(item) for item in flat_config[key]
-                    ]
-            else:
-                flat_config[key] = get_datastore_encryptor().decrypt(flat_config[key])
-        return flat_config
 
     @staticmethod
     def _encrypt_or_decrypt_config(config, is_decrypt=False):
@@ -427,11 +372,13 @@ class ConfigService:
         }
 
     @staticmethod
-    def format_flat_config_for_agent(config: Dict):
+    def format_flat_config_for_agent():
+        config = ConfigService.get_flat_config()
         ConfigService._remove_credentials_from_flat_config(config)
         ConfigService._format_payloads_from_flat_config(config)
         ConfigService._format_pbas_from_flat_config(config)
         ConfigService._format_propagation_from_flat_config(config)
+        return config
 
     @staticmethod
     def _remove_credentials_from_flat_config(config: Dict):
