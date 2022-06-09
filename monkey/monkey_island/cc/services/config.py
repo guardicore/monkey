@@ -114,7 +114,7 @@ class ConfigService:
     @staticmethod
     def set_config_value(config_key_as_arr, value):
         mongo_key = ".".join(config_key_as_arr)
-        mongo.db.config.find_one().update({"$set": {mongo_key: value}})
+        mongo.db.config.update({}, {"$set": {mongo_key: value}})
 
     @staticmethod
     def get_flat_config(should_decrypt=True):
@@ -151,7 +151,7 @@ class ConfigService:
                 item_value = encrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item_value)
             else:
                 item_value = get_datastore_encryptor().encrypt(item_value)
-        mongo.db.config.find_one().update({"$addToSet": {item_key: item_value}}, upsert=False)
+        mongo.db.config.update({}, {"$addToSet": {item_key: item_value}})
 
     @staticmethod
     def creds_add_username(username):
