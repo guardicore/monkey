@@ -1,5 +1,5 @@
 ---
-title: "Running the monkey on AWS EC2 instances"
+title: "Running the agent on AWS EC2 instances"
 date: 2020-06-28T10:44:05+03:00
 draft: false
 description: "Use AWS SSM to execute Infection Monkey on your AWS instances."

@@ -9,7 +9,7 @@ tags: ["agent", "propagation", "reference"]
 
 ## How does the Infection Monkey Agent propagate to a new machine?
 
-Once an Agent exploits a vulnerable system, it propagates to the machine by copying the appropriate
-Agent binary to it.
+Agent mainly propagates using remote code execution vulnerabilities. Once the agent is able to
+run commands on the victim it executes commands that are similar to the ones described in [manual run page.](../../usage/running-manually/)
 
 On Windows, it is copied to `C:\Windows\temp\monkey64.exe`. On Linux, it is copied to `/tmp/monkey`.
