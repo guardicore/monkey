@@ -153,10 +153,6 @@ class ConfigService:
                 item_value = get_datastore_encryptor().encrypt(item_value)
         mongo.db.config.find_one().update({"$addToSet": {item_key: item_value}}, upsert=False)
 
-        mongo.db.monkey.update(
-            {}, {"$addToSet": {"config." + item_key.split(".")[-1]: item_value}}, multi=True
-        )
-
     @staticmethod
     def creds_add_username(username):
         ConfigService.add_item_to_config_set_if_dont_exist(
