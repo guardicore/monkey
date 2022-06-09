@@ -83,6 +83,9 @@ install_monkey_island_python_dependencies() {
   pushd "$BUILD_DIR/monkey_island" || handle_error
   "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" sync --system || handle_error
   popd || handle_error
+
+  log_message "Uninstalling pipenv (build dependency only)"
+  "$APPDIR"/AppRun -m pip uninstall pipenv virtualenv || handle_error
 }
 
 
