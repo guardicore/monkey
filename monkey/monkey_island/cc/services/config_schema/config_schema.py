@@ -20,7 +20,7 @@ SCHEMA = {
     # users will not accidentally chose unsafe options
     "definitions": {
         "exploiter_classes": EXPLOITER_CLASSES,
-        "credential_collector_classes": CREDENTIAL_COLLECTOR_CLASSES,
+        "credential_collectors": CREDENTIAL_COLLECTOR_CLASSES,
         "post_breach_actions": POST_BREACH_ACTIONS,
         "finger_classes": FINGER_CLASSES,
     },
