@@ -11,6 +11,13 @@ def mock_port(monkeypatch, PORT):
     monkeypatch.setattr("monkey_island.cc.services.config.ISLAND_PORT", PORT)
 
 
+@pytest.fixture(autouse=True)
+def mock_flat_config(monkeypatch, flat_monkey_config):
+    monkeypatch.setattr(
+        "monkey_island.cc.services.config.ConfigService.get_flat_config", lambda: flat_monkey_config
+    )
+
+
 @pytest.mark.slow
 @pytest.mark.usefixtures("uses_encryptor")
 def test_set_server_ips_in_config_command_servers(config, IPS, PORT):
@@ -27,8 +34,8 @@ def test_set_server_ips_in_config_current_server(config, IPS, PORT):
     assert config["internal"]["island_server"]["current_server"] == expected_config_current_server
 
 
-def test_format_config_for_agent__credentials_removed(flat_monkey_config):
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+def test_format_config_for_agent__credentials_removed():
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "exploit_lm_hash_list" not in flat_monkey_config
     assert "exploit_ntlm_hash_list" not in flat_monkey_config
@@ -37,7 +44,7 @@ def test_format_config_for_agent__credentials_removed(flat_monkey_config):
     assert "exploit_user_list" not in flat_monkey_config
 
 
-def test_format_config_for_agent__ransomware_payload(flat_monkey_config):
+def test_format_config_for_agent__ransomware_payload():
     expected_ransomware_options = {
         "ransomware": {
             "encryption": {
@@ -51,7 +58,7 @@ def test_format_config_for_agent__ransomware_payload(flat_monkey_config):
         }
     }
 
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "payloads" in flat_monkey_config
     assert flat_monkey_config["payloads"] == expected_ransomware_options
@@ -59,7 +66,7 @@ def test_format_config_for_agent__ransomware_payload(flat_monkey_config):
     assert "ransomware" not in flat_monkey_config
 
 
-def test_format_config_for_agent__pbas(flat_monkey_config):
+def test_format_config_for_agent__pbas():
     expected_pbas_config = {
         "CommunicateAsBackdoorUser": {},
         "ModifyShellStartupFiles": {},
@@ -67,7 +74,7 @@ def test_format_config_for_agent__pbas(flat_monkey_config):
         "Timestomping": {},
         "AccountDiscovery": {},
     }
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "post_breach_actions" in flat_monkey_config
     assert flat_monkey_config["post_breach_actions"] == expected_pbas_config
@@ -78,7 +85,7 @@ def test_format_config_for_agent__pbas(flat_monkey_config):
     assert "PBA_windows_filename" not in flat_monkey_config
 
 
-def test_format_config_for_custom_pbas(flat_monkey_config):
+def test_format_config_for_custom_pbas():
     custom_config = {
         "linux_command": "bash test.sh",
         "windows_command": "powershell test.ps1",
@@ -86,7 +93,7 @@ def test_format_config_for_custom_pbas(flat_monkey_config):
         "windows_filename": "test.ps1",
         "current_server": "10.197.94.72:5000",
     }
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert flat_monkey_config["custom_pbas"] == custom_config
 
@@ -104,8 +111,8 @@ def test_get_config_propagation_credentials_from_flat_config(flat_monkey_config)
     assert creds == expected_creds
 
 
-def test_format_config_for_agent__propagation(flat_monkey_config):
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+def test_format_config_for_agent__propagation():
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "propagation" in flat_monkey_config
     assert "targets" in flat_monkey_config["propagation"]
@@ -113,7 +120,7 @@ def test_format_config_for_agent__propagation(flat_monkey_config):
     assert "exploiters" in flat_monkey_config["propagation"]
 
 
-def test_format_config_for_agent__propagation_targets(flat_monkey_config):
+def test_format_config_for_agent__propagation_targets():
     expected_targets = {
         "blocked_ips": ["192.168.1.1", "192.168.1.100"],
         "inaccessible_subnets": ["10.0.0.0/24", "10.0.10.0/24"],
@@ -121,7 +128,7 @@ def test_format_config_for_agent__propagation_targets(flat_monkey_config):
         "subnet_scan_list": ["192.168.1.50", "192.168.56.0/24", "10.0.33.0/30"],
     }
 
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert flat_monkey_config["propagation"]["targets"] == expected_targets
     assert "blocked_ips" not in flat_monkey_config
@@ -130,7 +137,7 @@ def test_format_config_for_agent__propagation_targets(flat_monkey_config):
     assert "subnet_scan_list" not in flat_monkey_config
 
 
-def test_format_config_for_agent__network_scan(flat_monkey_config):
+def test_format_config_for_agent__network_scan():
     expected_network_scan_config = {
         "tcp": {
             "timeout_ms": 3000,
@@ -164,7 +171,7 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
             {"name": "ssh", "options": {}},
         ],
     }
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "propagation" in flat_monkey_config
     assert "network_scan" in flat_monkey_config["propagation"]
@@ -176,7 +183,7 @@ def test_format_config_for_agent__network_scan(flat_monkey_config):
     assert "finger_classes" not in flat_monkey_config
 
 
-def test_format_config_for_agent__exploiters(flat_monkey_config):
+def test_format_config_for_agent__exploiters():
     expected_exploiters_config = {
         "options": {
             "http_ports": [80, 443, 7001, 8008, 8080, 9200],
@@ -202,7 +209,7 @@ def test_format_config_for_agent__exploiters(flat_monkey_config):
             {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}},
         ],
     }
-    ConfigService.format_flat_config_for_agent(flat_monkey_config)
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "propagation" in flat_monkey_config
     assert "exploiters" in flat_monkey_config["propagation"]
