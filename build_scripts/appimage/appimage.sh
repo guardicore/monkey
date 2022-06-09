@@ -79,20 +79,10 @@ install_monkey_island_python_dependencies() {
   log_message "Installing pipenv"
   "$APPDIR"/AppRun -m pip install pipenv || handle_error
 
-  requirements_island="$BUILD_DIR/monkey_island/requirements.txt"
-  generate_requirements_from_pipenv_lock "$requirements_island"
-
-  log_message "Installing island python requirements"
-  "$APPDIR"/AppRun -m pip install -r "${requirements_island}"  --ignore-installed || handle_error
-}
-
-generate_requirements_from_pipenv_lock () {
-  local requirements_island=$1
-
-  log_message "Generating a requirements.txt file with 'pipenv requirements'"
-  pushd "$BUILD_DIR/monkey_island"
-  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" requirements --hash > "$requirements_island" || handle_error
-  popd
+  log_message "Installing dependencies"
+  pushd "$BUILD_DIR/monkey_island" || handle_error
+  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" sync --system || handle_error
+  popd || handle_error
 }
 
 
