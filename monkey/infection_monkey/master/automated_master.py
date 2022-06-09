@@ -149,7 +149,7 @@ class AutomatedMaster(IMaster):
             target=self._run_plugins,
             name="CredentialCollectorThread",
             args=(
-                config["credential_collector_classes"],
+                config["credential_collectors"],
                 "credential collector",
                 self._collect_credentials,
             ),
