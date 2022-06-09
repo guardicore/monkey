@@ -4,6 +4,11 @@
 
 group: travis_latest
 
+branches:
+  only:
+    - develop
+    - master
+
 jobs:
   include:
     - name: "Monkey Linux"
