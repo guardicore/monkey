@@ -30,7 +30,7 @@ setup_build_dir() {
   local deployment_type=$3
   local is_release_build=$4
 
-  pushd $APPIMAGE_DIR
+  pushd $APPIMAGE_DIR || handle_error
 
   setup_python_37_appdir
 
@@ -50,7 +50,7 @@ setup_build_dir() {
 
   remove_python_appdir_artifacts
 
-  popd
+  popd || handle_error
 }
 
 setup_python_37_appdir() {
@@ -105,7 +105,7 @@ build_package() {
 
   log_message "Building AppImage"
 
-  pushd "$APPIMAGE_DIR"
+  pushd "$APPIMAGE_DIR" || handle_error
   ARCH="x86_64" linuxdeploy \
       --appdir "$APPIMAGE_DIR/squashfs-root" \
       --icon-file "$ICON_PATH" \
@@ -117,7 +117,7 @@ build_package() {
   dst_name="InfectionMonkey-$version.AppImage"
   move_package_to_dist_dir $dist_dir $dst_name
 
-  popd
+  popd || handle_error
 }
 
 move_package_to_dist_dir() {
