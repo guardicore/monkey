@@ -6,11 +6,16 @@ import subprocess
 from pathlib import Path
 from shutil import copyfile
 
-from monkey_island.cc.resources.agent_binaries import get_agent_executable_path
-from monkey_island.cc.server_utils.consts import ISLAND_PORT
+from monkey_island.cc.server_utils.consts import ISLAND_PORT, MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 logger = logging.getLogger(__name__)
+
+AGENTS = {"linux": "monkey-linux-64", "windows": "monkey-windows-64.exe"}
+
+
+class UnsupportedOSError(Exception):
+    pass
 
 
 class LocalMonkeyRunService:
@@ -27,7 +32,7 @@ class LocalMonkeyRunService:
     def run_local_monkey():
         # get the monkey executable suitable to run on the server
         try:
-            src_path = get_agent_executable_path(platform.system().lower())
+            src_path = LocalMonkeyRunService._get_agent_executable_path(platform.system().lower())
         except Exception as ex:
             logger.error(f"Error running agent from island: {ex}")
             return False, str(ex)
@@ -55,3 +60,22 @@ class LocalMonkeyRunService:
             return False, "popen failed: %s" % exc
 
         return True, ""
+
+    @staticmethod
+    def _get_agent_executable_path(os: str) -> Path:
+        try:
+            agent_path = LocalMonkeyRunService._get_executable_full_path(AGENTS[os])
+            logger.debug(f'Local path for {os} executable is "{agent_path}"')
+            if not agent_path.is_file():
+                logger.error(f"File {agent_path} not found")
+
+            return agent_path
+        except KeyError:
+            logger.warning(f"No monkey executable could be found for the host os: {os}")
+            raise UnsupportedOSError(
+                f'No Agents are available for unsupported operating system "{os}"'
+            )
+
+    @staticmethod
+    def _get_executable_full_path(executable_filename: str) -> Path:
+        return Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries" / executable_filename
