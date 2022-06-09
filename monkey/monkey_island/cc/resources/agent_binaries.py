@@ -17,10 +17,10 @@ class AgentBinaries(AbstractResource):
     # Used by monkey. can't secure.
     def get(self, os):
         """
-        Gets the agent binary based on the OS
+        Gets the agent binary for the specified OS
 
         :param os: Operating systems. Supported OS are: 'linux' and 'windows'
-        :return: file-like object with a filename same as the OS
+        :return: an agent binary file
         """
         try:
             agent_binaries = {
