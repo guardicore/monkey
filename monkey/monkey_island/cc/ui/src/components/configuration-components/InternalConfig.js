@@ -6,7 +6,6 @@ const sectionOrder = [
   'network',
   'island_server',
   'exploits',
-  'dropper',
   'classes',
   'general',
   'testing'
