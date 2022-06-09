@@ -1,7 +1,7 @@
 # Infection Monkey
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/guardicore/monkey)](https://github.com/guardicore/monkey/releases)
 
-[![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=develop)](https://travis-ci.com/guardicore/monkey)
+[![Build Status](https://app.travis-ci.com/guardicore/monkey.svg?branch=develop)](https://app.travis-ci.com/guardicore/monkey)
 [![codecov](https://codecov.io/gh/guardicore/monkey/branch/develop/graph/badge.svg)](https://codecov.io/gh/guardicore/monkey)
 
 ![GitHub stars](https://img.shields.io/github/stars/guardicore/monkey)
