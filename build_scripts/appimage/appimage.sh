@@ -3,7 +3,7 @@
 LINUXDEPLOY_URL="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
 PYTHON_VERSION="3.7.13"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
-APPIMAGE_DIR=$(realpath "$(dirname "$BASH_SOURCE[0]")")
+APPIMAGE_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 APPDIR="$APPIMAGE_DIR/squashfs-root"
 BUILD_DIR="$APPDIR/usr/src"
 
