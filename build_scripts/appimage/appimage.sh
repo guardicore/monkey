@@ -3,7 +3,7 @@
 LINUXDEPLOY_URL="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
 PYTHON_VERSION="3.7.13"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
-APPIMAGE_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
+APPIMAGE_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 APPDIR="$APPIMAGE_DIR/squashfs-root"
 BUILD_DIR="$APPDIR/usr/src"
 
@@ -30,7 +30,7 @@ setup_build_dir() {
   local deployment_type=$3
   local is_release_build=$4
 
-  pushd $APPIMAGE_DIR
+  pushd "$APPIMAGE_DIR" || handle_error
 
   setup_python_37_appdir
 
@@ -50,7 +50,7 @@ setup_build_dir() {
 
   remove_python_appdir_artifacts
 
-  popd
+  popd || handle_error
 }
 
 setup_python_37_appdir() {
@@ -79,20 +79,13 @@ install_monkey_island_python_dependencies() {
   log_message "Installing pipenv"
   "$APPDIR"/AppRun -m pip install pipenv || handle_error
 
-  requirements_island="$BUILD_DIR/monkey_island/requirements.txt"
-  generate_requirements_from_pipenv_lock "$requirements_island"
+  log_message "Installing dependencies"
+  pushd "$BUILD_DIR/monkey_island" || handle_error
+  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" sync --system || handle_error
+  popd || handle_error
 
-  log_message "Installing island python requirements"
-  "$APPDIR"/AppRun -m pip install -r "${requirements_island}"  --ignore-installed || handle_error
-}
-
-generate_requirements_from_pipenv_lock () {
-  local requirements_island=$1
-
-  log_message "Generating a requirements.txt file with 'pipenv requirements'"
-  pushd "$BUILD_DIR/monkey_island"
-  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" requirements --hash > "$requirements_island" || handle_error
-  popd
+  log_message "Uninstalling pipenv (build dependency only)"
+  "$APPDIR"/AppRun -m pip uninstall --yes pipenv virtualenv || handle_error
 }
 
 
@@ -115,7 +108,7 @@ build_package() {
 
   log_message "Building AppImage"
 
-  pushd "$APPIMAGE_DIR"
+  pushd "$APPIMAGE_DIR" || handle_error
   ARCH="x86_64" linuxdeploy \
       --appdir "$APPIMAGE_DIR/squashfs-root" \
       --icon-file "$ICON_PATH" \
@@ -125,9 +118,9 @@ build_package() {
       --output appimage
 
   dst_name="InfectionMonkey-$version.AppImage"
-  move_package_to_dist_dir $dist_dir $dst_name
+  move_package_to_dist_dir "$dist_dir" "$dst_name"
 
-  popd
+  popd || handle_error
 }
 
 move_package_to_dist_dir() {
