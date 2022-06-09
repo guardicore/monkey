@@ -68,7 +68,7 @@ class ControlChannel(IControlChannel):
 
     def get_credentials_for_propagation(self) -> PropagationCredentials:
         propagation_credentials_url = (
-            f"https://{self._control_channel_server}/api/propagation-credentials/{self._agent_id}"
+            f"https://{self._control_channel_server}/api/propagation-credentials"
         )
         try:
             response = requests.get(  # noqa: DUO123

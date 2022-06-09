@@ -328,34 +328,6 @@ class ConfigService:
         ConfigService._encrypt_or_decrypt_config(config, False)
 
     @staticmethod
-    def decrypt_flat_config(flat_config, is_island=False):
-        """
-        Same as decrypt_config but for a flat configuration
-        """
-        keys = [config_arr_as_array[-1] for config_arr_as_array in ENCRYPTED_CONFIG_VALUES]
-
-        for key in keys:
-            if isinstance(flat_config[key], collections.Sequence) and not isinstance(
-                flat_config[key], str
-            ):
-                # Check if we are decrypting ssh key pair
-                if (
-                    flat_config[key]
-                    and isinstance(flat_config[key][0], dict)
-                    and "public_key" in flat_config[key][0]
-                ):
-                    flat_config[key] = [
-                        decrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item) for item in flat_config[key]
-                    ]
-                else:
-                    flat_config[key] = [
-                        get_datastore_encryptor().decrypt(item) for item in flat_config[key]
-                    ]
-            else:
-                flat_config[key] = get_datastore_encryptor().decrypt(flat_config[key])
-        return flat_config
-
-    @staticmethod
     def _encrypt_or_decrypt_config(config, is_decrypt=False):
         for config_arr_as_array in ENCRYPTED_CONFIG_VALUES:
             config_arr = config

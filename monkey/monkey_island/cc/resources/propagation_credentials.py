@@ -1,17 +1,15 @@
-from monkey_island.cc.database import mongo
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.services.config import ConfigService
 
 
 class PropagationCredentials(AbstractResource):
-    urls = ["/api/propagation-credentials/<string:guid>"]
+    urls = ["/api/propagation-credentials"]
 
-    def get(self, guid: str):
-        monkey_json = mongo.db.monkey.find_one_or_404({"guid": guid})
-        ConfigService.decrypt_flat_config(monkey_json["config"])
+    def get(self):
+        config = ConfigService.get_flat_config(should_decrypt=True)
 
         propagation_credentials = ConfigService.get_config_propagation_credentials_from_flat_config(
-            monkey_json["config"]
+            config
         )
 
         return {"propagation_credentials": propagation_credentials}
