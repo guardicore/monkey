@@ -26,6 +26,11 @@ AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 
 def initialize_services(data_dir: Path) -> DIContainer:
     container = DIContainer()
+
+    # TODO: everything that is build with DI and expects Path in the constructor
+    # will use the same data_dir. Come up with a better way to inject
+    # the data_dir in the things that needed
+    container.register_instance(Path, data_dir)
     container.register_instance(AWSInstance, AWSInstance())
 
     container.register_instance(
@@ -33,10 +38,10 @@ def initialize_services(data_dir: Path) -> DIContainer:
     )
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
+    container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
 
     # This is temporary until we get DI all worked out.
     PostBreachFilesService.initialize(container.resolve(IFileRepository))
-    LocalMonkeyRunService.initialize(data_dir)
     AuthenticationService.initialize(data_dir, JsonFileUserDatastore(data_dir))
     ReportService.initialize(container.resolve(AWSService))
 

@@ -12,6 +12,9 @@ from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 class LocalRun(AbstractResource):
     urls = ["/api/local-monkey"]
 
+    def __init__(self, local_monkey_run_service: LocalMonkeyRunService):
+        self._local_monkey_run_service = local_monkey_run_service
+
     # API Spec: Both of these methods should be separated to their own resources
 
     # API Spec: This should be a REST endpoint, /api/monkeys or something
@@ -30,7 +33,7 @@ class LocalRun(AbstractResource):
     def post(self):
         body = json.loads(request.data)
         if body.get("action") == "run":
-            local_run = LocalMonkeyRunService.run_local_monkey()
+            local_run = self._local_monkey_run_service.run_local_monkey()
             # API Spec: Feels weird to return "error_text" even when "is_running" is True
             return jsonify(is_running=local_run[0], error_text=local_run[1])
 
