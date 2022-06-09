@@ -1,49 +1,58 @@
 import logging
-import os
 import platform
 import stat
 import subprocess
 from pathlib import Path
-from shutil import copyfile
+from shutil import copyfileobj
 
-from monkey_island.cc.server_utils.consts import ISLAND_PORT, MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.repository import AgentRetrievalError, IAgentBinaryRepository
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 logger = logging.getLogger(__name__)
 
-AGENTS = {"linux": "monkey-linux-64", "windows": "monkey-windows-64.exe"}
-
-
-class UnsupportedOSError(Exception):
-    pass
+AGENT_NAMES = {"linux": "monkey-linux-64", "windows": "monkey-windows-64.exe"}
 
 
 class LocalMonkeyRunService:
-    DATA_DIR = None
+    def __init__(self, data_dir: Path, agent_binary_repository: IAgentBinaryRepository):
+        self._data_dir = data_dir
+        self._agent_binary_repository = agent_binary_repository
 
-    # TODO: A number of these services should be instance objects instead of
-    # static/singleton hybrids. At the moment, this requires invasive refactoring that's
-    # not a priority.
-    @classmethod
-    def initialize(cls, data_dir: Path):
-        cls.DATA_DIR = data_dir
-
-    @staticmethod
-    def run_local_monkey():
+    def run_local_monkey(self):
         # get the monkey executable suitable to run on the server
+        operating_system = platform.system().lower()
         try:
-            src_path = LocalMonkeyRunService._get_agent_executable_path(platform.system().lower())
-        except Exception as ex:
-            logger.error(f"Error running agent from island: {ex}")
-            return False, str(ex)
+            agents = {
+                "linux": self._agent_binary_repository.get_linux_binary,
+                "windows": self._agent_binary_repository.get_windows_binary,
+            }
 
-        dest_path = LocalMonkeyRunService.DATA_DIR / src_path.name
+            agent_binary = agents[platform.system().lower()]()
+        except AgentRetrievalError as err:
+            logger.error(
+                f"No Agent can be retrieved for the specified operating system"
+                f'"{operating_system}"'
+            )
+            return False, str(err)
+        except KeyError as err:
+            logger.error(
+                f"No Agents are available for unsupported operating system" f'"{operating_system}"'
+            )
+            return False, str(err)
+        except Exception as err:
+            logger.error(f"Error running agent from island: {err}")
+            return False, str(err)
+
+        dest_path = self._data_dir / AGENT_NAMES[operating_system]
 
         # copy the executable to temp path (don't run the monkey from its current location as it may
         # delete itself)
         try:
-            copyfile(src_path, dest_path)
-            os.chmod(dest_path, stat.S_IRWXU | stat.S_IRWXG)
+            with open(dest_path, "wb") as dest_agent:
+                copyfileobj(agent_binary, dest_agent)
+
+            dest_path.chmod(stat.S_IRWXU | stat.S_IRWXG)
         except Exception as exc:
             logger.error("Copy file failed", exc_info=True)
             return False, "Copy file failed: %s" % exc
@@ -54,28 +63,9 @@ class LocalMonkeyRunService:
             port = ISLAND_PORT
 
             args = [str(dest_path), "m0nk3y", "-s", f"{ip}:{port}"]
-            subprocess.Popen(args, cwd=LocalMonkeyRunService.DATA_DIR)
+            subprocess.Popen(args, cwd=self._data_dir)
         except Exception as exc:
             logger.error("popen failed", exc_info=True)
             return False, "popen failed: %s" % exc
 
         return True, ""
-
-    @staticmethod
-    def _get_agent_executable_path(os: str) -> Path:
-        try:
-            agent_path = LocalMonkeyRunService._get_executable_full_path(AGENTS[os])
-            logger.debug(f'Local path for {os} executable is "{agent_path}"')
-            if not agent_path.is_file():
-                logger.error(f"File {agent_path} not found")
-
-            return agent_path
-        except KeyError:
-            logger.warning(f"No monkey executable could be found for the host os: {os}")
-            raise UnsupportedOSError(
-                f'No Agents are available for unsupported operating system "{os}"'
-            )
-
-    @staticmethod
-    def _get_executable_full_path(executable_filename: str) -> Path:
-        return Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries" / executable_filename
