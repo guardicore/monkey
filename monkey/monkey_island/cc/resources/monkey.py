@@ -28,29 +28,6 @@ class Monkey(AbstractResource):
         return {"config": ConfigService.format_flat_config_for_agent()}
 
     # Used by monkey. can't secure.
-    @TestTelemStore.store_exported_telem
-    def patch(self, guid):
-
-        # TODO: This endpoint appears to be doing 3 things, although only one of them is used
-        # (config_error). The WormConfiguration will be removed in #1960. We should consider
-        # removing this endpoint
-        monkey_json = json.loads(request.data)
-        update = {"$set": {"modifytime": datetime.now()}}
-        monkey = NodeService.get_monkey_by_guid(guid)
-        if "config_error" in monkey_json:
-            update["$set"]["config_error"] = monkey_json["config_error"]
-
-        if "tunnel" in monkey_json:
-            tunnel_host_ip = monkey_json["tunnel"].split(":")[-2].replace("//", "")
-            NodeService.set_monkey_tunnel(monkey["_id"], tunnel_host_ip)
-
-        ttl = create_monkey_ttl_document(DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS)
-        update["$set"]["ttl_ref"] = ttl.id
-
-        # API Spec: What is this returning? Check that it follows rules.
-        return mongo.db.monkey.update({"_id": monkey["_id"]}, update, upsert=False)
-
-    # Used by monkey. can't secure.
     # Called on monkey wakeup to initialize local configuration
     @TestTelemStore.store_exported_telem
     def post(self, **kw):

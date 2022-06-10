@@ -51,7 +51,6 @@ class Monkey(Document):
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
     parent = ListField(ListField(DynamicField()))
-    config_error = BooleanField()
     critical_services = ListField(StringField())
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
