@@ -77,11 +77,11 @@ MONKEY = {
             "title": "Credential collection",
             "type": "object",
             "properties": {
-                "credential_collector_classes": {
+                "credential_collectors": {
                     "title": "Credential collectors",
                     "type": "array",
                     "uniqueItems": True,
-                    "items": {"$ref": "#/definitions/credential_collector_classes"},
+                    "items": {"$ref": "#/definitions/credential_collectors"},
                     "default": [
                         MIMIKATZ_COLLECTOR,
                         SSH_COLLECTOR,

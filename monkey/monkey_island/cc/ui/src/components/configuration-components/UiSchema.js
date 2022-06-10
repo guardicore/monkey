@@ -95,7 +95,7 @@ export default function UiSchema(props) {
         }
       },
       credential_collectors: {
-        credential_collector_classes: {
+        credential_collectors: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect
         }

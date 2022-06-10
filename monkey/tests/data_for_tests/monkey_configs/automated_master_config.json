@@ -101,7 +101,7 @@
                 "other_behaviors": {"readme": true}
             }
         },
-        "credential_collector_classes": [
+        "credential_collectors": [
             "MimikatzCollector",
             "SSHCollector"
         ]

@@ -17,8 +17,8 @@ function getPluginDescriptors(schema, config) {
     },
     {
       name: 'CredentialCollectors',
-      allPlugins: schema.definitions.credential_collector_classes.anyOf,
-      selectedPlugins: config.monkey.credential_collectors.credential_collector_classes
+      allPlugins: schema.definitions.credential_collectors.anyOf,
+      selectedPlugins: config.monkey.credential_collectors.credential_collectors
     }
   ]);
 }
