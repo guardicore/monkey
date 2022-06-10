@@ -2,8 +2,6 @@ import logging
 
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.agent_controls import AgentControls
-from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
-from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.report import ReportService
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
@@ -73,5 +71,3 @@ def _on_finished_infection():
     # we want to skip and reply.
     if not is_report_being_generated() and not ReportService.is_latest_report_exists():
         safe_generate_reports()
-    if ConfigService.is_test_telem_export_enabled() and not TestTelemStore.TELEMS_EXPORTED:
-        TestTelemStore.export_telems()

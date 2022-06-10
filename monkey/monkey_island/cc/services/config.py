@@ -9,7 +9,6 @@ from typing import Any, Dict, List
 from jsonschema import Draft4Validator, validators
 
 from common.config_value_paths import (
-    EXPORT_MONKEY_TELEMS_PATH,
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
     PASSWORD_LIST_PATH,
@@ -354,10 +353,6 @@ class ConfigService:
                     if is_decrypt
                     else get_datastore_encryptor().encrypt(config_arr)
                 )
-
-    @staticmethod
-    def is_test_telem_export_enabled():
-        return ConfigService.get_config_value(EXPORT_MONKEY_TELEMS_PATH)
 
     @staticmethod
     def get_config_propagation_credentials_from_flat_config(config) -> Dict[str, List[str]]:
