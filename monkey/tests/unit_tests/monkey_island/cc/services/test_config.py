@@ -195,12 +195,12 @@ def test_format_config_for_agent__exploiters():
             {
                 "name": "SmbExploiter",
                 "supported_os": ["windows"],
-                "options": {"smb_download_timeout": 300},
+                "options": {"smb_download_timeout": 30},
             },
             {
                 "name": "WmiExploiter",
                 "supported_os": ["windows"],
-                "options": {"smb_download_timeout": 300},
+                "options": {"smb_download_timeout": 30},
             },
         ],
         "vulnerability": [
