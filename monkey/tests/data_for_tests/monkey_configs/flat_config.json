@@ -47,7 +47,6 @@
         "PowerShellExploiter",
         "Log4ShellExploiter"
     ],
-    "export_monkey_telems": false,
     "finger_classes": [
         "SMBFinger",
         "SSHFinger",
