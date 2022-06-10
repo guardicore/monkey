@@ -41,14 +41,6 @@
       "general": {
         "keep_tunnel_open_time": 60
       },
-      "monkey": {
-        "alive": true,
-        "aws_keys": {
-          "aws_access_key_id": "",
-          "aws_secret_access_key": "",
-          "aws_session_token": ""
-        }
-      },
       "island_server": {
         "command_servers": [
           "192.168.1.37:5000",

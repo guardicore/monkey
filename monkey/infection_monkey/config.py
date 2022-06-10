@@ -7,8 +7,6 @@ SENSITIVE_FIELDS = [
     "exploit_password_list",
     "exploit_user_list",
     "exploit_ssh_keys",
-    "aws_secret_access_key",
-    "aws_session_token",
 ]
 LOCAL_CONFIG_VARS = ["name", "id", "current_server", "max_depth"]
 HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"

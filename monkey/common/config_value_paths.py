@@ -1,4 +1,3 @@
-AWS_KEYS_PATH = ["internal", "monkey", "aws_keys"]
 EXPORT_MONKEY_TELEMS_PATH = ["internal", "testing", "export_monkey_telems"]
 CURRENT_SERVER_PATH = ["internal", "island_server", "current_server"]
 SSH_KEYS_PATH = ["internal", "exploits", "exploit_ssh_keys"]

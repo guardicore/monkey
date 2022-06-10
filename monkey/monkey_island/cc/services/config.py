@@ -9,7 +9,6 @@ from typing import Any, Dict, List
 from jsonschema import Draft4Validator, validators
 
 from common.config_value_paths import (
-    AWS_KEYS_PATH,
     EXPORT_MONKEY_TELEMS_PATH,
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
@@ -42,9 +41,6 @@ ENCRYPTED_CONFIG_VALUES = [
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
     SSH_KEYS_PATH,
-    AWS_KEYS_PATH + ["aws_access_key_id"],
-    AWS_KEYS_PATH + ["aws_secret_access_key"],
-    AWS_KEYS_PATH + ["aws_session_token"],
 ]
 
 SENSITIVE_SSH_KEY_FIELDS = [
