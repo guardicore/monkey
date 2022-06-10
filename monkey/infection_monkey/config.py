@@ -69,10 +69,5 @@ class Configuration(object):
 
     keep_tunnel_open_time = 30
 
-    ###########################
-    # testing configuration
-    ###########################
-    export_monkey_telems = False
-
 
 WormConfiguration = Configuration()
