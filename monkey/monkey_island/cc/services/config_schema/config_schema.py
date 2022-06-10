@@ -1,7 +1,7 @@
 from monkey_island.cc.services.config_schema.basic import BASIC
 from monkey_island.cc.services.config_schema.basic_network import BASIC_NETWORK
 from monkey_island.cc.services.config_schema.definitions.credential_collector_classes import (
-    CREDENTIAL_COLLECTOR_CLASSES,
+    CREDENTIAL_COLLECTORS,
 )
 from monkey_island.cc.services.config_schema.definitions.exploiter_classes import EXPLOITER_CLASSES
 from monkey_island.cc.services.config_schema.definitions.finger_classes import FINGER_CLASSES
@@ -20,7 +20,7 @@ SCHEMA = {
     # users will not accidentally chose unsafe options
     "definitions": {
         "exploiter_classes": EXPLOITER_CLASSES,
-        "credential_collectors": CREDENTIAL_COLLECTOR_CLASSES,
+        "credential_collectors": CREDENTIAL_COLLECTORS,
         "post_breach_actions": POST_BREACH_ACTIONS,
         "finger_classes": FINGER_CLASSES,
     },

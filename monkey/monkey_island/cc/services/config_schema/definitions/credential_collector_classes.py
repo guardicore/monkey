@@ -1,6 +1,6 @@
 from common.common_consts.credential_collector_names import MIMIKATZ_COLLECTOR, SSH_COLLECTOR
 
-CREDENTIAL_COLLECTOR_CLASSES = {
+CREDENTIAL_COLLECTORS = {
     "title": "Credential Collectors",
     "description": "Click on a credential collector to find out what it collects.",
     "type": "string",
