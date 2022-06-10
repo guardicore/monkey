@@ -14,7 +14,6 @@ HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
 class Configuration(object):
     def from_kv(self, formatted_data):
-        unknown_items = []
         for key, value in list(formatted_data.items()):
             if key.startswith("_"):
                 continue
@@ -22,11 +21,8 @@ class Configuration(object):
                 continue
             if hasattr(self, key):
                 setattr(self, key, value)
-            else:
-                unknown_items.append(key)
         if not self.max_depth:
             self.max_depth = self.depth
-        return unknown_items
 
     @staticmethod
     def hide_sensitive_info(config_dict):

@@ -185,7 +185,7 @@ class ControlClient(object):
             return
 
         try:
-            unknown_variables = WormConfiguration.from_kv(reply.json().get("config"))
+            WormConfiguration.from_kv(reply.json().get("config"))
             formatted_config = pformat(
                 WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
             )
@@ -199,28 +199,6 @@ class ControlClient(object):
                 exc,
             )
             raise Exception("Couldn't load from from server's configuration, aborting. %s" % exc)
-
-        if unknown_variables:
-            ControlClient.send_config_error()
-
-    @staticmethod
-    def send_config_error():
-        if not WormConfiguration.current_server:
-            return
-        try:
-            requests.patch(  # noqa: DUO123
-                f"https://{WormConfiguration.current_server}/api/agent/{GUID}",
-                data=json.dumps({"config_error": True}),
-                headers={"content-type": "application/json"},
-                verify=False,
-                proxies=ControlClient.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
-        except Exception as exc:
-            logger.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
-            return {}
 
     @staticmethod
     def create_control_tunnel():
