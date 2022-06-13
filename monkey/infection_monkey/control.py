@@ -25,8 +25,8 @@ PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
 
 class ControlClient:
-    # TODO Every telemetry should have its own control client
-    # for the moment that is a big refactor.
+    # TODO When we have mechanism that support telemetry messenger
+    # with control clients, then this needs to be removed
     # Ref: infection_monkey.telemetry.base_telem.py
     control_client_object = None
 
