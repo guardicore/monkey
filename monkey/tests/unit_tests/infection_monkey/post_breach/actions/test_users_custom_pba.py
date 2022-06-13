@@ -44,8 +44,6 @@ def fake_custom_pba_linux_options():
         "linux_filename": CUSTOM_LINUX_FILENAME,
         "windows_command": "",
         "windows_filename": "",
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 
@@ -71,8 +69,6 @@ def fake_custom_pba_windows_options():
         "linux_filename": "",
         "windows_command": CUSTOM_WINDOWS_CMD,
         "windows_filename": CUSTOM_WINDOWS_FILENAME,
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 
@@ -94,8 +90,6 @@ def fake_options_files_only():
         "linux_filename": CUSTOM_LINUX_FILENAME,
         "windows_command": "",
         "windows_filename": CUSTOM_WINDOWS_FILENAME,
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 
@@ -113,8 +107,6 @@ def fake_options_commands_only():
         "linux_filename": "",
         "windows_command": CUSTOM_WINDOWS_CMD,
         "windows_filename": "",
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 

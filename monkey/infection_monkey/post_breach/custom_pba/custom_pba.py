@@ -37,9 +37,6 @@ class CustomPBA(PBA):
         return super().run(options)
 
     def _set_options(self, options: Dict):
-        # Required for attack telemetry
-        self.current_server = options["current_server"]
-
         if is_windows_os():
             # Add windows commands to PBA's
             if options["windows_filename"]:
@@ -89,8 +86,8 @@ class CustomPBA(PBA):
         self.telemetry_messenger.send_telemetry(
             T1105Telem(
                 status,
-                self.current_server.split(":")[0],
-                get_interface_to_target(self.current_server.split(":")[0]),
+                self.cc_client.server_address.split(":")[0],
+                get_interface_to_target(self.cc_client.server_address.split(":")[0]),
                 filename,
             )
         )
