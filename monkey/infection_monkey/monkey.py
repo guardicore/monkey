@@ -90,6 +90,8 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
         self.cc_client = ControlClient(self._opts.server)
+        # TODO Refactor the BaseTelem to have its own control client
+        ControlClient.control_client_object = self.cc_client
         self._monkey_inbound_tunnel = None
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
