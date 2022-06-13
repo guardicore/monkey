@@ -10,8 +10,8 @@ import infection_monkey.tunnel as tunnel
 from common.network.network_utils import address_to_ip_port
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
-from infection_monkey.control import ControlClient
 from infection_monkey.config import GUID
+from infection_monkey.control import ControlClient
 from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
@@ -90,7 +90,8 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
         self._control_client = ControlClient(self._opts.server)
-        # TODO Refactor the BaseTelem to have its own control client
+        # TODO Refactor the telemetry messengers to accept control client
+        # and remove control_client_object
         ControlClient.control_client_object = self._control_client
         self._monkey_inbound_tunnel = None
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
