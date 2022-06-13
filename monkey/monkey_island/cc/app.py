@@ -30,6 +30,7 @@ from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyE
 from monkey_island.cc.resources.island_configuration import IslandConfiguration
 from monkey_island.cc.resources.island_logs import IslandLog
 from monkey_island.cc.resources.island_mode import IslandMode
+from monkey_island.cc.resources.local_ips import LocalIps
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
@@ -171,6 +172,7 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(TelemetryFeed)
     api.add_resource(Log)
     api.add_resource(IslandLog)
+    api.add_resource(LocalIps)
 
     # API Spec: These two should be the same resource, GET for download and POST for upload
     api.add_resource(PBAFileDownload)
