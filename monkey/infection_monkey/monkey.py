@@ -185,7 +185,6 @@ class InfectionMonkey:
         control_channel = ControlChannel(
             self._control_client.server_address, GUID, self._control_client.proxies
         )
-        control_client = self._control_client
         credentials_store = AggregatingCredentialsStore(control_channel)
 
         puppet = self._build_puppet(credentials_store)
@@ -207,7 +206,6 @@ class InfectionMonkey:
             control_channel,
             local_network_interfaces,
             credentials_store,
-            control_client,
         )
 
     @staticmethod
