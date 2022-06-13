@@ -5,7 +5,6 @@ from typing import Mapping
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from infection_monkey.control import ControlClient
 from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 
