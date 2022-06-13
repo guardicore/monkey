@@ -8,6 +8,8 @@ from netifaces import AF_INET, ifaddresses, interfaces
 from ring import lru
 
 # Local ips function
+# TODO: I can't find anywhere these are actually used. Confirm this is the case, remove these
+#       functions, and test.
 if sys.platform == "win32":
 
     def local_ips():
