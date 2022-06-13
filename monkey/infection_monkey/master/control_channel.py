@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import Mapping
 
 import requests
 
@@ -14,9 +15,10 @@ logger = logging.getLogger(__name__)
 
 
 class ControlChannel(IControlChannel):
-    def __init__(self, server: str, agent_id: str):
+    def __init__(self, server: str, agent_id: str, proxies: Mapping[str, str]):
         self._agent_id = agent_id
         self._control_channel_server = server
+        self._proxies = proxies
 
     def should_agent_stop(self) -> bool:
         if not self._control_channel_server:
@@ -30,7 +32,7 @@ class ControlChannel(IControlChannel):
             response = requests.get(  # noqa: DUO123
                 url,
                 verify=False,
-                proxies=ControlClient.proxies,
+                proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()
@@ -51,7 +53,7 @@ class ControlChannel(IControlChannel):
             response = requests.get(  # noqa: DUO123
                 f"https://{self._control_channel_server}/api/agent",
                 verify=False,
-                proxies=ControlClient.proxies,
+                proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()
@@ -74,7 +76,7 @@ class ControlChannel(IControlChannel):
             response = requests.get(  # noqa: DUO123
                 propagation_credentials_url,
                 verify=False,
-                proxies=ControlClient.proxies,
+                proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()
