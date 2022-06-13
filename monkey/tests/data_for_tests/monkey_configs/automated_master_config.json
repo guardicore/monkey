@@ -62,8 +62,6 @@
         },
         "PBA_linux_filename": "",
         "PBA_windows_filename": "",
-        "command_servers": ["10.197.94.72:5000"],
-        "current_server": "localhost:5000",
         "custom_pbas": {
             "linux_command": "",
             "windows_command": ""

@@ -1,7 +1,6 @@
-from common.config_value_paths import CURRENT_SERVER_PATH
 from common.utils.attack_utils import ScanStatus
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from monkey_island.cc.services.config import ConfigService
 
 
 class T1065(AttackTechnique):
@@ -14,6 +13,5 @@ class T1065(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        port = ConfigService.get_config_value(CURRENT_SERVER_PATH).split(":")[1]
-        T1065.used_msg = T1065.message % port
+        T1065.used_msg = T1065.message % ISLAND_PORT
         return T1065.get_base_data_by_status(ScanStatus.USED.value)

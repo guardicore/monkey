@@ -1,4 +1,3 @@
-CURRENT_SERVER_PATH = ["internal", "island_server", "current_server"]
 SSH_KEYS_PATH = ["internal", "exploits", "exploit_ssh_keys"]
 INACCESSIBLE_SUBNETS_PATH = ["basic_network", "network_analysis", "inaccessible_subnets"]
 USER_LIST_PATH = ["basic", "credentials", "exploit_user_list"]
