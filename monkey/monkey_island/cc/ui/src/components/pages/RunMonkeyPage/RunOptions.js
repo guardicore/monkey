@@ -9,7 +9,7 @@ import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
 
-const CONFIG_URL = '/api/configuration/island';
+const LOCAL_IPS_URL = '/api/island/local-ips';
 
 function RunOptions(props) {
 
@@ -21,13 +21,10 @@ function RunOptions(props) {
 
   useEffect(() => {
     if (initialized === false) {
-      authComponent.authFetch(CONFIG_URL)
+      authComponent.authFetch(LOCAL_IPS_URL)
       .then(res => res.json())
       .then(res => {
-        let commandServers = res.configuration.internal.island_server.command_servers;
-        let ipAddresses = commandServers.map(ip => {
-          return ip.split(':', 1);
-        });
+        let ipAddresses = res.local_ips;
         setIps(ipAddresses);
         setInitialized(true);
       });
