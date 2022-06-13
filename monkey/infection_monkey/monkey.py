@@ -128,7 +128,9 @@ class InfectionMonkey:
 
         run_aws_environment_check(self._telemetry_messenger)
 
-        should_stop = ControlChannel(WormConfiguration.current_server, GUID).should_agent_stop()
+        should_stop = ControlChannel(
+            WormConfiguration.current_server, GUID, self.cc_client.proxies
+        ).should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
@@ -177,7 +179,9 @@ class InfectionMonkey:
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
-        control_channel = ControlChannel(self.cc_client.server_address, GUID)
+        control_channel = ControlChannel(
+            self.cc_client.server_address, GUID, self.cc_client.proxies
+        )
         control_client = self.cc_client
         credentials_store = AggregatingCredentialsStore(control_channel)
 
