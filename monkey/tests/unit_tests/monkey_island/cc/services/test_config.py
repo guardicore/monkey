@@ -6,11 +6,6 @@ from monkey_island.cc.services.config import ConfigService
 # monkey/monkey_island/cc/ui/src/components/pages/RunMonkeyPage/RunOptions.js
 
 
-@pytest.fixture(scope="function", autouse=True)
-def mock_port(monkeypatch, PORT):
-    monkeypatch.setattr("monkey_island.cc.services.config.ISLAND_PORT", PORT)
-
-
 @pytest.fixture(autouse=True)
 def mock_flat_config(monkeypatch, flat_monkey_config):
     monkeypatch.setattr(
