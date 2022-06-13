@@ -56,7 +56,7 @@ class ControlClient:
             monkey["tunnel"] = self.proxies.get("https")
 
         requests.post(  # noqa: DUO123
-            f"https://{WormConfiguration.current_server}/api/agent",
+            f"https://{self.server_address}/api/agent",
             data=json.dumps(monkey),
             headers={"content-type": "application/json"},
             verify=False,
@@ -65,37 +65,26 @@ class ControlClient:
         )
 
     def find_server(self, default_tunnel=None):
-        logger.debug(
-            "Trying to wake up with Monkey Island servers list: %r"
-            % WormConfiguration.command_servers
-        )
+        logger.debug(f"Trying to wake up with Monkey Island server: {self.server_address}")
         if default_tunnel:
             logger.debug("default_tunnel: %s" % (default_tunnel,))
 
-        current_server = ""
-
-        for server in WormConfiguration.command_servers:
-            try:
-                current_server = server
-
-                debug_message = "Trying to connect to server: %s" % server
-                if self.proxies:
-                    debug_message += " through proxies: %s" % self.proxies
+        try:
+            debug_message = "Trying to connect to server: %s" % self.server_address
+            if self.proxies:
+                debug_message += " through proxies: %s" % self.proxies
                 logger.debug(debug_message)
                 requests.get(  # noqa: DUO123
-                    f"https://{server}/api?action=is-up",
+                    f"https://{self.server_address}/api?action=is-up",
                     verify=False,
                     proxies=self.proxies,
                     timeout=MEDIUM_REQUEST_TIMEOUT,
                 )
-                WormConfiguration.current_server = current_server
-                break
+        except ConnectionError as exc:
+            self.server_address = ""
+            logger.warning("Error connecting to control server %s: %s", self.server_address, exc)
 
-            except ConnectionError as exc:
-                current_server = ""
-                logger.warning("Error connecting to control server %s: %s", server, exc)
-
-        if current_server:
+        if self.server_address:
             return True
         else:
             if self.proxies:
@@ -130,7 +119,7 @@ class ControlClient:
             self.proxies["https"] = f"{proxy_address}:{proxy_port}"
 
     def send_telemetry(self, telem_category, json_data: str):
-        if not WormConfiguration.current_server:
+        if not self.server_address:
             logger.error(
                 "Trying to send %s telemetry before current server is established, aborting."
                 % telem_category
@@ -139,7 +128,7 @@ class ControlClient:
         try:
             telemetry = {"monkey_guid": GUID, "telem_category": telem_category, "data": json_data}
             requests.post(  # noqa: DUO123
-                "https://%s/api/telemetry" % (WormConfiguration.current_server,),
+                "https://%s/api/telemetry" % (self.server_address,),
                 data=json.dumps(telemetry),
                 headers={"content-type": "application/json"},
                 verify=False,
@@ -147,17 +136,15 @@ class ControlClient:
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
-            logger.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
+            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
     def send_log(self, log):
-        if not WormConfiguration.current_server:
+        if not self.server_address:
             return
         try:
             telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
             requests.post(  # noqa: DUO123
-                "https://%s/api/log" % (WormConfiguration.current_server,),
+                "https://%s/api/log" % (self.server_address,),
                 data=json.dumps(telemetry),
                 headers={"content-type": "application/json"},
                 verify=False,
@@ -165,25 +152,21 @@ class ControlClient:
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
-            logger.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
+            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
     def load_control_config(self):
-        if not WormConfiguration.current_server:
+        if not self.server_address:
             return
         try:
             reply = requests.get(  # noqa: DUO123
-                f"https://{WormConfiguration.current_server}/api/agent/",
+                f"https://{self.server_address}/api/agent/",
                 verify=False,
                 proxies=self.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
 
         except Exception as exc:
-            logger.warning(
-                "Error connecting to control server %s: %s", WormConfiguration.current_server, exc
-            )
+            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
             return
 
         try:
@@ -196,14 +179,14 @@ class ControlClient:
             # we don't continue with default conf here because it might be dangerous
             logger.error(
                 "Error parsing JSON reply from control server %s (%s): %s",
-                WormConfiguration.current_server,
+                self.server_address,
                 reply._content,
                 exc,
             )
             raise Exception("Couldn't load from from server's configuration, aborting. %s" % exc)
 
     def create_control_tunnel(self):
-        if not WormConfiguration.current_server:
+        if not self.server_address:
             return None
 
         my_proxy = self.proxies.get("https", "").replace("https://", "")
@@ -228,7 +211,7 @@ class ControlClient:
     def get_pba_file(self, filename):
         try:
             return requests.get(  # noqa: DUO123
-                PBA_FILE_DOWNLOAD % (WormConfiguration.current_server, filename),
+                PBA_FILE_DOWNLOAD % (self.server_address, filename),
                 verify=False,
                 proxies=self.proxies,
                 timeout=LONG_REQUEST_TIMEOUT,
