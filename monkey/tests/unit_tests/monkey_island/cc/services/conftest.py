@@ -14,8 +14,7 @@ def PORT():
 
 
 @pytest.fixture
-def config(monkeypatch, IPS, PORT):
-    monkeypatch.setattr("monkey_island.cc.services.config.local_ip_addresses", lambda: IPS)
+def config(monkeypatch):
     config = ConfigService.get_default_config(True)
     return config
 
