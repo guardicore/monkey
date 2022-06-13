@@ -15,28 +15,6 @@ INTERNAL = {
                 },
             },
         },
-        "island_server": {
-            "title": "Island server",
-            "type": "object",
-            "properties": {
-                "command_servers": {
-                    "title": "Island server's IP's",
-                    "type": "array",
-                    "uniqueItems": True,
-                    "items": {"type": "string"},
-                    "default": ["192.0.2.0:5000"],
-                    "description": "List of command servers/network interfaces to try to "
-                    "communicate with "
-                    "(format is <ip>:<port>)",
-                },
-                "current_server": {
-                    "title": "Current server",
-                    "type": "string",
-                    "default": "192.0.2.0:5000",
-                    "description": "The current command server the monkey is communicating with",
-                },
-            },
-        },
         "network": {
             "title": "Network",
             "type": "object",

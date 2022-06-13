@@ -11,10 +11,6 @@
     "PBA_windows_filename": "test.ps1",
     "alive": true,
     "blocked_ips": ["192.168.1.1", "192.168.1.100"],
-    "command_servers": [
-        "10.197.94.72:5000"
-    ],
-    "current_server": "10.197.94.72:5000",
     "custom_PBA_linux_cmd": "bash test.sh",
     "custom_PBA_windows_cmd": "powershell test.ps1",
     "depth": 2,
