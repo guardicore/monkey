@@ -6,8 +6,7 @@ const sectionOrder = [
   'network',
   'exploits',
   'classes',
-  'general',
-  'testing'
+  'general'
 ];
 const initialSection = sectionOrder[0];
 
