@@ -167,7 +167,7 @@ class InfectionMonkey:
             self._monkey_inbound_tunnel.start()
 
         StateTelem(is_done=False, version=get_version()).send()
-        TunnelTelem().send()
+        TunnelTelem(self.cc_client.proxies).send()
 
         self._build_master()
 

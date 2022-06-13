@@ -7,7 +7,7 @@ from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 
 @pytest.fixture
 def tunnel_telem_test_instance():
-    return TunnelTelem()
+    return TunnelTelem({})
 
 
 def test_tunnel_telem_send(tunnel_telem_test_instance, spy_send_telemetry):
