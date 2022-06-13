@@ -25,6 +25,11 @@ PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
 
 class ControlClient:
+    # TODO Every telemetry should have its own control client
+    # for the moment that is a big refactor.
+    # Ref: infection_monkey.telemetry.base_telem.py
+    control_client_object = None
+
     def __init__(self, server_address: str, proxies: Optional[Mapping[str, str]] = None):
         self.proxies = {} if not proxies else proxies
         self.server_address = server_address
