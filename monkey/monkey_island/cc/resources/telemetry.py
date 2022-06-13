@@ -9,7 +9,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey import Monkey
 from monkey_island.cc.models.telemetries import get_telemetry_by_query
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
@@ -45,7 +44,6 @@ class Telemetry(AbstractResource):
         return result
 
     # Used by monkey. can't secure.
-    @TestTelemStore.store_exported_telem
     def post(self):
         telemetry_json = json.loads(request.data)
         telemetry_json["data"] = json.loads(telemetry_json["data"])

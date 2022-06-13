@@ -92,9 +92,6 @@
         "exploit_lm_hash_list": [],
         "exploit_ntlm_hash_list": [],
         "exploit_ssh_keys": []
-      },
-      "testing": {
-        "export_monkey_telems": false
       }
     },
     "monkey": {

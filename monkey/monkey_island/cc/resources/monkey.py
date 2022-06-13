@@ -6,7 +6,6 @@ from flask import request
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.blackbox.utils.telem_store import TestTelemStore
 from monkey_island.cc.resources.utils.semaphores import agent_killing_mutex
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 from monkey_island.cc.services.config import ConfigService
@@ -29,7 +28,6 @@ class Monkey(AbstractResource):
 
     # Used by monkey. can't secure.
     # Called on monkey wakeup to initialize local configuration
-    @TestTelemStore.store_exported_telem
     def post(self, **kw):
 
         # TODO: Why is it the registration of an agent coupled to exploit telemetry? It's hard to
