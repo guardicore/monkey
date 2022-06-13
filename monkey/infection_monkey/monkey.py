@@ -10,8 +10,8 @@ import infection_monkey.tunnel as tunnel
 from common.network.network_utils import address_to_ip_port
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
-from infection_monkey.config import GUID, WormConfiguration
 from infection_monkey.control import ControlClient
+from infection_monkey.config import GUID
 from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
@@ -131,7 +131,7 @@ class InfectionMonkey:
         run_aws_environment_check(self._telemetry_messenger)
 
         should_stop = ControlChannel(
-            WormConfiguration.current_server, GUID, self.cc_client.proxies
+            self.cc_client.server_address, GUID, self.cc_client.proxies
         ).should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")

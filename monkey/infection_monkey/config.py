@@ -8,7 +8,7 @@ SENSITIVE_FIELDS = [
     "exploit_user_list",
     "exploit_ssh_keys",
 ]
-LOCAL_CONFIG_VARS = ["name", "id", "current_server", "max_depth"]
+LOCAL_CONFIG_VARS = ["name", "id", "max_depth"]
 HIDDEN_FIELD_REPLACEMENT_CONTENT = "hidden"
 
 
@@ -62,10 +62,6 @@ class Configuration(object):
     # depth of propagation
     depth = 2
     max_depth = None
-    current_server = ""
-
-    # Configuration servers to try to connect to, in this order.
-    command_servers = []
 
     keep_tunnel_open_time = 30
 
