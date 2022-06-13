@@ -25,12 +25,12 @@ class CustomPBA(PBA):
     Defines user's configured post breach action.
     """
 
-    def __init__(self, telemetry_messenger: ITelemetryMessenger, cc_client: ControlClient):
+    def __init__(self, telemetry_messenger: ITelemetryMessenger, control_client: ControlClient):
         super(CustomPBA, self).__init__(
             telemetry_messenger, POST_BREACH_FILE_EXECUTION, timeout=None
         )
         self.filename = ""
-        self.cc_client = cc_client
+        self.control_client = control_client
 
     def run(self, options: Dict) -> Iterable[PostBreachData]:
         self._set_options(options)
@@ -73,7 +73,7 @@ class CustomPBA(PBA):
         :return: True if successful, false otherwise
         """
 
-        pba_file_contents = self.cc_client.get_pba_file(filename)
+        pba_file_contents = self.control_client.get_pba_file(filename)
 
         status = None
         if not pba_file_contents or not pba_file_contents.content:
@@ -86,8 +86,8 @@ class CustomPBA(PBA):
         self.telemetry_messenger.send_telemetry(
             T1105Telem(
                 status,
-                self.cc_client.server_address.split(":")[0],
-                get_interface_to_target(self.cc_client.server_address.split(":")[0]),
+                self.control_client.server_address.split(":")[0],
+                get_interface_to_target(self.control_client.server_address.split(":")[0]),
                 filename,
             )
         )

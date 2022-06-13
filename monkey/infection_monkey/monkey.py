@@ -89,9 +89,9 @@ class InfectionMonkey:
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
-        self.cc_client = ControlClient(self._opts.server)
+        self._control_client = ControlClient(self._opts.server)
         # TODO Refactor the BaseTelem to have its own control client
-        ControlClient.control_client_object = self.cc_client
+        ControlClient.control_client_object = self._control_client
         self._monkey_inbound_tunnel = None
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
@@ -131,7 +131,7 @@ class InfectionMonkey:
         run_aws_environment_check(self._telemetry_messenger)
 
         should_stop = ControlChannel(
-            self.cc_client.server_address, GUID, self.cc_client.proxies
+            self._control_client.server_address, GUID, self._control_client.proxies
         ).should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
@@ -143,17 +143,17 @@ class InfectionMonkey:
     def _connect_to_island(self):
         # Sets island's IP and port for monkey to communicate to
         if self._current_server_is_set():
-            logger.debug("Default server set to: %s" % self.cc_client.server_address)
+            logger.debug("Default server set to: %s" % self._control_client.server_address)
         else:
             raise Exception(
                 "Monkey couldn't find server with {} default tunnel.".format(self._opts.tunnel)
             )
 
-        self.cc_client.wakeup(parent=self._opts.parent)
-        self.cc_client.load_control_config()
+        self._control_client.wakeup(parent=self._opts.parent)
+        self._control_client.load_control_config()
 
     def _current_server_is_set(self) -> bool:
-        if self.cc_client.find_server(default_tunnel=self._opts.tunnel):
+        if self._control_client.find_server(default_tunnel=self._opts.tunnel):
             return True
 
         return False
@@ -166,12 +166,12 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        self._monkey_inbound_tunnel = self.cc_client.create_control_tunnel()
+        self._monkey_inbound_tunnel = self._control_client.create_control_tunnel()
         if self._monkey_inbound_tunnel and self._propagation_enabled():
             self._monkey_inbound_tunnel.start()
 
         StateTelem(is_done=False, version=get_version()).send()
-        TunnelTelem(self.cc_client.proxies).send()
+        TunnelTelem(self._control_client.proxies).send()
 
         self._build_master()
 
@@ -182,9 +182,9 @@ class InfectionMonkey:
 
         # TODO control_channel and control_client have same responsibilities, merge them
         control_channel = ControlChannel(
-            self.cc_client.server_address, GUID, self.cc_client.proxies
+            self._control_client.server_address, GUID, self._control_client.proxies
         )
-        control_client = self.cc_client
+        control_client = self._control_client
         credentials_store = AggregatingCredentialsStore(control_channel)
 
         puppet = self._build_puppet(credentials_store)
@@ -238,7 +238,7 @@ class InfectionMonkey:
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
         agent_repository = CachingAgentRepository(
-            f"https://{self.cc_client.server_address}", self.cc_client.proxies
+            f"https://{self._control_client.server_address}", self._control_client.proxies
         )
         exploit_wrapper = ExploiterWrapper(self._telemetry_messenger, agent_repository)
 
@@ -322,7 +322,7 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             "CustomPBA",
-            CustomPBA(self._telemetry_messenger, self.cc_client),
+            CustomPBA(self._telemetry_messenger, self._control_client),
             PluginType.POST_BREACH_ACTION,
         )
 
@@ -341,7 +341,7 @@ class InfectionMonkey:
         )
 
     def _running_on_island(self, local_network_interfaces: List[NetworkInterface]) -> bool:
-        server_ip, _ = address_to_ip_port(self.cc_client.server_address)
+        server_ip, _ = address_to_ip_port(self._control_client.server_address)
         return server_ip in {interface.address for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
@@ -389,7 +389,7 @@ class InfectionMonkey:
 
     def _close_tunnel(self):
         tunnel_address = (
-            self.cc_client.proxies.get("https", "").replace("http://", "").split(":")[0]
+            self._control_client.proxies.get("https", "").replace("http://", "").split(":")[0]
         )
         if tunnel_address:
             logger.info("Quitting tunnel %s", tunnel_address)
@@ -403,7 +403,7 @@ class InfectionMonkey:
         else:
             log = ""
 
-        self.cc_client.send_log(log)
+        self._control_client.send_log(log)
 
     @staticmethod
     def _self_delete() -> bool:
