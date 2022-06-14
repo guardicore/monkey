@@ -144,11 +144,9 @@ class InfectionMonkey:
     def _connect_to_island(self):
         # Sets island's IP and port for monkey to communicate to
         if self._current_server_is_set():
-            logger.debug("Default server set to: %s" % self._control_client.server_address)
+            logger.debug(f"Default server set to: {self._control_client.server_address}")
         else:
-            raise Exception(
-                "Monkey couldn't find server with {} default tunnel.".format(self._opts.tunnel)
-            )
+            raise Exception(f"Monkey couldn't find server with {self._opts.tunnel} default tunnel.")
 
         self._control_client.wakeup(parent=self._opts.parent)
         self._control_client.load_control_config()
