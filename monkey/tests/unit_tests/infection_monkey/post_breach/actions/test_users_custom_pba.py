@@ -2,7 +2,6 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.control import ControlClient
 from infection_monkey.post_breach.custom_pba.custom_pba import CustomPBA
 
 MONKEY_DIR_PATH = "/dir/to/monkey/"
@@ -47,15 +46,8 @@ def fake_custom_pba_linux_options():
     }
 
 
-@pytest.fixture
-def control_client():
-    return ControlClient(CUSTOM_SERVER)
-
-
-def test_command_linux_custom_file_and_cmd(
-    fake_custom_pba_linux_options, set_os_linux, control_client
-):
-    pba = CustomPBA(MagicMock(), control_client)
+def test_command_linux_custom_file_and_cmd(fake_custom_pba_linux_options, set_os_linux):
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_custom_pba_linux_options)
     expected_command = f"cd {MONKEY_DIR_PATH} ; {CUSTOM_LINUX_CMD}"
     assert pba.command == expected_command
@@ -72,11 +64,9 @@ def fake_custom_pba_windows_options():
     }
 
 
-def test_command_windows_custom_file_and_cmd(
-    fake_custom_pba_windows_options, set_os_windows, control_client
-):
+def test_command_windows_custom_file_and_cmd(fake_custom_pba_windows_options, set_os_windows):
 
-    pba = CustomPBA(MagicMock(), control_client)
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_custom_pba_windows_options)
     expected_command = f"cd {MONKEY_DIR_PATH} & {CUSTOM_WINDOWS_CMD}"
     assert pba.command == expected_command
@@ -94,8 +84,8 @@ def fake_options_files_only():
 
 
 @pytest.mark.parametrize("os", [set_os_linux, set_os_windows])
-def test_files_only(fake_options_files_only, os, control_client):
-    pba = CustomPBA(MagicMock(), control_client)
+def test_files_only(fake_options_files_only, os):
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_options_files_only)
     assert pba.command == ""
 
@@ -110,15 +100,15 @@ def fake_options_commands_only():
     }
 
 
-def test_commands_only(fake_options_commands_only, set_os_linux, control_client):
-    pba = CustomPBA(MagicMock(), control_client)
+def test_commands_only(fake_options_commands_only, set_os_linux):
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_options_commands_only)
     assert pba.command == CUSTOM_LINUX_CMD
     assert pba.filename == ""
 
 
-def test_commands_only_windows(fake_options_commands_only, set_os_windows, control_client):
-    pba = CustomPBA(MagicMock(), control_client)
+def test_commands_only_windows(fake_options_commands_only, set_os_windows):
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_options_commands_only)
     assert pba.command == CUSTOM_WINDOWS_CMD
     assert pba.filename == ""
