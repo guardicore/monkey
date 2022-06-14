@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock
+
 import pytest
 
 from infection_monkey.control import ControlClient
@@ -13,5 +15,5 @@ def spy_send_telemetry(monkeypatch):
     _spy_send_telemetry.data = None
     control_client = ControlClient("localhost:5000")
     ControlClient.control_client_object = control_client
-    monkeypatch.setattr(ControlClient.control_client_object, "send_telemetry", _spy_send_telemetry)
+    ControlClient.control_client_object.send_telemetry = MagicMock(side_effect=_spy_send_telemetry)
     return _spy_send_telemetry
