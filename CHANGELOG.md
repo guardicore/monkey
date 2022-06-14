@@ -92,6 +92,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automatic jumping to the bottom in the telemetry overview windows. #1850
 - 2-second delay when the Island server starts, and it's not running on AWS. #1636
 - Malformed MSSQL agent launch command. #2018
+- MSSQL batch file cleanup. #2019
 
 ### Security
 - Change SSH exploiter so that it does not set the permissions of the agent
