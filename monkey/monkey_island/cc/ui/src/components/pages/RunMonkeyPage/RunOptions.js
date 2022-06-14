@@ -9,7 +9,7 @@ import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
 
-const LOCAL_IPS_URL = '/api/island/local-ips';
+const IP_ADDRESSES_URL = '/api/island/ip-addresses';
 
 function RunOptions(props) {
 
@@ -21,10 +21,10 @@ function RunOptions(props) {
 
   useEffect(() => {
     if (initialized === false) {
-      authComponent.authFetch(LOCAL_IPS_URL)
+      authComponent.authFetch(IP_ADDRESSES_URL)
       .then(res => res.json())
       .then(res => {
-        let ipAddresses = res.local_ips;
+        let ipAddresses = res.ip_addresses;
         setIps(ipAddresses);
         setInitialized(true);
       });
