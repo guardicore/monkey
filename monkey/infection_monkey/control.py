@@ -73,31 +73,28 @@ class ControlClient:
             debug_message = "Trying to connect to server: %s" % self.server_address
             if self.proxies:
                 debug_message += " through proxies: %s" % self.proxies
-                logger.debug(debug_message)
-                requests.get(  # noqa: DUO123
-                    f"https://{self.server_address}/api?action=is-up",
-                    verify=False,
-                    proxies=self.proxies,
-                    timeout=MEDIUM_REQUEST_TIMEOUT,
-                )
+            logger.debug(debug_message)
+            requests.get(  # noqa: DUO123
+                f"https://{self.server_address}/api?action=is-up",
+                verify=False,
+                proxies=self.proxies,
+                timeout=MEDIUM_REQUEST_TIMEOUT,
+            )
+            return True
         except ConnectionError as exc:
-            self.server_address = ""
             logger.warning("Error connecting to control server %s: %s", self.server_address, exc)
 
-        if self.server_address:
-            return True
+        if self.proxies:
+            return False
         else:
-            if self.proxies:
-                return False
+            logger.info("Starting tunnel lookup...")
+            proxy_find = tunnel.find_tunnel(default=default_tunnel)
+            if proxy_find:
+                self.set_proxies(proxy_find)
+                return self.find_server()
             else:
-                logger.info("Starting tunnel lookup...")
-                proxy_find = tunnel.find_tunnel(default=default_tunnel)
-                if proxy_find:
-                    self.set_proxies(proxy_find)
-                    return self.find_server()
-                else:
-                    logger.info("No tunnel found")
-                    return False
+                logger.info("No tunnel found")
+                return False
 
     def set_proxies(self, proxy_find):
         """
