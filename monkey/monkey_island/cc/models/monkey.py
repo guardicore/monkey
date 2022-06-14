@@ -144,6 +144,9 @@ class Monkey(Document):
         """
         return {"ips": self.ip_addresses, "hostname": self.hostname}
 
+    def get_tunnel_info(self):
+        return {"tunnel": self.tunnel}
+
     # data has TTL of 1 second. This is useful for rapid calls for report generation.
     @ring.lru(expire=1)
     @staticmethod
