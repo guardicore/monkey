@@ -27,7 +27,7 @@ PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 class ControlClient:
     # TODO When we have mechanism that support telemetry messenger
     # with control clients, then this needs to be removed
-    # Ref: infection_monkey.telemetry.base_telem.py
+    # https://github.com/guardicore/monkey/blob/133f7f5da131b481561141171827d1f9943f6aec/monkey/infection_monkey/telemetry/base_telem.py
     control_client_object = None
 
     def __init__(self, server_address: str, proxies: Optional[Mapping[str, str]] = None):
