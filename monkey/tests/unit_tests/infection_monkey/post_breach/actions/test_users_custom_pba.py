@@ -43,13 +43,11 @@ def fake_custom_pba_linux_options():
         "linux_filename": CUSTOM_LINUX_FILENAME,
         "windows_command": "",
         "windows_filename": "",
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 
 def test_command_linux_custom_file_and_cmd(fake_custom_pba_linux_options, set_os_linux):
-    pba = CustomPBA(MagicMock())
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_custom_pba_linux_options)
     expected_command = f"cd {MONKEY_DIR_PATH} ; {CUSTOM_LINUX_CMD}"
     assert pba.command == expected_command
@@ -63,14 +61,12 @@ def fake_custom_pba_windows_options():
         "linux_filename": "",
         "windows_command": CUSTOM_WINDOWS_CMD,
         "windows_filename": CUSTOM_WINDOWS_FILENAME,
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 
 def test_command_windows_custom_file_and_cmd(fake_custom_pba_windows_options, set_os_windows):
 
-    pba = CustomPBA(MagicMock())
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_custom_pba_windows_options)
     expected_command = f"cd {MONKEY_DIR_PATH} & {CUSTOM_WINDOWS_CMD}"
     assert pba.command == expected_command
@@ -84,14 +80,12 @@ def fake_options_files_only():
         "linux_filename": CUSTOM_LINUX_FILENAME,
         "windows_command": "",
         "windows_filename": CUSTOM_WINDOWS_FILENAME,
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 
 @pytest.mark.parametrize("os", [set_os_linux, set_os_windows])
 def test_files_only(fake_options_files_only, os):
-    pba = CustomPBA(MagicMock())
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_options_files_only)
     assert pba.command == ""
 
@@ -103,20 +97,18 @@ def fake_options_commands_only():
         "linux_filename": "",
         "windows_command": CUSTOM_WINDOWS_CMD,
         "windows_filename": "",
-        # Current server is used for attack telemetry
-        "current_server": CUSTOM_SERVER,
     }
 
 
 def test_commands_only(fake_options_commands_only, set_os_linux):
-    pba = CustomPBA(MagicMock())
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_options_commands_only)
     assert pba.command == CUSTOM_LINUX_CMD
     assert pba.filename == ""
 
 
 def test_commands_only_windows(fake_options_commands_only, set_os_windows):
-    pba = CustomPBA(MagicMock())
+    pba = CustomPBA(MagicMock(), MagicMock())
     pba._set_options(fake_options_commands_only)
     assert pba.command == CUSTOM_WINDOWS_CMD
     assert pba.filename == ""

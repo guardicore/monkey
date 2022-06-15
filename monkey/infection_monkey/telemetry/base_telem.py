@@ -35,7 +35,7 @@ class BaseTelem(ITelem, metaclass=abc.ABCMeta):
         data = self.get_data()
         serialized_data = json.dumps(data, cls=self.json_encoder)
         self._log_telem_sending(serialized_data, log_data)
-        ControlClient.send_telemetry(self.telem_category, serialized_data)
+        ControlClient.control_client_object.send_telemetry(self.telem_category, serialized_data)
 
     @property
     def json_encoder(self):
