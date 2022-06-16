@@ -1,4 +1,8 @@
-from common.configuration import CustomPBAConfigurationSchema, PluginConfigurationSchema
+from common.configuration import (
+    CustomPBAConfigurationSchema,
+    ExploiterConfigurationSchema,
+    PluginConfigurationSchema,
+)
 
 
 def test_build_plugin_configuration():
@@ -32,3 +36,16 @@ def test_custom_pba_configuration_schema():
     assert config.linux_filename == linux_filename
     assert config.windows_command == windows_command
     assert config.windows_filename == windows_filename
+
+
+def test_exploiter_configuration_schema():
+    name = "bond"
+    options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
+    supported_os = ["linux", "windows"]
+    schema = ExploiterConfigurationSchema()
+
+    config = schema.load({"name": name, "options": options, "supported_os": supported_os})
+
+    assert config.name == name
+    assert config.options == options
+    assert config.supported_os == supported_os

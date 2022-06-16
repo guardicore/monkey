@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 
 from marshmallow import RAISE, Schema, fields, post_load
 
@@ -42,3 +42,23 @@ class PluginConfigurationSchema(Schema):
     @post_load
     def make_plugin_configuration(self, data, **kwargs):
         return PluginConfiguration(**data)
+
+
+@dataclass(frozen=True)
+class ExploiterConfiguration:
+    name: str
+    options: Dict
+    supported_os: List[str]
+
+
+class ExploiterConfigurationSchema(Schema):
+    class Meta:
+        unknown = RAISE
+
+    name = fields.Str()
+    options = fields.Mapping()
+    supported_os = fields.List(fields.Str())
+
+    @post_load
+    def make_exploiter_configuration(self, data, **kwargs):
+        return ExploiterConfiguration(**data)
