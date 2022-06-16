@@ -27,10 +27,7 @@ AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 def initialize_services(data_dir: Path) -> DIContainer:
     container = DIContainer()
 
-    # TODO: everything that is build with DI and expects Path in the constructor
-    # will use the same data_dir. Come up with a better way to inject
-    # the data_dir in the things that needed
-    container.register_instance(Path, data_dir)
+    container.register_convention(Path, "data_dir", data_dir)
     container.register_instance(AWSInstance, AWSInstance())
 
     container.register_instance(
