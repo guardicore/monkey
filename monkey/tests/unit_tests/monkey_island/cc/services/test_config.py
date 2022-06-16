@@ -6,32 +6,11 @@ from monkey_island.cc.services.config import ConfigService
 # monkey/monkey_island/cc/ui/src/components/pages/RunMonkeyPage/RunOptions.js
 
 
-@pytest.fixture(scope="function", autouse=True)
-def mock_port(monkeypatch, PORT):
-    monkeypatch.setattr("monkey_island.cc.services.config.ISLAND_PORT", PORT)
-
-
 @pytest.fixture(autouse=True)
 def mock_flat_config(monkeypatch, flat_monkey_config):
     monkeypatch.setattr(
         "monkey_island.cc.services.config.ConfigService.get_flat_config", lambda: flat_monkey_config
     )
-
-
-@pytest.mark.slow
-@pytest.mark.usefixtures("uses_encryptor")
-def test_set_server_ips_in_config_command_servers(config, IPS, PORT):
-    ConfigService.set_server_ips_in_config(config)
-    expected_config_command_servers = [f"{ip}:{PORT}" for ip in IPS]
-    assert config["internal"]["island_server"]["command_servers"] == expected_config_command_servers
-
-
-@pytest.mark.slow
-@pytest.mark.usefixtures("uses_encryptor")
-def test_set_server_ips_in_config_current_server(config, IPS, PORT):
-    ConfigService.set_server_ips_in_config(config)
-    expected_config_current_server = f"{IPS[0]}:{PORT}"
-    assert config["internal"]["island_server"]["current_server"] == expected_config_current_server
 
 
 def test_format_config_for_agent__credentials_removed():
@@ -91,7 +70,6 @@ def test_format_config_for_custom_pbas():
         "windows_command": "powershell test.ps1",
         "linux_filename": "test.sh",
         "windows_filename": "test.ps1",
-        "current_server": "10.197.94.72:5000",
     }
     flat_monkey_config = ConfigService.format_flat_config_for_agent()
 

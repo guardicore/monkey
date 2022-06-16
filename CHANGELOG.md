@@ -10,6 +10,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - credentials.json file for storing Monkey Island user login information. #1206
 - "GET /api/propagation-credentials/<string:guid>" endpoint for agents to
   retrieve updated credentials from the Island. #1538
+- "GET /api/island/ip-addresses" endpoint to get IP addresses of the Island server
+  network interfaces. #1996
 - SSHCollector as a configurable System info Collector. #1606
 - deployment_scrips/install-infection-monkey-service.sh to install an AppImage
   as a service. #1552
@@ -36,6 +38,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update MongoDB version to 4.4.x. #1924
 - Endpoint to get agent binaries from "/api/agent/download/<string:os>" to
   "/api/agent-binaries/<string:os>". #1978
+- Agent configuration structure. #1996, #1998, #1961, #1997, #1994, #1741, #1761, #1695, #1605
 
 ### Removed
 - VSFTPD exploiter. #1533

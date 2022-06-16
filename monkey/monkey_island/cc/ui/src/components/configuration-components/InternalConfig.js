@@ -4,11 +4,9 @@ import {Nav} from 'react-bootstrap';
 
 const sectionOrder = [
   'network',
-  'island_server',
   'exploits',
   'classes',
-  'general',
-  'testing'
+  'general'
 ];
 const initialSection = sectionOrder[0];
 

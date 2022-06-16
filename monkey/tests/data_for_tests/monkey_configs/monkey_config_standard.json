@@ -41,14 +41,6 @@
       "general": {
         "keep_tunnel_open_time": 60
       },
-      "island_server": {
-        "command_servers": [
-          "192.168.1.37:5000",
-          "10.0.3.1:5000",
-          "172.17.0.1:5000"
-        ],
-        "current_server": "192.168.1.37:5000"
-      },
       "network": {
         "tcp_scanner": {
           "HTTP_PORTS": [

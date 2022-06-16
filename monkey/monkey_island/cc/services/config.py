@@ -18,7 +18,6 @@ from common.config_value_paths import (
     USER_LIST_PATH,
 )
 from monkey_island.cc.database import mongo
-from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.server_utils.encryption import (
     SensitiveField,
     StringEncryptor,
@@ -30,7 +29,6 @@ from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
-from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 logger = logging.getLogger(__name__)
 
@@ -255,24 +253,12 @@ class ConfigService:
     def reset_config():
         PostBreachFilesService.remove_PBA_files()
         config = ConfigService.get_default_config(True)
-        ConfigService.set_server_ips_in_config(config)
         try:
             mode = get_mode()
             update_config_per_mode(mode, config, should_encrypt=False)
         except ModeNotSetError:
             ConfigService.update_config(config, should_encrypt=False)
         logger.info("Monkey config reset was called")
-
-    @staticmethod
-    def set_server_ips_in_config(config):
-        ips = local_ip_addresses()
-        config["internal"]["island_server"]["command_servers"] = [
-            "%s:%d" % (ip, ISLAND_PORT) for ip in ips
-        ]
-        config["internal"]["island_server"]["current_server"] = "%s:%d" % (
-            ips[0],
-            ISLAND_PORT,
-        )
 
     @staticmethod
     def _extend_config_with_default(validator_class):
@@ -407,8 +393,6 @@ class ConfigService:
             "linux_filename": config.get(flat_linux_filename_field, ""),
             "windows_command": config.get(flat_windows_command_field, ""),
             "windows_filename": config.get(flat_windows_filename_field, ""),
-            # Current server is used for attack telemetry
-            "current_server": config.get("current_server"),
         }
 
         config["post_breach_actions"] = formatted_pbas_config
