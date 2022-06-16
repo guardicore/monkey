@@ -357,6 +357,10 @@ class ConfigService:
         ConfigService._format_payloads_from_flat_config(config)
         ConfigService._format_pbas_from_flat_config(config)
         ConfigService._format_propagation_from_flat_config(config)
+
+        # Ok, I'll admit this is just sort of jammed in here. But this code is going away very soon.
+        del config["HTTP_PORTS"]
+
         return config
 
     @staticmethod
