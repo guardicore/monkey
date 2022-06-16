@@ -187,6 +187,7 @@ response_code  # unused variable (monkey/monkey_island/cc/services/aws/aws_comma
 Meta  # unused class(monkey/common/configuration/agent_configuration.py:13)
 unknown  # unused variable(monkey/common/configuration/agent_configuration.py:14)
 make_plugin_configuration  # unused method(monkey/common/configuration/agent_configuration.py:19)
+make_custom_pba_configuration  # unused method(monkey/common/configuration/agent_configuration.py:34)
 
 
 # TODO DELETE AFTER RESOURCE REFACTORING
