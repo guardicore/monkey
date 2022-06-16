@@ -164,7 +164,7 @@ class DIContainer:
 
     def release(self, interface: Type[T]):
         """
-        Deregister's an interface
+        Deregister an interface
 
         :param interface: The interface to release
         """
