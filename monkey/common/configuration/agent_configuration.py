@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Dict
 
 from marshmallow import RAISE, Schema, fields, post_load
 
@@ -28,7 +29,7 @@ class CustomPBAConfigurationSchema(Schema):
 @dataclass(frozen=True)
 class PluginConfiguration:
     name: str
-    options: dict
+    options: Dict
 
 
 class PluginConfigurationSchema(Schema):
