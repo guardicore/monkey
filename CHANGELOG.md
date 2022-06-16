@@ -11,7 +11,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/propagation-credentials/<string:guid>" endpoint for agents to
   retrieve updated credentials from the Island. #1538
 - "GET /api/island/ip-addresses" endpoint to get IP addresses of the Island server
-  network interfaces
+  network interfaces. #1996
 - SSHCollector as a configurable System info Collector. #1606
 - deployment_scrips/install-infection-monkey-service.sh to install an AppImage
   as a service. #1552
