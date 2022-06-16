@@ -184,11 +184,13 @@ architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_r
 response_code  # unused variable (monkey/monkey_island/cc/services/aws/aws_command_runner.py:26)
 
 # Agent Configuration
-Meta  # unused class(monkey/common/configuration/agent_configuration.py:13)
-unknown  # unused variable(monkey/common/configuration/agent_configuration.py:14)
-make_plugin_configuration  # unused method(monkey/common/configuration/agent_configuration.py:19)
-make_custom_pba_configuration  # unused method(monkey/common/configuration/agent_configuration.py:34)
-make_exploiter_configuration  # unused method(monkey/common/configuration/agent_configuration.py:62)
+Meta  # unused class (monkey/common/configuration/agent_configuration.py:13)
+unknown  # unused variable (monkey/common/configuration/agent_configuration.py:14)
+make_plugin_configuration  # unused method (monkey/common/configuration/agent_configuration.py:19)
+make_custom_pba_configuration  # unused method (monkey/common/configuration/agent_configuration.py:34)
+make_exploiter_configuration  # unused method (monkey/common/configuration/agent_configuration.py:62)
+LINUX  # unused variable (monkey/common/operating_systems.py:5)
+WINDOWS  # unused variable (monkey/common/operating_systems.py:6)
 
 
 # TODO DELETE AFTER RESOURCE REFACTORING

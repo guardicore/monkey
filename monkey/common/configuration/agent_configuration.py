@@ -2,6 +2,9 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 from marshmallow import RAISE, Schema, fields, post_load
+from marshmallow_enum import EnumField
+
+from common import OperatingSystems
 
 
 @dataclass(frozen=True)
@@ -48,7 +51,7 @@ class PluginConfigurationSchema(Schema):
 class ExploiterConfiguration:
     name: str
     options: Dict
-    supported_os: List[str]
+    supported_os: List[OperatingSystems]
 
 
 class ExploiterConfigurationSchema(Schema):
@@ -57,7 +60,7 @@ class ExploiterConfigurationSchema(Schema):
 
     name = fields.Str()
     options = fields.Mapping()
-    supported_os = fields.List(fields.Str())
+    supported_os = fields.List(EnumField(OperatingSystems))
 
     @post_load
     def make_exploiter_configuration(self, data, **kwargs):

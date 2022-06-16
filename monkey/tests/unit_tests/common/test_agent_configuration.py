@@ -1,3 +1,4 @@
+from common import OperatingSystems
 from common.configuration import (
     CustomPBAConfigurationSchema,
     ExploiterConfigurationSchema,
@@ -41,10 +42,12 @@ def test_custom_pba_configuration_schema():
 def test_exploiter_configuration_schema():
     name = "bond"
     options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
-    supported_os = ["linux", "windows"]
+    supported_os = [OperatingSystems.LINUX, OperatingSystems.WINDOWS]
     schema = ExploiterConfigurationSchema()
 
-    config = schema.load({"name": name, "options": options, "supported_os": supported_os})
+    config = schema.load(
+        {"name": name, "options": options, "supported_os": [os_.name for os_ in supported_os]}
+    )
 
     assert config.name == name
     assert config.options == options
