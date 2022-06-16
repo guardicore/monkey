@@ -25,6 +25,7 @@ pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not create
 pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
 paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/VakarisZ/paramiko.git"}
 marshmallow = "*"
+marshmallow-enum = "*"
 
 [dev-packages]
 ldap3 = "*"

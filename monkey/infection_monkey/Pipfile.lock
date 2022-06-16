@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fc7e8d826d41fa764926d16a224cfd4a583c1a356b2a61af7aa7231256b79255"
+            "sha256": "202bc4667be3a990bdf39be19ce2ddbacc0b3189810d89f75464ad361c9142b2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -221,7 +221,7 @@
                 "sha256:0f7569a4a6ff151958b64304071d370daa3243d15941a7beedf0c9fe5105603e",
                 "sha256:a851e51367fb93e9e1361732c1d60dab63eff98712e503ea7d92e6eccb109b4f"
             ],
-            "markers": "python_version >= '3.6' and python_version < '4'",
+            "markers": "python_version >= '3.6' and python_version < '4.0'",
             "version": "==2.2.1"
         },
         "flask": {
@@ -379,6 +379,14 @@
             ],
             "index": "pypi",
             "version": "==3.16.0"
+        },
+        "marshmallow-enum": {
+            "hashes": [
+                "sha256:38e697e11f45a8e64b4a1e664000897c659b60aa57bfa18d44e226a9920b6e58",
+                "sha256:57161ab3dbfde4f57adeb12090f39592e992b9c86d206d02f6bd03ebec60f072"
+            ],
+            "index": "pypi",
+            "version": "==1.5.1"
         },
         "minidump": {
             "hashes": [
