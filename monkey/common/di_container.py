@@ -8,6 +8,10 @@ class UnregisteredTypeError(ValueError):
     pass
 
 
+class UnregisteredConventionError(ValueError):
+    pass
+
+
 class DIContainer:
     """
     A dependency injection (DI) container that uses type annotations to resolve and inject
