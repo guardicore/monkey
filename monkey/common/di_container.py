@@ -95,6 +95,11 @@ class DIContainer:
         injection. Note that only positional arguments are resolved. Varargs, keyword-only args, and
         default values are ignored.
 
+        Dependencies are resolved with the following precedence
+
+        1. Conventions
+        2. Types, Instances
+
         :param **type_**: A `type` (class) to construct
         :return: An instance of **type_**
         """
@@ -111,6 +116,8 @@ class DIContainer:
         Resolves all dependencies of `type_` and returns a Sequence of objects
         that correspond `type_`'s dependencies. Note that only positional
         arguments are resolved. Varargs, keyword-only args, and default values are ignored.
+
+        See resolve() for information about dependency resolution precedence.
 
         :param **type_**: A type (class) to resolve dependencies for
         :return: An Sequence of dependencies to be injected into `type_`'s constructor
