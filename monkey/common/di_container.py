@@ -171,6 +171,16 @@ class DIContainer:
         DIContainer._del_key(self._type_registry, interface)
         DIContainer._del_key(self._instance_registry, interface)
 
+    def release_convention(self, type_: Type[T], name: str):
+        """
+        Deregister a convention
+
+        :param **type_**: The `type` (class) of the dependency
+        :param name: The name of the dependency parameter
+        """
+        convention_identifier = (type_, name)
+        DIContainer._del_key(self._convention_registry, convention_identifier)
+
     @staticmethod
     def _del_key(mapping: MutableMapping[T, Any], key: T):
         """

@@ -182,6 +182,7 @@ GCPHandler  # unused function (envs/monkey_zoo/blackbox/test_blackbox.py:57)
 architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_repository.py:25)
 
 response_code  # unused variable (monkey/monkey_island/cc/services/aws/aws_command_runner.py:26)
+release_convention  # unused method (monkey/common/di_container.py:174)
 
 # TODO DELETE AFTER RESOURCE REFACTORING
 NetworkMap

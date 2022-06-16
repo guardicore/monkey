@@ -366,3 +366,12 @@ def test_register_convention__instance_properly_resolved(container):
 
     assert id(service_a_instance) == id(test_9.service_a)
     assert test_9.my_str == my_str
+
+
+def test_release_convention(container):
+    my_str = "test_string"
+    container.register_convention(str, "my_str", my_str)
+
+    with pytest.raises(ValueError):
+        container.release_convention(str, "my_str")
+        container.resolve(TestClass6)
