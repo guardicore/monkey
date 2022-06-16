@@ -281,3 +281,88 @@ def test_register_instance_with_conflicting_type(container):
     service_b_instance = ServiceB()
     with pytest.raises(TypeError):
         container.register_instance(IServiceA, service_b_instance)
+
+
+class TestClass6:
+    __test__ = False
+
+    def __init__(self, my_str: str):
+        self.my_str = my_str
+
+
+def test_register_convention(container):
+    my_str = "test_string"
+    container.register_convention(str, "my_str", my_str)
+
+    test_6 = container.resolve(TestClass6)
+
+    assert test_6.my_str == my_str
+
+
+class TestClass7:
+    __test__ = False
+
+    def __init__(self, my_str1: str, my_str2: str):
+        self.my_str1 = my_str1
+        self.my_str2 = my_str2
+
+
+def test_register_convention__multiple_parameters_same_type(container):
+    my_str1 = "s1"
+    my_str2 = "s2"
+    container.register_convention(str, "my_str2", my_str2)
+    container.register_convention(str, "my_str1", my_str1)
+
+    test_7 = container.resolve(TestClass7)
+    assert test_7.my_str1 == my_str1
+    assert test_7.my_str2 == my_str2
+
+
+class TestClass8:
+    __test__ = False
+
+    def __init__(self, my_str: str, my_int: int):
+        self.my_str = my_str
+        self.my_int = my_int
+
+
+def test_register_convention__multiple_parameters_different_types(container):
+    my_str = "test_string"
+    my_int = 42
+    container.register_convention(str, "my_str", my_str)
+    container.register_convention(int, "my_int", my_int)
+
+    test_8 = container.resolve(TestClass8)
+    assert test_8.my_str == my_str
+    assert test_8.my_int == my_int
+
+
+class TestClass9:
+    __test__ = False
+
+    def __init__(self, service_a: IServiceA, my_str: str):
+        self.service_a = service_a
+        self.my_str = my_str
+
+
+def test_register_convention__type_properly_resolved(container):
+    my_str = "test_string"
+
+    container.register(IServiceA, ServiceA)
+    container.register_convention(str, "my_str", my_str)
+    test_9 = container.resolve(TestClass9)
+
+    assert isinstance(test_9.service_a, ServiceA)
+    assert test_9.my_str == my_str
+
+
+def test_register_convention__instance_properly_resolved(container):
+    service_a_instance = ServiceA()
+    my_str = "test_string"
+
+    container.register_instance(IServiceA, service_a_instance)
+    container.register_convention(str, "my_str", my_str)
+    test_9 = container.resolve(TestClass9)
+
+    assert id(service_a_instance) == id(test_9.service_a)
+    assert test_9.my_str == my_str
