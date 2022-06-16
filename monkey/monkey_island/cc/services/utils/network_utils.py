@@ -3,6 +3,7 @@ import ipaddress
 import socket
 import struct
 import sys
+from typing import Sequence
 
 from netifaces import AF_INET, ifaddresses, interfaces
 from ring import lru
@@ -60,7 +61,7 @@ else:
 # This means that if the interfaces of the Island machine change, the Island process needs to be
 # restarted.
 @lru(maxsize=1)
-def local_ip_addresses():
+def local_ip_addresses() -> Sequence[str]:
     ip_list = []
     for interface in interfaces():
         addresses = ifaddresses(interface).get(AF_INET, [])
