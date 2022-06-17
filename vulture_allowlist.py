@@ -190,6 +190,7 @@ make_plugin_configuration  # unused method (monkey/common/configuration/agent_co
 make_custom_pba_configuration  # unused method (monkey/common/configuration/agent_configuration.py:34)
 make_exploitation_options_configuration  # unused method (monkey/common/configuration/agent_configuration.py:58)
 make_exploiter_configuration  # unused method (monkey/common/configuration/agent_configuration.py:62)
+make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:114)
 LINUX  # unused variable (monkey/common/operating_systems.py:5)
 WINDOWS  # unused variable (monkey/common/operating_systems.py:6)
 

@@ -105,3 +105,12 @@ class ICMPScanConfiguration:
 class TCPScanConfiguration:
     timeout_ms: int
     ports: List[int]
+
+
+class TCPScanConfigurationSchema(Schema):
+    timeout_ms = fields.Int()
+    ports = fields.List(fields.Int())
+
+    @post_load
+    def make_tcp_scan_configuration(self, data, **kwargs):
+        return TCPScanConfiguration(**data)

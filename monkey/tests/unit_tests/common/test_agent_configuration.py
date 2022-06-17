@@ -6,6 +6,7 @@ from common.configuration import (
     ExploitationOptionsConfigurationSchema,
     ExploiterConfigurationSchema,
     PluginConfigurationSchema,
+    TCPScanConfigurationSchema,
 )
 
 
@@ -95,3 +96,14 @@ def test_exploitation_configuration():
 
     assert isinstance(config, ExploitationConfiguration)
     assert config_dict == exploitation_config
+
+
+def test_tcp_scan_configuration_schema():
+    timeout_ms = 2525
+    ports = [8080, 443]
+    schema = TCPScanConfigurationSchema()
+
+    config = schema.load({"timeout_ms": timeout_ms, "ports": ports})
+
+    assert config.timeout_ms == timeout_ms
+    assert config.ports == ports
