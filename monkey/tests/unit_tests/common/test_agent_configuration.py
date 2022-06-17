@@ -24,7 +24,11 @@ from tests.common.example_agent_configuration import (
 )
 
 from common import OperatingSystems
-from common.configuration import AgentConfiguration, AgentConfigurationSchema
+from common.configuration import (
+    DEFAULT_AGENT_CONFIGURATION,
+    AgentConfiguration,
+    AgentConfigurationSchema,
+)
 from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     ExploitationConfigurationSchema,
@@ -171,3 +175,11 @@ def test_agent_configuration():
     assert isinstance(config.payloads[0], PluginConfiguration)
     assert isinstance(config.propagation, PropagationConfiguration)
     assert config_dict == AGENT_CONFIGURATION
+
+
+def test_default_agent_configuration():
+    schema = AgentConfigurationSchema()
+
+    config = schema.loads(DEFAULT_AGENT_CONFIGURATION)
+
+    assert isinstance(config, AgentConfiguration)
