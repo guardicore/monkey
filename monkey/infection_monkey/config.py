@@ -64,6 +64,3 @@ class Configuration(object):
     max_depth = None
 
     keep_tunnel_open_time = 30
-
-
-WormConfiguration = Configuration()

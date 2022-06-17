@@ -5,13 +5,11 @@ import os
 import sys
 import traceback
 from multiprocessing import freeze_support
-from pprint import pformat
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
 import infection_monkey.post_breach  # noqa: F401
 from common.version import get_version
-from infection_monkey.config import WormConfiguration
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
@@ -56,9 +54,6 @@ def main():
     )
     mode_args, mode_specific_args = arg_parser.parse_known_args()
     mode = mode_args.mode
-
-    formatted_config = pformat(WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
-    print(f"Loaded Configuration:\n{formatted_config}")
 
     try:
         if MONKEY_ARG == mode:

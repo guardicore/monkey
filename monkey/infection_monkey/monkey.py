@@ -149,7 +149,6 @@ class InfectionMonkey:
             raise Exception(f"Monkey couldn't find server with {self._opts.tunnel} default tunnel.")
 
         self._control_client.wakeup(parent=self._opts.parent)
-        self._control_client.load_control_config()
 
     def _current_server_is_set(self) -> bool:
         if self._control_client.find_server(default_tunnel=self._opts.tunnel):
@@ -165,7 +164,13 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        self._monkey_inbound_tunnel = self._control_client.create_control_tunnel()
+        control_channel = ControlChannel(
+            self._control_client.server_address, GUID, self._control_client.proxies
+        )
+        keep_tunnel_open_time = control_channel.get_config()["config"]["keep_tunnel_open_time"]
+        self._monkey_inbound_tunnel = self._control_client.create_control_tunnel(
+            keep_tunnel_open_time
+        )
         if self._monkey_inbound_tunnel and self._propagation_enabled():
             self._monkey_inbound_tunnel.start()
 
