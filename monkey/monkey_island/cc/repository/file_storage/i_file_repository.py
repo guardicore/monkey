@@ -1,8 +1,10 @@
 import abc
 from typing import BinaryIO
 
+from monkey_island.cc.repository import RetrievalError
 
-class FileRetrievalError(RuntimeError):
+
+class FileRetrievalError(RetrievalError):
     pass
 
 

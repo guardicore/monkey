@@ -7,7 +7,9 @@ from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     AgentRetrievalError,
+    FileAgentConfigurationRepository,
     IAgentBinaryRepository,
+    IAgentConfigurationRepository,
     IFileRepository,
     LocalStorageFileRepository,
 )
@@ -31,11 +33,14 @@ def initialize_services(data_dir: Path) -> DIContainer:
     container.register_instance(AWSInstance, AWSInstance())
 
     container.register_instance(
-        IFileRepository, LocalStorageFileRepository(data_dir / "custom_pbas")
+        IFileRepository, LocalStorageFileRepository(data_dir / "runtime_data")
     )
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
+    container.register_instance(
+        IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
+    )
 
     # This is temporary until we get DI all worked out.
     PostBreachFilesService.initialize(container.resolve(IFileRepository))

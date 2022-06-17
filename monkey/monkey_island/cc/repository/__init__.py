@@ -1,3 +1,6 @@
+from .errors import RetrievalError
 from .file_storage import FileRetrievalError, IFileRepository, LocalStorageFileRepository
 from .i_agent_binary_repository import IAgentBinaryRepository, AgentRetrievalError
 from .agent_binary_repository import AgentBinaryRepository
+from .i_agent_configuration_repository import IAgentConfigurationRepository
+from .file_agent_configuration_repository import FileAgentConfigurationRepository
