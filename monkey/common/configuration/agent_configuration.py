@@ -67,11 +67,11 @@ class ScanTargetConfigurationSchema(Schema):
 
 @dataclass(frozen=True)
 class ICMPScanConfiguration:
-    timeout_ms: int
+    timeout: float
 
 
 class ICMPScanConfigurationSchema(Schema):
-    timeout_ms = fields.Int()
+    timeout = fields.Float()
 
     @post_load
     def _make_icmp_scan_configuration(self, data, **kwargs):
@@ -80,12 +80,12 @@ class ICMPScanConfigurationSchema(Schema):
 
 @dataclass(frozen=True)
 class TCPScanConfiguration:
-    timeout_ms: int
+    timeout: float
     ports: List[int]
 
 
 class TCPScanConfigurationSchema(Schema):
-    timeout_ms = fields.Int()
+    timeout = fields.Float()
     ports = fields.List(fields.Int())
 
     @post_load

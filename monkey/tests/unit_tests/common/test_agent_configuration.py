@@ -72,8 +72,8 @@ def test_scan_target_configuration():
     assert config.subnets == SUBNETS
 
 
-TIMEOUT_MS = 2525
-ICMP_CONFIGURATION = {"timeout_ms": TIMEOUT_MS}
+TIMEOUT = 2.525
+ICMP_CONFIGURATION = {"timeout": TIMEOUT}
 
 
 def test_icmp_scan_configuration_schema():
@@ -81,13 +81,12 @@ def test_icmp_scan_configuration_schema():
 
     config = schema.load(ICMP_CONFIGURATION)
 
-    assert config.timeout_ms == TIMEOUT_MS
+    assert config.timeout == TIMEOUT
 
 
-TIMEOUT_MS = 2525
 PORTS = [8080, 443]
 
-TCP_SCAN_CONFIGURATION = {"timeout_ms": TIMEOUT_MS, "ports": PORTS}
+TCP_SCAN_CONFIGURATION = {"timeout": TIMEOUT, "ports": PORTS}
 
 
 def test_tcp_scan_configuration_schema():
@@ -95,7 +94,7 @@ def test_tcp_scan_configuration_schema():
 
     config = schema.load(TCP_SCAN_CONFIGURATION)
 
-    assert config.timeout_ms == TIMEOUT_MS
+    assert config.timeout == TIMEOUT
     assert config.ports == PORTS
 
 
@@ -114,8 +113,8 @@ def test_network_scan_configuration():
     config = schema.load(NETWORK_SCAN_CONFIGURATION)
 
     assert config.tcp.ports == TCP_SCAN_CONFIGURATION["ports"]
-    assert config.tcp.timeout_ms == TCP_SCAN_CONFIGURATION["timeout_ms"]
-    assert config.icmp.timeout_ms == ICMP_CONFIGURATION["timeout_ms"]
+    assert config.tcp.timeout == TCP_SCAN_CONFIGURATION["timeout"]
+    assert config.icmp.timeout == ICMP_CONFIGURATION["timeout"]
     assert config.fingerprinters[0].name == FINGERPRINTERS[0]["name"]
     assert config.fingerprinters[0].options == FINGERPRINTERS[0]["options"]
     assert config.targets.blocked_ips == BLOCKED_IPS
