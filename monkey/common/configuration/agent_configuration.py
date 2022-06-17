@@ -86,3 +86,11 @@ class ExploitationConfigurationSchema(Schema):
     @post_load
     def make_exploitation_options_configuration(self, data, **kwargs):
         return ExploitationConfiguration(**data)
+
+
+@dataclass(frozen=True)
+class ScanTargetConfiguration:
+    blocked_ips: List[str]
+    inaccessible_subnets: List[str]
+    local_network_scan: bool
+    subnets: List[str]
