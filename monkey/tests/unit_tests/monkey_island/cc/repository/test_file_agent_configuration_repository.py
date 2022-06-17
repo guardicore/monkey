@@ -10,7 +10,7 @@ def test_store_agent_config():
     schema = AgentConfigurationSchema()
     agent_configuration = schema.load(AGENT_CONFIGURATION)
 
-    repository.set_configuration(agent_configuration)
+    repository.store_configuration(agent_configuration)
     retrieved_agent_configuration = repository.get_configuration()
 
     assert retrieved_agent_configuration == agent_configuration

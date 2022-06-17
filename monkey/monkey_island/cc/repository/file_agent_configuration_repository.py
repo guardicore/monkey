@@ -17,7 +17,7 @@ class FileAgentConfigurationRepository(IAgentConfigurationRepository):
 
         return self._schema.loads(configuration_json)
 
-    def set_configuration(self, agent_configuration: AgentConfiguration):
+    def store_configuration(self, agent_configuration: AgentConfiguration):
         configuration_json = self._schema.dumps(agent_configuration)
 
         self._file_repository.save_file(

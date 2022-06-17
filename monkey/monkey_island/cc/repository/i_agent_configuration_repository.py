@@ -18,7 +18,7 @@ class IAgentConfigurationRepository(ABC):
         pass
 
     @abstractmethod
-    def set_configuration(self, agent_configuration: AgentConfiguration):
+    def store_configuration(self, agent_configuration: AgentConfiguration):
         """
         Store the agent configuration in the repository
 
