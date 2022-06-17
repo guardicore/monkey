@@ -25,34 +25,33 @@ def test_format_config_for_agent__credentials_removed():
 
 def test_format_config_for_agent__ransomware_payload():
     expected_ransomware_options = {
-        "ransomware": {
-            "encryption": {
-                "enabled": True,
-                "directories": {
-                    "linux_target_dir": "/tmp/ransomware-target",
-                    "windows_target_dir": "C:\\windows\\temp\\ransomware-target",
-                },
+        "encryption": {
+            "enabled": True,
+            "directories": {
+                "linux_target_dir": "/tmp/ransomware-target",
+                "windows_target_dir": "C:\\windows\\temp\\ransomware-target",
             },
-            "other_behaviors": {"readme": True},
-        }
+        },
+        "other_behaviors": {"readme": True},
     }
 
     flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "payloads" in flat_monkey_config
-    assert flat_monkey_config["payloads"] == expected_ransomware_options
+    assert flat_monkey_config["payloads"][0]["name"] == "ransomware"
+    assert flat_monkey_config["payloads"][0]["options"] == expected_ransomware_options
 
     assert "ransomware" not in flat_monkey_config
 
 
 def test_format_config_for_agent__pbas():
-    expected_pbas_config = {
-        "CommunicateAsBackdoorUser": {},
-        "ModifyShellStartupFiles": {},
-        "ScheduleJobs": {},
-        "Timestomping": {},
-        "AccountDiscovery": {},
-    }
+    expected_pbas_config = [
+        {"name": "CommunicateAsBackdoorUser", "options": {}},
+        {"name": "ModifyShellStartupFiles", "options": {}},
+        {"name": "ScheduleJobs", "options": {}},
+        {"name": "Timestomping", "options": {}},
+        {"name": "AccountDiscovery", "options": {}},
+    ]
     flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "post_breach_actions" in flat_monkey_config

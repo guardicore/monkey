@@ -27,6 +27,7 @@
             "private_key": "my_private_key"
         }
     ],
+    "credential_collectors": ["MimikatzCollector", "SSHCollector"],
     "exploit_user_list": [
         "Administrator",
         "root",

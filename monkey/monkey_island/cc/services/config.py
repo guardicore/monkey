@@ -357,6 +357,7 @@ class ConfigService:
         ConfigService._format_payloads_from_flat_config(config)
         ConfigService._format_pbas_from_flat_config(config)
         ConfigService._format_propagation_from_flat_config(config)
+        ConfigService._format_credential_collectors(config)
 
         # Ok, I'll admit this is just sort of jammed in here. But this code is going away very soon.
         del config["HTTP_PORTS"]
@@ -377,8 +378,17 @@ class ConfigService:
             config.pop(field, None)
 
     @staticmethod
+    def _format_credential_collectors(config: Dict):
+        collectors = [
+            {"name": collector, "options": {}} for collector in config["credential_collectors"]
+        ]
+        config["credential_collectors"] = collectors
+
+    @staticmethod
     def _format_payloads_from_flat_config(config: Dict):
-        config.setdefault("payloads", {})["ransomware"] = config["ransomware"]
+        config.setdefault("payloads", []).append(
+            {"name": "ransomware", "options": config["ransomware"]}
+        )
         config.pop("ransomware", None)
 
     @staticmethod
@@ -388,9 +398,9 @@ class ConfigService:
         flat_windows_command_field = "custom_PBA_windows_cmd"
         flat_windows_filename_field = "PBA_windows_filename"
 
-        formatted_pbas_config = {}
-        for pba in config.get("post_breach_actions", []):
-            formatted_pbas_config[pba] = {}
+        formatted_pbas_config = [
+            {"name": pba, "options": {}} for pba in config.get("post_breach_actions", [])
+        ]
 
         config["custom_pbas"] = {
             "linux_command": config.get(flat_linux_command_field, ""),
