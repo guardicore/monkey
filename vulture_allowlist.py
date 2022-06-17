@@ -186,11 +186,12 @@ response_code  # unused variable (monkey/monkey_island/cc/services/aws/aws_comma
 # Agent Configuration
 Meta  # unused class (monkey/common/configuration/agent_configuration.py:13)
 unknown  # unused variable (monkey/common/configuration/agent_configuration.py:14)
-make_plugin_configuration  # unused method (monkey/common/configuration/agent_configuration.py:19)
-make_custom_pba_configuration  # unused method (monkey/common/configuration/agent_configuration.py:34)
-make_exploitation_options_configuration  # unused method (monkey/common/configuration/agent_configuration.py:58)
-make_exploiter_configuration  # unused method (monkey/common/configuration/agent_configuration.py:62)
-make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:114)
+_make_plugin_configuration  # unused method (monkey/common/configuration/agent_configuration.py:19)
+_make_custom_pba_configuration  # unused method (monkey/common/configuration/agent_configuration.py:24)
+_make_exploiter_configuration  # unused method (monkey/common/configuration/agent_configuration.py:69)
+_make_exploitation_options_configuration  # unused method (monkey/common/configuration/agent_configuration.py:86)
+_make_icmp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:107)
+_make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:122)
 LINUX  # unused variable (monkey/common/operating_systems.py:5)
 WINDOWS  # unused variable (monkey/common/operating_systems.py:6)
 

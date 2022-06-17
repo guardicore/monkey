@@ -22,7 +22,7 @@ class CustomPBAConfigurationSchema(Schema):
     windows_filename = fields.Str()
 
     @post_load
-    def make_custom_pba_configuration(self, data, **kwargs):
+    def _make_custom_pba_configuration(self, data, **kwargs):
         return CustomPBAConfiguration(**data)
 
 
@@ -37,7 +37,7 @@ class PluginConfigurationSchema(Schema):
     options = fields.Mapping()
 
     @post_load
-    def make_plugin_configuration(self, data, **kwargs):
+    def _make_plugin_configuration(self, data, **kwargs):
         return PluginConfiguration(**data)
 
 
@@ -50,7 +50,7 @@ class ExploitationOptionsConfigurationSchema(Schema):
     http_ports = fields.List(fields.Int())
 
     @post_load
-    def make_exploitation_options_configuration(self, data, **kwargs):
+    def _make_exploitation_options_configuration(self, data, **kwargs):
         return ExploitationOptionsConfiguration(**data)
 
 
@@ -67,7 +67,7 @@ class ExploiterConfigurationSchema(Schema):
     supported_os = fields.List(EnumField(OperatingSystems))
 
     @post_load
-    def make_exploiter_configuration(self, data, **kwargs):
+    def _make_exploiter_configuration(self, data, **kwargs):
         return ExploiterConfiguration(**data)
 
 
@@ -84,7 +84,7 @@ class ExploitationConfigurationSchema(Schema):
     vulnerability = fields.List(fields.Nested(ExploiterConfigurationSchema))
 
     @post_load
-    def make_exploitation_options_configuration(self, data, **kwargs):
+    def _make_exploitation_options_configuration(self, data, **kwargs):
         return ExploitationConfiguration(**data)
 
 
@@ -105,7 +105,7 @@ class ICMPScanConfigurationSchema(Schema):
     timeout_ms = fields.Int()
 
     @post_load
-    def make_icmp_scan_configuration(self, data, **kwargs):
+    def _make_icmp_scan_configuration(self, data, **kwargs):
         return ICMPScanConfiguration(**data)
 
 
@@ -120,5 +120,5 @@ class TCPScanConfigurationSchema(Schema):
     ports = fields.List(fields.Int())
 
     @post_load
-    def make_tcp_scan_configuration(self, data, **kwargs):
+    def _make_tcp_scan_configuration(self, data, **kwargs):
         return TCPScanConfiguration(**data)
