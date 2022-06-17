@@ -8,6 +8,10 @@ class UnregisteredTypeError(ValueError):
     pass
 
 
+class UnregisteredConventionError(ValueError):
+    pass
+
+
 class DIContainer:
     """
     A dependency injection (DI) container that uses type annotations to resolve and inject
@@ -17,6 +21,7 @@ class DIContainer:
     def __init__(self):
         self._type_registry = {}
         self._instance_registry = {}
+        self._convention_registry = {}
 
     def register(self, interface: Type[T], concrete_type: Type[T]):
         """
@@ -56,11 +61,44 @@ class DIContainer:
         self._instance_registry[interface] = instance
         DIContainer._del_key(self._type_registry, interface)
 
+    def register_convention(self, type_: Type[T], name: str, instance: T):
+        """
+        Register an instance as a convention
+
+        At times — particularly when dealing with primitive types — it can be useful to define a
+        convention for how dependencies should be resolved. For example, you might want any class
+        that specifies `hostname: str` in its constructor to receive the hostname of the system it's
+        running on. Registering a convention allows you to assign an object instance to a type, name
+        pair.
+
+        Example:
+            class TestClass:
+                def __init__(self, hostname: str):
+                    self.hostname = hostname
+
+            di_container = DIContainer()
+            di_container.register_convention(str, "hostname", "my_hostname.domain")
+
+            test = di_container.resolve(TestClass)
+            assert test.hostname == "my_hostname.domain"
+
+        :param **type_**: The `type` (class) of the dependency
+        :param name: The name of the dependency parameter
+        :param instance: An instance (object) of `type_` that will be injected into constructors
+                         that specify `[name]: [type_]` as parameters
+        """
+        self._convention_registry[(type_, name)] = instance
+
     def resolve(self, type_: Type[T]) -> T:
         """
         Resolves all dependencies and returns a new instance of `type_` using constructor dependency
         injection. Note that only positional arguments are resolved. Varargs, keyword-only args, and
         default values are ignored.
+
+        Dependencies are resolved with the following precedence
+
+        1. Conventions
+        2. Types, Instances
 
         :param **type_**: A `type` (class) to construct
         :return: An instance of **type_**
@@ -79,16 +117,31 @@ class DIContainer:
         that correspond `type_`'s dependencies. Note that only positional
         arguments are resolved. Varargs, keyword-only args, and default values are ignored.
 
+        See resolve() for information about dependency resolution precedence.
+
         :param **type_**: A type (class) to resolve dependencies for
         :return: An Sequence of dependencies to be injected into `type_`'s constructor
         """
         args = []
 
-        for arg_type in inspect.getfullargspec(type_).annotations.values():
-            instance = self._resolve_type(arg_type)
+        for arg_name, arg_type in inspect.getfullargspec(type_).annotations.items():
+            try:
+                instance = self._resolve_convention(arg_type, arg_name)
+            except UnregisteredConventionError:
+                instance = self._resolve_type(arg_type)
+
             args.append(instance)
 
         return tuple(args)
+
+    def _resolve_convention(self, type_: Type[T], name: str) -> T:
+        convention_identifier = (type_, name)
+        try:
+            return self._convention_registry[convention_identifier]
+        except KeyError:
+            raise UnregisteredConventionError(
+                f"Failed to resolve unregistered convention {convention_identifier}"
+            )
 
     def _resolve_type(self, type_: Type[T]) -> T:
         if type_ in self._type_registry:
@@ -111,12 +164,22 @@ class DIContainer:
 
     def release(self, interface: Type[T]):
         """
-        Deregister's an interface
+        Deregister an interface
 
         :param interface: The interface to release
         """
         DIContainer._del_key(self._type_registry, interface)
         DIContainer._del_key(self._instance_registry, interface)
+
+    def release_convention(self, type_: Type[T], name: str):
+        """
+        Deregister a convention
+
+        :param **type_**: The `type` (class) of the dependency
+        :param name: The name of the dependency parameter
+        """
+        convention_identifier = (type_, name)
+        DIContainer._del_key(self._convention_registry, convention_identifier)
 
     @staticmethod
     def _del_key(mapping: MutableMapping[T, Any], key: T):
@@ -124,7 +187,7 @@ class DIContainer:
         Deletes key from mapping. Unlike the `del` keyword, this function does not raise a KeyError
         if the key does not exist.
 
-        :param MutableMapping: A mapping from which a key will be deleted
+        :param mapping: A mapping from which a key will be deleted
         :param key: A key to delete from `mapping`
         """
         try:
