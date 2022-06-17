@@ -3,7 +3,7 @@ from abc import ABC
 from common.configuration import AgentConfiguration
 
 
-class IConfigurationRepository(ABC):
+class IAgentConfigurationRepository(ABC):
     """
     A repository used to store and retrieve the agent configuration.
     """
