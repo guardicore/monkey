@@ -13,7 +13,8 @@ class IAgentConfigurationRepository(ABC):
         """
         Retrieve the agent configuration from the repository
 
-        :return: The agent configuration
+        :return: The agent configuration as retrieved from the repository, or the default
+                 configuration if none could be retrieved.
         :raises RetrievalError: if the configuration can not be retrieved
         """
         pass
