@@ -1,24 +1,30 @@
-from .agent_configuration import (
+from .agent_sub_configurations import (
     PluginConfiguration,
-    PluginConfigurationSchema,
     CustomPBAConfiguration,
-    CustomPBAConfigurationSchema,
     ICMPScanConfiguration,
-    ICMPScanConfigurationSchema,
     TCPScanConfiguration,
-    TCPScanConfigurationSchema,
     ScanTargetConfiguration,
-    ScanTargetConfigurationSchema,
     NetworkScanConfiguration,
-    NetworkScanConfigurationSchema,
     ExploitationOptionsConfiguration,
-    ExploitationOptionsConfigurationSchema,
     ExploiterConfiguration,
-    ExploiterConfigurationSchema,
     ExploitationConfiguration,
-    ExploitationConfigurationSchema,
     PropagationConfiguration,
+)
+
+from .agent_sub_configuration_schemas import (
+    PluginConfigurationSchema,
+    CustomPBAConfigurationSchema,
+    ICMPScanConfigurationSchema,
+    TCPScanConfigurationSchema,
+    ScanTargetConfigurationSchema,
+    NetworkScanConfigurationSchema,
+    ExploitationOptionsConfigurationSchema,
+    ExploiterConfigurationSchema,
+    ExploitationConfigurationSchema,
     PropagationConfigurationSchema,
+)
+
+from .agent_configuration import (
     AgentConfiguration,
     AgentConfigurationSchema,
 )
