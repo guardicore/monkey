@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from common.configuration import AgentConfiguration
 
@@ -8,6 +8,7 @@ class IAgentConfigurationRepository(ABC):
     A repository used to store and retrieve the agent configuration.
     """
 
+    @abstractmethod
     def get_configuration(self) -> AgentConfiguration:
         """
         Retrieve the agent configuration from the repository
@@ -16,6 +17,7 @@ class IAgentConfigurationRepository(ABC):
         """
         pass
 
+    @abstractmethod
     def set_configuration(self, agent_configuration: AgentConfiguration):
         """
         Store the agent configuration in the repository
