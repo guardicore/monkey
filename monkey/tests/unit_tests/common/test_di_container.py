@@ -112,8 +112,7 @@ def test_register_mixed_instance_and_type(container):
     assert id(test_2.service_b) != id(test_3.service_b)
 
 
-def test_unregistered_type():
-    container = DIContainer()
+def test_unregistered_type(container):
     with pytest.raises(ValueError):
         container.resolve(TestClass1)
 
