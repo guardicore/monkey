@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, List
 
-from marshmallow import RAISE, Schema, fields, post_load
+from marshmallow import Schema, fields, post_load
 from marshmallow_enum import EnumField
 
 from common import OperatingSystems
@@ -16,9 +16,6 @@ class CustomPBAConfiguration:
 
 
 class CustomPBAConfigurationSchema(Schema):
-    class Meta:
-        unknown = RAISE
-
     linux_command = fields.Str()
     linux_filename = fields.Str()
     windows_command = fields.Str()
@@ -36,9 +33,6 @@ class PluginConfiguration:
 
 
 class PluginConfigurationSchema(Schema):
-    class Meta:
-        unknown = RAISE
-
     name = fields.Str()
     options = fields.Mapping()
 
@@ -68,9 +62,6 @@ class ExploiterConfiguration:
 
 
 class ExploiterConfigurationSchema(Schema):
-    class Meta:
-        unknown = RAISE
-
     name = fields.Str()
     options = fields.Mapping()
     supported_os = fields.List(EnumField(OperatingSystems))
