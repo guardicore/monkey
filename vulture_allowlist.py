@@ -191,6 +191,7 @@ _make_exploitation_options_configuration  # unused method (monkey/common/configu
 _make_scan_target_configuration  # unused method (monkey/common/configuration/agent_configuration.py:105)
 _make_icmp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:107)
 _make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:122)
+_make_network_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:110)
 LINUX  # unused variable (monkey/common/operating_systems.py:5)
 WINDOWS  # unused variable (monkey/common/operating_systems.py:6)
 

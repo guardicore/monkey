@@ -93,6 +93,25 @@ class TCPScanConfigurationSchema(Schema):
         return TCPScanConfiguration(**data)
 
 
+@dataclass(frozen=True)
+class NetworkScanConfiguration:
+    tcp: TCPScanConfiguration
+    icmp: ICMPScanConfiguration
+    fingerprinters: List[PluginConfiguration]
+    targets: ScanTargetConfiguration
+
+
+class NetworkScanConfigurationSchema(Schema):
+    tcp = fields.Nested(TCPScanConfigurationSchema)
+    icmp = fields.Nested(ICMPScanConfigurationSchema)
+    fingerprinters = fields.List(fields.Nested(PluginConfigurationSchema))
+    targets = fields.Nested(ScanTargetConfigurationSchema)
+
+    @post_load
+    def _make_network_scan_configuration(self, data, **kwargs):
+        return NetworkScanConfiguration(**data)
+
+
 class ExploitationOptionsConfigurationSchema(Schema):
     http_ports = fields.List(fields.Int())
 
