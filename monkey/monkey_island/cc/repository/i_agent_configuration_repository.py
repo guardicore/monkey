@@ -14,6 +14,7 @@ class IAgentConfigurationRepository(ABC):
         Retrieve the agent configuration from the repository
 
         :return: The agent configuration
+        :raises RetrievalError: if the configuration can not be retrieved
         """
         pass
 
