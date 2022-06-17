@@ -9,6 +9,8 @@ from .agent_configuration import (
     ExploiterConfigurationSchema,
     ExploitationConfiguration,
     ExploitationConfigurationSchema,
+    ICMPScanConfiguration,
+    ICMPScanConfigurationSchema,
     TCPScanConfiguration,
     TCPScanConfigurationSchema,
 )

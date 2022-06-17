@@ -101,6 +101,14 @@ class ICMPScanConfiguration:
     timeout_ms: int
 
 
+class ICMPScanConfigurationSchema(Schema):
+    timeout_ms = fields.Int()
+
+    @post_load
+    def make_icmp_scan_configuration(self, data, **kwargs):
+        return ICMPScanConfiguration(**data)
+
+
 @dataclass(frozen=True)
 class TCPScanConfiguration:
     timeout_ms: int
