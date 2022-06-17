@@ -6,8 +6,11 @@ from common.configuration import (
     ExploitationOptionsConfigurationSchema,
     ExploiterConfigurationSchema,
     ICMPScanConfigurationSchema,
+    NetworkScanConfiguration,
     NetworkScanConfigurationSchema,
     PluginConfigurationSchema,
+    PropagationConfiguration,
+    PropagationConfigurationSchema,
     ScanTargetConfigurationSchema,
     TCPScanConfigurationSchema,
 )
@@ -96,23 +99,25 @@ def test_tcp_scan_configuration_schema():
     assert config.ports == PORTS
 
 
+FINGERPRINTERS = [{"name": "mssql", "options": {}}]
+NETWORK_SCAN_CONFIGURATION = {
+    "tcp": TCP_SCAN_CONFIGURATION,
+    "icmp": ICMP_CONFIGURATION,
+    "fingerprinters": FINGERPRINTERS,
+    "targets": SCAN_TARGET_CONFIGURATION,
+}
+
+
 def test_network_scan_configuration():
-    fingerprinters = [{"name": "mssql", "options": {}}]
-    network_scan_configuration = {
-        "tcp": TCP_SCAN_CONFIGURATION,
-        "icmp": ICMP_CONFIGURATION,
-        "fingerprinters": fingerprinters,
-        "targets": SCAN_TARGET_CONFIGURATION,
-    }
     schema = NetworkScanConfigurationSchema()
 
-    config = schema.load(network_scan_configuration)
+    config = schema.load(NETWORK_SCAN_CONFIGURATION)
 
     assert config.tcp.ports == TCP_SCAN_CONFIGURATION["ports"]
     assert config.tcp.timeout_ms == TCP_SCAN_CONFIGURATION["timeout_ms"]
     assert config.icmp.timeout_ms == ICMP_CONFIGURATION["timeout_ms"]
-    assert config.fingerprinters[0].name == fingerprinters[0]["name"]
-    assert config.fingerprinters[0].options == fingerprinters[0]["options"]
+    assert config.fingerprinters[0].name == FINGERPRINTERS[0]["name"]
+    assert config.fingerprinters[0].options == FINGERPRINTERS[0]["options"]
     assert config.targets.blocked_ips == BLOCKED_IPS
     assert config.targets.inaccessible_subnets == INACCESSIBLE_SUBNETS
     assert config.targets.local_network_scan == LOCAL_NETWORK_SCAN
@@ -143,32 +148,52 @@ def test_exploiter_configuration_schema():
     assert config.supported_os == supported_os
 
 
+BRUTE_FORCE = [
+    {"name": "ex1", "options": {}, "supported_os": ["LINUX"]},
+    {
+        "name": "ex2",
+        "options": {"smb_download_timeout": 10},
+        "supported_os": ["LINUX", "WINDOWS"],
+    },
+]
+VULNERABILITY = [
+    {
+        "name": "ex3",
+        "options": {"smb_download_timeout": 10},
+        "supported_os": ["WINDOWS"],
+    },
+]
+EXPLOITATION_CONFIGURATION = {
+    "options": {"http_ports": PORTS},
+    "brute_force": BRUTE_FORCE,
+    "vulnerability": VULNERABILITY,
+}
+
+
 def test_exploitation_configuration():
-    ports = [1, 2, 3]
-    brute_force = [
-        {"name": "ex1", "options": {}, "supported_os": ["LINUX"]},
-        {
-            "name": "ex2",
-            "options": {"smb_download_timeout": 10},
-            "supported_os": ["LINUX", "WINDOWS"],
-        },
-    ]
-    vulnerability = [
-        {
-            "name": "ex3",
-            "options": {"smb_download_timeout": 10},
-            "supported_os": ["WINDOWS"],
-        },
-    ]
-    exploitation_config = {
-        "options": {"http_ports": ports},
-        "brute_force": brute_force,
-        "vulnerability": vulnerability,
-    }
     schema = ExploitationConfigurationSchema()
 
-    config = schema.load(exploitation_config)
+    config = schema.load(EXPLOITATION_CONFIGURATION)
     config_dict = schema.dump(config)
 
     assert isinstance(config, ExploitationConfiguration)
-    assert config_dict == exploitation_config
+    assert config_dict == EXPLOITATION_CONFIGURATION
+
+
+PROPAGATION_CONFIGURATION = {
+    "network_scan": NETWORK_SCAN_CONFIGURATION,
+    "exploitation": EXPLOITATION_CONFIGURATION,
+}
+
+
+def test_propagation_configuration():
+    schema = PropagationConfigurationSchema()
+
+    config = schema.load(PROPAGATION_CONFIGURATION)
+    config_dict = schema.dump(config)
+
+    assert isinstance(config, PropagationConfiguration)
+    assert isinstance(config.network_scan, NetworkScanConfiguration)
+    assert isinstance(config.exploitation, ExploitationConfiguration)
+
+    assert config_dict == PROPAGATION_CONFIGURATION

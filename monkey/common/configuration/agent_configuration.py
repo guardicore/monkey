@@ -152,3 +152,18 @@ class ExploitationConfigurationSchema(Schema):
     @post_load
     def _make_exploitation_options_configuration(self, data, **kwargs):
         return ExploitationConfiguration(**data)
+
+
+@dataclass(frozen=True)
+class PropagationConfiguration:
+    network_scan: NetworkScanConfiguration
+    exploitation: ExploitationConfiguration
+
+
+class PropagationConfigurationSchema(Schema):
+    network_scan = fields.Nested(NetworkScanConfigurationSchema)
+    exploitation = fields.Nested(ExploitationConfigurationSchema)
+
+    @post_load
+    def _make_propagation_configuration(self, data, **kwargs):
+        return PropagationConfiguration(**data)
