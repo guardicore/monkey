@@ -99,3 +99,9 @@ class ScanTargetConfiguration:
 @dataclass(frozen=True)
 class ICMPScanConfiguration:
     timeout_ms: int
+
+
+@dataclass(frozen=True)
+class TCPScanConfiguration:
+    timeout_ms: int
+    ports: List[int]
