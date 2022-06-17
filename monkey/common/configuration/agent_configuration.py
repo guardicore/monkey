@@ -96,6 +96,17 @@ class ScanTargetConfiguration:
     subnets: List[str]
 
 
+class ScanTargetConfigurationSchema(Schema):
+    blocked_ips = fields.List(fields.Str())
+    inaccessible_subnets = fields.List(fields.Str())
+    local_network_scan = fields.Bool()
+    subnets = fields.List(fields.Str())
+
+    @post_load
+    def _make_scan_target_configuration(self, data, **kwargs):
+        return ScanTargetConfiguration(**data)
+
+
 @dataclass(frozen=True)
 class ICMPScanConfiguration:
     timeout_ms: int

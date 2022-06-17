@@ -13,4 +13,6 @@ from .agent_configuration import (
     ICMPScanConfigurationSchema,
     TCPScanConfiguration,
     TCPScanConfigurationSchema,
+    ScanTargetConfiguration,
+    ScanTargetConfigurationSchema,
 )

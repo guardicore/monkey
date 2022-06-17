@@ -7,6 +7,7 @@ from common.configuration import (
     ExploiterConfigurationSchema,
     ICMPScanConfigurationSchema,
     PluginConfigurationSchema,
+    ScanTargetConfigurationSchema,
     TCPScanConfigurationSchema,
 )
 
@@ -97,6 +98,27 @@ def test_exploitation_configuration():
 
     assert isinstance(config, ExploitationConfiguration)
     assert config_dict == exploitation_config
+
+
+def test_scan_target_configuration():
+    blocked_ips = ["10.0.0.1", "192.168.1.1"]
+    inaccessible_subnets = ["172.0.0.0/24", "172.2.2.0/24", "192.168.56.0/24"]
+    local_network_scan = True
+    subnets = ["10.0.0.2", "10.0.0.2/16"]
+    scan_target_config = {
+        "blocked_ips": blocked_ips,
+        "inaccessible_subnets": inaccessible_subnets,
+        "local_network_scan": local_network_scan,
+        "subnets": subnets,
+    }
+    schema = ScanTargetConfigurationSchema()
+
+    config = schema.load(scan_target_config)
+
+    assert config.blocked_ips == blocked_ips
+    assert config.inaccessible_subnets == inaccessible_subnets
+    assert config.local_network_scan == local_network_scan
+    assert config.subnets == subnets
 
 
 def test_icmp_scan_configuration_schema():
