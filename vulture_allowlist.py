@@ -184,6 +184,21 @@ architecture  # unused variable (monkey/infection_monkey/exploit/caching_agent_r
 response_code  # unused variable (monkey/monkey_island/cc/services/aws/aws_command_runner.py:26)
 release_convention  # unused method (monkey/common/di_container.py:174)
 
+# Agent Configuration
+_make_plugin_configuration  # unused method (monkey/common/configuration/agent_configuration.py:19)
+_make_custom_pba_configuration  # unused method (monkey/common/configuration/agent_configuration.py:24)
+_make_exploiter_configuration  # unused method (monkey/common/configuration/agent_configuration.py:69)
+_make_exploitation_options_configuration  # unused method (monkey/common/configuration/agent_configuration.py:86)
+_make_scan_target_configuration  # unused method (monkey/common/configuration/agent_configuration.py:105)
+_make_icmp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:107)
+_make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:122)
+_make_network_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:110)
+_make_propagation_configuration  # unused method (monkey/common/configuration/agent_configuration.py:167)
+_make_agent_configuration  # unused method (monkey/common/configuration/agent_configuration.py:192)
+LINUX  # unused variable (monkey/common/operating_systems.py:5)
+WINDOWS  # unused variable (monkey/common/operating_systems.py:6)
+
+
 # TODO DELETE AFTER RESOURCE REFACTORING
 NetworkMap
 Arc.dst_machine
