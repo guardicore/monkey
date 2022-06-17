@@ -7,6 +7,7 @@ class IConfigRepository(ABC):
     """
     A repository used to store and retrieve the agent configuration.
     """
+
     def get_config(self) -> AgentConfiguration:
         """
         Retrieve the agent configuration from the repository
