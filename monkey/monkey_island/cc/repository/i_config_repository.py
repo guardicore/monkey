@@ -1,5 +1,7 @@
 from abc import ABC
-from typing import Any, Mapping, Sequence
+from typing import Any, Sequence
+
+from common.configuration import AgentConfiguration
 
 
 class IConfigRepository(ABC):
@@ -10,10 +12,10 @@ class IConfigRepository(ABC):
     # This returns the current config
     # TODO investigate if encryption should be here or where
     # TODO potentially should be a DTO as well, but it's structure is defined in schema already
-    def get_config(self) -> Mapping:
+    def get_config(self) -> AgentConfiguration:
         pass
 
-    def set_config(self, config: dict):
+    def set_config(self, config: AgentConfiguration):
         pass
 
     # Used when only a subset of config is submitted, for example only PBAFiles
