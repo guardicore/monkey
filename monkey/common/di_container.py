@@ -65,7 +65,7 @@ class DIContainer:
         """
         Register an instance as a convention
 
-        At times — particularly when dealing with primative types — it can be useful to define a
+        At times — particularly when dealing with primitive types — it can be useful to define a
         convention for how dependencies should be resolved. For example, you might want any class
         that specifies `hostname: str` in its constructor to receive the hostname of the system it's
         running on. Registering a convention allows you to assign an object instance to a type, name
