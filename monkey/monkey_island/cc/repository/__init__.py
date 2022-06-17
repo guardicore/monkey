@@ -3,3 +3,4 @@ from .i_agent_binary_repository import IAgentBinaryRepository, AgentRetrievalErr
 from .agent_binary_repository import AgentBinaryRepository
 from .i_agent_configuration_repository import IAgentConfigurationRepository
 from .file_agent_configuration_repository import FileAgentConfigurationRepository
+from .errors import RetrievalError
