@@ -1,6 +1,8 @@
 from common import OperatingSystems
 from common.configuration import (
     CustomPBAConfigurationSchema,
+    ExploitationConfiguration,
+    ExploitationConfigurationSchema,
     ExploitationOptionsConfigurationSchema,
     ExploiterConfigurationSchema,
     PluginConfigurationSchema,
@@ -62,3 +64,34 @@ def test_exploiter_configuration_schema():
     assert config.name == name
     assert config.options == options
     assert config.supported_os == supported_os
+
+
+def test_exploitation_configuration():
+    ports = [1, 2, 3]
+    brute_force = [
+        {"name": "ex1", "options": {}, "supported_os": ["LINUX"]},
+        {
+            "name": "ex2",
+            "options": {"smb_download_timeout": 10},
+            "supported_os": ["LINUX", "WINDOWS"],
+        },
+    ]
+    vulnerability = [
+        {
+            "name": "ex3",
+            "options": {"smb_download_timeout": 10},
+            "supported_os": ["WINDOWS"],
+        },
+    ]
+    exploitation_config = {
+        "options": {"http_ports": ports},
+        "brute_force": brute_force,
+        "vulnerability": vulnerability,
+    }
+    schema = ExploitationConfigurationSchema()
+
+    config = schema.load(exploitation_config)
+    config_dict = schema.dump(config)
+
+    assert isinstance(config, ExploitationConfiguration)
+    assert config_dict == exploitation_config

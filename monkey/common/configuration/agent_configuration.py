@@ -69,3 +69,20 @@ class ExploiterConfigurationSchema(Schema):
     @post_load
     def make_exploiter_configuration(self, data, **kwargs):
         return ExploiterConfiguration(**data)
+
+
+@dataclass(frozen=True)
+class ExploitationConfiguration:
+    options: ExploitationOptionsConfiguration
+    brute_force: List[ExploiterConfiguration]
+    vulnerability: List[ExploiterConfiguration]
+
+
+class ExploitationConfigurationSchema(Schema):
+    options = fields.Nested(ExploitationOptionsConfigurationSchema)
+    brute_force = fields.List(fields.Nested(ExploiterConfigurationSchema))
+    vulnerability = fields.List(fields.Nested(ExploiterConfigurationSchema))
+
+    @post_load
+    def make_exploitation_options_configuration(self, data, **kwargs):
+        return ExploitationConfiguration(**data)

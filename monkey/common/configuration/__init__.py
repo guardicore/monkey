@@ -7,4 +7,6 @@ from .agent_configuration import (
     ExploitationOptionsConfigurationSchema,
     ExploiterConfiguration,
     ExploiterConfigurationSchema,
+    ExploitationConfiguration,
+    ExploitationConfigurationSchema,
 )
