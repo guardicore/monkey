@@ -1,22 +1,23 @@
 from common import OperatingSystems
-from common.configuration import (
-    AgentConfiguration,
-    AgentConfigurationSchema,
-    CustomPBAConfiguration,
+from common.configuration import AgentConfiguration, AgentConfigurationSchema
+from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
-    ExploitationConfiguration,
     ExploitationConfigurationSchema,
     ExploitationOptionsConfigurationSchema,
     ExploiterConfigurationSchema,
     ICMPScanConfigurationSchema,
-    NetworkScanConfiguration,
     NetworkScanConfigurationSchema,
-    PluginConfiguration,
     PluginConfigurationSchema,
-    PropagationConfiguration,
     PropagationConfigurationSchema,
     ScanTargetConfigurationSchema,
     TCPScanConfigurationSchema,
+)
+from common.configuration.agent_sub_configurations import (
+    CustomPBAConfiguration,
+    ExploitationConfiguration,
+    NetworkScanConfiguration,
+    PluginConfiguration,
+    PropagationConfiguration,
 )
 
 NAME = "bond"
