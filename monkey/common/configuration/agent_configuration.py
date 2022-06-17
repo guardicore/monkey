@@ -94,3 +94,8 @@ class ScanTargetConfiguration:
     inaccessible_subnets: List[str]
     local_network_scan: bool
     subnets: List[str]
+
+
+@dataclass(frozen=True)
+class ICMPScanConfiguration:
+    timeout_ms: int
