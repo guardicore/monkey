@@ -48,6 +48,19 @@ class PluginConfigurationSchema(Schema):
 
 
 @dataclass(frozen=True)
+class ExploitationOptionsConfiguration:
+    http_ports: List[int]
+
+
+class ExploitationOptionsConfigurationSchema(Schema):
+    http_ports = fields.List(fields.Int())
+
+    @post_load
+    def make_exploitation_options_configuration(self, data, **kwargs):
+        return ExploitationOptionsConfiguration(**data)
+
+
+@dataclass(frozen=True)
 class ExploiterConfiguration:
     name: str
     options: Dict

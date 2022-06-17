@@ -3,6 +3,8 @@ from .agent_configuration import (
     PluginConfigurationSchema,
     CustomPBAConfiguration,
     CustomPBAConfigurationSchema,
+    ExploitationOptionsConfiguration,
+    ExploitationOptionsConfigurationSchema,
     ExploiterConfiguration,
     ExploiterConfigurationSchema,
 )

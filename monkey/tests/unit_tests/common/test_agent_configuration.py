@@ -1,6 +1,7 @@
 from common import OperatingSystems
 from common.configuration import (
     CustomPBAConfigurationSchema,
+    ExploitationOptionsConfigurationSchema,
     ExploiterConfigurationSchema,
     PluginConfigurationSchema,
 )
@@ -37,6 +38,15 @@ def test_custom_pba_configuration_schema():
     assert config.linux_filename == linux_filename
     assert config.windows_command == windows_command
     assert config.windows_filename == windows_filename
+
+
+def test_exploitation_options_configuration_schema():
+    ports = [1, 2, 3]
+    schema = ExploitationOptionsConfigurationSchema()
+
+    config = schema.load({"http_ports": ports})
+
+    assert config.http_ports == ports
 
 
 def test_exploiter_configuration_schema():
