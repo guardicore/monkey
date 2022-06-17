@@ -45,6 +45,47 @@ def test_custom_pba_configuration_schema():
     assert config.windows_filename == windows_filename
 
 
+def test_scan_target_configuration():
+    blocked_ips = ["10.0.0.1", "192.168.1.1"]
+    inaccessible_subnets = ["172.0.0.0/24", "172.2.2.0/24", "192.168.56.0/24"]
+    local_network_scan = True
+    subnets = ["10.0.0.2", "10.0.0.2/16"]
+    scan_target_config = {
+        "blocked_ips": blocked_ips,
+        "inaccessible_subnets": inaccessible_subnets,
+        "local_network_scan": local_network_scan,
+        "subnets": subnets,
+    }
+    schema = ScanTargetConfigurationSchema()
+
+    config = schema.load(scan_target_config)
+
+    assert config.blocked_ips == blocked_ips
+    assert config.inaccessible_subnets == inaccessible_subnets
+    assert config.local_network_scan == local_network_scan
+    assert config.subnets == subnets
+
+
+def test_icmp_scan_configuration_schema():
+    timeout_ms = 2525
+    schema = ICMPScanConfigurationSchema()
+
+    config = schema.load({"timeout_ms": timeout_ms})
+
+    assert config.timeout_ms == timeout_ms
+
+
+def test_tcp_scan_configuration_schema():
+    timeout_ms = 2525
+    ports = [8080, 443]
+    schema = TCPScanConfigurationSchema()
+
+    config = schema.load({"timeout_ms": timeout_ms, "ports": ports})
+
+    assert config.timeout_ms == timeout_ms
+    assert config.ports == ports
+
+
 def test_exploitation_options_configuration_schema():
     ports = [1, 2, 3]
     schema = ExploitationOptionsConfigurationSchema()
@@ -98,44 +139,3 @@ def test_exploitation_configuration():
 
     assert isinstance(config, ExploitationConfiguration)
     assert config_dict == exploitation_config
-
-
-def test_scan_target_configuration():
-    blocked_ips = ["10.0.0.1", "192.168.1.1"]
-    inaccessible_subnets = ["172.0.0.0/24", "172.2.2.0/24", "192.168.56.0/24"]
-    local_network_scan = True
-    subnets = ["10.0.0.2", "10.0.0.2/16"]
-    scan_target_config = {
-        "blocked_ips": blocked_ips,
-        "inaccessible_subnets": inaccessible_subnets,
-        "local_network_scan": local_network_scan,
-        "subnets": subnets,
-    }
-    schema = ScanTargetConfigurationSchema()
-
-    config = schema.load(scan_target_config)
-
-    assert config.blocked_ips == blocked_ips
-    assert config.inaccessible_subnets == inaccessible_subnets
-    assert config.local_network_scan == local_network_scan
-    assert config.subnets == subnets
-
-
-def test_icmp_scan_configuration_schema():
-    timeout_ms = 2525
-    schema = ICMPScanConfigurationSchema()
-
-    config = schema.load({"timeout_ms": timeout_ms})
-
-    assert config.timeout_ms == timeout_ms
-
-
-def test_tcp_scan_configuration_schema():
-    timeout_ms = 2525
-    ports = [8080, 443]
-    schema = TCPScanConfigurationSchema()
-
-    config = schema.load({"timeout_ms": timeout_ms, "ports": ports})
-
-    assert config.timeout_ms == timeout_ms
-    assert config.ports == ports

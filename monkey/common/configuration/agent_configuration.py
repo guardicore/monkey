@@ -46,48 +46,6 @@ class ExploitationOptionsConfiguration:
     http_ports: List[int]
 
 
-class ExploitationOptionsConfigurationSchema(Schema):
-    http_ports = fields.List(fields.Int())
-
-    @post_load
-    def _make_exploitation_options_configuration(self, data, **kwargs):
-        return ExploitationOptionsConfiguration(**data)
-
-
-@dataclass(frozen=True)
-class ExploiterConfiguration:
-    name: str
-    options: Dict
-    supported_os: List[OperatingSystems]
-
-
-class ExploiterConfigurationSchema(Schema):
-    name = fields.Str()
-    options = fields.Mapping()
-    supported_os = fields.List(EnumField(OperatingSystems))
-
-    @post_load
-    def _make_exploiter_configuration(self, data, **kwargs):
-        return ExploiterConfiguration(**data)
-
-
-@dataclass(frozen=True)
-class ExploitationConfiguration:
-    options: ExploitationOptionsConfiguration
-    brute_force: List[ExploiterConfiguration]
-    vulnerability: List[ExploiterConfiguration]
-
-
-class ExploitationConfigurationSchema(Schema):
-    options = fields.Nested(ExploitationOptionsConfigurationSchema)
-    brute_force = fields.List(fields.Nested(ExploiterConfigurationSchema))
-    vulnerability = fields.List(fields.Nested(ExploiterConfigurationSchema))
-
-    @post_load
-    def _make_exploitation_options_configuration(self, data, **kwargs):
-        return ExploitationConfiguration(**data)
-
-
 @dataclass(frozen=True)
 class ScanTargetConfiguration:
     blocked_ips: List[str]
@@ -133,3 +91,45 @@ class TCPScanConfigurationSchema(Schema):
     @post_load
     def _make_tcp_scan_configuration(self, data, **kwargs):
         return TCPScanConfiguration(**data)
+
+
+class ExploitationOptionsConfigurationSchema(Schema):
+    http_ports = fields.List(fields.Int())
+
+    @post_load
+    def _make_exploitation_options_configuration(self, data, **kwargs):
+        return ExploitationOptionsConfiguration(**data)
+
+
+@dataclass(frozen=True)
+class ExploiterConfiguration:
+    name: str
+    options: Dict
+    supported_os: List[OperatingSystems]
+
+
+class ExploiterConfigurationSchema(Schema):
+    name = fields.Str()
+    options = fields.Mapping()
+    supported_os = fields.List(EnumField(OperatingSystems))
+
+    @post_load
+    def _make_exploiter_configuration(self, data, **kwargs):
+        return ExploiterConfiguration(**data)
+
+
+@dataclass(frozen=True)
+class ExploitationConfiguration:
+    options: ExploitationOptionsConfiguration
+    brute_force: List[ExploiterConfiguration]
+    vulnerability: List[ExploiterConfiguration]
+
+
+class ExploitationConfigurationSchema(Schema):
+    options = fields.Nested(ExploitationOptionsConfigurationSchema)
+    brute_force = fields.List(fields.Nested(ExploiterConfigurationSchema))
+    vulnerability = fields.List(fields.Nested(ExploiterConfigurationSchema))
+
+    @post_load
+    def _make_exploitation_options_configuration(self, data, **kwargs):
+        return ExploitationConfiguration(**data)
