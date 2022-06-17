@@ -187,7 +187,7 @@ class DIContainer:
         Deletes key from mapping. Unlike the `del` keyword, this function does not raise a KeyError
         if the key does not exist.
 
-        :param MutableMapping: A mapping from which a key will be deleted
+        :param mapping: A mapping from which a key will be deleted
         :param key: A key to delete from `mapping`
         """
         try:
