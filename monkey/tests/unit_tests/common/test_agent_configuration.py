@@ -1,5 +1,8 @@
 from common import OperatingSystems
 from common.configuration import (
+    AgentConfiguration,
+    AgentConfigurationSchema,
+    CustomPBAConfiguration,
     CustomPBAConfigurationSchema,
     ExploitationConfiguration,
     ExploitationConfigurationSchema,
@@ -8,6 +11,7 @@ from common.configuration import (
     ICMPScanConfigurationSchema,
     NetworkScanConfiguration,
     NetworkScanConfigurationSchema,
+    PluginConfiguration,
     PluginConfigurationSchema,
     PropagationConfiguration,
     PropagationConfigurationSchema,
@@ -15,38 +19,41 @@ from common.configuration import (
     TCPScanConfigurationSchema,
 )
 
+NAME = "bond"
+OPTIONS = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
+PLUGIN_CONFIGURATION = {"name": NAME, "options": OPTIONS}
+
 
 def test_build_plugin_configuration():
-    name = "bond"
-    options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
     schema = PluginConfigurationSchema()
 
-    config = schema.load({"name": name, "options": options})
+    config = schema.load(PLUGIN_CONFIGURATION)
 
-    assert config.name == name
-    assert config.options == options
+    assert config.name == NAME
+    assert config.options == OPTIONS
+
+
+LINUX_COMMAND = "a"
+LINUX_FILENAME = "b"
+WINDOWS_COMMAND = "c"
+WINDOWS_FILENAME = "d"
+CUSTOM_PBA_CONFIGURATION = {
+    "linux_command": LINUX_COMMAND,
+    "linux_filename": LINUX_FILENAME,
+    "windows_command": WINDOWS_COMMAND,
+    "windows_filename": WINDOWS_FILENAME,
+}
 
 
 def test_custom_pba_configuration_schema():
-    linux_command = "a"
-    linux_filename = "b"
-    windows_command = "c"
-    windows_filename = "d"
     schema = CustomPBAConfigurationSchema()
 
-    config = schema.load(
-        {
-            "linux_command": linux_command,
-            "linux_filename": linux_filename,
-            "windows_command": windows_command,
-            "windows_filename": windows_filename,
-        }
-    )
+    config = schema.load(CUSTOM_PBA_CONFIGURATION)
 
-    assert config.linux_command == linux_command
-    assert config.linux_filename == linux_filename
-    assert config.windows_command == windows_command
-    assert config.windows_filename == windows_filename
+    assert config.linux_command == LINUX_COMMAND
+    assert config.linux_filename == LINUX_FILENAME
+    assert config.windows_command == WINDOWS_COMMAND
+    assert config.windows_filename == WINDOWS_FILENAME
 
 
 BLOCKED_IPS = ["10.0.0.1", "192.168.1.1"]
@@ -197,3 +204,27 @@ def test_propagation_configuration():
     assert isinstance(config.exploitation, ExploitationConfiguration)
     assert config.maximum_depth == 5
     assert config_dict == PROPAGATION_CONFIGURATION
+
+
+def test_agent_configuration():
+    agent_configuration = {
+        "keep_tunnel_open_time": 30,
+        "custom_pbas": CUSTOM_PBA_CONFIGURATION,
+        "post_breach_actions": [PLUGIN_CONFIGURATION],
+        "credential_collectors": [PLUGIN_CONFIGURATION],
+        "payloads": [PLUGIN_CONFIGURATION],
+        "propagation": PROPAGATION_CONFIGURATION,
+    }
+    schema = AgentConfigurationSchema()
+
+    config = schema.load(agent_configuration)
+    config_dict = schema.dump(config)
+
+    assert isinstance(config, AgentConfiguration)
+    assert config.keep_tunnel_open_time == 30
+    assert isinstance(config.custom_pbas, CustomPBAConfiguration)
+    assert isinstance(config.post_breach_actions[0], PluginConfiguration)
+    assert isinstance(config.credential_collectors[0], PluginConfiguration)
+    assert isinstance(config.payloads[0], PluginConfiguration)
+    assert isinstance(config.propagation, PropagationConfiguration)
+    assert config_dict == agent_configuration

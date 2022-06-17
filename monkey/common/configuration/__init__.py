@@ -19,4 +19,6 @@ from .agent_configuration import (
     ExploitationConfigurationSchema,
     PropagationConfiguration,
     PropagationConfigurationSchema,
+    AgentConfiguration,
+    AgentConfigurationSchema,
 )

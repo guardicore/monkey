@@ -169,3 +169,26 @@ class PropagationConfigurationSchema(Schema):
     @post_load
     def _make_propagation_configuration(self, data, **kwargs):
         return PropagationConfiguration(**data)
+
+
+@dataclass(frozen=True)
+class AgentConfiguration:
+    keep_tunnel_open_time: float
+    custom_pbas: CustomPBAConfiguration
+    post_breach_actions: List[PluginConfiguration]
+    credential_collectors: List[PluginConfiguration]
+    payloads: List[PluginConfiguration]
+    propagation: PropagationConfiguration
+
+
+class AgentConfigurationSchema(Schema):
+    keep_tunnel_open_time = fields.Float()
+    custom_pbas = fields.Nested(CustomPBAConfigurationSchema)
+    post_breach_actions = fields.List(fields.Nested(PluginConfigurationSchema))
+    credential_collectors = fields.List(fields.Nested(PluginConfigurationSchema))
+    payloads = fields.List(fields.Nested(PluginConfigurationSchema))
+    propagation = fields.Nested(PropagationConfigurationSchema)
+
+    @post_load
+    def _make_agent_configuration(self, data, **kwargs):
+        return AgentConfiguration(**data)
