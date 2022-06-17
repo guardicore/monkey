@@ -156,11 +156,13 @@ class ExploitationConfigurationSchema(Schema):
 
 @dataclass(frozen=True)
 class PropagationConfiguration:
+    maximum_depth: int
     network_scan: NetworkScanConfiguration
     exploitation: ExploitationConfiguration
 
 
 class PropagationConfigurationSchema(Schema):
+    maximum_depth = fields.Int()
     network_scan = fields.Nested(NetworkScanConfigurationSchema)
     exploitation = fields.Nested(ExploitationConfigurationSchema)
 

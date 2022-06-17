@@ -181,6 +181,7 @@ def test_exploitation_configuration():
 
 
 PROPAGATION_CONFIGURATION = {
+    "maximum_depth": 5,
     "network_scan": NETWORK_SCAN_CONFIGURATION,
     "exploitation": EXPLOITATION_CONFIGURATION,
 }
@@ -195,5 +196,5 @@ def test_propagation_configuration():
     assert isinstance(config, PropagationConfiguration)
     assert isinstance(config.network_scan, NetworkScanConfiguration)
     assert isinstance(config.exploitation, ExploitationConfiguration)
-
+    assert config.maximum_depth == 5
     assert config_dict == PROPAGATION_CONFIGURATION
