@@ -9,7 +9,6 @@
     ],
     "PBA_linux_filename": "test.sh",
     "PBA_windows_filename": "test.ps1",
-    "alive": true,
     "blocked_ips": ["192.168.1.1", "192.168.1.100"],
     "custom_PBA_linux_cmd": "bash test.sh",
     "custom_PBA_windows_cmd": "powershell test.ps1",
@@ -54,7 +53,6 @@
     "inaccessible_subnets": ["10.0.0.0/24", "10.0.10.0/24"],
     "keep_tunnel_open_time": 60,
     "local_network_scan": true,
-    "max_depth": null,
     "ping_scan_timeout": 1000,
     "post_breach_actions": [
         "CommunicateAsBackdoorUser",
@@ -76,9 +74,6 @@
         }
     },
     "subnet_scan_list": ["192.168.1.50", "192.168.56.0/24", "10.0.33.0/30"],
-    "system_info_collector_classes": [
-        "MimikatzCollector"
-    ],
     "tcp_scan_timeout": 3000,
     "tcp_target_ports": [
         22,
