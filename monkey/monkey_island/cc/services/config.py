@@ -418,24 +418,24 @@ class ConfigService:
 
     @staticmethod
     def _format_propagation_from_flat_config(config: Dict):
-        formatted_propagation_config = {"network_scan": {}, "targets": {}}
+        formatted_propagation_config = {"network_scan": {}, "maximum_depth": {}, "exploiters": {}}
 
         formatted_propagation_config[
             "network_scan"
         ] = ConfigService._format_network_scan_from_flat_config(config)
 
-        formatted_propagation_config["targets"] = ConfigService._format_targets_from_flat_config(
-            config
-        )
         formatted_propagation_config[
             "exploiters"
         ] = ConfigService._format_exploiters_from_flat_config(config)
+
+        formatted_propagation_config["maximum_depth"] = config["depth"]
+        del config["depth"]
 
         config["propagation"] = formatted_propagation_config
 
     @staticmethod
     def _format_network_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
-        formatted_network_scan_config = {"tcp": {}, "icmp": {}, "fingerprinters": []}
+        formatted_network_scan_config = {"tcp": {}, "icmp": {}, "fingerprinters": [], "targets": {}}
 
         formatted_network_scan_config["tcp"] = ConfigService._format_tcp_scan_from_flat_config(
             config
@@ -447,6 +447,10 @@ class ConfigService:
             "fingerprinters"
         ] = ConfigService._format_fingerprinters_from_flat_config(config)
 
+        formatted_network_scan_config["targets"] = ConfigService._format_targets_from_flat_config(
+            config
+        )
+
         return formatted_network_scan_config
 
     @staticmethod
@@ -457,7 +461,7 @@ class ConfigService:
 
         formatted_tcp_scan_config = {}
 
-        formatted_tcp_scan_config["timeout_ms"] = config[flat_tcp_timeout_field]
+        formatted_tcp_scan_config["timeout"] = config[flat_tcp_timeout_field]
 
         ports = ConfigService._union_tcp_and_http_ports(
             config[flat_tcp_ports_field], config[flat_http_ports_field]
@@ -481,7 +485,7 @@ class ConfigService:
         flat_ping_timeout_field = "ping_scan_timeout"
 
         formatted_icmp_scan_config = {}
-        formatted_icmp_scan_config["timeout_ms"] = config[flat_ping_timeout_field]
+        formatted_icmp_scan_config["timeout"] = config[flat_ping_timeout_field]
 
         config.pop(flat_ping_timeout_field, None)
 
@@ -529,7 +533,7 @@ class ConfigService:
         formatted_scan_targets_config[flat_local_network_scan_field] = config[
             flat_local_network_scan_field
         ]
-        formatted_scan_targets_config[flat_subnet_scan_list_field] = config[
+        formatted_scan_targets_config["subnets"] = config[
             flat_subnet_scan_list_field
         ]
 
