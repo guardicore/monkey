@@ -92,32 +92,14 @@ def test_format_config_for_agent__propagation():
     flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "propagation" in flat_monkey_config
-    assert "targets" in flat_monkey_config["propagation"]
     assert "network_scan" in flat_monkey_config["propagation"]
-    assert "exploiters" in flat_monkey_config["propagation"]
-
-
-def test_format_config_for_agent__propagation_targets():
-    expected_targets = {
-        "blocked_ips": ["192.168.1.1", "192.168.1.100"],
-        "inaccessible_subnets": ["10.0.0.0/24", "10.0.10.0/24"],
-        "local_network_scan": True,
-        "subnet_scan_list": ["192.168.1.50", "192.168.56.0/24", "10.0.33.0/30"],
-    }
-
-    flat_monkey_config = ConfigService.format_flat_config_for_agent()
-
-    assert flat_monkey_config["propagation"]["targets"] == expected_targets
-    assert "blocked_ips" not in flat_monkey_config
-    assert "inaccessible_subnets" not in flat_monkey_config
-    assert "local_network_scan" not in flat_monkey_config
-    assert "subnet_scan_list" not in flat_monkey_config
+    assert "exploitation" in flat_monkey_config["propagation"]
 
 
 def test_format_config_for_agent__network_scan():
     expected_network_scan_config = {
         "tcp": {
-            "timeout_ms": 3000,
+            "timeout": 3000,
             "ports": [
                 22,
                 80,
@@ -135,7 +117,13 @@ def test_format_config_for_agent__network_scan():
             ],
         },
         "icmp": {
-            "timeout_ms": 1000,
+            "timeout": 1000,
+        },
+        "targets": {
+            "blocked_ips": ["192.168.1.1", "192.168.1.100"],
+            "inaccessible_subnets": ["10.0.0.0/24", "10.0.10.0/24"],
+            "local_network_scan": True,
+            "subnets": ["192.168.1.50", "192.168.56.0/24", "10.0.33.0/30"],
         },
         "fingerprinters": [
             {"name": "elastic", "options": {}},
@@ -160,36 +148,53 @@ def test_format_config_for_agent__network_scan():
     assert "finger_classes" not in flat_monkey_config
 
 
+def test_format_config_for_agent__propagation_network_scan_targets():
+    expected_targets = {
+        "blocked_ips": ["192.168.1.1", "192.168.1.100"],
+        "inaccessible_subnets": ["10.0.0.0/24", "10.0.10.0/24"],
+        "local_network_scan": True,
+        "subnets": ["192.168.1.50", "192.168.56.0/24", "10.0.33.0/30"],
+    }
+
+    flat_monkey_config = ConfigService.format_flat_config_for_agent()
+
+    assert flat_monkey_config["propagation"]["network_scan"]["targets"] == expected_targets
+    assert "blocked_ips" not in flat_monkey_config
+    assert "inaccessible_subnets" not in flat_monkey_config
+    assert "local_network_scan" not in flat_monkey_config
+    assert "subnet_scan_list" not in flat_monkey_config
+
+
 def test_format_config_for_agent__exploiters():
     expected_exploiters_config = {
         "options": {
             "http_ports": [80, 443, 7001, 8008, 8080, 9200],
         },
         "brute_force": [
-            {"name": "MSSQLExploiter", "supported_os": ["windows"], "options": {}},
-            {"name": "PowerShellExploiter", "supported_os": ["windows"], "options": {}},
-            {"name": "SSHExploiter", "supported_os": ["linux"], "options": {}},
+            {"name": "MSSQLExploiter", "supported_os": ["WINDOWS"], "options": {}},
+            {"name": "PowerShellExploiter", "supported_os": ["WINDOWS"], "options": {}},
+            {"name": "SSHExploiter", "supported_os": ["LINUX"], "options": {}},
             {
                 "name": "SmbExploiter",
-                "supported_os": ["windows"],
+                "supported_os": ["WINDOWS"],
                 "options": {"smb_download_timeout": 30},
             },
             {
                 "name": "WmiExploiter",
-                "supported_os": ["windows"],
+                "supported_os": ["WINDOWS"],
                 "options": {"smb_download_timeout": 30},
             },
         ],
         "vulnerability": [
-            {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
-            {"name": "Log4ShellExploiter", "supported_os": ["linux", "windows"], "options": {}},
-            {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}},
+            {"name": "HadoopExploiter", "supported_os": ["LINUX", "WINDOWS"], "options": {}},
+            {"name": "Log4ShellExploiter", "supported_os": ["LINUX", "WINDOWS"], "options": {}},
+            {"name": "ZerologonExploiter", "supported_os": ["WINDOWS"], "options": {}},
         ],
     }
     flat_monkey_config = ConfigService.format_flat_config_for_agent()
 
     assert "propagation" in flat_monkey_config
-    assert "exploiters" in flat_monkey_config["propagation"]
+    assert "exploitation" in flat_monkey_config["propagation"]
 
-    assert flat_monkey_config["propagation"]["exploiters"] == expected_exploiters_config
+    assert flat_monkey_config["propagation"]["exploitation"] == expected_exploiters_config
     assert "exploiter_classes" not in flat_monkey_config
