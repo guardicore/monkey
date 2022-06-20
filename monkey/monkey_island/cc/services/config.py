@@ -600,14 +600,14 @@ class ConfigService:
         formatted_config: Dict,
     ) -> Dict[str, List[Dict[str, Any]]]:
         supported_os = {
-            "HadoopExploiter": ["linux", "windows"],
-            "Log4ShellExploiter": ["linux", "windows"],
-            "MSSQLExploiter": ["windows"],
-            "PowerShellExploiter": ["windows"],
-            "SSHExploiter": ["linux"],
-            "SmbExploiter": ["windows"],
-            "WmiExploiter": ["windows"],
-            "ZerologonExploiter": ["windows"],
+            "HadoopExploiter": ["LINUX", "WINDOWS"],
+            "Log4ShellExploiter": ["LINUX", "WINDOWS"],
+            "MSSQLExploiter": ["WINDOWS"],
+            "PowerShellExploiter": ["WINDOWS"],
+            "SSHExploiter": ["LINUX"],
+            "SmbExploiter": ["WINDOWS"],
+            "WmiExploiter": ["WINDOWS"],
+            "ZerologonExploiter": ["WINDOWS"],
         }
         new_config = copy.deepcopy(formatted_config)
         for exploiter in chain(new_config["brute_force"], new_config["vulnerability"]):
