@@ -1,5 +1,6 @@
 import pytest
 
+from common import OperatingSystems
 from monkey_island.cc.services.config import ConfigService
 
 # If tests fail because config path is changed, sync with
@@ -171,24 +172,40 @@ def test_format_config_for_agent__exploiters():
             "http_ports": [80, 443, 7001, 8008, 8080, 9200],
         },
         "brute_force": [
-            {"name": "MSSQLExploiter", "supported_os": ["WINDOWS"], "options": {}},
-            {"name": "PowerShellExploiter", "supported_os": ["WINDOWS"], "options": {}},
-            {"name": "SSHExploiter", "supported_os": ["LINUX"], "options": {}},
+            {"name": "MSSQLExploiter", "supported_os": [OperatingSystems.WINDOWS], "options": {}},
+            {
+                "name": "PowerShellExploiter",
+                "supported_os": [OperatingSystems.WINDOWS],
+                "options": {},
+            },
+            {"name": "SSHExploiter", "supported_os": [OperatingSystems.LINUX], "options": {}},
             {
                 "name": "SmbExploiter",
-                "supported_os": ["WINDOWS"],
+                "supported_os": [OperatingSystems.WINDOWS],
                 "options": {"smb_download_timeout": 30},
             },
             {
                 "name": "WmiExploiter",
-                "supported_os": ["WINDOWS"],
+                "supported_os": [OperatingSystems.WINDOWS],
                 "options": {"smb_download_timeout": 30},
             },
         ],
         "vulnerability": [
-            {"name": "HadoopExploiter", "supported_os": ["LINUX", "WINDOWS"], "options": {}},
-            {"name": "Log4ShellExploiter", "supported_os": ["LINUX", "WINDOWS"], "options": {}},
-            {"name": "ZerologonExploiter", "supported_os": ["WINDOWS"], "options": {}},
+            {
+                "name": "HadoopExploiter",
+                "supported_os": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
+                "options": {},
+            },
+            {
+                "name": "Log4ShellExploiter",
+                "supported_os": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
+                "options": {},
+            },
+            {
+                "name": "ZerologonExploiter",
+                "supported_os": [OperatingSystems.WINDOWS],
+                "options": {},
+            },
         ],
     }
     flat_monkey_config = ConfigService.format_flat_config_for_agent()
