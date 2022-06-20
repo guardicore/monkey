@@ -8,6 +8,7 @@ from typing import Any, Dict, List
 
 from jsonschema import Draft4Validator, validators
 
+from common import OperatingSystems
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
@@ -533,9 +534,7 @@ class ConfigService:
         formatted_scan_targets_config[flat_local_network_scan_field] = config[
             flat_local_network_scan_field
         ]
-        formatted_scan_targets_config["subnets"] = config[
-            flat_subnet_scan_list_field
-        ]
+        formatted_scan_targets_config["subnets"] = config[flat_subnet_scan_list_field]
 
         config.pop(flat_blocked_ips_field, None)
         config.pop(flat_inaccessible_subnets_field, None)
@@ -600,14 +599,14 @@ class ConfigService:
         formatted_config: Dict,
     ) -> Dict[str, List[Dict[str, Any]]]:
         supported_os = {
-            "HadoopExploiter": ["LINUX", "WINDOWS"],
-            "Log4ShellExploiter": ["LINUX", "WINDOWS"],
-            "MSSQLExploiter": ["WINDOWS"],
-            "PowerShellExploiter": ["WINDOWS"],
-            "SSHExploiter": ["LINUX"],
-            "SmbExploiter": ["WINDOWS"],
-            "WmiExploiter": ["WINDOWS"],
-            "ZerologonExploiter": ["WINDOWS"],
+            "HadoopExploiter": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
+            "Log4ShellExploiter": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
+            "MSSQLExploiter": [OperatingSystems.WINDOWS],
+            "PowerShellExploiter": [OperatingSystems.WINDOWS],
+            "SSHExploiter": [OperatingSystems.LINUX],
+            "SmbExploiter": [OperatingSystems.WINDOWS],
+            "WmiExploiter": [OperatingSystems.WINDOWS],
+            "ZerologonExploiter": [OperatingSystems.WINDOWS],
         }
         new_config = copy.deepcopy(formatted_config)
         for exploiter in chain(new_config["brute_force"], new_config["vulnerability"]):
