@@ -1,5 +1,7 @@
+import errno
 import io
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
@@ -131,5 +133,15 @@ def test_remove_nonexistant_file(tmp_path):
 def test_open_nonexistant_file(tmp_path):
     fss = LocalStorageFileRepository(tmp_path)
 
-    with pytest.raises(FileRetrievalError):
+    with pytest.raises(FileNotFoundError):
         fss.open_file("nonexistant_file.txt")
+
+
+def test_open_locked_file(tmp_path, monkeypatch):
+    fss = LocalStorageFileRepository(tmp_path)
+
+    with patch(
+        "builtins.open", Mock(side_effect=OSError(errno.EIO, "File could not be retrieved"))
+    ):
+        with pytest.raises(FileRetrievalError):
+            fss.open_file("locked_file.txt")

@@ -1,3 +1,4 @@
+import errno
 import logging
 import shutil
 from pathlib import Path
@@ -44,11 +45,12 @@ class LocalStorageFileRepository(IFileRepository):
             logger.debug(f"Opening {safe_file_path}")
             return open(safe_file_path, "rb")
         except OSError as err:
-            # TODO: The interface should make a destinction between file not found and an error when
-            #       retrieving a file that should exist. The built-in `FileNotFoundError` is not
-            #       sufficient because it inherits from `OSError` and the interface does not
-            #       guarantee that the file is stored on the local file system.
-            raise FileRetrievalError(f"Failed to retrieve file {safe_file_path}: {err}") from err
+            if err.errno == errno.ENOENT:
+                raise FileNotFoundError(f"No file {safe_file_path} found: {err}") from err
+            else:
+                raise FileRetrievalError(
+                    f"Failed to retrieve file {safe_file_path}: {err}"
+                ) from err
 
     def delete_file(self, unsafe_file_name: str):
         safe_file_path = self._get_safe_file_path(unsafe_file_name)

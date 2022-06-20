@@ -30,7 +30,8 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be opened
         :return: A file-like object providing access to the file's contents
-        :raises FileRetrievalError: if the file cannot be opened
+        :raises FileRetrievalError: if the file cannot be retrieved
+        :raises FileNotFoundError: if the file cannot be found
         """
         pass
 
