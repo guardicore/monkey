@@ -166,7 +166,7 @@ class InfectionMonkey:
             firewall.add_firewall_rule()
 
         self._monkey_inbound_tunnel = self._control_client.create_control_tunnel()
-        if self._monkey_inbound_tunnel and self._propagation_enabled():
+        if self._monkey_inbound_tunnel:
             self._monkey_inbound_tunnel.start()
 
         StateTelem(is_done=False, version=get_version()).send()
@@ -353,7 +353,7 @@ class InfectionMonkey:
 
             reset_signal_handlers()
 
-            if self._monkey_inbound_tunnel and self._propagation_enabled():
+            if self._monkey_inbound_tunnel:
                 self._monkey_inbound_tunnel.stop()
                 self._monkey_inbound_tunnel.join()
 
@@ -377,12 +377,6 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
 
         logger.info("Monkey is shutting down")
-
-    def _propagation_enabled(self) -> bool:
-        # If self._current_depth is None, assume that propagation is desired.
-        # The Master will ignore this value if it is None and pull the actual
-        # maximum depth from the server
-        return self._current_depth is None or self._current_depth > 0
 
     def _close_tunnel(self):
         tunnel_address = (

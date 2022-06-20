@@ -169,10 +169,10 @@ class AutomatedMaster(IMaster):
         # still running.
         credential_collector_thread.join()
 
-        current_depth = self._current_depth if self._current_depth is not None else config["depth"]
+        current_depth = self._current_depth if self._current_depth is not None else 0
         logger.info(f"Current depth is {current_depth}")
 
-        if self._can_propagate() and current_depth > 0:
+        if self._can_propagate() and current_depth < config["depth"]:
             self._propagator.propagate(config["propagation"], current_depth, self._stop)
 
         payload_thread = create_daemon_thread(

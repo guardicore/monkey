@@ -40,8 +40,6 @@ def build_monkey_commandline_explicitly(
         cmdline.append("-s")
         cmdline.append(str(server))
     if depth is not None:
-        if int(depth) < 0:
-            depth = 0
         cmdline.append("-d")
         cmdline.append(str(depth))
     if location is not None:

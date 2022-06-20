@@ -60,7 +60,7 @@ class Configuration(object):
     ###########################
 
     # depth of propagation
-    depth = 2
+    depth = 0
     max_depth = None
 
     keep_tunnel_open_time = 30

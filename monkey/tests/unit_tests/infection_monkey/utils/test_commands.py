@@ -28,16 +28,6 @@ def test_build_monkey_commandline_explicitly_arguments():
     assert expected == actual
 
 
-def test_build_monkey_commandline_explicitly_depth_condition_less():
-    expected = [
-        "-d",
-        "0",
-    ]
-    actual = build_monkey_commandline_explicitly(depth=-50)
-
-    assert expected == actual
-
-
 def test_build_monkey_commandline_explicitly_depth_condition_greater():
     expected = [
         "-d",
