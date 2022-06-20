@@ -38,6 +38,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update MongoDB version to 4.4.x. #1924
 - Endpoint to get agent binaries from "/api/agent/download/<string:os>" to
   "/api/agent-binaries/<string:os>". #1978
+- Depth flag (-d) on the agent now acts the  way you would expect(it represents
+  the current depth of the agent, not hops remaining). #2033
 - Agent configuration structure. #1996, #1998, #1961, #1997, #1994, #1741,
   #1761, #1695, #1605, #2028
 
