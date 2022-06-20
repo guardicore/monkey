@@ -8,6 +8,7 @@ from typing import Any, Dict, List
 
 from jsonschema import Draft4Validator, validators
 
+from common import OperatingSystems
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
@@ -357,6 +358,7 @@ class ConfigService:
         ConfigService._format_payloads_from_flat_config(config)
         ConfigService._format_pbas_from_flat_config(config)
         ConfigService._format_propagation_from_flat_config(config)
+        ConfigService._format_credential_collectors(config)
 
         # Ok, I'll admit this is just sort of jammed in here. But this code is going away very soon.
         del config["HTTP_PORTS"]
@@ -377,8 +379,17 @@ class ConfigService:
             config.pop(field, None)
 
     @staticmethod
+    def _format_credential_collectors(config: Dict):
+        collectors = [
+            {"name": collector, "options": {}} for collector in config["credential_collectors"]
+        ]
+        config["credential_collectors"] = collectors
+
+    @staticmethod
     def _format_payloads_from_flat_config(config: Dict):
-        config.setdefault("payloads", {})["ransomware"] = config["ransomware"]
+        config.setdefault("payloads", []).append(
+            {"name": "ransomware", "options": config["ransomware"]}
+        )
         config.pop("ransomware", None)
 
     @staticmethod
@@ -388,9 +399,9 @@ class ConfigService:
         flat_windows_command_field = "custom_PBA_windows_cmd"
         flat_windows_filename_field = "PBA_windows_filename"
 
-        formatted_pbas_config = {}
-        for pba in config.get("post_breach_actions", []):
-            formatted_pbas_config[pba] = {}
+        formatted_pbas_config = [
+            {"name": pba, "options": {}} for pba in config.get("post_breach_actions", [])
+        ]
 
         config["custom_pbas"] = {
             "linux_command": config.get(flat_linux_command_field, ""),
@@ -408,24 +419,24 @@ class ConfigService:
 
     @staticmethod
     def _format_propagation_from_flat_config(config: Dict):
-        formatted_propagation_config = {"network_scan": {}, "targets": {}}
+        formatted_propagation_config = {"network_scan": {}, "maximum_depth": {}, "exploitation": {}}
 
         formatted_propagation_config[
             "network_scan"
         ] = ConfigService._format_network_scan_from_flat_config(config)
 
-        formatted_propagation_config["targets"] = ConfigService._format_targets_from_flat_config(
-            config
-        )
         formatted_propagation_config[
-            "exploiters"
+            "exploitation"
         ] = ConfigService._format_exploiters_from_flat_config(config)
+
+        formatted_propagation_config["maximum_depth"] = config["depth"]
+        del config["depth"]
 
         config["propagation"] = formatted_propagation_config
 
     @staticmethod
     def _format_network_scan_from_flat_config(config: Dict) -> Dict[str, Any]:
-        formatted_network_scan_config = {"tcp": {}, "icmp": {}, "fingerprinters": []}
+        formatted_network_scan_config = {"tcp": {}, "icmp": {}, "fingerprinters": [], "targets": {}}
 
         formatted_network_scan_config["tcp"] = ConfigService._format_tcp_scan_from_flat_config(
             config
@@ -437,6 +448,10 @@ class ConfigService:
             "fingerprinters"
         ] = ConfigService._format_fingerprinters_from_flat_config(config)
 
+        formatted_network_scan_config["targets"] = ConfigService._format_targets_from_flat_config(
+            config
+        )
+
         return formatted_network_scan_config
 
     @staticmethod
@@ -447,7 +462,7 @@ class ConfigService:
 
         formatted_tcp_scan_config = {}
 
-        formatted_tcp_scan_config["timeout_ms"] = config[flat_tcp_timeout_field]
+        formatted_tcp_scan_config["timeout"] = config[flat_tcp_timeout_field]
 
         ports = ConfigService._union_tcp_and_http_ports(
             config[flat_tcp_ports_field], config[flat_http_ports_field]
@@ -471,7 +486,7 @@ class ConfigService:
         flat_ping_timeout_field = "ping_scan_timeout"
 
         formatted_icmp_scan_config = {}
-        formatted_icmp_scan_config["timeout_ms"] = config[flat_ping_timeout_field]
+        formatted_icmp_scan_config["timeout"] = config[flat_ping_timeout_field]
 
         config.pop(flat_ping_timeout_field, None)
 
@@ -519,9 +534,7 @@ class ConfigService:
         formatted_scan_targets_config[flat_local_network_scan_field] = config[
             flat_local_network_scan_field
         ]
-        formatted_scan_targets_config[flat_subnet_scan_list_field] = config[
-            flat_subnet_scan_list_field
-        ]
+        formatted_scan_targets_config["subnets"] = config[flat_subnet_scan_list_field]
 
         config.pop(flat_blocked_ips_field, None)
         config.pop(flat_inaccessible_subnets_field, None)
@@ -586,14 +599,14 @@ class ConfigService:
         formatted_config: Dict,
     ) -> Dict[str, List[Dict[str, Any]]]:
         supported_os = {
-            "HadoopExploiter": ["linux", "windows"],
-            "Log4ShellExploiter": ["linux", "windows"],
-            "MSSQLExploiter": ["windows"],
-            "PowerShellExploiter": ["windows"],
-            "SSHExploiter": ["linux"],
-            "SmbExploiter": ["windows"],
-            "WmiExploiter": ["windows"],
-            "ZerologonExploiter": ["windows"],
+            "HadoopExploiter": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
+            "Log4ShellExploiter": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
+            "MSSQLExploiter": [OperatingSystems.WINDOWS],
+            "PowerShellExploiter": [OperatingSystems.WINDOWS],
+            "SSHExploiter": [OperatingSystems.LINUX],
+            "SmbExploiter": [OperatingSystems.WINDOWS],
+            "WmiExploiter": [OperatingSystems.WINDOWS],
+            "ZerologonExploiter": [OperatingSystems.WINDOWS],
         }
         new_config = copy.deepcopy(formatted_config)
         for exploiter in chain(new_config["brute_force"], new_config["vulnerability"]):

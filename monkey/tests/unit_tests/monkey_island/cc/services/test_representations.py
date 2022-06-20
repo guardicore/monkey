@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from unittest import TestCase
 
 import bson
@@ -44,3 +45,11 @@ class TestRepresentations(TestCase):
                 }
             ),
         )
+
+    def test_normalize__enum(self):
+        class BogusEnum(Enum):
+            bogus_val = "Bogus"
+
+        my_obj = {"something": "something", "my_enum": BogusEnum.bogus_val}
+
+        assert {"something": "something", "my_enum": "bogus_val"} == normalize_obj(my_obj)
