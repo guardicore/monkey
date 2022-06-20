@@ -24,6 +24,10 @@ class AgentConfiguration:
     payloads: List[PluginConfiguration]
     propagation: PropagationConfiguration
 
+    @staticmethod
+    def from_dict(_dict: dict):
+        return AgentConfigurationSchema().load(_dict)
+
 
 class AgentConfigurationSchema(Schema):
     keep_tunnel_open_time = fields.Float()
