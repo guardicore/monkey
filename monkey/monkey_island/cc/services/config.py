@@ -418,14 +418,14 @@ class ConfigService:
 
     @staticmethod
     def _format_propagation_from_flat_config(config: Dict):
-        formatted_propagation_config = {"network_scan": {}, "maximum_depth": {}, "exploiters": {}}
+        formatted_propagation_config = {"network_scan": {}, "maximum_depth": {}, "exploitation": {}}
 
         formatted_propagation_config[
             "network_scan"
         ] = ConfigService._format_network_scan_from_flat_config(config)
 
         formatted_propagation_config[
-            "exploiters"
+            "exploitation"
         ] = ConfigService._format_exploiters_from_flat_config(config)
 
         formatted_propagation_config["maximum_depth"] = config["depth"]
