@@ -3,19 +3,17 @@ from dataclasses import dataclass
 from itertools import chain
 from typing import Mapping
 
+import marshmallow
 from flask import jsonify, request
 
 from common.configuration.agent_configuration import AgentConfigurationSchema
-from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 
 
 class ImportStatuses:
-    UNSAFE_OPTION_VERIFICATION_REQUIRED = "unsafe_options_verification_required"
     INVALID_CONFIGURATION = "invalid_configuration"
-    INVALID_CREDENTIALS = "invalid_credentials"
     IMPORTED = "imported"
 
 
@@ -51,11 +49,9 @@ class AgentConfiguration(AbstractResource):
         try:
             schema = AgentConfigurationSchema()
             configuration_object = schema.loads(configuration_json)
-            self._agent_configuration_repository.store_configuration(
-                configuration_object
-            )  # check error handling
+            self._agent_configuration_repository.store_configuration(configuration_object)
             return ResponseContents().form_response()
-        except InvalidConfigurationError:  # don't need this probably either; if invalid, schema should raise error (catch marshmallow exception and return 400)
+        except marshmallow.exceptions.ValidationError:
             return ResponseContents(
                 import_status=ImportStatuses.INVALID_CONFIGURATION,
                 message="Invalid configuration supplied. "
