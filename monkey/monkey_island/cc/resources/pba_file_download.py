@@ -26,7 +26,6 @@ class PBAFileDownload(AbstractResource):
             # `send_file()` handles the closing of the open file.
             return send_file(file, mimetype="application/octet-stream")
         except repository.FileNotFoundError as err:
-            # TODO: Do we need to log? Or will flask handle it when we `make_response()`?
             logger.error(str(err))
             return make_response({"error": str(err)}, 404)
 
