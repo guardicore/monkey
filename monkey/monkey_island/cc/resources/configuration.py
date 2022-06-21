@@ -8,7 +8,7 @@ from flask import jsonify, request
 
 from common.configuration.agent_configuration import AgentConfigurationSchema
 from common.utils.exceptions import InvalidConfigurationError
-from monkey_island.cc.repository import FileAgentConfigurationRepository
+from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 
@@ -40,6 +40,9 @@ class ResponseContents:
 class Configuration(AbstractResource):
     urls = ["/api/configuration/<string:configuration_type>"]
 
+    def __init__(self, file_agent_configuration_repository: IAgentConfigurationRepository):
+        self._file_agent_configuration_repository = file_agent_configuration_repository
+
     @jwt_required
     def get(self, configuration_type: str):
         # Q: we probably still need this because of credential fields, HTTP ports, etc in the
@@ -47,7 +50,7 @@ class Configuration(AbstractResource):
         if configuration_type == ConfigurationTypeEnum.ISLAND:
             pass
         elif configuration_type == ConfigurationTypeEnum.AGENT:
-            configuration = FileAgentConfigurationRepository.get_configuration()
+            configuration = self._file_agent_configuration_repository.get_configuration()
             return jsonify(configuration=configuration)
 
     @jwt_required
@@ -63,7 +66,7 @@ class Configuration(AbstractResource):
                 # Q: in what format/schema are we getting the config from the Island?
                 # Q: when does flattening the config go away?
                 configuration_object = schema.loads(configuration_json)
-                FileAgentConfigurationRepository.store_configuration(
+                self._file_agent_configuration_repository.store_configuration(
                     configuration_object
                 )  # check error handling
                 return ResponseContents().form_response()
