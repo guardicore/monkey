@@ -3,6 +3,8 @@ from queue import Queue
 from threading import Event
 from typing import Dict, List
 
+from common.configuration import PropagationConfiguration,\
+    NetworkScanConfiguration, ScanTargetConfiguration
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
@@ -39,14 +41,18 @@ class Propagator:
         self._local_network_interfaces = local_network_interfaces
         self._hosts_to_exploit = None
 
-    def propagate(self, propagation_config: Dict, current_depth: int, stop: Event):
+    def propagate(
+        self, propagation_config: PropagationConfiguration, current_depth: int, stop: Event
+    ):
         logger.info("Attempting to propagate")
 
         network_scan_completed = Event()
         self._hosts_to_exploit = Queue()
 
         scan_thread = create_daemon_thread(
-            target=self._scan_network, name="PropagatorScanThread", args=(propagation_config, stop)
+            target=self._scan_network,
+            name="PropagatorScanThread",
+            args=(propagation_config.network_scan, stop),
         )
         exploit_thread = create_daemon_thread(
             target=self._exploit_hosts,
@@ -64,22 +70,21 @@ class Propagator:
 
         logger.info("Finished attempting to propagate")
 
-    def _scan_network(self, propagation_config: Dict, stop: Event):
+    def _scan_network(self, scan_config: NetworkScanConfiguration, stop: Event):
         logger.info("Starting network scan")
 
-        target_config = propagation_config["targets"]
-        scan_config = propagation_config["network_scan"]
-
-        addresses_to_scan = self._compile_scan_target_list(target_config)
+        addresses_to_scan = self._compile_scan_target_list(scan_config.targets)
         self._ip_scanner.scan(addresses_to_scan, scan_config, self._process_scan_results, stop)
 
         logger.info("Finished network scan")
 
-    def _compile_scan_target_list(self, target_config: Dict) -> List[NetworkAddress]:
-        ranges_to_scan = target_config["subnet_scan_list"]
-        inaccessible_subnets = target_config["inaccessible_subnets"]
-        blocklisted_ips = target_config["blocked_ips"]
-        enable_local_network_scan = target_config["local_network_scan"]
+    def _compile_scan_target_list(
+        self, target_config: ScanTargetConfiguration
+    ) -> List[NetworkAddress]:
+        ranges_to_scan = target_config.subnets
+        inaccessible_subnets = target_config.inaccessible_subnets
+        blocklisted_ips = target_config.blocked_ips
+        enable_local_network_scan = target_config.local_network_scan
 
         return compile_scan_target_list(
             self._local_network_interfaces,

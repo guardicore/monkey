@@ -174,7 +174,7 @@ class AutomatedMaster(IMaster):
         logger.info(f"Current depth is {current_depth}")
 
         if should_propagate(self._control_channel.get_config(), self._current_depth):
-            self._propagator.propagate(config["propagation"], current_depth, self._stop)
+            self._propagator.propagate(config.propagation, current_depth, self._stop)
         else:
             logger.info("Skipping propagation: maximum depth reached")
 

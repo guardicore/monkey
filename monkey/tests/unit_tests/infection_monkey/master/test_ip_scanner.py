@@ -5,6 +5,12 @@ from unittest.mock import MagicMock
 import pytest
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 
+from common.configuration.agent_sub_configurations import (
+    ICMPScanConfiguration,
+    NetworkScanConfiguration,
+    PluginConfiguration,
+    TCPScanConfiguration,
+)
 from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
@@ -14,28 +20,31 @@ LINUX_OS = "linux"
 
 
 @pytest.fixture
-def scan_config():
-    return {
-        "tcp": {
-            "timeout_ms": 3000,
-            "ports": [
-                22,
-                445,
-                3389,
-                443,
-                8008,
-                3306,
-            ],
-        },
-        "icmp": {
-            "timeout_ms": 1000,
-        },
-        "fingerprinters": [
-            {"name": "HTTPFinger", "options": {}},
-            {"name": "SMBFinger", "options": {}},
-            {"name": "SSHFinger", "options": {}},
+def scan_config(default_agent_config):
+    tcp_config = TCPScanConfiguration(
+        timeout=3,
+        ports=[
+            22,
+            445,
+            3389,
+            443,
+            8008,
+            3306,
         ],
-    }
+    )
+    icmp_config = ICMPScanConfiguration(timeout=1)
+    fingerprinter_config = [
+        PluginConfiguration(name="HTTPFinger", options={}),
+        PluginConfiguration(name="SMBFinger", options={}),
+        PluginConfiguration(name="SSHFinger", options={}),
+    ]
+    scan_config = NetworkScanConfiguration(
+        tcp_config,
+        icmp_config,
+        fingerprinter_config,
+        default_agent_config.propagation.network_scan.targets,
+    )
+    return scan_config
 
 
 @pytest.fixture

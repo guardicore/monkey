@@ -3,8 +3,13 @@ import queue
 import threading
 from queue import Queue
 from threading import Event
-from typing import Any, Callable, Dict, List
+from typing import Callable, Dict, List
 
+from common.configuration.agent_sub_configurations import (
+    NetworkScanConfiguration,
+    PluginConfiguration,
+    ScanTargetConfiguration,
+)
 from infection_monkey.i_puppet import (
     FingerprintData,
     IPuppet,
@@ -30,7 +35,7 @@ class IPScanner:
     def scan(
         self,
         addresses_to_scan: List[NetworkAddress],
-        options: Dict,
+        options: ScanTargetConfiguration,
         results_callback: Callback,
         stop: Event,
     ):
@@ -49,12 +54,16 @@ class IPScanner:
         )
 
     def _scan_addresses(
-        self, addresses: Queue, options: Dict, results_callback: Callback, stop: Event
+        self,
+        addresses: Queue,
+        options: NetworkScanConfiguration,
+        results_callback: Callback,
+        stop: Event,
     ):
-        logger.debug(f"Starting scan thread -- Thread ID: {threading.get_ident()}")
-        icmp_timeout = options["icmp"]["timeout_ms"] / 1000
-        tcp_timeout = options["tcp"]["timeout_ms"] / 1000
-        tcp_ports = options["tcp"]["ports"]
+        logger.debug(f"Starting scan .read -- Thread ID: {threading.get_ident()}")
+        icmp_timeout = options.icmp.timeout
+        tcp_timeout = options.tcp.timeout
+        tcp_ports = options.tcp.ports
 
         try:
             while not stop.is_set():
@@ -66,7 +75,7 @@ class IPScanner:
 
                 fingerprint_data = {}
                 if IPScanner.port_scan_found_open_port(port_scan_data):
-                    fingerprinters = options["fingerprinters"]
+                    fingerprinters = options.fingerprinters
                     fingerprint_data = self._run_fingerprinters(
                         address.ip, fingerprinters, ping_scan_data, port_scan_data, stop
                     )
@@ -90,7 +99,7 @@ class IPScanner:
     def _run_fingerprinters(
         self,
         ip: str,
-        fingerprinters: List[Dict[str, Any]],
+        fingerprinters: List[PluginConfiguration],
         ping_scan_data: PingScanData,
         port_scan_data: Dict[int, PortScanData],
         stop: Event,
@@ -98,8 +107,8 @@ class IPScanner:
         fingerprint_data = {}
 
         for f in interruptible_iter(fingerprinters, stop):
-            fingerprint_data[f["name"]] = self._puppet.fingerprint(
-                f["name"], ip, ping_scan_data, port_scan_data, f["options"]
+            fingerprint_data[f.name] = self._puppet.fingerprint(
+                f.name, ip, ping_scan_data, port_scan_data, f.options
             )
 
         return fingerprint_data
