@@ -1,6 +1,5 @@
 import json
 from dataclasses import dataclass
-from enum import Enum
 from itertools import chain
 from typing import Mapping
 
@@ -11,11 +10,6 @@ from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-
-
-class ConfigurationTypeEnum(Enum):
-    ISLAND = "island"
-    AGENT = "agent"
 
 
 class ImportStatuses:
@@ -38,23 +32,18 @@ class ResponseContents:
 
 
 class Configuration(AbstractResource):
-    urls = ["/api/configuration/<string:configuration_type>"]
+    urls = ["/api/configuration"]
 
     def __init__(self, file_agent_configuration_repository: IAgentConfigurationRepository):
         self._file_agent_configuration_repository = file_agent_configuration_repository
 
     @jwt_required
-    def get(self, configuration_type: str):
-        # Q: we probably still need this because of credential fields, HTTP ports, etc in the
-        #    config?
-        if configuration_type == ConfigurationTypeEnum.ISLAND:
-            pass
-        elif configuration_type == ConfigurationTypeEnum.AGENT:
-            configuration = self._file_agent_configuration_repository.get_configuration()
-            return jsonify(configuration=configuration)
+    def get(self):
+        configuration = self._file_agent_configuration_repository.get_configuration()
+        return jsonify(configuration=configuration)
 
     @jwt_required
-    def post(self, configuration_type: str):
+    def post(self):
         request_contents = json.loads(request.data)
         configuration_json = json.loads(request_contents["config"])
         Configuration._remove_metadata_from_config(configuration_json)
