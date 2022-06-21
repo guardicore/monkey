@@ -20,7 +20,6 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that will identify the file
         :param file_contents: The data to be stored in the file
-        :raises ValueError: If the file name is an attempted directory traversal
         :raises StorageError: If an error was encountered while attempting to store the file
         """
         pass
@@ -34,7 +33,6 @@ class IFileRepository(metaclass=abc.ABCMeta):
         :return: A file-like object providing access to the file's contents
         :raises FileNotFoundError: if the file does not exist
         :raises RetrievalError: if the file exists but cannot be retrieved
-        :raises ValueError: If the file name is an attempted directory traversal
         """
         pass
 
@@ -47,7 +45,6 @@ class IFileRepository(metaclass=abc.ABCMeta):
         idempotent and will succeed if the file to be deleted does not exist.
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be deleted
-        :raises ValueError: If the file name is an attempted directory traversal
         :raises RemovalError: If an error was encountered while attempting to remove a file
         """
         pass

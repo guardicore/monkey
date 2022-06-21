@@ -32,19 +32,19 @@ class LocalStorageFileRepository(IFileRepository):
         self._storage_directory = storage_directory
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
-        safe_file_path = self._get_safe_file_path(unsafe_file_name)
-
-        logger.debug(f"Saving file contents to {safe_file_path}")
         try:
+            safe_file_path = self._get_safe_file_path(unsafe_file_name)
+
+            logger.debug(f"Saving file contents to {safe_file_path}")
             with open(safe_file_path, "wb") as dest:
                 shutil.copyfileobj(file_contents, dest)
         except Exception as err:
             raise StorageError(f"Error while attempting to store {unsafe_file_name}: {err}")
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        safe_file_path = self._get_safe_file_path(unsafe_file_name)
-
         try:
+            safe_file_path = self._get_safe_file_path(unsafe_file_name)
+
             logger.debug(f"Opening {safe_file_path}")
             return open(safe_file_path, "rb")
         except FileNotFoundError as err:
@@ -58,9 +58,9 @@ class LocalStorageFileRepository(IFileRepository):
             )
 
     def delete_file(self, unsafe_file_name: str):
-        safe_file_path = self._get_safe_file_path(unsafe_file_name)
-
         try:
+            safe_file_path = self._get_safe_file_path(unsafe_file_name)
+
             logger.debug(f"Deleting {safe_file_path}")
             safe_file_path.unlink()
         except FileNotFoundError:
