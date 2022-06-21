@@ -141,7 +141,7 @@ class AutomatedMaster(IMaster):
         try:
             config = AutomatedMaster._try_communicate_with_island(
                 self._control_channel.get_config, CHECK_FOR_CONFIG_COUNT
-            )["config"]
+            )
         except IslandCommunicationError as e:
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
