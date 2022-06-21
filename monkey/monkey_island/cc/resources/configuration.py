@@ -22,8 +22,6 @@ class ResponseContents:
     import_status: str = ImportStatuses.IMPORTED
     message: str = ""
     status_code: int = 200
-    config: str = ""
-    config_schema: str = ""
 
     def form_response(self):
         return self.__dict__
