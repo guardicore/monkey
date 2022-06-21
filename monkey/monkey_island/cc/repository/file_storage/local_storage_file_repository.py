@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import BinaryIO
 
 from common.utils.file_utils import get_all_regular_files_in_directory
-from monkey_island.cc.repository import RetrievalError
+from monkey_island.cc.repository import RemovalError, RetrievalError, StorageError
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
 from . import IFileRepository, i_file_repository
@@ -32,16 +32,19 @@ class LocalStorageFileRepository(IFileRepository):
         self._storage_directory = storage_directory
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
-        safe_file_path = self._get_safe_file_path(unsafe_file_name)
+        try:
+            safe_file_path = self._get_safe_file_path(unsafe_file_name)
 
-        logger.debug(f"Saving file contents to {safe_file_path}")
-        with open(safe_file_path, "wb") as dest:
-            shutil.copyfileobj(file_contents, dest)
+            logger.debug(f"Saving file contents to {safe_file_path}")
+            with open(safe_file_path, "wb") as dest:
+                shutil.copyfileobj(file_contents, dest)
+        except Exception as err:
+            raise StorageError(f"Error while attempting to store {unsafe_file_name}: {err}")
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        safe_file_path = self._get_safe_file_path(unsafe_file_name)
-
         try:
+            safe_file_path = self._get_safe_file_path(unsafe_file_name)
+
             logger.debug(f"Opening {safe_file_path}")
             return open(safe_file_path, "rb")
         except FileNotFoundError as err:
@@ -55,14 +58,16 @@ class LocalStorageFileRepository(IFileRepository):
             )
 
     def delete_file(self, unsafe_file_name: str):
-        safe_file_path = self._get_safe_file_path(unsafe_file_name)
-
         try:
+            safe_file_path = self._get_safe_file_path(unsafe_file_name)
+
             logger.debug(f"Deleting {safe_file_path}")
             safe_file_path.unlink()
         except FileNotFoundError:
             # This method is idempotent.
             pass
+        except Exception as err:
+            raise RemovalError(f"Error while attempting to remove {unsafe_file_name}: {err}")
 
     def _get_safe_file_path(self, unsafe_file_name: str):
         # Remove any path information from the file name.
@@ -71,12 +76,17 @@ class LocalStorageFileRepository(IFileRepository):
 
         # This is a paranoid check to avoid directory traversal attacks.
         if self._storage_directory.resolve() not in safe_file_path.parents:
-            raise ValueError(f"The file named {unsafe_file_name} can not be safely retrieved")
+            raise ValueError(
+                f'The file named "{unsafe_file_name}" cannot be safely retrieved or written'
+            )
 
         logger.debug(f"Untrusted file name {unsafe_file_name} sanitized: {safe_file_path}")
         return safe_file_path
 
     def delete_all_files(self):
-        for file in get_all_regular_files_in_directory(self._storage_directory):
-            logger.debug(f"Deleting {file}")
-            file.unlink()
+        try:
+            for file in get_all_regular_files_in_directory(self._storage_directory):
+                logger.debug(f"Deleting {file}")
+                file.unlink()
+        except Exception as err:
+            raise RemovalError(f"Error while attempting to clear the repository: {err}")

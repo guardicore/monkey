@@ -20,6 +20,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that will identify the file
         :param file_contents: The data to be stored in the file
+        :raises StorageError: If an error was encountered while attempting to store the file
         """
         pass
 
@@ -44,6 +45,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
         idempotent and will succeed if the file to be deleted does not exist.
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be deleted
+        :raises RemovalError: If an error was encountered while attempting to remove a file
         """
         pass
 
@@ -51,5 +53,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
     def delete_all_files(self):
         """
         Delete all files that have been stored using this service.
+
+        :raises RemovalError: If an error was encountered while attempting to remove a file
         """
         pass
