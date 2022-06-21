@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 from shutil import copyfileobj
 
-from monkey_island.cc.repository import AgentRetrievalError, IAgentBinaryRepository
+from monkey_island.cc.repository import IAgentBinaryRepository, RetrievalError
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
@@ -29,7 +29,7 @@ class LocalMonkeyRunService:
             }
 
             agent_binary = agents[platform.system().lower()]()
-        except AgentRetrievalError as err:
+        except RetrievalError as err:
             logger.error(
                 f"No Agent can be retrieved for the specified operating system"
                 f'"{operating_system}"'
