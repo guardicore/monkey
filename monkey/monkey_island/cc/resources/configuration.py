@@ -49,24 +49,13 @@ class AgentConfiguration(AbstractResource):
         AgentConfiguration._remove_metadata_from_config(configuration_json)
 
         try:
-            # Q: encryption is moving to the frontend; also check this in the frontend?
-            if request_contents["unsafeOptionsVerified"]:
-                schema = AgentConfigurationSchema()
-                # Q: in what format/schema are we getting the config from the Island?
-                # Q: when does flattening the config go away?
-                configuration_object = schema.loads(configuration_json)
-                self._agent_configuration_repository.store_configuration(
-                    configuration_object
-                )  # check error handling
-                return ResponseContents().form_response()
-            else:
-                return ResponseContents(
-                    config=json.dumps(configuration_json),
-                    # Q: do we still need a separate config schema like this?
-                    # config_schema=ConfigService.get_config_schema(),
-                    import_status=ImportStatuses.UNSAFE_OPTION_VERIFICATION_REQUIRED,
-                ).form_response()
-        except InvalidConfigurationError:
+            schema = AgentConfigurationSchema()
+            configuration_object = schema.loads(configuration_json)
+            self._agent_configuration_repository.store_configuration(
+                configuration_object
+            )  # check error handling
+            return ResponseContents().form_response()
+        except InvalidConfigurationError:  # don't need this probably either; if invalid, schema should raise error (catch marshmallow exception and return 400)
             return ResponseContents(
                 import_status=ImportStatuses.INVALID_CONFIGURATION,
                 message="Invalid configuration supplied. "
