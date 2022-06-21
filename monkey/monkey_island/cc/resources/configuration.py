@@ -34,12 +34,12 @@ class ResponseContents:
 class Configuration(AbstractResource):
     urls = ["/api/configuration"]
 
-    def __init__(self, file_agent_configuration_repository: IAgentConfigurationRepository):
-        self._file_agent_configuration_repository = file_agent_configuration_repository
+    def __init__(self, agent_configuration_repository: IAgentConfigurationRepository):
+        self._agent_configuration_repository = agent_configuration_repository
 
     @jwt_required
     def get(self):
-        configuration = self._file_agent_configuration_repository.get_configuration()
+        configuration = self._agent_configuration_repository.get_configuration()
         return jsonify(configuration=configuration)
 
     @jwt_required
@@ -55,7 +55,7 @@ class Configuration(AbstractResource):
                 # Q: in what format/schema are we getting the config from the Island?
                 # Q: when does flattening the config go away?
                 configuration_object = schema.loads(configuration_json)
-                self._file_agent_configuration_repository.store_configuration(
+                self._agent_configuration_repository.store_configuration(
                     configuration_object
                 )  # check error handling
                 return ResponseContents().form_response()
