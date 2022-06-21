@@ -32,6 +32,7 @@ class AgentConfiguration(AbstractResource):
 
     def __init__(self, agent_configuration_repository: IAgentConfigurationRepository):
         self._agent_configuration_repository = agent_configuration_repository
+        self._schema = AgentConfigurationSchema()
 
     @jwt_required
     def get(self):
@@ -45,8 +46,7 @@ class AgentConfiguration(AbstractResource):
         AgentConfiguration._remove_metadata_from_config(configuration_json)
 
         try:
-            schema = AgentConfigurationSchema()
-            configuration_object = schema.loads(configuration_json)
+            configuration_object = self._schema.loads(configuration_json)
             self._agent_configuration_repository.store_configuration(configuration_object)
             return ResponseContents().form_response()
         except marshmallow.exceptions.ValidationError:
