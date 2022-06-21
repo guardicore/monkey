@@ -1,10 +1,8 @@
-from typing import BinaryIO
-
 import pytest
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from monkey_island.cc.repository import IFileRepository, RetrievalError
+from monkey_island.cc.repository import IFileRepository
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 
 from .mock_file_repository import FILE_CONTENTS, FILE_NAME, MockFileRepository
@@ -34,20 +32,6 @@ def test_file_download_endpoint_404(tmp_path, flask_client):
     resp = flask_client.get(download_url)
 
     assert resp.status_code == 404
-
-
-class OpenErrorFileRepository(MockFileRepository):
-    def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        raise RetrievalError("Error retrieving file")
-
-
-@pytest.fixture
-def open_error_flask_client(build_flask_client):
-    container = StubDIContainer()
-    container.register(IFileRepository, OpenErrorFileRepository)
-
-    with build_flask_client(container) as flask_client:
-        yield flask_client
 
 
 def test_file_download_endpoint_500(tmp_path, open_error_flask_client):
