@@ -1,11 +1,10 @@
 import pytest
 from tests.common import StubDIContainer
+from tests.monkey_island import FILE_CONTENTS, FILE_NAME, MockFileRepository
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from monkey_island.cc.repository import IFileRepository
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
-
-from .mock_file_repository import FILE_CONTENTS, FILE_NAME, MockFileRepository
 
 
 @pytest.fixture

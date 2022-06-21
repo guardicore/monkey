@@ -1,17 +1,15 @@
-from typing import BinaryIO
 from unittest.mock import MagicMock
 
 import flask_jwt_extended
 import pytest
 from tests.common import StubDIContainer
+from tests.monkey_island import OpenErrorFileRepository
 from tests.unit_tests.monkey_island.conftest import init_mock_app
 
 import monkey_island.cc.app
 import monkey_island.cc.resources.auth.auth
 import monkey_island.cc.resources.island_mode
-from monkey_island.cc.repository import IFileRepository, RetrievalError
-
-from .mock_file_repository import MockFileRepository
+from monkey_island.cc.repository import IFileRepository
 
 
 @pytest.fixture
@@ -43,11 +41,6 @@ def get_mock_app(container):
     flask_jwt_extended.JWTManager(app)
 
     return app
-
-
-class OpenErrorFileRepository(MockFileRepository):
-    def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        raise RetrievalError("Error retrieving file")
 
 
 @pytest.fixture
