@@ -69,7 +69,3 @@ class AgentConfiguration(AbstractResource):
             configuration_json["propagation"]["exploitation"]["vulnerability"],
         ):
             del exploiter["supported_os"]
-
-    @jwt_required
-    def patch(self):  # Q: reset the configuration here? or does that make more sense in delete?
-        pass
