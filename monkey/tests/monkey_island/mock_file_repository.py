@@ -4,21 +4,25 @@ from typing import BinaryIO
 from monkey_island.cc import repository
 from monkey_island.cc.repository import IFileRepository
 
+FILE_NAME = "test_file"
+FILE_CONTENTS = b"HelloWorld!"
 
-class SingleFileRepository(IFileRepository):
+
+class MockFileRepository(IFileRepository):
     def __init__(self):
-        self._file = None
+        self._file = io.BytesIO(FILE_CONTENTS)
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
-        self._file = io.BytesIO(file_contents.read())
+        pass
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        if self._file is None:
+        if unsafe_file_name != FILE_NAME:
             raise repository.FileNotFoundError()
+
         return self._file
 
     def delete_file(self, unsafe_file_name: str):
-        self._file = None
+        pass
 
     def delete_all_files(self):
-        self.delete_file("")
+        pass

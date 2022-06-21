@@ -5,7 +5,8 @@ from flask import Response, make_response, request, send_file
 from werkzeug.utils import secure_filename as sanitize_filename
 
 from common.config_value_paths import PBA_LINUX_FILENAME_PATH, PBA_WINDOWS_FILENAME_PATH
-from monkey_island.cc.repository import FileRetrievalError, IFileRepository
+from monkey_island.cc import repository
+from monkey_island.cc.repository import IFileRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.config import ConfigService
@@ -57,10 +58,9 @@ class FileUpload(AbstractResource):
 
             # `send_file()` handles the closing of the open file.
             return send_file(file, mimetype="application/octet-stream")
-        except FileRetrievalError as err:
-            error_msg = f"Failed to open file {filename}: {err}"
-            logger.error(error_msg)
-            return make_response({"error": error_msg}, 404)
+        except repository.FileNotFoundError as err:
+            logger.error(str(err))
+            return make_response({"error": str(err)}, 404)
 
     @jwt_required
     def post(self, target_os):

@@ -4,7 +4,7 @@ from typing import BinaryIO
 from monkey_island.cc.repository import RetrievalError
 
 
-class FileRetrievalError(RetrievalError):
+class FileNotFoundError(RetrievalError):
     pass
 
 
@@ -30,7 +30,8 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be opened
         :return: A file-like object providing access to the file's contents
-        :raises FileRetrievalError: if the file cannot be opened
+        :raises FileNotFoundError: if the file does not exist
+        :raises RetrievalError: if the file exists but cannot be retrieved
         """
         pass
 

@@ -6,12 +6,12 @@ from common.aws import AWSInstance
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
-    AgentRetrievalError,
     FileAgentConfigurationRepository,
     IAgentBinaryRepository,
     IAgentConfigurationRepository,
     IFileRepository,
     LocalStorageFileRepository,
+    RetrievalError,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import AWSService
@@ -76,7 +76,7 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
             agent_binary = get_agent_binary()
             binary_sha256_hash = get_binary_io_sha256_hash(agent_binary)
             agent_hashes[os] = binary_sha256_hash
-        except AgentRetrievalError as err:
+        except RetrievalError as err:
             logger.error(f"No agent available for {os}: {err}")
 
     for os, binary_sha256_hash in agent_hashes.items():

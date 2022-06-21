@@ -2,7 +2,7 @@ import logging
 
 from flask import make_response, send_file
 
-from monkey_island.cc.repository import AgentRetrievalError, IAgentBinaryRepository
+from monkey_island.cc.repository import IAgentBinaryRepository, RetrievalError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
@@ -31,10 +31,10 @@ class AgentBinaries(AbstractResource):
             file = agent_binaries[os]()
 
             return send_file(file, mimetype="application/octet-stream")
-        except AgentRetrievalError as err:
-            logger.error(err)
-            return make_response({"error": str(err)}, 500)
         except KeyError as err:
             error_msg = f'No Agents are available for unsupported operating system "{os}": {err}'
             logger.error(error_msg)
             return make_response({"error": error_msg}, 404)
+        except RetrievalError as err:
+            logger.error(err)
+            return make_response({"error": str(err)}, 500)

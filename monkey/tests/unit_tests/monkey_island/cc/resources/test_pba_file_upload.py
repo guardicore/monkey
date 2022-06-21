@@ -99,6 +99,15 @@ def test_pba_file_upload_get__file_not_found(flask_client, pba_os, mock_get_conf
 
 
 @pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
+def test_file_download_endpoint_500(open_error_flask_client, pba_os):
+    url = get_url_for_resource(FileUpload, target_os=pba_os, filename="bobug_mogus.py")
+
+    resp = open_error_flask_client.get(url)
+
+    assert resp.status_code == 500
+
+
+@pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
 def test_pba_file_upload_endpoint(
     flask_client, pba_os, mock_get_config_value, mock_set_config_value
 ):
