@@ -28,5 +28,3 @@ class PBAFileDownload(AbstractResource):
         except repository.FileNotFoundError as err:
             logger.error(str(err))
             return make_response({"error": str(err)}, 404)
-
-        # TODO: Add unit tests that test 404 vs 500 errors

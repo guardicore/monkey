@@ -62,8 +62,6 @@ class FileUpload(AbstractResource):
             logger.error(str(err))
             return make_response({"error": str(err)}, 404)
 
-        # TODO: Add unit tests that test 404 vs 500 errors
-
     @jwt_required
     def post(self, target_os):
         """
