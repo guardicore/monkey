@@ -76,7 +76,9 @@ class LocalStorageFileRepository(IFileRepository):
 
         # This is a paranoid check to avoid directory traversal attacks.
         if self._storage_directory.resolve() not in safe_file_path.parents:
-            raise ValueError(f"The file named {unsafe_file_name} can not be safely retrieved")
+            raise ValueError(
+                f'The file named "{unsafe_file_name}" cannot be safely retrieved or written'
+            )
 
         logger.debug(f"Untrusted file name {unsafe_file_name} sanitized: {safe_file_path}")
         return safe_file_path
