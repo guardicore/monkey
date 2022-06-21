@@ -21,6 +21,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
         :param unsafe_file_name: An unsanitized file name that will identify the file
         :param file_contents: The data to be stored in the file
         :raises ValueError: If the file name is an attempted directory traversal
+        :raises StorageError: If an error was encountered while attempting to store the file
         """
         pass
 

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import BinaryIO
 
 from common.utils.file_utils import get_all_regular_files_in_directory
-from monkey_island.cc.repository import RetrievalError
+from monkey_island.cc.repository import RetrievalError, StorageError
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
 from . import IFileRepository, i_file_repository
@@ -35,8 +35,11 @@ class LocalStorageFileRepository(IFileRepository):
         safe_file_path = self._get_safe_file_path(unsafe_file_name)
 
         logger.debug(f"Saving file contents to {safe_file_path}")
-        with open(safe_file_path, "wb") as dest:
-            shutil.copyfileobj(file_contents, dest)
+        try:
+            with open(safe_file_path, "wb") as dest:
+                shutil.copyfileobj(file_contents, dest)
+        except Exception as err:
+            raise StorageError(f"Error while attempting to store {unsafe_file_name}: {err}")
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         safe_file_path = self._get_safe_file_path(unsafe_file_name)
