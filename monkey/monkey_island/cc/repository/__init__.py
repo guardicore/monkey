@@ -1,4 +1,4 @@
-from .errors import RetrievalError, StorageError
+from .errors import RemovalError, RetrievalError, StorageError
 from .file_storage import FileNotFoundError, IFileRepository, LocalStorageFileRepository
 from .i_agent_binary_repository import IAgentBinaryRepository
 from .agent_binary_repository import AgentBinaryRepository
