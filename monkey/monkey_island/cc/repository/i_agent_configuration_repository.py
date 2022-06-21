@@ -15,7 +15,7 @@ class IAgentConfigurationRepository(ABC):
 
         :return: The agent configuration as retrieved from the repository, or the default
                  configuration if the repository is empty
-        :raises RetrievalError: if the configuration can not be retrieved
+        :raises RetrievalError: if the configuration could not be retrieved
         """
         pass
 
