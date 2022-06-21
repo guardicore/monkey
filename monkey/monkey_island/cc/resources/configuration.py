@@ -31,8 +31,8 @@ class ResponseContents:
         return self.__dict__
 
 
-class Configuration(AbstractResource):
-    urls = ["/api/configuration"]
+class AgentConfiguration(AbstractResource):
+    urls = ["/api/agent-configuration"]
 
     def __init__(self, agent_configuration_repository: IAgentConfigurationRepository):
         self._agent_configuration_repository = agent_configuration_repository
@@ -46,7 +46,7 @@ class Configuration(AbstractResource):
     def post(self):
         request_contents = json.loads(request.data)
         configuration_json = json.loads(request_contents["config"])
-        Configuration._remove_metadata_from_config(configuration_json)
+        AgentConfiguration._remove_metadata_from_config(configuration_json)
 
         try:
             # Q: encryption is moving to the frontend; also check this in the frontend?
