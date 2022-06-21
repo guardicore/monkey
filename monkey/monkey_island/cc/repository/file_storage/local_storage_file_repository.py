@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import BinaryIO
 
 from common.utils.file_utils import get_all_regular_files_in_directory
-from monkey_island.cc.repository import RetrievalError, StorageError
+from monkey_island.cc.repository import RemovalError, RetrievalError, StorageError
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
 from . import IFileRepository, i_file_repository
@@ -66,6 +66,8 @@ class LocalStorageFileRepository(IFileRepository):
         except FileNotFoundError:
             # This method is idempotent.
             pass
+        except Exception as err:
+            raise RemovalError(f"Error while attempting to remove {unsafe_file_name}: {err}")
 
     def _get_safe_file_path(self, unsafe_file_name: str):
         # Remove any path information from the file name.

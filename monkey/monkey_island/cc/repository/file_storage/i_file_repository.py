@@ -48,6 +48,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be deleted
         :raises ValueError: If the file name is an attempted directory traversal
+        :raises RemovalError: If an error was encountered while attempting to remove a file
         """
         pass
 
