@@ -58,12 +58,10 @@ class AgentConfiguration(AbstractResource):
             ).form_response()
 
     @staticmethod
-    # Q: why is this really needed? besides the fact that it just doesn't belong in the config
-    #    which is being saved in mongo? if nothing, can't we just wait to change the exploiters
-    #    to plugins?
     def _remove_metadata_from_config(configuration_json: Mapping):
         for exploiter in chain(
             configuration_json["propagation"]["exploitation"]["brute_force"],
             configuration_json["propagation"]["exploitation"]["vulnerability"],
         ):
-            del exploiter["supported_os"]
+            if "supported_os" in exploiter:
+                del exploiter["supported_os"]
