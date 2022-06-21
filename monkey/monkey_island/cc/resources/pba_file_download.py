@@ -2,7 +2,8 @@ import logging
 
 from flask import make_response, send_file
 
-from monkey_island.cc.repository import FileRetrievalError, IFileRepository
+from monkey_island.cc import repository
+from monkey_island.cc.repository import IFileRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__file__)
@@ -24,7 +25,9 @@ class PBAFileDownload(AbstractResource):
 
             # `send_file()` handles the closing of the open file.
             return send_file(file, mimetype="application/octet-stream")
-        except FileRetrievalError as err:
-            error_msg = f"Failed to open file {filename}: {err}"
-            logger.error(error_msg)
-            return make_response({"error": error_msg}, 404)
+        except repository.FileNotFoundError as err:
+            # TODO: Do we need to log? Or will flask handle it when we `make_response()`?
+            logger.error(str(err))
+            return make_response({"error": str(err)}, 404)
+
+        # TODO: Add unit tests that test 404 vs 500 errors

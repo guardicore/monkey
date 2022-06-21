@@ -5,7 +5,7 @@ import pytest
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from monkey_island.cc.repository import FileRetrievalError, IFileRepository
+from monkey_island.cc.repository import FileNotFoundError, IFileRepository
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 
 FILE_NAME = "test_file"
@@ -21,7 +21,7 @@ class MockFileRepository(IFileRepository):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         if unsafe_file_name != FILE_NAME:
-            raise FileRetrievalError()
+            raise FileNotFoundError()
 
         return self._file
 

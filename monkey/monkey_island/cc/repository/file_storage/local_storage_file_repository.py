@@ -1,13 +1,13 @@
-import errno
 import logging
 import shutil
 from pathlib import Path
 from typing import BinaryIO
 
 from common.utils.file_utils import get_all_regular_files_in_directory
+from monkey_island.cc.repository import RetrievalError
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
-from . import FileRetrievalError, IFileRepository
+from . import IFileRepository, i_file_repository
 
 logger = logging.getLogger(__name__)
 
@@ -44,13 +44,15 @@ class LocalStorageFileRepository(IFileRepository):
         try:
             logger.debug(f"Opening {safe_file_path}")
             return open(safe_file_path, "rb")
-        except OSError as err:
-            if err.errno == errno.ENOENT:
-                raise FileNotFoundError(f"No file {safe_file_path} found: {err}") from err
-            else:
-                raise FileRetrievalError(
-                    f"Failed to retrieve file {safe_file_path}: {err}"
-                ) from err
+        except FileNotFoundError as err:
+            # Wrap Python's FileNotFound error, which is-an OSError, in repository.FileNotFoundError
+            raise i_file_repository.FileNotFoundError(
+                f'The requested file "{unsafe_file_name}" does not exist: {err}'
+            )
+        except Exception as err:
+            raise RetrievalError(
+                f'Error retrieving file "{unsafe_file_name}" from the repository: {err}'
+            )
 
     def delete_file(self, unsafe_file_name: str):
         safe_file_path = self._get_safe_file_path(unsafe_file_name)

@@ -1,6 +1,8 @@
 from typing import BinaryIO
 
-from . import AgentRetrievalError, FileRetrievalError, IAgentBinaryRepository, IFileRepository
+from monkey_island.cc import repository
+
+from . import AgentRetrievalError, IAgentBinaryRepository, IFileRepository
 
 LINUX_AGENT_FILE_NAME = "monkey-linux-64"
 WINDOWS_AGENT_FILE_NAME = "monkey-windows-64.exe"
@@ -20,7 +22,8 @@ class AgentBinaryRepository(IAgentBinaryRepository):
         try:
             agent_binary = self._file_repository.open_file(filename)
             return agent_binary
-        except FileRetrievalError as err:
+        # TODO: Reevaluate this
+        except repository.FileNotFoundError as err:
             raise AgentRetrievalError(
                 f"An error occurred while retrieving the {filename}"
                 f" agent binary from {self._file_repository}: {err}"

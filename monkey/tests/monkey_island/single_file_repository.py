@@ -1,7 +1,8 @@
 import io
 from typing import BinaryIO
 
-from monkey_island.cc.repository import FileRetrievalError, IFileRepository
+from monkey_island.cc import repository
+from monkey_island.cc.repository import IFileRepository
 
 
 class SingleFileRepository(IFileRepository):
@@ -13,7 +14,7 @@ class SingleFileRepository(IFileRepository):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         if self._file is None:
-            raise FileRetrievalError()
+            raise repository.FileNotFoundError()
         return self._file
 
     def delete_file(self, unsafe_file_name: str):
