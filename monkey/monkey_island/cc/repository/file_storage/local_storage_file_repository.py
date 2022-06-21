@@ -82,6 +82,9 @@ class LocalStorageFileRepository(IFileRepository):
         return safe_file_path
 
     def delete_all_files(self):
-        for file in get_all_regular_files_in_directory(self._storage_directory):
-            logger.debug(f"Deleting {file}")
-            file.unlink()
+        try:
+            for file in get_all_regular_files_in_directory(self._storage_directory):
+                logger.debug(f"Deleting {file}")
+                file.unlink()
+        except Exception as err:
+            raise RemovalError(f"Error while attempting to clear the repository: {err}")

@@ -56,5 +56,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
     def delete_all_files(self):
         """
         Delete all files that have been stored using this service.
+
+        :raises RemovalError: If an error was encountered while attempting to remove a file
         """
         pass
