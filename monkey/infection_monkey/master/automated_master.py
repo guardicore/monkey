@@ -14,6 +14,7 @@ from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
+from utils.propagation import should_propagate
 
 from . import Exploiter, IPScanner, Propagator
 from .option_parsing import custom_pba_is_enabled
@@ -172,7 +173,7 @@ class AutomatedMaster(IMaster):
         current_depth = self._current_depth if self._current_depth is not None else 0
         logger.info(f"Current depth is {current_depth}")
 
-        if self._can_propagate() and current_depth < config["depth"]:
+        if self._can_propagate():
             self._propagator.propagate(config["propagation"], current_depth, self._stop)
 
         payload_thread = create_daemon_thread(
@@ -201,7 +202,7 @@ class AutomatedMaster(IMaster):
             self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
 
     def _can_propagate(self) -> bool:
-        return True
+        return should_propagate(self._control_channel.get_config(), self._current_depth)
 
     def _run_payload(self, payload: Tuple[str, Dict]):
         name = payload[0]

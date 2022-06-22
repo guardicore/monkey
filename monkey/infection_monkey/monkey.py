@@ -79,6 +79,7 @@ from infection_monkey.utils.monkey_dir import (
 )
 from infection_monkey.utils.monkey_log_path import get_agent_log_path
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
+from utils.propagation import should_propagate
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
@@ -167,7 +168,10 @@ class InfectionMonkey:
             firewall.add_firewall_rule()
 
         self._monkey_inbound_tunnel = self._control_client.create_control_tunnel()
-        if self._monkey_inbound_tunnel:
+        config = ControlChannel(
+            self._control_client.server_address, GUID, self._control_client.proxies
+        ).get_config()
+        if self._monkey_inbound_tunnel and should_propagate(config, self._current_depth):
             self._monkey_inbound_tunnel.start()
 
         StateTelem(is_done=False, version=get_version()).send()
