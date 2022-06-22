@@ -6,6 +6,8 @@ from typing import Callable, Dict
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
+from common.configuration import AgentConfiguration, build_default_agent_configuration
+
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
@@ -54,3 +56,8 @@ def load_monkey_config(data_for_tests_dir) -> Callable[[str], Dict]:
         return json.loads(open(config_path, "r").read())
 
     return inner
+
+
+@pytest.fixture
+def default_agent_configuration() -> AgentConfiguration:
+    return build_default_agent_configuration()
