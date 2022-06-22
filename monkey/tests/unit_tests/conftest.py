@@ -6,10 +6,10 @@ from typing import Callable, Dict
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
-from common.configuration import AgentConfiguration, build_default_agent_configuration
-
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
+
+from common.configuration import AgentConfiguration, build_default_agent_configuration  # noqa: E402
 
 
 @pytest.fixture(scope="session")
