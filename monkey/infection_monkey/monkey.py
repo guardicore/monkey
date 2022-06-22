@@ -8,6 +8,7 @@ from typing import List
 
 import infection_monkey.tunnel as tunnel
 from common.network.network_utils import address_to_ip_port
+from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID
@@ -104,7 +105,7 @@ class InfectionMonkey:
         arg_parser.add_argument("-p", "--parent")
         arg_parser.add_argument("-t", "--tunnel")
         arg_parser.add_argument("-s", "--server")
-        arg_parser.add_argument("-d", "--depth", type=int)
+        arg_parser.add_argument("-d", "--depth", type=positive_int)
         opts = arg_parser.parse_args(args)
         InfectionMonkey._log_arguments(opts)
 
