@@ -173,7 +173,7 @@ class AutomatedMaster(IMaster):
         current_depth = self._current_depth if self._current_depth is not None else 0
         logger.info(f"Current depth is {current_depth}")
 
-        if self._can_propagate():
+        if should_propagate(self._control_channel.get_config(), self._current_depth):
             self._propagator.propagate(config["propagation"], current_depth, self._stop)
         else:
             logger.info("Skipping propagation, maximum depth reached")
@@ -202,9 +202,6 @@ class AutomatedMaster(IMaster):
 
         for pba_data in self._puppet.run_pba(name, options):
             self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
-
-    def _can_propagate(self) -> bool:
-        return should_propagate(self._control_channel.get_config(), self._current_depth)
 
     def _run_payload(self, payload: Tuple[str, Dict]):
         name = payload[0]
