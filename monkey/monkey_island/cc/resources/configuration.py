@@ -28,7 +28,7 @@ class AgentConfiguration(AbstractResource):
         configuration_json = json.loads(request_contents["config"])
 
         try:
-            configuration_object = self._schema.loads(configuration_json)
+            configuration_object = self._schema.load(configuration_json)
             self._agent_configuration_repository.store_configuration(configuration_object)
             return make_response({}, 200)
         except marshmallow.exceptions.ValidationError:
