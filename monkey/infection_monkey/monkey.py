@@ -8,6 +8,7 @@ from typing import List
 
 import infection_monkey.tunnel as tunnel
 from common.network.network_utils import address_to_ip_port
+from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.config import GUID
@@ -77,6 +78,7 @@ from infection_monkey.utils.monkey_dir import (
     remove_monkey_dir,
 )
 from infection_monkey.utils.monkey_log_path import get_agent_log_path
+from infection_monkey.utils.propagation import should_propagate
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
 logger = logging.getLogger(__name__)
@@ -97,6 +99,7 @@ class InfectionMonkey:
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
+        self._inbound_tunnel_opened = False
 
     @staticmethod
     def _get_arguments(args):
@@ -104,7 +107,7 @@ class InfectionMonkey:
         arg_parser.add_argument("-p", "--parent")
         arg_parser.add_argument("-t", "--tunnel")
         arg_parser.add_argument("-s", "--server")
-        arg_parser.add_argument("-d", "--depth", type=int)
+        arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         opts = arg_parser.parse_args(args)
         InfectionMonkey._log_arguments(opts)
 
@@ -166,7 +169,11 @@ class InfectionMonkey:
             firewall.add_firewall_rule()
 
         self._monkey_inbound_tunnel = self._control_client.create_control_tunnel()
-        if self._monkey_inbound_tunnel and self._propagation_enabled():
+        config = ControlChannel(
+            self._control_client.server_address, GUID, self._control_client.proxies
+        ).get_config()
+        if self._monkey_inbound_tunnel and should_propagate(config, self._current_depth):
+            self._inbound_tunnel_opened = True
             self._monkey_inbound_tunnel.start()
 
         StateTelem(is_done=False, version=get_version()).send()
@@ -353,7 +360,7 @@ class InfectionMonkey:
 
             reset_signal_handlers()
 
-            if self._monkey_inbound_tunnel and self._propagation_enabled():
+            if self._inbound_tunnel_opened:
                 self._monkey_inbound_tunnel.stop()
                 self._monkey_inbound_tunnel.join()
 
@@ -377,12 +384,6 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
 
         logger.info("Monkey is shutting down")
-
-    def _propagation_enabled(self) -> bool:
-        # If self._current_depth is None, assume that propagation is desired.
-        # The Master will ignore this value if it is None and pull the actual
-        # maximum depth from the server
-        return self._current_depth is None or self._current_depth > 0
 
     def _close_tunnel(self):
         tunnel_address = (
