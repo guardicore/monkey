@@ -25,7 +25,7 @@ from tests.common.example_agent_configuration import (
 
 from common import OperatingSystems
 from common.configuration import (
-    DEFAULT_AGENT_CONFIGURATION,
+    DEFAULT_AGENT_CONFIGURATION_JSON,
     AgentConfiguration,
     AgentConfigurationSchema,
 )
@@ -180,6 +180,6 @@ def test_agent_configuration():
 def test_default_agent_configuration():
     schema = AgentConfigurationSchema()
 
-    config = schema.loads(DEFAULT_AGENT_CONFIGURATION)
+    config = schema.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
 
     assert isinstance(config, AgentConfiguration)

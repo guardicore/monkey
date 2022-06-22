@@ -1,10 +1,6 @@
 import io
 
-from common.configuration import (
-    DEFAULT_AGENT_CONFIGURATION,
-    AgentConfiguration,
-    AgentConfigurationSchema,
-)
+from common.configuration import AgentConfiguration, AgentConfigurationSchema
 from monkey_island.cc import repository
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
@@ -16,7 +12,10 @@ AGENT_CONFIGURATION_FILE_NAME = "agent_configuration.json"
 
 
 class FileAgentConfigurationRepository(IAgentConfigurationRepository):
-    def __init__(self, file_repository: IFileRepository):
+    def __init__(
+        self, default_agent_configuration: AgentConfiguration, file_repository: IFileRepository
+    ):
+        self._default_agent_configuration = default_agent_configuration
         self._file_repository = file_repository
         self._schema = AgentConfigurationSchema()
 
@@ -27,7 +26,7 @@ class FileAgentConfigurationRepository(IAgentConfigurationRepository):
 
             return self._schema.loads(configuration_json)
         except repository.FileNotFoundError:
-            return self._schema.loads(DEFAULT_AGENT_CONFIGURATION)
+            return self._default_agent_configuration
         except Exception as err:
             raise RetrievalError(f"Error retrieving the agent configuration: {err}")
 

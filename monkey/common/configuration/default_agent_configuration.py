@@ -1,4 +1,6 @@
-DEFAULT_AGENT_CONFIGURATION = """{
+from . import AgentConfiguration, AgentConfigurationSchema
+
+DEFAULT_AGENT_CONFIGURATION_JSON = """{
         "keep_tunnel_open_time": 30,
         "post_breach_actions": [
             {
@@ -215,3 +217,8 @@ DEFAULT_AGENT_CONFIGURATION = """{
         }
     }
 """
+
+
+def build_default_agent_configuration() -> AgentConfiguration:
+    schema = AgentConfigurationSchema()
+    return schema.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
