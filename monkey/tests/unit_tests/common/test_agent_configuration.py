@@ -23,7 +23,6 @@ from tests.common.example_agent_configuration import (
     WINDOWS_FILENAME,
 )
 
-from common import OperatingSystems
 from common.configuration import (
     DEFAULT_AGENT_CONFIGURATION_JSON,
     AgentConfiguration,
@@ -126,16 +125,12 @@ def test_exploitation_options_configuration_schema():
 def test_exploiter_configuration_schema():
     name = "bond"
     options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
-    supported_os = [OperatingSystems.LINUX, OperatingSystems.WINDOWS]
     schema = ExploiterConfigurationSchema()
 
-    config = schema.load(
-        {"name": name, "options": options, "supported_os": [os_.name for os_ in supported_os]}
-    )
+    config = schema.load({"name": name, "options": options})
 
     assert config.name == name
     assert config.options == options
-    assert config.supported_os == supported_os
 
 
 def test_exploitation_configuration():

@@ -39,18 +39,16 @@ NETWORK_SCAN_CONFIGURATION = {
 }
 
 BRUTE_FORCE = [
-    {"name": "ex1", "options": {}, "supported_os": ["LINUX"]},
+    {"name": "ex1", "options": {}},
     {
         "name": "ex2",
         "options": {"smb_download_timeout": 10},
-        "supported_os": ["LINUX", "WINDOWS"],
     },
 ]
 VULNERABILITY = [
     {
         "name": "ex3",
         "options": {"smb_download_timeout": 10},
-        "supported_os": ["WINDOWS"],
     },
 ]
 EXPLOITATION_CONFIGURATION = {

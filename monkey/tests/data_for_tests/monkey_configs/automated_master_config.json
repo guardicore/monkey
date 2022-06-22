@@ -47,16 +47,16 @@
             "exploiters": {
                 "options": {},
                 "brute_force": [
-                    {"name": "MSSQLExploiter", "supported_os": ["windows"], "options": {}},
-                    {"name": "PowerShellExploiter", "supported_os": ["windows"], "options": {}},
-                    {"name": "SmbExploiter", "supported_os": ["windows"], "options": {}},
-                    {"name": "SSHExploiter", "supported_os": ["linux"], "options": {}},
-                    {"name": "WmiExploiter", "supported_os": ["windows"], "options": {}}
+                    {"name": "MSSQLExploiter", "options": {}},
+                    {"name": "PowerShellExploiter", "options": {}},
+                    {"name": "SmbExploiter", "options": {}},
+                    {"name": "SSHExploiter", "options": {}},
+                    {"name": "WmiExploiter", "options": {}}
                 ],
                 "vulnerability": [
-                    {"name": "HadoopExploiter", "supported_os": ["linux", "windows"], "options": {}},
-                    {"name": "ShellShockExploiter", "supported_os": ["linux"], "options": {}},
-                    {"name": "ZerologonExploiter", "supported_os": ["windows"], "options": {}}
+                    {"name": "HadoopExploiter", "options": {}},
+                    {"name": "ShellShockExploiter", "options": {}},
+                    {"name": "ZerologonExploiter", "options": {}}
                 ]
             }
         },
