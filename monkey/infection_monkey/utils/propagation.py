@@ -1,2 +1,2 @@
-def should_propagate(config: dict, depth: int) -> bool:
-    return config["config"]["depth"] > depth
+def should_propagate(config: dict, current_depth: int) -> bool:
+    return config["config"]["depth"] > current_depth
