@@ -9,6 +9,7 @@ import sys
 import time
 from pathlib import PosixPath, WindowsPath
 
+from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import UsageEnum
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
@@ -45,7 +46,7 @@ class MonkeyDrops(object):
         arg_parser.add_argument("-p", "--parent")
         arg_parser.add_argument("-t", "--tunnel")
         arg_parser.add_argument("-s", "--server")
-        arg_parser.add_argument("-d", "--depth", type=int)
+        arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         arg_parser.add_argument("-l", "--location")
         arg_parser.add_argument("-vp", "--vulnerable-port")
         self.opts = arg_parser.parse_args(args)
