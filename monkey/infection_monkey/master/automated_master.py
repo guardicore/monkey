@@ -150,7 +150,7 @@ class AutomatedMaster(IMaster):
             target=self._run_plugins,
             name="CredentialCollectorThread",
             args=(
-                config["credential_collectors"],
+                config.credential_collectors,
                 "credential collector",
                 self._collect_credentials,
             ),
@@ -158,7 +158,7 @@ class AutomatedMaster(IMaster):
         pba_thread = create_daemon_thread(
             target=self._run_pbas,
             name="PBAThread",
-            args=(config["post_breach_actions"].items(), self._run_pba, config["custom_pbas"]),
+            args=(config.post_breach_actions, self._run_pba, config.custom_pbas),
         )
 
         credential_collector_thread.start()
@@ -181,7 +181,7 @@ class AutomatedMaster(IMaster):
         payload_thread = create_daemon_thread(
             target=self._run_plugins,
             name="PayloadThread",
-            args=(config["payloads"].items(), "payload", self._run_payload),
+            args=(config.payloads.items(), "payload", self._run_payload),
         )
         payload_thread.start()
         payload_thread.join()
