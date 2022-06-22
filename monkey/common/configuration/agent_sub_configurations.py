@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict, List
 
-from common import OperatingSystems
-
 
 @dataclass(frozen=True)
 class CustomPBAConfiguration:
@@ -54,7 +52,6 @@ class ExploitationOptionsConfiguration:
 class ExploiterConfiguration:
     name: str
     options: Dict
-    supported_os: List[OperatingSystems]
 
 
 @dataclass(frozen=True)

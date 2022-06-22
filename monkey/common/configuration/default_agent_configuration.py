@@ -157,60 +157,44 @@ DEFAULT_AGENT_CONFIGURATION_JSON = """{
                 "brute_force": [
                     {
                         "name": "MSSQLExploiter",
-                        "options": {},
-                        "supported_os": [
-                            "WINDOWS"
-                        ]
+                        "options": {}
+
                     },
                     {
                         "name": "PowerShellExploiter",
-                        "options": {},
-                        "supported_os": [
-                            "WINDOWS"
-                        ]
+                        "options": {}
+
                     },
                     {
                         "name": "SSHExploiter",
-                        "options": {},
-                        "supported_os": [
-                            "LINUX"
-                        ]
+                        "options": {}
+
                     },
                     {
                         "name": "SmbExploiter",
                         "options": {
                             "smb_download_timeout": 30
-                        },
-                        "supported_os": [
-                            "WINDOWS"
-                        ]
+                        }
+
                     },
                     {
                         "name": "WmiExploiter",
                         "options": {
                             "smb_download_timeout": 30
-                        },
-                        "supported_os": [
-                            "WINDOWS"
-                        ]
+                        }
+
                     }
                 ],
                 "vulnerability": [
                     {
                         "name": "HadoopExploiter",
-                        "options": {},
-                        "supported_os": [
-                            "LINUX",
-                            "WINDOWS"
-                        ]
+                        "options": {}
+
                     },
                     {
                         "name": "Log4ShellExploiter",
-                        "options": {},
-                        "supported_os": [
-                            "LINUX",
-                            "WINDOWS"
-                        ]
+                        "options": {}
+
                     }
                 ]
             }
