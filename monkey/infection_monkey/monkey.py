@@ -78,8 +78,8 @@ from infection_monkey.utils.monkey_dir import (
     remove_monkey_dir,
 )
 from infection_monkey.utils.monkey_log_path import get_agent_log_path
+from infection_monkey.utils.propagation import should_propagate
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
-from utils.propagation import should_propagate
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
