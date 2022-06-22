@@ -1,10 +1,13 @@
 import logging
 from queue import Queue
 from threading import Event
-from typing import Dict, List
+from typing import List
 
-from common.configuration import PropagationConfiguration,\
-    NetworkScanConfiguration, ScanTargetConfiguration
+from common.configuration import (
+    NetworkScanConfiguration,
+    PropagationConfiguration,
+    ScanTargetConfiguration,
+)
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
@@ -139,14 +142,14 @@ class Propagator:
 
     def _exploit_hosts(
         self,
-        propagation_config: Dict,
+        propagation_config: PropagationConfiguration,
         current_depth: int,
         network_scan_completed: Event,
         stop: Event,
     ):
         logger.info("Exploiting victims")
 
-        exploiter_config = propagation_config["exploiters"]
+        exploiter_config = propagation_config.exploitation
         self._exploiter.exploit_hosts(
             exploiter_config,
             self._hosts_to_exploit,
