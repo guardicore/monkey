@@ -176,7 +176,7 @@ class AutomatedMaster(IMaster):
         if should_propagate(self._control_channel.get_config(), self._current_depth):
             self._propagator.propagate(config["propagation"], current_depth, self._stop)
         else:
-            logger.info("Skipping propagation, maximum depth reached")
+            logger.info("Skipping propagation: maximum depth reached")
 
         payload_thread = create_daemon_thread(
             target=self._run_plugins,
