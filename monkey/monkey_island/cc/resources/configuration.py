@@ -1,31 +1,15 @@
 import json
-from dataclasses import dataclass
 from itertools import chain
 from typing import Mapping
 
 import marshmallow
-from flask import jsonify, request
+from flask import jsonify, make_response, request
 
 from common.configuration.agent_configuration import AgentConfigurationSchema
 from common.configuration.default_agent_configuration import DEFAULT_AGENT_CONFIGURATION
 from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-
-
-class ImportStatuses:
-    INVALID_CONFIGURATION = "invalid_configuration"
-    IMPORTED = "imported"
-
-
-@dataclass
-class ResponseContents:
-    import_status: str = ImportStatuses.IMPORTED
-    message: str = ""
-    status_code: int = 200
-
-    def form_response(self):
-        return self.__dict__
 
 
 class AgentConfiguration(AbstractResource):
@@ -63,14 +47,15 @@ class AgentConfiguration(AbstractResource):
         try:
             configuration_object = self._schema.loads(configuration_json)
             self._agent_configuration_repository.store_configuration(configuration_object)
-            return ResponseContents().form_response()
+            return make_response({}, 200)
         except marshmallow.exceptions.ValidationError:
-            return ResponseContents(
-                import_status=ImportStatuses.INVALID_CONFIGURATION,
-                message="Invalid configuration supplied. "
-                "Maybe the format is outdated or the file has been corrupted.",
-                status_code=400,
-            ).form_response()
+            return make_response(
+                {
+                    "message": "Invalid configuration supplied. "
+                    "Maybe the format is outdated or the file has been corrupted."
+                },
+                400,
+            )
 
     @staticmethod
     def _remove_metadata_from_config(configuration_json: Mapping):
