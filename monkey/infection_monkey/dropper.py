@@ -46,7 +46,7 @@ class MonkeyDrops(object):
         arg_parser.add_argument("-p", "--parent")
         arg_parser.add_argument("-t", "--tunnel")
         arg_parser.add_argument("-s", "--server")
-        arg_parser.add_argument("-d", "--depth", type=positive_int)
+        arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         arg_parser.add_argument("-l", "--location")
         arg_parser.add_argument("-vp", "--vulnerable-port")
         self.opts = arg_parser.parse_args(args)
