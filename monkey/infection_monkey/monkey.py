@@ -99,6 +99,7 @@ class InfectionMonkey:
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
+        self._inbound_tunnel_opened = False
 
     @staticmethod
     def _get_arguments(args):
@@ -172,6 +173,7 @@ class InfectionMonkey:
             self._control_client.server_address, GUID, self._control_client.proxies
         ).get_config()
         if self._monkey_inbound_tunnel and should_propagate(config, self._current_depth):
+            self._inbound_tunnel_opened = True
             self._monkey_inbound_tunnel.start()
 
         StateTelem(is_done=False, version=get_version()).send()
@@ -358,7 +360,7 @@ class InfectionMonkey:
 
             reset_signal_handlers()
 
-            if self._monkey_inbound_tunnel:
+            if self._inbound_tunnel_opened:
                 self._monkey_inbound_tunnel.stop()
                 self._monkey_inbound_tunnel.join()
 
