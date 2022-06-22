@@ -1,6 +1,7 @@
 import re
 from typing import Dict, Optional, Tuple
 
+from common import OperatingSystems
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
 
 SSH_REGEX = r"SSH-\d\.\d-OpenSSH"
@@ -40,6 +41,6 @@ class SSHFingerprinter(IFingerprinter):
         for dist in LINUX_DIST_SSH:
             if banner.lower().find(dist) != -1:
                 os_version = banner.split(" ").pop().strip()
-                os = "linux"
+                os = OperatingSystems.LINUX
 
         return os, os_version

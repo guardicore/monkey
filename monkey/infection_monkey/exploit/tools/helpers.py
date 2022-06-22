@@ -15,7 +15,7 @@ AGENT_BINARY_PATH_WIN64 = PureWindowsPath(r"C:\Windows\temp\monkey64.exe")
 
 
 def get_agent_dst_path(host: VictimHost) -> PurePath:
-    if host.os["type"] == "windows":
+    if host.is_windows():
         path = PureWindowsPath(AGENT_BINARY_PATH_WIN64)
     else:
         path = PurePosixPath(AGENT_BINARY_PATH_LINUX)
