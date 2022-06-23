@@ -112,7 +112,7 @@ class AutomatedMaster(IMaster):
             time.sleep(CHECK_FOR_TERMINATE_INTERVAL_SEC)
 
     @staticmethod
-    def _try_communicate_with_island(fn: Callable[[], Any], max_tries: int):
+    def _try_communicate_with_island(fn: Callable[[], Any], max_tries: int) -> Any:
         tries = 0
         while tries < max_tries:
             try:
