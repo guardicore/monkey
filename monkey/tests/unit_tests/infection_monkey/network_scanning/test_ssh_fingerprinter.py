@@ -1,5 +1,6 @@
 import pytest
 
+from common import OperatingSystems
 from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 
@@ -56,7 +57,7 @@ def test_ssh_os(ssh_fingerprinter):
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
 
     assert results == FingerprintData(
-        "linux",
+        OperatingSystems.LINUX,
         "Ubuntu-4ubuntu0.2",
         {
             "tcp-22": {
@@ -78,7 +79,7 @@ def test_multiple_os(ssh_fingerprinter):
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
 
     assert results == FingerprintData(
-        "linux",
+        OperatingSystems.LINUX,
         "Debian",
         {
             "tcp-22": {

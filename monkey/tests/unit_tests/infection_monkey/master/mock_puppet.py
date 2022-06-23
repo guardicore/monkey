@@ -2,6 +2,7 @@ import logging
 import threading
 from typing import Dict, Iterable, List, Sequence
 
+from common import OperatingSystems
 from infection_monkey.credential_collectors import LMHash, Password, SSHKeypair, Username
 from infection_monkey.i_puppet import (
     Credentials,
@@ -182,19 +183,23 @@ class MockPuppet(IPuppet):
             "vulnerable_ports": [22],
             "executed_cmds": [],
         }
-        os_windows = "windows"
-        os_linux = "linux"
 
         successful_exploiters = {
             DOT_1: {
                 "ZerologonExploiter": ExploiterResultData(
-                    False, False, False, os_windows, {}, [], "Zerologon failed"
+                    False, False, False, OperatingSystems.WINDOWS, {}, [], "Zerologon failed"
                 ),
                 "SSHExploiter": ExploiterResultData(
-                    False, False, False, os_linux, info_ssh, attempts, "Failed exploiting"
+                    False,
+                    False,
+                    False,
+                    OperatingSystems.LINUX,
+                    info_ssh,
+                    attempts,
+                    "Failed exploiting",
                 ),
                 "WmiExploiter": ExploiterResultData(
-                    True, True, False, os_windows, info_wmi, attempts, None
+                    True, True, False, OperatingSystems.WINDOWS, info_wmi, attempts, None
                 ),
             },
             DOT_3: {
@@ -202,16 +207,22 @@ class MockPuppet(IPuppet):
                     False,
                     False,
                     False,
-                    os_windows,
+                    OperatingSystems.WINDOWS,
                     info_wmi,
                     attempts,
                     "PowerShell Exploiter Failed",
                 ),
                 "SSHExploiter": ExploiterResultData(
-                    False, False, False, os_linux, info_ssh, attempts, "Failed exploiting"
+                    False,
+                    False,
+                    False,
+                    OperatingSystems.LINUX,
+                    info_ssh,
+                    attempts,
+                    "Failed exploiting",
                 ),
                 "ZerologonExploiter": ExploiterResultData(
-                    True, False, False, os_windows, {}, [], None
+                    True, False, False, OperatingSystems.WINDOWS, {}, [], None
                 ),
             },
         }
@@ -220,7 +231,13 @@ class MockPuppet(IPuppet):
             return successful_exploiters[host.ip_addr][name]
         except KeyError:
             return ExploiterResultData(
-                False, False, False, os_linux, {}, [], f"{name} failed for host {host}"
+                False,
+                False,
+                False,
+                OperatingSystems.LINUX,
+                {},
+                [],
+                f"{name} failed for host {host}",
             )
 
     def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
