@@ -20,7 +20,7 @@ LINUX_OS = "linux"
 
 
 @pytest.fixture
-def scan_config(default_agent_config):
+def scan_config(default_agent_configuration):
     tcp_config = TCPScanConfiguration(
         timeout=3,
         ports=[
@@ -42,7 +42,7 @@ def scan_config(default_agent_config):
         tcp_config,
         icmp_config,
         fingerprinter_config,
-        default_agent_config.propagation.network_scan.targets,
+        default_agent_configuration.propagation.network_scan.targets,
     )
     return scan_config
 

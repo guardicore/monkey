@@ -140,23 +140,23 @@ class StubExploiter:
         pass
 
 
-def get_propagation_config(default_agent_config, scan_target_config: ScanTargetConfiguration):
+def get_propagation_config(default_agent_configuration, scan_target_config: ScanTargetConfiguration):
     network_scan = NetworkScanConfiguration(
-        default_agent_config.propagation.network_scan.tcp,
-        default_agent_config.propagation.network_scan.icmp,
-        default_agent_config.propagation.network_scan.fingerprinters,
+        default_agent_configuration.propagation.network_scan.tcp,
+        default_agent_configuration.propagation.network_scan.icmp,
+        default_agent_configuration.propagation.network_scan.fingerprinters,
         scan_target_config,
     )
     propagation_config = PropagationConfiguration(
-        default_agent_config.propagation.maximum_depth,
+        default_agent_configuration.propagation.maximum_depth,
         network_scan,
-        default_agent_config.propagation.exploitation,
+        default_agent_configuration.propagation.exploitation,
     )
     return propagation_config
 
 
 def test_scan_result_processing(
-    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_config
+    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
 ):
     p = Propagator(
         telemetry_messenger_spy, mock_ip_scanner, StubExploiter(), mock_victim_host_factory, []
@@ -167,7 +167,7 @@ def test_scan_result_processing(
         local_network_scan=False,
         subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
-    propagation_config = get_propagation_config(default_agent_config, targets)
+    propagation_config = get_propagation_config(default_agent_configuration, targets)
     p.propagate(propagation_config, 1, Event())
 
     assert len(telemetry_messenger_spy.telemetries) == 3
@@ -253,7 +253,7 @@ class MockExploiter:
 
 
 def test_exploiter_result_processing(
-    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_config
+    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
 ):
     p = Propagator(
         telemetry_messenger_spy, mock_ip_scanner, MockExploiter(), mock_victim_host_factory, []
@@ -265,7 +265,7 @@ def test_exploiter_result_processing(
         local_network_scan=False,
         subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
-    propagation_config = get_propagation_config(default_agent_config, targets)
+    propagation_config = get_propagation_config(default_agent_configuration, targets)
     p.propagate(propagation_config, 1, Event())
 
     exploit_telems = [t for t in telemetry_messenger_spy.telemetries if isinstance(t, ExploitTelem)]
@@ -290,7 +290,7 @@ def test_exploiter_result_processing(
 
 
 def test_scan_target_generation(
-    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_config
+    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
 ):
     local_network_interfaces = [NetworkInterface("10.0.0.9", "/29")]
     p = Propagator(
@@ -306,7 +306,7 @@ def test_scan_target_generation(
         local_network_scan=True,
         subnets=["10.0.0.0/29", "172.10.20.30"],
     )
-    propagation_config = get_propagation_config(default_agent_config, targets)
+    propagation_config = get_propagation_config(default_agent_configuration, targets)
     p.propagate(propagation_config, 1, Event())
 
     expected_ip_scan_list = [
