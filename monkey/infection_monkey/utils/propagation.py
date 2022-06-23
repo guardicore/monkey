@@ -1,5 +1,2 @@
-from common.configuration import AgentConfiguration
-
-
-def should_propagate(config: AgentConfiguration, current_depth: int) -> bool:
-    return config.propagation.maximum_depth > current_depth
+def should_propagate(maximum_depth: int, current_depth: int) -> bool:
+    return maximum_depth > current_depth
