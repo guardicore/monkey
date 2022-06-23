@@ -1,7 +1,7 @@
 import json
 
 import marshmallow
-from flask import jsonify, make_response, request
+from flask import make_response, request
 
 from common.configuration.agent_configuration import AgentConfigurationSchema
 from monkey_island.cc.repository import IAgentConfigurationRepository
@@ -20,22 +20,19 @@ class AgentConfiguration(AbstractResource):
     def get(self):
         configuration = self._agent_configuration_repository.get_configuration()
         configuration_json = self._schema.dumps(configuration)
-        return jsonify(configuration_json=configuration_json)
+        return make_response(configuration_json, 200)
 
     @jwt_required
     def post(self):
-        request_contents = json.loads(request.data)
-        configuration_json = json.loads(request_contents["config"])
 
         try:
-            configuration_object = self._schema.load(configuration_json)
+            request_contents = json.loads(request.data)
+
+            configuration_object = self._schema.load(request_contents)
             self._agent_configuration_repository.store_configuration(configuration_object)
             return make_response({}, 200)
-        except marshmallow.exceptions.ValidationError:
+        except (marshmallow.exceptions.ValidationError, json.JSONDecodeError) as err:
             return make_response(
-                {
-                    "message": "Invalid configuration supplied. "
-                    "Maybe the format is outdated or the file has been corrupted."
-                },
+                {"message": f"Invalid configuration supplied: {err}"},
                 400,
             )
