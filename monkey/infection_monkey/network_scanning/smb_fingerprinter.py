@@ -5,6 +5,7 @@ from typing import Dict
 
 from odict import odict
 
+from common import OperatingSystems
 from infection_monkey.i_puppet import (
     FingerprintData,
     IFingerprinter,
@@ -193,9 +194,9 @@ class SMBFingerprinter(IFingerprinter):
                 logger.debug(f'os_version: "{os_version}", service_client: "{service_client}"')
 
                 if os_version.lower() != "unix":
-                    os_type = "windows"
+                    os_type = OperatingSystems.WINDOWS
                 else:
-                    os_type = "linux"
+                    os_type = OperatingSystems.LINUX
 
                 smb_service["name"] = service_client
 
