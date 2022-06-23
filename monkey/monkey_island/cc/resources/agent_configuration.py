@@ -26,9 +26,7 @@ class AgentConfiguration(AbstractResource):
     def post(self):
 
         try:
-            request_contents = json.loads(request.data)
-
-            configuration_object = self._schema.load(request_contents)
+            configuration_object = self._schema.loads(request.data)
             self._agent_configuration_repository.store_configuration(configuration_object)
             return make_response({}, 200)
         except (marshmallow.exceptions.ValidationError, json.JSONDecodeError) as err:
