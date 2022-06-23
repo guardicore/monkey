@@ -4,7 +4,7 @@ from common.configuration.agent_configuration import AgentConfigurationSchema
 from monkey_island.cc.repository import IAgentConfigurationRepository
 
 
-class InMemoryFileAgentConfigurationRepository(IAgentConfigurationRepository):
+class InMemoryAgentConfigurationRepository(IAgentConfigurationRepository):
     def __init__(self):
         self._configuration = AgentConfigurationSchema().load(AGENT_CONFIGURATION)
 
