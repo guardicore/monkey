@@ -3,12 +3,10 @@ import copy
 import functools
 import logging
 import re
-from itertools import chain
 from typing import Any, Dict, List
 
 from jsonschema import Draft4Validator, validators
 
-from common import OperatingSystems
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
@@ -580,7 +578,7 @@ class ConfigService:
         formatted_exploiters_config = ConfigService._add_smb_download_timeout_to_exploiters(
             formatted_exploiters_config
         )
-        return ConfigService._add_supported_os_to_exploiters(formatted_exploiters_config)
+        return formatted_exploiters_config
 
     @staticmethod
     def _add_smb_download_timeout_to_exploiters(
@@ -591,25 +589,5 @@ class ConfigService:
 
         for exploiter in filter(lambda e: e["name"] in uses_smb_timeout, new_config["brute_force"]):
             exploiter["options"]["smb_download_timeout"] = SMB_DOWNLOAD_TIMEOUT
-
-        return new_config
-
-    @staticmethod
-    def _add_supported_os_to_exploiters(
-        formatted_config: Dict,
-    ) -> Dict[str, List[Dict[str, Any]]]:
-        supported_os = {
-            "HadoopExploiter": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
-            "Log4ShellExploiter": [OperatingSystems.LINUX, OperatingSystems.WINDOWS],
-            "MSSQLExploiter": [OperatingSystems.WINDOWS],
-            "PowerShellExploiter": [OperatingSystems.WINDOWS],
-            "SSHExploiter": [OperatingSystems.LINUX],
-            "SmbExploiter": [OperatingSystems.WINDOWS],
-            "WmiExploiter": [OperatingSystems.WINDOWS],
-            "ZerologonExploiter": [OperatingSystems.WINDOWS],
-        }
-        new_config = copy.deepcopy(formatted_config)
-        for exploiter in chain(new_config["brute_force"], new_config["vulnerability"]):
-            exploiter["supported_os"] = supported_os.get(exploiter["name"], [])
 
         return new_config

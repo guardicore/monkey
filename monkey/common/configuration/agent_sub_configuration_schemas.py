@@ -1,7 +1,4 @@
 from marshmallow import Schema, fields, post_load
-from marshmallow_enum import EnumField
-
-from common import OperatingSystems
 
 from .agent_sub_configurations import (
     CustomPBAConfiguration,
@@ -87,7 +84,6 @@ class ExploitationOptionsConfigurationSchema(Schema):
 class ExploiterConfigurationSchema(Schema):
     name = fields.Str()
     options = fields.Mapping()
-    supported_os = fields.List(EnumField(OperatingSystems))
 
     @post_load
     def _make_exploiter_configuration(self, data, **kwargs):
