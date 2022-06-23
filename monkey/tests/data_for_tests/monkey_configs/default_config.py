@@ -1,4 +1,3 @@
-from common import OperatingSystems
 from common.configuration import AgentConfigurationSchema
 
 flat_config = {
@@ -85,39 +84,32 @@ flat_config = {
                 {
                     "name": "MSSQLExploiter",
                     "options": {},
-                    "supported_os": [OperatingSystems.WINDOWS.name],
                 },
                 {
                     "name": "PowerShellExploiter",
                     "options": {},
-                    "supported_os": [OperatingSystems.WINDOWS.name],
                 },
                 {
                     "name": "SSHExploiter",
                     "options": {},
-                    "supported_os": [OperatingSystems.LINUX.name],
                 },
                 {
                     "name": "SmbExploiter",
                     "options": {"smb_download_timeout": 30},
-                    "supported_os": [OperatingSystems.WINDOWS.name],
                 },
                 {
                     "name": "WmiExploiter",
                     "options": {"smb_download_timeout": 30},
-                    "supported_os": [OperatingSystems.WINDOWS.name],
                 },
             ],
             "vulnerability": [
                 {
                     "name": "HadoopExploiter",
                     "options": {},
-                    "supported_os": [OperatingSystems.LINUX.name, OperatingSystems.WINDOWS.name],
                 },
                 {
                     "name": "Log4ShellExploiter",
                     "options": {},
-                    "supported_os": [OperatingSystems.LINUX.name, OperatingSystems.WINDOWS.name],
                 },
             ],
         },
