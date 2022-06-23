@@ -172,9 +172,8 @@ class InfectionMonkey:
         )
 
         config = control_channel.get_config()
-        keep_tunnel_open_time = control_channel.get_config().keep_tunnel_open_time
         self._monkey_inbound_tunnel = self._control_client.create_control_tunnel(
-            keep_tunnel_open_time
+            config.keep_tunnel_open_time
         )
         if self._monkey_inbound_tunnel and should_propagate(config, self._current_depth):
             self._inbound_tunnel_opened = True
