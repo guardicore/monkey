@@ -12,6 +12,7 @@ from common import DIContainer
 from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import AgentBinaries, RemoteRun
 from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.agent_configuration import AgentConfiguration
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
@@ -155,6 +156,7 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(IslandConfiguration)
     api.add_resource(ConfigurationExport)
     api.add_resource(ConfigurationImport)
+    api.add_resource(AgentConfiguration)
     api.add_resource(AgentBinaries)
     api.add_resource(NetMap)
     api.add_resource(Edge)
