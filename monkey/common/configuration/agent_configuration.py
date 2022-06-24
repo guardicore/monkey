@@ -17,6 +17,10 @@ from .agent_sub_configurations import (
 )
 
 
+class InvalidConfigurationError(Exception):
+    pass
+
+
 @dataclass(frozen=True)
 class AgentConfiguration:
     keep_tunnel_open_time: float
