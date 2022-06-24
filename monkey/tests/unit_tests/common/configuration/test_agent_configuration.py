@@ -189,3 +189,12 @@ def test_from_dict():
     config = AgentConfiguration.from_dict(dict_)
 
     assert schema.dump(config) == dict_
+
+
+def test_from_json():
+    schema = AgentConfigurationSchema()
+    dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+
+    config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
+
+    assert schema.dump(config) == dict_

@@ -28,6 +28,10 @@ class AgentConfiguration:
     def from_dict(dict_: dict):
         return AgentConfigurationSchema().load(dict_)
 
+    @staticmethod
+    def from_json(config_json: dict):
+        return AgentConfigurationSchema().loads(config_json)
+
 
 class AgentConfigurationSchema(Schema):
     keep_tunnel_open_time = fields.Float()
