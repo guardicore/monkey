@@ -53,7 +53,7 @@ class AgentConfiguration:
             raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
 
     @staticmethod
-    def from_json(config_json: dict):
+    def from_json(config_json: str) -> AgentConfiguration:
         try:
             config_dict = AgentConfigurationSchema().loads(config_json)
             return AgentConfiguration(**config_dict)
