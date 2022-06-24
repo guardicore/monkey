@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List
+from typing import Any, List, Mapping
 
 from marshmallow import Schema, fields
 from marshmallow.exceptions import MarshmallowError
@@ -45,9 +45,9 @@ class AgentConfiguration:
             raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
 
     @staticmethod
-    def from_dict(config_dict: dict):
+    def from_mapping(config_mapping: Mapping[str, Any]) -> AgentConfiguration:
         try:
-            config_dict = AgentConfigurationSchema().load(config_dict)
+            config_dict = AgentConfigurationSchema().load(config_mapping)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")

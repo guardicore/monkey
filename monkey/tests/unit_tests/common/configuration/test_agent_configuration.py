@@ -161,7 +161,7 @@ def test_propagation_configuration():
 
 
 def test_agent_configuration():
-    config = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
+    config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
     config_json = AgentConfiguration.to_json(config)
 
     assert isinstance(config, AgentConfiguration)
@@ -175,7 +175,7 @@ def test_agent_configuration():
 
 
 def test_incorrect_type():
-    valid_config = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
+    valid_config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
     with pytest.raises(InvalidConfigurationError):
         valid_config_dict = valid_config.__dict__
         valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
@@ -192,7 +192,7 @@ def test_from_dict():
     schema = AgentConfigurationSchema()
     dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
 
-    config = AgentConfiguration.from_dict(dict_)
+    config = AgentConfiguration.from_mapping(dict_)
 
     assert schema.dump(config) == dict_
 
@@ -202,7 +202,7 @@ def test_from_dict__invalid_data():
     dict_["payloads"] = "payloads"
 
     with pytest.raises(InvalidConfigurationError):
-        AgentConfiguration.from_dict(dict_)
+        AgentConfiguration.from_mapping(dict_)
 
 
 def test_from_json():

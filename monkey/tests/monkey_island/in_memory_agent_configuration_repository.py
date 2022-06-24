@@ -6,7 +6,7 @@ from monkey_island.cc.repository import IAgentConfigurationRepository
 
 class InMemoryAgentConfigurationRepository(IAgentConfigurationRepository):
     def __init__(self):
-        self._configuration = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
+        self._configuration = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
 
     def get_configuration(self):
         return self._configuration

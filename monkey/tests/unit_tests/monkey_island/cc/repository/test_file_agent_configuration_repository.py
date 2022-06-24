@@ -12,7 +12,7 @@ def repository(default_agent_configuration):
 
 
 def test_store_agent_config(repository):
-    agent_configuration = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
+    agent_configuration = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
 
     repository.store_configuration(agent_configuration)
     retrieved_agent_configuration = repository.get_configuration()

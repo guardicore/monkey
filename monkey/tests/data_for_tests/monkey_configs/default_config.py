@@ -116,4 +116,4 @@ flat_config = {
     },
 }
 
-DEFAULT_CONFIG = AgentConfiguration.from_dict(flat_config)
+DEFAULT_CONFIG = AgentConfiguration.from_mapping(flat_config)

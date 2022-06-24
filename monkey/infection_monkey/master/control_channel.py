@@ -58,7 +58,7 @@ class ControlChannel(IControlChannel):
             )
             response.raise_for_status()
 
-            return AgentConfiguration.from_dict(json.loads(response.text)["config"])
+            return AgentConfiguration.from_mapping(json.loads(response.text)["config"])
         except (
             json.JSONDecodeError,
             requests.exceptions.ConnectionError,
