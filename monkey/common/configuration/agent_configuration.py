@@ -45,9 +45,9 @@ class AgentConfiguration:
             raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
 
     @staticmethod
-    def from_dict(dict_: dict):
+    def from_dict(config_dict: dict):
         try:
-            config_dict = AgentConfigurationSchema().load(dict_)
+            config_dict = AgentConfigurationSchema().load(config_dict)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
