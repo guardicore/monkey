@@ -3,7 +3,7 @@ import queue
 import threading
 from queue import Queue
 from threading import Event
-from typing import Callable, Dict, List
+from typing import Callable, Dict, Sequence
 
 from common.configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
@@ -34,7 +34,7 @@ class IPScanner:
 
     def scan(
         self,
-        addresses_to_scan: List[NetworkAddress],
+        addresses_to_scan: Sequence[NetworkAddress],
         options: ScanTargetConfiguration,
         results_callback: Callback,
         stop: Event,
@@ -99,7 +99,7 @@ class IPScanner:
     def _run_fingerprinters(
         self,
         ip: str,
-        fingerprinters: List[PluginConfiguration],
+        fingerprinters: Sequence[PluginConfiguration],
         ping_scan_data: PingScanData,
         port_scan_data: Dict[int, PortScanData],
         stop: Event,
