@@ -161,7 +161,7 @@ def test_propagation_configuration():
 def test_agent_configuration():
     schema = AgentConfigurationSchema()
 
-    config = schema.load(AGENT_CONFIGURATION)
+    config = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
     config_dict = schema.dump(config)
 
     assert isinstance(config, AgentConfiguration)
@@ -175,9 +175,7 @@ def test_agent_configuration():
 
 
 def test_default_agent_configuration():
-    schema = AgentConfigurationSchema()
-
-    config = schema.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
 
     assert isinstance(config, AgentConfiguration)
 
