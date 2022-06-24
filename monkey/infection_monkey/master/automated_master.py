@@ -1,7 +1,7 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 from common.configuration import PluginConfiguration
 from common.utils import Timer
@@ -212,7 +212,7 @@ class AutomatedMaster(IMaster):
 
     def _run_pbas(
         self,
-        plugins: List[PluginConfiguration],
+        plugins: Iterable[PluginConfiguration],
         callback: Callable[[Any], None],
         custom_pba_options: Dict,
     ):
@@ -226,7 +226,10 @@ class AutomatedMaster(IMaster):
             )
 
     def _run_plugins(
-        self, plugins: List[PluginConfiguration], plugin_type: str, callback: Callable[[Any], None]
+        self,
+        plugins: Iterable[PluginConfiguration],
+        plugin_type: str,
+        callback: Callable[[Any], None],
     ):
         logger.info(f"Running {plugin_type}s")
         logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")
