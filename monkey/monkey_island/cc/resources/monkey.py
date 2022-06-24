@@ -8,7 +8,6 @@ from monkey_island.cc.models.monkey_ttl import create_monkey_ttl_document
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.utils.semaphores import agent_killing_mutex
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
-from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.edge.edge import EdgeService
 from monkey_island.cc.services.node import NodeService
 
@@ -21,10 +20,6 @@ class Monkey(AbstractResource):
         "/api/agent",
         "/api/agent/<string:guid>",
     ]
-
-    # Used by monkey. can't secure.
-    def get(self):
-        return {"config": ConfigService.format_flat_config_for_agent()}
 
     # Used by monkey. can't secure.
     # Called on monkey wakeup to initialize local configuration
