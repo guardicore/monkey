@@ -46,6 +46,15 @@ class AgentConfiguration:
 
     @staticmethod
     def from_mapping(config_mapping: Mapping[str, Any]) -> AgentConfiguration:
+        """
+        Construct an AgentConfiguration from a Mapping
+
+        :param config_mapping: A Mapping that represents an AgentConfiguration
+        :return: An AgentConfiguration
+        :raises: InvalidConfigurationError if the provided Mapping does not represent a valid
+                 AgentConfiguration
+        """
+
         try:
             config_dict = AgentConfigurationSchema().load(config_mapping)
             return AgentConfiguration(**config_dict)
@@ -54,6 +63,14 @@ class AgentConfiguration:
 
     @staticmethod
     def from_json(config_json: str) -> AgentConfiguration:
+        """
+        Construct an AgentConfiguration from a JSON string
+
+        :param config_json: A JSON string that represents an AgentConfiguration
+        :return: An AgentConfiguration
+        :raises: InvalidConfigurationError if the provided JSON does not represent a valid
+                 AgentConfiguration
+        """
         try:
             config_dict = AgentConfigurationSchema().loads(config_json)
             return AgentConfiguration(**config_dict)
@@ -62,6 +79,12 @@ class AgentConfiguration:
 
     @staticmethod
     def to_json(config: AgentConfiguration) -> str:
+        """
+        Serialize an AgentConfiguration to JSON
+
+        :param config: An AgentConfiguration
+        :return: A JSON string representing the AgentConfiguration
+        """
         return AgentConfigurationSchema().dumps(config)
 
 
