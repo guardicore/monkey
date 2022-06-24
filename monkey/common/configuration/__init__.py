@@ -1,7 +1,4 @@
-from .agent_configuration import (
-    AgentConfiguration,
-    AgentConfigurationSchema,
-)
+from .agent_configuration import AgentConfiguration, InvalidConfigurationError
 from .agent_sub_configurations import (
     CustomPBAConfiguration,
     PluginConfiguration,

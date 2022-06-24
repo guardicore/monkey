@@ -1,4 +1,4 @@
-from . import AgentConfiguration, AgentConfigurationSchema
+from . import AgentConfiguration
 
 DEFAULT_AGENT_CONFIGURATION_JSON = """{
         "keep_tunnel_open_time": 30,
@@ -204,5 +204,4 @@ DEFAULT_AGENT_CONFIGURATION_JSON = """{
 
 
 def build_default_agent_configuration() -> AgentConfiguration:
-    schema = AgentConfigurationSchema()
-    return schema.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    return AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)

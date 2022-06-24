@@ -1,4 +1,4 @@
-from common.configuration import AgentConfigurationSchema
+from common.configuration import AgentConfiguration
 
 flat_config = {
     "keep_tunnel_open_time": 30,
@@ -116,4 +116,4 @@ flat_config = {
     },
 }
 
-DEFAULT_CONFIG = AgentConfigurationSchema().load(flat_config)
+DEFAULT_CONFIG = AgentConfiguration.from_mapping(flat_config)
