@@ -52,17 +52,16 @@ class ControlChannel(IControlChannel):
     def get_config(self) -> AgentConfiguration:
         try:
             response = requests.get(  # noqa: DUO123
-                f"https://{self._control_channel_server}/api/agent",
+                f"https://{self._control_channel_server}/api/agent-configuration",
                 verify=False,
                 proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()
 
-            config_dict = json.loads(response.text)["config"]
             logger.debug(f"Received configuration:\n{pformat(json.loads(response.text))}")
 
-            return AgentConfiguration.from_mapping(config_dict)
+            return AgentConfiguration.from_json(response.text)
         except (
             json.JSONDecodeError,
             requests.exceptions.ConnectionError,
