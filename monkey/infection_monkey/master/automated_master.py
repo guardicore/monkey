@@ -1,7 +1,7 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, Iterable, List, Optional
+from typing import Any, Callable, Iterable, List, Mapping, Optional
 
 from common.configuration import PluginConfiguration
 from common.utils import Timer
@@ -208,7 +208,7 @@ class AutomatedMaster(IMaster):
         self,
         plugins: Iterable[PluginConfiguration],
         callback: Callable[[Any], None],
-        custom_pba_options: Dict,
+        custom_pba_options: Mapping,
     ):
         self._run_plugins(plugins, "post-breach action", callback)
 
