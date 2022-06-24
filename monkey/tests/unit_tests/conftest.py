@@ -5,9 +5,6 @@ from typing import Callable, Dict
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from tests.data_for_tests.monkey_configs.default_config import DEFAULT_CONFIG
-
-from common.configuration import AgentConfiguration
 
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
