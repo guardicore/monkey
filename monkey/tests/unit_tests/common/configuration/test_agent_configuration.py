@@ -1,3 +1,5 @@
+import json
+
 from tests.common.example_agent_configuration import (
     AGENT_CONFIGURATION,
     BLOCKED_IPS,
@@ -178,3 +180,12 @@ def test_default_agent_configuration():
     config = schema.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
 
     assert isinstance(config, AgentConfiguration)
+
+
+def test_from_dict():
+    schema = AgentConfigurationSchema()
+    dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+
+    config = AgentConfiguration.from_dict(dict_)
+
+    assert schema.dump(config) == dict_
