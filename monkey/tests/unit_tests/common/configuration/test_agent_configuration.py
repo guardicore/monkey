@@ -25,11 +25,8 @@ from tests.common.example_agent_configuration import (
     WINDOWS_FILENAME,
 )
 
-from common.configuration import (
-    DEFAULT_AGENT_CONFIGURATION_JSON,
-    AgentConfiguration,
-    AgentConfigurationSchema,
-)
+from common.configuration import DEFAULT_AGENT_CONFIGURATION_JSON, AgentConfiguration
+from common.configuration.agent_configuration import AgentConfigurationSchema
 from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     ExploitationConfigurationSchema,
@@ -159,10 +156,8 @@ def test_propagation_configuration():
 
 
 def test_agent_configuration():
-    schema = AgentConfigurationSchema()
-
     config = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
-    config_dict = schema.dump(config)
+    config_json = AgentConfiguration.to_json(config)
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
@@ -171,7 +166,7 @@ def test_agent_configuration():
     assert isinstance(config.credential_collectors[0], PluginConfiguration)
     assert isinstance(config.payloads[0], PluginConfiguration)
     assert isinstance(config.propagation, PropagationConfiguration)
-    assert config_dict == AGENT_CONFIGURATION
+    assert json.loads(config_json) == AGENT_CONFIGURATION
 
 
 def test_default_agent_configuration():
