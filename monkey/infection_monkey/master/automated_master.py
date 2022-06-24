@@ -182,7 +182,7 @@ class AutomatedMaster(IMaster):
         payload_thread = create_daemon_thread(
             target=self._run_plugins,
             name="PayloadThread",
-            args=(config.payloads.items(), "payload", self._run_payload),
+            args=(config.payloads, "payload", self._run_payload),
         )
         payload_thread.start()
         payload_thread.join()
@@ -205,8 +205,8 @@ class AutomatedMaster(IMaster):
             self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
 
     def _run_payload(self, payload: Tuple[str, Dict]):
-        name = payload[0]
-        options = payload[1]
+        name = payload.name
+        options = payload.options
 
         self._puppet.run_payload(name, options, self._stop)
 
