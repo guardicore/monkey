@@ -1,7 +1,7 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional
 
 from common.configuration import PluginConfiguration
 from common.utils import Timer
@@ -201,11 +201,8 @@ class AutomatedMaster(IMaster):
         for pba_data in self._puppet.run_pba(pba.name, pba.options):
             self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
 
-    def _run_payload(self, payload: Tuple[str, Dict]):
-        name = payload.name
-        options = payload.options
-
-        self._puppet.run_payload(name, options, self._stop)
+    def _run_payload(self, payload: PluginConfiguration):
+        self._puppet.run_payload(payload.name, payload.options, self._stop)
 
     def _run_pbas(
         self,
