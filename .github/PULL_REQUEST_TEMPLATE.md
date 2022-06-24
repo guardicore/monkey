@@ -17,7 +17,3 @@ Add any further explanations here.
 * [ ] Have you successfully tested your changes locally? Elaborate:
     > Tested by {Running the Monkey locally with relevant config/running Island/...}
 * [ ] If applicable, add screenshots or log transcripts of the feature working
-
-## Explain Changes
-
-Are the commit messages enough? If not, elaborate.
