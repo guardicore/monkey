@@ -1,5 +1,6 @@
 import json
 import logging
+from pprint import pformat
 from typing import Mapping
 
 import requests
@@ -58,7 +59,10 @@ class ControlChannel(IControlChannel):
             )
             response.raise_for_status()
 
-            return AgentConfiguration.from_mapping(json.loads(response.text)["config"])
+            config_dict = json.loads(response.text)["config"]
+            logger.debug(f"Received configuration:\n{pformat(json.loads(response.text))}")
+
+            return AgentConfiguration.from_mapping(config_dict)
         except (
             json.JSONDecodeError,
             requests.exceptions.ConnectionError,
