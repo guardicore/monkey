@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List
 
-from marshmallow import Schema, fields, post_load
+from marshmallow import Schema, fields
 
 from .agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
@@ -28,11 +28,13 @@ class AgentConfiguration:
 
     @staticmethod
     def from_dict(dict_: dict):
-        return AgentConfigurationSchema().load(dict_)
+        config_dict = AgentConfigurationSchema().load(dict_)
+        return AgentConfiguration(**config_dict)
 
     @staticmethod
     def from_json(config_json: dict):
-        return AgentConfigurationSchema().loads(config_json)
+        config_dict = AgentConfigurationSchema().loads(config_json)
+        return AgentConfiguration(**config_dict)
 
     @staticmethod
     def to_json(config: AgentConfiguration) -> str:
@@ -46,7 +48,3 @@ class AgentConfigurationSchema(Schema):
     credential_collectors = fields.List(fields.Nested(PluginConfigurationSchema))
     payloads = fields.List(fields.Nested(PluginConfigurationSchema))
     propagation = fields.Nested(PropagationConfigurationSchema)
-
-    @post_load
-    def _make_agent_configuration(self, data, **kwargs):
-        return AgentConfiguration(**data)
