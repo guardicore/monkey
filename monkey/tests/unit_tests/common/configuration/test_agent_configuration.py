@@ -198,3 +198,11 @@ def test_from_json():
     config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
 
     assert schema.dump(config) == dict_
+
+
+def test_to_json():
+    config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
+
+    assert json.loads(AgentConfiguration.to_json(config)) == json.loads(
+        DEFAULT_AGENT_CONFIGURATION_JSON
+    )

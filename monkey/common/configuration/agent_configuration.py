@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import List
 
@@ -31,6 +33,10 @@ class AgentConfiguration:
     @staticmethod
     def from_json(config_json: dict):
         return AgentConfigurationSchema().loads(config_json)
+
+    @staticmethod
+    def to_json(config: AgentConfiguration) -> str:
+        return AgentConfigurationSchema().dumps(config)
 
 
 class AgentConfigurationSchema(Schema):
