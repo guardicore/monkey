@@ -140,7 +140,9 @@ class StubExploiter:
         pass
 
 
-def get_propagation_config(default_agent_configuration, scan_target_config: ScanTargetConfiguration):
+def get_propagation_config(
+    default_agent_configuration, scan_target_config: ScanTargetConfiguration
+):
     network_scan = NetworkScanConfiguration(
         default_agent_configuration.propagation.network_scan.tcp,
         default_agent_configuration.propagation.network_scan.icmp,
