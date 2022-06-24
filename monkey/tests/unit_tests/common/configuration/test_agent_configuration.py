@@ -1,5 +1,6 @@
 import json
 
+import pytest
 from tests.common.example_agent_configuration import (
     AGENT_CONFIGURATION,
     BLOCKED_IPS,
@@ -167,6 +168,14 @@ def test_agent_configuration():
     assert isinstance(config.payloads[0], PluginConfiguration)
     assert isinstance(config.propagation, PropagationConfiguration)
     assert json.loads(config_json) == AGENT_CONFIGURATION
+
+
+def test_incorrect_type():
+    valid_config = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
+    with pytest.raises(Exception):
+        valid_config_dict = valid_config.__dict__
+        valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
+        AgentConfiguration(**valid_config_dict)
 
 
 def test_default_agent_configuration():

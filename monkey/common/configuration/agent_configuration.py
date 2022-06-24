@@ -26,6 +26,11 @@ class AgentConfiguration:
     payloads: List[PluginConfiguration]
     propagation: PropagationConfiguration
 
+    def __post_init__(self):
+        # This will raise an exception if the object is invalid. Calling this in __post__init()
+        # makes it impossible to construct an invalid object
+        AgentConfigurationSchema().dump(self)
+
     @staticmethod
     def from_dict(dict_: dict):
         config_dict = AgentConfigurationSchema().load(dict_)
