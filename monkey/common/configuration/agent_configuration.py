@@ -25,8 +25,8 @@ class AgentConfiguration:
     propagation: PropagationConfiguration
 
     @staticmethod
-    def from_dict(_dict: dict):
-        return AgentConfigurationSchema().load(_dict)
+    def from_dict(dict_: dict):
+        return AgentConfigurationSchema().load(dict_)
 
 
 class AgentConfigurationSchema(Schema):
