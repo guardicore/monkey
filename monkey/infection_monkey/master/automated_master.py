@@ -198,10 +198,7 @@ class AutomatedMaster(IMaster):
             logger.debug(f"No credentials were collected by {collector}")
 
     def _run_pba(self, pba: PluginConfiguration):
-        name = pba.name
-        options = pba.options
-
-        for pba_data in self._puppet.run_pba(name, options):
+        for pba_data in self._puppet.run_pba(pba.name, pba.options):
             self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
 
     def _run_payload(self, payload: Tuple[str, Dict]):
