@@ -26,7 +26,11 @@ from tests.common.example_agent_configuration import (
     WINDOWS_FILENAME,
 )
 
-from common.configuration import DEFAULT_AGENT_CONFIGURATION_JSON, AgentConfiguration
+from common.configuration import (
+    DEFAULT_AGENT_CONFIGURATION_JSON,
+    AgentConfiguration,
+    InvalidConfigurationError,
+)
 from common.configuration.agent_configuration import AgentConfigurationSchema
 from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
@@ -172,7 +176,7 @@ def test_agent_configuration():
 
 def test_incorrect_type():
     valid_config = AgentConfiguration.from_dict(AGENT_CONFIGURATION)
-    with pytest.raises(Exception):
+    with pytest.raises(InvalidConfigurationError):
         valid_config_dict = valid_config.__dict__
         valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
         AgentConfiguration(**valid_config_dict)
@@ -193,6 +197,14 @@ def test_from_dict():
     assert schema.dump(config) == dict_
 
 
+def test_from_dict__invalid_data():
+    dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    dict_["payloads"] = "payloads"
+
+    with pytest.raises(InvalidConfigurationError):
+        AgentConfiguration.from_dict(dict_)
+
+
 def test_from_json():
     schema = AgentConfigurationSchema()
     dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
@@ -200,6 +212,14 @@ def test_from_json():
     config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
 
     assert schema.dump(config) == dict_
+
+
+def test_from_json__invalid_data():
+    invalid_dict = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    invalid_dict["payloads"] = "payloads"
+
+    with pytest.raises(InvalidConfigurationError):
+        AgentConfiguration.from_json(json.dumps(invalid_dict))
 
 
 def test_to_json():

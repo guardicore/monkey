@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import List
 
 from marshmallow import Schema, fields
+from marshmallow.exceptions import MarshmallowError
 
 from .agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
@@ -21,6 +22,11 @@ class InvalidConfigurationError(Exception):
     pass
 
 
+INVALID_CONFIGURATION_ERROR_MESSAGE = (
+    "Cannot construct an AgentConfiguration object with the supplied, invalid data:"
+)
+
+
 @dataclass(frozen=True)
 class AgentConfiguration:
     keep_tunnel_open_time: float
@@ -33,17 +39,26 @@ class AgentConfiguration:
     def __post_init__(self):
         # This will raise an exception if the object is invalid. Calling this in __post__init()
         # makes it impossible to construct an invalid object
-        AgentConfigurationSchema().dump(self)
+        try:
+            AgentConfigurationSchema().dump(self)
+        except Exception as err:
+            raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
 
     @staticmethod
     def from_dict(dict_: dict):
-        config_dict = AgentConfigurationSchema().load(dict_)
-        return AgentConfiguration(**config_dict)
+        try:
+            config_dict = AgentConfigurationSchema().load(dict_)
+            return AgentConfiguration(**config_dict)
+        except MarshmallowError as err:
+            raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
 
     @staticmethod
     def from_json(config_json: dict):
-        config_dict = AgentConfigurationSchema().loads(config_json)
-        return AgentConfiguration(**config_dict)
+        try:
+            config_dict = AgentConfigurationSchema().loads(config_json)
+            return AgentConfiguration(**config_dict)
+        except MarshmallowError as err:
+            raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
 
     @staticmethod
     def to_json(config: AgentConfiguration) -> str:
