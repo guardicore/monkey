@@ -30,6 +30,6 @@ class AgentConfiguration(AbstractResource):
             return make_response({}, 200)
         except (InvalidConfigurationError, json.JSONDecodeError) as err:
             return make_response(
-                {"message": f"Invalid configuration supplied: {err}"},
+                {"error": f"Invalid configuration supplied: {err}"},
                 400,
             )
