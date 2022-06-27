@@ -41,14 +41,14 @@ def test_stop_if_cant_get_config_from_island(monkeypatch):
 
 
 @pytest.fixture
-def sleep_and_return_config(automated_master_config):
+def sleep_and_return_config(default_agent_configuration):
     # Ensure that should_agent_stop times out before get_config() returns to prevent the
     # Propagator's sub-threads from hanging
     get_config_sleep_time = INTERVAL * (CHECK_FOR_STOP_AGENT_COUNT + 1)
 
     def _inner():
         time.sleep(get_config_sleep_time)
-        return automated_master_config
+        return default_agent_configuration
 
     return _inner
 
