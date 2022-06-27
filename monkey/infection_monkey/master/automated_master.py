@@ -1,9 +1,9 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Iterable, List, Mapping, Optional
+from typing import Any, Callable, Iterable, List, Optional
 
-from common.configuration import PluginConfiguration
+from common.configuration import CustomPBAConfiguration, PluginConfiguration
 from common.utils import Timer
 from infection_monkey.credential_store import ICredentialsStore
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
@@ -208,13 +208,13 @@ class AutomatedMaster(IMaster):
         self,
         plugins: Iterable[PluginConfiguration],
         callback: Callable[[Any], None],
-        custom_pba_options: Mapping,
+        custom_pba_options: CustomPBAConfiguration,
     ):
         self._run_plugins(plugins, "post-breach action", callback)
 
         if custom_pba_is_enabled(custom_pba_options):
             self._run_plugins(
-                [PluginConfiguration(name="CustomPBA", options=custom_pba_options)],
+                [PluginConfiguration(name="CustomPBA", options=custom_pba_options.__dict__)],
                 "post-breach action",
                 callback,
             )
