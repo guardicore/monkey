@@ -174,7 +174,7 @@ class AutomatedMaster(IMaster):
         current_depth = self._current_depth if self._current_depth is not None else 0
         logger.info(f"Current depth is {current_depth}")
 
-        if maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+        if maximum_depth_reached(config.propagation.maximum_depth, current_depth):
             self._propagator.propagate(config.propagation, current_depth, self._stop)
         else:
             logger.info("Skipping propagation: maximum depth reached")
