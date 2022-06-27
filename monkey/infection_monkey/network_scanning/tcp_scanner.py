@@ -2,6 +2,7 @@ import logging
 import select
 import socket
 import time
+from pprint import pformat
 from typing import Iterable, Mapping, Tuple
 
 from common.utils import Timer
@@ -110,9 +111,9 @@ def _check_tcp_ports(
 
                 sockets_to_try = sockets_to_try - connected_ports
 
-            logger.debug(
-                "On host %s discovered the following ports %s"
-                % (str(ip), ",".join([str(s[0]) for s in connected_ports]))
+            logger.info(
+                f"Discovered the following ports on {ip}: "
+                f"{pformat([port for port, _ in connected_ports])}"
             )
 
             open_ports = {port: "" for port, _ in connected_ports}
