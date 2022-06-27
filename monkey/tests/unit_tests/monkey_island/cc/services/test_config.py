@@ -99,7 +99,7 @@ def test_format_config_for_agent__propagation():
 def test_format_config_for_agent__network_scan():
     expected_network_scan_config = {
         "tcp": {
-            "timeout": 3000,
+            "timeout": 3.0,
             "ports": [
                 22,
                 80,
@@ -117,7 +117,7 @@ def test_format_config_for_agent__network_scan():
             ],
         },
         "icmp": {
-            "timeout": 1000,
+            "timeout": 1.0,
         },
         "targets": {
             "blocked_ips": ["192.168.1.1", "192.168.1.100"],

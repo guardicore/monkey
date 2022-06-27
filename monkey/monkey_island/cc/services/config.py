@@ -179,6 +179,7 @@ class ConfigService:
             should_encrypt=True,
         )
 
+    @staticmethod
     def _filter_none_values(data):
         if isinstance(data, dict):
             return {
@@ -460,7 +461,7 @@ class ConfigService:
 
         formatted_tcp_scan_config = {}
 
-        formatted_tcp_scan_config["timeout"] = config[flat_tcp_timeout_field]
+        formatted_tcp_scan_config["timeout"] = config[flat_tcp_timeout_field] / 1000
 
         ports = ConfigService._union_tcp_and_http_ports(
             config[flat_tcp_ports_field], config[flat_http_ports_field]
@@ -484,7 +485,7 @@ class ConfigService:
         flat_ping_timeout_field = "ping_scan_timeout"
 
         formatted_icmp_scan_config = {}
-        formatted_icmp_scan_config["timeout"] = config[flat_ping_timeout_field]
+        formatted_icmp_scan_config["timeout"] = config[flat_ping_timeout_field] / 1000
 
         config.pop(flat_ping_timeout_field, None)
 

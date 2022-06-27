@@ -78,7 +78,7 @@ from infection_monkey.utils.monkey_dir import (
     remove_monkey_dir,
 )
 from infection_monkey.utils.monkey_log_path import get_agent_log_path
-from infection_monkey.utils.propagation import should_propagate
+from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
 logger = logging.getLogger(__name__)
@@ -173,9 +173,11 @@ class InfectionMonkey:
 
         config = control_channel.get_config()
         self._monkey_inbound_tunnel = self._control_client.create_control_tunnel(
-            config["config"]["keep_tunnel_open_time"]
+            config.keep_tunnel_open_time
         )
-        if self._monkey_inbound_tunnel and should_propagate(config, self._current_depth):
+        if self._monkey_inbound_tunnel and maximum_depth_reached(
+            config.propagation.maximum_depth, self._current_depth
+        ):
             self._inbound_tunnel_opened = True
             self._monkey_inbound_tunnel.start()
 

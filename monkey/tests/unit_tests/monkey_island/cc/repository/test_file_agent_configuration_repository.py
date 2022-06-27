@@ -2,7 +2,7 @@ import pytest
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.monkey_island import OpenErrorFileRepository, SingleFileRepository
 
-from common.configuration import AgentConfigurationSchema
+from common.configuration import AgentConfiguration
 from monkey_island.cc.repository import FileAgentConfigurationRepository, RetrievalError
 
 
@@ -12,8 +12,7 @@ def repository(default_agent_configuration):
 
 
 def test_store_agent_config(repository):
-    schema = AgentConfigurationSchema()
-    agent_configuration = schema.load(AGENT_CONFIGURATION)
+    agent_configuration = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
 
     repository.store_configuration(agent_configuration)
     retrieved_agent_configuration = repository.get_configuration()

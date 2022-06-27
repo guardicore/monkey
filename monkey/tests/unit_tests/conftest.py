@@ -9,7 +9,7 @@ from _pytest.monkeypatch import MonkeyPatch
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
-from common.configuration import AgentConfiguration, build_default_agent_configuration  # noqa: E402
+from common.configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -60,4 +60,4 @@ def load_monkey_config(data_for_tests_dir) -> Callable[[str], Dict]:
 
 @pytest.fixture
 def default_agent_configuration() -> AgentConfiguration:
-    return build_default_agent_configuration()
+    return DEFAULT_AGENT_CONFIGURATION

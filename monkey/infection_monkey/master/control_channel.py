@@ -1,10 +1,12 @@
 import json
 import logging
+from pprint import pformat
 from typing import Mapping
 
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
+from common.configuration import AgentConfiguration
 from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 
@@ -47,7 +49,7 @@ class ControlChannel(IControlChannel):
         ) as e:
             raise IslandCommunicationError(e)
 
-    def get_config(self) -> dict:
+    def get_config(self) -> AgentConfiguration:
         try:
             response = requests.get(  # noqa: DUO123
                 f"https://{self._control_channel_server}/api/agent",
@@ -57,7 +59,10 @@ class ControlChannel(IControlChannel):
             )
             response.raise_for_status()
 
-            return json.loads(response.content.decode())
+            config_dict = json.loads(response.text)["config"]
+            logger.debug(f"Received configuration:\n{pformat(json.loads(response.text))}")
+
+            return AgentConfiguration.from_mapping(config_dict)
         except (
             json.JSONDecodeError,
             requests.exceptions.ConnectionError,

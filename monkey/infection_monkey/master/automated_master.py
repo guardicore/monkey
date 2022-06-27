@@ -1,8 +1,9 @@
 import logging
 import threading
 import time
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
+from typing import Any, Callable, Iterable, List, Optional
 
+from common.configuration import CustomPBAConfiguration, PluginConfiguration
 from common.utils import Timer
 from infection_monkey.credential_store import ICredentialsStore
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
@@ -13,7 +14,7 @@ from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.utils.propagation import should_propagate
+from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
 from . import Exploiter, IPScanner, Propagator
@@ -111,7 +112,7 @@ class AutomatedMaster(IMaster):
             time.sleep(CHECK_FOR_TERMINATE_INTERVAL_SEC)
 
     @staticmethod
-    def _try_communicate_with_island(fn: Callable[[], Any], max_tries: int):
+    def _try_communicate_with_island(fn: Callable[[], Any], max_tries: int) -> Any:
         tries = 0
         while tries < max_tries:
             try:
@@ -141,7 +142,7 @@ class AutomatedMaster(IMaster):
         try:
             config = AutomatedMaster._try_communicate_with_island(
                 self._control_channel.get_config, CHECK_FOR_CONFIG_COUNT
-            )["config"]
+            )
         except IslandCommunicationError as e:
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
@@ -150,7 +151,7 @@ class AutomatedMaster(IMaster):
             target=self._run_plugins,
             name="CredentialCollectorThread",
             args=(
-                config["credential_collectors"],
+                config.credential_collectors,
                 "credential collector",
                 self._collect_credentials,
             ),
@@ -158,7 +159,7 @@ class AutomatedMaster(IMaster):
         pba_thread = create_daemon_thread(
             target=self._run_pbas,
             name="PBAThread",
-            args=(config["post_breach_actions"].items(), self._run_pba, config["custom_pbas"]),
+            args=(config.post_breach_actions, self._run_pba, config.custom_pbas),
         )
 
         credential_collector_thread.start()
@@ -173,52 +174,56 @@ class AutomatedMaster(IMaster):
         current_depth = self._current_depth if self._current_depth is not None else 0
         logger.info(f"Current depth is {current_depth}")
 
-        if should_propagate(self._control_channel.get_config(), self._current_depth):
-            self._propagator.propagate(config["propagation"], current_depth, self._stop)
+        if maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+            self._propagator.propagate(config.propagation, current_depth, self._stop)
         else:
             logger.info("Skipping propagation: maximum depth reached")
 
         payload_thread = create_daemon_thread(
             target=self._run_plugins,
             name="PayloadThread",
-            args=(config["payloads"].items(), "payload", self._run_payload),
+            args=(config.payloads, "payload", self._run_payload),
         )
         payload_thread.start()
         payload_thread.join()
 
         pba_thread.join()
 
-    def _collect_credentials(self, collector: str):
-        credentials = self._puppet.run_credential_collector(collector, {})
+    def _collect_credentials(self, collector: PluginConfiguration):
+        credentials = self._puppet.run_credential_collector(collector.name, collector.options)
 
         if credentials:
             self._telemetry_messenger.send_telemetry(CredentialsTelem(credentials))
         else:
             logger.debug(f"No credentials were collected by {collector}")
 
-    def _run_pba(self, pba: Tuple[str, Dict]):
-        name = pba[0]
-        options = pba[1]
-
-        for pba_data in self._puppet.run_pba(name, options):
+    def _run_pba(self, pba: PluginConfiguration):
+        for pba_data in self._puppet.run_pba(pba.name, pba.options):
             self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
 
-    def _run_payload(self, payload: Tuple[str, Dict]):
-        name = payload[0]
-        options = payload[1]
-
-        self._puppet.run_payload(name, options, self._stop)
+    def _run_payload(self, payload: PluginConfiguration):
+        self._puppet.run_payload(payload.name, payload.options, self._stop)
 
     def _run_pbas(
-        self, plugins: Iterable[Any], callback: Callable[[Any], None], custom_pba_options: Mapping
+        self,
+        plugins: Iterable[PluginConfiguration],
+        callback: Callable[[Any], None],
+        custom_pba_options: CustomPBAConfiguration,
     ):
         self._run_plugins(plugins, "post-breach action", callback)
 
         if custom_pba_is_enabled(custom_pba_options):
-            self._run_plugins([("CustomPBA", custom_pba_options)], "post-breach action", callback)
+            self._run_plugins(
+                [PluginConfiguration(name="CustomPBA", options=custom_pba_options.__dict__)],
+                "post-breach action",
+                callback,
+            )
 
     def _run_plugins(
-        self, plugins: Iterable[Any], plugin_type: str, callback: Callable[[Any], None]
+        self,
+        plugins: Iterable[PluginConfiguration],
+        plugin_type: str,
+        callback: Callable[[Any], None],
     ):
         logger.info(f"Running {plugin_type}s")
         logger.debug(f"Found {len(plugins)} {plugin_type}(s) to run")

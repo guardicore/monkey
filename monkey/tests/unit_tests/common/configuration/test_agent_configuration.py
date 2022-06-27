@@ -1,3 +1,7 @@
+import json
+from copy import deepcopy
+
+import pytest
 from tests.common.example_agent_configuration import (
     AGENT_CONFIGURATION,
     BLOCKED_IPS,
@@ -23,11 +27,8 @@ from tests.common.example_agent_configuration import (
     WINDOWS_FILENAME,
 )
 
-from common.configuration import (
-    DEFAULT_AGENT_CONFIGURATION_JSON,
-    AgentConfiguration,
-    AgentConfigurationSchema,
-)
+from common.configuration import AgentConfiguration, InvalidConfigurationError
+from common.configuration.agent_configuration import AgentConfigurationSchema
 from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     ExploitationConfigurationSchema,
@@ -157,10 +158,8 @@ def test_propagation_configuration():
 
 
 def test_agent_configuration():
-    schema = AgentConfigurationSchema()
-
-    config = schema.load(AGENT_CONFIGURATION)
-    config_dict = schema.dump(config)
+    config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
+    config_json = AgentConfiguration.to_json(config)
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
@@ -169,12 +168,53 @@ def test_agent_configuration():
     assert isinstance(config.credential_collectors[0], PluginConfiguration)
     assert isinstance(config.payloads[0], PluginConfiguration)
     assert isinstance(config.propagation, PropagationConfiguration)
-    assert config_dict == AGENT_CONFIGURATION
+    assert json.loads(config_json) == AGENT_CONFIGURATION
 
 
-def test_default_agent_configuration():
+def test_incorrect_type():
+    valid_config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
+    with pytest.raises(InvalidConfigurationError):
+        valid_config_dict = valid_config.__dict__
+        valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
+        AgentConfiguration(**valid_config_dict)
+
+
+def test_from_dict():
     schema = AgentConfigurationSchema()
+    dict_ = deepcopy(AGENT_CONFIGURATION)
 
-    config = schema.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    config = AgentConfiguration.from_mapping(dict_)
+
+    assert schema.dump(config) == dict_
+
+
+def test_from_dict__invalid_data():
+    dict_ = deepcopy(AGENT_CONFIGURATION)
+    dict_["payloads"] = "payloads"
+
+    with pytest.raises(InvalidConfigurationError):
+        AgentConfiguration.from_mapping(dict_)
+
+
+def test_from_json():
+    schema = AgentConfigurationSchema()
+    dict_ = deepcopy(AGENT_CONFIGURATION)
+
+    config = AgentConfiguration.from_json(json.dumps(dict_))
 
     assert isinstance(config, AgentConfiguration)
+    assert schema.dump(config) == dict_
+
+
+def test_from_json__invalid_data():
+    invalid_dict = deepcopy(AGENT_CONFIGURATION)
+    invalid_dict["payloads"] = "payloads"
+
+    with pytest.raises(InvalidConfigurationError):
+        AgentConfiguration.from_json(json.dumps(invalid_dict))
+
+
+def test_to_json():
+    config = deepcopy(AGENT_CONFIGURATION)
+
+    assert json.loads(AgentConfiguration.to_json(config)) == AGENT_CONFIGURATION

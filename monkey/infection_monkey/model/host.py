@@ -17,7 +17,7 @@ class VictimHost(object):
         return self.__dict__
 
     def is_windows(self) -> bool:
-        return OperatingSystems.WINDOWS in self.os["type"]
+        return OperatingSystems.WINDOWS == self.os["type"]
 
     def __hash__(self):
         return hash(self.ip_addr)

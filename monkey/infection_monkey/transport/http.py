@@ -62,7 +62,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             f.close()
 
     def send_head(self):
-        if self.path != "/" + urllib.parse.quote(self.victim_os):
+        if self.path != "/" + urllib.parse.quote(self.victim_os.value):
             self.send_error(500, "")
             return None, 0, 0
         try:
