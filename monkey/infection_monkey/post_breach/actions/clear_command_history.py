@@ -16,7 +16,7 @@ class ClearCommandHistory(PBA):
         super().__init__(telemetry_messenger, name=POST_BREACH_CLEAR_CMD_HISTORY)
 
     def run(self, options: Dict) -> Iterable[PostBreachData]:
-        results = [pba.run() for pba in self.clear_command_history_pba_list()]
+        results = [pba.run(options) for pba in self.clear_command_history_pba_list()]
         if results:
             # `self.command` is empty here
             self.pba_data.append(PostBreachData(self.name, self.command, results))
@@ -53,7 +53,7 @@ class ClearCommandHistory(PBA):
                     linux_cmd=linux_cmds,
                 )
 
-            def run(self) -> Tuple[str, bool]:
+            def run(self, options: Dict) -> Tuple[str, bool]:
                 if self.command:
                     try:
                         output = subprocess.check_output(  # noqa: DUO116
