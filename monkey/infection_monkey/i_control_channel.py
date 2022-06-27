@@ -1,5 +1,7 @@
 import abc
 
+from common.configuration import AgentConfiguration
+
 
 class IControlChannel(metaclass=abc.ABCMeta):
     @abc.abstractmethod
@@ -11,10 +13,10 @@ class IControlChannel(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def get_config(self) -> dict:
+    def get_config(self) -> AgentConfiguration:
         """
-        :return: A dictionary containing Agent Configuration
-        :rtype: dict
+        :return: An AgentConfiguration object
+        :rtype: AgentConfiguration
         """
         pass
 

@@ -3,13 +3,16 @@ from pathlib import Path
 
 from common import DIContainer
 from common.aws import AWSInstance
+from common.configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
-    AgentRetrievalError,
+    FileAgentConfigurationRepository,
     IAgentBinaryRepository,
+    IAgentConfigurationRepository,
     IFileRepository,
     LocalStorageFileRepository,
+    RetrievalError,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import AWSService
@@ -28,14 +31,20 @@ def initialize_services(data_dir: Path) -> DIContainer:
     container = DIContainer()
 
     container.register_convention(Path, "data_dir", data_dir)
+    container.register_convention(
+        AgentConfiguration, "default_agent_configuration", DEFAULT_AGENT_CONFIGURATION
+    )
     container.register_instance(AWSInstance, AWSInstance())
 
     container.register_instance(
-        IFileRepository, LocalStorageFileRepository(data_dir / "custom_pbas")
+        IFileRepository, LocalStorageFileRepository(data_dir / "runtime_data")
     )
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
+    container.register_instance(
+        IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
+    )
 
     # This is temporary until we get DI all worked out.
     PostBreachFilesService.initialize(container.resolve(IFileRepository))
@@ -71,7 +80,7 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
             agent_binary = get_agent_binary()
             binary_sha256_hash = get_binary_io_sha256_hash(agent_binary)
             agent_hashes[os] = binary_sha256_hash
-        except AgentRetrievalError as err:
+        except RetrievalError as err:
             logger.error(f"No agent available for {os}: {err}")
 
     for os, binary_sha256_hash in agent_hashes.items():

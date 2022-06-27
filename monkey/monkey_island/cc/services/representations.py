@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 
 import bson
 from bson.json_util import dumps
@@ -11,17 +12,25 @@ def normalize_obj(obj):
         del obj["_id"]
 
     for key, value in list(obj.items()):
-        if isinstance(value, bson.objectid.ObjectId):
-            obj[key] = str(value)
-        if isinstance(value, datetime):
-            obj[key] = str(value)
-        if isinstance(value, dict):
-            obj[key] = normalize_obj(value)
         if isinstance(value, list):
             for i in range(0, len(value)):
-                if isinstance(value[i], dict):
-                    value[i] = normalize_obj(value[i])
+                obj[key][i] = _normalize_value(value[i])
+        else:
+            obj[key] = _normalize_value(value)
     return obj
+
+
+def _normalize_value(value):
+    if type(value) == dict:
+        return normalize_obj(value)
+    if isinstance(value, bson.objectid.ObjectId):
+        return str(value)
+    if isinstance(value, datetime):
+        return str(value)
+    if issubclass(type(value), Enum):
+        return value.name
+    else:
+        return value
 
 
 def output_json(obj, code, headers=None):

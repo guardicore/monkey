@@ -1,35 +1,10 @@
-import io
-from typing import BinaryIO
-
 import pytest
 from tests.common import StubDIContainer
+from tests.monkey_island import FILE_CONTENTS, FILE_NAME, MockFileRepository
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from monkey_island.cc.repository import FileRetrievalError, IFileRepository
+from monkey_island.cc.repository import IFileRepository
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
-
-FILE_NAME = "test_file"
-FILE_CONTENTS = b"HelloWorld!"
-
-
-class MockFileRepository(IFileRepository):
-    def __init__(self):
-        self._file = io.BytesIO(FILE_CONTENTS)
-
-    def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
-        pass
-
-    def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        if unsafe_file_name != FILE_NAME:
-            raise FileRetrievalError()
-
-        return self._file
-
-    def delete_file(self, unsafe_file_name: str):
-        pass
-
-    def delete_all_files(self):
-        pass
 
 
 @pytest.fixture
@@ -56,3 +31,11 @@ def test_file_download_endpoint_404(tmp_path, flask_client):
     resp = flask_client.get(download_url)
 
     assert resp.status_code == 404
+
+
+def test_file_download_endpoint_500(tmp_path, open_error_flask_client):
+    download_url = get_url_for_resource(PBAFileDownload, filename="test")
+
+    resp = open_error_flask_client.get(download_url)
+
+    assert resp.status_code == 500

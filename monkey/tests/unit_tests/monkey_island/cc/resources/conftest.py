@@ -2,11 +2,14 @@ from unittest.mock import MagicMock
 
 import flask_jwt_extended
 import pytest
+from tests.common import StubDIContainer
+from tests.monkey_island import OpenErrorFileRepository
 from tests.unit_tests.monkey_island.conftest import init_mock_app
 
 import monkey_island.cc.app
 import monkey_island.cc.resources.auth.auth
 import monkey_island.cc.resources.island_mode
+from monkey_island.cc.repository import IFileRepository
 
 
 @pytest.fixture
@@ -38,3 +41,12 @@ def get_mock_app(container):
     flask_jwt_extended.JWTManager(app)
 
     return app
+
+
+@pytest.fixture
+def open_error_flask_client(build_flask_client):
+    container = StubDIContainer()
+    container.register(IFileRepository, OpenErrorFileRepository)
+
+    with build_flask_client(container) as flask_client:
+        yield flask_client

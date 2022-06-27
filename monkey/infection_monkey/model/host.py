@@ -1,5 +1,7 @@
 from typing import Optional
 
+from common import OperatingSystems
+
 
 class VictimHost(object):
     def __init__(self, ip_addr: str, domain_name: str = ""):
@@ -13,6 +15,9 @@ class VictimHost(object):
 
     def as_dict(self):
         return self.__dict__
+
+    def is_windows(self) -> bool:
+        return OperatingSystems.WINDOWS == self.os["type"]
 
     def __hash__(self):
         return hash(self.ip_addr)

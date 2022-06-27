@@ -1,7 +1,6 @@
 import json
 import logging
 import platform
-from pprint import pformat
 from socket import gethostname
 from typing import Mapping, Optional
 
@@ -10,7 +9,7 @@ from requests.exceptions import ConnectionError
 
 import infection_monkey.tunnel as tunnel
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
-from infection_monkey.config import GUID, WormConfiguration
+from infection_monkey.config import GUID
 from infection_monkey.network.info import get_host_subnets, local_ips
 from infection_monkey.transport.http import HTTPConnectProxy
 from infection_monkey.transport.tcp import TcpProxy
@@ -151,38 +150,7 @@ class ControlClient:
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
-    def load_control_config(self):
-        if not self.server_address:
-            return
-        try:
-            reply = requests.get(  # noqa: DUO123
-                f"https://{self.server_address}/api/agent/",
-                verify=False,
-                proxies=self.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
-
-        except Exception as exc:
-            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
-            return
-
-        try:
-            WormConfiguration.from_kv(reply.json().get("config"))
-            formatted_config = pformat(
-                WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict())
-            )
-            logger.info(f"New configuration was loaded from server:\n{formatted_config}")
-        except Exception as exc:
-            # we don't continue with default conf here because it might be dangerous
-            logger.error(
-                "Error parsing JSON reply from control server %s (%s): %s",
-                self.server_address,
-                reply._content,
-                exc,
-            )
-            raise Exception("Couldn't load from from server's configuration, aborting. %s" % exc)
-
-    def create_control_tunnel(self):
+    def create_control_tunnel(self, keep_tunnel_open_time: int):
         if not self.server_address:
             return None
 
@@ -200,7 +168,7 @@ class ControlClient:
 
         return tunnel.MonkeyTunnel(
             proxy_class,
-            keep_tunnel_open_time=WormConfiguration.keep_tunnel_open_time,
+            keep_tunnel_open_time=keep_tunnel_open_time,
             target_addr=target_addr,
             target_port=target_port,
         )

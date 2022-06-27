@@ -3,6 +3,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.configuration.agent_sub_configurations import (
+    NetworkScanConfiguration,
+    PropagationConfiguration,
+    ScanTargetConfiguration,
+)
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
@@ -135,24 +140,37 @@ class StubExploiter:
         pass
 
 
-def test_scan_result_processing(telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory):
+def get_propagation_config(
+    default_agent_configuration, scan_target_config: ScanTargetConfiguration
+):
+    network_scan = NetworkScanConfiguration(
+        default_agent_configuration.propagation.network_scan.tcp,
+        default_agent_configuration.propagation.network_scan.icmp,
+        default_agent_configuration.propagation.network_scan.fingerprinters,
+        scan_target_config,
+    )
+    propagation_config = PropagationConfiguration(
+        default_agent_configuration.propagation.maximum_depth,
+        network_scan,
+        default_agent_configuration.propagation.exploitation,
+    )
+    return propagation_config
+
+
+def test_scan_result_processing(
+    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
+):
     p = Propagator(
         telemetry_messenger_spy, mock_ip_scanner, StubExploiter(), mock_victim_host_factory, []
     )
-    p.propagate(
-        {
-            "targets": {
-                "subnet_scan_list": ["10.0.0.1", "10.0.0.2", "10.0.0.3"],
-                "local_network_scan": False,
-                "inaccessible_subnets": [],
-                "blocked_ips": [],
-            },
-            "network_scan": {},  # This is empty since MockIPscanner ignores it
-            "exploiters": {},  # This is empty since StubExploiter ignores it
-        },
-        1,
-        Event(),
+    targets = ScanTargetConfiguration(
+        blocked_ips=[],
+        inaccessible_subnets=[],
+        local_network_scan=False,
+        subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
+    propagation_config = get_propagation_config(default_agent_configuration, targets)
+    p.propagate(propagation_config, 1, Event())
 
     assert len(telemetry_messenger_spy.telemetries) == 3
 
@@ -237,25 +255,20 @@ class MockExploiter:
 
 
 def test_exploiter_result_processing(
-    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory
+    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
 ):
     p = Propagator(
         telemetry_messenger_spy, mock_ip_scanner, MockExploiter(), mock_victim_host_factory, []
     )
-    p.propagate(
-        {
-            "targets": {
-                "subnet_scan_list": ["10.0.0.1", "10.0.0.2", "10.0.0.3"],
-                "local_network_scan": False,
-                "inaccessible_subnets": [],
-                "blocked_ips": [],
-            },
-            "network_scan": {},  # This is empty since MockIPscanner ignores it
-            "exploiters": {},  # This is empty since MockExploiter ignores it
-        },
-        1,
-        Event(),
+
+    targets = ScanTargetConfiguration(
+        blocked_ips=[],
+        inaccessible_subnets=[],
+        local_network_scan=False,
+        subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
+    propagation_config = get_propagation_config(default_agent_configuration, targets)
+    p.propagate(propagation_config, 1, Event())
 
     exploit_telems = [t for t in telemetry_messenger_spy.telemetries if isinstance(t, ExploitTelem)]
     assert len(exploit_telems) == 4
@@ -278,7 +291,9 @@ def test_exploiter_result_processing(
                 assert data["propagation_result"]
 
 
-def test_scan_target_generation(telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory):
+def test_scan_target_generation(
+    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
+):
     local_network_interfaces = [NetworkInterface("10.0.0.9", "/29")]
     p = Propagator(
         telemetry_messenger_spy,
@@ -287,20 +302,15 @@ def test_scan_target_generation(telemetry_messenger_spy, mock_ip_scanner, mock_v
         mock_victim_host_factory,
         local_network_interfaces,
     )
-    p.propagate(
-        {
-            "targets": {
-                "subnet_scan_list": ["10.0.0.0/29", "172.10.20.30"],
-                "local_network_scan": True,
-                "blocked_ips": ["10.0.0.3"],
-                "inaccessible_subnets": ["10.0.0.128/30", "10.0.0.8/29"],
-            },
-            "network_scan": {},  # This is empty since MockIPscanner ignores it
-            "exploiters": {},  # This is empty since MockExploiter ignores it
-        },
-        1,
-        Event(),
+    targets = ScanTargetConfiguration(
+        blocked_ips=["10.0.0.3"],
+        inaccessible_subnets=["10.0.0.128/30", "10.0.0.8/29"],
+        local_network_scan=True,
+        subnets=["10.0.0.0/29", "172.10.20.30"],
     )
+    propagation_config = get_propagation_config(default_agent_configuration, targets)
+    p.propagate(propagation_config, 1, Event())
+
     expected_ip_scan_list = [
         "10.0.0.0",
         "10.0.0.1",

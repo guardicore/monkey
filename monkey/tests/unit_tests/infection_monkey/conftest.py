@@ -15,8 +15,3 @@ class TelemetryMessengerSpy(ITelemetryMessenger):
 @pytest.fixture
 def telemetry_messenger_spy():
     return TelemetryMessengerSpy()
-
-
-@pytest.fixture
-def automated_master_config(load_monkey_config):
-    return load_monkey_config("automated_master_config.json")

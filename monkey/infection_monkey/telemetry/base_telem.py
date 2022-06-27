@@ -4,6 +4,7 @@ import logging
 
 from infection_monkey.control import ControlClient
 from infection_monkey.telemetry.i_telem import ITelem
+from infection_monkey.telemetry.telem_encoder import TelemetryJSONEncoder
 
 logger = logging.getLogger(__name__)
 LOGGED_DATA_LENGTH = 300  # How many characters of telemetry data will be logged
@@ -39,7 +40,7 @@ class BaseTelem(ITelem, metaclass=abc.ABCMeta):
 
     @property
     def json_encoder(self):
-        return json.JSONEncoder
+        return TelemetryJSONEncoder
 
     def _log_telem_sending(self, serialized_data: str, log_data=True):
         logger.debug(f"Sending {self.telem_category} telemetry.")

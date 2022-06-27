@@ -1,12 +1,10 @@
-import io
-from typing import BinaryIO
-
 import pytest
 from tests.common import StubDIContainer
+from tests.monkey_island import SingleFileRepository
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 from tests.utils import raise_
 
-from monkey_island.cc.repository import FileRetrievalError, IFileRepository
+from monkey_island.cc.repository import IFileRepository
 from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE, FileUpload
 
 TEST_FILE_CONTENTS = b"m0nk3y"
@@ -40,28 +38,9 @@ def mock_get_config_value(monkeypatch):
     )
 
 
-class MockFileRepository(IFileRepository):
-    def __init__(self):
-        self._file = None
-
-    def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
-        self._file = io.BytesIO(file_contents.read())
-
-    def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        if self._file is None:
-            raise FileRetrievalError()
-        return self._file
-
-    def delete_file(self, unsafe_file_name: str):
-        self._file = None
-
-    def delete_all_files(self):
-        self.delete_file("")
-
-
 @pytest.fixture
 def file_repository():
-    return MockFileRepository()
+    return SingleFileRepository()
 
 
 @pytest.fixture
@@ -117,6 +96,15 @@ def test_pba_file_upload_get__file_not_found(flask_client, pba_os, mock_get_conf
     url = get_url_for_resource(FileUpload, target_os=pba_os, filename="bobug_mogus.py")
     resp = flask_client.get(url)
     assert resp.status_code == 404
+
+
+@pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])
+def test_file_download_endpoint_500(open_error_flask_client, pba_os):
+    url = get_url_for_resource(FileUpload, target_os=pba_os, filename="bobug_mogus.py")
+
+    resp = open_error_flask_client.get(url)
+
+    assert resp.status_code == 500
 
 
 @pytest.mark.parametrize("pba_os", [LINUX_PBA_TYPE, WINDOWS_PBA_TYPE])

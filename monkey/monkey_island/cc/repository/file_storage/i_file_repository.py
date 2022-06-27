@@ -1,8 +1,10 @@
 import abc
 from typing import BinaryIO
 
+from monkey_island.cc.repository import RetrievalError
 
-class FileRetrievalError(RuntimeError):
+
+class FileNotFoundError(RetrievalError):
     pass
 
 
@@ -18,6 +20,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that will identify the file
         :param file_contents: The data to be stored in the file
+        :raises StorageError: If an error was encountered while attempting to store the file
         """
         pass
 
@@ -28,7 +31,8 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be opened
         :return: A file-like object providing access to the file's contents
-        :raises FileRetrievalError: if the file cannot be opened
+        :raises FileNotFoundError: if the file does not exist
+        :raises RetrievalError: if the file exists but cannot be retrieved
         """
         pass
 
@@ -41,6 +45,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
         idempotent and will succeed if the file to be deleted does not exist.
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be deleted
+        :raises RemovalError: If an error was encountered while attempting to remove a file
         """
         pass
 
@@ -48,5 +53,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
     def delete_all_files(self):
         """
         Delete all files that have been stored using this service.
+
+        :raises RemovalError: If an error was encountered while attempting to remove a file
         """
         pass
