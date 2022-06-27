@@ -195,8 +195,6 @@ _make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent
 _make_network_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:110)
 _make_propagation_configuration  # unused method (monkey/common/configuration/agent_configuration.py:167)
 _make_agent_configuration  # unused method (monkey/common/configuration/agent_configuration.py:192)
-LINUX  # unused variable (monkey/common/operating_systems.py:5)
-WINDOWS  # unused variable (monkey/common/operating_systems.py:6)
 
 
 # TODO DELETE AFTER RESOURCE REFACTORING
