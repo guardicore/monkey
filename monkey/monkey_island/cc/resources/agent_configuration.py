@@ -6,6 +6,7 @@ from common.configuration.agent_configuration import AgentConfiguration as Agent
 from common.configuration.agent_configuration import InvalidConfigurationError
 from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.request_authentication import jwt_required
 
 
 class AgentConfiguration(AbstractResource):
@@ -20,9 +21,8 @@ class AgentConfiguration(AbstractResource):
         configuration_json = AgentConfigurationObject.to_json(configuration)
         return make_response(configuration_json, 200)
 
-    # Used by the agent. Can't secure
+    @jwt_required
     def post(self):
-
         try:
             configuration_object = AgentConfigurationObject.from_json(request.data)
             self._agent_configuration_repository.store_configuration(configuration_object)
