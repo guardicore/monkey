@@ -15,7 +15,7 @@ class AgentConfiguration(AbstractResource):
     def __init__(self, agent_configuration_repository: IAgentConfigurationRepository):
         self._agent_configuration_repository = agent_configuration_repository
 
-    @jwt_required
+    # Used by the agent. Can't secure
     def get(self):
         configuration = self._agent_configuration_repository.get_configuration()
         configuration_json = AgentConfigurationObject.to_json(configuration)
@@ -23,7 +23,6 @@ class AgentConfiguration(AbstractResource):
 
     @jwt_required
     def post(self):
-
         try:
             configuration_object = AgentConfigurationObject.from_json(request.data)
             self._agent_configuration_repository.store_configuration(configuration_object)
