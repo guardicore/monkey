@@ -12,6 +12,5 @@ from .agent_sub_configurations import (
     PropagationConfiguration,
 )
 from .default_agent_configuration import (
-    DEFAULT_AGENT_CONFIGURATION_JSON,
-    build_default_agent_configuration,
+    DEFAULT_AGENT_CONFIGURATION,
 )

@@ -1,207 +1,115 @@
 from . import AgentConfiguration
+from .agent_sub_configurations import (
+    CustomPBAConfiguration,
+    ExploitationConfiguration,
+    ExploitationOptionsConfiguration,
+    ExploiterConfiguration,
+    ICMPScanConfiguration,
+    NetworkScanConfiguration,
+    PluginConfiguration,
+    PropagationConfiguration,
+    ScanTargetConfiguration,
+    TCPScanConfiguration,
+)
 
-DEFAULT_AGENT_CONFIGURATION_JSON = """{
-        "keep_tunnel_open_time": 30,
-        "post_breach_actions": [
-            {
-                "name": "CommunicateAsBackdoorUser",
-                "options": {}
-            },
-            {
-                "name": "ModifyShellStartupFiles",
-                "options": {}
-            },
-            {
-                "name": "HiddenFiles",
-                "options": {}
-            },
-            {
-                "name": "TrapCommand",
-                "options": {}
-            },
-            {
-                "name": "ChangeSetuidSetgid",
-                "options": {}
-            },
-            {
-                "name": "ScheduleJobs",
-                "options": {}
-            },
-            {
-                "name": "Timestomping",
-                "options": {}
-            },
-            {
-                "name": "AccountDiscovery",
-                "options": {}
-            },
-            {
-                "name": "ProcessListCollection",
-                "options": {}
-            }
-        ],
-        "credential_collectors": [
-            {
-                "name": "MimikatzCollector",
-                "options": {}
-            },
-            {
-                "name": "SSHCollector",
-                "options": {}
-            }
-        ],
-        "payloads": [
-            {
-                "name": "ransomware",
-                "options": {
-                    "encryption": {
-                        "enabled": true,
-                        "directories": {
-                            "linux_target_dir": "",
-                            "windows_target_dir": ""
-                        }
-                    },
-                    "other_behaviors": {
-                        "readme": true
-                    }
-                }
-            }
-        ],
-        "custom_pbas": {
-            "linux_command": "",
-            "linux_filename": "",
-            "windows_command": "",
-            "windows_filename": ""
-        },
-        "propagation": {
-            "maximum_depth": 2,
-            "network_scan": {
-                "tcp": {
-                    "timeout": 3000,
-                    "ports": [
-                        22,
-                        80,
-                        135,
-                        443,
-                        445,
-                        2222,
-                        3306,
-                        3389,
-                        5985,
-                        5986,
-                        7001,
-                        8008,
-                        8080,
-                        8088,
-                        8983,
-                        9200,
-                        9600
-                    ]
-                },
-                "icmp": {
-                    "timeout": 1000
-                },
-                "fingerprinters": [
-                    {
-                        "name": "elastic",
-                        "options": {}
-                    },
-                    {
-                        "name": "http",
-                        "options": {
-                            "http_ports": [
-                                80,
-                                443,
-                                7001,
-                                8008,
-                                8080,
-                                8983,
-                                9200,
-                                9600
-                            ]
-                        }
-                    },
-                    {
-                        "name": "mssql",
-                        "options": {}
-                    },
-                    {
-                        "name": "smb",
-                        "options": {}
-                    },
-                    {
-                        "name": "ssh",
-                        "options": {}
-                    }
-                ],
-                "targets": {
-                    "blocked_ips": [],
-                    "inaccessible_subnets": [],
-                    "local_network_scan": true,
-                    "subnets": []
-                }
-            },
-            "exploitation": {
-                "options": {
-                    "http_ports": [
-                        80,
-                        443,
-                        7001,
-                        8008,
-                        8080,
-                        8983,
-                        9200,
-                        9600
-                    ]
-                },
-                "brute_force": [
-                    {
-                        "name": "MSSQLExploiter",
-                        "options": {}
+PBAS = [
+    "CommunicateAsBackdoorUser",
+    "ModifyShellStartupFiles",
+    "HiddenFiles",
+    "TrapCommand",
+    "ChangeSetuidSetgid",
+    "ScheduleJobs",
+    "Timestomping",
+    "AccountDiscovery",
+    "ProcessListCollection",
+]
 
-                    },
-                    {
-                        "name": "PowerShellExploiter",
-                        "options": {}
+CREDENTIAL_COLLECTORS = ["MimikatzCollector", "SSHCollector"]
 
-                    },
-                    {
-                        "name": "SSHExploiter",
-                        "options": {}
+PBA_CONFIGURATION = [PluginConfiguration(pba, {}) for pba in PBAS]
+CREDENTIAL_COLLECTOR_CONFIGURATION = [
+    PluginConfiguration(collector, {}) for collector in CREDENTIAL_COLLECTORS
+]
 
-                    },
-                    {
-                        "name": "SmbExploiter",
-                        "options": {
-                            "smb_download_timeout": 30
-                        }
+RANSOMWARE_OPTIONS = {
+    "encryption": {
+        "enabled": True,
+        "directories": {"linux_target_dir": "", "windows_target_dir": ""},
+    },
+    "other_behaviors": {"readme": True},
+}
 
-                    },
-                    {
-                        "name": "WmiExploiter",
-                        "options": {
-                            "smb_download_timeout": 30
-                        }
+PAYLOAD_CONFIGURATION = [PluginConfiguration("ransomware", RANSOMWARE_OPTIONS)]
 
-                    }
-                ],
-                "vulnerability": [
-                    {
-                        "name": "HadoopExploiter",
-                        "options": {}
+CUSTOM_PBA_CONFIGURATION = CustomPBAConfiguration(
+    linux_command="", linux_filename="", windows_command="", windows_filename=""
+)
 
-                    },
-                    {
-                        "name": "Log4ShellExploiter",
-                        "options": {}
+TCP_PORTS = [
+    22,
+    80,
+    135,
+    443,
+    445,
+    2222,
+    3306,
+    3389,
+    5985,
+    5986,
+    7001,
+    8008,
+    8080,
+    8088,
+    8983,
+    9200,
+    9600,
+]
 
-                    }
-                ]
-            }
-        }
-    }
-"""
+TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=TCP_PORTS)
+ICMP_CONFIGURATION = ICMPScanConfiguration(timeout=1.0)
+HTTP_PORTS = [80, 443, 7001, 8008, 8080, 8983, 9200, 9600]
+FINGERPRINTERS = [
+    PluginConfiguration("elastic", {}),
+    PluginConfiguration("http", {"http_ports": HTTP_PORTS}),
+    PluginConfiguration("mssql", {}),
+    PluginConfiguration("smb", {}),
+    PluginConfiguration("ssh", {}),
+]
 
+SCAN_TARGET_CONFIGURATION = ScanTargetConfiguration([], [], True, [])
+NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
+    TCP_SCAN_CONFIGURATION, ICMP_CONFIGURATION, FINGERPRINTERS, SCAN_TARGET_CONFIGURATION
+)
 
-def build_default_agent_configuration() -> AgentConfiguration:
-    return AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
+EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(HTTP_PORTS)
+BRUTE_FORCE_EXPLOITERS = [
+    ExploiterConfiguration("MSSQLExploiter", {}),
+    ExploiterConfiguration("PowerShellExploiter", {}),
+    ExploiterConfiguration("SSHExploiter", {}),
+    ExploiterConfiguration("SmbExploiter", {"smb_download_timeout": 30}),
+    ExploiterConfiguration("WmiExploiter", {"smb_download_timeout": 30}),
+]
+
+VULNERABILITY_EXPLOITERS = [
+    ExploiterConfiguration("Log4ShellExploiter", {}),
+    ExploiterConfiguration("HadoopExploiter", {}),
+]
+
+EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
+    EXPLOITATION_OPTIONS_CONFIGURATION, BRUTE_FORCE_EXPLOITERS, VULNERABILITY_EXPLOITERS
+)
+
+PROPAGATION_CONFIGURATION = PropagationConfiguration(
+    maximum_depth=2,
+    network_scan=NETWORK_SCAN_CONFIGURATION,
+    exploitation=EXPLOITATION_CONFIGURATION,
+)
+
+DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
+    keep_tunnel_open_time=30,
+    custom_pbas=CUSTOM_PBA_CONFIGURATION,
+    post_breach_actions=PBA_CONFIGURATION,
+    credential_collectors=CREDENTIAL_COLLECTOR_CONFIGURATION,
+    payloads=PAYLOAD_CONFIGURATION,
+    propagation=PROPAGATION_CONFIGURATION,
+)
