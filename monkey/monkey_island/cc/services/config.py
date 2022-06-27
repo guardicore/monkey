@@ -179,6 +179,7 @@ class ConfigService:
             should_encrypt=True,
         )
 
+    @staticmethod
     def _filter_none_values(data):
         if isinstance(data, dict):
             return {
