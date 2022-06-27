@@ -8,12 +8,7 @@ from flask import request
 from common.utils.exceptions import InvalidConfigurationError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-from monkey_island.cc.server_utils.encryption import (
-    InvalidCiphertextError,
-    InvalidCredentialsError,
-    PasswordBasedStringEncryptor,
-    is_encrypted,
-)
+from monkey_island.cc.server_utils.encryption import InvalidCiphertextError, InvalidCredentialsError
 from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__name__)
@@ -75,9 +70,6 @@ class ConfigurationImport(AbstractResource):
     def _get_plaintext_config_from_request(request_contents: dict) -> dict:
         try:
             config = request_contents["config"]
-            if ConfigurationImport.is_config_encrypted(request_contents["config"]):
-                pb_encryptor = PasswordBasedStringEncryptor(request_contents["password"])
-                config = pb_encryptor.decrypt(config)
             return json.loads(config)
         except (JSONDecodeError, InvalidCiphertextError):
             logger.exception(
@@ -88,16 +80,4 @@ class ConfigurationImport(AbstractResource):
     @staticmethod
     def import_config(config_json):
         if not ConfigService.update_config(config_json, should_encrypt=True):
-            raise InvalidConfigurationError
-
-    @staticmethod
-    def is_config_encrypted(config: str):
-        try:
-            if config.startswith("{"):
-                return False
-            elif is_encrypted(config):
-                return True
-            else:
-                raise InvalidConfigurationError
-        except Exception:
             raise InvalidConfigurationError
