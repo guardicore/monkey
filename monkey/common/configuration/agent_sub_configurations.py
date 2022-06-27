@@ -49,16 +49,10 @@ class ExploitationOptionsConfiguration:
 
 
 @dataclass(frozen=True)
-class ExploiterConfiguration:
-    name: str
-    options: Dict
-
-
-@dataclass(frozen=True)
 class ExploitationConfiguration:
     options: ExploitationOptionsConfiguration
-    brute_force: List[ExploiterConfiguration]
-    vulnerability: List[ExploiterConfiguration]
+    brute_force: List[PluginConfiguration]
+    vulnerability: List[PluginConfiguration]
 
 
 @dataclass(frozen=True)

@@ -3,7 +3,6 @@ from .agent_sub_configurations import (
     CustomPBAConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
-    ExploiterConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
@@ -83,16 +82,16 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
 
 EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(HTTP_PORTS)
 BRUTE_FORCE_EXPLOITERS = [
-    ExploiterConfiguration("MSSQLExploiter", {}),
-    ExploiterConfiguration("PowerShellExploiter", {}),
-    ExploiterConfiguration("SSHExploiter", {}),
-    ExploiterConfiguration("SmbExploiter", {"smb_download_timeout": 30}),
-    ExploiterConfiguration("WmiExploiter", {"smb_download_timeout": 30}),
+    PluginConfiguration("MSSQLExploiter", {}),
+    PluginConfiguration("PowerShellExploiter", {}),
+    PluginConfiguration("SSHExploiter", {}),
+    PluginConfiguration("SmbExploiter", {"smb_download_timeout": 30}),
+    PluginConfiguration("WmiExploiter", {"smb_download_timeout": 30}),
 ]
 
 VULNERABILITY_EXPLOITERS = [
-    ExploiterConfiguration("Log4ShellExploiter", {}),
-    ExploiterConfiguration("HadoopExploiter", {}),
+    PluginConfiguration("Log4ShellExploiter", {}),
+    PluginConfiguration("HadoopExploiter", {}),
 ]
 
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(

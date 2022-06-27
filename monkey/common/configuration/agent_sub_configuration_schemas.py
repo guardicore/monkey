@@ -4,7 +4,6 @@ from .agent_sub_configurations import (
     CustomPBAConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
-    ExploiterConfiguration,
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
@@ -81,19 +80,10 @@ class ExploitationOptionsConfigurationSchema(Schema):
         return ExploitationOptionsConfiguration(**data)
 
 
-class ExploiterConfigurationSchema(Schema):
-    name = fields.Str()
-    options = fields.Mapping()
-
-    @post_load
-    def _make_exploiter_configuration(self, data, **kwargs):
-        return ExploiterConfiguration(**data)
-
-
 class ExploitationConfigurationSchema(Schema):
     options = fields.Nested(ExploitationOptionsConfigurationSchema)
-    brute_force = fields.List(fields.Nested(ExploiterConfigurationSchema))
-    vulnerability = fields.List(fields.Nested(ExploiterConfigurationSchema))
+    brute_force = fields.List(fields.Nested(PluginConfigurationSchema))
+    vulnerability = fields.List(fields.Nested(PluginConfigurationSchema))
 
     @post_load
     def _make_exploitation_options_configuration(self, data, **kwargs):

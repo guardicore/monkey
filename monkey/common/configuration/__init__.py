@@ -7,7 +7,6 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
     NetworkScanConfiguration,
     ExploitationOptionsConfiguration,
-    ExploiterConfiguration,
     ExploitationConfiguration,
     PropagationConfiguration,
 )

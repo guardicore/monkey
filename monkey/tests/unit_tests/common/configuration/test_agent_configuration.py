@@ -33,7 +33,6 @@ from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     ExploitationConfigurationSchema,
     ExploitationOptionsConfigurationSchema,
-    ExploiterConfigurationSchema,
     ICMPScanConfigurationSchema,
     NetworkScanConfigurationSchema,
     PluginConfigurationSchema,
@@ -126,7 +125,7 @@ def test_exploitation_options_configuration_schema():
 def test_exploiter_configuration_schema():
     name = "bond"
     options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
-    schema = ExploiterConfigurationSchema()
+    schema = PluginConfigurationSchema()
 
     config = schema.load({"name": name, "options": options})
 
