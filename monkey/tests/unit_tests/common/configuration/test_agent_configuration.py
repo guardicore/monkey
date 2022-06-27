@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 import pytest
 from tests.common.example_agent_configuration import (
@@ -26,11 +27,7 @@ from tests.common.example_agent_configuration import (
     WINDOWS_FILENAME,
 )
 
-from common.configuration import (
-    DEFAULT_AGENT_CONFIGURATION_JSON,
-    AgentConfiguration,
-    InvalidConfigurationError,
-)
+from common.configuration import AgentConfiguration, InvalidConfigurationError
 from common.configuration.agent_configuration import AgentConfigurationSchema
 from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
@@ -182,15 +179,9 @@ def test_incorrect_type():
         AgentConfiguration(**valid_config_dict)
 
 
-def test_default_agent_configuration():
-    config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
-
-    assert isinstance(config, AgentConfiguration)
-
-
 def test_from_dict():
     schema = AgentConfigurationSchema()
-    dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    dict_ = deepcopy(AGENT_CONFIGURATION)
 
     config = AgentConfiguration.from_mapping(dict_)
 
@@ -198,7 +189,7 @@ def test_from_dict():
 
 
 def test_from_dict__invalid_data():
-    dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    dict_ = deepcopy(AGENT_CONFIGURATION)
     dict_["payloads"] = "payloads"
 
     with pytest.raises(InvalidConfigurationError):
@@ -207,15 +198,16 @@ def test_from_dict__invalid_data():
 
 def test_from_json():
     schema = AgentConfigurationSchema()
-    dict_ = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    dict_ = deepcopy(AGENT_CONFIGURATION)
 
-    config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
+    config = AgentConfiguration.from_json(json.dumps(dict_))
 
+    assert isinstance(config, AgentConfiguration)
     assert schema.dump(config) == dict_
 
 
 def test_from_json__invalid_data():
-    invalid_dict = json.loads(DEFAULT_AGENT_CONFIGURATION_JSON)
+    invalid_dict = deepcopy(AGENT_CONFIGURATION)
     invalid_dict["payloads"] = "payloads"
 
     with pytest.raises(InvalidConfigurationError):
@@ -223,8 +215,6 @@ def test_from_json__invalid_data():
 
 
 def test_to_json():
-    config = AgentConfiguration.from_json(DEFAULT_AGENT_CONFIGURATION_JSON)
+    config = deepcopy(AGENT_CONFIGURATION)
 
-    assert json.loads(AgentConfiguration.to_json(config)) == json.loads(
-        DEFAULT_AGENT_CONFIGURATION_JSON
-    )
+    assert json.loads(AgentConfiguration.to_json(config)) == AGENT_CONFIGURATION
