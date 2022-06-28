@@ -12,6 +12,7 @@ type Props = {
 }
 
 const ConfigExportModal = (props: Props) => {
+  // TODO: Change this endpoint to new agent-configuration endpoint
   const configExportEndpoint = '/api/configuration/export';
 
   const [pass, setPass] = useState('');
