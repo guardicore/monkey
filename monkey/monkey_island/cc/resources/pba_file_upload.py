@@ -36,7 +36,8 @@ class FileUpload(AbstractResource):
     # This endpoint is basically a duplicate of PBAFileDownload.get(). They serve slightly different
     # purposes. This endpoint is authenticated, whereas the one in PBAFileDownload can not be (at
     # the present time). In the future, consider whether or not they should be merged, or if they
-    # serve truly distinct purposes
+    # serve truly distinct purposes. After #2049, all endpoints that the agent uses will be
+    # authenticated.
     @jwt_required
     def get(self, target_os):
         """
