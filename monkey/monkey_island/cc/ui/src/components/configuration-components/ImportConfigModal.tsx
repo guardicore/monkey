@@ -18,6 +18,7 @@ type Props = {
 
 
 const ConfigImportModal = (props: Props) => {
+  // TODO: change this endpoint to the new configuration import endpoint
   const configImportEndpoint = '/api/configuration/import';
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
