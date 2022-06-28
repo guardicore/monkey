@@ -83,6 +83,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "+dev" from version numbers. #1553
 - agent's "--config" argument. #906
 - Option to export monkey telemetries. #1998
+- "/api/configuration/import" endpoint. #2002
+- "/api/configuration/export" endpoint. #2002
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

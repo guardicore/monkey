@@ -2,10 +2,6 @@ from .i_encryptor import IEncryptor
 from .key_based_encryptor import (
     KeyBasedEncryptor,
 )
-from .password_based_string_encryptor import (
-    PasswordBasedStringEncryptor,
-    is_encrypted,
-)
 from .password_based_bytes_encryptor import (
     PasswordBasedBytesEncryptor,
     InvalidCredentialsError,

@@ -23,8 +23,6 @@ from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyB
 from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
     TelemetryBlackboxEndpoint,
 )
-from monkey_island.cc.resources.configuration_export import ConfigurationExport
-from monkey_island.cc.resources.configuration_import import ConfigurationImport
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
@@ -154,8 +152,6 @@ def init_api_resources(api: FlaskDIWrapper):
 
     api.add_resource(IslandMode)
     api.add_resource(IslandConfiguration)
-    api.add_resource(ConfigurationExport)
-    api.add_resource(ConfigurationImport)
     api.add_resource(AgentConfiguration)
     api.add_resource(AgentBinaries)
     api.add_resource(NetMap)
