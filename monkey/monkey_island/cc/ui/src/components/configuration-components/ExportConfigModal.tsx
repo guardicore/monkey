@@ -1,53 +1,40 @@
-import {Button, Modal, Form} from 'react-bootstrap';
+import {Button, Form, Modal} from 'react-bootstrap';
 import React, {useState} from 'react';
 
 import FileSaver from 'file-saver';
-import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ExportConfigModal.scss';
+import {encryptText} from '../utils/PasswordBasedEncryptor';
 
 
 type Props = {
   show: boolean,
+  configuration: object,
   onHide: () => void
 }
 
 const ConfigExportModal = (props: Props) => {
-  // TODO: Change this endpoint to new agent-configuration endpoint
-  const configExportEndpoint = '/api/configuration/export';
-
   const [pass, setPass] = useState('');
   const [radioValue, setRadioValue] = useState('password');
-  const authComponent = new AuthComponent({});
 
   function isExportBtnDisabled() {
     return pass === '' && radioValue === 'password';
   }
 
   function onSubmit() {
-    authComponent.authFetch(configExportEndpoint,
-      {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          should_encrypt: (radioValue === 'password'),
-          password: pass
-        })
-      }
-    )
-      .then(res => res.json())
-      .then(res => {
-        let configToExport = res['config_export'];
-        if (res['encrypted']) {
-          configToExport = new Blob([configToExport]);
-        } else {
-          configToExport = new Blob(
-            [JSON.stringify(configToExport, null, 2)],
-            {type: 'text/plain;charset=utf-8'}
-            );
-        }
-        FileSaver.saveAs(configToExport, 'monkey.conf');
-        props.onHide();
-      })
+    let config_json = JSON.stringify(props.configuration, null, 2);
+    let config_export = null;
+
+    if (radioValue === 'password') {
+      config_export = encryptText(config_json, pass);
+    } else {
+      config_export = config_json;
+    }
+    config_export = new Blob(
+      [config_export],
+      {type: 'text/plain;charset=utf-8'}
+    );
+    FileSaver.saveAs(config_export, 'monkey.conf');
+    props.onHide();
   }
 
   return (
@@ -95,8 +82,8 @@ const PasswordInput = (props: {
   return (
     <div className={'config-export-password-input'}>
       <p>Encrypt with a password:</p>
-      <Form.Control type='password'
-                    placeholder='Password'
+      <Form.Control type="password"
+                    placeholder="Password"
                     onChange={evt => (props.onChange(evt.target.value))}/>
     </div>
   )
