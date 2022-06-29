@@ -18,6 +18,7 @@ import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
+import {SCHEMA} from '../../services/configuration/config_schema.js';
 
 const CONFIG_URL = '/api/configuration/island';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
@@ -68,24 +69,25 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidMount = () => {
-    let urls = [CONFIG_URL];
+    let urls = ['/api/agent-configuration'];
     // ??? Why fetch config here and not in `render()`?
     Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
       .then(data => {
         let sections = [];
         let monkeyConfig = data[0];
-        this.setInitialConfig(monkeyConfig.configuration);
+        this.setInitialConfig(monkeyConfig);
         for (let sectionKey of this.getSectionsOrder()) {
           sections.push({
             key: sectionKey,
-            title: monkeyConfig.schema.properties[sectionKey].title
+            title: SCHEMA.properties[sectionKey].title
           });
         }
+
         this.setState({
-          schema: monkeyConfig.schema,
-          configuration: monkeyConfig.configuration,
+          schema: SCHEMA,
+          configuration: monkeyConfig,
           sections: sections,
-          currentFormData: monkeyConfig.configuration[this.state.selectedSection]
+          currentFormData: monkeyConfig[this.state.selectedSection]
         })
       });
   };
@@ -337,10 +339,6 @@ class ConfigurePageComponent extends AuthComponent {
     let formProperties = {};
     formProperties['schema'] = displayedSchema
     formProperties['uiSchema'] = UiSchema({
-      PBA_linux_filename: this.state.configuration.monkey.post_breach.PBA_linux_filename,
-      PBA_windows_filename: this.state.configuration.monkey.post_breach.PBA_windows_filename,
-      setPbaFilenameWindows: this.setPbaFilenameWindows,
-      setPbaFilenameLinux: this.setPbaFilenameLinux,
       selectedSection: this.state.selectedSection
     })
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
@@ -391,7 +389,7 @@ class ConfigurePageComponent extends AuthComponent {
                  style={{'marginBottom': '2em'}}
                  className={'config-nav'}>
       {this.state.sections.map(section => {
-        let classProp = section.key.startsWith('basic') ? 'tab-primary' : '';
+        let classProp = section.key.startsWith('propagation') ? 'tab-primary' : '';
         return (
           <Nav.Item key={section.key}>
             <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>
