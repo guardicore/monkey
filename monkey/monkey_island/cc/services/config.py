@@ -1,10 +1,9 @@
 import collections
-import copy
 import functools
 import logging
 from typing import Dict, List
 
-from jsonschema import Draft4Validator, validators
+from jsonschema import validators
 
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
@@ -23,8 +22,6 @@ from monkey_island.cc.server_utils.encryption import (
     encrypt_dict,
     get_datastore_encryptor,
 )
-from monkey_island.cc.services.config_schema.config_schema import SCHEMA
-from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
 logger = logging.getLogger(__name__)
 
@@ -124,10 +121,6 @@ class ConfigService:
 
         return flat_config_json
 
-    @staticmethod
-    def get_config_schema():
-        return SCHEMA
-
     # Not added to interface because it's doable by get_config_field + set_config_field
     @staticmethod
     def add_item_to_config_set_if_dont_exist(item_path_array, item_value, should_encrypt):
@@ -217,37 +210,9 @@ class ConfigService:
             ConfigService.set_config_value(PBA_WINDOWS_FILENAME_PATH, windows_filename)
 
     @staticmethod
-    def init_default_config():
-        if ConfigService.default_config is None:
-            default_validating_draft4_validator = ConfigService._extend_config_with_default(
-                Draft4Validator
-            )
-            config = {}
-            default_validating_draft4_validator(SCHEMA).validate(config)
-            ConfigService.default_config = config
-
-    @staticmethod
-    def get_default_config(should_encrypt=False):
-        ConfigService.init_default_config()
-        config = copy.deepcopy(ConfigService.default_config)
-
-        if should_encrypt:
-            ConfigService.encrypt_config(config)
-
-        logger.info("Default config was called")
-
-        return config
-
-    @staticmethod
     def init_config():
         if ConfigService.get_config(should_decrypt=False) != {}:
             return
-        ConfigService.reset_config()
-
-    @staticmethod
-    def reset_config():
-        PostBreachFilesService.remove_PBA_files()
-        logger.info("Monkey config reset was called")
 
     @staticmethod
     def _extend_config_with_default(validator_class):
