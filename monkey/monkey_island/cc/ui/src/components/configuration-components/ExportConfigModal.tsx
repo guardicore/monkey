@@ -21,19 +21,23 @@ const ConfigExportModal = (props: Props) => {
   }
 
   function onSubmit() {
-    let config_json = JSON.stringify(props.configuration, null, 2);
-    let config_export = null;
+    let config = props.configuration;
+    let config_export = {'metadata': {}, 'contents': null};
 
     if (radioValue === 'password') {
-      config_export = encryptText(config_json, pass);
+      config_export.contents = encryptText(JSON.stringify(config), pass);
+      config_export.metadata = {'encrypted': true};
     } else {
-      config_export = config_json;
+      config_export.contents = config;
+      config_export.metadata = {'encrypted': false};
     }
-    config_export = new Blob(
-      [config_export],
+
+    let export_json = JSON.stringify(config_export, null, 2);
+    let export_blob = new Blob(
+      [export_json],
       {type: 'text/plain;charset=utf-8'}
     );
-    FileSaver.saveAs(config_export, 'monkey.conf');
+    FileSaver.saveAs(export_blob, 'monkey.conf');
     props.onHide();
   }
 
