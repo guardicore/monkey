@@ -54,8 +54,7 @@ const IslandResetModal = (props: Props) => {
         <button type='button' className='btn btn-danger btn-lg' style={{margin: '5px'}}
                 onClick={() => {
                   setDeleteStatus(Loading);
-                  resetIsland('/api?action=delete-agent-data',
-                    () => {
+                  clearSimulationData(() => {
                       setDeleteStatus(Done)
                     })
                 }}>
@@ -91,11 +90,10 @@ const IslandResetModal = (props: Props) => {
     }
   }
 
-  function resetIsland(url: string, callback: () => void) {
-    auth.authFetch(url)
-      .then(res => res.json())
+  function clearSimulationData(callback: () => void) {
+    auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
       .then(res => {
-        if (res['status'] === 'OK') {
+        if (res.status === 200) {
           callback()
         }
       })
