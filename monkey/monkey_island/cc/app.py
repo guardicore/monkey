@@ -10,7 +10,12 @@ from werkzeug.exceptions import NotFound
 
 from common import DIContainer
 from monkey_island.cc.database import database, mongo
-from monkey_island.cc.resources import AgentBinaries, RemoteRun, ResetAgentConfiguration
+from monkey_island.cc.resources import (
+    AgentBinaries,
+    ClearSimulationData,
+    RemoteRun,
+    ResetAgentConfiguration,
+)
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.agent_configuration import AgentConfiguration
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
@@ -199,6 +204,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
     api.add_resource(ResetAgentConfiguration)
+    api.add_resource(ClearSimulationData)
 
 
 def init_app(mongo_url: str, container: DIContainer):
