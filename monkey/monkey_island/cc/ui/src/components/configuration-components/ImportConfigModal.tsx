@@ -78,12 +78,8 @@ const ConfigImportModal = (props: Props) => {
     ).then(res => res.json())
       .then(res => {
         if (res['import_status'] === 'invalid_configuration') {
-          if(showPassword){
-            setShowPassword(true);
-          } else {
-            setUploadStatus(UploadStatuses.error);
-            setErrorMessage(res['message']);
-          }
+          setUploadStatus(UploadStatuses.error);
+          setErrorMessage(res['message']);
         } else if (res['import_status'] === 'imported') {
           resetState();
           props.onClose(true);
