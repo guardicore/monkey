@@ -4,6 +4,7 @@ import pytest
 from tests.utils import raise_
 
 from monkey_island.cc.models.island_mode_model import IslandMode
+from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 from monkey_island.cc.resources import island_mode as island_mode_resource
 from monkey_island.cc.resources.island_mode import IslandMode as IslandModeResource
 
@@ -13,7 +14,7 @@ def uses_database():
     IslandMode.objects().delete()
 
 
-@pytest.mark.parametrize("mode", ["ransomware", "advanced"])
+@pytest.mark.parametrize("mode", [IslandModeEnum.RANSOMWARE.value, IslandModeEnum.ADVANCED.value, IslandModeEnum.UNSET.value])
 def test_island_mode_post(flask_client, mode, monkeypatch):
     monkeypatch.setattr(
         "monkey_island.cc.resources.island_mode.update_config_on_mode_set",
@@ -42,12 +43,12 @@ def test_island_mode_post__internal_server_error(monkeypatch, flask_client):
     monkeypatch.setattr(island_mode_resource, "set_mode", lambda x: raise_(Exception()))
 
     resp = flask_client.post(
-        IslandModeResource.urls[0], data=json.dumps({"mode": "ransomware"}), follow_redirects=True
+        IslandModeResource.urls[0], data=json.dumps({"mode":IslandModeEnum.RANSOMWARE.value}), follow_redirects=True
     )
     assert resp.status_code == 500
 
 
-@pytest.mark.parametrize("mode", ["ransomware", "advanced"])
+@pytest.mark.parametrize("mode", [IslandModeEnum.RANSOMWARE.value, IslandModeEnum.ADVANCED.value])
 def test_island_mode_endpoint(flask_client, uses_database, mode):
     flask_client.post(
         IslandModeResource.urls[0], data=json.dumps({"mode": mode}), follow_redirects=True
@@ -63,4 +64,4 @@ def test_island_mode_endpoint__invalid_mode(flask_client, uses_database):
     )
     resp_get = flask_client.get(IslandModeResource.urls[0], follow_redirects=True)
     assert resp_post.status_code == 422
-    assert json.loads(resp_get.data)["mode"] is None
+    assert json.loads(resp_get.data)["mode"] == IslandModeEnum.UNSET.value
