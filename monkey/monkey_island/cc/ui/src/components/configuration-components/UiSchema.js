@@ -4,13 +4,18 @@ import InfoBox from './InfoBox';
 export default function UiSchema(props) {
   const UiSchema = {
     propagation: {
-      'ui:order': ['exploitation', 'maximum_depth', 'network_scan'],
       exploitation: {
         brute_force: {
-          'ui:widget': AdvancedMultiSelect
+          brute_force_classes: {
+            classNames: 'config-template-no-header',
+            'ui:widget': AdvancedMultiSelect
+          }
         },
         vulnerability: {
-          'ui:widget': AdvancedMultiSelect
+          vulnerability_classes: {
+            classNames: 'config-template-no-header',
+            'ui:widget': AdvancedMultiSelect
+          }
         }
       },
       network_scan: {
