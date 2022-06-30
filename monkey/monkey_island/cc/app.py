@@ -143,6 +143,11 @@ class FlaskDIWrapper:
 
 
 def init_api_resources(api: FlaskDIWrapper):
+    init_restful_endpoints(api)
+    init_rpc_endpoints(api)
+
+
+def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Root)
     api.add_resource(Registration)
     api.add_resource(Authenticate)
@@ -190,6 +195,10 @@ def init_api_resources(api: FlaskDIWrapper):
     api.add_resource(ClearCaches)
     api.add_resource(LogBlackboxEndpoint)
     api.add_resource(TelemetryBlackboxEndpoint)
+
+
+def init_rpc_endpoints(api: FlaskDIWrapper):
+    pass
 
 
 def init_app(mongo_url: str, container: DIContainer):
