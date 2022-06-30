@@ -37,6 +37,7 @@ class DataStoreEncryptor(IEncryptor):
         return KeyBasedEncryptor(plaintext_key)
 
     def _create_key(self) -> KeyBasedEncryptor:
+        # TODO: Can we just use secrets.token_bytes(DataStoreEncryptor._KEY_LENGTH_BYTES)?
         plaintext_key = Random.new().read(DataStoreEncryptor._KEY_LENGTH_BYTES)
 
         encrypted_key = self._password_based_encryptor.encrypt(plaintext_key)
