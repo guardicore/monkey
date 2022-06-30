@@ -116,7 +116,7 @@ const ConfigImportModal = (props: Props) => {
       try {
         importContents = JSON.parse(event.target.result);
       } catch (e){
-        setErrorMessage("File is not in a valid json format");
+        setErrorMessage('File is not in a valid json format');
         return
       }
       setConfigEncrypted(importContents['metadata']['encrypted']);
@@ -160,9 +160,9 @@ const ConfigImportModal = (props: Props) => {
         <div className={`mb-3 config-import-option`}>
           {showVerificationDialog()}
           <Form>
-            <Form.File id="importConfigFileSelector"
-                       label="Please choose a configuration file"
-                       accept=".conf"
+            <Form.File id='importConfigFileSelector'
+                       label='Please choose a configuration file'
+                       accept='.conf'
                        onChange={uploadFile}
                        className={'file-input'}
                        key={fileFieldKey}/>
@@ -196,8 +196,8 @@ const PasswordInput = (props: {
   return (
     <div className={'config-import-password-input'}>
       <p>File is protected. Please enter the password:</p>
-      <Form.Control type="password"
-                    placeholder="Password"
+      <Form.Control type='password'
+                    placeholder='Password'
                     onChange={evt => (props.onChange(evt.target.value))}/>
     </div>
   )
