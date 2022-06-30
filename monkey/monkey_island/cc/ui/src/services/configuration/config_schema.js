@@ -1,10 +1,15 @@
 import {customPBAConfigurationSchema} from './definitions/custom_pbas.js';
 import {pluginConfigurationSchema} from './definitions/plugins.js';
 import {propagationConfigurationSchema} from './definitions/propagation.js';
+import {bruteForceExploiters, vulnerabilityExploiters} from './definitions/exploiter_classes.js';
 
 export const SCHEMA = {
   'title': 'Monkey',
   'type': 'object',
+  'definitions': {
+    'brute_force_classes': bruteForceExploiters,
+    'vulnerability_classes': vulnerabilityExploiters
+  },
   'properties': {
     'propagation': propagationConfigurationSchema,
     'post_breach_actions': {
