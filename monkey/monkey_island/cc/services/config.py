@@ -25,7 +25,8 @@ from monkey_island.cc.server_utils.encryption import (
 )
 from monkey_island.cc.services.config_manipulator import update_config_per_mode
 from monkey_island.cc.services.config_schema.config_schema import SCHEMA
-from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode
+from monkey_island.cc.services.mode.island_mode_service import get_mode
+from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 
 logger = logging.getLogger(__name__)
@@ -250,11 +251,13 @@ class ConfigService:
     def reset_config():
         PostBreachFilesService.remove_PBA_files()
         config = ConfigService.get_default_config(True)
-        try:
-            mode = get_mode()
-            update_config_per_mode(mode, config, should_encrypt=False)
-        except ModeNotSetError:
+
+        mode = get_mode()
+        if mode == IslandModeEnum.UNSET.value:
             ConfigService.update_config(config, should_encrypt=False)
+        else:
+            update_config_per_mode(mode, config, should_encrypt=False)
+
         logger.info("Monkey config reset was called")
 
     @staticmethod
