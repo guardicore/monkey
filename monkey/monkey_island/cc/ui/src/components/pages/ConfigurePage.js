@@ -180,6 +180,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderConfigImportModal = () => {
     return (<ConfigImportModal show={this.state.showConfigImportModal}
+                               schema={this.state.schema}
                                onClose={this.onClose}/>);
   }
 
