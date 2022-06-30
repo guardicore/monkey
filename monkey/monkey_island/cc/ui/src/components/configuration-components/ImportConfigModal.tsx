@@ -9,10 +9,12 @@ import UnsafeConfigOptionsConfirmationModal
   from './UnsafeConfigOptionsConfirmationModal.js';
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
+import {decryptText} from '../utils/PasswordBasedEncryptor';
 
 
 type Props = {
   show: boolean,
+  schema: object,
   onClose: (importSuccessful: boolean) => void
 }
 
@@ -23,9 +25,9 @@ const ConfigImportModal = (props: Props) => {
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
   const [configContents, setConfigContents] = useState(null);
-  const [candidateConfig, setCandidateConfig] = useState(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [configEncrypted, setConfigEncrypted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [unsafeOptionsVerified, setUnsafeOptionsVerified] = useState(false);
   const [showUnsafeOptionsConfirmation,
@@ -36,10 +38,33 @@ const ConfigImportModal = (props: Props) => {
 
   useEffect(() => {
     if (configContents !== null) {
-      sendConfigToServer();
+      tryImport();
     }
   }, [configContents, unsafeOptionsVerified])
 
+  function tryImport() {
+    if (configEncrypted && !showPassword){
+      setShowPassword(true);
+    } else if (configEncrypted && showPassword) {
+      try {
+        let decryptedConfig = JSON.parse(decryptText(configContents, password));
+        setConfigEncrypted(false);
+        setConfigContents(decryptedConfig);
+      } catch (e) {
+        setUploadStatus(UploadStatuses.error);
+        setErrorMessage('Decryption failed: Password is wrong or the file is corrupted');
+      }
+    } else if(!unsafeOptionsVerified) {
+      if(isUnsafeOptionSelected(props.schema, configContents)){
+        setShowUnsafeOptionsConfirmation(true);
+      } else {
+        setUnsafeOptionsVerified(true);
+      }
+    } else {
+      sendConfigToServer();
+      setUploadStatus(UploadStatuses.success);
+    }
+  }
 
   function sendConfigToServer() {
     authComponent.authFetch(configImportEndpoint,
@@ -48,34 +73,14 @@ const ConfigImportModal = (props: Props) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           config: configContents,
-          password: password,
-          unsafeOptionsVerified: unsafeOptionsVerified
         })
       }
     ).then(res => res.json())
       .then(res => {
-        if (res['import_status'] === 'invalid_credentials') {
-          setUploadStatus(UploadStatuses.success);
-          if (showPassword){
-            setErrorMessage(res['message']);
-          } else {
-            setShowPassword(true);
-            setErrorMessage('');
-          }
-        } else if (res['import_status'] === 'invalid_configuration') {
+        if (res['import_status'] === 'invalid_configuration') {
           setUploadStatus(UploadStatuses.error);
           setErrorMessage(res['message']);
-        } else if (res['import_status'] === 'unsafe_options_verification_required') {
-          setUploadStatus(UploadStatuses.success);
-          setErrorMessage('');
-
-          if (isUnsafeOptionSelected(res['config_schema'], JSON.parse(res['config']))) {
-            setShowUnsafeOptionsConfirmation(true);
-            setCandidateConfig(res['config']);
-          } else {
-            setUnsafeOptionsVerified(true);
-          }
-        } else if (res['import_status'] === 'imported'){
+        } else if (res['import_status'] === 'imported') {
           resetState();
           props.onClose(true);
         }
@@ -83,7 +88,8 @@ const ConfigImportModal = (props: Props) => {
   }
 
   function isImportDisabled(): boolean {
-    return uploadStatus !== UploadStatuses.success || (showPassword && password === '')
+    // Don't allow import if password input is empty or there's an error
+    return (showPassword && password === '') || (errorMessage !== '');
   }
 
   function resetState() {
@@ -95,13 +101,22 @@ const ConfigImportModal = (props: Props) => {
     setShowUnsafeOptionsConfirmation(false);
     setUnsafeOptionsVerified(false);
     setFileFieldKey(Date.now());  // Resets the file input
+    setConfigEncrypted(false);
   }
 
   function uploadFile(event) {
     setShowPassword(false);
     let reader = new FileReader();
     reader.onload = (event) => {
-      setConfigContents(event.target.result);
+      let importContents = null;
+      try {
+        importContents = JSON.parse(event.target.result);
+      } catch (e){
+        setErrorMessage('File is not in a valid json format');
+        return
+      }
+      setConfigEncrypted(importContents['metadata']['encrypted']);
+      setConfigContents(importContents['contents']);
     };
     reader.readAsText(event.target.files[0]);
   }
@@ -115,7 +130,6 @@ const ConfigImportModal = (props: Props) => {
         }}
         onContinueClick={() => {
           setUnsafeOptionsVerified(true);
-          setConfigContents(candidateConfig);
         }}
       />
     );
@@ -150,20 +164,21 @@ const ConfigImportModal = (props: Props) => {
                        key={fileFieldKey}/>
             <UploadStatusIcon status={uploadStatus}/>
 
-            {showPassword && <PasswordInput onChange={setPassword}/>}
+            {showPassword && <PasswordInput onChange={(password) => {setPassword(password);
+              setErrorMessage('')}}/>}
 
             {errorMessage &&
-            <Alert variant={'danger'} className={'import-error'}>
-              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
-              {errorMessage}
-            </Alert>
+              <Alert variant={'danger'} className={'import-error'}>
+                <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
+                {errorMessage}
+              </Alert>
             }
           </Form>
         </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant={'info'}
-                onClick={sendConfigToServer}
+                onClick={tryImport}
                 disabled={isImportDisabled()}>
           Import
         </Button>

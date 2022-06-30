@@ -23,6 +23,10 @@ const CONFIG_URL = '/api/configuration/island';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/file-upload/PBAwindows';
 
+const configSubmitAction = 'config-submit';
+const configExportAction = 'config-export';
+const configSaveAction = 'config-saved';
+
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
@@ -87,14 +91,16 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onUnsafeConfirmationCancelClick = () => {
-    this.setState({showUnsafeOptionsConfirmation: false});
+    this.setState({showUnsafeOptionsConfirmation: false, lastAction: 'none'});
   }
 
   onUnsafeConfirmationContinueClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false});
-
-    if (this.state.lastAction === 'submit_attempt') {
+    if (this.state.lastAction === configSubmitAction) {
       this.configSubmit();
+    } else if (this.state.lastAction === configExportAction) {
+      this.configSubmit();
+      this.setState({showConfigExportModal: true});
     }
   }
 
@@ -113,37 +119,31 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   onSubmit = () => {
-    this.attemptConfigSubmit();
+    this.setState({lastAction: configSubmitAction}, this.attemptConfigSubmit)
   };
 
   canSafelySubmitConfig(config) {
     return !isUnsafeOptionSelected(this.state.schema, config);
   }
 
-  checkAndShowUnsafeAttackWarning = () => {
-    if (isUnsafeOptionSelected(this.state.schema, this.state.configuration)) {
-      this.setState({showUnsafeAttackOptionsWarning: true});
+  async attemptConfigSubmit() {
+    await this.updateConfigSection();
+    if (this.canSafelySubmitConfig(this.state.configuration)) {
+      this.configSubmit();
+      if(this.state.lastAction === configExportAction){
+        this.setState({showConfigExportModal: true})
+      }
+    } else {
+      this.setState({showUnsafeOptionsConfirmation: true});
     }
   }
 
-  attemptConfigSubmit() {
-    this.updateConfigSection();
-    this.setState({lastAction: 'submit_attempt'}, () => {
-        if (this.canSafelySubmitConfig(this.state.configuration)) {
-          this.configSubmit();
-        } else {
-          this.setState({showUnsafeOptionsConfirmation: true});
-        }
-      }
-    );
-  }
-
   configSubmit() {
-    this.sendConfig()
+    return this.sendConfig()
       .then(res => res.json())
       .then(res => {
         this.setState({
-          lastAction: 'saved',
+          lastAction: configSaveAction,
           schema: res.schema,
           configuration: res.configuration
         });
@@ -167,11 +167,12 @@ class ConfigurePageComponent extends AuthComponent {
     if (Object.keys(this.state.currentFormData).length > 0) {
       newConfig[this.currentSection] = this.state.currentFormData;
     }
-    this.setState({configuration: newConfig, lastAction: 'none'});
+    this.setState({configuration: newConfig});
   };
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
+                               configuration={this.state.configuration}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
                                }}/>);
@@ -179,6 +180,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderConfigImportModal = () => {
     return (<ConfigImportModal show={this.state.showConfigImportModal}
+                               schema={this.state.schema}
                                onClose={this.onClose}/>);
   }
 
@@ -307,9 +309,9 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch(apiEndpoint, request_options);
   }
 
-  exportConfig = () => {
-    this.updateConfigSection();
-    this.setState({showConfigExportModal: true});
+  exportConfig = async () => {
+    await this.setState({lastAction: configExportAction});
+    await this.attemptConfigSubmit();
   };
 
   sendConfig() {
@@ -451,7 +453,7 @@ class ConfigurePageComponent extends AuthComponent {
               Configuration reset successfully.
             </div>
             : ''}
-          {this.state.lastAction === 'saved' ?
+          {this.state.lastAction === configSaveAction ?
             <div className='alert alert-success'>
               <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.
