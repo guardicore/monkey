@@ -34,7 +34,6 @@ class IslandMode(AbstractResource):
             return make_response({}, 200)
         except (AttributeError, json.decoder.JSONDecodeError):
             return make_response({}, 400)
-        # API Spec: Check if HTTP codes make sense
         except ValueError:
             return make_response({}, 422)
 
