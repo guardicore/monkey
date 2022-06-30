@@ -86,8 +86,8 @@ const PasswordInput = (props: {
   return (
     <div className={'config-export-password-input'}>
       <p>Encrypt with a password:</p>
-      <Form.Control type="password"
-                    placeholder="Password"
+      <Form.Control type='password'
+                    placeholder='Password'
                     onChange={evt => (props.onChange(evt.target.value))}/>
     </div>
   )
