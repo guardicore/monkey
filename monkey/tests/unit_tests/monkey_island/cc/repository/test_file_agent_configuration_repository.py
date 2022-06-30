@@ -33,3 +33,13 @@ def test_get_agent_config_retrieval_error(default_agent_configuration):
 
     with pytest.raises(RetrievalError):
         repository.get_configuration()
+
+
+def test_reset_to_default(repository, default_agent_configuration):
+    agent_configuration = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
+
+    repository.store_configuration(agent_configuration)
+    repository.reset_to_default()
+    retrieved_agent_configuration = repository.get_configuration()
+
+    assert retrieved_agent_configuration == default_agent_configuration

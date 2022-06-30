@@ -35,3 +35,6 @@ class FileAgentConfigurationRepository(IAgentConfigurationRepository):
         self._file_repository.save_file(
             AGENT_CONFIGURATION_FILE_NAME, io.BytesIO(configuration_json.encode())
         )
+
+    def reset_to_default(self):
+        self.store_configuration(self._default_agent_configuration)
