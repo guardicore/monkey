@@ -16,6 +16,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - deployment_scrips/install-infection-monkey-service.sh to install an AppImage
   as a service. #1552
 - The ability to download the Monkey Island logs from the Infection Map page. #1640
+- `/api/reset-agent-configuration` endpoint. #2036
+- `/api/clear-simulation-data` endpoint. #2036
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
@@ -42,6 +44,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   the current depth of the agent, not hops remaining). #2033
 - Agent configuration structure. #1996, #1998, #1961, #1997, #1994, #1741,
   #1761, #1695, #1605, #2028
+- `/api/island-mode` to accept and return new "unset" mode. #2036
 
 ### Removed
 - VSFTPD exploiter. #1533
