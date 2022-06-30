@@ -28,3 +28,12 @@ class IAgentConfigurationRepository(ABC):
         :raises StorageError: If the configuration could not be stored
         """
         pass
+
+    @abstractmethod
+    def reset_to_default(self):
+        """
+        Remove any stored configuration from the repository
+
+        :raises RemovalError: If the repository could not be reset
+        """
+        pass
