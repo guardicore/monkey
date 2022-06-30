@@ -38,11 +38,11 @@ const ConfigImportModal = (props: Props) => {
 
   useEffect(() => {
     if (configContents !== null) {
-      saveConfig();
+      tryImport();
     }
   }, [configContents, unsafeOptionsVerified])
 
-  function saveConfig() {
+  function tryImport() {
     if (configEncrypted && !showPassword){
       setShowPassword(true);
     } else if (configEncrypted && showPassword) {
@@ -178,7 +178,7 @@ const ConfigImportModal = (props: Props) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant={'info'}
-                onClick={saveConfig}
+                onClick={tryImport}
                 disabled={isImportDisabled()}>
           Import
         </Button>
