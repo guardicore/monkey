@@ -74,8 +74,7 @@ const IslandResetModal = (props: Props) => {
         <button type='button' className='btn btn-danger btn-lg' style={{margin: '5px'}}
                 onClick={() => {
                   setResetAll(Loading);
-                  resetIsland('/api?action=reset',
-                    () => {
+                  resetAll(() => {
                       setResetAll(Done);
                       props.onClose();
                     })
@@ -96,6 +95,24 @@ const IslandResetModal = (props: Props) => {
         if (res.status === 200) {
           callback()
         }
+      })
+  }
+  function resetAll(callback: () => void) {
+    auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
+      .then(res => {
+        if (res.status === 200) {
+            auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
+              .then(res => {
+                if (res.status === 200) {
+                    auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
+                      .then(res => {
+                        if (res.status === 200) {
+                            callback()
+                        }
+                    })
+                }
+              })
+          }
       })
   }
 
