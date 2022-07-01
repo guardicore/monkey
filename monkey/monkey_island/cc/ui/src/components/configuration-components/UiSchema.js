@@ -9,14 +9,14 @@ export default function UiSchema(props) {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect,
           brute_force_classes: {
-            classNames: 'config-template-no-header',
+            classNames: 'config-template-no-header'
           }
         },
         vulnerability: {
           classNames: 'config-template-no-header',
+          'ui:widget': AdvancedMultiSelect,
           vulnerability_classes: {
-            classNames: 'config-template-no-header',
-            //'ui:widget': AdvancedMultiSelect
+            classNames: 'config-template-no-header'
           }
         }
       },
@@ -25,6 +25,15 @@ export default function UiSchema(props) {
           info_box: {
             'ui:field': InfoBox
           }
+        }
+      }
+    },
+    credential_collectors: {
+      collectors: {
+        classNames: 'config-template-no-header',
+        'ui:widget': AdvancedMultiSelect,
+        credential_collectors_classes :{
+          classNames: 'config-template-no-header'
         }
       }
     }

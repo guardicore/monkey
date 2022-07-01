@@ -52,7 +52,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   onChange = (strValues) => {
-    console.log("Values");
+    console.log('Values');
     console.log(this.props);
     console.log(this.state);
     console.log(strValues);
@@ -196,7 +196,7 @@ class AdvancedMultiSelect extends React.Component {
       id,
       multiple,
       required,
-      schema,
+      schema
     } = this.props;
 
     return (

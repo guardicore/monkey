@@ -2,13 +2,15 @@ import {customPBAConfigurationSchema} from './definitions/custom_pbas.js';
 import {pluginConfigurationSchema} from './definitions/plugins.js';
 import {propagationConfigurationSchema} from './definitions/propagation.js';
 import {bruteForceExploiters, vulnerabilityExploiters} from './definitions/exploiter_classes.js';
+import {credentialCollectors} from './definitions/credential_collectors.js';
 
 export const SCHEMA = {
   'title': 'Monkey',
   'type': 'object',
   'definitions': {
     'brute_force_classes': bruteForceExploiters,
-    'vulnerability_classes': vulnerabilityExploiters
+    'vulnerability_classes': vulnerabilityExploiters,
+    'credential_collectors_classes': credentialCollectors
   },
   'properties': {
     'propagation': propagationConfigurationSchema,
@@ -38,12 +40,20 @@ export const SCHEMA = {
     },
     'credential_collectors': {
       'title': 'Credential collectors',
-      'type': 'array',
-      'items': pluginConfigurationSchema,
-      'default': [
-        {'name': 'MimikatzCollector', 'safe': true, 'options':{}},
-        {'name': 'SSHCollector', 'safe': true, 'options':{}}
-      ]
+      'properties': {
+        'collectors': {
+          'title': 'Credential collectors',
+          'type': 'array',
+          'uniqueItems': true,
+          'items': {
+            '$ref': '#/definitions/credential_collectors_classes'
+          },
+          'default': [
+            'MimikatzCollector',
+            'SSHCollector'
+          ]
+        }
+      }
     },
     'advanced': {
       'title': 'Advanced',
