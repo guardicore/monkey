@@ -11,15 +11,12 @@ def simulation_repository():
     return FileSimulationRepository(SingleFileRepository())
 
 
-def test_save_simulation(simulation_repository):
-    simulation = Simulation(IslandModeEnum.RANSOMWARE)
-
-    old_simulation = simulation_repository.get_simulation()
+@pytest.mark.parametrize("mode", list(IslandModeEnum))
+def test_save_simulation(simulation_repository, mode):
+    simulation = Simulation(mode)
     simulation_repository.save_simulation(simulation)
-    new_simulation = simulation_repository.get_simulation()
 
-    assert old_simulation != simulation
-    assert new_simulation == simulation
+    assert simulation_repository.get_simulation() == simulation
 
 
 def test_get_default_simulation(simulation_repository):
