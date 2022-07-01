@@ -10,7 +10,7 @@ class ISimulationRepository(ABC):
         pass
 
     @abstractmethod
-    def get_simulation(self):
+    def get_simulation(self) -> Simulation:
         pass
 
     @abstractmethod
