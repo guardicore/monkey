@@ -54,8 +54,7 @@ const IslandResetModal = (props: Props) => {
         <button type='button' className='btn btn-danger btn-lg' style={{margin: '5px'}}
                 onClick={() => {
                   setDeleteStatus(Loading);
-                  resetIsland('/api?action=delete-agent-data',
-                    () => {
+                  clearSimulationData(() => {
                       setDeleteStatus(Done)
                     })
                 }}>
@@ -75,11 +74,14 @@ const IslandResetModal = (props: Props) => {
         <button type='button' className='btn btn-danger btn-lg' style={{margin: '5px'}}
                 onClick={() => {
                   setResetAll(Loading);
-                  resetIsland('/api?action=reset',
-                    () => {
-                      setResetAll(Done);
-                      props.onClose();
-                    })
+                  try {
+                    resetAll();
+                    setResetAll(Done);
+                    props.onClose();
+                  } catch (err) {
+                    // TODO: Display error message to user
+                    console.error(err)
+                  }
                 }}>
           Reset the Island
         </button>
@@ -91,15 +93,30 @@ const IslandResetModal = (props: Props) => {
     }
   }
 
-  function resetIsland(url: string, callback: () => void) {
-    auth.authFetch(url)
-      .then(res => res.json())
+  function clearSimulationData(callback: () => void) {
+    auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
       .then(res => {
-        if (res['status'] === 'OK') {
-          callback()
+        if (res.status === 200) {
+          callback();
         }
       })
   }
+  function resetAll() {
+    auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
+      .then(res => {
+        if (res.status === 200) {
+            return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
+        })
+      .then(res => {
+        if (res.status === 200) {
+            return auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
+        })
+      .then(res => {
+        if (res.status !== 200) {
+          throw 'Error resetting the simulation'
+        }
+      })
+}
 
   function showModalButtons() {
     return (<Container className={`text-left island-reset-modal`}>
