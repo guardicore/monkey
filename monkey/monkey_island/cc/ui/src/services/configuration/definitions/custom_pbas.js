@@ -1,6 +1,5 @@
 export const customPBAConfigurationSchema = {
-  'title': 'Custom post-breach action',
-  'type': 'object',
+  'title': 'Custom PBA',
   'properties': {
     'linux_command': {
       'title': 'Linux post-breach command',
@@ -14,7 +13,6 @@ export const customPBAConfigurationSchema = {
     'linux_filename': {
       'title': 'Linux post-breach file',
       'type': 'string',
-      'format': 'data-url',
       'description': 'File to be uploaded after braeaching. ' +
       'Use the "Linux post-breach command" field to ' +
       'change permissions, run, or delete the file. ' +
@@ -32,7 +30,6 @@ export const customPBAConfigurationSchema = {
     'windows_filename':{
       'title': 'Windows post-breach file',
       'type': 'string',
-      'format': 'data-url',
       'description': 'File to be uploaded after breaching. ' +
       'Use the "Windows post-breach command" filed to ' +
       'change permissions, run or delete the file. ' +
