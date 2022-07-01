@@ -5,7 +5,6 @@ from flask import jsonify, make_response, request
 from monkey_island.cc.database import mongo
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-from monkey_island.cc.services.database import Database
 from monkey_island.cc.services.infection_lifecycle import get_completed_steps
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
@@ -22,10 +21,6 @@ class Root(AbstractResource):
 
         if not action:
             return self.get_server_info()
-        elif action == "delete-agent-data":
-            return jwt_required(Database.reset_db)(reset_config=False)
-        elif action == "reset":
-            return jwt_required(Database.reset_db)()
         elif action == "is-up":
             return {"is-up": True}
         else:
