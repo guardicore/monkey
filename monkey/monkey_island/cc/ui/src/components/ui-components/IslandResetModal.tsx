@@ -75,16 +75,11 @@ const IslandResetModal = (props: Props) => {
                 onClick={() => {
                   setResetAll(Loading);
                   try {
-                      resetAll().then(res => {
-                        if (res.status === 200) {
-                          setResetAll(Done);
-                          props.onClose();
-                        } else {
-                            throw 'Error resetting the simulation'
-                        }
-                    })
+                    resetAll();
+                    setResetAll(Done);
+                    props.onClose();
                   } catch (err) {
-                    // TODO: Display error message
+                    // TODO: Display error message to user
                     console.error(err)
                   }
                 }}>
@@ -107,7 +102,7 @@ const IslandResetModal = (props: Props) => {
       })
   }
   function resetAll() {
-    return auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
+    auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
         if (res.status === 200) {
             return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
@@ -116,6 +111,11 @@ const IslandResetModal = (props: Props) => {
         if (res.status === 200) {
             return auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
         })
+      .then(res => {
+        if (res.status !== 200) {
+          throw 'Error resetting the simulation'
+        }
+      })
 }
 
   function showModalButtons() {
