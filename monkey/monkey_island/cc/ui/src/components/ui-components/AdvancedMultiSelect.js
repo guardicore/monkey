@@ -34,7 +34,6 @@ class AdvancedMultiSelect extends React.Component {
     super(props);
     this.infoPaneRefString = props.schema.items.$ref;
     this.registry = props.registry;
-    this.enumOptions = props.options.enumOptions.sort(this.compareOptions);
     this.pluginNames = props.value.map(v => v.name);
 
     this.state = {
@@ -48,6 +47,10 @@ class AdvancedMultiSelect extends React.Component {
         this.registry).pluginDefs,
       pluginNames: props.value.map(v => v.name)
     };
+  }
+
+  getOptionList = () => {
+    return this.props.options.enumOptions.sort(this.compareOptions);
   }
 
   onChange = (strValues) => {
@@ -88,7 +91,7 @@ class AdvancedMultiSelect extends React.Component {
     if (checkboxState === MasterCheckboxState.ALL) {
       var newValues = [];
     } else {
-      newValues = this.enumOptions.map(({value}) => value);
+      newValues = this.getOptionList().map(({value}) => value);
     }
 
     this.onChange(newValues);
@@ -124,7 +127,7 @@ class AdvancedMultiSelect extends React.Component {
       return MasterCheckboxState.NONE;
     }
 
-    if (selectValues.length !== this.enumOptions.length) {
+    if (selectValues.length !== this.getOptionList().length) {
       return MasterCheckboxState.MIXED;
     }
 
@@ -152,6 +155,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   isSafe = (itemKey) => {
+    console.log(getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey))
     return getFullDefinitionByKey(this.infoPaneRefString, this.registry, itemKey).safe;
   }
 
@@ -201,7 +205,7 @@ class AdvancedMultiSelect extends React.Component {
                                 onPaneClick={this.setPaneInfo}
                                 onCheckboxClick={this.onChildCheckboxClick}
                                 selectedValues={this.state.pluginNames}
-                                enumOptions={this.enumOptions}/>
+                                enumOptions={this.getOptionList()}/>
 
         <InfoPane title={this.state.infoPaneParams.title}
                   body={this.state.infoPaneParams.content}
