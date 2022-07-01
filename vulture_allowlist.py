@@ -197,6 +197,9 @@ _make_network_scan_configuration  # unused method (monkey/common/configuration/a
 _make_propagation_configuration  # unused method (monkey/common/configuration/agent_configuration.py:167)
 _make_agent_configuration  # unused method (monkey/common/configuration/agent_configuration.py:192)
 
+# Models
+_make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:19
+
 
 # TODO DELETE AFTER RESOURCE REFACTORING
 NetworkMap
