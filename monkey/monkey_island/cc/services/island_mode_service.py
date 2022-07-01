@@ -1,6 +1,6 @@
 from common.configuration import AgentConfiguration
+from monkey_island.cc.models import IslandModeEnum
 from monkey_island.cc.repository import IAgentConfigurationRepository, ISimulationRepository
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 class IslandModeService:

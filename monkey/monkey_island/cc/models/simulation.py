@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 
 from marshmallow import Schema, post_load
 from marshmallow_enum import EnumField
 
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
+
+class IslandModeEnum(Enum):
+    UNSET = "unset"
+    RANSOMWARE = "ransomware"
+    ADVANCED = "advanced"
 
 
 @dataclass(frozen=True)

@@ -1,9 +1,8 @@
 import pytest
 from tests.monkey_island import OpenErrorFileRepository, SingleFileRepository
 
-from monkey_island.cc.models import Simulation
+from monkey_island.cc.models import IslandModeEnum, Simulation
 from monkey_island.cc.repository import FileSimulationRepository, RetrievalError
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 @pytest.fixture

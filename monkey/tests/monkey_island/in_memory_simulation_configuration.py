@@ -1,8 +1,7 @@
 import dataclasses
 
-from monkey_island.cc.models import Simulation
+from monkey_island.cc.models import IslandModeEnum, Simulation
 from monkey_island.cc.repository import ISimulationRepository
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 class InMemorySimulationRepository(ISimulationRepository):

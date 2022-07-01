@@ -5,10 +5,10 @@ import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemorySimulationRepository
 
+from monkey_island.cc.models import IslandModeEnum
 from monkey_island.cc.repository import RetrievalError
 from monkey_island.cc.resources.island_mode import IslandMode as IslandModeResource
 from monkey_island.cc.services import IslandModeService
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 class MockIslandModeService(IslandModeService):

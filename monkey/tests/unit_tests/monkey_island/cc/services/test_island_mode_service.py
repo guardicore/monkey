@@ -2,8 +2,8 @@ import pytest
 from tests.monkey_island import InMemoryAgentConfigurationRepository, InMemorySimulationRepository
 
 from common.configuration import DEFAULT_AGENT_CONFIGURATION, DEFAULT_RANSOMWARE_AGENT_CONFIGURATION
+from monkey_island.cc.models import IslandModeEnum
 from monkey_island.cc.services import IslandModeService
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 @pytest.fixture

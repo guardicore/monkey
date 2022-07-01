@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from monkey_island.cc.models import Simulation
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
+from monkey_island.cc.models import IslandModeEnum, Simulation
 
 
 class ISimulationRepository(ABC):

@@ -2,9 +2,8 @@ import dataclasses
 import io
 
 from monkey_island.cc import repository
-from monkey_island.cc.models import Simulation, SimulationSchema
+from monkey_island.cc.models import IslandModeEnum, Simulation, SimulationSchema
 from monkey_island.cc.repository import IFileRepository, ISimulationRepository, RetrievalError
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 SIMULATION_STATE_FILE_NAME = "simulation_state.json"
 
