@@ -6,7 +6,7 @@ import {cloneDeep} from 'lodash';
 import {getDefaultPaneParams, InfoPane, WarningType} from './InfoPane';
 import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
 import ChildCheckboxContainer from './ChildCheckbox';
-import {getFullDefinitionByKey} from './JsonSchemaHelpers';
+import {getFullDefinitionByKey, getObjectFromRegistryByRef} from './JsonSchemaHelpers';
 
 function AdvancedMultiSelectHeader(props) {
   const {
@@ -16,6 +16,7 @@ function AdvancedMultiSelectHeader(props) {
     hideReset,
     onResetClick
   } = props;
+
 
   return (
     <Card.Header className="d-flex justify-content-between">
@@ -31,21 +32,48 @@ function AdvancedMultiSelectHeader(props) {
 class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props);
-
     this.defaultValues = props.schema.default;
     this.infoPaneRefString = props.schema.items.$ref;
     this.registry = props.registry;
     this.enumOptions = props.options.enumOptions.sort(this.compareOptions);
+    this.value = JSON.parse(JSON.stringify(props.value)).map(v => v.name);
 
     this.state = {
-      masterCheckboxState: this.getMasterCheckboxState(props.value),
-      hideReset: this.getHideResetState(props.value),
+      masterCheckboxState: this.getMasterCheckboxState(this.value),
+      hideReset: this.getHideResetState(this.value),
       infoPaneParams: getDefaultPaneParams(
         this.infoPaneRefString,
         this.registry,
-        this.isUnsafeOptionSelected(props.value)
-      )
+        this.isUnsafeOptionSelected(this.value)
+      ),
+      pluginDefinitions: getObjectFromRegistryByRef(this.infoPaneRefString, this.registry).pluginDefs,
+      value: JSON.parse(JSON.stringify(props.value)).map(v => v.name)
     };
+  }
+
+  onChange = (strValues) => {
+    console.log("Values");
+    console.log(this.props);
+    console.log(this.state);
+    console.log(strValues);
+    let newValues = [];
+    for (let j = 0; j < strValues.length; j++){
+      let found = false;
+      for (let i = 0; i < this.props.value.length; i++){
+        if(strValues[j] === this.props.value[i]['name']){
+          newValues.push(JSON.parse(JSON.stringify(this.props.value[i])))
+          found = true;
+          break;
+        }
+      }
+      if(! found){
+        newValues.push(this.state.pluginDefinitions[strValues[j]]);
+      }
+    }
+    newValues = JSON.parse(JSON.stringify(newValues));
+    console.log(newValues);
+    this.props.onChange(newValues)
+    this.setState({value: newValues.map(v => v.name)});
   }
 
   // Sort options alphabetically. "Unsafe" options float to the top so that they
@@ -76,14 +104,14 @@ class AdvancedMultiSelect extends React.Component {
 
   onChildCheckboxClick = (value) => {
     let selectValues = this.getSelectValuesAfterClick(value);
-    this.props.onChange(selectValues);
+    this.onChange(selectValues);
 
     this.setMasterCheckboxState(selectValues);
     this.setHideResetState(selectValues);
   }
 
   getSelectValuesAfterClick(clickedValue) {
-    const valueArray = cloneDeep(this.props.value);
+    const valueArray = cloneDeep(this.state.value);
 
     if (valueArray.includes(clickedValue)) {
       return valueArray.filter(e => e !== clickedValue);
@@ -169,7 +197,6 @@ class AdvancedMultiSelect extends React.Component {
       multiple,
       required,
       schema,
-      value
     } = this.props;
 
     return (
@@ -182,7 +209,7 @@ class AdvancedMultiSelect extends React.Component {
         <ChildCheckboxContainer id={id} multiple={multiple} required={required}
           autoFocus={autofocus} isSafe={this.isSafe}
           onPaneClick={this.setPaneInfo} onCheckboxClick={this.onChildCheckboxClick}
-          selectedValues={value} enumOptions={this.enumOptions}/>
+          selectedValues={this.state.value} enumOptions={this.enumOptions}/>
 
         <InfoPane title={this.state.infoPaneParams.title}
           body={this.state.infoPaneParams.content}
@@ -193,7 +220,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   componentDidUpdate(_prevProps) {
-    this.setMasterCheckboxState(this.props.value);
+    this.setMasterCheckboxState(this.value);
   }
 }
 

@@ -6,15 +6,17 @@ export default function UiSchema(props) {
     propagation: {
       exploitation: {
         brute_force: {
+          classNames: 'config-template-no-header',
+          'ui:widget': AdvancedMultiSelect,
           brute_force_classes: {
             classNames: 'config-template-no-header',
-            'ui:widget': AdvancedMultiSelect
           }
         },
         vulnerability: {
+          classNames: 'config-template-no-header',
           vulnerability_classes: {
             classNames: 'config-template-no-header',
-            'ui:widget': AdvancedMultiSelect
+            //'ui:widget': AdvancedMultiSelect
           }
         }
       },
