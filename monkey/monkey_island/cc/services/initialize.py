@@ -8,9 +8,11 @@ from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     FileAgentConfigurationRepository,
+    FileSimulationRepository,
     IAgentBinaryRepository,
     IAgentConfigurationRepository,
     IFileRepository,
+    ISimulationRepository,
     LocalStorageFileRepository,
     RetrievalError,
 )
@@ -45,6 +47,7 @@ def initialize_services(data_dir: Path) -> DIContainer:
     container.register_instance(
         IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
     )
+    container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
 
     # This is temporary until we get DI all worked out.
     PostBreachFilesService.initialize(container.resolve(IFileRepository))
