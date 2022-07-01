@@ -195,7 +195,6 @@ _make_icmp_scan_configuration  # unused method (monkey/common/configuration/agen
 _make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:122)
 _make_network_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:110)
 _make_propagation_configuration  # unused method (monkey/common/configuration/agent_configuration.py:167)
-_make_agent_configuration  # unused method (monkey/common/configuration/agent_configuration.py:192)
 
 # Models
 _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:19
