@@ -21,6 +21,7 @@ class ISimulationRepository(ABC):
         :return The island's current mode
         :raises RetrievalError: If the mode could not be retrieved
         """
+
         pass
 
     @abstractmethod
