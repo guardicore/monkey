@@ -2,7 +2,7 @@ import pytest
 from tests.monkey_island import InMemoryAgentConfigurationRepository, InMemorySimulationRepository
 
 from common.configuration import DEFAULT_AGENT_CONFIGURATION, DEFAULT_RANSOMWARE_AGENT_CONFIGURATION
-from monkey_island.cc.models import IslandModeEnum
+from monkey_island.cc.models import IslandMode
 from monkey_island.cc.services import IslandModeService
 
 
@@ -21,7 +21,7 @@ def island_mode_service(agent_configuration_repository):
     )
 
 
-@pytest.mark.parametrize("mode", list(IslandModeEnum))
+@pytest.mark.parametrize("mode", list(IslandMode))
 def test_set_mode(island_mode_service, mode):
     island_mode_service.set_mode(mode)
     assert island_mode_service.get_mode() == mode
@@ -30,9 +30,9 @@ def test_set_mode(island_mode_service, mode):
 @pytest.mark.parametrize(
     "mode, expected_config",
     [
-        (IslandModeEnum.UNSET, DEFAULT_AGENT_CONFIGURATION),
-        (IslandModeEnum.ADVANCED, DEFAULT_AGENT_CONFIGURATION),
-        (IslandModeEnum.RANSOMWARE, DEFAULT_RANSOMWARE_AGENT_CONFIGURATION),
+        (IslandMode.UNSET, DEFAULT_AGENT_CONFIGURATION),
+        (IslandMode.ADVANCED, DEFAULT_AGENT_CONFIGURATION),
+        (IslandMode.RANSOMWARE, DEFAULT_RANSOMWARE_AGENT_CONFIGURATION),
     ],
 )
 def test_set_mode_sets_config(

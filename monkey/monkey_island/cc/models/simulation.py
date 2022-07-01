@@ -7,7 +7,7 @@ from marshmallow import Schema, post_load
 from marshmallow_enum import EnumField
 
 
-class IslandModeEnum(Enum):
+class IslandMode(Enum):
     UNSET = "unset"
     RANSOMWARE = "ransomware"
     ADVANCED = "advanced"
@@ -15,11 +15,11 @@ class IslandModeEnum(Enum):
 
 @dataclass(frozen=True)
 class Simulation:
-    mode: IslandModeEnum = IslandModeEnum.UNSET
+    mode: IslandMode = IslandMode.UNSET
 
 
 class SimulationSchema(Schema):
-    mode = EnumField(IslandModeEnum)
+    mode = EnumField(IslandMode)
 
     @post_load
     def _make_simulation(self, data, **kwargs):

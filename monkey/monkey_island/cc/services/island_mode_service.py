@@ -1,5 +1,5 @@
 from common.configuration import AgentConfiguration
-from monkey_island.cc.models import IslandModeEnum
+from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repository import IAgentConfigurationRepository, ISimulationRepository
 
 
@@ -25,7 +25,7 @@ class IslandModeService:
         """
         return self._simulation_repository.get_mode()
 
-    def set_mode(self, mode: IslandModeEnum):
+    def set_mode(self, mode: IslandMode):
         """
         Set the island's mode
 
@@ -35,8 +35,8 @@ class IslandModeService:
         self._simulation_repository.set_mode(mode)
         self._set_configuration(mode)
 
-    def _set_configuration(self, mode: IslandModeEnum):
-        if mode == IslandModeEnum.RANSOMWARE:
+    def _set_configuration(self, mode: IslandMode):
+        if mode == IslandMode.RANSOMWARE:
             self._agent_configuration_repository.store_configuration(
                 self._default_ransomware_agent_configuration
             )
