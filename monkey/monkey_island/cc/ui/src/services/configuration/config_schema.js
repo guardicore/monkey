@@ -4,6 +4,7 @@ import {propagationConfigurationSchema} from './definitions/propagation.js';
 import {bruteForceExploiters, vulnerabilityExploiters} from './definitions/exploiter_classes.js';
 import {credentialCollectors} from './definitions/credential_collectors.js';
 import {postBreachActions} from './definitions/post_breach_actions.js';
+import {fingerprinterClasses} from './definitions/fingerprinter_classes.js'
 
 export const SCHEMA = {
   'title': 'Monkey',
@@ -12,7 +13,8 @@ export const SCHEMA = {
     'brute_force_classes': bruteForceExploiters,
     'vulnerability_classes': vulnerabilityExploiters,
     'credential_collectors_classes': credentialCollectors,
-    'post_breach_actions': postBreachActions
+    'post_breach_actions': postBreachActions,
+    'fingerprinter_classes': fingerprinterClasses
   },
   'properties': {
     'propagation': propagationConfigurationSchema,

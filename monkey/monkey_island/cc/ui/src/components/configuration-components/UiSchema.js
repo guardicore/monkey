@@ -25,6 +25,14 @@ export default function UiSchema(props) {
           info_box: {
             'ui:field': InfoBox
           }
+        },
+        fingerprinters:{
+          classNames: 'config-template-no-header',
+          'ui:widget': AdvancedMultiSelect,
+          fingerprinter_classes: {
+            classNames: 'config-template-no-header'
+          }
+
         }
       }
     },
