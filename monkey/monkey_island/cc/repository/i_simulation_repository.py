@@ -1,16 +1,19 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from monkey_island.cc.models import Simulation
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
 class ISimulationRepository(ABC):
+    @abstractmethod
     def save_simulation(self, simulation: Simulation):
         pass
 
+    @abstractmethod
     def get_simulation(self):
         pass
 
+    @abstractmethod
     def get_mode(self) -> IslandModeEnum:
         """
         Get's the island's current mode
@@ -20,6 +23,7 @@ class ISimulationRepository(ABC):
         """
         pass
 
+    @abstractmethod
     def set_mode(self, mode: IslandModeEnum):
         """
         Set the island's mode
