@@ -22,6 +22,7 @@ class ISimulationRepository(ABC):
         :param simulation: The simulation state
         :raises StorageError: If the simulation states could not be saved
         """
+
         pass
 
     @abstractmethod
