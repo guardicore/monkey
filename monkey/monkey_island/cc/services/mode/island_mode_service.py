@@ -1,17 +1,25 @@
-from monkey_island.cc.models.island_mode_model import IslandMode
+from monkey_island.cc.repository import ISimulationRepository
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
-def set_mode(mode: IslandModeEnum):
-    IslandMode.drop_collection()
-    island_mode_model = IslandMode()
-    island_mode_model.mode = mode.value
-    island_mode_model.save()
+class IslandModeService:
+    def __init__(self, simulation_repository: ISimulationRepository):
+        self._simulation_repository = simulation_repository
 
+    def get_mode(self):
+        """
+        Get's the island's current mode
 
-def get_mode() -> str:
-    if IslandMode.objects:
-        mode = IslandMode.objects[0].mode
-        return mode
-    else:
-        return IslandModeEnum.UNSET.value
+        :return The island's current mode
+        :raises RetrievalError: If the mode could not be retrieved
+        """
+        return self._simulation_repository.get_mode()
+
+    def set_mode(self, mode: IslandModeEnum):
+        """
+        Set the island's mode
+
+        :param mode: The island's new mode
+        :raises StorageError: If the mode could not be saved
+        """
+        self._simulation_repository.set_mode(mode)

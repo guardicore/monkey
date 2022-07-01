@@ -17,7 +17,7 @@ from monkey_island.cc.repository import (
     RetrievalError,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.services import AWSService
+from monkey_island.cc.services import AWSService, IslandModeService
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
@@ -41,13 +41,15 @@ def initialize_services(data_dir: Path) -> DIContainer:
     container.register_instance(
         IFileRepository, LocalStorageFileRepository(data_dir / "runtime_data")
     )
-    container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
-    container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
     container.register_instance(
         IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
     )
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
+
+    container.register_instance(AWSService, container.resolve(AWSService))
+    container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
+    container.register_instance(IslandModeService, container.resolve(IslandModeService))
 
     # This is temporary until we get DI all worked out.
     PostBreachFilesService.initialize(container.resolve(IFileRepository))
