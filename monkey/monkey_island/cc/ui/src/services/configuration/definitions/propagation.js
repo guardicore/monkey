@@ -11,7 +11,7 @@ export const propagationConfigurationSchema = {
       'type': 'integer',
       'minimum': 1,
       'default': 2,
-      'description': 'Amount of hops alloed for the monkey to spread from the ' +
+      'description': 'Amount of hops allowed for the monkey to spread from the ' +
       'Island server. \n' +
       ' \u26A0' +
       ' Note that setting this value too high may result in the ' +

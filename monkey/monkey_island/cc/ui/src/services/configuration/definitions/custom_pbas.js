@@ -6,14 +6,14 @@ export const customPBAConfigurationSchema = {
       'type': 'string',
       'default': '',
       'description': 'Command to be executed after breaching. ' +
-      'Use this field to run custom commands or execute uploaded ' +
-      'files on exploited machines.\nExample: ' +
+      'Use this field to run custom commands or execute the uploaded ' +
+      'file on exploited machines.\nExample: ' +
       '"chmod +x ./my_script.sh; ./my_script.sh ; rm ./my_script.sh"'
     },
     'linux_filename': {
       'title': 'Linux post-breach file',
       'type': 'string',
-      'description': 'File to be uploaded after braeaching. ' +
+      'description': 'File to be uploaded after breaching. ' +
       'Use the "Linux post-breach command" field to ' +
       'change permissions, run, or delete the file. ' +
       'Reference your file by filename.'
@@ -23,7 +23,7 @@ export const customPBAConfigurationSchema = {
       'type': 'string',
       'default': '',
       'description': 'Command to be executed after breaching. ' +
-      'Use this field to run custom commands or execute uploaded ' +
+      'Use this field to run custom commands or execute the uploaded ' +
       'file on exploited machine.\nExample: ' +
       '"my_script.bat & del my_script.bat"'
     },
@@ -31,7 +31,7 @@ export const customPBAConfigurationSchema = {
       'title': 'Windows post-breach file',
       'type': 'string',
       'description': 'File to be uploaded after breaching. ' +
-      'Use the "Windows post-breach command" filed to ' +
+      'Use the "Windows post-breach command" field to ' +
       'change permissions, run or delete the file. ' +
       'Reference your file by filename.'
     }
