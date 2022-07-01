@@ -10,7 +10,7 @@ from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 @dataclass(frozen=True)
 class Simulation:
-    mode: IslandModeEnum
+    mode: IslandModeEnum = IslandModeEnum.UNSET
 
 
 class SimulationSchema(Schema):
