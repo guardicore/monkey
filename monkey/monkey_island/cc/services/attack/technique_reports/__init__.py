@@ -6,19 +6,20 @@ from common.utils.attack_utils import ScanStatus
 from common.utils.code_utils import abstractstatic
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.services.config_schema.config_schema import SCHEMA
 from monkey_island.cc.services.attack.attack_schema import SCHEMA as ATTACK_SCHEMA
-from monkey_island.cc.services.config_schema.config_schema_per_attack_technique import (
-    ConfigSchemaPerAttackTechnique,
-)
+
 
 logger = logging.getLogger(__name__)
 
 
+UNSCANNED_MESSAGE = (
+    "The configuration options corresponding to this ATT&CK technique were not "
+    "enabled in the configuration."
+)
+
+
 class AttackTechnique(object, metaclass=abc.ABCMeta):
     """Abstract class for ATT&CK report components"""
-
-    config_schema_per_attack_technique = None
 
     @property
     @abc.abstractmethod
@@ -120,51 +121,12 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         :return: message string
         """
         if status == ScanStatus.UNSCANNED.value:
-            if not cls.config_schema_per_attack_technique:
-                cls.config_schema_per_attack_technique = (
-                    ConfigSchemaPerAttackTechnique().get_config_schema_per_attack_technique(SCHEMA)
-                )
-            unscanned_msg = cls._get_unscanned_msg_with_reasons(
-                cls.unscanned_msg, cls.config_schema_per_attack_technique
-            )
+            unscanned_msg = UNSCANNED_MESSAGE
             return unscanned_msg
         elif status == ScanStatus.SCANNED.value:
             return cls.scanned_msg
         else:
             return cls.used_msg
-
-    @classmethod
-    def _get_unscanned_msg_with_reasons(
-        cls, unscanned_msg: str, config_schema_per_attack_technique: Dict
-    ):
-        reasons = []
-        if len(cls.relevant_systems) == 1:
-            reasons.append(f"- Monkey did not run on any {cls.relevant_systems[0]} systems.")
-        if cls.tech_id in config_schema_per_attack_technique:
-            reasons.append(
-                "- The following configuration options were disabled or empty:<br/>"
-                f"{cls._get_relevant_config_values(config_schema_per_attack_technique)}"
-            )
-
-        if reasons:
-            unscanned_msg = (
-                unscanned_msg.strip(".")
-                + " due to one of the following reasons:\n"
-                + "\n".join(reasons)
-            )
-
-        return unscanned_msg
-
-    @classmethod
-    def _get_relevant_config_values(cls, config_schema_per_attack_technique: Dict):
-        config_options = ""
-        for config_type in config_schema_per_attack_technique[cls.tech_id]:
-            config_options += (
-                f"- {config_type} — "
-                f"{', '.join(config_schema_per_attack_technique[cls.tech_id][config_type])}<br/>"
-            )
-
-        return config_options
 
     @classmethod
     def technique_title(cls):
