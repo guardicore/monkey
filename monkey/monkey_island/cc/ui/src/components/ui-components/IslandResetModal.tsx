@@ -74,10 +74,19 @@ const IslandResetModal = (props: Props) => {
         <button type='button' className='btn btn-danger btn-lg' style={{margin: '5px'}}
                 onClick={() => {
                   setResetAll(Loading);
-                  resetAll(() => {
-                      setResetAll(Done);
-                      props.onClose();
+                  try {
+                      resetAll().then(res => {
+                        if (res.status === 200) {
+                          setResetAll(Done);
+                          props.onClose();
+                        } else {
+                            throw 'Error resetting the simulation'
+                        }
                     })
+                  } catch (err) {
+                    // TODO: Display error message
+                    console.error(err)
+                  }
                 }}>
           Reset the Island
         </button>
@@ -97,24 +106,17 @@ const IslandResetModal = (props: Props) => {
         }
       })
   }
-  function resetAll(callback: () => void) {
-    auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
+  function resetAll() {
+    return auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
         if (res.status === 200) {
-            auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
-              .then(res => {
-                if (res.status === 200) {
-                    auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
-                      .then(res => {
-                        if (res.status === 200) {
-                            callback();
-                        }
-                    })
-                }
-              })
-          }
-      })
-  }
+            return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
+        })
+      .then(res => {
+        if (res.status === 200) {
+            return auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
+        })
+}
 
   function showModalButtons() {
     return (<Container className={`text-left island-reset-modal`}>
