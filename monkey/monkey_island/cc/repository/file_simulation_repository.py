@@ -14,13 +14,6 @@ class FileSimulationRepository(ISimulationRepository):
         self._file_repository = file_repository
         self._simulation_schema = SimulationSchema()
 
-    def save_simulation(self, simulation: Simulation):
-        simulation_json = self._simulation_schema.dumps(simulation)
-
-        self._file_repository.save_file(
-            SIMULATION_STATE_FILE_NAME, io.BytesIO(simulation_json.encode())
-        )
-
     def get_simulation(self) -> Simulation:
         try:
             with self._file_repository.open_file(SIMULATION_STATE_FILE_NAME) as f:
@@ -31,6 +24,13 @@ class FileSimulationRepository(ISimulationRepository):
             return Simulation()
         except Exception as err:
             raise RetrievalError(f"Error retrieving the simulation state: {err}")
+
+    def save_simulation(self, simulation: Simulation):
+        simulation_json = self._simulation_schema.dumps(simulation)
+
+        self._file_repository.save_file(
+            SIMULATION_STATE_FILE_NAME, io.BytesIO(simulation_json.encode())
+        )
 
     def get_mode(self) -> IslandModeEnum:
         return self.get_simulation().mode
