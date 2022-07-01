@@ -93,7 +93,7 @@ class AppComponent extends AuthComponent {
     if (res) {
       this.setMode()
         .then(() => {
-            if (this.state.islandMode === null) {
+            if (this.state.islandMode === "unset") {
               return
             }
             this.authFetch('/api')
@@ -151,12 +151,12 @@ class AppComponent extends AuthComponent {
   };
 
   needsRedirectionToLandingPage = (route_path) => {
-    return (this.state.islandMode === null && route_path !== Routes.LandingPage)
+    return (this.state.islandMode === "unset" && route_path !== Routes.LandingPage)
   }
 
   needsRedirectionToGettingStarted = (route_path) => {
     return route_path === Routes.LandingPage &&
-      this.state.islandMode !== null && this.state.islandMode !== undefined
+      this.state.islandMode !== "unset" && this.state.islandMode !== undefined
   }
 
   redirectTo = (userPath, targetPath) => {

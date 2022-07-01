@@ -149,7 +149,8 @@ MONKEY_LINUX_RUNNING  # unused variable (monkey/monkey_island/cc/services/utils/
 import_status  # monkey_island\cc\resources\configuration_import.py:19
 config_schema  # monkey_island\cc\resources\configuration_import.py:25
 exception_stream  # unused attribute (monkey_island/cc/server_setup.py:104)
-ADVANCED  # unused attribute (monkey/monkey_island/cc/services/mode/mode_enum.py:6:)
+ADVANCED  # unused attribute (monkey/monkey_island/cc/services/mode/mode_enum.py:7:)
+UNSET  # unused attribute (monkey/monkey_island/cc/services/mode/mode_enum.py:5:)
 Report.overview
 Report.recommendations
 Report.glance
