@@ -35,7 +35,20 @@ AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 
 def initialize_services(data_dir: Path) -> DIContainer:
     container = DIContainer()
+    _register_conventions(container, data_dir)
+    container.register_instance(AWSInstance, AWSInstance())
+    _register_repositories(container, data_dir)
+    _register_services(container)
 
+    # This is temporary until we get DI all worked out.
+    PostBreachFilesService.initialize(container.resolve(IFileRepository))
+    AuthenticationService.initialize(data_dir, JsonFileUserDatastore(data_dir))
+    ReportService.initialize(container.resolve(AWSService))
+
+    return container
+
+
+def _register_conventions(container: DIContainer, data_dir: Path):
     container.register_convention(Path, "data_dir", data_dir)
     container.register_convention(
         AgentConfiguration, "default_agent_configuration", DEFAULT_AGENT_CONFIGURATION
@@ -45,8 +58,9 @@ def initialize_services(data_dir: Path) -> DIContainer:
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
-    container.register_instance(AWSInstance, AWSInstance())
 
+
+def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         IFileRepository, LocalStorageFileRepository(data_dir / "runtime_data")
     )
@@ -55,17 +69,6 @@ def initialize_services(data_dir: Path) -> DIContainer:
         IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
     )
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
-
-    container.register_instance(AWSService, container.resolve(AWSService))
-    container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
-    container.register_instance(IslandModeService, container.resolve(IslandModeService))
-
-    # This is temporary until we get DI all worked out.
-    PostBreachFilesService.initialize(container.resolve(IFileRepository))
-    AuthenticationService.initialize(data_dir, JsonFileUserDatastore(data_dir))
-    ReportService.initialize(container.resolve(AWSService))
-
-    return container
 
 
 def _build_agent_binary_repository():
@@ -99,3 +102,9 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
 
     for os, binary_sha256_hash in agent_hashes.items():
         logger.info(f"{os} agent: SHA-256 hash: {binary_sha256_hash}")
+
+
+def _register_services(container: DIContainer):
+    container.register_instance(AWSService, container.resolve(AWSService))
+    container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
+    container.register_instance(IslandModeService, container.resolve(IslandModeService))
