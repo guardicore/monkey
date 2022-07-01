@@ -5,18 +5,27 @@ import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemorySimulationRepository
 
-from monkey_island.cc.repository import ISimulationRepository, RetrievalError
+from monkey_island.cc.repository import RetrievalError
 from monkey_island.cc.resources.island_mode import IslandMode as IslandModeResource
 from monkey_island.cc.services import IslandModeService
 from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 
+class MockIslandModeService(IslandModeService):
+    def __init__(self):
+        self._simulation_repository = InMemorySimulationRepository()
+
+    def get_mode(self) -> IslandModeEnum:
+        return self._simulation_repository.get_mode()
+
+    def set_mode(self, mode: IslandModeEnum):
+        self._simulation_repository.set_mode(mode)
+
+
 @pytest.fixture
 def flask_client(build_flask_client):
     container = StubDIContainer()
-
-    container.register(ISimulationRepository, InMemorySimulationRepository)
-    container.register_instance(IslandModeService, container.resolve(IslandModeService))
+    container.register_instance(IslandModeService, MockIslandModeService())
 
     with build_flask_client(container) as flask_client:
         yield flask_client

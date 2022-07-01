@@ -3,7 +3,11 @@ from pathlib import Path
 
 from common import DIContainer
 from common.aws import AWSInstance
-from common.configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration
+from common.configuration import (
+    DEFAULT_AGENT_CONFIGURATION,
+    DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
+    AgentConfiguration,
+)
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
@@ -35,6 +39,11 @@ def initialize_services(data_dir: Path) -> DIContainer:
     container.register_convention(Path, "data_dir", data_dir)
     container.register_convention(
         AgentConfiguration, "default_agent_configuration", DEFAULT_AGENT_CONFIGURATION
+    )
+    container.register_convention(
+        AgentConfiguration,
+        "default_ransomware_agent_configuration",
+        DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
     container.register_instance(AWSInstance, AWSInstance())
 
