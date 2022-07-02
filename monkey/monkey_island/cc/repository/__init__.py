@@ -1,6 +1,7 @@
 from .errors import RemovalError, RetrievalError, StorageError
 from .i_file_repository import FileNotFoundError, IFileRepository
 from .local_storage_file_repository import LocalStorageFileRepository
+from .file_repository_locking_decorator import FileRepositoryLockingDecorator
 from .file_repository_logging_decorator import FileRepositoryLoggingDecorator
 from .i_agent_binary_repository import IAgentBinaryRepository
 from .agent_binary_repository import AgentBinaryRepository
