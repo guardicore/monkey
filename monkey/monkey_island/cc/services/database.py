@@ -6,7 +6,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Config
 from monkey_island.cc.models.agent_controls import AgentControls
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.models.island_mode_model import IslandMode
 from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__name__)
@@ -33,7 +32,7 @@ class Database(object):
     @staticmethod
     def _should_drop(collection: str, drop_config: bool) -> bool:
         if not drop_config:
-            if collection == IslandMode.COLLECTION_NAME or collection == Config.COLLECTION_NAME:
+            if collection == Config.COLLECTION_NAME:
                 return False
         return (
             not collection.startswith("system.")

@@ -1,3 +1,5 @@
+import dataclasses
+
 from . import AgentConfiguration
 from .agent_sub_configurations import (
     CustomPBAConfiguration,
@@ -111,4 +113,8 @@ DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     credential_collectors=CREDENTIAL_COLLECTOR_CONFIGURATION,
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
+)
+
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = dataclasses.replace(
+    DEFAULT_AGENT_CONFIGURATION, post_breach_actions=[]
 )

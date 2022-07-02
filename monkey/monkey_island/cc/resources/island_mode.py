@@ -3,11 +3,10 @@ import logging
 
 from flask import make_response, request
 
+from monkey_island.cc.models import IslandMode as IslandModeEnum
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-from monkey_island.cc.services.config_manipulator import update_config_on_mode_set
-from monkey_island.cc.services.mode.island_mode_service import get_mode, set_mode
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
+from monkey_island.cc.services import IslandModeService
 
 logger = logging.getLogger(__name__)
 
@@ -16,20 +15,16 @@ class IslandMode(AbstractResource):
     # API Spec: Instead of POST, this could just be PATCH
     urls = ["/api/island-mode"]
 
+    def __init__(self, island_mode_service: IslandModeService):
+        self._island_mode_service = island_mode_service
+
     @jwt_required
     def post(self):
         try:
             body = json.loads(request.data)
-            mode_str = body.get("mode")
+            mode = IslandModeEnum(body.get("mode"))
 
-            mode = IslandModeEnum(mode_str)
-            set_mode(mode)
-
-            if not update_config_on_mode_set(mode):
-                logger.error(
-                    "Could not apply configuration changes per mode. "
-                    "Using default advanced configuration."
-                )
+            self._island_mode_service.set_mode(mode)
 
             return make_response({}, 200)
         except (AttributeError, json.decoder.JSONDecodeError):
@@ -39,5 +34,5 @@ class IslandMode(AbstractResource):
 
     @jwt_required
     def get(self):
-        island_mode = get_mode()
-        return make_response({"mode": island_mode}, 200)
+        island_mode = self._island_mode_service.get_mode()
+        return make_response({"mode": island_mode.value}, 200)
