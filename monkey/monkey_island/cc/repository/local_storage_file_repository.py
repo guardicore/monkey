@@ -36,7 +36,6 @@ class LocalStorageFileRepository(IFileRepository):
         try:
             safe_file_path = self._get_safe_file_path(unsafe_file_name)
 
-            logger.debug(f"Saving file contents to {safe_file_path}")
             with open(safe_file_path, "wb") as dest:
                 shutil.copyfileobj(file_contents, dest)
         except Exception as err:
@@ -45,8 +44,6 @@ class LocalStorageFileRepository(IFileRepository):
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         try:
             safe_file_path = self._get_safe_file_path(unsafe_file_name)
-
-            logger.debug(f"Opening {safe_file_path}")
             return open(safe_file_path, "rb")
         except FileNotFoundError as err:
             # Wrap Python's FileNotFound error, which is-an OSError, in repository.FileNotFoundError
@@ -61,8 +58,6 @@ class LocalStorageFileRepository(IFileRepository):
     def delete_file(self, unsafe_file_name: str):
         try:
             safe_file_path = self._get_safe_file_path(unsafe_file_name)
-
-            logger.debug(f"Deleting {safe_file_path}")
             safe_file_path.unlink()
         except FileNotFoundError:
             # This method is idempotent.
