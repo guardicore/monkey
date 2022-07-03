@@ -11,21 +11,17 @@ class FileRepositoryLoggingDecorator(IFileRepository):
         self._file_repository = file_repository
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
-        logger.info(f"Saving file {unsafe_file_name}")
-
+        logger.debug(f"Saving file {unsafe_file_name}")
         return self._file_repository.save_file(unsafe_file_name, file_contents)
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
-        logger.info(f"Opening file {unsafe_file_name}")
-
+        logger.debug(f"Opening file {unsafe_file_name}")
         return self._file_repository.open_file(unsafe_file_name)
 
     def delete_file(self, unsafe_file_name: str):
-        logger.info(f"Deleting file {unsafe_file_name}")
-
+        logger.debug(f"Deleting file {unsafe_file_name}")
         return self._file_repository.delete_file(unsafe_file_name)
 
     def delete_all_files(self):
-        logger.info("Deleting all files in the repository")
-
+        logger.debug("Deleting all files in the repository")
         return self._file_repository.delete_all_files()
