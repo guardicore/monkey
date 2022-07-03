@@ -3,6 +3,10 @@ from typing import BinaryIO
 
 from . import IFileRepository
 
+# TODO: Use a read-write lock. See:
+#           - https://pypi.org/project/readerwriterlock/
+#           - https://www.oreilly.com/library/view/python-cookbook/0596001673/ch06s04.html
+
 
 class FileRepositoryLockingDecorator(IFileRepository):
     def __init__(self, file_repository: IFileRepository):
