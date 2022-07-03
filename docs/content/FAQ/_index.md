@@ -15,18 +15,20 @@ Below are some of the most common questions we receive about the Infection Monke
 - [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
 - [Reset the Monkey Island password](#reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
-  - [Which queries does the Infection Monkey perform to the internet exactly?](#which-queries-does-the-infection-monkey-perform-to-the-internet-exactly)
+  - [Exactly what internet queries does the Infection Monkey perform?](#exactly-what-internet-queries-does-the-infection-monkey-perform)
 - [Logging and how to find logs](#logging-and-how-to-find-logs)
+  - [Downloading logs](#downloading-logs)
+  - [Log locations](#log-locations)
   - [Monkey Island server logs](#monkey-island-server-logs)
   - [Infection Monkey agent logs](#infection-monkey-agent-logs)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
-  - [What's the Infection Monkey Agent's impact on system resources usage?](#whats-the-infection-monkeys-impact-on-system-resources-usage)
+  - [What's the Infection Monkey Agent's impact on system resources usage?](#whats-the-infection-monkey-agents-impact-on-system-resources-usage)
   - [What are the system resource requirements for the Monkey Island?](#what-are-the-system-resource-requirements-for-the-monkey-island)
   - [Is it safe to use real passwords and usernames in the Infection Monkey's configuration?](#is-it-safe-to-use-real-passwords-and-usernames-in-the-infection-monkeys-configuration)
   - [How do you store sensitive information on Monkey Island?](#how-do-you-store-sensitive-information-on-monkey-island)
-  - [How stable are the exploitations used by the Infection Monkey? Will the Infection Monkey crash my systems with its exploits?](#how-stable-are-the-exploitations-used-by-the-infection-monkey-will-the-infection-monkey-crash-my-systems-with-its-exploits)
-- [After I've set up Monkey Island, how can I execute the Infection Monkey?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
+  - [How stable are the exploits used by the Infection Monkey? Will the Infection Monkey crash my systems with its exploits?](#how-stable-are-the-exploits-used-by-the-infection-monkey-will-the-infection-monkey-crash-my-systems-with-its-exploits)
+- [After I've set up Monkey Island, how can I execute the Infection Monkey agent?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
 - [How can I make the Infection Monkey agents propagate “deeper” into the network?](#how-can-i-make-the-infection-monkey-agent-propagate-deeper-into-the-network)
 - [What if the report returns a blank screen?](#what-if-the-report-returns-a-blank-screen)
 - [Can I limit how the Infection Monkey propagates through my network?](#can-i-limit-how-the-infection-monkey-propagates-through-my-network)
@@ -177,7 +179,7 @@ the Infection Map.
 If the logs can't be downloaded through the UI for any reason, you can collect the log files
 directly from the machine where an Agent or Monkey Island ran.
 
-#### Monkey Island server log
+#### Monkey Island server logs
 
 The Monkey Island's log file is located in the
 [data directory]({{< ref "/reference/data_directory" >}}).
