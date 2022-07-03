@@ -82,7 +82,7 @@ def _decorate_file_repository(file_repository: IFileRepository) -> IFileReposito
 
 
 def _build_agent_binary_repository():
-    file_repository = LocalStorageFileRepository(AGENT_BINARIES_PATH)
+    file_repository = _decorate_file_repository(LocalStorageFileRepository(AGENT_BINARIES_PATH))
     agent_binary_repository = AgentBinaryRepository(file_repository)
 
     _log_agent_binary_hashes(agent_binary_repository)
