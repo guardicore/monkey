@@ -64,7 +64,9 @@ class ConfigurePageComponent extends AuthComponent {
 
   setInitialConfig(config) {
     // Sets a reference to know if config was changed
+    console.log(config, SCHEMA);
     this.initialConfig = JSON.parse(JSON.stringify(config));
+    console.log(this.initialConfig);
   }
 
   componentDidMount = () => {
@@ -267,9 +269,15 @@ class ConfigurePageComponent extends AuthComponent {
 
     this.updateConfigSection();
     this.currentSection = key;
+    let selectedSectionData = this.state.configuration[key];
+
+    if(key == 'payloads') {
+      selectedSectionData = this.state.configuration[key][0]['options'];
+    }
+
     this.setState({
       selectedSection: key,
-      currentFormData: this.state.configuration[key]
+      currentFormData: selectedSectionData
     });
   };
 
