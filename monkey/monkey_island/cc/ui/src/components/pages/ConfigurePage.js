@@ -64,9 +64,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   setInitialConfig(config) {
     // Sets a reference to know if config was changed
-    console.log(config, SCHEMA);
     this.initialConfig = JSON.parse(JSON.stringify(config));
-    console.log(this.initialConfig);
   }
 
   componentDidMount = () => {
