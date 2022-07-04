@@ -4,9 +4,7 @@ import os
 import sys
 
 ISLAND_LOG_FILENAME = "monkey_island.log"
-LOG_FORMAT = (
-    "%(asctime)s - %(filename)s:%(lineno)s - %(funcName)10s() - %(levelname)s - %(message)s"
-)
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(funcName)s() - %(message)s"
 FILE_MAX_BYTES = 10485760
 FILE_BACKUP_COUNT = 20
 FILE_ENCODING = "utf8"
