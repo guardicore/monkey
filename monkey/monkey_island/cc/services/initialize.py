@@ -77,7 +77,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
     return FileRepositoryLockingDecorator(
-        FileRepositoryCachingDecorator(FileRepositoryLoggingDecorator(file_repository))
+        FileRepositoryLoggingDecorator(FileRepositoryCachingDecorator(file_repository))
     )
 
 
