@@ -74,6 +74,9 @@ class ConfigurePageComponent extends AuthComponent {
       .then(data => {
         let sections = [];
         let monkeyConfig = data[0];
+        // TODO: Fix when we add plugins
+        monkeyConfig['payloads'] = monkeyConfig['payloads'][0]['options'];
+
         this.setInitialConfig(monkeyConfig);
         for (let sectionKey of this.getSectionsOrder()) {
           sections.push({
@@ -268,10 +271,6 @@ class ConfigurePageComponent extends AuthComponent {
     this.updateConfigSection();
     this.currentSection = key;
     let selectedSectionData = this.state.configuration[key];
-
-    if(key == 'payloads') {
-      selectedSectionData = this.state.configuration[key][0]['options'];
-    }
 
     this.setState({
       selectedSection: key,

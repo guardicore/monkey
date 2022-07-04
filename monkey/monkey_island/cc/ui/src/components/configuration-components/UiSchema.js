@@ -74,9 +74,18 @@ export default function UiSchema(props) {
         info_box : {
           'ui:field': InfoBox
         },
+        directories: {
+          // Directory inputs are dynamically hidden
+        },
         text_box: {
           'ui:field': TextBox
+        },
+        enabled: {
+          'ui:widget': 'hidden'
         }
+      },
+      other_behaviors : {
+        'ui:widget': 'hidden'
       }
     },
     custom_pbas: {
