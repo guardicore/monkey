@@ -17,7 +17,7 @@ export const scanTargetConfigurationSchema = {
       'default': [],
       'description': 'List of IPs that the monkey will not scan.'
     },
-    'inaccessible_sbunets': {
+    'inaccessible_subnets': {
       'title': 'Network segmentation testing',
       'type': 'array',
       'uniqueItems': true,

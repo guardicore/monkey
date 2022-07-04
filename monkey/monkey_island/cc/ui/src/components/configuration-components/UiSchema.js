@@ -19,12 +19,41 @@ export default function UiSchema(props) {
           vulnerability_classes: {
             classNames: 'config-template-no-header'
           }
+        },
+        options: {
+          http_ports: {
+            items: {
+              classNames: 'config-template-no-header'
+            }
+          }
         }
       },
       network_scan: {
         targets: {
           info_box: {
             'ui:field': InfoBox
+          },
+          blocked_ips: {
+            items: {
+              classNames: 'config-template-no-header'
+            }
+          },
+          inaccessible_subnets: {
+            items: {
+              classNames: 'config-template-no-header'
+            }
+          },
+          subnets: {
+            items: {
+              classNames: 'config-template-no-header'
+            }
+          }
+        },
+        tcp: {
+          ports: {
+            items: {
+            classNames: 'config-template-no-header'
+            }
           }
         },
         fingerprinters:{
