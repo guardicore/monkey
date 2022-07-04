@@ -93,8 +93,6 @@ class AdvancedMultiSelect extends React.Component {
   onChildCheckboxClick = (value) => {
     let selectValues = this.getSelectValuesAfterClick(value);
     this.onChange(selectValues);
-
-    this.setHideResetState(selectValues);
   }
 
   getSelectValuesAfterClick(clickedValue) {
@@ -128,15 +126,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   onResetClick = () => {
-    this.onChange(this.defaultValues);
-    this.setHideResetState(this.defaultValues);
-    this.setPaneInfoToSafe(this.isUnsafeOptionSelected(this.defaultValues));
-  }
-
-  setHideResetState(selectValues) {
-    this.setState(() => ({
-      hideReset: this.getHideResetState(selectValues)
-    }));
+    this.setPaneInfoToSafe();
   }
 
   getHideResetState(selectValues) {
@@ -168,9 +158,10 @@ class AdvancedMultiSelect extends React.Component {
     );
   }
 
-  setPaneInfoToSafe(isUnsafeOptionSelected) {
+  setPaneInfoToSafe() {
     let safePluginNames = this.state.allPluginNames.filter(pluginName => this.isSafe(pluginName));
     this.setState({selectedPluginNames: safePluginNames});
+    this.onChange(safePluginNames);
   }
 
   render() {
@@ -195,7 +186,7 @@ class AdvancedMultiSelect extends React.Component {
                                    checkboxState={this.getMasterCheckboxState(
                                      this.state.selectedPluginNames)}
                                    hideReset={this.getHideResetState(
-                                     this.state.allPluginNames)}
+                                     this.state.selectedPluginNames)}
                                    onResetClick={this.onResetClick}/>
 
         <ChildCheckboxContainer id={id} multiple={multiple} required={required}
