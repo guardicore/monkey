@@ -353,17 +353,14 @@ class ConfigurePageComponent extends AuthComponent {
                               formProperties['formData'],
                               formProperties['uiSchema']);
 
-    if (this.state.selectedSection === 'internal') {
-      return (<InternalConfig {...formProperties}/>)
-    } else {
-      return (
-        <div>
-          <Form {...formProperties}>
-            <button type='submit' className={'hidden'}>Submit</button>
-          </Form>
-        </div>
-      )
-    }
+    console.log(displayedSchema)
+    return (
+      <div>
+        <Form {...formProperties} key={displayedSchema.title}>
+          <button type='submit' className={'hidden'}>Submit</button>
+        </Form>
+      </div>
+    )
   };
 
   setPbaFilenameWindows = (filename) => {
