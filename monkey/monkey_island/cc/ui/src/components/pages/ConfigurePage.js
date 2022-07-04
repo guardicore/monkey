@@ -344,7 +344,11 @@ class ConfigurePageComponent extends AuthComponent {
     let formProperties = {};
     formProperties['schema'] = displayedSchema
     formProperties['uiSchema'] = UiSchema({
-      selectedSection: this.state.selectedSection
+      selectedSection: this.state.selectedSection,
+      linux_filename: this.state.configuration.custom_pbas.linux_filename,
+      windows_filename: this.state.configuration.custom_pbas.windows_filename,
+      setPbaFilenameWindows: this.setPbaFilenameWindows,
+      setPbaFilenameLinux: this.setPbaFilenameLinux
     })
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['formData'] = this.state.currentFormData;
@@ -369,7 +373,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   setPbaFilenameWindows = (filename) => {
     let config = this.state.configuration
-    config.monkey.post_breach.PBA_windows_filename = filename
+    config.custom_pbas.windows_filename = filename
     this.setState({
       configuration: config
     })
@@ -377,7 +381,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   setPbaFilenameLinux = (filename) => {
     let config = this.state.configuration
-    config.monkey.post_breach.PBA_linux_filename = filename
+    config.custom_pbas.linux_filename = filename
     this.setState({
       configuration: config
     })
