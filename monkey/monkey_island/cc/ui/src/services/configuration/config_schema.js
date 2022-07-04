@@ -1,5 +1,5 @@
 import {customPBAConfigurationSchema} from './definitions/custom_pbas.js';
-import {pluginConfigurationSchema} from './definitions/plugins.js';
+import {ransomwareSchema} from './definitions/ransomware.js';
 import {propagationConfigurationSchema} from './definitions/propagation.js';
 import {bruteForceExploiters, vulnerabilityExploiters} from './definitions/exploiter_classes.js';
 import {credentialCollectors} from './definitions/credential_collectors.js';
@@ -27,14 +27,7 @@ export const SCHEMA = {
       }
     },
     'custom_pbas': customPBAConfigurationSchema,
-    'payloads': {
-      'title': 'Payloads',
-      'type': 'array',
-      'items': pluginConfigurationSchema,
-      'default': [
-        {'name': 'ransomware', 'safe': true, 'options': {}}
-      ]
-    },
+    'payloads': ransomwareSchema,
     'credential_collectors': {
       'title': 'Credential collectors',
       'type': 'array',

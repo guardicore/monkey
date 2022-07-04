@@ -1,5 +1,6 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import InfoBox from './InfoBox';
+import TextBox from './TextBox.js';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -33,6 +34,17 @@ export default function UiSchema(props) {
             classNames: 'config-template-no-header'
           }
 
+        }
+      }
+    },
+    payloads: {
+      classNames: 'config-template-no-header',
+      encryption: {
+        info_box : {
+          'ui:field': InfoBox
+        },
+        text_box: {
+          'ui:field': TextBox
         }
       }
     },
