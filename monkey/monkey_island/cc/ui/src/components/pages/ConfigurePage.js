@@ -8,7 +8,6 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
-import InternalConfig from '../configuration-components/InternalConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
@@ -353,7 +352,6 @@ class ConfigurePageComponent extends AuthComponent {
                               formProperties['formData'],
                               formProperties['uiSchema']);
 
-    console.log(displayedSchema)
     return (
       <div>
         <Form {...formProperties} key={displayedSchema.title}>
