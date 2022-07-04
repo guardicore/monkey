@@ -36,23 +36,23 @@ export default function UiSchema(props) {
         }
       }
     },
-    custom_pbas : {
+    custom_pbas: {
       classNames: 'config-template-no-header'
     },
     post_breach_actions: {
-        classNames: 'config-template-no-header',
-        'ui:widget': AdvancedMultiSelect,
-        post_breach_actions: {
-          classNames: 'config-template-no-header'
-        }
+      classNames: 'config-template-no-header',
+      'ui:widget': AdvancedMultiSelect,
+      post_breach_actions: {
+        classNames: 'config-template-no-header'
+      }
     },
     credential_collectors: {
       classNames: 'config-template-no-header',
       'ui:widget': AdvancedMultiSelect,
-        credential_collectors_classes :{
-          classNames: 'config-template-no-header'
-        }
+      credential_collectors_classes: {
+        classNames: 'config-template-no-header'
       }
+    }
   };
   return UiSchema[props.selectedSection]
 }
