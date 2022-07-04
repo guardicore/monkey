@@ -34,10 +34,11 @@ class AdvancedMultiSelect extends React.Component {
     super(props);
 
     this.state = {
+      allPluginNames: this.props.value.map(v => v.name),
       masterCheckboxState: this.getMasterCheckboxState(this.props.value.map(v => v.name)),
       pluginDefinitions: getObjectFromRegistryByRef(this.props.schema.items.$ref,
         this.props.registry).pluginDefs,
-      pluginNames: this.props.value.map(v => v.name)
+      selectedPluginNames: this.props.value.map(v => v.name)
     };
   }
 
@@ -62,7 +63,7 @@ class AdvancedMultiSelect extends React.Component {
     }
     newValues = JSON.parse(JSON.stringify(newValues));
     this.props.onChange(newValues)
-    this.setState({pluginNames: newValues.map(v => v.name)});
+    this.setState({selectedPluginNames: newValues.map(v => v.name)});
   }
 
   // Sort options alphabetically. "Unsafe" options float to the top so that they
@@ -79,7 +80,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   onMasterCheckboxClick = () => {
-    let checkboxState = this.getMasterCheckboxState(this.state.pluginNames);
+    let checkboxState = this.getMasterCheckboxState(this.state.selectedPluginNames);
     if (checkboxState === MasterCheckboxState.ALL) {
       var newValues = [];
     } else {
@@ -97,7 +98,7 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   getSelectValuesAfterClick(clickedValue) {
-    const valueArray = cloneDeep(this.state.pluginNames);
+    const valueArray = cloneDeep(this.state.selectedPluginNames);
 
     if (valueArray.includes(clickedValue)) {
       return valueArray.filter(e => e !== clickedValue);
@@ -168,13 +169,8 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   setPaneInfoToSafe(isUnsafeOptionSelected) {
-    this.setState(() => ({
-      infoPaneParams: getDefaultPaneParams(
-        this.props.schema.items.$ref,
-        this.props.registry,
-        isUnsafeOptionSelected
-      )
-    }));
+    let safePluginNames = this.state.allPluginNames.filter(pluginName => this.isSafe(pluginName));
+    this.setState({selectedPluginNames: safePluginNames});
   }
 
   render() {
@@ -189,7 +185,7 @@ class AdvancedMultiSelect extends React.Component {
     let paneParams = getDefaultPaneParams(
       this.props.schema.items.$ref,
       this.props.registry,
-      this.isUnsafeOptionSelected(this.state.pluginNames)
+      this.isUnsafeOptionSelected(this.state.selectedPluginNames)
     );
 
     return (
@@ -197,16 +193,16 @@ class AdvancedMultiSelect extends React.Component {
         <AdvancedMultiSelectHeader title={schema.title}
                                    onCheckboxClick={this.onMasterCheckboxClick}
                                    checkboxState={this.getMasterCheckboxState(
-                                     this.state.pluginNames)}
+                                     this.state.selectedPluginNames)}
                                    hideReset={this.getHideResetState(
-                                     this.props.value.map(v => v.name))}
+                                     this.state.allPluginNames)}
                                    onResetClick={this.onResetClick}/>
 
         <ChildCheckboxContainer id={id} multiple={multiple} required={required}
                                 autoFocus={autofocus} isSafe={this.isSafe}
                                 onPaneClick={this.setPaneInfo}
                                 onCheckboxClick={this.onChildCheckboxClick}
-                                selectedValues={this.state.pluginNames}
+                                selectedValues={this.state.selectedPluginNames}
                                 enumOptions={this.getOptionList()}/>
 
         <InfoPane title={paneParams.title}
