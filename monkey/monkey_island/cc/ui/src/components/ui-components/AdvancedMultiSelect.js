@@ -33,12 +33,19 @@ class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props);
 
+    let pluginNames = this.props.value.map(v => v.name);
+
     this.state = {
-      allPluginNames: this.props.value.map(v => v.name),
-      masterCheckboxState: this.getMasterCheckboxState(this.props.value.map(v => v.name)),
+      infoPaneParams: getDefaultPaneParams(
+        this.props.schema.items.$ref,
+        this.props.registry,
+        this.isUnsafeOptionSelected(pluginNames)
+      ),
+      allPluginNames: pluginNames,
+      masterCheckboxState: this.getMasterCheckboxState(pluginNames),
       pluginDefinitions: getObjectFromRegistryByRef(this.props.schema.items.$ref,
         this.props.registry).pluginDefs,
-      selectedPluginNames: this.props.value.map(v => v.name)
+      selectedPluginNames: pluginNames
     };
   }
 
@@ -173,12 +180,6 @@ class AdvancedMultiSelect extends React.Component {
       schema
     } = this.props;
 
-    let paneParams = getDefaultPaneParams(
-      this.props.schema.items.$ref,
-      this.props.registry,
-      this.isUnsafeOptionSelected(this.state.selectedPluginNames)
-    );
-
     return (
       <div className={'advanced-multi-select'}>
         <AdvancedMultiSelectHeader title={schema.title}
@@ -196,10 +197,10 @@ class AdvancedMultiSelect extends React.Component {
                                 selectedValues={this.state.selectedPluginNames}
                                 enumOptions={this.getOptionList()}/>
 
-        <InfoPane title={paneParams.title}
-                  body={paneParams.content}
-                  link={paneParams.link}
-                  warningType={paneParams.warningType}/>
+        <InfoPane title={this.state.infoPaneParams.title}
+                  body={this.state.infoPaneParams.content}
+                  link={this.state.infoPaneParams.link}
+                  warningType={this.state.infoPaneParams.warningType}/>
       </div>
     );
   }
