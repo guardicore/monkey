@@ -10,7 +10,7 @@ class ICredentialsRepository(ABC):
         Retrieve all credentials that were configured.
 
         :raises RetrievalError: If an error is encountered while attempting to retrieve configured
-                                credentials.
+                                credentials
         :return: Sequence of configured credentials
         """
         pass
@@ -19,9 +19,9 @@ class ICredentialsRepository(ABC):
         """
         Save credentials which are configured.
 
-        :param configured_credentials: Credentials that are going to be stored.
+        :param configured_credentials: Credentials that are going to be stored
         :raises StorageError: If an error is encountered while attempting to store configured
-        credentials.
+                              credentials
         """
         pass
 
@@ -30,7 +30,7 @@ class ICredentialsRepository(ABC):
         Remove all configured credentials.
 
         :raises RemovalError: If an error is encountered while attempting to remove configured
-        credentials.
+                              credentials
         """
         pass
 
@@ -39,7 +39,7 @@ class ICredentialsRepository(ABC):
         Retrieve credentials that are stolen
 
         :raises RetrievalError: If an error is encountered while attempting to retrieve stolen
-        credentials.
+                                credentials
         :return: Sequence of all stolen credentials
         """
         pass
@@ -48,9 +48,9 @@ class ICredentialsRepository(ABC):
         """
         Save credentials which are stolen.
 
-        :param stolen_credentials: Credentials that are going to be stored.
+        :param stolen_credentials: Credentials that are going to be stored
         :raises StorageError: If an error is encountered while attempting to store stolen
-        credentials.
+                              credentials
         """
         pass
 
@@ -58,7 +58,7 @@ class ICredentialsRepository(ABC):
         """
         Remove all credentials from the repository.
 
-        :raises RemovalError: If an error is encountered while attempting to remove the credentials.
+        :raises RemovalError: If an error is encountered while attempting to remove the credentials
         """
         pass
 
@@ -76,6 +76,6 @@ class ICredentialsRepository(ABC):
         """
         Remove all the credentials in the repository.
 
-        :raises RemovalError: If an error is encountered while attempting to remove the credentials.
+        :raises RemovalError: If an error is encountered while attempting to remove the credentials
         """
         pass
