@@ -3,9 +3,9 @@ import threading
 from typing import Dict, Iterable, List, Sequence
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
+from common.credentials import Credentials
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
-    Credentials,
     ExploiterResultData,
     FingerprintData,
     IPuppet,

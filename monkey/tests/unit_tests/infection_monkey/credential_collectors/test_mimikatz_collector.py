@@ -2,17 +2,11 @@ from typing import Sequence
 
 import pytest
 
-from infection_monkey.credential_collectors import (
-    LMHash,
-    MimikatzCredentialCollector,
-    NTHash,
-    Password,
-    Username,
-)
+from common.credentials import Credentials, LMHash, NTHash, Password, Username
+from infection_monkey.credential_collectors import MimikatzCredentialCollector
 from infection_monkey.credential_collectors.mimikatz_collector.windows_credentials import (
     WindowsCredentials,
 )
-from infection_monkey.i_puppet import Credentials
 
 
 def patch_pypykatz(win_creds: [WindowsCredentials], monkeypatch):

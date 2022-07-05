@@ -3,7 +3,7 @@ import json
 from typing import Dict, Iterable
 
 from common.common_consts.telem_categories import TelemCategoryEnum
-from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialComponent
+from common.credentials import Credentials, ICredentialComponent
 from infection_monkey.telemetry.base_telem import BaseTelem
 
 
