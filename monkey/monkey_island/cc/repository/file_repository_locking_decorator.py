@@ -6,6 +6,10 @@ from . import IFileRepository
 
 
 class FileRepositoryLockingDecorator(IFileRepository):
+    """
+    An IFileRepository decorator that makes other IFileRepositories thread-safe.
+    """
+
     def __init__(self, file_repository: IFileRepository):
         self._file_repository = file_repository
         self._rwlock = rwlock.RWLockFair()

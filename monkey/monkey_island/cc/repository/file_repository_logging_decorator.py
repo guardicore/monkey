@@ -7,6 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 class FileRepositoryLoggingDecorator(IFileRepository):
+    """
+    An IFileRepository decorator that provides debug logging for other IFileRepositories.
+    """
+
     def __init__(self, file_repository: IFileRepository):
         self._file_repository = file_repository
 

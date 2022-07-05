@@ -7,6 +7,10 @@ from . import IFileRepository
 
 
 class FileRepositoryCachingDecorator(IFileRepository):
+    """
+    An IFileRepository decorator that provides caching for other IFileRepositories.
+    """
+
     def __init__(self, file_repository: IFileRepository):
         self._file_repository = file_repository
 
