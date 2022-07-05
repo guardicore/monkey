@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Sequence
 
-from monkey_island.cc.services.telemetry.processing.credentials import Credentials
+from common.credentials import Credentials
 
 
 class ICredentialsRepository(ABC):
