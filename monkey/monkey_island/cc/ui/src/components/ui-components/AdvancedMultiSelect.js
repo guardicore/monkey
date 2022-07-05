@@ -33,19 +33,20 @@ class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props);
 
-    let pluginNames = this.props.value.map(v => v.name);
+    let selectedPluginNames = this.props.value.map(v => v.name);
+    let allPluginNames = this.props.options.enumOptions.map(v => v.value);
 
     this.state = {
       infoPaneParams: getDefaultPaneParams(
         this.props.schema.items.$ref,
         this.props.registry,
-        this.isUnsafeOptionSelected(pluginNames)
+        this.isUnsafeOptionSelected(selectedPluginNames)
       ),
-      allPluginNames: pluginNames,
-      masterCheckboxState: this.getMasterCheckboxState(pluginNames),
+      allPluginNames: allPluginNames,
+      masterCheckboxState: this.getMasterCheckboxState(selectedPluginNames),
       pluginDefinitions: getObjectFromRegistryByRef(this.props.schema.items.$ref,
         this.props.registry).pluginDefs,
-      selectedPluginNames: pluginNames
+      selectedPluginNames: selectedPluginNames
     };
   }
 
@@ -57,8 +58,8 @@ class AdvancedMultiSelect extends React.Component {
     let newValues = [];
     for (let j = 0; j < strValues.length; j++) {
       let found = false;
-      for (let i = 0; i < this.props.value.length; i++) {
-        if (strValues[j] === this.props.value[i]['name']) {
+      for (let i = 0; i < this.state.allPluginNames.length; i++) {
+        if (strValues[j] === this.state.allPluginNames[i]['name']) {
           newValues.push(JSON.parse(JSON.stringify(this.props.value[i])))
           found = true;
           break;
