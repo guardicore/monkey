@@ -1,6 +1,9 @@
 from typing import List
 
 from bson import ObjectId
+
+# TODO: Switch to threading.lock and test. Calling gevent.patch_all() is supposed to monkeypatch
+#       threading to be compatible with gevent/greenlets.
 from gevent.lock import BoundedSemaphore
 
 from common.common_consts import zero_trust_consts
