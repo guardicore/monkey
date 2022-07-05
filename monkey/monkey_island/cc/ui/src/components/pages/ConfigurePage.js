@@ -8,7 +8,6 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
-import InternalConfig from '../configuration-components/InternalConfig';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
@@ -18,6 +17,7 @@ import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
+import {SCHEMA} from '../../services/configuration/config_schema.js';
 
 const CONFIG_URL = '/api/configuration/island';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
@@ -68,24 +68,28 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidMount = () => {
-    let urls = [CONFIG_URL];
+    let urls = ['/api/agent-configuration'];
     // ??? Why fetch config here and not in `render()`?
     Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
       .then(data => {
         let sections = [];
         let monkeyConfig = data[0];
-        this.setInitialConfig(monkeyConfig.configuration);
+        // TODO: Fix when we add plugins
+        monkeyConfig['payloads'] = monkeyConfig['payloads'][0]['options'];
+
+        this.setInitialConfig(monkeyConfig);
         for (let sectionKey of this.getSectionsOrder()) {
           sections.push({
             key: sectionKey,
-            title: monkeyConfig.schema.properties[sectionKey].title
+            title: SCHEMA.properties[sectionKey].title
           });
         }
+
         this.setState({
-          schema: monkeyConfig.schema,
-          configuration: monkeyConfig.configuration,
+          schema: SCHEMA,
+          configuration: monkeyConfig,
           sections: sections,
-          currentFormData: monkeyConfig.configuration[this.state.selectedSection]
+          currentFormData: monkeyConfig[this.state.selectedSection]
         })
       });
   };
@@ -266,9 +270,11 @@ class ConfigurePageComponent extends AuthComponent {
 
     this.updateConfigSection();
     this.currentSection = key;
+    let selectedSectionData = this.state.configuration[key];
+
     this.setState({
       selectedSection: key,
-      currentFormData: this.state.configuration[key]
+      currentFormData: selectedSectionData
     });
   };
 
@@ -337,11 +343,11 @@ class ConfigurePageComponent extends AuthComponent {
     let formProperties = {};
     formProperties['schema'] = displayedSchema
     formProperties['uiSchema'] = UiSchema({
-      PBA_linux_filename: this.state.configuration.monkey.post_breach.PBA_linux_filename,
-      PBA_windows_filename: this.state.configuration.monkey.post_breach.PBA_windows_filename,
+      selectedSection: this.state.selectedSection,
+      linux_filename: this.state.configuration.custom_pbas.linux_filename,
+      windows_filename: this.state.configuration.custom_pbas.windows_filename,
       setPbaFilenameWindows: this.setPbaFilenameWindows,
-      setPbaFilenameLinux: this.setPbaFilenameLinux,
-      selectedSection: this.state.selectedSection
+      setPbaFilenameLinux: this.setPbaFilenameLinux
     })
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['formData'] = this.state.currentFormData;
@@ -355,22 +361,18 @@ class ConfigurePageComponent extends AuthComponent {
                               formProperties['formData'],
                               formProperties['uiSchema']);
 
-    if (this.state.selectedSection === 'internal') {
-      return (<InternalConfig {...formProperties}/>)
-    } else {
-      return (
-        <div>
-          <Form {...formProperties}>
-            <button type='submit' className={'hidden'}>Submit</button>
-          </Form>
-        </div>
-      )
-    }
+    return (
+      <div>
+        <Form {...formProperties} key={displayedSchema.title}>
+          <button type='submit' className={'hidden'}>Submit</button>
+        </Form>
+      </div>
+    )
   };
 
   setPbaFilenameWindows = (filename) => {
     let config = this.state.configuration
-    config.monkey.post_breach.PBA_windows_filename = filename
+    config.custom_pbas.windows_filename = filename
     this.setState({
       configuration: config
     })
@@ -378,7 +380,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   setPbaFilenameLinux = (filename) => {
     let config = this.state.configuration
-    config.monkey.post_breach.PBA_linux_filename = filename
+    config.custom_pbas.linux_filename = filename
     this.setState({
       configuration: config
     })
@@ -391,7 +393,7 @@ class ConfigurePageComponent extends AuthComponent {
                  style={{'marginBottom': '2em'}}
                  className={'config-nav'}>
       {this.state.sections.map(section => {
-        let classProp = section.key.startsWith('basic') ? 'tab-primary' : '';
+        let classProp = section.key.startsWith('propagation') ? 'tab-primary' : '';
         return (
           <Nav.Item key={section.key}>
             <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>

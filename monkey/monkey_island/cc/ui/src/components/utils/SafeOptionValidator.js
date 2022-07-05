@@ -1,24 +1,29 @@
 function getPluginDescriptors(schema, config) {
   return ([
     {
-      name: 'Exploiters',
-      allPlugins: schema.definitions.exploiter_classes.anyOf,
-      selectedPlugins: config.basic.exploiters.exploiter_classes
+      name: 'Brute force exploiters',
+      allPlugins: schema.definitions.brute_force_classes.anyOf,
+      selectedPlugins: config.propagation.exploitation.brute_force
+    },
+    {
+      name: 'Vulnerability exploiters',
+      allPlugins: schema.definitions.vulnerability_classes.anyOf,
+      selectedPlugins: config.propagation.exploitation.vulnerability
     },
     {
       name: 'Fingerprinters',
-      allPlugins: schema.definitions.finger_classes.anyOf,
-      selectedPlugins: config.internal.classes.finger_classes
+      allPlugins: schema.definitions.fingerprinter_classes.anyOf,
+      selectedPlugins: config.propagation.network_scan.fingerprinters
     },
     {
       name: 'PostBreachActions',
       allPlugins: schema.definitions.post_breach_actions.anyOf,
-      selectedPlugins: config.monkey.post_breach.post_breach_actions
+      selectedPlugins: config.post_breach_actions
     },
     {
       name: 'CredentialCollectors',
-      allPlugins: schema.definitions.credential_collectors.anyOf,
-      selectedPlugins: config.monkey.credential_collectors.credential_collectors
+      allPlugins: schema.definitions.credential_collectors_classes.anyOf,
+      selectedPlugins: config.credential_collectors
     }
   ]);
 }
@@ -40,7 +45,7 @@ function isUnsafePluginSelected(pluginDescriptor) {
   pluginDescriptor.allPlugins.forEach(i => pluginSafety[i.enum[0]] = i.safe);
 
   for (let selected of pluginDescriptor.selectedPlugins) {
-    if (!pluginSafety[selected]) {
+    if (!pluginSafety[selected.name]) {
       return true;
     }
   }

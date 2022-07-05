@@ -12,7 +12,7 @@ function applyUiSchemaManipulators(selectedSection,
 function ransomwareDirManipulator(selectedSection,
                                   formData,
                                   uiSchema) {
-  if (selectedSection === 'ransomware'){
+  if (selectedSection === 'payloads'){
       uiSchema.encryption.directories =
         {'ui:disabled': !formData['encryption']['enabled']};
     }
