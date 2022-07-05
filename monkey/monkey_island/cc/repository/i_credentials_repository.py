@@ -15,11 +15,11 @@ class ICredentialsRepository(ABC):
         """
         pass
 
-    def save_configured_credentials(self, configured_credentials: Credentials):
+    def save_configured_credentials(self, credentials: Credentials):
         """
         Save credentials which are configured.
 
-        :param configured_credentials: Credentials that are going to be stored
+        :param credentials: Credentials that are going to be stored
         :raises StorageError: If an error is encountered while attempting to store configured
                               credentials
         """
@@ -44,11 +44,11 @@ class ICredentialsRepository(ABC):
         """
         pass
 
-    def save_stolen_credentials(self, stolen_credentials: Credentials):
+    def save_stolen_credentials(self, credentials: Credentials):
         """
         Save credentials which are stolen.
 
-        :param stolen_credentials: Credentials that are going to be stored
+        :param credentials: Credentials that are going to be stored
         :raises StorageError: If an error is encountered while attempting to store stolen
                               credentials
         """

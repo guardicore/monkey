@@ -238,6 +238,4 @@ IEventRepository.get_events
 IFindingRepository.get_findings
 key_list
 simulation
-stolen_credentials
-configured_credentials
 netmap
