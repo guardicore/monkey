@@ -16,6 +16,7 @@ jobs:
       python:
         - 3.7
       os: linux
+      dist: focal
       vm:
         size: x-large
       env:
