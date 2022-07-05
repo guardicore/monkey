@@ -2,7 +2,7 @@ import logging
 from typing import Sequence
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
-from infection_monkey.i_puppet.credential_collection import ICredentialCollector
+from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
 
 from . import pypykatz_handler

@@ -10,3 +10,4 @@ from .i_puppet import (
     UnknownPluginError,
 )
 from .i_fingerprinter import IFingerprinter
+from .i_credential_collector import ICredentialCollector

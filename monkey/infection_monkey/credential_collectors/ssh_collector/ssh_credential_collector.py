@@ -3,7 +3,7 @@ from typing import Dict, Iterable, Sequence
 
 from common.credentials import Credentials, SSHKeypair, Username
 from infection_monkey.credential_collectors.ssh_collector import ssh_handler
-from infection_monkey.i_puppet.credential_collection import ICredentialCollector
+from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 logger = logging.getLogger(__name__)
