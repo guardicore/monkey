@@ -5,6 +5,14 @@ from monkey_island.cc.services.telemetry.processing.credentials import Credentia
 
 
 class ICredentialsRepository(ABC):
+    """
+    Store credentials that can be used to propagate around the network.
+
+    This repository stores credentials that were either "configured" or "stolen". "Configured"
+    credentials are provided to the simulation as input. "Stolen" credentials are collected during
+    a simulation.
+    """
+
     def get_configured_credentials(self) -> Sequence[Credentials]:
         """
         Retrieve credentials that were configured.
