@@ -1,9 +1,9 @@
 import logging
 from typing import Dict, Iterable, Sequence
 
-from infection_monkey.credential_collectors import SSHKeypair, Username
+from common.credentials import Credentials, SSHKeypair, Username
 from infection_monkey.credential_collectors.ssh_collector import ssh_handler
-from infection_monkey.i_puppet.credential_collection import Credentials, ICredentialCollector
+from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 
 logger = logging.getLogger(__name__)

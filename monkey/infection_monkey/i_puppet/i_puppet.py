@@ -5,10 +5,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Iterable, List, Mapping, Sequence
 
+from common.credentials import Credentials
 from infection_monkey.model import VictimHost
 
 from . import PluginType
-from .credential_collection import Credentials
 
 
 class PortStatus(Enum):

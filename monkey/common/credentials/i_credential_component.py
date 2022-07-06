@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from common.common_consts.credential_component_type import CredentialComponentType
+from . import CredentialComponentType
 
 
 class ICredentialComponent(ABC):

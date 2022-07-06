@@ -10,8 +10,4 @@ from .i_puppet import (
     UnknownPluginError,
 )
 from .i_fingerprinter import IFingerprinter
-from .credential_collection import (
-    Credentials,
-    ICredentialCollector,
-    ICredentialComponent,
-)
+from .i_credential_collector import ICredentialCollector

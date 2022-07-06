@@ -1,8 +1,8 @@
 import abc
 from typing import Iterable
 
+from common.credentials import Credentials
 from infection_monkey.custom_types import PropagationCredentials
-from infection_monkey.i_puppet import Credentials
 
 
 class ICredentialsStore(metaclass=abc.ABCMeta):

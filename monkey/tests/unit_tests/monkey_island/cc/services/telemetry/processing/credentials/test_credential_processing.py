@@ -6,13 +6,13 @@ from tests.unit_tests.monkey_island.cc.services.telemetry.processing.credentials
     CREDENTIAL_TELEM_TEMPLATE,
 )
 
-from common.common_consts.credential_component_type import CredentialComponentType
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
     PASSWORD_LIST_PATH,
     USER_LIST_PATH,
 )
+from common.credentials import CredentialComponentType
 from monkey_island.cc.models import StolenCredentials
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (

@@ -2,7 +2,7 @@ import logging
 from itertools import chain
 from typing import Mapping
 
-from common.common_consts.credential_component_type import CredentialComponentType
+from common.credentials import CredentialComponentType
 from monkey_island.cc.models import StolenCredentials
 
 from .credentials import Credentials

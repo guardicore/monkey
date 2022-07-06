@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.credential_collectors import SSHCredentialCollector, SSHKeypair, Username
-from infection_monkey.i_puppet.credential_collection import Credentials
+from common.credentials import Credentials, SSHKeypair, Username
+from infection_monkey.credential_collectors import SSHCredentialCollector
 
 
 @pytest.fixture

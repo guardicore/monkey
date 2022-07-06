@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Mapping, Optional, Sequence
 
-from .credentials import Credentials
+from common.credentials import Credentials
 
 
 class ICredentialCollector(ABC):

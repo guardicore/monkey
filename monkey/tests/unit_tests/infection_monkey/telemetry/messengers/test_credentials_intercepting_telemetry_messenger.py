@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock
 
-from infection_monkey.credential_collectors import Password, SSHKeypair, Username
-from infection_monkey.i_puppet import Credentials
+from common.credentials import Credentials, Password, SSHKeypair, Username
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.credentials_intercepting_telemetry_messenger import (
     CredentialsInterceptingTelemetryMessenger,

@@ -2,8 +2,7 @@ import json
 
 import pytest
 
-from infection_monkey.credential_collectors import Password, SSHKeypair, Username
-from infection_monkey.i_puppet import Credentials
+from common.credentials import Credentials, Password, SSHKeypair, Username
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 
 USERNAME = "m0nkey"

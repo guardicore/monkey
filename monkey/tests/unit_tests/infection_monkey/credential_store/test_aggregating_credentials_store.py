@@ -2,9 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.credential_collectors import Password, SSHKeypair, Username
+from common.credentials import Credentials, Password, SSHKeypair, Username
 from infection_monkey.credential_store import AggregatingCredentialsStore
-from infection_monkey.i_puppet import Credentials
 
 CONTROL_CHANNEL_CREDENTIALS = {
     "exploit_user_list": ["Administrator", "root", "user1"],

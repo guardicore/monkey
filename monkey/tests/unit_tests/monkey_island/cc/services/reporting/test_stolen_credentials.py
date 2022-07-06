@@ -1,6 +1,6 @@
 import pytest
 
-from common.common_consts.credential_component_type import CredentialComponentType
+from common.credentials import CredentialComponentType
 from monkey_island.cc.models import Monkey, StolenCredentials
 from monkey_island.cc.services.reporting.stolen_credentials import (
     extract_ssh_keys,

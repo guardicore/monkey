@@ -3,9 +3,8 @@ import threading
 from typing import Dict, Iterable, List, Sequence
 
 from common import OperatingSystems
-from infection_monkey.credential_collectors import LMHash, Password, SSHKeypair, Username
+from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
 from infection_monkey.i_puppet import (
-    Credentials,
     ExploiterResultData,
     FingerprintData,
     IPuppet,
