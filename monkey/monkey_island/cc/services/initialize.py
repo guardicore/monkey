@@ -12,6 +12,9 @@ from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     FileAgentConfigurationRepository,
+    FileRepositoryCachingDecorator,
+    FileRepositoryLockingDecorator,
+    FileRepositoryLoggingDecorator,
     FileSimulationRepository,
     IAgentBinaryRepository,
     IAgentConfigurationRepository,
@@ -62,7 +65,8 @@ def _register_conventions(container: DIContainer, data_dir: Path):
 
 def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
-        IFileRepository, LocalStorageFileRepository(data_dir / "runtime_data")
+        IFileRepository,
+        _decorate_file_repository(LocalStorageFileRepository(data_dir / "runtime_data")),
     )
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
     container.register_instance(
@@ -71,8 +75,14 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
 
 
+def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
+    return FileRepositoryLockingDecorator(
+        FileRepositoryLoggingDecorator(FileRepositoryCachingDecorator(file_repository))
+    )
+
+
 def _build_agent_binary_repository():
-    file_repository = LocalStorageFileRepository(AGENT_BINARIES_PATH)
+    file_repository = _decorate_file_repository(LocalStorageFileRepository(AGENT_BINARIES_PATH))
     agent_binary_repository = AgentBinaryRepository(file_repository)
 
     _log_agent_binary_hashes(agent_binary_repository)

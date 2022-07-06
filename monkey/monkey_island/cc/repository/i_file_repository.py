@@ -27,7 +27,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         """
-        Open a file and return a file-like object
+        Open a file and return a read-only file-like object
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be opened
         :return: A file-like object providing access to the file's contents
