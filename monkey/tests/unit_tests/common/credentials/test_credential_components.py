@@ -3,10 +3,18 @@ from typing import Any, Mapping
 import pytest
 from marshmallow.exceptions import ValidationError
 
-from common.credentials import CredentialComponentType, LMHash, NTHash, Password, Username
+from common.credentials import (
+    CredentialComponentType,
+    LMHash,
+    NTHash,
+    Password,
+    SSHKeypair,
+    Username,
+)
 from common.credentials.lm_hash import LMHashSchema
 from common.credentials.nt_hash import NTHashSchema
 from common.credentials.password import PasswordSchema
+from common.credentials.ssh_keypair import SSHKeypairSchema
 from common.credentials.username import UsernameSchema
 
 PARAMETRIZED_PARAMETER_NAMES = (
@@ -28,6 +36,12 @@ PARAMETRIZED_PARAMETER_VALUES = [
         CredentialComponentType.NT_HASH,
         {"nt_hash": "E52CAC67419A9A224A3B108F3FA6CB6D"},
     ),
+    (
+        SSHKeypair,
+        SSHKeypairSchema,
+        CredentialComponentType.SSH_KEYPAIR,
+        {"public_key": "TEST_PUBLIC_KEY", "private_key": "TEST_PRIVATE_KEY"},
+    ),
 ]
 
 
@@ -47,6 +61,12 @@ INVALID_COMPONENT_DATA = {
         {"nt_hash": 2.0},
         {"nt_hash": "0123456789012345678901234568901"},
         {"nt_hash": "E52GAC67419A9A224A3B108F3FA6CB6D"},
+    ),
+    CredentialComponentType.SSH_KEYPAIR: (
+        {"public_key": None, "private_key": "TEST_PRIVATE_KEY"},
+        {"public_key": "TEST_PUBLIC_KEY", "private_key": None},
+        {"public_key": 1, "private_key": "TEST_PRIVATE_KEY"},
+        {"public_key": "TEST_PUBLIC_KEY", "private_key": 999},
     ),
 }
 
