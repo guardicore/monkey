@@ -196,6 +196,9 @@ _make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent
 _make_network_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:110)
 _make_propagation_configuration  # unused method (monkey/common/configuration/agent_configuration.py:167)
 
+# Credentials
+_strip_credential_type  # unused method(monkey/common/credentials/password.py:18)
+
 # Models
 _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:19
 
