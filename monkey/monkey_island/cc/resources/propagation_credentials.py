@@ -1,15 +1,16 @@
+from flask import make_response
+
+from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.services.config import ConfigService
 
 
 class PropagationCredentials(AbstractResource):
     urls = ["/api/propagation-credentials"]
 
+    def __init__(self, credentials_repository: ICredentialsRepository):
+        self._credentials_repository = credentials_repository
+
     def get(self):
-        config = ConfigService.get_flat_config(should_decrypt=True)
+        propagation_credentials = self._credentials_repository.get_all_credentials()
 
-        propagation_credentials = ConfigService.get_config_propagation_credentials_from_flat_config(
-            config
-        )
-
-        return {"propagation_credentials": propagation_credentials}
+        return make_response({"propagation_credentials": propagation_credentials})
