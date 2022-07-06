@@ -2,7 +2,11 @@ import json
 
 import pytest
 from tests.common import StubDIContainer
-from tests.monkey_island import StubPropagationCredentialsRepository
+from tests.monkey_island import (
+    PROPAGATION_CREDENTIALS_1,
+    PROPAGATION_CREDENTIALS_2,
+    StubPropagationCredentialsRepository,
+)
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from monkey_island.cc.repository import ICredentialsRepository
@@ -25,4 +29,10 @@ def test_propagation_credentials_endpoint_get(flask_client):
     resp = flask_client.get(propagation_credentials_url)
 
     assert resp.status_code == 200
-    assert len(json.loads(resp.data)["propagation_credentials"]) == 2
+    actual_propagation_credentials = json.loads(resp.data)["propagation_credentials"]
+    assert len(actual_propagation_credentials) == 2
+
+    del actual_propagation_credentials[0]["monkey_guid"]
+    assert actual_propagation_credentials[0] == PROPAGATION_CREDENTIALS_1
+    del actual_propagation_credentials[1]["monkey_guid"]
+    assert actual_propagation_credentials[1] == PROPAGATION_CREDENTIALS_2

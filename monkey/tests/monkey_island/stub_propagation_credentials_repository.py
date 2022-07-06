@@ -10,7 +10,7 @@ fake_lm_hash = "299BD128C1101FD6"
 fake_password_1 = "trytostealthis"
 fake_password_2 = "password"
 fake_password_3 = "12345678"
-propagation_credentials_1 = {
+PROPAGATION_CREDENTIALS_1 = {
     "identities": [{"username": fake_username, "credential_type": "USERNAME"}],
     "secrets": [
         {"nt_hash": fake_nt_hash, "credential_type": "NT_HASH"},
@@ -19,7 +19,7 @@ propagation_credentials_1 = {
     ],
 }
 
-propagation_credentials_2 = {
+PROPAGATION_CREDENTIALS_2 = {
     "identities": [
         {"username": fake_username, "credential_type": "USERNAME"},
         {"username": fake_special_username, "credential_type": "USERNAME"},
@@ -42,8 +42,8 @@ class StubPropagationCredentialsRepository(ICredentialsRepository):
     def get_all_credentials(self) -> Sequence[Credentials]:
 
         return [
-            Credentials.from_mapping(propagation_credentials_1, monkey_guid="some_guid"),
-            Credentials.from_mapping(propagation_credentials_2, monkey_guid="second_guid"),
+            Credentials.from_mapping(PROPAGATION_CREDENTIALS_1, monkey_guid="some_guid"),
+            Credentials.from_mapping(PROPAGATION_CREDENTIALS_2, monkey_guid="second_guid"),
         ]
 
     def save_configured_credentials(self, credentials: Credentials):
