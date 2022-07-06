@@ -5,6 +5,7 @@ class Config(EmbeddedDocument):
 
     COLLECTION_NAME = "config"
 
+    # TODO: Fix this comment
     """
     No need to define this schema here. It will change often and is already is defined in
     monkey_island.cc.services.config_schema.

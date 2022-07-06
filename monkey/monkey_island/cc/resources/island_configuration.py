@@ -24,7 +24,7 @@ class IslandConfiguration(AbstractResource):
         # API Spec: Makes more sense to have a PATCH request for this since the resource,
         # i.e. the configuration, is being updated.
         if "reset" in config_json:
-            ConfigService.reset_config()
+            pass
         else:
             if not ConfigService.update_config(config_json, should_encrypt=True):
                 abort(400)

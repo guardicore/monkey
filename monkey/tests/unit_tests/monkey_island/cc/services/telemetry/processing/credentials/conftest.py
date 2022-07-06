@@ -14,7 +14,9 @@ fake_ip_address = "192.168.56.1"
 def fake_mongo(monkeypatch, uses_encryptor):
     mongo = mongoengine.connection.get_connection()
     monkeypatch.setattr("monkey_island.cc.services.config.mongo", mongo)
-    config = ConfigService.get_default_config()
+    # Note: ConfigService is going away, don't try to fix UT using
+    # this fixture
+    config = ConfigService.get_config()
     ConfigService.update_config(config, should_encrypt=True)
 
 

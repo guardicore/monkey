@@ -15,7 +15,9 @@ def PORT():
 
 @pytest.fixture
 def config(monkeypatch):
-    config = ConfigService.get_default_config(True)
+    # Note: ConfigService is going away, don't try to fix the UT using
+    # this fixture
+    config = ConfigService.get_config(True)
     return config
 
 
