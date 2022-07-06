@@ -1,5 +1,7 @@
 import queue
-from typing import Any, List
+from typing import Any, List, MutableMapping, TypeVar
+
+T = TypeVar("T")
 
 
 class abstractstatic(staticmethod):
@@ -30,3 +32,17 @@ def queue_to_list(q: queue.Queue) -> List[Any]:
         pass
 
     return list_
+
+
+def del_key(mapping: MutableMapping[T, Any], key: T):
+    """
+    Deletes key from mapping. Unlike the `del` keyword, this function does not raise a KeyError
+    if the key does not exist.
+
+    :param mapping: A mapping from which a key will be deleted
+    :param key: A key to delete from `mapping`
+    """
+    try:
+        del mapping[key]
+    except KeyError:
+        pass
