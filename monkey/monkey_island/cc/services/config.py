@@ -38,7 +38,6 @@ SENSITIVE_SSH_KEY_FIELDS = [
 
 
 class ConfigService:
-
     def __init__(self):
         pass
 
