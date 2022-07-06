@@ -3,8 +3,6 @@ import functools
 import logging
 from typing import Dict, List
 
-from jsonschema import validators
-
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
     NTLM_HASH_LIST_PATH,
@@ -40,7 +38,6 @@ SENSITIVE_SSH_KEY_FIELDS = [
 
 
 class ConfigService:
-    default_config = None
 
     def __init__(self):
         pass
@@ -213,44 +210,6 @@ class ConfigService:
     def init_config():
         if ConfigService.get_config(should_decrypt=False) != {}:
             return
-
-    @staticmethod
-    def _extend_config_with_default(validator_class):
-        validate_properties = validator_class.VALIDATORS["properties"]
-
-        def set_defaults(validator, properties, instance, schema):
-            # Do it only for root.
-            if instance != {}:
-                return
-            for property1, subschema1 in list(properties.items()):
-                main_dict = {}
-                for property2, subschema2 in list(subschema1["properties"].items()):
-                    sub_dict = {}
-                    for property3, subschema3 in list(subschema2["properties"].items()):
-                        if "default" in subschema3:
-                            sub_dict[property3] = subschema3["default"]
-                        elif "properties" in subschema3:
-                            layer_3_dict = {}
-                            for property4, subschema4 in list(subschema3["properties"].items()):
-                                if "properties" in subschema4:
-                                    raise ValueError(
-                                        "monkey/monkey_island/cc/services/config.py "
-                                        "can't handle 5 level config. "
-                                        "Either change back the config or refactor."
-                                    )
-                                if "default" in subschema4:
-                                    layer_3_dict[property4] = subschema4["default"]
-                            sub_dict[property3] = layer_3_dict
-                    main_dict[property2] = sub_dict
-                instance.setdefault(property1, main_dict)
-
-            for error in validate_properties(validator, properties, instance, schema):
-                yield error
-
-        return validators.extend(
-            validator_class,
-            {"properties": set_defaults},
-        )
 
     @staticmethod
     def decrypt_config(config):
