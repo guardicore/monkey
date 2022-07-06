@@ -1,6 +1,15 @@
 from dataclasses import dataclass, field
 
+from marshmallow import fields
+
 from . import CredentialComponentType, ICredentialComponent
+from .credential_component_schema import CredentialComponentSchema, CredentialTypeField
+from .validators import ntlm_hash_validator
+
+
+class NTHashSchema(CredentialComponentSchema):
+    credential_type = CredentialTypeField(CredentialComponentType.NT_HASH)
+    nt_hash = fields.Str(validate=ntlm_hash_validator)
 
 
 @dataclass(frozen=True)

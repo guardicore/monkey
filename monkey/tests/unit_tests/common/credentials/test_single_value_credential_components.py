@@ -1,8 +1,9 @@
 import pytest
 from marshmallow.exceptions import ValidationError
 
-from common.credentials import CredentialComponentType, LMHash, Password, Username
+from common.credentials import CredentialComponentType, LMHash, NTHash, Password, Username
 from common.credentials.lm_hash import LMHashSchema
+from common.credentials.nt_hash import NTHashSchema
 from common.credentials.password import PasswordSchema
 from common.credentials.username import UsernameSchema
 
@@ -20,6 +21,13 @@ PARAMETRIZED_PARAMETER_VALUES = [
         "lm_hash",
         "E52CAC67419A9A224A3B108F3FA6CB6D",
     ),
+    (
+        NTHash,
+        NTHashSchema,
+        CredentialComponentType.NT_HASH,
+        "nt_hash",
+        "E52CAC67419A9A224A3B108F3FA6CB6D",
+    ),
 ]
 
 
@@ -27,6 +35,13 @@ INVALID_VALUES = {
     CredentialComponentType.USERNAME: (None, 1, 2.0),
     CredentialComponentType.PASSWORD: (None, 1, 2.0),
     CredentialComponentType.LM_HASH: (
+        None,
+        1,
+        2.0,
+        "0123456789012345678901234568901",
+        "E52GAC67419A9A224A3B108F3FA6CB6D",
+    ),
+    CredentialComponentType.NT_HASH: (
         None,
         1,
         2.0,
