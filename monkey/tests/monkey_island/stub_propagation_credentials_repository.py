@@ -32,7 +32,7 @@ propagation_credentials_2 = {
 }
 
 
-class PropagationCredentialsRepository(ICredentialsRepository):
+class StubPropagationCredentialsRepository(ICredentialsRepository):
     def get_configured_credentials(self) -> Sequence[Credentials]:
         pass
 

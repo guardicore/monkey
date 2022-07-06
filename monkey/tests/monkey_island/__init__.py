@@ -3,4 +3,4 @@ from .mock_file_repository import MockFileRepository, FILE_CONTENTS, FILE_NAME
 from .open_error_file_repository import OpenErrorFileRepository
 from .in_memory_agent_configuration_repository import InMemoryAgentConfigurationRepository
 from .in_memory_simulation_configuration import InMemorySimulationRepository
-from .propagation_credentials_repository import PropagationCredentialsRepository
+from .stub_propagation_credentials_repository import StubPropagationCredentialsRepository
