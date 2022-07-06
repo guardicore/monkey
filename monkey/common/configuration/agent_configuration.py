@@ -17,14 +17,17 @@ from .agent_sub_configurations import (
     PropagationConfiguration,
 )
 
-
-class InvalidConfigurationError(Exception):
-    pass
-
-
 INVALID_CONFIGURATION_ERROR_MESSAGE = (
     "Cannot construct an AgentConfiguration object with the supplied, invalid data:"
 )
+
+
+class InvalidConfigurationError(Exception):
+    def __init__(self, message: str):
+        self._message = message
+
+    def __str__(self) -> str:
+        return f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {self._message}"
 
 
 @dataclass(frozen=True)
@@ -42,7 +45,7 @@ class AgentConfiguration:
         try:
             AgentConfigurationSchema().dump(self)
         except Exception as err:
-            raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
+            raise InvalidConfigurationError(err)
 
     @staticmethod
     def from_mapping(config_mapping: Mapping[str, Any]) -> AgentConfiguration:
