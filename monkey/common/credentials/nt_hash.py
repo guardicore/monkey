@@ -4,7 +4,7 @@ from marshmallow import fields
 
 from . import CredentialComponentType, ICredentialComponent
 from .credential_component_schema import CredentialComponentSchema, CredentialTypeField
-from .validators import ntlm_hash_validator
+from .validators import credential_component_validator, ntlm_hash_validator
 
 
 class NTHashSchema(CredentialComponentSchema):
@@ -18,3 +18,6 @@ class NTHash(ICredentialComponent):
         default=CredentialComponentType.NT_HASH, init=False
     )
     nt_hash: str
+
+    def __post_init__(self):
+        credential_component_validator(NTHashSchema(), self)
