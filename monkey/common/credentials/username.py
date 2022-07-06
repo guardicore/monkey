@@ -1,16 +1,13 @@
 from dataclasses import dataclass, field
 
-from marshmallow import fields, validate
-from marshmallow_enum import EnumField
+from marshmallow import fields
 
 from . import CredentialComponentType, ICredentialComponent
-from .credential_component_schema import CredentialComponentSchema
+from .credential_component_schema import CredentialComponentSchema, CredentialTypeField
 
 
 class UsernameSchema(CredentialComponentSchema):
-    credential_type = EnumField(
-        CredentialComponentType, validate=validate.Equal(CredentialComponentType.USERNAME)
-    )
+    credential_type = CredentialTypeField(CredentialComponentType.USERNAME)
     username = fields.Str()
 
 
