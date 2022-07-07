@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, MutableMapping, Tuple
+from typing import Any, Mapping, MutableMapping, Sequence, Tuple
 
 from marshmallow import Schema, fields, post_load, pre_dump
 
@@ -20,6 +20,7 @@ CREDENTIAL_COMPINENT_TYPE_TO_CLASS = {
     CredentialComponentType.SSH_KEYPAIR: SSHKeypair,
     CredentialComponentType.USERNAME: Username,
 }
+
 CREDENTIAL_COMPINENT_TYPE_TO_CLASS_SCHEMA = {
     CredentialComponentType.LM_HASH: LMHashSchema(),
     CredentialComponentType.NT_HASH: NTHashSchema(),
@@ -36,7 +37,7 @@ class CredentialsSchema(Schema):
     secrets = fields.List(fields.Mapping())
 
     @post_load
-    def _make_credentials(self, data, **kwargs) -> Mapping[str, Tuple[Mapping[str, Any]]]:
+    def _make_credentials(self, data, **kwargs) -> Mapping[str, Sequence[Mapping[str, Any]]]:
         data["identities"] = tuple(
             [
                 CredentialsSchema._build_credential_component(component)
@@ -66,7 +67,7 @@ class CredentialsSchema(Schema):
     @pre_dump
     def _serialize_credentials(
         self, credentials: Credentials, **kwargs
-    ) -> Mapping[str, Tuple[Mapping[str, Any]]]:
+    ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
         data = {}
         data["identities"] = tuple(
             [
@@ -84,7 +85,9 @@ class CredentialsSchema(Schema):
         return data
 
     @staticmethod
-    def _serialize_credential_component(credential_component: ICredentialComponent):
+    def _serialize_credential_component(
+        credential_component: ICredentialComponent,
+    ) -> Mapping[str, Any]:
         credential_component_schema = CREDENTIAL_COMPINENT_TYPE_TO_CLASS_SCHEMA[
             credential_component.credential_type
         ]
