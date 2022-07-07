@@ -44,7 +44,9 @@ class PropagationCredentials(AbstractResource):
                     self._credentials_repository.save_stolen_credentials(credentials_object)
                 elif body.get("type") == PropagationCredentialsType.CONFIGURED:
                     self._credentials_repository.save_configured_credentials(credentials_object)
-            except StorageError as err:
+                else:
+                    raise UnknownCredentialTypeError("Credential type unknown")
+            except (StorageError, UnknownCredentialTypeError) as err:
                 return make_response(
                     {"error": f"Error encountered while storing credentials: {err}"}, 400
                 )
