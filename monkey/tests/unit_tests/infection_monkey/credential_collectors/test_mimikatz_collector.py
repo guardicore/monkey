@@ -56,14 +56,16 @@ def test_pypykatz_result_parsing_duplicates(monkeypatch):
 
 def test_pypykatz_result_parsing_defaults(monkeypatch):
     win_creds = [
-        WindowsCredentials(username="user2", password="secret2", lm_hash="lm_hash"),
+        WindowsCredentials(
+            username="user2", password="secret2", lm_hash="0182BD0BD4444BF8FC83B5D9042EED2E"
+        ),
     ]
     patch_pypykatz(win_creds, monkeypatch)
 
     # Expected credentials
     username = Username("user2")
     password = Password("secret2")
-    lm_hash = LMHash("lm_hash")
+    lm_hash = LMHash("0182BD0BD4444BF8FC83B5D9042EED2E")
     expected_credentials = Credentials([username], [password, lm_hash])
 
     collected_credentials = collect_credentials()
@@ -73,12 +75,17 @@ def test_pypykatz_result_parsing_defaults(monkeypatch):
 
 def test_pypykatz_result_parsing_no_identities(monkeypatch):
     win_creds = [
-        WindowsCredentials(username="", password="", ntlm_hash="ntlm_hash", lm_hash="lm_hash"),
+        WindowsCredentials(
+            username="",
+            password="",
+            ntlm_hash="E9F85516721DDC218359AD5280DB4450",
+            lm_hash="0182BD0BD4444BF8FC83B5D9042EED2E",
+        ),
     ]
     patch_pypykatz(win_creds, monkeypatch)
 
-    lm_hash = LMHash("lm_hash")
-    nt_hash = NTHash("ntlm_hash")
+    lm_hash = LMHash("0182BD0BD4444BF8FC83B5D9042EED2E")
+    nt_hash = NTHash("E9F85516721DDC218359AD5280DB4450")
     expected_credentials = Credentials([], [lm_hash, nt_hash])
 
     collected_credentials = collect_credentials()

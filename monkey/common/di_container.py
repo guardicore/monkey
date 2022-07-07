@@ -1,5 +1,7 @@
 import inspect
-from typing import Any, MutableMapping, Sequence, Type, TypeVar
+from typing import Any, Sequence, Type, TypeVar
+
+from common.utils.code_utils import del_key
 
 T = TypeVar("T")
 
@@ -43,7 +45,7 @@ class DIContainer:
             )
 
         self._type_registry[interface] = concrete_type
-        DIContainer._del_key(self._instance_registry, interface)
+        del_key(self._instance_registry, interface)
 
     def register_instance(self, interface: Type[T], instance: T):
         """
@@ -59,7 +61,7 @@ class DIContainer:
             )
 
         self._instance_registry[interface] = instance
-        DIContainer._del_key(self._type_registry, interface)
+        del_key(self._type_registry, interface)
 
     def register_convention(self, type_: Type[T], name: str, instance: T):
         """
@@ -168,8 +170,8 @@ class DIContainer:
 
         :param interface: The interface to release
         """
-        DIContainer._del_key(self._type_registry, interface)
-        DIContainer._del_key(self._instance_registry, interface)
+        del_key(self._type_registry, interface)
+        del_key(self._instance_registry, interface)
 
     def release_convention(self, type_: Type[T], name: str):
         """
@@ -179,18 +181,4 @@ class DIContainer:
         :param name: The name of the dependency parameter
         """
         convention_identifier = (type_, name)
-        DIContainer._del_key(self._convention_registry, convention_identifier)
-
-    @staticmethod
-    def _del_key(mapping: MutableMapping[T, Any], key: T):
-        """
-        Deletes key from mapping. Unlike the `del` keyword, this function does not raise a KeyError
-        if the key does not exist.
-
-        :param mapping: A mapping from which a key will be deleted
-        :param key: A key to delete from `mapping`
-        """
-        try:
-            del mapping[key]
-        except KeyError:
-            pass
+        del_key(self._convention_registry, convention_identifier)
