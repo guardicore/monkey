@@ -4,6 +4,7 @@ import pytest
 
 from common.credentials import (
     Credentials,
+    InvalidCredentialComponentError,
     InvalidCredentialsError,
     LMHash,
     NTHash,
@@ -76,4 +77,13 @@ def test_credentials_deserialization__invalid_credentials():
 def test_credentials_deserialization__invalid_component_type():
     invalid_data = {"secrets": [], "identities": [{"credential_type": "FAKE", "username": "user1"}]}
     with pytest.raises(InvalidCredentialsError):
+        Credentials.from_mapping(invalid_data)
+
+
+def test_credentials_deserialization__invalid_component():
+    invalid_data = {
+        "secrets": [],
+        "identities": [{"credential_type": "USERNAME", "unknown_field": "user1"}],
+    }
+    with pytest.raises(InvalidCredentialComponentError):
         Credentials.from_mapping(invalid_data)

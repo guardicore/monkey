@@ -77,7 +77,10 @@ class CredentialsSchema(Schema):
             credential_component_type
         ]
 
-        return credential_component_class(**credential_component_schema.load(data))
+        try:
+            return credential_component_class(**credential_component_schema.load(data))
+        except MarshmallowError as err:
+            raise InvalidCredentialComponentError(credential_component_class, str(err))
 
     @pre_dump
     def _serialize_credentials(
