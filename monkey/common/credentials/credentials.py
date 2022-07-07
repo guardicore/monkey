@@ -13,7 +13,7 @@ from .password import PasswordSchema
 from .ssh_keypair import SSHKeypairSchema
 from .username import UsernameSchema
 
-CREDENTIAL_COMPINENT_TYPE_TO_CLASS = {
+CREDENTIAL_COMPONENT_TYPE_TO_CLASS = {
     CredentialComponentType.LM_HASH: LMHash,
     CredentialComponentType.NT_HASH: NTHash,
     CredentialComponentType.PASSWORD: Password,
@@ -21,7 +21,7 @@ CREDENTIAL_COMPINENT_TYPE_TO_CLASS = {
     CredentialComponentType.USERNAME: Username,
 }
 
-CREDENTIAL_COMPINENT_TYPE_TO_CLASS_SCHEMA = {
+CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA = {
     CredentialComponentType.LM_HASH: LMHashSchema(),
     CredentialComponentType.NT_HASH: NTHashSchema(),
     CredentialComponentType.PASSWORD: PasswordSchema(),
@@ -56,8 +56,8 @@ class CredentialsSchema(Schema):
     @staticmethod
     def _build_credential_component(data: MutableMapping[str, Any]):
         credential_component_type = CredentialComponentType[data["credential_type"]]
-        credential_component_class = CREDENTIAL_COMPINENT_TYPE_TO_CLASS[credential_component_type]
-        credential_component_schema = CREDENTIAL_COMPINENT_TYPE_TO_CLASS_SCHEMA[
+        credential_component_class = CREDENTIAL_COMPONENT_TYPE_TO_CLASS[credential_component_type]
+        credential_component_schema = CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA[
             credential_component_type
         ]
 
@@ -88,7 +88,7 @@ class CredentialsSchema(Schema):
     def _serialize_credential_component(
         credential_component: ICredentialComponent,
     ) -> Mapping[str, Any]:
-        credential_component_schema = CREDENTIAL_COMPINENT_TYPE_TO_CLASS_SCHEMA[
+        credential_component_schema = CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA[
             credential_component.credential_type
         ]
         return credential_component_schema.dump(credential_component)
