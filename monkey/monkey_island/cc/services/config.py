@@ -1,7 +1,6 @@
 import collections
 import functools
 import logging
-from typing import Dict, List
 
 from common.config_value_paths import (
     LM_HASH_LIST_PATH,
@@ -97,25 +96,6 @@ class ConfigService:
     def set_config_value(config_key_as_arr, value):
         mongo_key = ".".join(config_key_as_arr)
         mongo.db.config.update({}, {"$set": {mongo_key: value}})
-
-    @staticmethod
-    def get_flat_config(should_decrypt=True):
-        config_json = ConfigService.get_config(should_decrypt)
-        flat_config_json = {}
-        for i in config_json:
-            if i == "ransomware":
-                # Don't flatten the ransomware because ransomware payload expects a dictionary #1260
-                flat_config_json[i] = config_json[i]
-                continue
-            for j in config_json[i]:
-                for k in config_json[i][j]:
-                    if isinstance(config_json[i][j][k], dict):
-                        for key, value in config_json[i][j][k].items():
-                            flat_config_json[key] = value
-                    else:
-                        flat_config_json[k] = config_json[i][j][k]
-
-        return flat_config_json
 
     # Not added to interface because it's doable by get_config_field + set_config_field
     @staticmethod
@@ -251,13 +231,3 @@ class ConfigService:
                     if is_decrypt
                     else get_datastore_encryptor().encrypt(config_arr)
                 )
-
-    @staticmethod
-    def get_config_propagation_credentials_from_flat_config(config) -> Dict[str, List[str]]:
-        return {
-            "exploit_user_list": config.get("exploit_user_list", []),
-            "exploit_password_list": config.get("exploit_password_list", []),
-            "exploit_lm_hash_list": config.get("exploit_lm_hash_list", []),
-            "exploit_ntlm_hash_list": config.get("exploit_ntlm_hash_list", []),
-            "exploit_ssh_keys": config.get("exploit_ssh_keys", []),
-        }
