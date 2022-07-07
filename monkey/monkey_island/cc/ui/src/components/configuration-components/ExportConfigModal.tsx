@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import FileSaver from 'file-saver';
 import '../../styles/components/configuration-components/ExportConfigModal.scss';
 import {encryptText} from '../utils/PasswordBasedEncryptor';
+import {reformatConfig} from './ReformatHook';
 
 
 type Props = {
@@ -21,7 +22,7 @@ const ConfigExportModal = (props: Props) => {
   }
 
   function onSubmit() {
-    let config = props.configuration;
+    let config = reformatConfig(props.configuration, true);
     let config_export = {'metadata': {}, 'contents': null};
 
     if (radioValue === 'password') {

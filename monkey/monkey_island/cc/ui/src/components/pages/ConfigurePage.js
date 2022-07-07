@@ -18,6 +18,7 @@ import applyUiSchemaManipulators from '../configuration-components/UISchemaManip
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 import {SCHEMA} from '../../services/configuration/config_schema.js';
+import {reformatConfig} from '../configuration-components/ReformatHook';
 
 const CONFIG_URL = '/api/agent-configuration';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
@@ -71,9 +72,7 @@ class ConfigurePageComponent extends AuthComponent {
     this.authFetch(CONFIG_URL).then(res => res.json())
       .then(monkeyConfig => {
         let sections = [];
-        let monkeyConfig = data[0];
-        // TODO: Fix when we add plugins
-        monkeyConfig['payloads'] = monkeyConfig['payloads'][0]['options'];
+        monkeyConfig = reformatConfig(monkeyConfig);
 
         this.setInitialConfig(monkeyConfig);
         for (let sectionKey of this.getSectionsOrder()) {
@@ -110,13 +109,16 @@ class ConfigurePageComponent extends AuthComponent {
     this.setState({showUnsafeAttackOptionsWarning: false});
   }
 
-  updateConfig = (callback = null) => {
+  updateConfig = () => {
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
-        this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration,
-          currentFormData: data.configuration[this.state.selectedSection]}, callback);
+        data = reformatConfig(data);
+        this.setInitialConfig(data);
+        this.setState({
+          configuration: data,
+          currentFormData: data[this.state.selectedSection]
+        });
       })
   };
 
@@ -132,7 +134,7 @@ class ConfigurePageComponent extends AuthComponent {
     await this.updateConfigSection();
     if (this.canSafelySubmitConfig(this.state.configuration)) {
       this.configSubmit();
-      if(this.state.lastAction === configExportAction){
+      if (this.state.lastAction === configExportAction) {
         this.setState({showConfigExportModal: true})
       }
     } else {
@@ -145,16 +147,14 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         this.setState({
-          lastAction: configSaveAction,
-          schema: res.schema,
-          configuration: res.configuration
+          lastAction: configSaveAction
         });
-        this.setInitialConfig(res.configuration);
+        this.setInitialConfig(this.state.configuration);
         this.props.onStatusChange();
       }).catch(error => {
-      console.log('Bad configuration: ' + error.toString());
-      this.setState({lastAction: 'invalid_configuration'});
-    });
+        console.log('Bad configuration: ' + error.toString());
+        this.setState({lastAction: 'invalid_configuration'});
+      });
   }
 
   onChange = ({formData}) => {
@@ -187,10 +187,12 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   onClose = (importSuccessful) => {
-    if(importSuccessful === true){
+    if (importSuccessful === true) {
       this.updateConfig();
-      this.setState({lastAction: 'import_success',
-                          showConfigImportModal: false});
+      this.setState({
+        lastAction: 'import_success',
+        showConfigImportModal: false
+      });
 
     } else {
       this.setState({showConfigImportModal: false});
@@ -251,8 +253,8 @@ class ConfigurePageComponent extends AuthComponent {
         }
       }
     } catch (TypeError) {
-      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)){
-         return false;
+      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
+        return false;
       }
     }
     return true;
@@ -285,6 +287,7 @@ class ConfigurePageComponent extends AuthComponent {
       })
       .then(res => res.json())
       .then(res => {
+          res.configuration = reformatConfig(res.configuration);
           this.setState({
             lastAction: 'reset',
             schema: res.schema,
@@ -319,12 +322,15 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   sendConfig() {
+    let config = JSON.parse(JSON.stringify(this.state.configuration))
+    config = reformatConfig(config, true);
+
     return (
       this.authFetch(CONFIG_URL,
         {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(this.state.configuration)
+          body: JSON.stringify(config)
         })
         .then(res => {
           if (!res.ok) {
@@ -356,8 +362,8 @@ class ConfigurePageComponent extends AuthComponent {
     formProperties['liveValidate'] = true;
 
     applyUiSchemaManipulators(this.state.selectedSection,
-                              formProperties['formData'],
-                              formProperties['uiSchema']);
+      formProperties['formData'],
+      formProperties['uiSchema']);
 
     return (
       <div>
