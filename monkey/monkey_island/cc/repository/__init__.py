@@ -11,3 +11,4 @@ from .file_agent_configuration_repository import FileAgentConfigurationRepositor
 from .i_simulation_repository import ISimulationRepository
 from .file_simulation_repository import FileSimulationRepository
 from .i_credentials_repository import ICredentialsRepository
+from .mongo_credentials_repository import MongoCredentialsRepository
