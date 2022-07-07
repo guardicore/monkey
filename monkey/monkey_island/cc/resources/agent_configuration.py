@@ -24,7 +24,7 @@ class AgentConfiguration(AbstractResource):
     @jwt_required
     def post(self):
         try:
-            configuration_object = AgentConfigurationObject.from_json(request.data)
+            configuration_object = AgentConfigurationObject.from_mapping(request.json)
             self._agent_configuration_repository.store_configuration(configuration_object)
             return make_response({}, 200)
         except (InvalidConfigurationError, json.JSONDecodeError) as err:
