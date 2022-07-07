@@ -101,6 +101,7 @@ const IslandResetModal = (props: Props) => {
         }
       })
   }
+
   function resetAll() {
     auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
@@ -123,7 +124,7 @@ const IslandResetModal = (props: Props) => {
           throw 'Error resetting the simulation'
         }
       })
-}
+  }
 
   function showModalButtons() {
     return (<Container className={`text-left island-reset-modal`}>
