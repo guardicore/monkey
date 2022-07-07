@@ -19,12 +19,6 @@ class ClearSimulationData(AbstractResource):
         Clear all data collected during the simulation
         """
         Database.reset_db(reset_config=False)
-
-        try:
-            self._credentials_repository.remove_stolen_credentials()
-        except RemovalError as err:
-            make_response(
-                {"error": f"Error encountered while removing stolen credentials: {err}"}, 500
-            )
+        self._credentials_repository.remove_stolen_credentials()
 
         return make_response({}, 200)
