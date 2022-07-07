@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from typing import Any, Mapping, MutableMapping, Sequence, Tuple
 
@@ -142,3 +143,8 @@ class Credentials:
     @staticmethod
     def to_json(credentials: Credentials) -> str:
         return CredentialsSchema().dumps(credentials)
+
+    @staticmethod
+    def from_json_array(credentials_array_json: str) -> Sequence[Credentials]:
+        credentials_list = json.loads(credentials_array_json)
+        return [Credentials.from_mapping(c) for c in credentials_list]
