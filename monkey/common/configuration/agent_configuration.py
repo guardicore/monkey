@@ -17,17 +17,16 @@ from .agent_sub_configurations import (
     PropagationConfiguration,
 )
 
-INVALID_CONFIGURATION_ERROR_MESSAGE = (
-    "Cannot construct an AgentConfiguration object with the supplied, invalid data:"
-)
-
 
 class InvalidConfigurationError(Exception):
     def __init__(self, message: str):
         self._message = message
 
     def __str__(self) -> str:
-        return f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {self._message}"
+        return (
+            f"Cannot construct an AgentConfiguration object with the supplied, invalid data: "
+            f"{self._message}"
+        )
 
 
 @dataclass(frozen=True)
@@ -45,7 +44,7 @@ class AgentConfiguration:
         try:
             AgentConfigurationSchema().dump(self)
         except Exception as err:
-            raise InvalidConfigurationError(err)
+            raise InvalidConfigurationError(str(err))
 
     @staticmethod
     def from_mapping(config_mapping: Mapping[str, Any]) -> AgentConfiguration:
@@ -62,7 +61,7 @@ class AgentConfiguration:
             config_dict = AgentConfigurationSchema().load(config_mapping)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
-            raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
+            raise InvalidConfigurationError(str(err))
 
     @staticmethod
     def from_json(config_json: str) -> AgentConfiguration:
@@ -78,7 +77,7 @@ class AgentConfiguration:
             config_dict = AgentConfigurationSchema().loads(config_json)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
-            raise InvalidConfigurationError(f"{INVALID_CONFIGURATION_ERROR_MESSAGE}: {err}")
+            raise InvalidConfigurationError(str(err))
 
     @staticmethod
     def to_json(config: AgentConfiguration) -> str:
