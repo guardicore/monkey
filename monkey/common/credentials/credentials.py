@@ -122,6 +122,17 @@ class Credentials:
 
     @staticmethod
     def from_mapping(credentials: Mapping) -> Credentials:
+        """
+        Construct a Credentials object from a Mapping
+
+        :param credentials: A mapping that represents a Credentials object
+        :return: A Credentials object
+        :raises InvalidCredentialsError: If the provided Mapping does not represent a valid
+                                         Credentials object
+        :raises InvalidCredentialComponentError: If any of the contents of `identities` or `secrets`
+                                                 are not a valid ICredentialComponent
+        """
+
         try:
             deserialized_data = CredentialsSchema().load(credentials)
             return Credentials(**deserialized_data)
@@ -132,6 +143,17 @@ class Credentials:
 
     @staticmethod
     def from_json(credentials: str) -> Credentials:
+        """
+        Construct a Credentials object from a JSON string
+
+        :param credentials: A JSON string that represents a Credentials object
+        :return: A Credentials object
+        :raises InvalidCredentialsError: If the provided JSON does not represent a valid
+                                         Credentials object
+        :raises InvalidCredentialComponentError: If any of the contents of `identities` or `secrets`
+                                                 are not a valid ICredentialComponent
+        """
+
         try:
             deserialized_data = CredentialsSchema().loads(credentials)
             return Credentials(**deserialized_data)
@@ -141,10 +163,30 @@ class Credentials:
             raise InvalidCredentialsError(str(err))
 
     @staticmethod
-    def to_json(credentials: Credentials) -> str:
-        return CredentialsSchema().dumps(credentials)
-
-    @staticmethod
     def from_json_array(credentials_array_json: str) -> Sequence[Credentials]:
+        """
+        Construct a sequence of Credentials object from a JSON string
+
+        :param credentials: A JSON string that represents an array of Credentials objects
+        :return: A Sequence of Credentials objects
+        :raises InvalidCredentialsError: If the provided JSON does not represent a valid
+                                         Credentials object
+        :raises InvalidCredentialComponentError: If any of the contents of `identities` or `secrets`
+                                                 are not a valid ICredentialComponent
+        :raises JSONDecodeError: If the provided string is not valid JSON
+        :raises TypeError: If the provided JSON does not represent an array
+        """
+
         credentials_list = json.loads(credentials_array_json)
         return [Credentials.from_mapping(c) for c in credentials_list]
+
+    @staticmethod
+    def to_json(credentials: Credentials) -> str:
+        """
+        Serialize a Credentials object to JSON
+
+        :param credentials: A Credentials objcet
+        :return: A JSON string representing a Credentials object
+        """
+
+        return CredentialsSchema().dumps(credentials)
