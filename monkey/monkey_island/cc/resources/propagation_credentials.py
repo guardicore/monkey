@@ -1,7 +1,14 @@
+from enum import Enum
+
 from flask import make_response
 
 from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
+
+
+class PropagationCredentialsType(Enum):
+    STOLEN = "stolen"
+    CONFIGURED = "configured"
 
 
 class PropagationCredentials(AbstractResource):
