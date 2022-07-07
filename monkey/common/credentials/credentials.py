@@ -37,7 +37,9 @@ class CredentialsSchema(Schema):
     secrets = fields.List(fields.Mapping())
 
     @post_load
-    def _make_credentials(self, data, **kwargs) -> Mapping[str, Sequence[Mapping[str, Any]]]:
+    def _make_credentials(
+        self, data: MutableMapping, **kwargs: Mapping[str, Any]
+    ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
         data["identities"] = tuple(
             [
                 CredentialsSchema._build_credential_component(component)
@@ -54,7 +56,7 @@ class CredentialsSchema(Schema):
         return data
 
     @staticmethod
-    def _build_credential_component(data: MutableMapping[str, Any]):
+    def _build_credential_component(data: Mapping[str, Any]) -> ICredentialComponent:
         credential_component_type = CredentialComponentType[data["credential_type"]]
         credential_component_class = CREDENTIAL_COMPONENT_TYPE_TO_CLASS[credential_component_type]
         credential_component_schema = CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA[
@@ -68,6 +70,7 @@ class CredentialsSchema(Schema):
         self, credentials: Credentials, **kwargs
     ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
         data = {}
+
         data["identities"] = tuple(
             [
                 CredentialsSchema._serialize_credential_component(component)
@@ -90,6 +93,7 @@ class CredentialsSchema(Schema):
         credential_component_schema = CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA[
             credential_component.credential_type
         ]
+
         return credential_component_schema.dump(credential_component)
 
 
