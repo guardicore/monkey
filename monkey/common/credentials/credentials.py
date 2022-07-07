@@ -61,7 +61,6 @@ class CredentialsSchema(Schema):
             credential_component_type
         ]
 
-        data["credential_type"] = data["credential_type"]
         return credential_component_class(**credential_component_schema.load(data))
 
     @pre_dump
