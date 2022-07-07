@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, MutableMapping, Sequence, Tuple
 
 from marshmallow import Schema, fields, post_load, pre_dump
+from marshmallow.exceptions import MarshmallowError
 
 from . import (
     CredentialComponentType,
@@ -122,7 +123,7 @@ class Credentials:
             return Credentials(**deserialized_data)
         except (InvalidCredentialsError, InvalidCredentialComponentError) as err:
             raise err
-        except Exception as err:
+        except MarshmallowError as err:
             raise InvalidCredentialsError(str(err))
 
     @staticmethod
@@ -132,7 +133,7 @@ class Credentials:
             return Credentials(**deserialized_data)
         except (InvalidCredentialsError, InvalidCredentialComponentError) as err:
             raise err
-        except Exception as err:
+        except MarshmallowError as err:
             raise InvalidCredentialsError(str(err))
 
     @staticmethod
