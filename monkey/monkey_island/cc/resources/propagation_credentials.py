@@ -9,6 +9,10 @@ from monkey_island.cc.repository.errors import StorageError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 
+class UnknownCredentialTypeError(Exception):
+    pass
+
+
 class PropagationCredentialsType(Enum):
     STOLEN = "stolen"
     CONFIGURED = "configured"
