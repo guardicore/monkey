@@ -5,7 +5,16 @@ from typing import Any, Mapping, MutableMapping, Sequence, Tuple
 
 from marshmallow import Schema, fields, post_load, pre_dump
 
-from . import CredentialComponentType, LMHash, NTHash, Password, SSHKeypair, Username
+from . import (
+    CredentialComponentType,
+    InvalidCredentialComponentError,
+    InvalidCredentialsError,
+    LMHash,
+    NTHash,
+    Password,
+    SSHKeypair,
+    Username,
+)
 from .i_credential_component import ICredentialComponent
 from .lm_hash import LMHashSchema
 from .nt_hash import NTHashSchema
@@ -57,7 +66,11 @@ class CredentialsSchema(Schema):
 
     @staticmethod
     def _build_credential_component(data: Mapping[str, Any]) -> ICredentialComponent:
-        credential_component_type = CredentialComponentType[data["credential_type"]]
+        try:
+            credential_component_type = CredentialComponentType[data["credential_type"]]
+        except KeyError as err:
+            raise InvalidCredentialsError(f"Unknown credential component type {err}")
+
         credential_component_class = CREDENTIAL_COMPONENT_TYPE_TO_CLASS[credential_component_type]
         credential_component_schema = CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA[
             credential_component_type
@@ -104,13 +117,23 @@ class Credentials:
 
     @staticmethod
     def from_mapping(credentials: Mapping) -> Credentials:
-        deserialized_data = CredentialsSchema().load(credentials)
-        return Credentials(**deserialized_data)
+        try:
+            deserialized_data = CredentialsSchema().load(credentials)
+            return Credentials(**deserialized_data)
+        except (InvalidCredentialsError, InvalidCredentialComponentError) as err:
+            raise err
+        except Exception as err:
+            raise InvalidCredentialsError(str(err))
 
     @staticmethod
     def from_json(credentials: str) -> Credentials:
-        deserialized_data = CredentialsSchema().loads(credentials)
-        return Credentials(**deserialized_data)
+        try:
+            deserialized_data = CredentialsSchema().loads(credentials)
+            return Credentials(**deserialized_data)
+        except (InvalidCredentialsError, InvalidCredentialComponentError) as err:
+            raise err
+        except Exception as err:
+            raise InvalidCredentialsError(str(err))
 
     @staticmethod
     def to_json(credentials: Credentials) -> str:

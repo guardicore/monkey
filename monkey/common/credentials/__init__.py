@@ -1,7 +1,7 @@
 from .credential_component_type import CredentialComponentType
 from .i_credential_component import ICredentialComponent
 
-from .validators import InvalidCredentialComponent
+from .validators import InvalidCredentialComponentError, InvalidCredentialsError
 
 from .lm_hash import LMHash
 from .nt_hash import NTHash

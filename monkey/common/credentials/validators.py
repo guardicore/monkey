@@ -9,7 +9,7 @@ _ntlm_hash_regex = re.compile(r"^[a-fA-F0-9]{32}$")
 ntlm_hash_validator = validate.Regexp(regex=_ntlm_hash_regex)
 
 
-class InvalidCredentialComponent(Exception):
+class InvalidCredentialComponentError(Exception):
     def __init__(self, credential_component_class: Type[ICredentialComponent], message: str):
         self._credential_component_name = credential_component_class.__name__
         self._message = message
@@ -17,6 +17,17 @@ class InvalidCredentialComponent(Exception):
     def __str__(self) -> str:
         return (
             f"Cannot construct a {self._credential_component_name} object with the supplied, "
+            f"invalid data: {self._message}"
+        )
+
+
+class InvalidCredentialsError(Exception):
+    def __init__(self, message: str):
+        self._message = message
+
+    def __str__(self) -> str:
+        return (
+            f"Cannot construct a Credentials object with the supplied, "
             f"invalid data: {self._message}"
         )
 
@@ -36,4 +47,4 @@ def credential_component_validator(schema: Schema, credential_component: ICreden
         # makes it impossible to construct an invalid object
         schema.load(serialized_data)
     except Exception as err:
-        raise InvalidCredentialComponent(credential_component.__class__, err)
+        raise InvalidCredentialComponentError(credential_component.__class__, err)

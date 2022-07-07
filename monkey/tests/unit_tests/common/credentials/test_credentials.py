@@ -1,6 +1,16 @@
 import json
 
-from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
+import pytest
+
+from common.credentials import (
+    Credentials,
+    InvalidCredentialsError,
+    LMHash,
+    NTHash,
+    Password,
+    SSHKeypair,
+    Username,
+)
 
 USER1 = "test_user_1"
 USER2 = "test_user_2"
@@ -55,3 +65,15 @@ def test_credentials_deserialization__from_json():
     deserialized_credentials = Credentials.from_json(CREDENTIALS_JSON)
 
     assert deserialized_credentials == CREDENTIALS_OBJECT
+
+
+def test_credentials_deserialization__invalid_credentials():
+    invalid_data = {"secrets": [], "unknown_key": []}
+    with pytest.raises(InvalidCredentialsError):
+        Credentials.from_mapping(invalid_data)
+
+
+def test_credentials_deserialization__invalid_component_type():
+    invalid_data = {"secrets": [], "identities": [{"credential_type": "FAKE", "username": "user1"}]}
+    with pytest.raises(InvalidCredentialsError):
+        Credentials.from_mapping(invalid_data)
