@@ -106,11 +106,18 @@ const IslandResetModal = (props: Props) => {
       .then(res => {
         if (res.status === 200) {
             return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
-        })
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+          return auth.authFetch('/api/reset-configured-propagation-credentials', {method: 'POST'})
+        }
+      })
       .then(res => {
         if (res.status === 200) {
             return auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
-        })
+        }
+      })
       .then(res => {
         if (res.status !== 200) {
           throw 'Error resetting the simulation'
