@@ -185,8 +185,18 @@ class Credentials:
         """
         Serialize a Credentials object to JSON
 
-        :param credentials: A Credentials objcet
+        :param credentials: A Credentials object
         :return: A JSON string representing a Credentials object
         """
 
         return CredentialsSchema().dumps(credentials)
+
+    @staticmethod
+    def to_json_array(credentials: Sequence[Credentials]) -> str:
+        """
+        Serialize a Sequence of Credentials objects to a JSON array
+
+        :param credentials: A Sequence of Credentials objects
+        :return: A JSON string representing an array of Credentials objects
+        """
+        return "[" + ",".join([Credentials.to_json(c) for c in credentials]) + "]"
