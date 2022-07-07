@@ -19,7 +19,7 @@ import HtmlFieldDescription from '../configuration-components/HtmlFieldDescripti
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 import {SCHEMA} from '../../services/configuration/config_schema.js';
 
-const CONFIG_URL = '/api/configuration/island';
+const CONFIG_URL = '/api/agent-configuration';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/file-upload/PBAwindows';
 
@@ -68,10 +68,8 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidMount = () => {
-    let urls = ['/api/agent-configuration'];
-    // ??? Why fetch config here and not in `render()`?
-    Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
-      .then(data => {
+    this.authFetch(CONFIG_URL).then(res => res.json())
+      .then(monkeyConfig => {
         let sections = [];
         let monkeyConfig = data[0];
         // TODO: Fix when we add plugins
@@ -322,7 +320,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   sendConfig() {
     return (
-      this.authFetch('/api/configuration/island',
+      this.authFetch(CONFIG_URL,
         {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
