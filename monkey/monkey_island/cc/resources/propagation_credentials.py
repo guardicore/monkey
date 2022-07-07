@@ -13,7 +13,7 @@ class UnknownCredentialTypeError(Exception):
     pass
 
 
-class PropagationCredentialsType(Enum):
+class PropagationCredentialType(Enum):
     STOLEN = "stolen"
     CONFIGURED = "configured"
 
@@ -40,9 +40,9 @@ class PropagationCredentials(AbstractResource):
                 return make_response({"error": f"Couldn't create 'Credentials' object: {exc}"}, 400)
 
             try:
-                if body.get("type") == PropagationCredentialsType.STOLEN:
+                if body.get("type") == PropagationCredentialType.STOLEN:
                     self._credentials_repository.save_stolen_credentials(credentials_object)
-                elif body.get("type") == PropagationCredentialsType.CONFIGURED:
+                elif body.get("type") == PropagationCredentialType.CONFIGURED:
                     self._credentials_repository.save_configured_credentials(credentials_object)
                 else:
                     raise UnknownCredentialTypeError("Credential type unknown")
