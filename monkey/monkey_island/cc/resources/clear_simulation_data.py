@@ -24,7 +24,7 @@ class ClearSimulationData(AbstractResource):
             self._credentials_repository.remove_stolen_credentials()
         except RemovalError as err:
             make_response(
-                {"error": f"Error encountered while removing stolen credentials: {err}"}, 400
+                {"error": f"Error encountered while removing stolen credentials: {err}"}, 500
             )
 
         return make_response({}, 200)
