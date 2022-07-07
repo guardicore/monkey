@@ -38,8 +38,7 @@ def test_credential_telem_send(spy_send_telemetry, credentials_for_test):
     telem = CredentialsTelem([credentials_for_test])
     telem.send()
 
-    expected_data = json.dumps(expected_data, cls=telem.json_encoder)
-    assert spy_send_telemetry.data == expected_data
+    assert json.loads(spy_send_telemetry.data) == expected_data
     assert spy_send_telemetry.telem_category == "credentials"
 
 
