@@ -47,10 +47,10 @@ class StubPropagationCredentialsRepository(ICredentialsRepository):
             Credentials.from_mapping(PROPAGATION_CREDENTIALS_2, monkey_guid="second_guid"),
         ]
 
-    def save_configured_credentials(self, credentials: Credentials):
+    def save_configured_credentials(self, credentials: Sequence[Credentials]):
         pass
 
-    def save_stolen_credentials(self, credentials: Credentials):
+    def save_stolen_credentials(self, credentials: Sequence[Credentials]):
         pass
 
     def remove_configured_credentials(self):

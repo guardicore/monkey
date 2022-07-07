@@ -34,15 +34,15 @@ class MongoCredentialsRepository(ICredentialsRepository):
         except RetrievalError as err:
             raise err
 
-    def save_configured_credentials(self, credentials: Credentials):
+    def save_configured_credentials(self, credentials: Sequence[Credentials]):
         try:
-            mongo.db.configured_credentials.insert_one(credentials)
+            mongo.db.configured_credentials.insert_many(credentials)
         except Exception as err:
             raise StorageError(err)
 
-    def save_stolen_credentials(self, credentials: Credentials):
+    def save_stolen_credentials(self, credentials: Sequence[Credentials]):
         try:
-            mongo.db.stolen_credentials.insert_one(credentials)
+            mongo.db.stolen_credentials.insert_many(credentials)
         except Exception as err:
             raise StorageError(err)
 
