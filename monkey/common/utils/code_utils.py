@@ -36,7 +36,7 @@ def queue_to_list(q: queue.Queue) -> List[Any]:
 
 def del_key(mapping: MutableMapping[T, Any], key: T):
     """
-    Deletes key from mapping. Unlike the `del` keyword, this function does not raise a KeyError
+    Delete a key from mapping. Unlike the `del` keyword, this function does not raise a KeyError
     if the key does not exist.
 
     :param mapping: A mapping from which a key will be deleted
