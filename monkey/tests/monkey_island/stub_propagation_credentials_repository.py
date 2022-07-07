@@ -32,6 +32,7 @@ PROPAGATION_CREDENTIALS_2 = {
 }
 
 
+# TODO: Use Credentials from common.credentials when serialization is implemented
 class StubPropagationCredentialsRepository(ICredentialsRepository):
     def get_configured_credentials(self) -> Sequence[Credentials]:
         pass

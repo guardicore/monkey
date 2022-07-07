@@ -29,9 +29,10 @@ def test_propagation_credentials_endpoint_get(flask_client):
     resp = flask_client.get(propagation_credentials_url)
 
     assert resp.status_code == 200
-    actual_propagation_credentials = json.loads(resp.data)["propagation_credentials"]
+    actual_propagation_credentials = json.loads(resp.data)
     assert len(actual_propagation_credentials) == 2
 
+    # TODO: delete the removal of monkey_guid key when the serialization of credentials
     del actual_propagation_credentials[0]["monkey_guid"]
     assert actual_propagation_credentials[0] == PROPAGATION_CREDENTIALS_1
     del actual_propagation_credentials[1]["monkey_guid"]
