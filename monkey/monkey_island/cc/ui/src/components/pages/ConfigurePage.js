@@ -21,6 +21,7 @@ import {SCHEMA} from '../../services/configuration/config_schema.js';
 import {reformatConfig} from '../configuration-components/ReformatHook';
 
 const CONFIG_URL = '/api/agent-configuration';
+const RESET_URL = '/api/reset-agent-configuration';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/file-upload/PBAwindows';
 
@@ -145,7 +146,7 @@ class ConfigurePageComponent extends AuthComponent {
   configSubmit() {
     return this.sendConfig()
       .then(res => res.json())
-      .then(res => {
+      .then(() => {
         this.setState({
           lastAction: configSaveAction
         });
@@ -279,22 +280,16 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
-    this.authFetch(CONFIG_URL,
+    this.authFetch(RESET_URL,
       {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({'reset': true})
       })
       .then(res => res.json())
-      .then(res => {
-          res.configuration = reformatConfig(res.configuration);
+      .then(() => {
           this.setState({
             lastAction: 'reset',
-            schema: res.schema,
-            configuration: res.configuration,
-            currentFormData: res.configuration[this.state.selectedSection]
           });
-          this.setInitialConfig(res.configuration);
+          this.updateConfig();
           this.props.onStatusChange();
         }
       ).then(() => {
