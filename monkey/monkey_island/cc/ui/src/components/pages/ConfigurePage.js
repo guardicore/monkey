@@ -59,6 +59,10 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
+  resetLastAction = () => {
+    this.setState({lastAction: 'none'});
+  }
+
   getSectionsOrder() {
     let islandMode = this.props.islandMode !== 'unset' ? this.props.islandMode : 'advanced'
     return CONFIGURATION_TABS_PER_MODE[islandMode];
@@ -262,13 +266,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   setSelectedSection = (key) => {
-
-    // TODO: Fix https://github.com/guardicore/monkey/issues/1621
-    //if ( key === 'basic' & this.userChangedConfig()) {
-    //  this.setState({showUnsubmittedConfigWarning: true});
-    //  return;
-    //}
-
+    this.resetLastAction();
     this.updateConfigSection();
     this.currentSection = key;
     let selectedSectionData = this.state.configuration[key];
@@ -351,6 +349,7 @@ class ConfigurePageComponent extends AuthComponent {
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['formData'] = this.state.currentFormData;
     formProperties['onChange'] = this.onChange;
+    formProperties['onFocus'] = this.resetLastAction;
     formProperties['customFormats'] = formValidationFormats;
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';

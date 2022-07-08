@@ -182,7 +182,7 @@ class AdvancedMultiSelect extends React.Component {
     } = this.props;
 
     return (
-      <div className={'advanced-multi-select'}>
+      <div className={'advanced-multi-select'} onFocus={this.props.onFocus}>
         <AdvancedMultiSelectHeader title={schema.title}
                                    onCheckboxClick={this.onMasterCheckboxClick}
                                    checkboxState={this.getMasterCheckboxState(
