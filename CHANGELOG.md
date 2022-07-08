@@ -43,7 +43,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Depth flag (-d) on the agent now acts the  way you would expect(it represents
   the current depth of the agent, not hops remaining). #2033
 - Agent configuration structure. #1996, #1998, #1961, #1997, #1994, #1741,
-  #1761, #1695, #1605, #2028
+  #1761, #1695, #1605, #2028, #2003
 - `/api/island-mode` to accept and return new "unset" mode. #2036
 
 ### Removed
@@ -88,6 +88,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Option to export monkey telemetries. #1998
 - "/api/configuration/import" endpoint. #2002
 - "/api/configuration/export" endpoint. #2002
+- "/api/island-configuration" endpoint. #2003
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
