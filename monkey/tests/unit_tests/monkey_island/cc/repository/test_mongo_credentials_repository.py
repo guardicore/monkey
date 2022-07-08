@@ -78,7 +78,6 @@ def test_mongo_repository_configured(fake_mongo):
     ]
 
     mongo_repository = MongoCredentialsRepository()
-
     mongo_repository.save_configured_credentials(credentials)
 
     actual_configured_credentials = mongo_repository.get_configured_credentials()
@@ -99,7 +98,6 @@ def test_mongo_repository_stolen(fake_mongo):
     configured_credentials = [Credentials.from_mapping(CREDENTIALS_DICT_2)]
 
     mongo_repository = MongoCredentialsRepository()
-
     mongo_repository.save_configured_credentials(configured_credentials)
     mongo_repository.save_stolen_credentials(stolen_credentials)
 
@@ -127,7 +125,6 @@ def test_mongo_repository_all(fake_mongo):
     ]
 
     mongo_repository = MongoCredentialsRepository()
-
     mongo_repository.save_configured_credentials(configured_credentials)
     mongo_repository.save_stolen_credentials(stolen_credentials)
 

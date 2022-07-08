@@ -30,6 +30,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
             for c in list_stolen_credentials:
                 del c["_id"]
                 stolen_credentials.append(Credentials.from_mapping(c))
+
             return stolen_credentials
         except Exception as err:
             raise RetrievalError(err)
@@ -44,6 +45,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
             raise err
 
     def save_configured_credentials(self, credentials: Sequence[Credentials]):
+        # TODO: Fix deduplication of Credentials in mongo
         try:
             for c in credentials:
                 mongo.db.configured_credentials.insert_one(Credentials.to_mapping(c))
@@ -51,6 +53,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
             raise StorageError(err)
 
     def save_stolen_credentials(self, credentials: Sequence[Credentials]):
+        # TODO: Fix deduplication of Credentials in mongo
         try:
             for c in credentials:
                 mongo.db.stolen_credentials.insert_one(Credentials.to_mapping(c))
