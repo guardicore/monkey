@@ -200,3 +200,13 @@ class Credentials:
         :return: A JSON string representing an array of Credentials objects
         """
         return "[" + ",".join([Credentials.to_json(c) for c in credentials]) + "]"
+
+    @staticmethod
+    def to_mapping(credentials: Credentials) -> Mapping:
+        """
+        Serialize a Credentials object to Mapping
+
+        :param credentials: A Credentials object
+        :return: A mapping representing a Credentials object
+        """
+        return CredentialsSchema().dump(credentials)
