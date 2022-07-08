@@ -46,7 +46,6 @@ class ConfigurePageComponent extends AuthComponent {
       selectedSection: this.currentSection,
       showUnsubmittedConfigWarning: false,
       showUnsafeOptionsConfirmation: false,
-      showUnsafeAttackOptionsWarning: false,
       showConfigExportModal: false,
       showConfigImportModal: false
     };
@@ -204,32 +203,6 @@ class ConfigurePageComponent extends AuthComponent {
       this.setState({showConfigImportModal: false});
     }
   }
-
-  renderAttackAlertModal = () => {
-    return (<Modal show={this.state.showUnsubmittedConfigWarning} onHide={() => {
-      this.setState({showUnsubmittedConfigWarning: false})
-    }}>
-      <Modal.Body>
-        <h2>
-          <div className='text-center'>Warning</div>
-        </h2>
-        <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-          You have unsubmitted changes. Submit them before proceeding.
-        </p>
-        <div className='text-center'>
-          <Button type='button'
-                  className='btn btn-success'
-                  size='lg'
-                  style={{margin: '5px'}}
-                  onClick={() => {
-                    this.setState({showUnsubmittedConfigWarning: false})
-                  }}>
-            Cancel
-          </Button>
-        </div>
-      </Modal.Body>
-    </Modal>)
-  };
 
   renderUnsafeOptionsConfirmationModal() {
     return (
@@ -402,7 +375,6 @@ class ConfigurePageComponent extends AuthComponent {
            className={'main'}>
         {this.renderConfigExportModal()}
         {this.renderConfigImportModal()}
-        {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
         {this.renderUnsafeAttackOptionsWarningModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
