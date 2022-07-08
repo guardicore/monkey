@@ -1,7 +1,8 @@
 from typing import Sequence
 
+from flask_pymongo import PyMongo
+
 from common.credentials import Credentials
-from monkey_island.cc.database import mongo
 from monkey_island.cc.repository import RemovalError, RetrievalError, StorageError
 from monkey_island.cc.repository.i_credentials_repository import ICredentialsRepository
 
@@ -11,27 +12,23 @@ class MongoCredentialsRepository(ICredentialsRepository):
     Store credentials in a mongo database that can be used to propagate around the network.
     """
 
+    def __init__(self, mongo_db: PyMongo):
+        self._mongo = mongo_db
+
     def get_configured_credentials(self) -> Sequence[Credentials]:
         try:
-            configured_credentials = []
-            list_configured_credentials = list(mongo.db.configured_credentials.find({}))
-            for c in list_configured_credentials:
-                del c["_id"]
-                configured_credentials.append(Credentials.from_mapping(c))
 
-            return configured_credentials
+            return MongoCredentialsRepository._get_credentials_from_collection(
+                self._mongo.db.configured_credentials
+            )
         except Exception as err:
             raise RetrievalError(err)
 
     def get_stolen_credentials(self) -> Sequence[Credentials]:
         try:
-            stolen_credentials = []
-            list_stolen_credentials = list(mongo.db.stolen_credentials.find({}))
-            for c in list_stolen_credentials:
-                del c["_id"]
-                stolen_credentials.append(Credentials.from_mapping(c))
-
-            return stolen_credentials
+            return MongoCredentialsRepository._get_credentials_from_collection(
+                self._mongo.db.stolen_credentials
+            )
         except Exception as err:
             raise RetrievalError(err)
 
@@ -47,28 +44,30 @@ class MongoCredentialsRepository(ICredentialsRepository):
     def save_configured_credentials(self, credentials: Sequence[Credentials]):
         # TODO: Fix deduplication of Credentials in mongo
         try:
-            for c in credentials:
-                mongo.db.configured_credentials.insert_one(Credentials.to_mapping(c))
+            MongoCredentialsRepository._save_credentials_to_collection(
+                credentials, self._mongo.db.configured_credentials
+            )
         except Exception as err:
             raise StorageError(err)
 
     def save_stolen_credentials(self, credentials: Sequence[Credentials]):
         # TODO: Fix deduplication of Credentials in mongo
         try:
-            for c in credentials:
-                mongo.db.stolen_credentials.insert_one(Credentials.to_mapping(c))
+            MongoCredentialsRepository._save_credentials_to_collection(
+                credentials, self._mongo.db.stolen_credentials
+            )
         except Exception as err:
             raise StorageError(err)
 
     def remove_configured_credentials(self):
         try:
-            mongo.db.configured_credentials.delete_many({})
+            MongoCredentialsRepository._delete_collection(self._mongo.db.configured_credentials)
         except Exception as err:
             raise RemovalError(err)
 
     def remove_stolen_credentials(self):
         try:
-            mongo.db.stolen_credentials.delete_many({})
+            MongoCredentialsRepository._delete_collection(self._mongo.db.stolen_credentials)
         except Exception as err:
             raise RemovalError(err)
 
@@ -78,3 +77,22 @@ class MongoCredentialsRepository(ICredentialsRepository):
             self.remove_stolen_credentials()
         except RemovalError as err:
             raise err
+
+    @staticmethod
+    def _get_credentials_from_collection(collection) -> Sequence[Credentials]:
+        collection_result = []
+        list_collection_result = list(collection.find({}))
+        for c in list_collection_result:
+            del c["_id"]
+            collection_result.append(Credentials.from_mapping(c))
+
+        return collection_result
+
+    @staticmethod
+    def _save_credentials_to_collection(credentials: Sequence[Credentials], collection):
+        for c in credentials:
+            collection.insert_one(Credentials.to_mapping(c))
+
+    @staticmethod
+    def _delete_collection(collection):
+        collection.delete_many({})

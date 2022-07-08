@@ -42,101 +42,91 @@ CREDENTIALS_DICT_2 = {
     ],
 }
 
+CONFIGURED_CREDENTIALS = [Credentials.from_mapping(CREDENTIALS_DICT_1)]
+
+STOLEN_CREDENTIALS = [Credentials.from_mapping(CREDENTIALS_DICT_2)]
+
+CREDENTIALS_LIST = [
+    Credentials.from_mapping(CREDENTIALS_DICT_1),
+    Credentials.from_mapping(CREDENTIALS_DICT_2),
+]
+
 
 @pytest.fixture
-def fake_mongo(monkeypatch):
+def fake_mongo_repository(monkeypatch):
     mongo = mongoengine.connection.get_connection()
-    monkeypatch.setattr("monkey_island.cc.repository.mongo_credentials_repository.mongo", mongo)
+    return MongoCredentialsRepository(mongo)
 
 
-def test_mongo_repository_get_configured(fake_mongo):
+def test_mongo_repository_get_configured(fake_mongo_repository):
 
-    actual_configured_credentials = MongoCredentialsRepository().get_configured_credentials()
+    actual_configured_credentials = fake_mongo_repository.get_configured_credentials()
 
     assert actual_configured_credentials == []
 
 
-def test_mongo_repository_get_stolen(fake_mongo):
+def test_mongo_repository_get_stolen(fake_mongo_repository):
 
-    actual_stolen_credentials = MongoCredentialsRepository().get_stolen_credentials()
+    actual_stolen_credentials = fake_mongo_repository.get_stolen_credentials()
 
     assert actual_stolen_credentials == []
 
 
-def test_mongo_repository_get_all(fake_mongo):
+def test_mongo_repository_get_all(fake_mongo_repository):
 
-    actual_credentials = MongoCredentialsRepository().get_all_credentials()
+    actual_credentials = fake_mongo_repository.get_all_credentials()
 
     assert actual_credentials == []
 
 
-def test_mongo_repository_configured(fake_mongo):
+def test_mongo_repository_configured(fake_mongo_repository):
 
-    credentials = [
-        Credentials.from_mapping(CREDENTIALS_DICT_1),
-        Credentials.from_mapping(CREDENTIALS_DICT_2),
-    ]
+    fake_mongo_repository.save_configured_credentials(CREDENTIALS_LIST)
 
-    mongo_repository = MongoCredentialsRepository()
-    mongo_repository.save_configured_credentials(credentials)
+    actual_configured_credentials = fake_mongo_repository.get_configured_credentials()
 
-    actual_configured_credentials = mongo_repository.get_configured_credentials()
+    assert actual_configured_credentials == CREDENTIALS_LIST
 
-    assert actual_configured_credentials == credentials
+    fake_mongo_repository.remove_configured_credentials()
 
-    mongo_repository.remove_configured_credentials()
-
-    actual_configured_credentials = mongo_repository.get_configured_credentials()
+    actual_configured_credentials = fake_mongo_repository.get_configured_credentials()
 
     assert actual_configured_credentials == []
 
 
-def test_mongo_repository_stolen(fake_mongo):
+def test_mongo_repository_stolen(fake_mongo_repository):
 
-    stolen_credentials = [Credentials.from_mapping(CREDENTIALS_DICT_1)]
+    fake_mongo_repository.save_configured_credentials(CONFIGURED_CREDENTIALS)
+    fake_mongo_repository.save_stolen_credentials(STOLEN_CREDENTIALS)
 
-    configured_credentials = [Credentials.from_mapping(CREDENTIALS_DICT_2)]
+    actual_stolen_credentials = fake_mongo_repository.get_stolen_credentials()
 
-    mongo_repository = MongoCredentialsRepository()
-    mongo_repository.save_configured_credentials(configured_credentials)
-    mongo_repository.save_stolen_credentials(stolen_credentials)
+    assert actual_stolen_credentials == STOLEN_CREDENTIALS
 
-    actual_stolen_credentials = mongo_repository.get_stolen_credentials()
+    fake_mongo_repository.remove_stolen_credentials()
 
-    assert actual_stolen_credentials == stolen_credentials
-
-    mongo_repository.remove_stolen_credentials()
-
-    actual_stolen_credentials = mongo_repository.get_stolen_credentials()
+    actual_stolen_credentials = fake_mongo_repository.get_stolen_credentials()
 
     assert actual_stolen_credentials == []
 
     # Must remove configured also for the next tests
-    mongo_repository.remove_configured_credentials()
+    fake_mongo_repository.remove_configured_credentials()
 
 
-def test_mongo_repository_all(fake_mongo):
+def test_mongo_repository_all(fake_mongo_repository):
 
-    configured_credentials = [Credentials.from_mapping(CREDENTIALS_DICT_1)]
-    stolen_credentials = [Credentials.from_mapping(CREDENTIALS_DICT_2)]
-    all_credentials = [
-        Credentials.from_mapping(CREDENTIALS_DICT_1),
-        Credentials.from_mapping(CREDENTIALS_DICT_2),
-    ]
+    fake_mongo_repository.save_configured_credentials(CONFIGURED_CREDENTIALS)
+    fake_mongo_repository.save_stolen_credentials(STOLEN_CREDENTIALS)
 
-    mongo_repository = MongoCredentialsRepository()
-    mongo_repository.save_configured_credentials(configured_credentials)
-    mongo_repository.save_stolen_credentials(stolen_credentials)
+    actual_credentials = fake_mongo_repository.get_all_credentials()
 
-    actual_credentials = mongo_repository.get_all_credentials()
+    assert actual_credentials == CREDENTIALS_LIST
 
-    assert actual_credentials == all_credentials
+    fake_mongo_repository.remove_all_credentials()
 
-    mongo_repository.remove_all_credentials()
-
-    actual_credentials = mongo_repository.get_all_credentials()
-    actual_stolen_credentials = mongo_repository.get_stolen_credentials()
-    actual_configured_credentials = mongo_repository.get_configured_credentials()
+    actual_credentials = fake_mongo_repository.get_all_credentials()
+    actual_stolen_credentials = fake_mongo_repository.get_stolen_credentials()
+    actual_configured_credentials = fake_mongo_repository.get_configured_credentials()
 
     assert actual_credentials == []
     assert actual_stolen_credentials == []
