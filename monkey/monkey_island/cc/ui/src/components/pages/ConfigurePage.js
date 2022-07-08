@@ -1,6 +1,6 @@
 import React from 'react';
 import Form from 'react-jsonschema-form-bs4';
-import {Button, Col, Modal, Nav} from 'react-bootstrap';
+import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import UiSchema from '../configuration-components/UiSchema';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -10,7 +10,6 @@ import {formValidationFormats} from '../configuration-components/ValidationForma
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
-import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
@@ -107,10 +106,6 @@ class ConfigurePageComponent extends AuthComponent {
       this.configSubmit();
       this.setState({showConfigExportModal: true});
     }
-  }
-
-  onUnsafeAttackContinueClick = () => {
-    this.setState({showUnsafeAttackOptionsWarning: false});
   }
 
   updateConfig = () => {
@@ -228,12 +223,12 @@ class ConfigurePageComponent extends AuthComponent {
   resetConfig = () => {
     this.authFetch(RESET_URL,
       {
-        method: 'POST',
+        method: 'POST'
       })
       .then(res => res.json())
       .then(() => {
           this.setState({
-            lastAction: 'reset',
+            lastAction: 'reset'
           });
           this.updateConfig();
           this.props.onStatusChange();
