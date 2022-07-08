@@ -44,7 +44,6 @@ class ConfigurePageComponent extends AuthComponent {
       schema: {},
       sections: [],
       selectedSection: this.currentSection,
-      showUnsubmittedConfigWarning: false,
       showUnsafeOptionsConfirmation: false,
       showConfigExportModal: false,
       showConfigImportModal: false
@@ -214,15 +213,6 @@ class ConfigurePageComponent extends AuthComponent {
     );
   }
 
-  renderUnsafeAttackOptionsWarningModal() {
-    return (
-      <UnsafeOptionsWarningModal
-        show={this.state.showUnsafeAttackOptionsWarning}
-        onContinueClick={this.onUnsafeAttackContinueClick}
-      />
-    );
-  }
-
   setSelectedSection = (key) => {
     this.resetLastAction();
     this.updateConfigSection();
@@ -376,7 +366,6 @@ class ConfigurePageComponent extends AuthComponent {
         {this.renderConfigExportModal()}
         {this.renderConfigImportModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
-        {this.renderUnsafeAttackOptionsWarningModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
