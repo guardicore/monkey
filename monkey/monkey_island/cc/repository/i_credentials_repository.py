@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Sequence
+from typing import Optional, Sequence
 
 from common.credentials import Credentials
 
@@ -13,74 +13,35 @@ class ICredentialsRepository(ABC):
     a simulation.
     """
 
-    def get_configured_credentials(self) -> Sequence[Credentials]:
+    def get_credentials(
+        self, origin: Optional[str], secret_type: Optional[str]
+    ) -> Sequence[Credentials]:
         """
-        Retrieve credentials that were configured.
+        Retrieve credentials in the repository.
 
+        :param origin: String representing the origin of the credentials
+        :param secret_type: String representing secret type
         :raises RetrievalError: If an error is encountered while attempting to retrieve the
                                 credentials
-        :return: Sequence of configured credentials
+        :return: Sequence of filtered credentials
         """
         pass
 
-    def get_stolen_credentials(self) -> Sequence[Credentials]:
-        """
-        Retrieve credentials that were stolen during a simulation.
-
-        :raises RetrievalError: If an error is encountered while attempting to retrieve the
-                                credentials
-        :return: Sequence of stolen credentials
-        """
-        pass
-
-    def get_all_credentials(self) -> Sequence[Credentials]:
-        """
-        Retrieve all credentials in the repository.
-
-        :raises RetrievalError: If an error is encountered while attempting to retrieve the
-                                credentials
-        :return: Sequence of stolen and configured credentials
-        """
-        pass
-
-    def save_configured_credentials(self, credentials: Credentials):
+    def save_credentials(self, credentials: Credentials, origin: str):
         """
         Save credentials that were configured.
 
+        :param origin: String representing the origin of credentials
         :param credentials: Configured Credentials to store in the repository
         :raises StorageError: If an error is encountered while attempting to store the credentials
         """
         pass
 
-    def save_stolen_credentials(self, credentials: Credentials):
-        """
-        Save credentials that were stolen during a simulation.
-
-        :param credentials: Stolen Credentials to store in the repository
-        :raises StorageError: If an error is encountered while attempting to store the credentials
-        """
-        pass
-
-    def remove_configured_credentials(self):
-        """
-        Remove credentials that were configured from the repository.
-
-        :raises RemovalError: If an error is encountered while attempting to remove the credentials
-        """
-        pass
-
-    def remove_stolen_credentials(self):
-        """
-        Remove stolen credentials from the repository.
-
-        :raises RemovalError: If an error is encountered while attempting to remove the credentials
-        """
-        pass
-
-    def remove_all_credentials(self):
+    def remove_credentials(self, origin: Optional[str]):
         """
         Remove all credentials in the repository.
 
+        :param origin: String representing the origin of the credentials
         :raises RemovalError: If an error is encountered while attempting to remove the credentials
         """
         pass
