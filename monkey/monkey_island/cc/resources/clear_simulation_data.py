@@ -1,6 +1,5 @@
 from flask import make_response
 
-from monkey_island.cc.repository import RemovalError
 from monkey_island.cc.repository.i_credentials_repository import ICredentialsRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
