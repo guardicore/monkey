@@ -20,8 +20,7 @@ type Props = {
 
 
 const ConfigImportModal = (props: Props) => {
-  // TODO: change this endpoint to the new configuration import endpoint
-  const configImportEndpoint = '/api/configuration/import';
+  const configImportEndpoint = '/api/agent-configuration';
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
   const [configContents, setConfigContents] = useState(null);
@@ -71,18 +70,15 @@ const ConfigImportModal = (props: Props) => {
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          config: configContents,
-        })
+        body: JSON.stringify(configContents)
       }
-    ).then(res => res.json())
-      .then(res => {
-        if (res['import_status'] === 'invalid_configuration') {
-          setUploadStatus(UploadStatuses.error);
-          setErrorMessage(res['message']);
-        } else if (res['import_status'] === 'imported') {
+    ).then(res => {
+        if (res.ok) {
           resetState();
           props.onClose(true);
+        } else {
+          setUploadStatus(UploadStatuses.error);
+          setErrorMessage("Configuration file is corrupt or in an outdated format.");
         }
       })
   }

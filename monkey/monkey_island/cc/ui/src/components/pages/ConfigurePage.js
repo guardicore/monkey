@@ -1,6 +1,6 @@
 import React from 'react';
 import Form from 'react-jsonschema-form-bs4';
-import {Button, Col, Modal, Nav} from 'react-bootstrap';
+import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import UiSchema from '../configuration-components/UiSchema';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -10,7 +10,6 @@ import {formValidationFormats} from '../configuration-components/ValidationForma
 import transformErrors from '../configuration-components/ValidationErrorMessages';
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
-import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
@@ -18,8 +17,10 @@ import applyUiSchemaManipulators from '../configuration-components/UISchemaManip
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 import {SCHEMA} from '../../services/configuration/config_schema.js';
+import {reformatConfig} from '../configuration-components/ReformatHook';
 
-const CONFIG_URL = '/api/configuration/island';
+const CONFIG_URL = '/api/agent-configuration';
+const RESET_URL = '/api/reset-agent-configuration';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/file-upload/PBAwindows';
 
@@ -42,9 +43,7 @@ class ConfigurePageComponent extends AuthComponent {
       schema: {},
       sections: [],
       selectedSection: this.currentSection,
-      showUnsubmittedConfigWarning: false,
       showUnsafeOptionsConfirmation: false,
-      showUnsafeAttackOptionsWarning: false,
       showConfigExportModal: false,
       showConfigImportModal: false
     };
@@ -57,8 +56,13 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
+  resetLastAction = () => {
+    this.setState({lastAction: 'none'});
+  }
+
   getSectionsOrder() {
-    let islandMode = this.props.islandMode !== 'unset' ? this.props.islandMode : 'advanced'
+    let islandModeSet = (this.props.islandMode !== 'unset' && this.props.islandMode !== undefined)
+    let islandMode = islandModeSet ? this.props.islandMode : 'advanced'
     return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
@@ -68,14 +72,10 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   componentDidMount = () => {
-    let urls = ['/api/agent-configuration'];
-    // ??? Why fetch config here and not in `render()`?
-    Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
-      .then(data => {
+    this.authFetch(CONFIG_URL).then(res => res.json())
+      .then(monkeyConfig => {
         let sections = [];
-        let monkeyConfig = data[0];
-        // TODO: Fix when we add plugins
-        monkeyConfig['payloads'] = monkeyConfig['payloads'][0]['options'];
+        monkeyConfig = reformatConfig(monkeyConfig);
 
         this.setInitialConfig(monkeyConfig);
         for (let sectionKey of this.getSectionsOrder()) {
@@ -108,17 +108,16 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
-  onUnsafeAttackContinueClick = () => {
-    this.setState({showUnsafeAttackOptionsWarning: false});
-  }
-
-  updateConfig = (callback = null) => {
+  updateConfig = () => {
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
-        this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration,
-          currentFormData: data.configuration[this.state.selectedSection]}, callback);
+        data = reformatConfig(data);
+        this.setInitialConfig(data);
+        this.setState({
+          configuration: data,
+          currentFormData: data[this.state.selectedSection]
+        });
       })
   };
 
@@ -134,7 +133,7 @@ class ConfigurePageComponent extends AuthComponent {
     await this.updateConfigSection();
     if (this.canSafelySubmitConfig(this.state.configuration)) {
       this.configSubmit();
-      if(this.state.lastAction === configExportAction){
+      if (this.state.lastAction === configExportAction) {
         this.setState({showConfigExportModal: true})
       }
     } else {
@@ -145,18 +144,16 @@ class ConfigurePageComponent extends AuthComponent {
   configSubmit() {
     return this.sendConfig()
       .then(res => res.json())
-      .then(res => {
+      .then(() => {
         this.setState({
-          lastAction: configSaveAction,
-          schema: res.schema,
-          configuration: res.configuration
+          lastAction: configSaveAction
         });
-        this.setInitialConfig(res.configuration);
+        this.setInitialConfig(this.state.configuration);
         this.props.onStatusChange();
       }).catch(error => {
-      console.log('Bad configuration: ' + error.toString());
-      this.setState({lastAction: 'invalid_configuration'});
-    });
+        console.log('Bad configuration: ' + error.toString());
+        this.setState({lastAction: 'invalid_configuration'});
+      });
   }
 
   onChange = ({formData}) => {
@@ -189,41 +186,17 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   onClose = (importSuccessful) => {
-    if(importSuccessful === true){
+    if (importSuccessful === true) {
       this.updateConfig();
-      this.setState({lastAction: 'import_success',
-                          showConfigImportModal: false});
+      this.setState({
+        lastAction: 'import_success',
+        showConfigImportModal: false
+      });
 
     } else {
       this.setState({showConfigImportModal: false});
     }
   }
-
-  renderAttackAlertModal = () => {
-    return (<Modal show={this.state.showUnsubmittedConfigWarning} onHide={() => {
-      this.setState({showUnsubmittedConfigWarning: false})
-    }}>
-      <Modal.Body>
-        <h2>
-          <div className='text-center'>Warning</div>
-        </h2>
-        <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-          You have unsubmitted changes. Submit them before proceeding.
-        </p>
-        <div className='text-center'>
-          <Button type='button'
-                  className='btn btn-success'
-                  size='lg'
-                  style={{margin: '5px'}}
-                  onClick={() => {
-                    this.setState({showUnsubmittedConfigWarning: false})
-                  }}>
-            Cancel
-          </Button>
-        </div>
-      </Modal.Body>
-    </Modal>)
-  };
 
   renderUnsafeOptionsConfirmationModal() {
     return (
@@ -235,39 +208,8 @@ class ConfigurePageComponent extends AuthComponent {
     );
   }
 
-  renderUnsafeAttackOptionsWarningModal() {
-    return (
-      <UnsafeOptionsWarningModal
-        show={this.state.showUnsafeAttackOptionsWarning}
-        onContinueClick={this.onUnsafeAttackContinueClick}
-      />
-    );
-  }
-
-  userChangedConfig() {
-    try {
-      if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
-        if (Object.keys(this.state.currentFormData).length === 0 ||
-          JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
-          return false;
-        }
-      }
-    } catch (TypeError) {
-      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)){
-         return false;
-      }
-    }
-    return true;
-  }
-
   setSelectedSection = (key) => {
-
-    // TODO: Fix https://github.com/guardicore/monkey/issues/1621
-    //if ( key === 'basic' & this.userChangedConfig()) {
-    //  this.setState({showUnsubmittedConfigWarning: true});
-    //  return;
-    //}
-
+    this.resetLastAction();
     this.updateConfigSection();
     this.currentSection = key;
     let selectedSectionData = this.state.configuration[key];
@@ -279,21 +221,16 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   resetConfig = () => {
-    this.authFetch(CONFIG_URL,
+    this.authFetch(RESET_URL,
       {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({'reset': true})
+        method: 'POST'
       })
       .then(res => res.json())
-      .then(res => {
+      .then(() => {
           this.setState({
-            lastAction: 'reset',
-            schema: res.schema,
-            configuration: res.configuration,
-            currentFormData: res.configuration[this.state.selectedSection]
+            lastAction: 'reset'
           });
-          this.setInitialConfig(res.configuration);
+          this.updateConfig();
           this.props.onStatusChange();
         }
       ).then(() => {
@@ -321,12 +258,15 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   sendConfig() {
+    let config = JSON.parse(JSON.stringify(this.state.configuration))
+    config = reformatConfig(config, true);
+
     return (
-      this.authFetch('/api/configuration/island',
+      this.authFetch(CONFIG_URL,
         {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(this.state.configuration)
+          body: JSON.stringify(config)
         })
         .then(res => {
           if (!res.ok) {
@@ -352,14 +292,15 @@ class ConfigurePageComponent extends AuthComponent {
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['formData'] = this.state.currentFormData;
     formProperties['onChange'] = this.onChange;
+    formProperties['onFocus'] = this.resetLastAction;
     formProperties['customFormats'] = formValidationFormats;
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
 
     applyUiSchemaManipulators(this.state.selectedSection,
-                              formProperties['formData'],
-                              formProperties['uiSchema']);
+      formProperties['formData'],
+      formProperties['uiSchema']);
 
     return (
       <div>
@@ -419,9 +360,7 @@ class ConfigurePageComponent extends AuthComponent {
            className={'main'}>
         {this.renderConfigExportModal()}
         {this.renderConfigImportModal()}
-        {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
-        {this.renderUnsafeAttackOptionsWarningModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
