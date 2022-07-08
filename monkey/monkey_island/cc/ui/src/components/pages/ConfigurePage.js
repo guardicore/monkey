@@ -250,22 +250,6 @@ class ConfigurePageComponent extends AuthComponent {
     );
   }
 
-  userChangedConfig() {
-    try {
-      if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
-        if (Object.keys(this.state.currentFormData).length === 0 ||
-          JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
-          return false;
-        }
-      }
-    } catch (TypeError) {
-      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   setSelectedSection = (key) => {
     this.resetLastAction();
     this.updateConfigSection();
