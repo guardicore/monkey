@@ -13,14 +13,23 @@ class MongoCredentialsRepository(ICredentialsRepository):
 
     def get_configured_credentials(self) -> Sequence[Credentials]:
         try:
-            configured_credentials = list(mongo.db.configured_credentials.find({}))
+            configured_credentials = []
+            list_configured_credentials = list(mongo.db.configured_credentials.find({}))
+            for c in list_configured_credentials:
+                del c["_id"]
+                configured_credentials.append(Credentials.from_mapping(c))
+
             return configured_credentials
         except Exception as err:
             raise RetrievalError(err)
 
     def get_stolen_credentials(self) -> Sequence[Credentials]:
         try:
-            stolen_credentials = list(mongo.db.stolen_credentials.find({}))
+            stolen_credentials = []
+            list_stolen_credentials = list(mongo.db.stolen_credentials.find({}))
+            for c in list_stolen_credentials:
+                del c["_id"]
+                stolen_credentials.append(Credentials.from_mapping(c))
             return stolen_credentials
         except Exception as err:
             raise RetrievalError(err)
@@ -36,25 +45,27 @@ class MongoCredentialsRepository(ICredentialsRepository):
 
     def save_configured_credentials(self, credentials: Sequence[Credentials]):
         try:
-            mongo.db.configured_credentials.insert_many(credentials)
+            for c in credentials:
+                mongo.db.configured_credentials.insert_one(Credentials.to_mapping(c))
         except Exception as err:
             raise StorageError(err)
 
     def save_stolen_credentials(self, credentials: Sequence[Credentials]):
         try:
-            mongo.db.stolen_credentials.insert_many(credentials)
+            for c in credentials:
+                mongo.db.stolen_credentials.insert_one(Credentials.to_mapping(c))
         except Exception as err:
             raise StorageError(err)
 
     def remove_configured_credentials(self):
         try:
-            mongo.db.configured_credentials.remove({})
+            mongo.db.configured_credentials.delete_many({})
         except Exception as err:
             raise RemovalError(err)
 
     def remove_stolen_credentials(self):
         try:
-            mongo.db.stolen_credentials.remove({})
+            mongo.db.stolen_credentials.delete_many({})
         except Exception as err:
             raise RemovalError(err)
 
