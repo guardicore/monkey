@@ -18,9 +18,11 @@ from monkey_island.cc.repository import (
     FileSimulationRepository,
     IAgentBinaryRepository,
     IAgentConfigurationRepository,
+    ICredentialsRepository,
     IFileRepository,
     ISimulationRepository,
     LocalStorageFileRepository,
+    MongoCredentialsRepository,
     RetrievalError,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
@@ -73,6 +75,9 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
     )
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
+    container.register_instance(
+        ICredentialsRepository, container.resolve(MongoCredentialsRepository)
+    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
