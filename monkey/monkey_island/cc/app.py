@@ -28,6 +28,9 @@ from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyB
 from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
     TelemetryBlackboxEndpoint,
 )
+from monkey_island.cc.resources.credentials.configured_propagation_credentials import (
+    ConfiguredPropagationCredentials,
+)
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
@@ -185,6 +188,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(FileUpload)
 
     api.add_resource(PropagationCredentials)
+    api.add_resource(ConfiguredPropagationCredentials)
+
     api.add_resource(RemoteRun)
     api.add_resource(VersionUpdate)
     api.add_resource(StopAgentCheck)
