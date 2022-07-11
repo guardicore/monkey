@@ -9,7 +9,6 @@ from common.config_value_paths import (
     PBA_LINUX_FILENAME_PATH,
     PBA_WINDOWS_FILENAME_PATH,
     SSH_KEYS_PATH,
-    USER_LIST_PATH,
 )
 from monkey_island.cc.database import mongo
 from monkey_island.cc.server_utils.encryption import (
@@ -96,52 +95,6 @@ class ConfigService:
     def set_config_value(config_key_as_arr, value):
         mongo_key = ".".join(config_key_as_arr)
         mongo.db.config.update({}, {"$set": {mongo_key: value}})
-
-    # Not added to interface because it's doable by get_config_field + set_config_field
-    @staticmethod
-    def add_item_to_config_set_if_dont_exist(item_path_array, item_value, should_encrypt):
-        item_key = ".".join(item_path_array)
-        items_from_config = ConfigService.get_config_value(item_path_array, should_encrypt)
-        if item_value in items_from_config:
-            return
-        if should_encrypt:
-            if isinstance(item_value, dict):
-                item_value = encrypt_dict(SENSITIVE_SSH_KEY_FIELDS, item_value)
-            else:
-                item_value = get_datastore_encryptor().encrypt(item_value)
-        mongo.db.config.update({}, {"$addToSet": {item_key: item_value}})
-
-    @staticmethod
-    def creds_add_username(username):
-        ConfigService.add_item_to_config_set_if_dont_exist(
-            USER_LIST_PATH, username, should_encrypt=False
-        )
-
-    @staticmethod
-    def creds_add_password(password):
-        ConfigService.add_item_to_config_set_if_dont_exist(
-            PASSWORD_LIST_PATH, password, should_encrypt=True
-        )
-
-    @staticmethod
-    def creds_add_lm_hash(lm_hash):
-        ConfigService.add_item_to_config_set_if_dont_exist(
-            LM_HASH_LIST_PATH, lm_hash, should_encrypt=True
-        )
-
-    @staticmethod
-    def creds_add_ntlm_hash(ntlm_hash):
-        ConfigService.add_item_to_config_set_if_dont_exist(
-            NTLM_HASH_LIST_PATH, ntlm_hash, should_encrypt=True
-        )
-
-    @staticmethod
-    def ssh_add_keys(public_key, private_key):
-        ConfigService.add_item_to_config_set_if_dont_exist(
-            SSH_KEYS_PATH,
-            {"public_key": public_key, "private_key": private_key},
-            should_encrypt=True,
-        )
 
     @staticmethod
     def _filter_none_values(data):
