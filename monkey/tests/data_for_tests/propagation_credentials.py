@@ -16,3 +16,11 @@ PROPAGATION_CREDENTIALS_2 = Credentials(
     identities=(Username(username), Username(special_username)),
     secrets=(Password(password_1), Password(password_2), Password(password_3)),
 )
+PROPAGATION_CREDENTIALS_3 = Credentials(
+    identities=(Username(username),),
+    secrets=(Password(password_1),),
+)
+PROPAGATION_CREDENTIALS_4 = Credentials(
+    identities=(Username(username),),
+    secrets=(Password(password_2),),
+)
