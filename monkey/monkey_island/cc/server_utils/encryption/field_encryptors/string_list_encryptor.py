@@ -7,8 +7,8 @@ from . import IFieldEncryptor
 class StringListEncryptor(IFieldEncryptor):
     @staticmethod
     def encrypt(value: List[str]):
-        return [get_datastore_encryptor().encrypt(string) for string in value]
+        return [get_datastore_encryptor().encrypt(string.encode()) for string in value]
 
     @staticmethod
-    def decrypt(value: List[str]):
-        return [get_datastore_encryptor().decrypt(string) for string in value]
+    def decrypt(value: List[bytes]):
+        return [get_datastore_encryptor().decrypt(bytes_).decode() for bytes_ in value]

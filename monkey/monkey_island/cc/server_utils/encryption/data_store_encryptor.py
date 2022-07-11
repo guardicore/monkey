@@ -46,10 +46,10 @@ class DataStoreEncryptor(IEncryptor):
 
         return KeyBasedEncryptor(plaintext_key)
 
-    def encrypt(self, plaintext: str) -> str:
+    def encrypt(self, plaintext: bytes) -> bytes:
         return self._key_based_encryptor.encrypt(plaintext)
 
-    def decrypt(self, ciphertext: str):
+    def decrypt(self, ciphertext: bytes) -> bytes:
         return self._key_based_encryptor.decrypt(ciphertext)
 
 

@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
 
 class IEncryptor(ABC):
     @abstractmethod
-    def encrypt(self, plaintext: Any) -> Any:
+    def encrypt(self, plaintext: bytes) -> bytes:
         """
         Encrypts data and returns the ciphertext.
 
@@ -13,7 +12,7 @@ class IEncryptor(ABC):
         """
 
     @abstractmethod
-    def decrypt(self, ciphertext: Any):
+    def decrypt(self, ciphertext: bytes) -> bytes:
         """
         Decrypts data and returns the plaintext.
 

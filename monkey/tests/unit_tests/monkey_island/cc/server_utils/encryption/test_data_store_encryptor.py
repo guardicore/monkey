@@ -11,7 +11,7 @@ from monkey_island.cc.server_utils.encryption import (
 # Mark all tests in this module as slow
 pytestmark = pytest.mark.slow
 
-PLAINTEXT = "Hello, Monkey!"
+PLAINTEXT = b"Hello, Monkey!"
 MOCK_SECRET = "53CR31"
 
 

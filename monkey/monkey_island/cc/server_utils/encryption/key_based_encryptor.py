@@ -31,15 +31,15 @@ class KeyBasedEncryptor(IEncryptor):
     #       something up. The main drawback to fernet is that it uses AES-128, which is not
     #       quantum-safe. At the present time, human error is probably a greater risk than quantum
     #       computers.
-    def encrypt(self, plaintext: str) -> str:
+    def encrypt(self, plaintext: bytes) -> bytes:
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
-        padded_plaintext = Padding.pad(plaintext.encode(), self._BLOCK_SIZE)
-        return base64.b64encode(cipher_iv + cipher.encrypt(padded_plaintext)).decode()
+        padded_plaintext = Padding.pad(plaintext, self._BLOCK_SIZE)
+        return base64.b64encode(cipher_iv + cipher.encrypt(padded_plaintext))
 
-    def decrypt(self, ciphertext: str):
+    def decrypt(self, ciphertext: bytes) -> bytes:
         enc_message = base64.b64decode(ciphertext)
         cipher_iv = enc_message[0 : AES.block_size]
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
         padded_plaintext = cipher.decrypt(enc_message[AES.block_size :])
-        return Padding.unpad(padded_plaintext, self._BLOCK_SIZE).decode()
+        return Padding.unpad(padded_plaintext, self._BLOCK_SIZE)
