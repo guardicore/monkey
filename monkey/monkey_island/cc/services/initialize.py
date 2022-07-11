@@ -66,6 +66,9 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
+    container.register_convention(
+        MongoClient, "mongo", MongoClient(MONGO_URL, serverSelectionTimeoutMS=100)
+    )
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
@@ -78,7 +81,9 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
     )
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
-    container.register_instance(ICredentialsRepository, _build_mongo_credentials_repository())
+    container.register_instance(
+        ICredentialsRepository, container.resolve(MongoCredentialsRepository)
+    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
@@ -94,13 +99,6 @@ def _build_agent_binary_repository():
     _log_agent_binary_hashes(agent_binary_repository)
 
     return agent_binary_repository
-
-
-def _build_mongo_credentials_repository():
-    mongo = MongoClient(MONGO_URL, serverSelectionTimeoutMS=100)
-
-    mongo_credentials_repository = MongoCredentialsRepository(mongo)
-    return mongo_credentials_repository
 
 
 def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
