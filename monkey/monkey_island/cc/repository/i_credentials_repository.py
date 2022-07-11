@@ -43,7 +43,7 @@ class ICredentialsRepository(ABC):
         """
         pass
 
-    def save_configured_credentials(self, credentials: Credentials):
+    def save_configured_credentials(self, credentials: Sequence[Credentials]):
         """
         Save credentials that were configured.
 
@@ -52,7 +52,7 @@ class ICredentialsRepository(ABC):
         """
         pass
 
-    def save_stolen_credentials(self, credentials: Credentials):
+    def save_stolen_credentials(self, credentials: Sequence[Credentials]):
         """
         Save credentials that were stolen during a simulation.
 

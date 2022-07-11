@@ -56,6 +56,12 @@ def test_credentials_serialization_json():
     assert json.loads(serialized_credentials) == CREDENTIALS_DICT
 
 
+def test_credentials_serialization_mapping():
+    serialized_credentials = Credentials.to_mapping(CREDENTIALS_OBJECT)
+
+    assert serialized_credentials == CREDENTIALS_DICT
+
+
 def test_credentials_deserialization__from_mapping():
     deserialized_credentials = Credentials.from_mapping(CREDENTIALS_DICT)
 
