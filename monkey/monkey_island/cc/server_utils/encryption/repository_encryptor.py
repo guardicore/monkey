@@ -52,6 +52,9 @@ class RepositoryEncryptor(ILockableEncryptor):
         if self._key_file.is_file():
             self._key_file.unlink()
 
+        self._password_based_encryptor = None
+        self._key_based_encryptor = None
+
     def encrypt(self, plaintext: bytes) -> bytes:
         if self._key_based_encryptor is None:
             raise LockedKeyError("Cannot encrypt while the encryptor is locked)")
