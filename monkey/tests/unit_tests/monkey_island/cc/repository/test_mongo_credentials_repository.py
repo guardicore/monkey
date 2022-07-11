@@ -94,9 +94,6 @@ def test_mongo_repository_stolen(mongo_repository):
 
     assert actual_stolen_credentials == []
 
-    # Must remove configured also for the next tests
-    mongo_repository.remove_configured_credentials()
-
 
 def test_mongo_repository_all(mongo_repository):
 
