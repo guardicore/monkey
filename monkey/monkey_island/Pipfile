@@ -31,6 +31,7 @@ pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement 
 marshmallow = "*"
 marshmallow-enum = "*"
 readerwriterlock = "*"
+pymongo = "*"
 
 [dev-packages]
 virtualenv = ">=20.0.26"
