@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class ConfiguredPropagationCredentials(AbstractResource):
-    # API Spec: Resource name should be plural
     urls = ["/api/propagation-credentials/configured"]
 
     def __init__(self, credentials_repository: ICredentialsRepository):

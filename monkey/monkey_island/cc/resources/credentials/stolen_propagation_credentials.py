@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class StolenPropagationCredentials(AbstractResource):
-    # API Spec: Resource name should be plural
     urls = ["/api/propagation-credentials/stolen"]
 
     def __init__(self, credentials_repository: ICredentialsRepository):
