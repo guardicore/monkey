@@ -14,7 +14,7 @@ from tests.monkey_island import InMemoryCredentialsRepository
 
 from common.credentials import Credentials
 from monkey_island.cc.repository import ICredentialsRepository
-from monkey_island.cc.resources.credentials.propagation_credentials import PropagationCredentials
+from monkey_island.cc.resources import PropagationCredentials
 
 ALL_CREDENTIALS_URL = PropagationCredentials.urls[0]
 CONFIGURED_CREDENTIALS_URL = PropagationCredentials.urls[1]
