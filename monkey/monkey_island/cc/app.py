@@ -31,9 +31,7 @@ from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
 from monkey_island.cc.resources.credentials.configured_propagation_credentials import (
     ConfiguredPropagationCredentials,
 )
-from monkey_island.cc.resources.credentials.stolen_propagation_credentials import (
-    StolenPropagationCredentials,
-)
+from monkey_island.cc.resources.credentials.propagation_credentials import PropagationCredentials
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
@@ -48,7 +46,6 @@ from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
-from monkey_island.cc.resources.credentials.propagation_credentials import PropagationCredentials
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
@@ -192,7 +189,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     api.add_resource(PropagationCredentials)
     api.add_resource(ConfiguredPropagationCredentials)
-    api.add_resource(StolenPropagationCredentials)
 
     api.add_resource(RemoteRun)
     api.add_resource(VersionUpdate)
