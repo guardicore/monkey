@@ -204,7 +204,7 @@ class Credentials:
     @staticmethod
     def to_mapping(credentials: Credentials) -> Mapping:
         """
-        Serialize a Credentials object to Mapping
+        Serialize a Credentials object to a Mapping
 
         :param credentials: A Credentials object
         :return: A mapping representing a Credentials object
