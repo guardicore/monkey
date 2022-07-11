@@ -25,7 +25,10 @@ class StubPropagationCredentialsRepository(ICredentialsRepository):
         pass
 
     def get_stolen_credentials(self) -> Sequence[Credentials]:
-        pass
+        return [
+            Credentials.from_mapping(PROPAGATION_CREDENTIALS_1, monkey_guid="some_guid"),
+            Credentials.from_mapping(PROPAGATION_CREDENTIALS_2, monkey_guid="second_guid"),
+        ]
 
     def get_all_credentials(self) -> Sequence[Credentials]:
 
