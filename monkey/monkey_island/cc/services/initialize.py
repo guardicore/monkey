@@ -5,6 +5,7 @@ from pymongo import MongoClient
 
 from common import DIContainer
 from common.aws import AWSInstance
+from common.common_consts.telem_categories import TelemCategoryEnum
 from common.configuration import (
     DEFAULT_AGENT_CONFIGURATION,
     DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
@@ -31,6 +32,12 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import AWSService, IslandModeService
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
+from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
+    CredentialsParser,
+)
+from monkey_island.cc.services.telemetry.processing.processing import (
+    TELEMETRY_CATEGORY_TO_PROCESSING_FUNC,
+)
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
 from . import AuthenticationService, JsonFileUserDatastore
@@ -50,6 +57,10 @@ def initialize_services(data_dir: Path) -> DIContainer:
 
     _register_repositories(container, data_dir)
     _register_services(container)
+
+    # Note: A hack to resolve credentials parser
+    # It changes telemetry processing function, this will be refactored!
+    _patch_credentials_parser(container)
 
     # This is temporary until we get DI all worked out.
     PostBreachFilesService.initialize(container.resolve(IFileRepository))
@@ -129,3 +140,9 @@ def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
     container.register_instance(IslandModeService, container.resolve(IslandModeService))
+
+
+def _patch_credentials_parser(container: DIContainer):
+    TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[TelemCategoryEnum.CREDENTIALS] = container.resolve(
+        CredentialsParser
+    )
