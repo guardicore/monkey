@@ -43,10 +43,14 @@ class MongoCredentialsRepository(ICredentialsRepository):
         )
 
     def remove_configured_credentials(self):
-        MongoCredentialsRepository._delete_collection(self._mongo.db.configured_credentials)
+        MongoCredentialsRepository._remove_credentials_fom_collection(
+            self._mongo.db.configured_credentials
+        )
 
     def remove_stolen_credentials(self):
-        MongoCredentialsRepository._delete_collection(self._mongo.db.stolen_credentials)
+        MongoCredentialsRepository._remove_credentials_fom_collection(
+            self._mongo.db.stolen_credentials
+        )
 
     def remove_all_credentials(self):
         self.remove_configured_credentials()
@@ -74,7 +78,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
             raise StorageError(err)
 
     @staticmethod
-    def _delete_collection(collection):
+    def _remove_credentials_fom_collection(collection):
         try:
             collection.delete_many({})
         except RemovalError as err:
