@@ -13,8 +13,7 @@ class PropagationCredentials(AbstractResource):
 
     def get(self):
         origin = request.args.get("origin")
-        secret_type = request.args.get("secret-type")
-        propagation_credentials = self._credentials_repository.get_credentials(origin, secret_type)
+        propagation_credentials = self._credentials_repository.get_credentials(origin)
 
         return jsonify(propagation_credentials)
 

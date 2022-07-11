@@ -13,14 +13,11 @@ class ICredentialsRepository(ABC):
     a simulation.
     """
 
-    def get_credentials(
-        self, origin: Optional[str], secret_type: Optional[str]
-    ) -> Sequence[Credentials]:
+    def get_credentials(self, origin: Optional[str]) -> Sequence[Credentials]:
         """
         Retrieve credentials in the repository.
 
         :param origin: String representing the origin of the credentials
-        :param secret_type: String representing secret type
         :raises RetrievalError: If an error is encountered while attempting to retrieve the
                                 credentials
         :return: Sequence of filtered credentials
