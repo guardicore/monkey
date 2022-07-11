@@ -21,6 +21,8 @@ class StolenPropagationCredentials(AbstractResource):
     def post(self):
         credentials = Credentials.from_mapping(request.json)
         self._credentials_repository.save_stolen_credentials(credentials)
+        return {}, 204
 
     def delete(self):
         self._credentials_repository.remove_stolen_credentials()
+        return {}, 204
