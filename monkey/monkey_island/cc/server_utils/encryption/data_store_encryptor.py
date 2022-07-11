@@ -15,6 +15,7 @@ _KEY_FILE_NAME = "mongo_key.bin"
 _encryptor: Union[None, IEncryptor] = None
 
 
+# NOTE: This class is being replaced by RepositoryEncryptor
 class DataStoreEncryptor(IEncryptor):
     _KEY_LENGTH_BYTES = 32
 
