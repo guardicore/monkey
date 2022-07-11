@@ -44,7 +44,10 @@ AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
 def initialize_services(data_dir: Path) -> DIContainer:
     container = DIContainer()
     _register_conventions(container, data_dir)
+
     container.register_instance(AWSInstance, AWSInstance())
+    container.register_instance(MongoClient, MongoClient(MONGO_URL, serverSelectionTimeoutMS=100))
+
     _register_repositories(container, data_dir)
     _register_services(container)
 
@@ -65,9 +68,6 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         AgentConfiguration,
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
-    )
-    container.register_convention(
-        MongoClient, "mongo", MongoClient(MONGO_URL, serverSelectionTimeoutMS=100)
     )
 
 
