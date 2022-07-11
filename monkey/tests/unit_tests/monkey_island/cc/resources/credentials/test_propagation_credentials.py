@@ -1,5 +1,6 @@
 import json
 from http import HTTPStatus
+from typing import Sequence
 
 import pytest
 from tests.common import StubDIContainer
@@ -16,7 +17,8 @@ from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.resources.credentials.propagation_credentials import PropagationCredentials
 
 ALL_CREDENTIALS_URL = PropagationCredentials.urls[0]
-STOLEN_CREDENTIALS_URL = PropagationCredentials.urls[1]
+CONFIGURED_CREDENTIALS_URL = PropagationCredentials.urls[1]
+STOLEN_CREDENTIALS_URL = PropagationCredentials.urls[2]
 
 
 @pytest.fixture
@@ -53,12 +55,22 @@ def test_propagation_credentials_endpoint_get(flask_client, credentials_reposito
     assert PROPAGATION_CREDENTIALS_4 in actual_propagation_credentials
 
 
-def test_propagation_credentials_endpoint__get_stolen(flask_client, credentials_repository):
-    credentials_repository.save_stolen_credentials(
-        [PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_2]
+def pre_populate_repository(
+    url: str, credentials_repository: ICredentialsRepository, credentials: Sequence[Credentials]
+):
+    if "configured" in url:
+        credentials_repository.save_configured_credentials(credentials)
+    else:
+        credentials_repository.save_stolen_credentials(credentials)
+
+
+@pytest.mark.parametrize("url", [CONFIGURED_CREDENTIALS_URL, STOLEN_CREDENTIALS_URL])
+def test_propagation_credentials_endpoint__get_stolen(flask_client, credentials_repository, url):
+    pre_populate_repository(
+        url, credentials_repository, [PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_2]
     )
 
-    resp = flask_client.get(STOLEN_CREDENTIALS_URL)
+    resp = flask_client.get(url)
     actual_propagation_credentials = Credentials.from_json_array(resp.text)
 
     assert resp.status_code == HTTPStatus.OK
@@ -67,11 +79,12 @@ def test_propagation_credentials_endpoint__get_stolen(flask_client, credentials_
     assert actual_propagation_credentials[1] == PROPAGATION_CREDENTIALS_2
 
 
-def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials_repository):
-    credentials_repository.save_stolen_credentials([PROPAGATION_CREDENTIALS_1])
+@pytest.mark.parametrize("url", [CONFIGURED_CREDENTIALS_URL, STOLEN_CREDENTIALS_URL])
+def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials_repository, url):
+    pre_populate_repository(url, credentials_repository, [PROPAGATION_CREDENTIALS_1])
 
     resp = flask_client.post(
-        STOLEN_CREDENTIALS_URL,
+        url,
         json=[
             Credentials.to_json(PROPAGATION_CREDENTIALS_2),
             Credentials.to_json(PROPAGATION_CREDENTIALS_3),
@@ -79,7 +92,7 @@ def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
 
-    resp = flask_client.get(STOLEN_CREDENTIALS_URL)
+    resp = flask_client.get(url)
     retrieved_propagation_credentials = Credentials.from_json_array(resp.text)
 
     assert resp.status_code == HTTPStatus.OK
@@ -89,14 +102,15 @@ def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials
     assert PROPAGATION_CREDENTIALS_3 in retrieved_propagation_credentials
 
 
-def test_stolen_propagation_credentials_endpoint_delete(flask_client, credentials_repository):
-    credentials_repository.save_stolen_credentials(
-        [PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_2]
+@pytest.mark.parametrize("url", [CONFIGURED_CREDENTIALS_URL, STOLEN_CREDENTIALS_URL])
+def test_stolen_propagation_credentials_endpoint_delete(flask_client, credentials_repository, url):
+    pre_populate_repository(
+        url, credentials_repository, [PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_2]
     )
-    resp = flask_client.delete(STOLEN_CREDENTIALS_URL)
+    resp = flask_client.delete(url)
     assert resp.status_code == HTTPStatus.NO_CONTENT
 
-    resp = flask_client.get(STOLEN_CREDENTIALS_URL)
+    resp = flask_client.get(url)
     assert len(json.loads(resp.text)) == 0
 
 
