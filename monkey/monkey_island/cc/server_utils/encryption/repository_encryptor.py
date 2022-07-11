@@ -1,4 +1,3 @@
-import os
 import secrets
 from pathlib import Path
 
@@ -22,7 +21,7 @@ class RepositoryEncryptor(ILockableEncryptor):
         self._key_based_encryptor = self._initialize_key_based_encryptor()
 
     def _initialize_key_based_encryptor(self):
-        if os.path.exists(self._key_file):
+        if self._key_file.is_file():
             return self._load_key()
 
         return self._create_key()
@@ -45,6 +44,10 @@ class RepositoryEncryptor(ILockableEncryptor):
 
     def lock(self):
         self._key_based_encryptor = None
+
+    def reset_key(self):
+        if self._key_file.is_file():
+            self._key_file.unlink()
 
     def encrypt(self, plaintext: bytes) -> bytes:
         if self._key_based_encryptor is None:

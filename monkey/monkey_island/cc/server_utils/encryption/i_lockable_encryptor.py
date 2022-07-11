@@ -44,6 +44,12 @@ class ILockableEncryptor(IEncryptor):
         """
 
     @abstractmethod
+    def reset_key(self):
+        """
+        Reset the encryptor's key
+        """
+
+    @abstractmethod
     def encrypt(self, plaintext: bytes) -> bytes:
         """
         Encrypts data and returns the ciphertext.

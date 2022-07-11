@@ -68,3 +68,19 @@ def test_lock(encryptor):
 
     with pytest.raises(LockedKeyError):
         encryptor.decrypt(encrypted_data)
+
+
+def test_reset(encryptor, key_file):
+    encryptor.unlock(SECRET)
+    key_file_hash_1 = get_file_sha256_hash(key_file)
+
+    encryptor.reset_key()
+    encryptor.unlock(SECRET)
+    key_file_hash_2 = get_file_sha256_hash(key_file)
+
+    assert key_file_hash_1 != key_file_hash_2
+
+
+def test_reset_before_unlock(encryptor):
+    # Test will fail if an exception is raised
+    encryptor.reset_key()
