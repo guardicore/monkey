@@ -1,6 +1,4 @@
-from abc import abstractmethod
-
-from . import IEncryptor
+from abc import ABC, abstractmethod
 
 # NOTE: The ILockableEncryptor introduces temporal coupling, that is, you must first unlock the
 #       encryptor before you can use it. This is because the key material used to encrypt repository
@@ -33,7 +31,7 @@ class ResetKeyError(Exception):
     """
 
 
-class ILockableEncryptor(IEncryptor):
+class ILockableEncryptor(ABC):
     """
     An encryptor that can be locked or unlocked.
 
