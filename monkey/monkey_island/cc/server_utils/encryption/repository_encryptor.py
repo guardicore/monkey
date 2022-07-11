@@ -3,7 +3,7 @@ from pathlib import Path
 
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
-from . import ILockableEncryptor, LockedKeyError, UnlockError
+from . import ILockableEncryptor, LockedKeyError, ResetKeyError, UnlockError
 from .key_based_encryptor import KeyBasedEncryptor
 from .password_based_bytes_encryptor import PasswordBasedBytesEncryptor
 
@@ -49,8 +49,11 @@ class RepositoryEncryptor(ILockableEncryptor):
         self._key_based_encryptor = None
 
     def reset_key(self):
-        if self._key_file.is_file():
-            self._key_file.unlink()
+        try:
+            if self._key_file.is_file():
+                self._key_file.unlink()
+        except Exception as err:
+            raise ResetKeyError(err)
 
         self._password_based_encryptor = None
         self._key_based_encryptor = None

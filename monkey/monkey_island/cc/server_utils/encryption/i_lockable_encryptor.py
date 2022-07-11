@@ -27,6 +27,12 @@ class UnlockError(Exception):
     """
 
 
+class ResetKeyError(Exception):
+    """
+    Raised if an error occurs while attempting to reset an ILockableEncryptor's key
+    """
+
+
 class ILockableEncryptor(IEncryptor):
     """
     An encryptor that can be locked or unlocked.
@@ -54,6 +60,10 @@ class ILockableEncryptor(IEncryptor):
     def reset_key(self):
         """
         Reset the encryptor's key
+
+        Remove the existing key material so that it can never be used again.
+
+        :raises ResetKeyError: If an error occurred while attemping to reset the key
         """
 
     @abstractmethod

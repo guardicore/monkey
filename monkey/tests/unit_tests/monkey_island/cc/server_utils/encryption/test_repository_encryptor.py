@@ -7,6 +7,7 @@ from common.utils.file_utils import get_file_sha256_hash
 from monkey_island.cc.server_utils.encryption import (
     LockedKeyError,
     RepositoryEncryptor,
+    ResetKeyError,
     UnlockError,
 )
 
@@ -110,3 +111,16 @@ def test_encrypt_after_reset(encryptor, key_file):
 def test_reset_before_unlock(encryptor):
     # Test will fail if an exception is raised
     encryptor.reset_key()
+
+
+def test_reset_key_error(key_file):
+    class UnlinkErrorWrapper(key_file.__class__):
+        def unlink(self):
+            raise OSError("Can't delete file")
+
+    encryptor = RepositoryEncryptor(UnlinkErrorWrapper(key_file))
+    encryptor.unlock(SECRET)
+    encryptor.lock()
+
+    with pytest.raises(ResetKeyError):
+        encryptor.reset_key()
