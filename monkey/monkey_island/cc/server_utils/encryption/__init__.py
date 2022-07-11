@@ -7,6 +7,7 @@ from .password_based_bytes_encryptor import (
     InvalidCredentialsError,
     InvalidCiphertextError,
 )
+from .i_lockable_encryptor import ILockableEncryptor
 from .data_store_encryptor import (
     get_datastore_encryptor,
     unlock_datastore_encryptor,
