@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
 
+from pymongo import MongoClient
+
 from common import DIContainer
 from common.aws import AWSInstance
 from common.configuration import (
@@ -29,6 +31,7 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import AWSService, IslandModeService
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
+from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
 from . import AuthenticationService, JsonFileUserDatastore
 from .reporting.report import ReportService
@@ -75,9 +78,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
     )
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
-    container.register_instance(
-        ICredentialsRepository, container.resolve(MongoCredentialsRepository)
-    )
+    container.register_instance(ICredentialsRepository, _build_mongo_credentials_repository())
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
@@ -93,6 +94,13 @@ def _build_agent_binary_repository():
     _log_agent_binary_hashes(agent_binary_repository)
 
     return agent_binary_repository
+
+
+def _build_mongo_credentials_repository():
+    mongo = MongoClient(MONGO_URL, serverSelectionTimeoutMS=100)
+
+    mongo_credentials_repository = MongoCredentialsRepository(mongo)
+    return mongo_credentials_repository
 
 
 def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
