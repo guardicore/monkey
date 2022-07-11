@@ -1,13 +1,13 @@
 import json
 
-from tests.monkey_island import PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_2
+from tests.data_for_tests.propagation_credentials import (
+    PROPAGATION_CREDENTIALS_1,
+    PROPAGATION_CREDENTIALS_2,
+)
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from monkey_island.cc.resources.credentials.configured_propagation_credentials import (
     ConfiguredPropagationCredentials,
-)
-from monkey_island.cc.resources.credentials.stolen_propagation_credentials import (
-    StolenPropagationCredentials,
 )
 
 
