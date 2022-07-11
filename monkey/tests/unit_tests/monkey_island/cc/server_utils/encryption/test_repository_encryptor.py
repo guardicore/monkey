@@ -11,6 +11,9 @@ from monkey_island.cc.server_utils.encryption import (
     UnlockError,
 )
 
+# Mark all tests in this module as slow
+pytestmark = pytest.mark.slow
+
 PLAINTEXT = b"Hello, Monkey!"
 SECRET = b"53CR31"
 
