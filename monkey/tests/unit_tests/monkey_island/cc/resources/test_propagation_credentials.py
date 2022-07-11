@@ -9,7 +9,7 @@ from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.credentials import Credentials
 from monkey_island.cc.repository import ICredentialsRepository
-from monkey_island.cc.resources.propagation_credentials import PropagationCredentials
+from monkey_island.cc.resources.credentials.propagation_credentials import PropagationCredentials
 
 
 @pytest.fixture
