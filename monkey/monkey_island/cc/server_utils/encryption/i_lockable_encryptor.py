@@ -21,6 +21,12 @@ class LockedKeyError(Exception):
     """
 
 
+class UnlockError(Exception):
+    """
+    Raised if an error occurs while attempting to unlock an ILockableEncryptor
+    """
+
+
 class ILockableEncryptor(IEncryptor):
     """
     An encryptor that can be locked or unlocked.
@@ -35,6 +41,7 @@ class ILockableEncryptor(IEncryptor):
         Unlock the encryptor
 
         :param secret: A secret that must be used to access the ILockableEncryptor's key material.
+        :raises UnlockError: If the ILockableEncryptor could not be unlocked
         """
 
     @abstractmethod

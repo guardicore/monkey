@@ -4,7 +4,11 @@ import string
 import pytest
 
 from common.utils.file_utils import get_file_sha256_hash
-from monkey_island.cc.server_utils.encryption import LockedKeyError, RepositoryEncryptor
+from monkey_island.cc.server_utils.encryption import (
+    LockedKeyError,
+    RepositoryEncryptor,
+    UnlockError,
+)
 
 PLAINTEXT = b"Hello, Monkey!"
 SECRET = b"53CR31"
@@ -49,6 +53,20 @@ def test_existing_key_reused(encryptor, key_file):
     key_file_hash_2 = get_file_sha256_hash(key_file)
 
     assert key_file_hash_1 == key_file_hash_2
+
+
+def test_unlock_os_error(encryptor, key_file):
+    key_file.mkdir()
+
+    with pytest.raises(UnlockError):
+        encryptor.unlock(SECRET)
+
+
+def test_unlock_wrong_password(encryptor):
+    encryptor.unlock(SECRET)
+
+    with pytest.raises(UnlockError):
+        encryptor.unlock(b"WRONG_PASSWORD")
 
 
 def test_use_locked_encryptor__encrypt(encryptor):
