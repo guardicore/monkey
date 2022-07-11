@@ -1,55 +1,62 @@
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from unittest import TestCase
 
 import bson
 
-from monkey_island.cc.services.representations import normalize_obj
+from monkey_island.cc.services.representations import _normalize_value
 
 
-class TestRepresentations(TestCase):
-    def test_normalize_obj(self):
-        # empty
-        self.assertEqual({}, normalize_obj({}))
+@dataclass
+class MockClass:
+    a: int
 
-        # no special content
-        self.assertEqual({"a": "a"}, normalize_obj({"a": "a"}))
 
-        # _id field -> id field
-        self.assertEqual({"id": 12345}, normalize_obj({"_id": 12345}))
+obj_id_str = "123456789012345678901234"
+mock_object = MockClass(1)
 
-        # obj id field -> str
-        obj_id_str = "123456789012345678901234"
-        self.assertEqual(
-            {"id": obj_id_str}, normalize_obj({"_id": bson.objectid.ObjectId(obj_id_str)})
-        )
 
-        # datetime -> str
-        dt = datetime.now()
-        expected = {"a": str(dt)}
-        result = normalize_obj({"a": dt})
-        self.assertEqual(expected, result)
+def test_normalize_dicts():
+    assert {} == _normalize_value({})
 
-        # dicts and lists
-        self.assertEqual(
-            {"a": [{"ba": obj_id_str, "bb": obj_id_str}], "b": {"id": obj_id_str}},
-            normalize_obj(
-                {
-                    "a": [
-                        {
-                            "ba": bson.objectid.ObjectId(obj_id_str),
-                            "bb": bson.objectid.ObjectId(obj_id_str),
-                        }
-                    ],
-                    "b": {"_id": bson.objectid.ObjectId(obj_id_str)},
-                }
-            ),
-        )
+    assert {"a": "a"} == _normalize_value({"a": "a"})
 
-    def test_normalize__enum(self):
-        class BogusEnum(Enum):
-            bogus_val = "Bogus"
+    assert {"id": 12345} == _normalize_value({"_id": 12345})
 
-        my_obj = {"something": "something", "my_enum": BogusEnum.bogus_val}
+    assert {"id": obj_id_str} == _normalize_value({"_id": bson.objectid.ObjectId(obj_id_str)})
 
-        assert {"something": "something", "my_enum": "bogus_val"} == normalize_obj(my_obj)
+    dt = datetime.now()
+    expected = {"a": str(dt)}
+    result = _normalize_value({"a": dt})
+    assert expected == result
+
+
+def test_normalize_complex():
+    mock_dict = {
+        "a": [
+            {
+                "ba": bson.objectid.ObjectId(obj_id_str),
+                "bb": bson.objectid.ObjectId(obj_id_str),
+            }
+        ],
+        "b": {"_id": bson.objectid.ObjectId(obj_id_str)},
+    }
+
+    expected_dict = {"a": [{"ba": obj_id_str, "bb": obj_id_str}], "b": {"id": obj_id_str}}
+    assert expected_dict == _normalize_value(mock_dict)
+
+
+def test_normalize_list():
+    mock_list = [bson.objectid.ObjectId(obj_id_str), {"a": "b"}, {"object": [mock_object]}]
+
+    expected_list = [obj_id_str, {"a": "b"}, {"object": [{"a": 1}]}]
+    assert expected_list == _normalize_value(mock_list)
+
+
+def test_normalize__enum():
+    class BogusEnum(Enum):
+        bogus_val = "Bogus"
+
+    my_obj = {"something": "something", "my_enum": BogusEnum.bogus_val}
+
+    assert {"something": "something", "my_enum": "bogus_val"} == _normalize_value(my_obj)
