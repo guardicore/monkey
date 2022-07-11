@@ -13,8 +13,8 @@ class MockClass:
 
 
 obj_id_str = "123456789012345678901234"
-mock_object1 = MockClass(1)
-mock_object2 = MockClass(2)
+bogus_object1 = MockClass(1)
+bogus_object2 = MockClass(2)
 
 
 def test_normalize_dicts():
@@ -33,7 +33,7 @@ def test_normalize_dicts():
 
 
 def test_normalize_complex():
-    mock_dict = {
+    bogus_dict = {
         "a": [
             {
                 "ba": bson.objectid.ObjectId(obj_id_str),
@@ -44,14 +44,14 @@ def test_normalize_complex():
     }
 
     expected_dict = {"a": [{"ba": obj_id_str, "bb": obj_id_str}], "b": {"id": obj_id_str}}
-    assert expected_dict == _normalize_value(mock_dict)
+    assert expected_dict == _normalize_value(bogus_dict)
 
 
 def test_normalize_list():
-    mock_list = [bson.objectid.ObjectId(obj_id_str), {"a": "b"}, {"object": [mock_object1]}]
+    bogus_list = [bson.objectid.ObjectId(obj_id_str), {"a": "b"}, {"object": [bogus_object1]}]
 
     expected_list = [obj_id_str, {"a": "b"}, {"object": [{"a": 1}]}]
-    assert expected_list == _normalize_value(mock_list)
+    assert expected_list == _normalize_value(bogus_list)
 
 
 def test_normalize_enum():
@@ -64,6 +64,6 @@ def test_normalize_enum():
 
 
 def test_normalize_tuple():
-    mock_tuple = [{"my_tuple": (mock_object1, mock_object2, b"one_two")}]
+    bogus_tuple = [{"my_tuple": (bogus_object1, bogus_object2, b"one_two")}]
     expected_tuple = [{"my_tuple": ({"a": 1}, {"a": 2}, b"one_two")}]
-    assert expected_tuple == _normalize_value(mock_tuple)
+    assert expected_tuple == _normalize_value(bogus_tuple)
