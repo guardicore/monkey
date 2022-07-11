@@ -1,7 +1,7 @@
 import mongomock
 import pytest
 
-from common.credentials import Credentials
+from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 from monkey_island.cc.repository import MongoCredentialsRepository
 
 USER1 = "test_user_1"
@@ -15,41 +15,25 @@ NT_HASH = "7A21990FCD3D759941E45C490F143D5F"
 PUBLIC_KEY = "MY_PUBLIC_KEY"
 PRIVATE_KEY = "MY_PRIVATE_KEY"
 
-CREDENTIALS_DICT_1 = {
-    "identities": [
-        {"credential_type": "USERNAME", "username": USER1},
-        {"credential_type": "USERNAME", "username": USER2},
-    ],
-    "secrets": [
-        {"credential_type": "PASSWORD", "password": PASSWORD},
-        {"credential_type": "LM_HASH", "lm_hash": LM_HASH},
-        {"credential_type": "NT_HASH", "nt_hash": NT_HASH},
-        {
-            "credential_type": "SSH_KEYPAIR",
-            "public_key": PUBLIC_KEY,
-            "private_key": PRIVATE_KEY,
-        },
-    ],
-}
+IDENTITIES_1 = (Username(USER1), Username(USER2))
+SECRETS_1 = (
+    Password(PASSWORD),
+    LMHash(LM_HASH),
+    NTHash(NT_HASH),
+    SSHKeypair(PRIVATE_KEY, PUBLIC_KEY),
+)
+CREDENTIALS_OBJECT_1 = Credentials(IDENTITIES_1, SECRETS_1)
 
-CREDENTIALS_DICT_2 = {
-    "identities": [
-        {"credential_type": "USERNAME", "username": USER3},
-    ],
-    "secrets": [
-        {"credential_type": "PASSWORD", "password": PASSWORD2},
-        {"credential_type": "PASSWORD", "password": PASSWORD3},
-    ],
-}
+IDENTITIES_2 = (Username(USER3),)
+SECRETS_2 = (Password(PASSWORD2), Password(PASSWORD3))
+CREDENTIALS_OBJECT_2 = Credentials(IDENTITIES_2, SECRETS_2)
 
-CONFIGURED_CREDENTIALS = [Credentials.from_mapping(CREDENTIALS_DICT_1)]
 
-STOLEN_CREDENTIALS = [Credentials.from_mapping(CREDENTIALS_DICT_2)]
+CONFIGURED_CREDENTIALS = [CREDENTIALS_OBJECT_1]
 
-CREDENTIALS_LIST = [
-    Credentials.from_mapping(CREDENTIALS_DICT_1),
-    Credentials.from_mapping(CREDENTIALS_DICT_2),
-]
+STOLEN_CREDENTIALS = [CREDENTIALS_OBJECT_2]
+
+CREDENTIALS_LIST = [CREDENTIALS_OBJECT_1, CREDENTIALS_OBJECT_2]
 
 
 @pytest.fixture
