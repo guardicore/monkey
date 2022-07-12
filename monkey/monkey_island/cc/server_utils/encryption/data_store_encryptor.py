@@ -15,6 +15,7 @@ _KEY_FILE_NAME = "mongo_key.bin"
 _encryptor: Union[None, IEncryptor] = None
 
 
+# NOTE: This class is being replaced by RepositoryEncryptor
 class DataStoreEncryptor(IEncryptor):
     _KEY_LENGTH_BYTES = 32
 
@@ -46,10 +47,10 @@ class DataStoreEncryptor(IEncryptor):
 
         return KeyBasedEncryptor(plaintext_key)
 
-    def encrypt(self, plaintext: str) -> str:
+    def encrypt(self, plaintext: bytes) -> bytes:
         return self._key_based_encryptor.encrypt(plaintext)
 
-    def decrypt(self, ciphertext: str):
+    def decrypt(self, ciphertext: bytes) -> bytes:
         return self._key_based_encryptor.decrypt(ciphertext)
 
 

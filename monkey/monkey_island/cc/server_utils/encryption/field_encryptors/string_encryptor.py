@@ -5,8 +5,8 @@ from . import IFieldEncryptor
 class StringEncryptor(IFieldEncryptor):
     @staticmethod
     def encrypt(value: str):
-        return get_datastore_encryptor().encrypt(value)
+        return get_datastore_encryptor().encrypt(value.encode())
 
     @staticmethod
     def decrypt(value: str):
-        return get_datastore_encryptor().decrypt(value)
+        return get_datastore_encryptor().decrypt(value).decode()
