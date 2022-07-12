@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 
 import flask_jwt_extended
 from flask import make_response, request
@@ -47,7 +48,7 @@ class Authenticate(AbstractResource):
             self._authentication_service.authenticate(username, password)
             access_token = create_access_token(username)
         except IncorrectCredentialsError:
-            return make_response({"error": "Invalid credentials"}, 401)
+            return make_response({"error": "Invalid credentials"}, HTTPStatus.UNAUTHORIZED)
 
         # API Spec: Why are we sending "error" here?
-        return make_response({"access_token": access_token, "error": ""}, 200)
+        return make_response({"access_token": access_token, "error": ""}, HTTPStatus.OK)
