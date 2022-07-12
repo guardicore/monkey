@@ -6,7 +6,7 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.models import UserCreds
+from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
@@ -21,16 +21,16 @@ class JSONFileUserRepository(IUserRepository):
         if self._credentials_file.exists():
             self._credentials = self._load_from_file()
 
-    def _load_from_file(self) -> UserCreds:
+    def _load_from_file(self) -> UserCredentials:
         with open(self._credentials_file, "r") as f:
             credentials_dict = json.load(f)
 
-            return UserCreds(credentials_dict["user"], credentials_dict["password_hash"])
+            return UserCredentials(credentials_dict["user"], credentials_dict["password_hash"])
 
     def has_registered_users(self) -> bool:
         return self._credentials is not None
 
-    def add_user(self, credentials: UserCreds):
+    def add_user(self, credentials: UserCredentials):
         if credentials is None:
             raise InvalidRegistrationCredentialsError("Credentials can not be 'None'")
         elif not credentials.username:
@@ -50,7 +50,7 @@ class JSONFileUserRepository(IUserRepository):
         with open_new_securely_permissioned_file(self._credentials_file, "w") as f:
             json.dump(self._credentials.to_dict(), f, indent=2)
 
-    def get_user_credentials(self, username: str) -> UserCreds:
+    def get_user_credentials(self, username: str) -> UserCredentials:
         if self._credentials is None or self._credentials.username != username:
             raise UnknownUserError(f"User {username} does not exist.")
 

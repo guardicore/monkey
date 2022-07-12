@@ -8,7 +8,7 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.models import UserCreds
+from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.services import AuthenticationService
 from monkey_island.cc.services.authentication import authentication_service
@@ -27,10 +27,10 @@ class MockUserDatastore(IUserRepository):
     def has_registered_users(self):
         return self._has_registered_users()
 
-    def add_user(self, credentials: UserCreds):
+    def add_user(self, credentials: UserCredentials):
         return self._add_user(credentials)
 
-    def get_user_credentials(self, username: str) -> UserCreds:
+    def get_user_credentials(self, username: str) -> UserCredentials:
         return self._get_user_credentials(username)
 
 
@@ -136,7 +136,7 @@ def test_authenticate__success(tmp_path, mock_unlock_datastore_encryptor):
     mock_user_datastore = MockUserDatastore(
         lambda: True,
         None,
-        lambda _: UserCreds(USERNAME, PASSWORD_HASH),
+        lambda _: UserCredentials(USERNAME, PASSWORD_HASH),
     )
 
     a_s = AuthenticationService(tmp_path, mock_user_datastore)
@@ -156,7 +156,7 @@ def test_authenticate__failed_wrong_credentials(
     mock_user_datastore = MockUserDatastore(
         lambda: True,
         None,
-        lambda _: UserCreds(USERNAME, PASSWORD_HASH),
+        lambda _: UserCredentials(USERNAME, PASSWORD_HASH),
     )
 
     a_s = AuthenticationService(tmp_path, mock_user_datastore)

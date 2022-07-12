@@ -1,36 +1,36 @@
-from monkey_island.cc.models import UserCreds
+from monkey_island.cc.models import UserCredentials
 
 TEST_USER = "Test"
 TEST_HASH = "abc1231234"
 
 
 def test_bool_true():
-    assert UserCreds(TEST_USER, TEST_HASH)
+    assert UserCredentials(TEST_USER, TEST_HASH)
 
 
 def test_bool_false_empty_password_hash():
-    assert not UserCreds(TEST_USER, "")
+    assert not UserCredentials(TEST_USER, "")
 
 
 def test_bool_false_empty_user():
-    assert not UserCreds("", TEST_HASH)
+    assert not UserCredentials("", TEST_HASH)
 
 
 def test_bool_false_empty_user_and_password_hash():
-    assert not UserCreds("", "")
+    assert not UserCredentials("", "")
 
 
 def test_to_dict_empty_creds():
-    user_creds = UserCreds("", "")
+    user_creds = UserCredentials("", "")
     assert user_creds.to_dict() == {}
 
 
 def test_to_dict_full_creds():
-    user_creds = UserCreds(TEST_USER, TEST_HASH)
+    user_creds = UserCredentials(TEST_USER, TEST_HASH)
     assert user_creds.to_dict() == {"user": TEST_USER, "password_hash": TEST_HASH}
 
 
 def test_member_values(monkeypatch):
-    creds = UserCreds(TEST_USER, TEST_HASH)
+    creds = UserCredentials(TEST_USER, TEST_HASH)
     assert creds.username == TEST_USER
     assert creds.password_hash == TEST_HASH

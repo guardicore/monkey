@@ -7,7 +7,7 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.models import UserCreds
+from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
@@ -28,7 +28,7 @@ class AuthenticationService:
         if not username or not password:
             raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
 
-        credentials = UserCreds(username, _hash_password(password))
+        credentials = UserCredentials(username, _hash_password(password))
         self._user_datastore.add_user(credentials)
         self._reset_datastore_encryptor(username, password)
         reset_database()
@@ -61,7 +61,7 @@ def _hash_password(plaintext_password: str) -> str:
 
 
 def _credentials_match_registered_user(
-    username: str, password: str, registered_user: UserCreds
+    username: str, password: str, registered_user: UserCredentials
 ) -> bool:
     return (registered_user.username == username) and _password_matches_hash(
         password, registered_user.password_hash
