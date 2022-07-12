@@ -1,6 +1,7 @@
 import json
 from http import HTTPStatus
 from typing import Sequence
+from urllib.parse import urljoin
 
 import pytest
 from tests.common import StubDIContainer
@@ -15,10 +16,14 @@ from tests.monkey_island import InMemoryCredentialsRepository
 from common.credentials import Credentials
 from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.resources import PropagationCredentials
+from monkey_island.cc.resources.propagation_credentials import (
+    _configured_collection,
+    _stolen_collection,
+)
 
 ALL_CREDENTIALS_URL = PropagationCredentials.urls[0]
-CONFIGURED_CREDENTIALS_URL = PropagationCredentials.urls[1]
-STOLEN_CREDENTIALS_URL = PropagationCredentials.urls[2]
+CONFIGURED_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL, _configured_collection)
+STOLEN_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL, _stolen_collection)
 
 
 @pytest.fixture
@@ -116,9 +121,4 @@ def test_stolen_propagation_credentials_endpoint_delete(flask_client, credential
 
 def test_propagation_credentials_endpoint__propagation_credentials_post_not_allowed(flask_client):
     resp = flask_client.post(ALL_CREDENTIALS_URL, json=[])
-    assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
-
-
-def test_propagation_credentials_endpoint__propagation_credentials_delete_not_allowed(flask_client):
-    resp = flask_client.delete(ALL_CREDENTIALS_URL)
     assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED

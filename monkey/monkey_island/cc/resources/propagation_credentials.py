@@ -6,47 +6,44 @@ from common.credentials import Credentials
 from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
+_configured_collection = "configured-credentials"
+_stolen_collection = "stolen-credentials"
+
 
 class PropagationCredentials(AbstractResource):
-    urls = [
-        "/api/propagation-credentials",
-        "/api/propagation-credentials/configured-credentials",
-        "/api/propagation-credentials/stolen-credentials",
-    ]
+    urls = ["/api/propagation-credentials/", "/api/propagation-credentials/<string:collection>"]
 
     def __init__(self, credentials_repository: ICredentialsRepository):
         self._credentials_repository = credentials_repository
 
-    def get(self):
-        propagation_credentials = []
-
-        if request.url.endswith("/configured-credentials"):
+    def get(self, collection=None):
+        if collection == _configured_collection:
             propagation_credentials = self._credentials_repository.get_configured_credentials()
-        elif request.url.endswith("/stolen-credentials"):
+        elif collection == _stolen_collection:
             propagation_credentials = self._credentials_repository.get_stolen_credentials()
         else:
             propagation_credentials = self._credentials_repository.get_all_credentials()
 
         return make_response(Credentials.to_json_array(propagation_credentials), HTTPStatus.OK)
 
-    def post(self):
+    def post(self, collection=None):
         credentials = [Credentials.from_json(c) for c in request.json]
 
-        if request.url.endswith("/configured-credentials"):
+        if collection == _configured_collection:
             self._credentials_repository.save_configured_credentials(credentials)
-        elif request.url.endswith("/stolen-credentials"):
+        elif collection == _stolen_collection:
             self._credentials_repository.save_stolen_credentials(credentials)
         else:
             return {}, HTTPStatus.METHOD_NOT_ALLOWED
 
         return {}, HTTPStatus.NO_CONTENT
 
-    def delete(self):
-        if request.url.endswith("/configured-credentials"):
+    def delete(self, collection=None):
+        if collection == _configured_collection:
             self._credentials_repository.remove_configured_credentials()
-        elif request.url.endswith("/stolen-credentials"):
+        elif collection == _stolen_collection:
             self._credentials_repository.remove_stolen_credentials()
         else:
-            return {}, HTTPStatus.METHOD_NOT_ALLOWED
+            self._credentials_repository.remove_all_credentials()
 
         return {}, HTTPStatus.NO_CONTENT
