@@ -41,7 +41,7 @@ from monkey_island.cc.services.telemetry.processing.processing import (
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
 from . import AuthenticationService, JsonFileUserDatastore
-from .authentication.i_user_datastore import IUserDatastore
+from .authentication.i_user_datastore import IUserRepository
 from .reporting.report import ReportService
 
 logger = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         ICredentialsRepository, container.resolve(MongoCredentialsRepository)
     )
-    container.register_instance(IUserDatastore, container.resolve(JsonFileUserDatastore))
+    container.register_instance(IUserRepository, container.resolve(JsonFileUserDatastore))
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:

@@ -13,12 +13,12 @@ from monkey_island.cc.server_utils.encryption import (
 )
 from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
-from .i_user_datastore import IUserDatastore
+from .i_user_datastore import IUserRepository
 from .user_creds import UserCreds
 
 
 class AuthenticationService:
-    def __init__(self, data_dir: Path, user_datastore: IUserDatastore):
+    def __init__(self, data_dir: Path, user_datastore: IUserRepository):
         self._data_dir = data_dir
         self._user_datastore = user_datastore
 

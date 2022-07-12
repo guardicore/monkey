@@ -8,13 +8,13 @@ from common.utils.exceptions import (
 )
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
-from .i_user_datastore import IUserDatastore
+from .i_user_datastore import IUserRepository
 from .user_creds import UserCreds
 
 CREDENTIALS_FILE = "credentials.json"
 
 
-class JsonFileUserDatastore(IUserDatastore):
+class JsonFileUserDatastore(IUserRepository):
     def __init__(self, data_dir: Path):
         self._credentials = None
         self._credentials_file = data_dir / CREDENTIALS_FILE

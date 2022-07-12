@@ -10,7 +10,7 @@ from common.utils.exceptions import (
 )
 from monkey_island.cc.services import AuthenticationService
 from monkey_island.cc.services.authentication import authentication_service
-from monkey_island.cc.services.authentication.i_user_datastore import IUserDatastore
+from monkey_island.cc.services.authentication.i_user_datastore import IUserRepository
 from monkey_island.cc.services.authentication.user_creds import UserCreds
 
 USERNAME = "user1"
@@ -18,7 +18,7 @@ PASSWORD = "test"
 PASSWORD_HASH = "$2b$12$YsGjjuJFddYJ6z5S5/nMCuKkCzKHB1AWY9SXkQ02i25d8TgdhIRS2"
 
 
-class MockUserDatastore(IUserDatastore):
+class MockUserDatastore(IUserRepository):
     def __init__(self, has_registered_users, add_user, get_user_credentials):
         self._has_registered_users = has_registered_users
         self._add_user = add_user

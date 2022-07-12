@@ -3,7 +3,7 @@ import abc
 from .user_creds import UserCreds
 
 
-class IUserDatastore(metaclass=abc.ABCMeta):
+class IUserRepository(metaclass=abc.ABCMeta):
     """
     Allows user credentials to be stored and retrieved.
     """
