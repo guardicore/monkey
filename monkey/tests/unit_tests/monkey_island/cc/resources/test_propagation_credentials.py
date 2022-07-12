@@ -122,3 +122,22 @@ def test_stolen_propagation_credentials_endpoint_delete(flask_client, credential
 def test_propagation_credentials_endpoint__propagation_credentials_post_not_allowed(flask_client):
     resp = flask_client.post(ALL_CREDENTIALS_URL, json=[])
     assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
+
+
+def test_propagation_credentials_endpoint__not_found(flask_client):
+    non_existent_collection_url = urljoin(ALL_CREDENTIALS_URL, "bogus-credentials")
+
+    resp = flask_client.get(non_existent_collection_url)
+    assert resp.status_code == HTTPStatus.NOT_FOUND
+
+    resp = flask_client.post(
+        non_existent_collection_url,
+        json=[
+            Credentials.to_json(PROPAGATION_CREDENTIALS_2),
+            Credentials.to_json(PROPAGATION_CREDENTIALS_3),
+        ],
+    )
+    assert resp.status_code == HTTPStatus.NOT_FOUND
+
+    resp = flask_client.delete(non_existent_collection_url)
+    assert resp.status_code == HTTPStatus.NOT_FOUND

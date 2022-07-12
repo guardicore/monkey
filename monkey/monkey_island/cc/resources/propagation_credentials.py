@@ -21,8 +21,10 @@ class PropagationCredentials(AbstractResource):
             propagation_credentials = self._credentials_repository.get_configured_credentials()
         elif collection == _stolen_collection:
             propagation_credentials = self._credentials_repository.get_stolen_credentials()
-        else:
+        elif collection is None:
             propagation_credentials = self._credentials_repository.get_all_credentials()
+        else:
+            return {}, HTTPStatus.NOT_FOUND
 
         return make_response(Credentials.to_json_array(propagation_credentials), HTTPStatus.OK)
 
@@ -33,8 +35,10 @@ class PropagationCredentials(AbstractResource):
             self._credentials_repository.save_configured_credentials(credentials)
         elif collection == _stolen_collection:
             self._credentials_repository.save_stolen_credentials(credentials)
-        else:
+        elif collection is None:
             return {}, HTTPStatus.METHOD_NOT_ALLOWED
+        else:
+            return {}, HTTPStatus.NOT_FOUND
 
         return {}, HTTPStatus.NO_CONTENT
 
@@ -43,7 +47,9 @@ class PropagationCredentials(AbstractResource):
             self._credentials_repository.remove_configured_credentials()
         elif collection == _stolen_collection:
             self._credentials_repository.remove_stolen_credentials()
-        else:
+        elif collection is None:
             self._credentials_repository.remove_all_credentials()
+        else:
+            return {}, HTTPStatus.NOT_FOUND
 
         return {}, HTTPStatus.NO_CONTENT
