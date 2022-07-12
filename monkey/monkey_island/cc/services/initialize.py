@@ -31,6 +31,7 @@ from monkey_island.cc.repository import (
     RetrievalError,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import AWSService, IslandModeService
 from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
@@ -48,6 +49,7 @@ from .reporting.report import ReportService
 logger = logging.getLogger(__name__)
 
 AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
+REPOSITORY_KEY_FILE_NAME = "repository_key.bin"
 
 
 def initialize_services(data_dir: Path) -> DIContainer:
@@ -56,6 +58,9 @@ def initialize_services(data_dir: Path) -> DIContainer:
 
     container.register_instance(AWSInstance, AWSInstance())
     container.register_instance(MongoClient, MongoClient(MONGO_URL, serverSelectionTimeoutMS=100))
+    container.register_instance(
+        ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
+    )
 
     _register_repositories(container, data_dir)
     _register_services(container)
