@@ -4,7 +4,6 @@ dead or is kept deliberately. Referencing these in a file like this makes sure t
 Vulture doesn't mark these as dead again.
 """
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from monkey_island.cc import app
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -207,6 +206,12 @@ _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:
 
 
 # TODO DELETE AFTER RESOURCE REFACTORING
+
+# https://github.com/jendrikseipp/vulture/issues/287
+# Both happen in common\utils\IJSONSerializable.py
+json_string
+class_object
+
 NetworkMap
 Arc.dst_machine
 IMitigationsRepository.get_mitigations

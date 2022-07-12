@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import make_response, request
+from flask import request
 
 from common.credentials import Credentials
 from monkey_island.cc.repository import ICredentialsRepository
@@ -26,7 +26,7 @@ class PropagationCredentials(AbstractResource):
         else:
             return {}, HTTPStatus.NOT_FOUND
 
-        return make_response(Credentials.to_json_array(propagation_credentials), HTTPStatus.OK)
+        return propagation_credentials, HTTPStatus.OK
 
     def post(self, collection=None):
         credentials = [Credentials.from_json(c) for c in request.json]

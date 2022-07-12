@@ -7,6 +7,7 @@ from typing import Any, Mapping, MutableMapping, Sequence, Tuple
 from marshmallow import Schema, fields, post_load, pre_dump
 from marshmallow.exceptions import MarshmallowError
 
+from ..utils import IJSONSerializable
 from . import (
     CredentialComponentType,
     InvalidCredentialComponentError,
@@ -116,7 +117,7 @@ class CredentialsSchema(Schema):
 
 
 @dataclass(frozen=True)
-class Credentials:
+class Credentials(IJSONSerializable):
     identities: Tuple[ICredentialComponent]
     secrets: Tuple[ICredentialComponent]
 
@@ -141,8 +142,8 @@ class Credentials:
         except MarshmallowError as err:
             raise InvalidCredentialsError(str(err))
 
-    @staticmethod
-    def from_json(credentials: str) -> Credentials:
+    @classmethod
+    def from_json(cls, credentials: str) -> Credentials:
         """
         Construct a Credentials object from a JSON string
 
@@ -180,8 +181,8 @@ class Credentials:
         credentials_list = json.loads(credentials_array_json)
         return [Credentials.from_mapping(c) for c in credentials_list]
 
-    @staticmethod
-    def to_json(credentials: Credentials) -> str:
+    @classmethod
+    def to_json(cls, credentials: Credentials) -> str:
         """
         Serialize a Credentials object to JSON
 

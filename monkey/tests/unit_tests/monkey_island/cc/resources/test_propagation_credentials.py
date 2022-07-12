@@ -50,7 +50,7 @@ def test_propagation_credentials_endpoint_get(flask_client, credentials_reposito
     )
 
     resp = flask_client.get(ALL_CREDENTIALS_URL)
-    actual_propagation_credentials = Credentials.from_json_array(resp.text)
+    actual_propagation_credentials = [Credentials.from_mapping(creds) for creds in resp.json]
 
     assert resp.status_code == HTTPStatus.OK
     assert len(actual_propagation_credentials) == 4
@@ -76,7 +76,7 @@ def test_propagation_credentials_endpoint__get_stolen(flask_client, credentials_
     )
 
     resp = flask_client.get(url)
-    actual_propagation_credentials = Credentials.from_json_array(resp.text)
+    actual_propagation_credentials = [Credentials.from_mapping(creds) for creds in resp.json]
 
     assert resp.status_code == HTTPStatus.OK
     assert len(actual_propagation_credentials) == 2
@@ -98,7 +98,7 @@ def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials
     assert resp.status_code == HTTPStatus.NO_CONTENT
 
     resp = flask_client.get(url)
-    retrieved_propagation_credentials = Credentials.from_json_array(resp.text)
+    retrieved_propagation_credentials = [Credentials.from_mapping(creds) for creds in resp.json]
 
     assert resp.status_code == HTTPStatus.OK
     assert len(retrieved_propagation_credentials) == 3
