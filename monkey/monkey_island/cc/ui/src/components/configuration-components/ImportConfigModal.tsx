@@ -106,7 +106,8 @@ const ConfigImportModal = (props: Props) => {
     reader.onload = (event) => {
       let importContents = null;
       try {
-        importContents = JSON.parse(event.target.result);
+        let contents = event.target.result as string;
+        importContents = JSON.parse(contents);
       } catch (e){
         setErrorMessage('File is not in a valid json format');
         return
