@@ -44,72 +44,51 @@ def mongo_repository():
 
 
 def test_mongo_repository_get_configured(mongo_repository):
-
     actual_configured_credentials = mongo_repository.get_configured_credentials()
 
     assert actual_configured_credentials == []
 
 
 def test_mongo_repository_get_stolen(mongo_repository):
-
     actual_stolen_credentials = mongo_repository.get_stolen_credentials()
 
     assert actual_stolen_credentials == []
 
 
 def test_mongo_repository_get_all(mongo_repository):
-
     actual_credentials = mongo_repository.get_all_credentials()
 
     assert actual_credentials == []
 
 
 def test_mongo_repository_configured(mongo_repository):
-
     mongo_repository.save_configured_credentials(CREDENTIALS_LIST)
-
     actual_configured_credentials = mongo_repository.get_configured_credentials()
-
     assert actual_configured_credentials == CREDENTIALS_LIST
 
     mongo_repository.remove_configured_credentials()
-
     actual_configured_credentials = mongo_repository.get_configured_credentials()
-
     assert actual_configured_credentials == []
 
 
 def test_mongo_repository_stolen(mongo_repository):
-
-    mongo_repository.save_configured_credentials(CONFIGURED_CREDENTIALS)
     mongo_repository.save_stolen_credentials(STOLEN_CREDENTIALS)
-
     actual_stolen_credentials = mongo_repository.get_stolen_credentials()
-
     assert actual_stolen_credentials == STOLEN_CREDENTIALS
 
     mongo_repository.remove_stolen_credentials()
-
     actual_stolen_credentials = mongo_repository.get_stolen_credentials()
-
     assert actual_stolen_credentials == []
 
 
 def test_mongo_repository_all(mongo_repository):
-
     mongo_repository.save_configured_credentials(CONFIGURED_CREDENTIALS)
     mongo_repository.save_stolen_credentials(STOLEN_CREDENTIALS)
-
     actual_credentials = mongo_repository.get_all_credentials()
-
     assert actual_credentials == CREDENTIALS_LIST
 
     mongo_repository.remove_all_credentials()
 
-    actual_credentials = mongo_repository.get_all_credentials()
-    actual_stolen_credentials = mongo_repository.get_stolen_credentials()
-    actual_configured_credentials = mongo_repository.get_configured_credentials()
-
-    assert actual_credentials == []
-    assert actual_stolen_credentials == []
-    assert actual_configured_credentials == []
+    assert mongo_repository.get_all_credentials() == []
+    assert mongo_repository.get_stolen_credentials() == []
+    assert mongo_repository.get_configured_credentials() == []
