@@ -11,7 +11,7 @@ from common.utils import IJSONSerializable
 
 
 class APIEncoder(JSONEncoder):
-    def default(self, value: Any):
+    def default(self, value: Any) -> Any:
         # ObjectId is serializible by default, but returns a dict
         # So serialize it first into a plain string
         if isinstance(value, bson.objectid.ObjectId):
