@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Dict
 
 
-class UserCreds:
+class UserCredentials:
     def __init__(self, username, password_hash):
         self.username = username
         self.password_hash = password_hash

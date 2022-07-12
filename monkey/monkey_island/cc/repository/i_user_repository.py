@@ -1,9 +1,9 @@
 import abc
 
-from .user_creds import UserCreds
+from monkey_island.cc.models import UserCredentials
 
 
-class IUserDatastore(metaclass=abc.ABCMeta):
+class IUserRepository(metaclass=abc.ABCMeta):
     """
     Allows user credentials to be stored and retrieved.
     """
@@ -17,7 +17,7 @@ class IUserDatastore(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def add_user(self, credentials: UserCreds):
+    def add_user(self, credentials: UserCredentials):
         """
         Adds a new user to the datastore.
         :param UserCreds credentials: New user credentials to persistant storage.
@@ -26,7 +26,7 @@ class IUserDatastore(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def get_user_credentials(self, username: str) -> UserCreds:
+    def get_user_credentials(self, username: str) -> UserCredentials:
         """
         Gets the user matching `username` from storage.
         :param str username: The username for which credentials will be retrieved

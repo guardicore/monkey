@@ -14,14 +14,17 @@ class Registration(AbstractResource):
 
     urls = ["/api/registration"]
 
+    def __init__(self, authentication_service: AuthenticationService):
+        self._authentication_service = authentication_service
+
     def get(self):
-        return {"needs_registration": AuthenticationService.needs_registration()}
+        return {"needs_registration": self._authentication_service.needs_registration()}
 
     def post(self):
         username, password = get_username_password_from_request(request)
 
         try:
-            AuthenticationService.register_new_user(username, password)
+            self._authentication_service.register_new_user(username, password)
             return make_response({"error": ""}, 200)
         # API Spec: HTTP status code for AlreadyRegisteredError should be 409 (CONFLICT)
         except (InvalidRegistrationCredentialsError, AlreadyRegisteredError) as e:

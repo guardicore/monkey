@@ -8,17 +8,16 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.services import AuthenticationService
-from monkey_island.cc.services.authentication import authentication_service
-from monkey_island.cc.services.authentication.i_user_datastore import IUserDatastore
-from monkey_island.cc.services.authentication.user_creds import UserCreds
+from monkey_island.cc.models import UserCredentials
+from monkey_island.cc.repository import IUserRepository
+from monkey_island.cc.services import AuthenticationService, authentication_service
 
 USERNAME = "user1"
 PASSWORD = "test"
 PASSWORD_HASH = "$2b$12$YsGjjuJFddYJ6z5S5/nMCuKkCzKHB1AWY9SXkQ02i25d8TgdhIRS2"
 
 
-class MockUserDatastore(IUserDatastore):
+class MockUserDatastore(IUserRepository):
     def __init__(self, has_registered_users, add_user, get_user_credentials):
         self._has_registered_users = has_registered_users
         self._add_user = add_user
@@ -27,10 +26,10 @@ class MockUserDatastore(IUserDatastore):
     def has_registered_users(self):
         return self._has_registered_users()
 
-    def add_user(self, credentials: UserCreds):
+    def add_user(self, credentials: UserCredentials):
         return self._add_user(credentials)
 
-    def get_user_credentials(self, username: str) -> UserCreds:
+    def get_user_credentials(self, username: str) -> UserCredentials:
         return self._get_user_credentials(username)
 
 
@@ -69,8 +68,7 @@ def test_needs_registration__true(tmp_path):
     has_registered_users = False
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     assert a_s.needs_registration()
 
@@ -79,8 +77,7 @@ def test_needs_registration__false(tmp_path):
     has_registered_users = True
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     assert not a_s.needs_registration()
 
@@ -92,8 +89,7 @@ def test_register_new_user__fails(
 ):
     mock_user_datastore = MockUserDatastore(lambda: True, MagicMock(side_effect=error), None)
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     with pytest.raises(error):
         a_s.register_new_user(USERNAME, PASSWORD)
@@ -107,8 +103,7 @@ def test_register_new_user__empty_password_fails(
 ):
     mock_user_datastore = MockUserDatastore(lambda: False, None, None)
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     with pytest.raises(InvalidRegistrationCredentialsError):
         a_s.register_new_user(USERNAME, "")
@@ -122,8 +117,7 @@ def test_register_new_user(tmp_path, mock_reset_datastore_encryptor, mock_reset_
     mock_add_user = MagicMock()
     mock_user_datastore = MockUserDatastore(lambda: False, mock_add_user, None)
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     a_s.register_new_user(USERNAME, PASSWORD)
 
@@ -141,11 +135,10 @@ def test_authenticate__success(tmp_path, mock_unlock_datastore_encryptor):
     mock_user_datastore = MockUserDatastore(
         lambda: True,
         None,
-        lambda _: UserCreds(USERNAME, PASSWORD_HASH),
+        lambda _: UserCredentials(USERNAME, PASSWORD_HASH),
     )
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     # If authentication fails, this function will raise an exception and the test will fail.
     a_s.authenticate(USERNAME, PASSWORD)
@@ -162,11 +155,10 @@ def test_authenticate__failed_wrong_credentials(
     mock_user_datastore = MockUserDatastore(
         lambda: True,
         None,
-        lambda _: UserCreds(USERNAME, PASSWORD_HASH),
+        lambda _: UserCredentials(USERNAME, PASSWORD_HASH),
     )
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     with pytest.raises(IncorrectCredentialsError):
         a_s.authenticate(username, password)
@@ -179,8 +171,7 @@ def test_authenticate__failed_no_registered_user(tmp_path, mock_unlock_datastore
         lambda: True, None, MagicMock(side_effect=UnknownUserError)
     )
 
-    a_s = AuthenticationService()
-    a_s.initialize(tmp_path, mock_user_datastore)
+    a_s = AuthenticationService(tmp_path, mock_user_datastore)
 
     with pytest.raises(IncorrectCredentialsError):
         a_s.authenticate(USERNAME, PASSWORD)
