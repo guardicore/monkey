@@ -10,11 +10,11 @@ from common.utils.exceptions import (
     UnknownUserError,
 )
 from monkey_island.cc.models import UserCredentials
-from monkey_island.cc.server_utils.file_utils import is_windows_os
-from monkey_island.cc.services.authentication.json_file_user_datastore import (
+from monkey_island.cc.repository.json_file_user_repository import (
     CREDENTIALS_FILE,
     JSONFileUserRepository,
 )
+from monkey_island.cc.server_utils.file_utils import is_windows_os
 
 USERNAME = "test"
 PASSWORD_HASH = "DEADBEEF"
