@@ -14,7 +14,7 @@ from .user_creds import UserCreds
 CREDENTIALS_FILE = "credentials.json"
 
 
-class JsonFileUserDatastore(IUserRepository):
+class JSONFileUserRepository(IUserRepository):
     def __init__(self, data_dir: Path):
         self._credentials = None
         self._credentials_file = data_dir / CREDENTIALS_FILE

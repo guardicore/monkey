@@ -12,7 +12,7 @@ from common.utils.exceptions import (
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 from monkey_island.cc.services.authentication.json_file_user_datastore import (
     CREDENTIALS_FILE,
-    JsonFileUserDatastore,
+    JSONFileUserRepository,
 )
 from monkey_island.cc.services.authentication.user_creds import UserCreds
 
@@ -22,12 +22,12 @@ PASSWORD_HASH = "DEADBEEF"
 
 @pytest.fixture
 def empty_datastore(tmp_path):
-    return JsonFileUserDatastore(tmp_path)
+    return JSONFileUserRepository(tmp_path)
 
 
 @pytest.fixture
 def populated_datastore(data_for_tests_dir):
-    return JsonFileUserDatastore(data_for_tests_dir)
+    return JSONFileUserRepository(data_for_tests_dir)
 
 
 @pytest.fixture
@@ -91,10 +91,10 @@ def test_add_user__already_registered(populated_datastore):
 
 
 def test_get_user_credentials_from_file(tmp_path):
-    empty_datastore = JsonFileUserDatastore(tmp_path)
+    empty_datastore = JSONFileUserRepository(tmp_path)
     empty_datastore.add_user(UserCreds(USERNAME, PASSWORD_HASH))
 
-    populated_datastore = JsonFileUserDatastore(tmp_path)
+    populated_datastore = JSONFileUserRepository(tmp_path)
     stored_user = populated_datastore.get_user_credentials(USERNAME)
 
     assert stored_user.username == USERNAME

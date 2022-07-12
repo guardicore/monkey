@@ -1,5 +1,5 @@
 from .authentication.authentication_service import AuthenticationService
-from .authentication.json_file_user_datastore import JsonFileUserDatastore
+from .authentication.json_file_user_datastore import JSONFileUserRepository
 
 from .aws import AWSService
 from .island_mode_service import IslandModeService
