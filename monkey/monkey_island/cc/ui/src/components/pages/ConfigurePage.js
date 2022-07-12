@@ -8,6 +8,7 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
+import PropagationConfig from '../configuration-components/PropagationConfig'
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
@@ -302,13 +303,18 @@ class ConfigurePageComponent extends AuthComponent {
       formProperties['formData'],
       formProperties['uiSchema']);
 
-    return (
-      <div>
-        <Form {...formProperties} key={displayedSchema.title}>
-          <button type='submit' className={'hidden'}>Submit</button>
-        </Form>
-      </div>
-    )
+    if (this.state.selectedSection === 'propagation') {
+        console.log(formProperties['uiSchema']);
+        return (<PropagationConfig {...formProperties}/>)
+    } else {
+      return (
+        <div>
+          <Form {...formProperties} key={displayedSchema.title}>
+            <button type='submit' className={'hidden'}>Submit</button>
+          </Form>
+        </div>
+      )
+    }
   };
 
   setPbaFilenameWindows = (filename) => {
