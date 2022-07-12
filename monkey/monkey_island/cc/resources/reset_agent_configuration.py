@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import make_response
 
 from monkey_island.cc.repository import IAgentConfigurationRepository
@@ -18,4 +20,4 @@ class ResetAgentConfiguration(AbstractResource):
         """
         self._agent_configuration_repository.reset_to_default()
 
-        return make_response({}, 200)
+        return make_response({}, HTTPStatus.OK)

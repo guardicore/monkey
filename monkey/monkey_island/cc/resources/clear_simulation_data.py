@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import make_response
 
 from monkey_island.cc.repository.i_credentials_repository import ICredentialsRepository
@@ -20,4 +22,4 @@ class ClearSimulationData(AbstractResource):
         Database.reset_db(reset_config=False)
         self._credentials_repository.remove_stolen_credentials()
 
-        return make_response({}, 200)
+        return make_response({}, HTTPStatus.OK)

@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 
 from flask import make_response, send_file
 
@@ -34,7 +35,7 @@ class AgentBinaries(AbstractResource):
         except KeyError as err:
             error_msg = f'No Agents are available for unsupported operating system "{os}": {err}'
             logger.error(error_msg)
-            return make_response({"error": error_msg}, 404)
+            return make_response({"error": error_msg}, HTTPStatus.NOT_FOUND)
         except RetrievalError as err:
             logger.error(err)
-            return make_response({"error": str(err)}, 500)
+            return make_response({"error": str(err)}, HTTPStatus.INTERNAL_SERVER_ERROR)
