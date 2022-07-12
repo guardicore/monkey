@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import make_response, request
+from flask import request
 
 from common.credentials import Credentials
 from monkey_island.cc.repository import ICredentialsRepository

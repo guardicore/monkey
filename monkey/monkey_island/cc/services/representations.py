@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import Enum
+from json import loads
 
 import bson
 from flask import make_response
@@ -19,7 +20,7 @@ class APIEncoder(JSONEncoder):
         if issubclass(type(value), Enum):
             return value.name
         if issubclass(type(value), IJSONSerializable):
-            return value.__class__.to_json(value)
+            return loads(value.__class__.to_json(value))
         try:
             return JSONEncoder.default(self, value)
         except TypeError:
@@ -27,6 +28,6 @@ class APIEncoder(JSONEncoder):
 
 
 def output_json(value, code, headers=None):
-    resp = make_response(dumps(value, APIEncoder), code)
+    resp = make_response(dumps(value, cls=APIEncoder), code)
     resp.headers.extend(headers or {})
     return resp
