@@ -10,6 +10,7 @@ from common.utils.exceptions import (
 from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.server_utils.encryption import (
+    ILockableEncryptor,
     reset_datastore_encryptor,
     unlock_datastore_encryptor,
 )
@@ -17,9 +18,15 @@ from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
 
 class AuthenticationService:
-    def __init__(self, data_dir: Path, user_datastore: IUserRepository):
+    def __init__(
+        self,
+        data_dir: Path,
+        user_datastore: IUserRepository,
+        repository_encryptor: ILockableEncryptor,
+    ):
         self._data_dir = data_dir
         self._user_datastore = user_datastore
+        self._repository_encryptor = repository_encryptor
 
     def needs_registration(self) -> bool:
         return not self._user_datastore.has_registered_users()
@@ -30,7 +37,7 @@ class AuthenticationService:
 
         credentials = UserCredentials(username, _hash_password(password))
         self._user_datastore.add_user(credentials)
-        self._reset_datastore_encryptor(username, password)
+        self._reset_repository_encryptor(username, password)
         reset_database()
 
     def authenticate(self, username: str, password: str):
@@ -42,14 +49,21 @@ class AuthenticationService:
         if not _credentials_match_registered_user(username, password, registered_user):
             raise IncorrectCredentialsError()
 
-        self._unlock_datastore_encryptor(username, password)
+        self._unlock_repository_encryptor(username, password)
 
-    def _unlock_datastore_encryptor(self, username: str, password: str):
+    def _unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
+        self._repository_encryptor.unlock(secret.encode())
+
+        # Legacy datastore encryptor will be removed soon
         unlock_datastore_encryptor(self._data_dir, secret)
 
-    def _reset_datastore_encryptor(self, username: str, password: str):
+    def _reset_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
+        self._repository_encryptor.reset_key()
+        self._repository_encryptor.unlock(secret.encode())
+
+        # Legacy datastore encryptor will be removed soon
         reset_datastore_encryptor(self._data_dir, secret)
 
 
