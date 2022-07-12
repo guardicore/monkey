@@ -75,7 +75,7 @@ def test_api_encoder_tuple():
     assert json.dumps(expected_tuple) == json.dumps(bogus_tuple, cls=APIEncoder)
 
 
-class BogusClass(IJSONSerializable):
+class BogusSerializableClass(IJSONSerializable):
     def __init__(self, a):
         self.a = a
 
@@ -89,6 +89,6 @@ class BogusClass(IJSONSerializable):
 
 
 def test_api_encoder_json_serializable():
-    bogus_data = {"target": [BogusClass("macky")]}
+    bogus_data = {"target": [BogusSerializableClass("macky")]}
     expected_result = {"target": [{"wacky": "macky"}]}
     assert json.dumps(expected_result) == json.dumps(bogus_data, cls=APIEncoder)
