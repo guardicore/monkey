@@ -74,6 +74,9 @@ class MongoCredentialsRepository(ICredentialsRepository):
     # NOTE: The encryption/decryption is complicated and also full of mostly duplicated code. Rather
     #       than spend the effort to improve them now, we can revisit them when we resolve #2072.
     #       Resolving #2072 will make it easier to simplify these methods and remove duplication.
+    #
+    #       If possible, implement the encryption/decryption as a decorator so it can be reused with
+    #       different ICredentialsRepository implementations
     def _encrypt_credentials_mapping(self, mapping: Mapping[str, Any]) -> Mapping[str, Any]:
         encrypted_mapping: Dict[str, Any] = {}
 
