@@ -13,19 +13,6 @@ PASSWORD = "test_password"
 
 
 @pytest.fixture
-def mock_authentication_service(monkeypatch):
-    mock_service = MagicMock()
-    mock_service.register_new_user = MagicMock()
-    mock_service.needs_registration = MagicMock()
-
-    monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.registration.AuthenticationService", mock_service
-    )
-
-    return mock_service
-
-
-@pytest.fixture
 def make_registration_request(flask_client):
     def inner(request_body):
         return flask_client.post(REGISTRATION_URL, data=request_body, follow_redirects=True)

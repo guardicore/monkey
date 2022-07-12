@@ -18,52 +18,40 @@ from .user_creds import UserCreds
 
 
 class AuthenticationService:
-    DATA_DIR = None
-    user_datastore = None
+    def __init__(self, data_dir: Path, user_datastore: IUserDatastore):
+        self._data_dir = data_dir
+        self._user_datastore = user_datastore
 
-    # TODO: A number of these services should be instance objects instead of
-    # static/singleton hybrids. At the moment, this requires invasive refactoring that's
-    # not a priority.
-    @classmethod
-    def initialize(cls, data_dir: Path, user_datastore: IUserDatastore):
-        cls.DATA_DIR = data_dir
-        cls.user_datastore = user_datastore
+    def needs_registration(self) -> bool:
+        return not self._user_datastore.has_registered_users()
 
-    @classmethod
-    def needs_registration(cls) -> bool:
-        return not cls.user_datastore.has_registered_users()
-
-    @classmethod
-    def register_new_user(cls, username: str, password: str):
+    def register_new_user(self, username: str, password: str):
         if not username or not password:
             raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
 
         credentials = UserCreds(username, _hash_password(password))
-        cls.user_datastore.add_user(credentials)
-        cls._reset_datastore_encryptor(username, password)
+        self._user_datastore.add_user(credentials)
+        self._reset_datastore_encryptor(username, password)
         reset_database()
 
-    @classmethod
-    def authenticate(cls, username: str, password: str):
+    def authenticate(self, username: str, password: str):
         try:
-            registered_user = cls.user_datastore.get_user_credentials(username)
+            registered_user = self._user_datastore.get_user_credentials(username)
         except UnknownUserError:
             raise IncorrectCredentialsError()
 
         if not _credentials_match_registered_user(username, password, registered_user):
             raise IncorrectCredentialsError()
 
-        cls._unlock_datastore_encryptor(username, password)
+        self._unlock_datastore_encryptor(username, password)
 
-    @classmethod
-    def _unlock_datastore_encryptor(cls, username: str, password: str):
+    def _unlock_datastore_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
-        unlock_datastore_encryptor(cls.DATA_DIR, secret)
+        unlock_datastore_encryptor(self._data_dir, secret)
 
-    @classmethod
-    def _reset_datastore_encryptor(cls, username: str, password: str):
+    def _reset_datastore_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
-        reset_datastore_encryptor(cls.DATA_DIR, secret)
+        reset_datastore_encryptor(self._data_dir, secret)
 
 
 def _hash_password(plaintext_password: str) -> str:

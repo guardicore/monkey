@@ -29,6 +29,9 @@ class Authenticate(AbstractResource):
 
     urls = ["/api/auth"]
 
+    def __init__(self, authentication_service: AuthenticationService):
+        self._authentication_service = authentication_service
+
     def post(self):
         """
         Example request: \
@@ -41,7 +44,7 @@ class Authenticate(AbstractResource):
         username, password = get_username_password_from_request(request)
 
         try:
-            AuthenticationService.authenticate(username, password)
+            self._authentication_service.authenticate(username, password)
             access_token = create_access_token(username)
         except IncorrectCredentialsError:
             return make_response({"error": "Invalid credentials"}, 401)

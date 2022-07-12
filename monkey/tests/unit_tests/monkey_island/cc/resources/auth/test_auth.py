@@ -12,16 +12,6 @@ TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
 
 
 @pytest.fixture
-def mock_authentication_service(monkeypatch):
-    mock_service = MagicMock()
-    mock_service.authenticate = MagicMock()
-
-    monkeypatch.setattr("monkey_island.cc.resources.auth.auth.AuthenticationService", mock_service)
-
-    return mock_service
-
-
-@pytest.fixture
 def make_auth_request(flask_client):
     url = Authenticate.urls[0]
 
