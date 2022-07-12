@@ -13,6 +13,7 @@ from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import (
     AgentBinaries,
     ClearSimulationData,
+    PropagationCredentials,
     RemoteRun,
     ResetAgentConfiguration,
 )
@@ -42,7 +43,6 @@ from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
 from monkey_island.cc.resources.pba_file_upload import FileUpload
-from monkey_island.cc.resources.propagation_credentials import PropagationCredentials
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
