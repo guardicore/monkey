@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 
 from flask import make_response, request
 
@@ -25,7 +26,7 @@ class Registration(AbstractResource):
 
         try:
             self._authentication_service.register_new_user(username, password)
-            return make_response({"error": ""}, 200)
+            return make_response({"error": ""}, HTTPStatus.OK)
         # API Spec: HTTP status code for AlreadyRegisteredError should be 409 (CONFLICT)
         except (InvalidRegistrationCredentialsError, AlreadyRegisteredError) as e:
-            return make_response({"error": str(e)}, 400)
+            return make_response({"error": str(e)}, HTTPStatus.BAD_REQUEST)
