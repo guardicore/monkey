@@ -1,4 +1,4 @@
-from monkey_island.cc.services.authentication.user_creds import UserCreds
+from monkey_island.cc.models import UserCreds
 
 TEST_USER = "Test"
 TEST_HASH = "abc1231234"
