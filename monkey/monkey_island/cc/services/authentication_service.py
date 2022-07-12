@@ -21,28 +21,28 @@ class AuthenticationService:
     def __init__(
         self,
         data_dir: Path,
-        user_datastore: IUserRepository,
+        user_repository: IUserRepository,
         repository_encryptor: ILockableEncryptor,
     ):
         self._data_dir = data_dir
-        self._user_datastore = user_datastore
+        self._user_repository = user_repository
         self._repository_encryptor = repository_encryptor
 
     def needs_registration(self) -> bool:
-        return not self._user_datastore.has_registered_users()
+        return not self._user_repository.has_registered_users()
 
     def register_new_user(self, username: str, password: str):
         if not username or not password:
             raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
 
         credentials = UserCredentials(username, _hash_password(password))
-        self._user_datastore.add_user(credentials)
+        self._user_repository.add_user(credentials)
         self._reset_repository_encryptor(username, password)
         reset_database()
 
     def authenticate(self, username: str, password: str):
         try:
-            registered_user = self._user_datastore.get_user_credentials(username)
+            registered_user = self._user_repository.get_user_credentials(username)
         except UnknownUserError:
             raise IncorrectCredentialsError()
 
