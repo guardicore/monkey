@@ -124,14 +124,17 @@ def test_propagation_credentials_endpoint__propagation_credentials_post_not_allo
     assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
 
-def test_propagation_credentials_endpoint__not_found(flask_client):
-    non_existent_collection_url = urljoin(ALL_CREDENTIALS_URL, "bogus-credentials")
+NON_EXISTENT_COLLECTION_URL = urljoin(ALL_CREDENTIALS_URL, "bogus-credentials")
 
-    resp = flask_client.get(non_existent_collection_url)
+
+def test_propagation_credentials_endpoint__get_not_found(flask_client):
+    resp = flask_client.get(NON_EXISTENT_COLLECTION_URL)
     assert resp.status_code == HTTPStatus.NOT_FOUND
 
+
+def test_propagation_credentials_endpoint__post_not_found(flask_client):
     resp = flask_client.post(
-        non_existent_collection_url,
+        NON_EXISTENT_COLLECTION_URL,
         json=[
             Credentials.to_json(PROPAGATION_CREDENTIALS_2),
             Credentials.to_json(PROPAGATION_CREDENTIALS_3),
@@ -139,5 +142,7 @@ def test_propagation_credentials_endpoint__not_found(flask_client):
     )
     assert resp.status_code == HTTPStatus.NOT_FOUND
 
-    resp = flask_client.delete(non_existent_collection_url)
+
+def test_propagation_credentials_endpoint__delete_not_found(flask_client):
+    resp = flask_client.delete(NON_EXISTENT_COLLECTION_URL)
     assert resp.status_code == HTTPStatus.NOT_FOUND
