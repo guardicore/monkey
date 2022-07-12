@@ -8,9 +8,9 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
+from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.services import AuthenticationService
 from monkey_island.cc.services.authentication import authentication_service
-from monkey_island.cc.services.authentication.i_user_datastore import IUserRepository
 from monkey_island.cc.services.authentication.user_creds import UserCreds
 
 USERNAME = "user1"

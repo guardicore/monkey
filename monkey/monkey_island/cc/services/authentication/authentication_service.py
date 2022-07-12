@@ -7,13 +7,13 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
+from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
     unlock_datastore_encryptor,
 )
 from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
-from .i_user_datastore import IUserRepository
 from .user_creds import UserCreds
 
 

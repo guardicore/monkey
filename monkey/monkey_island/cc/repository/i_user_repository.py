@@ -1,6 +1,6 @@
 import abc
 
-from .user_creds import UserCreds
+from monkey_island.cc.services.authentication.user_creds import UserCreds
 
 
 class IUserRepository(metaclass=abc.ABCMeta):

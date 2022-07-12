@@ -24,6 +24,7 @@ from monkey_island.cc.repository import (
     ICredentialsRepository,
     IFileRepository,
     ISimulationRepository,
+    IUserRepository,
     LocalStorageFileRepository,
     MongoCredentialsRepository,
     RetrievalError,
@@ -41,7 +42,6 @@ from monkey_island.cc.services.telemetry.processing.processing import (
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
 from . import AuthenticationService, JSONFileUserRepository
-from .authentication.i_user_datastore import IUserRepository
 from .reporting.report import ReportService
 
 logger = logging.getLogger(__name__)
