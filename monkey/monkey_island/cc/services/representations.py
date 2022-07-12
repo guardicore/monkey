@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from json import loads
+from typing import Any
 
 import bson
 from flask import make_response
@@ -10,7 +11,7 @@ from common.utils import IJSONSerializable
 
 
 class APIEncoder(JSONEncoder):
-    def default(self, value):
+    def default(self, value: Any):
         # ObjectId is serializible by default, but returns a dict
         # So serialize it first into a plain string
         if isinstance(value, bson.objectid.ObjectId):
