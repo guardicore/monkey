@@ -391,14 +391,7 @@ class ReportService:
     @staticmethod
     def get_config_exploits():
         exploits_config_value = EXPLOITER_CLASSES_PATH
-        # TODO: Return default config here
-        default_exploits = ConfigService.get_default_config(False)
-        for namespace in exploits_config_value:
-            default_exploits = default_exploits[namespace]
         exploits = ConfigService.get_config_value(exploits_config_value, True)
-
-        if exploits == default_exploits:
-            return ["default"]
 
         return [
             ExploiterDescriptorEnum.get_by_class_name(exploit).display_name for exploit in exploits

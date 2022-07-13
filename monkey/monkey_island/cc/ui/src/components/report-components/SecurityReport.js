@@ -297,17 +297,12 @@ class ReportPageComponent extends AuthComponent {
         }
         {
           this.state.report.overview.config_exploits.length > 0 ?
-            (
-              this.state.report.overview.config_exploits[0] === 'default' ?
-                ''
-                :
-                <p>
-                  The Monkey uses the following exploit methods:
-                  <ul>
-                    {this.state.report.overview.config_exploits.map(x => <li key={x}>{x}</li>)}
-                  </ul>
-                </p>
-            )
+            <p>
+              The Monkey uses the following exploit methods:
+              <ul>
+                {this.state.report.overview.config_exploits.map(x => <li key={x}>{x}</li>)}
+              </ul>
+            </p>
             :
             <p>
               No exploits are used by the Monkey.
