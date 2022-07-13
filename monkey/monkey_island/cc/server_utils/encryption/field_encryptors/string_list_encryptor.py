@@ -6,9 +6,9 @@ from . import IFieldEncryptor
 
 class StringListEncryptor(IFieldEncryptor):
     @staticmethod
-    def encrypt(value: List[str]):
-        return [get_datastore_encryptor().encrypt(string.encode()) for string in value]
+    def encrypt(value: List[str]) -> List[str]:
+        return [get_datastore_encryptor().encrypt(string.encode()).decode() for string in value]
 
     @staticmethod
-    def decrypt(value: List[bytes]):
-        return [get_datastore_encryptor().decrypt(bytes_).decode() for bytes_ in value]
+    def decrypt(value: List[str]) -> List[str]:
+        return [get_datastore_encryptor().decrypt(string.encode()).decode() for string in value]

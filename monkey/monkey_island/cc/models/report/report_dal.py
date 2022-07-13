@@ -29,7 +29,8 @@ def save_report(report_dict: dict):
 
 def get_report() -> dict:
     report_dict = Report.objects.first().to_mongo()
-    return _decode_dot_char_before_mongo_insert(decrypt_dict(sensitive_fields, report_dict))
+    decrypted = decrypt_dict(sensitive_fields, report_dict)
+    return _decode_dot_char_before_mongo_insert(decrypted)
 
 
 # TODO remove this unnecessary encoding. I think these are legacy methods from back in the day
