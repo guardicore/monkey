@@ -60,12 +60,12 @@ class RepositoryEncryptor(ILockableEncryptor):
 
     def encrypt(self, plaintext: bytes) -> bytes:
         if self._key_based_encryptor is None:
-            raise LockedKeyError("Cannot encrypt while the encryptor is locked)")
+            raise LockedKeyError("Cannot encrypt while the encryptor is locked")
 
         return self._key_based_encryptor.encrypt(plaintext)
 
     def decrypt(self, ciphertext: bytes) -> bytes:
         if self._key_based_encryptor is None:
-            raise LockedKeyError("Cannot decrypt while the encryptor is locked)")
+            raise LockedKeyError("Cannot decrypt while the encryptor is locked")
 
         return self._key_based_encryptor.decrypt(ciphertext)
