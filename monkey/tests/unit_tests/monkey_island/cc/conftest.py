@@ -5,11 +5,6 @@ from monkey_island.cc.server_utils.encryption import unlock_datastore_encryptor
 
 
 @pytest.fixture
-def flat_monkey_config(load_monkey_config):
-    return load_monkey_config("flat_config.json")
-
-
-@pytest.fixture
 def uses_encryptor(data_for_tests_dir):
     secret = "m0nk3y_u53r:3cr3t_p455w0rd"
     unlock_datastore_encryptor(data_for_tests_dir, secret)
