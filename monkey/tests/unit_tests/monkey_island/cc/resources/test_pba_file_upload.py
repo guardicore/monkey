@@ -129,10 +129,9 @@ def test_pba_file_upload_endpoint(
 
     resp_delete = flask_client.delete(url_with_os, data="test.py", content_type="text/plain;")
     resp_get_del = flask_client.get(url_with_filename)
+
     assert resp_post.status_code == 200
-
     assert resp_delete.status_code == 200
-
     assert resp_get_del.status_code == 404
 
 
