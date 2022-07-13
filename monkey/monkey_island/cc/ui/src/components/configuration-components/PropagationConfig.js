@@ -1,5 +1,5 @@
 import Form from 'react-jsonschema-form-bs4';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Nav} from 'react-bootstrap';
 import {CREDENTIALS} from '../../services/configuration/credentials.js';
 
@@ -21,21 +21,34 @@ export default function PropagationConfig(props) {
     className,
     formData
   } = props;
-  console.log(schema, uiSchema, formData);
   const [selectedSection, setSelectedSection] = useState(initialSection);
   const [displayedSchema, setDisplayedSchema] = useState(getSchemaByKey(schema, initialSection));
   const [displayedSchemaUi, setDisplayedSchemaUi] = useState(getUiSchemaByKey(uiSchema, initialSection));
+  const [localFormData , setLocalFormData] = useState(formData[initialSection]);
+
+  let varLocalFormData = formData[initialSection];
+  useEffect(() => {
+    varLocalFormData = localFormData;
+
+  }, [localFormData]);
+
+  useEffect(() => {
+    console.log('setSection selectedSection:'+selectedSection);
+    setLocalFormData(formData[selectedSection]);
+    setDisplayedSchema(getSchemaByKey(schema, selectedSection));
+    setDisplayedSchemaUi(getUiSchemaByKey(uiSchema, selectedSection));
+    setLocalFormData(formData[selectedSection]);
+  }, [selectedSection])
+
   const onInnerDataChange = (innerData) => {
-    console.log(innerData);
+    console.log('onInnerDataChange is called, section:'+selectedSection);
     formData[selectedSection] = innerData.formData;
-    onChange({formData: formData});
+    onChange({formData: innerData.formData});
   }
 
   const setSection = (sectionKey) => {
-    console.log(sectionKey);
+    console.log('setSection is called with:'+sectionKey);
     setSelectedSection(sectionKey);
-    setDisplayedSchema(getSchemaByKey(schema, sectionKey));
-    setDisplayedSchemaUi(getUiSchemaByKey(uiSchema, sectionKey));
   }
 
   const renderNav = () => {
@@ -53,13 +66,12 @@ export default function PropagationConfig(props) {
     </Nav>)
   }
 
-  console.log(displayedSchemaUi)
 
   return (<div>
     {renderNav()}
     <Form schema={displayedSchema}
           uiSchema={displayedSchemaUi}
-          formData={formData[selectedSection]}
+          formData={varLocalFormData}
           onChange={onInnerDataChange}
           customFormats={customFormats}
           className={className}
