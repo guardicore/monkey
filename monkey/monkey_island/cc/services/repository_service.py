@@ -28,10 +28,13 @@ class RepositoryService:
             self._file_repository.delete_file(custom_pbas.windows_filename)
 
     def unlock(self):
-        pass
+        raise NotImplementedError
 
     def reset_key(self):
-        pass
+        raise NotImplementedError
 
     def clear_simulation_data(self):
-        pass
+        # NOTE: This method will be replaced by an event when we implement pub/sub in the island.
+        #       Different plugins and components will be able to register for the event and clear
+        #       any configuration data they've collected.
+        raise NotImplementedError
