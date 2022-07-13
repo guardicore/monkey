@@ -13,7 +13,7 @@ WINDOWS_FILENAME = "windows_pba_file.ps1"
 
 
 @pytest.fixture
-def agent_configuration(default_agent_configuration) -> AgentConfiguration:
+def agent_configuration(default_agent_configuration: AgentConfiguration) -> AgentConfiguration:
     custom_pbas = replace(
         default_agent_configuration.custom_pbas,
         linux_filename=LINUX_FILENAME,
@@ -23,7 +23,9 @@ def agent_configuration(default_agent_configuration) -> AgentConfiguration:
 
 
 @pytest.fixture
-def agent_configuration_repository(agent_configuration) -> IAgentConfigurationRepository:
+def agent_configuration_repository(
+    agent_configuration: AgentConfiguration,
+) -> IAgentConfigurationRepository:
     agent_configuration_repository = InMemoryAgentConfigurationRepository()
     agent_configuration_repository.store_configuration(agent_configuration)
 
@@ -31,7 +33,7 @@ def agent_configuration_repository(agent_configuration) -> IAgentConfigurationRe
 
 
 @pytest.fixture
-def mock_file_repository():
+def mock_file_repository() -> IFileRepository:
     return MagicMock(spec=IFileRepository)
 
 
