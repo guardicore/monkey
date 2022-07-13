@@ -20,9 +20,6 @@ def patch_attack_mitigations_path(monkeypatch, data_for_tests_dir):
 @pytest.fixture(scope="module", autouse=True)
 def patch_dependencies(monkeypatch_session):
     monkeypatch_session.setattr(
-        "monkey_island.cc.services.config.ConfigService.init_config", lambda: None
-    )
-    monkeypatch_session.setattr(
         "monkey_island.cc.services.database.jsonify", MagicMock(return_value=True)
     )
 

@@ -6,11 +6,11 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Config
 from monkey_island.cc.models.agent_controls import AgentControls
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
-from monkey_island.cc.services.config import ConfigService
 
 logger = logging.getLogger(__name__)
 
 
+# NOTE: This service is being replaced by the RepositoryService
 class Database(object):
     def __init__(self):
         pass
@@ -24,7 +24,6 @@ class Database(object):
             for x in mongo.db.collection_names()
             if Database._should_drop(x, reset_config)
         ]
-        ConfigService.init_config()
         Database.init_agent_controls()
         logger.info("DB was reset")
         return jsonify(status="OK")
