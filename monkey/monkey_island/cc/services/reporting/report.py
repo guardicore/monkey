@@ -1,10 +1,10 @@
 import functools
 import ipaddress
-import itertools
 import logging
+from itertools import chain, product
 from typing import List
 
-from common.config_value_paths import EXPLOITER_CLASSES_PATH, PASSWORD_LIST_PATH, USER_LIST_PATH
+from common.config_value_paths import PASSWORD_LIST_PATH, USER_LIST_PATH
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
@@ -304,7 +304,7 @@ class ReportService:
         """
         cross_segment_issues = []
 
-        for subnet_pair in itertools.product(subnet_group, subnet_group):
+        for subnet_pair in product(subnet_group, subnet_group):
             source_subnet = subnet_pair[0]
             target_subnet = subnet_pair[1]
             pair_issues = ReportService.get_cross_segment_issues_per_subnet_pair(
@@ -388,13 +388,21 @@ class ReportService:
     def get_config_passwords():
         return ConfigService.get_config_value(PASSWORD_LIST_PATH, True)
 
-    @staticmethod
-    def get_config_exploits():
-        exploits_config_value = EXPLOITER_CLASSES_PATH
-        exploits = ConfigService.get_config_value(exploits_config_value, True)
+    @classmethod
+    def get_config_exploits(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        exploitation_configuration = agent_configuration.propagation.exploitation
+
+        enabled_exploiters = (
+            exploiter
+            for exploiter in chain(
+                exploitation_configuration.brute_force, exploitation_configuration.vulnerability
+            )
+        )
 
         return [
-            ExploiterDescriptorEnum.get_by_class_name(exploit).display_name for exploit in exploits
+            ExploiterDescriptorEnum.get_by_class_name(exploiter.name).display_name
+            for exploiter in enabled_exploiters
         ]
 
     @classmethod
