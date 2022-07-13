@@ -4,7 +4,6 @@ import logging
 from itertools import chain, product
 from typing import List
 
-from common.config_value_paths import PASSWORD_LIST_PATH
 from common.credentials import CredentialComponentType
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
@@ -12,7 +11,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import IAgentConfigurationRepository, ICredentialsRepository
-from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
 )
@@ -401,9 +399,21 @@ class ReportService:
             )
         return [u.username for u in usernames]
 
-    @staticmethod
-    def get_config_passwords():
-        return ConfigService.get_config_value(PASSWORD_LIST_PATH, True)
+    @classmethod
+    def get_config_passwords(cls):
+        passwords = []
+        configured_credentials = cls._credentials_repository.get_configured_credentials()
+        for credentials in configured_credentials:
+            passwords = chain(
+                passwords,
+                (
+                    secret
+                    for secret in credentials.secrets
+                    if secret.credential_type == CredentialComponentType.PASSWORD
+                ),
+            )
+
+        return [p.password for p in passwords]
 
     @classmethod
     def get_config_exploits(cls):
