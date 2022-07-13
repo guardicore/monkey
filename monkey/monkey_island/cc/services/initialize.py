@@ -33,7 +33,6 @@ from monkey_island.cc.repository import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import AWSService, IslandModeService, RepositoryService
-from monkey_island.cc.services.post_breach_files import PostBreachFilesService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
     CredentialsParser,
@@ -70,7 +69,6 @@ def initialize_services(data_dir: Path) -> DIContainer:
     _patch_credentials_parser(container)
 
     # This is temporary until we get DI all worked out.
-    PostBreachFilesService.initialize(container.resolve(IFileRepository))
     ReportService.initialize(container.resolve(AWSService))
 
     return container
