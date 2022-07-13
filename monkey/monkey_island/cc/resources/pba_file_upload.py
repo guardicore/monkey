@@ -70,7 +70,7 @@ class FileUpload(AbstractResource):
             return send_file(file, mimetype="application/octet-stream")
         except repository.FileNotFoundError as err:
             logger.error(str(err))
-            return make_response({"error": str(err)}, 404)
+            return make_response({"error": str(err)}, HTTPStatus.NOT_FOUND)
 
     # NOTE: Consider putting most of this functionality into a service when this is transformed into
     #       a payload plugin.
@@ -96,7 +96,7 @@ class FileUpload(AbstractResource):
             raise err
 
         # API Spec: HTTP status code should be 201
-        response = Response(response=safe_filename, status=200, mimetype="text/plain")
+        response = Response(response=safe_filename, status=HTTPStatus.OK, mimetype="text/plain")
         return response
 
     def _update_config(self, target_os: str, safe_filename: str):
@@ -136,7 +136,7 @@ class FileUpload(AbstractResource):
             raise err
 
         # API Spec: HTTP status code should be 204
-        return make_response({}, 200)
+        return make_response({}, HTTPStatus.OK)
 
     @staticmethod
     def _is_target_os_supported(target_os: str) -> bool:
