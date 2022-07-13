@@ -4,18 +4,13 @@ import itertools
 import logging
 from typing import List
 
-from common.config_value_paths import (
-    EXPLOITER_CLASSES_PATH,
-    LOCAL_NETWORK_SCAN_PATH,
-    PASSWORD_LIST_PATH,
-    SUBNET_SCAN_LIST_PATH,
-    USER_LIST_PATH,
-)
+from common.config_value_paths import EXPLOITER_CLASSES_PATH, PASSWORD_LIST_PATH, USER_LIST_PATH
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
+from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
@@ -47,6 +42,7 @@ logger = logging.getLogger(__name__)
 class ReportService:
 
     _aws_service = None
+    _agent_configuration_repository = None
 
     class DerivedIssueEnum:
         WEAK_PASSWORD = "weak_password"
@@ -54,8 +50,11 @@ class ReportService:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
 
     @classmethod
-    def initialize(cls, aws_service: AWSService):
+    def initialize(
+        cls, aws_service: AWSService, agent_configuration_repository: IAgentConfigurationRepository
+    ):
         cls._aws_service = aws_service
+        cls._agent_configuration_repository = agent_configuration_repository
 
     # This should pull from Simulation entity
     @staticmethod
@@ -405,13 +404,15 @@ class ReportService:
             ExploiterDescriptorEnum.get_by_class_name(exploit).display_name for exploit in exploits
         ]
 
-    @staticmethod
-    def get_config_ips():
-        return ConfigService.get_config_value(SUBNET_SCAN_LIST_PATH, True)
+    @classmethod
+    def get_config_ips(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        return agent_configuration.propagation.network_scan.targets.subnets
 
-    @staticmethod
-    def get_config_scan():
-        return ConfigService.get_config_value(LOCAL_NETWORK_SCAN_PATH, True)
+    @classmethod
+    def get_config_scan(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        return agent_configuration.propagation.network_scan.targets.local_network_scan
 
     @staticmethod
     def get_issue_set(issues, config_users, config_passwords):

@@ -69,7 +69,9 @@ def initialize_services(data_dir: Path) -> DIContainer:
     _patch_credentials_parser(container)
 
     # This is temporary until we get DI all worked out.
-    ReportService.initialize(container.resolve(AWSService))
+    ReportService.initialize(
+        container.resolve(AWSService), container.resolve(IAgentConfigurationRepository)
+    )
 
     return container
 
