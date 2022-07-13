@@ -4,13 +4,14 @@ import logging
 from itertools import chain, product
 from typing import List
 
-from common.config_value_paths import PASSWORD_LIST_PATH, USER_LIST_PATH
+from common.config_value_paths import PASSWORD_LIST_PATH
+from common.credentials import CredentialComponentType
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
-from monkey_island.cc.repository import IAgentConfigurationRepository
+from monkey_island.cc.repository import IAgentConfigurationRepository, ICredentialsRepository
 from monkey_island.cc.services.config import ConfigService
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
@@ -43,6 +44,7 @@ class ReportService:
 
     _aws_service = None
     _agent_configuration_repository = None
+    _credentials_repository = None
 
     class DerivedIssueEnum:
         WEAK_PASSWORD = "weak_password"
@@ -51,10 +53,14 @@ class ReportService:
 
     @classmethod
     def initialize(
-        cls, aws_service: AWSService, agent_configuration_repository: IAgentConfigurationRepository
+        cls,
+        aws_service: AWSService,
+        agent_configuration_repository: IAgentConfigurationRepository,
+        credentials_repository: ICredentialsRepository,
     ):
         cls._aws_service = aws_service
         cls._agent_configuration_repository = agent_configuration_repository
+        cls._credentials_repository = credentials_repository
 
     # This should pull from Simulation entity
     @staticmethod
@@ -380,9 +386,20 @@ class ReportService:
     def get_manual_monkey_hostnames():
         return [monkey["hostname"] for monkey in get_manual_monkeys()]
 
-    @staticmethod
-    def get_config_users():
-        return ConfigService.get_config_value(USER_LIST_PATH, True)
+    @classmethod
+    def get_config_users(cls):
+        usernames = []
+        configured_credentials = cls._credentials_repository.get_configured_credentials()
+        for credentials in configured_credentials:
+            usernames = chain(
+                usernames,
+                (
+                    identity
+                    for identity in credentials.identities
+                    if identity.credential_type == CredentialComponentType.USERNAME
+                ),
+            )
+        return [u.username for u in usernames]
 
     @staticmethod
     def get_config_passwords():
