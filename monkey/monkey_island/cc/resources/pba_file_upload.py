@@ -17,6 +17,7 @@ LINUX_PBA_TYPE = "PBAlinux"
 WINDOWS_PBA_TYPE = "PBAwindows"
 
 
+# NOTE: This resource will be reworked when the Custom PBA feature is rebuilt as a payload plugin.
 class FileUpload(AbstractResource):
     # API Spec: FileUpload -> PBAFileUpload. Change endpoint accordingly.
     """
@@ -36,6 +37,9 @@ class FileUpload(AbstractResource):
     ):
         self._file_storage_service = file_storage_repository
         self._agent_configuration_repository = agent_configuration_repository
+
+    # NOTE: None of these methods are thread-safe. Don't forget to fix that when this becomes a
+    #       payload plugin.
 
     # This endpoint is basically a duplicate of PBAFileDownload.get(). They serve slightly different
     # purposes. This endpoint is authenticated, whereas the one in PBAFileDownload can not be (at
@@ -68,6 +72,8 @@ class FileUpload(AbstractResource):
             logger.error(str(err))
             return make_response({"error": str(err)}, 404)
 
+    # NOTE: Consider putting most of this functionality into a service when this is transformed into
+    #       a payload plugin.
     @jwt_required
     def post(self, target_os):
         """
@@ -85,6 +91,7 @@ class FileUpload(AbstractResource):
         try:
             self._update_config(target_os, safe_filename)
         except Exception as err:
+            # Roll back the entire transaction if part of it failed.
             self._file_storage.delete_file(safe_filename)
             raise err
 
@@ -124,6 +131,7 @@ class FileUpload(AbstractResource):
         try:
             self._file_storage_service.delete_file(filename)
         except Exception as err:
+            # Roll back the entire transaction if part of it failed.
             self._agent_configuration_repository.store_configuration(original_agent_configuration)
             raise err
 
