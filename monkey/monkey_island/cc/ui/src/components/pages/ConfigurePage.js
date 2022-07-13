@@ -233,11 +233,12 @@ class ConfigurePageComponent extends AuthComponent {
           this.updateConfig();
           this.props.onStatusChange();
         }
-      ).then(() => {
-      this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
-      this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
-    })
-    .then(this.authFetch('/api/propagation-credentials/configured-credentials', {method: 'DELETE'}));
+      )
+      .then(() => {
+        this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
+        this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
+      })
+      .then(this.authFetch('/api/propagation-credentials/configured-credentials', {method: 'DELETE'}));
   };
 
   removePBAfile(apiEndpoint, setFilenameFnc) {
