@@ -107,6 +107,10 @@ const IslandResetModal = (props: Props) => {
         if (res.status === 200) {
             return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
         }})
+        .then(res => {
+          if (res.status === 200) {
+              return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'DELETE'})
+          }})
       .then(res => {
         if (res.status === 200) {
             return auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
