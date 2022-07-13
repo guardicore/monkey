@@ -43,7 +43,7 @@ def test_reset_configuration__remove_pba_files(
     repository_service.reset_agent_configuration()
 
     assert mock_file_repository.delete_file.called_with(LINUX_FILENAME)
-    assert mock_file_repository.delete_file.called_with(LINUX_FILENAME)
+    assert mock_file_repository.delete_file.called_with(WINDOWS_FILENAME)
 
 
 def test_reset_configuration__agent_configuration_changed(
