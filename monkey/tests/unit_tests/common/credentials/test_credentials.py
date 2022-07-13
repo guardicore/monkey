@@ -93,35 +93,3 @@ def test_credentials_deserialization__invalid_component():
     }
     with pytest.raises(InvalidCredentialComponentError):
         Credentials.from_mapping(invalid_data)
-
-
-DESERIALIZED_CREDENTIALS_0 = Credentials.from_mapping(CREDENTIALS_DICT)
-DESERIALIZED_CREDENTIALS_1 = Credentials(
-    secrets=(Password(PASSWORD),), identities=(Username("STUPID"),)
-)
-DESERIALIZED_CREDENTIALS_2 = Credentials(secrets=(LMHash(LM_HASH),), identities=tuple())
-credentials_array_json = (
-    f"[{Credentials.to_json(DESERIALIZED_CREDENTIALS_0)},"
-    f"{Credentials.to_json(DESERIALIZED_CREDENTIALS_1)},"
-    f"{Credentials.to_json(DESERIALIZED_CREDENTIALS_2)}]"
-)
-
-
-def test_from_json_array():
-    credentials_sequence = Credentials.from_json_array(credentials_array_json)
-
-    assert len(credentials_sequence) == 3
-    assert credentials_sequence[0] == DESERIALIZED_CREDENTIALS_0
-    assert credentials_sequence[1] == DESERIALIZED_CREDENTIALS_1
-    assert credentials_sequence[2] == DESERIALIZED_CREDENTIALS_2
-
-
-def test_to_json_array():
-    expected_credentials_dict = json.loads(credentials_array_json)
-    actual_credentials_dict = json.loads(
-        Credentials.to_json_array(
-            [DESERIALIZED_CREDENTIALS_0, DESERIALIZED_CREDENTIALS_1, DESERIALIZED_CREDENTIALS_2]
-        )
-    )
-
-    assert actual_credentials_dict == expected_credentials_dict

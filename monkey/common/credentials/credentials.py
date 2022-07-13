@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass
 from typing import Any, Mapping, MutableMapping, Sequence, Tuple
 
@@ -164,22 +163,15 @@ class Credentials(IJSONSerializable):
             raise InvalidCredentialsError(str(err))
 
     @staticmethod
-    def from_json_array(credentials_array_json: str) -> Sequence[Credentials]:
+    def to_mapping(credentials: Credentials) -> Mapping:
         """
-        Construct a sequence of Credentials object from a JSON string
+        Serialize a Credentials object to a Mapping
 
-        :param credentials: A JSON string that represents an array of Credentials objects
-        :return: A Sequence of Credentials objects
-        :raises InvalidCredentialsError: If the provided JSON does not represent a valid
-                                         Credentials object
-        :raises InvalidCredentialComponentError: If any of the contents of `identities` or `secrets`
-                                                 are not a valid ICredentialComponent
-        :raises JSONDecodeError: If the provided string is not valid JSON
-        :raises TypeError: If the provided JSON does not represent an array
+        :param credentials: A Credentials object
+        :return: A mapping representing a Credentials object
         """
 
-        credentials_list = json.loads(credentials_array_json)
-        return [Credentials.from_mapping(c) for c in credentials_list]
+        return CredentialsSchema().dump(credentials)
 
     @classmethod
     def to_json(cls, credentials: Credentials) -> str:
@@ -191,23 +183,3 @@ class Credentials(IJSONSerializable):
         """
 
         return CredentialsSchema().dumps(credentials)
-
-    @staticmethod
-    def to_json_array(credentials: Sequence[Credentials]) -> str:
-        """
-        Serialize a Sequence of Credentials objects to a JSON array
-
-        :param credentials: A Sequence of Credentials objects
-        :return: A JSON string representing an array of Credentials objects
-        """
-        return "[" + ",".join([Credentials.to_json(c) for c in credentials]) + "]"
-
-    @staticmethod
-    def to_mapping(credentials: Credentials) -> Mapping:
-        """
-        Serialize a Credentials object to a Mapping
-
-        :param credentials: A Credentials object
-        :return: A mapping representing a Credentials object
-        """
-        return CredentialsSchema().dump(credentials)
