@@ -139,11 +139,6 @@ class ConfigService:
             ConfigService.set_config_value(PBA_WINDOWS_FILENAME_PATH, windows_filename)
 
     @staticmethod
-    def init_config():
-        if ConfigService.get_config(should_decrypt=False) != {}:
-            return
-
-    @staticmethod
     def decrypt_config(config):
         ConfigService._encrypt_or_decrypt_config(config, True)
 
