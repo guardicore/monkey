@@ -21,6 +21,7 @@ import {reformatConfig} from '../configuration-components/ReformatHook';
 
 const CONFIG_URL = '/api/agent-configuration';
 const RESET_URL = '/api/reset-agent-configuration';
+const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
 export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
 export const API_PBA_WINDOWS = '/api/file-upload/PBAwindows';
 
@@ -238,7 +239,7 @@ class ConfigurePageComponent extends AuthComponent {
         this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
         this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
       })
-      .then(this.authFetch('/api/propagation-credentials/configured-credentials', {method: 'DELETE'}));
+      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'DELETE'}));
   };
 
   removePBAfile(apiEndpoint, setFilenameFnc) {
