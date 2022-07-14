@@ -33,7 +33,6 @@ export const SCHEMA = {
       'properties':{
         'keep_tunnel_open_time': {
           'title': 'Keep tunnel open time',
-          'format': 'float',
           'type': 'number',
           'default': 30,
           'description': 'Time to keep tunnel open before going down after last exploit (in seconds)'
