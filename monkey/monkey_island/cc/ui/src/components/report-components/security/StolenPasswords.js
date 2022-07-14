@@ -1,13 +1,13 @@
 import React from 'react';
-import ReactTable from 'react-table'
+import ReactTable  from 'react-table'
+import {getCredentialsTableData} from '../credentialParsing.js';
 
 const columns = [
   {
     Header: 'Stolen Credentials',
     columns: [
       {Header: 'Username', accessor: 'username'},
-      {Header: 'Type', accessor: 'type'},
-      {Header: 'Stolen From', accessor: 'origin'}
+      {Header: 'Type', accessor: 'type'}
     ]
   }
 ];
@@ -22,11 +22,12 @@ class StolenPasswordsComponent extends React.Component {
   render() {
     let defaultPageSize = this.props.data.length > pageSize ? pageSize : this.props.data.length;
     let showPagination = this.props.data.length > pageSize;
+    let table_data = getCredentialsTableData(this.props.data);
     return (
       <div className="data-table-container">
         <ReactTable
           columns={columns}
-          data={this.props.data}
+          data={table_data}
           showPagination={showPagination}
           defaultPageSize={defaultPageSize}
         />
