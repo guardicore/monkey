@@ -176,8 +176,8 @@ def get_technique(technique_id):
     :return: Technique object or None if technique is not found
     """
     attack_config = ATTACK_SCHEMA["properties"]
-    for config_key, attack_type in list(attack_config.items()):
-        for type_key, technique in list(attack_type["properties"].items()):
+    for attack_type in attack_config.values():
+        for type_key, technique in attack_type["properties"].items():
             if type_key == technique_id:
                 return technique
     return None
