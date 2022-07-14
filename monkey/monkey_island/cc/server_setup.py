@@ -28,6 +28,7 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
+from monkey_island.cc.setup import PyWSGILoggingFilter  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
@@ -145,11 +146,18 @@ def _start_island_server(
         app,
         certfile=config_options.crt_path,
         keyfile=config_options.key_path,
-        log=logger,
+        log=_get_wsgi_server_logger(),
         error_log=logger,
     )
     _log_init_info()
     http_server.serve_forever()
+
+
+def _get_wsgi_server_logger() -> logging.Logger:
+    wsgi_server_logger = logger.getChild("wsgi")
+    wsgi_server_logger.addFilter(PyWSGILoggingFilter())
+
+    return wsgi_server_logger
 
 
 def _log_init_info():
