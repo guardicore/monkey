@@ -45,6 +45,8 @@ import {
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
 import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
+import {getCredentialsSecrets, getCredentialsUsernames} from './credentialParsing';
+import UsedCredentials from './security/UsedCredentials.tsx';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -161,13 +163,29 @@ class ReportPageComponent extends AuthComponent {
     this.state = {
       report: props.report,
       graph: {nodes: [], edges: []},
-      nodeStateList: []
+      nodeStateList: [],
+      stolenCredentials: [],
+      configuredCredentials: []
     };
   }
 
   componentDidMount() {
     this.getNodeStateListFromServer();
+    this.getCredentialsFromServer();
     this.updateMapFromServer();
+  }
+
+  getCredentialsFromServer = () => {
+    this.authFetch('/api/propagation-credentials/stolen-credentials')
+      .then(res => res.json())
+      .then(creds => {
+        this.setState({stolenCredentials: creds});
+      })
+    this.authFetch('/api/propagation-credentials/configured-credentials')
+      .then(res => res.json())
+      .then(creds => {
+        this.setState({configuredCredentials: creds});
+      })
   }
 
   getNodeStateListFromServer = () => {
@@ -184,9 +202,18 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
-      this.setState({report: this.props.report})
+      this.updateReport(this.props.report);
     }
   }
+
+  updateReport(report) {
+    let newReport = this.addIssuesToOverviewIssues(report);
+
+    this.setState({
+      report: newReport
+    })
+  }
+
 
   render() {
     let content;
@@ -273,39 +300,20 @@ class ReportPageComponent extends AuthComponent {
         <p>
           The monkeys were run with the following configuration:
         </p>
-        {
-          this.state.report.overview.config_users.length > 0 ?
-            <>
-              <p>
-                Usernames used for brute-forcing:
-              </p>
-              <ul>
-                {this.state.report.overview.config_users.map(x => <li key={x}>{x}</li>)}
-              </ul>
-              <p>
-                Passwords used for brute-forcing:
-              </p>
-              <ul>
-                {this.state.report.overview.config_passwords.map(x => <li key={x}>{x.substr(0, 3) + '******'}</li>)}
-              </ul>
-            </>
-            :
-            <p>
-              Brute forcing uses stolen credentials only. No credentials were supplied during Monkey’s
-              configuration.
-            </p>
-        }
+        <UsedCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials}/>
         {
           this.state.report.overview.config_exploits.length > 0 ?
-            <p>
-              The Monkey uses the following exploit methods:
-              <ul>
-                {this.state.report.overview.config_exploits.map(x => <li key={x}>{x}</li>)}
-              </ul>
-            </p>
+            (
+              <p>
+                The Monkey attempted the following exploitation methods:
+                <ul>
+                  {this.state.report.overview.config_exploits.map(x => <li key={x}>{x}</li>)}
+                </ul>
+              </p>
+            )
             :
             <p>
-              No exploits are used by the Monkey.
+              No exploiters were enabled.
             </p>
         }
         {
@@ -535,7 +543,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{marginBottom: '20px'}}>
-          <StolenPasswords data={this.state.report.glance.stolen_creds}/>
+          <StolenPasswords data={this.state.stolenCredentials}/>
         </div>
         <div>
           <StrongUsers data={this.state.report.glance.strong_users}/>
@@ -582,6 +590,42 @@ class ReportPageComponent extends AuthComponent {
     }
     return <ul>{issuesDivArray}</ul>;
   };
+
+  addIssuesToOverviewIssues(report) {
+    let issues = report.overview.issues;
+    let overview_issues = [];
+
+    for(let i=0; i < issues.length; i++) {
+      if (this.isWeakCredentialsIssue(issues[i])) {
+        overview_issues.push('weak_password')
+      } else if (this.isStolenCredentialsIssue(issues[i])) {
+        overview_issues.push('stolen_creds');
+      } else {
+        overview_issues.push(issues[i])
+      }
+    }
+
+    const newOverview = { ...report.overview, issues : overview_issues };
+
+    const newReport = { ...report, overview : newOverview };
+
+
+    return newReport;
+  }
+
+  isWeakCredentialsIssue(issue) {
+    return (Object.prototype.hasOwnProperty.call(issue, 'credential_type') &&
+        issue.credential_type === 'PASSWORD' &&
+        getCredentialsSecrets(this.state.configuredCredentials, 'password').includes(issue.password) &&
+        getCredentialsUsernames(this.state.configuredCredentials).includes(issue.username))
+  }
+
+  isStolenCredentialsIssue(issue) {
+    return ( Object.prototype.hasOwnProperty.call(issue, 'credential_type') &&
+        (issue.credential_type === 'PASSWORD' ||
+            issue.credential_type === 'NT_HASH' ||
+            issue.credential_type === 'LM_HASH'))
+  }
 }
 
 export default ReportPageComponent;
