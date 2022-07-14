@@ -1,5 +1,4 @@
 SSH_KEYS_PATH = ["internal", "exploits", "exploit_ssh_keys"]
-INACCESSIBLE_SUBNETS_PATH = ["basic_network", "network_analysis", "inaccessible_subnets"]
 USER_LIST_PATH = ["basic", "credentials", "exploit_user_list"]
 PASSWORD_LIST_PATH = ["basic", "credentials", "exploit_password_list"]
 LM_HASH_LIST_PATH = ["internal", "exploits", "exploit_lm_hash_list"]

@@ -11,9 +11,6 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import IAgentConfigurationRepository, ICredentialsRepository
-from monkey_island.cc.services.configuration.utils import (
-    get_config_network_segments_as_subnet_groups,
-)
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
@@ -325,8 +322,8 @@ class ReportService:
 
         return cross_segment_issues
 
-    @staticmethod
-    def get_cross_segment_issues():
+    @classmethod
+    def get_cross_segment_issues(cls):
         scans = mongo.db.telemetry.find(
             {"telem_category": "scan"},
             {
@@ -340,7 +337,8 @@ class ReportService:
         cross_segment_issues = []
 
         # For now the feature is limited to 1 group.
-        subnet_groups = get_config_network_segments_as_subnet_groups()
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        subnet_groups = agent_configuration.propagation.network_scan.targets.inaccessible_subnets
 
         for subnet_group in subnet_groups:
             cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(

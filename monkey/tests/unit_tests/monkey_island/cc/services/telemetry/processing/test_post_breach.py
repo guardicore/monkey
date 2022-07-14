@@ -69,8 +69,8 @@ expected_telem_single_result = {
 def test_process_post_breach_telemetry():
     post_breach.update_data = Mock()  # actual behavior of update_data() is to access mongodb
     # multiple results in PBA
-    post_breach.process_post_breach_telemetry(original_telem_multiple_results)
+    post_breach.process_post_breach_telemetry(original_telem_multiple_results, None)
     assert original_telem_multiple_results == expected_telem_multiple_results
     # single result in PBA
-    post_breach.process_post_breach_telemetry(original_telem_single_result)
+    post_breach.process_post_breach_telemetry(original_telem_single_result, None)
     assert original_telem_single_result == expected_telem_single_result

@@ -1,5 +1,6 @@
 from typing import Mapping
 
+from common.configuration import AgentConfiguration
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.node import NodeService
@@ -14,7 +15,7 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import (
 )
 
 
-def process_scan_telemetry(telemetry_json):
+def process_scan_telemetry(telemetry_json, agent_configuration: AgentConfiguration):
     if not _host_responded(telemetry_json["data"]["machine"]):
         return
 
@@ -23,7 +24,7 @@ def process_scan_telemetry(telemetry_json):
 
     current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
     target_ip = telemetry_json["data"]["machine"]["ip_addr"]
-    check_segmentation_violation(current_monkey, target_ip)
+    check_segmentation_violation(current_monkey, target_ip, agent_configuration)
 
 
 def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):

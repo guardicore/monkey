@@ -32,7 +32,7 @@ POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
 }
 
 
-def process_post_breach_telemetry(telemetry_json):
+def process_post_breach_telemetry(telemetry_json, _):
     def convert_telem_data_to_list(data):
         modified_data = [data]
         if type(data["result"][0]) is list:  # multiple results in one pba

@@ -1,6 +1,7 @@
 import logging
 
 from common.common_consts.telem_categories import TelemCategoryEnum
+from common.configuration import AgentConfiguration
 from monkey_island.cc.models.telemetries import save_telemetry
 from monkey_island.cc.services.telemetry.processing.aws_info import process_aws_telemetry
 from monkey_island.cc.services.telemetry.processing.exploit import process_exploit_telemetry
@@ -29,11 +30,13 @@ TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
 UNSAVED_TELEMETRIES = [TelemCategoryEnum.CREDENTIALS]
 
 
-def process_telemetry(telemetry_json):
+def process_telemetry(telemetry_json, agent_configuration: AgentConfiguration):
     try:
         telem_category = telemetry_json.get("telem_category")
         if telem_category in TELEMETRY_CATEGORY_TO_PROCESSING_FUNC:
-            TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[telem_category](telemetry_json)
+            TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[telem_category](
+                telemetry_json, agent_configuration
+            )
         else:
             logger.info("Got unknown type of telemetry: %s" % telem_category)
 
