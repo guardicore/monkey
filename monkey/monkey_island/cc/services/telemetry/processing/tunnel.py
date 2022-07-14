@@ -5,7 +5,7 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.tunneling import (
 )
 
 
-def process_tunnel_telemetry(telemetry_json):
+def process_tunnel_telemetry(telemetry_json, _):
     check_tunneling_violation(telemetry_json)
     monkey_id = NodeService.get_monkey_by_guid(telemetry_json["monkey_guid"])["_id"]
     if telemetry_json["data"]["proxy"] is not None:

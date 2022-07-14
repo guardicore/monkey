@@ -14,7 +14,7 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import (
 )
 
 
-def process_scan_telemetry(telemetry_json):
+def process_scan_telemetry(telemetry_json, _):
     if not _host_responded(telemetry_json["data"]["machine"]):
         return
 

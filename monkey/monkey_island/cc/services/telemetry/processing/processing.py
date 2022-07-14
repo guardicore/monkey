@@ -34,7 +34,9 @@ def process_telemetry(telemetry_json, agent_configuration: AgentConfiguration):
     try:
         telem_category = telemetry_json.get("telem_category")
         if telem_category in TELEMETRY_CATEGORY_TO_PROCESSING_FUNC:
-            TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[telem_category](telemetry_json)
+            TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[telem_category](
+                telemetry_json, agent_configuration
+            )
         else:
             logger.info("Got unknown type of telemetry: %s" % telem_category)
 
