@@ -15,10 +15,6 @@ def get_stolen_creds() -> Sequence[Mapping]:
     return stolen_creds
 
 
-def extract_ssh_keys(credentials: Sequence[Mapping]) -> Sequence[Mapping]:
-    return [c for c in credentials if c["_type"] == CredentialComponentType.SSH_KEYPAIR.name]
-
-
 def _fetch_from_db() -> Sequence[StolenCredentials]:
     return list(StolenCredentials.objects())
 

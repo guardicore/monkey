@@ -2,10 +2,7 @@ import pytest
 
 from common.credentials import CredentialComponentType
 from monkey_island.cc.models import Monkey, StolenCredentials
-from monkey_island.cc.services.reporting.stolen_credentials import (
-    extract_ssh_keys,
-    get_stolen_creds,
-)
+from monkey_island.cc.services.reporting.stolen_credentials import get_stolen_creds
 
 monkey_hostname = "fake_hostname"
 fake_monkey_guid = "abc"
@@ -73,25 +70,3 @@ def test_get_credentials(fake_monkey):
     assert result2 in credentials
     assert result3 in credentials
     assert result4 in credentials
-
-
-@pytest.mark.usefixtures("uses_database")
-def test_extract_ssh_keys(fake_monkey):
-    StolenCredentials(
-        identities=fake_credentials["identities"],
-        secrets=fake_credentials["secrets"],
-        monkey=fake_monkey,
-    ).save()
-
-    credentials = get_stolen_creds()
-    keys = extract_ssh_keys(credentials)
-
-    assert len(keys) == 1
-
-    result = {
-        "origin": monkey_hostname,
-        "_type": CredentialComponentType.SSH_KEYPAIR.name,
-        "type": "Clear SSH private key",
-        "username": fake_username,
-    }
-    assert result in keys
