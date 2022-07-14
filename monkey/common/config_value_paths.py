@@ -1,9 +1,0 @@
-SSH_KEYS_PATH = ["internal", "exploits", "exploit_ssh_keys"]
-USER_LIST_PATH = ["basic", "credentials", "exploit_user_list"]
-PASSWORD_LIST_PATH = ["basic", "credentials", "exploit_password_list"]
-LM_HASH_LIST_PATH = ["internal", "exploits", "exploit_lm_hash_list"]
-NTLM_HASH_LIST_PATH = ["internal", "exploits", "exploit_ntlm_hash_list"]
-
-# TODO: These are tuples so that they are immutable. Make the rest of these paths tuples as well.
-PBA_LINUX_FILENAME_PATH = ("monkey", "post_breach", "PBA_linux_filename")
-PBA_WINDOWS_FILENAME_PATH = ("monkey", "post_breach", "PBA_windows_filename")
