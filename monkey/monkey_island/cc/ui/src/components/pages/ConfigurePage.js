@@ -304,7 +304,6 @@ class ConfigurePageComponent extends AuthComponent {
       formProperties['uiSchema']);
 
     if (this.state.selectedSection === 'propagation') {
-        console.log(formProperties['uiSchema']);
         return (<PropagationConfig {...formProperties}/>)
     } else {
       return (
