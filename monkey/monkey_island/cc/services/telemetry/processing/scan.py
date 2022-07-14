@@ -24,7 +24,7 @@ def process_scan_telemetry(telemetry_json, agent_configuration: AgentConfigurati
 
     current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
     target_ip = telemetry_json["data"]["machine"]["ip_addr"]
-    check_segmentation_violation(current_monkey, target_ip)
+    check_segmentation_violation(current_monkey, target_ip, agent_configuration)
 
 
 def update_edges_and_nodes_based_on_scan_telemetry(telemetry_json):

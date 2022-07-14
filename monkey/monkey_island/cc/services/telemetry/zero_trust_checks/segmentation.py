@@ -6,9 +6,6 @@ from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_if_in_subnet, get_ip_in_src_and_not_in_dst
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.zero_trust.event import Event
-from monkey_island.cc.services.configuration.utils import (
-    get_config_network_segments_as_subnet_groups,
-)
 from monkey_island.cc.services.zero_trust.monkey_findings.monkey_zt_finding_service import (
     MonkeyZTFindingService,
 )
@@ -25,9 +22,11 @@ SEGMENTATION_VIOLATION_EVENT_TEXT = (
 )
 
 
-def check_segmentation_violation(current_monkey, target_ip):
+def check_segmentation_violation(
+    current_monkey, target_ip, agent_configuration: AgentConfiguration
+):
     # TODO - lower code duplication between this and report.py.
-    subnet_groups = get_config_network_segments_as_subnet_groups()
+    subnet_groups = _get_config_network_segments_as_subnet_groups(agent_configuration)
     for subnet_group in subnet_groups:
         subnet_pairs = itertools.product(subnet_group, subnet_group)
         for subnet_pair in subnet_pairs:
