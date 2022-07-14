@@ -1,5 +1,6 @@
 from typing import Mapping
 
+from common.configuration import AgentConfiguration
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.node import NodeService
@@ -14,7 +15,7 @@ from monkey_island.cc.services.telemetry.zero_trust_checks.segmentation import (
 )
 
 
-def process_scan_telemetry(telemetry_json, _):
+def process_scan_telemetry(telemetry_json, agent_configuration: AgentConfiguration):
     if not _host_responded(telemetry_json["data"]["machine"]):
         return
 
