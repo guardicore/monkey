@@ -80,30 +80,27 @@ class MongoCredentialsRepository(ICredentialsRepository):
     def _encrypt_credentials_mapping(self, mapping: Mapping[str, Any]) -> Mapping[str, Any]:
         encrypted_mapping: Dict[str, Any] = {}
 
-        for secret_or_identity, credentials_components in mapping.items():
-            encrypted_mapping[secret_or_identity] = []
-            for component in credentials_components:
-                encrypted_component = {}
-                for key, value in component.items():
-                    encrypted_component[key] = self._repository_encryptor.encrypt(value.encode())
+        for secret_or_identity, credentials_component in mapping.items():
+            encrypted_component = {}
+            for key, value in credentials_component.items():
+                encrypted_component[key] = self._repository_encryptor.encrypt(value.encode())
 
-                encrypted_mapping[secret_or_identity].append(encrypted_component)
+            encrypted_mapping[secret_or_identity] = encrypted_component
 
         return encrypted_mapping
 
     def _decrypt_credentials_mapping(self, mapping: Mapping[str, Any]) -> Mapping[str, Any]:
-        encrypted_mapping: Dict[str, Any] = {}
+        decrypted_mapping: Dict[str, Any] = {}
 
-        for secret_or_identity, credentials_components in mapping.items():
-            encrypted_mapping[secret_or_identity] = []
-            for component in credentials_components:
-                encrypted_component = {}
-                for key, value in component.items():
-                    encrypted_component[key] = self._repository_encryptor.decrypt(value).decode()
+        for secret_or_identity, credentials_component in mapping.items():
+            decrypted_mapping[secret_or_identity] = []
+            decrypted_component = {}
+            for key, value in credentials_component.items():
+                decrypted_component[key] = self._repository_encryptor.decrypt(value).decode()
 
-                encrypted_mapping[secret_or_identity].append(encrypted_component)
+            decrypted_mapping[secret_or_identity] = decrypted_component
 
-        return encrypted_mapping
+        return decrypted_mapping
 
     @staticmethod
     def _remove_credentials_fom_collection(collection):
