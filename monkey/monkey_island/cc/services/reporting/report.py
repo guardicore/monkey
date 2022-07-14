@@ -1,22 +1,16 @@
 import functools
 import ipaddress
-import itertools
 import logging
+from itertools import chain, product
 from typing import List
 
-from common.config_value_paths import (
-    EXPLOITER_CLASSES_PATH,
-    LOCAL_NETWORK_SCAN_PATH,
-    PASSWORD_LIST_PATH,
-    SUBNET_SCAN_LIST_PATH,
-    USER_LIST_PATH,
-)
+from common.credentials import CredentialComponentType
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
-from monkey_island.cc.services.config import ConfigService
+from monkey_island.cc.repository import IAgentConfigurationRepository, ICredentialsRepository
 from monkey_island.cc.services.configuration.utils import (
     get_config_network_segments_as_subnet_groups,
 )
@@ -47,6 +41,8 @@ logger = logging.getLogger(__name__)
 class ReportService:
 
     _aws_service = None
+    _agent_configuration_repository = None
+    _credentials_repository = None
 
     class DerivedIssueEnum:
         WEAK_PASSWORD = "weak_password"
@@ -54,8 +50,15 @@ class ReportService:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
 
     @classmethod
-    def initialize(cls, aws_service: AWSService):
+    def initialize(
+        cls,
+        aws_service: AWSService,
+        agent_configuration_repository: IAgentConfigurationRepository,
+        credentials_repository: ICredentialsRepository,
+    ):
         cls._aws_service = aws_service
+        cls._agent_configuration_repository = agent_configuration_repository
+        cls._credentials_repository = credentials_repository
 
     # This should pull from Simulation entity
     @staticmethod
@@ -305,7 +308,7 @@ class ReportService:
         """
         cross_segment_issues = []
 
-        for subnet_pair in itertools.product(subnet_group, subnet_group):
+        for subnet_pair in product(subnet_group, subnet_group):
             source_subnet = subnet_pair[0]
             target_subnet = subnet_pair[1]
             pair_issues = ReportService.get_cross_segment_issues_per_subnet_pair(
@@ -381,37 +384,60 @@ class ReportService:
     def get_manual_monkey_hostnames():
         return [monkey["hostname"] for monkey in get_manual_monkeys()]
 
-    @staticmethod
-    def get_config_users():
-        return ConfigService.get_config_value(USER_LIST_PATH, True)
+    @classmethod
+    def get_config_users(cls):
+        usernames = []
+        configured_credentials = cls._credentials_repository.get_configured_credentials()
+        for credentials in configured_credentials:
+            usernames = chain(
+                usernames,
+                (
+                    identity
+                    for identity in credentials.identities
+                    if identity.credential_type == CredentialComponentType.USERNAME
+                ),
+            )
+        return [u.username for u in usernames]
 
-    @staticmethod
-    def get_config_passwords():
-        return ConfigService.get_config_value(PASSWORD_LIST_PATH, True)
+    @classmethod
+    def get_config_passwords(cls):
+        passwords = []
+        configured_credentials = cls._credentials_repository.get_configured_credentials()
+        for credentials in configured_credentials:
+            passwords = chain(
+                passwords,
+                (
+                    secret
+                    for secret in credentials.secrets
+                    if secret.credential_type == CredentialComponentType.PASSWORD
+                ),
+            )
 
-    @staticmethod
-    def get_config_exploits():
-        exploits_config_value = EXPLOITER_CLASSES_PATH
-        # TODO: Return default config here
-        default_exploits = ConfigService.get_default_config(False)
-        for namespace in exploits_config_value:
-            default_exploits = default_exploits[namespace]
-        exploits = ConfigService.get_config_value(exploits_config_value, True)
+        return [p.password for p in passwords]
 
-        if exploits == default_exploits:
-            return ["default"]
+    @classmethod
+    def get_config_exploits(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        exploitation_configuration = agent_configuration.propagation.exploitation
+
+        enabled_exploiters = chain(
+            exploitation_configuration.brute_force, exploitation_configuration.vulnerability
+        )
 
         return [
-            ExploiterDescriptorEnum.get_by_class_name(exploit).display_name for exploit in exploits
+            ExploiterDescriptorEnum.get_by_class_name(exploiter.name).display_name
+            for exploiter in enabled_exploiters
         ]
 
-    @staticmethod
-    def get_config_ips():
-        return ConfigService.get_config_value(SUBNET_SCAN_LIST_PATH, True)
+    @classmethod
+    def get_config_ips(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        return agent_configuration.propagation.network_scan.targets.subnets
 
-    @staticmethod
-    def get_config_scan():
-        return ConfigService.get_config_value(LOCAL_NETWORK_SCAN_PATH, True)
+    @classmethod
+    def get_config_scan(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        return agent_configuration.propagation.network_scan.targets.local_network_scan
 
     @staticmethod
     def get_issue_set(issues, config_users, config_passwords):
@@ -478,8 +504,6 @@ class ReportService:
         report = {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
-                "config_users": config_users,
-                "config_passwords": config_passwords,
                 "config_exploits": ReportService.get_config_exploits(),
                 "config_ips": ReportService.get_config_ips(),
                 "config_scan": ReportService.get_config_scan(),
