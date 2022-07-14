@@ -20,16 +20,11 @@ from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
     safe_generate_regular_report,
 )
-from monkey_island.cc.services.reporting.stolen_credentials import (
-    extract_ssh_keys,
-    get_stolen_creds,
-)
 from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
 
 from .. import AWSService
 from . import aws_exporter
 from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
-from .issue_processing.exploit_processing.processors.cred_exploit import CredentialType
 from .issue_processing.exploit_processing.processors.exploit import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
@@ -42,8 +37,6 @@ class ReportService:
     _credentials_repository = None
 
     class DerivedIssueEnum:
-        WEAK_PASSWORD = "weak_password"
-        STOLEN_CREDS = "stolen_creds"
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
 
     @classmethod
@@ -438,41 +431,17 @@ class ReportService:
         return agent_configuration.propagation.network_scan.targets.local_network_scan
 
     @staticmethod
-    def get_issue_set(issues, config_users, config_passwords):
+    def get_issue_set(issues):
         issue_set = set()
 
         for machine in issues:
             for issue in issues[machine]:
-                if ReportService._is_weak_credential_issue(issue, config_users, config_passwords):
-                    issue_set.add(ReportService.DerivedIssueEnum.WEAK_PASSWORD)
-                elif ReportService._is_stolen_credential_issue(issue):
-                    issue_set.add(ReportService.DerivedIssueEnum.STOLEN_CREDS)
-                elif ReportService._is_zerologon_pass_restore_failed(issue):
+                if ReportService._is_zerologon_pass_restore_failed(issue):
                     issue_set.add(ReportService.DerivedIssueEnum.ZEROLOGON_PASS_RESTORE_FAILED)
 
                 issue_set.add(issue["type"])
 
         return issue_set
-
-    @staticmethod
-    def _is_weak_credential_issue(
-        issue: dict, config_usernames: List[str], config_passwords: List[str]
-    ) -> bool:
-        # Only credential exploiter issues have 'credential_type'
-        return (
-            "credential_type" in issue
-            and issue["credential_type"] == CredentialType.PASSWORD.value
-            and issue["password"] in config_passwords
-            and issue["username"] in config_usernames
-        )
-
-    @staticmethod
-    def _is_stolen_credential_issue(issue: dict) -> bool:
-        # Only credential exploiter issues have 'credential_type'
-        return "credential_type" in issue and (
-            issue["credential_type"] == CredentialType.PASSWORD.value
-            or issue["credential_type"] == CredentialType.HASH.value
-        )
 
     @staticmethod
     def _is_zerologon_pass_restore_failed(issue: dict):
@@ -490,12 +459,9 @@ class ReportService:
     def generate_report():
         domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
-        config_users = ReportService.get_config_users()
-        config_passwords = ReportService.get_config_passwords()
-        issue_set = ReportService.get_issue_set(issues, config_users, config_passwords)
+        issue_set = ReportService.get_issue_set(issues)
         cross_segment_issues = ReportService.get_cross_segment_issues()
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
-        stolen_creds = get_stolen_creds()
 
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(get_monkey_exploited())
@@ -515,8 +481,6 @@ class ReportService:
             "glance": {
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
-                "stolen_creds": stolen_creds,
-                "ssh_keys": extract_ssh_keys(stolen_creds),
                 "strong_users": PTHReportService.get_strong_users_on_crit_details(),
             },
             "recommendations": {"issues": issues, "domain_issues": domain_issues},
@@ -532,8 +496,6 @@ class ReportService:
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
-            PTHReportService.get_duplicated_passwords_issues,
-            PTHReportService.get_strong_users_on_crit_issues,
         ]
 
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
