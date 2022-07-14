@@ -71,19 +71,16 @@ class MongoCredentialsRepository(ICredentialsRepository):
         except Exception as err:
             raise StorageError(err)
 
-    # NOTE: The encryption/decryption is complicated and also full of mostly duplicated code. Rather
-    #       than spend the effort to improve them now, we can revisit them when we resolve #2072.
-    #       Resolving #2072 will make it easier to simplify these methods and remove duplication.
-    #
-    #       If possible, implement the encryption/decryption as a decorator so it can be reused with
+    # TODO: If possible, implement the encryption/decryption as a decorator so it can be reused with
     #       different ICredentialsRepository implementations
     def _encrypt_credentials_mapping(self, mapping: Mapping[str, Any]) -> Mapping[str, Any]:
         encrypted_mapping: Dict[str, Any] = {}
 
         for secret_or_identity, credentials_component in mapping.items():
-            encrypted_component = {}
-            for key, value in credentials_component.items():
-                encrypted_component[key] = self._repository_encryptor.encrypt(value.encode())
+            encrypted_component = {
+                key: self._repository_encryptor.encrypt(value.encode())
+                for key, value in credentials_component.items()
+            }
 
             encrypted_mapping[secret_or_identity] = encrypted_component
 
@@ -93,10 +90,10 @@ class MongoCredentialsRepository(ICredentialsRepository):
         decrypted_mapping: Dict[str, Any] = {}
 
         for secret_or_identity, credentials_component in mapping.items():
-            decrypted_mapping[secret_or_identity] = []
-            decrypted_component = {}
-            for key, value in credentials_component.items():
-                decrypted_component[key] = self._repository_encryptor.decrypt(value).decode()
+            decrypted_component = {
+                key: self._repository_encryptor.decrypt(value).decode()
+                for key, value in credentials_component.items()
+            }
 
             decrypted_mapping[secret_or_identity] = decrypted_component
 
