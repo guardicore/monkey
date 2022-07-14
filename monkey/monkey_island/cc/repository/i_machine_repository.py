@@ -15,6 +15,6 @@ class IMachineRepository(ABC):
         id: Optional[str] = None,
         ips: Optional[Sequence[str]] = None,
         state: Optional[MachineState] = None,  # noqa: F821
-        is_island: Optional[bool] = None,
+        is_island: Optional[bool] = None,  # noqa: F841
     ) -> Sequence[Machine]:  # noqa: F821
         pass
