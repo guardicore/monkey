@@ -504,7 +504,6 @@ class ReportService:
         report = {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
-                "config_users": config_users,
                 "config_passwords": config_passwords,
                 "config_exploits": ReportService.get_config_exploits(),
                 "config_ips": ReportService.get_config_ips(),
