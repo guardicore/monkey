@@ -3,14 +3,10 @@ from __future__ import annotations
 from bson import json_util
 
 from monkey_island.cc.models.report.report import Report
-from monkey_island.cc.server_utils.encryption import decrypt_dict, encrypt_dict
-
-sensitive_fields = []
 
 
 def save_report(report_dict: dict):
     report_dict = _encode_dot_char_before_mongo_insert(report_dict)
-    report_dict = encrypt_dict(sensitive_fields, report_dict)
     Report.objects.delete()
     Report(
         overview=report_dict["overview"],
@@ -22,8 +18,7 @@ def save_report(report_dict: dict):
 
 def get_report() -> dict:
     report_dict = Report.objects.first().to_mongo()
-    decrypted = decrypt_dict(sensitive_fields, report_dict)
-    return _decode_dot_char_before_mongo_insert(decrypted)
+    return _decode_dot_char_before_mongo_insert(report_dict)
 
 
 # TODO remove this unnecessary encoding. I think these are legacy methods from back in the day
