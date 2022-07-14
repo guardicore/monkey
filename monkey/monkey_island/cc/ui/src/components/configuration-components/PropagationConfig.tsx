@@ -46,7 +46,6 @@ export default function PropagationConfig(props) {
   }
 
   const setSection = (sectionKey) => {
-    console.log('setSection is called with:'+sectionKey);
     setSelectedSection(sectionKey);
   }
 
@@ -81,19 +80,10 @@ export default function PropagationConfig(props) {
 }
 
 function getSchemaByKey(schema, key) {
-  if(key === 'maximum_depth'){
-    return schema['properties'][key];
-  }
-  if(key === 'credentials') {
-    return { properties: CREDENTIALS['properties']};
-  }
-  let definitions = schema['definitions'];
-
-  return {definitions: definitions, properties: schema['properties'][key]['properties']};
+  return schema['properties'][key];
 }
 
-
-function getUiSchemaByKey(uiSchema, key){
+function getUiSchemaByKey(uiSchema, key) {
   return uiSchema[key];
 }
 
@@ -104,5 +94,5 @@ function getNavTitle(schema, key) {
   if (key === 'credentials') {
     return 'Credentials';
   }
-  return schema.properties[key].title;
+  return schema['properties'][key].title;
 }
