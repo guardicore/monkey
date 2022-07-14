@@ -1,4 +1,4 @@
-export const icmpScanConfigurationSchema = {
+const ICMP_SCAN_CONFIGURATION_SCHEMA = {
   'title': 'Ping scanner',
   'type': 'object',
   'properties': {
@@ -10,3 +10,5 @@ export const icmpScanConfigurationSchema = {
     }
   }
 }
+
+export default ICMP_SCAN_CONFIGURATION_SCHEMA;

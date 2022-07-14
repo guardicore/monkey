@@ -12,8 +12,8 @@ const WarningType = {
   MULTIPLE: 2
 }
 
-function getDefaultPaneParams(refString, registry, isUnsafeOptionSelected) {
-  let configSection = getObjectFromRegistryByRef(refString, registry);
+function getDefaultPaneParams(items, isUnsafeOptionSelected) {
+  let configSection = items;
   return (
     {
       title: configSection.title,

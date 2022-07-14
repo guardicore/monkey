@@ -1,11 +1,13 @@
-import {exploitationConfigurationSchema} from './exploitation.js';
-import {networkScanConfigurationSchema} from './network_scan.js';
+import NETWORK_SCAN_CONFIGURATION_SCHEMA from './networkScan.js';
+import CREDENTIALS from './credentials';
+import EXPLOITATION_CONFIGURATION_SCHEMA from './exploitation';
 
-export const propagationConfigurationSchema = {
+const PROPAGATION_CONFIGURATION_SCHEMA = {
   'title': 'Propagation',
   'type': 'object',
   'properties': {
-    'exploitation': exploitationConfigurationSchema,
+    'exploitation': EXPLOITATION_CONFIGURATION_SCHEMA,
+    'credentials': CREDENTIALS,
     'maximum_depth': {
       'title': 'Maximum scan depth',
       'type': 'integer',
@@ -18,6 +20,7 @@ export const propagationConfigurationSchema = {
       'Monkey propagating too far, '+
       'if the "Local network scan" is enabled'
     },
-    'network_scan': networkScanConfigurationSchema
+    'network_scan': NETWORK_SCAN_CONFIGURATION_SCHEMA
   }
 }
+export default PROPAGATION_CONFIGURATION_SCHEMA;

@@ -1,4 +1,4 @@
-export const tcpScanConfigurationSchema = {
+const TCP_SCAN_CONFIGURATION_SCHEMA = {
   'title': 'TCP scanner',
   'type': 'object',
   'properties': {
@@ -19,3 +19,4 @@ export const tcpScanConfigurationSchema = {
     }
   }
 }
+export default TCP_SCAN_CONFIGURATION_SCHEMA;

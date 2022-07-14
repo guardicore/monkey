@@ -17,7 +17,7 @@ import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
-import {SCHEMA} from '../../services/configuration/config_schema.js';
+import {SCHEMA} from '../../services/configuration/configSchema.js';
 import {reformatConfig} from '../configuration-components/ReformatHook';
 
 const CONFIG_URL = '/api/agent-configuration';

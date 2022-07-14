@@ -1,4 +1,4 @@
-export const customPBAConfigurationSchema = {
+const CUSTOM_PBA_CONFIGURATION_SCHEMA = {
   'title': 'Custom PBA',
   'properties': {
     'linux_command': {
@@ -49,3 +49,4 @@ export const customPBAConfigurationSchema = {
     }
   }
 }
+export default CUSTOM_PBA_CONFIGURATION_SCHEMA;

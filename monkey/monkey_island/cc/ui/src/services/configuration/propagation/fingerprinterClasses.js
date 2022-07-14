@@ -1,4 +1,4 @@
-export const fingerprinterClasses = {
+const FINGERPRINTER_CLASSES = {
   'title': 'Fingerprinters',
   'description': 'Fingerprint modules collect info about external services ' +
   'Infection Monkey scans.',
@@ -50,3 +50,5 @@ export const fingerprinterClasses = {
   ]
 
 }
+
+export default FINGERPRINTER_CLASSES;
