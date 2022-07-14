@@ -12,10 +12,11 @@ FILE_ENCODING = "utf8"
 
 def setup_logging(data_dir: Path, log_level: str):
     """
-    Setup the logging configuration
-    :param data_dir: data directory file path
-    :param log_level: level to log from
-    :return:
+    Set up the logger
+
+    :param data_dir: The data directory
+    :param log_level: A string representing threshold for the logger. Valid values are "DEBUG",
+                      "INFO", "WARNING", "ERROR", and "CRITICAL".
     """
     logger = logging.getLogger()
     logger.setLevel(log_level.upper())
