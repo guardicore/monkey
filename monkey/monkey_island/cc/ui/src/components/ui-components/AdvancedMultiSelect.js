@@ -6,7 +6,7 @@ import {cloneDeep} from 'lodash';
 import {getDefaultPaneParams, InfoPane, WarningType} from './InfoPane';
 import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
 import ChildCheckboxContainer from './ChildCheckbox';
-import {getFullDefinitionByKey, getObjectFromRegistryByRef} from './JsonSchemaHelpers';
+import {getFullDefinitionByKey} from './JsonSchemaHelpers';
 
 function AdvancedMultiSelectHeader(props) {
   const {
@@ -38,14 +38,12 @@ class AdvancedMultiSelect extends React.Component {
 
     this.state = {
       infoPaneParams: getDefaultPaneParams(
-        this.props.schema.items.$ref,
-        this.props.registry,
+        this.props.schema.items,
         this.isUnsafeOptionSelected(selectedPluginNames)
       ),
       allPluginNames: allPluginNames,
       masterCheckboxState: this.getMasterCheckboxState(selectedPluginNames),
-      pluginDefinitions: getObjectFromRegistryByRef(this.props.schema.items.$ref,
-        this.props.registry).pluginDefs,
+      pluginDefinitions: this.props.schema.items.pluginDefs,
       selectedPluginNames: selectedPluginNames
     };
   }
@@ -55,23 +53,17 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   onChange = (strValues) => {
-    let newValues = [];
-    for (let j = 0; j < strValues.length; j++) {
-      let found = false;
-      for (let i = 0; i < this.state.allPluginNames.length; i++) {
-        if (strValues[j] === this.state.allPluginNames[i]['name']) {
-          newValues.push(JSON.parse(JSON.stringify(this.props.value[i])))
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        newValues.push(this.state.pluginDefinitions[strValues[j]]);
-      }
+    let pluginArray = this.namesToPlugins(strValues, this.state.pluginDefinitions);
+    this.props.onChange(pluginArray)
+    this.setState({selectedPluginNames: pluginArray.map(v => v.name)});
+  }
+
+  namesToPlugins = (names, allPlugins) => {
+    let plugins = [];
+    for (let i = 0; i < names.length; i++){
+      plugins.push(_.clone(allPlugins[names[i]]));
     }
-    newValues = JSON.parse(JSON.stringify(newValues));
-    this.props.onChange(newValues)
-    this.setState({selectedPluginNames: newValues.map(v => v.name)});
+    return plugins
   }
 
   // Sort options alphabetically. "Unsafe" options float to the top so that they
@@ -146,14 +138,12 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   isSafe = (itemKey) => {
-    let fullDef = getFullDefinitionByKey(this.props.schema.items.$ref,
-      this.props.registry, itemKey);
+    let fullDef = getFullDefinitionByKey(this.props.schema.items, itemKey);
     return fullDef.safe;
   }
 
   setPaneInfo = (itemKey) => {
-    let definitionObj = getFullDefinitionByKey(this.props.schema.items.$ref,
-      this.props.registry, itemKey);
+    let definitionObj = getFullDefinitionByKey(this.props.schema.items, itemKey);
     this.setState(
       {
         infoPaneParams: {
