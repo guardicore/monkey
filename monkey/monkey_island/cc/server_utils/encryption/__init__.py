@@ -15,4 +15,3 @@ from .data_store_encryptor import (
     reset_datastore_encryptor,
 )
 from .field_encryptors.i_field_encryptor import IFieldEncryptor
-from .field_encryptors.string_encryptor import StringEncryptor
