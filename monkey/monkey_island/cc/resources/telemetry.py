@@ -63,7 +63,8 @@ class Telemetry(AbstractResource):
         monkey = NodeService.get_monkey_by_guid(telemetry_json["monkey_guid"])
         NodeService.update_monkey_modify_time(monkey["_id"])
 
-        process_telemetry(telemetry_json)
+        agent_configuration = self._agent_configuration_repository.get_configuration()
+        process_telemetry(telemetry_json, agent_configuration)
 
         # API Spec: RESTful way is to return an identifier of the updated/newly created resource
         return {}, 201
