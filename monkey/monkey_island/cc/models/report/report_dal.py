@@ -3,16 +3,9 @@ from __future__ import annotations
 from bson import json_util
 
 from monkey_island.cc.models.report.report import Report
-from monkey_island.cc.server_utils.encryption import (
-    SensitiveField,
-    StringListEncryptor,
-    decrypt_dict,
-    encrypt_dict,
-)
+from monkey_island.cc.server_utils.encryption import decrypt_dict, encrypt_dict
 
-sensitive_fields = [
-    SensitiveField(path="overview.config_passwords", field_encryptor=StringListEncryptor)
-]
+sensitive_fields = []
 
 
 def save_report(report_dict: dict):
