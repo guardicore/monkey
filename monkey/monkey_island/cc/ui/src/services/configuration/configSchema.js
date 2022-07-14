@@ -21,11 +21,7 @@ export const SCHEMA = {
       'title': 'Credential collectors',
       'type': 'array',
       'uniqueItems': true,
-      'items': CREDENTIAL_COLLECTORS,
-      'default': [
-        'MimikatzCollector',
-        'SSHCollector'
-      ]
+      'items': CREDENTIAL_COLLECTORS
     },
     'advanced': {
       'title': 'Advanced',
