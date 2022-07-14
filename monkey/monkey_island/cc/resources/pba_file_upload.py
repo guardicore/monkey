@@ -53,7 +53,7 @@ class FileUpload(AbstractResource):
         :param target_os: Indicates which file to send, linux or windows
         :return: Returns file contents
         """
-        if self._is_target_os_supported(target_os):
+        if self._target_os_is_unsupported(target_os):
             return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         agent_configuration = self._agent_configuration_repository.get_configuration()
@@ -81,7 +81,7 @@ class FileUpload(AbstractResource):
         :param target_os: Type indicates which file was received, linux or windows
         :return: Returns flask response object with uploaded file's filename
         """
-        if self._is_target_os_supported(target_os):
+        if self._target_os_is_unsupported(target_os):
             return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         file_storage = next(request.files.values())  # For now, assume there's only one file
@@ -117,7 +117,7 @@ class FileUpload(AbstractResource):
         :param target_os: Type indicates which file was deleted, linux of windows
         :return: Empty response
         """
-        if self._is_target_os_supported(target_os):
+        if self._target_os_is_unsupported(target_os):
             return Response(status=HTTPStatus.UNPROCESSABLE_ENTITY, mimetype="text/plain")
 
         original_agent_configuration = self._agent_configuration_repository.get_configuration()
@@ -139,5 +139,5 @@ class FileUpload(AbstractResource):
         return make_response({}, HTTPStatus.OK)
 
     @staticmethod
-    def _is_target_os_supported(target_os: str) -> bool:
+    def _target_os_is_unsupported(target_os: str) -> bool:
         return target_os not in {LINUX_PBA_TYPE, WINDOWS_PBA_TYPE}
