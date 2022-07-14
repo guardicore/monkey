@@ -1,4 +1,9 @@
-from monkey_island.cc.repository import IAgentConfigurationRepository, IFileRepository
+from monkey_island.cc.repository import (
+    IAgentConfigurationRepository,
+    ICredentialsRepository,
+    IFileRepository,
+)
+from monkey_island.cc.services.database import Database
 
 
 class RepositoryService:
@@ -6,9 +11,11 @@ class RepositoryService:
         self,
         agent_configuration_repository: IAgentConfigurationRepository,
         file_repository: IFileRepository,
+        credentials_repository: ICredentialsRepository,
     ):
         self._agent_configuration_repository = agent_configuration_repository
         self._file_repository = file_repository
+        self._credentials_repository = credentials_repository
 
     def reset_agent_configuration(self):
         # NOTE: This method will be replaced by an event when we implement pub/sub in the island.
@@ -27,14 +34,9 @@ class RepositoryService:
         if custom_pbas.windows_filename:
             self._file_repository.delete_file(custom_pbas.windows_filename)
 
-    def unlock(self):
-        raise NotImplementedError
-
-    def reset_key(self):
-        raise NotImplementedError
-
     def clear_simulation_data(self):
         # NOTE: This method will be replaced by an event when we implement pub/sub in the island.
         #       Different plugins and components will be able to register for the event and clear
         #       any configuration data they've collected.
-        raise NotImplementedError
+        Database.reset_db(reset_config=False)
+        self._credentials_repository.remove_stolen_credentials()
