@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, MutableMapping, Sequence, Tuple
+from typing import Any, Mapping, MutableMapping, Sequence
 
 from marshmallow import Schema, fields, post_load, pre_dump
 from marshmallow.exceptions import MarshmallowError
@@ -42,27 +42,15 @@ CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA = {
 
 
 class CredentialsSchema(Schema):
-    # Use fields.List instead of fields.Tuple because marshmallow requires fields.Tuple to have a
-    # fixed length.
-    identities = fields.List(fields.Mapping())
-    secrets = fields.List(fields.Mapping())
+    identity = fields.Mapping()
+    secret = fields.Mapping()
 
     @post_load
     def _make_credentials(
         self, data: MutableMapping, **kwargs: Mapping[str, Any]
     ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
-        data["identities"] = tuple(
-            [
-                CredentialsSchema._build_credential_component(component)
-                for component in data["identities"]
-            ]
-        )
-        data["secrets"] = tuple(
-            [
-                CredentialsSchema._build_credential_component(component)
-                for component in data["secrets"]
-            ]
-        )
+        data["identity"] = CredentialsSchema._build_credential_component(data["identity"])
+        data["secret"] = CredentialsSchema._build_credential_component(data["secret"])
 
         return data
 
@@ -89,18 +77,8 @@ class CredentialsSchema(Schema):
     ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
         data = {}
 
-        data["identities"] = tuple(
-            [
-                CredentialsSchema._serialize_credential_component(component)
-                for component in credentials.identities
-            ]
-        )
-        data["secrets"] = tuple(
-            [
-                CredentialsSchema._serialize_credential_component(component)
-                for component in credentials.secrets
-            ]
-        )
+        data["identity"] = CredentialsSchema._serialize_credential_component(credentials.identity)
+        data["secret"] = CredentialsSchema._serialize_credential_component(credentials.secret)
 
         return data
 
@@ -117,8 +95,8 @@ class CredentialsSchema(Schema):
 
 @dataclass(frozen=True)
 class Credentials(IJSONSerializable):
-    identities: Tuple[ICredentialComponent]
-    secrets: Tuple[ICredentialComponent]
+    identity: ICredentialComponent
+    secret: ICredentialComponent
 
     @staticmethod
     def from_mapping(credentials: Mapping) -> Credentials:
