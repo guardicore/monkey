@@ -1,6 +1,7 @@
 import logging
 import logging.handlers
 import sys
+from pathlib import Path
 
 ISLAND_LOG_FILENAME = "monkey_island.log"
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(funcName)s() - %(message)s"
@@ -9,7 +10,7 @@ FILE_BACKUP_COUNT = 20
 FILE_ENCODING = "utf8"
 
 
-def setup_logging(data_dir, log_level):
+def setup_logging(data_dir: Path, log_level: str):
     """
     Setup the logging configuration
     :param data_dir: data directory file path
