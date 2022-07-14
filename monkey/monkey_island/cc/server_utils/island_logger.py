@@ -1,6 +1,5 @@
 import logging
 import logging.handlers
-import os
 import sys
 
 ISLAND_LOG_FILENAME = "monkey_island.log"
@@ -10,10 +9,10 @@ FILE_BACKUP_COUNT = 20
 FILE_ENCODING = "utf8"
 
 
-def setup_logging(data_dir_path, log_level):
+def setup_logging(data_dir, log_level):
     """
     Setup the logging configuration
-    :param data_dir_path: data directory file path
+    :param data_dir: data directory file path
     :param log_level: level to log from
     :return:
     """
@@ -22,7 +21,7 @@ def setup_logging(data_dir_path, log_level):
 
     formatter = _get_log_formatter()
 
-    log_file_path = os.path.join(data_dir_path, ISLAND_LOG_FILENAME)
+    log_file_path = data_dir / ISLAND_LOG_FILENAME
     _add_file_handler(logger, formatter, log_file_path)
 
     _add_console_handler(logger, formatter)
