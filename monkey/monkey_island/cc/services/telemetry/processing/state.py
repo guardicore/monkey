@@ -20,7 +20,7 @@ def process_state_telemetry(telemetry_json, agent_configuration: AgentConfigurat
 
     if telemetry_json["data"]["done"]:
         current_monkey = Monkey.get_single_monkey_by_guid(telemetry_json["monkey_guid"])
-        check_passed_findings_for_unreached_segments(current_monkey)
+        check_passed_findings_for_unreached_segments(current_monkey, agent_configuration)
 
     if telemetry_json["data"]["version"]:
         logger.info(

@@ -1,6 +1,7 @@
 import itertools
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
+from common.configuration import AgentConfiguration
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_if_in_subnet, get_ip_in_src_and_not_in_dst
 from monkey_island.cc.models import Monkey
@@ -84,11 +85,19 @@ def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, t
     )
 
 
-def check_passed_findings_for_unreached_segments(current_monkey):
+def check_passed_findings_for_unreached_segments(
+    current_monkey, agent_configuration: AgentConfiguration
+):
     flat_all_subnets = [
-        item for sublist in get_config_network_segments_as_subnet_groups() for item in sublist
+        item
+        for sublist in _get_config_network_segments_as_subnet_groups(agent_configuration)
+        for item in sublist
     ]
     create_or_add_findings_for_all_pairs(flat_all_subnets, current_monkey)
+
+
+def _get_config_network_segments_as_subnet_groups(agent_configuration: AgentConfiguration):
+    return agent_configuration.propagation.network_scan.targets.inaccessible_subnets
 
 
 def create_or_add_findings_for_all_pairs(all_subnets, current_monkey):
