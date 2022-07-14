@@ -10,7 +10,6 @@ class UsedCredentials extends React.Component {
   render() {
     let allUsernames = getAllUsernames(this.props.stolen, this.props.configured);
     let allSecrets = getAllSecrets(this.props.stolen, this.props.configured);
-    allSecrets.map(x => console.log(x['type'], x['content']));
     return (
     allUsernames.length > 0 ?
       <>
