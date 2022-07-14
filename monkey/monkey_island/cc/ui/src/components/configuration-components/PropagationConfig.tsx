@@ -1,7 +1,7 @@
 import Form from 'react-jsonschema-form-bs4';
 import React, {useState, useEffect} from 'react';
 import {Nav} from 'react-bootstrap';
-import {CREDENTIALS} from '../../services/configuration/credentials.js';
+import _ from 'lodash';
 
 const sectionOrder = [
   'exploitation',
@@ -24,26 +24,25 @@ export default function PropagationConfig(props) {
   const [selectedSection, setSelectedSection] = useState(initialSection);
   const [displayedSchema, setDisplayedSchema] = useState(getSchemaByKey(schema, initialSection));
   const [displayedSchemaUi, setDisplayedSchemaUi] = useState(getUiSchemaByKey(uiSchema, initialSection));
-  const [localFormData , setLocalFormData] = useState(formData[initialSection]);
-
-  let varLocalFormData = formData[initialSection];
-  useEffect(() => {
-    varLocalFormData = localFormData;
-
-  }, [localFormData]);
+  const [localFormData, setLocalFormData] = useState(formData[initialSection]);
 
   useEffect(() => {
-    console.log('setSection selectedSection:'+selectedSection);
     setLocalFormData(formData[selectedSection]);
     setDisplayedSchema(getSchemaByKey(schema, selectedSection));
     setDisplayedSchemaUi(getUiSchemaByKey(uiSchema, selectedSection));
     setLocalFormData(formData[selectedSection]);
   }, [selectedSection])
 
+  useEffect(() => {
+    setLocalFormData(formData[selectedSection]);
+  }, [formData])
+
   const onInnerDataChange = (innerData) => {
-    console.log('onInnerDataChange is called, section:'+selectedSection);
-    formData[selectedSection] = innerData.formData;
-    onChange({formData: innerData.formData});
+    let innerDataClone = _.clone(innerData);
+    let formDataClone = _.clone(formData);
+
+    formDataClone[selectedSection] = innerDataClone.formData;
+    onChange({formData: formDataClone});
   }
 
   const setSection = (sectionKey) => {
@@ -71,7 +70,7 @@ export default function PropagationConfig(props) {
     {renderNav()}
     <Form schema={displayedSchema}
           uiSchema={displayedSchemaUi}
-          formData={varLocalFormData}
+          formData={localFormData}
           onChange={onInnerDataChange}
           customFormats={customFormats}
           className={className}
@@ -99,10 +98,10 @@ function getUiSchemaByKey(uiSchema, key){
 }
 
 function getNavTitle(schema, key) {
-  if(key === 'maximum_depth'){
+  if (key === 'maximum_depth') {
     return 'General';
   }
-  if(key === 'credentials'){
+  if (key === 'credentials') {
     return 'Credentials';
   }
   return schema.properties[key].title;
