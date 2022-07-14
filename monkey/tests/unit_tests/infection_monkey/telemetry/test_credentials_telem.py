@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from common.credentials import Credentials, Password, SSHKeypair, Username
+from common.credentials import Credentials, Password, Username
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 
 USERNAME = "m0nkey"
@@ -14,24 +14,15 @@ PRIVATE_KEY = "priv_key"
 @pytest.fixture
 def credentials_for_test():
 
-    return Credentials(
-        [Username(USERNAME)], [Password(PASSWORD), SSHKeypair(PRIVATE_KEY, PUBLIC_KEY)]
-    )
+    return Credentials(Username(USERNAME), Password(PASSWORD))
 
 
 def test_credential_telem_send(spy_send_telemetry, credentials_for_test):
 
     expected_data = [
         {
-            "identities": [{"username": USERNAME, "credential_type": "USERNAME"}],
-            "secrets": [
-                {"password": PASSWORD, "credential_type": "PASSWORD"},
-                {
-                    "private_key": PRIVATE_KEY,
-                    "public_key": PUBLIC_KEY,
-                    "credential_type": "SSH_KEYPAIR",
-                },
-            ],
+            "identity": {"username": USERNAME, "credential_type": "USERNAME"},
+            "secret": {"password": PASSWORD, "credential_type": "PASSWORD"},
         }
     ]
 
