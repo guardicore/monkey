@@ -61,7 +61,7 @@ class AdvancedMultiSelect extends React.Component {
   namesToPlugins = (names, allPlugins) => {
     let plugins = [];
     for (let i = 0; i < names.length; i++){
-      plugins.push(_.clone(allPlugins[names[i]]));
+      plugins.push(cloneDeep(allPlugins[names[i]]));
     }
     return plugins
   }

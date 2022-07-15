@@ -1,9 +1,7 @@
-import {Card, Button} from 'react-bootstrap';
+import {Button, Card} from 'react-bootstrap';
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
-
-import {getObjectFromRegistryByRef} from './JsonSchemaHelpers';
 import WarningIcon from './WarningIcon';
 
 const WarningType = {
