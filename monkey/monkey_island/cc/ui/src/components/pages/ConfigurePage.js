@@ -18,7 +18,11 @@ import applyUiSchemaManipulators from '../configuration-components/UISchemaManip
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
 import {SCHEMA} from '../../services/configuration/configSchema.js';
-import {reformatConfig} from '../configuration-components/ReformatHook';
+import {
+  reformatConfig,
+  formatCredentialsForForm,
+  formatCredentialsForIsland
+} from '../configuration-components/ReformatHook';
 
 const CONFIG_URL = '/api/agent-configuration';
 const RESET_URL = '/api/reset-agent-configuration';
@@ -39,6 +43,7 @@ class ConfigurePageComponent extends AuthComponent {
 
     this.state = {
       configuration: {},
+      credentials: {},
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
@@ -94,6 +99,7 @@ class ConfigurePageComponent extends AuthComponent {
           currentFormData: monkeyConfig[this.state.selectedSection]
         })
       });
+    this.updateCredentials();
   };
 
   onUnsafeConfirmationCancelClick = () => {
@@ -110,7 +116,19 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
+  updateCredentials = () => {
+    this.authFetch(CREDENTIALS_URL)
+      .then(res => res.json())
+      .then(credentials => {
+        credentials = formatCredentialsForForm(credentials);
+        this.setState({
+          credentials: credentials
+        });
+      });
+  }
+
   updateConfig = () => {
+    this.updateCredentials();
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
@@ -120,8 +138,8 @@ class ConfigurePageComponent extends AuthComponent {
           configuration: data,
           currentFormData: data[this.state.selectedSection]
         });
-      })
-  };
+      });
+  }
 
   onSubmit = () => {
     this.setState({lastAction: configSubmitAction}, this.attemptConfigSubmit)
@@ -144,8 +162,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   configSubmit() {
-    return this.sendConfig()
-      .then(res => res.json())
+    this.sendConfig()
       .then(() => {
         this.setState({
           lastAction: configSaveAction
@@ -158,11 +175,16 @@ class ConfigurePageComponent extends AuthComponent {
       });
   }
 
-  onChange = ({formData}) => {
+  onChange = (formData) => {
+    let data = formData;
     let configuration = this.state.configuration;
-    configuration[this.state.selectedSection] = formData;
-    this.setState({currentFormData: formData, configuration: configuration});
+    configuration[this.state.selectedSection] = data;
+    this.setState({currentFormData: data, configuration: configuration});
   };
+
+  onCredentialChange = (credentials) => {
+    this.setState({credentials: credentials});
+  }
 
   updateConfigSection = () => {
     let newConfig = this.state.configuration;
@@ -256,6 +278,22 @@ class ConfigurePageComponent extends AuthComponent {
     let config = JSON.parse(JSON.stringify(this.state.configuration))
     config = reformatConfig(config, true);
 
+    this.authFetch(CREDENTIALS_URL,
+      {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
+      })
+      .then(res => {
+        if (!res.ok) {
+          throw Error()
+        }
+        return res;
+      }).catch((error) => {
+      console.log(`bad configuration ${error}`);
+      this.setState({lastAction: 'invalid_configuration'});
+    });
+
     return (
       this.authFetch(CONFIG_URL,
         {
@@ -285,21 +323,27 @@ class ConfigurePageComponent extends AuthComponent {
       setPbaFilenameLinux: this.setPbaFilenameLinux
     })
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
-    formProperties['formData'] = this.state.currentFormData;
     formProperties['onChange'] = this.onChange;
     formProperties['onFocus'] = this.resetLastAction;
     formProperties['customFormats'] = formValidationFormats;
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
+    formProperties['formData'] = this.state.currentFormData;
 
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],
       formProperties['uiSchema']);
 
     if (this.state.selectedSection === 'propagation') {
-        return (<PropagationConfig {...formProperties}/>)
+      delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
+      return (<PropagationConfig {...formProperties}
+                                 credentials={this.state.credentials}
+                                 onCredentialChange={this.onCredentialChange}/>)
     } else {
+      formProperties['onChange'] = (formData) => {
+        this.onChange(formData.formData)
+      };
       return (
         <div>
           <Form {...formProperties} key={displayedSchema.title}>
