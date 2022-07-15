@@ -10,8 +10,6 @@ from .password_based_bytes_encryptor import PasswordBasedBytesEncryptor
 
 
 class RepositoryEncryptor(ILockableEncryptor):
-    _KEY_LENGTH_BYTES = 32
-
     def __init__(self, key_file: Path):
         self._key_file = key_file
         self._password_based_encryptor = None

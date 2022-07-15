@@ -17,8 +17,6 @@ _encryptor: Union[None, IEncryptor] = None
 
 # NOTE: This class is being replaced by RepositoryEncryptor
 class DataStoreEncryptor(IEncryptor):
-    _KEY_LENGTH_BYTES = 32
-
     def __init__(self, secret: str, key_file: Path):
         self._key_file = key_file
         self._password_based_encryptor = PasswordBasedBytesEncryptor(secret)
