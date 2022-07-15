@@ -27,10 +27,6 @@ class KeyBasedEncryptor(IEncryptor):
     def __init__(self, key: bytes):
         self._key = key
 
-    # TODO: Let's use cryptography.fernet. It's simpler for us and we're less likely to screw
-    #       something up. The main drawback to fernet is that it uses AES-128, which is not
-    #       quantum-safe. At the present time, human error is probably a greater risk than quantum
-    #       computers.
     def encrypt(self, plaintext: bytes) -> bytes:
         cipher_iv = Random.new().read(AES.block_size)
         cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
