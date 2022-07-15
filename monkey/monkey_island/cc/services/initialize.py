@@ -33,6 +33,7 @@ from monkey_island.cc.repository import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import AWSService, IslandModeService, RepositoryService
+from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
     CredentialsParser,
@@ -41,7 +42,6 @@ from monkey_island.cc.services.telemetry.processing.processing import (
     TELEMETRY_CATEGORY_TO_PROCESSING_FUNC,
 )
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
-from monkey_island.services.atack.technique_reports.T1003 import T1003, T1003GetReportData
 
 from . import AuthenticationService
 from .reporting.report import ReportService
