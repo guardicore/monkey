@@ -46,7 +46,7 @@ import {
 } from './security/issues/ZerologonIssue';
 import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
 import {getCredentialsSecrets, getCredentialsUsernames} from './credentialParsing';
-import UsedCredentials from './security/UsedCredentials.tsx';
+import UsedCredentials from './security/UsedCredentials';
 
 
 class ReportPageComponent extends AuthComponent {
