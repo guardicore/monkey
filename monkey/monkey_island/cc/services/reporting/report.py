@@ -496,6 +496,8 @@ class ReportService:
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
+            PTHReportService.get_duplicated_passwords_issues,
+            PTHReportService.get_strong_users_on_crit_issues,
         ]
 
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
