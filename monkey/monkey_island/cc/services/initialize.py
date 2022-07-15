@@ -41,6 +41,7 @@ from monkey_island.cc.services.telemetry.processing.processing import (
     TELEMETRY_CATEGORY_TO_PROCESSING_FUNC,
 )
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
+from monkey_island.services.atack.technique_reports.T1003 import T1003, T1003GetReportData
 
 from . import AuthenticationService
 from .reporting.report import ReportService
@@ -63,6 +64,8 @@ def initialize_services(data_dir: Path) -> DIContainer:
 
     _register_repositories(container, data_dir)
     _register_services(container)
+
+    _dirty_hacks(container)
 
     # Note: A hack to resolve credentials parser
     # It changes telemetry processing function, this will be refactored!
@@ -157,3 +160,12 @@ def _patch_credentials_parser(container: DIContainer):
     TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[TelemCategoryEnum.CREDENTIALS] = container.resolve(
         CredentialsParser
     )
+
+
+def _dirty_hacks(container: DIContainer):
+    # A dirty hacks function that patches some of the things that
+    # are needed at the current point
+
+    # Patches attack technique T1003 which is a static class
+    # but it needs stolen credentials from the database
+    T1003.get_report_data = container.resolve(T1003GetReportData)
