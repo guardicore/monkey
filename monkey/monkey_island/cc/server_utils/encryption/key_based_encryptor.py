@@ -21,11 +21,10 @@ class KeyBasedEncryptor(IEncryptor):
 
     def __init__(self, key: bytes):
         self._key = key
+        self._fernet_object = Fernet(self._key)
 
     def encrypt(self, plaintext: bytes) -> bytes:
-        fernet_object = Fernet(self._key)
-        return fernet_object.encrypt(plaintext.encode())
+        return self._fernet_object.encrypt(plaintext.encode())
 
     def decrypt(self, ciphertext: bytes) -> bytes:
-        fernet_object = Fernet(self._key)
-        return fernet_object.decrypt(ciphertext)
+        return self._fernet_object.decrypt(ciphertext)
