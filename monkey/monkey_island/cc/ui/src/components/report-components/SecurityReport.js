@@ -44,7 +44,6 @@ import {
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
 import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
-import {getCredentialsSecrets} from './credentialParsing';
 import UsedCredentials from './security/UsedCredentials';
 
 
@@ -591,7 +590,7 @@ class ReportPageComponent extends AuthComponent {
     let overview_issues = [];
 
     for(let i=0; i < issues.length; i++) {
-      if (this.isStolenCredentialsIssue(issues[i])) {
+      if (this.shouldAddStolenCredentialsIssue()) {
         overview_issues.push('stolen_creds');
       } else {
         overview_issues.push(issues[i])
@@ -602,14 +601,8 @@ class ReportPageComponent extends AuthComponent {
     return newReport;
   }
 
-  isStolenCredentialsIssue(issue) {
-    return ( Object.prototype.hasOwnProperty.call(issue, 'credential_type') &&
-        (getCredentialsSecrets(this.state.stolenCredentials, 'password').includes(issue.password) ||
-            getCredentialsSecrets(this.state.configuredCredentials, 'nt_hash').includes(issue.password) ||
-                getCredentialsSecrets(this.state.configuredCredentials, 'lm_hash').includes(issue.password)) &&
-        (issue.credential_type === 'PASSWORD' ||
-            issue.credential_type === 'NT_HASH' ||
-            issue.credential_type === 'LM_HASH'))
+  shouldAddStolenCredentialsIssue() {
+    return ( this.state.stolenCredentials.length > 0 )
   }
 }
 
