@@ -67,10 +67,6 @@ def initialize_services(data_dir: Path) -> DIContainer:
 
     _dirty_hacks(container)
 
-    # Note: A hack to resolve credentials parser
-    # It changes telemetry processing function, this will be refactored!
-    _patch_credentials_parser(container)
-
     # This is temporary until we get DI all worked out.
     ReportService.initialize(
         container.resolve(AWSService),
@@ -156,12 +152,6 @@ def _register_services(container: DIContainer):
     container.register_instance(RepositoryService, container.resolve(RepositoryService))
 
 
-def _patch_credentials_parser(container: DIContainer):
-    TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[TelemCategoryEnum.CREDENTIALS] = container.resolve(
-        CredentialsParser
-    )
-
-
 def _dirty_hacks(container: DIContainer):
     # A dirty hacks function that patches some of the things that
     # are needed at the current point
@@ -169,3 +159,9 @@ def _dirty_hacks(container: DIContainer):
     # Patches attack technique T1003 which is a static class
     # but it needs stolen credentials from the database
     T1003.get_report_data = container.resolve(T1003GetReportData)
+
+    # Note: A hack to resolve credentials parser
+    # It changes telemetry processing function, this will be refactored!
+    TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[TelemCategoryEnum.CREDENTIALS] = container.resolve(
+        CredentialsParser
+    )
