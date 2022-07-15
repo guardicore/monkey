@@ -2,6 +2,14 @@ import copy
 import json
 
 import pytest
+from tests.data_for_tests.propagation_credentials import (
+    LM_HASH,
+    NT_HASH,
+    PASSWORD_1,
+    PRIVATE_KEY,
+    PUBLIC_KEY,
+    USERNAME,
+)
 
 from common.credentials import (
     Credentials,
@@ -14,28 +22,21 @@ from common.credentials import (
     Username,
 )
 
-USER1 = "test_user_1"
-PASSWORD = "12435"
-LM_HASH = "AEBD4DE384C7EC43AAD3B435B51404EE"
-NT_HASH = "7A21990FCD3D759941E45C490F143D5F"
-PUBLIC_KEY = "MY_PUBLIC_KEY"
-PRIVATE_KEY = "MY_PRIVATE_KEY"
-
-CREDENTIALS_DICT = {
-    "identity": {"credential_type": "USERNAME", "username": USER1},
+CREDENTIALS_DICT_TEMPLATE = {
+    "identity": {"credential_type": "USERNAME", "username": USERNAME},
     "secret": {},
 }
 
-IDENTITY = Username(USER1)
+IDENTITY = Username(USERNAME)
 SECRETS = (
-    Password(PASSWORD),
+    Password(PASSWORD_1),
     LMHash(LM_HASH),
     NTHash(NT_HASH),
     SSHKeypair(PRIVATE_KEY, PUBLIC_KEY),
 )
 
 SECRETS_DICTS = [
-    {"credential_type": "PASSWORD", "password": PASSWORD},
+    {"credential_type": "PASSWORD", "password": PASSWORD_1},
     {"credential_type": "LM_HASH", "lm_hash": LM_HASH},
     {"credential_type": "NT_HASH", "nt_hash": NT_HASH},
     {
@@ -45,46 +46,46 @@ SECRETS_DICTS = [
     },
 ]
 
+CREDENTIALS_DICTS = []
+for secret in SECRETS_DICTS:
+    credentials_dict = copy.copy(CREDENTIALS_DICT_TEMPLATE)
+    credentials_dict["secret"] = secret
+    CREDENTIALS_DICTS.append(credentials_dict)
 
-@pytest.mark.parametrize("secret, expected_secret", zip(SECRETS, SECRETS_DICTS))
-def test_credentials_serialization_json(secret, expected_secret):
-    expected_credentials = copy.copy(CREDENTIALS_DICT)
-    expected_credentials["secret"] = expected_secret
-    c = Credentials(IDENTITY, secret)
-
-    serialized_credentials = Credentials.to_json(c)
-
-    assert json.loads(serialized_credentials) == expected_credentials
+CREDENTIALS = [Credentials(IDENTITY, secret) for secret in SECRETS]
 
 
-@pytest.mark.parametrize("secret, expected_secret", zip(SECRETS, SECRETS_DICTS))
-def test_credentials_serialization_mapping(secret, expected_secret):
-    expected_credentials = copy.copy(CREDENTIALS_DICT)
-    expected_credentials["secret"] = expected_secret
-    c = Credentials(IDENTITY, secret)
+@pytest.mark.parametrize(
+    "credentials, expected_credentials_dict", zip(CREDENTIALS, CREDENTIALS_DICTS)
+)
+def test_credentials_serialization_json(credentials, expected_credentials_dict):
+    serialized_credentials = Credentials.to_json(credentials)
 
-    serialized_credentials = Credentials.to_mapping(c)
-
-    assert serialized_credentials == expected_credentials
+    assert json.loads(serialized_credentials) == expected_credentials_dict
 
 
-@pytest.mark.parametrize("secret, secret_dict", zip(SECRETS, SECRETS_DICTS))
-def test_credentials_deserialization__from_mapping(secret, secret_dict):
-    expected_credentials = Credentials(IDENTITY, secret)
-    credentials_dict = copy.copy(CREDENTIALS_DICT)
-    credentials_dict["secret"] = secret_dict
+@pytest.mark.parametrize(
+    "credentials, expected_credentials_dict", zip(CREDENTIALS, CREDENTIALS_DICTS)
+)
+def test_credentials_serialization_mapping(credentials, expected_credentials_dict):
+    serialized_credentials = Credentials.to_mapping(credentials)
 
+    assert serialized_credentials == expected_credentials_dict
+
+
+@pytest.mark.parametrize(
+    "expected_credentials, credentials_dict", zip(CREDENTIALS, CREDENTIALS_DICTS)
+)
+def test_credentials_deserialization__from_mapping(expected_credentials, credentials_dict):
     deserialized_credentials = Credentials.from_mapping(credentials_dict)
 
     assert deserialized_credentials == expected_credentials
 
 
-@pytest.mark.parametrize("secret, secret_dict", zip(SECRETS, SECRETS_DICTS))
-def test_credentials_deserialization__from_json(secret, secret_dict):
-    expected_credentials = Credentials(IDENTITY, secret)
-    credentials_dict = copy.copy(CREDENTIALS_DICT)
-    credentials_dict["secret"] = secret_dict
-
+@pytest.mark.parametrize(
+    "expected_credentials, credentials_dict", zip(CREDENTIALS, CREDENTIALS_DICTS)
+)
+def test_credentials_deserialization__from_json(expected_credentials, credentials_dict):
     deserialized_credentials = Credentials.from_json(json.dumps(credentials_dict))
 
     assert deserialized_credentials == expected_credentials
