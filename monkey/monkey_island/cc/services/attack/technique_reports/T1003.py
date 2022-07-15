@@ -1,7 +1,7 @@
 from common.utils.attack_utils import ScanStatus
-from monkey_island.cc.models import StolenCredentials
+from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from monkey_island.cc.services.reporting.stolen_credentials import get_stolen_creds
+from monkey_island.cc.services.reporting.stolen_credentials import format_creds_for_reporting
 
 
 class T1003(AttackTechnique):
@@ -16,8 +16,21 @@ class T1003(AttackTechnique):
 
     @staticmethod
     def get_report_data():
+        raise NotImplementedError
+
+
+class T1003GetReportData:
+    """
+    Class to patch the T1003 attack technique which
+    needs stolen credentials from db.
+    """
+
+    def __init__(self, credentials_repository: ICredentialsRepository):
+        self._credentials_repository = credentials_repository
+
+    def __call__(self):
         def get_technique_status_and_data():
-            if list(StolenCredentials.objects()):
+            if list(self._credentials_repository.get_stolen_credentials()):
                 status = ScanStatus.USED.value
             else:
                 status = ScanStatus.UNSCANNED.value
@@ -28,5 +41,7 @@ class T1003(AttackTechnique):
 
         data.update(T1003.get_message_and_status(status))
         data.update(T1003.get_mitigation_by_status(status))
-        data["stolen_creds"] = get_stolen_creds()
+        data["stolen_creds"] = format_creds_for_reporting(
+            self._credentials_repository.get_stolen_credentials()
+        )
         return data
