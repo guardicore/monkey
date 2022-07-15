@@ -30,6 +30,16 @@ export default function UiSchema(props) {
           }
         }
       },
+      credentials: {
+        exploit_ssh_keys: {
+          items: {
+            public_key: {
+            },
+            private_key: {
+            }
+          }
+        }
+      },
       network_scan: {
         targets: {
           info_box: {

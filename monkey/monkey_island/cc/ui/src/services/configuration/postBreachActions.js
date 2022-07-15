@@ -1,4 +1,4 @@
-export const postBreachActions = {
+const POST_BREACH_ACTIONS = {
   'title': 'Post-Breach Actions',
   'description': 'Runs scripts/commands on infected machines. These actions safely simulate what ' +
   'an adversary might do after breaching a new machine. Used in ATT&CK and Zero trust reports.',
@@ -109,3 +109,4 @@ export const postBreachActions = {
 
 
 }
+export default POST_BREACH_ACTIONS;

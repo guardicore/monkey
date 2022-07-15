@@ -1,4 +1,4 @@
-export const scanTargetConfigurationSchema = {
+const SCAN_TARGET_CONFIGURATION_SCHEMA = {
   'title': 'Network',
   'type': 'object',
   'properties': {
@@ -68,3 +68,4 @@ export const scanTargetConfigurationSchema = {
 
   }
 }
+export default SCAN_TARGET_CONFIGURATION_SCHEMA;

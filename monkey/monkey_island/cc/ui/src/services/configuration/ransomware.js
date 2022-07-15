@@ -1,4 +1,4 @@
-export const ransomwareSchema = {
+const RANSOMWARE_SCHEMA = {
    'title': 'Payloads',
     'properties': {
         'encryption': {
@@ -63,3 +63,5 @@ export const ransomwareSchema = {
         }
     }
 }
+
+export default RANSOMWARE_SCHEMA;

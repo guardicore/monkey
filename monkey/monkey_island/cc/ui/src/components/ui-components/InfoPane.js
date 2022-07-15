@@ -1,9 +1,7 @@
-import {Card, Button} from 'react-bootstrap';
+import {Button, Card} from 'react-bootstrap';
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
-
-import {getObjectFromRegistryByRef} from './JsonSchemaHelpers';
 import WarningIcon from './WarningIcon';
 
 const WarningType = {
@@ -12,8 +10,8 @@ const WarningType = {
   MULTIPLE: 2
 }
 
-function getDefaultPaneParams(refString, registry, isUnsafeOptionSelected) {
-  let configSection = getObjectFromRegistryByRef(refString, registry);
+function getDefaultPaneParams(items, isUnsafeOptionSelected) {
+  let configSection = items;
   return (
     {
       title: configSection.title,

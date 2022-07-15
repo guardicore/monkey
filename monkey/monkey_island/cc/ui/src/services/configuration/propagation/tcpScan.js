@@ -1,4 +1,4 @@
-export const tcpScanConfigurationSchema = {
+const TCP_SCAN_CONFIGURATION_SCHEMA = {
   'title': 'TCP scanner',
   'type': 'object',
   'properties': {
@@ -13,9 +13,9 @@ export const tcpScanConfigurationSchema = {
     },
     'timeout': {
       'title': 'TCP scan timeout',
-      'format': 'float',
       'type': 'number',
       'description': 'Maximum time to wait for TCP response.'
     }
   }
 }
+export default TCP_SCAN_CONFIGURATION_SCHEMA;

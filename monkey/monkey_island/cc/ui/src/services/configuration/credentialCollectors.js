@@ -1,4 +1,4 @@
-export const credentialCollectors = {
+const CREDENTIAL_COLLECTORS = {
     'title': 'Credential Collectors',
     'description': 'Click on a credential collector to find out what it collects.',
     'type': 'string',
@@ -23,3 +23,4 @@ export const credentialCollectors = {
         }
     ]
 }
+export default CREDENTIAL_COLLECTORS

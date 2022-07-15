@@ -2,27 +2,27 @@ function getPluginDescriptors(schema, config) {
   return ([
     {
       name: 'Brute force exploiters',
-      allPlugins: schema.definitions.brute_force_classes.anyOf,
+      allPlugins: schema.properties.propagation.properties.exploitation.properties.brute_force.items.anyOf,
       selectedPlugins: config.propagation.exploitation.brute_force
     },
     {
       name: 'Vulnerability exploiters',
-      allPlugins: schema.definitions.vulnerability_classes.anyOf,
+      allPlugins: schema.properties.propagation.properties.exploitation.properties.vulnerability.items.anyOf,
       selectedPlugins: config.propagation.exploitation.vulnerability
     },
     {
       name: 'Fingerprinters',
-      allPlugins: schema.definitions.fingerprinter_classes.anyOf,
+      allPlugins: schema.properties.propagation.properties.network_scan.properties.fingerprinters.items.anyOf,
       selectedPlugins: config.propagation.network_scan.fingerprinters
     },
     {
       name: 'PostBreachActions',
-      allPlugins: schema.definitions.post_breach_actions.anyOf,
+      allPlugins: schema.properties.post_breach_actions.items.anyOf,
       selectedPlugins: config.post_breach_actions
     },
     {
       name: 'CredentialCollectors',
-      allPlugins: schema.definitions.credential_collectors_classes.anyOf,
+      allPlugins: schema.properties.credential_collectors.items.anyOf,
       selectedPlugins: config.credential_collectors
     }
   ]);

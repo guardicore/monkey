@@ -8,6 +8,7 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
+import PropagationConfig from '../configuration-components/PropagationConfig'
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
@@ -16,7 +17,7 @@ import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
-import {SCHEMA} from '../../services/configuration/config_schema.js';
+import {SCHEMA} from '../../services/configuration/configSchema.js';
 import {reformatConfig} from '../configuration-components/ReformatHook';
 
 const CONFIG_URL = '/api/agent-configuration';
@@ -296,13 +297,17 @@ class ConfigurePageComponent extends AuthComponent {
       formProperties['formData'],
       formProperties['uiSchema']);
 
-    return (
-      <div>
-        <Form {...formProperties} key={displayedSchema.title}>
-          <button type='submit' className={'hidden'}>Submit</button>
-        </Form>
-      </div>
-    )
+    if (this.state.selectedSection === 'propagation') {
+        return (<PropagationConfig {...formProperties}/>)
+    } else {
+      return (
+        <div>
+          <Form {...formProperties} key={displayedSchema.title}>
+            <button type='submit' className={'hidden'}>Submit</button>
+          </Form>
+        </div>
+      )
+    }
   };
 
   setPbaFilenameWindows = (filename) => {
