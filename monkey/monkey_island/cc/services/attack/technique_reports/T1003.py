@@ -1,7 +1,7 @@
 from common.utils.attack_utils import ScanStatus
 from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.services.attack.technique_reports import AttackTechnique
-from monkey_island.cc.services.reporting.stolen_credentials import format_creds_for_reporting
+from monkey_island.cc.services.reporting import format_creds_for_reporting
 
 
 class T1003(AttackTechnique):

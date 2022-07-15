@@ -7,7 +7,7 @@ from common.credentials import (
     SSHKeypair,
     Username,
 )
-from monkey_island.cc.services.reporting.stolen_credentials import format_creds_for_reporting
+from monkey_island.cc.services.reporting import format_creds_for_reporting
 
 monkey_hostname = "fake_hostname"
 fake_monkey_guid = "abc"
