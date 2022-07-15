@@ -77,10 +77,13 @@ class MongoCredentialsRepository(ICredentialsRepository):
         encrypted_mapping: Dict[str, Any] = {}
 
         for secret_or_identity, credentials_component in mapping.items():
-            encrypted_component = {
-                key: self._repository_encryptor.encrypt(value.encode())
-                for key, value in credentials_component.items()
-            }
+            if credentials_component is None:
+                encrypted_component = None
+            else:
+                encrypted_component = {
+                    key: self._repository_encryptor.encrypt(value.encode())
+                    for key, value in credentials_component.items()
+                }
 
             encrypted_mapping[secret_or_identity] = encrypted_component
 
@@ -90,10 +93,13 @@ class MongoCredentialsRepository(ICredentialsRepository):
         decrypted_mapping: Dict[str, Any] = {}
 
         for secret_or_identity, credentials_component in mapping.items():
-            decrypted_component = {
-                key: self._repository_encryptor.decrypt(value).decode()
-                for key, value in credentials_component.items()
-            }
+            if credentials_component is None:
+                decrypted_component = None
+            else:
+                decrypted_component = {
+                    key: self._repository_encryptor.decrypt(value).decode()
+                    for key, value in credentials_component.items()
+                }
 
             decrypted_mapping[secret_or_identity] = decrypted_component
 

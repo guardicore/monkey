@@ -13,7 +13,7 @@ from monkey_island.cc.repository import MongoCredentialsRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 CONFIGURED_CREDENTIALS = PROPAGATION_CREDENTIALS[0:3]
-STOLEN_CREDENTIALS = PROPAGATION_CREDENTIALS[3:6]
+STOLEN_CREDENTIALS = PROPAGATION_CREDENTIALS[3:]
 
 
 def reverse(data: bytes) -> bytes:
@@ -91,9 +91,6 @@ def test_mongo_repository_all(mongo_repository):
     assert mongo_repository.get_configured_credentials() == []
 
 
-# NOTE: The following tests are complicated, but they work. Rather than spend the effort to improve
-#       them now, we can revisit them when we resolve #2072. Resolving #2072 will make it easier to
-#       simplify these tests.
 @pytest.mark.parametrize("credentials", PROPAGATION_CREDENTIALS)
 def test_configured_secrets_encrypted(
     mongo_repository: MongoCredentialsRepository,
@@ -116,8 +113,11 @@ def check_if_stored_credentials_encrypted(mongo_client: MongoClient, original_cr
 
     for rc in raw_credentials:
         for identity_or_secret, credentials_component in rc.items():
-            for key, value in credentials_component.items():
-                assert original_credentials_mapping[identity_or_secret][key] != value.decode()
+            if original_credentials_mapping[identity_or_secret] is None:
+                assert credentials_component is None
+            else:
+                for key, value in credentials_component.items():
+                    assert original_credentials_mapping[identity_or_secret][key] != value.decode()
 
 
 def get_all_credentials_in_mongo(
