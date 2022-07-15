@@ -1,5 +1,6 @@
-import secrets
 from pathlib import Path
+
+from cryptography.fernet import Fernet
 
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
@@ -37,7 +38,7 @@ class RepositoryEncryptor(ILockableEncryptor):
         return KeyBasedEncryptor(plaintext_key)
 
     def _create_key(self) -> KeyBasedEncryptor:
-        plaintext_key = secrets.token_bytes(RepositoryEncryptor._KEY_LENGTH_BYTES)
+        plaintext_key = Fernet.generate_key()
 
         encrypted_key = self._password_based_encryptor.encrypt(plaintext_key)
         with open_new_securely_permissioned_file(str(self._key_file), "wb") as f:
