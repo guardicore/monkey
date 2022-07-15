@@ -59,6 +59,20 @@ def test_existing_key_reused(encryptor, key_file):
     assert key_file_hash_1 == key_file_hash_2
 
 
+def test_existing_key_reused__lock(encryptor, key_file):
+    assert not key_file.is_file()
+
+    encryptor.unlock(SECRET)
+    key_file_hash_1 = get_file_sha256_hash(key_file)
+
+    encryptor.lock()
+
+    encryptor.unlock(SECRET)
+    key_file_hash_2 = get_file_sha256_hash(key_file)
+
+    assert key_file_hash_1 == key_file_hash_2
+
+
 def test_unlock_os_error(encryptor, key_file):
     key_file.mkdir()
 
