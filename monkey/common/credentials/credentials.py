@@ -49,6 +49,9 @@ class CredentialsSchema(Schema):
     def _make_credentials(
         self, data: MutableMapping, **kwargs: Mapping[str, Any]
     ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
+        if not any(data.values()):
+            raise InvalidCredentialsError("At least one credentials component must be defined")
+
         data["identity"] = CredentialsSchema._build_credential_component(data["identity"])
         data["secret"] = CredentialsSchema._build_credential_component(data["secret"])
 
@@ -109,6 +112,17 @@ class CredentialsSchema(Schema):
 class Credentials(IJSONSerializable):
     identity: Optional[ICredentialComponent]
     secret: Optional[ICredentialComponent]
+
+    def __post_init__(self):
+        schema = CredentialsSchema()
+        try:
+            serialized_data = schema.dump(self)
+
+            # This will raise an exception if the object is invalid. Calling this in __post__init()
+            # makes it impossible to construct an invalid object
+            schema.load(serialized_data)
+        except Exception as err:
+            raise InvalidCredentialsError(err)
 
     @staticmethod
     def from_mapping(credentials: Mapping) -> Credentials:

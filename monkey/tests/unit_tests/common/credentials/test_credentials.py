@@ -115,3 +115,8 @@ def test_credentials_deserialization__invalid_component():
     }
     with pytest.raises(InvalidCredentialComponentError):
         Credentials.from_mapping(invalid_data)
+
+
+def test_create_credentials__none_none():
+    with pytest.raises(InvalidCredentialsError):
+        Credentials(None, None)
