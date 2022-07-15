@@ -8,7 +8,7 @@ PLAINTEXT_UTF8_1 = "slaptažodis"  # "password" in Lithuanian
 PLAINTEXT_UTF8_2 = "弟"  # Japanese
 PLAINTEXT_UTF8_3 = "ж"  # Ukranian
 
-KEY = b"\x84\xd4qA\xb5\xd4Y\x9bH.\x14\xab\xd8\xc7+g\x12\xfa\x80'%\xfd#\xf8c\x94\xb9\x96_\xf4\xc51"
+KEY = b"FK-jSjEPwBPlg-LxxdEti8-_9EN036afsR8DHuXS0Zo="
 
 kb_encryptor = KeyBasedEncryptor(KEY)
 
