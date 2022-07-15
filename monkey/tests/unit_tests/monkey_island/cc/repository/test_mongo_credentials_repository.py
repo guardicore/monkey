@@ -1,4 +1,4 @@
-from typing import Any, Iterable, List, Mapping, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 from unittest.mock import MagicMock
 
 import mongomock
@@ -22,6 +22,7 @@ def reverse(data: bytes) -> bytes:
 
 @pytest.fixture
 def repository_encryptor():
+    # NOTE: Tests will fail if any inputs to this mock encryptor are palindromes.
     repository_encryptor = MagicMock(spec=ILockableEncryptor)
     repository_encryptor.encrypt = MagicMock(side_effect=reverse)
     repository_encryptor.decrypt = MagicMock(side_effect=reverse)
@@ -136,12 +137,13 @@ def get_all_credentials_in_mongo(
 
 
 def get_all_collections_in_mongo(mongo_client: MongoClient) -> Iterable[Collection]:
-    collections: List[Collection] = []
+    collections = [
+        collection
+        for db in get_all_databases_in_mongo(mongo_client)
+        for collection in get_all_collections_in_database(db)
+    ]
 
-    databases = get_all_databases_in_mongo(mongo_client)
-    for db in databases:
-        collections.extend(get_all_collections_in_database(db))
-
+    assert len(collections) > 0
     return collections
 
 
