@@ -6,10 +6,10 @@ from urllib.parse import urljoin
 import pytest
 from tests.common import StubDIContainer
 from tests.data_for_tests.propagation_credentials import (
-    PROPAGATION_CREDENTIALS_1,
-    PROPAGATION_CREDENTIALS_2,
-    PROPAGATION_CREDENTIALS_3,
-    PROPAGATION_CREDENTIALS_4,
+    LM_HASH_CREDENTIALS,
+    NT_HASH_CREDENTIALS,
+    PASSWORD_CREDENTIALS_1,
+    PASSWORD_CREDENTIALS_2,
 )
 from tests.monkey_island import InMemoryCredentialsRepository
 
@@ -43,21 +43,19 @@ def flask_client(build_flask_client, credentials_repository):
 
 def test_propagation_credentials_endpoint_get(flask_client, credentials_repository):
     credentials_repository.save_configured_credentials(
-        [PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_3]
+        [PASSWORD_CREDENTIALS_1, NT_HASH_CREDENTIALS]
     )
-    credentials_repository.save_stolen_credentials(
-        [PROPAGATION_CREDENTIALS_2, PROPAGATION_CREDENTIALS_4]
-    )
+    credentials_repository.save_stolen_credentials([LM_HASH_CREDENTIALS, PASSWORD_CREDENTIALS_2])
 
     resp = flask_client.get(ALL_CREDENTIALS_URL)
     actual_propagation_credentials = [Credentials.from_mapping(creds) for creds in resp.json]
 
     assert resp.status_code == HTTPStatus.OK
     assert len(actual_propagation_credentials) == 4
-    assert PROPAGATION_CREDENTIALS_1 in actual_propagation_credentials
-    assert PROPAGATION_CREDENTIALS_2 in actual_propagation_credentials
-    assert PROPAGATION_CREDENTIALS_3 in actual_propagation_credentials
-    assert PROPAGATION_CREDENTIALS_4 in actual_propagation_credentials
+    assert PASSWORD_CREDENTIALS_1 in actual_propagation_credentials
+    assert LM_HASH_CREDENTIALS in actual_propagation_credentials
+    assert NT_HASH_CREDENTIALS in actual_propagation_credentials
+    assert PASSWORD_CREDENTIALS_2 in actual_propagation_credentials
 
 
 def pre_populate_repository(
@@ -72,7 +70,7 @@ def pre_populate_repository(
 @pytest.mark.parametrize("url", [CONFIGURED_CREDENTIALS_URL, STOLEN_CREDENTIALS_URL])
 def test_propagation_credentials_endpoint__get_stolen(flask_client, credentials_repository, url):
     pre_populate_repository(
-        url, credentials_repository, [PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_2]
+        url, credentials_repository, [PASSWORD_CREDENTIALS_1, LM_HASH_CREDENTIALS]
     )
 
     resp = flask_client.get(url)
@@ -80,19 +78,19 @@ def test_propagation_credentials_endpoint__get_stolen(flask_client, credentials_
 
     assert resp.status_code == HTTPStatus.OK
     assert len(actual_propagation_credentials) == 2
-    assert actual_propagation_credentials[0] == PROPAGATION_CREDENTIALS_1
-    assert actual_propagation_credentials[1] == PROPAGATION_CREDENTIALS_2
+    assert actual_propagation_credentials[0] == PASSWORD_CREDENTIALS_1
+    assert actual_propagation_credentials[1] == LM_HASH_CREDENTIALS
 
 
 @pytest.mark.parametrize("url", [CONFIGURED_CREDENTIALS_URL, STOLEN_CREDENTIALS_URL])
 def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials_repository, url):
-    pre_populate_repository(url, credentials_repository, [PROPAGATION_CREDENTIALS_1])
+    pre_populate_repository(url, credentials_repository, [PASSWORD_CREDENTIALS_1])
 
     resp = flask_client.post(
         url,
         json=[
-            Credentials.to_json(PROPAGATION_CREDENTIALS_2),
-            Credentials.to_json(PROPAGATION_CREDENTIALS_3),
+            Credentials.to_json(LM_HASH_CREDENTIALS),
+            Credentials.to_json(NT_HASH_CREDENTIALS),
         ],
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
@@ -102,15 +100,15 @@ def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials
 
     assert resp.status_code == HTTPStatus.OK
     assert len(retrieved_propagation_credentials) == 3
-    assert PROPAGATION_CREDENTIALS_1 in retrieved_propagation_credentials
-    assert PROPAGATION_CREDENTIALS_2 in retrieved_propagation_credentials
-    assert PROPAGATION_CREDENTIALS_3 in retrieved_propagation_credentials
+    assert PASSWORD_CREDENTIALS_1 in retrieved_propagation_credentials
+    assert LM_HASH_CREDENTIALS in retrieved_propagation_credentials
+    assert NT_HASH_CREDENTIALS in retrieved_propagation_credentials
 
 
 @pytest.mark.parametrize("url", [CONFIGURED_CREDENTIALS_URL, STOLEN_CREDENTIALS_URL])
 def test_stolen_propagation_credentials_endpoint_delete(flask_client, credentials_repository, url):
     pre_populate_repository(
-        url, credentials_repository, [PROPAGATION_CREDENTIALS_1, PROPAGATION_CREDENTIALS_2]
+        url, credentials_repository, [PASSWORD_CREDENTIALS_1, LM_HASH_CREDENTIALS]
     )
     resp = flask_client.delete(url)
     assert resp.status_code == HTTPStatus.NO_CONTENT
@@ -136,8 +134,8 @@ def test_propagation_credentials_endpoint__post_not_found(flask_client):
     resp = flask_client.post(
         NON_EXISTENT_COLLECTION_URL,
         json=[
-            Credentials.to_json(PROPAGATION_CREDENTIALS_2),
-            Credentials.to_json(PROPAGATION_CREDENTIALS_3),
+            Credentials.to_json(LM_HASH_CREDENTIALS),
+            Credentials.to_json(NT_HASH_CREDENTIALS),
         ],
     )
     assert resp.status_code == HTTPStatus.NOT_FOUND
