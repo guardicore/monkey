@@ -1,5 +1,5 @@
-import copy
 import json
+from itertools import product
 
 import pytest
 from tests.data_for_tests.propagation_credentials import (
@@ -22,20 +22,16 @@ from common.credentials import (
     Username,
 )
 
-CREDENTIALS_DICT_TEMPLATE = {
-    "identity": {"credential_type": "USERNAME", "username": USERNAME},
-    "secret": {},
-}
+IDENTITIES = [Username(USERNAME)]
+IDENTITY_DICTS = [{"credential_type": "USERNAME", "username": USERNAME}]
 
-IDENTITY = Username(USERNAME)
 SECRETS = (
     Password(PASSWORD_1),
     LMHash(LM_HASH),
     NTHash(NT_HASH),
     SSHKeypair(PRIVATE_KEY, PUBLIC_KEY),
 )
-
-SECRETS_DICTS = [
+SECRET_DICTS = [
     {"credential_type": "PASSWORD", "password": PASSWORD_1},
     {"credential_type": "LM_HASH", "lm_hash": LM_HASH},
     {"credential_type": "NT_HASH", "nt_hash": NT_HASH},
@@ -46,13 +42,12 @@ SECRETS_DICTS = [
     },
 ]
 
-CREDENTIALS_DICTS = []
-for secret in SECRETS_DICTS:
-    credentials_dict = copy.copy(CREDENTIALS_DICT_TEMPLATE)
-    credentials_dict["secret"] = secret
-    CREDENTIALS_DICTS.append(credentials_dict)
+CREDENTIALS = [Credentials(identity, secret) for identity, secret in product(IDENTITIES, SECRETS)]
 
-CREDENTIALS = [Credentials(IDENTITY, secret) for secret in SECRETS]
+CREDENTIALS_DICTS = [
+    {"identity": identity, "secret": secret}
+    for identity, secret in product(IDENTITY_DICTS, SECRET_DICTS)
+]
 
 
 @pytest.mark.parametrize(
@@ -92,14 +87,14 @@ def test_credentials_deserialization__from_json(expected_credentials, credential
 
 
 def test_credentials_deserialization__invalid_credentials():
-    invalid_data = {"secret": SECRETS_DICTS[0], "unknown_key": []}
+    invalid_data = {"secret": SECRET_DICTS[0], "unknown_key": []}
     with pytest.raises(InvalidCredentialsError):
         Credentials.from_mapping(invalid_data)
 
 
 def test_credentials_deserialization__invalid_component_type():
     invalid_data = {
-        "secret": SECRETS_DICTS[0],
+        "secret": SECRET_DICTS[0],
         "identity": {"credential_type": "FAKE", "username": "user1"},
     }
     with pytest.raises(InvalidCredentialsError):
@@ -108,7 +103,7 @@ def test_credentials_deserialization__invalid_component_type():
 
 def test_credentials_deserialization__invalid_component():
     invalid_data = {
-        "secret": SECRETS_DICTS[0],
+        "secret": SECRET_DICTS[0],
         "identity": {"credential_type": "USERNAME", "unknown_field": "user1"},
     }
     with pytest.raises(InvalidCredentialComponentError):
