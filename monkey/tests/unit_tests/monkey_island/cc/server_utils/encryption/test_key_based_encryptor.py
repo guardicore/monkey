@@ -3,7 +3,8 @@ import pytest
 from monkey_island.cc.server_utils.encryption import KeyBasedEncryptor
 
 PLAINTEXT = "password"
-PLAINTEXT_MULTIPLE_BLOCK_SIZE = "banana" * KeyBasedEncryptor._BLOCK_SIZE
+# cryptography.fernet.Fernet.generate_key() generates a 32-bit key
+PLAINTEXT_MULTIPLE_BLOCK_SIZE = "banana" * 32
 PLAINTEXT_UTF8_1 = "slaptažodis"  # "password" in Lithuanian
 PLAINTEXT_UTF8_2 = "弟"  # Japanese
 PLAINTEXT_UTF8_3 = "ж"  # Ukranian
