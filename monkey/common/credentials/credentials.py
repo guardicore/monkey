@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, MutableMapping, Sequence
+from typing import Any, Mapping, MutableMapping, Sequence, Type
 
 from marshmallow import Schema, fields, post_load, pre_dump
 from marshmallow.exceptions import MarshmallowError
@@ -24,7 +24,7 @@ from .password import PasswordSchema
 from .ssh_keypair import SSHKeypairSchema
 from .username import UsernameSchema
 
-CREDENTIAL_COMPONENT_TYPE_TO_CLASS = {
+CREDENTIAL_COMPONENT_TYPE_TO_CLASS: Mapping[CredentialComponentType, Type[ICredentialComponent]] = {
     CredentialComponentType.LM_HASH: LMHash,
     CredentialComponentType.NT_HASH: NTHash,
     CredentialComponentType.PASSWORD: Password,
@@ -32,7 +32,7 @@ CREDENTIAL_COMPONENT_TYPE_TO_CLASS = {
     CredentialComponentType.USERNAME: Username,
 }
 
-CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA = {
+CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA: Mapping[CredentialComponentType, Schema] = {
     CredentialComponentType.LM_HASH: LMHashSchema(),
     CredentialComponentType.NT_HASH: NTHashSchema(),
     CredentialComponentType.PASSWORD: PasswordSchema(),
