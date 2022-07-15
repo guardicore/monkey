@@ -16,9 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class KeyBasedEncryptor(IEncryptor):
-
-    _BLOCK_SIZE = 32
-
     def __init__(self, key: bytes):
         self._key = key
         self._fernet_object = Fernet(self._key)
