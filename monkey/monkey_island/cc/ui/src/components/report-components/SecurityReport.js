@@ -587,14 +587,10 @@ class ReportPageComponent extends AuthComponent {
 
   addIssuesToOverviewIssues(report) {
     let issues = report.overview.issues;
-    let overview_issues = [];
+    let overview_issues = issues;
 
-    for(let i=0; i < issues.length; i++) {
-      if (this.shouldAddStolenCredentialsIssue()) {
-        overview_issues.push('stolen_creds');
-      } else {
-        overview_issues.push(issues[i])
-      }
+    if (this.shouldAddStolenCredentialsIssue()) {
+      overview_issues.push('stolen_creds');
     }
     const newOverview = { ...report.overview, issues : overview_issues };
     const newReport = { ...report, overview : newOverview };
@@ -602,6 +598,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   shouldAddStolenCredentialsIssue() {
+    // TODO: This should check if any stolen credentials are used to
+    // exploit a machine
     return ( this.state.stolenCredentials.length > 0 )
   }
 }
