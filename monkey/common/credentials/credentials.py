@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, MutableMapping, Sequence, Type
+from typing import Any, Mapping, MutableMapping, Optional, Sequence, Type
 
 from marshmallow import Schema, fields, post_load, pre_dump
 from marshmallow.exceptions import MarshmallowError
@@ -42,8 +42,8 @@ CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA: Mapping[CredentialComponentType, Sche
 
 
 class CredentialsSchema(Schema):
-    identity = fields.Mapping()
-    secret = fields.Mapping()
+    identity = fields.Mapping(allow_none=True)
+    secret = fields.Mapping(allow_none=True)
 
     @post_load
     def _make_credentials(
@@ -55,9 +55,16 @@ class CredentialsSchema(Schema):
         return data
 
     @staticmethod
-    def _build_credential_component(data: Mapping[str, Any]) -> ICredentialComponent:
+    def _build_credential_component(
+        credential_component: Optional[Mapping[str, Any]]
+    ) -> Optional[ICredentialComponent]:
+        if credential_component is None:
+            return None
+
         try:
-            credential_component_type = CredentialComponentType[data["credential_type"]]
+            credential_component_type = CredentialComponentType[
+                credential_component["credential_type"]
+            ]
         except KeyError as err:
             raise InvalidCredentialsError(f"Unknown credential component type {err}")
 
@@ -67,7 +74,9 @@ class CredentialsSchema(Schema):
         ]
 
         try:
-            return credential_component_class(**credential_component_schema.load(data))
+            return credential_component_class(
+                **credential_component_schema.load(credential_component)
+            )
         except MarshmallowError as err:
             raise InvalidCredentialComponentError(credential_component_class, str(err))
 
@@ -84,8 +93,11 @@ class CredentialsSchema(Schema):
 
     @staticmethod
     def _serialize_credential_component(
-        credential_component: ICredentialComponent,
-    ) -> Mapping[str, Any]:
+        credential_component: Optional[ICredentialComponent],
+    ) -> Optional[Mapping[str, Any]]:
+        if credential_component is None:
+            return None
+
         credential_component_schema = CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA[
             credential_component.credential_type
         ]
@@ -95,8 +107,8 @@ class CredentialsSchema(Schema):
 
 @dataclass(frozen=True)
 class Credentials(IJSONSerializable):
-    identity: ICredentialComponent
-    secret: ICredentialComponent
+    identity: Optional[ICredentialComponent]
+    secret: Optional[ICredentialComponent]
 
     @staticmethod
     def from_mapping(credentials: Mapping) -> Credentials:

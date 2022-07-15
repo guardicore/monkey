@@ -22,14 +22,15 @@ from common.credentials import (
     Username,
 )
 
-IDENTITIES = [Username(USERNAME)]
-IDENTITY_DICTS = [{"credential_type": "USERNAME", "username": USERNAME}]
+IDENTITIES = [Username(USERNAME), None]
+IDENTITY_DICTS = [{"credential_type": "USERNAME", "username": USERNAME}, None]
 
 SECRETS = (
     Password(PASSWORD_1),
     LMHash(LM_HASH),
     NTHash(NT_HASH),
     SSHKeypair(PRIVATE_KEY, PUBLIC_KEY),
+    None,
 )
 SECRET_DICTS = [
     {"credential_type": "PASSWORD", "password": PASSWORD_1},
@@ -40,13 +41,19 @@ SECRET_DICTS = [
         "public_key": PUBLIC_KEY,
         "private_key": PRIVATE_KEY,
     },
+    None,
 ]
 
-CREDENTIALS = [Credentials(identity, secret) for identity, secret in product(IDENTITIES, SECRETS)]
+CREDENTIALS = [
+    Credentials(identity, secret)
+    for identity, secret in product(IDENTITIES, SECRETS)
+    if not (identity is None and secret is None)
+]
 
 CREDENTIALS_DICTS = [
     {"identity": identity, "secret": secret}
     for identity, secret in product(IDENTITY_DICTS, SECRET_DICTS)
+    if not (identity is None and secret is None)
 ]
 
 
