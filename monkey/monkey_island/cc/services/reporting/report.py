@@ -4,7 +4,6 @@ import logging
 from itertools import chain, product
 from typing import List
 
-from common.credentials import CredentialComponentType
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
@@ -374,37 +373,6 @@ class ReportService:
     @staticmethod
     def get_manual_monkey_hostnames():
         return [monkey["hostname"] for monkey in get_manual_monkeys()]
-
-    @classmethod
-    def get_config_users(cls):
-        usernames = []
-        configured_credentials = cls._credentials_repository.get_configured_credentials()
-        for credentials in configured_credentials:
-            usernames = chain(
-                usernames,
-                (
-                    identity
-                    for identity in credentials.identities
-                    if identity.credential_type == CredentialComponentType.USERNAME
-                ),
-            )
-        return [u.username for u in usernames]
-
-    @classmethod
-    def get_config_passwords(cls):
-        passwords = []
-        configured_credentials = cls._credentials_repository.get_configured_credentials()
-        for credentials in configured_credentials:
-            passwords = chain(
-                passwords,
-                (
-                    secret
-                    for secret in credentials.secrets
-                    if secret.credential_type == CredentialComponentType.PASSWORD
-                ),
-            )
-
-        return [p.password for p in passwords]
 
     @classmethod
     def get_config_exploits(cls):
