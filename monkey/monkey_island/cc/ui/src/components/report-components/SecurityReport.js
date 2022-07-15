@@ -37,7 +37,6 @@ import {
 } from './security/issues/SharedPasswordsIssue';
 import {tunnelIssueReport, tunnelIssueOverview} from './security/issues/TunnelIssue';
 import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
-import {weakPasswordIssueOverview} from './security/issues/WeakPasswordIssue';
 import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
   zerologonIssueOverview,
@@ -45,7 +44,7 @@ import {
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
 import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
-import {getCredentialsSecrets, getCredentialsUsernames} from './credentialParsing';
+import {getCredentialsSecrets} from './credentialParsing';
 import UsedCredentials from './security/UsedCredentials';
 
 
@@ -146,10 +145,6 @@ class ReportPageComponent extends AuthComponent {
       },
       'strong_users_on_crit': {
         [this.issueContentTypes.REPORT]: strongUsersOnCritIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'weak_password': {
-        [this.issueContentTypes.OVERVIEW]: weakPasswordIssueOverview,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'stolen_creds': {
@@ -596,28 +591,15 @@ class ReportPageComponent extends AuthComponent {
     let overview_issues = [];
 
     for(let i=0; i < issues.length; i++) {
-      if (this.isWeakCredentialsIssue(issues[i])) {
-        overview_issues.push('weak_password')
-      } else if (this.isStolenCredentialsIssue(issues[i])) {
+      if (this.isStolenCredentialsIssue(issues[i])) {
         overview_issues.push('stolen_creds');
       } else {
         overview_issues.push(issues[i])
       }
     }
-
     const newOverview = { ...report.overview, issues : overview_issues };
-
     const newReport = { ...report, overview : newOverview };
-
-
     return newReport;
-  }
-
-  isWeakCredentialsIssue(issue) {
-    return (Object.prototype.hasOwnProperty.call(issue, 'credential_type') &&
-        issue.credential_type === 'PASSWORD' &&
-        getCredentialsSecrets(this.state.configuredCredentials, 'password').includes(issue.password) &&
-        getCredentialsUsernames(this.state.configuredCredentials).includes(issue.username))
   }
 
   isStolenCredentialsIssue(issue) {
