@@ -8,7 +8,7 @@ const CREDENTIALS = {
       'uniqueItems': true,
       'items': {'type': 'string'},
       'default': [],
-      'description': 'List of user names that will be used by exploiters that need ' +
+      'description': 'List of usernames that will be used by exploiters that need ' +
         'credentials, like SSH brute-forcing.'
     },
     'exploit_password_list': {
