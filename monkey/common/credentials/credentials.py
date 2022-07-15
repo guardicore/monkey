@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, MutableMapping, Optional, Sequence, Type
+from typing import Any, Mapping, Optional, Type
 
 from marshmallow import Schema, fields, post_load, pre_dump
 from marshmallow.exceptions import MarshmallowError
@@ -40,6 +40,9 @@ CREDENTIAL_COMPONENT_TYPE_TO_CLASS_SCHEMA: Mapping[CredentialComponentType, Sche
     CredentialComponentType.USERNAME: UsernameSchema(),
 }
 
+CredentialComponentMapping = Optional[Mapping[str, Any]]
+CredentialsMapping = Mapping[str, CredentialComponentMapping]
+
 
 class CredentialsSchema(Schema):
     identity = fields.Mapping(allow_none=True)
@@ -47,19 +50,23 @@ class CredentialsSchema(Schema):
 
     @post_load
     def _make_credentials(
-        self, data: MutableMapping, **kwargs: Mapping[str, Any]
-    ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
-        if not any(data.values()):
+        self,
+        credentials: CredentialsMapping,
+        **kwargs: Mapping[str, Any],
+    ) -> Mapping[str, Optional[ICredentialComponent]]:
+        if not any(credentials.values()):
             raise InvalidCredentialsError("At least one credentials component must be defined")
 
-        data["identity"] = CredentialsSchema._build_credential_component(data["identity"])
-        data["secret"] = CredentialsSchema._build_credential_component(data["secret"])
+        parsed_credentials = {
+            key: CredentialsSchema._build_credential_component(credential_component_mapping)
+            for key, credential_component_mapping in credentials.items()
+        }
 
-        return data
+        return parsed_credentials
 
     @staticmethod
     def _build_credential_component(
-        credential_component: Optional[Mapping[str, Any]]
+        credential_component: CredentialComponentMapping,
     ) -> Optional[ICredentialComponent]:
         if credential_component is None:
             return None
@@ -84,9 +91,7 @@ class CredentialsSchema(Schema):
             raise InvalidCredentialComponentError(credential_component_class, str(err))
 
     @pre_dump
-    def _serialize_credentials(
-        self, credentials: Credentials, **kwargs
-    ) -> Mapping[str, Sequence[Mapping[str, Any]]]:
+    def _serialize_credentials(self, credentials: Credentials, **kwargs) -> CredentialsMapping:
         data = {}
 
         data["identity"] = CredentialsSchema._serialize_credential_component(credentials.identity)
@@ -97,7 +102,7 @@ class CredentialsSchema(Schema):
     @staticmethod
     def _serialize_credential_component(
         credential_component: Optional[ICredentialComponent],
-    ) -> Optional[Mapping[str, Any]]:
+    ) -> CredentialComponentMapping:
         if credential_component is None:
             return None
 
@@ -125,7 +130,7 @@ class Credentials(IJSONSerializable):
             raise InvalidCredentialsError(err)
 
     @staticmethod
-    def from_mapping(credentials: Mapping) -> Credentials:
+    def from_mapping(credentials: CredentialsMapping) -> Credentials:
         """
         Construct a Credentials object from a Mapping
 
@@ -167,7 +172,7 @@ class Credentials(IJSONSerializable):
             raise InvalidCredentialsError(str(err))
 
     @staticmethod
-    def to_mapping(credentials: Credentials) -> Mapping:
+    def to_mapping(credentials: Credentials) -> CredentialsMapping:
         """
         Serialize a Credentials object to a Mapping
 
