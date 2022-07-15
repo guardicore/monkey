@@ -622,6 +622,9 @@ class ReportPageComponent extends AuthComponent {
 
   isStolenCredentialsIssue(issue) {
     return ( Object.prototype.hasOwnProperty.call(issue, 'credential_type') &&
+        (getCredentialsSecrets(this.state.stolenCredentials, 'password').includes(issue.password) ||
+            getCredentialsSecrets(this.state.configuredCredentials, 'nt_hash').includes(issue.password) ||
+                getCredentialsSecrets(this.state.configuredCredentials, 'lm_hash').includes(issue.password)) &&
         (issue.credential_type === 'PASSWORD' ||
             issue.credential_type === 'NT_HASH' ||
             issue.credential_type === 'LM_HASH'))
