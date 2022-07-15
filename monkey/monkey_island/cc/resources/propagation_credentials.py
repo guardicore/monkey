@@ -29,7 +29,7 @@ class PropagationCredentials(AbstractResource):
         return propagation_credentials, HTTPStatus.OK
 
     def post(self, collection=None):
-        credentials = [Credentials.from_json(c) for c in request.json]
+        credentials = [Credentials.from_mapping(c) for c in request.json]
 
         if collection == _configured_collection:
             self._credentials_repository.save_configured_credentials(credentials)
@@ -40,6 +40,15 @@ class PropagationCredentials(AbstractResource):
         else:
             return {}, HTTPStatus.NOT_FOUND
 
+        return {}, HTTPStatus.NO_CONTENT
+
+    def patch(self, collection=None):
+        if collection != _configured_collection:
+            return {}, HTTPStatus.METHOD_NOT_ALLOWED
+
+        credentials = [Credentials.from_mapping(c) for c in request.json]
+        self._credentials_repository.remove_configured_credentials()
+        self._credentials_repository.save_configured_credentials(credentials)
         return {}, HTTPStatus.NO_CONTENT
 
     def delete(self, collection=None):
