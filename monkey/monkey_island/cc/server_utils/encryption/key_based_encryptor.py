@@ -24,7 +24,7 @@ class KeyBasedEncryptor(IEncryptor):
         self._fernet_object = Fernet(self._key)
 
     def encrypt(self, plaintext: bytes) -> bytes:
-        return self._fernet_object.encrypt(plaintext.encode())
+        return self._fernet_object.encrypt(plaintext)
 
     def decrypt(self, ciphertext: bytes) -> bytes:
         return self._fernet_object.decrypt(ciphertext)
