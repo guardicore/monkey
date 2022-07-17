@@ -19,7 +19,7 @@ class IslandMode(AbstractResource):
         self._island_mode_service = island_mode_service
 
     @jwt_required
-    def post(self):
+    def put(self):
         try:
             body = json.loads(request.data)
             mode = IslandModeEnum(body.get("mode"))
