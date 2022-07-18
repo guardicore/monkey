@@ -3,9 +3,9 @@ import pathlib
 from typing import Type
 
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_2_a import Depth2A
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
+from envs.monkey_zoo.blackbox.config_templates.depth_1_a import Depth1A
+from envs.monkey_zoo.blackbox.config_templates.depth_2_a import Depth2A
+from envs.monkey_zoo.blackbox.config_templates.depth_3_a import Depth3A
 from envs.monkey_zoo.blackbox.config_templates.single_tests.powershell_credentials_reuse import (
     PowerShellCredentialsReuse,
 )
