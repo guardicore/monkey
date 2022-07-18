@@ -8,15 +8,15 @@ from typing_extensions import Type
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_1_a import Depth1A
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_2_a import Depth2A
-from envs.monkey_zoo.blackbox.config_templates.grouped.depth_3_a import Depth3A
-from envs.monkey_zoo.blackbox.config_templates.single_tests.powershell_credentials_reuse import (
+from envs.monkey_zoo.blackbox.config_templates.depth_1_a import Depth1A
+from envs.monkey_zoo.blackbox.config_templates.depth_2_a import Depth2A
+from envs.monkey_zoo.blackbox.config_templates.depth_3_a import Depth3A
+from envs.monkey_zoo.blackbox.config_templates.powershell_credentials_reuse import (
     PowerShellCredentialsReuse,
 )
-from envs.monkey_zoo.blackbox.config_templates.single_tests.smb_pth import SmbPth
-from envs.monkey_zoo.blackbox.config_templates.single_tests.wmi_mimikatz import WmiMimikatz
-from envs.monkey_zoo.blackbox.config_templates.single_tests.zerologon import Zerologon
+from envs.monkey_zoo.blackbox.config_templates.smb_pth import SmbPth
+from envs.monkey_zoo.blackbox.config_templates.wmi_mimikatz import WmiMimikatz
+from envs.monkey_zoo.blackbox.config_templates.zerologon import Zerologon
 from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
