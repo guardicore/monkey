@@ -22,12 +22,15 @@ class MimikatzCredentialCollector(ICredentialCollector):
     def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> Sequence[Credentials]:
         credentials = []
         for wc in windows_credentials:
-            identity = None
-
             # Mimikatz picks up users created by the Monkey even if they're successfully deleted
             # since it picks up creds from the registry. The newly created users are not removed
             # from the registry until a reboot of the system, hence this check.
-            if wc.username and not wc.username.startswith(USERNAME_PREFIX):
+            if wc.username and wc.username.startswith(USERNAME_PREFIX):
+                continue
+
+            identity = None
+
+            if wc.username:
                 identity = Username(wc.username)
 
             if wc.password:
