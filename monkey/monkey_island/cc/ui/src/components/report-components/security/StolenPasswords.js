@@ -24,6 +24,8 @@ class StolenPasswordsComponent extends React.Component {
     let showPagination = this.props.data.length > pageSize;
     let table_data = this.props.data;
     if(this.props.format) {
+      // Note: This formatting is needed because StolenPasswords
+      // is used in Security and Attack report with different data
       table_data = getCredentialsTableData(this.props.data);
     }
 
