@@ -92,12 +92,10 @@ class CredentialsSchema(Schema):
 
     @pre_dump
     def _serialize_credentials(self, credentials: Credentials, **kwargs) -> CredentialsMapping:
-        data = {}
-
-        data["identity"] = CredentialsSchema._serialize_credential_component(credentials.identity)
-        data["secret"] = CredentialsSchema._serialize_credential_component(credentials.secret)
-
-        return data
+        return {
+            "identity": CredentialsSchema._serialize_credential_component(credentials.identity),
+            "secret": CredentialsSchema._serialize_credential_component(credentials.secret),
+        }
 
     @staticmethod
     def _serialize_credential_component(
