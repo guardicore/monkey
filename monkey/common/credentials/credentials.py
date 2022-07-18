@@ -57,12 +57,10 @@ class CredentialsSchema(Schema):
         if not any(credentials.values()):
             raise InvalidCredentialsError("At least one credentials component must be defined")
 
-        parsed_credentials = {
+        return {
             key: CredentialsSchema._build_credential_component(credential_component_mapping)
             for key, credential_component_mapping in credentials.items()
         }
-
-        return parsed_credentials
 
     @staticmethod
     def _build_credential_component(
