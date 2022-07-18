@@ -5,6 +5,7 @@ from common.configuration import (
     AgentConfiguration,
     ExploitationConfiguration,
     NetworkScanConfiguration,
+    PluginConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
@@ -13,7 +14,9 @@ from . import TestConfiguration
 
 
 def add_exploiters(
-    agent_configuration: AgentConfiguration, brute_force=[], vulnerability=[]
+    agent_configuration: AgentConfiguration,
+    brute_force: Sequence[PluginConfiguration] = [],
+    vulnerability: Sequence[PluginConfiguration] = [],
 ) -> AgentConfiguration:
     exploitation_configuration = replace(
         agent_configuration.propagation.exploitation,
