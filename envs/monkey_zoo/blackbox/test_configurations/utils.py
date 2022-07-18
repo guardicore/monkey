@@ -55,6 +55,15 @@ def add_credential_collectors(
     return replace(agent_configuration, credential_collectors=tuple(credential_collectors))
 
 
+def set_maximum_depth(
+    agent_configuration: AgentConfiguration, maximum_depth: int
+) -> AgentConfiguration:
+    propagation_configuration = replace(
+        agent_configuration.propagation, maximum_depth=maximum_depth
+    )
+    return replace_propagation_configuration(agent_configuration, propagation_configuration)
+
+
 def replace_exploitation_configuration(
     agent_configuration: AgentConfiguration, exploitation_configuration: ExploitationConfiguration
 ) -> AgentConfiguration:
