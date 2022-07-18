@@ -537,7 +537,10 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{marginBottom: '20px'}}>
-          <StolenPasswords data={this.state.stolenCredentials}/>
+          <StolenPasswords
+            data={this.state.stolenCredentials}
+            format={true}
+          />
         </div>
         <div>
           <StrongUsers data={this.state.report.glance.strong_users}/>
