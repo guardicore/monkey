@@ -45,4 +45,7 @@ class MimikatzCredentialCollector(ICredentialCollector):
                 ntlm_hash = NTHash(nt_hash=wc.ntlm_hash)
                 credentials.append(Credentials(identity, ntlm_hash))
 
+            if len(credentials) == 0 and identity is not None:
+                credentials.append(Credentials(identity, None))
+
         return credentials
