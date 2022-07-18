@@ -19,12 +19,7 @@ def credentials_for_test():
 
 def test_credential_telem_send(spy_send_telemetry, credentials_for_test):
 
-    expected_data = [
-        {
-            "identity": {"username": USERNAME, "credential_type": "USERNAME"},
-            "secret": {"password": PASSWORD, "credential_type": "PASSWORD"},
-        }
-    ]
+    expected_data = [Credentials.to_mapping(credentials_for_test)]
 
     telem = CredentialsTelem([credentials_for_test])
     telem.send()
