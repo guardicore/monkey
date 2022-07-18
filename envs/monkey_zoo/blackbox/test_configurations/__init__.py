@@ -1,1 +1,2 @@
 from .test_configuration import TestConfiguration
+from .zerologon import zerologon_test_configuration

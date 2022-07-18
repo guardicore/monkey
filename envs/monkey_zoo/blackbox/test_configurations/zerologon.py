@@ -1,6 +1,6 @@
 from common.configuration import AgentConfiguration, PluginConfiguration
 
-from .noop_test_configuration import noop_test_configuration
+from .noop import noop_test_configuration
 from .utils import add_exploiters, add_subnets, add_tcp_ports, replace_agent_configuration
 
 
