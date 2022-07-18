@@ -23,7 +23,14 @@ fake_ssh_key = SSHKeypair(fake_ssh_private_key, fake_ssh_public_key)
 identities = (fake_username,)
 secrets = (fake_nt_hash, fake_lm_hash, fake_password, fake_ssh_key)
 
-fake_credentials = [Credentials(identities, secrets)]
+fake_credentials = [
+    Credentials(fake_username, fake_nt_hash),
+    Credentials(fake_username, fake_lm_hash),
+    Credentials(fake_username, fake_password),
+    Credentials(fake_username, fake_ssh_key),
+    Credentials(None, fake_ssh_key),
+    Credentials(fake_username, None),
+]
 
 
 def test_formatting_credentials_for_report():
@@ -50,7 +57,13 @@ def test_formatting_credentials_for_report():
         "type": "Clear SSH private key",
         "username": fake_username.username,
     }
+    result5 = {
+        "_type": CredentialComponentType.SSH_KEYPAIR.name,
+        "type": "Clear SSH private key",
+        "username": "",
+    }
     assert result1 in credentials
     assert result2 in credentials
     assert result3 in credentials
     assert result4 in credentials
+    assert result5 in credentials
