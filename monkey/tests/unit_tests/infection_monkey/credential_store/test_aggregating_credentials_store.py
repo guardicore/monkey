@@ -42,6 +42,7 @@ TEST_CREDENTIALS = [
         identity=None,
         secret=Password("super_secret"),
     ),
+    Credentials(identity=Username("user4"), secret=None),
 ]
 
 SSH_KEYS_CREDENTIALS = [
@@ -88,6 +89,7 @@ def test_add_credentials_to_store(aggregating_credentials_store):
             "root",
             "user1",
             "user3",
+            "user4",
         ]
     )
     assert actual_stored_credentials["exploit_password_list"] == set(
