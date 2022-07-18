@@ -5,15 +5,6 @@ export function getAllUsernames(stolen, configured){
   return usernames;
 }
 
-export function getCredentialsSecrets(credentials, credential_type) {
-  let secrets = [];
-
-  for(let i = 0; i < credentials.length; i++){
-    secrets.push(credentials[i]['secrets'][0][credential_type]);
-  }
-  return secrets;
-}
-
 export function getCredentialsUsernames(credentials) {
   let usernames = [];
   for(let i = 0; i < credentials.length; i++){
