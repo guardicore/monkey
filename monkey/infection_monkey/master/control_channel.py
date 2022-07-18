@@ -1,13 +1,13 @@
 import json
 import logging
 from pprint import pformat
-from typing import Mapping
+from typing import Mapping, Sequence
 
 import requests
 
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.configuration import AgentConfiguration
-from infection_monkey.custom_types import PropagationCredentials
+from common.credentials import Credentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 
 requests.packages.urllib3.disable_warnings()
@@ -71,7 +71,7 @@ class ControlChannel(IControlChannel):
         ) as e:
             raise IslandCommunicationError(e)
 
-    def get_credentials_for_propagation(self) -> PropagationCredentials:
+    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
         propagation_credentials_url = (
             f"https://{self._control_channel_server}/api/propagation-credentials"
         )
@@ -84,9 +84,9 @@ class ControlChannel(IControlChannel):
             )
             response.raise_for_status()
 
-            return json.loads(response.content.decode())["propagation_credentials"]
+            return [Credentials.from_mapping(credentials) for credentials in response.json]
         except (
-            json.JSONDecodeError,
+            requests.exceptions.JSONDecodeError,
             requests.exceptions.ConnectionError,
             requests.exceptions.Timeout,
             requests.exceptions.TooManyRedirects,
