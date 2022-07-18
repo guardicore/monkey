@@ -8,13 +8,10 @@ from infection_monkey.telemetry.messengers.credentials_intercepting_telemetry_me
 
 TELEM_CREDENTIALS = [
     Credentials(
-        [Username("user1"), Username("user3")],
-        [
-            Password("abcdefg"),
-            Password("root"),
-            SSHKeypair(public_key="some_public_key", private_key="some_private_key"),
-        ],
-    )
+        Username("user1"),
+        SSHKeypair(public_key="some_public_key", private_key="some_private_key"),
+    ),
+    Credentials(Username("root"), Password("password")),
 ]
 
 
