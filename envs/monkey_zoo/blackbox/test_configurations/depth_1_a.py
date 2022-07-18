@@ -8,6 +8,7 @@ from .utils import (
     add_subnets,
     replace_agent_configuration,
     replace_propagation_credentials,
+    set_maximum_depth,
 )
 
 credentials = (
@@ -53,9 +54,10 @@ def _add_credential_collectors(agent_configuration: AgentConfiguration) -> Agent
     )
 
 
-agent_configuration = _add_exploiters(
-    _add_subnets(_add_credential_collectors(noop_test_configuration.agent_configuration))
-)
+agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+agent_configuration = _add_exploiters(agent_configuration)
+agent_configuration = _add_subnets(agent_configuration)
+agent_configuration = _add_credential_collectors(agent_configuration)
 
 depth_1_a_test_configuration = replace_agent_configuration(
     noop_test_configuration, agent_configuration
