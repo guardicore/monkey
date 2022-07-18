@@ -1,5 +1,5 @@
 from dataclasses import replace
-from typing import Sequence
+from typing import Sequence, Tuple
 
 from common.configuration import (
     AgentConfiguration,
@@ -9,6 +9,7 @@ from common.configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
+from common.credentials import Credentials
 
 from . import TestConfiguration
 
@@ -87,3 +88,9 @@ def replace_agent_configuration(
     test_configuration: TestConfiguration, agent_configuration: AgentConfiguration
 ) -> TestConfiguration:
     return replace(test_configuration, agent_configuration=agent_configuration)
+
+
+def replace_propagation_credentials(
+    test_configuration: TestConfiguration, propagation_credentials: Tuple[Credentials, ...]
+):
+    return replace(test_configuration, propagation_credentials=propagation_credentials)
