@@ -159,7 +159,8 @@ class ReportPageComponent extends AuthComponent {
       graph: {nodes: [], edges: []},
       nodeStateList: [],
       stolenCredentials: [],
-      configuredCredentials: []
+      configuredCredentials: [],
+      issues: []
     };
   }
 
@@ -196,18 +197,10 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
-      this.updateReport(this.props.report);
+      this.setState({report: this.props.report});
+      this.addIssuesToOverviewIssues();
     }
   }
-
-  updateReport(report) {
-    let newReport = this.addIssuesToOverviewIssues(report);
-
-    this.setState({
-      report: newReport
-    })
-  }
-
 
   render() {
     let content;
@@ -381,6 +374,9 @@ class ReportPageComponent extends AuthComponent {
   getPotentialSecurityIssuesOverviews() {
     let overviews = [];
     let issues = this.state.report.overview.issues;
+    let state_issues = this.state.issues;
+    issues.push(...state_issues);
+    issues = [...new Set(issues)];
 
     for(let i=0; i < issues.length; i++) {
       if (this.isIssuePotentialSecurityIssue(issues[i])) {
@@ -422,6 +418,10 @@ class ReportPageComponent extends AuthComponent {
   getImmediateThreatCount() {
     let threatCount = 0;
     let issues = this.state.report.overview.issues;
+    let state_issues = this.state.issues;
+
+    issues.push(...state_issues);
+    issues = [...new Set(issues)];
 
     for(let i=0; i < issues.length; i++) {
       if(this.isIssueImmediateThreat(issues[i])) {
@@ -441,6 +441,10 @@ class ReportPageComponent extends AuthComponent {
   getImmediateThreatsOverviews() {
     let overviews = [];
     let issues = this.state.report.overview.issues;
+    let state_issues = this.state.issues;
+
+    issues.push(...state_issues);
+    issues = [...new Set(issues)];
 
     for(let i=0; i < issues.length; i++) {
       if (this.isIssueImmediateThreat(issues[i])) {
@@ -588,16 +592,15 @@ class ReportPageComponent extends AuthComponent {
     return <ul>{issuesDivArray}</ul>;
   };
 
-  addIssuesToOverviewIssues(report) {
-    let issues = report.overview.issues;
-    let overview_issues = issues;
+  addIssuesToOverviewIssues() {
+    let overview_issues = this.state.issues;
 
     if (this.shouldAddStolenCredentialsIssue()) {
       overview_issues.push('stolen_creds');
     }
-    const newOverview = { ...report.overview, issues : overview_issues };
-    const newReport = { ...report, overview : newOverview };
-    return newReport;
+    this.setState({
+      issues: overview_issues
+    });
   }
 
   shouldAddStolenCredentialsIssue() {
