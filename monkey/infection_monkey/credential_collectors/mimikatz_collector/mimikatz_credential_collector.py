@@ -14,36 +14,38 @@ logger = logging.getLogger(__name__)
 class MimikatzCredentialCollector(ICredentialCollector):
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
-        creds = pypykatz_handler.get_windows_creds()
-        logger.info(f"Pypykatz gathered {len(creds)} credentials.")
-        return MimikatzCredentialCollector._to_credentials(creds)
+        windows_credentials = pypykatz_handler.get_windows_creds()
+        logger.info(f"Pypykatz gathered {len(windows_credentials)} credentials.")
+        return MimikatzCredentialCollector._to_credentials(windows_credentials)
 
     @staticmethod
-    def _to_credentials(win_creds: Sequence[WindowsCredentials]) -> [Credentials]:
-        all_creds = []
-        for win_cred in win_creds:
-            identities = []
-            secrets = []
-
+    def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> Sequence[Credentials]:
+        credentials = []
+        for wc in windows_credentials:
             # Mimikatz picks up users created by the Monkey even if they're successfully deleted
             # since it picks up creds from the registry. The newly created users are not removed
             # from the registry until a reboot of the system, hence this check.
-            if win_cred.username and not win_cred.username.startswith(USERNAME_PREFIX):
-                identity = Username(win_cred.username)
-                identities.append(identity)
+            if wc.username and wc.username.startswith(USERNAME_PREFIX):
+                continue
 
-            if win_cred.password:
-                password = Password(win_cred.password)
-                secrets.append(password)
+            identity = None
 
-            if win_cred.lm_hash:
-                lm_hash = LMHash(lm_hash=win_cred.lm_hash)
-                secrets.append(lm_hash)
+            if wc.username:
+                identity = Username(wc.username)
 
-            if win_cred.ntlm_hash:
-                lm_hash = NTHash(nt_hash=win_cred.ntlm_hash)
-                secrets.append(lm_hash)
+            if wc.password:
+                password = Password(wc.password)
+                credentials.append(Credentials(identity, password))
 
-            if identities != [] or secrets != []:
-                all_creds.append(Credentials(identities, secrets))
-        return all_creds
+            if wc.lm_hash:
+                lm_hash = LMHash(lm_hash=wc.lm_hash)
+                credentials.append(Credentials(identity, lm_hash))
+
+            if wc.ntlm_hash:
+                ntlm_hash = NTHash(nt_hash=wc.ntlm_hash)
+                credentials.append(Credentials(identity, ntlm_hash))
+
+            if len(credentials) == 0 and identity is not None:
+                credentials.append(Credentials(identity, None))
+
+        return credentials

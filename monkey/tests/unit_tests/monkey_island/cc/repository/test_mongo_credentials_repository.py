@@ -1,42 +1,19 @@
+from typing import Any, Iterable, Mapping, Sequence
 from unittest.mock import MagicMock
 
 import mongomock
 import pytest
+from pymongo import MongoClient
+from pymongo.collection import Collection
+from pymongo.database import Database
+from tests.data_for_tests.propagation_credentials import PROPAGATION_CREDENTIALS
 
-from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
+from common.credentials import Credentials
 from monkey_island.cc.repository import MongoCredentialsRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
-USER1 = "test_user_1"
-USER2 = "test_user_2"
-USER3 = "test_user_3"
-PASSWORD = "12435"
-PASSWORD2 = "password"
-PASSWORD3 = "lozinka"
-LM_HASH = "AEBD4DE384C7EC43AAD3B435B51404EE"
-NT_HASH = "7A21990FCD3D759941E45C490F143D5F"
-PUBLIC_KEY = "MY_PUBLIC_KEY"
-PRIVATE_KEY = "MY_PRIVATE_KEY"
-
-IDENTITIES_1 = (Username(USER1), Username(USER2))
-SECRETS_1 = (
-    Password(PASSWORD),
-    LMHash(LM_HASH),
-    NTHash(NT_HASH),
-    SSHKeypair(PRIVATE_KEY, PUBLIC_KEY),
-)
-CREDENTIALS_OBJECT_1 = Credentials(IDENTITIES_1, SECRETS_1)
-
-IDENTITIES_2 = (Username(USER3),)
-SECRETS_2 = (Password(PASSWORD2), Password(PASSWORD3))
-CREDENTIALS_OBJECT_2 = Credentials(IDENTITIES_2, SECRETS_2)
-
-
-CONFIGURED_CREDENTIALS = [CREDENTIALS_OBJECT_1]
-
-STOLEN_CREDENTIALS = [CREDENTIALS_OBJECT_2]
-
-CREDENTIALS_LIST = [CREDENTIALS_OBJECT_1, CREDENTIALS_OBJECT_2]
+CONFIGURED_CREDENTIALS = PROPAGATION_CREDENTIALS[0:3]
+STOLEN_CREDENTIALS = PROPAGATION_CREDENTIALS[3:]
 
 
 def reverse(data: bytes) -> bytes:
@@ -45,6 +22,7 @@ def reverse(data: bytes) -> bytes:
 
 @pytest.fixture
 def repository_encryptor():
+    # NOTE: Tests will fail if any inputs to this mock encryptor are palindromes.
     repository_encryptor = MagicMock(spec=ILockableEncryptor)
     repository_encryptor.encrypt = MagicMock(side_effect=reverse)
     repository_encryptor.decrypt = MagicMock(side_effect=reverse)
@@ -81,9 +59,9 @@ def test_mongo_repository_get_all(mongo_repository):
 
 
 def test_mongo_repository_configured(mongo_repository):
-    mongo_repository.save_configured_credentials(CREDENTIALS_LIST)
+    mongo_repository.save_configured_credentials(PROPAGATION_CREDENTIALS)
     actual_configured_credentials = mongo_repository.get_configured_credentials()
-    assert actual_configured_credentials == CREDENTIALS_LIST
+    assert actual_configured_credentials == PROPAGATION_CREDENTIALS
 
     mongo_repository.remove_configured_credentials()
     actual_configured_credentials = mongo_repository.get_configured_credentials()
@@ -93,7 +71,7 @@ def test_mongo_repository_configured(mongo_repository):
 def test_mongo_repository_stolen(mongo_repository):
     mongo_repository.save_stolen_credentials(STOLEN_CREDENTIALS)
     actual_stolen_credentials = mongo_repository.get_stolen_credentials()
-    assert sorted(actual_stolen_credentials) == sorted(STOLEN_CREDENTIALS)
+    assert actual_stolen_credentials == STOLEN_CREDENTIALS
 
     mongo_repository.remove_stolen_credentials()
     actual_stolen_credentials = mongo_repository.get_stolen_credentials()
@@ -104,7 +82,7 @@ def test_mongo_repository_all(mongo_repository):
     mongo_repository.save_configured_credentials(CONFIGURED_CREDENTIALS)
     mongo_repository.save_stolen_credentials(STOLEN_CREDENTIALS)
     actual_credentials = mongo_repository.get_all_credentials()
-    assert actual_credentials == CREDENTIALS_LIST
+    assert actual_credentials == PROPAGATION_CREDENTIALS
 
     mongo_repository.remove_all_credentials()
 
@@ -113,41 +91,65 @@ def test_mongo_repository_all(mongo_repository):
     assert mongo_repository.get_configured_credentials() == []
 
 
-# NOTE: The following tests are complicated, but they work. Rather than spend the effort to improve
-#       them now, we can revisit them when we resolve #2072. Resolving #2072 will make it easier to
-#       simplify these tests.
-def test_configured_secrets_encrypted(mongo_repository, mongo_client):
-    mongo_repository.save_configured_credentials([CREDENTIALS_OBJECT_2])
-    check_if_stored_credentials_encrypted(mongo_client, CREDENTIALS_OBJECT_2)
+@pytest.mark.parametrize("credentials", PROPAGATION_CREDENTIALS)
+def test_configured_secrets_encrypted(
+    mongo_repository: MongoCredentialsRepository,
+    mongo_client: MongoClient,
+    credentials: Sequence[Credentials],
+):
+    mongo_repository.save_configured_credentials([credentials])
+    check_if_stored_credentials_encrypted(mongo_client, credentials)
 
 
-def test_stolen_secrets_encrypted(mongo_repository, mongo_client):
-    mongo_repository.save_stolen_credentials([CREDENTIALS_OBJECT_2])
-    check_if_stored_credentials_encrypted(mongo_client, CREDENTIALS_OBJECT_2)
+@pytest.mark.parametrize("credentials", PROPAGATION_CREDENTIALS)
+def test_stolen_secrets_encrypted(mongo_repository, mongo_client, credentials: Credentials):
+    mongo_repository.save_stolen_credentials([credentials])
+    check_if_stored_credentials_encrypted(mongo_client, credentials)
 
 
-def check_if_stored_credentials_encrypted(mongo_client, original_credentials):
-    raw_credentials = get_all_credentials_in_mongo(mongo_client)
+def check_if_stored_credentials_encrypted(mongo_client: MongoClient, original_credentials):
     original_credentials_mapping = Credentials.to_mapping(original_credentials)
+    raw_credentials = get_all_credentials_in_mongo(mongo_client)
+
     for rc in raw_credentials:
-        for identity_or_secret, credentials_components in rc.items():
-            for component in credentials_components:
-                for key, value in component.items():
-                    assert (
-                        original_credentials_mapping[identity_or_secret][0].get(key, None) != value
-                    )
+        for identity_or_secret, credentials_component in rc.items():
+            if original_credentials_mapping[identity_or_secret] is None:
+                assert credentials_component is None
+            else:
+                for key, value in credentials_component.items():
+                    assert original_credentials_mapping[identity_or_secret][key] != value.decode()
 
 
-def get_all_credentials_in_mongo(mongo_client):
+def get_all_credentials_in_mongo(
+    mongo_client: MongoClient,
+) -> Iterable[Mapping[str, Mapping[str, Any]]]:
     encrypted_credentials = []
 
     # Loop through all databases and collections and search for credentials. We don't want the tests
     # to assume anything about the internal workings of the repository.
-    for db in mongo_client.list_database_names():
-        for collection in mongo_client[db].list_collection_names():
-            mongo_credentials = mongo_client[db][collection].find({})
-            for mc in mongo_credentials:
-                del mc["_id"]
-                encrypted_credentials.append(mc)
+    for collection in get_all_collections_in_mongo(mongo_client):
+        mongo_credentials = collection.find({})
+        for mc in mongo_credentials:
+            del mc["_id"]
+            encrypted_credentials.append(mc)
 
     return encrypted_credentials
+
+
+def get_all_collections_in_mongo(mongo_client: MongoClient) -> Iterable[Collection]:
+    collections = [
+        collection
+        for db in get_all_databases_in_mongo(mongo_client)
+        for collection in get_all_collections_in_database(db)
+    ]
+
+    assert len(collections) > 0
+    return collections
+
+
+def get_all_databases_in_mongo(mongo_client) -> Iterable[Database]:
+    return (mongo_client[db_name] for db_name in mongo_client.list_database_names())
+
+
+def get_all_collections_in_database(db: Database) -> Iterable[Collection]:
+    return (db[collection_name] for collection_name in db.list_collection_names())

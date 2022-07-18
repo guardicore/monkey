@@ -30,21 +30,25 @@ EMPTY_CHANNEL_CREDENTIALS = {
 
 TEST_CREDENTIALS = [
     Credentials(
-        [Username("user1"), Username("user3")],
-        [
-            Password("abcdefg"),
-            Password("root"),
-            SSHKeypair(public_key="some_public_key_1", private_key="some_private_key_1"),
-        ],
-    )
+        identity=Username("user1"),
+        secret=Password("root"),
+    ),
+    Credentials(identity=Username("user1"), secret=Password("abcdefg")),
+    Credentials(
+        identity=Username("user3"),
+        secret=SSHKeypair(public_key="some_public_key_1", private_key="some_private_key_1"),
+    ),
+    Credentials(
+        identity=None,
+        secret=Password("super_secret"),
+    ),
+    Credentials(identity=Username("user4"), secret=None),
 ]
 
 SSH_KEYS_CREDENTIALS = [
     Credentials(
-        [Username("root")],
-        [
-            SSHKeypair(public_key="some_public_key", private_key="some_private_key"),
-        ],
+        Username("root"),
+        SSHKeypair(public_key="some_public_key", private_key="some_private_key"),
     )
 ]
 
@@ -85,6 +89,7 @@ def test_add_credentials_to_store(aggregating_credentials_store):
             "root",
             "user1",
             "user3",
+            "user4",
         ]
     )
     assert actual_stored_credentials["exploit_password_list"] == set(
@@ -94,6 +99,7 @@ def test_add_credentials_to_store(aggregating_credentials_store):
             "abcdefg",
             "password",
             "root",
+            "super_secret",
         ]
     )
 

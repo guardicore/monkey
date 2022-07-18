@@ -29,11 +29,11 @@ class SSHCredentialCollector(ICredentialCollector):
         ssh_credentials = []
 
         for info in ssh_info:
-            identities = []
-            secrets = []
+            identity = None
+            secret = None
 
             if info.get("name", ""):
-                identities.append(Username(info["name"]))
+                identity = Username(info["name"])
 
             ssh_keypair = {}
             for key in ["public_key", "private_key"]:
@@ -41,13 +41,11 @@ class SSHCredentialCollector(ICredentialCollector):
                     ssh_keypair[key] = info[key]
 
             if len(ssh_keypair):
-                secrets.append(
-                    SSHKeypair(
-                        ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
-                    )
+                secret = SSHKeypair(
+                    ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
                 )
 
-            if identities != [] or secrets != []:
-                ssh_credentials.append(Credentials(identities, secrets))
+            if any([identity, secret]):
+                ssh_credentials.append(Credentials(identity, secret))
 
         return ssh_credentials

@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Iterable, Mapping
 
-from common.credentials import CredentialComponentType, Credentials
+from common.credentials import CredentialComponentType, Credentials, ICredentialComponent
 from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.utils.decorators import request_cache
@@ -26,31 +26,28 @@ class AggregatingCredentialsStore(ICredentialsStore):
 
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         for credentials in credentials_to_add:
-            usernames = {
-                identity.username
-                for identity in credentials.identities
-                if identity.credential_type is CredentialComponentType.USERNAME
-            }
-            self._stored_credentials.setdefault("exploit_user_list", set()).update(usernames)
+            if credentials.identity:
+                self._add_identity(credentials.identity)
 
-            for secret in credentials.secrets:
-                if secret.credential_type is CredentialComponentType.PASSWORD:
-                    self._stored_credentials.setdefault("exploit_password_list", set()).add(
-                        secret.password
-                    )
-                elif secret.credential_type is CredentialComponentType.LM_HASH:
-                    self._stored_credentials.setdefault("exploit_lm_hash_list", set()).add(
-                        secret.lm_hash
-                    )
-                elif secret.credential_type is CredentialComponentType.NT_HASH:
-                    self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).add(
-                        secret.nt_hash
-                    )
-                elif secret.credential_type is CredentialComponentType.SSH_KEYPAIR:
-                    self._set_attribute(
-                        "exploit_ssh_keys",
-                        [{"public_key": secret.public_key, "private_key": secret.private_key}],
-                    )
+            if credentials.secret:
+                self._add_secret(credentials.secret)
+
+    def _add_identity(self, identity: ICredentialComponent):
+        if identity.credential_type is CredentialComponentType.USERNAME:
+            self._stored_credentials.setdefault("exploit_user_list", set()).add(identity.username)
+
+    def _add_secret(self, secret: ICredentialComponent):
+        if secret.credential_type is CredentialComponentType.PASSWORD:
+            self._stored_credentials.setdefault("exploit_password_list", set()).add(secret.password)
+        elif secret.credential_type is CredentialComponentType.LM_HASH:
+            self._stored_credentials.setdefault("exploit_lm_hash_list", set()).add(secret.lm_hash)
+        elif secret.credential_type is CredentialComponentType.NT_HASH:
+            self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).add(secret.nt_hash)
+        elif secret.credential_type is CredentialComponentType.SSH_KEYPAIR:
+            self._set_attribute(
+                "exploit_ssh_keys",
+                [{"public_key": secret.public_key, "private_key": secret.private_key}],
+            )
 
     def get_credentials(self) -> PropagationCredentials:
         try:

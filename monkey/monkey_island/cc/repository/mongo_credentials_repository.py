@@ -71,39 +71,39 @@ class MongoCredentialsRepository(ICredentialsRepository):
         except Exception as err:
             raise StorageError(err)
 
-    # NOTE: The encryption/decryption is complicated and also full of mostly duplicated code. Rather
-    #       than spend the effort to improve them now, we can revisit them when we resolve #2072.
-    #       Resolving #2072 will make it easier to simplify these methods and remove duplication.
-    #
-    #       If possible, implement the encryption/decryption as a decorator so it can be reused with
+    # TODO: If possible, implement the encryption/decryption as a decorator so it can be reused with
     #       different ICredentialsRepository implementations
     def _encrypt_credentials_mapping(self, mapping: Mapping[str, Any]) -> Mapping[str, Any]:
         encrypted_mapping: Dict[str, Any] = {}
 
-        for secret_or_identity, credentials_components in mapping.items():
-            encrypted_mapping[secret_or_identity] = []
-            for component in credentials_components:
-                encrypted_component = {}
-                for key, value in component.items():
-                    encrypted_component[key] = self._repository_encryptor.encrypt(value.encode())
+        for secret_or_identity, credentials_component in mapping.items():
+            if credentials_component is None:
+                encrypted_component = None
+            else:
+                encrypted_component = {
+                    key: self._repository_encryptor.encrypt(value.encode())
+                    for key, value in credentials_component.items()
+                }
 
-                encrypted_mapping[secret_or_identity].append(encrypted_component)
+            encrypted_mapping[secret_or_identity] = encrypted_component
 
         return encrypted_mapping
 
     def _decrypt_credentials_mapping(self, mapping: Mapping[str, Any]) -> Mapping[str, Any]:
-        encrypted_mapping: Dict[str, Any] = {}
+        decrypted_mapping: Dict[str, Any] = {}
 
-        for secret_or_identity, credentials_components in mapping.items():
-            encrypted_mapping[secret_or_identity] = []
-            for component in credentials_components:
-                encrypted_component = {}
-                for key, value in component.items():
-                    encrypted_component[key] = self._repository_encryptor.decrypt(value).decode()
+        for secret_or_identity, credentials_component in mapping.items():
+            if credentials_component is None:
+                decrypted_component = None
+            else:
+                decrypted_component = {
+                    key: self._repository_encryptor.decrypt(value).decode()
+                    for key, value in credentials_component.items()
+                }
 
-                encrypted_mapping[secret_or_identity].append(encrypted_component)
+            decrypted_mapping[secret_or_identity] = decrypted_component
 
-        return encrypted_mapping
+        return decrypted_mapping
 
     @staticmethod
     def _remove_credentials_fom_collection(collection):
