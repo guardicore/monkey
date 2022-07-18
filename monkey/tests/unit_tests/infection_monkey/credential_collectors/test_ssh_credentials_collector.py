@@ -55,9 +55,9 @@ def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger):
     ssh_keypair2 = SSHKeypair("", "AnotherPublicKey")
 
     expected = [
-        Credentials(identities=[username], secrets=[ssh_keypair1]),
-        Credentials(identities=[username2], secrets=[ssh_keypair2]),
-        Credentials(identities=[username3], secrets=[]),
+        Credentials(identity=username, secret=ssh_keypair1),
+        Credentials(identity=username2, secret=ssh_keypair2),
+        Credentials(identity=username3, secret=None),
     ]
     collected = SSHCredentialCollector(patch_telemetry_messenger).collect_credentials()
     assert expected == collected
