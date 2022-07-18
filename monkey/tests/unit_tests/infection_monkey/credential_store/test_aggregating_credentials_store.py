@@ -73,24 +73,11 @@ def aggregating_credentials_store() -> AggregatingCredentialsStore:
     return AggregatingCredentialsStore(control_channel)
 
 
-def test_get_credentials_from_store(aggregating_credentials_store):
+@pytest.mark.parametrize("key", TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS.keys())
+def test_get_credentials_from_store(aggregating_credentials_store, key):
     actual_stored_credentials = aggregating_credentials_store.get_credentials()
 
-    assert (
-        actual_stored_credentials["exploit_user_list"]
-        == TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS["exploit_user_list"]
-    )
-    assert (
-        actual_stored_credentials["exploit_password_list"]
-        == TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS["exploit_password_list"]
-    )
-    assert (
-        actual_stored_credentials["exploit_ntlm_hash_list"]
-        == TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS["exploit_ntlm_hash_list"]
-    )
-
-    for ssh_keypair in actual_stored_credentials["exploit_ssh_keys"]:
-        assert ssh_keypair in TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS["exploit_ssh_keys"]
+    assert actual_stored_credentials[key] == TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS[key]
 
 
 def test_add_credentials_to_store(aggregating_credentials_store):
