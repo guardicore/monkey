@@ -6,6 +6,7 @@ from .utils import (
     add_credential_collectors,
     add_exploiters,
     add_subnets,
+    add_tcp_ports,
     replace_agent_configuration,
     replace_propagation_credentials,
     set_maximum_depth,
@@ -52,6 +53,11 @@ def _add_credential_collectors(agent_configuration: AgentConfiguration) -> Agent
     return add_credential_collectors(
         agent_configuration, [PluginConfiguration("MimikatzCollector", {})]
     )
+
+
+def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    ports = [445, 8088, 22]
+    return add_tcp_ports(agent_configuration, ports)
 
 
 agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
