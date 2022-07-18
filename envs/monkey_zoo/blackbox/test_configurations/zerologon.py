@@ -1,7 +1,13 @@
 from common.configuration import AgentConfiguration, PluginConfiguration
 
 from .noop import noop_test_configuration
-from .utils import add_exploiters, add_subnets, add_tcp_ports, replace_agent_configuration
+from .utils import (
+    add_exploiters,
+    add_subnets,
+    add_tcp_ports,
+    replace_agent_configuration,
+    set_maximum_depth,
+)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
@@ -21,9 +27,11 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     return add_subnets(agent_configuration, subnets)
 
 
-agent_configuration = _add_exploiters(
-    _add_tcp_ports(_add_subnets(noop_test_configuration.agent_configuration))
-)
+agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+agent_configuration = _add_exploiters(agent_configuration)
+agent_configuration = _add_tcp_ports(agent_configuration)
+agent_configuration = _add_subnets(agent_configuration)
+
 zerologon_test_configuration = replace_agent_configuration(
     noop_test_configuration, agent_configuration
 )
