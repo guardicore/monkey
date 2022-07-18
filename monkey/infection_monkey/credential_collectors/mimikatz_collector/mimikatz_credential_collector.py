@@ -22,28 +22,24 @@ class MimikatzCredentialCollector(ICredentialCollector):
     def _to_credentials(win_creds: Sequence[WindowsCredentials]) -> [Credentials]:
         all_creds = []
         for win_cred in win_creds:
-            identities = []
-            secrets = []
+            identity = None
 
             # Mimikatz picks up users created by the Monkey even if they're successfully deleted
             # since it picks up creds from the registry. The newly created users are not removed
             # from the registry until a reboot of the system, hence this check.
             if win_cred.username and not win_cred.username.startswith(USERNAME_PREFIX):
                 identity = Username(win_cred.username)
-                identities.append(identity)
 
             if win_cred.password:
                 password = Password(win_cred.password)
-                secrets.append(password)
+                all_creds.append(Credentials(identity, password))
 
             if win_cred.lm_hash:
                 lm_hash = LMHash(lm_hash=win_cred.lm_hash)
-                secrets.append(lm_hash)
+                all_creds.append(Credentials(identity, lm_hash))
 
             if win_cred.ntlm_hash:
-                lm_hash = NTHash(nt_hash=win_cred.ntlm_hash)
-                secrets.append(lm_hash)
+                ntlm_hash = NTHash(nt_hash=win_cred.ntlm_hash)
+                all_creds.append(Credentials(identity, ntlm_hash))
 
-            if identities != [] or secrets != []:
-                all_creds.append(Credentials(identities, secrets))
         return all_creds

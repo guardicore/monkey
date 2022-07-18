@@ -36,7 +36,7 @@ def test_pypykatz_result_parsing(monkeypatch):
 
     username = Username("user")
     password = Password("secret")
-    expected_credentials = Credentials([username], [password])
+    expected_credentials = Credentials(username, password)
 
     collected_credentials = collect_credentials()
     assert len(collected_credentials) == 1
@@ -66,11 +66,11 @@ def test_pypykatz_result_parsing_defaults(monkeypatch):
     username = Username("user2")
     password = Password("secret2")
     lm_hash = LMHash("0182BD0BD4444BF8FC83B5D9042EED2E")
-    expected_credentials = Credentials([username], [password, lm_hash])
+    expected_credentials = [Credentials(username, password), Credentials(username, lm_hash)]
 
     collected_credentials = collect_credentials()
-    assert len(collected_credentials) == 1
-    assert collected_credentials[0] == expected_credentials
+    assert len(collected_credentials) == 2
+    assert collected_credentials == expected_credentials
 
 
 def test_pypykatz_result_parsing_no_identities(monkeypatch):
@@ -86,8 +86,8 @@ def test_pypykatz_result_parsing_no_identities(monkeypatch):
 
     lm_hash = LMHash("0182BD0BD4444BF8FC83B5D9042EED2E")
     nt_hash = NTHash("E9F85516721DDC218359AD5280DB4450")
-    expected_credentials = Credentials([], [lm_hash, nt_hash])
+    expected_credentials = [Credentials(None, lm_hash), Credentials(None, nt_hash)]
 
     collected_credentials = collect_credentials()
-    assert len(collected_credentials) == 1
-    assert collected_credentials[0] == expected_credentials
+    assert len(collected_credentials) == 2
+    assert collected_credentials == expected_credentials
