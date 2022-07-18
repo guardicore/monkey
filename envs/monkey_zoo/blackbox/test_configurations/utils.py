@@ -49,6 +49,12 @@ def add_subnets(
     return replace_scan_target_configuration(agent_configuration, scan_target_configuration)
 
 
+def add_credential_collectors(
+    agent_configuration: AgentConfiguration, credential_collectors: Sequence[PluginConfiguration]
+) -> AgentConfiguration:
+    return replace(agent_configuration, credential_collectors=tuple(credential_collectors))
+
+
 def replace_exploitation_configuration(
     agent_configuration: AgentConfiguration, exploitation_configuration: ExploitationConfiguration
 ) -> AgentConfiguration:
