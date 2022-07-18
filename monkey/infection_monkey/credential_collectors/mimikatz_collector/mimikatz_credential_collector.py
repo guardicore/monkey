@@ -19,7 +19,7 @@ class MimikatzCredentialCollector(ICredentialCollector):
         return MimikatzCredentialCollector._to_credentials(windows_credentials)
 
     @staticmethod
-    def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> [Credentials]:
+    def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> Sequence[Credentials]:
         credentials = []
         for wc in windows_credentials:
             identity = None
