@@ -38,6 +38,10 @@ TEST_CREDENTIALS = [
         identity=Username("user3"),
         secret=SSHKeypair(public_key="some_public_key_1", private_key="some_private_key_1"),
     ),
+    Credentials(
+        identity=None,
+        secret=Password("super_secret"),
+    ),
 ]
 
 SSH_KEYS_CREDENTIALS = [
@@ -93,6 +97,7 @@ def test_add_credentials_to_store(aggregating_credentials_store):
             "abcdefg",
             "password",
             "root",
+            "super_secret",
         ]
     )
 

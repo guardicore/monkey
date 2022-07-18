@@ -26,9 +26,11 @@ class AggregatingCredentialsStore(ICredentialsStore):
 
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         for credentials in credentials_to_add:
-            self._stored_credentials.setdefault("exploit_user_list", set()).add(
-                credentials.identity.username
-            )
+            identity = credentials.identity
+            if identity and identity.credential_type is CredentialComponentType.USERNAME:
+                self._stored_credentials.setdefault("exploit_user_list", set()).add(
+                    identity.username
+                )
 
             secret = credentials.secret
 
