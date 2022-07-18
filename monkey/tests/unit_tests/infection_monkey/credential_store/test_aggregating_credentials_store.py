@@ -30,21 +30,20 @@ EMPTY_CHANNEL_CREDENTIALS = {
 
 TEST_CREDENTIALS = [
     Credentials(
-        [Username("user1"), Username("user3")],
-        [
-            Password("abcdefg"),
-            Password("root"),
-            SSHKeypair(public_key="some_public_key_1", private_key="some_private_key_1"),
-        ],
-    )
+        identity=Username("user1"),
+        secret=Password("root"),
+    ),
+    Credentials(identity=Username("user1"), secret=Password("abcdefg")),
+    Credentials(
+        identity=Username("user3"),
+        secret=SSHKeypair(public_key="some_public_key_1", private_key="some_private_key_1"),
+    ),
 ]
 
 SSH_KEYS_CREDENTIALS = [
     Credentials(
-        [Username("root")],
-        [
-            SSHKeypair(public_key="some_public_key", private_key="some_private_key"),
-        ],
+        Username("root"),
+        SSHKeypair(public_key="some_public_key", private_key="some_private_key"),
     )
 ]
 

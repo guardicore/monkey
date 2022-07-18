@@ -26,31 +26,29 @@ class AggregatingCredentialsStore(ICredentialsStore):
 
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         for credentials in credentials_to_add:
-            usernames = {
-                identity.username
-                for identity in credentials.identities
-                if identity.credential_type is CredentialComponentType.USERNAME
-            }
-            self._stored_credentials.setdefault("exploit_user_list", set()).update(usernames)
+            self._stored_credentials.setdefault("exploit_user_list", set()).add(
+                credentials.identity.username
+            )
 
-            for secret in credentials.secrets:
-                if secret.credential_type is CredentialComponentType.PASSWORD:
-                    self._stored_credentials.setdefault("exploit_password_list", set()).add(
-                        secret.password
-                    )
-                elif secret.credential_type is CredentialComponentType.LM_HASH:
-                    self._stored_credentials.setdefault("exploit_lm_hash_list", set()).add(
-                        secret.lm_hash
-                    )
-                elif secret.credential_type is CredentialComponentType.NT_HASH:
-                    self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).add(
-                        secret.nt_hash
-                    )
-                elif secret.credential_type is CredentialComponentType.SSH_KEYPAIR:
-                    self._set_attribute(
-                        "exploit_ssh_keys",
-                        [{"public_key": secret.public_key, "private_key": secret.private_key}],
-                    )
+            secret = credentials.secret
+
+            if secret.credential_type is CredentialComponentType.PASSWORD:
+                self._stored_credentials.setdefault("exploit_password_list", set()).add(
+                    secret.password
+                )
+            elif secret.credential_type is CredentialComponentType.LM_HASH:
+                self._stored_credentials.setdefault("exploit_lm_hash_list", set()).add(
+                    secret.lm_hash
+                )
+            elif secret.credential_type is CredentialComponentType.NT_HASH:
+                self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).add(
+                    secret.nt_hash
+                )
+            elif secret.credential_type is CredentialComponentType.SSH_KEYPAIR:
+                self._set_attribute(
+                    "exploit_ssh_keys",
+                    [{"public_key": secret.public_key, "private_key": secret.private_key}],
+                )
 
     def get_credentials(self) -> PropagationCredentials:
         try:
