@@ -45,7 +45,7 @@ class SSHCredentialCollector(ICredentialCollector):
                     ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
                 )
 
-            if identity is not None:
+            if any([identity, secret]):
                 ssh_credentials.append(Credentials(identity, secret))
 
         return ssh_credentials
