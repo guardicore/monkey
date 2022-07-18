@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Sequence
 
 from common.credentials import CredentialComponentType, Credentials, ICredentialComponent
 from infection_monkey.custom_types import PropagationCredentials
@@ -52,9 +52,7 @@ class AggregatingCredentialsStore(ICredentialsStore):
     def get_credentials(self) -> PropagationCredentials:
         try:
             propagation_credentials = self._get_credentials_from_control_channel()
-
-            # Needs to be reworked when exploiters accepts sequence of Credentials
-            self._aggregate_credentials(propagation_credentials)
+            self.add_credentials(propagation_credentials)
 
             return self._stored_credentials
         except Exception as ex:
@@ -62,12 +60,8 @@ class AggregatingCredentialsStore(ICredentialsStore):
             logger.error(f"Error while attempting to retrieve credentials for propagation: {ex}")
 
     @request_cache(CREDENTIALS_POLL_PERIOD_SEC)
-    def _get_credentials_from_control_channel(self) -> PropagationCredentials:
+    def _get_credentials_from_control_channel(self) -> Sequence[Credentials]:
         return self._control_channel.get_credentials_for_propagation()
-
-    def _aggregate_credentials(self, credentials_to_aggr: Mapping):
-        for cred_attr, credentials_values in credentials_to_aggr.items():
-            self._set_attribute(cred_attr, credentials_values)
 
     def _set_attribute(self, attribute_to_be_set: str, credentials_values: Iterable[Any]):
         if not credentials_values:
