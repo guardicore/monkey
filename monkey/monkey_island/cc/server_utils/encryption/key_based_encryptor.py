@@ -3,7 +3,7 @@ import logging
 
 from cryptography.fernet import Fernet
 
-from . import EncryptionKey32Bytes
+from .encryption_key_types import EncryptionKey32Bytes
 from .i_encryptor import IEncryptor
 
 logger = logging.getLogger(__name__)

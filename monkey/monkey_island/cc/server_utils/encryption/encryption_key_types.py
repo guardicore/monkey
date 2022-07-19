@@ -1,4 +1,4 @@
-from . import SizeError
+from .errors import SizeError
 
 
 class EncryptionKey32Bytes(bytes):
