@@ -13,7 +13,7 @@ from .utils import (
     set_maximum_depth,
 )
 
-credentials = (
+CREDENTIALS = (
     Credentials(Username("m0nk3y"), None),
     Credentials(None, Password("Ivrrw5zEzs")),
     Credentials(None, Password("Xk8VDTsC")),
@@ -79,5 +79,5 @@ depth_1_a_test_configuration = replace_agent_configuration(
     noop_test_configuration, agent_configuration
 )
 depth_1_a_test_configuration = replace_propagation_credentials(
-    depth_1_a_test_configuration, credentials
+    depth_1_a_test_configuration, CREDENTIALS
 )
