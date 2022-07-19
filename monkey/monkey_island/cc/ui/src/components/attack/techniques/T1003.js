@@ -18,7 +18,9 @@ class T1003 extends React.Component {
         <br/>
         {this.props.data.status === ScanStatus.USED ?
           <StolenPasswordsComponent
-            data={this.props.data.stolen_creds}/>
+            data={this.props.data.stolen_creds}
+            format={false}
+          />
           : ''}
         <MitigationsComponent mitigations={this.props.data.mitigations}/>
       </div>

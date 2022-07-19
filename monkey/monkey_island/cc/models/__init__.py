@@ -7,6 +7,5 @@ from .monkey import Monkey
 from .monkey_ttl import MonkeyTtl
 from .pba_results import PbaResults
 from monkey_island.cc.models.report.report import Report
-from .stolen_credentials import StolenCredentials
 from .simulation import Simulation, SimulationSchema, IslandMode
 from .user_credentials import UserCredentials

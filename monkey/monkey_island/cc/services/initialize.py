@@ -33,6 +33,7 @@ from monkey_island.cc.repository import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import AWSService, IslandModeService, RepositoryService
+from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
     CredentialsParser,
@@ -64,9 +65,7 @@ def initialize_services(data_dir: Path) -> DIContainer:
     _register_repositories(container, data_dir)
     _register_services(container)
 
-    # Note: A hack to resolve credentials parser
-    # It changes telemetry processing function, this will be refactored!
-    _patch_credentials_parser(container)
+    _dirty_hacks(container)
 
     # This is temporary until we get DI all worked out.
     ReportService.initialize(
@@ -153,7 +152,16 @@ def _register_services(container: DIContainer):
     container.register_instance(RepositoryService, container.resolve(RepositoryService))
 
 
-def _patch_credentials_parser(container: DIContainer):
+def _dirty_hacks(container: DIContainer):
+    # A dirty hacks function that patches some of the things that
+    # are needed at the current point
+
+    # Patches attack technique T1003 which is a static class
+    # but it needs stolen credentials from the database
+    T1003.get_report_data = container.resolve(T1003GetReportData)
+
+    # Note: A hack to resolve credentials parser
+    # It changes telemetry processing function, this will be refactored!
     TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[TelemCategoryEnum.CREDENTIALS] = container.resolve(
         CredentialsParser
     )
