@@ -13,12 +13,6 @@ from .utils import (
     set_maximum_depth,
 )
 
-CREDENTIALS = (
-    Credentials(Username("m0nk3y"), None),
-    Credentials(None, Password("Ivrrw5zEzs")),
-    Credentials(None, Password("Xk8VDTsC")),
-)
-
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     brute_force = [
@@ -69,14 +63,21 @@ def _add_http_ports(agent_configuration: AgentConfiguration) -> AgentConfigurati
 
 
 agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
-agent_configuration = _add_tcp_ports(agent_configuration)
 agent_configuration = _add_exploiters(agent_configuration)
 agent_configuration = _add_subnets(agent_configuration)
+agent_configuration = _add_tcp_ports(agent_configuration)
 agent_configuration = _add_credential_collectors(agent_configuration)
 agent_configuration = _add_http_ports(agent_configuration)
 
 depth_1_a_test_configuration = replace_agent_configuration(
     noop_test_configuration, agent_configuration
+)
+
+
+CREDENTIALS = (
+    Credentials(Username("m0nk3y"), None),
+    Credentials(None, Password("Ivrrw5zEzs")),
+    Credentials(None, Password("Xk8VDTsC")),
 )
 depth_1_a_test_configuration = replace_propagation_credentials(
     depth_1_a_test_configuration, CREDENTIALS
