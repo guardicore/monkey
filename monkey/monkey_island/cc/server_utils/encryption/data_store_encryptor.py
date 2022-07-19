@@ -32,7 +32,7 @@ class DataStoreEncryptor(IEncryptor):
         with open(self._key_file, "rb") as f:
             encrypted_key = f.read()
 
-        plaintext_key = self._password_based_encryptor.decrypt(encrypted_key)
+        plaintext_key = EncryptionKey32Bytes(self._password_based_encryptor.decrypt(encrypted_key))
         return KeyBasedEncryptor(plaintext_key)
 
     def _create_key(self) -> KeyBasedEncryptor:
