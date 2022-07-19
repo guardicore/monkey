@@ -4,6 +4,7 @@ from typing import Sequence, Tuple
 from common.configuration import (
     AgentConfiguration,
     ExploitationConfiguration,
+    ExploitationOptionsConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
     PropagationConfiguration,
@@ -55,6 +56,19 @@ def add_credential_collectors(
     return replace(agent_configuration, credential_collectors=tuple(credential_collectors))
 
 
+def add_http_ports(
+    agent_configuration: AgentConfiguration, http_ports: Sequence[int]
+) -> AgentConfiguration:
+    exploitation_options_configuration = agent_configuration.propagation.exploitation.options
+    exploitation_options_configuration = replace(
+        exploitation_options_configuration, http_ports=http_ports
+    )
+
+    return replace_exploitation_options_configuration(
+        agent_configuration, exploitation_options_configuration
+    )
+
+
 def set_maximum_depth(
     agent_configuration: AgentConfiguration, maximum_depth: int
 ) -> AgentConfiguration:
@@ -97,6 +111,17 @@ def replace_propagation_configuration(
     agent_configuration: AgentConfiguration, propagation_configuration: PropagationConfiguration
 ) -> AgentConfiguration:
     return replace(agent_configuration, propagation=propagation_configuration)
+
+
+def replace_exploitation_options_configuration(
+    agent_configuration: AgentConfiguration,
+    exploitation_options_configuration: ExploitationOptionsConfiguration,
+) -> AgentConfiguration:
+    exploitation_configuration = agent_configuration.propagation.exploitation
+    exploitation_configuration = replace(
+        exploitation_configuration, options=exploitation_options_configuration
+    )
+    return replace_exploitation_configuration(agent_configuration, exploitation_configuration)
 
 
 def replace_agent_configuration(
