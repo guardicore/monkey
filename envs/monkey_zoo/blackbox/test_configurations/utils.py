@@ -69,6 +69,12 @@ def add_http_ports(
     )
 
 
+def set_keep_tunnel_open_time(
+    agent_configuration: AgentConfiguration, keep_tunnel_open_time: int
+) -> AgentConfiguration:
+    return replace(agent_configuration, keep_tunnel_open_time=keep_tunnel_open_time)
+
+
 def set_maximum_depth(
     agent_configuration: AgentConfiguration, maximum_depth: int
 ) -> AgentConfiguration:
