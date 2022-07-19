@@ -22,9 +22,8 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
         PluginConfiguration(name="SmbExploiter", options={}),
         PluginConfiguration(name="SSHExploiter", options={}),
     ]
-    vulnerability = [PluginConfiguration(name="ZerologonExploiter", options={})]
 
-    return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=vulnerability)
+    return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=[])
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
