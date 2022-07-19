@@ -5,3 +5,4 @@ from .depth_2_a import depth_2_a_test_configuration
 from .depth_3_a import depth_3_a_test_configuration
 from .powershell_credentials_reuse import powershell_credentials_reuse_test_configuration
 from .smb_pth import smb_pth_test_configuration
+from .wmi_mimikatz import wmi_mimikatz_test_configuration
