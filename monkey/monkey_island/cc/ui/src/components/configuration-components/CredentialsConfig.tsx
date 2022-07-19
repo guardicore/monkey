@@ -13,7 +13,6 @@ export default function CredentialsConfig(props) {
   } = props;
 
   let credentialsCopy = _.clone(credentials);
-
   return (<>
     <Form schema={schema}
           uiSchema={uiSchema}

@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import CredentialsConfig from './CredentialsConfig';
+import AuthComponent from '../AuthComponent';
 
 const sectionOrder = [
   'exploitation',
@@ -25,15 +26,6 @@ export default function PropagationConfig(props) {
     onCredentialChange
   } = props;
   const [selectedSection, setSelectedSection] = useState(initialSection);
-  const [displayedSchema, setDisplayedSchema] = useState(getSchemaByKey(schema, initialSection));
-  const [displayedSchemaUi, setDisplayedSchemaUi] = useState(getUiSchemaByKey(uiSchema, initialSection));
-  const [localFormData, setLocalFormData] = useState(configuration[initialSection]);
-
-  useEffect(() => {
-    setLocalFormData(configuration[selectedSection]);
-    setDisplayedSchema(getSchemaByKey(schema, selectedSection));
-    setDisplayedSchemaUi(getUiSchemaByKey(uiSchema, selectedSection));
-  }, [selectedSection])
 
   const onFormDataChange = (formData) => {
     let formDataClone = _.clone(formData.formData);
@@ -63,23 +55,28 @@ export default function PropagationConfig(props) {
   }
 
   const getForm = () => {
+    let selectedSectionData = configuration[selectedSection];
+    let displayedSchema = getSchemaByKey(schema, selectedSection);
+    let displayedUiSchema = getUiSchemaByKey(uiSchema, selectedSection);
     if (selectedSection === 'credentials') {
       return <CredentialsConfig schema={displayedSchema}
-                                uiSchema={displayedSchemaUi}
+                                uiSchema={displayedUiSchema}
                                 credentials={credentials}
                                 onChange={onCredentialChange}
                                 customFormats={customFormats}
                                 className={className}/>
     } else {
-      return <Form schema={displayedSchema}
-                   uiSchema={displayedSchemaUi}
-                   formData={localFormData}
+      let formForm = <Form schema={displayedSchema}
+                   uiSchema={displayedUiSchema}
+                   formData={selectedSectionData}
                    onChange={onFormDataChange}
                    customFormats={customFormats}
                    className={className}
+                   key={selectedSection}
                    liveValidate
                    // children={true} hides the submit button
                    children={true}/>
+      return formForm;
     }
   }
 
