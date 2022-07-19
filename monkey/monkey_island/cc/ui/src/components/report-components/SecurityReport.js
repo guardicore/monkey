@@ -146,6 +146,8 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.REPORT]: strongUsersOnCritIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
+      // TODO: Add used_password issue: configured password that were
+      // successfull exploiting a machine, previously called 'weak_password'
       'stolen_creds': {
         [this.issueContentTypes.OVERVIEW]: stolenCredsIssueOverview,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
