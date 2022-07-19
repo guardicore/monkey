@@ -17,11 +17,27 @@ logger = logging.getLogger(__name__)
 
 class KeyBasedEncryptor(IEncryptor):
     def __init__(self, key: bytes):
+        """
+        Initializes a KeyBasedEncryptor object
+        :param bytes key: The encryption key with which the object should be initialized
+        """
         self._key = key
         self._fernet_object = Fernet(self._key)
 
     def encrypt(self, plaintext: bytes) -> bytes:
+        """
+        Encrypts a given bytestream
+        :param bytes plaintext: The bytestream to encrypt
+        :return: Encrypted message
+        :rtype: bytes
+        """
         return self._fernet_object.encrypt(plaintext)
 
     def decrypt(self, ciphertext: bytes) -> bytes:
+        """
+        Decrypts a given bytestream
+        :param bytes ciphertext: The bytestream to decrypt
+        :return: Decrypted message
+        :rtype: bytes
+        """
         return self._fernet_object.decrypt(ciphertext)
