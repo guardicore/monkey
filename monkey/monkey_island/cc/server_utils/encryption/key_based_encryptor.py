@@ -19,7 +19,8 @@ class KeyBasedEncryptor(IEncryptor):
     def __init__(self, key: bytes):
         """
         Initializes a KeyBasedEncryptor object
-        :param bytes key: The encryption key with which the object should be initialized
+        :param bytes key: The encryption key with which the object should be initialized.
+                          This should be a URL-safe base64-encoded 32-byte key.
         """
         self._key = key
         self._fernet_object = Fernet(self._key)
