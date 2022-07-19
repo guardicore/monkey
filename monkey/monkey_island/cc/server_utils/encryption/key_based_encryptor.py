@@ -30,17 +30,15 @@ class KeyBasedEncryptor(IEncryptor):
     def encrypt(self, plaintext: bytes) -> bytes:
         """
         Encrypts a given bytestream
-        :param bytes plaintext: The bytestream to encrypt
+        :param plaintext: The bytestream to encrypt
         :return: Encrypted message
-        :rtype: bytes
         """
         return self._fernet.encrypt(plaintext)
 
     def decrypt(self, ciphertext: bytes) -> bytes:
         """
         Decrypts a given bytestream
-        :param bytes ciphertext: The bytestream to decrypt
+        :param ciphertext: The bytestream to decrypt
         :return: Decrypted message
-        :rtype: bytes
         """
         return self._fernet.decrypt(ciphertext)
