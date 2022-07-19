@@ -14,3 +14,4 @@ from .data_store_encryptor import (
     unlock_datastore_encryptor,
     reset_datastore_encryptor,
 )
+from .encryption_key_types import EncryptionKey32Bytes
