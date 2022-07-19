@@ -1,9 +1,9 @@
 import os
+import secrets
 from pathlib import Path
 from typing import Union
 
-from Crypto import Random  # noqa: DUO133  # nosec: B413
-
+from monkey_island.cc.server_utils.encryption.encryption_key_types import EncryptionKey32Bytes
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
 from .i_encryptor import IEncryptor
@@ -17,8 +17,6 @@ _encryptor: Union[None, IEncryptor] = None
 
 # NOTE: This class is being replaced by RepositoryEncryptor
 class DataStoreEncryptor(IEncryptor):
-    _KEY_LENGTH_BYTES = 32
-
     def __init__(self, secret: str, key_file: Path):
         self._key_file = key_file
         self._password_based_encryptor = PasswordBasedBytesEncryptor(secret)
@@ -34,12 +32,11 @@ class DataStoreEncryptor(IEncryptor):
         with open(self._key_file, "rb") as f:
             encrypted_key = f.read()
 
-        plaintext_key = self._password_based_encryptor.decrypt(encrypted_key)
+        plaintext_key = EncryptionKey32Bytes(self._password_based_encryptor.decrypt(encrypted_key))
         return KeyBasedEncryptor(plaintext_key)
 
     def _create_key(self) -> KeyBasedEncryptor:
-        # TODO: Can we just use secrets.token_bytes(DataStoreEncryptor._KEY_LENGTH_BYTES)?
-        plaintext_key = Random.new().read(DataStoreEncryptor._KEY_LENGTH_BYTES)
+        plaintext_key = EncryptionKey32Bytes(secrets.token_bytes(32))
 
         encrypted_key = self._password_based_encryptor.encrypt(plaintext_key)
         with open_new_securely_permissioned_file(str(self._key_file), "wb") as f:
