@@ -1,7 +1,9 @@
+import base64
 import logging
 
 from cryptography.fernet import Fernet
 
+from . import EncryptionKey32Bytes
 from .i_encryptor import IEncryptor
 
 logger = logging.getLogger(__name__)
@@ -16,14 +18,14 @@ logger = logging.getLogger(__name__)
 
 
 class KeyBasedEncryptor(IEncryptor):
-    def __init__(self, key: bytes):
+    def __init__(self, key: EncryptionKey32Bytes):
         """
         Initializes a KeyBasedEncryptor object
-        :param bytes key: The encryption key with which the object should be initialized.
-                          This should be a URL-safe base64-encoded 32-byte key.
+        :param EncryptionKey32Bytes key: The encryption key with which the object should be
+                                         initialized.
         """
-        self._key = key
-        self._fernet_object = Fernet(self._key)
+        self._formatted_key = base64.urlsafe_b64encode(key)
+        self._fernet_object = Fernet(self._formatted_key)
 
     def encrypt(self, plaintext: bytes) -> bytes:
         """
