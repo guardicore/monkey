@@ -22,14 +22,16 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     brute_force = [
-        PluginConfiguration(name="HadoopExploiter", options={}),
-        PluginConfiguration(name="Log4ShellExploiter", options={}),
         PluginConfiguration(name="MSSQLExploiter", options={}),
         PluginConfiguration(name="SmbExploiter", options={}),
         PluginConfiguration(name="SSHExploiter", options={}),
     ]
+    vulnerability = [
+        PluginConfiguration(name="HadoopExploiter", options={}),
+        PluginConfiguration(name="Log4ShellExploiter", options={}),
+    ]
 
-    return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=[])
+    return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=vulnerability)
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
