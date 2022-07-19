@@ -3,6 +3,7 @@ import secrets
 from pathlib import Path
 from typing import Union
 
+from monkey_island.cc.server_utils.encryption.encryption_key_types import EncryptionKey32Bytes
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
 from .i_encryptor import IEncryptor
@@ -35,7 +36,7 @@ class DataStoreEncryptor(IEncryptor):
         return KeyBasedEncryptor(plaintext_key)
 
     def _create_key(self) -> KeyBasedEncryptor:
-        plaintext_key = secrets.token_bytes(32)
+        plaintext_key = EncryptionKey32Bytes(secrets.token_bytes(32))
 
         encrypted_key = self._password_based_encryptor.encrypt(plaintext_key)
         with open_new_securely_permissioned_file(str(self._key_file), "wb") as f:
