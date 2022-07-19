@@ -13,6 +13,12 @@ from .utils import (
     set_maximum_depth,
 )
 
+# Tests:
+#     Hadoop (10.2.2.2, 10.2.2.3)
+#     Log4shell (10.2.3.55, 10.2.3.56, 10.2.3.49, 10.2.3.50, 10.2.3.51, 10.2.3.52)
+#     MSSQL (10.2.2.16)
+#     SMB mimikatz password stealing and brute force (10.2.2.14 and 10.2.2.15)
+
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     brute_force = [
