@@ -25,7 +25,7 @@ class KeyBasedEncryptor(IEncryptor):
                                          initialized.
         """
         self._formatted_key = base64.urlsafe_b64encode(key)
-        self._fernet_object = Fernet(self._formatted_key)
+        self._fernet = Fernet(self._formatted_key)
 
     def encrypt(self, plaintext: bytes) -> bytes:
         """
@@ -34,7 +34,7 @@ class KeyBasedEncryptor(IEncryptor):
         :return: Encrypted message
         :rtype: bytes
         """
-        return self._fernet_object.encrypt(plaintext)
+        return self._fernet.encrypt(plaintext)
 
     def decrypt(self, ciphertext: bytes) -> bytes:
         """
@@ -43,4 +43,4 @@ class KeyBasedEncryptor(IEncryptor):
         :return: Decrypted message
         :rtype: bytes
         """
-        return self._fernet_object.decrypt(ciphertext)
+        return self._fernet.decrypt(ciphertext)
