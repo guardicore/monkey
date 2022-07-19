@@ -117,7 +117,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   updateCredentials = () => {
-    this.authFetch(CREDENTIALS_URL)
+    this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL)
       .then(res => res.json())
       .then(credentials => {
         credentials = formatCredentialsForForm(credentials);
@@ -278,7 +278,7 @@ class ConfigurePageComponent extends AuthComponent {
     let config = JSON.parse(JSON.stringify(this.state.configuration))
     config = reformatConfig(config, true);
 
-    this.authFetch(CREDENTIALS_URL,
+    this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
       {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json'},
