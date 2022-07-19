@@ -56,17 +56,20 @@ def _add_credential_collectors(agent_configuration: AgentConfiguration) -> Agent
     )
 
 
+HTTP_PORTS = [8080, 8983, 9600]
+
+
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [445, 8088, 22]
+    ports = [22, 445] + HTTP_PORTS
     return add_tcp_ports(agent_configuration, ports)
 
 
 def _add_http_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    http_ports = [8080, 8983, 9600]
-    return add_http_ports(agent_configuration, http_ports)
+    return add_http_ports(agent_configuration, HTTP_PORTS)
 
 
 agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+agent_configuration = _add_tcp_ports(agent_configuration)
 agent_configuration = _add_exploiters(agent_configuration)
 agent_configuration = _add_subnets(agent_configuration)
 agent_configuration = _add_credential_collectors(agent_configuration)
