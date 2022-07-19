@@ -12,6 +12,8 @@ from .utils import (
 )
 
 
+# Tests:
+#     SSH password and key brute-force, key stealing (10.2.2.11, 10.2.2.12)
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     brute_force = [
         PluginConfiguration(name="SSHExploiter", options={}),
