@@ -24,8 +24,8 @@ class KeyBasedEncryptor(IEncryptor):
         :param EncryptionKey32Bytes key: The encryption key with which the object should be
                                          initialized.
         """
-        self._formatted_key = base64.urlsafe_b64encode(key)
-        self._fernet = Fernet(self._formatted_key)
+        formatted_key = base64.urlsafe_b64encode(key)
+        self._fernet = Fernet(formatted_key)
 
     def encrypt(self, plaintext: bytes) -> bytes:
         """
