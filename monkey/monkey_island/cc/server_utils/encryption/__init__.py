@@ -15,3 +15,4 @@ from .data_store_encryptor import (
     reset_datastore_encryptor,
 )
 from .encryption_key_types import EncryptionKey32Bytes
+from .errors import SizeError
