@@ -4,11 +4,11 @@ const FINGERPRINTER_CLASSES = {
   'Infection Monkey scans.',
   'type': 'string',
   'pluginDefs': {
-    'smb' : {'name':'smb', 'options':''},
-    'ssh' : {'name':'ssh', 'options':''},
-    'http' : {'name':'http', 'options':''},
-    'mssql' : {'name':'mssql', 'options':''},
-    'elastic' : {'name':'elastic', 'options':''}
+    'smb' : {'name':'smb', 'options':{}},
+    'ssh' : {'name':'ssh', 'options':{}},
+    'http' : {'name':'http', 'options':{}},
+    'mssql' : {'name':'mssql', 'options':{}},
+    'elastic' : {'name':'elastic', 'options':{}}
   },
   'anyOf': [
     {
