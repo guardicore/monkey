@@ -162,17 +162,11 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   configSubmit() {
-    this.sendConfig()
-      .then(() => {
-        this.setState({
-          lastAction: configSaveAction
-        });
-        this.setInitialConfig(this.state.configuration);
-        this.props.onStatusChange();
-      }).catch(error => {
-        console.log('Bad configuration: ' + error.toString());
-        this.setState({lastAction: 'invalid_configuration'});
-      });
+    this.sendCredentials().then(res => {
+      if(res.ok) {
+        this.sendConfig();
+      }
+    });
   }
 
   onChange = (formData) => {
@@ -277,8 +271,33 @@ class ConfigurePageComponent extends AuthComponent {
   sendConfig() {
     let config = JSON.parse(JSON.stringify(this.state.configuration))
     config = reformatConfig(config, true);
+    console.log(config);
 
-    this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
+    return (
+      this.authFetch(CONFIG_URL,
+        {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(config)
+        })
+        .then(res => {
+          if (!res.ok) {
+            console.log(`bad configuration submited ${res.status}`);
+            this.setState({lastAction: 'invalid_configuration'});
+          } else {
+            this.setState({
+              lastAction: configSaveAction
+            });
+            this.setInitialConfig(this.state.configuration);
+            this.props.onStatusChange();
+          }
+          return res;
+        }));
+  }
+
+  sendCredentials() {
+    return (
+      this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
       {
         method: 'PATCH',
         headers: {'Content-Type': 'application/json'},
@@ -292,24 +311,7 @@ class ConfigurePageComponent extends AuthComponent {
       }).catch((error) => {
       console.log(`bad configuration ${error}`);
       this.setState({lastAction: 'invalid_configuration'});
-    });
-
-    return (
-      this.authFetch(CONFIG_URL,
-        {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(config)
-        })
-        .then(res => {
-          if (!res.ok) {
-            throw Error()
-          }
-          return res;
-        }).catch((error) => {
-        console.log(`bad configuration ${error}`);
-        this.setState({lastAction: 'invalid_configuration'});
-      }));
+    }));
   }
 
   renderConfigContent = (displayedSchema) => {
