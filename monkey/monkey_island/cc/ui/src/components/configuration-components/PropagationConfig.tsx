@@ -1,9 +1,8 @@
 import Form from 'react-jsonschema-form-bs4';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import CredentialsConfig from './CredentialsConfig';
-import AuthComponent from '../AuthComponent';
 
 const sectionOrder = [
   'exploitation',
@@ -35,14 +34,10 @@ export default function PropagationConfig(props) {
     onChange(configurationClone);
   }
 
-  const setSection = (sectionKey) => {
-    setSelectedSection(sectionKey);
-  }
-
   const renderNav = () => {
     return (<Nav variant="tabs"
                  fill
-                 activeKey={selectedSection} onSelect={setSection}
+                 activeKey={selectedSection} onSelect={setSelectedSection}
                  style={{'marginBottom': '2em'}}
                  className={'config-nav'}>
       {sectionOrder.map(section => {
@@ -55,7 +50,6 @@ export default function PropagationConfig(props) {
   }
 
   const getForm = () => {
-    let selectedSectionData = configuration[selectedSection];
     let displayedSchema = getSchemaByKey(schema, selectedSection);
     let displayedUiSchema = getUiSchemaByKey(uiSchema, selectedSection);
     if (selectedSection === 'credentials') {
@@ -66,17 +60,19 @@ export default function PropagationConfig(props) {
                                 customFormats={customFormats}
                                 className={className}/>
     } else {
-      let formForm = <Form schema={displayedSchema}
+      let selectedSectionData = configuration[selectedSection];
+      return <Form schema={displayedSchema}
                    uiSchema={displayedUiSchema}
                    formData={selectedSectionData}
                    onChange={onFormDataChange}
                    customFormats={customFormats}
                    className={className}
+                   // Each form must be a unique component
+                   // which is defined by the selectedSection
                    key={selectedSection}
                    liveValidate
                    // children={true} hides the submit button
                    children={true}/>
-      return formForm;
     }
   }
 
