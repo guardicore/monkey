@@ -22,7 +22,7 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
     brute_force = [
         PluginConfiguration(name="PowerShellExploiter", options={}),
         PluginConfiguration(name="SSHExploiter", options={}),
-        PluginConfiguration(name="WmiExploiter", options={}),
+        PluginConfiguration(name="WmiExploiter", options={"smb_download_timeout": 30}),
     ]
 
     return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=[])

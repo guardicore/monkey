@@ -15,7 +15,7 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     brute_force = [
-        PluginConfiguration(name="SmbExploiter", options={}),
+        PluginConfiguration(name="SmbExploiter", options={"smb_download_timeout": 30}),
     ]
 
     return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=[])
