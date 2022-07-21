@@ -3,11 +3,10 @@ import os
 from time import sleep
 
 import pytest
-from typing_extensions import Type
 
+from common.configuration.agent_configuration import AgentConfiguration
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
-from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
 from envs.monkey_zoo.blackbox.island_client.island_config_parser import IslandConfigParser
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
@@ -86,11 +85,11 @@ class TestMonkeyBlackbox:
     @staticmethod
     def run_exploitation_test(
         island_client: MonkeyIslandClient,
-        config_template: Type[ConfigTemplate],
+        agent_configuration: AgentConfiguration,
         test_name: str,
         timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS,
     ):
-        raw_config = IslandConfigParser.get_raw_config(config_template, island_client)
+        raw_config = IslandConfigParser.get_serialized_config(agent_configuration)
         analyzer = CommunicationAnalyzer(
             island_client, IslandConfigParser.get_ips_of_targets(raw_config)
         )
@@ -144,7 +143,7 @@ class TestMonkeyBlackbox:
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
-        raw_config = IslandConfigParser.get_raw_config(zerologon_test_configuration, island_client)
+        raw_config = IslandConfigParser.get_serialized_config(zerologon_test_configuration)
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client, IslandConfigParser.get_ips_of_targets(raw_config)
