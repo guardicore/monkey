@@ -26,7 +26,6 @@ from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
     start_machines,
     stop_machines,
 )
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
 
 DEFAULT_TIMEOUT_SECONDS = 2 * 60 + 30
 MACHINE_BOOTUP_WAIT_SECONDS = 30
@@ -63,7 +62,7 @@ def wait_machine_bootup():
 
 
 @pytest.fixture(scope="class")
-def island_client(island, quick_performance_tests):
+def island_client(island):
     client_established = False
     try:
         island_client_object = MonkeyIslandClient(island)
@@ -73,9 +72,6 @@ def island_client(island, quick_performance_tests):
     finally:
         if not client_established:
             pytest.exit("BB tests couldn't establish communication to the island.")
-    if not quick_performance_tests:
-        island_client_object.reset_env()
-        island_client_object.set_scenario(IslandModeEnum.ADVANCED.value)
     yield island_client_object
 
 
