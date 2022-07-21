@@ -59,4 +59,12 @@ const CREDENTIALS = {
   }
 }
 
+export const defaultCredentials = {
+ 'exploit_user_list': [],
+ 'exploit_password_list': [],
+ 'exploit_lm_hash_list': [],
+ 'exploit_ntlm_hash_list': [],
+ 'exploit_ssh_keys': []
+}
+
 export default CREDENTIALS;

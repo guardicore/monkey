@@ -3,6 +3,7 @@ import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
 import PbaInput from './PbaInput';
 import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
+import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -25,7 +26,6 @@ export default function UiSchema(props) {
         options: {
           http_ports: {
             items: {
-              classNames: 'config-template-no-header'
             }
           }
         }
@@ -37,6 +37,24 @@ export default function UiSchema(props) {
             },
             private_key: {
             }
+          }
+        },
+        exploit_password_list: {
+          items: {
+            classNames: 'config-template-no-header',
+            'ui:widget': SensitiveTextInput
+          }
+        },
+        exploit_lm_hash_list:{
+          items: {
+            classNames: 'config-template-no-header',
+            'ui:widget': SensitiveTextInput
+          }
+        },
+        exploit_ntlm_hash_list:{
+          items: {
+            classNames: 'config-template-no-header',
+            'ui:widget': SensitiveTextInput
           }
         }
       },

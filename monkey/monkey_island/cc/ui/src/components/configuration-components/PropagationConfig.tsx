@@ -1,7 +1,8 @@
 import Form from 'react-jsonschema-form-bs4';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
+import CredentialsConfig from './CredentialsConfig';
 
 const sectionOrder = [
   'exploitation',
@@ -19,40 +20,24 @@ export default function PropagationConfig(props) {
     onChange,
     customFormats,
     className,
-    formData
+    configuration,
+    credentials,
+    onCredentialChange
   } = props;
   const [selectedSection, setSelectedSection] = useState(initialSection);
-  const [displayedSchema, setDisplayedSchema] = useState(getSchemaByKey(schema, initialSection));
-  const [displayedSchemaUi, setDisplayedSchemaUi] = useState(getUiSchemaByKey(uiSchema, initialSection));
-  const [localFormData, setLocalFormData] = useState(formData[initialSection]);
 
-  useEffect(() => {
-    setLocalFormData(formData[selectedSection]);
-    setDisplayedSchema(getSchemaByKey(schema, selectedSection));
-    setDisplayedSchemaUi(getUiSchemaByKey(uiSchema, selectedSection));
-    setLocalFormData(formData[selectedSection]);
-  }, [selectedSection])
+  const onFormDataChange = (formData) => {
+    let formDataClone = _.clone(formData.formData);
+    let configurationClone = _.clone(configuration);
 
-  useEffect(() => {
-    setLocalFormData(formData[selectedSection]);
-  }, [formData])
-
-  const onInnerDataChange = (innerData) => {
-    let innerDataClone = _.clone(innerData);
-    let formDataClone = _.clone(formData);
-
-    formDataClone[selectedSection] = innerDataClone.formData;
-    onChange({formData: formDataClone});
-  }
-
-  const setSection = (sectionKey) => {
-    setSelectedSection(sectionKey);
+    configurationClone[selectedSection] = formDataClone;
+    onChange(configurationClone);
   }
 
   const renderNav = () => {
-    return (<Nav variant='tabs'
+    return (<Nav variant="tabs"
                  fill
-                 activeKey={selectedSection} onSelect={setSection}
+                 activeKey={selectedSection} onSelect={setSelectedSection}
                  style={{'marginBottom': '2em'}}
                  className={'config-nav'}>
       {sectionOrder.map(section => {
@@ -64,18 +49,36 @@ export default function PropagationConfig(props) {
     </Nav>)
   }
 
+  const getForm = () => {
+    let displayedSchema = getSchemaByKey(schema, selectedSection);
+    let displayedUiSchema = getUiSchemaByKey(uiSchema, selectedSection);
+    if (selectedSection === 'credentials') {
+      return <CredentialsConfig schema={displayedSchema}
+                                uiSchema={displayedUiSchema}
+                                credentials={credentials}
+                                onChange={onCredentialChange}
+                                customFormats={customFormats}
+                                className={className}/>
+    } else {
+      let selectedSectionData = configuration[selectedSection];
+      return <Form schema={displayedSchema}
+                   uiSchema={displayedUiSchema}
+                   formData={selectedSectionData}
+                   onChange={onFormDataChange}
+                   customFormats={customFormats}
+                   className={className}
+                   // Each form must be a unique component
+                   // which is defined by the selectedSection
+                   key={selectedSection}
+                   liveValidate
+                   // children={true} hides the submit button
+                   children={true}/>
+    }
+  }
 
   return (<div>
     {renderNav()}
-    <Form schema={displayedSchema}
-          uiSchema={displayedSchemaUi}
-          formData={localFormData}
-          onChange={onInnerDataChange}
-          customFormats={customFormats}
-          className={className}
-          liveValidate>
-      <button type='submit' className={'hidden'}>Submit</button>
-    </Form>
+    {getForm()}
   </div>)
 }
 
@@ -90,9 +93,6 @@ function getUiSchemaByKey(uiSchema, key) {
 function getNavTitle(schema, key) {
   if (key === 'maximum_depth') {
     return 'General';
-  }
-  if (key === 'credentials') {
-    return 'Credentials';
   }
   return schema['properties'][key].title;
 }

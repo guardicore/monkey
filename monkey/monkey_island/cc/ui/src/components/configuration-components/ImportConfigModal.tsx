@@ -10,7 +10,10 @@ import UnsafeConfigOptionsConfirmationModal
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import {decryptText} from '../utils/PasswordBasedEncryptor';
-
+import {
+  reformatConfig,
+  formatCredentialsForIsland
+} from '../configuration-components/ReformatHook';
 
 type Props = {
   show: boolean,
@@ -21,9 +24,11 @@ type Props = {
 
 const ConfigImportModal = (props: Props) => {
   const configImportEndpoint = '/api/agent-configuration';
+  const credentialsEndpoint = '/api/propagation-credentials/configured-credentials';
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
   const [configContents, setConfigContents] = useState(null);
+  const [configCredentials, setConfigCredentials] = useState(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [configEncrypted, setConfigEncrypted] = useState(false);
@@ -36,10 +41,10 @@ const ConfigImportModal = (props: Props) => {
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    if (configContents !== null) {
+    if (configContents !== null && configCredentials !== null) {
       tryImport();
     }
-  }, [configContents, unsafeOptionsVerified])
+  }, [configContents, configCredentials, unsafeOptionsVerified])
 
   function tryImport() {
     if (configEncrypted && !showPassword){
@@ -47,8 +52,10 @@ const ConfigImportModal = (props: Props) => {
     } else if (configEncrypted && showPassword) {
       try {
         let decryptedConfig = JSON.parse(decryptText(configContents, password));
+        let decryptedConfigCredentials = JSON.parse(decryptText(configCredentials, password));
         setConfigEncrypted(false);
         setConfigContents(decryptedConfig);
+        setConfigCredentials(decryptedConfigCredentials);
       } catch (e) {
         setUploadStatus(UploadStatuses.error);
         setErrorMessage('Decryption failed: Password is wrong or the file is corrupted');
@@ -61,16 +68,38 @@ const ConfigImportModal = (props: Props) => {
       }
     } else {
       sendConfigToServer();
+      sendConfigCredentialsToServer();
       setUploadStatus(UploadStatuses.success);
     }
   }
 
+  function sendConfigCredentialsToServer() {
+    let credentials = formatCredentialsForIsland(configCredentials);
+    authComponent.authFetch(credentialsEndpoint,
+      {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(credentials)
+      }
+    ).then(res => {
+        if (res.ok) {
+          resetState();
+          props.onClose(true);
+        } else {
+          setUploadStatus(UploadStatuses.error);
+          setErrorMessage("Configuration file is corrupt or in an outdated format.");
+        }
+      })
+  }
+
   function sendConfigToServer() {
+    let config = reformatConfig(configContents, true);
+    delete config['advanced'];
     authComponent.authFetch(configImportEndpoint,
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(configContents)
+        body: JSON.stringify(config)
       }
     ).then(res => {
         if (res.ok) {
@@ -92,6 +121,7 @@ const ConfigImportModal = (props: Props) => {
     setUploadStatus(UploadStatuses.clean);
     setPassword('');
     setConfigContents(null);
+    setConfigCredentials(null);
     setErrorMessage('');
     setShowPassword(false);
     setShowUnsafeOptionsConfirmation(false);
@@ -113,7 +143,8 @@ const ConfigImportModal = (props: Props) => {
         return
       }
       setConfigEncrypted(importContents['metadata']['encrypted']);
-      setConfigContents(importContents['contents']);
+      setConfigContents(importContents['configuration']);
+      setConfigCredentials(importContents['credentials']);
     };
     reader.readAsText(event.target.files[0]);
   }

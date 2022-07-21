@@ -10,6 +10,7 @@ import {reformatConfig} from './ReformatHook';
 type Props = {
   show: boolean,
   configuration: object,
+  credentials: object,
   onHide: () => void
 }
 
@@ -22,17 +23,17 @@ const ConfigExportModal = (props: Props) => {
   }
 
   function onSubmit() {
-    let config = reformatConfig(props.configuration, true);
-    let config_export = {'metadata': {}, 'contents': null};
+    let configuration = reformatConfig(props.configuration, true);
+    let credentials = props.credentials;
+    let metadata = {'encrypted': false};
 
     if (radioValue === 'password') {
-      config_export.contents = encryptText(JSON.stringify(config), pass);
-      config_export.metadata = {'encrypted': true};
-    } else {
-      config_export.contents = config;
-      config_export.metadata = {'encrypted': false};
+      configuration = encryptText(JSON.stringify(configuration), pass);
+      credentials = encryptText(JSON.stringify(credentials), pass);
+      metadata = {'encrypted': true};
     }
 
+    let config_export = {'metadata': metadata, 'configuration': configuration, 'credentials': credentials};
     let export_json = JSON.stringify(config_export, null, 2);
     let export_blob = new Blob(
       [export_json],

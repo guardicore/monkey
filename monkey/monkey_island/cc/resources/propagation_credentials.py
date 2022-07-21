@@ -42,6 +42,22 @@ class PropagationCredentials(AbstractResource):
 
         return {}, HTTPStatus.NO_CONTENT
 
+    def put(self, collection=None):
+        credentials = [Credentials.from_mapping(c) for c in request.json]
+
+        if collection == _configured_collection:
+            self._credentials_repository.remove_configured_credentials()
+            self._credentials_repository.save_configured_credentials(credentials)
+        elif collection == _stolen_collection:
+            self._credentials_repository.remove_stolen_credentials()
+            self._credentials_repository.save_stolen_credentials(credentials)
+        elif collection is None:
+            return {}, HTTPStatus.METHOD_NOT_ALLOWED
+        else:
+            return {}, HTTPStatus.NOT_FOUND
+
+        return {}, HTTPStatus.NO_CONTENT
+
     def delete(self, collection=None):
         if collection == _configured_collection:
             self._credentials_repository.remove_configured_credentials()
