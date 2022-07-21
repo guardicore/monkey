@@ -192,6 +192,7 @@ class ConfigurePageComponent extends AuthComponent {
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
                                configuration={this.state.configuration}
+                               credentials={this.state.credentials}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
                                }}/>);
@@ -271,7 +272,7 @@ class ConfigurePageComponent extends AuthComponent {
   sendConfig() {
     let config = JSON.parse(JSON.stringify(this.state.configuration))
     config = reformatConfig(config, true);
-    console.log(config);
+    delete config['advanced'];
 
     return (
       this.authFetch(CONFIG_URL,
