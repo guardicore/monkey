@@ -11,7 +11,5 @@ class IslandConfigParser:
         return agent_configuration.to_json()
 
     @staticmethod
-    def get_target_ips_from_serialized_config(serialized_config: Mapping) -> Iterable:
-        return dpath.util.get(
-            serialized_config, "agent_configuration.propagation.network_scan.targets.subnets", "."
-        )
+    def get_target_ips_from_configuration(agent_configuration: AgentConfiguration) -> Iterable:
+        return agent_configuration.propagation.network_scan.targets.subnets
