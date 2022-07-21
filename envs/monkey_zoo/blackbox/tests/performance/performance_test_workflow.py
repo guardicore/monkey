@@ -13,11 +13,11 @@ class PerformanceTestWorkflow(BasicTest):
         self.name = name
         self.exploitation_test = exploitation_test
         self.island_client = exploitation_test.island_client
-        self.raw_config = exploitation_test.raw_config
+        self.serialized_config = exploitation_test.serialized_config
         self.performance_config = performance_config
 
     def run(self):
-        self.island_client.import_config(self.raw_config)
+        self.island_client.import_config(self.serialized_config)
         self.exploitation_test.print_test_starting_info()
         try:
             self.island_client.run_monkey_local()
