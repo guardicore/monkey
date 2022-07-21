@@ -2,20 +2,27 @@ import {defaultCredentials} from '../../services/configuration/propagation/crede
 import _ from 'lodash';
 
 export function reformatConfig(config, reverse = false) {
+  let formattedConfig = _.clone(config);
+
   if (reverse) {
-    config['payloads'] = [{'name': 'ransomware', 'options': config['payloads']}];
-    config['keep_tunnel_open_time'] = config['advanced']['keep_tunnel_open_time'];
-    delete config['advanced'];
+    if(formattedConfig['payloads'].length === 1){
+      // Second click on Export
+      formattedConfig['payloads'] = [{'name': 'ransomware', 'options': formattedConfig['payloads'][0]['options']}];
+    } else {
+      formattedConfig['payloads'] = [{'name': 'ransomware', 'options': formattedConfig['payloads']}];
+    }
+    formattedConfig['keep_tunnel_open_time'] = formattedConfig['advanced']['keep_tunnel_open_time'];
   } else {
-    config['payloads'] = config['payloads'][0]['options'];
-    config['advanced'] = {};
-    config['advanced']['keep_tunnel_open_time'] = config['keep_tunnel_open_time'];
+    formattedConfig['payloads'] = formattedConfig['payloads'][0]['options'];
+    formattedConfig['advanced'] = {};
+    formattedConfig['advanced']['keep_tunnel_open_time'] = formattedConfig['keep_tunnel_open_time'];
   }
-  return config;
+  return formattedConfig;
 }
 
 export function formatCredentialsForForm(credentials) {
   let formattedCredentials = _.clone(defaultCredentials);
+  console.log('formatCredentialsForForm was called');
   for (let i = 0; i < credentials.length; i++) {
     let identity = credentials[i]['identity'];
     if(identity !== null) {
@@ -39,6 +46,13 @@ export function formatCredentialsForForm(credentials) {
       }
     }
   }
+  console.log(formattedCredentials);
+
+  formattedCredentials['exploit_user_list'] = [...new Set(formattedCredentials['exploit_user_list'])];
+  formattedCredentials['exploit_password_list'] = [...new Set(formattedCredentials['exploit_password_list'])];
+  formattedCredentials['exploit_ntlm_hash_list'] = [...new Set(formattedCredentials['exploit_ntlm_hash_list'])];
+  formattedCredentials['exploit_lm_hash_list'] = [...new Set(formattedCredentials['exploit_lm_hash_list'])];
+
   return formattedCredentials;
 }
 
