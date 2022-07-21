@@ -74,9 +74,7 @@ const ConfigImportModal = (props: Props) => {
   }
 
   function sendConfigCredentialsToServer() {
-    console.log("sendConfig to server called!!");
     let credentials = formatCredentialsForIsland(configCredentials);
-    console.log(credentials);
     authComponent.authFetch(credentialsEndpoint,
       {
         method: 'PUT',
