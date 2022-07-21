@@ -170,10 +170,9 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   onChange = (formData) => {
-    let data = formData;
     let configuration = this.state.configuration;
-    configuration[this.state.selectedSection] = data;
-    this.setState({currentFormData: data, configuration: configuration});
+    configuration[this.state.selectedSection] = formData;
+    this.setState({currentFormData: formData, configuration: configuration});
   };
 
   onCredentialChange = (credentials) => {
