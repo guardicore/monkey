@@ -92,7 +92,7 @@ class TestMonkeyBlackbox:
         serialized_config = IslandConfigParser.get_serialized_config(agent_configuration)
         analyzer = CommunicationAnalyzer(
             island_client,
-            IslandConfigParser.get_target_ips_from_serialized_config(serialized_config),
+            IslandConfigParser.get_target_ips_from_configuration(agent_configuration),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -100,7 +100,7 @@ class TestMonkeyBlackbox:
         ExploitationTest(
             name=test_name,
             island_client=island_client,
-            serialized_config=serialized_config,
+            agent_configuration=agent_configuration,
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
             log_handler=log_handler,
@@ -148,7 +148,7 @@ class TestMonkeyBlackbox:
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
-            IslandConfigParser.get_target_ips_from_serialized_config(serialized_config),
+            IslandConfigParser.get_target_ips_from_configuration(zerologon_test_configuration),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -156,7 +156,7 @@ class TestMonkeyBlackbox:
         ExploitationTest(
             name=test_name,
             island_client=island_client,
-            serialized_config=serialized_config,
+            agent_configuration=zerologon_test_configuration,
             analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
