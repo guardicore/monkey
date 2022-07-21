@@ -3,9 +3,13 @@ import _ from 'lodash';
 
 export function reformatConfig(config, reverse = false) {
   if (reverse) {
-    config['payloads'] = [{'name': 'ransomware', 'options': config['payloads']}]
+    config['payloads'] = [{'name': 'ransomware', 'options': config['payloads']}];
+    config['keep_tunnel_open_time'] = config['advanced']['keep_tunnel_open_time'];
+    delete config['advanced'];
   } else {
     config['payloads'] = config['payloads'][0]['options'];
+    config['advanced'] = {};
+    config['advanced']['keep_tunnel_open_time'] = config['keep_tunnel_open_time'];
   }
   return config;
 }
