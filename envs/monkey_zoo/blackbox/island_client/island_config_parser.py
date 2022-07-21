@@ -3,20 +3,17 @@ import json
 import dpath.util
 from typing_extensions import Type
 
+from common.configuration.agent_configuration import AgentConfiguration
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
 
 class IslandConfigParser:
     @staticmethod
-    def get_raw_config(
-        config_template: Type[ConfigTemplate], island_client: MonkeyIslandClient
+    def get_serialized_config(
+        agent_configuration: AgentConfiguration, island_client: MonkeyIslandClient
     ) -> str:
-        response = island_client.get_config()
-        config = IslandConfigParser.apply_template_to_config(
-            config_template, response["configuration"]
-        )
-        return json.dumps(config)
+        return agent_configuration.to_json()
 
     @staticmethod
     def apply_template_to_config(config_template: Type[ConfigTemplate], config: dict) -> dict:
