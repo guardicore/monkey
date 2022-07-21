@@ -84,9 +84,7 @@ class ControlChannel(IControlChannel):
             )
             response.raise_for_status()
 
-            return [
-                Credentials.from_mapping(credentials) for credentials in json.loads(response.text)
-            ]
+            return [Credentials.from_mapping(credentials) for credentials in response.json()]
         except (
             requests.exceptions.JSONDecodeError,
             requests.exceptions.ConnectionError,
