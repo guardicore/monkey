@@ -6,7 +6,7 @@ from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIs
 
 
 class CommunicationAnalyzer(Analyzer):
-    def __init__(self, island_client: MonkeyIslandClient, machine_ips: Iterable):
+    def __init__(self, island_client: MonkeyIslandClient, machine_ips: Iterable[str]):
         self.island_client = island_client
         self.machine_ips = machine_ips
         self.log = AnalyzerLog(self.__class__.__name__)
