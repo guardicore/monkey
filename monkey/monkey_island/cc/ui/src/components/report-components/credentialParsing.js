@@ -8,7 +8,10 @@ export function getAllUsernames(stolen, configured){
 export function getCredentialsUsernames(credentials) {
   let usernames = [];
   for(let i = 0; i < credentials.length; i++){
-    usernames.push(credentials[i]['identity']['username']);
+    let username = credentials[i]['identity'];
+    if(username !== null) {
+      usernames.push(username['username']);
+    }
   }
   return usernames;
 }
@@ -16,10 +19,16 @@ export function getCredentialsUsernames(credentials) {
 export function getAllSecrets(stolen, configured){
   let secrets = [];
   for(let i = 0; i < stolen.length; i++){
-    secrets.push(getSecretsFromCredential(stolen[i]['secret']));
+    let secret = stolen[i]['secret'];
+    if(secret !== null){
+      secrets.push(getSecretsFromCredential(secret));
+    }
   }
   for(let i = 0; i < configured.length; i++){
-    secrets.push(getSecretsFromCredential(configured[i]['secret']));
+    let secret = configured[i]['secret'];
+    if(secret !== null){
+      secrets.push(getSecretsFromCredential(secret));
+    }
   }
   return secrets;
 }
