@@ -42,7 +42,6 @@ const ConfigImportModal = (props: Props) => {
 
   useEffect(() => {
     if (configContents !== null && configCredentials !== null) {
-      console.log("useEffect was called");
       tryImport();
     }
   }, [configContents, configCredentials, unsafeOptionsVerified])
@@ -80,7 +79,7 @@ const ConfigImportModal = (props: Props) => {
     console.log(credentials);
     authComponent.authFetch(credentialsEndpoint,
       {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(credentials)
       }

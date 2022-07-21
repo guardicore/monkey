@@ -300,7 +300,7 @@ class ConfigurePageComponent extends AuthComponent {
     return (
       this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
       {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
       })
