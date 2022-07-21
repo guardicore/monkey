@@ -1,6 +1,4 @@
-from typing import Iterable, Mapping
-
-import dpath.util
+from typing import Iterable
 
 from common.configuration.agent_configuration import AgentConfiguration
 

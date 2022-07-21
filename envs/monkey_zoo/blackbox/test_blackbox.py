@@ -89,7 +89,6 @@ class TestMonkeyBlackbox:
         test_name: str,
         timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS,
     ):
-        serialized_config = IslandConfigParser.get_serialized_config(agent_configuration)
         analyzer = CommunicationAnalyzer(
             island_client,
             IslandConfigParser.get_target_ips_from_configuration(agent_configuration),
@@ -144,7 +143,6 @@ class TestMonkeyBlackbox:
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
-        serialized_config = IslandConfigParser.get_serialized_config(zerologon_test_configuration)
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
