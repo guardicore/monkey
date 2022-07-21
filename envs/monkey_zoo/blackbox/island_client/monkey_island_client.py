@@ -77,10 +77,6 @@ class MonkeyIslandClient(object):
             LOGGER.error("Failed to reset the environment.")
             assert False
 
-    @avoid_race_condition
-    def set_scenario(self, scenario):
-        self.requests.post_json("api/island-mode", {"mode": scenario})
-
     def find_monkeys_in_db(self, query):
         if query is None:
             raise TypeError
@@ -120,13 +116,3 @@ class MonkeyIslandClient(object):
     def is_all_monkeys_dead(self):
         query = {"dead": False}
         return len(self.find_monkeys_in_db(query)) == 0
-
-    def clear_caches(self):
-        """
-        Tries to clear caches.
-        :raises: If error (by error code), raises the error
-        :return: The response
-        """
-        response = self.requests.get("api/test/clear-caches")
-        response.raise_for_status()
-        return response

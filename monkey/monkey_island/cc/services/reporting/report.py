@@ -568,19 +568,6 @@ class ReportService:
         return False
 
     @staticmethod
-    def delete_saved_report_if_exists():
-        """
-        This function clears the saved report from the DB.
-
-        :raises RuntimeError if deletion failed
-        """
-        delete_result = mongo.db.report.delete_many({})
-        if mongo.db.report.count_documents({}) != 0:
-            raise RuntimeError(
-                "Report cache not cleared. DeleteResult: " + delete_result.raw_result
-            )
-
-    @staticmethod
     def get_report():
         if not ReportService.is_latest_report_exists():
             return safe_generate_regular_report()
