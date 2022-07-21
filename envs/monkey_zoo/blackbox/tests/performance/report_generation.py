@@ -23,13 +23,13 @@ class ReportGenerationTest(PerformanceTest):
     TEST_NAME = "Report generation performance test"
 
     def __init__(
-        self, island_client, raw_config, analyzers, timeout, log_handler, break_on_timeout
+        self, island_client, serialized_config, analyzers, timeout, log_handler, break_on_timeout
     ):
         self.island_client = island_client
         exploitation_test = ExploitationTest(
             ReportGenerationTest.TEST_NAME,
             island_client,
-            raw_config,
+            serialized_config,
             analyzers,
             timeout,
             log_handler,

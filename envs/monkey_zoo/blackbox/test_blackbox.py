@@ -89,9 +89,10 @@ class TestMonkeyBlackbox:
         test_name: str,
         timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS,
     ):
-        raw_config = IslandConfigParser.get_serialized_config(agent_configuration)
+        serialized_config = IslandConfigParser.get_serialized_config(agent_configuration)
         analyzer = CommunicationAnalyzer(
-            island_client, IslandConfigParser.get_target_ips_from_serialized_config(raw_config)
+            island_client,
+            IslandConfigParser.get_target_ips_from_serialized_config(serialized_config),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -99,7 +100,7 @@ class TestMonkeyBlackbox:
         ExploitationTest(
             name=test_name,
             island_client=island_client,
-            raw_config=raw_config,
+            serialized_config=serialized_config,
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
             log_handler=log_handler,
@@ -143,10 +144,11 @@ class TestMonkeyBlackbox:
             "aad3b435b51404eeaad3b435b51404ee",
             "2864b62ea4496934a5d6e86f50b834a5",
         ]
-        raw_config = IslandConfigParser.get_serialized_config(zerologon_test_configuration)
+        serialized_config = IslandConfigParser.get_serialized_config(zerologon_test_configuration)
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
-            island_client, IslandConfigParser.get_target_ips_from_serialized_config(raw_config)
+            island_client,
+            IslandConfigParser.get_target_ips_from_serialized_config(serialized_config),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -154,7 +156,7 @@ class TestMonkeyBlackbox:
         ExploitationTest(
             name=test_name,
             island_client=island_client,
-            raw_config=raw_config,
+            serialized_config=serialized_config,
             analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
