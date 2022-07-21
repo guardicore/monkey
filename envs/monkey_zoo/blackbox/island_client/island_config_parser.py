@@ -5,14 +5,11 @@ from typing_extensions import Type
 
 from common.configuration.agent_configuration import AgentConfiguration
 from envs.monkey_zoo.blackbox.config_templates.config_template import ConfigTemplate
-from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
 
 class IslandConfigParser:
     @staticmethod
-    def get_serialized_config(
-        agent_configuration: AgentConfiguration, island_client: MonkeyIslandClient
-    ) -> str:
+    def get_serialized_config(agent_configuration: AgentConfiguration) -> str:
         return agent_configuration.to_json()
 
     @staticmethod
