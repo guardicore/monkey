@@ -27,11 +27,11 @@ class MonkeyIslandClient(object):
         return self.requests.get("api")
 
     def get_config(self):
-        return json.loads(self.requests.get("api/configuration/island").content)
+        return json.loads(self.requests.get("api/agent-configuration").content)
 
     @avoid_race_condition
     def import_config(self, config_contents):
-        _ = self.requests.post("api/configuration/island", data=config_contents)
+        _ = self.requests.post("api/agent-configuration", data=config_contents)
 
     @avoid_race_condition
     def run_monkey_local(self):
