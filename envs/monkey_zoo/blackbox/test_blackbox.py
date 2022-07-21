@@ -4,7 +4,6 @@ from time import sleep
 
 import pytest
 
-from common.configuration.agent_configuration import AgentConfiguration
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
@@ -20,6 +19,7 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     wmi_mimikatz_test_configuration,
     zerologon_test_configuration,
 )
+from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
 from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
     initialize_gcp_client,
@@ -85,13 +85,13 @@ class TestMonkeyBlackbox:
     @staticmethod
     def run_exploitation_test(
         island_client: MonkeyIslandClient,
-        agent_configuration: AgentConfiguration,
+        test_configuration: TestConfiguration,
         test_name: str,
         timeout_in_seconds=DEFAULT_TIMEOUT_SECONDS,
     ):
         analyzer = CommunicationAnalyzer(
             island_client,
-            IslandConfigParser.get_target_ips_from_configuration(agent_configuration),
+            IslandConfigParser.get_target_ips(test_configuration),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -99,7 +99,7 @@ class TestMonkeyBlackbox:
         ExploitationTest(
             name=test_name,
             island_client=island_client,
-            agent_configuration=agent_configuration,
+            test_configuration=test_configuration,
             analyzers=[analyzer],
             timeout=timeout_in_seconds,
             log_handler=log_handler,
@@ -146,7 +146,7 @@ class TestMonkeyBlackbox:
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
-            IslandConfigParser.get_target_ips_from_configuration(zerologon_test_configuration),
+            IslandConfigParser.get_target_ips(zerologon_test_configuration),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -154,7 +154,7 @@ class TestMonkeyBlackbox:
         ExploitationTest(
             name=test_name,
             island_client=island_client,
-            agent_configuration=zerologon_test_configuration,
+            test_configuration=zerologon_test_configuration,
             analyzers=[zero_logon_analyzer, communication_analyzer],
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
