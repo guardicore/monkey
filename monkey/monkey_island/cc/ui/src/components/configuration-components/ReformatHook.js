@@ -22,7 +22,6 @@ export function reformatConfig(config, reverse = false) {
 
 export function formatCredentialsForForm(credentials) {
   let formattedCredentials = _.clone(defaultCredentials);
-  console.log('formatCredentialsForForm was called');
   for (let i = 0; i < credentials.length; i++) {
     let identity = credentials[i]['identity'];
     if(identity !== null) {
@@ -46,7 +45,6 @@ export function formatCredentialsForForm(credentials) {
       }
     }
   }
-  console.log(formattedCredentials);
 
   formattedCredentials['exploit_user_list'] = [...new Set(formattedCredentials['exploit_user_list'])];
   formattedCredentials['exploit_password_list'] = [...new Set(formattedCredentials['exploit_password_list'])];
