@@ -91,7 +91,7 @@ class TestMonkeyBlackbox:
     ):
         raw_config = IslandConfigParser.get_serialized_config(agent_configuration)
         analyzer = CommunicationAnalyzer(
-            island_client, IslandConfigParser.get_ips_of_targets(raw_config)
+            island_client, IslandConfigParser.get_target_ips_from_serialized_config(raw_config)
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -146,7 +146,7 @@ class TestMonkeyBlackbox:
         raw_config = IslandConfigParser.get_serialized_config(zerologon_test_configuration)
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
-            island_client, IslandConfigParser.get_ips_of_targets(raw_config)
+            island_client, IslandConfigParser.get_target_ips_from_serialized_config(raw_config)
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
