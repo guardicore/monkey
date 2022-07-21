@@ -1,4 +1,4 @@
-import json
+from typing import Iterable, Mapping
 
 import dpath.util
 
@@ -11,5 +11,7 @@ class IslandConfigParser:
         return agent_configuration.to_json()
 
     @staticmethod
-    def get_ips_of_targets(raw_config):
-        return dpath.util.get(json.loads(raw_config), "basic_network.scope.subnet_scan_list", ".")
+    def get_ips_of_targets(raw_config: Mapping) -> Iterable:
+        return dpath.util.get(
+            raw_config, "agent_configuration.propagation.network_scan.targets.subnets", "."
+        )
