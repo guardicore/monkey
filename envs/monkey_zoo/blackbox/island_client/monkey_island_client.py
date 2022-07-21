@@ -6,6 +6,7 @@ from typing import Union
 from bson import json_util
 
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 MONKEY_TEST_ENDPOINT = "api/test/monkey"
@@ -30,8 +31,10 @@ class MonkeyIslandClient(object):
         return json.loads(self.requests.get("api/agent-configuration").content)
 
     @avoid_race_condition
-    def import_config(self, config_contents):
-        _ = self.requests.post("api/agent-configuration", data=config_contents)
+    def import_config(self, test_configuration: TestConfiguration):
+        _ = self.requests.post(
+            "api/agent-configuration", data=test_configuration.agent_configuration.to_json()
+        )
 
     @avoid_race_condition
     def run_monkey_local(self):
