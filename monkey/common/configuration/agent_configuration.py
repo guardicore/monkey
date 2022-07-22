@@ -95,7 +95,7 @@ class AgentConfiguration:
         Serialize an AgentConfiguration to JSON
 
         :param config: An AgentConfiguration
-        :return: A JSON string representing the AgentConfiguration
+        :return: A JSON string that represents the AgentConfiguration
         """
         return AgentConfigurationSchema().dumps(config)
 
