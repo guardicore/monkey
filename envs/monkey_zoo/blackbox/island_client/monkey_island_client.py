@@ -34,17 +34,17 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
-        self.requests.post(
+        self.requests.post_json(
             "api/agent-configuration",
-            data=AgentConfiguration.to_mapping(test_configuration.agent_configuration),
+            json=AgentConfiguration.to_mapping(test_configuration.agent_configuration),
         )
         serialized_propagation_credentials = [
             Credentials.to_mapping(credentials)
             for credentials in test_configuration.propagation_credentials
         ]
-        self.requests.post(
+        self.requests.post_json(
             "/api/propagation-credentials/configured-credentials",
-            data=serialized_propagation_credentials,
+            json=serialized_propagation_credentials,
         )
 
     @avoid_race_condition
