@@ -26,6 +26,7 @@ class AgentConfiguration(AbstractResource):
         try:
             configuration_object = AgentConfigurationObject.from_mapping(request.json)
             self._agent_configuration_repository.store_configuration(configuration_object)
+            # API Spec: Should return 204 (NO CONTENT)
             return make_response({}, 200)
         except (InvalidConfigurationError, json.JSONDecodeError) as err:
             return make_response(
