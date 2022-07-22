@@ -184,7 +184,7 @@ def test_to_from_mapping():
     assert AgentConfiguration.to_mapping(config) == AGENT_CONFIGURATION
 
 
-def test_from_dict__invalid_data():
+def test_from_mapping__invalid_data():
     dict_ = deepcopy(AGENT_CONFIGURATION)
     dict_["payloads"] = "payloads"
 
