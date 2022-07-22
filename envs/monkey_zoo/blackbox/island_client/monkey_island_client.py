@@ -47,7 +47,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def run_monkey_local(self):
-        response = self.requests.post_json("api/local-monkey", data={"action": "run"})
+        response = self.requests.post_json("api/local-monkey", json={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
             LOGGER.info("Running the monkey.")
         else:
@@ -61,7 +61,7 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def kill_all_monkeys(self):
         response = self.requests.post_json(
-            "api/monkey-control/stop-all-agents", data={"kill_time": time.time()}
+            "api/monkey-control/stop-all-agents", json={"kill_time": time.time()}
         )
         if response.ok:
             LOGGER.info("Killing all monkeys after the test.")
