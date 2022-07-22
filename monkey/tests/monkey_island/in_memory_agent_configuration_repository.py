@@ -1,12 +1,10 @@
-from tests.common.example_agent_configuration import AGENT_CONFIGURATION
-
-from common.configuration.agent_configuration import AgentConfiguration
+from common.configuration import DEFAULT_AGENT_CONFIGURATION
 from monkey_island.cc.repository import IAgentConfigurationRepository
 
 
 class InMemoryAgentConfigurationRepository(IAgentConfigurationRepository):
     def __init__(self):
-        self._default_configuration = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
+        self._default_configuration = DEFAULT_AGENT_CONFIGURATION
         self._configuration = self._default_configuration
 
     def get_configuration(self):
