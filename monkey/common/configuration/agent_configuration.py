@@ -80,6 +80,16 @@ class AgentConfiguration:
             raise InvalidConfigurationError(str(err))
 
     @staticmethod
+    def to_mapping(config: AgentConfiguration) -> Mapping[str, Any]:
+        """
+        Serialize an AgentConfiguration to a Mapping
+
+        :param config: An AgentConfiguration
+        :return: A Mapping that represents the AgentConfiguration
+        """
+        return AgentConfigurationSchema().dump(config)
+
+    @staticmethod
     def to_json(config: AgentConfiguration) -> str:
         """
         Serialize an AgentConfiguration to JSON

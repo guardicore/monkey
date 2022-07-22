@@ -178,13 +178,10 @@ def test_incorrect_type():
         AgentConfiguration(**valid_config_dict)
 
 
-def test_from_dict():
-    schema = AgentConfigurationSchema()
-    dict_ = deepcopy(AGENT_CONFIGURATION)
+def test_to_from_mapping():
+    config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
 
-    config = AgentConfiguration.from_mapping(dict_)
-
-    assert schema.dump(config) == dict_
+    assert AgentConfiguration.to_mapping(config) == AGENT_CONFIGURATION
 
 
 def test_from_dict__invalid_data():
