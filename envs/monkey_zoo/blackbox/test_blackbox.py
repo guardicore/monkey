@@ -8,7 +8,7 @@ from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import Communicat
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
 from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_TEST_MACHINE_LIST
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
-from envs.monkey_zoo.blackbox.island_client.test_configuration_parser import TestConfigurationParser
+from envs.monkey_zoo.blackbox.island_client.test_configuration_parser import get_target_ips
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 from envs.monkey_zoo.blackbox.test_configurations import (
     depth_1_a_test_configuration,
@@ -87,7 +87,7 @@ class TestMonkeyBlackbox:
     ):
         analyzer = CommunicationAnalyzer(
             island_client,
-            TestConfigurationParser.get_target_ips(test_configuration),
+            get_target_ips(test_configuration),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
@@ -142,7 +142,7 @@ class TestMonkeyBlackbox:
         zero_logon_analyzer = ZerologonAnalyzer(island_client, expected_creds)
         communication_analyzer = CommunicationAnalyzer(
             island_client,
-            TestConfigurationParser.get_target_ips(zerologon_test_configuration),
+            get_target_ips(zerologon_test_configuration),
         )
         log_handler = TestLogsHandler(
             test_name, island_client, TestMonkeyBlackbox.get_log_dir_path()
