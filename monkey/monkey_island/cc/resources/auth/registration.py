@@ -28,7 +28,5 @@ class Registration(AbstractResource):
             self._authentication_service.register_new_user(username, password)
             return make_response({"error": ""}, HTTPStatus.OK)
         # API Spec: HTTP status code for AlreadyRegisteredError should be 409 (CONFLICT)
-        # API Spec: HTTP status code for InvalidRegistrationCredentialsError should be 401
-        #           (UNAUTHORIZED). See https://www.rfc-editor.org/rfc/rfc7235#section-3.1
         except (InvalidRegistrationCredentialsError, AlreadyRegisteredError) as e:
             return make_response({"error": str(e)}, HTTPStatus.BAD_REQUEST)
