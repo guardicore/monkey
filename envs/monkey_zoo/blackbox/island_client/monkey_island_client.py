@@ -6,6 +6,7 @@ from typing import Union
 from bson import json_util
 
 from common.configuration import AgentConfiguration
+from common.credentials import Credentials
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
@@ -37,9 +38,10 @@ class MonkeyIslandClient(object):
             "api/agent-configuration",
             data=AgentConfiguration.to_mapping(test_configuration.agent_configuration),
         )
-        serialized_propagation_credentials = json.dumps(
-            [credential.to_json() for credential in test_configuration.propagation_credentials]
-        )
+        serialized_propagation_credentials = [
+            Credentials.to_mapping(credentials)
+            for credentials in test_configuration.propagation_credentials
+        ]
         self.requests.post(
             "/api/propagation-credentials/configured-credentials",
             data=serialized_propagation_credentials,
