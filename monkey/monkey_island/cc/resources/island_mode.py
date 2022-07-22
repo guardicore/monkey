@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 class IslandMode(AbstractResource):
-    # API Spec: Instead of POST, this could just be PATCH
     urls = ["/api/island-mode"]
 
     def __init__(self, island_mode_service: IslandModeService):
         self._island_mode_service = island_mode_service
 
+    # API Spec: Instead of POST, this should be PUT
     @jwt_required
     def post(self):
         try:
@@ -26,6 +26,9 @@ class IslandMode(AbstractResource):
 
             self._island_mode_service.set_mode(mode)
 
+            # TODO: Do any of these returns need a body and make_response? What happens if we just
+            #       return the response code?
+            # API Spec: This should be 204 (NO CONTENT)
             return make_response({}, 200)
         except (AttributeError, json.decoder.JSONDecodeError):
             return make_response({}, 400)
