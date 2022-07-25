@@ -113,6 +113,7 @@
     "redux": "^4.1.1",
     "sha3": "^2.1.4",
     "source-map-loader": "^3.0.1",
+    "terser": "^5.14.2",
     "tsparticles": "^1.35.4"
   },
   "snyk": true
