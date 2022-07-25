@@ -65,6 +65,7 @@ export default function PropagationConfig(props) {
                    uiSchema={displayedUiSchema}
                    formData={selectedSectionData}
                    onChange={onFormDataChange}
+                   // @ts-ignore
                    customFormats={customFormats}
                    className={className}
                    // Each form must be a unique component
