@@ -89,8 +89,8 @@ def test_propagation_credentials_endpoint__post_stolen(flask_client, credentials
     resp = flask_client.post(
         url,
         json=[
-            Credentials.to_json(LM_HASH_CREDENTIALS),
-            Credentials.to_json(NT_HASH_CREDENTIALS),
+            Credentials.to_mapping(LM_HASH_CREDENTIALS),
+            Credentials.to_mapping(NT_HASH_CREDENTIALS),
         ],
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
@@ -134,8 +134,8 @@ def test_propagation_credentials_endpoint__post_not_found(flask_client):
     resp = flask_client.post(
         NON_EXISTENT_COLLECTION_URL,
         json=[
-            Credentials.to_json(LM_HASH_CREDENTIALS),
-            Credentials.to_json(NT_HASH_CREDENTIALS),
+            Credentials.to_mapping(LM_HASH_CREDENTIALS),
+            Credentials.to_mapping(NT_HASH_CREDENTIALS),
         ],
     )
     assert resp.status_code == HTTPStatus.NOT_FOUND

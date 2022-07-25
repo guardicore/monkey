@@ -28,7 +28,6 @@ from tests.common.example_agent_configuration import (
 )
 
 from common.configuration import AgentConfiguration, InvalidConfigurationError
-from common.configuration.agent_configuration import AgentConfigurationSchema
 from common.configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     ExploitationConfigurationSchema,
@@ -178,16 +177,13 @@ def test_incorrect_type():
         AgentConfiguration(**valid_config_dict)
 
 
-def test_from_dict():
-    schema = AgentConfigurationSchema()
-    dict_ = deepcopy(AGENT_CONFIGURATION)
+def test_to_from_mapping():
+    config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
 
-    config = AgentConfiguration.from_mapping(dict_)
-
-    assert schema.dump(config) == dict_
+    assert AgentConfiguration.to_mapping(config) == AGENT_CONFIGURATION
 
 
-def test_from_dict__invalid_data():
+def test_from_mapping__invalid_data():
     dict_ = deepcopy(AGENT_CONFIGURATION)
     dict_["payloads"] = "payloads"
 
@@ -195,14 +191,11 @@ def test_from_dict__invalid_data():
         AgentConfiguration.from_mapping(dict_)
 
 
-def test_from_json():
-    schema = AgentConfigurationSchema()
-    dict_ = deepcopy(AGENT_CONFIGURATION)
+def test_to_from_json():
+    original_config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
+    config_json = AgentConfiguration.to_json(original_config)
 
-    config = AgentConfiguration.from_json(json.dumps(dict_))
-
-    assert isinstance(config, AgentConfiguration)
-    assert schema.dump(config) == dict_
+    assert AgentConfiguration.from_json(config_json) == original_config
 
 
 def test_from_json__invalid_data():
@@ -211,9 +204,3 @@ def test_from_json__invalid_data():
 
     with pytest.raises(InvalidConfigurationError):
         AgentConfiguration.from_json(json.dumps(invalid_dict))
-
-
-def test_to_json():
-    config = deepcopy(AGENT_CONFIGURATION)
-
-    assert json.loads(AgentConfiguration.to_json(config)) == AGENT_CONFIGURATION

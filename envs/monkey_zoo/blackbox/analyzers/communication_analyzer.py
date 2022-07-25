@@ -1,9 +1,12 @@
+from typing import Iterable
+
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 
 
 class CommunicationAnalyzer(Analyzer):
-    def __init__(self, island_client, machine_ips):
+    def __init__(self, island_client: MonkeyIslandClient, machine_ips: Iterable[str]):
         self.island_client = island_client
         self.machine_ips = machine_ips
         self.log = AnalyzerLog(self.__class__.__name__)
@@ -19,6 +22,6 @@ class CommunicationAnalyzer(Analyzer):
                 self.log.add_entry("Monkey from {} communicated back".format(machine_ip))
         return all_monkeys_communicated
 
-    def did_monkey_communicate_back(self, machine_ip):
+    def did_monkey_communicate_back(self, machine_ip: str):
         query = {"ip_addresses": {"$elemMatch": {"$eq": machine_ip}}}
         return len(self.island_client.find_monkeys_in_db(query)) > 0

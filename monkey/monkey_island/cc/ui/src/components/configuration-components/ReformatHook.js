@@ -13,7 +13,12 @@ export function reformatConfig(config, reverse = false) {
     }
     formattedConfig['keep_tunnel_open_time'] = formattedConfig['advanced']['keep_tunnel_open_time'];
   } else {
-    formattedConfig['payloads'] = formattedConfig['payloads'][0]['options'];
+    if(formattedConfig['payloads'].length !== 0)
+    {
+      formattedConfig['payloads'] = formattedConfig['payloads'][0]['options'];
+    } else {
+      formattedConfig['payloads'] = {'encryption': {}, 'other_behaviors': {}}
+    }
     formattedConfig['advanced'] = {};
     formattedConfig['advanced']['keep_tunnel_open_time'] = formattedConfig['keep_tunnel_open_time'];
   }

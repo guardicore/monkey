@@ -5,7 +5,10 @@ from typing import Union
 
 from bson import json_util
 
+from common.configuration import AgentConfiguration
+from common.credentials import Credentials
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
+from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 MONKEY_TEST_ENDPOINT = "api/test/monkey"
@@ -27,15 +30,26 @@ class MonkeyIslandClient(object):
         return self.requests.get("api")
 
     def get_config(self):
-        return json.loads(self.requests.get("api/configuration/island").content)
+        return json.loads(self.requests.get("api/agent-configuration").content)
 
     @avoid_race_condition
-    def import_config(self, config_contents):
-        _ = self.requests.post("api/configuration/island", data=config_contents)
+    def import_config(self, test_configuration: TestConfiguration):
+        self.requests.post_json(
+            "api/agent-configuration",
+            json=AgentConfiguration.to_mapping(test_configuration.agent_configuration),
+        )
+        serialized_propagation_credentials = [
+            Credentials.to_mapping(credentials)
+            for credentials in test_configuration.propagation_credentials
+        ]
+        self.requests.post_json(
+            "/api/propagation-credentials/configured-credentials",
+            json=serialized_propagation_credentials,
+        )
 
     @avoid_race_condition
     def run_monkey_local(self):
-        response = self.requests.post_json("api/local-monkey", data={"action": "run"})
+        response = self.requests.post_json("api/local-monkey", json={"action": "run"})
         if MonkeyIslandClient.monkey_ran_successfully(response):
             LOGGER.info("Running the monkey.")
         else:
@@ -49,7 +63,7 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def kill_all_monkeys(self):
         response = self.requests.post_json(
-            "api/monkey-control/stop-all-agents", data={"kill_time": time.time()}
+            "api/monkey-control/stop-all-agents", json={"kill_time": time.time()}
         )
         if response.ok:
             LOGGER.info("Killing all monkeys after the test.")
@@ -66,10 +80,6 @@ class MonkeyIslandClient(object):
         else:
             LOGGER.error("Failed to reset the environment.")
             assert False
-
-    @avoid_race_condition
-    def set_scenario(self, scenario):
-        self.requests.post_json("api/island-mode", {"mode": scenario})
 
     def find_monkeys_in_db(self, query):
         if query is None:
@@ -110,13 +120,3 @@ class MonkeyIslandClient(object):
     def is_all_monkeys_dead(self):
         query = {"dead": False}
         return len(self.find_monkeys_in_db(query)) == 0
-
-    def clear_caches(self):
-        """
-        Tries to clear caches.
-        :raises: If error (by error code), raises the error
-        :return: The response
-        """
-        response = self.requests.get("api/test/clear-caches")
-        response.raise_for_status()
-        return response

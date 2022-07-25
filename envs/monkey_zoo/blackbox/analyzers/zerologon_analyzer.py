@@ -1,9 +1,6 @@
 from pprint import pformat
 from typing import List
 
-import dpath.util
-
-from common.config_value_paths import LM_HASH_LIST_PATH, NTLM_HASH_LIST_PATH, USER_LIST_PATH
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
@@ -36,9 +33,11 @@ class ZerologonAnalyzer(Analyzer):
     @staticmethod
     def _get_relevant_credentials(config: dict):
         credentials_on_island = []
-        credentials_on_island.extend(dpath.util.get(config["configuration"], USER_LIST_PATH))
-        credentials_on_island.extend(dpath.util.get(config["configuration"], NTLM_HASH_LIST_PATH))
-        credentials_on_island.extend(dpath.util.get(config["configuration"], LM_HASH_LIST_PATH))
+        # TODO: Pull configured credentials and put usernames, nt and lm hashes into
+        # credentials_island
+        # credentials_on_island.extend(dpath.util.get(config["configuration"], USER_LIST_PATH))
+        # credentials_on_island.extend(dpath.util.get(config["configuration"], NTLM_HASH_LIST_PATH))
+        # credentials_on_island.extend(dpath.util.get(config["configuration"], LM_HASH_LIST_PATH))
         return credentials_on_island
 
     def _is_all_credentials_in_list(self, all_creds: List[str]) -> bool:
