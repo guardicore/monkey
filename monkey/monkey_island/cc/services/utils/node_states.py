@@ -45,7 +45,9 @@ class NodeStates(Enum):
     @staticmethod
     def _is_state_from_keywords(group, keywords) -> bool:
         group_keywords = group.value.split("_")
-        return collections.Counter(group_keywords) == collections.Counter(keywords)
+        return collections.Counter(group_keywords) == collections.Counter(
+            [word.lower() for word in keywords]
+        )
 
 
 class MultipleGroupsFoundException(Exception):
