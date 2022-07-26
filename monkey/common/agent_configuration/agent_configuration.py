@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, List, Mapping
 
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_load
 from marshmallow.exceptions import MarshmallowError
 
 from .agent_sub_configuration_schemas import (
@@ -16,6 +16,7 @@ from .agent_sub_configurations import (
     PluginConfiguration,
     PropagationConfiguration,
 )
+from .utils import freeze_lists
 
 
 class InvalidConfigurationError(Exception):
@@ -58,8 +59,7 @@ class AgentConfiguration:
         """
 
         try:
-            config_dict = AgentConfigurationSchema().load(config_mapping)
-            return AgentConfiguration(**config_dict)
+            return AgentConfigurationSchema().load(config_mapping)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))
 
@@ -74,8 +74,7 @@ class AgentConfiguration:
                  AgentConfiguration
         """
         try:
-            config_dict = AgentConfigurationSchema().loads(config_json)
-            return AgentConfiguration(**config_dict)
+            return AgentConfigurationSchema().loads(config_json)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))
 
@@ -107,3 +106,8 @@ class AgentConfigurationSchema(Schema):
     credential_collectors = fields.List(fields.Nested(PluginConfigurationSchema))
     payloads = fields.List(fields.Nested(PluginConfigurationSchema))
     propagation = fields.Nested(PropagationConfigurationSchema)
+
+    @post_load
+    @freeze_lists
+    def _make_agent_configuration(self, data, **kwargs):
+        return AgentConfiguration(**data)

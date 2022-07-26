@@ -73,10 +73,10 @@ def test_scan_target_configuration():
 
     config = schema.load(SCAN_TARGET_CONFIGURATION)
 
-    assert config.blocked_ips == BLOCKED_IPS
-    assert config.inaccessible_subnets == INACCESSIBLE_SUBNETS
+    assert config.blocked_ips == tuple(BLOCKED_IPS)
+    assert config.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
     assert config.local_network_scan == LOCAL_NETWORK_SCAN
-    assert config.subnets == SUBNETS
+    assert config.subnets == tuple(SUBNETS)
 
 
 def test_icmp_scan_configuration_schema():
@@ -93,7 +93,7 @@ def test_tcp_scan_configuration_schema():
     config = schema.load(TCP_SCAN_CONFIGURATION)
 
     assert config.timeout == TIMEOUT
-    assert config.ports == PORTS
+    assert config.ports == tuple(PORTS)
 
 
 def test_network_scan_configuration():
@@ -101,15 +101,15 @@ def test_network_scan_configuration():
 
     config = schema.load(NETWORK_SCAN_CONFIGURATION)
 
-    assert config.tcp.ports == TCP_SCAN_CONFIGURATION["ports"]
+    assert config.tcp.ports == tuple(TCP_SCAN_CONFIGURATION["ports"])
     assert config.tcp.timeout == TCP_SCAN_CONFIGURATION["timeout"]
     assert config.icmp.timeout == ICMP_CONFIGURATION["timeout"]
     assert config.fingerprinters[0].name == FINGERPRINTERS[0]["name"]
     assert config.fingerprinters[0].options == FINGERPRINTERS[0]["options"]
-    assert config.targets.blocked_ips == BLOCKED_IPS
-    assert config.targets.inaccessible_subnets == INACCESSIBLE_SUBNETS
+    assert config.targets.blocked_ips == tuple(BLOCKED_IPS)
+    assert config.targets.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
     assert config.targets.local_network_scan == LOCAL_NETWORK_SCAN
-    assert config.targets.subnets == SUBNETS
+    assert config.targets.subnets == tuple(SUBNETS)
 
 
 def test_exploitation_options_configuration_schema():
@@ -118,7 +118,7 @@ def test_exploitation_options_configuration_schema():
 
     config = schema.load({"http_ports": ports})
 
-    assert config.http_ports == ports
+    assert config.http_ports == tuple(ports)
 
 
 def test_exploiter_configuration_schema():

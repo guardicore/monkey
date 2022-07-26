@@ -48,3 +48,10 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
         del mapping[key]
     except KeyError:
         pass
+
+
+def freeze_lists_in_dict(mapping: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    for key, value in mapping.items():
+        if type(value) == list:
+            mapping[key] = tuple(value)
+    return mapping

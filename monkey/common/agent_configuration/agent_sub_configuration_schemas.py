@@ -11,6 +11,7 @@ from .agent_sub_configurations import (
     ScanTargetConfiguration,
     TCPScanConfiguration,
 )
+from .utils import freeze_lists
 
 
 class CustomPBAConfigurationSchema(Schema):
@@ -40,6 +41,7 @@ class ScanTargetConfigurationSchema(Schema):
     subnets = fields.List(fields.Str())
 
     @post_load
+    @freeze_lists
     def _make_scan_target_configuration(self, data, **kwargs):
         return ScanTargetConfiguration(**data)
 
@@ -57,6 +59,7 @@ class TCPScanConfigurationSchema(Schema):
     ports = fields.List(fields.Int())
 
     @post_load
+    @freeze_lists
     def _make_tcp_scan_configuration(self, data, **kwargs):
         return TCPScanConfiguration(**data)
 
@@ -68,6 +71,7 @@ class NetworkScanConfigurationSchema(Schema):
     targets = fields.Nested(ScanTargetConfigurationSchema)
 
     @post_load
+    @freeze_lists
     def _make_network_scan_configuration(self, data, **kwargs):
         return NetworkScanConfiguration(**data)
 
@@ -76,6 +80,7 @@ class ExploitationOptionsConfigurationSchema(Schema):
     http_ports = fields.List(fields.Int())
 
     @post_load
+    @freeze_lists
     def _make_exploitation_options_configuration(self, data, **kwargs):
         return ExploitationOptionsConfiguration(**data)
 
@@ -86,6 +91,7 @@ class ExploitationConfigurationSchema(Schema):
     vulnerability = fields.List(fields.Nested(PluginConfigurationSchema))
 
     @post_load
+    @freeze_lists
     def _make_exploitation_options_configuration(self, data, **kwargs):
         return ExploitationConfiguration(**data)
 

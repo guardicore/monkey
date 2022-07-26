@@ -194,6 +194,7 @@ _make_icmp_scan_configuration  # unused method (monkey/common/configuration/agen
 _make_tcp_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:122)
 _make_network_scan_configuration  # unused method (monkey/common/configuration/agent_configuration.py:110)
 _make_propagation_configuration  # unused method (monkey/common/configuration/agent_configuration.py:167)
+_make_agent_configuration  # \common\agent_configuration\agent_configuration.py:110: unused method '_make_agent_configuration'
 
 # Credentials
 _strip_credential_type  # unused method (monkey/common/credentials/password.py:18)
