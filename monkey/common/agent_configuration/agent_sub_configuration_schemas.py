@@ -15,7 +15,7 @@ from .agent_sub_configurations import (
 )
 from .utils import freeze_lists
 
-valid_custom_pba_filename_regex = re.compile(r"^([a-zA-Z0-9\ \._-]+)$")
+valid_custom_pba_filename_regex = re.compile(r"^([a-zA-Z0-9\ \._-]*)$")
 
 
 class CustomPBAConfigurationSchema(Schema):
