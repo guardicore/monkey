@@ -2,6 +2,7 @@ import json
 from copy import deepcopy
 
 import pytest
+from marshmallow import ValidationError
 from tests.common.example_agent_configuration import (
     AGENT_CONFIGURATION,
     BLOCKED_IPS,
@@ -66,6 +67,30 @@ def test_custom_pba_configuration_schema():
     assert config.linux_filename == LINUX_FILENAME
     assert config.windows_command == WINDOWS_COMMAND
     assert config.windows_filename == WINDOWS_FILENAME
+
+
+def test_custom_pba_configuration_schema__empty_filename_allowed():
+    schema = CustomPBAConfigurationSchema()
+
+    empty_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
+    empty_filename_configuration.update({"linux_filename": ""})
+
+    config = schema.load(empty_filename_configuration)
+
+    assert config.linux_command == LINUX_COMMAND
+    assert config.linux_filename == ""
+    assert config.windows_command == WINDOWS_COMMAND
+    assert config.windows_filename == WINDOWS_FILENAME
+
+
+def test_custom_pba_configuration_schema__invalid_filename():
+    schema = CustomPBAConfigurationSchema()
+
+    invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
+    invalid_filename_configuration["linux_filename"] = "???"
+
+    with pytest.raises(ValidationError):
+        schema.load(invalid_filename_configuration)
 
 
 def test_scan_target_configuration():
