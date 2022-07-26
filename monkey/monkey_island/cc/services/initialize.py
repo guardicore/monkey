@@ -4,13 +4,13 @@ from pathlib import Path
 from pymongo import MongoClient
 
 from common import DIContainer
-from common.aws import AWSInstance
-from common.common_consts.telem_categories import TelemCategoryEnum
-from common.configuration import (
+from common.agent_configuration import (
     DEFAULT_AGENT_CONFIGURATION,
     DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     AgentConfiguration,
 )
+from common.aws import AWSInstance
+from common.common_consts.telem_categories import TelemCategoryEnum
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,

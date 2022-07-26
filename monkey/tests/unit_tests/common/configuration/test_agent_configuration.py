@@ -27,8 +27,8 @@ from tests.common.example_agent_configuration import (
     WINDOWS_FILENAME,
 )
 
-from common.configuration import AgentConfiguration, InvalidConfigurationError
-from common.configuration.agent_sub_configuration_schemas import (
+from common.agent_configuration import AgentConfiguration, InvalidConfigurationError
+from common.agent_configuration.agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     ExploitationConfigurationSchema,
     ExploitationOptionsConfigurationSchema,
@@ -39,7 +39,7 @@ from common.configuration.agent_sub_configuration_schemas import (
     ScanTargetConfigurationSchema,
     TCPScanConfigurationSchema,
 )
-from common.configuration.agent_sub_configurations import (
+from common.agent_configuration.agent_sub_configurations import (
     CustomPBAConfiguration,
     ExploitationConfiguration,
     NetworkScanConfiguration,

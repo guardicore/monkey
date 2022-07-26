@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 
 
 class IAgentConfigurationRepository(ABC):

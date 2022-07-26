@@ -1,7 +1,7 @@
 import logging
 
+from common.agent_configuration import AgentConfiguration
 from common.common_consts.telem_categories import TelemCategoryEnum
-from common.configuration import AgentConfiguration
 from monkey_island.cc.models.telemetries import save_telemetry
 from monkey_island.cc.services.telemetry.processing.aws_info import process_aws_telemetry
 from monkey_island.cc.services.telemetry.processing.exploit import process_exploit_telemetry

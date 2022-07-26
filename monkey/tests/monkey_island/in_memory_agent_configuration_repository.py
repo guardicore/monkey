@@ -1,4 +1,4 @@
-from common.configuration import DEFAULT_AGENT_CONFIGURATION
+from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION
 from monkey_island.cc.repository import IAgentConfigurationRepository
 
 

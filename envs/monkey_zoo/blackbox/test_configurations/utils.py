@@ -1,7 +1,7 @@
 from dataclasses import replace
 from typing import Sequence, Tuple
 
-from common.configuration import (
+from common.agent_configuration import (
     AgentConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,

@@ -1,6 +1,6 @@
 from typing import Mapping
 
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.node import NodeService

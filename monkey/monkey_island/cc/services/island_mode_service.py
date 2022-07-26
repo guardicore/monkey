@@ -1,4 +1,4 @@
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repository import IAgentConfigurationRepository, ISimulationRepository
 

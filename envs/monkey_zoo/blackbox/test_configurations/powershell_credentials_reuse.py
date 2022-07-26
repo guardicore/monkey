@@ -1,4 +1,4 @@
-from common.configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration, PluginConfiguration
 
 from .noop import noop_test_configuration
 from .utils import (

@@ -1,4 +1,4 @@
-from common.configuration import (
+from common.agent_configuration import (
     AgentConfiguration,
     CustomPBAConfiguration,
     ExploitationConfiguration,

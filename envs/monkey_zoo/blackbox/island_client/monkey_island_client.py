@@ -5,7 +5,7 @@ from typing import Union
 
 from bson import json_util
 
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
