@@ -251,3 +251,4 @@ IFindingRepository.get_findings
 key_list
 simulation
 netmap
+validate_windows_filename_not_reserved
