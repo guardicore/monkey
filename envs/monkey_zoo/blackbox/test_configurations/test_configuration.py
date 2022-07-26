@@ -7,5 +7,6 @@ from common.credentials import Credentials
 
 @dataclass
 class TestConfiguration:
+    __test__ = False
     agent_configuration: AgentConfiguration
     propagation_credentials: Tuple[Credentials, ...]

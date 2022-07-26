@@ -10,6 +10,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class TestLogsHandler(object):
+    __test__ = False
+
     def __init__(self, test_name, island_client, log_dir_path):
         self.test_name = test_name
         self.island_client = island_client
