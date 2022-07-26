@@ -12,13 +12,13 @@ class CustomPBAConfiguration:
                              use this field to change its permissions, execute it, and/or delete
                              it.
                              Example: `chmod +x file.sh; ./file.sh; rm file.sh`
-        linux_filename (str): Name of the file to upload and run on Linux victim machines.
+        linux_filename (str): Name of the file to upload on Linux victim machines.
                               Example: `i-am-custom-pba-file.sh`
         windows_command (str): Command to run on Windows victim machines. If a file is uploaded,
                                use this field to change its permissions, execute it, and/or delete
                                it.
                                Example: `file.bat & del file.bat`
-        windows_filename (str): Name of the file to upload and run on Windows victim machines.
+        windows_filename (str): Name of the file to upload on Windows victim machines.
                                 Example: `i-am-custom-pba-file.bat`
     """
 
