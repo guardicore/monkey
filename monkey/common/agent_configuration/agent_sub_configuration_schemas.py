@@ -16,7 +16,7 @@ from .agent_sub_configurations import (
 from .utils import freeze_lists
 
 valid_windows_custom_pba_filename_regex = re.compile(r"^[^<>:\"\\\/|?*]*[^<>:\"\\\/|?* \.]+$|^$")
-valid_linux_custom_pba_filename_regex = re.compile(r"^[^\\]*$")
+valid_linux_custom_pba_filename_regex = re.compile(r"^[^\0\\]*$")
 
 
 class CustomPBAConfigurationSchema(Schema):
