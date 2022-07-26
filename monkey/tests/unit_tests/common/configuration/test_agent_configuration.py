@@ -83,7 +83,7 @@ def test_custom_pba_configuration_schema__empty_filenames_allowed():
     assert config.windows_filename == ""
 
 
-@pytest.mark.parametrize("linux_filename", ["\\", "\\\\\\", "\0"])
+@pytest.mark.parametrize("linux_filename", ["/", "/abc/", "\0"])
 def test_custom_pba_configuration_schema__invalid_linux_filename(linux_filename):
     schema = CustomPBAConfigurationSchema()
 
