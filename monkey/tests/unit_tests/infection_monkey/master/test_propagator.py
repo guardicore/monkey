@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from common.configuration.agent_sub_configurations import (
+from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,

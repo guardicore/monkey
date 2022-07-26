@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 
-from common.configuration.agent_sub_configurations import (
+from common.agent_configuration.agent_sub_configurations import (
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,

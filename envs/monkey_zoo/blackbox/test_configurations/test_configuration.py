@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Tuple
 
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials
 
 

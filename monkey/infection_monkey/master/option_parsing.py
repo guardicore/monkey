@@ -1,4 +1,4 @@
-from common.configuration import CustomPBAConfiguration
+from common.agent_configuration import CustomPBAConfiguration
 from infection_monkey.utils.environment import is_windows_os
 
 

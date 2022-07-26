@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from tests.monkey_island import InMemoryAgentConfigurationRepository
 
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
     ICredentialsRepository,

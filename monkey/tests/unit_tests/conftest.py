@@ -7,7 +7,7 @@ from _pytest.monkeypatch import MonkeyPatch
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
-from common.configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
+from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
 
 
 @pytest.fixture(scope="session")

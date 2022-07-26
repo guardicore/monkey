@@ -2,8 +2,10 @@ import json
 
 from flask import make_response, request
 
-from common.configuration.agent_configuration import AgentConfiguration as AgentConfigurationObject
-from common.configuration.agent_configuration import InvalidConfigurationError
+from common.agent_configuration.agent_configuration import (
+    AgentConfiguration as AgentConfigurationObject,
+)
+from common.agent_configuration.agent_configuration import InvalidConfigurationError
 from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required

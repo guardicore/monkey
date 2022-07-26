@@ -6,7 +6,7 @@ from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.monkey_island import InMemoryAgentConfigurationRepository
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.agent_configuration import (
     AgentConfiguration as AgentConfigurationResource,

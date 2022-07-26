@@ -3,7 +3,7 @@ import threading
 import time
 from typing import Any, Callable, Iterable, List, Optional
 
-from common.configuration import CustomPBAConfiguration, PluginConfiguration
+from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
 from common.utils import Timer
 from infection_monkey.credential_store import ICredentialsStore
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError

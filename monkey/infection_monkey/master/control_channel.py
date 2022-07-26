@@ -5,8 +5,8 @@ from typing import Mapping, Sequence
 
 import requests
 
+from common.agent_configuration import AgentConfiguration
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
-from common.configuration import AgentConfiguration
 from common.credentials import Credentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 

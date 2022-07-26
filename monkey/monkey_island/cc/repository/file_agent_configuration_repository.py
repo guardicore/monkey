@@ -1,6 +1,6 @@
 import io
 
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from monkey_island.cc import repository
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,

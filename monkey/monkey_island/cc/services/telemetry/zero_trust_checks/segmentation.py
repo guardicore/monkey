@@ -1,7 +1,7 @@
 import itertools
 
 import common.common_consts.zero_trust_consts as zero_trust_consts
-from common.configuration import AgentConfiguration
+from common.agent_configuration import AgentConfiguration
 from common.network.network_range import NetworkRange
 from common.network.segmentation_utils import get_ip_if_in_subnet, get_ip_in_src_and_not_in_dst
 from monkey_island.cc.models import Monkey

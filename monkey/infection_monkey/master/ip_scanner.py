@@ -5,7 +5,7 @@ from queue import Queue
 from threading import Event
 from typing import Callable, Dict, Sequence
 
-from common.configuration.agent_sub_configurations import (
+from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PluginConfiguration,
     ScanTargetConfiguration,

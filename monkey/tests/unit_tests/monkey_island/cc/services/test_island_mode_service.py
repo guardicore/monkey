@@ -1,7 +1,10 @@
 import pytest
 from tests.monkey_island import InMemoryAgentConfigurationRepository, InMemorySimulationRepository
 
-from common.configuration import DEFAULT_AGENT_CONFIGURATION, DEFAULT_RANSOMWARE_AGENT_CONFIGURATION
+from common.agent_configuration import (
+    DEFAULT_AGENT_CONFIGURATION,
+    DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
+)
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.services import IslandModeService
 

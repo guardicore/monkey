@@ -3,7 +3,7 @@ from queue import Queue
 from threading import Event
 from typing import List
 
-from common.configuration import (
+from common.agent_configuration import (
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
