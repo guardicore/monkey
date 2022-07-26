@@ -32,10 +32,10 @@ class FileUpload(AbstractResource):
 
     def __init__(
         self,
-        file_storage_repository: IFileRepository,
+        file_repository: IFileRepository,
         agent_configuration_repository: IAgentConfigurationRepository,
     ):
-        self._file_storage_service = file_storage_repository
+        self._file_repository = file_repository
         self._agent_configuration_repository = agent_configuration_repository
 
     # NOTE: None of these methods are thread-safe. Don't forget to fix that when this becomes a
@@ -64,7 +64,7 @@ class FileUpload(AbstractResource):
             filename = agent_configuration.custom_pbas.windows_filename
 
         try:
-            file = self._file_storage_service.open_file(filename)
+            file = self._file_repository.open_file(filename)
 
             # `send_file()` handles the closing of the open file.
             return send_file(file, mimetype="application/octet-stream")
@@ -87,7 +87,7 @@ class FileUpload(AbstractResource):
         file_storage = next(request.files.values())  # For now, assume there's only one file
         safe_filename = sanitize_filename(file_storage.filename)
 
-        self._file_storage_service.save_file(safe_filename, file_storage.stream)
+        self._file_repository.save_file(safe_filename, file_storage.stream)
         try:
             self._update_config(target_os, safe_filename)
         except Exception as err:
@@ -129,7 +129,7 @@ class FileUpload(AbstractResource):
             filename = original_agent_configuration.custom_pbas.windows_filename
 
         try:
-            self._file_storage_service.delete_file(filename)
+            self._file_repository.delete_file(filename)
         except Exception as err:
             # Roll back the entire transaction if part of it failed.
             self._agent_configuration_repository.store_configuration(original_agent_configuration)
