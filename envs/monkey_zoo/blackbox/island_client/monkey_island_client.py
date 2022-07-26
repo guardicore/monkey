@@ -74,11 +74,38 @@ class MonkeyIslandClient(object):
             assert False
 
     @avoid_race_condition
-    def reset_env(self):
-        if self.requests.get("api", {"action": "reset"}).ok:
-            LOGGER.info("Resetting environment after the test.")
+    def reset_island(self):
+        self._reset_agent_configuration()
+        self._reset_simulation_data()
+        self._reset_credentials()
+        self._reset_island_mode()
+
+    def _reset_agent_configuration(self):
+        if self.requests.post("api/reset-agent-configuration", data=None).ok:
+            LOGGER.info("Resetting agent-configuration after the test.")
         else:
-            LOGGER.error("Failed to reset the environment.")
+            LOGGER.error("Failed to reset agent configuration.")
+            assert False
+
+    def _reset_simulation_data(self):
+        if self.requests.post("api/clear-simulation-data", data=None).ok:
+            LOGGER.info("Clearing simulation data.")
+        else:
+            LOGGER.error("Failed to clear simulation data")
+            assert False
+
+    def _reset_credentials(self):
+        if self.requests.delete("api/propagation-credentials/configured-credentials").ok:
+            LOGGER.info("Resseting configured credentials after the test.")
+        else:
+            LOGGER.error("Failed to reset configured credentials")
+            assert False
+
+    def _reset_island_mode(self):
+        if self.requests.post("api/island-mode", data='{"mode": "unset"}').ok:
+            LOGGER.info("Resseting island mode after the test.")
+        else:
+            LOGGER.error("Failed to reset island mode")
             assert False
 
     def find_monkeys_in_db(self, query):
