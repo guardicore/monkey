@@ -6,7 +6,7 @@ from typing import Any, Mapping, Tuple
 from marshmallow import Schema, fields
 from marshmallow.exceptions import MarshmallowError
 
-from ..utils.code_utils import freeze_lists_in_dict
+from ..utils.code_utils import freeze_lists_in_mapping
 from .agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     PluginConfigurationSchema,
@@ -60,7 +60,7 @@ class AgentConfiguration:
 
         try:
             config_dict = AgentConfigurationSchema().load(config_mapping)
-            config_dict = freeze_lists_in_dict(config_dict)
+            config_dict = freeze_lists_in_mapping(config_dict)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))
@@ -77,7 +77,7 @@ class AgentConfiguration:
         """
         try:
             config_dict = AgentConfigurationSchema().loads(config_json)
-            config_dict = freeze_lists_in_dict(config_dict)
+            config_dict = freeze_lists_in_mapping(config_dict)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))
