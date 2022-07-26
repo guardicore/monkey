@@ -18,6 +18,7 @@ export default function CredentialsConfig(props) {
           uiSchema={uiSchema}
           formData={credentialsCopy}
           onChange={(formData) => {onChange(formData.formData)}}
+          // @ts-ignore
           customFormats={customFormats}
           className={className}
           liveValidate

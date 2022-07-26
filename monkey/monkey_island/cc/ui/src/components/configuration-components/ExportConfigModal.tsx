@@ -10,7 +10,7 @@ import {reformatConfig} from './ReformatHook';
 type Props = {
   show: boolean,
   configuration: object,
-  credentials: object,
+  credentials: string,
   onHide: () => void
 }
 
