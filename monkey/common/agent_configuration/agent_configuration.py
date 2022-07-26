@@ -34,9 +34,9 @@ class InvalidConfigurationError(Exception):
 class AgentConfiguration:
     keep_tunnel_open_time: float
     custom_pbas: CustomPBAConfiguration
-    post_breach_actions: Tuple[PluginConfiguration]
-    credential_collectors: Tuple[PluginConfiguration]
-    payloads: Tuple[PluginConfiguration]
+    post_breach_actions: Tuple[PluginConfiguration, ...]
+    credential_collectors: Tuple[PluginConfiguration, ...]
+    payloads: Tuple[PluginConfiguration, ...]
     propagation: PropagationConfiguration
 
     def __post_init__(self):

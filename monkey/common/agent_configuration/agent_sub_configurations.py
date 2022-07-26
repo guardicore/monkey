@@ -18,10 +18,10 @@ class PluginConfiguration:
 
 @dataclass(frozen=True)
 class ScanTargetConfiguration:
-    blocked_ips: Tuple[str]
-    inaccessible_subnets: Tuple[str]
+    blocked_ips: Tuple[str, ...]
+    inaccessible_subnets: Tuple[str, ...]
     local_network_scan: bool
-    subnets: Tuple[str]
+    subnets: Tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -32,27 +32,27 @@ class ICMPScanConfiguration:
 @dataclass(frozen=True)
 class TCPScanConfiguration:
     timeout: float
-    ports: Tuple[int]
+    ports: Tuple[int, ...]
 
 
 @dataclass(frozen=True)
 class NetworkScanConfiguration:
     tcp: TCPScanConfiguration
     icmp: ICMPScanConfiguration
-    fingerprinters: Tuple[PluginConfiguration]
+    fingerprinters: Tuple[PluginConfiguration, ...]
     targets: ScanTargetConfiguration
 
 
 @dataclass(frozen=True)
 class ExploitationOptionsConfiguration:
-    http_ports: Tuple[int]
+    http_ports: Tuple[int, ...]
 
 
 @dataclass(frozen=True)
 class ExploitationConfiguration:
     options: ExploitationOptionsConfiguration
-    brute_force: Tuple[PluginConfiguration]
-    vulnerability: Tuple[PluginConfiguration]
+    brute_force: Tuple[PluginConfiguration, ...]
+    vulnerability: Tuple[PluginConfiguration, ...]
 
 
 @dataclass(frozen=True)
