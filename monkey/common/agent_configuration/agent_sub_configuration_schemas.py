@@ -1,4 +1,6 @@
-from marshmallow import Schema, fields, post_load
+import re
+
+from marshmallow import Schema, fields, post_load, validate
 
 from .agent_sub_configurations import (
     CustomPBAConfiguration,
@@ -13,12 +15,14 @@ from .agent_sub_configurations import (
 )
 from .utils import freeze_lists
 
+valid_custom_pba_filename_regex = re.compile(r"^([a-zA-Z0-9\ \._-]+)$")
+
 
 class CustomPBAConfigurationSchema(Schema):
     linux_command = fields.Str()
-    linux_filename = fields.Str()
+    linux_filename = fields.Str(validate=validate.Regexp(regex=valid_custom_pba_filename_regex))
     windows_command = fields.Str()
-    windows_filename = fields.Str()
+    windows_filename = fields.Str(validate=validate.Regexp(regex=valid_custom_pba_filename_regex))
 
     @post_load
     def _make_custom_pba_configuration(self, data, **kwargs):
