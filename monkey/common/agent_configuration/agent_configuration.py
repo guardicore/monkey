@@ -16,7 +16,7 @@ from .agent_sub_configurations import (
     PluginConfiguration,
     PropagationConfiguration,
 )
-from .utils import freeze_lists
+from ..utils.code_utils import freeze_lists_in_dict
 
 
 class InvalidConfigurationError(Exception):
@@ -59,7 +59,9 @@ class AgentConfiguration:
         """
 
         try:
-            return AgentConfigurationSchema().load(config_mapping)
+            config_dict = AgentConfigurationSchema().load(config_mapping)
+            config_dict = freeze_lists_in_dict(config_dict)
+            return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))
 
@@ -74,7 +76,9 @@ class AgentConfiguration:
                  AgentConfiguration
         """
         try:
-            return AgentConfigurationSchema().loads(config_json)
+            config_dict = AgentConfigurationSchema().loads(config_json)
+            config_dict = freeze_lists_in_dict(config_dict)
+            return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))
 
@@ -106,8 +110,3 @@ class AgentConfigurationSchema(Schema):
     credential_collectors = fields.List(fields.Nested(PluginConfigurationSchema))
     payloads = fields.List(fields.Nested(PluginConfigurationSchema))
     propagation = fields.Nested(PropagationConfigurationSchema)
-
-    @post_load
-    @freeze_lists
-    def _make_agent_configuration(self, data, **kwargs):
-        return AgentConfiguration(**data)
