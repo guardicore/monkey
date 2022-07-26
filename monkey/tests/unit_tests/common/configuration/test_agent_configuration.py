@@ -69,25 +69,35 @@ def test_custom_pba_configuration_schema():
     assert config.windows_filename == WINDOWS_FILENAME
 
 
-def test_custom_pba_configuration_schema__empty_filename_allowed():
+def test_custom_pba_configuration_schema__empty_filenames_allowed():
     schema = CustomPBAConfigurationSchema()
 
     empty_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
-    empty_filename_configuration.update({"linux_filename": ""})
+    empty_filename_configuration.update({"linux_filename": "", "windows_filename": ""})
 
     config = schema.load(empty_filename_configuration)
 
     assert config.linux_command == LINUX_COMMAND
     assert config.linux_filename == ""
     assert config.windows_command == WINDOWS_COMMAND
-    assert config.windows_filename == WINDOWS_FILENAME
+    assert config.windows_filename == ""
 
 
-def test_custom_pba_configuration_schema__invalid_filename():
+def test_custom_pba_configuration_schema__invalid_linux_filename():
     schema = CustomPBAConfigurationSchema()
 
     invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
-    invalid_filename_configuration["linux_filename"] = "???"
+    invalid_filename_configuration["linux_filename"] = "\\"
+
+    with pytest.raises(ValidationError):
+        schema.load(invalid_filename_configuration)
+
+
+def test_custom_pba_configuration_schema__invalid_windows_filename():
+    schema = CustomPBAConfigurationSchema()
+
+    invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
+    invalid_filename_configuration["windows_filename"] = "?"
 
     with pytest.raises(ValidationError):
         schema.load(invalid_filename_configuration)
