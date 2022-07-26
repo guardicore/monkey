@@ -12,7 +12,7 @@ class MonkeyLog(object):
         self.log_dir_path = log_dir_path
 
     def download_log(self, island_client):
-        log = island_client.find_log_in_db({"monkey_id": ObjectId(self.monkey["id"])})
+        log = island_client.find_log_in_db({"monkey_id": ObjectId(self.monkey["_id"])})
         if not log:
             LOGGER.error("Log for monkey {} not found".format(self.monkey["ip_addresses"][0]))
             return False
