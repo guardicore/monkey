@@ -83,21 +83,25 @@ def test_custom_pba_configuration_schema__empty_filenames_allowed():
     assert config.windows_filename == ""
 
 
-def test_custom_pba_configuration_schema__invalid_linux_filename():
+@pytest.mark.parametrize("linux_filename", ["\\", "\\\\\\"])
+def test_custom_pba_configuration_schema__invalid_linux_filename(linux_filename):
     schema = CustomPBAConfigurationSchema()
 
     invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
-    invalid_filename_configuration["linux_filename"] = "\\"
+    invalid_filename_configuration["linux_filename"] = linux_filename
 
     with pytest.raises(ValidationError):
         schema.load(invalid_filename_configuration)
 
 
-def test_custom_pba_configuration_schema__invalid_windows_filename():
+@pytest.mark.parametrize(
+    "windows_filename", ["CON", "CON.txt", "con.abc.pdf", " ", "abc.", "a?b", "d\\e"]
+)
+def test_custom_pba_configuration_schema__invalid_windows_filename(windows_filename):
     schema = CustomPBAConfigurationSchema()
 
     invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
-    invalid_filename_configuration["windows_filename"] = "?"
+    invalid_filename_configuration["windows_filename"] = windows_filename
 
     with pytest.raises(ValidationError):
         schema.load(invalid_filename_configuration)
