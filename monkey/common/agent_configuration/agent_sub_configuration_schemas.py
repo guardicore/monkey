@@ -15,14 +15,19 @@ from .agent_sub_configurations import (
 )
 from .utils import freeze_lists
 
-valid_custom_pba_filename_regex = re.compile(r"^([a-zA-Z0-9\ \._-]*)$")
+valid_windows_custom_pba_filename_regex = re.compile(r"^[^<>:\"\\\/|?*]+[^<>:\"\\\/|?* \.]$")
+valid_linux_custom_pba_filename_regex = re.compile(r"^[^\\]+$")
 
 
 class CustomPBAConfigurationSchema(Schema):
     linux_command = fields.Str()
-    linux_filename = fields.Str(validate=validate.Regexp(regex=valid_custom_pba_filename_regex))
+    linux_filename = fields.Str(
+        validate=validate.Regexp(regex=valid_linux_custom_pba_filename_regex)
+    )
     windows_command = fields.Str()
-    windows_filename = fields.Str(validate=validate.Regexp(regex=valid_custom_pba_filename_regex))
+    windows_filename = fields.Str(
+        validate=validate.Regexp(regex=valid_windows_custom_pba_filename_regex)
+    )
 
     @post_load
     def _make_custom_pba_configuration(self, data, **kwargs):
