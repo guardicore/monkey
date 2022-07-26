@@ -28,7 +28,7 @@ class CustomPBAConfiguration:
 @dataclass(frozen=True)
 class PluginConfiguration:
     """
-    Dataclass for the configuration of plugins
+    A configuration for plugins
 
     :param name: Name of the plugin.
                  Example: "ransomware"
