@@ -5,7 +5,7 @@ from typing import Dict, Tuple
 @dataclass(frozen=True)
 class CustomPBAConfiguration:
     """
-    Dataclass for the configuration of custom post-breach actions
+    A configuration for custom post-breach actions
 
     Attributes:
         linux_command (str): Command to run on Linux victim machines. If a file is uploaded,
