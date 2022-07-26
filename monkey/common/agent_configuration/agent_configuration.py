@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, List, Mapping
+from typing import Any, Mapping, Tuple
 
 from marshmallow import Schema, fields
 from marshmallow.exceptions import MarshmallowError
 
+from ..utils.code_utils import freeze_lists_in_mapping
 from .agent_sub_configuration_schemas import (
     CustomPBAConfigurationSchema,
     PluginConfigurationSchema,
@@ -33,9 +34,9 @@ class InvalidConfigurationError(Exception):
 class AgentConfiguration:
     keep_tunnel_open_time: float
     custom_pbas: CustomPBAConfiguration
-    post_breach_actions: List[PluginConfiguration]
-    credential_collectors: List[PluginConfiguration]
-    payloads: List[PluginConfiguration]
+    post_breach_actions: Tuple[PluginConfiguration, ...]
+    credential_collectors: Tuple[PluginConfiguration, ...]
+    payloads: Tuple[PluginConfiguration, ...]
     propagation: PropagationConfiguration
 
     def __post_init__(self):
@@ -59,6 +60,7 @@ class AgentConfiguration:
 
         try:
             config_dict = AgentConfigurationSchema().load(config_mapping)
+            config_dict = freeze_lists_in_mapping(config_dict)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))
@@ -75,6 +77,7 @@ class AgentConfiguration:
         """
         try:
             config_dict = AgentConfigurationSchema().loads(config_json)
+            config_dict = freeze_lists_in_mapping(config_dict)
             return AgentConfiguration(**config_dict)
         except MarshmallowError as err:
             raise InvalidConfigurationError(str(err))

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, Tuple
 
 
 @dataclass(frozen=True)
@@ -18,10 +18,10 @@ class PluginConfiguration:
 
 @dataclass(frozen=True)
 class ScanTargetConfiguration:
-    blocked_ips: List[str]
-    inaccessible_subnets: List[str]
+    blocked_ips: Tuple[str, ...]
+    inaccessible_subnets: Tuple[str, ...]
     local_network_scan: bool
-    subnets: List[str]
+    subnets: Tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -32,27 +32,27 @@ class ICMPScanConfiguration:
 @dataclass(frozen=True)
 class TCPScanConfiguration:
     timeout: float
-    ports: List[int]
+    ports: Tuple[int, ...]
 
 
 @dataclass(frozen=True)
 class NetworkScanConfiguration:
     tcp: TCPScanConfiguration
     icmp: ICMPScanConfiguration
-    fingerprinters: List[PluginConfiguration]
+    fingerprinters: Tuple[PluginConfiguration, ...]
     targets: ScanTargetConfiguration
 
 
 @dataclass(frozen=True)
 class ExploitationOptionsConfiguration:
-    http_ports: List[int]
+    http_ports: Tuple[int, ...]
 
 
 @dataclass(frozen=True)
 class ExploitationConfiguration:
     options: ExploitationOptionsConfiguration
-    brute_force: List[PluginConfiguration]
-    vulnerability: List[PluginConfiguration]
+    brute_force: Tuple[PluginConfiguration, ...]
+    vulnerability: Tuple[PluginConfiguration, ...]
 
 
 @dataclass(frozen=True)
