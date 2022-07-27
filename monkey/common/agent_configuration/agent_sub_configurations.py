@@ -46,6 +46,14 @@ class ICMPScanConfiguration:
 
 @dataclass(frozen=True)
 class TCPScanConfiguration:
+    """
+    A configuration for TCP scanning
+
+    Attributes:
+        :param timeout: Maximum time to wait for a response from the target
+        :param ports: Ports to scan
+    """
+
     timeout: float
     ports: Tuple[int, ...]
 
