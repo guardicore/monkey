@@ -110,7 +110,7 @@ class ExploitationOptionsConfiguration:
     A configuration for exploitation options
 
     Attributes:
-        :param http_ports: HTTP ports to scan
+        :param http_ports: HTTP ports to exploit
     """
 
     http_ports: Tuple[int, ...]
