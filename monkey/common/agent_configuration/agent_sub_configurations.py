@@ -118,6 +118,15 @@ class ExploitationConfiguration:
 
 @dataclass(frozen=True)
 class PropagationConfiguration:
+    """
+    A configuration for propagation
+
+    Attributes:
+        :param maximum_depth: Maximum number of hops to take from the Island server
+        :param network_scan: Configuration for network scanning
+        :param exploitation: Configuration for exploitation
+    """
+
     maximum_depth: int
     network_scan: NetworkScanConfiguration
     exploitation: ExploitationConfiguration
