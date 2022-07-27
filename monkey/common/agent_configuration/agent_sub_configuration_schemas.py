@@ -115,7 +115,7 @@ class NetworkScanConfigurationSchema(Schema):
 
 
 class ExploitationOptionsConfigurationSchema(Schema):
-    http_ports = fields.List(fields.Int())
+    http_ports = fields.List(fields.Int(validate=validate.Range(min=0, max=65535)))
 
     @post_load
     @freeze_lists
