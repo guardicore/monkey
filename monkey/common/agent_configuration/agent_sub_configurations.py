@@ -41,6 +41,13 @@ class ScanTargetConfiguration:
 
 @dataclass(frozen=True)
 class ICMPScanConfiguration:
+    """
+    A configuration for ICMP scanning
+
+    Attributes:
+        :param timeout: Maximum time in seconds to wait for a response from the target
+    """
+
     timeout: float
 
 
