@@ -54,6 +54,18 @@ class PluginConfiguration:
 
 @dataclass(frozen=True)
 class ScanTargetConfiguration:
+    """
+    Configuration of network targets to scan and exploit
+
+    Attributes:
+        :param blocked_ips: Tuple of IP's that won't be scanned. Example: ("1.1.1.1", "2.2.2.2")
+        :param inaccessible_subnets: Tuple of subnet ranges that shouldn't be accessible for the
+        agent. Example: ("1.1.1.1", "2.2.2.2/24", "myserver")
+        :param local_network_scan: Boolean indicating if the agent should scan the local network
+        :param subnets: Tuple of subnet ranges to scan. Example: ("192.168.1.1-192.168.2.255",
+         "3.3.3.3", "2.2.2.2/24", "myHostname")
+    """
+
     blocked_ips: Tuple[str, ...]
     inaccessible_subnets: Tuple[str, ...]
     local_network_scan: bool
