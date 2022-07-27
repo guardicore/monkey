@@ -237,6 +237,16 @@ def test_propagation_configuration():
     assert config_dict == PROPAGATION_CONFIGURATION
 
 
+def test_propagation_configuration__invalid_maximum_depth():
+    schema = PropagationConfigurationSchema()
+
+    negative_maximum_depth_configuration = PROPAGATION_CONFIGURATION.copy()
+    negative_maximum_depth_configuration["maximum_depth"] = -1
+
+    with pytest.raises(ValidationError):
+        schema.load(negative_maximum_depth_configuration)
+
+
 def test_agent_configuration():
     config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
     config_json = AgentConfiguration.to_json(config)

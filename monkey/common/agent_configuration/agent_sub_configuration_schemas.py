@@ -135,7 +135,7 @@ class ExploitationConfigurationSchema(Schema):
 
 
 class PropagationConfigurationSchema(Schema):
-    maximum_depth = fields.Int()
+    maximum_depth = fields.Int(validate=validate.Range(min=0))
     network_scan = fields.Nested(NetworkScanConfigurationSchema)
     exploitation = fields.Nested(ExploitationConfigurationSchema)
 
