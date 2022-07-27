@@ -11,7 +11,7 @@ const PROPAGATION_CONFIGURATION_SCHEMA = {
     'maximum_depth': {
       'title': 'Maximum scan depth',
       'type': 'integer',
-      'minimum': 1,
+      'minimum': 0,
       'default': 2,
       'description': 'Amount of hops allowed for the monkey to spread from the ' +
       'Island server. \n' +
