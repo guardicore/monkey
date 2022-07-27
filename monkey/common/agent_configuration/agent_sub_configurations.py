@@ -106,6 +106,13 @@ class NetworkScanConfiguration:
 
 @dataclass(frozen=True)
 class ExploitationOptionsConfiguration:
+    """
+    A configuration for exploitation options
+
+    Attributes:
+        :param http_ports: HTTP ports to scan
+    """
+
     http_ports: Tuple[int, ...]
 
 
