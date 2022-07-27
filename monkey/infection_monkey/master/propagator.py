@@ -4,6 +4,7 @@ from threading import Event
 from typing import List
 
 from common.agent_configuration import (
+    ExploitationConfiguration,
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
@@ -60,7 +61,7 @@ class Propagator:
         exploit_thread = create_daemon_thread(
             target=self._exploit_hosts,
             name="PropagatorExploitThread",
-            args=(propagation_config, current_depth, network_scan_completed, stop),
+            args=(propagation_config.exploitation, current_depth, network_scan_completed, stop),
         )
 
         scan_thread.start()
@@ -142,16 +143,15 @@ class Propagator:
 
     def _exploit_hosts(
         self,
-        propagation_config: PropagationConfiguration,
+        exploitation_config: ExploitationConfiguration,
         current_depth: int,
         network_scan_completed: Event,
         stop: Event,
     ):
         logger.info("Exploiting victims")
 
-        exploiter_config = propagation_config.exploitation
         self._exploiter.exploit_hosts(
-            exploiter_config,
+            exploitation_config,
             self._hosts_to_exploit,
             current_depth,
             self._process_exploit_attempts,
