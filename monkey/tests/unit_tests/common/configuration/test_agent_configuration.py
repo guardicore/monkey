@@ -126,6 +126,16 @@ def test_icmp_scan_configuration_schema():
     assert config.timeout == TIMEOUT
 
 
+def test_icmp_scan_configuration_schema__negative_timeout():
+    schema = ICMPScanConfigurationSchema()
+
+    negative_timeout_configuration = ICMP_CONFIGURATION.copy()
+    negative_timeout_configuration["timeout"] = -1
+
+    with pytest.raises(ValidationError):
+        schema.load(negative_timeout_configuration)
+
+
 def test_tcp_scan_configuration_schema():
     schema = TCPScanConfigurationSchema()
 
