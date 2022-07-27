@@ -239,6 +239,14 @@ def test_agent_configuration():
     assert json.loads(config_json) == AGENT_CONFIGURATION
 
 
+def test_agent_configuration__negative_keep_tunnel_open_time():
+    negative_keep_tunnel_open_time_configuration = AGENT_CONFIGURATION.copy()
+    negative_keep_tunnel_open_time_configuration["keep_tunnel_open_time"] = -1
+
+    with pytest.raises(InvalidConfigurationError):
+        AgentConfiguration.from_mapping(negative_keep_tunnel_open_time_configuration)
+
+
 def test_incorrect_type():
     valid_config = AgentConfiguration.from_mapping(AGENT_CONFIGURATION)
     with pytest.raises(InvalidConfigurationError):
