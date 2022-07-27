@@ -48,6 +48,8 @@ from common.agent_configuration.agent_sub_configurations import (
     PropagationConfiguration,
 )
 
+INVALID_PORTS = [[-1, 1, 2], [1, 2, 99999]]
+
 
 def test_build_plugin_configuration():
     schema = PluginConfigurationSchema()
@@ -145,7 +147,7 @@ def test_tcp_scan_configuration_schema():
     assert config.ports == tuple(PORTS)
 
 
-@pytest.mark.parametrize("ports", [[-1, 1, 2], [1, 2, 99999]])
+@pytest.mark.parametrize("ports", INVALID_PORTS)
 def test_tcp_scan_configuration_schema__ports_out_of_range(ports):
     schema = TCPScanConfigurationSchema()
 
@@ -191,7 +193,7 @@ def test_exploitation_options_configuration_schema():
     assert config.http_ports == tuple(ports)
 
 
-@pytest.mark.parametrize("ports", [[-1, 1, 2], [1, 2, 99999]])
+@pytest.mark.parametrize("ports", INVALID_PORTS)
 def test_exploitation_options_configuration_schema__ports_out_of_range(ports):
     schema = ExploitationOptionsConfigurationSchema()
 
