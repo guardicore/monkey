@@ -1,7 +1,8 @@
 import logging
+from dataclasses import replace
 from queue import Queue
 from threading import Event
-from typing import List
+from typing import List, Sequence
 
 from common.agent_configuration import (
     NetworkScanConfiguration,
@@ -52,18 +53,14 @@ class Propagator:
         network_scan_completed = Event()
         self._hosts_to_exploit = Queue()
 
-        # This is a hack to add http_ports to the options of fingerprinters
-        # It will be reworked
-        for fingerprinter in propagation_config.network_scan.fingerprinters:
-            if fingerprinter.name == "http":
-                fingerprinter.options[
-                    "http_ports"
-                ] = propagation_config.exploitation.options.http_ports
+        network_scan = self._add_http_ports_to_fingerprinters(
+            propagation_config.network_scan, propagation_config.exploitation.options.http_ports
+        )
 
         scan_thread = create_daemon_thread(
             target=self._scan_network,
             name="PropagatorScanThread",
-            args=(propagation_config.network_scan, stop),
+            args=(network_scan, stop),
         )
         exploit_thread = create_daemon_thread(
             target=self._exploit_hosts,
@@ -80,6 +77,23 @@ class Propagator:
         exploit_thread.join()
 
         logger.info("Finished attempting to propagate")
+
+    @staticmethod
+    def _add_http_ports_to_fingerprinters(
+        network_scan: NetworkScanConfiguration, http_ports: Sequence[int]
+    ) -> NetworkScanConfiguration:
+        # This is a hack to add http_ports to the options of fingerprinters
+        # It will be reworked
+        modified_fingerprinters = [*network_scan.fingerprinters]
+        for i, fingerprinter in enumerate(modified_fingerprinters):
+            if fingerprinter.name != "http":
+                continue
+
+            modified_options = fingerprinter.options.copy()
+            modified_options["http_ports"] = list(http_ports)
+            modified_fingerprinters[i] = replace(fingerprinter, options=modified_options)
+
+        return replace(network_scan, fingerprinters=modified_fingerprinters)
 
     def _scan_network(self, scan_config: NetworkScanConfiguration, stop: Event):
         logger.info("Starting network scan")
