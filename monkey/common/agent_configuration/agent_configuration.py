@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Tuple
 
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 from marshmallow.exceptions import MarshmallowError
 
 from ..utils.code_utils import freeze_lists_in_mapping
@@ -117,7 +117,7 @@ class AgentConfiguration:
 
 
 class AgentConfigurationSchema(Schema):
-    keep_tunnel_open_time = fields.Float()
+    keep_tunnel_open_time = fields.Float(validate=validate.Range(min=0))
     custom_pbas = fields.Nested(CustomPBAConfigurationSchema)
     post_breach_actions = fields.List(fields.Nested(PluginConfigurationSchema))
     credential_collectors = fields.List(fields.Nested(PluginConfigurationSchema))
