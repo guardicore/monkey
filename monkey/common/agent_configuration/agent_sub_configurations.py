@@ -27,6 +27,27 @@ class CustomPBAConfiguration:
 
 @dataclass(frozen=True)
 class PluginConfiguration:
+    """
+    A configuration for plugins
+
+    Attributes:
+        :param name: Name of the plugin
+                     Example: "ransomware"
+        :param options: Any other information/configuration fields relevant to the plugin
+                        Example: {
+                            "encryption": {
+                                "enabled": True,
+                                "directories": {
+                                    "linux_target_dir": "~/this_dir",
+                                    "windows_target_dir": "C:\that_dir"
+                                },
+                            },
+                            "other_behaviors": {
+                                "readme": True
+                            },
+                        }
+    """
+
     name: str
     options: Dict
 
