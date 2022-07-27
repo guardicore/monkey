@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Tuple
 
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 from marshmallow.exceptions import MarshmallowError
 
 from ..utils.code_utils import freeze_lists_in_mapping
@@ -32,6 +32,19 @@ class InvalidConfigurationError(Exception):
 
 @dataclass(frozen=True)
 class AgentConfiguration:
+    """
+    A configuration for Infection Monkey agents
+
+    Attributes:
+        :param keep_tunnel_open_time: Maximum time in seconds to keep a tunnel open after
+                                      the last exploit
+        :param custom_pbas: Configuration for custom post-breach actions
+        :param post_breach_actions: Configuration for post-breach actions
+        :param credential_collectors: Configuration for credential collectors
+        :param payloads: Configuration for payloads
+        :param propagation: Configuration for propagation
+    """
+
     keep_tunnel_open_time: float
     custom_pbas: CustomPBAConfiguration
     post_breach_actions: Tuple[PluginConfiguration, ...]
@@ -104,7 +117,7 @@ class AgentConfiguration:
 
 
 class AgentConfigurationSchema(Schema):
-    keep_tunnel_open_time = fields.Float()
+    keep_tunnel_open_time = fields.Float(validate=validate.Range(min=0))
     custom_pbas = fields.Nested(CustomPBAConfigurationSchema)
     post_breach_actions = fields.List(fields.Nested(PluginConfigurationSchema))
     credential_collectors = fields.List(fields.Nested(PluginConfigurationSchema))
