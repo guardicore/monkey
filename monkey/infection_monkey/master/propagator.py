@@ -52,6 +52,14 @@ class Propagator:
         network_scan_completed = Event()
         self._hosts_to_exploit = Queue()
 
+        # This is a hack to add http_ports to the options of fingerprinters
+        # It will be reworked
+        for fingerprinter in propagation_config.network_scan.fingerprinters:
+            if fingerprinter.name == "http":
+                fingerprinter.options[
+                    "http_ports"
+                ] = propagation_config.exploitation.options.http_ports
+
         scan_thread = create_daemon_thread(
             target=self._scan_network,
             name="PropagatorScanThread",
