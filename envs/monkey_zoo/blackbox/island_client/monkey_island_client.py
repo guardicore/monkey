@@ -34,18 +34,35 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
-        self.requests.post_json(
+        self._import_config(test_configuration)
+        self._import_credentials(test_configuration.propagation_credentials)
+
+    @avoid_race_condition
+    def _import_config(self, test_configuration: TestConfiguration):
+        response = self.requests.post_json(
             "api/agent-configuration",
             json=AgentConfiguration.to_mapping(test_configuration.agent_configuration),
         )
+        if response.ok:
+            LOGGER.info("Configuration is imported.")
+        else:
+            LOGGER.error(f"Failed to import config: {response}")
+            assert False
+
+    @avoid_race_condition
+    def _import_credentials(self, propagation_credentials: Credentials):
         serialized_propagation_credentials = [
-            Credentials.to_mapping(credentials)
-            for credentials in test_configuration.propagation_credentials
+            Credentials.to_mapping(credentials) for credentials in propagation_credentials
         ]
-        self.requests.post_json(
+        response = self.requests.post_json(
             "/api/propagation-credentials/configured-credentials",
             json=serialized_propagation_credentials,
         )
+        if response.ok:
+            LOGGER.info("Credentials are imported.")
+        else:
+            LOGGER.error(f"Failed to import credentials: {response}")
+            assert False
 
     @avoid_race_condition
     def run_monkey_local(self):
