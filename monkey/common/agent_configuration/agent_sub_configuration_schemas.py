@@ -14,6 +14,7 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 from .utils import freeze_lists
+from .validators.ip_ranges import validate_ip, validate_subnet_range
 
 valid_windows_custom_pba_filename_regex = re.compile(r"^[^<>:\"\\\/|?*]*[^<>:\"\\\/|?* \.]+$|^$")
 valid_linux_custom_pba_filename_regex = re.compile(r"^[^\0/]*$")
@@ -73,10 +74,10 @@ class PluginConfigurationSchema(Schema):
 
 
 class ScanTargetConfigurationSchema(Schema):
-    blocked_ips = fields.List(fields.Str())
-    inaccessible_subnets = fields.List(fields.Str())
+    blocked_ips = fields.List(fields.Str(validate=validate_ip))
+    inaccessible_subnets = fields.List(fields.Str(validate=validate_subnet_range))
     local_network_scan = fields.Bool()
-    subnets = fields.List(fields.Str())
+    subnets = fields.List(fields.Str(validate=validate_subnet_range))
 
     @post_load
     @freeze_lists
