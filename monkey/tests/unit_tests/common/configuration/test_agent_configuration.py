@@ -191,6 +191,16 @@ def test_exploitation_options_configuration_schema():
     assert config.http_ports == tuple(ports)
 
 
+@pytest.mark.parametrize("ports", [[-1, 1, 2], [1, 2, 99999]])
+def test_exploitation_options_configuration_schema__ports_out_of_range(ports):
+    schema = ExploitationOptionsConfigurationSchema()
+
+    invalid_ports_configuration = {"http_ports": ports}
+
+    with pytest.raises(ValidationError):
+        schema.load(invalid_ports_configuration)
+
+
 def test_exploiter_configuration_schema():
     name = "bond"
     options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
