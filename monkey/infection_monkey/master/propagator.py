@@ -83,7 +83,7 @@ class Propagator:
         network_scan: NetworkScanConfiguration, http_ports: Sequence[int]
     ) -> NetworkScanConfiguration:
         # This is a hack to add http_ports to the options of fingerprinters
-        # It will be reworked
+        # It will be reworked. See https://github.com/guardicore/monkey/issues/2136
         modified_fingerprinters = [*network_scan.fingerprinters]
         for i, fingerprinter in enumerate(modified_fingerprinters):
             if fingerprinter.name != "http":
