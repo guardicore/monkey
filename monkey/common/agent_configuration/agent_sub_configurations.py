@@ -52,6 +52,16 @@ class TCPScanConfiguration:
 
 @dataclass(frozen=True)
 class NetworkScanConfiguration:
+    """
+    A configuration for network scanning
+
+    Attributes:
+        :param tcp: Configuration for TCP scanning
+        :param icmp: Configuration for ICMP scanning
+        :param fingerprinters: Configuration for fingerprinters to run
+        :param targets: Configuration for targets to scan
+    """
+
     tcp: TCPScanConfiguration
     icmp: ICMPScanConfiguration
     fingerprinters: Tuple[PluginConfiguration, ...]
