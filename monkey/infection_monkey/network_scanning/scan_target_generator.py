@@ -8,6 +8,9 @@ from infection_monkey.network import NetworkAddress, NetworkInterface
 
 logger = logging.getLogger(__name__)
 
+# TODO: We can probably reduce code and save ourselves some trouble if we use IPv4Address and
+#       IPv4Network. See https://docs.python.org/3/library/ipaddress.html
+
 
 def compile_scan_target_list(
     local_network_interfaces: List[NetworkInterface],
