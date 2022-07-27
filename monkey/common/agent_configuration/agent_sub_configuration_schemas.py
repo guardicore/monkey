@@ -93,8 +93,8 @@ class ICMPScanConfigurationSchema(Schema):
 
 
 class TCPScanConfigurationSchema(Schema):
-    timeout = fields.Float()
-    ports = fields.List(fields.Int())
+    timeout = fields.Float(validate=validate.Range(min=0))
+    ports = fields.List(fields.Int(validate=validate.Range(min=0, max=65535)))
 
     @post_load
     @freeze_lists
