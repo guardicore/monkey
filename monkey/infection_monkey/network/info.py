@@ -18,6 +18,8 @@ SIOCGIFNETMASK = 0x891B  # get network PA mask
 RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
 
+# TODO: We can probably replace both of these namedtuples with classes in Python's ipaddress
+#       library: https://docs.python.org/3/library/ipaddress.html
 NetworkInterface = namedtuple("NetworkInterface", ("address", "netmask"))
 NetworkAddress = namedtuple("NetworkAddress", ("ip", "domain"))
 
