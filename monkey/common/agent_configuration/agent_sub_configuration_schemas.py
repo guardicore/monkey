@@ -85,7 +85,7 @@ class ScanTargetConfigurationSchema(Schema):
 
 
 class ICMPScanConfigurationSchema(Schema):
-    timeout = fields.Float()
+    timeout = fields.Float(validate=validate.Range(min=0))
 
     @post_load
     def _make_icmp_scan_configuration(self, data, **kwargs):
