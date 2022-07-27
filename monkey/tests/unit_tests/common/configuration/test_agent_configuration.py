@@ -146,6 +146,16 @@ def test_tcp_scan_configuration_schema__ports_out_of_range(ports):
         schema.load(invalid_ports_configuration)
 
 
+def test_tcp_scan_configuration_schema__negative_timeout():
+    schema = TCPScanConfigurationSchema()
+
+    negative_timeout_configuration = TCP_SCAN_CONFIGURATION.copy()
+    negative_timeout_configuration["timeout"] = -1
+
+    with pytest.raises(ValidationError):
+        schema.load(negative_timeout_configuration)
+
+
 def test_network_scan_configuration():
     schema = NetworkScanConfigurationSchema()
 
