@@ -49,7 +49,7 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
 
 
 agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 3)
-agent_configuration = set_keep_tunnel_open_time(noop_test_configuration.agent_configuration, 20)
+agent_configuration = set_keep_tunnel_open_time(agent_configuration, 20)
 agent_configuration = _add_exploiters(agent_configuration)
 agent_configuration = _add_subnets(agent_configuration)
 agent_configuration = _add_tcp_ports(agent_configuration)
