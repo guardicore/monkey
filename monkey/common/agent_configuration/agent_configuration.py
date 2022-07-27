@@ -32,6 +32,19 @@ class InvalidConfigurationError(Exception):
 
 @dataclass(frozen=True)
 class AgentConfiguration:
+    """
+    A configuration for Infection Monkey agents
+
+    Attributes:
+        :param keep_tunnel_open_time: Maximum time in seconds to keep a tunnel open after
+                                      the last exploit
+        :param custom_pbas: Configuration for custom post-breach actions
+        :param post_breach_actions: Configuration for post-breach actions
+        :param credential_collectors: Configuration for credential collectors
+        :param payloads: Configuration for payloads
+        :param propagation: Configuration for propagation
+    """
+
     keep_tunnel_open_time: float
     custom_pbas: CustomPBAConfiguration
     post_breach_actions: Tuple[PluginConfiguration, ...]
