@@ -225,15 +225,14 @@ def test_propagation_configuration():
     assert config_dict == PROPAGATION_CONFIGURATION
 
 
-@pytest.mark.parametrize("depth", [-1, 0])
-def test_propagation_configuration__invalid_maximum_depth(depth):
+def test_propagation_configuration__invalid_maximum_depth():
     schema = PropagationConfigurationSchema()
 
-    invalid_maximum_depth_configuration = PROPAGATION_CONFIGURATION.copy()
-    invalid_maximum_depth_configuration["maximum_depth"] = depth
+    negative_maximum_depth_configuration = PROPAGATION_CONFIGURATION.copy()
+    negative_maximum_depth_configuration["maximum_depth"] = -1
 
     with pytest.raises(ValidationError):
-        schema.load(invalid_maximum_depth_configuration)
+        schema.load(negative_maximum_depth_configuration)
 
 
 def test_agent_configuration():
