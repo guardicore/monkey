@@ -22,6 +22,8 @@ class APIEncoder(JSONEncoder):
             return value.name
         if issubclass(type(value), IJSONSerializable):
             return loads(value.__class__.to_json(value))
+        if issubclass(type(value), set):
+            return list(value)
         try:
             return JSONEncoder.default(self, value)
         except TypeError:
