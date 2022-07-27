@@ -111,6 +111,15 @@ class ExploitationOptionsConfiguration:
 
 @dataclass(frozen=True)
 class ExploitationConfiguration:
+    """
+    A configuration for exploitation
+
+    Attributes:
+        :param options: Configuration for exploitation options
+        :param brute_force: Configuration for brute force exploiters
+        :param vulnerability: Configuration for vulnerability exploiters
+    """
+
     options: ExploitationOptionsConfiguration
     brute_force: Tuple[PluginConfiguration, ...]
     vulnerability: Tuple[PluginConfiguration, ...]
