@@ -29,7 +29,7 @@ def add_exploiters(
 
 
 def add_fingerprinters(
-    agent_configuration: AgentConfiguration, fingerprinters: Sequence[PluginConfiguration] = []
+    agent_configuration: AgentConfiguration, fingerprinters: Sequence[PluginConfiguration]
 ) -> AgentConfiguration:
     network_scan_configuration = replace(
         agent_configuration.propagation.network_scan, fingerprinters=fingerprinters
