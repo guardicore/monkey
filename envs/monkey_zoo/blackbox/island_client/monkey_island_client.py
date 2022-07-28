@@ -1,7 +1,7 @@
 import json
 import logging
 import time
-from typing import Union
+from typing import Sequence, Union
 
 from bson import json_util
 
@@ -29,8 +29,9 @@ class MonkeyIslandClient(object):
     def get_api_status(self):
         return self.requests.get("api")
 
-    def get_config(self):
-        return json.loads(self.requests.get("api/agent-configuration").content)
+    def get_propagation_credentials(self) -> Sequence[Credentials]:
+        response = self.requests.get("api/propagation-credentials")
+        return [Credentials.from_mapping(credentials) for credentials in response.json()]
 
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
