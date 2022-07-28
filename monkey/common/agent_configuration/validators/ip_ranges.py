@@ -3,9 +3,6 @@ from ipaddress import AddressValueError, IPv4Address, IPv4Network, NetmaskValueE
 
 from marshmallow import ValidationError
 
-hostname_pattern = r"([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*.?)*([A-Za-z0-9]*[A-Za-z]+[A-Za-z0-9]*)"
-hostname_regex = re.compile(hostname_pattern)
-
 
 def validate_subnet_range(subnet_range: str):
     try:
@@ -30,11 +27,21 @@ def validate_subnet_range(subnet_range: str):
 
 
 def validate_hostname(hostname: str):
-    match = re.match(hostname_regex, hostname)
-    if match and match.group() == hostname:
-        return
-    else:
-        raise ValidationError(f"Invalid hostname {hostname}")
+    # Based on hostname syntax: https://www.rfc-editor.org/rfc/rfc1123#page-13
+    hostname_segments = hostname.split(".")
+    if any((part.endswith("-") or part.startswith("-") for part in hostname_segments)):
+        raise ValidationError(f"Hostname segment can't start or end with a hyphen: {hostname}")
+    if not any((char.isalpha() for char in hostname_segments[-1])):
+        raise ValidationError(f"Last segment of a hostname must contain a letter: {hostname}")
+
+    valid_characters_pattern = r"^[A-Za-z0-9\-]+$"
+    valid_characters_regex = re.compile(valid_characters_pattern)
+    matches = (
+        re.match(valid_characters_regex, hostname_segment) for hostname_segment in hostname_segments
+    )
+
+    if not all(matches):
+        raise ValidationError(f"Hostname contains invalid characters: {hostname}")
 
 
 def validate_ip_network(ip_network: str):

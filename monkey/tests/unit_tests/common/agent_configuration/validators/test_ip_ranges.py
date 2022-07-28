@@ -46,12 +46,14 @@ def test_validate_subnet_range__ip_range_invalid(ip_range):
         validate_subnet_range(ip_range)
 
 
-@pytest.mark.parametrize("hostname", ["infection.monkey", "1nfection-Monkey"])
+@pytest.mark.parametrize("hostname", ["infection.monkey", "1nfection-Monkey", "1.1.1.1a"])
 def test_validate_subnet_range__hostname_valid(hostname):
     validate_subnet_range(hostname)
 
 
-@pytest.mark.parametrize("hostname", ["hy&!he.host", "čili-peppers.are-hot"])
+@pytest.mark.parametrize(
+    "hostname", ["hy&!he.host", "čili-peppers.are-hot", "one.two-", "one-.two", "one@two", ""]
+)
 def test_validate_subnet_range__hostname_invalid(hostname):
     with pytest.raises(ValidationError):
         validate_subnet_range(hostname)
