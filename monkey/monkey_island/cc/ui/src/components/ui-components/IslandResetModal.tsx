@@ -109,7 +109,7 @@ const IslandResetModal = (props: Props) => {
         }})
         .then(res => {
           if (res.status === 200) {
-              return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'DELETE'})
+              return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
           }})
       .then(res => {
         if (res.status === 200) {
