@@ -252,7 +252,7 @@ class ConfigurePageComponent extends AuthComponent {
           this.props.onStatusChange();
         }
       )
-      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'DELETE'})) ;
+      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'})) ;
   };
 
   sendPbaRemoveRequest(apiEndpoint) {
