@@ -52,15 +52,12 @@ def validate_ip_network(ip_network: str):
 
 
 def validate_ip_range(ip_range: str):
-    try:
-        ip_range = ip_range.replace(" ", "")
-        ips = ip_range.split("-")
-        if len(ips) != 2:
-            raise ValidationError(f"Invalid IP range {ip_range}")
-        validate_ip(ips[0])
-        validate_ip(ips[1])
-    except IndexError:
+    ip_range = ip_range.replace(" ", "")
+    ips = ip_range.split("-")
+    if len(ips) != 2:
         raise ValidationError(f"Invalid IP range {ip_range}")
+    validate_ip(ips[0])
+    validate_ip(ips[1])
 
 
 def validate_ip(ip: str):
