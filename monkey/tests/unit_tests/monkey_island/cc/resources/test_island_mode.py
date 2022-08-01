@@ -36,14 +36,14 @@ def flask_client(build_flask_client):
     [IslandMode.RANSOMWARE.value, IslandMode.ADVANCED.value, IslandMode.UNSET.value],
 )
 def test_island_mode_post(flask_client, mode):
-    resp = flask_client.post(
+    resp = flask_client.put(
         IslandModeResource.urls[0], data=json.dumps({"mode": mode}), follow_redirects=True
     )
-    assert resp.status_code == 200
+    assert resp.status_code == 204
 
 
 def test_island_mode_post__invalid_mode(flask_client):
-    resp = flask_client.post(
+    resp = flask_client.put(
         IslandModeResource.urls[0], data=json.dumps({"mode": "bogus mode"}), follow_redirects=True
     )
     assert resp.status_code == 422
@@ -51,7 +51,7 @@ def test_island_mode_post__invalid_mode(flask_client):
 
 @pytest.mark.parametrize("invalid_json", ["42", "{test"])
 def test_island_mode_post__invalid_json(flask_client, invalid_json):
-    resp = flask_client.post(IslandModeResource.urls[0], data="{test", follow_redirects=True)
+    resp = flask_client.put(IslandModeResource.urls[0], data="{test", follow_redirects=True)
     assert resp.status_code == 400
 
 
@@ -63,7 +63,7 @@ def test_island_mode_post__internal_server_error(build_flask_client):
     container.register_instance(IslandModeService, mock_island_mode_service)
 
     with build_flask_client(container) as flask_client:
-        resp = flask_client.post(
+        resp = flask_client.put(
             IslandModeResource.urls[0],
             data=json.dumps({"mode": IslandMode.RANSOMWARE.value}),
             follow_redirects=True,
@@ -74,7 +74,7 @@ def test_island_mode_post__internal_server_error(build_flask_client):
 
 @pytest.mark.parametrize("mode", [IslandMode.RANSOMWARE.value, IslandMode.ADVANCED.value])
 def test_island_mode_endpoint(flask_client, mode):
-    flask_client.post(
+    flask_client.put(
         IslandModeResource.urls[0], data=json.dumps({"mode": mode}), follow_redirects=True
     )
     resp = flask_client.get(IslandModeResource.urls[0], follow_redirects=True)
@@ -83,7 +83,7 @@ def test_island_mode_endpoint(flask_client, mode):
 
 
 def test_island_mode_endpoint__invalid_mode(flask_client):
-    resp_post = flask_client.post(
+    resp_post = flask_client.put(
         IslandModeResource.urls[0], data=json.dumps({"mode": "bogus_mode"}), follow_redirects=True
     )
     resp_get = flask_client.get(IslandModeResource.urls[0], follow_redirects=True)
