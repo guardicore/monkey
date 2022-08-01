@@ -88,7 +88,7 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
-    container.register_convention(Path, "island_log_file_path", get_log_file_path())
+    container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
