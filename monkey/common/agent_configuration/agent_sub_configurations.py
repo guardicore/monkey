@@ -58,12 +58,14 @@ class ScanTargetConfiguration:
     Configuration of network targets to scan and exploit
 
     Attributes:
-        :param blocked_ips: IP's that won't be scanned. Example: ("1.1.1.1", "2.2.2.2")
-        :param inaccessible_subnets: Subnet ranges that shouldn't be accessible for the
-        agent. Example: ("1.1.1.1", "2.2.2.2/24", "myserver")
-        :param local_network_scan: Indicating if the agent should scan the local network
-        :param subnets: Subnet ranges to scan. Example: ("192.168.1.1-192.168.2.255",
-         "3.3.3.3", "2.2.2.2/24", "myHostname")
+        :param blocked_ips: IP's that won't be scanned
+                            Example: ("1.1.1.1", "2.2.2.2")
+        :param inaccessible_subnets: Subnet ranges that shouldn't be accessible for the agent
+                                     Example: ("1.1.1.1", "2.2.2.2/24", "myserver")
+        :param local_network_scan: Whether or not the agent should scan the local network
+        :param subnets: Subnet ranges to scan
+                        Example: ("192.168.1.1-192.168.2.255", "3.3.3.3", "2.2.2.2/24",
+                                  "myHostname")
     """
 
     blocked_ips: Tuple[str, ...]
