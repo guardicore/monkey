@@ -96,7 +96,7 @@ const IslandResetModal = (props: Props) => {
   function clearSimulationData(callback: () => void) {
     auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
       .then(res => {
-        if (res.status === 200) {
+        if (res.ok) {
           callback();
         }
       })
@@ -104,19 +104,19 @@ const IslandResetModal = (props: Props) => {
   function resetAll() {
     auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
-        if (res.status === 200) {
+        if (res.ok) {
             return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
         }})
         .then(res => {
-          if (res.status === 200) {
+          if (res.ok) {
               return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
           }})
       .then(res => {
-        if (res.status === 200) {
-            return auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
+        if (res.ok) {
+            return auth.authFetch('/api/island/mode', {method: 'PUT', body: '{"mode": "unset"}'})
         }})
       .then(res => {
-        if (res.status !== 200) {
+        if (!res.ok) {
           throw 'Error resetting the simulation'
         }
       })
