@@ -26,14 +26,11 @@ class IslandMode(AbstractResource):
 
             self._island_mode_service.set_mode(mode)
 
-            # TODO: Do any of these returns need a body and make_response? What happens if we just
-            #       return the response code?
-            # API Spec: This should be 204 (NO CONTENT)
-            return make_response({}, HTTPStatus.NO_CONTENT)
+            return {}, HTTPStatus.NO_CONTENT
         except (AttributeError, json.decoder.JSONDecodeError):
-            return make_response({}, HTTPStatus.BAD_REQUEST)
+            return {}, HTTPStatus.BAD_REQUEST
         except ValueError:
-            return make_response({}, HTTPStatus.UNPROCESSABLE_ENTITY)
+            return {}, HTTPStatus.UNPROCESSABLE_ENTITY
 
     @jwt_required
     def get(self):
