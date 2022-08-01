@@ -30,11 +30,11 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
     return add_tcp_ports(agent_configuration, ports)
 
 
-agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
-agent_configuration = _add_exploiters(agent_configuration)
-agent_configuration = _add_subnets(agent_configuration)
-agent_configuration = _add_tcp_ports(agent_configuration)
+test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+test_configuration = _add_exploiters(test_configuration)
+test_configuration = _add_subnets(test_configuration)
+test_configuration = _add_tcp_ports(test_configuration)
 
 powershell_credentials_reuse_test_configuration = replace_agent_configuration(
-    noop_test_configuration, agent_configuration
+    noop_test_configuration, test_configuration
 )

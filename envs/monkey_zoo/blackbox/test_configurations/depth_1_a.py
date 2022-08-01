@@ -76,16 +76,16 @@ def _add_http_ports(agent_configuration: AgentConfiguration) -> AgentConfigurati
     return add_http_ports(agent_configuration, HTTP_PORTS)
 
 
-agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
-agent_configuration = _add_exploiters(agent_configuration)
-agent_configuration = _add_fingerprinters(agent_configuration)
-agent_configuration = _add_subnets(agent_configuration)
-agent_configuration = _add_tcp_ports(agent_configuration)
-agent_configuration = _add_credential_collectors(agent_configuration)
-agent_configuration = _add_http_ports(agent_configuration)
+test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+test_configuration = _add_exploiters(test_configuration)
+test_configuration = _add_fingerprinters(test_configuration)
+test_configuration = _add_subnets(test_configuration)
+test_configuration = _add_tcp_ports(test_configuration)
+test_configuration = _add_credential_collectors(test_configuration)
+test_configuration = _add_http_ports(test_configuration)
 
 depth_1_a_test_configuration = replace_agent_configuration(
-    noop_test_configuration, agent_configuration
+    noop_test_configuration, test_configuration
 )
 CREDENTIALS = (
     Credentials(Username("m0nk3y"), None),
