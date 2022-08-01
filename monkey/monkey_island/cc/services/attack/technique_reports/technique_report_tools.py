@@ -31,7 +31,7 @@ def censor_password(password, plain_chars=3, secret_chars=5):
     """
     if not password:
         return ""
-    password = get_datastore_encryptor().decrypt(password)
+    password = get_datastore_encryptor().decrypt(password.encode()).decode()
     return password[0:plain_chars] + "*" * secret_chars
 
 
@@ -45,5 +45,5 @@ def censor_hash(str_hash, plain_chars=5):
     """
     if not str_hash:
         return ""
-    str_hash = get_datastore_encryptor().decrypt(str_hash)
+    str_hash = get_datastore_encryptor().decrypt(str_hash.encode()).decode()
     return str_hash[0:plain_chars] + " ..."

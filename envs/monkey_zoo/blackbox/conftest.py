@@ -32,6 +32,11 @@ def no_gcp(request):
     return request.config.getoption("--no-gcp")
 
 
+@pytest.fixture(scope="session")
+def machines_to_start(request):
+    return request.config.getoption("-k")
+
+
 def pytest_runtest_setup(item):
     if "skip_powershell_reuse" in item.keywords and item.config.getoption(
         "--skip-powershell-reuse"

@@ -1,6 +1,7 @@
 from pprint import pformat
 from typing import List
 
+from common.credentials import CredentialComponentType, Credentials
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
@@ -26,19 +27,23 @@ class ZerologonAnalyzer(Analyzer):
         return is_creds_gathered and is_creds_restored
 
     def _analyze_credential_gathering(self) -> bool:
-        config = self.island_client.get_config()
-        credentials_on_island = ZerologonAnalyzer._get_relevant_credentials(config)
+        propagation_credentials = self.island_client.get_propagation_credentials()
+        credentials_on_island = ZerologonAnalyzer._get_relevant_credentials(propagation_credentials)
         return self._is_all_credentials_in_list(credentials_on_island)
 
     @staticmethod
-    def _get_relevant_credentials(config: dict):
-        credentials_on_island = []
-        # TODO: Pull configured credentials and put usernames, nt and lm hashes into
-        # credentials_island
-        # credentials_on_island.extend(dpath.util.get(config["configuration"], USER_LIST_PATH))
-        # credentials_on_island.extend(dpath.util.get(config["configuration"], NTLM_HASH_LIST_PATH))
-        # credentials_on_island.extend(dpath.util.get(config["configuration"], LM_HASH_LIST_PATH))
-        return credentials_on_island
+    def _get_relevant_credentials(propagation_credentials: Credentials) -> List[str]:
+        credentials_on_island = set()
+
+        for credentials in propagation_credentials:
+            if credentials.identity.credential_type is CredentialComponentType.USERNAME:
+                credentials_on_island.update([credentials.identity.username])
+            if credentials.secret.credential_type is CredentialComponentType.NT_HASH:
+                credentials_on_island.update([credentials.secret.nt_hash])
+            if credentials.secret.credential_type is CredentialComponentType.LM_HASH:
+                credentials_on_island.update([credentials.secret.lm_hash])
+
+        return list(credentials_on_island)
 
     def _is_all_credentials_in_list(self, all_creds: List[str]) -> bool:
         credentials_missing = [cred for cred in self.expected_credentials if cred not in all_creds]

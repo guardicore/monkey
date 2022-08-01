@@ -5,6 +5,7 @@ from .noop import noop_test_configuration
 from .utils import (
     add_credential_collectors,
     add_exploiters,
+    add_fingerprinters,
     add_http_ports,
     add_subnets,
     add_tcp_ports,
@@ -32,6 +33,12 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
     ]
 
     return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=vulnerability)
+
+
+def _add_fingerprinters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
+    fingerprinters = [PluginConfiguration(name="http", options={})]
+
+    return add_fingerprinters(agent_configuration, fingerprinters)
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
@@ -69,18 +76,17 @@ def _add_http_ports(agent_configuration: AgentConfiguration) -> AgentConfigurati
     return add_http_ports(agent_configuration, HTTP_PORTS)
 
 
-agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
-agent_configuration = _add_exploiters(agent_configuration)
-agent_configuration = _add_subnets(agent_configuration)
-agent_configuration = _add_tcp_ports(agent_configuration)
-agent_configuration = _add_credential_collectors(agent_configuration)
-agent_configuration = _add_http_ports(agent_configuration)
+test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+test_configuration = _add_exploiters(test_configuration)
+test_configuration = _add_fingerprinters(test_configuration)
+test_configuration = _add_subnets(test_configuration)
+test_configuration = _add_tcp_ports(test_configuration)
+test_configuration = _add_credential_collectors(test_configuration)
+test_configuration = _add_http_ports(test_configuration)
 
 depth_1_a_test_configuration = replace_agent_configuration(
-    noop_test_configuration, agent_configuration
+    noop_test_configuration, test_configuration
 )
-
-
 CREDENTIALS = (
     Credentials(Username("m0nk3y"), None),
     Credentials(None, Password("Ivrrw5zEzs")),

@@ -28,6 +28,16 @@ def add_exploiters(
     return replace_exploitation_configuration(agent_configuration, exploitation_configuration)
 
 
+def add_fingerprinters(
+    agent_configuration: AgentConfiguration, fingerprinters: Sequence[PluginConfiguration]
+) -> AgentConfiguration:
+    network_scan_configuration = replace(
+        agent_configuration.propagation.network_scan, fingerprinters=fingerprinters
+    )
+
+    return replace_network_scan_configuration(agent_configuration, network_scan_configuration)
+
+
 def add_tcp_ports(
     agent_configuration: AgentConfiguration, tcp_ports: Sequence[int]
 ) -> AgentConfiguration:
