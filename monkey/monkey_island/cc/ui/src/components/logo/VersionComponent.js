@@ -14,7 +14,7 @@ class VersionComponent extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api/version-update') // This is not authenticated on purpose
+    fetch('/api/island/version') // This is not authenticated on purpose
       .then(res => res.json())
       .then(res => {
         this.setState({
