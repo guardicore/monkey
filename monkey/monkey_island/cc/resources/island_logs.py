@@ -3,6 +3,7 @@ from pathlib import Path
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
+from monkey_island.cc.server_utils.island_logger import get_log_file_contents
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +17,6 @@ class IslandLog(AbstractResource):
     @jwt_required
     def get(self):
         try:
-            return self._get_log_file_contents()
+            return {"log_file": get_log_file_contents(self._island_log_file_path)}
         except Exception:
             logger.error("Monkey Island logs failed to download", exc_info=True)
-
-    def _get_log_file_contents(self):
-        with open(self._island_log_file_path, "rt") as f:
-            log_file = f.read()
-        return {"log_file": log_file}
