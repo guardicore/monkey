@@ -66,7 +66,7 @@ def reset_logger():
         logger.removeHandler(handler)
 
 
-def get_log_file_path() -> Optional[str]:
+def get_log_file_path() -> Optional[Path]:
     """
     Finds the log file by finding the logger handlers and checking if one of them is a fileHandler
     of any kind by checking if the handler has the property handler.baseFilename.
@@ -81,7 +81,7 @@ def get_log_file_path() -> Optional[str]:
         if hasattr(handler, "baseFilename"):
             logger.info("Log file found: {0}".format(handler.baseFilename))
             log_file_path = handler.baseFilename
-            return log_file_path
+            return Path(log_file_path)
 
     logger.warning("No log file could be found, check logger config.")
     return None
