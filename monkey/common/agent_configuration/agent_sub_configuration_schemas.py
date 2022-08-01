@@ -1,6 +1,4 @@
-import re
-
-from marshmallow import Schema, ValidationError, fields, post_load, validate, validates
+from marshmallow import Schema, fields, post_load, validate
 
 from .agent_sub_configurations import (
     CustomPBAConfiguration,
@@ -14,49 +12,19 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 from .utils import freeze_lists
-
-valid_windows_custom_pba_filename_regex = re.compile(r"^[^<>:\"\\\/|?*]*[^<>:\"\\\/|?* \.]+$|^$")
-valid_linux_custom_pba_filename_regex = re.compile(r"^[^\0/]*$")
+from .validators import (
+    validate_ip,
+    validate_linux_filename,
+    validate_subnet_range,
+    validate_windows_filename,
+)
 
 
 class CustomPBAConfigurationSchema(Schema):
     linux_command = fields.Str()
-    linux_filename = fields.Str(
-        validate=validate.Regexp(regex=valid_linux_custom_pba_filename_regex)
-    )
+    linux_filename = fields.Str(validate=validate_linux_filename)
     windows_command = fields.Str()
-    windows_filename = fields.Str(
-        validate=validate.Regexp(regex=valid_windows_custom_pba_filename_regex)
-    )
-
-    @validates("windows_filename")
-    def validate_windows_filename_not_reserved(self, windows_filename):
-        # filename shouldn't start with any of these and be followed by a period
-        if windows_filename.split(".")[0].upper() in [
-            "CON",
-            "PRN",
-            "AUX",
-            "NUL",
-            "COM1",
-            "COM2",
-            "COM3",
-            "COM4",
-            "COM5",
-            "COM6",
-            "COM7",
-            "COM8",
-            "COM9",
-            "LPT1",
-            "LPT2",
-            "LPT3",
-            "LPT4",
-            "LPT5",
-            "LPT6",
-            "LPT7",
-            "LPT8",
-            "LPT9",
-        ]:
-            raise ValidationError("Invalid Windows filename: reserved name used")
+    windows_filename = fields.Str(validate=validate_windows_filename)
 
     @post_load
     def _make_custom_pba_configuration(self, data, **kwargs):
@@ -73,10 +41,10 @@ class PluginConfigurationSchema(Schema):
 
 
 class ScanTargetConfigurationSchema(Schema):
-    blocked_ips = fields.List(fields.Str())
-    inaccessible_subnets = fields.List(fields.Str())
+    blocked_ips = fields.List(fields.Str(validate=validate_ip))
+    inaccessible_subnets = fields.List(fields.Str(validate=validate_subnet_range))
     local_network_scan = fields.Bool()
-    subnets = fields.List(fields.Str())
+    subnets = fields.List(fields.Str(validate=validate_subnet_range))
 
     @post_load
     @freeze_lists
