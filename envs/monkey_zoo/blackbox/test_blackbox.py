@@ -42,7 +42,12 @@ def GCPHandler(request, no_gcp, machines_to_start):
     if not no_gcp:
         list_machines = GCP_TEST_MACHINE_LIST
         if machines_to_start:
-            list_machines = GCP_SINGLE_TEST_LIST[machines_to_start]
+            try:
+                list_machines = GCP_SINGLE_TEST_LIST[machines_to_start]
+            except KeyError as err:
+                LOGGER.warning(
+                    f"Partial or wrong test name provided. " f"Starting all GCP machines:{err}"
+                )
         try:
             initialize_gcp_client()
             start_machines(list_machines)
