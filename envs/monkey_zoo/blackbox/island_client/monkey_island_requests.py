@@ -49,7 +49,7 @@ class MonkeyIslandRequests(object):
 
     def try_set_island_to_credentials(self):
         resp = requests.post(  # noqa: DUO123
-            self.addr + "api/registration",
+            self.addr + "api/register",
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
