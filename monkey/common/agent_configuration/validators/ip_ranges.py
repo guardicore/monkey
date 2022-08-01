@@ -47,7 +47,6 @@ def validate_hostname(hostname: str):
 def validate_ip_network(ip_network: str):
     try:
         IPv4Network(ip_network, strict=False)
-        return
     except (NetmaskValueError, AddressValueError):
         raise ValidationError(f"Invalid IPv4 network {ip_network}")
 
@@ -56,11 +55,11 @@ def validate_ip_range(ip_range: str):
     try:
         ip_range = ip_range.replace(" ", "")
         ips = ip_range.split("-")
-        validate_ip(ips[0])
-        validate_ip(ips[1])
         if len(ips) != 2:
             raise ValidationError(f"Invalid IP range {ip_range}")
-    except (AddressValueError, IndexError):
+        validate_ip(ips[0])
+        validate_ip(ips[1])
+    except IndexError:
         raise ValidationError(f"Invalid IP range {ip_range}")
 
 
