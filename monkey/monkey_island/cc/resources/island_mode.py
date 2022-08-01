@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class IslandMode(AbstractResource):
-    urls = ["/api/island-mode"]
+    urls = ["/api/island/mode"]
 
     def __init__(self, island_mode_service: IslandModeService):
         self._island_mode_service = island_mode_service

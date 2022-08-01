@@ -113,7 +113,7 @@ const IslandResetModal = (props: Props) => {
           }})
       .then(res => {
         if (res.status === 200) {
-            return auth.authFetch('/api/island-mode', {method: 'POST', body: '{"mode": "unset"}'})
+            return auth.authFetch('/api/island/mode', {method: 'POST', body: '{"mode": "unset"}'})
         }})
       .then(res => {
         if (res.status !== 200) {
