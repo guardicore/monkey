@@ -45,6 +45,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Agent configuration structure. #1996, #1998, #1961, #1997, #1994, #1741,
   #1761, #1695, #1605, #2028, #2003
 - `/api/island-mode` to accept and return new "unset" mode. #2036
+- The `/api/island-mode` to `/api/island/mode`. #2106
 
 ### Removed
 - VSFTPD exploiter. #1533
