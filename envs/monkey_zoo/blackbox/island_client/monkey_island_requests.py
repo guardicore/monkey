@@ -39,7 +39,7 @@ class MonkeyIslandRequests(object):
 
     def get_jwt_from_server(self):
         resp = requests.post(  # noqa: DUO123
-            self.addr + "api/auth",
+            self.addr + "api/authenticate",
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
