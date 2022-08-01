@@ -21,7 +21,7 @@ from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.agent_configuration import AgentConfiguration
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
-from monkey_island.cc.resources.auth.auth import Authenticate, init_jwt
+from monkey_island.cc.resources.auth.authenticate import Authenticate, init_jwt
 from monkey_island.cc.resources.auth.registration import Registration
 from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogBlackboxEndpoint
 from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyBlackboxEndpoint
