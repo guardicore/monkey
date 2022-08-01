@@ -2,7 +2,7 @@ import decode from 'jwt-decode';
 
 export default class AuthService {
   SECONDS_BEFORE_JWT_EXPIRES = 20;
-  AUTHENTICATION_API_ENDPOINT = '/api/auth';
+  AUTHENTICATION_API_ENDPOINT = '/api/authenticate';
   REGISTRATION_API_ENDPOINT = '/api/registration';
 
   login = (username, password) => {
