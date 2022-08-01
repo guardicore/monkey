@@ -7,12 +7,11 @@ from monkey_island.cc.services.version_update import VersionUpdateService
 logger = logging.getLogger(__name__)
 
 
-class VersionUpdate(AbstractResource):
-    # API Spec: Rename to /version-info
-    urls = ["/api/version-update"]
+class Version(AbstractResource):
+    urls = ["/api/island/version"]
 
     def __init__(self):
-        super(VersionUpdate, self).__init__()
+        super(Version, self).__init__()
 
     # We don't secure this since it doesn't give out any private info and we want UI to know version
     # even when not authenticated

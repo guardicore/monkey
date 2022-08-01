@@ -47,7 +47,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
-from monkey_island.cc.resources.version_update import VersionUpdate
+from monkey_island.cc.resources.version import Version
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
@@ -185,7 +185,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     api.add_resource(PropagationCredentials)
     api.add_resource(RemoteRun)
-    api.add_resource(VersionUpdate)
+    api.add_resource(Version)
     api.add_resource(StopAgentCheck)
     api.add_resource(StopAllAgents)
 
