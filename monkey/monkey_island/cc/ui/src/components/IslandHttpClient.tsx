@@ -12,11 +12,11 @@ export class Response{
 }
 
 class IslandHttpClient extends AuthComponent {
-  post(endpoint: string, contents: any): Promise<Response>{
+  put(endpoint: string, contents: any): Promise<Response>{
     let status = null;
     return this.authFetch(endpoint,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(contents)
       })
