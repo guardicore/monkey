@@ -12,20 +12,15 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 from .utils import freeze_lists
-from .validators.filenames import (
-    valid_linux_custom_pba_filename_regex,
-    validate_windows_custom_pba_filename,
-)
+from .validators.filenames import validate_linux_filename, validate_windows_filename
 from .validators.ip_ranges import validate_ip, validate_subnet_range
 
 
 class CustomPBAConfigurationSchema(Schema):
     linux_command = fields.Str()
-    linux_filename = fields.Str(
-        validate=validate.Regexp(regex=valid_linux_custom_pba_filename_regex)
-    )
+    linux_filename = fields.Str(validate=validate_linux_filename)
     windows_command = fields.Str()
-    windows_filename = fields.Str(validate=validate_windows_custom_pba_filename)
+    windows_filename = fields.Str(validate=validate_windows_filename)
 
     @post_load
     def _make_custom_pba_configuration(self, data, **kwargs):
