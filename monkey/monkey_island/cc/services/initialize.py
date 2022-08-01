@@ -32,6 +32,7 @@ from monkey_island.cc.repository import (
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
+from monkey_island.cc.server_utils.island_logger import get_log_file_path
 from monkey_island.cc.services import AWSService, IslandModeService, RepositoryService
 from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
@@ -87,6 +88,7 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
+    container.register_convention(Path, "island_log_file_path", get_log_file_path())
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
