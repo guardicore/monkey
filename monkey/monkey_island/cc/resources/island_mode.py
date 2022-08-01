@@ -2,7 +2,7 @@ import json
 import logging
 from http import HTTPStatus
 
-from flask import make_response, request
+from flask import request
 
 from monkey_island.cc.models import IslandMode as IslandModeEnum
 from monkey_island.cc.resources.AbstractResource import AbstractResource
@@ -21,8 +21,7 @@ class IslandMode(AbstractResource):
     @jwt_required
     def put(self):
         try:
-            body = json.loads(request.data)
-            mode = IslandModeEnum(body.get("mode"))
+            mode = IslandModeEnum(json.loads(request.data))
 
             self._island_mode_service.set_mode(mode)
 
@@ -35,4 +34,4 @@ class IslandMode(AbstractResource):
     @jwt_required
     def get(self):
         island_mode = self._island_mode_service.get_mode()
-        return make_response({"mode": island_mode.value}, HTTPStatus.OK)
+        return island_mode.value, HTTPStatus.OK
