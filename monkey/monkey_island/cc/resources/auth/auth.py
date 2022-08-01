@@ -28,7 +28,7 @@ class Authenticate(AbstractResource):
 
     """
 
-    urls = ["/api/auth"]
+    urls = ["/api/authenticate"]
 
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
