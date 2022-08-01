@@ -8,8 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class IslandLog(AbstractResource):
-    # API Spec: Why the inconsistency in endpoints of IslandLog and Log?
-    urls = ["/api/log/island/download"]
+    urls = ["/api/island/log"]
 
     @jwt_required
     def get(self):
