@@ -12,8 +12,12 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 from .utils import freeze_lists
-from .validators.filenames import validate_linux_filename, validate_windows_filename
-from .validators.ip_ranges import validate_ip, validate_subnet_range
+from .validators import (
+    validate_ip,
+    validate_linux_filename,
+    validate_subnet_range,
+    validate_windows_filename,
+)
 
 
 class CustomPBAConfigurationSchema(Schema):
