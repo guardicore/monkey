@@ -22,10 +22,7 @@ def init_jwt(app):
 
 class Authenticate(AbstractResource):
     """
-    Resource for user authentication. The user provides the username and password and we \
-    give them a JWT. \
-    See `AuthService.js` file for the frontend counterpart for this code. \
-
+    A resource for user authentication
     """
 
     urls = ["/api/authenticate"]
@@ -35,13 +32,13 @@ class Authenticate(AbstractResource):
 
     def post(self):
         """
-        Example request: \
-        { \
-            "username": "my_user", \
-            "password": "my_password" \
-        } \
+        Gets a username and password from the request sent from the client, authenticates, and
+        returns an access token
 
+        :return: Access token in the response body
+        :raises IncorrectCredentialsError: If credentials are invalid
         """
+
         username, password = get_username_password_from_request(request)
 
         try:
