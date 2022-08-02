@@ -33,7 +33,7 @@ from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.ip_addresses import IpAddresses
-from monkey_island.cc.resources.island_logs import IslandLog
+from monkey_island.cc.resources.island_log import IslandLog
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
