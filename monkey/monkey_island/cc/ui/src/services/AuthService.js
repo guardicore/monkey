@@ -2,8 +2,8 @@ import decode from 'jwt-decode';
 
 export default class AuthService {
   SECONDS_BEFORE_JWT_EXPIRES = 20;
-  AUTHENTICATION_API_ENDPOINT = '/api/auth';
-  REGISTRATION_API_ENDPOINT = '/api/registration';
+  AUTHENTICATION_API_ENDPOINT = '/api/authenticate';
+  REGISTRATION_API_ENDPOINT = '/api/register';
 
   login = (username, password) => {
     return this._login(username, password);

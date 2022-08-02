@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.utils.exceptions import IncorrectCredentialsError
-from monkey_island.cc.resources.auth.auth import Authenticate
+from monkey_island.cc.resources.auth.authenticate import Authenticate
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
@@ -37,7 +37,6 @@ def test_authentication_successful(make_auth_request, mock_authentication_servic
     response = make_auth_request(TEST_REQUEST)
 
     assert response.status_code == 200
-    assert response.json["error"] == ""
     assert re.match(
         r"^[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=\-_]+$", response.json["access_token"]
     )

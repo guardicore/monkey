@@ -28,7 +28,7 @@ class Authenticate(AbstractResource):
 
     """
 
-    urls = ["/api/auth"]
+    urls = ["/api/authenticate"]
 
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
@@ -50,5 +50,4 @@ class Authenticate(AbstractResource):
         except IncorrectCredentialsError:
             return make_response({"error": "Invalid credentials"}, HTTPStatus.UNAUTHORIZED)
 
-        # API Spec: Why are we sending "error" here?
-        return make_response({"access_token": access_token, "error": ""}, HTTPStatus.OK)
+        return make_response({"access_token": access_token}, HTTPStatus.OK)

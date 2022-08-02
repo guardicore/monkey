@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class Registration(AbstractResource):
 
-    urls = ["/api/registration"]
+    urls = ["/api/register"]
 
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
