@@ -21,7 +21,7 @@ if is_windows_os():
     import monkey_island.cc.server_utils.windows_permissions as windows_permissions
 
 
-def get_file_contents(file_path: Path) -> str:
+def get_text_file_contents(file_path: Path) -> str:
     with open(file_path, "rt") as f:
         file_contents = f.read()
     return file_contents
