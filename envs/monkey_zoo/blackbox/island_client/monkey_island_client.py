@@ -121,7 +121,7 @@ class MonkeyIslandClient(object):
 
     def _reset_island_mode(self):
         if self.requests.put("api/island/mode", data='"unset"').ok:
-            LOGGER.info("Resseting island mode after the test.")
+            LOGGER.info("Resetting island mode after the test.")
         else:
             LOGGER.error("Failed to reset island mode")
             assert False
