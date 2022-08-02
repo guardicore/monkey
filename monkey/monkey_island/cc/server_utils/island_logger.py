@@ -2,7 +2,6 @@ import logging
 import logging.handlers
 import sys
 from pathlib import Path
-from typing import Mapping
 
 ISLAND_LOG_FILENAME = "monkey_island.log"
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)s - %(funcName)s() - %(message)s"
@@ -34,7 +33,7 @@ def get_log_file_path(data_dir: Path) -> Path:
     return data_dir / ISLAND_LOG_FILENAME
 
 
-def get_log_file_contents(log_file_path: Path) -> Mapping:
+def get_log_file_contents(log_file_path: Path) -> str:
     with open(log_file_path, "rt") as f:
         log_file = f.read()
     return log_file
