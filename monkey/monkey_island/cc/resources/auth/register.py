@@ -18,9 +18,6 @@ class Registration(AbstractResource):
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
 
-    def get(self):
-        return {"needs_registration": self._authentication_service.needs_registration()}
-
     def post(self):
         username, password = get_username_password_from_request(request)
 
