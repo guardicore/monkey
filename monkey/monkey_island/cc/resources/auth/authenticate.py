@@ -50,5 +50,4 @@ class Authenticate(AbstractResource):
         except IncorrectCredentialsError:
             return make_response({"error": "Invalid credentials"}, HTTPStatus.UNAUTHORIZED)
 
-        # API Spec: Why are we sending "error" here?
-        return make_response({"access_token": access_token, "error": ""}, HTTPStatus.OK)
+        return make_response({"access_token": access_token}, HTTPStatus.OK)
