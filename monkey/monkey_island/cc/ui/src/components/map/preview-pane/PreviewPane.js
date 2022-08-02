@@ -87,7 +87,7 @@ class PreviewPaneComponent extends AuthComponent {
               Download Island Server Log
             </th>
             <td>
-              <IslandLogDownloadButton url={'/api/log/island/download'} />
+              <IslandLogDownloadButton url={'/api/island/log'} />
             </td>
           </tr>
         }

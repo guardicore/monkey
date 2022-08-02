@@ -23,10 +23,20 @@ def setup_logging(data_dir: Path, log_level: str):
 
     formatter = _get_log_formatter()
 
-    log_file_path = data_dir / ISLAND_LOG_FILENAME
+    log_file_path = get_log_file_path(data_dir)
     _add_file_handler(logger, formatter, log_file_path)
 
     _add_console_handler(logger, formatter)
+
+
+def get_log_file_path(data_dir: Path) -> Path:
+    return data_dir / ISLAND_LOG_FILENAME
+
+
+def get_log_file_contents(log_file_path: Path) -> str:
+    with open(log_file_path, "rt") as f:
+        log_file = f.read()
+    return log_file
 
 
 def setup_default_failsafe_logging():

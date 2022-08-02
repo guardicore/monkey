@@ -48,7 +48,7 @@ export const IslandLogDownloadButton = ({ url, variant = 'primary'}: Props) => {
       .then(res => res.json())
       .then(res => {
         let filename = 'Island_log';
-        let logContent = (res['log_file']);
+        let logContent = res;
         download(logContent, filename, 'text/plain');
       });
   }

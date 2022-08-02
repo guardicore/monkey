@@ -47,6 +47,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/island-mode` to accept and return new "unset" mode. #2036
 - `/api/version-update` to `api/island/version`. #2109
 - The `/api/island-mode` to `/api/island/mode`. #2106
+- The `/api/log/island/download` endpoint to `/api/island/log`. #2107
 
 ### Removed
 - VSFTPD exploiter. #1533
