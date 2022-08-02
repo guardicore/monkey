@@ -23,6 +23,8 @@ class Registration(AbstractResource):
 
     def post(self):
         """
+        Registers a new user
+
         Gets a username and password from the request sent from the client,
         and registers a new user
 

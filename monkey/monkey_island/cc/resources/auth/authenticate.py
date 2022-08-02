@@ -32,6 +32,8 @@ class Authenticate(AbstractResource):
 
     def post(self):
         """
+        Authenticates a user
+
         Gets a username and password from the request sent from the client, authenticates, and
         returns an access token
 
