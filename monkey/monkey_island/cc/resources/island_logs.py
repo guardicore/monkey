@@ -17,6 +17,6 @@ class IslandLog(AbstractResource):
     @jwt_required
     def get(self):
         try:
-            return {"log_file": get_log_file_contents(self._island_log_file_path)}
+            return get_log_file_contents(self._island_log_file_path)
         except Exception:
             logger.error("Monkey Island logs failed to download", exc_info=True)
