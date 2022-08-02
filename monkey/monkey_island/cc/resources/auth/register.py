@@ -11,7 +11,10 @@ from monkey_island.cc.services import AuthenticationService
 logger = logging.getLogger(__name__)
 
 
-class Registration(AbstractResource):
+class Register(AbstractResource):
+    """
+    A resource for user registration
+    """
 
     urls = ["/api/register"]
 
@@ -19,6 +22,16 @@ class Registration(AbstractResource):
         self._authentication_service = authentication_service
 
     def post(self):
+        """
+        Registers a new user
+
+        Gets a username and password from the request sent from the client,
+        and registers a new user
+
+        :raises InvalidRegistrationCredentialsError: If username or password is empty
+        :raises AlreadyRegisteredError: If a user has already been registered
+        """
+
         username, password = get_username_password_from_request(request)
 
         try:

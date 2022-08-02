@@ -22,7 +22,7 @@ from monkey_island.cc.resources.agent_configuration import AgentConfiguration
 from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth.authenticate import Authenticate, init_jwt
-from monkey_island.cc.resources.auth.register import Registration
+from monkey_island.cc.resources.auth.register import Register
 from monkey_island.cc.resources.auth.registration_status import RegistrationStatus
 from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogBlackboxEndpoint
 from monkey_island.cc.resources.blackbox.monkey_blackbox_endpoint import MonkeyBlackboxEndpoint
@@ -153,7 +153,7 @@ def init_api_resources(api: FlaskDIWrapper):
 
 def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Root)
-    api.add_resource(Registration)
+    api.add_resource(Register)
     api.add_resource(RegistrationStatus)
     api.add_resource(Authenticate)
     api.add_resource(Monkey)
