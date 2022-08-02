@@ -62,12 +62,3 @@ def test_internal_error(make_registration_request, mock_authentication_service):
     response = make_registration_request(registration_request_body)
 
     assert response.status_code == 500
-
-
-@pytest.mark.parametrize("needs_registration", [True, False])
-def test_needs_registration(flask_client, mock_authentication_service, needs_registration):
-    mock_authentication_service.needs_registration = MagicMock(return_value=needs_registration)
-    response = flask_client.get(REGISTRATION_URL, follow_redirects=True)
-
-    assert response.status_code == 200
-    assert response.json["needs_registration"] is needs_registration
