@@ -11,7 +11,7 @@ from monkey_island.cc.services import AuthenticationService
 logger = logging.getLogger(__name__)
 
 
-class Registration(AbstractResource):
+class Register(AbstractResource):
     """
     A resource for user registration
     """
