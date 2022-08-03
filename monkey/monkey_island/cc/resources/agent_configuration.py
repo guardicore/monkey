@@ -24,7 +24,7 @@ class AgentConfiguration(AbstractResource):
         return make_response(configuration_json, 200)
 
     @jwt_required
-    def post(self):
+    def put(self):
         try:
             configuration_object = AgentConfigurationObject.from_mapping(request.json)
             self._agent_configuration_repository.store_configuration(configuration_object)

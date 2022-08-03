@@ -97,7 +97,7 @@ const ConfigImportModal = (props: Props) => {
     delete config['advanced'];
     authComponent.authFetch(configImportEndpoint,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(config)
       }
@@ -107,7 +107,7 @@ const ConfigImportModal = (props: Props) => {
           props.onClose(true);
         } else {
           setUploadStatus(UploadStatuses.error);
-          setErrorMessage("Configuration file is corrupt or in an outdated format.");
+          setErrorMessage("Configuration file is corrupt or in an outdated format");
         }
       })
   }
@@ -142,9 +142,20 @@ const ConfigImportModal = (props: Props) => {
         setErrorMessage('File is not in a valid json format');
         return
       }
-      setConfigEncrypted(importContents['metadata']['encrypted']);
-      setConfigContents(importContents['configuration']);
-      setConfigCredentials(importContents['credentials']);
+
+      try {
+        setConfigEncrypted(importContents['metadata']['encrypted']);
+        setConfigContents(importContents['configuration']);
+        setConfigCredentials(importContents['credentials']);
+      } catch (e) {
+        if (e instanceof TypeError) {
+          setErrorMessage('Missing required fields; configuration file is most '
+          + 'likely from an older version of Infection Monkey.')
+        }
+        else {
+          throw e;
+        }
+      }
     };
     reader.readAsText(event.target.files[0]);
   }
