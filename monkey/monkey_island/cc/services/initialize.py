@@ -153,6 +153,8 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
         logger.info(f"{os} agent: SHA-256 hash: {binary_sha256_hash}")
 
 
+# TODO: The deployment should probably be passed into initialize_services(), but we can rework that
+#       when we refactor this file.
 def _get_depyloyment_from_file(file_path: Path) -> Deployment:
     try:
         with open(file_path, "r") as deployment_info_file:
