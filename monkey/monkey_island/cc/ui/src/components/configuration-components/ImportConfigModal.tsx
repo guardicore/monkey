@@ -149,8 +149,8 @@ const ConfigImportModal = (props: Props) => {
         setConfigCredentials(importContents['credentials']);
       } catch (e) {
         if (e instanceof TypeError) {
-          setErrorMessage('Missing required fields, configuration file is most '
-          + 'likely from an old version')
+          setErrorMessage('Missing required fields; configuration file is most '
+          + 'likely from an older version of Infection Monkey.')
         }
         else {
           throw e;
