@@ -13,6 +13,7 @@ from common.agent_configuration import (
 from common.aws import AWSInstance
 from common.common_consts.telem_categories import TelemCategoryEnum
 from common.utils.file_utils import get_binary_io_sha256_hash
+from common.version import get_version
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     FileAgentConfigurationRepository,
@@ -93,6 +94,7 @@ def _register_conventions(container: DIContainer, data_dir: Path):
     )
     container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
     container.register_convention(Deployment, "deployment", _get_depyloyment_from_file(DEPLOYMENT_FILE_PATH))
+    container.register_convention(str, "version_number", get_version())
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
