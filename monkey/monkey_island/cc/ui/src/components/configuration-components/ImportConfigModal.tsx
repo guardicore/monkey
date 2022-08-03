@@ -107,7 +107,7 @@ const ConfigImportModal = (props: Props) => {
           props.onClose(true);
         } else {
           setUploadStatus(UploadStatuses.error);
-          setErrorMessage("Configuration file is corrupt or in an outdated format.");
+          setErrorMessage("Configuration file is corrupt or in an outdated format");
         }
       })
   }
