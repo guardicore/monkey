@@ -1,8 +1,7 @@
 import logging
 
-from common.version import get_version
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.services.version_update import VersionUpdateService
+from monkey_island.cc.version import Version
 
 logger = logging.getLogger(__name__)
 
@@ -10,14 +9,14 @@ logger = logging.getLogger(__name__)
 class Version(AbstractResource):
     urls = ["/api/island/version"]
 
-    def __init__(self):
-        super(Version, self).__init__()
+    def __init__(self, version: Version):
+        self._version = version
 
     # We don't secure this since it doesn't give out any private info and we want UI to know version
     # even when not authenticated
     def get(self):
         return {
-            "current_version": get_version(),
-            "newer_version": VersionUpdateService.get_newer_version(),
-            "download_link": VersionUpdateService.get_download_link(),
+            "current_version": self._version.version_number,
+            "newer_version": self._version.latest_version,
+            "download_link": self._version.download_url,
         }
