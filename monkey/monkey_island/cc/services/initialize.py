@@ -1,3 +1,4 @@
+import json
 import logging
 from pathlib import Path
 
@@ -12,6 +13,8 @@ from common.agent_configuration import (
 from common.aws import AWSInstance
 from common.common_consts.telem_categories import TelemCategoryEnum
 from common.utils.file_utils import get_binary_io_sha256_hash
+from common.version import get_version
+from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     FileAgentConfigurationRepository,
@@ -43,6 +46,7 @@ from monkey_island.cc.services.telemetry.processing.processing import (
     TELEMETRY_CATEGORY_TO_PROCESSING_FUNC,
 )
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
+from monkey_island.cc.version import Version
 
 from . import AuthenticationService
 from .reporting.report import ReportService
@@ -50,6 +54,7 @@ from .reporting.report import ReportService
 logger = logging.getLogger(__name__)
 
 AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
+DEPLOYMENT_FILE_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "deployment.json"
 REPOSITORY_KEY_FILE_NAME = "repository_key.bin"
 
 
@@ -57,12 +62,13 @@ def initialize_services(data_dir: Path) -> DIContainer:
     container = DIContainer()
     _register_conventions(container, data_dir)
 
+    container.register_instance(Deployment, _get_depyloyment_from_file(DEPLOYMENT_FILE_PATH))
     container.register_instance(AWSInstance, AWSInstance())
     container.register_instance(MongoClient, MongoClient(MONGO_URL, serverSelectionTimeoutMS=100))
     container.register_instance(
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
     )
-
+    container.register_instance(Version, container.resolve(Version))
     _register_repositories(container, data_dir)
     _register_services(container)
 
@@ -89,6 +95,7 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
     container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
+    container.register_convention(str, "version_number", get_version())
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
@@ -144,6 +151,22 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
 
     for os, binary_sha256_hash in agent_hashes.items():
         logger.info(f"{os} agent: SHA-256 hash: {binary_sha256_hash}")
+
+
+# TODO: The deployment should probably be passed into initialize_services(), but we can rework that
+#       when we refactor this file.
+def _get_depyloyment_from_file(file_path: Path) -> Deployment:
+    try:
+        with open(file_path, "r") as deployment_info_file:
+            deployment_info = json.load(deployment_info_file)
+            return Deployment[deployment_info["deployment"].upper()]
+    except KeyError as err:
+        raise Exception(
+            f"The deployment file ({file_path}) did not contain the expected data: "
+            f"missing key {err}"
+        )
+    except Exception as err:
+        raise Exception(f"Failed to fetch the deployment from {file_path}: {err}")
 
 
 def _register_services(container: DIContainer):

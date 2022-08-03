@@ -9,7 +9,7 @@ PATCH = "0"
 
 build_file_path = Path(__file__).parent.joinpath("BUILD")
 with open(build_file_path, "r") as build_file:
-    BUILD = build_file.read()
+    BUILD = build_file.read().strip()
 
 
 def get_version(build=BUILD):
