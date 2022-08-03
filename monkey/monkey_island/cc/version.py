@@ -64,7 +64,7 @@ class Version:
 
         try:
             reply = requests.get(url, timeout=LATEST_VERSION_TIMEOUT)
-        except requests.exceptions.RequestsException as err:
+        except requests.exceptions.RequestException as err:
             logger.warning(f"Failed to connect to {VERSION_SERVER_URL_PREF}: {err}")
             return self._version_number
 
