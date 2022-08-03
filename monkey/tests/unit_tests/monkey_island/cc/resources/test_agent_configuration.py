@@ -26,7 +26,7 @@ def flask_client(build_flask_client):
 
 
 def test_agent_configuration_endpoint(flask_client):
-    resp = flask_client.post(
+    resp = flask_client.put(
         AGENT_CONFIGURATION_URL,
         json=AgentConfiguration.to_mapping(AGENT_CONFIGURATION),
         follow_redirects=True,
@@ -39,12 +39,12 @@ def test_agent_configuration_endpoint(flask_client):
 
 
 def test_agent_configuration_invalid_config(flask_client):
-    resp = flask_client.post(AGENT_CONFIGURATION_URL, json={"invalid_config": "invalid_stuff"})
+    resp = flask_client.put(AGENT_CONFIGURATION_URL, json={"invalid_config": "invalid_stuff"})
 
     assert resp.status_code == 400
 
 
 def test_agent_configuration_invalid_json(flask_client):
-    resp = flask_client.post(AGENT_CONFIGURATION_URL, data="InvalidJson!")
+    resp = flask_client.put(AGENT_CONFIGURATION_URL, data="InvalidJson!")
 
     assert resp.status_code == 400
