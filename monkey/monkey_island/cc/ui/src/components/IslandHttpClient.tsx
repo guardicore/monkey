@@ -20,7 +20,7 @@ class IslandHttpClient extends AuthComponent {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(contents)
       })
-      .then(res => {status = res.status; return res.json()})
+      .then(res => {status = res.status; return res})
       .then(res => new Response(res, status));
   }
 
