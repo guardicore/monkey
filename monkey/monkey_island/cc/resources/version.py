@@ -16,7 +16,7 @@ class Version(AbstractResource):
     # even when not authenticated
     def get(self):
         return {
-            "current_version": self._version.version_number,
-            "newer_version": self._version.latest_version,
+            "version_number": self._version.version_number,
+            "latest_version": self._version.latest_version,
             "download_link": self._version.download_url,
         }
