@@ -205,6 +205,10 @@ _serialize_credentials  # unused method (monkey/common/credentials/credentials:6
 # Models
 _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:19
 
+# TODO DELETE AFTER EVENT QUEUE IMPLEMENTATION
+AbstractEvent
+tags
+
 
 # TODO DELETE AFTER RESOURCE REFACTORING
 
