@@ -97,7 +97,7 @@ const ConfigImportModal = (props: Props) => {
     delete config['advanced'];
     authComponent.authFetch(configImportEndpoint,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(config)
       }
