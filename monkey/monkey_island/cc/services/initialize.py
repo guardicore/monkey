@@ -1,3 +1,4 @@
+import json
 import logging
 from pathlib import Path
 
@@ -33,6 +34,7 @@ from monkey_island.cc.repository import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.server_utils.island_logger import get_log_file_path
+from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.services import AWSService, IslandModeService, RepositoryService
 from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
@@ -50,6 +52,7 @@ from .reporting.report import ReportService
 logger = logging.getLogger(__name__)
 
 AGENT_BINARIES_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "binaries"
+DEPLOYMENT_FILE_PATH = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "deployment.json"
 REPOSITORY_KEY_FILE_NAME = "repository_key.bin"
 
 
@@ -89,6 +92,7 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
     container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
+    container.register_convention(Deployment, "deployment", _get_depyloyment_from_file(DEPLOYMENT_FILE_PATH))
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
@@ -144,6 +148,20 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
 
     for os, binary_sha256_hash in agent_hashes.items():
         logger.info(f"{os} agent: SHA-256 hash: {binary_sha256_hash}")
+
+def _get_depyloyment_from_file(file_path: Path) -> Deployment:
+    try:
+        with open(file_path, "r") as deployment_info_file:
+            deployment_info = json.load(deployment_info_file)
+            return Deployment[deployment_info["deployment"].upper()]
+    except FileNotFoundError as ex:
+        logger.debug(f"Deployment file {file_path} is not found. Exception: {ex}")
+    except KeyError as ex:
+        logger.debug(f"Invalid key in the deployment file. Exception: {ex}")
+    except json.JSONDecodeError as ex:
+        logger.debug(f"Invalid deployment info file. Exception: {ex}")
+    except Exception as ex:
+        logger.debug(f"Couldn't get deployment info from {file_path}. Exception: {ex}.")
 
 
 def _register_services(container: DIContainer):
