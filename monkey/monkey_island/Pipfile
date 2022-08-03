@@ -32,6 +32,7 @@ marshmallow-enum = "*"
 readerwriterlock = "*"
 pymongo = "*"
 cryptography = "*"
+semantic-version = "*"
 
 [dev-packages]
 virtualenv = ">=20.0.26"
