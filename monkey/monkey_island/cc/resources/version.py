@@ -1,7 +1,7 @@
 import logging
 
+from monkey_island.cc import Version
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.version import Version
 
 logger = logging.getLogger(__name__)
 
