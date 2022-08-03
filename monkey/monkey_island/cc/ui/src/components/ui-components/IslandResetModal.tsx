@@ -111,9 +111,16 @@ const IslandResetModal = (props: Props) => {
           if (res.ok) {
               return auth.authFetch('/api/propagation-credentials/configured-credentials', {method: 'PUT', body:'[]'})
           }})
-      .then(res => {
+       .then(res => {
         if (res.ok) {
-            return auth.authFetch('/api/island/mode', {method: 'PUT', body: '{"mode": "unset"}'})
+            return auth.authFetch(
+              '/api/island/mode',
+              {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: '"unset"'
+              }
+            )
         }})
       .then(res => {
         if (!res.ok) {
