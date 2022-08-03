@@ -17,7 +17,9 @@ logger = logging.getLogger(__name__)
 
 class Version:
     """
-    Class which get current version, latest version and download link for the latest version
+    Information about the Island's version
+
+    Provides the current version, latest version, and download link for the latest version.
     """
 
     def __init__(self, version_number: str, deployment: Deployment):
