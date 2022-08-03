@@ -62,6 +62,7 @@ def initialize_services(data_dir: Path) -> DIContainer:
     container = DIContainer()
     _register_conventions(container, data_dir)
 
+    container.register_instance(Deployment, _get_depyloyment_from_file(DEPLOYMENT_FILE_PATH))
     container.register_instance(AWSInstance, AWSInstance())
     container.register_instance(MongoClient, MongoClient(MONGO_URL, serverSelectionTimeoutMS=100))
     container.register_instance(
@@ -94,9 +95,6 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
     container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
-    container.register_convention(
-        Deployment, "deployment", _get_depyloyment_from_file(DEPLOYMENT_FILE_PATH)
-    )
     container.register_convention(str, "version_number", get_version())
 
 
