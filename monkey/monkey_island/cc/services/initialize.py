@@ -158,14 +158,13 @@ def _get_depyloyment_from_file(file_path: Path) -> Deployment:
         with open(file_path, "r") as deployment_info_file:
             deployment_info = json.load(deployment_info_file)
             return Deployment[deployment_info["deployment"].upper()]
-    except FileNotFoundError as ex:
-        logger.debug(f"Deployment file {file_path} is not found. Exception: {ex}")
-    except KeyError as ex:
-        logger.debug(f"Invalid key in the deployment file. Exception: {ex}")
-    except json.JSONDecodeError as ex:
-        logger.debug(f"Invalid deployment info file. Exception: {ex}")
-    except Exception as ex:
-        logger.debug(f"Couldn't get deployment info from {file_path}. Exception: {ex}.")
+    except KeyError as err:
+        raise Exception(
+            f"The deployment file ({file_path}) did not contain the expected data: "
+            f"missing key {err}"
+        )
+    except Exception as err:
+        raise Exception(f"Failed to fetch the deployment from {file_path}: {err}")
 
 
 def _register_services(container: DIContainer):
