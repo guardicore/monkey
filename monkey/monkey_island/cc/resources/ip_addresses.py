@@ -5,6 +5,10 @@ from monkey_island.cc.resources.request_authentication import jwt_required
 
 
 class IpAddresses(AbstractResource):
+    """
+    Endpoint for the Monkey Island's local IP addresses
+    """
+
     urls = ["/api/island/ip-addresses"]
 
     def __init__(self, local_ip_addresses: Sequence[str]):
@@ -13,9 +17,9 @@ class IpAddresses(AbstractResource):
     @jwt_required
     def get(self) -> Sequence[str]:
         """
-        Gets the IP addresses of the Island network interfaces
+        Sends the local IP addresses of the Island
 
-        :return: a dictionary with "ip_addresses" key that points to a list of IP's
+        :return: Local IPs
         """
 
         return self._local_ips
