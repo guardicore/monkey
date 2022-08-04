@@ -15,7 +15,7 @@ class VersionComponent extends AuthComponent {
   }
 
   componentDidMount() {
-    this.authFetch('/api/island/version') // This is not authenticated on purpose
+    this.authFetch('/api/island/version')
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -28,7 +28,6 @@ class VersionComponent extends AuthComponent {
 
   newerVersionAvailable() {
     const semverGt = require('semver/functions/gt');
-    console.log(this.state);
     if(this.state.latestVersion !== undefined && this.state.versionNumber !== undefined) {
       return semverGt(this.state.latestVersion, this.state.versionNumber);
     }
