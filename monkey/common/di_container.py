@@ -35,13 +35,14 @@ class DIContainer:
         if not inspect.isclass(concrete_type):
             raise TypeError(
                 "Expected a class, but received an instance of type "
-                f'"{concrete_type.__class__.__name__}"; Pass a class, not an instance, to '
-                "register(), or use register_instance() instead"
+                f'"{DIContainer._format_type_name(concrete_type.__class__)}"; Pass a class, not an '
+                "instance, to register(), or use register_instance() instead"
             )
 
         if not issubclass(concrete_type, interface):
             raise TypeError(
-                f'Class "{concrete_type.__name__}" is not a subclass of {interface.__name__}'
+                f'Class "{DIContainer._format_type_name(concrete_type)}" is not a subclass of '
+                f"{DIContainer._format_type_name(interface)}"
             )
 
         self._type_registry[interface] = concrete_type
@@ -56,8 +57,9 @@ class DIContainer:
         """
         if not isinstance(instance, interface):
             raise TypeError(
-                f'The provided instance of type "{instance.__class__.__name__}" '
-                f"is not an instance of {interface.__name__}"
+                "The provided instance of type "
+                f'"{DIContainer._format_type_name(instance.__class__)}" '
+                f"is not an instance of {DIContainer._format_type_name(interface)}"
             )
 
         self._instance_registry[interface] = instance
@@ -151,7 +153,9 @@ class DIContainer:
         elif type_ in self._instance_registry:
             return self._retrieve_registered_instance(type_)
 
-        raise UnregisteredTypeError(f'Failed to resolve unregistered type "{type_.__name__}"')
+        raise UnregisteredTypeError(
+            f'Failed to resolve unregistered type "{DIContainer._format_type_name(type)}"'
+        )
 
     def _construct_new_instance(self, arg_type: Type[T]) -> T:
         try:
@@ -182,3 +186,13 @@ class DIContainer:
         """
         convention_identifier = (type_, name)
         del_key(self._convention_registry, convention_identifier)
+
+    @staticmethod
+    def _format_type_name(type_: Type) -> str:
+        try:
+            return type_.__name__
+        except AttributeError:
+            # Some Types, like typing.Sequence, don't have a __name__ attribute in python3.7. When
+            # we upgrade to a later version of Python, this exception handler may no longer be
+            # necessary.
+            return str(type_)
