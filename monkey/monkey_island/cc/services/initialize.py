@@ -1,6 +1,7 @@
 import json
 import logging
 from pathlib import Path
+from typing import Sequence
 
 from pymongo import MongoClient
 
@@ -14,6 +15,7 @@ from common.aws import AWSInstance
 from common.common_consts.telem_categories import TelemCategoryEnum
 from common.utils.file_utils import get_binary_io_sha256_hash
 from common.version import get_version
+from monkey_island.cc.services.utils.network_utils import get_local_ip_addresses
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
@@ -96,6 +98,7 @@ def _register_conventions(container: DIContainer, data_dir: Path):
     )
     container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
     container.register_convention(str, "version_number", get_version())
+    container.register_convention(Sequence[str], "local_ip_addresses", get_local_ip_addresses())
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
