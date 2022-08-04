@@ -14,6 +14,7 @@ from common.aws import AWSInstance
 from common.common_consts.telem_categories import TelemCategoryEnum
 from common.utils.file_utils import get_binary_io_sha256_hash
 from common.version import get_version
+from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
@@ -46,7 +47,6 @@ from monkey_island.cc.services.telemetry.processing.processing import (
     TELEMETRY_CATEGORY_TO_PROCESSING_FUNC,
 )
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
-from monkey_island.cc.version import Version
 
 from . import AuthenticationService
 from .reporting.report import ReportService
