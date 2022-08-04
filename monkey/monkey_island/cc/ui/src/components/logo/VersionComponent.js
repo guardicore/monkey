@@ -2,8 +2,9 @@ import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
+import AuthComponent from '../AuthComponent';
 
-class VersionComponent extends React.Component {
+class VersionComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +15,7 @@ class VersionComponent extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api/island/version') // This is not authenticated on purpose
+    this.authFetch('/api/island/version') // This is not authenticated on purpose
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -27,6 +28,7 @@ class VersionComponent extends React.Component {
 
   newerVersionAvailable() {
     const semverGt = require('semver/functions/gt');
+    console.log(this.state);
     if(this.state.latestVersion !== undefined && this.state.versionNumber !== undefined) {
       return semverGt(this.state.latestVersion, this.state.versionNumber);
     }
