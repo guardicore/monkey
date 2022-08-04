@@ -2,11 +2,13 @@ from typing import Mapping, Sequence
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-from monkey_island.cc.services.utils.network_utils import get_local_ip_addresses
 
 
 class IpAddresses(AbstractResource):
     urls = ["/api/island/ip-addresses"]
+
+    def __init__(self, local_ip_addresses: Sequence[str]):
+        self._local_ips = local_ip_addresses
 
     @jwt_required
     def get(self) -> Mapping[str, Sequence[str]]:
@@ -15,6 +17,5 @@ class IpAddresses(AbstractResource):
 
         :return: a dictionary with "ip_addresses" key that points to a list of IP's
         """
-        local_ips = get_local_ip_addresses()
 
-        return {"ip_addresses": local_ips}
+        return {"ip_addresses": self._local_ips}
