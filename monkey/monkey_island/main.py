@@ -1,9 +1,9 @@
 # This import patches other imports and needs to be first
+import monkey_island.setup.gevent_setup  # noqa: F401 isort:skip
+
 import sys
 
 from monkey_island.cc.server_utils.island_logger import setup_default_failsafe_logging
-
-import monkey_island.setup.gevent_setup  # noqa: F401 isort:skip
 
 
 def main():
