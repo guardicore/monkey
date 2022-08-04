@@ -7,7 +7,7 @@ from shutil import copyfileobj
 
 from monkey_island.cc.repository import IAgentBinaryRepository, RetrievalError
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
-from monkey_island.cc.services.utils.network_utils import local_ip_addresses
+from monkey_island.cc.services.utils.network_utils import get_local_ip_addresses
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ class LocalMonkeyRunService:
 
         # run the monkey
         try:
-            ip = local_ip_addresses()[0]
+            ip = get_local_ip_addresses()[0]
             port = ISLAND_PORT
 
             args = [str(dest_path), "m0nk3y", "-s", f"{ip}:{port}"]
