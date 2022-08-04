@@ -4,7 +4,7 @@ from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 
 
-class IpAddresses(AbstractResource):
+class IPAddresses(AbstractResource):
     """
     Endpoint for the Monkey Island's local IP addresses
     """
