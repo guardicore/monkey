@@ -7,10 +7,6 @@ T = TypeVar("T")
 
 
 class StubDIContainer(DIContainer):
-    def __init__(self):
-        super().__init__()
-        self._convention_registry[(Sequence[str], "local_ip_addresses")] = []
-
     def resolve(self, type_: Type[T]) -> T:
         try:
             return super().resolve(type_)
