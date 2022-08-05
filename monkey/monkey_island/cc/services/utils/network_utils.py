@@ -58,7 +58,7 @@ else:
 # lot of times during the report generation. This means that if the interfaces of the Island machine
 # change, the Island process needs to be restarted.
 @lru(maxsize=1)
-def get_local_ip_addresses() -> Sequence[str]:
+def get_ip_addresses() -> Sequence[str]:
     ip_list = []
     for interface in interfaces():
         addresses = ifaddresses(interface).get(AF_INET, [])

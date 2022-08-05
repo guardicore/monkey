@@ -46,7 +46,7 @@ from monkey_island.cc.services.telemetry.processing.credentials.credentials_pars
 from monkey_island.cc.services.telemetry.processing.processing import (
     TELEMETRY_CATEGORY_TO_PROCESSING_FUNC,
 )
-from monkey_island.cc.services.utils.network_utils import get_local_ip_addresses
+from monkey_island.cc.services.utils.network_utils import get_ip_addresses
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 from monkey_island.cc.version import Version
 
@@ -98,7 +98,7 @@ def _register_conventions(container: DIContainer, data_dir: Path):
     )
     container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
     container.register_convention(str, "version_number", get_version())
-    container.register_convention(Sequence[str], "local_ip_addresses", get_local_ip_addresses())
+    container.register_convention(Sequence[str], "ip_addresses", get_ip_addresses())
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):

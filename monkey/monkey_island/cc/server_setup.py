@@ -27,7 +27,7 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
 )
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
-from monkey_island.cc.services.utils.network_utils import get_local_ip_addresses  # noqa: E402
+from monkey_island.cc.services.utils.network_utils import get_ip_addresses  # noqa: E402
 from monkey_island.cc.setup import PyWSGILoggingFilter  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
@@ -168,9 +168,7 @@ def _log_init_info():
 
 
 def _log_web_interface_access_urls():
-    web_interface_urls = ", ".join(
-        [f"https://{ip}:{ISLAND_PORT}" for ip in get_local_ip_addresses()]
-    )
+    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in get_ip_addresses()])
     logger.info(
         "To access the web interface, navigate to one of the the following URLs using your "
         f"browser: {web_interface_urls}"

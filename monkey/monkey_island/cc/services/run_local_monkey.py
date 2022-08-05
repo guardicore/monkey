@@ -19,11 +19,11 @@ class LocalMonkeyRunService:
         self,
         data_dir: Path,
         agent_binary_repository: IAgentBinaryRepository,
-        local_ip_addresses: Sequence[str],
+        ip_addresses: Sequence[str],
     ):
         self._data_dir = data_dir
         self._agent_binary_repository = agent_binary_repository
-        self._local_ips = local_ip_addresses
+        self._ips = ip_addresses
 
     def run_local_monkey(self):
         # get the monkey executable suitable to run on the server
@@ -65,7 +65,7 @@ class LocalMonkeyRunService:
 
         # run the monkey
         try:
-            ip = self._local_ips[0]
+            ip = self._ips[0]
             port = ISLAND_PORT
 
             args = [str(dest_path), "m0nk3y", "-s", f"{ip}:{port}"]
