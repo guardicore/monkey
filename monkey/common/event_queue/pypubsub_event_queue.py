@@ -1,26 +1,17 @@
-from abc import ABC, abstractstaticmethod
 from typing import Any, Callable, Sequence
 
 from common.events import AbstractEvent
+from .i_event_queue import IEventQueue
+from pubsub import pub, ALL_TOPICS
 
 
-class IEventQueue(ABC):
-    """
-    Manages subscription and publishing of events
-    """
+class PypubsubEventQueue(IEventQueue):
 
-    @abstractstaticmethod
+    @staticmethod
     def subscribe_all(subscriber: Callable[..., Any]):
-        """
-        Subscribes a subscriber to all events
+        pub.subscribe(listener=subscriber, topicName=ALL_TOPICS)
 
-        :param subscriber: Callable that should subscribe to events
-        """
-
-        pass
-
-    @abstractstaticmethod
-    def subscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
+    def subscribe_types(self, types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
         """
         Subscribes a subscriber to all specifed event types
 
@@ -30,8 +21,7 @@ class IEventQueue(ABC):
 
         pass
 
-    @abstractstaticmethod
-    def subscribe_tags(tags: Sequence[str], subscriber: Callable[..., Any]):
+    def subscribe_tags(self, tags: Sequence[str], subscriber: Callable[..., Any]):
         """
         Subscribes a subscriber to all specified event tags
 
@@ -41,8 +31,7 @@ class IEventQueue(ABC):
 
         pass
 
-    @abstractstaticmethod
-    def publish(event: AbstractEvent, data: Any):
+    def publish(self, event: AbstractEvent, data: Any):
         """
         Publishes an event with the given data
 
@@ -52,5 +41,3 @@ class IEventQueue(ABC):
 
         pass
 
-
-# TODO: Add unsubscribing functions
