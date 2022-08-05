@@ -31,6 +31,7 @@ class DIContainer:
 
         :param interface: An interface or abstract base class that other classes depend upon
         :param concrete_type: A `type` (class) that implements `interface`
+        :raises TypeError: If `concrete_type` is not a class, or not a subclass of `interface`
         """
         if not inspect.isclass(concrete_type):
             raise TypeError(
@@ -54,6 +55,7 @@ class DIContainer:
 
         :param interface: An interface or abstract base class that other classes depend upon
         :param instance: An instance (object) of a `type` that implements `interface`
+        :raises TypeError: If `instance` is not an instance of `interface`
         """
         if not isinstance(instance, interface):
             raise TypeError(
@@ -106,6 +108,7 @@ class DIContainer:
 
         :param **type_**: A `type` (class) to construct
         :return: An instance of **type_**
+        :raises UnresolvableDependencyError: If any dependencies could not be successfully resolved
         """
         try:
             return self._resolve_type(type_)
@@ -125,6 +128,7 @@ class DIContainer:
 
         :param **type_**: A type (class) to resolve dependencies for
         :return: An Sequence of dependencies to be injected into `type_`'s constructor
+        :raises UnresolvableDependencyError: If any dependencies could not be successfully resolved
         """
         args = []
 
