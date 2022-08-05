@@ -1,5 +1,4 @@
 import logging
-from typing import Sequence
 
 from flask import jsonify, make_response, request
 
@@ -15,9 +14,6 @@ class Root(AbstractResource):
 
     urls = ["/api"]
 
-    def __init__(self, local_ip_addresses: Sequence[str]):
-        self._local_ips = local_ip_addresses
-
     def get(self, action=None):
         if not action:
             action = request.args.get("action")
@@ -32,7 +28,6 @@ class Root(AbstractResource):
     @jwt_required
     def get_server_info(self):
         return jsonify(
-            ip_addresses=self._local_ips,
             mongo=str(mongo.db),
             completed_steps=get_completed_steps(),
         )
