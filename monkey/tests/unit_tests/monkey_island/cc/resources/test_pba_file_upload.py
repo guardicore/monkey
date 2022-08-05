@@ -9,8 +9,7 @@ from tests.utils import raise_
 
 from common import DIContainer
 from monkey_island.cc.repository import IAgentConfigurationRepository, IFileRepository
-from monkey_island.cc.resources import PBAFileUpload
-from monkey_island.cc.resources.pba_file_upload import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE
+from monkey_island.cc.resources import LINUX_PBA_TYPE, WINDOWS_PBA_TYPE, PBAFileUpload
 
 TEST_FILE_CONTENTS = b"m0nk3y"
 TEST_FILE = (
