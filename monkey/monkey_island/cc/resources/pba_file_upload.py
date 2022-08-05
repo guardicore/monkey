@@ -18,16 +18,15 @@ WINDOWS_PBA_TYPE = "PBAwindows"
 
 
 # NOTE: This resource will be reworked when the Custom PBA feature is rebuilt as a payload plugin.
-class FileUpload(AbstractResource):
-    # API Spec: FileUpload -> PBAFileUpload. Change endpoint accordingly.
+class PBAFileUpload(AbstractResource):
     """
     File upload endpoint used to send/receive Custom PBA files
     """
 
     urls = [
-        "/api/file-upload/<string:target_os>",
-        "/api/file-upload/<string:target_os>?load=<string:filename>",
-        "/api/file-upload/<string:target_os>?restore=<string:filename>",
+        "/api/pba/upload/<string:target_os>",
+        "/api/pba/upload/<string:target_os>?load=<string:filename>",
+        "/api/pba/upload/<string:target_os>?restore=<string:filename>",
     ]
 
     def __init__(

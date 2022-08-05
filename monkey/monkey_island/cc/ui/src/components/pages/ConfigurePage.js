@@ -27,8 +27,8 @@ import {
 const CONFIG_URL = '/api/agent-configuration';
 const RESET_URL = '/api/reset-agent-configuration';
 const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
-export const API_PBA_LINUX = '/api/file-upload/PBAlinux';
-export const API_PBA_WINDOWS = '/api/file-upload/PBAwindows';
+export const API_PBA_LINUX = '/api/pba/upload/PBAlinux';
+export const API_PBA_WINDOWS = '/api/pba/upload/PBAwindows';
 
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';

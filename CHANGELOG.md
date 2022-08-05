@@ -52,6 +52,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/log/island/download` endpoint to `/api/island/log`. #2107
 - `/api/auth` endpoint to `/api/authenticate`. #2105
 - `/api/registration` endpoint to `/api/register`. #2105
+- `/api/file-upload` endpoit to `/api/pba/upload`. #2154
 
 ### Removed
 - VSFTPD exploiter. #1533
