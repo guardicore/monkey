@@ -32,11 +32,11 @@ const getContents = (props) => {
   }, []);
 
   function getIps() {
-    authComponent.authFetch('/api')
+    authComponent.authFetch('/api/island/ip-addresses')
       .then(res => res.json())
-      .then(res => {
-        setAllIPs(res['ip_addresses']);
-        setSelectedIp(res['ip_addresses'][0]);
+      .then(ip_addresses => {
+        setAllIPs(ip_addresses);
+        setSelectedIp(ip_addresses[0]);
       });
   }
 
