@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.utils.exceptions import IncorrectCredentialsError
-from monkey_island.cc.resources.auth.authenticate import Authenticate
+from monkey_island.cc.resources.auth import Authenticate
 
 USERNAME = "test_user"
 PASSWORD = "test_password"

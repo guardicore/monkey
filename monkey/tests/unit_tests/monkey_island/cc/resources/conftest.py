@@ -7,7 +7,7 @@ from tests.monkey_island import OpenErrorFileRepository
 from tests.unit_tests.monkey_island.conftest import init_mock_app
 
 import monkey_island.cc.app
-import monkey_island.cc.resources.auth.authenticate
+import monkey_island.cc.resources.auth
 import monkey_island.cc.resources.island_mode
 from monkey_island.cc.repository import IFileRepository
 

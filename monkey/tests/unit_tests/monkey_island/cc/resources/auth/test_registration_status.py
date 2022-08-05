@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from monkey_island.cc.resources.auth.registration_status import RegistrationStatus
+from monkey_island.cc.resources.auth import RegistrationStatus
 
 REGISTRATION_STATUS_URL = RegistrationStatus.urls[0]
 
