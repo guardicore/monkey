@@ -55,7 +55,7 @@ class MonkeyIslandClient(object):
         serialized_propagation_credentials = [
             Credentials.to_mapping(credentials) for credentials in propagation_credentials
         ]
-        response = self.requests.post_json(
+        response = self.requests.put_json(
             "/api/propagation-credentials/configured-credentials",
             json=serialized_propagation_credentials,
         )
