@@ -89,6 +89,12 @@ class MonkeyIslandRequests(object):
         )
 
     @_Decorators.refresh_jwt_token
+    def put_json(self, url, json: Dict):
+        return requests.put(  # noqa: DUO123
+            self.addr + url, json=json, headers=self.get_jwt_header(), verify=False
+        )
+
+    @_Decorators.refresh_jwt_token
     def post_json(self, url, json: Dict):
         return requests.post(  # noqa: DUO123
             self.addr + url, json=json, headers=self.get_jwt_header(), verify=False
