@@ -40,7 +40,7 @@ from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
 from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.pba_file_download import PBAFileDownload
-from monkey_island.cc.resources.pba_file_upload import FileUpload
+from monkey_island.cc.resources.pba_file_upload import PBAFileUpload
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
@@ -181,7 +181,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     # API Spec: These two should be the same resource, GET for download and POST for upload
     api.add_resource(PBAFileDownload)
-    api.add_resource(FileUpload)
+    api.add_resource(PBAFileUpload)
 
     api.add_resource(PropagationCredentials)
     api.add_resource(RemoteRun)
