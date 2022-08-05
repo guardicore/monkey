@@ -40,7 +40,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def _import_config(self, test_configuration: TestConfiguration):
-        response = self.requests.post_json(
+        response = self.requests.put_json(
             "api/agent-configuration",
             json=AgentConfiguration.to_mapping(test_configuration.agent_configuration),
         )
