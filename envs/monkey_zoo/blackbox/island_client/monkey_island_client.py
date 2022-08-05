@@ -113,7 +113,7 @@ class MonkeyIslandClient(object):
             assert False
 
     def _reset_credentials(self):
-        if self.requests.delete("api/propagation-credentials/configured-credentials").ok:
+        if self.requests.put_json("api/propagation-credentials/configured-credentials", json=[]).ok:
             LOGGER.info("Resseting configured credentials after the test.")
         else:
             LOGGER.error("Failed to reset configured credentials")
