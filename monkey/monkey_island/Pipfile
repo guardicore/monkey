@@ -33,6 +33,7 @@ readerwriterlock = "*"
 pymongo = "*"
 cryptography = "*"
 semantic-version = "*"
+pypubsub = "*"
 
 [dev-packages]
 virtualenv = ">=20.0.26"
