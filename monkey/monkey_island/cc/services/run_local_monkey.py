@@ -4,10 +4,10 @@ import stat
 import subprocess
 from pathlib import Path
 from shutil import copyfileobj
+from typing import Sequence
 
 from monkey_island.cc.repository import IAgentBinaryRepository, RetrievalError
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
-from monkey_island.cc.services.utils.network_utils import local_ip_addresses
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +15,15 @@ AGENT_NAMES = {"linux": "monkey-linux-64", "windows": "monkey-windows-64.exe"}
 
 
 class LocalMonkeyRunService:
-    def __init__(self, data_dir: Path, agent_binary_repository: IAgentBinaryRepository):
+    def __init__(
+        self,
+        data_dir: Path,
+        agent_binary_repository: IAgentBinaryRepository,
+        ip_addresses: Sequence[str],
+    ):
         self._data_dir = data_dir
         self._agent_binary_repository = agent_binary_repository
+        self._ips = ip_addresses
 
     def run_local_monkey(self):
         # get the monkey executable suitable to run on the server
@@ -59,7 +65,7 @@ class LocalMonkeyRunService:
 
         # run the monkey
         try:
-            ip = local_ip_addresses()[0]
+            ip = self._ips[0]
             port = ISLAND_PORT
 
             args = [str(dest_path), "m0nk3y", "-s", f"{ip}:{port}"]

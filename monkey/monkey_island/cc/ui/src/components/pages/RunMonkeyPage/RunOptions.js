@@ -23,8 +23,7 @@ function RunOptions(props) {
     if (initialized === false) {
       authComponent.authFetch(IP_ADDRESSES_URL)
       .then(res => res.json())
-      .then(res => {
-        let ipAddresses = res.ip_addresses;
+      .then(ipAddresses => {
         setIps(ipAddresses);
         setInitialized(true);
       });

@@ -13,6 +13,7 @@ from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import (
     AgentBinaries,
     ClearSimulationData,
+    IPAddresses,
     IslandLog,
     PropagationCredentials,
     RemoteRun,
@@ -33,7 +34,6 @@ from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
-from monkey_island.cc.resources.ip_addresses import IpAddresses
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
@@ -179,7 +179,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(TelemetryFeed)
     api.add_resource(Log)
     api.add_resource(IslandLog)
-    api.add_resource(IpAddresses)
+    api.add_resource(IPAddresses)
 
     # API Spec: These two should be the same resource, GET for download and POST for upload
     api.add_resource(PBAFileDownload)
