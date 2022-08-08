@@ -15,22 +15,14 @@ class PypubsubEventQueue(IEventQueue):
     @staticmethod
     def subscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
         for event_type in types:
-            PypubsubEventQueue._subscribe_type(event_type, subscriber)
-
-    @staticmethod
-    def _subscribe_type(event_type: AbstractEvent, subscriber: Callable[..., Any]):
-        # pypubsub.pub.subscribe needs a string as the topic/event name
-        event_type_name = event_type.__name__
-        pub.subscribe(listener=subscriber, topicName=event_type_name)
+            # pypubsub.pub.subscribe needs a string as the topic/event name
+            event_type_name = event_type.__name__
+            pub.subscribe(listener=subscriber, topicName=event_type_name)
 
     @staticmethod
     def subscribe_tags(tags: Sequence[str], subscriber: Callable[..., Any]):
         for tag in tags:
-            PypubsubEventQueue._subscribe_tag(tag, subscriber)
-
-    @staticmethod
-    def _subscribe_tag(tag: str, subscriber: Callable[..., Any]):
-        pub.subscribe(listener=subscriber, topicName=tag)
+            pub.subscribe(listener=subscriber, topicName=tag)
 
     @staticmethod
     def publish(event: AbstractEvent, data: Any):
@@ -45,10 +37,7 @@ class PypubsubEventQueue(IEventQueue):
         # to the function, and publish to each class's type and tags (except the last 3 classes)
         for event_type in event.mro()[:-3]:
             PypubsubEventQueue._publish_to_type(event_type, data)
-
-            # one event can have multiple tags
-            for tag in event_type.tags:
-                PypubsubEventQueue._publish_to_tag(tag, data)
+            PypubsubEventQueue._publish_to_tags(event_type, data)
 
     @staticmethod
     def _publish_to_type(event_type: AbstractEvent, data: Any):
@@ -56,5 +45,6 @@ class PypubsubEventQueue(IEventQueue):
         pub.sendMessage(event_type_name, data)
 
     @staticmethod
-    def _publish_to_tag(tag: str, data: Any):
-        pub.sendMessage(tag, data)
+    def _publish_to_tags(event_type: AbstractEvent, data: Any):
+        for tag in event_type.tags:
+            pub.sendMessage(tag, data)
