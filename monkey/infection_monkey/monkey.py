@@ -17,7 +17,10 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.credential_store import AggregatingCredentialsStore, ICredentialsStore
+from infection_monkey.credential_store import (
+    AggregatingPropagationCredentialsRepository,
+    IPropagationCredentialsRepository,
+)
 from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
@@ -195,7 +198,7 @@ class InfectionMonkey:
         control_channel = ControlChannel(
             self._control_client.server_address, GUID, self._control_client.proxies
         )
-        credentials_store = AggregatingCredentialsStore(control_channel)
+        credentials_store = AggregatingPropagationCredentialsRepository(control_channel)
 
         puppet = self._build_puppet(credentials_store)
 
@@ -226,7 +229,7 @@ class InfectionMonkey:
 
         return local_network_interfaces
 
-    def _build_puppet(self, credentials_store: ICredentialsStore) -> IPuppet:
+    def _build_puppet(self, credentials_store: IPropagationCredentialsRepository) -> IPuppet:
         puppet = Puppet()
 
         puppet.load_plugin(

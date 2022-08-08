@@ -1,11 +1,10 @@
 from datetime import datetime
 from enum import Enum
-from json import loads
+from json import JSONEncoder, dumps, loads
 from typing import Any
 
 import bson
 from flask import make_response
-from flask.json import JSONEncoder, dumps
 
 from common.utils import IJSONSerializable
 

@@ -6,14 +6,19 @@ from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.utils.decorators import request_cache
 
-from .i_credentials_store import ICredentialsStore
+from .i_propagation_credentials_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
 
 CREDENTIALS_POLL_PERIOD_SEC = 10
 
 
-class AggregatingCredentialsStore(ICredentialsStore):
+class AggregatingPropagationCredentialsRepository(IPropagationCredentialsRepository):
+    """
+    Repository that stores credentials on the island and saves/gets credentials by using
+    command and control channel
+    """
+
     def __init__(self, control_channel: IControlChannel):
         self._stored_credentials = {
             "exploit_user_list": set(),

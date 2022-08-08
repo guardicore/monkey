@@ -15,7 +15,7 @@ from tests.data_for_tests.propagation_credentials import (
 )
 
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
-from infection_monkey.credential_store import AggregatingCredentialsStore
+from infection_monkey.credential_repository import AggregatingPropagationCredentialsRepository
 
 CONTROL_CHANNEL_CREDENTIALS = PROPAGATION_CREDENTIALS
 TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS = {
@@ -67,24 +67,24 @@ STOLEN_SSH_KEYS_CREDENTIALS = [
 
 
 @pytest.fixture
-def aggregating_credentials_store() -> AggregatingCredentialsStore:
+def aggregating_credentials_repository() -> AggregatingPropagationCredentialsRepository:
     control_channel = MagicMock()
     control_channel.get_credentials_for_propagation.return_value = CONTROL_CHANNEL_CREDENTIALS
-    return AggregatingCredentialsStore(control_channel)
+    return AggregatingPropagationCredentialsRepository(control_channel)
 
 
 @pytest.mark.parametrize("key", TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS.keys())
-def test_get_credentials_from_store(aggregating_credentials_store, key):
-    actual_stored_credentials = aggregating_credentials_store.get_credentials()
+def test_get_credentials_from_repository(aggregating_credentials_repository, key):
+    actual_stored_credentials = aggregating_credentials_repository.get_credentials()
 
     assert actual_stored_credentials[key] == TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS[key]
 
 
-def test_add_credentials_to_store(aggregating_credentials_store):
-    aggregating_credentials_store.add_credentials(STOLEN_CREDENTIALS)
-    aggregating_credentials_store.add_credentials(STOLEN_SSH_KEYS_CREDENTIALS)
+def test_add_credentials_to_repository(aggregating_credentials_repository):
+    aggregating_credentials_repository.add_credentials(STOLEN_CREDENTIALS)
+    aggregating_credentials_repository.add_credentials(STOLEN_SSH_KEYS_CREDENTIALS)
 
-    actual_stored_credentials = aggregating_credentials_store.get_credentials()
+    actual_stored_credentials = aggregating_credentials_repository.get_credentials()
 
     assert actual_stored_credentials["exploit_user_list"] == set(
         [
@@ -113,9 +113,9 @@ def test_add_credentials_to_store(aggregating_credentials_store):
 def test_all_keys_if_credentials_empty():
     control_channel = MagicMock()
     control_channel.get_credentials_for_propagation.return_value = EMPTY_CHANNEL_CREDENTIALS
-    credentials_store = AggregatingCredentialsStore(control_channel)
+    credentials_repository = AggregatingPropagationCredentialsRepository(control_channel)
 
-    actual_stored_credentials = credentials_store.get_credentials()
+    actual_stored_credentials = credentials_repository.get_credentials()
     print(type(actual_stored_credentials))
 
     assert "exploit_user_list" in actual_stored_credentials
