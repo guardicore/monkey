@@ -52,5 +52,34 @@ class IEventQueue(ABC):
 
         pass
 
+    @abstractstaticmethod
+    def unsubscribe_all(subscriber: Callable[..., Any]):
+        """
+        Unsubscribes a subscriber from all events
 
-# TODO: Add unsubscribing functions
+        :param subscriber: Callable that should unsubscribe from events
+        """
+
+        pass
+
+    @abstractstaticmethod
+    def unsubscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
+        """
+        Unsubscribes a subscriber from all specifed event types
+
+        :param types: Event types from which the subscriber should unsubscribe
+        :param subscriber: Callable that should unsubscribe from events
+        """
+
+        pass
+
+    @abstractstaticmethod
+    def unsubscribe_tags(tags: Sequence[str], subscriber: Callable[..., Any]):
+        """
+        Unubscribes a subscriber from all specified event tags
+
+        :param tags: Event tags from which the subscriber should unsubscribe
+        :param subscriber: Callable that should unsubscribe from events
+        """
+
+        pass
