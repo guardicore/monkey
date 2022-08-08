@@ -5,7 +5,7 @@ from typing import Any
 
 import bson
 from flask import make_response
-from flask.json import JSONEncoder, dumps
+from json import JSONEncoder, dumps
 
 from common.utils import IJSONSerializable
 
