@@ -14,6 +14,11 @@ CREDENTIALS_POLL_PERIOD_SEC = 10
 
 
 class AggregatingPropagationCredentialsRepository(IPropagationCredentialsRepository):
+    """
+    Repository that stores credentials on the island and saves/gets credentials by using
+    command and control channel
+    """
+
     def __init__(self, control_channel: IControlChannel):
         self._stored_credentials = {
             "exploit_user_list": set(),
@@ -33,18 +38,10 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
                 self._add_secret(credentials.secret)
 
     def _add_identity(self, identity: ICredentialComponent):
-        """
-        Stores identity component to the repository
-        :param identity: Identity credential component
-        """
         if identity.credential_type is CredentialComponentType.USERNAME:
             self._stored_credentials.setdefault("exploit_user_list", set()).add(identity.username)
 
     def _add_secret(self, secret: ICredentialComponent):
-        """
-        Stores secret component to the repository
-        :param secret: Secret credential component
-        """
         if secret.credential_type is CredentialComponentType.PASSWORD:
             self._stored_credentials.setdefault("exploit_password_list", set()).add(secret.password)
         elif secret.credential_type is CredentialComponentType.LM_HASH:
@@ -69,18 +66,9 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
 
     @request_cache(CREDENTIALS_POLL_PERIOD_SEC)
     def _get_credentials_from_control_channel(self) -> Sequence[Credentials]:
-        """
-        Fetches credentials from control channel
-        :return: Credentials that can be used for propagation
-        """
         return self._control_channel.get_credentials_for_propagation()
 
     def _set_attribute(self, attribute_to_be_set: str, credentials_values: Iterable[Any]):
-        """
-        Sets a value for a credential type
-        :param attribute_to_be_set: Key of self._stored_credentials (credential container key)
-        :param credentials_values: Value we want to set the container to
-        """
         if not credentials_values:
             return
 
