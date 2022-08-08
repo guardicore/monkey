@@ -1,4 +1,5 @@
 import inspect
+from contextlib import suppress
 from typing import Any, Sequence, Type, TypeVar
 
 from common.utils.code_utils import del_key
@@ -110,10 +111,8 @@ class DIContainer:
         :return: An instance of **type_**
         :raises UnresolvableDependencyError: If any dependencies could not be successfully resolved
         """
-        try:
+        with suppress(UnresolvableDependencyError):
             return self._resolve_type(type_)
-        except UnresolvableDependencyError:
-            pass
 
         args = self.resolve_dependencies(type_)
         return type_(*args)
