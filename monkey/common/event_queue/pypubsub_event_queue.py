@@ -18,18 +18,16 @@ class PypubsubEventQueue(IEventQueue):
             PypubsubEventQueue._subscribe_type(event_type, subscriber)
 
     def _subscribe_type(event_type: AbstractEvent, subscriber: Callable[..., Any]):
+        # pypubsub.pub.subscribe needs a string as the topic/event name
         event_type_name = event_type.__name__
-        pub.subscribe(subscriber, event_type_name)
+        pub.subscribe(listener=subscriber, topicName=event_type_name)
 
     def subscribe_tags(self, tags: Sequence[str], subscriber: Callable[..., Any]):
-        """
-        Subscribes a subscriber to all specified event tags
+        for tag in tags:
+            PypubsubEventQueue._subscribe_tag(tag, subscriber)
 
-        :param tags: Event tags to which the subscriber should subscribe
-        :param subscriber: Callable that should subscribe to events
-        """
-
-        pass
+    def _subscribe_tag(tag: str, subscriber: Callable[..., Any]):
+        pub.subscribe(listener=subscriber, topicName=tag)
 
     def publish(self, event: AbstractEvent, data: Any):
         """
