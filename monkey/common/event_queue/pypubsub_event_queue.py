@@ -17,15 +17,18 @@ class PypubsubEventQueue(IEventQueue):
         for event_type in types:
             PypubsubEventQueue._subscribe_type(event_type, subscriber)
 
+    @staticmethod
     def _subscribe_type(event_type: AbstractEvent, subscriber: Callable[..., Any]):
         # pypubsub.pub.subscribe needs a string as the topic/event name
         event_type_name = event_type.__name__
         pub.subscribe(listener=subscriber, topicName=event_type_name)
 
-    def subscribe_tags(self, tags: Sequence[str], subscriber: Callable[..., Any]):
+    @staticmethod
+    def subscribe_tags(tags: Sequence[str], subscriber: Callable[..., Any]):
         for tag in tags:
             PypubsubEventQueue._subscribe_tag(tag, subscriber)
 
+    @staticmethod
     def _subscribe_tag(tag: str, subscriber: Callable[..., Any]):
         pub.subscribe(listener=subscriber, topicName=tag)
 
