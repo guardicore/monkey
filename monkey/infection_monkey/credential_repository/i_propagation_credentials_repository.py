@@ -5,7 +5,7 @@ from common.credentials import Credentials
 from infection_monkey.custom_types import PropagationCredentials
 
 
-class ICredentialsStore(metaclass=abc.ABCMeta):
+class IPropagationCredentialsRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         """

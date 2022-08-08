@@ -5,7 +5,7 @@ from typing import Any, Callable, Iterable, List, Optional
 
 from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
 from common.utils import Timer
-from infection_monkey.credential_store import ICredentialsStore
+from infection_monkey.credential_repository import IPropagationCredentialsRepository
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -40,7 +40,7 @@ class AutomatedMaster(IMaster):
         victim_host_factory: VictimHostFactory,
         control_channel: IControlChannel,
         local_network_interfaces: List[NetworkInterface],
-        credentials_store: ICredentialsStore,
+        credentials_store: IPropagationCredentialsRepository,
     ):
         self._current_depth = current_depth
         self._puppet = puppet

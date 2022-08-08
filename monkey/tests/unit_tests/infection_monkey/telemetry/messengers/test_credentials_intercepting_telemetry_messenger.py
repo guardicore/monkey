@@ -25,28 +25,28 @@ class MockCredentialsTelem(CredentialsTelem):
 
 def test_credentials_generic_telemetry(TestTelem):
     mock_telemetry_messenger = MagicMock()
-    mock_credentials_store = MagicMock()
+    mock_credentials_repository = MagicMock()
 
     telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
-        mock_telemetry_messenger, mock_credentials_store
+        mock_telemetry_messenger, mock_credentials_repository
     )
 
     telemetry_messenger.send_telemetry(TestTelem())
 
     assert mock_telemetry_messenger.send_telemetry.called
-    assert not mock_credentials_store.add_credentials.called
+    assert not mock_credentials_repository.add_credentials.called
 
 
 def test_successful_intercepting_credentials_telemetry():
     mock_telemetry_messenger = MagicMock()
-    mock_credentials_store = MagicMock()
+    mock_credentials_repository = MagicMock()
     mock_empty_credentials_telem = MockCredentialsTelem(TELEM_CREDENTIALS)
 
     telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
-        mock_telemetry_messenger, mock_credentials_store
+        mock_telemetry_messenger, mock_credentials_repository
     )
 
     telemetry_messenger.send_telemetry(mock_empty_credentials_telem)
 
     assert mock_telemetry_messenger.send_telemetry.called
-    assert mock_credentials_store.add_credentials.called
+    assert mock_credentials_repository.add_credentials.called
