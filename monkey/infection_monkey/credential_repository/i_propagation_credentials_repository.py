@@ -14,7 +14,7 @@ class IPropagationCredentialsRepository(metaclass=abc.ABCMeta):
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         """
         Adds credentials to the CredentialStore
-        :param Iterable[Credentials] credentials_to_add: The credentials that will be added
+        :param credentials_to_add: The credentials that will be added
         """
 
     @abc.abstractmethod
@@ -22,5 +22,4 @@ class IPropagationCredentialsRepository(metaclass=abc.ABCMeta):
         """
         Retrieves credentials from the store
         :return: Credentials that can be used for propagation
-        :type: PropagationCredentials
         """
