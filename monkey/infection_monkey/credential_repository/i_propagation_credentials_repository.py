@@ -10,7 +10,7 @@ class IPropagationCredentialsRepository(metaclass=abc.ABCMeta):
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         """
         Adds credentials to the CredentialStore
-        :param Iterable[Credentials] credentials: The credentials that will be added
+        :param Iterable[Credentials] credentials_to_add: The credentials that will be added
         """
 
     @abc.abstractmethod
