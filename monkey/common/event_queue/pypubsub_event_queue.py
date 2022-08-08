@@ -1,6 +1,6 @@
 from typing import Any, Callable, Sequence
 
-from pubsub import ALL_TOPICS, pub
+from pubsub import pub
 
 from common.events import AbstractEvent
 
@@ -10,7 +10,7 @@ from .i_event_queue import IEventQueue
 class PypubsubEventQueue(IEventQueue):
     @staticmethod
     def subscribe_all(subscriber: Callable[..., Any]):
-        pub.subscribe(listener=subscriber, topicName=ALL_TOPICS)
+        pub.subscribe(listener=subscriber, topicName=pub.ALL_TOPICS)
 
     @staticmethod
     def subscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
@@ -25,18 +25,20 @@ class PypubsubEventQueue(IEventQueue):
             pub.subscribe(listener=subscriber, topicName=tag)
 
     @staticmethod
-    def publish(event: AbstractEvent, data: Any):
+    def publish(event: AbstractEvent, data: Any = None):
+        data = data if data else {}
+
         # publish to event type's topic
         event_type_name = event.__name__
-        pub.sendMessage(event_type_name, data)
+        pub.sendMessage(event_type_name, **data)
 
         # publish to tags' topics
         for tag in event.tags:
-            pub.sendMessage(tag, data)
+            pub.sendMessage(tag, **data)
 
     @staticmethod
     def unsubscribe_all(subscriber: Callable[..., Any]):
-        pub.unsubscribe(listener=subscriber, topicName=ALL_TOPICS)
+        pub.unsubscribe(listener=subscriber, topicName=pub.ALL_TOPICS)
 
     @staticmethod
     def unsubscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
