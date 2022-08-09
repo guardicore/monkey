@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 from typing import Sequence
 
+from pubsub import pub
 from pymongo import MongoClient
 
 from common import DIContainer
@@ -13,6 +14,8 @@ from common.agent_configuration import (
 )
 from common.aws import AWSInstance
 from common.common_consts.telem_categories import TelemCategoryEnum
+from common.event_queue.i_event_queue import IEventQueue
+from common.event_queue.pypubsub_event_queue import PyPubSubEventQueue
 from common.utils.file_utils import get_binary_io_sha256_hash
 from common.version import get_version
 from monkey_island.cc import Version
@@ -71,6 +74,8 @@ def initialize_services(data_dir: Path) -> DIContainer:
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
     )
     container.register_instance(Version, container.resolve(Version))
+    container.register_instance(IEventQueue, PyPubSubEventQueue(pub))
+
     _register_repositories(container, data_dir)
     _register_services(container)
 
