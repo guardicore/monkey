@@ -1,4 +1,4 @@
-from typing import Any, Callable, Sequence
+from typing import Any, Callable
 
 from pubsub import pub
 
@@ -13,13 +13,10 @@ class PyPubSubEventQueue(IEventQueue):
         pub.subscribe(listener=subscriber, topicName=pub.ALL_TOPICS)
 
     @staticmethod
-    def subscribe_types(
-        types: Sequence[AbstractEvent], subscriber: Callable[[AbstractEvent], None]
-    ):
-        for event_type in types:
-            # pypubsub.pub.subscribe needs a string as the topic/event name
-            event_type_name = event_type.__name__
-            pub.subscribe(listener=subscriber, topicName=event_type_name)
+    def subscribe_type(event_type: AbstractEvent, subscriber: Callable[[AbstractEvent], None]):
+        # pypubsub.pub.subscribe needs a string as the topic/event name
+        event_type_name = event_type.__name__
+        pub.subscribe(listener=subscriber, topicName=event_type_name)
 
     @staticmethod
     def subscribe_tag(tag: str, subscriber: Callable[[AbstractEvent], None]):
