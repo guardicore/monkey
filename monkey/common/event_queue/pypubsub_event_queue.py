@@ -4,6 +4,8 @@ from common.events import AbstractEvent
 
 from .i_event_queue import IEventQueue
 
+INTERNAL_ALL_EVENT_TYPES_TOPIC = "internal_all_event_types"
+
 
 class PyPubSubEventQueue(IEventQueue):
     def __init__(self, pypubsub_publisher):
@@ -21,6 +23,11 @@ class PyPubSubEventQueue(IEventQueue):
         event_type_name = event_type.__name__
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=event_type_name)
 
+    def subscribe_all_event_types(self, subscriber: Callable[[AbstractEvent], None]):
+        self._pypubsub_publisher.subscribe(
+            listener=subscriber, topicName=INTERNAL_ALL_EVENT_TYPES_TOPIC
+        )
+
     def subscribe_tag(self, tag: str, subscriber: Callable[[AbstractEvent], None]):
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=tag)
 
@@ -30,6 +37,9 @@ class PyPubSubEventQueue(IEventQueue):
         # publish to event type's topic
         event_type_name = event.__name__
         self._pypubsub_publisher.sendMessage(event_type_name, **data)
+
+        # publish to all events' topic
+        self._pypubsub_publisher.sendMessage(INTERNAL_ALL_EVENT_TYPES_TOPIC, **data)
 
         # publish to tags' topics
         for tag in event.tags:
