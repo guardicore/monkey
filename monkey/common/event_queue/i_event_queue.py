@@ -10,7 +10,7 @@ class IEventQueue(ABC):
     """
 
     @abstractstaticmethod
-    def subscribe_all(subscriber: Callable[..., Any]):
+    def subscribe_all(subscriber: Callable[[AbstractEvent], None]):
         """
         Subscribes a subscriber to all events
 
@@ -20,7 +20,9 @@ class IEventQueue(ABC):
         pass
 
     @abstractstaticmethod
-    def subscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
+    def subscribe_types(
+        types: Sequence[AbstractEvent], subscriber: Callable[[AbstractEvent], None]
+    ):
         """
         Subscribes a subscriber to all specifed event types
 
@@ -31,7 +33,7 @@ class IEventQueue(ABC):
         pass
 
     @abstractstaticmethod
-    def subscribe_tags(tags: Sequence[str], subscriber: Callable[..., Any]):
+    def subscribe_tags(tags: Sequence[str], subscriber: Callable[[AbstractEvent], None]):
         """
         Subscribes a subscriber to all specified event tags
 

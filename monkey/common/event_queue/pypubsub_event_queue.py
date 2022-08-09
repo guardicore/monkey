@@ -9,18 +9,20 @@ from .i_event_queue import IEventQueue
 
 class PyPubSubEventQueue(IEventQueue):
     @staticmethod
-    def subscribe_all(subscriber: Callable[..., Any]):
+    def subscribe_all(subscriber: Callable[[AbstractEvent], None]):
         pub.subscribe(listener=subscriber, topicName=pub.ALL_TOPICS)
 
     @staticmethod
-    def subscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
+    def subscribe_types(
+        types: Sequence[AbstractEvent], subscriber: Callable[[AbstractEvent], None]
+    ):
         for event_type in types:
             # pypubsub.pub.subscribe needs a string as the topic/event name
             event_type_name = event_type.__name__
             pub.subscribe(listener=subscriber, topicName=event_type_name)
 
     @staticmethod
-    def subscribe_tags(tags: Sequence[str], subscriber: Callable[..., Any]):
+    def subscribe_tags(tags: Sequence[str], subscriber: Callable[[AbstractEvent], None]):
         for tag in tags:
             pub.subscribe(listener=subscriber, topicName=tag)
 
