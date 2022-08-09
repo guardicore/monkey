@@ -1,2 +1,2 @@
-baseURL = "https://www.guardicore.com/infectionmonkey/docs/"
-canonifyURLs = true
+baseURL = "https://monkey-documentation.website-us-southeast-1.linodeobjects.com"
+canonifyURLs = false
