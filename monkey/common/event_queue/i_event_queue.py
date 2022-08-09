@@ -1,4 +1,4 @@
-from abc import ABC, abstractstaticmethod
+from abc import ABC, abstractmethod
 from typing import Any, Callable
 
 from common.events import AbstractEvent
@@ -9,8 +9,8 @@ class IEventQueue(ABC):
     Manages subscription and publishing of events
     """
 
-    @abstractstaticmethod
-    def subscribe_all(subscriber: Callable[[AbstractEvent], None]):
+    @abstractmethod
+    def subscribe_all(self, subscriber: Callable[[AbstractEvent], None]):
         """
         Subscribes a subscriber to all events
 
@@ -19,8 +19,10 @@ class IEventQueue(ABC):
 
         pass
 
-    @abstractstaticmethod
-    def subscribe_type(event_type: AbstractEvent, subscriber: Callable[[AbstractEvent], None]):
+    @abstractmethod
+    def subscribe_type(
+        self, event_type: AbstractEvent, subscriber: Callable[[AbstractEvent], None]
+    ):
         """
         Subscribes a subscriber to the specifed event type
 
@@ -30,8 +32,8 @@ class IEventQueue(ABC):
 
         pass
 
-    @abstractstaticmethod
-    def subscribe_tag(tag: str, subscriber: Callable[[AbstractEvent], None]):
+    @abstractmethod
+    def subscribe_tag(self, tag: str, subscriber: Callable[[AbstractEvent], None]):
         """
         Subscribes a subscriber to the specified event tag
 
@@ -41,8 +43,8 @@ class IEventQueue(ABC):
 
         pass
 
-    @abstractstaticmethod
-    def publish(event: AbstractEvent, data: Any):
+    @abstractmethod
+    def publish(self, event: AbstractEvent, data: Any):
         """
         Publishes an event with the given data
 
