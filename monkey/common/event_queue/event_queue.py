@@ -35,19 +35,3 @@ class EventQueue(IEventQueue):
         # publish to tags' topics
         for tag in event.tags:
             pub.sendMessage(tag, **data)
-
-    @staticmethod
-    def unsubscribe_all(subscriber: Callable[..., Any]):
-        pub.unsubscribe(listener=subscriber, topicName=pub.ALL_TOPICS)
-
-    @staticmethod
-    def unsubscribe_types(types: Sequence[AbstractEvent], subscriber: Callable[..., Any]):
-        for event_type in types:
-            # pypubsub.pub.subscribe needs a string as the topic/event name
-            event_type_name = event_type.__name__
-            pub.unsubscribe(listener=subscriber, topicName=event_type_name)
-
-    @staticmethod
-    def unsubscribe_tags(tags: Sequence[str], subscriber: Callable[..., Any]):
-        for tag in tags:
-            pub.unsubscribe(listener=subscriber, topicName=tag)
