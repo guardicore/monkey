@@ -22,9 +22,8 @@ class PyPubSubEventQueue(IEventQueue):
             pub.subscribe(listener=subscriber, topicName=event_type_name)
 
     @staticmethod
-    def subscribe_tags(tags: Sequence[str], subscriber: Callable[[AbstractEvent], None]):
-        for tag in tags:
-            pub.subscribe(listener=subscriber, topicName=tag)
+    def subscribe_tag(tag: str, subscriber: Callable[[AbstractEvent], None]):
+        pub.subscribe(listener=subscriber, topicName=tag)
 
     @staticmethod
     def publish(event: AbstractEvent, data: Any = None):

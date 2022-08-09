@@ -33,11 +33,11 @@ class IEventQueue(ABC):
         pass
 
     @abstractstaticmethod
-    def subscribe_tags(tags: Sequence[str], subscriber: Callable[[AbstractEvent], None]):
+    def subscribe_tag(tag: str, subscriber: Callable[[AbstractEvent], None]):
         """
-        Subscribes a subscriber to all specified event tags
+        Subscribes a subscriber to the specified event tag
 
-        :param tags: Event tags to which the subscriber should subscribe
+        :param tag: Event tag to which the subscriber should subscribe
         :param subscriber: Callable that should subscribe to events
         """
 
