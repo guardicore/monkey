@@ -40,7 +40,7 @@ def test_subscribe_all():
 def test_subscribe_types():
     subscriber = MagicMock()
 
-    PyPubSubEventQueue.subscribe_types([EventType], subscriber)
+    PyPubSubEventQueue.subscribe_type(EventType, subscriber)
     PyPubSubEventQueue.publish(EventType)
 
     assert pypubsub_event_queue_file.pub.sendMessage.call_count == 3
@@ -50,7 +50,7 @@ def test_subscribe_types():
 def test_subscribe_tags():
     subscriber = MagicMock()
 
-    PyPubSubEventQueue.subscribe_tags([EVENT_TAG_2], subscriber)
+    PyPubSubEventQueue.subscribe_tag(EVENT_TAG_2, subscriber)
     PyPubSubEventQueue.publish(EventType)
 
     assert pypubsub_event_queue_file.pub.sendMessage.call_count == 3
