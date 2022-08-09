@@ -7,7 +7,7 @@ from common.events import AbstractEvent
 from .i_event_queue import IEventQueue
 
 
-class EventQueue(IEventQueue):
+class PyPubSubEventQueue(IEventQueue):
     @staticmethod
     def subscribe_all(subscriber: Callable[..., Any]):
         pub.subscribe(listener=subscriber, topicName=pub.ALL_TOPICS)
