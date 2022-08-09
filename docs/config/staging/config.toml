@@ -1,2 +1,2 @@
-baseURL = "http://staging-infectionmonkey.temp312.kinsta.cloud/docs/"
-canonifyURLs = true
+baseURL = "http://monkey-documentation-staging.website-us-southeast-1.linodeobjects.com"
+canonifyURLs = false
