@@ -4,7 +4,7 @@ from typing import FrozenSet, Union
 from uuid import UUID
 
 import pytest
-from pubsub import pub
+from pubsub.core import Publisher
 
 from common.event_queue.pypubsub_event_queue import PyPubSubEventQueue
 from common.events import AbstractEvent
@@ -49,7 +49,7 @@ def subscriber():
 
 @pytest.fixture
 def event_queue():
-    return PyPubSubEventQueue(pub)
+    return PyPubSubEventQueue(Publisher())
 
 
 def test_subscribe_all(event_queue, subscriber):
