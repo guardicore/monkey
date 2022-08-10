@@ -99,3 +99,11 @@ def test_subscribe_tags_multiple_types(event_queue, subscriber):
     assert TestEvent1 in subscriber.call_types
     assert TestEvent2 in subscriber.call_types
     assert {EVENT_TAG_1, EVENT_TAG_2}.issubset(subscriber.call_tags)
+
+
+def test_type_tag_collision(event_queue, subscriber):
+    event_queue.subscribe_type(TestEvent1, subscriber)
+
+    event_queue.publish(TestEvent2(tags={TestEvent1.__name__}))
+
+    assert subscriber.call_count == 0
