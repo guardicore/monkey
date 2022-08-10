@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Type
 
 from pubsub.core import Publisher
 
@@ -19,7 +19,7 @@ class PyPubSubEventQueue(IEventQueue):
         )
 
     def subscribe_type(
-        self, event_type: AbstractEvent, subscriber: Callable[[AbstractEvent], None]
+        self, event_type: Type[AbstractEvent], subscriber: Callable[[AbstractEvent], None]
     ):
         # pypubsub.pub.subscribe needs a string as the topic/event name
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=event_type.__name__)
