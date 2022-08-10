@@ -1,1 +1,1 @@
-from abstract_event import AbstractEvent
+from .abstract_event import AbstractEvent
