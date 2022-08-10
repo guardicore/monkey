@@ -13,7 +13,7 @@ draft: false
 The Infection Monkey is an open-source breach and attack simulation tool for testing a data center's resiliency to perimeter breaches and internal server infection.
 Infection Monkey will help you validate existing security solutions and will provide a view of the internal network from an attacker's perspective.
 
-Infection Monkey is free and can be downloaded from [our homepage](https://infectionmonkey.com/).
+Infection Monkey is free and can be downloaded from [our homepage](https://www.akamai.com/infectionmonkey).
 
 ![Infection Monkey Documentation Hub Logo](/images/monkey-teacher.svg?height=400px "Infection Monkey Documentation Hub Logo")
 
@@ -40,7 +40,7 @@ A more in-depth description of reports generated can be found in the [reports do
 
 ## Getting Started
 
-If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://www.guardicore.com/infectionmonkey/#download). After downloading the Monkey, install it using one of our [setup guides]({{< ref "/setup" >}}), and read our [getting started guide]({{< ref "/usage/getting-started" >}}) for a quick-start on Monkey!
+If you haven't downloaded Infection Monkey yet you can do so [from our homepage](https://www.akamai.com/infectionmonkey#download). After downloading the Monkey, install it using one of our [setup guides]({{< ref "/setup" >}}), and read our [getting started guide]({{< ref "/usage/getting-started" >}}) for a quick-start on Monkey!
 
 ## Support and community
 
