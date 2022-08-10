@@ -6,6 +6,8 @@ from uuid import UUID
 import pytest
 from pubsub.core import Publisher
 
+from common.event_queue import EventSubscriber
+from common.event_queue.i_event_queue import IEventQueue
 from common.event_queue.pypubsub_event_queue import PyPubSubEventQueue
 from common.events import AbstractEvent
 
@@ -29,8 +31,8 @@ class TestEvent2(AbstractEvent):
     tags: FrozenSet = frozenset()
 
 
-def new_subscriber():
-    def fn(event):
+def new_subscriber() -> EventSubscriber:
+    def fn(event: AbstractEvent):
         fn.call_count += 1
         fn.call_types.add(event.__class__)
         fn.call_tags |= event.tags
@@ -43,16 +45,16 @@ def new_subscriber():
 
 
 @pytest.fixture
-def subscriber():
+def subscriber() -> EventSubscriber:
     return new_subscriber()
 
 
 @pytest.fixture
-def event_queue():
+def event_queue() -> IEventQueue:
     return PyPubSubEventQueue(Publisher())
 
 
-def test_subscribe_all(event_queue, subscriber):
+def test_subscribe_all(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_all_events(subscriber)
 
     event_queue.publish(TestEvent1(tags={EVENT_TAG_1, EVENT_TAG_2}))
@@ -66,7 +68,7 @@ def test_subscribe_all(event_queue, subscriber):
 
 
 @pytest.mark.parametrize("type_to_subscribe", [TestEvent1, TestEvent2])
-def test_subscribe_types(event_queue, subscriber, type_to_subscribe):
+def test_subscribe_types(event_queue: IEventQueue, subscriber: EventSubscriber, type_to_subscribe):
     event_queue.subscribe_type(type_to_subscribe, subscriber)
 
     event_queue.publish(TestEvent1())
@@ -76,7 +78,7 @@ def test_subscribe_types(event_queue, subscriber, type_to_subscribe):
     assert type_to_subscribe in subscriber.call_types
 
 
-def test_subscribe_tags_single_type(event_queue, subscriber):
+def test_subscribe_tags_single_type(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_tag(EVENT_TAG_1, subscriber)
 
     event_queue.publish(TestEvent1(tags={EVENT_TAG_1, EVENT_TAG_2}))
@@ -88,7 +90,7 @@ def test_subscribe_tags_single_type(event_queue, subscriber):
     assert EVENT_TAG_1 in subscriber.call_tags
 
 
-def test_subscribe_tags_multiple_types(event_queue, subscriber):
+def test_subscribe_tags_multiple_types(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_tag(EVENT_TAG_2, subscriber)
 
     event_queue.publish(TestEvent1(tags={EVENT_TAG_1, EVENT_TAG_2}))
@@ -101,7 +103,7 @@ def test_subscribe_tags_multiple_types(event_queue, subscriber):
     assert {EVENT_TAG_1, EVENT_TAG_2}.issubset(subscriber.call_tags)
 
 
-def test_type_tag_collision(event_queue, subscriber):
+def test_type_tag_collision(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_type(TestEvent1, subscriber)
 
     event_queue.publish(TestEvent2(tags={TestEvent1.__name__}))
