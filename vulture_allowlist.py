@@ -270,4 +270,4 @@ subscribe_type  # common\event_queue\pypubsub_event_queue.py
 subscribe_tag  # common\event_queue\pypubsub_event_queue.py
 publish  # common\event_queue\pypubsub_event_queue.py
 PyPubSubEventQueue  # common\event_queue\pypubsub_event_queue.py
-subscribe_all_event_types  # common\event_queue\pypubsub_event_queue.py
+subscribe_all_events  # common\event_queue\pypubsub_event_queue.py

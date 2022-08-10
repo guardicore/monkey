@@ -67,7 +67,7 @@ def test_subscribe_all():
     def subscriber(event, topic=pub.AUTO_TOPIC):
         subscriber_calls.append(topic.getName())
 
-    pypubsub_event_queue.subscribe_all(subscriber)
+    pypubsub_event_queue.subscribe_all_events(subscriber)
     pypubsub_event_queue.publish(EventType)
 
     assert len(subscriber_calls) == 1

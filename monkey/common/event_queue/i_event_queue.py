@@ -10,7 +10,7 @@ class IEventQueue(ABC):
     """
 
     @abstractmethod
-    def subscribe_all(self, subscriber: Callable[[AbstractEvent], None]):
+    def subscribe_all_events(self, subscriber: Callable[[AbstractEvent], None]):
         """
         Subscribes a subscriber to all events
 
