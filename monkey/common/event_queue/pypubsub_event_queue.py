@@ -4,8 +4,7 @@ from pubsub.core import Publisher
 
 from common.events import AbstractEvent
 
-from . import EventSubscriber
-from .i_event_queue import IEventQueue
+from . import EventSubscriber, IEventQueue
 
 _ALL_EVENTS_TOPIC = "all_events_topic"
 

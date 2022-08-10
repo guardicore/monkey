@@ -6,8 +6,7 @@ from uuid import UUID
 import pytest
 from pubsub.core import Publisher
 
-from common.event_queue import EventSubscriber
-from common.event_queue.i_event_queue import IEventQueue
+from common.event_queue import EventSubscriber, IEventQueue
 from common.event_queue.pypubsub_event_queue import PyPubSubEventQueue
 from common.events import AbstractEvent
 
