@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Callable
 
 from common.events import AbstractEvent
 
@@ -31,16 +31,14 @@ class PyPubSubEventQueue(IEventQueue):
     def subscribe_tag(self, tag: str, subscriber: Callable[[AbstractEvent], None]):
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=tag)
 
-    def publish(self, event: AbstractEvent, data: Any = None):
-        data = data if data else {}
-
+    def publish(self, event: AbstractEvent):
         # publish to event type's topic
         event_type_name = event.__name__
-        self._pypubsub_publisher.sendMessage(event_type_name, **data)
+        self._pypubsub_publisher.sendMessage(event_type_name, event)
 
         # publish to all events' topic
-        self._pypubsub_publisher.sendMessage(INTERNAL_ALL_EVENT_TYPES_TOPIC, **data)
+        self._pypubsub_publisher.sendMessage(INTERNAL_ALL_EVENT_TYPES_TOPIC, event)
 
         # publish to tags' topics
         for tag in event.tags:
-            self._pypubsub_publisher.sendMessage(tag, **data)
+            self._pypubsub_publisher.sendMessage(tag, event)
