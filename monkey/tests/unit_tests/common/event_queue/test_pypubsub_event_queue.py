@@ -36,12 +36,18 @@ def subscriber_2_calls():
 
 @pytest.fixture
 def subscriber_1(subscriber_1_calls):
-    return lambda event, topic=pub.AUTO_TOPIC: subscriber_1_calls.append(topic.getName())
+    def fn(event, topic=pub.AUTO_TOPIC):
+        subscriber_1_calls.append(topic.getName())
+
+    return fn
 
 
 @pytest.fixture
 def subscriber_2(subscriber_2_calls):
-    return lambda event, topic=pub.AUTO_TOPIC: subscriber_2_calls.append(topic.getName())
+    def fn(event, topic=pub.AUTO_TOPIC):
+        subscriber_2_calls.append(topic.getName())
+
+    return fn
 
 
 @pytest.mark.usefixtures("subscriber_1", "subscriber_2", "subscriber_1_calls", "subscriber_2_calls")
@@ -57,7 +63,9 @@ def test_topic_subscription(subscriber_1, subscriber_2, subscriber_1_calls, subs
 
 def test_subscribe_all():
     subscriber_calls = []
-    subscriber = lambda topic=pub.AUTO_TOPIC: subscriber_calls.append(topic.getName())
+
+    def subscriber(topic=pub.AUTO_TOPIC):
+        subscriber_calls.append(topic.getName())
 
     pypubsub_event_queue.subscribe_all(subscriber)
     pypubsub_event_queue.publish(EventType)
