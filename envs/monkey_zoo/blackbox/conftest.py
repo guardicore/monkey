@@ -37,7 +37,7 @@ def no_gcp(request):
 
 
 @pytest.fixture(scope="session")
-def list_machines(request: pytest.FixtureRequest) -> Mapping[str, Collection[str]]:
+def gcp_machines_to_start(request: pytest.FixtureRequest) -> Mapping[str, Collection[str]]:
     machines_to_start: Dict[str, Set[str]] = {}
 
     enabled_tests = (test.name for test in request.node.items)

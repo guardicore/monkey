@@ -34,20 +34,20 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True, scope="session")
-def GCPHandler(request, no_gcp, list_machines):
+def GCPHandler(request, no_gcp, gcp_machines_to_start):
     if not no_gcp:
-        LOGGER.info(f"MACHINES TO START: {list_machines}")
+        LOGGER.info(f"MACHINES TO START: {gcp_machines_to_start}")
 
         try:
             initialize_gcp_client()
-            start_machines(list_machines)
+            start_machines(gcp_machines_to_start)
         except Exception as e:
             LOGGER.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
         def fin():
-            stop_machines(list_machines)
+            stop_machines(gcp_machines_to_start)
 
         request.addfinalizer(fin)
 
