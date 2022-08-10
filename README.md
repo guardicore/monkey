@@ -18,14 +18,14 @@ The Infection Monkey is comprised of two parts:
 * **Monkey** - A tool which infects other machines and propagates to them.
 * **Monkey Island** - A dedicated server to control and visualize the Infection Monkey's progress inside the data center.
 
-To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonkey.com).
+To read more about the Monkey, visit [akamai.com/infectionmonkey](https://www.akamai.com/infectionmonkey).
 
 ## 💥 We're Hiring 💥
 We are looking for a senior developer with a passion for cybersecurity to join
 the Infection Monkey development team. This is a remote position and is open
 anywhere in the US Eastern timezone or in Brazil. If you're excited about Infection Monkey,
 we want to see your resume. You can learn more about Infection Monkey on our
-[website](https://www.guardicore.com/infectionmonkey/).
+[website](https://www.akamai.com/infectionmonkey).
 
 For more information, or to apply, see the official job post:
   - [USA](https://akamaicareers.inflightcloud.com/jobdetails/aka_ext/028789?section=aka_ext&job=028789).
