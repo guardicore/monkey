@@ -16,8 +16,6 @@ from infection_monkey.transport.tcp import TcpProxy
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.environment import is_windows_os
 
-requests.packages.urllib3.disable_warnings()  # type: ignore
-
 logger = logging.getLogger(__name__)
 
 PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
