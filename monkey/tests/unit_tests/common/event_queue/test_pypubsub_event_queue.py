@@ -3,10 +3,7 @@ from dataclasses import dataclass
 import pytest
 from pubsub import pub
 
-from common.event_queue.pypubsub_event_queue import (
-    INTERNAL_ALL_EVENT_TYPES_TOPIC,
-    PyPubSubEventQueue,
-)
+from common.event_queue.pypubsub_event_queue import PyPubSubEventQueue
 from common.events import AbstractEvent
 
 EVENT_TAG_1 = "event tag 1"
