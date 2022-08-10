@@ -23,19 +23,29 @@ class EventType(AbstractEvent):
 
 pypubsub_event_queue = PyPubSubEventQueue(pub)
 
-subscriber_1_calls = subscriber_2_calls = subscriber_1 = subscriber_2 = None
+
+@pytest.fixture()
+def subscriber_1_calls():
+    return []
 
 
-@pytest.fixture(autouse=True, scope="function")
-def reset_subscribers():
-    global subscriber_1, subscriber_2, subscriber_1_calls, subscriber_2_calls
-    subscriber_1_calls = []
-    subscriber_2_calls = []
-    subscriber_1 = lambda event, topic=pub.AUTO_TOPIC: subscriber_1_calls.append(topic.getName())
-    subscriber_2 = lambda event, topic=pub.AUTO_TOPIC: subscriber_2_calls.append(topic.getName())
+@pytest.fixture()
+def subscriber_2_calls():
+    return []
 
 
-def test_topic_subscription():
+@pytest.fixture
+def subscriber_1(subscriber_1_calls):
+    return lambda event, topic=pub.AUTO_TOPIC: subscriber_1_calls.append(topic.getName())
+
+
+@pytest.fixture
+def subscriber_2(subscriber_2_calls):
+    return lambda event, topic=pub.AUTO_TOPIC: subscriber_2_calls.append(topic.getName())
+
+
+@pytest.mark.usefixtures("subscriber_1", "subscriber_2", "subscriber_1_calls", "subscriber_2_calls")
+def test_topic_subscription(subscriber_1, subscriber_2, subscriber_1_calls, subscriber_2_calls):
     pypubsub_event_queue.subscribe_type(EventType, subscriber_1)
     pypubsub_event_queue.subscribe_tag(EVENT_TAG_2, subscriber_1)
     pypubsub_event_queue.subscribe_tag(EVENT_TAG_1, subscriber_2)
@@ -60,7 +70,8 @@ def test_subscribe_all():
     ]
 
 
-def test_subscribe_types():
+@pytest.mark.usefixtures("subscriber_1", "subscriber_2", "subscriber_1_calls", "subscriber_2_calls")
+def test_subscribe_types(subscriber_1, subscriber_2, subscriber_1_calls, subscriber_2_calls):
     pypubsub_event_queue.subscribe_type(EventType, subscriber_1)
     pypubsub_event_queue.publish(EventType)
 
@@ -68,7 +79,8 @@ def test_subscribe_types():
     assert subscriber_2_calls == []
 
 
-def test_subscribe_tags():
+@pytest.mark.usefixtures("subscriber_1", "subscriber_2", "subscriber_1_calls", "subscriber_2_calls")
+def test_subscribe_tags(subscriber_1, subscriber_2, subscriber_1_calls, subscriber_2_calls):
     pypubsub_event_queue.subscribe_tag(EVENT_TAG_1, subscriber_1)
     pypubsub_event_queue.subscribe_tag(EVENT_TAG_2, subscriber_2)
     pypubsub_event_queue.publish(EventType)
