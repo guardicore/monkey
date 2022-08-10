@@ -14,7 +14,7 @@ const ATTACK_DESCRIPTION = <>
                              <br />
                              <br />
                              <ExternalLink
-                               url="https://www.guardicore.com/blog/what-are-ransomware-costs/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
+                               url="https://web.archive.org/web/20210510221915/https://www.guardicore.com/blog/what-are-ransomware-costs/"
                                text="Learn about the financial impact of ransomware on Guardicore's blog"
                              />
                            </>

@@ -9,7 +9,7 @@ weight: 5
 ## Overview
 
 Numerous attack techniques (from phishing to dumpster diving) might result in a credential leak,
-which can be **extremely costly** as demonstrated in our report [IResponse to IEncrypt](https://www.guardicore.com/2019/04/iresponse-to-iencrypt/).
+which can be **extremely costly** as demonstrated in our report [IResponse to IEncrypt](https://web.archive.org/web/20210117224801/https://www.guardicore.com/2019/04/iresponse-to-iencrypt/).
 
 The Infection Monkey can help you assess the impact of stolen credentials by automatically searching
 where bad actors can reuse these credentials in your network.
