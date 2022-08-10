@@ -24,7 +24,7 @@ class IEventQueue(ABC):
     @abstractmethod
     def subscribe_type(self, event_type: Type[AbstractEvent], subscriber: EventSubscriber):
         """
-        Subscribes a subscriber to the specifed event type
+        Subscribes a subscriber to the specified event type
 
         :param event_type: Event type to which the subscriber should subscribe
         :param subscriber: A subscriber that will receive events
