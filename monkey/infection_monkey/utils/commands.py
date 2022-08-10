@@ -11,7 +11,14 @@ DROPPER_TARGET_PATH_WIN64 = AGENT_BINARY_PATH_WIN64
 
 
 def build_monkey_commandline(target_host: VictimHost, depth: int, location: str = None) -> str:
+    """
+    Construct command line arguments from a VictimHost.
 
+    :param target_host: The host upon which the the new agent will run.
+    :param depth: The current network depth.
+    :param location: Path into which to copy the agent, defaults to None.
+    :return: A string containing the command line arguments
+    """
     return " " + " ".join(
         build_monkey_commandline_explicitly(
             GUID,
@@ -52,12 +59,27 @@ def build_monkey_commandline_explicitly(
 
 
 def get_monkey_commandline_windows(destination_path: str, monkey_cmd_args: List[str]) -> List[str]:
+    """
+    Build a command to run the agent on Windows.
+
+    :param destination_path: The path to the agent executable.
+    :param monkey_cmd_args: A list of command line arguments for the agent.
+    :return: The command, as a list of strings.
+    """
+
     monkey_cmdline = [CMD_EXE, CMD_CARRY_OUT, destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_cmd_args
 
 
 def get_monkey_commandline_linux(destination_path: str, monkey_cmd_args: List[str]) -> List[str]:
+    """
+    Build a command to run the agent on Linux.
+
+    :param destination_path: The path to the agent executable.
+    :param monkey_cmd_args: A list of command line arguments for the agent.
+    :return: The command, as a list of strings.
+    """
     monkey_cmdline = [destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_cmd_args
