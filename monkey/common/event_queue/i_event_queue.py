@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Type
 
 from common.events import AbstractEvent
 
@@ -21,7 +21,7 @@ class IEventQueue(ABC):
 
     @abstractmethod
     def subscribe_type(
-        self, event_type: AbstractEvent, subscriber: Callable[[AbstractEvent], None]
+        self, event_type: Type[AbstractEvent], subscriber: Callable[[AbstractEvent], None]
     ):
         """
         Subscribes a subscriber to the specifed event type
