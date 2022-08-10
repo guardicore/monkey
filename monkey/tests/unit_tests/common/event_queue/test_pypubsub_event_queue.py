@@ -94,3 +94,12 @@ def test_subscribe_tags(subscriber_1, subscriber_2, subscriber_1_calls, subscrib
 
     assert subscriber_1_calls == [EVENT_TAG_1]
     assert subscriber_2_calls == [EVENT_TAG_2]
+
+
+@pytest.mark.usefixtures("subscriber_1", "subscriber_1_calls")
+def test_subscribe_all_event_types(subscriber_1, subscriber_1_calls):
+    pypubsub_event_queue.subscribe_all_event_types(subscriber_1)
+    pypubsub_event_queue.publish(EventType)
+    pypubsub_event_queue.publish(EventType)
+
+    assert subscriber_1_calls == [INTERNAL_ALL_EVENT_TYPES_TOPIC, INTERNAL_ALL_EVENT_TYPES_TOPIC]
