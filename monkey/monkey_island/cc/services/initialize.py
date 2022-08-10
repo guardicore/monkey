@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Sequence
 
-from pubsub import pub
+from pubsub.core import Publisher
 from pymongo import MongoClient
 
 from common import DIContainer
@@ -74,7 +74,8 @@ def initialize_services(data_dir: Path) -> DIContainer:
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
     )
     container.register_instance(Version, container.resolve(Version))
-    container.register_instance(IEventQueue, PyPubSubEventQueue(pub))
+    container.register(Publisher, Publisher)
+    container.register_instance(IEventQueue, container.resolve(PyPubSubEventQueue))
 
     _register_repositories(container, data_dir)
     _register_services(container)
