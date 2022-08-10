@@ -64,18 +64,16 @@ def test_topic_subscription(subscriber_1, subscriber_2, subscriber_1_calls, subs
 def test_subscribe_all():
     subscriber_calls = []
 
-    def subscriber(topic=pub.AUTO_TOPIC):
+    def subscriber(event, topic=pub.AUTO_TOPIC):
         subscriber_calls.append(topic.getName())
 
     pypubsub_event_queue.subscribe_all(subscriber)
     pypubsub_event_queue.publish(EventType)
 
-    assert subscriber_calls == [
-        EventType.__name__,
-        INTERNAL_ALL_EVENT_TYPES_TOPIC,
-        EVENT_TAG_1,
-        EVENT_TAG_2,
-    ]
+    assert len(subscriber_calls) == 1
+    assert EventType.__name__ not in subscriber_calls
+    assert EVENT_TAG_1 not in subscriber_calls
+    assert EVENT_TAG_2 not in subscriber_calls
 
 
 @pytest.mark.usefixtures("subscriber_1", "subscriber_1_calls")

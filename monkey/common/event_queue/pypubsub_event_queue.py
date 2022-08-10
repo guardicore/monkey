@@ -13,14 +13,8 @@ class PyPubSubEventQueue(IEventQueue):
         self._pypubsub_publisher = pypubsub_publisher
 
     def subscribe_all(self, subscriber: Callable[[AbstractEvent], None]):
-        # From the documentation (https://pypubsub.readthedocs.io/en/v4.0.3/usage/
-        # usage_advanced_debug.html#listen-for-messages-from-all-topics):
-        # "PyPubSub defines a special topic named pub.ALL_TOPICS. A listener that subscribes
-        # to this topic will receives all messages of every topic. By default, the listener
-        # will not receive any data since pub.ALL_TOPICS is the parent of all root topics (...)"
-
         self._pypubsub_publisher.subscribe(
-            listener=subscriber, topicName=self._pypubsub_publisher.ALL_TOPICS
+            listener=subscriber, topicName=INTERNAL_ALL_EVENT_TYPES_TOPIC
         )
 
     def subscribe_type(
