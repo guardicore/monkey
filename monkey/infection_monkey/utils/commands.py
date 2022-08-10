@@ -1,3 +1,5 @@
+from typing import List
+
 from infection_monkey.config import GUID
 from infection_monkey.exploit.tools.helpers import AGENT_BINARY_PATH_LINUX, AGENT_BINARY_PATH_WIN64
 from infection_monkey.model import CMD_CARRY_OUT, CMD_EXE, MONKEY_ARG
@@ -27,7 +29,7 @@ def build_monkey_commandline_explicitly(
     server: str = None,
     depth: int = None,
     location: str = None,
-) -> list:
+) -> List[str]:
     cmdline = []
 
     if parent is not None:
@@ -49,13 +51,13 @@ def build_monkey_commandline_explicitly(
     return cmdline
 
 
-def get_monkey_commandline_windows(destination_path: str, monkey_cmd_args: list) -> list:
+def get_monkey_commandline_windows(destination_path: str, monkey_cmd_args: List[str]) -> List[str]:
     monkey_cmdline = [CMD_EXE, CMD_CARRY_OUT, destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_cmd_args
 
 
-def get_monkey_commandline_linux(destination_path: str, monkey_cmd_args: list) -> list:
+def get_monkey_commandline_linux(destination_path: str, monkey_cmd_args: List[str]) -> List[str]:
     monkey_cmdline = [destination_path, MONKEY_ARG]
 
     return monkey_cmdline + monkey_cmd_args
