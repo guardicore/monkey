@@ -1,5 +1,10 @@
 import pytest
 
+from envs.monkey_zoo.blackbox.gcp_test_machine_list import (
+    GCP_SINGLE_TEST_LIST,
+    GCP_TEST_MACHINE_LIST,
+)
+
 
 def pytest_addoption(parser):
     parser.addoption(
@@ -33,8 +38,30 @@ def no_gcp(request):
 
 
 @pytest.fixture(scope="session")
-def machines_to_start(request):
-    return request.config.getoption("-k")
+def list_machines(request):
+    enabled_tests = [test.name for test in request.node.items]
+
+    if len(enabled_tests) == len(GCP_SINGLE_TEST_LIST.keys()):
+        return GCP_TEST_MACHINE_LIST
+
+    try:
+        list_machines_to_start = [GCP_SINGLE_TEST_LIST[test] for test in enabled_tests]
+
+        if len(list_machines_to_start) == 1:
+            return list_machines_to_start[0]
+
+        single_machine_list = {}
+
+        for machine_dict in list_machines_to_start:
+            for zone, machines in machine_dict.items():
+                for machine in machines:
+                    if machine not in single_machine_list[zone]:
+                        single_machine_list[zone].append(machine)
+
+    except KeyError:
+        return GCP_TEST_MACHINE_LIST
+
+    return single_machine_list
 
 
 def pytest_runtest_setup(item):
