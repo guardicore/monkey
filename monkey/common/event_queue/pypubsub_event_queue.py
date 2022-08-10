@@ -1,6 +1,7 @@
 from typing import Callable
 
 from common.events import AbstractEvent
+from pubsub.core import Publisher
 
 from .i_event_queue import IEventQueue
 
@@ -8,7 +9,7 @@ INTERNAL_ALL_EVENT_TYPES_TOPIC = "internal_all_event_types"
 
 
 class PyPubSubEventQueue(IEventQueue):
-    def __init__(self, pypubsub_publisher):
+    def __init__(self, pypubsub_publisher: Publisher):
         self._pypubsub_publisher = pypubsub_publisher
 
     def subscribe_all(self, subscriber: Callable[[AbstractEvent], None]):
