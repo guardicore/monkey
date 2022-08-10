@@ -52,3 +52,10 @@ repos:
     rev: v2.3
     hooks:
       - id: vulture
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.971
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-paramiko, types-python-dateutil, types-requests]
+        exclude: ^monkey/tests/
+        args: [--ignore-missing-imports]
