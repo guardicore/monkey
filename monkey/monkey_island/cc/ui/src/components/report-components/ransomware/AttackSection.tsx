@@ -5,6 +5,7 @@ import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import ExternalLink from '../common/ExternalLink';
 
+// TODO: Fix the url
 const ATTACK_DESCRIPTION = <>
                              After the attacker or malware has propagated through your network,
                              your data is at risk on any machine the attacker can access. It can be

@@ -13,7 +13,7 @@ function Logo() {
       <hr/>
       <div className='guardicore-link text-center' style={{'marginBottom': '0.5em'}}>
         <span>Powered by</span>
-        <a href='http://www.guardicore.com' rel='noopener noreferrer' target='_blank'>
+        <a href='https://www.akamai.com/products/akamai-segmentation' rel='noopener noreferrer' target='_blank'>
           <img src={guardicoreLogoImage} alt='GuardiCore'/>
         </a>
       </div>

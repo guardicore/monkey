@@ -12,7 +12,7 @@ const LATERAL_MOVEMENT_DESCRIPTION = <>
                                        <br />
                                        <br />
                                        <ExternalLink
-                                         url="https://www.guardicore.com/blog/stopping-ransomware-with-segmentation/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
+                                         url="https://www.akamai.com/blog/security/stopping-ransomware-with-segmentation/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
                                          text="See some real-world examples on Guardicore's blog"
                                        />
                                      </>

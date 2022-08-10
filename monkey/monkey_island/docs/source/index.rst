@@ -65,7 +65,7 @@ The results of running Monkey Agents are:
 Getting Started
 ===============
 
-If you haven't downloaded Infection Monkey yet you can do so `from our homepage <https://www.guardicore.com/infectionmonkey/#download>`_.
+If you haven't downloaded Infection Monkey yet you can do so `from our homepage <https://www.akamai.com/infectionmonkey#download>`_.
 
 ..
   After downloading the Monkey, install it using one of our [setup guides]({{< ref "/setup" >}}), and read our [getting started guide]({{< ref "/usage/getting-started" >}}) for a quick-start on Monkey!
