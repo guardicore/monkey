@@ -2,7 +2,7 @@ import json
 import logging
 import platform
 from socket import gethostname
-from typing import Mapping, Optional
+from typing import MutableMapping, Optional
 
 import requests
 from requests.exceptions import ConnectionError
@@ -16,7 +16,7 @@ from infection_monkey.transport.tcp import TcpProxy
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.environment import is_windows_os
 
-requests.packages.urllib3.disable_warnings()
+requests.packages.urllib3.disable_warnings()  # type: ignore
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class ControlClient:
     # https://github.com/guardicore/monkey/blob/133f7f5da131b481561141171827d1f9943f6aec/monkey/infection_monkey/telemetry/base_telem.py
     control_client_object = None
 
-    def __init__(self, server_address: str, proxies: Optional[Mapping[str, str]] = None):
+    def __init__(self, server_address: str, proxies: Optional[MutableMapping[str, str]] = None):
         self.proxies = {} if not proxies else proxies
         self.server_address = server_address
 
@@ -158,8 +158,8 @@ class ControlClient:
         if my_proxy:
             proxy_class = TcpProxy
             try:
-                target_addr, target_port = my_proxy.split(":", 1)
-                target_port = int(target_port)
+                target_addr, target_port_str = my_proxy.split(":", 1)
+                target_port = int(target_port_str)
             except ValueError:
                 return None
         else:
