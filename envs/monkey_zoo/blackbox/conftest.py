@@ -1,9 +1,8 @@
+from typing import Collection, Dict, Mapping, Set
+
 import pytest
 
-from envs.monkey_zoo.blackbox.gcp_test_machine_list import (
-    GCP_SINGLE_TEST_LIST,
-    GCP_TEST_MACHINE_LIST,
-)
+from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_SINGLE_TEST_LIST
 
 
 def pytest_addoption(parser):
@@ -38,30 +37,17 @@ def no_gcp(request):
 
 
 @pytest.fixture(scope="session")
-def list_machines(request):
-    enabled_tests = [test.name for test in request.node.items]
+def list_machines(request: pytest.FixtureRequest) -> Mapping[str, Collection[str]]:
+    machines_to_start: Dict[str, Set[str]] = {}
 
-    if len(enabled_tests) == len(GCP_SINGLE_TEST_LIST.keys()):
-        return GCP_TEST_MACHINE_LIST
+    enabled_tests = (test.name for test in request.node.items)
+    machines_for_enabled_tests = (GCP_SINGLE_TEST_LIST[test] for test in enabled_tests)
 
-    try:
-        list_machines_to_start = [GCP_SINGLE_TEST_LIST[test] for test in enabled_tests]
+    for machine_dict in machines_for_enabled_tests:
+        for zone, machines in machine_dict.items():
+            machines_to_start.setdefault(zone, set()).update(machines)
 
-        if len(list_machines_to_start) == 1:
-            return list_machines_to_start[0]
-
-        single_machine_list = {}
-
-        for machine_dict in list_machines_to_start:
-            for zone, machines in machine_dict.items():
-                for machine in machines:
-                    if machine not in single_machine_list[zone]:
-                        single_machine_list[zone].append(machine)
-
-    except KeyError:
-        return GCP_TEST_MACHINE_LIST
-
-    return single_machine_list
+    return machines_to_start
 
 
 def pytest_runtest_setup(item):
