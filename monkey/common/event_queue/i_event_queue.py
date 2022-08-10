@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable
+from typing import Callable
 
 from common.events import AbstractEvent
 
@@ -44,7 +44,7 @@ class IEventQueue(ABC):
         pass
 
     @abstractmethod
-    def publish(self, event: AbstractEvent, data: Any):
+    def publish(self, event: AbstractEvent):
         """
         Publishes an event with the given data
 
