@@ -14,8 +14,7 @@ from common.agent_configuration import (
 )
 from common.aws import AWSInstance
 from common.common_consts.telem_categories import TelemCategoryEnum
-from common.event_queue import IEventQueue
-from common.event_queue.pypubsub_event_queue import PyPubSubEventQueue
+from common.event_queue import IEventQueue, PyPubSubEventQueue
 from common.utils.file_utils import get_binary_io_sha256_hash
 from common.version import get_version
 from monkey_island.cc import Version
