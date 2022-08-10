@@ -57,9 +57,9 @@ def event_queue() -> IEventQueue:
 def test_subscribe_all(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_all_events(subscriber)
 
-    event_queue.publish(TestEvent1(tags={EVENT_TAG_1, EVENT_TAG_2}))
-    event_queue.publish(TestEvent1(tags={EVENT_TAG_2}))
-    event_queue.publish(TestEvent1(tags={"secret_tag"}))
+    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
+    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_2})))
+    event_queue.publish(TestEvent1(tags=frozenset({"secret_tag"})))
     event_queue.publish(TestEvent2())
 
     assert subscriber.call_count == 4
@@ -81,8 +81,8 @@ def test_subscribe_types(event_queue: IEventQueue, subscriber: EventSubscriber, 
 def test_subscribe_tags_single_type(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_tag(EVENT_TAG_1, subscriber)
 
-    event_queue.publish(TestEvent1(tags={EVENT_TAG_1, EVENT_TAG_2}))
-    event_queue.publish(TestEvent2(tags={EVENT_TAG_2}))
+    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
+    event_queue.publish(TestEvent2(tags=frozenset({EVENT_TAG_2})))
 
     assert subscriber.call_count == 1
     assert len(subscriber.call_types) == 1
@@ -93,8 +93,8 @@ def test_subscribe_tags_single_type(event_queue: IEventQueue, subscriber: EventS
 def test_subscribe_tags_multiple_types(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_tag(EVENT_TAG_2, subscriber)
 
-    event_queue.publish(TestEvent1(tags={EVENT_TAG_1, EVENT_TAG_2}))
-    event_queue.publish(TestEvent2(tags={EVENT_TAG_2}))
+    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
+    event_queue.publish(TestEvent2(tags=frozenset({EVENT_TAG_2})))
 
     assert subscriber.call_count == 2
     assert len(subscriber.call_types) == 2
@@ -106,6 +106,6 @@ def test_subscribe_tags_multiple_types(event_queue: IEventQueue, subscriber: Eve
 def test_type_tag_collision(event_queue: IEventQueue, subscriber: EventSubscriber):
     event_queue.subscribe_type(TestEvent1, subscriber)
 
-    event_queue.publish(TestEvent2(tags={TestEvent1.__name__}))
+    event_queue.publish(TestEvent2(tags=frozenset({TestEvent1.__name__})))
 
     assert subscriber.call_count == 0
