@@ -44,7 +44,7 @@ Infection Monkey is an open-source breach and attack simulation (BAS) platform. 
 directory have been manipulated as part of a ransomware simulation. If you've discovered this file
 and are unsure about how to proceed, please contact your administrator.
 
-For more information about Infection Monkey, see https://www.guardicore.com/infectionmonkey.
+For more information about Infection Monkey, see https://www.akamai.com/infectionmonkey.
 
 For more information about Infection Monkey's ransomware simulation, see
 https://www.guardicore.com/infectionmonkey/docs/reference/ransomware.
