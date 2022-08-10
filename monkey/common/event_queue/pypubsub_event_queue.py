@@ -32,12 +32,16 @@ class PyPubSubEventQueue(IEventQueue):
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=tag)
 
     def publish(self, event: AbstractEvent):
-        # publish to event type's topic
-        self._pypubsub_publisher.sendMessage(event.__name__, event=event)
+        self._publish_to_all_events_topic(event)
+        self._publish_to_type_topic(event)
+        self._publish_to_tags_topic(event)
 
-        # publish to all events' topic
+    def _publish_to_all_events_topic(self, event: AbstractEvent):
         self._pypubsub_publisher.sendMessage(INTERNAL_ALL_EVENT_TYPES_TOPIC, event=event)
 
-        # publish to tags' topics
+    def _publish_to_type_topic(self, event: AbstractEvent):
+        self._pypubsub_publisher.sendMessage(event.__name__, event=event)
+
+    def _publish_to_tags_topic(self, event: AbstractEvent):
         for tag in event.tags:
             self._pypubsub_publisher.sendMessage(tag, event=event)
