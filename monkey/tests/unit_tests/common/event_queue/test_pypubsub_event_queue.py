@@ -78,13 +78,12 @@ def test_subscribe_all():
     ]
 
 
-@pytest.mark.usefixtures("subscriber_1", "subscriber_2", "subscriber_1_calls", "subscriber_2_calls")
-def test_subscribe_types(subscriber_1, subscriber_2, subscriber_1_calls, subscriber_2_calls):
+@pytest.mark.usefixtures("subscriber_1", "subscriber_1_calls")
+def test_subscribe_types(subscriber_1, subscriber_1_calls):
     pypubsub_event_queue.subscribe_type(EventType, subscriber_1)
     pypubsub_event_queue.publish(EventType)
 
     assert subscriber_1_calls == [EventType.__name__]
-    assert subscriber_2_calls == []
 
 
 @pytest.mark.usefixtures("subscriber_1", "subscriber_2", "subscriber_1_calls", "subscriber_2_calls")
