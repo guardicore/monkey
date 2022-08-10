@@ -1,9 +1,10 @@
-from typing import Callable, Type
+from typing import Type
 
 from pubsub.core import Publisher
 
 from common.events import AbstractEvent
 
+from . import EventSubscriber
 from .i_event_queue import IEventQueue
 
 _ALL_EVENTS_TOPIC = "all_events_topic"
@@ -13,17 +14,15 @@ class PyPubSubEventQueue(IEventQueue):
     def __init__(self, pypubsub_publisher: Publisher):
         self._pypubsub_publisher = pypubsub_publisher
 
-    def subscribe_all_events(self, subscriber: Callable[[AbstractEvent], None]):
+    def subscribe_all_events(self, subscriber: EventSubscriber):
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=_ALL_EVENTS_TOPIC)
 
-    def subscribe_type(
-        self, event_type: Type[AbstractEvent], subscriber: Callable[[AbstractEvent], None]
-    ):
+    def subscribe_type(self, event_type: Type[AbstractEvent], subscriber: EventSubscriber):
         # pypubsub.pub.subscribe needs a string as the topic/event name
         event_type_topic = PyPubSubEventQueue._get_type_topic(event_type)
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=event_type_topic)
 
-    def subscribe_tag(self, tag: str, subscriber: Callable[[AbstractEvent], None]):
+    def subscribe_tag(self, tag: str, subscriber: EventSubscriber):
         tag_topic = PyPubSubEventQueue._get_tag_topic(tag)
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=tag_topic)
 

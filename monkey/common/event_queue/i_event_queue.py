@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Type
+from typing import Type
 
 from common.events import AbstractEvent
+
+from . import EventSubscriber
 
 
 class IEventQueue(ABC):
@@ -10,35 +12,33 @@ class IEventQueue(ABC):
     """
 
     @abstractmethod
-    def subscribe_all_events(self, subscriber: Callable[[AbstractEvent], None]):
+    def subscribe_all_events(self, subscriber: EventSubscriber):
         """
         Subscribes a subscriber to all events
 
-        :param subscriber: Callable that should subscribe to events
+        :param subscriber: A subscriber that well receive events
         """
 
         pass
 
     @abstractmethod
-    def subscribe_type(
-        self, event_type: Type[AbstractEvent], subscriber: Callable[[AbstractEvent], None]
-    ):
+    def subscribe_type(self, event_type: Type[AbstractEvent], subscriber: EventSubscriber):
         """
         Subscribes a subscriber to the specifed event type
 
         :param event_type: Event type to which the subscriber should subscribe
-        :param subscriber: Callable that should subscribe to events
+        :param subscriber: A subscriber that well receive events
         """
 
         pass
 
     @abstractmethod
-    def subscribe_tag(self, tag: str, subscriber: Callable[[AbstractEvent], None]):
+    def subscribe_tag(self, tag: str, subscriber: EventSubscriber):
         """
         Subscribes a subscriber to the specified event tag
 
         :param tag: Event tag to which the subscriber should subscribe
-        :param subscriber: Callable that should subscribe to events
+        :param subscriber: A subscriber that well receive events
         """
 
         pass
