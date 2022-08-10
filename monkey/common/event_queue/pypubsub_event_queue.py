@@ -24,11 +24,6 @@ class PyPubSubEventQueue(IEventQueue):
         # pypubsub.pub.subscribe needs a string as the topic/event name
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=event_type.__name__)
 
-    def subscribe_all_event_types(self, subscriber: Callable[[AbstractEvent], None]):
-        self._pypubsub_publisher.subscribe(
-            listener=subscriber, topicName=INTERNAL_ALL_EVENT_TYPES_TOPIC
-        )
-
     def subscribe_tag(self, tag: str, subscriber: Callable[[AbstractEvent], None]):
         self._pypubsub_publisher.subscribe(listener=subscriber, topicName=tag)
 
