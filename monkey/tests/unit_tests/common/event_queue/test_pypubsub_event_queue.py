@@ -17,7 +17,7 @@ EVENT_TAG_2 = "event tag 2"
 
 @dataclass(frozen=True)
 class TestEvent1(AbstractEvent):
-    source: UUID = "f811ad00-5a68-4437-bd51-7b5cc1768ad5"
+    source: UUID = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
     target: Union[UUID, IPv4Address, None] = None
     timestamp: float = 0.0
     tags: FrozenSet = frozenset()
@@ -25,7 +25,7 @@ class TestEvent1(AbstractEvent):
 
 @dataclass(frozen=True)
 class TestEvent2(AbstractEvent):
-    source: UUID = "e810ad01-6b67-9446-fc58-9b8d717653f7"
+    source: UUID = UUID("e810ad01-6b67-9446-fc58-9b8d717653f7")
     target: Union[UUID, IPv4Address, None] = None
     timestamp: float = 0.0
     tags: FrozenSet = frozenset()
