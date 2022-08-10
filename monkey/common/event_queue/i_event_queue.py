@@ -16,7 +16,7 @@ class IEventQueue(ABC):
         """
         Subscribes a subscriber to all events
 
-        :param subscriber: A subscriber that well receive events
+        :param subscriber: A subscriber that will receive events
         """
 
         pass
@@ -27,7 +27,7 @@ class IEventQueue(ABC):
         Subscribes a subscriber to the specifed event type
 
         :param event_type: Event type to which the subscriber should subscribe
-        :param subscriber: A subscriber that well receive events
+        :param subscriber: A subscriber that will receive events
         """
 
         pass
@@ -38,7 +38,7 @@ class IEventQueue(ABC):
         Subscribes a subscriber to the specified event tag
 
         :param tag: Event tag to which the subscriber should subscribe
-        :param subscriber: A subscriber that well receive events
+        :param subscriber: A subscriber that will receive events
         """
 
         pass
