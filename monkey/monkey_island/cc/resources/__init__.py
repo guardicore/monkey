@@ -8,3 +8,4 @@ from .ip_addresses import IPAddresses
 from .agent_configuration import AgentConfiguration
 from .pba_file_upload import PBAFileUpload, LINUX_PBA_TYPE, WINDOWS_PBA_TYPE
 from .pba_file_download import PBAFileDownload
+from .events import Events
