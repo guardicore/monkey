@@ -14,6 +14,7 @@ from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
     ClearSimulationData,
+    Events,
     IPAddresses,
     IslandLog,
     PBAFileDownload,
@@ -178,6 +179,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Log)
     api.add_resource(IslandLog)
     api.add_resource(IPAddresses)
+
+    api.add_resource(Events)
 
     # API Spec: These two should be the same resource, GET for download and POST for upload
     api.add_resource(PBAFileDownload)
