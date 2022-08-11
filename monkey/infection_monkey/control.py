@@ -2,7 +2,7 @@ import json
 import logging
 import platform
 from socket import gethostname
-from typing import MutableMapping, Optional
+from typing import MutableMapping, Optional, Tuple
 
 import requests
 from requests.exceptions import ConnectionError
@@ -31,7 +31,7 @@ class ControlClient:
         self.proxies = {} if not proxies else proxies
         self.server_address = server_address
 
-    def wakeup(self, parent=None):
+    def wakeup(self, parent: str = None):
         if parent:
             logger.debug("parent: %s" % (parent,))
 
@@ -61,7 +61,7 @@ class ControlClient:
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
-    def find_server(self, default_tunnel=None):
+    def find_server(self, default_tunnel: str = None) -> bool:
         logger.debug(f"Trying to wake up with Monkey Island server: {self.server_address}")
         if default_tunnel:
             logger.debug("default_tunnel: %s" % (default_tunnel,))
@@ -93,7 +93,7 @@ class ControlClient:
                 logger.info("No tunnel found")
                 return False
 
-    def set_proxies(self, proxy_find):
+    def set_proxies(self, proxy_find: Tuple[str, str]):
         """
         Note: The proxy schema changes between different versions of requests and urllib3,
         which causes the machine to not open a tunnel back.
@@ -112,7 +112,7 @@ class ControlClient:
         else:
             self.proxies["https"] = f"{proxy_address}:{proxy_port}"
 
-    def send_telemetry(self, telem_category, json_data: str):
+    def send_telemetry(self, telem_category: str, json_data: str):
         if not self.server_address:
             logger.error(
                 "Trying to send %s telemetry before current server is established, aborting."
@@ -132,7 +132,7 @@ class ControlClient:
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
-    def send_log(self, log):
+    def send_log(self, log: str):
         if not self.server_address:
             return
         try:
@@ -148,7 +148,7 @@ class ControlClient:
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
-    def create_control_tunnel(self, keep_tunnel_open_time: int):
+    def create_control_tunnel(self, keep_tunnel_open_time: int) -> Optional[tunnel.MonkeyTunnel]:
         if not self.server_address:
             return None
 
@@ -171,7 +171,7 @@ class ControlClient:
             target_port=target_port,
         )
 
-    def get_pba_file(self, filename):
+    def get_pba_file(self, filename: str):
         try:
             return requests.get(  # noqa: DUO123
                 PBA_FILE_DOWNLOAD % (self.server_address, filename),
