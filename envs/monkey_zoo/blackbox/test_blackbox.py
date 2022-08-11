@@ -6,10 +6,6 @@ import pytest
 
 from envs.monkey_zoo.blackbox.analyzers.communication_analyzer import CommunicationAnalyzer
 from envs.monkey_zoo.blackbox.analyzers.zerologon_analyzer import ZerologonAnalyzer
-from envs.monkey_zoo.blackbox.gcp_test_machine_list import (
-    GCP_SINGLE_TEST_LIST,
-    GCP_TEST_MACHINE_LIST,
-)
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from envs.monkey_zoo.blackbox.island_client.test_configuration_parser import get_target_ips
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
@@ -38,26 +34,20 @@ LOGGER = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True, scope="session")
-def GCPHandler(request, no_gcp, machines_to_start):
+def GCPHandler(request, no_gcp, gcp_machines_to_start):
     if not no_gcp:
-        list_machines = GCP_TEST_MACHINE_LIST
-        if machines_to_start:
-            try:
-                list_machines = GCP_SINGLE_TEST_LIST[machines_to_start]
-            except KeyError as err:
-                LOGGER.warning(
-                    f"Partial or wrong test name provided. " f"Starting all GCP machines:{err}"
-                )
+        LOGGER.info(f"MACHINES TO START: {gcp_machines_to_start}")
+
         try:
             initialize_gcp_client()
-            start_machines(list_machines)
+            start_machines(gcp_machines_to_start)
         except Exception as e:
             LOGGER.error("GCP Handler failed to initialize: %s." % e)
             pytest.exit("Encountered an error while starting GCP machines. Stopping the tests.")
         wait_machine_bootup()
 
         def fin():
-            stop_machines(list_machines)
+            stop_machines(gcp_machines_to_start)
 
         request.addfinalizer(fin)
 

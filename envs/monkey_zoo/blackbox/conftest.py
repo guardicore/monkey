@@ -1,4 +1,8 @@
+from typing import Collection, Dict, Mapping, Set
+
 import pytest
+
+from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_SINGLE_TEST_LIST
 
 
 def pytest_addoption(parser):
@@ -33,8 +37,17 @@ def no_gcp(request):
 
 
 @pytest.fixture(scope="session")
-def machines_to_start(request):
-    return request.config.getoption("-k")
+def gcp_machines_to_start(request: pytest.FixtureRequest) -> Mapping[str, Collection[str]]:
+    machines_to_start: Dict[str, Set[str]] = {}
+
+    enabled_tests = (test.name for test in request.node.items)
+    machines_for_enabled_tests = (GCP_SINGLE_TEST_LIST[test] for test in enabled_tests)
+
+    for machine_dict in machines_for_enabled_tests:
+        for zone, machines in machine_dict.items():
+            machines_to_start.setdefault(zone, set()).update(machines)
+
+    return machines_to_start
 
 
 def pytest_runtest_setup(item):
