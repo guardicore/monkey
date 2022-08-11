@@ -17,7 +17,7 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.credential_store import (
+from infection_monkey.credential_repository import (
     AggregatingPropagationCredentialsRepository,
     IPropagationCredentialsRepository,
 )
