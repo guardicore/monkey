@@ -8,7 +8,6 @@ from .deployment import Deployment
 
 # TODO get redirects instead of using direct links to AWS
 LATEST_VERSION_URL = "https://njf01cuupf.execute-api.us-east-1.amazonaws.com/default?deployment={}"
-
 LATEST_VERSION_TIMEOUT = 7
 
 logger = logging.getLogger(__name__)

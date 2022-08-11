@@ -53,6 +53,7 @@ from monkey_island.cc.services.utils.network_utils import get_ip_addresses
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
 from . import AuthenticationService
+from .analytics import Analytics
 from .reporting.report import ReportService
 
 logger = logging.getLogger(__name__)
@@ -73,6 +74,7 @@ def initialize_services(data_dir: Path) -> DIContainer:
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
     )
     container.register_instance(Version, container.resolve(Version))
+    container.register_instance(Analytics, container.resolve(Analytics))
     container.register(Publisher, Publisher)
     container.register_instance(IEventQueue, container.resolve(PyPubSubEventQueue))
 
