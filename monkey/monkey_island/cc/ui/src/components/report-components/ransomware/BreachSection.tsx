@@ -13,7 +13,7 @@ const BREACH_DESCRIPTION = <>
                              <br />
                              <br />
                              <ExternalLink
-                               url="https://www.guardicore.com/blog/4-techniques-for-early-ransomware-detection/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
+                               url="https://www.akamai.com/blog/security/4-techniques-for-early-ransomware-detection/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
                                text="Learn techniques for early ransomware detection on Guardicore's blog"
                              />
                            </>

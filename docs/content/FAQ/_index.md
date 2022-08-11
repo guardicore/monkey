@@ -36,7 +36,7 @@ Below are some of the most common questions we receive about the Infection Monke
 
 ## Where can I get the latest version of the Infection Monkey?
 
-For the latest **stable** release, visit [our downloads page](https://www.guardicore.com/infectionmonkey/#download). **This is the recommended and supported version**!
+For the latest **stable** release, visit [our downloads page](https://www.akamai.com/infectionmonkey#download). **This is the recommended and supported version**!
 
 If you want to see what has changed between versions, refer to the [releases page on GitHub](https://github.com/guardicore/monkey/releases). For the latest development version, visit the [develop version on GitHub](https://github.com/guardicore/monkey/tree/develop).
 

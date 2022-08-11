@@ -8,8 +8,8 @@ weight: 3
 
 ## Overview
 
-From the [Hex-Men campaign](https://www.guardicore.com/2017/12/beware-the-hex-men/) that hit
-internet-facing DB servers to a [cryptomining operation that attacks WordPress sites](https://www.guardicore.com/2018/06/operation-prowli-traffic-manipulation-cryptocurrency-mining-2/) or any other malicious campaign – attackers are now trying to go deeper into your network.
+From the [Hex-Men campaign](https://web.archive.org/web/20210115171355/https://www.guardicore.com/2017/12/beware-the-hex-men/) that hit
+internet-facing DB servers to a [cryptomining operation that attacks WordPress sites](https://web.archive.org/web/20210115185135/https://www.guardicore.com/2018/06/operation-prowli-traffic-manipulation-cryptocurrency-mining-2/) or any other malicious campaign – attackers are now trying to go deeper into your network.
 
 Infection Monkey will help you assess the impact of a future breach by attempting to propagate within your internal network using service vulnerabilities, brute-forcing and other safe exploiters.
 
