@@ -5,8 +5,11 @@ import sys
 from pathlib import Path
 
 import gevent.hub
+import requests
 from gevent.pywsgi import WSGIServer
 
+from monkey_island.cc import Version
+from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.setup.config_setup import get_server_config
 
@@ -150,6 +153,7 @@ def _start_island_server(
         error_log=logger,
     )
     _log_init_info()
+    _send_analytics(container)
     http_server.serve_forever()
 
 
@@ -173,3 +177,25 @@ def _log_web_interface_access_urls():
         "To access the web interface, navigate to one of the the following URLs using your "
         f"browser: {web_interface_urls}"
     )
+
+
+ANALYTICS_URL = (
+    "https://m15mjynko3.execute-api.us-east-1.amazonaws.com/default?version={"
+    "version}&deployment={deployment}"
+)
+
+
+def _send_analytics(di_container):
+    version = di_container.resolve(Version)
+    deployment = di_container.resolve(Deployment)
+    url = ANALYTICS_URL.format(deployment=deployment.value, version=version.version_number)
+    try:
+        response = requests.get(url).json()
+        logger.info(
+            f"Version number and deployment type was sent to analytics server."
+            f" The response is: {response}"
+        )
+    except requests.exceptions.ConnectionError as err:
+        logger.info(
+            f"Failed to send deployment type and version " f"number to the analytics server: {err}"
+        )
