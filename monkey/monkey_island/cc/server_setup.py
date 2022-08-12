@@ -192,10 +192,10 @@ def _send_analytics(di_container):
     try:
         response = requests.get(url).json()
         logger.info(
-            f"Version number and deployment type was sent to analytics server."
-            f" The response is: {response}"
+            f"Version number and deployment type was sent to analytics server. "
+            f"The response is: {response}"
         )
     except requests.exceptions.ConnectionError as err:
         logger.info(
-            f"Failed to send deployment type and version " f"number to the analytics server: {err}"
+            f"Failed to send deployment type and version number to the analytics server: {err}"
         )
