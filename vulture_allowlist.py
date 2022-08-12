@@ -215,7 +215,7 @@ AbstractEvent
 tags
 
 # TODO DELETE IN #2176
-StolenCredentialsEvent
+CredentialsStolenEvent
 
 
 # TODO DELETE AFTER RESOURCE REFACTORING
