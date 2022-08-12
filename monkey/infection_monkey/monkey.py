@@ -106,7 +106,6 @@ class InfectionMonkey:
         self._current_depth = self._opts.depth
         self._master = None
         self._inbound_tunnel_opened = False
-        self._event_queue = None
 
     @staticmethod
     def _get_arguments(args):
@@ -198,7 +197,7 @@ class InfectionMonkey:
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
-        self._event_queue = PyPubSubEventQueue(Publisher())
+        _event_queue = PyPubSubEventQueue(Publisher())
 
         # TODO control_channel and control_client have same responsibilities, merge them
         control_channel = ControlChannel(
