@@ -1,1 +1,2 @@
 from .abstract_event import AbstractEvent
+from .credentials_stolen_events import CredentialsStolenEvent

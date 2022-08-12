@@ -214,6 +214,9 @@ _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:
 AbstractEvent
 tags
 
+# TODO DELETE IN #2176
+CredentialsStolenEvent
+
 
 # TODO DELETE AFTER RESOURCE REFACTORING
 
