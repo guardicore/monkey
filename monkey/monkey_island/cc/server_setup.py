@@ -47,16 +47,17 @@ logger = logging.getLogger(__name__)
 def run_monkey_island():
     island_args = parse_cli_args()
     config_options = _extract_config(island_args)
-    _setup_data_dir(config_options.data_dir)
-
     _exit_on_invalid_config_options(config_options)
 
+    _setup_data_dir(config_options.data_dir)
     _configure_logging(config_options)
+
     ip_addresses, deployment, version = _collect_system_info()
+
     _send_analytics(deployment, version)
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
-    _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
 
+    _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
     _start_island_server(island_args.setup_only, config_options, container)
 
 
