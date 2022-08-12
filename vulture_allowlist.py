@@ -213,6 +213,7 @@ _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:
 # TODO DELETE AFTER EVENT QUEUE IMPLEMENTATION
 AbstractEvent
 tags
+_event_queue
 
 # TODO DELETE IN #2176
 CredentialsStolenEvent

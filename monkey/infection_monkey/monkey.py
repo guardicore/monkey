@@ -6,7 +6,10 @@ import sys
 from pathlib import Path, WindowsPath
 from typing import List
 
+from pubsub.core import Publisher
+
 import infection_monkey.tunnel as tunnel
+from common.event_queue import PyPubSubEventQueue
 from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -193,6 +196,8 @@ class InfectionMonkey:
 
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+
+        _event_queue = PyPubSubEventQueue(Publisher())
 
         # TODO control_channel and control_client have same responsibilities, merge them
         control_channel = ControlChannel(
