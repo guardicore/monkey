@@ -128,7 +128,7 @@ class FlaskDIWrapper:
             raise ValueError(f"Resource {resource.__name__} has no defined URLs")
 
         self._reserve_urls(resource.urls)
-
+        resource.urls = map(lambda url: url.rstrip("/"), resource.urls)
         dependencies = self._container.resolve_dependencies(resource)
         self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
 

@@ -81,3 +81,11 @@ def test_url_check_slash_stripping__path_separation(resource_manager):
     # Following shouldn't raise and exception
     resource_manager.add_resource(resource3)
     resource_manager.add_resource(resource4)
+
+
+def test_trailing_slash_removal(resource_manager):
+    bogus_endpoint = "/beef/face"
+    resource3 = get_mock_resource("res3", [f"{bogus_endpoint}/"])
+    resource_manager.add_resource(resource3)
+    registered_rules = resource_manager._api.app.url_map._rules
+    assert any([rule.rule == bogus_endpoint for rule in registered_rules])
