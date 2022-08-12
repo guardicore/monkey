@@ -56,7 +56,7 @@ class Version:
         self._latest_version, self._download_url = self._get_version_info()
         self._initialization_complete.set()
 
-    def _get_version_info(self) -> Tuple[Optional[str], Optional[str]]:
+    def _get_version_info(self) -> Tuple[str, Optional[str]]:
         url = LATEST_VERSION_URL.format(self._deployment.value)
 
         try:
