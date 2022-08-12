@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Sequence, Tuple
 
 import gevent.hub
 import requests
@@ -27,6 +28,7 @@ from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
 from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,
+    MONKEY_ISLAND_ABS_PATH,
 )
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
@@ -50,7 +52,9 @@ def run_monkey_island():
     _exit_on_invalid_config_options(config_options)
 
     _configure_logging(config_options)
-    container = _initialize_di_container(config_options.data_dir)
+    ip_addresses, deployment, version = _collect_system_info()
+    _send_analytics(deployment, version)
+    container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
 
     _start_island_server(island_args.setup_only, config_options, container)
@@ -85,8 +89,39 @@ def _configure_logging(config_options):
     setup_logging(config_options.data_dir, config_options.log_level)
 
 
-def _initialize_di_container(data_dir: Path) -> DIContainer:
-    return initialize_services(data_dir)
+def _collect_system_info() -> Tuple[Sequence[str], Deployment, Version]:
+    deployment = _get_deployment()
+    version = Version(get_version(), deployment)
+    return (get_ip_addresses(), deployment, version)
+
+
+def _get_deployment() -> Deployment:
+    deployment_file_path = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "deployment.json"
+    try:
+        with open(deployment_file_path, "r") as deployment_info_file:
+            deployment_info = json.load(deployment_info_file)
+            return Deployment[deployment_info["deployment"].upper()]
+    except KeyError as err:
+        raise Exception(
+            f"The deployment file ({deployment_file_path}) did not contain the expected data: "
+            f"missing key {err}"
+        )
+    except Exception as err:
+        raise Exception(f"Failed to fetch the deployment from {deployment_file_path}: {err}")
+
+
+def _initialize_di_container(
+    ip_addresses: Sequence[str], version: Version, data_dir: Path
+) -> DIContainer:
+    container = DIContainer()
+
+    container.register_convention(Sequence[str], "ip_addresses", ip_addresses)
+    container.register_instance(Version, version)
+    container.register_convention(Path, "data_dir", data_dir)
+
+    initialize_services(container, data_dir)
+
+    return container
 
 
 def _initialize_mongodb_connection(start_mongodb: bool, data_dir: Path):
@@ -145,7 +180,6 @@ def _start_island_server(
         error_log=logger,
     )
     _log_init_info()
-    _send_analytics(container)
     http_server.serve_forever()
 
 
@@ -189,9 +223,7 @@ ANALYTICS_URL = (
 )
 
 
-def _send_analytics(di_container):
-    version = di_container.resolve(Version)
-    deployment = di_container.resolve(Deployment)
+def _send_analytics(deployment: Deployment, version: Version):
     url = ANALYTICS_URL.format(deployment=deployment.value, version=version.version_number)
     try:
         response = requests.get(url).json()
