@@ -59,7 +59,7 @@ def run_monkey_island():
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
-    _start_island_server(island_args.setup_only, config_options, container)
+    _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
@@ -158,7 +158,10 @@ def _connect_to_mongodb(mongo_db_process: MongoDbProcess):
 
 
 def _start_island_server(
-    should_setup_only: bool, config_options: IslandConfigOptions, container: DIContainer
+    ip_addresses: Sequence[str],
+    should_setup_only: bool,
+    config_options: IslandConfigOptions,
+    container: DIContainer,
 ):
     _configure_gevent_exception_handling(config_options.data_dir)
 
@@ -181,7 +184,7 @@ def _start_island_server(
         log=_get_wsgi_server_logger(),
         error_log=logger,
     )
-    _log_init_info()
+    _log_init_info(ip_addresses)
     http_server.serve_forever()
 
 
@@ -204,15 +207,15 @@ def _get_wsgi_server_logger() -> logging.Logger:
     return wsgi_server_logger
 
 
-def _log_init_info():
+def _log_init_info(ip_addresses: Sequence[str]):
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
 
-    _log_web_interface_access_urls()
+    _log_web_interface_access_urls(ip_addresses)
 
 
-def _log_web_interface_access_urls():
-    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in get_ip_addresses()])
+def _log_web_interface_access_urls(ip_addresses: Sequence[str]):
+    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in ip_addresses])
     logger.info(
         "To access the web interface, navigate to one of the the following URLs using your "
         f"browser: {web_interface_urls}"
