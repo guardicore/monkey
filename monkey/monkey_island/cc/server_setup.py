@@ -52,11 +52,7 @@ def run_monkey_island():
     _configure_logging(config_options)
     container = _initialize_di_container(config_options.data_dir)
 
-    mongo_db_process = None
-    if config_options.start_mongodb:
-        mongo_db_process = _start_mongodb(config_options.data_dir)
-
-    _connect_to_mongodb(mongo_db_process)
+    _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
 
     _configure_gevent_exception_handling(config_options.data_dir)
     _start_island_server(island_args.setup_only, config_options, container)
@@ -93,6 +89,14 @@ def _configure_logging(config_options):
 
 def _initialize_di_container(data_dir: Path) -> DIContainer:
     return initialize_services(data_dir)
+
+
+def _initialize_mongodb_connection(start_mongodb: bool, data_dir: Path):
+    mongo_db_process = None
+    if start_mongodb:
+        mongo_db_process = _start_mongodb(data_dir)
+
+    _connect_to_mongodb(mongo_db_process)
 
 
 def _start_mongodb(data_dir: Path) -> MongoDbProcess:
