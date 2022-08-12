@@ -149,7 +149,7 @@ def _start_island_server(
     http_server.serve_forever()
 
 
-def _configure_gevent_exception_handling(data_dir):
+def _configure_gevent_exception_handling(data_dir: Path):
     hub = gevent.hub.get_hub()
 
     gevent_exception_log = open(data_dir / GEVENT_EXCEPTION_LOG, "w+", buffering=1)
