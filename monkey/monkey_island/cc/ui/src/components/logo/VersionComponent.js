@@ -28,6 +28,11 @@ class VersionComponent extends AuthComponent {
 
   newerVersionAvailable() {
     const semverGt = require('semver/functions/gt');
+    if(this.state.latestVersion === null) {
+        // Couldn't fetch the latest version.
+        // Consider showing this state to the user
+        return false;
+    }
     if(this.state.latestVersion !== undefined && this.state.versionNumber !== undefined) {
       return semverGt(this.state.latestVersion, this.state.versionNumber);
     }
