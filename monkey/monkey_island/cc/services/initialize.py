@@ -34,7 +34,6 @@ from monkey_island.cc.repository import (
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
-from monkey_island.cc.server_utils.island_logger import get_log_file_path
 from monkey_island.cc.services import AWSService, IslandModeService, RepositoryService
 from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
@@ -56,7 +55,7 @@ REPOSITORY_KEY_FILE_NAME = "repository_key.bin"
 
 
 def initialize_services(container: DIContainer, data_dir: Path):
-    _register_conventions(container, data_dir)
+    _register_conventions(container)
 
     container.register_instance(AWSInstance, AWSInstance())
     container.register_instance(MongoClient, MongoClient(MONGO_URL, serverSelectionTimeoutMS=100))
@@ -79,7 +78,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
     )
 
 
-def _register_conventions(container: DIContainer, data_dir: Path):
+def _register_conventions(container: DIContainer):
     container.register_convention(
         AgentConfiguration, "default_agent_configuration", DEFAULT_AGENT_CONFIGURATION
     )
@@ -88,7 +87,6 @@ def _register_conventions(container: DIContainer, data_dir: Path):
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
-    container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
