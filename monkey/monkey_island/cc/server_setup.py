@@ -51,10 +51,8 @@ def run_monkey_island():
 
     _configure_logging(config_options)
     container = _initialize_di_container(config_options.data_dir)
-
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
 
-    _configure_gevent_exception_handling(config_options.data_dir)
     _start_island_server(island_args.setup_only, config_options, container)
 
 
@@ -122,21 +120,11 @@ def _connect_to_mongodb(mongo_db_process: MongoDbProcess):
         sys.exit(1)
 
 
-def _configure_gevent_exception_handling(data_dir):
-    hub = gevent.hub.get_hub()
-
-    gevent_exception_log = open(data_dir / GEVENT_EXCEPTION_LOG, "w+", buffering=1)
-    atexit.register(gevent_exception_log.close)
-
-    # Send gevent's exception output to a log file.
-    # https://www.gevent.org/api/gevent.hub.html#gevent.hub.Hub.exception_stream
-    hub.exception_stream = gevent_exception_log
-    hub.handle_error = GeventHubErrorHandler(hub, logger)
-
-
 def _start_island_server(
     should_setup_only: bool, config_options: IslandConfigOptions, container: DIContainer
 ):
+    _configure_gevent_exception_handling(config_options.data_dir)
+
     app = init_app(mongo_setup.MONGO_URL, container)
 
     if should_setup_only:
@@ -159,6 +147,18 @@ def _start_island_server(
     _log_init_info()
     _send_analytics(container)
     http_server.serve_forever()
+
+
+def _configure_gevent_exception_handling(data_dir):
+    hub = gevent.hub.get_hub()
+
+    gevent_exception_log = open(data_dir / GEVENT_EXCEPTION_LOG, "w+", buffering=1)
+    atexit.register(gevent_exception_log.close)
+
+    # Send gevent's exception output to a log file.
+    # https://www.gevent.org/api/gevent.hub.html#gevent.hub.Hub.exception_stream
+    hub.exception_stream = gevent_exception_log
+    hub.handle_error = GeventHubErrorHandler(hub, logger)
 
 
 def _get_wsgi_server_logger() -> logging.Logger:
