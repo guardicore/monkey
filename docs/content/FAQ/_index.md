@@ -81,7 +81,6 @@ Monkey in the newly created folder.
 
 ## Reset the Monkey Island password
 
-
 {{% notice warning %}}
 If you reset the credentials, the database will be cleared. Any findings of the Infection Monkey from previous runs will be lost. <br/><br/>
 However, you can save the Monkey's existing configuration by logging in with your current credentials and clicking on the **Export config** button on the configuration page.
@@ -160,8 +159,25 @@ If internet access is available, the Infection Monkey will use the internet for 
 
 The Monkey performs queries out to the Internet on two separate occasions:
 
-1. The Infection Monkey agent checks if it has internet access by performing requests to pre-configured domains. By default, these domains are `monkey.guardicore.com` and `www.google.com`, which can be changed.  The request doesn't include any extra information - it's a GET request with no extra parameters. Since the Infection Monkey is 100% open-source, you can find the domains in the configuration [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/config.py#L152) and the code that performs the internet check [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/network/info.py#L123). This **IS NOT** used for statistics collection.
-1. After installing the Monkey Island, it sends a request to check for updates on `updates.infectionmonkey.com`. The request doesn't include any PII other than the IP address of the request. It also includes the server's deployment type (e.g., Windows Server, AppImage, Docker) and the server's version (e.g., "1.6.3"), so we can check if we have an update available for this type of deployment. Since the Infection Monkey is 100% open-source, you can inspect the code that performs this [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/monkey_island/cc/services/version_update.py#L37). This **IS** used for statistics collection. However, due to this data's anonymous nature, we use this to get an aggregate assumption of how many deployments we see over a specific time period - it's not used for "personal" tracking.
+1. The Infection Monkey agent checks if it has internet access by performing
+   requests to pre-configured domains. By default, these domains are
+   `monkey.guardicore.com` and `www.google.com`, which can be changed.  The
+   request doesn't include any extra information - it's a GET request with no
+   extra parameters. Since the Infection Monkey is 100% open-source, you can
+   find the domains in the configuration
+   [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/config.py#L152)
+   and the code that performs the internet check
+   [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/network/info.py#L123).
+   This **IS NOT** used for statistics collection.
+1. After the Monkey Island starts it sends a GET request with current
+   deployment type to the update server to fetch the latest version and a
+   download link for it. This information is used by the Monkey Island to
+   suggest an update if one is available. No information gets collected during
+   this process.
+1. After the Monkey Island starts it sends a GET request to the analytics
+   server with your deployment type and a version number. This information gets
+   collected on the analytics server. It is used to understand which deployment
+   types/versions are no longer used and can be deprecated.
 
 ## Logging and how to find logs
 

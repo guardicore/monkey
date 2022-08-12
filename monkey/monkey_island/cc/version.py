@@ -1,15 +1,13 @@
 import logging
 from threading import Event, Thread
+from typing import Optional, Tuple
 
 import requests
-import semantic_version
 
 from .deployment import Deployment
 
-VERSION_SERVER_URL_PREF = "https://updates.infectionmonkey.com"
-VERSION_SERVER_CHECK_NEW_URL = VERSION_SERVER_URL_PREF + "?deployment=%s&monkey_version=%s"
-VERSION_SERVER_DOWNLOAD_URL = VERSION_SERVER_CHECK_NEW_URL + "&is_download=true"
-
+# TODO get redirects instead of using direct links to AWS
+LATEST_VERSION_URL = "https://njf01cuupf.execute-api.us-east-1.amazonaws.com/default?deployment={}"
 LATEST_VERSION_TIMEOUT = 7
 
 logger = logging.getLogger(__name__)
@@ -55,29 +53,23 @@ class Version:
         return self._download_url
 
     def _set_version_metadata(self):
-        self._latest_version = self._get_latest_version()
-        self._download_url = self._get_download_link()
+        self._latest_version, self._download_url = self._get_version_info()
         self._initialization_complete.set()
 
-    def _get_latest_version(self) -> str:
-        url = VERSION_SERVER_CHECK_NEW_URL % (self._deployment.value, self._version_number)
+    def _get_version_info(self) -> Tuple[str, Optional[str]]:
+        url = LATEST_VERSION_URL.format(self._deployment.value)
 
         try:
-            reply = requests.get(url, timeout=LATEST_VERSION_TIMEOUT)
+            response = requests.get(url, timeout=LATEST_VERSION_TIMEOUT).json()
         except requests.exceptions.RequestException as err:
-            logger.warning(f"Failed to connect to {VERSION_SERVER_URL_PREF}: {err}")
-            return self._version_number
+            logger.warning(f"Failed to fetch version information from {url}: {err}")
+            return self._version_number, None
 
-        res = reply.json().get("newer_version", None)
+        try:
+            download_link = response["download_link"]
+            latest_version = response["version"]
+        except KeyError:
+            logger.error(f"Failed to fetch version information from {url}: {response}")
+            return self._version_number, None
 
-        if res is False:
-            return self._version_number
-
-        if not semantic_version.validate(res):
-            logger.warning(f"Recieved invalid version {res} from {VERSION_SERVER_URL_PREF}")
-            return self._version_number
-
-        return res.strip()
-
-    def _get_download_link(self):
-        return VERSION_SERVER_DOWNLOAD_URL % (self._deployment.value, self._version_number)
+        return latest_version, download_link
