@@ -62,17 +62,14 @@ class Version:
         try:
             response = requests.get(url, timeout=LATEST_VERSION_TIMEOUT).json()
         except requests.exceptions.RequestException as err:
-            logger.warning(f"Failed to connect to {url}, Error: {err}")
+            logger.warning(f"Failed to connect to {url}: {err}")
             return self._version_number, None
 
         try:
             download_link = response["download_link"]
             latest_version = response["version"]
         except KeyError:
-            logger.error(
-                f"Failed to fetch version information from {url}, response: {response}."
-                f"Most likely deployment {self._deployment.value} is not recognized."
-            )
+            logger.error(f"Failed to fetch version information from {url}: {response}")
             return self._version_number, None
 
         return latest_version, download_link
