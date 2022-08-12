@@ -27,15 +27,17 @@ successful_response.return_value.json.return_value = {
 )
 def test_version__request_failed(monkeypatch, request_mock):
     monkeypatch.setattr("requests.get", request_mock)
+
     version = Version(version_number="1.0.0", deployment=Deployment.DEVELOP)
-    version._initialization_complete.wait()
+
     assert version.latest_version == "1.0.0"
     assert version.download_url is None
 
 
 def test_version__request_successful(monkeypatch):
     monkeypatch.setattr("requests.get", successful_response)
+
     version = Version(version_number="1.0.0", deployment=Deployment.DEVELOP)
-    version._initialization_complete.wait()
+
     assert version.latest_version == SUCCESS_VERSION
     assert version.download_url == SUCCESS_URL
