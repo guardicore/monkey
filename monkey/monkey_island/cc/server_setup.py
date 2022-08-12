@@ -219,15 +219,13 @@ def _log_web_interface_access_urls():
     )
 
 
-ANALYTICS_URL = (
-    "https://m15mjynko3.execute-api.us-east-1.amazonaws.com/default?version={"
-    "version}&deployment={deployment}"
-)
-
-
 def _send_analytics(deployment: Deployment, version: Version):
     def _inner(deployment: Deployment, version: Version):
-        url = ANALYTICS_URL.format(deployment=deployment.value, version=version.version_number)
+        url = (
+            "https://m15mjynko3.execute-api.us-east-1.amazonaws.com/default"
+            f"?version={version.version_number}&deployment={deployment.value}"
+        )
+
         try:
             response = requests.get(url).json()
             logger.info(
