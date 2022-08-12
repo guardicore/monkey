@@ -59,24 +59,24 @@ def run_monkey_island():
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
     try:
         return get_server_config(island_args)
-    except json.JSONDecodeError as ex:
-        print(f"Error loading server config: {ex}")
+    except json.JSONDecodeError as err:
+        print(f"Error loading server config: {err}")
         sys.exit(1)
 
 
 def _setup_data_dir(data_dir_path: Path):
     try:
         setup_data_dir(data_dir_path)
-    except IncompatibleDataDirectory as ex:
-        print(f"Incompatible data directory: {ex}")
+    except IncompatibleDataDirectory as err:
+        print(f"Incompatible data directory: {err}")
         sys.exit(1)
 
 
 def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
     try:
         island_config_options_validator.raise_on_invalid_options(config_options)
-    except Exception as ex:
-        print(f"Configuration error: {ex}")
+    except Exception as err:
+        print(f"Configuration error: {err}")
         sys.exit(1)
 
 
@@ -107,16 +107,16 @@ def _start_mongodb(data_dir: Path) -> MongoDbProcess:
 def _connect_to_mongodb(mongo_db_process: MongoDbProcess):
     try:
         mongo_setup.connect_to_mongodb(MONGO_CONNECTION_TIMEOUT)
-    except mongo_setup.MongoDBTimeOutError as ex:
+    except mongo_setup.MongoDBTimeOutError as err:
         if mongo_db_process and not mongo_db_process.is_running():
             logger.error(
                 f"Failed to start MongoDB process. Check log at {mongo_db_process.log_file}."
             )
         else:
-            logger.error(ex)
+            logger.error(err)
         sys.exit(1)
-    except mongo_setup.MongoDBVersionError as ex:
-        logger.error(ex)
+    except mongo_setup.MongoDBVersionError as err:
+        logger.error(err)
         sys.exit(1)
 
 
