@@ -29,7 +29,7 @@ def test_version__request_failed(monkeypatch, request_mock):
     monkeypatch.setattr("requests.get", request_mock)
     version = Version(version_number="1.0.0", deployment=Deployment.DEVELOP)
     version._initialization_complete.wait()
-    assert version.latest_version is None
+    assert version.latest_version == "1.0.0"
     assert version.download_url is None
 
 
