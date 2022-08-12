@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from threading import Thread
 from typing import Sequence, Tuple
 
 import gevent.hub
@@ -225,14 +226,17 @@ ANALYTICS_URL = (
 
 
 def _send_analytics(deployment: Deployment, version: Version):
-    url = ANALYTICS_URL.format(deployment=deployment.value, version=version.version_number)
-    try:
-        response = requests.get(url).json()
-        logger.info(
-            f"Version number and deployment type was sent to analytics server. "
-            f"The response is: {response}"
-        )
-    except requests.exceptions.ConnectionError as err:
-        logger.info(
-            f"Failed to send deployment type and version number to the analytics server: {err}"
-        )
+    def _inner(deployment: Deployment, version: Version):
+        url = ANALYTICS_URL.format(deployment=deployment.value, version=version.version_number)
+        try:
+            response = requests.get(url).json()
+            logger.info(
+                f"Version number and deployment type was sent to analytics server. "
+                f"The response is: {response}"
+            )
+        except requests.exceptions.ConnectionError as err:
+            logger.info(
+                f"Failed to send deployment type and version number to the analytics server: {err}"
+            )
+
+    Thread(target=_inner, args=(deployment, version), daemon=True).start()
