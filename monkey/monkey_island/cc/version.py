@@ -62,7 +62,7 @@ class Version:
         try:
             response = requests.get(url, timeout=LATEST_VERSION_TIMEOUT).json()
         except requests.exceptions.RequestException as err:
-            logger.warning(f"Failed to connect to {url}: {err}")
+            logger.warning(f"Failed to fetch version information from {url}: {err}")
             return self._version_number, None
 
         try:
