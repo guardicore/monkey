@@ -66,9 +66,6 @@ from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
-from infection_monkey.telemetry.messengers.credentials_intercepting_telemetry_messenger import (
-    CredentialsInterceptingTelemetryMessenger,
-)
 from infection_monkey.telemetry.messengers.exploit_intercepting_telemetry_messenger import (
     ExploitInterceptingTelemetryMessenger,
 )
@@ -214,11 +211,8 @@ class InfectionMonkey:
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
-        telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
-            ExploitInterceptingTelemetryMessenger(
-                self._telemetry_messenger, self._monkey_inbound_tunnel
-            ),
-            propagation_credentials_repository,
+        telemetry_messenger = ExploitInterceptingTelemetryMessenger(
+            self._telemetry_messenger, self._monkey_inbound_tunnel
         )
 
         self._master = AutomatedMaster(
@@ -296,13 +290,9 @@ class InfectionMonkey:
             "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), PluginType.EXPLOITER
         )
 
-        zerologon_telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
-            self._telemetry_messenger, propagation_credentials_repository
-        )
-        zerologon_wrapper = ExploiterWrapper(zerologon_telemetry_messenger, agent_repository)
         puppet.load_plugin(
             "ZerologonExploiter",
-            zerologon_wrapper.wrap(ZerologonExploiter),
+            exploit_wrapper.wrap(ZerologonExploiter),
             PluginType.EXPLOITER,
         )
 
