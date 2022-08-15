@@ -110,7 +110,7 @@ def _get_ssh_files(
 
                                             collected_credentials = Credentials(
                                                 identity=Username(info["name"]),
-                                                secrets=SSHKeypair(
+                                                secret=SSHKeypair(
                                                     info["private_key"], info["public_key"]
                                                 ),
                                             )
