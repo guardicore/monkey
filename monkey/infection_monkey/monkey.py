@@ -9,7 +9,7 @@ from typing import List
 from pubsub.core import Publisher
 
 import infection_monkey.tunnel as tunnel
-from common.event_queue import PyPubSubEventQueue
+from common.event_queue import IEventQueue, PyPubSubEventQueue
 from common.events import CredentialsStolenEvent
 from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
@@ -199,8 +199,8 @@ class InfectionMonkey:
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
-        _event_queue = PyPubSubEventQueue(Publisher())
-        _event_queue.subscribe_type(
+        event_queue = PyPubSubEventQueue(Publisher())
+        event_queue.subscribe_type(
             CredentialsStolenEvent, add_credentials_from_event_to_propagation_credentials_repository
         )
 
@@ -210,7 +210,7 @@ class InfectionMonkey:
         )
         credentials_store = AggregatingPropagationCredentialsRepository(control_channel)
 
-        puppet = self._build_puppet(credentials_store)
+        puppet = self._build_puppet(credentials_store, event_queue)
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
@@ -239,7 +239,9 @@ class InfectionMonkey:
 
         return local_network_interfaces
 
-    def _build_puppet(self, credentials_store: IPropagationCredentialsRepository) -> IPuppet:
+    def _build_puppet(
+        self, credentials_store: IPropagationCredentialsRepository, event_queue: IEventQueue
+    ) -> IPuppet:
         puppet = Puppet()
 
         puppet.load_plugin(
@@ -249,7 +251,7 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             "SSHCollector",
-            SSHCredentialCollector(self._telemetry_messenger),
+            SSHCredentialCollector(self._telemetry_messenger, event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
 
