@@ -122,3 +122,16 @@ def test_all_keys_if_credentials_empty():
     assert "exploit_password_list" in actual_stored_credentials
     assert "exploit_ntlm_hash_list" in actual_stored_credentials
     assert "exploit_ssh_keys" in actual_stored_credentials
+
+
+def test_credentials_obtained_if_propagation_credentials_fails():
+    control_channel = MagicMock()
+    control_channel.get_credentials_for_propagation.return_value = EMPTY_CHANNEL_CREDENTIALS
+    control_channel.get_credentials_for_propagation.side_effect = Exception(
+        "No credentials for you!"
+    )
+    credentials_repository = AggregatingPropagationCredentialsRepository(control_channel)
+
+    credentials = credentials_repository.get_credentials()
+
+    assert credentials is not None

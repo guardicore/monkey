@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Iterable, Sequence
+from typing import Any, Iterable
 
 from common.credentials import CredentialComponentType, Credentials, ICredentialComponent
 from infection_monkey.custom_types import PropagationCredentials
@@ -28,6 +28,11 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
             "exploit_ssh_keys": [],
         }
         self._control_channel = control_channel
+
+        # Ensure caching happens per-instance instead of being shared across instances
+        self._get_credentials_from_control_channel = request_cache(CREDENTIALS_POLL_PERIOD_SEC)(
+            self._control_channel.get_credentials_for_propagation
+        )
 
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         for credentials in credentials_to_add:
@@ -58,15 +63,10 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
         try:
             propagation_credentials = self._get_credentials_from_control_channel()
             self.add_credentials(propagation_credentials)
-
-            return self._stored_credentials
         except Exception as ex:
-            self._stored_credentials = {}
             logger.error(f"Error while attempting to retrieve credentials for propagation: {ex}")
 
-    @request_cache(CREDENTIALS_POLL_PERIOD_SEC)
-    def _get_credentials_from_control_channel(self) -> Sequence[Credentials]:
-        return self._control_channel.get_credentials_for_propagation()
+        return self._stored_credentials
 
     def _set_attribute(self, attribute_to_be_set: str, credentials_values: Iterable[Any]):
         if not credentials_values:
