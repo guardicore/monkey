@@ -1,14 +1,12 @@
 import glob
 import logging
 import os
-from time import time
 from typing import Dict, Iterable
 
 from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IEventQueue
 from common.events import CredentialsStolenEvent
 from common.utils.attack_utils import ScanStatus
-from infection_monkey.config import IGUID
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
@@ -136,9 +134,7 @@ def _get_ssh_files(
 
 def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):
     credentials_stolen_event = CredentialsStolenEvent(
-        source=IGUID,
         target=None,
-        timestamp=time(),
         tags=frozenset({SSH_CREDENTIAL_COLLECTOR_TAG, "T1005", "T1145"}),
         stolen_credentials=[collected_credentials],
     )
