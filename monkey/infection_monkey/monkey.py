@@ -10,6 +10,7 @@ from pubsub.core import Publisher
 
 import infection_monkey.tunnel as tunnel
 from common.event_queue import PyPubSubEventQueue
+from common.events import CredentialsStolenEvent
 from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -23,6 +24,7 @@ from infection_monkey.credential_collectors import (
 from infection_monkey.credential_repository import (
     AggregatingPropagationCredentialsRepository,
     IPropagationCredentialsRepository,
+    add_credentials_from_event_to_propagation_credentials_repository,
 )
 from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
@@ -198,6 +200,9 @@ class InfectionMonkey:
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
         _event_queue = PyPubSubEventQueue(Publisher())
+        _event_queue.subscribe_type(
+            CredentialsStolenEvent, add_credentials_from_event_to_propagation_credentials_repository
+        )
 
         # TODO control_channel and control_client have same responsibilities, merge them
         control_channel = ControlChannel(

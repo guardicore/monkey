@@ -217,7 +217,7 @@ _event_queue
 
 # TODO DELETE IN #2176
 CredentialsStolenEvent
-
+add_credentials_from_event_to_propagation_credentials_repository
 
 # TODO DELETE AFTER RESOURCE REFACTORING
 
