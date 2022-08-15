@@ -20,12 +20,8 @@ def mock_event_queue():
 def patch_ssh_handler(ssh_creds, monkeypatch):
     monkeypatch.setattr(
         "infection_monkey.credential_collectors.ssh_collector.ssh_handler.get_ssh_info",
-        lambda _: ssh_creds,
+        lambda _, __: ssh_creds,
     )
-
-
-def patch_guid(monkeypatch):
-    monkeypatch.setattr("infection_monkey.config.GUID", "1-2-3-4-5-6")
 
 
 @pytest.mark.parametrize(
@@ -39,7 +35,6 @@ def test_ssh_credentials_empty_results(
         patch_telemetry_messenger, mock_event_queue
     ).collect_credentials()
     assert not collected
-    mock_event_queue.publish.assert_called_once()
 
 
 def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger, mock_event_queue):
@@ -86,4 +81,3 @@ def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger, mock_ev
         patch_telemetry_messenger, mock_event_queue
     ).collect_credentials()
     assert expected == collected
-    mock_event_queue.publish.assert_called_once()
