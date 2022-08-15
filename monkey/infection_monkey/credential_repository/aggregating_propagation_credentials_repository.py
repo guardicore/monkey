@@ -63,11 +63,10 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
         try:
             propagation_credentials = self._get_credentials_from_control_channel()
             self.add_credentials(propagation_credentials)
-
-            return self._stored_credentials
         except Exception as ex:
-            self._stored_credentials = {}
             logger.error(f"Error while attempting to retrieve credentials for propagation: {ex}")
+
+        return self._stored_credentials
 
     def _set_attribute(self, attribute_to_be_set: str, credentials_values: Iterable[Any]):
         if not credentials_values:
