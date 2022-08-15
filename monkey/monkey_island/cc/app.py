@@ -129,6 +129,13 @@ class FlaskDIWrapper:
 
         self._reserve_urls(resource.urls)
 
+        # enforce our rule that URLs should not contain a trailing slash
+        for url in resource.urls:
+            if url.endswith("/"):
+                raise ValueError(
+                    f"Resource {resource.__name__} has an invalid URL: A URL "
+                    "should not have a trailing slash."
+                )
         dependencies = self._container.resolve_dependencies(resource)
         self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
 

@@ -22,8 +22,8 @@ from monkey_island.cc.resources.propagation_credentials import (
 )
 
 ALL_CREDENTIALS_URL = PropagationCredentials.urls[0]
-CONFIGURED_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL, _configured_collection)
-STOLEN_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL, _stolen_collection)
+CONFIGURED_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL + "/", _configured_collection)
+STOLEN_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL + "/", _stolen_collection)
 
 
 @pytest.fixture
@@ -105,7 +105,7 @@ def test_all_propagation_credentials_endpoint__put_not_allowed(flask_client):
     assert resp.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
 
-NON_EXISTENT_COLLECTION_URL = urljoin(ALL_CREDENTIALS_URL, "bogus-credentials")
+NON_EXISTENT_COLLECTION_URL = urljoin(ALL_CREDENTIALS_URL + "/", "bogus-credentials")
 
 
 def test_propagation_credentials_endpoint__get_not_found(flask_client):

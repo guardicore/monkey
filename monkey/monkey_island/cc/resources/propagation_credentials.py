@@ -11,7 +11,7 @@ _stolen_collection = "stolen-credentials"
 
 
 class PropagationCredentials(AbstractResource):
-    urls = ["/api/propagation-credentials/", "/api/propagation-credentials/<string:collection>"]
+    urls = ["/api/propagation-credentials", "/api/propagation-credentials/<string:collection>"]
 
     def __init__(self, credentials_repository: ICredentialsRepository):
         self._credentials_repository = credentials_repository
