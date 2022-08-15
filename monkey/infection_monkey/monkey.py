@@ -199,16 +199,17 @@ class InfectionMonkey:
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
-        event_queue = PyPubSubEventQueue(Publisher())
-        event_queue.subscribe_type(
-            CredentialsStolenEvent, add_credentials_from_event_to_propagation_credentials_repository
-        )
-
         # TODO control_channel and control_client have same responsibilities, merge them
         control_channel = ControlChannel(
             self._control_client.server_address, GUID, self._control_client.proxies
         )
         credentials_store = AggregatingPropagationCredentialsRepository(control_channel)
+
+        event_queue = PyPubSubEventQueue(Publisher())
+        event_queue.subscribe_type(
+            CredentialsStolenEvent,
+            add_credentials_from_event_to_propagation_credentials_repository(credentials_store),
+        )
 
         puppet = self._build_puppet(credentials_store, event_queue)
 
