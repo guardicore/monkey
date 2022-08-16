@@ -210,15 +210,6 @@ _serialize_credentials  # unused method (monkey/common/credentials/credentials:6
 # Models
 _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:19
 
-# TODO DELETE AFTER EVENT QUEUE IMPLEMENTATION
-AbstractEvent
-tags
-_event_queue
-
-# TODO DELETE IN #2176
-CredentialsStolenEvent
-add_credentials_from_event_to_propagation_credentials_repository
-
 # TODO DELETE AFTER RESOURCE REFACTORING
 
 # https://github.com/jendrikseipp/vulture/issues/287
