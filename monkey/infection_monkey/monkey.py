@@ -206,10 +206,7 @@ class InfectionMonkey:
         credentials_store = AggregatingPropagationCredentialsRepository(control_channel)
 
         event_queue = PyPubSubEventQueue(Publisher())
-        event_queue.subscribe_type(
-            CredentialsStolenEvent,
-            add_credentials_from_event_to_propagation_credentials_repository(credentials_store),
-        )
+        InfectionMonkey._subscribe_events(event_queue, credentials_store)
 
         puppet = self._build_puppet(credentials_store, event_queue)
 
@@ -230,6 +227,15 @@ class InfectionMonkey:
             control_channel,
             local_network_interfaces,
             credentials_store,
+        )
+
+    @staticmethod
+    def _subscribe_events(
+        event_queue: IEventQueue, credentials_store: IPropagationCredentialsRepository
+    ):
+        event_queue.subscribe_type(
+            CredentialsStolenEvent,
+            add_credentials_from_event_to_propagation_credentials_repository(credentials_store),
         )
 
     @staticmethod
