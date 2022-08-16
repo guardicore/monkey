@@ -6,7 +6,6 @@ from pubsub.core import Publisher
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IEventQueue, PyPubSubEventQueue
-from common.events import AbstractEvent
 from infection_monkey.credential_collectors import MimikatzCredentialCollector
 from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_credential_collector import (  # noqa: E501
     MIMIKATZ_EVENT_TAGS,
@@ -125,16 +124,11 @@ def event_queue() -> IEventQueue:
     return PyPubSubEventQueue(Publisher())
 
 
-def test_pypykatz_credentials_stolen_event_published(monkeypatch, event_queue):
-    def subscriber(event: AbstractEvent):
-        subscriber.call_count += 1
-        subscriber.call_tags |= event.tags
-
-    subscriber.call_count = 0
-    subscriber.call_tags = set()
-
+def test_pypykatz_credentials_stolen_event_published(
+    monkeypatch, event_queue, event_queue_subscriber
+):
     for event_tag in MIMIKATZ_EVENT_TAGS:
-        event_queue.subscribe_tag(event_tag, subscriber)
+        event_queue.subscribe_tag(event_tag, event_queue_subscriber)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(event_queue)
     monkeypatch.setattr(
@@ -142,5 +136,5 @@ def test_pypykatz_credentials_stolen_event_published(monkeypatch, event_queue):
     )
     mimikatz_credential_collector.collect_credentials()
 
-    assert subscriber.call_count == 3
-    assert subscriber.call_tags == MIMIKATZ_EVENT_TAGS
+    assert event_queue_subscriber.call_count == 3
+    assert event_queue_subscriber.call_tags == MIMIKATZ_EVENT_TAGS
