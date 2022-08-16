@@ -79,4 +79,4 @@ class MimikatzCredentialCollector(ICredentialCollector):
             stolen_credentials=collected_credentials,
         )
 
-        self.event_queue.publish(credentials_stolen_event)
+        self._event_queue.publish(credentials_stolen_event)
