@@ -12,6 +12,17 @@ from .windows_credentials import WindowsCredentials
 logger = logging.getLogger(__name__)
 
 
+MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "MimikatzCredentialsStolen"
+T1003_ATTACK_TECHNIQUE_TAG = "T1003"
+T1005_ATTACK_TECHNIQUE_TAG = "T1005"
+
+MIMIKATZ_EVENT_TAGS = {
+    MIMIKATZ_CREDENTIAL_COLLECTOR_TAG,
+    T1003_ATTACK_TECHNIQUE_TAG,
+    T1005_ATTACK_TECHNIQUE_TAG,
+}
+
+
 class MimikatzCredentialCollector(ICredentialCollector):
     def __init__(self, event_queue: IEventQueue):
         self._event_queue = event_queue
