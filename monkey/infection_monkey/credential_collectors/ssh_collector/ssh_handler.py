@@ -165,7 +165,6 @@ def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
 
 def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):
     credentials_stolen_event = CredentialsStolenEvent(
-        target=None,
         tags=frozenset(SSH_COLLECTOR_EVENT_TAG),
         stolen_credentials=[collected_credentials],
     )
