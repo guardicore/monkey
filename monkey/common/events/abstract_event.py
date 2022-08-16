@@ -16,10 +16,10 @@ class AbstractEvent(ABC):
     about the event.
 
     Attributes:
-        :param source: The UUID of the agent that observed the event
-        :param target: The target of the event (if not the local system)
-        :param timestamp: The time that the event occurred (seconds since the Unix epoch)
         :param tags: The set of tags associated with the event
+        :param target: The target of the event (if not the local system)
+        :param source: The UUID of the agent that observed the event
+        :param timestamp: The time that the event occurred (seconds since the Unix epoch)
     """
 
     tags: FrozenSet[str]
