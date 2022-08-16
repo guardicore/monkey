@@ -23,9 +23,8 @@ class SSHCredentialCollector(ICredentialCollector):
         logger.info("Started scanning for SSH credentials")
         ssh_info = ssh_handler.get_ssh_info(self._telemetry_messenger, self._event_queue)
         logger.info("Finished scanning for SSH credentials")
-        ssh_collector_credentials = SSHCredentialCollector._to_credentials(ssh_info)
 
-        return ssh_collector_credentials
+        return SSHCredentialCollector._to_credentials(ssh_info)
 
     @staticmethod
     def _to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
