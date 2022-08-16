@@ -1,7 +1,7 @@
 import glob
 import logging
 import os
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Sequence
 
 from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IEventQueue
@@ -118,12 +118,7 @@ def _get_ssh_files(
                                                 )
                                             )
 
-                                            collected_credentials = Credentials(
-                                                identity=Username(info["name"]),
-                                                secret=SSHKeypair(
-                                                    info["private_key"], info["public_key"]
-                                                ),
-                                            )
+                                            collected_credentials = to_credentials([info])
                                             _publish_credentials_stolen_event(
                                                 collected_credentials, event_queue
                                             )
@@ -140,6 +135,32 @@ def _get_ssh_files(
                     pass
     user_info = [info for info in user_info if info["private_key"] or info["public_key"]]
     return user_info
+
+
+def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
+    ssh_credentials = []
+
+    for info in ssh_info:
+        identity = None
+        secret = None
+
+        if info.get("name", ""):
+            identity = Username(info["name"])
+
+        ssh_keypair = {}
+        for key in ["public_key", "private_key"]:
+            if info.get(key) is not None:
+                ssh_keypair[key] = info[key]
+
+            if len(ssh_keypair):
+                secret = SSHKeypair(
+                    ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
+                )
+
+        if any([identity, secret]):
+            ssh_credentials.append(Credentials(identity, secret))
+
+    return ssh_credentials
 
 
 def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):

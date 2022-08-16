@@ -1,9 +1,10 @@
 from unittest.mock import MagicMock
 
 import pytest
+from pubsub.core import Publisher
 
 from common.credentials import Credentials, SSHKeypair, Username
-from common.event_queue import IEventQueue
+from common.event_queue import IEventQueue, PyPubSubEventQueue
 from infection_monkey.credential_collectors import SSHCredentialCollector
 
 
@@ -13,8 +14,8 @@ def patch_telemetry_messenger():
 
 
 @pytest.fixture
-def mock_event_queue():
-    return MagicMock(spec=IEventQueue)
+def event_queue() -> IEventQueue:
+    return PyPubSubEventQueue(Publisher())
 
 
 def patch_ssh_handler(ssh_creds, monkeypatch):
@@ -27,17 +28,15 @@ def patch_ssh_handler(ssh_creds, monkeypatch):
 @pytest.mark.parametrize(
     "ssh_creds", [([{"name": "", "home_dir": "", "public_key": None, "private_key": None}]), ([])]
 )
-def test_ssh_credentials_empty_results(
-    monkeypatch, ssh_creds, patch_telemetry_messenger, mock_event_queue
-):
+def test_ssh_credentials_empty_results(monkeypatch, ssh_creds, patch_telemetry_messenger):
     patch_ssh_handler(ssh_creds, monkeypatch)
     collected = SSHCredentialCollector(
-        patch_telemetry_messenger, mock_event_queue
+        patch_telemetry_messenger, MagicMock(spec=IEventQueue)
     ).collect_credentials()
     assert not collected
 
 
-def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger, mock_event_queue):
+def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger):
 
     ssh_creds = [
         {
@@ -78,6 +77,6 @@ def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger, mock_ev
         Credentials(identity=None, secret=ssh_keypair3),
     ]
     collected = SSHCredentialCollector(
-        patch_telemetry_messenger, mock_event_queue
+        patch_telemetry_messenger, MagicMock(spec=IEventQueue)
     ).collect_credentials()
     assert expected == collected

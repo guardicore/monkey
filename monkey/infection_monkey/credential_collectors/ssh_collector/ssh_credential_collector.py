@@ -1,7 +1,7 @@
 import logging
-from typing import Dict, Iterable, Sequence
+from typing import Sequence
 
-from common.credentials import Credentials, SSHKeypair, Username
+from common.credentials import Credentials
 from common.event_queue import IEventQueue
 from infection_monkey.credential_collectors.ssh_collector import ssh_handler
 from infection_monkey.i_puppet import ICredentialCollector
@@ -24,30 +24,4 @@ class SSHCredentialCollector(ICredentialCollector):
         ssh_info = ssh_handler.get_ssh_info(self._telemetry_messenger, self._event_queue)
         logger.info("Finished scanning for SSH credentials")
 
-        return SSHCredentialCollector._to_credentials(ssh_info)
-
-    @staticmethod
-    def _to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
-        ssh_credentials = []
-
-        for info in ssh_info:
-            identity = None
-            secret = None
-
-            if info.get("name", ""):
-                identity = Username(info["name"])
-
-            ssh_keypair = {}
-            for key in ["public_key", "private_key"]:
-                if info.get(key) is not None:
-                    ssh_keypair[key] = info[key]
-
-            if len(ssh_keypair):
-                secret = SSHKeypair(
-                    ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
-                )
-
-            if any([identity, secret]):
-                ssh_credentials.append(Credentials(identity, secret))
-
-        return ssh_credentials
+        return ssh_handler.to_credentials(ssh_info)
