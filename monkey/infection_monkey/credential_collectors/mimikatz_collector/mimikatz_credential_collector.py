@@ -31,8 +31,14 @@ class MimikatzCredentialCollector(ICredentialCollector):
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
         windows_credentials = pypykatz_handler.get_windows_creds()
+
         logger.info(f"Pypykatz gathered {len(windows_credentials)} credentials.")
-        return MimikatzCredentialCollector._to_credentials(windows_credentials)
+
+        collected_credentials = MimikatzCredentialCollector._to_credentials(windows_credentials)
+
+        self._publish_credentials_stolen_event(collected_credentials)
+
+        return collected_credentials
 
     @staticmethod
     def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> Sequence[Credentials]:
