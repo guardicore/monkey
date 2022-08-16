@@ -3,6 +3,7 @@ from typing import Sequence
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IEventQueue
+from common.events import CredentialsStolenEvent
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
 
@@ -64,3 +65,12 @@ class MimikatzCredentialCollector(ICredentialCollector):
                 credentials.append(Credentials(identity, None))
 
         return credentials
+
+    def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
+        credentials_stolen_event = CredentialsStolenEvent(
+            target=None,
+            tags=frozenset(MIMIKATZ_EVENT_TAGS),
+            stolen_credentials=collected_credentials,
+        )
+
+        self.event_queue.publish(credentials_stolen_event)
