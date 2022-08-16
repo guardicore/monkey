@@ -8,11 +8,8 @@ from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IEventQueue, PyPubSubEventQueue
 from common.events import AbstractEvent
 from infection_monkey.credential_collectors import MimikatzCredentialCollector
-from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_credential_collector import (
-    MIMIKATZ_CREDENTIAL_COLLECTOR_TAG,
+from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_credential_collector import (  # noqa: E501
     MIMIKATZ_EVENT_TAGS,
-    T1003_ATTACK_TECHNIQUE_TAG,
-    T1005_ATTACK_TECHNIQUE_TAG,
 )
 from infection_monkey.credential_collectors.mimikatz_collector.windows_credentials import (
     WindowsCredentials,
@@ -136,9 +133,8 @@ def test_pypykatz_credentials_stolen_event_published(monkeypatch, event_queue):
     subscriber.call_count = 0
     subscriber.call_tags = set()
 
-    event_queue.subscribe_tag(MIMIKATZ_CREDENTIAL_COLLECTOR_TAG, subscriber)
-    event_queue.subscribe_tag(T1003_ATTACK_TECHNIQUE_TAG, subscriber)
-    event_queue.subscribe_tag(T1005_ATTACK_TECHNIQUE_TAG, subscriber)
+    for event_tag in MIMIKATZ_EVENT_TAGS:
+        event_queue.subscribe_tag(event_tag, subscriber)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(event_queue)
     monkeypatch.setattr(
