@@ -55,6 +55,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/auth` endpoint to `/api/authenticate`. #2105
 - `/api/registration` endpoint to `/api/register`. #2105
 - `/api/file-upload` endpoit to `/api/pba/upload`. #2154
+- Improved the speed of ransomware encryption by 2-3x. #2123
 
 ### Removed
 - VSFTPD exploiter. #1533
