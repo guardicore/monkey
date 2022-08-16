@@ -16,6 +16,11 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_DIRS = ["/.ssh/", "/"]
 SSH_CREDENTIAL_COLLECTOR_TAG = "SSHCredentialsStolen"
+T1003_TAG = "T1003"
+T1005_TAG = "T1005"
+T1145_TAG = "T1145"
+
+SSH_COLLECTOR_EVENT_TAG = {SSH_CREDENTIAL_COLLECTOR_TAG, T1003_TAG, T1005_TAG, T1145_TAG}
 
 
 def get_ssh_info(
@@ -135,7 +140,7 @@ def _get_ssh_files(
 def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):
     credentials_stolen_event = CredentialsStolenEvent(
         target=None,
-        tags=frozenset({SSH_CREDENTIAL_COLLECTOR_TAG, "T1005", "T1145"}),
+        tags=frozenset(SSH_COLLECTOR_EVENT_TAG),
         stolen_credentials=[collected_credentials],
     )
 
