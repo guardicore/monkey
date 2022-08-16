@@ -1,8 +1,11 @@
 import glob
 import logging
 import os
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Sequence
 
+from common.credentials import Credentials, SSHKeypair, Username
+from common.event_queue import IEventQueue
+from common.events import CredentialsStolenEvent
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
@@ -12,9 +15,22 @@ from infection_monkey.utils.environment import is_windows_os
 logger = logging.getLogger(__name__)
 
 DEFAULT_DIRS = ["/.ssh/", "/"]
+SSH_CREDENTIAL_COLLECTOR_TAG = "ssh-credentials-collector"
+T1003_ATTACK_TECHNIQUE_TAG = "attack-t1003"
+T1005_ATTACK_TECHNIQUE_TAG = "attack-t1005"
+T1145_ATTACK_TECHNIQUE_TAG = "attack-t1145"
+
+SSH_COLLECTOR_EVENT_TAG = {
+    SSH_CREDENTIAL_COLLECTOR_TAG,
+    T1003_ATTACK_TECHNIQUE_TAG,
+    T1005_ATTACK_TECHNIQUE_TAG,
+    T1145_ATTACK_TECHNIQUE_TAG,
+}
 
 
-def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
+def get_ssh_info(
+    telemetry_messenger: ITelemetryMessenger, event_queue: IEventQueue
+) -> Iterable[Dict]:
     # TODO: Remove this check when this is turned into a plugin.
     if is_windows_os():
         logger.debug(
@@ -23,7 +39,7 @@ def get_ssh_info(telemetry_messenger: ITelemetryMessenger) -> Iterable[Dict]:
         return []
 
     home_dirs = _get_home_dirs()
-    ssh_info = _get_ssh_files(home_dirs, telemetry_messenger)
+    ssh_info = _get_ssh_files(home_dirs, telemetry_messenger, event_queue)
 
     return ssh_info
 
@@ -62,9 +78,9 @@ def _get_ssh_struct(name: str, home_dir: str) -> Dict:
 
 
 def _get_ssh_files(
-    usr_info: Iterable[Dict], telemetry_messenger: ITelemetryMessenger
+    user_info: Iterable[Dict], telemetry_messenger: ITelemetryMessenger, event_queue: IEventQueue
 ) -> Iterable[Dict]:
-    for info in usr_info:
+    for info in user_info:
         path = info["home_dir"]
         for directory in DEFAULT_DIRS:
             # TODO: Use PATH
@@ -101,6 +117,11 @@ def _get_ssh_files(
                                                     ScanStatus.USED, info["name"], info["home_dir"]
                                                 )
                                             )
+
+                                            collected_credentials = to_credentials([info])
+                                            _publish_credentials_stolen_event(
+                                                collected_credentials, event_queue
+                                            )
                                         else:
                                             continue
                                 except (IOError, OSError):
@@ -112,5 +133,40 @@ def _get_ssh_files(
                             pass
                 except OSError:
                     pass
-    usr_info = [info for info in usr_info if info["private_key"] or info["public_key"]]
-    return usr_info
+    user_info = [info for info in user_info if info["private_key"] or info["public_key"]]
+    return user_info
+
+
+def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
+    ssh_credentials = []
+
+    for info in ssh_info:
+        identity = None
+        secret = None
+
+        if info.get("name", ""):
+            identity = Username(info["name"])
+
+        ssh_keypair = {}
+        for key in ["public_key", "private_key"]:
+            if info.get(key) is not None:
+                ssh_keypair[key] = info[key]
+
+            if len(ssh_keypair):
+                secret = SSHKeypair(
+                    ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
+                )
+
+        if any([identity, secret]):
+            ssh_credentials.append(Credentials(identity, secret))
+
+    return ssh_credentials
+
+
+def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):
+    credentials_stolen_event = CredentialsStolenEvent(
+        tags=frozenset(SSH_COLLECTOR_EVENT_TAG),
+        stolen_credentials=[collected_credentials],
+    )
+
+    event_queue.publish(credentials_stolen_event)

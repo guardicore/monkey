@@ -9,7 +9,7 @@ from typing import List
 from pubsub.core import Publisher
 
 import infection_monkey.tunnel as tunnel
-from common.event_queue import PyPubSubEventQueue
+from common.event_queue import IEventQueue, PyPubSubEventQueue
 from common.events import CredentialsStolenEvent
 from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
@@ -199,18 +199,18 @@ class InfectionMonkey:
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
-        _event_queue = PyPubSubEventQueue(Publisher())
-        _event_queue.subscribe_type(
-            CredentialsStolenEvent, add_credentials_from_event_to_propagation_credentials_repository
-        )
-
         # TODO control_channel and control_client have same responsibilities, merge them
         control_channel = ControlChannel(
             self._control_client.server_address, GUID, self._control_client.proxies
         )
-        credentials_store = AggregatingPropagationCredentialsRepository(control_channel)
+        propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
+            control_channel
+        )
 
-        puppet = self._build_puppet(credentials_store)
+        event_queue = PyPubSubEventQueue(Publisher())
+        InfectionMonkey._subscribe_events(event_queue, propagation_credentials_repository)
+
+        puppet = self._build_puppet(propagation_credentials_repository, event_queue)
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
@@ -218,7 +218,7 @@ class InfectionMonkey:
             ExploitInterceptingTelemetryMessenger(
                 self._telemetry_messenger, self._monkey_inbound_tunnel
             ),
-            credentials_store,
+            propagation_credentials_repository,
         )
 
         self._master = AutomatedMaster(
@@ -228,7 +228,19 @@ class InfectionMonkey:
             victim_host_factory,
             control_channel,
             local_network_interfaces,
-            credentials_store,
+            propagation_credentials_repository,
+        )
+
+    @staticmethod
+    def _subscribe_events(
+        event_queue: IEventQueue,
+        propagation_credentials_repository: IPropagationCredentialsRepository,
+    ):
+        event_queue.subscribe_type(
+            CredentialsStolenEvent,
+            add_credentials_from_event_to_propagation_credentials_repository(
+                propagation_credentials_repository
+            ),
         )
 
     @staticmethod
@@ -239,7 +251,11 @@ class InfectionMonkey:
 
         return local_network_interfaces
 
-    def _build_puppet(self, credentials_store: IPropagationCredentialsRepository) -> IPuppet:
+    def _build_puppet(
+        self,
+        propagation_credentials_repository: IPropagationCredentialsRepository,
+        event_queue: IEventQueue,
+    ) -> IPuppet:
         puppet = Puppet()
 
         puppet.load_plugin(
@@ -249,7 +265,7 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             "SSHCollector",
-            SSHCredentialCollector(self._telemetry_messenger),
+            SSHCredentialCollector(self._telemetry_messenger, event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
 
@@ -281,7 +297,7 @@ class InfectionMonkey:
         )
 
         zerologon_telemetry_messenger = CredentialsInterceptingTelemetryMessenger(
-            self._telemetry_messenger, credentials_store
+            self._telemetry_messenger, propagation_credentials_repository
         )
         zerologon_wrapper = ExploiterWrapper(zerologon_telemetry_messenger, agent_repository)
         puppet.load_plugin(
