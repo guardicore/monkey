@@ -1,21 +1,15 @@
 from unittest.mock import MagicMock
 
 import pytest
-from pubsub.core import Publisher
 
 from common.credentials import Credentials, SSHKeypair, Username
-from common.event_queue import IEventQueue, PyPubSubEventQueue
+from common.event_queue import IEventQueue
 from infection_monkey.credential_collectors import SSHCredentialCollector
 
 
 @pytest.fixture
 def patch_telemetry_messenger():
     return MagicMock()
-
-
-@pytest.fixture
-def event_queue() -> IEventQueue:
-    return PyPubSubEventQueue(Publisher())
 
 
 def patch_ssh_handler(ssh_creds, monkeypatch):
