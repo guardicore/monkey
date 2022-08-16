@@ -6,10 +6,6 @@ from common.credentials import Credentials
 from . import AbstractEvent
 
 
-def hack_event():
-    raise TypeError("Missing a required argument")
-
-
 @dataclass(frozen=True)
 class CredentialsStolenEvent(AbstractEvent):
     """
@@ -19,4 +15,4 @@ class CredentialsStolenEvent(AbstractEvent):
         :param stolen_credentials: The credentials that were stolen by an agent
     """
 
-    stolen_credentials: Sequence[Credentials] = field(default_factory=hack_event)
+    stolen_credentials: Sequence[Credentials] = field(default_factory=list)
