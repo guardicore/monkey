@@ -68,9 +68,9 @@ def _get_ssh_struct(name: str, home_dir: str) -> Dict:
 
 
 def _get_ssh_files(
-    usr_info: Iterable[Dict], telemetry_messenger: ITelemetryMessenger, event_queue: IEventQueue
+    user_info: Iterable[Dict], telemetry_messenger: ITelemetryMessenger, event_queue: IEventQueue
 ) -> Iterable[Dict]:
-    for info in usr_info:
+    for info in user_info:
         path = info["home_dir"]
         for directory in DEFAULT_DIRS:
             # TODO: Use PATH
@@ -128,8 +128,8 @@ def _get_ssh_files(
                             pass
                 except OSError:
                     pass
-    usr_info = [info for info in usr_info if info["private_key"] or info["public_key"]]
-    return usr_info
+    user_info = [info for info in user_info if info["private_key"] or info["public_key"]]
+    return user_info
 
 
 def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):
