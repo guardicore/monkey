@@ -15,7 +15,7 @@ from infection_monkey.utils.environment import is_windows_os
 logger = logging.getLogger(__name__)
 
 DEFAULT_DIRS = ["/.ssh/", "/"]
-SSH_CREDENTIAL_COLLECTOR_TAG = "SSHCredentialsStolen"
+SSH_CREDENTIAL_COLLECTOR_TAG = "ssh-credentials-collector"
 T1003_ATTACK_TECHNIQUE_TAG = "attack-t1003"
 T1005_ATTACK_TECHNIQUE_TAG = "attack-t1005"
 T1145_ATTACK_TECHNIQUE_TAG = "attack-t1145"
