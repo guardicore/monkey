@@ -16,13 +16,13 @@ class AbstractEvent(ABC):
     about the event.
 
     Attributes:
-        :param tags: The set of tags associated with the event
-        :param target: The target of the event (if not the local system)
         :param source: The UUID of the agent that observed the event
+        :param target: The target of the event (if not the local system)
         :param timestamp: The time that the event occurred (seconds since the Unix epoch)
+        :param tags: The set of tags associated with the event
     """
 
-    tags: FrozenSet[str]
-    target: Union[UUID, IPv4Address, None]
     source: UUID = field(default_factory=getnode)
+    target: Union[UUID, IPv4Address, None] = field(default=None)
     timestamp: float = field(default_factory=time.time)
+    tags: FrozenSet[str] = field(default_factory=frozenset)
