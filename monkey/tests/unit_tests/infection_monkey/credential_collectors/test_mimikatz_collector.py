@@ -1,8 +1,10 @@
 from typing import Sequence
+from unittest.mock import MagicMock
 
 import pytest
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
+from common.event_queue import IEventQueue
 from infection_monkey.credential_collectors import MimikatzCredentialCollector
 from infection_monkey.credential_collectors.mimikatz_collector.windows_credentials import (
     WindowsCredentials,
@@ -18,7 +20,8 @@ def patch_pypykatz(win_creds: [WindowsCredentials], monkeypatch):
 
 
 def collect_credentials() -> Sequence[Credentials]:
-    return MimikatzCredentialCollector().collect_credentials()
+    mock_event_queue = MagicMock(spec=IEventQueue)
+    return MimikatzCredentialCollector(mock_event_queue).collect_credentials()
 
 
 @pytest.mark.parametrize(
