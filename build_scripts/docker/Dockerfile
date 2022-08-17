@@ -4,6 +4,7 @@ FROM bitnami/python:3.7 as builder
 COPY ./monkey /monkey
 WORKDIR /monkey
 RUN virtualenv .
+RUN export CI=1
 RUN . bin/activate && \
     cd monkey_island && \
     pip install pipenv==2022.7.4 && \
