@@ -74,7 +74,6 @@ class MimikatzCredentialCollector(ICredentialCollector):
 
     def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
         credentials_stolen_event = CredentialsStolenEvent(
-            target=None,
             tags=frozenset(MIMIKATZ_EVENT_TAGS),
             stolen_credentials=collected_credentials,
         )
