@@ -1,5 +1,5 @@
 from typing import Sequence
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -121,11 +121,7 @@ def test_pypykatz_result_parsing_no_secrets(monkeypatch):
 
 def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     mock_event_queue = MagicMock(spec=IEventQueue)
-    mock_pypykatz_handler = Mock()
-    monkeypatch.setattr(
-        "infection_monkey.credential_collectors.mimikatz_collector.pypykatz_handler",
-        mock_pypykatz_handler,
-    )
+    patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue)
     collected_credentials = mimikatz_credential_collector.collect_credentials()
