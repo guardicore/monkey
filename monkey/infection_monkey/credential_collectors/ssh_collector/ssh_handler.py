@@ -20,7 +20,7 @@ T1003_ATTACK_TECHNIQUE_TAG = "attack-t1003"
 T1005_ATTACK_TECHNIQUE_TAG = "attack-t1005"
 T1145_ATTACK_TECHNIQUE_TAG = "attack-t1145"
 
-SSH_COLLECTOR_EVENT_TAG = {
+SSH_COLLECTOR_EVENT_TAGS = {
     SSH_CREDENTIAL_COLLECTOR_TAG,
     T1003_ATTACK_TECHNIQUE_TAG,
     T1005_ATTACK_TECHNIQUE_TAG,
@@ -165,7 +165,7 @@ def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
 
 def _publish_credentials_stolen_event(collected_credentials: Credentials, event_queue: IEventQueue):
     credentials_stolen_event = CredentialsStolenEvent(
-        tags=frozenset(SSH_COLLECTOR_EVENT_TAG),
+        tags=frozenset(SSH_COLLECTOR_EVENT_TAGS),
         stolen_credentials=[collected_credentials],
     )
 
