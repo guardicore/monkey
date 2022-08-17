@@ -2,7 +2,7 @@ import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
 import PbaInput from './PbaInput';
-import {API_PBA_LINUX, API_PBA_WINDOWS} from '../pages/ConfigurePage';
+import { API_PBA_LINUX, API_PBA_WINDOWS } from '../pages/ConfigurePage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 
 export default function UiSchema(props) {
@@ -45,13 +45,13 @@ export default function UiSchema(props) {
             'ui:widget': SensitiveTextInput
           }
         },
-        exploit_lm_hash_list:{
+        exploit_lm_hash_list: {
           items: {
             classNames: 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
-        exploit_ntlm_hash_list:{
+        exploit_ntlm_hash_list: {
           items: {
             classNames: 'config-template-no-header',
             'ui:widget': SensitiveTextInput
@@ -82,11 +82,11 @@ export default function UiSchema(props) {
         tcp: {
           ports: {
             items: {
-            classNames: 'config-template-no-header'
+              classNames: 'config-template-no-header'
             }
           }
         },
-        fingerprinters:{
+        fingerprinters: {
           classNames: 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect,
           fingerprinter_classes: {
@@ -99,8 +99,11 @@ export default function UiSchema(props) {
     payloads: {
       classNames: 'config-template-no-header',
       encryption: {
-        info_box : {
+        info_box: {
           'ui:field': InfoBox
+        },
+        file_extension: {
+          'ui:emptyValue': ''
         },
         directories: {
           // Directory inputs are dynamically hidden
@@ -112,7 +115,7 @@ export default function UiSchema(props) {
           'ui:widget': 'hidden'
         }
       },
-      other_behaviors : {
+      other_behaviors: {
         'ui:widget': 'hidden'
       }
     },
