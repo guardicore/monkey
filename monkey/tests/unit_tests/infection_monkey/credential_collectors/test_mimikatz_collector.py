@@ -121,9 +121,10 @@ def test_pypykatz_result_parsing_no_secrets(monkeypatch):
 
 def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     mock_event_queue = MagicMock(spec=IEventQueue)
-    mock_subscriber = Mock()
+    mock_subscriber = mock_pypykatz_handler = Mock()
     monkeypatch.setattr(
-        "infection_monkey.credential_collectors.mimikatz_collector.pypykatz_handler", Mock()
+        "infection_monkey.credential_collectors.mimikatz_collector.pypykatz_handler",
+        mock_pypykatz_handler,
     )
 
     for event_tag in MIMIKATZ_EVENT_TAGS:
