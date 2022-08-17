@@ -36,6 +36,20 @@ def event_queue() -> IEventQueue:
     return PyPubSubEventQueue(Publisher())
 
 
+@pytest.fixture
+def event_queue_subscriber():
+    def fn(event: AbstractEvent):
+        fn.call_count += 1
+        fn.call_types.add(event.__class__)
+        fn.call_tags |= event.tags
+
+    fn.call_count = 0
+    fn.call_types = set()
+    fn.call_tags = set()
+
+    return fn
+
+
 def test_subscribe_all(event_queue: IEventQueue, event_queue_subscriber: EventSubscriber):
     event_queue.subscribe_all_events(event_queue_subscriber)
 

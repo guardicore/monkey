@@ -8,7 +8,6 @@ MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
-from common.events import AbstractEvent  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -51,17 +50,3 @@ def monkey_configs_dir(data_for_tests_dir) -> Path:
 @pytest.fixture
 def default_agent_configuration() -> AgentConfiguration:
     return DEFAULT_AGENT_CONFIGURATION
-
-
-@pytest.fixture
-def event_queue_subscriber():
-    def fn(event: AbstractEvent):
-        fn.call_count += 1
-        fn.call_types.add(event.__class__)
-        fn.call_tags |= event.tags
-
-    fn.call_count = 0
-    fn.call_types = set()
-    fn.call_tags = set()
-
-    return fn
