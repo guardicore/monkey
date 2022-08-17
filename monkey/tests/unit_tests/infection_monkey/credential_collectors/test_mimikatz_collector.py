@@ -138,5 +138,5 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
 
     assert isinstance(mock_event_queue_call_args, CredentialsStolenEvent)
-    assert mock_event_queue_call_args.tags == frozenset(MIMIKATZ_EVENT_TAGS)
+    assert mock_event_queue_call_args.tags == MIMIKATZ_EVENT_TAGS
     assert mock_event_queue_call_args.stolen_credentials == collected_credentials
