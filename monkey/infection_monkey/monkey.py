@@ -272,7 +272,7 @@ class InfectionMonkey:
         agent_repository = CachingAgentRepository(
             f"https://{self._control_client.server_address}", self._control_client.proxies
         )
-        exploit_wrapper = ExploiterWrapper(self._telemetry_messenger, agent_repository)
+        exploit_wrapper = ExploiterWrapper(self._telemetry_messenger, event_queue, agent_repository)
 
         puppet.load_plugin(
             "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER
