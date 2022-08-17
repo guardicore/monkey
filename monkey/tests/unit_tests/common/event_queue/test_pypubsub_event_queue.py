@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address
-from typing import FrozenSet, Union
+from typing import Callable, FrozenSet, Union
 from uuid import UUID
 
 import pytest
@@ -37,7 +37,7 @@ def event_queue() -> IEventQueue:
 
 
 @pytest.fixture
-def event_queue_subscriber():
+def event_queue_subscriber() -> Callable[[AbstractEvent], None]:
     def fn(event: AbstractEvent):
         fn.call_count += 1
         fn.call_types.add(event.__class__)
