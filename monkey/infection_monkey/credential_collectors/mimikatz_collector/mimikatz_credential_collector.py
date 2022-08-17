@@ -13,7 +13,7 @@ from .windows_credentials import WindowsCredentials
 logger = logging.getLogger(__name__)
 
 
-MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "MimikatzCredentialsStolen"
+MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "mimikatz-credentials-collector"
 T1003_ATTACK_TECHNIQUE_TAG = "T1003"
 T1005_ATTACK_TECHNIQUE_TAG = "T1005"
 
