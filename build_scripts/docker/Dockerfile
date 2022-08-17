@@ -6,7 +6,7 @@ WORKDIR /monkey
 RUN virtualenv .
 RUN . bin/activate && \
     cd monkey_island && \
-    pip install pipenv && \
+    pip install pipenv==2022.7.4 && \
     pipenv sync
 
 
