@@ -2,10 +2,10 @@ from typing import Sequence
 from unittest.mock import MagicMock, Mock
 
 import pytest
-from pubsub.core import Publisher
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
-from common.event_queue import IEventQueue, PyPubSubEventQueue
+from common.event_queue import IEventQueue
+from common.events import CredentialsStolenEvent
 from infection_monkey.credential_collectors import MimikatzCredentialCollector
 from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_credential_collector import (  # noqa: E501
     MIMIKATZ_EVENT_TAGS,
@@ -119,22 +119,23 @@ def test_pypykatz_result_parsing_no_secrets(monkeypatch):
     assert collected_credentials == expected_credentials
 
 
-@pytest.fixture
-def event_queue() -> IEventQueue:
-    return PyPubSubEventQueue(Publisher())
-
-
-def test_pypykatz_credentials_stolen_event_published(
-    monkeypatch, event_queue, event_queue_subscriber
-):
-    for event_tag in MIMIKATZ_EVENT_TAGS:
-        event_queue.subscribe_tag(event_tag, event_queue_subscriber)
-
-    mimikatz_credential_collector = MimikatzCredentialCollector(event_queue)
+def test_mimikatz_credentials_stolen_event_published(monkeypatch):
+    mock_event_queue = MagicMock(spec=IEventQueue)
+    mock_subscriber = Mock()
     monkeypatch.setattr(
         "infection_monkey.credential_collectors.mimikatz_collector.pypykatz_handler", Mock()
     )
-    mimikatz_credential_collector.collect_credentials()
 
-    assert event_queue_subscriber.call_count == 3
-    assert event_queue_subscriber.call_tags == MIMIKATZ_EVENT_TAGS
+    for event_tag in MIMIKATZ_EVENT_TAGS:
+        mock_event_queue.subscribe_tag(event_tag, mock_subscriber)
+
+    mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue)
+    collected_credentials = mimikatz_credential_collector.collect_credentials()
+
+    mock_event_queue.publish.assert_called_once()
+
+    mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
+
+    assert isinstance(mock_event_queue_call_args, CredentialsStolenEvent)
+    assert mock_event_queue_call_args.tags == frozenset(MIMIKATZ_EVENT_TAGS)
+    assert mock_event_queue_call_args.stolen_credentials == collected_credentials
