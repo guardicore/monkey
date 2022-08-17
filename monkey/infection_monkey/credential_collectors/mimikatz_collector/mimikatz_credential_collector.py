@@ -17,11 +17,13 @@ MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "mimikatz-credentials-collector"
 T1003_ATTACK_TECHNIQUE_TAG = "attack-t1003"
 T1005_ATTACK_TECHNIQUE_TAG = "attack-t1005"
 
-MIMIKATZ_EVENT_TAGS = {
-    MIMIKATZ_CREDENTIAL_COLLECTOR_TAG,
-    T1003_ATTACK_TECHNIQUE_TAG,
-    T1005_ATTACK_TECHNIQUE_TAG,
-}
+MIMIKATZ_EVENT_TAGS = frozenset(
+    (
+        MIMIKATZ_CREDENTIAL_COLLECTOR_TAG,
+        T1003_ATTACK_TECHNIQUE_TAG,
+        T1005_ATTACK_TECHNIQUE_TAG,
+    )
+)
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
@@ -74,7 +76,7 @@ class MimikatzCredentialCollector(ICredentialCollector):
 
     def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
         credentials_stolen_event = CredentialsStolenEvent(
-            tags=frozenset(MIMIKATZ_EVENT_TAGS),
+            tags=MIMIKATZ_EVENT_TAGS,
             stolen_credentials=collected_credentials,
         )
 
