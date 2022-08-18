@@ -2,6 +2,8 @@ import logging
 from typing import Sequence
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
+from common.event_queue import IEventQueue
+from common.events import CredentialsStolenEvent
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
 
@@ -11,12 +13,34 @@ from .windows_credentials import WindowsCredentials
 logger = logging.getLogger(__name__)
 
 
+MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "mimikatz-credentials-collector"
+T1003_ATTACK_TECHNIQUE_TAG = "attack-t1003"
+T1005_ATTACK_TECHNIQUE_TAG = "attack-t1005"
+
+MIMIKATZ_EVENT_TAGS = frozenset(
+    (
+        MIMIKATZ_CREDENTIAL_COLLECTOR_TAG,
+        T1003_ATTACK_TECHNIQUE_TAG,
+        T1005_ATTACK_TECHNIQUE_TAG,
+    )
+)
+
+
 class MimikatzCredentialCollector(ICredentialCollector):
+    def __init__(self, event_queue: IEventQueue):
+        self._event_queue = event_queue
+
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
         windows_credentials = pypykatz_handler.get_windows_creds()
+
         logger.info(f"Pypykatz gathered {len(windows_credentials)} credentials.")
-        return MimikatzCredentialCollector._to_credentials(windows_credentials)
+
+        collected_credentials = MimikatzCredentialCollector._to_credentials(windows_credentials)
+
+        self._publish_credentials_stolen_event(collected_credentials)
+
+        return collected_credentials
 
     @staticmethod
     def _to_credentials(windows_credentials: Sequence[WindowsCredentials]) -> Sequence[Credentials]:
@@ -49,3 +73,11 @@ class MimikatzCredentialCollector(ICredentialCollector):
                 credentials.append(Credentials(identity, None))
 
         return credentials
+
+    def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
+        credentials_stolen_event = CredentialsStolenEvent(
+            tags=MIMIKATZ_EVENT_TAGS,
+            stolen_credentials=collected_credentials,
+        )
+
+        self._event_queue.publish(credentials_stolen_event)
