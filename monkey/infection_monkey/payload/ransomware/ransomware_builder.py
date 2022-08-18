@@ -16,7 +16,6 @@ from .ransomware import Ransomware
 from .ransomware_options import RansomwareOptions
 from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 
-EXTENSION = ".m0nk3y"
 CHUNK_SIZE = 4096 * 24
 
 logger = logging.getLogger(__name__)
@@ -49,7 +48,7 @@ def _build_file_encryptor(file_extension: str):
 def _build_file_selector(file_extension: str):
     targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
     if file_extension:
-        targeted_file_extensions.discard(EXTENSION)
+        targeted_file_extensions.discard(file_extension)
 
     return ProductionSafeTargetFileSelector(targeted_file_extensions)
 
