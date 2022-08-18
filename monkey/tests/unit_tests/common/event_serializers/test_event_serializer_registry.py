@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field
+from unittest.mock import MagicMock
 
-from common.event_serializers import EventSerializerRegistry
+import pytest
+
+from common.event_serializers import EventSerializerRegistry, IEventSerializer
 from common.events import AbstractEvent
 
 
@@ -14,15 +17,55 @@ class OtherEvent(AbstractEvent):
     other_param: float = field(default=123.456)
 
 
-def test_event_serializer_registry():
+@dataclass(frozen=True)
+class NoneEvent(AbstractEvent):
+    none_param: float = field(default=1.0)
 
+
+SOME_SERIALIZER = MagicMock(spec=IEventSerializer)
+OTHER_SERIALIZER = MagicMock(spec=IEventSerializer)
+
+
+@pytest.fixture
+def event_serializer_registry():
     event_serializer_registry = EventSerializerRegistry()
 
-    some_event = SomeEvent(some_param=123)
-    other_event = OtherEvent()
+    event_serializer_registry[SomeEvent] = SOME_SERIALIZER
+    event_serializer_registry[OtherEvent] = OTHER_SERIALIZER
 
-    event_serializer_registry[SomeEvent] = some_event
-    event_serializer_registry[OtherEvent] = other_event
+    return event_serializer_registry
 
-    assert event_serializer_registry[some_event.__class__] == some_event
-    assert event_serializer_registry[other_event.__class__] == other_event
+
+def test_event_serializer_registry_event(event_serializer_registry):
+    assert event_serializer_registry[SomeEvent] == SOME_SERIALIZER
+    assert event_serializer_registry[OtherEvent] == OTHER_SERIALIZER
+
+
+def test_event_serializer_registry_string(event_serializer_registry):
+    assert event_serializer_registry[SomeEvent.__name__] == SOME_SERIALIZER
+    assert event_serializer_registry[OtherEvent.__name__] == OTHER_SERIALIZER
+
+
+def test_event_serializer_registry_set_unsupported_type(event_serializer_registry):
+    with pytest.raises(TypeError):
+        event_serializer_registry[SomeEvent] = "SomethingBogusVogus"
+
+
+def test_event_serializer_registry_set_unsupported_type_key(event_serializer_registry):
+    with pytest.raises(TypeError):
+        event_serializer_registry["BogusKey"] = MagicMock(spec=IEventSerializer)
+
+
+def test_event_serializer_registry_get_unsuported_type(event_serializer_registry):
+    with pytest.raises(TypeError):
+        event_serializer_registry[1]
+
+
+def test_event_serializer_registry_get_unexisting_type(event_serializer_registry):
+    with pytest.raises(KeyError):
+        event_serializer_registry[NoneEvent]
+
+
+def test_event_serializer_registry_get_unexisting_string(event_serializer_registry):
+    with pytest.raises(KeyError):
+        event_serializer_registry[NoneEvent.__name__]
