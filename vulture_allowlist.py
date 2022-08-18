@@ -266,3 +266,11 @@ subscribe_tag  # common\event_queue\pypubsub_event_queue.py
 publish  # common\event_queue\pypubsub_event_queue.py
 PyPubSubEventQueue  # common\event_queue\pypubsub_event_queue.py
 subscribe_all_events  # common\event_queue\pypubsub_event_queue.py
+
+
+# TODO: Remove once #2179 is closed
+EventSerializerRegistry
+serialize
+event
+deserialize
+serialized_event
