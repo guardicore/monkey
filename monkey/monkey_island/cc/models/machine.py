@@ -13,7 +13,7 @@ MachineID = PositiveInt
 
 class Machine(MutableBaseModel):
     id: MachineID = Field(..., allow_mutation=False)
-    node_id: Optional[PositiveInt]
+    hardware_id: Optional[PositiveInt]
     network_interfaces: Sequence[IPv4Interface]
     operating_system: OperatingSystems
     operating_system_version: str
