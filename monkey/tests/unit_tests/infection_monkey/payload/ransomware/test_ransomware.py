@@ -1,6 +1,5 @@
-import tempfile
 import threading
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 from unittest.mock import MagicMock
 
 import pytest
@@ -10,11 +9,9 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
     TEST_KEYBOARD_TXT,
 )
 
-import infection_monkey.payload.ransomware.ransomware_builder as ransomware_builder
 from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.payload.ransomware.ransomware import Ransomware
 from infection_monkey.payload.ransomware.ransomware_options import RansomwareOptions
-from monkey.common.agent_configuration.default_agent_configuration import RANSOMWARE_OPTIONS
 
 
 @pytest.fixture
@@ -53,19 +50,6 @@ def ransomware_options(ransomware_file_extension, ransomware_test_data):
             self.target_directory = target_directory
 
     return RansomwareOptionsStub(True, False, ransomware_file_extension, ransomware_test_data)
-
-
-@pytest.fixture
-def ransomware_options_dict(ransomware_file_extension):
-    options = RANSOMWARE_OPTIONS
-    options["encryption"]["file_extension"] = ransomware_file_extension
-    return options
-
-
-@pytest.fixture
-def encrypt_target_directory():
-    with tempfile.TemporaryDirectory() as tmpdir:
-        yield Path(tmpdir)
 
 
 @pytest.fixture
@@ -235,20 +219,3 @@ def test_leave_readme_exceptions_handled(build_ransomware, ransomware_options):
 
     # Test will fail if exception is raised and not handled
     ransomware.run(threading.Event())
-
-
-def test_uses_correct_extension(
-    ransomware_options_dict, encrypt_target_directory, ransomware_file_extension
-):
-    ransomware_directories = ransomware_options_dict["encryption"]["directories"]
-    ransomware_directories["linux_target_dir"] = encrypt_target_directory
-    ransomware_directories["windows_target_dir"] = encrypt_target_directory
-    ransomware = ransomware_builder.build_ransomware(ransomware_options_dict)
-    file = encrypt_target_directory / "file.txt"
-    file.write_text("Do your worst!")
-
-    ransomware.run(threading.Event())
-
-    # Verify that the file has been encrypted with the correct ending
-    encrypted_file = file.with_suffix(file.suffix + ransomware_file_extension)
-    assert encrypted_file.is_file()
