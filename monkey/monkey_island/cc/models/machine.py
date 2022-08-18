@@ -7,9 +7,11 @@ from common import OperatingSystems
 
 from .base_models import MutableBaseModel
 
+MachineID = PositiveInt
+
 
 class Machine(MutableBaseModel):
-    id: PositiveInt = Field(..., allow_mutation=False)
+    id: MachineID = Field(..., allow_mutation=False)
     node_id: Optional[PositiveInt]
     network_interfaces: Sequence[IPv4Interface]
     operating_system: OperatingSystems
