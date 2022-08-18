@@ -124,12 +124,39 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue)
-    collected_credentials = mimikatz_credential_collector.collect_credentials()
+    mimikatz_credential_collector.collect_credentials()
 
     mock_event_queue.publish.assert_called_once()
 
     mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
 
     assert isinstance(mock_event_queue_call_args, CredentialsStolenEvent)
+
+
+def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
+    mock_event_queue = MagicMock(spec=IEventQueue)
+    patch_pypykatz([], monkeypatch)
+
+    mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue)
+    mimikatz_credential_collector.collect_credentials()
+
+    mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
+
     assert mock_event_queue_call_args.tags == MIMIKATZ_EVENT_TAGS
+
+
+def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
+    mock_event_queue = MagicMock(spec=IEventQueue)
+    win_creds = [
+        WindowsCredentials(
+            username="user2", password="secret2", lm_hash="0182BD0BD4444BF8FC83B5D9042EED2E"
+        ),
+    ]
+    patch_pypykatz(win_creds, monkeypatch)
+
+    mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue)
+    collected_credentials = mimikatz_credential_collector.collect_credentials()
+
+    mock_event_queue_call_args = mock_event_queue.publish.call_args[0][0]
+
     assert mock_event_queue_call_args.stolen_credentials == collected_credentials
