@@ -10,3 +10,4 @@ from monkey_island.cc.models.report.report import Report
 from .simulation import Simulation, SimulationSchema, IslandMode
 from .user_credentials import UserCredentials
 from .machine import Machine
+from .communication_type import CommunicationType

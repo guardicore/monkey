@@ -282,3 +282,10 @@ underscore_attrs_are_private
 extra
 allow_mutation
 validate_assignment
+
+# CommunicationType
+CommunicationType
+SCANNED
+EXPLOITED
+CC
+CC_TUNNEL
