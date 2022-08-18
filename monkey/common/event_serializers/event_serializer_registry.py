@@ -12,9 +12,7 @@ class EventSerializerRegistry:
     def __init__(self):
         self._registry = {}
 
-    def __setitem__(
-        self, event_class: Union[str, Type[AbstractEvent]], event_serializer: IEventSerializer
-    ):
+    def __setitem__(self, event_class: Type[AbstractEvent], event_serializer: IEventSerializer):
         self._registry[event_class] = event_serializer
 
     def __getitem__(self, event_class: Union[str, Type[AbstractEvent]]):
