@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Union
 
 from common.events import AbstractEvent
 
 JSONSerializable = Union[
-    Dict[str, "JSONSerializable"], List["JSONSerializable"], int, str, float, bool, Type[None]
+    Dict[str, "JSONSerializable"], List["JSONSerializable"], int, str, float, bool, None
 ]
 
 
@@ -28,7 +28,7 @@ class IEventSerializer(ABC):
         """
         Deserializes an event
 
-        :param serialized_event: Serialized vent to deserialize
+        :param serialized_event: Serialized event to deserialize
         :return: Deserialized event
         """
         pass
