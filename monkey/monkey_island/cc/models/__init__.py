@@ -11,3 +11,4 @@ from .simulation import Simulation, SimulationSchema, IslandMode
 from .user_credentials import UserCredentials
 from .machine import Machine, MachineID
 from .communication_type import CommunicationType
+from .node import Node
