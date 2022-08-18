@@ -274,3 +274,9 @@ serialize
 event
 deserialize
 serialized_event
+
+# pydantic base models
+underscore_attrs_are_private
+extra
+allow_mutation
+validate_assignment
