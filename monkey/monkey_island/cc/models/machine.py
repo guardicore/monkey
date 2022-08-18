@@ -1,7 +1,7 @@
 from ipaddress import IPv4Interface
-from typing import Optional, Sequence
+from typing import MutableSequence, Optional, Sequence
 
-from pydantic import Field, PositiveInt
+from pydantic import Field, PositiveInt, validator
 
 from common import OperatingSystems
 
@@ -15,3 +15,10 @@ class Machine(MutableBaseModel):
     operating_system: OperatingSystems
     operating_system_version: str
     hostname: str
+
+    @validator("network_interfaces", pre=True)
+    def _make_sequence_immutable(cls, sequence: Sequence):
+        if isinstance(sequence, MutableSequence):
+            return tuple(sequence)
+
+        return sequence

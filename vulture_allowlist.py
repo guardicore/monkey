@@ -210,6 +210,7 @@ _serialize_credentials  # unused method (monkey/common/credentials/credentials:6
 # Models
 _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:19
 operating_system_version
+_make_sequence_immutable
 
 # TODO DELETE AFTER RESOURCE REFACTORING
 

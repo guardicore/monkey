@@ -1,6 +1,7 @@
 import uuid
 from ipaddress import IPv4Interface
 from types import MappingProxyType
+from typing import MutableSequence
 
 import pytest
 
@@ -123,6 +124,12 @@ def test_network_interfaces_set_invalid_value():
 
     with pytest.raises(ValueError):
         m.network_interfaces = [IPv4Interface("172.1.2.3/24"), None]
+
+
+def test_network_interfaces_sequence_is_immutable():
+    m = Machine(**MACHINE_OBJECT_DICT)
+
+    assert not isinstance(m.network_interfaces, MutableSequence)
 
 
 def test_operating_system_set_valid_value():
