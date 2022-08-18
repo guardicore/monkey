@@ -1,11 +1,12 @@
 from ipaddress import IPv4Interface
-from typing import MutableSequence, Optional, Sequence
+from typing import Optional, Sequence
 
 from pydantic import Field, PositiveInt, validator
 
 from common import OperatingSystems
 
 from .base_models import MutableBaseModel
+from .transforms import make_immutable_sequence
 
 MachineID = PositiveInt
 
@@ -18,9 +19,6 @@ class Machine(MutableBaseModel):
     operating_system_version: str
     hostname: str
 
-    @validator("network_interfaces", pre=True)
-    def _make_sequence_immutable(cls, sequence: Sequence):
-        if isinstance(sequence, MutableSequence):
-            return tuple(sequence)
-
-        return sequence
+    _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
+        make_immutable_sequence
+    )
