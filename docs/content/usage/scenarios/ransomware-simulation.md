@@ -55,7 +55,7 @@ them to remove the appended `.m0nk3y` extension.
 
 Flipping a file's bits is sufficient to simulate the encryption behavior of
 ransomware, as the data in your files has been manipulated (leaving them
-temporarily unusuable). Files are then renamed with a new extension appended,
+temporarily unusable). Files are then renamed with a new extension appended,
 which is similar to the way that many ransomwares behave. As this is a
 simulation, your
 security solutions should be triggered to notify you or prevent these changes
