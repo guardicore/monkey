@@ -209,6 +209,15 @@ _serialize_credentials  # unused method (monkey/common/credentials/credentials:6
 
 # Models
 _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:19
+operating_system_version
+_make_sequence_immutable
+Agent
+machine_id
+stop_time
+parent_id
+cc_server
+hardware_id
+connections
 
 # TODO DELETE AFTER RESOURCE REFACTORING
 
@@ -274,3 +283,16 @@ serialize
 event
 deserialize
 serialized_event
+
+# pydantic base models
+underscore_attrs_are_private
+extra
+allow_mutation
+validate_assignment
+
+# CommunicationType
+CommunicationType
+SCANNED
+EXPLOITED
+CC
+CC_TUNNEL
