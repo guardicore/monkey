@@ -254,7 +254,7 @@ class InfectionMonkey:
 
         puppet.load_plugin(
             "MimikatzCollector",
-            MimikatzCredentialCollector(),
+            MimikatzCredentialCollector(event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
         puppet.load_plugin(
