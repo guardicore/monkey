@@ -36,6 +36,7 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
 
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         for credentials in credentials_to_add:
+            logger.debug("Adding credentials")
             if credentials.identity:
                 self._add_identity(credentials.identity)
 
@@ -62,6 +63,8 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
     def get_credentials(self) -> PropagationCredentials:
         try:
             propagation_credentials = self._get_credentials_from_control_channel()
+            logger.debug(f"Received {len(propagation_credentials)} from the control channel")
+
             self.add_credentials(propagation_credentials)
         except Exception as ex:
             logger.error(f"Error while attempting to retrieve credentials for propagation: {ex}")
