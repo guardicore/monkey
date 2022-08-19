@@ -35,8 +35,17 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
+        self._set_island_mode()
         self._import_config(test_configuration)
         self._import_credentials(test_configuration.propagation_credentials)
+
+    @avoid_race_condition
+    def _set_island_mode(self):
+        if self.requests.put_json("api/island/mode", json="advanced").ok:
+            LOGGER.info("Setting island mode to Custom.")
+        else:
+            LOGGER.error("Failed to set island mode")
+            assert False
 
     @avoid_race_condition
     def _import_config(self, test_configuration: TestConfiguration):
