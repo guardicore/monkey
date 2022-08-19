@@ -15,10 +15,14 @@ def ransomware_options_dict(ransomware_file_extension):
 
 def test_uses_correct_extension(ransomware_options_dict, tmp_path, ransomware_file_extension):
     target_dir = tmp_path
+
+    # Leaving a readme is slow and not relevant for this test
+    ransomware_options_dict["other_behaviors"]["readme"] = False
     ransomware_directories = ransomware_options_dict["encryption"]["directories"]
     ransomware_directories["linux_target_dir"] = target_dir
     ransomware_directories["windows_target_dir"] = target_dir
     ransomware = ransomware_builder.build_ransomware(ransomware_options_dict)
+
     file = target_dir / "file.txt"
     file.write_text("Do your worst!")
 
