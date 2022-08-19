@@ -5,7 +5,7 @@ from typing import MutableSequence
 
 import pytest
 
-from common import OperatingSystems
+from common import OperatingSystem
 from monkey_island.cc.models import Machine
 
 MACHINE_OBJECT_DICT = MappingProxyType(
@@ -13,7 +13,7 @@ MACHINE_OBJECT_DICT = MappingProxyType(
         "id": 1,
         "hardware_id": uuid.getnode(),
         "network_interfaces": [IPv4Interface("10.0.0.1/24"), IPv4Interface("192.168.5.32/16")],
-        "operating_system": OperatingSystems.WINDOWS,
+        "operating_system": OperatingSystem.WINDOWS,
         "operating_system_version": "eXtra Problems",
         "hostname": "my.host",
     }
@@ -136,7 +136,7 @@ def test_operating_system_set_valid_value():
     m = Machine(**MACHINE_OBJECT_DICT)
 
     # Raises exception_on_failure
-    m.operating_system = OperatingSystems.LINUX
+    m.operating_system = OperatingSystem.LINUX
 
 
 def test_operating_system_set_invalid_value():

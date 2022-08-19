@@ -5,7 +5,7 @@ import re
 import subprocess
 import sys
 
-from common import OperatingSystems
+from common import OperatingSystem
 from infection_monkey.i_puppet import PingScanData
 from infection_monkey.utils.environment import is_windows_os
 
@@ -80,9 +80,9 @@ def _process_ping_command_output(ping_command_output: str) -> PingScanData:
 
     operating_system = None
     if ttl <= LINUX_TTL:
-        operating_system = OperatingSystems.LINUX
+        operating_system = OperatingSystem.LINUX
     else:  # as far we we know, could also be OSX/BSD, but lets handle that when it comes up.
-        operating_system = OperatingSystems.WINDOWS
+        operating_system = OperatingSystem.WINDOWS
 
     return PingScanData(True, operating_system)
 

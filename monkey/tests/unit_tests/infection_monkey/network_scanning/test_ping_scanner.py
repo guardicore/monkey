@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from common import OperatingSystems
+from common import OperatingSystem
 from infection_monkey.network_scanning import ping
 from infection_monkey.network_scanning.ping_scanner import EMPTY_PING_SCAN
 
@@ -92,7 +92,7 @@ def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output):
     result = ping("192.168.1.1", 1.0)
 
     assert result.response_received
-    assert result.os == OperatingSystems.LINUX
+    assert result.os == OperatingSystem.LINUX
 
 
 @pytest.mark.usefixtures("set_os_linux")
@@ -110,7 +110,7 @@ def test_windows_ping_success(patch_subprocess_running_ping_with_ping_output):
     result = ping("192.168.1.1", 1.0)
 
     assert result.response_received
-    assert result.os == OperatingSystems.WINDOWS
+    assert result.os == OperatingSystem.WINDOWS
 
 
 @pytest.mark.usefixtures("set_os_windows")

@@ -3,7 +3,7 @@ from typing import Optional, Sequence
 
 from pydantic import Field, PositiveInt, validator
 
-from common import OperatingSystems
+from common import OperatingSystem
 
 from .base_models import MutableBaseModel
 from .transforms import make_immutable_sequence
@@ -15,7 +15,7 @@ class Machine(MutableBaseModel):
     id: MachineID = Field(..., allow_mutation=False)
     hardware_id: Optional[PositiveInt]
     network_interfaces: Sequence[IPv4Interface]
-    operating_system: OperatingSystems
+    operating_system: OperatingSystem
     operating_system_version: str
     hostname: str
 

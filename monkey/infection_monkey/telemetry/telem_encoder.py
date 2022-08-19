@@ -1,10 +1,10 @@
 import json
 
-from common import OperatingSystems
+from common import OperatingSystem
 
 
 class TelemetryJSONEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, OperatingSystems):
+        if isinstance(obj, OperatingSystem):
             return obj.name
         return json.JSONEncoder.default(self, obj)

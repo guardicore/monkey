@@ -2,7 +2,7 @@ import logging
 import threading
 from typing import Dict, Iterable, List, Sequence
 
-from common import OperatingSystems
+from common import OperatingSystem
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -186,19 +186,19 @@ class MockPuppet(IPuppet):
         successful_exploiters = {
             DOT_1: {
                 "ZerologonExploiter": ExploiterResultData(
-                    False, False, False, OperatingSystems.WINDOWS, {}, [], "Zerologon failed"
+                    False, False, False, OperatingSystem.WINDOWS, {}, [], "Zerologon failed"
                 ),
                 "SSHExploiter": ExploiterResultData(
                     False,
                     False,
                     False,
-                    OperatingSystems.LINUX,
+                    OperatingSystem.LINUX,
                     info_ssh,
                     attempts,
                     "Failed exploiting",
                 ),
                 "WmiExploiter": ExploiterResultData(
-                    True, True, False, OperatingSystems.WINDOWS, info_wmi, attempts, None
+                    True, True, False, OperatingSystem.WINDOWS, info_wmi, attempts, None
                 ),
             },
             DOT_3: {
@@ -206,7 +206,7 @@ class MockPuppet(IPuppet):
                     False,
                     False,
                     False,
-                    OperatingSystems.WINDOWS,
+                    OperatingSystem.WINDOWS,
                     info_wmi,
                     attempts,
                     "PowerShell Exploiter Failed",
@@ -215,13 +215,13 @@ class MockPuppet(IPuppet):
                     False,
                     False,
                     False,
-                    OperatingSystems.LINUX,
+                    OperatingSystem.LINUX,
                     info_ssh,
                     attempts,
                     "Failed exploiting",
                 ),
                 "ZerologonExploiter": ExploiterResultData(
-                    True, False, False, OperatingSystems.WINDOWS, {}, [], None
+                    True, False, False, OperatingSystem.WINDOWS, {}, [], None
                 ),
             },
         }
@@ -233,7 +233,7 @@ class MockPuppet(IPuppet):
                 False,
                 False,
                 False,
-                OperatingSystems.LINUX,
+                OperatingSystem.LINUX,
                 {},
                 [],
                 f"{name} failed for host {host}",

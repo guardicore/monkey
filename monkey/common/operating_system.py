@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class OperatingSystems(Enum):
+class OperatingSystem(Enum):
     """
     An Enum representing all supported operating systems
 

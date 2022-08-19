@@ -1,6 +1,6 @@
 from typing import Optional
 
-from common import OperatingSystems
+from common import OperatingSystem
 
 
 class VictimHost(object):
@@ -17,7 +17,7 @@ class VictimHost(object):
         return self.__dict__
 
     def is_windows(self) -> bool:
-        return OperatingSystems.WINDOWS == self.os["type"]
+        return OperatingSystem.WINDOWS == self.os["type"]
 
     def __hash__(self):
         return hash(self.ip_addr)
