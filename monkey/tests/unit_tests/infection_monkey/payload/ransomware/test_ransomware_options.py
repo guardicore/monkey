@@ -7,6 +7,7 @@ from common.utils.file_utils import InvalidPath
 from infection_monkey.payload.ransomware import ransomware_options
 from infection_monkey.payload.ransomware.ransomware_options import RansomwareOptions
 
+EXTENSION = ".testext"
 LINUX_DIR = "/tmp/test"
 WINDOWS_DIR = "C:\\tmp\\test"
 
@@ -16,6 +17,7 @@ def options_from_island():
     return {
         "encryption": {
             "enabled": None,
+            "file_extension": EXTENSION,
             "directories": {
                 "linux_target_dir": LINUX_DIR,
                 "windows_target_dir": WINDOWS_DIR,
@@ -39,6 +41,12 @@ def test_readme_enabled(enabled, options_from_island):
     options = RansomwareOptions(options_from_island)
 
     assert options.readme_enabled == enabled
+
+
+def test_file_extension(options_from_island):
+    options = RansomwareOptions(options_from_island)
+
+    assert options.file_extension == EXTENSION
 
 
 def test_linux_target_dir(monkeypatch, options_from_island):

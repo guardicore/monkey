@@ -41,14 +41,15 @@ def build_ransomware(
 
 
 @pytest.fixture
-def ransomware_options(ransomware_test_data):
+def ransomware_options(ransomware_file_extension, ransomware_test_data):
     class RansomwareOptionsStub(RansomwareOptions):
-        def __init__(self, encryption_enabled, readme_enabled, target_directory):
+        def __init__(self, encryption_enabled, readme_enabled, file_extension, target_directory):
             self.encryption_enabled = encryption_enabled
             self.readme_enabled = readme_enabled
+            self.file_extension = file_extension
             self.target_directory = target_directory
 
-    return RansomwareOptionsStub(True, False, ransomware_test_data)
+    return RansomwareOptionsStub(True, False, ransomware_file_extension, ransomware_test_data)
 
 
 @pytest.fixture

@@ -16,7 +16,6 @@ from .ransomware import Ransomware
 from .ransomware_options import RansomwareOptions
 from .targeted_file_extensions import TARGETED_FILE_EXTENSIONS
 
-EXTENSION = ".m0nk3y"
 CHUNK_SIZE = 4096 * 24
 
 logger = logging.getLogger(__name__)
@@ -26,8 +25,8 @@ def build_ransomware(options: dict):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
     ransomware_options = RansomwareOptions(options)
 
-    file_encryptor = _build_file_encryptor()
-    file_selector = _build_file_selector()
+    file_encryptor = _build_file_encryptor(ransomware_options.file_extension)
+    file_selector = _build_file_selector(ransomware_options.file_extension)
     leave_readme = _build_leave_readme()
     telemetry_messenger = _build_telemetry_messenger()
 
@@ -40,15 +39,16 @@ def build_ransomware(options: dict):
     )
 
 
-def _build_file_encryptor():
+def _build_file_encryptor(file_extension: str):
     return InPlaceFileEncryptor(
-        encrypt_bytes=flip_bits, new_file_extension=EXTENSION, chunk_size=CHUNK_SIZE
+        encrypt_bytes=flip_bits, new_file_extension=file_extension, chunk_size=CHUNK_SIZE
     )
 
 
-def _build_file_selector():
+def _build_file_selector(file_extension: str):
     targeted_file_extensions = TARGETED_FILE_EXTENSIONS.copy()
-    targeted_file_extensions.discard(EXTENSION)
+    if file_extension:
+        targeted_file_extensions.discard(file_extension)
 
     return ProductionSafeTargetFileSelector(targeted_file_extensions)
 

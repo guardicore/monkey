@@ -21,6 +21,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/registration-status` endpoint. #2149
 - authentication to `/api/island/version`. #2109
 - `/api/events` endpoint. #2155
+- The ability to customize the file extension used by ransomware when
+  encrypting files. #1242
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
