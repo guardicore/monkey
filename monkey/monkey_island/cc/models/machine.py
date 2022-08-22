@@ -5,9 +5,8 @@ from pydantic import Field, PositiveInt, validator
 
 from common import OperatingSystem
 from common.base_models import MutableBaseModel
+from common.transforms import make_immutable_sequence
 from common.types import HardwareID
-
-from .transforms import make_immutable_sequence
 
 MachineID = PositiveInt
 
