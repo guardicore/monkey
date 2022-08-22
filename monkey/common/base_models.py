@@ -5,6 +5,7 @@ from pydantic import BaseModel, Extra, ValidationError
 
 
 class InfectionMonkeyModelConfig:
+    allow_mutation = False
     underscore_attrs_are_private = True
     extra = Extra.forbid
 
