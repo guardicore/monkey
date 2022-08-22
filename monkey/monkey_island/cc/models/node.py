@@ -2,8 +2,9 @@ from typing import Sequence, Tuple
 
 from pydantic import Field, validator
 
+from common.base_models import MutableBaseModel
+
 from . import CommunicationType, MachineID
-from .base_models import MutableBaseModel
 from .transforms import make_immutable_nested_sequence
 
 ConnectionsSequence = Sequence[Tuple[MachineID, Sequence[CommunicationType]]]

@@ -4,8 +4,9 @@ from uuid import UUID
 
 from pydantic import Field
 
+from common.base_models import MutableBaseModel
+
 from . import MachineID
-from .base_models import MutableBaseModel
 
 
 class Agent(MutableBaseModel):
