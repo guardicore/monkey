@@ -178,6 +178,7 @@ class InfectionMonkey:
         control_channel = ControlChannel(
             self._control_client.server_address, GUID, self._control_client.proxies
         )
+        control_channel.register_agent(self._opts.parent)
 
         config = control_channel.get_config()
         self._monkey_inbound_tunnel = self._control_client.create_control_tunnel(
