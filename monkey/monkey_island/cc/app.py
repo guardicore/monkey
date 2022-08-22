@@ -13,6 +13,7 @@ from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
+    Agents,
     ClearSimulationData,
     Events,
     IPAddresses,
@@ -162,6 +163,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Register)
     api.add_resource(RegistrationStatus)
     api.add_resource(Authenticate)
+    api.add_resource(Agents)
     api.add_resource(Monkey)
     api.add_resource(LocalRun)
     api.add_resource(Telemetry)
