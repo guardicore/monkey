@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID, getnode, uuid4
 
 
 def get_agent_id() -> UUID:
@@ -15,3 +15,8 @@ def get_agent_id() -> UUID:
 
 
 get_agent_id._id = None
+
+
+def get_machine_id() -> int:
+    """Get an integer that uniquely defines the machine the agent is running on"""
+    return getnode()
