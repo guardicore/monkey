@@ -1,6 +1,7 @@
 from itertools import zip_longest
-import pytest
 from typing import MutableSequence, Sequence
+
+import pytest
 
 from monkey_island.cc.models.transforms import (
     make_immutable_nested_sequence,
@@ -18,11 +19,13 @@ def test_make_immutable_sequence__list():
 
 
 @pytest.mark.parametrize(
-    "mutable_sequence", [
+    "mutable_sequence",
+    [
         [1, 2, 3],
         [[1, 2, 3], [4, 5, 6]],
         [[1, 2, 3, [4, 5, 6]], [4, 5, 6]],
-        [8, [5.3, "invalid_comm_type"]]]
+        [8, [5.3, "invalid_comm_type"]],
+    ],
 )
 def test_make_immutable_nested_sequence(mutable_sequence):
     immutable_sequence = make_immutable_nested_sequence(mutable_sequence)
