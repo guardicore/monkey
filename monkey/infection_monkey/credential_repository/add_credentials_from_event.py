@@ -1,6 +1,10 @@
+import logging
+
 from common.events import CredentialsStolenEvent
 
 from . import IPropagationCredentialsRepository
+
+logger = logging.getLogger(__name__)
 
 
 class add_credentials_from_event_to_propagation_credentials_repository:
@@ -8,4 +12,5 @@ class add_credentials_from_event_to_propagation_credentials_repository:
         self._credentials_repository = credentials_repository
 
     def __call__(self, event: CredentialsStolenEvent):
+        logger.debug(f"Adding {len(event.stolen_credentials)} to the credentials repository")
         self._credentials_repository.add_credentials(event.stolen_credentials)
