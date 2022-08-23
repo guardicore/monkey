@@ -1,12 +1,7 @@
 import logging
 from pprint import pformat
 
-from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
-    BatchingTelemetryMessenger,
-)
-from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
-    LegacyTelemetryMessengerAdapter,
-)
+from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.bit_manipulators import flip_bits
 
 from . import readme_dropper
@@ -21,14 +16,13 @@ CHUNK_SIZE = 4096 * 24
 logger = logging.getLogger(__name__)
 
 
-def build_ransomware(options: dict):
+def build_ransomware(options: dict, telemetry_messenger: ITelemetryMessenger):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
     ransomware_options = RansomwareOptions(options)
 
     file_encryptor = _build_file_encryptor(ransomware_options.file_extension)
     file_selector = _build_file_selector(ransomware_options.file_extension)
     leave_readme = _build_leave_readme()
-    telemetry_messenger = _build_telemetry_messenger()
 
     return Ransomware(
         ransomware_options,
@@ -55,9 +49,3 @@ def _build_file_selector(file_extension: str):
 
 def _build_leave_readme():
     return readme_dropper.leave_readme
-
-
-def _build_telemetry_messenger():
-    telemetry_messenger = LegacyTelemetryMessengerAdapter()
-
-    return BatchingTelemetryMessenger(telemetry_messenger)

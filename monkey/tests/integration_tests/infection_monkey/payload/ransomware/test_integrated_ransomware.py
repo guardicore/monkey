@@ -1,4 +1,5 @@
 import threading
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -21,7 +22,8 @@ def test_uses_correct_extension(ransomware_options_dict, tmp_path, ransomware_fi
     ransomware_directories = ransomware_options_dict["encryption"]["directories"]
     ransomware_directories["linux_target_dir"] = target_dir
     ransomware_directories["windows_target_dir"] = target_dir
-    ransomware = ransomware_builder.build_ransomware(ransomware_options_dict)
+    telemetry_messenger = MagicMock()
+    ransomware = ransomware_builder.build_ransomware(ransomware_options_dict, telemetry_messenger)
 
     file = target_dir / "file.txt"
     file.write_text("Do your worst!")

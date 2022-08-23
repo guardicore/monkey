@@ -66,6 +66,9 @@ from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
+from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
+    BatchingTelemetryMessenger,
+)
 from infection_monkey.telemetry.messengers.exploit_intercepting_telemetry_messenger import (
     ExploitInterceptingTelemetryMessenger,
 )
@@ -354,7 +357,11 @@ class InfectionMonkey:
             PluginType.POST_BREACH_ACTION,
         )
 
-        puppet.load_plugin("ransomware", RansomwarePayload(), PluginType.PAYLOAD)
+        puppet.load_plugin(
+            "ransomware",
+            RansomwarePayload(BatchingTelemetryMessenger(self._telemetry_messenger)),
+            PluginType.PAYLOAD,
+        )
 
         return puppet
 
