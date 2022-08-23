@@ -111,3 +111,22 @@ def test_type_tag_collision(event_queue: IEventQueue, event_queue_subscriber: Ev
     event_queue.publish(TestEvent2(tags=frozenset({TestEvent1.__name__})))
 
     assert event_queue_subscriber.call_count == 0
+
+
+def test_keep_subscriber_in_scope(event_queue: IEventQueue):
+    class MyCallable:
+        called = False
+
+        def __call__(self, event: AbstractEvent):
+            MyCallable.called = True
+
+    def subscribe():
+        # fn will go out of scope after subscribe() returns.
+        fn = MyCallable()
+        event_queue.subscribe_all_events(fn)
+
+    subscribe()
+
+    event_queue.publish(TestEvent2())
+
+    assert MyCallable.called
