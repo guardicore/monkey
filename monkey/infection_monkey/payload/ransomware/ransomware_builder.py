@@ -1,6 +1,9 @@
 import logging
 from pprint import pformat
 
+from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
+    BatchingTelemetryMessenger,
+)
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.bit_manipulators import flip_bits
 
@@ -29,7 +32,7 @@ def build_ransomware(options: dict, telemetry_messenger: ITelemetryMessenger):
         file_encryptor,
         file_selector,
         leave_readme,
-        telemetry_messenger,
+        BatchingTelemetryMessenger(telemetry_messenger),
     )
 
 
