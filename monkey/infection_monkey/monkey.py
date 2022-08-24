@@ -3,7 +3,6 @@ import logging
 import os
 import subprocess
 import sys
-import threading
 from pathlib import Path, WindowsPath
 from typing import List
 
@@ -413,12 +412,6 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
 
         logger.info("Monkey is shutting down")
-        for t in threading.enumerate():
-            logger.info(t.name)
-
-        import faulthandler
-
-        faulthandler.dump_traceback()
 
     def _close_tunnel(self):
         tunnel_address = (
