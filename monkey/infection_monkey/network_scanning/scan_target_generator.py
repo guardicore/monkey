@@ -19,7 +19,7 @@ def compile_scan_target_list(
     blocklisted_ips: List[str],
     enable_local_network_scan: bool,
 ) -> List[NetworkAddress]:
-    scan_targets = _get_ips_from_ranges_to_scan(ranges_to_scan)
+    scan_targets = _get_ips_from_subnets_to_scan(ranges_to_scan)
 
     if enable_local_network_scan:
         scan_targets.extend(_get_ips_to_scan_from_local_interface(local_network_interfaces))
@@ -58,14 +58,17 @@ def _range_to_addresses(range_obj: NetworkRange) -> List[NetworkAddress]:
     return addresses
 
 
-def _get_ips_from_ranges_to_scan(ranges_to_scan: List[str]) -> List[NetworkAddress]:
-    scan_targets = []
-
+def _get_ips_from_subnets_to_scan(subnets_to_scan: List[str]) -> List[NetworkAddress]:
     ranges_to_scan = NetworkRange.filter_invalid_ranges(
-        ranges_to_scan, "Bad network range input for targets to scan:"
+        subnets_to_scan, "Bad network range input for targets to scan:"
     )
 
     network_ranges = [NetworkRange.get_range_obj(_range) for _range in ranges_to_scan]
+    return _get_ips_from_ranges_to_scan(network_ranges)
+
+
+def _get_ips_from_ranges_to_scan(network_ranges: List[NetworkRange]) -> List[NetworkAddress]:
+    scan_targets = []
 
     for _range in network_ranges:
         scan_targets.extend(_range_to_addresses(_range))
@@ -82,7 +85,7 @@ def _get_ips_to_scan_from_local_interface(
     ranges = NetworkRange.filter_invalid_ranges(
         ranges, "Local network interface returns an invalid IP:"
     )
-    return _get_ips_from_ranges_to_scan(ranges)
+    return _get_ips_from_subnets_to_scan(ranges)
 
 
 def _remove_interface_ips(
@@ -121,8 +124,8 @@ def _get_segmentation_check_targets(
         inaccessible_subnets, "Invalid segmentation scan target: "
     )
 
-    inaccessible_subnets = _convert_to_range_object(inaccessible_subnets)
-    subnet_pairs = itertools.product(inaccessible_subnets, inaccessible_subnets)
+    inaccessible_ranges = _convert_to_range_object(inaccessible_subnets)
+    subnet_pairs = itertools.product(inaccessible_ranges, inaccessible_ranges)
 
     for (subnet1, subnet2) in subnet_pairs:
         if _is_segmentation_check_required(local_ips, subnet1, subnet2):
