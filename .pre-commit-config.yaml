@@ -35,6 +35,10 @@ repos:
     hooks:
       - id: eslint
         args: ["monkey/monkey_island/cc/ui/src/", "--fix", "--max-warnings=0"]
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.7.2
+    hooks:
+    -   id: shellcheck
   - repo: local
     hooks:
       - id: pytest
