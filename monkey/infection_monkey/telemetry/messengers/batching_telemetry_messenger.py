@@ -47,7 +47,7 @@ class BatchingTelemetryMessenger(ITelemetryMessenger):
         def start(self):
             self._should_run_batch_thread = True
             self._manage_telemetry_batches_thread = threading.Thread(
-                target=self._manage_telemetry_batches
+                name="BatchingTelemetryMessengerThread", target=self._manage_telemetry_batches
             )
             self._manage_telemetry_batches_thread.start()
 
