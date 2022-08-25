@@ -212,6 +212,7 @@ _make_simulation  # unused method (monkey/monkey_island/cc/models/simulation.py:
 operating_system_version
 _make_sequence_immutable
 Agent
+machine_hardware_id
 machine_id
 stop_time
 parent_id
