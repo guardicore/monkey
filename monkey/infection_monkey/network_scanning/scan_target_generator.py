@@ -1,7 +1,7 @@
 import itertools
 import logging
 import socket
-from typing import List
+from typing import Any, Dict, List
 
 from common.network.network_range import InvalidNetworkRangeError, NetworkRange
 from infection_monkey.network import NetworkAddress, NetworkInterface
@@ -39,7 +39,7 @@ def compile_scan_target_list(
 
 
 def _remove_redundant_targets(targets: List[NetworkAddress]) -> List[NetworkAddress]:
-    reverse_dns = {}
+    reverse_dns: Dict[Any, Any] = {}
     for target in targets:
         domain_name = target.domain
         ip = target.ip
@@ -124,7 +124,7 @@ def _get_segmentation_check_targets(
 
     for (subnet1, subnet2) in subnet_pairs:
         if _is_segmentation_check_required(local_ips, subnet1, subnet2):
-            ips = _get_ips_from_ranges_to_scan(subnet2)
+            ips = _get_ips_from_ranges_to_scan([subnet2])
             ips_to_scan.extend(ips)
 
     return ips_to_scan
