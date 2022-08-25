@@ -46,7 +46,7 @@ class InfectionMonkeyBaseModel(BaseModel):
         return BaseModel.dict(self, **kwargs)
 
 
-class MutableBaseModel(InfectionMonkeyBaseModel):
+class MutableInfectionMonkeyBaseModel(InfectionMonkeyBaseModel):
     class Config(InfectionMonkeyModelConfig):
         allow_mutation = True
         validate_assignment = True

@@ -2,7 +2,7 @@ from typing import Sequence, Tuple
 
 from pydantic import Field, validator
 
-from common.base_models import MutableBaseModel
+from common.base_models import MutableInfectionMonkeyBaseModel
 from common.transforms import make_immutable_nested_sequence
 
 from . import CommunicationType, MachineID
@@ -10,7 +10,7 @@ from . import CommunicationType, MachineID
 ConnectionsSequence = Sequence[Tuple[MachineID, Sequence[CommunicationType]]]
 
 
-class Node(MutableBaseModel):
+class Node(MutableInfectionMonkeyBaseModel):
     machine_id: MachineID = Field(..., allow_mutation=False)
     connections: ConnectionsSequence
 

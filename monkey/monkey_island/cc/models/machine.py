@@ -4,14 +4,14 @@ from typing import Optional, Sequence
 from pydantic import Field, PositiveInt, validator
 
 from common import OperatingSystem
-from common.base_models import MutableBaseModel
+from common.base_models import MutableInfectionMonkeyBaseModel
 from common.transforms import make_immutable_sequence
 from common.types import HardwareID
 
 MachineID = PositiveInt
 
 
-class Machine(MutableBaseModel):
+class Machine(MutableInfectionMonkeyBaseModel):
     id: MachineID = Field(..., allow_mutation=False)
     hardware_id: Optional[HardwareID]
     network_interfaces: Sequence[IPv4Interface]

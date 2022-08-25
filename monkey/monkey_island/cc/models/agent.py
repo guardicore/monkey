@@ -4,12 +4,12 @@ from uuid import UUID
 
 from pydantic import Field
 
-from common.base_models import MutableBaseModel
+from common.base_models import MutableInfectionMonkeyBaseModel
 
 from . import MachineID
 
 
-class Agent(MutableBaseModel):
+class Agent(MutableInfectionMonkeyBaseModel):
     id: UUID = Field(..., allow_mutation=False)
     machine_id: MachineID = Field(..., allow_mutation=False)
     start_time: datetime = Field(..., allow_mutation=False)
