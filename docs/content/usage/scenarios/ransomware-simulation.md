@@ -49,8 +49,8 @@ perform a bit flip on the files again and rename them to remove the appended
 
 Flipping a file's bits is sufficient to simulate the encryption behavior of
 ransomware, as the data in your files has been manipulated (leaving them
-temporarily unusuable). Files are then renamed with a new extension appended,
-which is similar to the way that many ransomwares behave. As this is a
+temporarily unusable). Files are then renamed with a new extension appended,
+which is similar to the way that many ransomware behave. As this is a
 simulation, your
 security solutions should be triggered to notify you or prevent these changes
 from taking place.
@@ -150,7 +150,7 @@ BitDefender](https://labs.bitdefender.com/2017/07/a-technical-look-into-the-gold
 
 ## Leaving a README.txt file
 
-Many ransomware packages leave a README.txt file on the victim machine with an
+Many ransomware packages leave a README.txt file on the victim's machine with an
 explanation of what has occurred and instructions for paying the attacker.
 The Infection Monkey will also leave a README.txt file in the target directory on
 the victim machine in order to replicate this behavior.

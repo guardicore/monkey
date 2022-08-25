@@ -32,11 +32,11 @@ On Windows, AppImage can be run in WSL 2.
     ```bash
     chmod u+x InfectionMonkey-v1.13.0.AppImage
     ```
-1. Start Monkey Island by running the Infection Monkey AppImage package:
+2. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
     ./InfectionMonkey-v1.13.0.AppImage
     ```
-1. Access the Monkey Island web UI by pointing your browser at
+3. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
 {{% notice info %}}
@@ -78,17 +78,17 @@ private certificate authority.
 
 1. Terminate the Island process if it's already running.
 
-1. (Optional but recommended) Move your `.crt` and `.key` files to
+2. (Optional but recommended) Move your `.crt` and `.key` files to
    `$HOME/.monkey_island`.
 
-1. Make sure that your `.crt` and `.key` files are readable only by you.
+3. Make sure that your `.crt` and `.key` files are readable only by you.
 
     ```bash
     chmod 600 <PATH_TO_KEY_FILE>
     chmod 600 <PATH_TO_CRT_FILE>
     ```
 
-1. Create a [server configuration file and provide the path to the certificate](../../reference/server_configuration).
+4. Create a [server configuration file and provide the path to the certificate](../../reference/server_configuration).
 The server configuration file should look something like:
 
     ```json
@@ -100,19 +100,19 @@ The server configuration file should look something like:
     }
     ```
 
-1. Start Monkey Island by running the Infection Monkey AppImage package:
+5. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
     ./InfectionMonkey-v1.13.0.AppImage --server-config="/path/to/server_config.json"
     ```
 
-1. Access the Monkey Island web UI by pointing your browser at
+6. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
 ### Change logging level
 
 1. Terminate the Island process if it's already running.
 
-1. Create a [server configuration file](../../reference/server_configuration).
+2. Create a [server configuration file](../../reference/server_configuration).
 The server configuration file should look something like:
 
     ```json
@@ -121,12 +121,12 @@ The server configuration file should look something like:
     }
     ```
 
-1. Start Monkey Island by running the Infection Monkey AppImage package:
+3. Start Monkey Island by running the Infection Monkey AppImage package:
     ```bash
     ./InfectionMonkey-v1.13.0.AppImage --server-config="/path/to/server_config.json"
     ```
 
-1. Access the Monkey Island web UI by pointing your browser at
+4. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
 ## Upgrading

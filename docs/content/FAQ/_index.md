@@ -157,7 +157,7 @@ If internet access is available, the Infection Monkey will use the internet for 
 
 ### Exactly what internet queries does the Infection Monkey perform?
 
-The Monkey performs queries out to the Internet on two separate occasions:
+The Monkey performs queries out to the Internet on these separate occasions:
 
 1. The Infection Monkey agent checks if it has internet access by performing
    requests to pre-configured domains. By default, these domains are
@@ -169,12 +169,12 @@ The Monkey performs queries out to the Internet on two separate occasions:
    and the code that performs the internet check
    [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/network/info.py#L123).
    This **IS NOT** used for statistics collection.
-1. After the Monkey Island starts it sends a GET request with current
+2. After the Monkey Island starts it sends a GET request with current
    deployment type to the update server to fetch the latest version and a
    download link for it. This information is used by the Monkey Island to
    suggest an update if one is available. No information gets collected during
    this process.
-1. After the Monkey Island starts it sends a GET request to the analytics
+3. After the Monkey Island starts it sends a GET request to the analytics
    server with your deployment type and a version number. This information gets
    collected on the analytics server. It is used to understand which deployment
    types/versions are no longer used and can be deprecated.

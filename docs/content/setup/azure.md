@@ -24,7 +24,7 @@ Select the [Infection Monkey from the Azure Marketplace](https://azuremarketplac
     1. Review the details of the offer and click **Create**.
 
 At this point, Azure will provision and deploy your new machine. When ready,
-you can browse to the Infection Monkey running on your fresh deployment at:
+you can browse the Infection Monkey running on your fresh deployment at:
 
 `https://{public-ip-address}:5000`
 
