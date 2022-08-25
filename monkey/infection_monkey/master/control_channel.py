@@ -1,14 +1,18 @@
 import json
 import logging
 from pprint import pformat
-from typing import Mapping, Sequence
+from typing import Mapping, Optional, Sequence
+from uuid import UUID
 
 import requests
 
+from common import AgentRegistrationData
 from common.agent_configuration import AgentConfiguration
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
+from infection_monkey.utils import agent_process
+from infection_monkey.utils.ids import get_agent_id, get_machine_id
 
 requests.packages.urllib3.disable_warnings()
 
@@ -20,6 +24,34 @@ class ControlChannel(IControlChannel):
         self._agent_id = agent_id
         self._control_channel_server = server
         self._proxies = proxies
+
+    def register_agent(self, parent: Optional[UUID] = None):
+        agent_registration_data = AgentRegistrationData(
+            id=get_agent_id(),
+            machine_hardware_id=get_machine_id(),
+            start_time=agent_process.get_start_time(),
+            parent_id=parent,
+            cc_server=self._control_channel_server,
+            network_interfaces=[],  # TODO: Populate this
+        )
+
+        try:
+            url = f"https://{self._control_channel_server}/api/agents"
+            response = requests.post(  # noqa: DUO123
+                url,
+                json=agent_registration_data.dict(simplify=True),
+                verify=False,
+                proxies=self._proxies,
+                timeout=SHORT_REQUEST_TIMEOUT,
+            )
+            response.raise_for_status()
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+            requests.exceptions.TooManyRedirects,
+            requests.exceptions.HTTPError,
+        ) as e:
+            raise IslandCommunicationError(e)
 
     def should_agent_stop(self) -> bool:
         if not self._control_channel_server:

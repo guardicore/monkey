@@ -27,6 +27,7 @@ paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/Vaka
 marshmallow = "*"
 marshmallow-enum = "*"
 pypubsub = "*"
+pydantic = "*"
 
 [dev-packages]
 ldap3 = "*"

@@ -3,10 +3,7 @@ from typing import MutableSequence, Sequence
 
 import pytest
 
-from monkey_island.cc.models.transforms import (
-    make_immutable_nested_sequence,
-    make_immutable_sequence,
-)
+from common.transforms import make_immutable_nested_sequence, make_immutable_sequence
 
 
 def test_make_immutable_sequence__list():

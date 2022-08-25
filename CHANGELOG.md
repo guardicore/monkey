@@ -23,6 +23,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/events` endpoint. #2155
 - The ability to customize the file extension used by ransomware when
   encrypting files. #1242
+- `/api/agents` endpoint.
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
