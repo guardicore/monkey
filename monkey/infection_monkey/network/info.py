@@ -2,7 +2,7 @@ import itertools
 import socket
 import struct
 from collections import namedtuple
-from ipaddress import IPv4Network
+from ipaddress import IPv4Interface
 from random import randint  # noqa: DUO102
 from typing import List
 
@@ -20,18 +20,12 @@ RTF_REJECT = 0x0200
 
 # TODO: We can probably replace both of these namedtuples with classes in Python's ipaddress
 #       library: https://docs.python.org/3/library/ipaddress.html
-NetworkInterface = namedtuple("NetworkInterface", ("address", "netmask"))
+NetworkInterface = IPv4Interface
 NetworkAddress = namedtuple("NetworkAddress", ("ip", "domain"))
 
 
 def get_local_network_interfaces() -> List[NetworkInterface]:
-    network_interfaces = []
-    for i in get_host_subnets():
-        netmask_bits = IPv4Network(f"{i['addr']}/{i['netmask']}", strict=False).prefixlen
-        cidr_netmask = f"/{netmask_bits}"
-        network_interfaces.append(NetworkInterface(i["addr"], cidr_netmask))
-
-    return network_interfaces
+    return [IPv4Interface(f"{i['addr']}/{i['netmask']}") for i in get_host_subnets()]
 
 
 def get_host_subnets():

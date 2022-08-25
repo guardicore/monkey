@@ -75,7 +75,9 @@ def _get_ips_from_ranges_to_scan(ranges_to_scan: List[str]) -> List[NetworkAddre
 def _get_ips_to_scan_from_local_interface(
     interfaces: List[NetworkInterface],
 ) -> List[NetworkAddress]:
-    ranges = [f"{interface.address}{interface.netmask}" for interface in interfaces]
+    ranges = [
+        f"{interface.ip.compressed}/{interface.network.prefixlen}" for interface in interfaces
+    ]
 
     ranges = NetworkRange.filter_invalid_ranges(
         ranges, "Local network interface returns an invalid IP:"
@@ -86,7 +88,7 @@ def _get_ips_to_scan_from_local_interface(
 def _remove_interface_ips(
     scan_targets: List[NetworkAddress], interfaces: List[NetworkInterface]
 ) -> List[NetworkAddress]:
-    interface_ips = [interface.address for interface in interfaces]
+    interface_ips = [interface.ip.compressed for interface in interfaces]
     return _remove_ips_from_scan_targets(scan_targets, interface_ips)
 
 
@@ -112,7 +114,7 @@ def _get_segmentation_check_targets(
     inaccessible_subnets: List[str], local_interfaces: List[NetworkInterface]
 ) -> List[NetworkAddress]:
     ips_to_scan = []
-    local_ips = [interface.address for interface in local_interfaces]
+    local_ips = [interface.ip.compressed for interface in local_interfaces]
 
     local_ips = NetworkRange.filter_invalid_ranges(local_ips, "Invalid local IP found: ")
     inaccessible_subnets = NetworkRange.filter_invalid_ranges(

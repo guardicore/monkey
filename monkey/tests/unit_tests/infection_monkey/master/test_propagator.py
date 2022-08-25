@@ -294,7 +294,7 @@ def test_exploiter_result_processing(
 def test_scan_target_generation(
     telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
 ):
-    local_network_interfaces = [NetworkInterface("10.0.0.9", "/29")]
+    local_network_interfaces = [NetworkInterface("10.0.0.9/29")]
     p = Propagator(
         telemetry_messenger_spy,
         mock_ip_scanner,
