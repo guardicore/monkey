@@ -28,7 +28,7 @@ You can use the Infection Monkey's cross-segment traffic feature to verify that 
 Execute The Infection Monkey on machines in different subnetworks using the “Manual” run option.
 
  Note that if the Infection Monkey can't communicate to the Monkey Island, it will
- not be able to send scan results, so make sure all machines can reach the the Monkey Island.
+ not be able to send scan results, so make sure all machines can reach the Monkey Island.
 
 ![How to configure network segmentation testing](/images/usage/scenarios/segmentation-config.png "How to configure network segmentation testing")
 
