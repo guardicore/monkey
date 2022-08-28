@@ -74,7 +74,7 @@ You'll need to add your Sytem Info Collector to the `monkey_island/cc/services/c
 },
 ```
 
-##### properties
+##### Properties
 
 Also, you can add the System Info Collector to be used by default by adding it to the `default` key under `properties/monkey/system_info/system_info_collectors_classes`:
 
