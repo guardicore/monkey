@@ -22,6 +22,10 @@ jobs:
         size: x-large
       env:
         - PIP_CACHE_DIR=$HOME/.cache/pip PIPENV_CACHE_DIR=$HOME/.cache/pipenv LIBSODIUM_MAKE_ARGS=-j8
+      addons:
+        apt:
+          packages:
+            - shellcheck
 
       cache:
         - pip: true
@@ -84,6 +88,9 @@ jobs:
         - eslint ./src --quiet  # test for errors
         - JS_WARNINGS_AMOUNT_UPPER_LIMIT=0
         - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # test for max warnings
+
+        # check shell scripts
+        - for file in $(find $TRAVIS_BUILD_DIR -type f); do shellcheck --format=gcc $file; done;
 
         # build documentation
         - cd $TRAVIS_BUILD_DIR/docs
