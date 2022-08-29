@@ -23,7 +23,7 @@ The location of the data directory is set in the `data_dir` field in the
 `server_config.json` file.
 
 1. Create a custom `server_config.json` file and set the `data_dir` field. Its
-   contents will look like:
+   contents will look like this:
 
     ```json
     {

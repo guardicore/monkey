@@ -14,11 +14,11 @@ The Infection Monkey has development tutorials that use [`swimm.io`](https://swi
 
 First, [sign up for swimm's beta](https://swimm.io/sign-beta). `swimm` is free for open-source projects, but as they're still in beta you'll need to sign up in order to download it.
 
-After you've downloaded and installed `swimm`, open a shell in the Infeciton Monkey repo folder and run:
+After you've downloaded and installed `swimm`, open a shell in the Infection Monkey repo folder and run:
 
 ```shell script
 swimm start
-``` 
+```
 
 A local web server with the currently available tutorials should show up, and will look something like this:
 

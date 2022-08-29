@@ -38,6 +38,6 @@ We always want to improve the core Infection Monkey code to make it smaller, fas
 
 ### Documentation 📚
 
-Every project requires excellent documentation. The Infection Monkey is no different. Please feel free to open pull requests with suggestions, improvements or issues and asking us to document various parts of the Monkey.
+Every project requires excellent documentation. The Infection Monkey is no different. Please feel free to open pull requests with suggestions, improvements or issues and ask us to document various parts of the Monkey.
 
 The Infection Monkey's documentation is stored in the `/docs/content` directory.
