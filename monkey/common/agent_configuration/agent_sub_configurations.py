@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Tuple
 
-from pydantic import PositiveFloat, conint, validator
+from pydantic import PositiveFloat, PositiveInt, conint, validator
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
@@ -337,3 +337,20 @@ class PropagationConfiguration:
     maximum_depth: int
     network_scan: NetworkScanConfiguration
     exploitation: ExploitationConfiguration
+
+
+class Pydantic___PropagationConfiguration:
+    """
+    A configuration for propagation
+
+    Attributes:
+        :param maximum_depth: Maximum number of hops allowed to spread from the machine where
+                              the attack started i.e. how far to propagate in the network from the
+                              first machine
+        :param network_scan: Configuration for network scanning
+        :param exploitation: Configuration for exploitation
+    """
+
+    maximum_depth: PositiveInt
+    network_scan: Pydantic___NetworkScanConfiguration
+    exploitation: Pydantic___ExploitationConfiguration
