@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Tuple
 
-from pydantic import validator
+from pydantic import PositiveFloat, validator
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
@@ -192,6 +192,17 @@ class ICMPScanConfiguration:
     """
 
     timeout: float
+
+
+class Pydantic___ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
+    """
+    A configuration for ICMP scanning
+
+    Attributes:
+        :param timeout: Maximum time in seconds to wait for a response from the target
+    """
+
+    timeout: PositiveFloat
 
 
 @dataclass(frozen=True)
