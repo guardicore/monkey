@@ -5,6 +5,9 @@ from typing import Any, Mapping, Tuple
 
 from marshmallow import Schema, fields, validate
 from marshmallow.exceptions import MarshmallowError
+from pydantic import PositiveFloat
+
+from common.base_models import MutableInfectionMonkeyBaseModel
 
 from ..utils.code_utils import freeze_lists_in_mapping
 from .agent_sub_configuration_schemas import (
@@ -16,6 +19,9 @@ from .agent_sub_configurations import (
     CustomPBAConfiguration,
     PluginConfiguration,
     PropagationConfiguration,
+    Pydantic___CustomPBAConfiguration,
+    Pydantic___PluginConfiguration,
+    Pydantic___PropagationConfiguration,
 )
 
 
@@ -123,3 +129,12 @@ class AgentConfigurationSchema(Schema):
     credential_collectors = fields.List(fields.Nested(PluginConfigurationSchema))
     payloads = fields.List(fields.Nested(PluginConfigurationSchema))
     propagation = fields.Nested(PropagationConfigurationSchema)
+
+
+class Pydantic___AgentConfiguration(MutableInfectionMonkeyBaseModel):
+    keep_tunnel_open_time: PositiveFloat
+    custom_pbas: Pydantic___CustomPBAConfiguration
+    post_breach_actions: Tuple[Pydantic___PluginConfiguration, ...]
+    credential_collectors: Tuple[Pydantic___PluginConfiguration, ...]
+    payloads: Tuple[Pydantic___PluginConfiguration, ...]
+    propagation: Pydantic___PropagationConfiguration
