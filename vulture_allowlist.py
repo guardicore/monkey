@@ -244,8 +244,11 @@ IConfigRepository.get_config_field
 ILogRepository.get_logs
 ILogRepository.save_log
 ILogRepository.delete_log
-IMachineRepository.save_machine
-IMachineRepository.get_machines
+IMachineRepository.create_machine
+IMachineRepository.update_machine
+IMachineRepository.get_machine_by_id
+IMachineRepository.get_machine_by_hardware_id
+IMachineRepository.get_machines_by_ip
 INetworkMapRepository.get_map
 INetworkMapRepository.save_netmap
 IReportRepository
