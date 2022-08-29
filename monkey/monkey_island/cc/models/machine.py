@@ -1,5 +1,5 @@
 from ipaddress import IPv4Interface
-from typing import Optional, Sequence
+from typing import Optional, Sequence, TypeAlias
 
 from pydantic import Field, PositiveInt, validator
 
@@ -8,7 +8,7 @@ from common.base_models import MutableInfectionMonkeyBaseModel
 from common.transforms import make_immutable_sequence
 from common.types import HardwareID
 
-MachineID = PositiveInt
+MachineID: TypeAlias = PositiveInt
 
 
 class Machine(MutableInfectionMonkeyBaseModel):
