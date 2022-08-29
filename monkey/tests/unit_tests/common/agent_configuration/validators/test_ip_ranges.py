@@ -1,5 +1,4 @@
 import pytest
-from marshmallow import ValidationError
 
 from common.agent_configuration.validators.ip_ranges import validate_ip, validate_subnet_range
 
@@ -11,7 +10,7 @@ def test_validate_ip_valid(ip):
 
 @pytest.mark.parametrize("ip", ["1.1.1", "257.256.255.255", "1.1.1.1.1"])
 def test_validate_ip_invalid(ip):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         validate_ip(ip)
 
 
@@ -22,7 +21,7 @@ def test_validate_subnet_range__ip_valid(ip):
 
 @pytest.mark.parametrize("ip", ["1.1.1", "257.256.255.255", "1.1.1.1.1"])
 def test_validate_subnet_range__ip_invalid(ip):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         validate_subnet_range(ip)
 
 
@@ -42,7 +41,7 @@ def test_validate_subnet_range__ip_range_valid(ip_range):
     ],
 )
 def test_validate_subnet_range__ip_range_invalid(ip_range):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         validate_subnet_range(ip_range)
 
 
@@ -55,7 +54,7 @@ def test_validate_subnet_range__hostname_valid(hostname):
     "hostname", ["hy&!he.host", "čili-peppers.are-hot", "one.two-", "one-.two", "one@two", ""]
 )
 def test_validate_subnet_range__hostname_invalid(hostname):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         validate_subnet_range(hostname)
 
 
@@ -66,5 +65,5 @@ def test_validate_subnet_range__cidr_valid(cidr_range):
 
 @pytest.mark.parametrize("cidr_range", ["1.1.1/24", "1.1.1.1/-1", "1.1.1.1/33", "1.1.1.1/222"])
 def test_validate_subnet_range__cidr_invalid(cidr_range):
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         validate_subnet_range(cidr_range)
