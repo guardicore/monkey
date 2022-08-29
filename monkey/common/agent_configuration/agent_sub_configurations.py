@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Tuple
 
-from pydantic import PositiveFloat, validator
+from pydantic import PositiveFloat, conint, validator
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
@@ -217,6 +217,19 @@ class TCPScanConfiguration:
 
     timeout: float
     ports: Tuple[int, ...]
+
+
+class Pydantic___TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
+    """
+    A configuration for TCP scanning
+
+    Attributes:
+        :param timeout: Maximum time in seconds to wait for a response from the target
+        :param ports: Ports to scan
+    """
+
+    timeout: PositiveFloat
+    ports: Tuple[conint(ge=0, le=65535), ...]
 
 
 @dataclass(frozen=True)
