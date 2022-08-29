@@ -36,6 +36,7 @@ class Database(object):
         return (
             not collection.startswith("system.")
             and not collection == AttackMitigations.COLLECTION_NAME
+            and not collection.startswith("config")
         )
 
     @staticmethod
