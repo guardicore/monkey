@@ -1,3 +1,5 @@
+from typing import TypeAlias
+
 from pydantic import PositiveInt
 
-HardwareID = PositiveInt
+HardwareID: TypeAlias = PositiveInt
