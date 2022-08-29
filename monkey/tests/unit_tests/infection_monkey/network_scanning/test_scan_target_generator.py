@@ -129,7 +129,7 @@ def test_local_network_interface_ips_removed_from_targets():
 
     assert len(scan_targets) == 252
     for interface in local_network_interfaces:
-        assert interface.ip.compressed not in scan_targets
+        assert str(interface.ip) not in scan_targets
 
 
 def test_no_redundant_targets():
@@ -192,7 +192,7 @@ def test_local_network_interface_ips_and_blocked_ips_removed_from_targets():
     )
 
     for interface in local_network_interfaces:
-        assert interface.ip.compressed not in scan_targets
+        assert str(interface.ip) not in scan_targets
 
     for ip in blocked_ips:
         assert ip not in scan_targets

@@ -239,10 +239,10 @@ class InfectionMonkey:
         )
 
     @staticmethod
-    def _get_local_network_interfaces():
+    def _get_local_network_interfaces() -> List[IPv4Interface]:
         local_network_interfaces = get_local_network_interfaces()
         for i in local_network_interfaces:
-            logger.debug(f"Found local interface {i.ip.compressed}/{i.network.prefixlen}")
+            logger.debug(f"Found local interface {str(i.ip)}/{i.network.prefixlen}")
 
         return local_network_interfaces
 
@@ -375,7 +375,7 @@ class InfectionMonkey:
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
         server_ip, _ = address_to_ip_port(self._control_client.server_address)
-        return server_ip in {interface.ip.compressed for interface in local_network_interfaces}
+        return server_ip in {str(interface.ip) for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
