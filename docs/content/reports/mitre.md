@@ -18,7 +18,7 @@ Watch the overview video:
 
 ## How to use the report
 
-The MITRE ATT&CK report is centred around the ATT&CK matrix:
+The MITRE ATT&CK report is centered around the ATT&CK matrix:
 
 ![MITRE Report](/images/usage/reports/mitre-report-0.png "MITRE Report")
 

@@ -4,11 +4,11 @@ date = 2020-05-26T20:55:04+03:00
 weight = 30
 chapter = true
 pre = '<i class="fas fa-layer-group"></i> '
-tags = ["reference"] 
+tags = ["reference"]
 +++
 
 # Reference
 
-Find detailed information about the Infection Monkey.
+Find detailed information about the Infection Monkey:
 
 {{% children %}}

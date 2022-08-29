@@ -9,7 +9,7 @@ weight: 100
 ## Overview
 This page provides additional information about configuring the Infection Monkey, tips and tricks and creative usage scenarios.
 
-## Custom behaviour
+## Custom behavior
 
 If you want the Infection Monkey to run a specific script or tool after it breaches a machine, you can configure it in
 **Configuration -> Monkey -> Post-breach**. Input commands you want to execute in the corresponding fields.

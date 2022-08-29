@@ -28,7 +28,7 @@ In order for the Infection Monkey to successfully view your instances, you'll ne
 
 #### Creating a custom IAM role
 
-Go to the [AWS IAM roles dashboard](https://console.aws.amazon.com/iam/home?#/roles) and create a new IAM role for EC2. The role will need to have some specific permissions (see Appendix A), but you can just create a role with the `AmazonEC2RoleforSSM`, `AWSSecurityHubFullAccess` and `AmazonSSMFullAccess` pre-made permissions. In the end it should like something like this:
+Go to the [AWS IAM roles dashboard](https://console.aws.amazon.com/iam/home?#/roles) and create a new IAM role for EC2. The role will need to have some specific permissions (see Appendix A), but you can just create a role with the `AmazonEC2RoleforSSM`, `AWSSecurityHubFullAccess` and `AmazonSSMFullAccess` pre-made permissions. In the end it should look something like this:
 
 ![Creating a custom IAM role](/images/usage/integrations/monkey-island-aws-screenshot-3.png "Creating a custom IAM role")
 
@@ -72,7 +72,7 @@ After you click on **Run on AWS machine of your choice** you can choose one of t
 
 ## Notes
 
-- The machines which can use IAM roles and be listed MUST be internet connected (or you can set up a proxy for IAM). This is standard AWS practice and you can read about it (and about how to set up the required proxy machines) in the AWS IAM documentation.
+- The machines that can use IAM roles and be listed MUST be internet connected (or you can set up a proxy for IAM). This is standard AWS practice and you can read about it (and about how to set up the required proxy machines) in the AWS IAM documentation.
 - You can view the Infection Monkey in [the AWS marketplace](https://aws.amazon.com/marketplace/pp/B07B3J7K6D).
 
 ### Appendix A: Specific policy permissions required
