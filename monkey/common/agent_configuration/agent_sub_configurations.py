@@ -250,6 +250,23 @@ class NetworkScanConfiguration:
     targets: ScanTargetConfiguration
 
 
+class Pydantic___NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
+    """
+    A configuration for network scanning
+
+    Attributes:
+        :param tcp: Configuration for TCP scanning
+        :param icmp: Configuration for ICMP scanning
+        :param fingerprinters: Configuration for fingerprinters to run
+        :param targets: Configuration for targets to scan
+    """
+
+    tcp: Pydantic___TCPScanConfiguration
+    icmp: Pydantic___ICMPScanConfiguration
+    fingerprinters: Tuple[Pydantic___PluginConfiguration, ...]
+    targets: Pydantic___ScanTargetConfiguration
+
+
 @dataclass(frozen=True)
 class ExploitationOptionsConfiguration:
     """
