@@ -26,7 +26,7 @@ def flask_client(build_flask_client):
 def test_agent_configuration_endpoint(flask_client):
     resp = flask_client.put(
         AGENT_CONFIGURATION_URL,
-        json=AgentConfiguration.to_mapping(AGENT_CONFIGURATION),
+        json=AgentConfiguration(**AGENT_CONFIGURATION).dict(),
         follow_redirects=True,
     )
     assert resp.status_code == 200
