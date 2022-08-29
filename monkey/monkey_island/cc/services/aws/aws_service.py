@@ -86,7 +86,7 @@ class AWSService:
         :return: A sequence of AWSCommandResults
         """
 
-        results_queue = Queue()
+        results_queue: Queue = Queue()
         command_threads = []
         for i in instances:
             t = Thread(
