@@ -290,6 +290,11 @@ underscore_attrs_are_private
 extra
 allow_mutation
 validate_assignment
+linux_filename_valid
+windows_filename_valid
+blocked_ips_valid
+inaccessible_subnets_valid
+subnets_valid
 
 # CommunicationType
 CommunicationType
