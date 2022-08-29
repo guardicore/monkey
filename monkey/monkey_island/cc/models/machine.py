@@ -1,7 +1,8 @@
 from ipaddress import IPv4Interface
-from typing import Optional, Sequence, TypeAlias
+from typing import Optional, Sequence
 
 from pydantic import Field, PositiveInt, validator
+from typing_extensions import TypeAlias
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel
