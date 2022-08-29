@@ -90,7 +90,7 @@ jobs:
         - eslint ./src --max-warnings $JS_WARNINGS_AMOUNT_UPPER_LIMIT  # test for max warnings
 
         # check shell scripts
-        - for file in $(find $TRAVIS_BUILD_DIR -type f); do shellcheck --format=gcc $file; done;
+        - for file in $(find $TRAVIS_BUILD_DIR -type f -name "*.sh" -or -name "*.bash"); do shellcheck --format=gcc $file; done;
 
         # build documentation
         - cd $TRAVIS_BUILD_DIR/docs
