@@ -20,11 +20,10 @@ RTF_REJECT = 0x0200
 
 # TODO: We can probably replace both of these namedtuples with classes in Python's ipaddress
 #       library: https://docs.python.org/3/library/ipaddress.html
-NetworkInterface = IPv4Interface
 NetworkAddress = namedtuple("NetworkAddress", ("ip", "domain"))
 
 
-def get_local_network_interfaces() -> List[NetworkInterface]:
+def get_local_network_interfaces() -> List[IPv4Interface]:
     return [IPv4Interface(f"{i['addr']}/{i['netmask']}") for i in get_host_subnets()]
 
 

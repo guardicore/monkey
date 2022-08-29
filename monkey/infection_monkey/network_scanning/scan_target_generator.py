@@ -1,10 +1,11 @@
 import itertools
 import logging
 import socket
+from ipaddress import IPv4Interface
 from typing import Any, Dict, List
 
 from common.network.network_range import InvalidNetworkRangeError, NetworkRange
-from infection_monkey.network import NetworkAddress, NetworkInterface
+from infection_monkey.network import NetworkAddress
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def compile_scan_target_list(
-    local_network_interfaces: List[NetworkInterface],
+    local_network_interfaces: List[IPv4Interface],
     ranges_to_scan: List[str],
     inaccessible_subnets: List[str],
     blocklisted_ips: List[str],
@@ -76,7 +77,7 @@ def _get_ips_from_ranges_to_scan(network_ranges: List[NetworkRange]) -> List[Net
 
 
 def _get_ips_to_scan_from_local_interface(
-    interfaces: List[NetworkInterface],
+    interfaces: List[IPv4Interface],
 ) -> List[NetworkAddress]:
     ranges = [
         f"{interface.ip.compressed}/{interface.network.prefixlen}" for interface in interfaces
@@ -89,7 +90,7 @@ def _get_ips_to_scan_from_local_interface(
 
 
 def _remove_interface_ips(
-    scan_targets: List[NetworkAddress], interfaces: List[NetworkInterface]
+    scan_targets: List[NetworkAddress], interfaces: List[IPv4Interface]
 ) -> List[NetworkAddress]:
     interface_ips = [interface.ip.compressed for interface in interfaces]
     return _remove_ips_from_scan_targets(scan_targets, interface_ips)
@@ -114,7 +115,7 @@ def _remove_ips_from_scan_targets(
 
 
 def _get_segmentation_check_targets(
-    inaccessible_subnets: List[str], local_interfaces: List[NetworkInterface]
+    inaccessible_subnets: List[str], local_interfaces: List[IPv4Interface]
 ) -> List[NetworkAddress]:
     ips_to_scan = []
     local_ips = [interface.ip.compressed for interface in local_interfaces]
