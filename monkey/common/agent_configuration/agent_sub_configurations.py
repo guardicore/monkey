@@ -5,7 +5,15 @@ from pydantic import validator
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
-from .validators import validate_linux_filename, validate_windows_filename
+from .validators import (
+    validate_hostname,
+    validate_ip,
+    validate_ip_network,
+    validate_ip_range,
+    validate_linux_filename,
+    validate_subnet_range,
+    validate_windows_filename,
+)
 
 
 @dataclass(frozen=True)
@@ -136,6 +144,42 @@ class ScanTargetConfiguration:
     inaccessible_subnets: Tuple[str, ...]
     local_network_scan: bool
     subnets: Tuple[str, ...]
+
+
+class Pydantic___ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
+    """
+    Configuration of network targets to scan and exploit
+
+    Attributes:
+        :param blocked_ips: IP's that won't be scanned
+                            Example: ("1.1.1.1", "2.2.2.2")
+        :param inaccessible_subnets: Subnet ranges that shouldn't be accessible for the agent
+                                     Example: ("1.1.1.1", "2.2.2.2/24", "myserver")
+        :param local_network_scan: Whether or not the agent should scan the local network
+        :param subnets: Subnet ranges to scan
+                        Example: ("192.168.1.1-192.168.2.255", "3.3.3.3", "2.2.2.2/24",
+                                  "myHostname")
+    """
+
+    blocked_ips: Tuple[str, ...]
+    inaccessible_subnets: Tuple[str, ...]
+    local_network_scan: bool
+    subnets: Tuple[str, ...]
+
+    @validator("blocked_ips", each_item=True)
+    def blocked_ips_valid(cls, ip):
+        validate_ip(ip)
+        return ip
+
+    @validator("inaccessible_subnets", each_item=True)
+    def inaccessible_subnets_valid(cls, subnet_range):
+        validate_subnet_range(subnet_range)
+        return subnet_range
+
+    @validator("subnets", each_item=True)
+    def subnets_valid(cls, subnet_range):
+        validate_subnet_range(subnet_range)
+        return subnet_range
 
 
 @dataclass(frozen=True)
