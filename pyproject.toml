@@ -28,3 +28,6 @@ pythonpath = "./monkey"
 [tool.vulture]
 exclude = ["monkey/monkey_island/cc/ui/", "monkey/tests/", "monkey/monkey_island/docs/"]
 paths = ["."]
+
+[tool.mypy]
+show_error_codes = true
