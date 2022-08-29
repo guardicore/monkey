@@ -27,7 +27,7 @@ This diagram provides you with a quick glance at how your organization scores on
 
 ![Zero Trust Report summary](/images/usage/reports/ztreport1.png "Zero Trust Report summary")
 
-## Test Results
+## Test results
 
 This section shows how your network fared against each of the tests the Infection Monkey ran. The tests are ordered by Zero Trust pillar, so you can quickly navigate to the category you want to prioritize.
 
