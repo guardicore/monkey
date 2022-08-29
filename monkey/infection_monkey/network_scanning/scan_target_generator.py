@@ -79,7 +79,7 @@ def _get_ips_from_ranges_to_scan(network_ranges: List[NetworkRange]) -> List[Net
 def _get_ips_to_scan_from_local_interface(
     interfaces: List[IPv4Interface],
 ) -> List[NetworkAddress]:
-    ranges = [f"{str(interface.ip)}/{interface.network.prefixlen}" for interface in interfaces]
+    ranges = [str(interface) for interface in interfaces]
 
     ranges = NetworkRange.filter_invalid_ranges(
         ranges, "Local network interface returns an invalid IP:"
