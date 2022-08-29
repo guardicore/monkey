@@ -1,5 +1,3 @@
-import dataclasses
-
 from . import AgentConfiguration
 from .agent_sub_configurations import (
     CustomPBAConfiguration,
@@ -27,9 +25,9 @@ PBAS = (
 
 CREDENTIAL_COLLECTORS = ("MimikatzCollector", "SSHCollector")
 
-PBA_CONFIGURATION = tuple(PluginConfiguration(pba, {}) for pba in PBAS)
+PBA_CONFIGURATION = tuple(PluginConfiguration(name=pba, options={}) for pba in PBAS)
 CREDENTIAL_COLLECTOR_CONFIGURATION = tuple(
-    PluginConfiguration(collector, {}) for collector in CREDENTIAL_COLLECTORS
+    PluginConfiguration(name=collector, options={}) for collector in CREDENTIAL_COLLECTORS
 )
 
 RANSOMWARE_OPTIONS = {
@@ -41,7 +39,7 @@ RANSOMWARE_OPTIONS = {
     "other_behaviors": {"readme": True},
 }
 
-PAYLOAD_CONFIGURATION = tuple([PluginConfiguration("ransomware", RANSOMWARE_OPTIONS)])
+PAYLOAD_CONFIGURATION = tuple([PluginConfiguration(name="ransomware", options=RANSOMWARE_OPTIONS)])
 
 CUSTOM_PBA_CONFIGURATION = CustomPBAConfiguration(
     linux_command="", linux_filename="", windows_command="", windows_filename=""
@@ -71,35 +69,42 @@ TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=TCP_PORTS)
 ICMP_CONFIGURATION = ICMPScanConfiguration(timeout=1.0)
 HTTP_PORTS = (80, 443, 7001, 8008, 8080, 8983, 9200, 9600)
 FINGERPRINTERS = (
-    PluginConfiguration("elastic", {}),
+    PluginConfiguration(name="elastic", options={}),
     # Plugin configuration option contents are not converted to tuples
-    PluginConfiguration("http", {"http_ports": list(HTTP_PORTS)}),
-    PluginConfiguration("mssql", {}),
-    PluginConfiguration("smb", {}),
-    PluginConfiguration("ssh", {}),
+    PluginConfiguration(name="http", options={"http_ports": list(HTTP_PORTS)}),
+    PluginConfiguration(name="mssql", options={}),
+    PluginConfiguration(name="smb", options={}),
+    PluginConfiguration(name="ssh", options={}),
 )
 
-SCAN_TARGET_CONFIGURATION = ScanTargetConfiguration(tuple(), tuple(), True, tuple())
+SCAN_TARGET_CONFIGURATION = ScanTargetConfiguration(
+    blocked_ips=tuple(), inaccessible_subnets=tuple(), local_network_scan=True, subnets=tuple()
+)
 NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
-    TCP_SCAN_CONFIGURATION, ICMP_CONFIGURATION, FINGERPRINTERS, SCAN_TARGET_CONFIGURATION
+    tcp=TCP_SCAN_CONFIGURATION,
+    icmp=ICMP_CONFIGURATION,
+    fingerprinters=FINGERPRINTERS,
+    targets=SCAN_TARGET_CONFIGURATION,
 )
 
-EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(HTTP_PORTS)
+EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
 BRUTE_FORCE_EXPLOITERS = (
-    PluginConfiguration("MSSQLExploiter", {}),
-    PluginConfiguration("PowerShellExploiter", {}),
-    PluginConfiguration("SSHExploiter", {}),
-    PluginConfiguration("SmbExploiter", {"smb_download_timeout": 30}),
-    PluginConfiguration("WmiExploiter", {"smb_download_timeout": 30}),
+    PluginConfiguration(name="MSSQLExploiter", options={}),
+    PluginConfiguration(name="PowerShellExploiter", options={}),
+    PluginConfiguration(name="SSHExploiter", options={}),
+    PluginConfiguration(name="SmbExploiter", options={"smb_download_timeout": 30}),
+    PluginConfiguration(name="WmiExploiter", options={"smb_download_timeout": 30}),
 )
 
 VULNERABILITY_EXPLOITERS = (
-    PluginConfiguration("Log4ShellExploiter", {}),
-    PluginConfiguration("HadoopExploiter", {}),
+    PluginConfiguration(name="Log4ShellExploiter", options={}),
+    PluginConfiguration(name="HadoopExploiter", options={}),
 )
 
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
-    EXPLOITATION_OPTIONS_CONFIGURATION, BRUTE_FORCE_EXPLOITERS, VULNERABILITY_EXPLOITERS
+    options=EXPLOITATION_OPTIONS_CONFIGURATION,
+    brute_force=BRUTE_FORCE_EXPLOITERS,
+    vulnerability=VULNERABILITY_EXPLOITERS,
 )
 
 PROPAGATION_CONFIGURATION = PropagationConfiguration(
@@ -117,6 +122,6 @@ DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     propagation=PROPAGATION_CONFIGURATION,
 )
 
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = dataclasses.replace(
-    DEFAULT_AGENT_CONFIGURATION, post_breach_actions=tuple()
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = DEFAULT_AGENT_CONFIGURATION.copy(
+    update={"post_breach_actions": tuple()}
 )
