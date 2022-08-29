@@ -40,7 +40,6 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [types-paramiko, types-python-dateutil, types-requests]
-        exclude: ^monkey/tests/
         args: [--ignore-missing-imports]
   - repo: local
     hooks:
