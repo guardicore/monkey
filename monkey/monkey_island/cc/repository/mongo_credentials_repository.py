@@ -3,8 +3,12 @@ from typing import Any, Dict, Mapping, Sequence
 from pymongo import MongoClient
 
 from common.credentials import Credentials
-from monkey_island.cc.repository import RemovalError, RetrievalError, StorageError
-from monkey_island.cc.repository.i_credentials_repository import ICredentialsRepository
+from monkey_island.cc.repository import (
+    ICredentialsRepository,
+    RemovalError,
+    RetrievalError,
+    StorageError,
+)
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from .consts import MONGO_OBJECT_ID_KEY
