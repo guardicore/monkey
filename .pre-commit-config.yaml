@@ -40,6 +40,7 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [types-paramiko, types-python-dateutil, types-requests]
+        exclude: "vulture_allowlist.py"
         args: [--ignore-missing-imports]
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.7.2
