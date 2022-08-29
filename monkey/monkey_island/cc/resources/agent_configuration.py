@@ -20,13 +20,13 @@ class AgentConfiguration(AbstractResource):
     # Used by the agent. Can't secure
     def get(self):
         configuration = self._agent_configuration_repository.get_configuration()
-        configuration_json = AgentConfigurationObject.to_json(configuration)
-        return make_response(configuration_json, 200)
+        configuration_dict = configuration.dict()
+        return make_response(configuration_dict, 200)
 
     @jwt_required
     def put(self):
         try:
-            configuration_object = AgentConfigurationObject.from_mapping(request.json)
+            configuration_object = AgentConfigurationObject(**request.json)
             self._agent_configuration_repository.store_configuration(configuration_object)
             # API Spec: Should return 204 (NO CONTENT)
             return make_response({}, 200)
