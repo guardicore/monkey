@@ -279,6 +279,17 @@ class ExploitationOptionsConfiguration:
     http_ports: Tuple[int, ...]
 
 
+class Pydantic___ExploitationOptionsConfiguration:
+    """
+    A configuration for exploitation options
+
+    Attributes:
+        :param http_ports: HTTP ports to exploit
+    """
+
+    http_ports: Tuple[conint(ge=0, le=65535), ...]
+
+
 @dataclass(frozen=True)
 class ExploitationConfiguration:
     """
