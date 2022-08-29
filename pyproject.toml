@@ -30,4 +30,5 @@ exclude = ["monkey/monkey_island/cc/ui/", "monkey/tests/", "monkey/monkey_island
 paths = ["."]
 
 [tool.mypy]
+exclude = 'vulture_allowlist\.py'
 show_error_codes = true
