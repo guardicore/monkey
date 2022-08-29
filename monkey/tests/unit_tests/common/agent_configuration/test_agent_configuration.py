@@ -26,31 +26,31 @@ from tests.common.example_agent_configuration import (
 )
 
 from common.agent_configuration import InvalidConfigurationError
-from common.agent_configuration.agent_configuration import Pydantic___AgentConfiguration
+from common.agent_configuration.agent_configuration import AgentConfiguration
 from common.agent_configuration.agent_sub_configurations import (
-    Pydantic___CustomPBAConfiguration,
-    Pydantic___ExploitationConfiguration,
-    Pydantic___ExploitationOptionsConfiguration,
-    Pydantic___ICMPScanConfiguration,
-    Pydantic___NetworkScanConfiguration,
-    Pydantic___PluginConfiguration,
-    Pydantic___PropagationConfiguration,
-    Pydantic___ScanTargetConfiguration,
-    Pydantic___TCPScanConfiguration,
+    CustomPBAConfiguration,
+    ExploitationConfiguration,
+    ExploitationOptionsConfiguration,
+    ICMPScanConfiguration,
+    NetworkScanConfiguration,
+    PluginConfiguration,
+    PropagationConfiguration,
+    ScanTargetConfiguration,
+    TCPScanConfiguration,
 )
 
 INVALID_PORTS = [[-1, 1, 2], [1, 2, 99999]]
 
 
 def test_build_plugin_configuration():
-    config = Pydantic___PluginConfiguration(**PLUGIN_CONFIGURATION)
+    config = PluginConfiguration(**PLUGIN_CONFIGURATION)
 
     assert config.name == PLUGIN_NAME
     assert config.options == PLUGIN_OPTIONS
 
 
 def test_custom_pba_configuration_schema():
-    config = Pydantic___CustomPBAConfiguration(**CUSTOM_PBA_CONFIGURATION)
+    config = CustomPBAConfiguration(**CUSTOM_PBA_CONFIGURATION)
 
     assert config.linux_command == LINUX_COMMAND
     assert config.linux_filename == LINUX_FILENAME
@@ -62,7 +62,7 @@ def test_custom_pba_configuration_schema__empty_filenames_allowed():
     empty_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
     empty_filename_configuration.update({"linux_filename": "", "windows_filename": ""})
 
-    config = Pydantic___CustomPBAConfiguration(**empty_filename_configuration)
+    config = CustomPBAConfiguration(**empty_filename_configuration)
 
     assert config.linux_command == LINUX_COMMAND
     assert config.linux_filename == ""
@@ -76,7 +76,7 @@ def test_custom_pba_configuration_schema__invalid_linux_filename(linux_filename)
     invalid_filename_configuration["linux_filename"] = linux_filename
 
     with pytest.raises(ValidationError):
-        Pydantic___CustomPBAConfiguration(**invalid_filename_configuration)
+        CustomPBAConfiguration(**invalid_filename_configuration)
 
 
 @pytest.mark.parametrize(
@@ -87,11 +87,11 @@ def test_custom_pba_configuration_schema__invalid_windows_filename(windows_filen
     invalid_filename_configuration["windows_filename"] = windows_filename
 
     with pytest.raises(ValidationError):
-        Pydantic___CustomPBAConfiguration(**invalid_filename_configuration)
+        CustomPBAConfiguration(**invalid_filename_configuration)
 
 
 def test_scan_target_configuration():
-    config = Pydantic___ScanTargetConfiguration(**SCAN_TARGET_CONFIGURATION)
+    config = ScanTargetConfiguration(**SCAN_TARGET_CONFIGURATION)
 
     assert config.blocked_ips == tuple(BLOCKED_IPS)
     assert config.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
@@ -100,7 +100,7 @@ def test_scan_target_configuration():
 
 
 def test_icmp_scan_configuration_schema():
-    config = Pydantic___ICMPScanConfiguration(**ICMP_CONFIGURATION)
+    config = ICMPScanConfiguration(**ICMP_CONFIGURATION)
 
     assert config.timeout == TIMEOUT
 
@@ -110,11 +110,11 @@ def test_icmp_scan_configuration_schema__negative_timeout():
     negative_timeout_configuration["timeout"] = -1
 
     with pytest.raises(ValidationError):
-        Pydantic___ICMPScanConfiguration(**negative_timeout_configuration)
+        ICMPScanConfiguration(**negative_timeout_configuration)
 
 
 def test_tcp_scan_configuration_schema():
-    config = Pydantic___TCPScanConfiguration(**TCP_SCAN_CONFIGURATION)
+    config = TCPScanConfiguration(**TCP_SCAN_CONFIGURATION)
 
     assert config.timeout == TIMEOUT
     assert config.ports == tuple(PORTS)
@@ -126,7 +126,7 @@ def test_tcp_scan_configuration_schema__ports_out_of_range(ports):
     invalid_ports_configuration["ports"] = ports
 
     with pytest.raises(ValidationError):
-        Pydantic___TCPScanConfiguration(**invalid_ports_configuration)
+        TCPScanConfiguration(**invalid_ports_configuration)
 
 
 def test_tcp_scan_configuration_schema__negative_timeout():
@@ -134,11 +134,11 @@ def test_tcp_scan_configuration_schema__negative_timeout():
     negative_timeout_configuration["timeout"] = -1
 
     with pytest.raises(ValidationError):
-        Pydantic___TCPScanConfiguration(**negative_timeout_configuration)
+        TCPScanConfiguration(**negative_timeout_configuration)
 
 
 def test_network_scan_configuration():
-    config = Pydantic___NetworkScanConfiguration(**NETWORK_SCAN_CONFIGURATION)
+    config = NetworkScanConfiguration(**NETWORK_SCAN_CONFIGURATION)
 
     assert config.tcp.ports == tuple(TCP_SCAN_CONFIGURATION["ports"])
     assert config.tcp.timeout == TCP_SCAN_CONFIGURATION["timeout"]
@@ -154,7 +154,7 @@ def test_network_scan_configuration():
 def test_exploitation_options_configuration_schema():
     ports = [1, 2, 3]
 
-    config = Pydantic___ExploitationOptionsConfiguration(**{"http_ports": ports})
+    config = ExploitationOptionsConfiguration(**{"http_ports": ports})
 
     assert config.http_ports == tuple(ports)
 
@@ -164,34 +164,34 @@ def test_exploitation_options_configuration_schema__ports_out_of_range(ports):
     invalid_ports_configuration = {"http_ports": ports}
 
     with pytest.raises(ValidationError):
-        Pydantic___ExploitationOptionsConfiguration(**invalid_ports_configuration)
+        ExploitationOptionsConfiguration(**invalid_ports_configuration)
 
 
 def test_exploiter_configuration_schema():
     name = "bond"
     options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
 
-    config = Pydantic___PluginConfiguration(**{"name": name, "options": options})
+    config = PluginConfiguration(**{"name": name, "options": options})
 
     assert config.name == name
     assert config.options == options
 
 
 def test_exploitation_configuration():
-    config = Pydantic___ExploitationConfiguration(**EXPLOITATION_CONFIGURATION)
+    config = ExploitationConfiguration(**EXPLOITATION_CONFIGURATION)
     config_dict = config.dict()
 
-    assert isinstance(config, Pydantic___ExploitationConfiguration)
+    assert isinstance(config, ExploitationConfiguration)
     assert config_dict == EXPLOITATION_CONFIGURATION
 
 
 def test_propagation_configuration():
-    config = Pydantic___PropagationConfiguration(**PROPAGATION_CONFIGURATION)
+    config = PropagationConfiguration(**PROPAGATION_CONFIGURATION)
     config_dict = config.dict()
 
-    assert isinstance(config, Pydantic___PropagationConfiguration)
-    assert isinstance(config.network_scan, Pydantic___NetworkScanConfiguration)
-    assert isinstance(config.exploitation, Pydantic___ExploitationConfiguration)
+    assert isinstance(config, PropagationConfiguration)
+    assert isinstance(config.network_scan, NetworkScanConfiguration)
+    assert isinstance(config.exploitation, ExploitationConfiguration)
     assert config.maximum_depth == 5
     assert config_dict == PROPAGATION_CONFIGURATION
 
@@ -201,20 +201,20 @@ def test_propagation_configuration__invalid_maximum_depth():
     negative_maximum_depth_configuration["maximum_depth"] = -1
 
     with pytest.raises(ValidationError):
-        Pydantic___PropagationConfiguration(**negative_maximum_depth_configuration)
+        PropagationConfiguration(**negative_maximum_depth_configuration)
 
 
 def test_agent_configuration():
-    config = Pydantic___AgentConfiguration(**AGENT_CONFIGURATION)
+    config = AgentConfiguration(**AGENT_CONFIGURATION)
     config_dict = config.dict()
 
-    assert isinstance(config, Pydantic___AgentConfiguration)
+    assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
-    assert isinstance(config.custom_pbas, Pydantic___CustomPBAConfiguration)
-    assert isinstance(config.post_breach_actions[0], Pydantic___PluginConfiguration)
-    assert isinstance(config.credential_collectors[0], Pydantic___PluginConfiguration)
-    assert isinstance(config.payloads[0], Pydantic___PluginConfiguration)
-    assert isinstance(config.propagation, Pydantic___PropagationConfiguration)
+    assert isinstance(config.custom_pbas, CustomPBAConfiguration)
+    assert isinstance(config.post_breach_actions[0], PluginConfiguration)
+    assert isinstance(config.credential_collectors[0], PluginConfiguration)
+    assert isinstance(config.payloads[0], PluginConfiguration)
+    assert isinstance(config.propagation, PropagationConfiguration)
     assert config_dict == AGENT_CONFIGURATION
 
 
@@ -223,12 +223,12 @@ def test_agent_configuration__negative_keep_tunnel_open_time():
     negative_keep_tunnel_open_time_configuration["keep_tunnel_open_time"] = -1
 
     with pytest.raises(InvalidConfigurationError):
-        Pydantic___AgentConfiguration(**negative_keep_tunnel_open_time_configuration)
+        AgentConfiguration(**negative_keep_tunnel_open_time_configuration)
 
 
 def test_incorrect_type():
-    valid_config = Pydantic___AgentConfiguration(**AGENT_CONFIGURATION)
+    valid_config = AgentConfiguration(**AGENT_CONFIGURATION)
     with pytest.raises(InvalidConfigurationError):
         valid_config_dict = valid_config.__dict__
         valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
-        Pydantic___AgentConfiguration(**valid_config_dict)
+        AgentConfiguration(**valid_config_dict)
