@@ -306,6 +306,21 @@ class ExploitationConfiguration:
     vulnerability: Tuple[PluginConfiguration, ...]
 
 
+class Pydantic___ExploitationConfiguration:
+    """
+    A configuration for exploitation
+
+    Attributes:
+        :param options: Exploitation options shared by all exploiters
+        :param brute_force: Configuration for brute force exploiters
+        :param vulnerability: Configuration for vulnerability exploiters
+    """
+
+    options: Pydantic___ExploitationOptionsConfiguration
+    brute_force: Tuple[Pydantic___PluginConfiguration, ...]
+    vulnerability: Tuple[Pydantic___PluginConfiguration, ...]
+
+
 @dataclass(frozen=True)
 class PropagationConfiguration:
     """
