@@ -23,7 +23,7 @@ class Machine(MutableInfectionMonkeyBaseModel):
     network_interfaces: Sequence[IPv4Interface]
     """The machine's networking interfaces"""
 
-    operating_system: OperatingSystem
+    operating_system: Optional[OperatingSystem]
     """The operating system the machine is running"""
 
     operating_system_version: str

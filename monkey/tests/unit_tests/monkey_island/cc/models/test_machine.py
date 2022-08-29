@@ -84,6 +84,15 @@ def test_construct_invalid_field__value_error(key, value):
         Machine(**invalid_type_dict)
 
 
+@pytest.mark.parametrize("field", ["hardware_id", "operating_system"])
+def test_optional_fields(field):
+    none_field_dict = MACHINE_SIMPLE_DICT.copy()
+    none_field_dict[field] = None
+
+    # Raises exception_on_failure
+    Machine(**none_field_dict)
+
+
 def test_construct__extra_fields_forbidden():
     extra_field_dict = MACHINE_SIMPLE_DICT.copy()
     extra_field_dict["extra_field"] = 99  # red balloons
