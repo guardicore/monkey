@@ -35,10 +35,15 @@ class DIContainer:
         :raises TypeError: If `concrete_type` is not a class, or not a subclass of `interface`
         """
         if not inspect.isclass(concrete_type):
+            # Ignoring arg-type error because this if clause discovers that concrete_type is not the
+            # type that mypy expects.
+            formatted_type_name = DIContainer._format_type_name(
+                concrete_type.__class__  # type: ignore[arg-type]
+            )
             raise TypeError(
                 "Expected a class, but received an instance of type "
-                f'"{DIContainer._format_type_name(concrete_type.__class__)}"; Pass a class, not an '
-                "instance, to register(), or use register_instance() instead"
+                f'"{formatted_type_name}"; Pass a class, not an instance, to register(), or use'
+                "register_instance() instead"
             )
 
         if not issubclass(concrete_type, interface):
