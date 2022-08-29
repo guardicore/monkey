@@ -5,7 +5,6 @@ from flask import make_response, request
 from common.agent_configuration.agent_configuration import (
     AgentConfiguration as AgentConfigurationObject,
 )
-from common.agent_configuration.agent_configuration import InvalidConfigurationError
 from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
@@ -30,7 +29,7 @@ class AgentConfiguration(AbstractResource):
             self._agent_configuration_repository.store_configuration(configuration_object)
             # API Spec: Should return 204 (NO CONTENT)
             return make_response({}, 200)
-        except (InvalidConfigurationError, json.JSONDecodeError) as err:
+        except (ValueError, TypeError, json.JSONDecodeError) as err:
             return make_response(
                 {"error": f"Invalid configuration supplied: {err}"},
                 400,
