@@ -276,7 +276,7 @@ class ExploitationOptionsConfiguration:
     http_ports: Tuple[int, ...]
 
 
-class Pydantic___ExploitationOptionsConfiguration:
+class Pydantic___ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for exploitation options
 
@@ -303,7 +303,7 @@ class ExploitationConfiguration:
     vulnerability: Tuple[PluginConfiguration, ...]
 
 
-class Pydantic___ExploitationConfiguration:
+class Pydantic___ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for exploitation
 
@@ -336,7 +336,7 @@ class PropagationConfiguration:
     exploitation: ExploitationConfiguration
 
 
-class Pydantic___PropagationConfiguration:
+class Pydantic___PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for propagation
 
