@@ -1,5 +1,4 @@
 import pytest
-from marshmallow import ValidationError
 from tests.common.example_agent_configuration import (
     AGENT_CONFIGURATION,
     BLOCKED_IPS,
@@ -25,7 +24,6 @@ from tests.common.example_agent_configuration import (
     WINDOWS_FILENAME,
 )
 
-from common.agent_configuration import InvalidConfigurationError
 from common.agent_configuration.agent_configuration import AgentConfiguration
 from common.agent_configuration.agent_sub_configurations import (
     CustomPBAConfiguration,
@@ -75,7 +73,7 @@ def test_custom_pba_configuration_schema__invalid_linux_filename(linux_filename)
     invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
     invalid_filename_configuration["linux_filename"] = linux_filename
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         CustomPBAConfiguration(**invalid_filename_configuration)
 
 
@@ -86,7 +84,7 @@ def test_custom_pba_configuration_schema__invalid_windows_filename(windows_filen
     invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
     invalid_filename_configuration["windows_filename"] = windows_filename
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         CustomPBAConfiguration(**invalid_filename_configuration)
 
 
@@ -109,7 +107,7 @@ def test_icmp_scan_configuration_schema__negative_timeout():
     negative_timeout_configuration = ICMP_CONFIGURATION.copy()
     negative_timeout_configuration["timeout"] = -1
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         ICMPScanConfiguration(**negative_timeout_configuration)
 
 
@@ -125,7 +123,7 @@ def test_tcp_scan_configuration_schema__ports_out_of_range(ports):
     invalid_ports_configuration = TCP_SCAN_CONFIGURATION.copy()
     invalid_ports_configuration["ports"] = ports
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         TCPScanConfiguration(**invalid_ports_configuration)
 
 
@@ -133,7 +131,7 @@ def test_tcp_scan_configuration_schema__negative_timeout():
     negative_timeout_configuration = TCP_SCAN_CONFIGURATION.copy()
     negative_timeout_configuration["timeout"] = -1
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         TCPScanConfiguration(**negative_timeout_configuration)
 
 
@@ -163,7 +161,7 @@ def test_exploitation_options_configuration_schema():
 def test_exploitation_options_configuration_schema__ports_out_of_range(ports):
     invalid_ports_configuration = {"http_ports": ports}
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         ExploitationOptionsConfiguration(**invalid_ports_configuration)
 
 
@@ -200,7 +198,7 @@ def test_propagation_configuration__invalid_maximum_depth():
     negative_maximum_depth_configuration = PROPAGATION_CONFIGURATION.copy()
     negative_maximum_depth_configuration["maximum_depth"] = -1
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValueError):
         PropagationConfiguration(**negative_maximum_depth_configuration)
 
 
@@ -222,13 +220,13 @@ def test_agent_configuration__negative_keep_tunnel_open_time():
     negative_keep_tunnel_open_time_configuration = AGENT_CONFIGURATION.copy()
     negative_keep_tunnel_open_time_configuration["keep_tunnel_open_time"] = -1
 
-    with pytest.raises(InvalidConfigurationError):
+    with pytest.raises(ValueError):
         AgentConfiguration(**negative_keep_tunnel_open_time_configuration)
 
 
 def test_incorrect_type():
     valid_config = AgentConfiguration(**AGENT_CONFIGURATION)
-    with pytest.raises(InvalidConfigurationError):
+    with pytest.raises(TypeError):
         valid_config_dict = valid_config.__dict__
         valid_config_dict["keep_tunnel_open_time"] = "not_a_float"
         AgentConfiguration(**valid_config_dict)
