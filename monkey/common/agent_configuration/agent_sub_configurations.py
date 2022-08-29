@@ -12,7 +12,7 @@ from .validators import (
 )
 
 
-class Pydantic___CustomPBAConfiguration(MutableInfectionMonkeyBaseModel):
+class CustomPBAConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for custom post-breach actions
 
@@ -44,7 +44,7 @@ class Pydantic___CustomPBAConfiguration(MutableInfectionMonkeyBaseModel):
         return filename
 
 
-class Pydantic___PluginConfiguration(MutableInfectionMonkeyBaseModel):
+class PluginConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for plugins
 
@@ -70,7 +70,7 @@ class Pydantic___PluginConfiguration(MutableInfectionMonkeyBaseModel):
     options: Dict
 
 
-class Pydantic___ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
+class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
     """
     Configuration of network targets to scan and exploit
 
@@ -106,7 +106,7 @@ class Pydantic___ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
         return subnet_range
 
 
-class Pydantic___ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
+class ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for ICMP scanning
 
@@ -117,7 +117,7 @@ class Pydantic___ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
     timeout: PositiveFloat
 
 
-class Pydantic___TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
+class TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for TCP scanning
 
@@ -130,7 +130,7 @@ class Pydantic___TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
     ports: Tuple[conint(ge=0, le=65535), ...]
 
 
-class Pydantic___NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
+class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for network scanning
 
@@ -141,13 +141,13 @@ class Pydantic___NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
         :param targets: Configuration for targets to scan
     """
 
-    tcp: Pydantic___TCPScanConfiguration
-    icmp: Pydantic___ICMPScanConfiguration
-    fingerprinters: Tuple[Pydantic___PluginConfiguration, ...]
-    targets: Pydantic___ScanTargetConfiguration
+    tcp: TCPScanConfiguration
+    icmp: ICMPScanConfiguration
+    fingerprinters: Tuple[PluginConfiguration, ...]
+    targets: ScanTargetConfiguration
 
 
-class Pydantic___ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
+class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for exploitation options
 
@@ -158,7 +158,7 @@ class Pydantic___ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseMode
     http_ports: Tuple[conint(ge=0, le=65535), ...]
 
 
-class Pydantic___ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
+class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for exploitation
 
@@ -168,12 +168,12 @@ class Pydantic___ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
         :param vulnerability: Configuration for vulnerability exploiters
     """
 
-    options: Pydantic___ExploitationOptionsConfiguration
-    brute_force: Tuple[Pydantic___PluginConfiguration, ...]
-    vulnerability: Tuple[Pydantic___PluginConfiguration, ...]
+    options: ExploitationOptionsConfiguration
+    brute_force: Tuple[PluginConfiguration, ...]
+    vulnerability: Tuple[PluginConfiguration, ...]
 
 
-class Pydantic___PropagationConfiguration(MutableInfectionMonkeyBaseModel):
+class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for propagation
 
@@ -186,5 +186,5 @@ class Pydantic___PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     maximum_depth: PositiveInt
-    network_scan: Pydantic___NetworkScanConfiguration
-    exploitation: Pydantic___ExploitationConfiguration
+    network_scan: NetworkScanConfiguration
+    exploitation: ExploitationConfiguration

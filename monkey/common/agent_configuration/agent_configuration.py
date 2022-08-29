@@ -7,9 +7,9 @@ from pydantic import PositiveFloat
 from common.base_models import MutableInfectionMonkeyBaseModel
 
 from .agent_sub_configurations import (
-    Pydantic___CustomPBAConfiguration,
-    Pydantic___PluginConfiguration,
-    Pydantic___PropagationConfiguration,
+    CustomPBAConfiguration,
+    PluginConfiguration,
+    PropagationConfiguration,
 )
 
 
@@ -24,10 +24,10 @@ class InvalidConfigurationError(Exception):
         )
 
 
-class Pydantic___AgentConfiguration(MutableInfectionMonkeyBaseModel):
+class AgentConfiguration(MutableInfectionMonkeyBaseModel):
     keep_tunnel_open_time: PositiveFloat
-    custom_pbas: Pydantic___CustomPBAConfiguration
-    post_breach_actions: Tuple[Pydantic___PluginConfiguration, ...]
-    credential_collectors: Tuple[Pydantic___PluginConfiguration, ...]
-    payloads: Tuple[Pydantic___PluginConfiguration, ...]
-    propagation: Pydantic___PropagationConfiguration
+    custom_pbas: CustomPBAConfiguration
+    post_breach_actions: Tuple[PluginConfiguration, ...]
+    credential_collectors: Tuple[PluginConfiguration, ...]
+    payloads: Tuple[PluginConfiguration, ...]
+    propagation: PropagationConfiguration
