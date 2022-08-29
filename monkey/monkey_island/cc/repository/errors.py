@@ -20,3 +20,9 @@ class StorageError(RuntimeError):
     """
 
     pass
+
+
+class UnknownRecordError(RuntimeError):
+    """
+    Raised when the repository does not contain any data matching the request.
+    """

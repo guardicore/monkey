@@ -1,4 +1,4 @@
-from .errors import RemovalError, RetrievalError, StorageError
+from .errors import RemovalError, RetrievalError, StorageError, UnknownRecordError
 
 
 from .i_file_repository import FileNotFoundError, IFileRepository
