@@ -32,9 +32,3 @@ class FindingWithoutDetailsError(Exception):
 
 class DomainControllerNameFetchError(FailedExploitationError):
     """Raise on failed attempt to extract domain controller's name"""
-
-
-# TODO: This has been replaced by common.configuration.InvalidConfigurationError. Use that error
-#       instead and remove this one.
-class InvalidConfigurationError(Exception):
-    """Raise when configuration is invalid"""
