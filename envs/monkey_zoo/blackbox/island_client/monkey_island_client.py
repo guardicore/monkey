@@ -5,7 +5,6 @@ from typing import Sequence, Union
 
 from bson import json_util
 
-from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
@@ -51,7 +50,7 @@ class MonkeyIslandClient(object):
     def _import_config(self, test_configuration: TestConfiguration):
         response = self.requests.put_json(
             "api/agent-configuration",
-            json=AgentConfiguration.to_mapping(test_configuration.agent_configuration),
+            json=test_configuration.agent_configuration.dict(),
         )
         if response.ok:
             LOGGER.info("Configuration is imported.")
