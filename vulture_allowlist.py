@@ -3,6 +3,10 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
+from common.agent_configuration.agent_sub_configurations import (
+    CustomPBAConfiguration,
+    ScanTargetConfiguration,
+)
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
@@ -294,11 +298,11 @@ underscore_attrs_are_private
 extra
 allow_mutation
 validate_assignment
-linux_filename_valid
-windows_filename_valid
-blocked_ips_valid
-inaccessible_subnets_valid
-subnets_valid
+CustomPBAConfiguration.linux_filename_valid
+CustomPBAConfiguration.windows_filename_valid
+ScanTargetConfiguration.blocked_ips_valid
+ScanTargetConfiguration.inaccessible_subnets_valid
+ScanTargetConfiguration.subnets_valid
 
 # CommunicationType
 CommunicationType
