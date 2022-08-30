@@ -98,6 +98,35 @@ def test_scan_target_configuration():
     assert config.subnets == tuple(SUBNETS)
 
 
+@pytest.mark.parametrize("invalid_blocked_ip_list", [["abc"], [1]])
+def test_scan_target_configuration__invalid_blocked_ips(invalid_blocked_ip_list):
+    invalid_blocked_ips = SCAN_TARGET_CONFIGURATION.copy()
+    invalid_blocked_ips["blocked_ips"] = invalid_blocked_ip_list
+
+    with pytest.raises(ValueError):
+        ScanTargetConfiguration(**invalid_blocked_ips)
+
+
+@pytest.mark.parametrize(
+    "invalid_inaccessible_subnets_list", [["1-2-3"], ["0.0.0.0/33"], ["www.invalid-.com"]]
+)
+def test_scan_target_configuration__invalid_inaccessible_subnets(invalid_inaccessible_subnets_list):
+    invalid_inaccessible_subnets = SCAN_TARGET_CONFIGURATION.copy()
+    invalid_inaccessible_subnets["inaccessible_subnets"] = invalid_inaccessible_subnets_list
+
+    with pytest.raises(ValueError):
+        ScanTargetConfiguration(**invalid_inaccessible_subnets)
+
+
+@pytest.mark.parametrize("invalid_subnets_list", [["1-2-3"], ["0.0.0.0/33"], ["www.invalid-.com"]])
+def test_scan_target_configuration__invalid_subnets(invalid_subnets_list):
+    invalid_subnets = SCAN_TARGET_CONFIGURATION.copy()
+    invalid_subnets["subnets"] = invalid_subnets_list
+
+    with pytest.raises(ValueError):
+        ScanTargetConfiguration(**invalid_subnets)
+
+
 def test_icmp_scan_configuration_schema():
     config = ICMPScanConfiguration(**ICMP_CONFIGURATION)
 
