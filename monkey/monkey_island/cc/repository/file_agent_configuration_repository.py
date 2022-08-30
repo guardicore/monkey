@@ -1,4 +1,5 @@
 import io
+import json
 
 from common.agent_configuration import AgentConfiguration
 from monkey_island.cc import repository
@@ -23,17 +24,17 @@ class FileAgentConfigurationRepository(IAgentConfigurationRepository):
             with self._file_repository.open_file(AGENT_CONFIGURATION_FILE_NAME) as f:
                 configuration_json = f.read().decode()
 
-            return AgentConfiguration.from_json(configuration_json)
+            return AgentConfiguration(**json.loads(configuration_json))
         except repository.FileNotFoundError:
             return self._default_agent_configuration
         except Exception as err:
             raise RetrievalError(f"Error retrieving the agent configuration: {err}")
 
     def store_configuration(self, agent_configuration: AgentConfiguration):
-        configuration_json = AgentConfiguration.to_json(agent_configuration)
+        configuration_json = agent_configuration.dict()
 
         self._file_repository.save_file(
-            AGENT_CONFIGURATION_FILE_NAME, io.BytesIO(configuration_json.encode())
+            AGENT_CONFIGURATION_FILE_NAME, io.BytesIO(json.dumps(configuration_json).encode())
         )
 
     def reset_to_default(self):
