@@ -1,7 +1,9 @@
 import select
 import socket
+from functools import partial
 from logging import getLogger
 from threading import Thread
+from typing import Callable
 
 from infection_monkey.transport.base import (
     PROXY_TIMEOUT,
@@ -16,7 +18,13 @@ logger = getLogger(__name__)
 
 
 class SocketsPipe(Thread):
-    def __init__(self, source, dest, timeout=SOCKET_READ_TIMEOUT):
+    def __init__(
+        self,
+        source,
+        dest,
+        timeout=SOCKET_READ_TIMEOUT,
+        client_disconnected: Callable[[str], None] = None,
+    ):
         Thread.__init__(self)
         self.source = source
         self.dest = dest
@@ -24,6 +32,7 @@ class SocketsPipe(Thread):
         self._keep_connection = True
         super(SocketsPipe, self).__init__()
         self.daemon = True
+        self._client_disconnected = client_disconnected
 
     def run(self):
         sockets = [self.source, self.dest]
@@ -48,9 +57,24 @@ class SocketsPipe(Thread):
 
         self.source.close()
         self.dest.close()
+        if self._client_disconnected:
+            self._client_disconnected()
 
 
 class TcpProxy(TransportProxyBase):
+    def __init__(
+        self,
+        local_port,
+        dest_host=None,
+        dest_port=None,
+        local_host="",
+        client_connected: Callable[[str], None] = None,
+        client_disconnected: Callable[[str], None] = None,
+    ):
+        super().__init__(local_port, dest_host, dest_port, local_host)
+        self._client_connected = client_connected
+        self._client_disconnected = client_disconnected
+
     def run(self):
         pipes = []
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -72,7 +96,10 @@ class TcpProxy(TransportProxyBase):
                 dest.close()
                 continue
 
-            pipe = SocketsPipe(source, dest)
+            on_disconnect = (
+                partial(self._client_connected, address[0]) if self._client_connected else None
+            )
+            pipe = SocketsPipe(source, dest, on_disconnect)
             pipes.append(pipe)
             logger.debug(
                 "piping sockets %s:%s->%s:%s",
@@ -81,6 +108,8 @@ class TcpProxy(TransportProxyBase):
                 self.dest_host,
                 self.dest_port,
             )
+            if self._client_connected:
+                self._client_connected(address[0])
             pipe.start()
 
         l_socket.close()

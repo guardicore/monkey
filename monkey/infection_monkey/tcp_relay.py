@@ -1,7 +1,14 @@
-from threading import Event, Thread
+from dataclasses import dataclass
+from threading import Event, Lock, Thread
 from time import sleep
+from typing import List
 
 from infection_monkey.transport.tcp import TcpProxy
+
+
+@dataclass
+class RelayUser:
+    address: str
 
 
 class TCPRelay(Thread):
@@ -14,10 +21,16 @@ class TCPRelay(Thread):
         self._target_port = target_port
         super(TCPRelay, self).__init__(name="MonkeyTcpRelayThread")
         self.daemon = True
+        self._relay_users: List[RelayUser] = []
+        self._lock = Lock()
 
     def run(self):
         proxy = TcpProxy(
-            local_port=self._local_port, dest_host=self._target_addr, dest_port=self._target_port
+            local_port=self._local_port,
+            dest_host=self._target_addr,
+            dest_port=self._target_port,
+            client_connected=self.on_user_connected,
+            client_disconnected=self.on_user_disconnected,
         )
         proxy.start()
 
@@ -29,3 +42,15 @@ class TCPRelay(Thread):
 
     def stop(self):
         self._stopped.set()
+
+    def on_user_connected(self, user: str):
+        with self._lock:
+            self._relay_users.append(RelayUser(user))
+
+    def on_user_disconnected(self, user: str):
+        with self._lock:
+            self._relay_users = [u for u in self._relay_users if u.address != user]
+
+    def relay_users(self) -> List[RelayUser]:
+        with self._lock:
+            return self._relay_users.copy()
