@@ -19,7 +19,7 @@ class AgentConfiguration(AbstractResource):
     # Used by the agent. Can't secure
     def get(self):
         configuration = self._agent_configuration_repository.get_configuration()
-        configuration_dict = configuration.dict()
+        configuration_dict = configuration.dict(simplify=True)
         return make_response(configuration_dict, 200)
 
     @jwt_required
