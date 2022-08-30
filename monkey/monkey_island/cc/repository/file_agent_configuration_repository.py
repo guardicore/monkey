@@ -31,10 +31,10 @@ class FileAgentConfigurationRepository(IAgentConfigurationRepository):
             raise RetrievalError(f"Error retrieving the agent configuration: {err}")
 
     def store_configuration(self, agent_configuration: AgentConfiguration):
-        configuration_json = agent_configuration.dict()
+        configuration_json = agent_configuration.json()
 
         self._file_repository.save_file(
-            AGENT_CONFIGURATION_FILE_NAME, io.BytesIO(json.dumps(configuration_json).encode())
+            AGENT_CONFIGURATION_FILE_NAME, io.BytesIO(configuration_json.encode())
         )
 
     def reset_to_default(self):
