@@ -180,6 +180,15 @@ def test_set_operating_system_version():
     m.operating_system_version = "1234"
 
 
+def test_operating_system_version_default_value():
+    missing_operating_system_version_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_operating_system_version_dict["operating_system_version"]
+
+    m = Machine(**missing_operating_system_version_dict)
+
+    assert m.operating_system_version == ""
+
+
 def test_set_hostname():
     m = Machine(**MACHINE_OBJECT_DICT)
 

@@ -26,7 +26,7 @@ class Machine(MutableInfectionMonkeyBaseModel):
     operating_system: Optional[OperatingSystem]
     """The operating system the machine is running"""
 
-    operating_system_version: str
+    operating_system_version: str = Field(default="")
     """The specific version of the operating system the machine is running"""
 
     hostname: str
