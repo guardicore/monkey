@@ -12,4 +12,4 @@ from .user_credentials import UserCredentials
 from .machine import Machine, MachineID
 from .communication_type import CommunicationType
 from .node import Node
-from .agent import Agent
+from .agent import Agent, AgentID
