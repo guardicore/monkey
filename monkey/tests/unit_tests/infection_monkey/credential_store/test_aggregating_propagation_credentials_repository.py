@@ -60,8 +60,8 @@ STOLEN_CREDENTIALS = [
 
 STOLEN_SSH_KEYS_CREDENTIALS = [
     Credentials(
-        Username(USERNAME),
-        SSHKeypair(public_key=STOLEN_PUBLIC_KEY_2, private_key=STOLEN_PRIVATE_KEY_2),
+        identity=Username(USERNAME),
+        secret=SSHKeypair(public_key=STOLEN_PUBLIC_KEY_2, private_key=STOLEN_PRIVATE_KEY_2),
     )
 ]
 

@@ -45,7 +45,7 @@ SECRET_DICTS = [
 ]
 
 CREDENTIALS = [
-    Credentials(identity, secret)
+    Credentials(identity=identity, secret=secret)
     for identity, secret in product(IDENTITIES, SECRETS)
     if not (identity is None and secret is None)
 ]
