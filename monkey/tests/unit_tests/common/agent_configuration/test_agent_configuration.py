@@ -207,7 +207,7 @@ def test_exploiter_configuration_schema():
 
 def test_exploitation_configuration():
     config = ExploitationConfiguration(**EXPLOITATION_CONFIGURATION)
-    config_dict = config.dict()
+    config_dict = config.dict(simplify=True)
 
     assert isinstance(config, ExploitationConfiguration)
     assert config_dict == convert_all_lists_to_tuples_in_mapping(EXPLOITATION_CONFIGURATION.copy())
@@ -215,7 +215,7 @@ def test_exploitation_configuration():
 
 def test_propagation_configuration():
     config = PropagationConfiguration(**PROPAGATION_CONFIGURATION)
-    config_dict = config.dict()
+    config_dict = config.dict(simplify=True)
 
     assert isinstance(config, PropagationConfiguration)
     assert isinstance(config.network_scan, NetworkScanConfiguration)
@@ -234,7 +234,7 @@ def test_propagation_configuration__invalid_maximum_depth():
 
 def test_agent_configuration():
     config = AgentConfiguration(**AGENT_CONFIGURATION)
-    config_dict = config.dict()
+    config_dict = config.dict(simplify=True)
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
