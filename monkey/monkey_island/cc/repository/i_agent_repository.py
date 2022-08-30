@@ -1,15 +1,41 @@
-from abc import ABC
-from typing import Optional, Sequence
+from abc import ABC, abstractmethod
+from typing import Sequence
 
-from monkey_island.cc.models import Monkey
+from monkey_island.cc.models import Agent, AgentID
 
 
 class IAgentRepository(ABC):
-    # TODO rename Monkey document to Agent
-    def save_agent(self, agent: Monkey):
-        pass
+    """A repository used to store and retrieve `Agent` objects"""
 
-    def get_agents(
-        self, id: Optional[str] = None, running: Optional[bool] = None
-    ) -> Sequence[Monkey]:
-        pass
+    @abstractmethod
+    def upsert_agent(self, agent: Agent):
+        """
+        Upsert (insert or update) an `Agent`
+
+        Insert the `Agent` if no `Agent` with a matching ID exists in the repository. If the agent
+        already exists, update it.
+
+        :param agent: The `agent` to be inserted or updated
+        :raises StorageError: If an error occurred while attempting to store the `Agent`
+        """
+
+    @abstractmethod
+    def get_agent_by_id(self, id: AgentID) -> Agent:
+        """
+        Get an `Agent` by ID
+
+        :param id: The ID of the `Agent` to be retrieved
+        :return: An `Agent` with a matching `id`
+        :raises UnknownRecordError: If an `Agent` with the specified `id` does not exist in the
+                                    repository
+        :raises RetrievalError: If an error occurred while attempting to retrieve the `Agent`
+        """
+
+    @abstractmethod
+    def get_running_agents(self) -> Sequence[Agent]:
+        """
+        Get all `Agents` that are currently running
+
+        :return: All `Agents` that are currently running
+        :raises RetrievalError: If an error occurred while attempting to retrieve the `Agents`
+        """
