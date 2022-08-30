@@ -39,10 +39,10 @@ def scan_config(default_agent_configuration):
         PluginConfiguration(name="SSHFinger", options={}),
     ]
     scan_config = NetworkScanConfiguration(
-        tcp_config,
-        icmp_config,
-        fingerprinter_config,
-        default_agent_configuration.propagation.network_scan.targets,
+        tcp=tcp_config,
+        icmp=icmp_config,
+        fingerprinters=fingerprinter_config,
+        targets=default_agent_configuration.propagation.network_scan.targets,
     )
     return scan_config
 
