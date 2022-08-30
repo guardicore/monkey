@@ -68,4 +68,7 @@ class IMachineRepository(ABC):
     def reset(self):
         """
         Removes all data from the repository
+
+        :raises RemovalError: If an error occurred while attempting to remove all `Machines` from
+                              the repository
         """

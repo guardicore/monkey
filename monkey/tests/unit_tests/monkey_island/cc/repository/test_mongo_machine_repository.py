@@ -10,6 +10,7 @@ from monkey_island.cc.models import Machine
 from monkey_island.cc.repository import (
     IMachineRepository,
     MongoMachineRepository,
+    RemovalError,
     RetrievalError,
     StorageError,
     UnknownRecordError,
@@ -77,6 +78,7 @@ def error_raising_mock_mongo_client() -> mongomock.MongoClient:
     mongo_client.monkey_island.machines.replace_one = MagicMock(
         side_effect=Exception("some exception")
     )
+    mongo_client.monkey_island.machines.drop = MagicMock(side_effect=Exception("some exception"))
 
     return mongo_client
 
@@ -236,3 +238,8 @@ def test_usable_after_reset(machine_repository):
     new_machine = machine_repository.create_machine()
 
     assert new_machine == machine_repository.get_machine_by_id(new_machine.id)
+
+
+def test_reset__removal_error(error_raising_machine_repository):
+    with pytest.raises(RemovalError):
+        error_raising_machine_repository.reset()

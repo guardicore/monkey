@@ -7,7 +7,7 @@ from pymongo import MongoClient
 from common.types import HardwareID
 from monkey_island.cc.models import Machine, MachineID
 
-from . import IMachineRepository, RetrievalError, StorageError, UnknownRecordError
+from . import IMachineRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
 from .consts import MONGO_OBJECT_ID_KEY
 
 
@@ -96,4 +96,7 @@ class MongoMachineRepository(IMachineRepository):
         return Machine(**mongo_record)
 
     def reset(self):
-        self._machines_collection.drop()
+        try:
+            self._machines_collection.drop()
+        except Exception as err:
+            raise RemovalError(f"Error resetting the repository: {err}")
