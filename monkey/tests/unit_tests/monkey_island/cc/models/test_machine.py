@@ -164,6 +164,15 @@ def test_operating_system_set_invalid_value():
         m.operating_system = "MacOS"
 
 
+def test_operating_system_default_value():
+    missing_operating_system_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_operating_system_dict["operating_system"]
+
+    m = Machine(**missing_operating_system_dict)
+
+    assert m.operating_system is None
+
+
 def test_set_operating_system_version():
     m = Machine(**MACHINE_OBJECT_DICT)
 
