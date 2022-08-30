@@ -1,5 +1,6 @@
 import logging
 from dataclasses import replace
+from ipaddress import IPv4Interface
 from queue import Queue
 from threading import Event
 from typing import List, Sequence
@@ -18,7 +19,7 @@ from infection_monkey.i_puppet import (
     PortStatus,
 )
 from infection_monkey.model import VictimHost, VictimHostFactory
-from infection_monkey.network import NetworkAddress, NetworkInterface
+from infection_monkey.network import NetworkAddress
 from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
@@ -37,7 +38,7 @@ class Propagator:
         ip_scanner: IPScanner,
         exploiter: Exploiter,
         victim_host_factory: VictimHostFactory,
-        local_network_interfaces: List[NetworkInterface],
+        local_network_interfaces: List[IPv4Interface],
     ):
         self._telemetry_messenger = telemetry_messenger
         self._ip_scanner = ip_scanner

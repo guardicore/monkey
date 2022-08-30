@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
 from typing import List
 
@@ -39,7 +40,6 @@ from infection_monkey.i_puppet import IPuppet, PluginType
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
-from infection_monkey.network import NetworkInterface
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_local_network_interfaces
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
@@ -239,10 +239,10 @@ class InfectionMonkey:
         )
 
     @staticmethod
-    def _get_local_network_interfaces():
+    def _get_local_network_interfaces() -> List[IPv4Interface]:
         local_network_interfaces = get_local_network_interfaces()
-        for i in local_network_interfaces:
-            logger.debug(f"Found local interface {i.address}{i.netmask}")
+        for interface in local_network_interfaces:
+            logger.debug(f"Found local interface {str(interface)}")
 
         return local_network_interfaces
 
@@ -364,7 +364,7 @@ class InfectionMonkey:
         return puppet
 
     def _build_victim_host_factory(
-        self, local_network_interfaces: List[NetworkInterface]
+        self, local_network_interfaces: List[IPv4Interface]
     ) -> VictimHostFactory:
         on_island = self._running_on_island(local_network_interfaces)
         logger.debug(f"This agent is running on the island: {on_island}")
@@ -373,9 +373,9 @@ class InfectionMonkey:
             self._monkey_inbound_tunnel, self._cmd_island_ip, self._cmd_island_port, on_island
         )
 
-    def _running_on_island(self, local_network_interfaces: List[NetworkInterface]) -> bool:
+    def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
         server_ip, _ = address_to_ip_port(self._control_client.server_address)
-        return server_ip in {interface.address for interface in local_network_interfaces}
+        return server_ip in {str(interface.ip) for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()

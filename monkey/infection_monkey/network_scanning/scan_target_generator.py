@@ -1,10 +1,11 @@
 import itertools
 import logging
 import socket
-from typing import List
+from ipaddress import IPv4Interface
+from typing import Dict, List
 
 from common.network.network_range import InvalidNetworkRangeError, NetworkRange
-from infection_monkey.network import NetworkAddress, NetworkInterface
+from infection_monkey.network import NetworkAddress
 
 logger = logging.getLogger(__name__)
 
@@ -13,13 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 def compile_scan_target_list(
-    local_network_interfaces: List[NetworkInterface],
+    local_network_interfaces: List[IPv4Interface],
     ranges_to_scan: List[str],
     inaccessible_subnets: List[str],
     blocklisted_ips: List[str],
     enable_local_network_scan: bool,
 ) -> List[NetworkAddress]:
-    scan_targets = _get_ips_from_ranges_to_scan(ranges_to_scan)
+    scan_targets = _get_ips_from_subnets_to_scan(ranges_to_scan)
 
     if enable_local_network_scan:
         scan_targets.extend(_get_ips_to_scan_from_local_interface(local_network_interfaces))
@@ -39,7 +40,7 @@ def compile_scan_target_list(
 
 
 def _remove_redundant_targets(targets: List[NetworkAddress]) -> List[NetworkAddress]:
-    reverse_dns = {}
+    reverse_dns: Dict[str, str] = {}
     for target in targets:
         domain_name = target.domain
         ip = target.ip
@@ -58,14 +59,17 @@ def _range_to_addresses(range_obj: NetworkRange) -> List[NetworkAddress]:
     return addresses
 
 
-def _get_ips_from_ranges_to_scan(ranges_to_scan: List[str]) -> List[NetworkAddress]:
-    scan_targets = []
-
+def _get_ips_from_subnets_to_scan(subnets_to_scan: List[str]) -> List[NetworkAddress]:
     ranges_to_scan = NetworkRange.filter_invalid_ranges(
-        ranges_to_scan, "Bad network range input for targets to scan:"
+        subnets_to_scan, "Bad network range input for targets to scan:"
     )
 
     network_ranges = [NetworkRange.get_range_obj(_range) for _range in ranges_to_scan]
+    return _get_ips_from_ranges_to_scan(network_ranges)
+
+
+def _get_ips_from_ranges_to_scan(network_ranges: List[NetworkRange]) -> List[NetworkAddress]:
+    scan_targets = []
 
     for _range in network_ranges:
         scan_targets.extend(_range_to_addresses(_range))
@@ -73,20 +77,20 @@ def _get_ips_from_ranges_to_scan(ranges_to_scan: List[str]) -> List[NetworkAddre
 
 
 def _get_ips_to_scan_from_local_interface(
-    interfaces: List[NetworkInterface],
+    interfaces: List[IPv4Interface],
 ) -> List[NetworkAddress]:
-    ranges = [f"{interface.address}{interface.netmask}" for interface in interfaces]
+    ranges = [str(interface) for interface in interfaces]
 
     ranges = NetworkRange.filter_invalid_ranges(
         ranges, "Local network interface returns an invalid IP:"
     )
-    return _get_ips_from_ranges_to_scan(ranges)
+    return _get_ips_from_subnets_to_scan(ranges)
 
 
 def _remove_interface_ips(
-    scan_targets: List[NetworkAddress], interfaces: List[NetworkInterface]
+    scan_targets: List[NetworkAddress], interfaces: List[IPv4Interface]
 ) -> List[NetworkAddress]:
-    interface_ips = [interface.address for interface in interfaces]
+    interface_ips = [str(interface.ip) for interface in interfaces]
     return _remove_ips_from_scan_targets(scan_targets, interface_ips)
 
 
@@ -109,22 +113,22 @@ def _remove_ips_from_scan_targets(
 
 
 def _get_segmentation_check_targets(
-    inaccessible_subnets: List[str], local_interfaces: List[NetworkInterface]
+    inaccessible_subnets: List[str], local_interfaces: List[IPv4Interface]
 ) -> List[NetworkAddress]:
     ips_to_scan = []
-    local_ips = [interface.address for interface in local_interfaces]
+    local_ips = [str(interface.ip) for interface in local_interfaces]
 
     local_ips = NetworkRange.filter_invalid_ranges(local_ips, "Invalid local IP found: ")
     inaccessible_subnets = NetworkRange.filter_invalid_ranges(
         inaccessible_subnets, "Invalid segmentation scan target: "
     )
 
-    inaccessible_subnets = _convert_to_range_object(inaccessible_subnets)
-    subnet_pairs = itertools.product(inaccessible_subnets, inaccessible_subnets)
+    inaccessible_ranges = _convert_to_range_object(inaccessible_subnets)
+    subnet_pairs = itertools.product(inaccessible_ranges, inaccessible_ranges)
 
     for (subnet1, subnet2) in subnet_pairs:
         if _is_segmentation_check_required(local_ips, subnet1, subnet2):
-            ips = _get_ips_from_ranges_to_scan(subnet2)
+            ips = _get_ips_from_ranges_to_scan([subnet2])
             ips_to_scan.extend(ips)
 
     return ips_to_scan

@@ -1,6 +1,7 @@
 import logging
 import threading
 import time
+from ipaddress import IPv4Interface
 from typing import Any, Callable, Iterable, List, Optional
 
 from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
@@ -10,7 +11,6 @@ from infection_monkey.i_control_channel import IControlChannel, IslandCommunicat
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
-from infection_monkey.network import NetworkInterface
 from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
@@ -39,7 +39,7 @@ class AutomatedMaster(IMaster):
         telemetry_messenger: ITelemetryMessenger,
         victim_host_factory: VictimHostFactory,
         control_channel: IControlChannel,
-        local_network_interfaces: List[NetworkInterface],
+        local_network_interfaces: List[IPv4Interface],
         credentials_store: IPropagationCredentialsRepository,
     ):
         self._current_depth = current_depth

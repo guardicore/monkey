@@ -1,1 +1,1 @@
-from .info import NetworkAddress, NetworkInterface
+from .info import NetworkAddress
