@@ -13,17 +13,6 @@ from .agent_sub_configurations import (
 )
 
 
-class InvalidConfigurationError(Exception):
-    def __init__(self, message: str):
-        self._message = message
-
-    def __str__(self) -> str:
-        return (
-            f"Cannot construct an AgentConfiguration object with the supplied, invalid data: "
-            f"{self._message}"
-        )
-
-
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
     keep_tunnel_open_time: PositiveFloat
     custom_pbas: CustomPBAConfiguration
