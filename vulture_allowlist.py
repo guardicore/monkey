@@ -218,6 +218,7 @@ stop_time
 parent_id
 cc_server
 hardware_id
+network_interfaces
 connections
 
 # TODO DELETE AFTER RESOURCE REFACTORING

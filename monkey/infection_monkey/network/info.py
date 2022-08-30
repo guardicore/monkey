@@ -1,7 +1,7 @@
 import itertools
 import socket
 import struct
-from collections import namedtuple
+from dataclasses import dataclass
 from ipaddress import IPv4Interface
 from random import randint  # noqa: DUO102
 from typing import List
@@ -18,9 +18,11 @@ SIOCGIFNETMASK = 0x891B  # get network PA mask
 RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
 
-# TODO: We can probably replace both of these namedtuples with classes in Python's ipaddress
-#       library: https://docs.python.org/3/library/ipaddress.html
-NetworkAddress = namedtuple("NetworkAddress", ("ip", "domain"))
+
+@dataclass
+class NetworkAddress:
+    ip: str
+    domain: str
 
 
 def get_local_network_interfaces() -> List[IPv4Interface]:

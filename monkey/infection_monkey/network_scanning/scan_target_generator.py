@@ -2,7 +2,7 @@ import itertools
 import logging
 import socket
 from ipaddress import IPv4Interface
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from common.network.network_range import InvalidNetworkRangeError, NetworkRange
 from infection_monkey.network import NetworkAddress
@@ -40,7 +40,7 @@ def compile_scan_target_list(
 
 
 def _remove_redundant_targets(targets: List[NetworkAddress]) -> List[NetworkAddress]:
-    reverse_dns: Dict[Any, Any] = {}
+    reverse_dns: Dict[str, str] = {}
     for target in targets:
         domain_name = target.domain
         ip = target.ip
