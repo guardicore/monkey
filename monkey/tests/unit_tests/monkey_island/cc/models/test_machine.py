@@ -194,3 +194,12 @@ def test_set_hostname():
 
     # Raises exception_on_failure
     m.operating_system_version = "wopr"
+
+
+def test_hostname_default_value():
+    missing_hostname_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_hostname_dict["hostname"]
+
+    m = Machine(**missing_hostname_dict)
+
+    assert m.hostname == ""

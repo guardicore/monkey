@@ -29,7 +29,7 @@ class Machine(MutableInfectionMonkeyBaseModel):
     operating_system_version: str = Field(default="")
     """The specific version of the operating system the machine is running"""
 
-    hostname: str
+    hostname: str = Field(default="")
     """The hostname of the machine"""
 
     _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
