@@ -31,7 +31,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 def _add_credential_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     return add_credential_collectors(
-        agent_configuration, [PluginConfiguration("MimikatzCollector", {})]
+        agent_configuration, [PluginConfiguration(name="MimikatzCollector", options={})]
     )
 
 

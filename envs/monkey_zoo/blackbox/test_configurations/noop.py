@@ -12,7 +12,9 @@ from common.agent_configuration import (
 
 from . import TestConfiguration
 
-_custom_pba_configuration = CustomPBAConfiguration("", "", "", "")
+_custom_pba_configuration = CustomPBAConfiguration(
+    linux_command="", linux_filename="", windows_command="", windows_filename=""
+)
 
 _tcp_scan_configuration = TCPScanConfiguration(timeout=3.0, ports=[])
 _icmp_scan_configuration = ICMPScanConfiguration(timeout=1.0)
