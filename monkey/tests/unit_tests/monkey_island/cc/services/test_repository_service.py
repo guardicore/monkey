@@ -1,4 +1,3 @@
-from dataclasses import replace
 from unittest.mock import MagicMock
 
 import pytest
@@ -18,12 +17,10 @@ WINDOWS_FILENAME = "windows_pba_file.ps1"
 
 @pytest.fixture
 def agent_configuration(default_agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    custom_pbas = replace(
-        default_agent_configuration.custom_pbas,
-        linux_filename=LINUX_FILENAME,
-        windows_filename=WINDOWS_FILENAME,
+    custom_pbas = default_agent_configuration.custom_pbas.copy(
+        update={"linux_filename": LINUX_FILENAME, "windows_filename": WINDOWS_FILENAME},
     )
-    return replace(default_agent_configuration, custom_pbas=custom_pbas)
+    return default_agent_configuration.copy(update={"custom_pbas": custom_pbas})
 
 
 @pytest.fixture
