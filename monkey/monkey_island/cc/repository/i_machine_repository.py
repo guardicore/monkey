@@ -29,11 +29,11 @@ class IMachineRepository(ABC):
         """
 
     @abstractmethod
-    def get_machine_by_id(self, id_: MachineID) -> Machine:
+    def get_machine_by_id(self, machine_id: MachineID) -> Machine:
         """
         Get a `Machine` by ID
 
-        :param id: The ID of the `Machine` to be retrieved
+        :param machine_id: The ID of the `Machine` to be retrieved
         :return: A `Machine` with a matching `id`
         :raises UnknownRecordError: If a `Machine` with the specified `id` does not exist in the
                                     repository

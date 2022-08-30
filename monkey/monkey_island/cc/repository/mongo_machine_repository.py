@@ -57,8 +57,8 @@ class MongoMachineRepository(IMachineRepository):
                 f"but updated {result.modified_count}"
             )
 
-    def get_machine_by_id(self, id_: MachineID) -> Machine:
-        return self._find_one("id", "machine ID", id_)
+    def get_machine_by_id(self, machine_id: MachineID) -> Machine:
+        return self._find_one("id", "machine ID", machine_id)
 
     def get_machine_by_hardware_id(self, hardware_id: HardwareID) -> Machine:
         return self._find_one("hardware_id", "hardware ID", hardware_id)
