@@ -1,7 +1,7 @@
 import ctypes
 import os
 from pathlib import Path
-from typing import Iterable, Mapping
+from typing import Iterable
 
 
 def is_user_admin():
@@ -31,15 +31,3 @@ def add_files_to_dir(parent_dir: Path, file_names: Iterable[str]) -> Iterable[Pa
         f.touch()
 
     return files
-
-
-# This is only needed since values are compared in configuration objects in the tests.
-# In practice, the list/tuple differences shouldn't make any difference since both are iterable.
-def convert_all_lists_to_tuples_in_mapping(configuration: Mapping):
-    for key in configuration:
-        value = configuration[key]
-        if isinstance(value, list):
-            configuration[key] = tuple(value)
-        if isinstance(value, Mapping):
-            convert_all_lists_to_tuples_in_mapping(value)
-    return configuration
