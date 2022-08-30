@@ -22,6 +22,7 @@ class TCPRelay(Thread):
         super(TCPRelay, self).__init__(name="MonkeyTcpRelayThread")
         self.daemon = True
         self._relay_users: List[RelayUser] = []
+        self._potential_users: List[RelayUser] = []
         self._lock = Lock()
 
     def run(self):
@@ -44,13 +45,21 @@ class TCPRelay(Thread):
         self._stopped.set()
 
     def on_user_connected(self, user: str):
+        """Handle new user connection."""
         with self._lock:
             self._relay_users.append(RelayUser(user))
 
     def on_user_disconnected(self, user: str):
+        """Handle user disconnection."""
         with self._lock:
             self._relay_users = [u for u in self._relay_users if u.address != user]
 
     def relay_users(self) -> List[RelayUser]:
+        """Get the list of users connected to the relay."""
         with self._lock:
             return self._relay_users.copy()
+
+    def on_potential_new_user(self, user: str):
+        """Notify TCPRelay that a new user may try and connect."""
+        with self._lock:
+            self._potential_users.append(RelayUser(user))
