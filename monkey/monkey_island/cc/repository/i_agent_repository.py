@@ -20,11 +20,11 @@ class IAgentRepository(ABC):
         """
 
     @abstractmethod
-    def get_agent_by_id(self, id: AgentID) -> Agent:
+    def get_agent_by_id(self, agent_id: AgentID) -> Agent:
         """
         Get an `Agent` by ID
 
-        :param id: The ID of the `Agent` to be retrieved
+        :param agent_id: The ID of the `Agent` to be retrieved
         :return: An `Agent` with a matching `id`
         :raises UnknownRecordError: If an `Agent` with the specified `id` does not exist in the
                                     repository
