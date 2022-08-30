@@ -241,8 +241,8 @@ class InfectionMonkey:
     @staticmethod
     def _get_local_network_interfaces() -> List[IPv4Interface]:
         local_network_interfaces = get_local_network_interfaces()
-        for i in local_network_interfaces:
-            logger.debug(f"Found local interface {str(i.ip)}/{i.network.prefixlen}")
+        for interface in local_network_interfaces:
+            logger.debug(f"Found local interface {str(interface)}")
 
         return local_network_interfaces
 
