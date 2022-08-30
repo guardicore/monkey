@@ -20,3 +20,4 @@ from .file_agent_configuration_repository import FileAgentConfigurationRepositor
 from .file_simulation_repository import FileSimulationRepository
 from .json_file_user_repository import JSONFileUserRepository
 from .mongo_credentials_repository import MongoCredentialsRepository
+from .mongo_machine_repository import MongoMachineRepository
