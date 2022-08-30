@@ -121,6 +121,15 @@ def test_hardware_id_validate_on_set():
         m.hardware_id = -50
 
 
+def test_hardware_id_default():
+    missing_hardware_id_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_hardware_id_dict["hardware_id"]
+
+    m = Machine(**missing_hardware_id_dict)
+
+    assert m.hardware_id is None
+
+
 def test_network_interfaces_set_valid_value():
     m = Machine(**MACHINE_OBJECT_DICT)
 
