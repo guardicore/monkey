@@ -101,16 +101,9 @@ class PBAFileUpload(AbstractResource):
         agent_configuration = self._agent_configuration_repository.get_configuration()
 
         if target_os == LINUX_PBA_TYPE:
-            custom_pbas = agent_configuration.custom_pbas.copy(
-                update={"linux_filename": safe_filename}
-            )
+            agent_configuration.custom_pbas.linux_filename = safe_filename
         else:
-            custom_pbas = agent_configuration.custom_pbas.copy(
-                update={"windows_filename": safe_filename}
-            )
-
-        updated_agent_configuration = agent_configuration.copy(update={"custom_pbas": custom_pbas})
-        self._agent_configuration_repository.store_configuration(updated_agent_configuration)
+            agent_configuration.custom_pbas.windows_filename = safe_filename
 
     @jwt_required
     def delete(self, target_os):
