@@ -144,15 +144,15 @@ def get_propagation_config(
     default_agent_configuration, scan_target_config: ScanTargetConfiguration
 ):
     network_scan = NetworkScanConfiguration(
-        default_agent_configuration.propagation.network_scan.tcp,
-        default_agent_configuration.propagation.network_scan.icmp,
-        default_agent_configuration.propagation.network_scan.fingerprinters,
-        scan_target_config,
+        tcp=default_agent_configuration.propagation.network_scan.tcp,
+        icmp=default_agent_configuration.propagation.network_scan.icmp,
+        fingerprinters=default_agent_configuration.propagation.network_scan.fingerprinters,
+        targets=scan_target_config,
     )
     propagation_config = PropagationConfiguration(
-        default_agent_configuration.propagation.maximum_depth,
-        network_scan,
-        default_agent_configuration.propagation.exploitation,
+        maximum_depth=default_agent_configuration.propagation.maximum_depth,
+        network_scan=network_scan,
+        exploitation=default_agent_configuration.propagation.exploitation,
     )
     return propagation_config
 
