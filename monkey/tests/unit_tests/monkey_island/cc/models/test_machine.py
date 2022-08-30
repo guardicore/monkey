@@ -141,6 +141,15 @@ def test_network_interfaces_sequence_is_immutable():
     assert not isinstance(m.network_interfaces, MutableSequence)
 
 
+def test_network_interfaces_default():
+    missing_network_interfaces_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_network_interfaces_dict["network_interfaces"]
+
+    m = Machine(**missing_network_interfaces_dict)
+
+    assert len(m.network_interfaces) == 0
+
+
 def test_operating_system_set_valid_value():
     m = Machine(**MACHINE_OBJECT_DICT)
 
