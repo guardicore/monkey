@@ -1,6 +1,8 @@
-from dataclasses import dataclass, field
+from dataclasses import field
+from typing import ClassVar
 
 from marshmallow import fields
+from pydantic.dataclasses import dataclass
 
 from . import CredentialComponentType, ICredentialComponent
 from .credential_component_schema import CredentialComponentSchema, CredentialTypeField
@@ -12,9 +14,9 @@ class NTHashSchema(CredentialComponentSchema):
     nt_hash = fields.Str(validate=ntlm_hash_validator)
 
 
-@dataclass(frozen=True)
+@dataclass
 class NTHash(ICredentialComponent):
-    credential_type: CredentialComponentType = field(
+    credential_type: ClassVar[CredentialComponentType] = field(
         default=CredentialComponentType.NT_HASH, init=False
     )
     nt_hash: str

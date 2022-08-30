@@ -24,12 +24,12 @@ identities = (fake_username,)
 secrets = (fake_nt_hash, fake_lm_hash, fake_password, fake_ssh_key)
 
 fake_credentials = [
-    Credentials(fake_username, fake_nt_hash),
-    Credentials(fake_username, fake_lm_hash),
-    Credentials(fake_username, fake_password),
-    Credentials(fake_username, fake_ssh_key),
-    Credentials(None, fake_ssh_key),
-    Credentials(fake_username, None),
+    Credentials(identity=fake_username, secret=fake_nt_hash),
+    Credentials(identity=fake_username, secret=fake_lm_hash),
+    Credentials(identity=fake_username, secret=fake_password),
+    Credentials(identity=fake_username, secret=fake_ssh_key),
+    Credentials(identity=None, secret=fake_ssh_key),
+    Credentials(identity=fake_username, secret=None),
 ]
 
 
