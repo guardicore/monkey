@@ -45,7 +45,7 @@ class Propagator:
         self._exploiter = exploiter
         self._victim_host_factory = victim_host_factory
         self._local_network_interfaces = local_network_interfaces
-        self._hosts_to_exploit = None
+        self._hosts_to_exploit: Queue = Queue()
 
     def propagate(
         self, propagation_config: PropagationConfiguration, current_depth: int, stop: Event

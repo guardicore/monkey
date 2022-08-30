@@ -1,26 +1,28 @@
 import json
 import logging
 from pprint import pformat
-from typing import Mapping, Optional, Sequence
+from typing import MutableMapping, Optional, Sequence
 from uuid import UUID
 
 import requests
+from urllib3 import disable_warnings
 
 from common import AgentRegistrationData
 from common.agent_configuration import AgentConfiguration
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
+from infection_monkey.network.info import get_network_interfaces
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 
-requests.packages.urllib3.disable_warnings()
+disable_warnings()  # noqa: DUO131
 
 logger = logging.getLogger(__name__)
 
 
 class ControlChannel(IControlChannel):
-    def __init__(self, server: str, agent_id: str, proxies: Mapping[str, str]):
+    def __init__(self, server: str, agent_id: str, proxies: MutableMapping[str, str]):
         self._agent_id = agent_id
         self._control_channel_server = server
         self._proxies = proxies
@@ -32,7 +34,7 @@ class ControlChannel(IControlChannel):
             start_time=agent_process.get_start_time(),
             parent_id=parent,
             cc_server=self._control_channel_server,
-            network_interfaces=[],  # TODO: Populate this
+            network_interfaces=get_network_interfaces(),
         )
 
         try:
@@ -70,8 +72,8 @@ class ControlChannel(IControlChannel):
             )
             response.raise_for_status()
 
-            response = json.loads(response.content.decode())
-            return response["stop_agent"]
+            json_response = json.loads(response.content.decode())
+            return json_response["stop_agent"]
         except (
             json.JSONDecodeError,
             requests.exceptions.ConnectionError,
