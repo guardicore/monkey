@@ -1,5 +1,4 @@
 import logging
-from dataclasses import replace
 from queue import Queue
 from threading import Event
 from typing import List, Sequence
@@ -92,9 +91,9 @@ class Propagator:
 
             modified_options = fingerprinter.options.copy()
             modified_options["http_ports"] = list(http_ports)
-            modified_fingerprinters[i] = replace(fingerprinter, options=modified_options)
+            modified_fingerprinters[i] = fingerprinter.copy(update={"options": modified_options})
 
-        return replace(network_scan, fingerprinters=modified_fingerprinters)
+        return network_scan.copy(update={"fingerprinters": modified_fingerprinters})
 
     def _scan_network(self, scan_config: NetworkScanConfiguration, stop: Event):
         logger.info("Starting network scan")
