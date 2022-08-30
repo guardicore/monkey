@@ -23,6 +23,7 @@ from tests.common.example_agent_configuration import (
     WINDOWS_COMMAND,
     WINDOWS_FILENAME,
 )
+from tests.utils import convert_lists_to_tuples
 
 from common.agent_configuration.agent_configuration import AgentConfiguration
 from common.agent_configuration.agent_sub_configurations import (
@@ -180,7 +181,7 @@ def test_exploitation_configuration():
     config_dict = config.dict()
 
     assert isinstance(config, ExploitationConfiguration)
-    assert config_dict == EXPLOITATION_CONFIGURATION
+    assert config_dict == convert_lists_to_tuples(EXPLOITATION_CONFIGURATION.copy())
 
 
 def test_propagation_configuration():
@@ -191,7 +192,7 @@ def test_propagation_configuration():
     assert isinstance(config.network_scan, NetworkScanConfiguration)
     assert isinstance(config.exploitation, ExploitationConfiguration)
     assert config.maximum_depth == 5
-    assert config_dict == PROPAGATION_CONFIGURATION
+    assert config_dict == convert_lists_to_tuples(PROPAGATION_CONFIGURATION.copy())
 
 
 def test_propagation_configuration__invalid_maximum_depth():
@@ -213,7 +214,7 @@ def test_agent_configuration():
     assert isinstance(config.credential_collectors[0], PluginConfiguration)
     assert isinstance(config.payloads[0], PluginConfiguration)
     assert isinstance(config.propagation, PropagationConfiguration)
-    assert config_dict == AGENT_CONFIGURATION
+    assert config_dict == convert_lists_to_tuples(AGENT_CONFIGURATION.copy())
 
 
 def test_agent_configuration__negative_keep_tunnel_open_time():
