@@ -58,19 +58,19 @@ class MongoMachineRepository(IMachineRepository):
             )
 
     def get_machine_by_id(self, machine_id: MachineID) -> Machine:
-        return self._find_one("id", "machine ID", machine_id)
+        return self._find_one("id", machine_id)
 
     def get_machine_by_hardware_id(self, hardware_id: HardwareID) -> Machine:
-        return self._find_one("hardware_id", "hardware ID", hardware_id)
+        return self._find_one("hardware_id", hardware_id)
 
-    def _find_one(self, key: str, key_display_name: str, search_value: Any) -> Machine:
+    def _find_one(self, key: str, search_value: Any) -> Machine:
         try:
             machine_dict = self._machines_collection.find_one({key: search_value})
         except Exception as err:
             raise RetrievalError(f'Error retrieving machine with "{key} == {search_value}": {err}')
 
         if machine_dict is None:
-            raise UnknownRecordError(f'Unknown {key_display_name} "{search_value}"')
+            raise UnknownRecordError(f'Unknown machine with "{key} == {search_value}"')
 
         return MongoMachineRepository._mongo_record_to_machine(machine_dict)
 
