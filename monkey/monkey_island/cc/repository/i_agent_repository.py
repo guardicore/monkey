@@ -39,3 +39,9 @@ class IAgentRepository(ABC):
         :return: All `Agents` that are currently running
         :raises RetrievalError: If an error occurred while attempting to retrieve the `Agents`
         """
+
+    @abstractmethod
+    def reset(self):
+        """
+        Removes all data from the repository
+        """
