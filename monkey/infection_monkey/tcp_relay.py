@@ -1,24 +1,34 @@
 from dataclasses import dataclass
 from threading import Event, Lock, Thread
-from time import sleep
+from time import sleep, time
 from typing import List
 
 from infection_monkey.transport.tcp import TcpProxy
+
+DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients to connect
 
 
 @dataclass
 class RelayUser:
     address: str
+    time: float
 
 
 class TCPRelay(Thread):
     """Provides and manages a TCP proxy connection."""
 
-    def __init__(self, local_port: int, target_addr: str, target_port: int):
+    def __init__(
+        self,
+        local_port: int,
+        target_addr: str,
+        target_port: int,
+        new_client_timeout: float = DEFAULT_NEW_CLIENT_TIMEOUT,
+    ):
         self._stopped = Event()
         self._local_port = local_port
         self._target_addr = target_addr
         self._target_port = target_port
+        self._new_client_timeout = new_client_timeout
         super(TCPRelay, self).__init__(name="MonkeyTcpRelayThread")
         self.daemon = True
         self._relay_users: List[RelayUser] = []
@@ -39,6 +49,8 @@ class TCPRelay(Thread):
         while not self._stopped.is_set():
             sleep(0.001)
 
+        self._wait_for_users_to_disconnect()
+
         proxy.stop()
         proxy.join()
 
@@ -49,7 +61,7 @@ class TCPRelay(Thread):
         """Handle new user connection."""
         with self._lock:
             self._potential_users = [u for u in self._potential_users if u.address != user]
-            self._relay_users.append(RelayUser(user))
+            self._relay_users.append(RelayUser(user, time()))
 
     def on_user_disconnected(self, user: str):
         """Handle user disconnection."""
@@ -63,7 +75,7 @@ class TCPRelay(Thread):
     def on_potential_new_user(self, user: str):
         """Notify TCPRelay that a new user may try and connect."""
         with self._lock:
-            self._potential_users.append(RelayUser(user))
+            self._potential_users.append(RelayUser(user, time()))
 
     def on_user_data_received(self, data: bytes, user: str) -> bool:
         if data.startswith(b"-"):
@@ -74,3 +86,15 @@ class TCPRelay(Thread):
     def _disconnect_user(self, user: str):
         with self._lock:
             self._relay_users = [u for u in self._relay_users if u.address != user]
+
+    def _wait_for_users_to_disconnect(self):
+        stop = False
+        while not stop:
+            sleep(0.01)
+            current_time = time()
+            most_recent_potential_time = max(
+                self._potential_users, key=lambda u: u.time, default=RelayUser("", 0)
+            ).time
+            potential_elapsed = current_time - most_recent_potential_time
+
+            stop = not self._potential_users or potential_elapsed > self._new_client_timeout
