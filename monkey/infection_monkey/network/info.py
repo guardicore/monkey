@@ -26,10 +26,6 @@ class NetworkAddress:
 
 
 def get_network_interfaces() -> List[IPv4Interface]:
-    return get_local_network_interfaces()
-
-
-def get_local_network_interfaces() -> List[IPv4Interface]:
     return [IPv4Interface(f"{i['addr']}/{i['netmask']}") for i in get_host_subnets()]
 
 
