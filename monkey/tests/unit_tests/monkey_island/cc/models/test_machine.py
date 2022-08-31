@@ -84,6 +84,15 @@ def test_construct_invalid_field__value_error(key, value):
         Machine(**invalid_type_dict)
 
 
+@pytest.mark.parametrize("field", ["hardware_id", "operating_system"])
+def test_optional_fields(field):
+    none_field_dict = MACHINE_SIMPLE_DICT.copy()
+    none_field_dict[field] = None
+
+    # Raises exception_on_failure
+    Machine(**none_field_dict)
+
+
 def test_construct__extra_fields_forbidden():
     extra_field_dict = MACHINE_SIMPLE_DICT.copy()
     extra_field_dict["extra_field"] = 99  # red balloons
@@ -112,6 +121,15 @@ def test_hardware_id_validate_on_set():
         m.hardware_id = -50
 
 
+def test_hardware_id_default():
+    missing_hardware_id_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_hardware_id_dict["hardware_id"]
+
+    m = Machine(**missing_hardware_id_dict)
+
+    assert m.hardware_id is None
+
+
 def test_network_interfaces_set_valid_value():
     m = Machine(**MACHINE_OBJECT_DICT)
 
@@ -132,6 +150,15 @@ def test_network_interfaces_sequence_is_immutable():
     assert not isinstance(m.network_interfaces, MutableSequence)
 
 
+def test_network_interfaces_default():
+    missing_network_interfaces_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_network_interfaces_dict["network_interfaces"]
+
+    m = Machine(**missing_network_interfaces_dict)
+
+    assert len(m.network_interfaces) == 0
+
+
 def test_operating_system_set_valid_value():
     m = Machine(**MACHINE_OBJECT_DICT)
 
@@ -146,6 +173,15 @@ def test_operating_system_set_invalid_value():
         m.operating_system = "MacOS"
 
 
+def test_operating_system_default_value():
+    missing_operating_system_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_operating_system_dict["operating_system"]
+
+    m = Machine(**missing_operating_system_dict)
+
+    assert m.operating_system is None
+
+
 def test_set_operating_system_version():
     m = Machine(**MACHINE_OBJECT_DICT)
 
@@ -153,8 +189,26 @@ def test_set_operating_system_version():
     m.operating_system_version = "1234"
 
 
+def test_operating_system_version_default_value():
+    missing_operating_system_version_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_operating_system_version_dict["operating_system_version"]
+
+    m = Machine(**missing_operating_system_version_dict)
+
+    assert m.operating_system_version == ""
+
+
 def test_set_hostname():
     m = Machine(**MACHINE_OBJECT_DICT)
 
     # Raises exception_on_failure
     m.operating_system_version = "wopr"
+
+
+def test_hostname_default_value():
+    missing_hostname_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_hostname_dict["hostname"]
+
+    m = Machine(**missing_hostname_dict)
+
+    assert m.hostname == ""

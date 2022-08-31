@@ -3,9 +3,15 @@ from typing import Any, Dict, Mapping, Sequence
 from pymongo import MongoClient
 
 from common.credentials import Credentials
-from monkey_island.cc.repository import RemovalError, RetrievalError, StorageError
-from monkey_island.cc.repository.i_credentials_repository import ICredentialsRepository
+from monkey_island.cc.repository import (
+    ICredentialsRepository,
+    RemovalError,
+    RetrievalError,
+    StorageError,
+)
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
+
+from .consts import MONGO_OBJECT_ID_KEY
 
 
 class MongoCredentialsRepository(ICredentialsRepository):
@@ -51,7 +57,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
             collection_result = []
             list_collection_result = list(collection.find({}))
             for encrypted_credentials in list_collection_result:
-                del encrypted_credentials["_id"]
+                del encrypted_credentials[MONGO_OBJECT_ID_KEY]
                 plaintext_credentials = self._decrypt_credentials_mapping(encrypted_credentials)
                 collection_result.append(Credentials.from_mapping(plaintext_credentials))
 
