@@ -41,7 +41,7 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.info import get_local_network_interfaces
+from infection_monkey.network.info import get_network_interfaces
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -240,7 +240,7 @@ class InfectionMonkey:
 
     @staticmethod
     def _get_local_network_interfaces() -> List[IPv4Interface]:
-        local_network_interfaces = get_local_network_interfaces()
+        local_network_interfaces = get_network_interfaces()
         for interface in local_network_interfaces:
             logger.debug(f"Found local interface {str(interface)}")
 

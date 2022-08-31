@@ -2,7 +2,7 @@ import logging
 import threading
 import time
 from ipaddress import IPv4Interface
-from typing import Any, Callable, Iterable, List, Optional
+from typing import Any, Callable, Collection, List, Optional
 
 from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
 from common.utils import Timer
@@ -206,7 +206,7 @@ class AutomatedMaster(IMaster):
 
     def _run_pbas(
         self,
-        plugins: Iterable[PluginConfiguration],
+        plugins: Collection[PluginConfiguration],
         callback: Callable[[Any], None],
         custom_pba_options: CustomPBAConfiguration,
     ):
@@ -221,7 +221,7 @@ class AutomatedMaster(IMaster):
 
     def _run_plugins(
         self,
-        plugins: Iterable[PluginConfiguration],
+        plugins: Collection[PluginConfiguration],
         plugin_type: str,
         callback: Callable[[Any], None],
     ):

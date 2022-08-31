@@ -41,7 +41,7 @@ class IPScanner:
     ):
         # Pre-fill a Queue with all IPs to scan so that threads know they can safely exit when the
         # queue is empty.
-        addresses = Queue()
+        addresses: Queue = Queue()
         for address in addresses_to_scan:
             addresses.put(address)
 
