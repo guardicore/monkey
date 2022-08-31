@@ -1,6 +1,6 @@
 from typing import Dict, Tuple
 
-from pydantic import PositiveFloat, PositiveInt, conint, validator
+from pydantic import PositiveFloat, conint, validator
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
@@ -185,6 +185,6 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
         :param exploitation: Configuration for exploitation
     """
 
-    maximum_depth: PositiveInt
+    maximum_depth: conint(ge=0)
     network_scan: NetworkScanConfiguration
     exploitation: ExploitationConfiguration
