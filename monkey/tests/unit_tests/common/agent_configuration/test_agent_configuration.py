@@ -229,6 +229,15 @@ def test_propagation_configuration__invalid_maximum_depth():
         PropagationConfiguration(**negative_maximum_depth_configuration)
 
 
+def test_propagation_configuration__maximum_depth_zero():
+    maximum_depth_zero_configuration = PROPAGATION_CONFIGURATION.copy()
+    maximum_depth_zero_configuration["maximum_depth"] = 0
+
+    pc = PropagationConfiguration(**maximum_depth_zero_configuration)
+
+    assert pc.maximum_depth == 0
+
+
 def test_agent_configuration():
     config = AgentConfiguration(**AGENT_CONFIGURATION)
     config_dict = config.dict(simplify=True)
