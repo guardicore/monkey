@@ -29,11 +29,22 @@ def test_user_added():
     assert users[0].address == new_user
 
 
-def test_user_removed():
+def test_user_not_removed_on_disconnect():
+    # A user should only be disconnected when they send a disconnect request
     relay = TCPRelay(9975, "0.0.0.0", 9976)
     new_user = "0.0.0.1"
     relay.on_user_connected(new_user)
     relay.on_user_disconnected(new_user)
+
+    users = relay.relay_users()
+    assert len(users) == 1
+
+
+def test_user_removed_on_request():
+    relay = TCPRelay(9975, "0.0.0.0", 9976)
+    new_user = "0.0.0.1"
+    relay.on_user_connected(new_user)
+    relay.on_user_data_received(b"-", "0.0.0.1")
 
     users = relay.relay_users()
     assert len(users) == 0

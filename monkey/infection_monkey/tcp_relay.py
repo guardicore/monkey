@@ -32,6 +32,7 @@ class TCPRelay(Thread):
             dest_port=self._target_port,
             client_connected=self.on_user_connected,
             client_disconnected=self.on_user_disconnected,
+            client_data_received=self.on_user_data_received,
         )
         proxy.start()
 
@@ -47,12 +48,12 @@ class TCPRelay(Thread):
     def on_user_connected(self, user: str):
         """Handle new user connection."""
         with self._lock:
+            self._potential_users = [u for u in self._potential_users if u.address != user]
             self._relay_users.append(RelayUser(user))
 
     def on_user_disconnected(self, user: str):
         """Handle user disconnection."""
-        with self._lock:
-            self._relay_users = [u for u in self._relay_users if u.address != user]
+        pass
 
     def relay_users(self) -> List[RelayUser]:
         """Get the list of users connected to the relay."""
@@ -63,3 +64,13 @@ class TCPRelay(Thread):
         """Notify TCPRelay that a new user may try and connect."""
         with self._lock:
             self._potential_users.append(RelayUser(user))
+
+    def on_user_data_received(self, data: bytes, user: str) -> bool:
+        if data.startswith(b"-"):
+            self._disconnect_user(user)
+            return False
+        return True
+
+    def _disconnect_user(self, user: str):
+        with self._lock:
+            self._relay_users = [u for u in self._relay_users if u.address != user]

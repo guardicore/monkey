@@ -17,6 +17,10 @@ SOCKET_READ_TIMEOUT = 10
 logger = getLogger(__name__)
 
 
+def _default_client_data_received(_: bytes, client=None) -> bool:
+    return True
+
+
 class SocketsPipe(Thread):
     def __init__(
         self,
@@ -24,6 +28,7 @@ class SocketsPipe(Thread):
         dest,
         timeout=SOCKET_READ_TIMEOUT,
         client_disconnected: Callable[[str], None] = None,
+        client_data_received: Callable[[bytes], bool] = _default_client_data_received,
     ):
         Thread.__init__(self)
         self.source = source
@@ -33,6 +38,7 @@ class SocketsPipe(Thread):
         super(SocketsPipe, self).__init__()
         self.daemon = True
         self._client_disconnected = client_disconnected
+        self._client_data_received = client_data_received
 
     def run(self):
         sockets = [self.source, self.dest]
@@ -47,7 +53,7 @@ class SocketsPipe(Thread):
                     data = r.recv(READ_BUFFER_SIZE)
                 except Exception:
                     break
-                if data:
+                if data and self._client_data_received(data):
                     try:
                         other.sendall(data)
                         update_last_serve_time()
@@ -70,10 +76,12 @@ class TcpProxy(TransportProxyBase):
         local_host="",
         client_connected: Callable[[str], None] = None,
         client_disconnected: Callable[[str], None] = None,
+        client_data_received: Callable[[bytes, str], bool] = _default_client_data_received,
     ):
         super().__init__(local_port, dest_host, dest_port, local_host)
         self._client_connected = client_connected
         self._client_disconnected = client_disconnected
+        self._client_data_received = client_data_received
 
     def run(self):
         pipes = []
@@ -99,7 +107,8 @@ class TcpProxy(TransportProxyBase):
             on_disconnect = (
                 partial(self._client_connected, address[0]) if self._client_connected else None
             )
-            pipe = SocketsPipe(source, dest, on_disconnect)
+            on_data_received = partial(self._client_data_received, client=address[0])
+            pipe = SocketsPipe(source, dest, on_disconnect, on_data_received)
             pipes.append(pipe)
             logger.debug(
                 "piping sockets %s:%s->%s:%s",
