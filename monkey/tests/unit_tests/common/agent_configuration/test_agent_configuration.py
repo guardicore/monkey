@@ -252,7 +252,16 @@ def test_agent_configuration():
     assert config_dict == AGENT_CONFIGURATION
 
 
-def test_agent_configuration__negative_keep_tunnel_open_time():
+def test_agent_configuration__negative_keep_tunnel_open_time_zero():
+    keep_tunnel_open_time_zero_configuration = AGENT_CONFIGURATION.copy()
+    keep_tunnel_open_time_zero_configuration["keep_tunnel_open_time"] = 0
+
+    ac = AgentConfiguration(**keep_tunnel_open_time_zero_configuration)
+
+    assert ac.keep_tunnel_open_time == 0
+
+
+def test_agent_configuration__keep_tunnel_open_time():
     negative_keep_tunnel_open_time_configuration = AGENT_CONFIGURATION.copy()
     negative_keep_tunnel_open_time_configuration["keep_tunnel_open_time"] = -1
 
