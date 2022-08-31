@@ -10,21 +10,22 @@ class IMachineRepository(ABC):
     """A repository used to store and retrieve Machines"""
 
     @abstractmethod
-    def create_machine(self) -> Machine:
+    def get_new_id(self) -> MachineID:
         """
-        Create a new `Machine` in the repository
+        Generates a new, unique `MachineID`
 
-        :return: A new `Machine` with a unique ID
-        :raises StorageError: If a new `Machine` could not be created
+        :return: A new, unique `MachineID`
         """
 
     @abstractmethod
-    def update_machine(self, machine: Machine):
+    def upsert_machine(self, machine: Machine):
         """
-        Update an existing `Machine` in the repository
+        Upsert (insert or update) a `Machine`
 
-        :param machine: An updated Machine object to store in the repository
-        :raises UnknownRecordError: If the provided `Machine` does not exist in the repository
+        Insert the `Machine` if no `Machine` with a matching ID exists in the repository. If the
+        `Machine` already exists, update it.
+
+        :param machine: The `Machine` to be inserted or updated
         :raises StorageError: If an error occurred while attempting to store the `Machine`
         """
 

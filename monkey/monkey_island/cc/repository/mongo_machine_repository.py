@@ -25,36 +25,29 @@ class MongoMachineRepository(IMachineRepository):
         except IndexError:
             return 0
 
-    def create_machine(self) -> Machine:
-        try:
-            next_id = self._get_next_id()
-            new_machine = Machine(id=next_id)
-            self._machines_collection.insert_one(new_machine.dict(simplify=True))
-
-            return new_machine
-        except Exception as err:
-            raise StorageError(f"Error creating a new machine: {err}")
-
-    def _get_next_id(self) -> MachineID:
+    def get_new_id(self) -> MachineID:
         with self._id_lock:
             self._next_id += 1
             return self._next_id
 
-    def update_machine(self, machine: Machine):
+    def upsert_machine(self, machine: Machine):
         try:
             result = self._machines_collection.replace_one(
-                {"id": machine.id}, machine.dict(simplify=True)
+                {"id": machine.id}, machine.dict(simplify=True), upsert=True
             )
         except Exception as err:
             raise StorageError(f'Error updating machine with ID "{machine.id}": {err}')
 
-        if result.matched_count == 0:
-            raise UnknownRecordError(f"Unknown machine: id == {machine.id}")
-
-        if result.modified_count != 1:
+        if result.matched_count != 0 and result.modified_count != 1:
             raise StorageError(
-                f'Error updating machine with ID "{machine.id}": Expected to update 1 machines, '
-                f"but updated {result.modified_count}"
+                f'Error updating machine with ID "{machine.id}": Expected to update 1 machine, '
+                f"but {result.modified_count} were updated"
+            )
+
+        if result.matched_count == 0 and result.upserted_id is None:
+            raise StorageError(
+                f'Error inserting machine with ID "{machine.id}": Expected to insert 1 machine, '
+                f"but no machines were inserted"
             )
 
     def get_machine_by_id(self, machine_id: MachineID) -> Machine:

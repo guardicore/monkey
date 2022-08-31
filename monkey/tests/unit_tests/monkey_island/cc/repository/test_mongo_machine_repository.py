@@ -93,60 +93,56 @@ def machine_repository(mongo_client) -> IMachineRepository:
     return MongoMachineRepository(mongo_client)
 
 
-def test_create_machine__unique_id(machine_repository):
-    new_machine = machine_repository.create_machine()
+def test_get_new_id__unique_id(machine_repository):
+    new_machine_id = machine_repository.get_new_id()
 
     for m in MACHINES:
-        assert m.id != new_machine.id
+        assert m.id != new_machine_id
 
 
-def test_create_machine__multiple_unique_ids(machine_repository):
-    new_machine_1 = machine_repository.create_machine()
-    new_machine_2 = machine_repository.create_machine()
+def test_get_new_id__multiple_unique_ids(machine_repository):
+    id_1 = machine_repository.get_new_id()
+    id_2 = machine_repository.get_new_id()
 
-    assert new_machine_1.id != new_machine_2.id
+    assert id_1 != id_2
 
 
-def test_create_machine__new_id_for_empty_repo(machine_repository):
+def test_get_new_id__new_id_for_empty_repo(machine_repository):
     empty_machine_repository = MongoMachineRepository(mongomock.MongoClient())
-    new_machine_1 = empty_machine_repository.create_machine()
-    new_machine_2 = empty_machine_repository.create_machine()
+    id_1 = empty_machine_repository.get_new_id()
+    id_2 = empty_machine_repository.get_new_id()
 
-    assert new_machine_1.id != new_machine_2.id
-
-
-def test_create_machine__storage_error(error_raising_machine_repository):
-    with pytest.raises(StorageError):
-        error_raising_machine_repository.create_machine()
+    assert id_1 != id_2
 
 
-def test_update_machine(machine_repository):
+def test_upsert_machine__update(machine_repository):
     machine = machine_repository.get_machine_by_id(1)
 
     machine.operating_system = OperatingSystem.WINDOWS
     machine.hostname = "viki"
     machine.network_interfaces = [IPv4Interface("10.0.0.1/16")]
 
-    machine_repository.update_machine(machine)
+    machine_repository.upsert_machine(machine)
 
     assert machine_repository.get_machine_by_id(1) == machine
 
 
-def test_update_machine__not_found(machine_repository):
-    machine = Machine(id=99)
+def test_upsert_machine__insert(machine_repository):
+    new_machine = Machine(id=99, hardware_id=8675309)
 
-    with pytest.raises(UnknownRecordError):
-        machine_repository.update_machine(machine)
+    machine_repository.upsert_machine(new_machine)
+
+    assert machine_repository.get_machine_by_id(99) == new_machine
 
 
-def test_update_machine__storage_error_exception(error_raising_machine_repository):
+def test_upsert_machine__storage_error_exception(error_raising_machine_repository):
     machine = MACHINES[0]
 
     with pytest.raises(StorageError):
-        error_raising_machine_repository.update_machine(machine)
+        error_raising_machine_repository.upsert_machine(machine)
 
 
-def test_update_machine__storage_error_update_failed(error_raising_mock_mongo_client):
+def test_upsert_machine__storage_error_update_failed(error_raising_mock_mongo_client):
     mock_result = MagicMock()
     mock_result.matched_count = 1
     mock_result.modified_count = 0
@@ -158,7 +154,22 @@ def test_update_machine__storage_error_update_failed(error_raising_mock_mongo_cl
 
     machine = MACHINES[0]
     with pytest.raises(StorageError):
-        machine_repository.update_machine(machine)
+        machine_repository.upsert_machine(machine)
+
+
+def test_upsert_machine__storage_error_insert_failed(error_raising_mock_mongo_client):
+    mock_result = MagicMock()
+    mock_result.matched_count = 0
+    mock_result.upserted_id = None
+
+    error_raising_mock_mongo_client.monkey_island.machines.replace_one = MagicMock(
+        return_value=mock_result
+    )
+    machine_repository = MongoMachineRepository(error_raising_mock_mongo_client)
+
+    machine = MACHINES[0]
+    with pytest.raises(StorageError):
+        machine_repository.upsert_machine(machine)
 
 
 def test_get_machine_by_id(machine_repository):
@@ -235,7 +246,9 @@ def test_reset(machine_repository):
 def test_usable_after_reset(machine_repository):
     machine_repository.reset()
 
-    new_machine = machine_repository.create_machine()
+    new_id = machine_repository.get_new_id()
+    new_machine = Machine(id=new_id)
+    machine_repository.upsert_machine(new_machine)
 
     assert new_machine == machine_repository.get_machine_by_id(new_machine.id)
 
