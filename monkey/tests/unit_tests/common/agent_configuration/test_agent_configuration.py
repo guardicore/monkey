@@ -181,24 +181,22 @@ def test_network_scan_configuration():
 def test_exploitation_options_configuration_schema():
     ports = [1, 2, 3]
 
-    config = ExploitationOptionsConfiguration(**{"http_ports": ports})
+    config = ExploitationOptionsConfiguration(http_ports=ports)
 
     assert config.http_ports == tuple(ports)
 
 
 @pytest.mark.parametrize("ports", INVALID_PORTS)
 def test_exploitation_options_configuration_schema__ports_out_of_range(ports):
-    invalid_ports_configuration = {"http_ports": ports}
-
     with pytest.raises(ValueError):
-        ExploitationOptionsConfiguration(**invalid_ports_configuration)
+        ExploitationOptionsConfiguration(http_ports=ports)
 
 
 def test_exploiter_configuration_schema():
     name = "bond"
     options = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
 
-    config = PluginConfiguration(**{"name": name, "options": options})
+    config = PluginConfiguration(name=name, options=options)
 
     assert config.name == name
     assert config.options == options
