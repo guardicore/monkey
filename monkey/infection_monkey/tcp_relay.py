@@ -33,7 +33,7 @@ class TCPRelay(Thread):
         self._target_addr = target_addr
         self._target_port = target_port
         self._new_client_timeout = new_client_timeout
-        super(TCPRelay, self).__init__(name="MonkeyTcpRelayThread")
+        super().__init__(name="MonkeyTcpRelayThread")
         self.daemon = True
         self._relay_users: Dict[IPv4Address, RelayUser] = {}
         self._potential_users: Dict[IPv4Address, RelayUser] = {}
