@@ -4,7 +4,7 @@ from threading import Event, Lock, Thread
 from time import sleep, time
 from typing import Dict
 
-from infection_monkey.transport.tcp import TcpProxy
+from infection_monkey.network.relay.tcp import TcpProxy
 
 DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients to connect
 RELAY_CONTROL_MESSAGE = b"infection-monkey-relay-control-message: -"
