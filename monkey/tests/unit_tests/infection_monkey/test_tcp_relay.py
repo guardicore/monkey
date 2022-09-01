@@ -1,6 +1,6 @@
 from threading import Thread
 
-from monkey.infection_monkey.tcp_relay import TCPRelay
+from monkey.infection_monkey.tcp_relay import RELAY_CONTROL_MESSAGE, TCPRelay
 
 
 def join_or_kill_thread(thread: Thread, timeout: float):
@@ -46,7 +46,7 @@ def test_user_removed_on_request():
     relay = TCPRelay(9975, "0.0.0.0", 9976)
     new_user = "0.0.0.1"
     relay.on_user_connected(new_user)
-    relay.on_user_data_received(b"-", "0.0.0.1")
+    relay.on_user_data_received(RELAY_CONTROL_MESSAGE, "0.0.0.1")
 
     users = relay.relay_users()
     assert len(users) == 0

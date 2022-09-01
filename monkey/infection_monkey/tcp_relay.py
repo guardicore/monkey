@@ -6,6 +6,7 @@ from typing import List
 from infection_monkey.transport.tcp import TcpProxy
 
 DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients to connect
+RELAY_CONTROL_MESSAGE = b"infection-monkey-relay-control-message: -"
 
 
 @dataclass
@@ -77,7 +78,7 @@ class TCPRelay(Thread):
             self._potential_users.append(RelayUser(user, time()))
 
     def on_user_data_received(self, data: bytes, user: str) -> bool:
-        if data.startswith(b"-"):
+        if data.startswith(RELAY_CONTROL_MESSAGE):
             self._disconnect_user(user)
             return False
         return True
