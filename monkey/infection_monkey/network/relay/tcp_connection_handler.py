@@ -41,3 +41,11 @@ class TCPConnectionHandler(Thread):
 
     def stop(self):
         self._stopped = True
+
+    def notify_client_connected(self, callback: Callable[[socket.socket, IPv4Address], None]):
+        """
+        Register to be notified when a client connects.
+
+        :param callback: Callable used to notify when a client connects.
+        """
+        self._client_connected = callback
