@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, NTHash, Password, Username
 
@@ -50,7 +52,7 @@ CREDENTIALS = (
     Credentials(None, NTHash("50c9987a6bf1ac59398df9f911122c9b")),
 )
 
-smb_pth_test_configuration = noop_test_configuration.copy()
+smb_pth_test_configuration = dataclasses.replace(noop_test_configuration)
 replace_agent_configuration(
     test_configuration=smb_pth_test_configuration, agent_configuration=test_agent_configuration
 )
