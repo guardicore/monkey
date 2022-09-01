@@ -72,10 +72,6 @@ class TCPRelay(Thread):
 
             self._relay_users[user_address] = RelayUser(user_address, time())
 
-    def on_user_disconnected(self, user_address: IPv4Address):
-        """Handle user disconnection."""
-        pass
-
     def relay_users(self) -> Dict[IPv4Address, RelayUser]:
         """
         Get the list of users connected to the relay.

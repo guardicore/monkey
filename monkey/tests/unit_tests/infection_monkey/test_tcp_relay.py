@@ -42,15 +42,6 @@ def test_user_added(tcp_relay):
     assert NEW_USER_ADDRESS in users
 
 
-def test_user_not_removed_on_disconnect(tcp_relay):
-    # A user should only be disconnected when they send a disconnect request
-    tcp_relay.on_user_connected(NEW_USER_ADDRESS)
-    tcp_relay.on_user_disconnected(NEW_USER_ADDRESS)
-
-    users = tcp_relay.relay_users()
-    assert len(users) == 1
-
-
 def test_user_removed_on_request(tcp_relay):
     tcp_relay.on_user_connected(NEW_USER_ADDRESS)
     tcp_relay.on_user_data_received(RELAY_CONTROL_MESSAGE, NEW_USER_ADDRESS)
