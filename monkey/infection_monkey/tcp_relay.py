@@ -44,8 +44,7 @@ class TCPRelay(Thread):
             local_port=self._local_port,
             dest_host=self._target_addr,
             dest_port=self._target_port,
-            client_connected=self.on_user_connected,
-            client_disconnected=self.on_user_disconnected,
+            client_connected=self.add_relay_user,
             client_data_received=self.on_user_data_received,
         )
         proxy.start()

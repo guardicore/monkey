@@ -80,6 +80,7 @@ class TcpProxy(TransportProxyBase):
     ):
         super().__init__(local_port, dest_host, dest_port, local_host)
         self._client_connected = client_connected
+        # TODO: Rethink client_disconnected
         self._client_disconnected = client_disconnected
         self._client_data_received = client_data_received
 
