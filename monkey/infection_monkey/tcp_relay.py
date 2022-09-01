@@ -9,6 +9,7 @@ from infection_monkey.network.relay import (
     RelayUserHandler,
     SocketsPipe,
     TCPConnectionHandler,
+    TCPPipeSpawner,
 )
 
 DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients to connect
@@ -21,20 +22,18 @@ class TCPRelay(Thread):
 
     def __init__(
         self,
-        local_port: int,
-        target_addr: str,
-        target_port: int,
+        relay_user_handler: RelayUserHandler,
+        connection_handler: TCPConnectionHandler,
+        pipe_spawner: TCPPipeSpawner,
         new_client_timeout: float = DEFAULT_NEW_CLIENT_TIMEOUT,
     ):
         self._stopped = Event()
 
-        self._user_handler = RelayUserHandler()
-        self._connection_handler = TCPConnectionHandler(
-            local_port, client_connected=self._user_connected
-        )
-        self._local_port = local_port
-        self._target_addr = target_addr
-        self._target_port = target_port
+        self._user_handler = relay_user_handler
+        self._connection_handler = connection_handler
+        self._connection_handler.notify_client_connected(self._user_connected)
+        self._pipe_spawner = pipe_spawner
+        self._pipe_spawner.notify_client_data_received(self._user_handler.on_user_data_received)
         self._new_client_timeout = new_client_timeout
         super().__init__(name="MonkeyTcpRelayThread")
         self.daemon = True
@@ -60,16 +59,7 @@ class TCPRelay(Thread):
         self._spawn_pipe(source)
 
     def _spawn_pipe(self, source: socket.socket):
-        dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            dest.connect((self._target_addr, self._target_port))
-        except socket.error:
-            source.close()
-            dest.close()
-
-        pipe = SocketsPipe(
-            source, dest, client_data_received=self._user_handler.on_user_data_received
-        )
+        pipe = self._pipe_spawner.spawn_pipe(source)
         self._pipes.append(pipe)
         pipe.run()
 
