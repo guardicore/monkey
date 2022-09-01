@@ -39,7 +39,7 @@ def test_user_added(tcp_relay):
 
     users = tcp_relay.relay_users()
     assert len(users) == 1
-    assert users[0].address == NEW_USER_ADDRESS
+    assert NEW_USER_ADDRESS in users
 
 
 def test_user_not_removed_on_disconnect(tcp_relay):
