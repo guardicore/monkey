@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 from unittest.mock import MagicMock
 from uuid import uuid4
@@ -10,6 +11,7 @@ from monkey_island.cc.repository import (
     IAgentRepository,
     MongoAgentRepository,
     RetrievalError,
+    StorageError,
     UnknownRecordError,
 )
 
@@ -46,6 +48,12 @@ def agent_repository() -> IAgentRepository:
 
 
 @pytest.fixture
+def empty_agent_repository() -> IAgentRepository:
+    mongo_client = mongomock.MongoClient()
+    return MongoAgentRepository(mongo_client)
+
+
+@pytest.fixture
 def error_raising_mock_mongo_client() -> mongomock.MongoClient:
     mongo_client = MagicMock(spec=mongomock.MongoClient)
     mongo_client.monkey_island = MagicMock(spec=mongomock.Database)
@@ -54,6 +62,9 @@ def error_raising_mock_mongo_client() -> mongomock.MongoClient:
     # The first call to find() must succeed
     mongo_client.monkey_island.agents.find_one = MagicMock(side_effect=Exception("some exception"))
     mongo_client.monkey_island.agents.find = MagicMock(side_effect=Exception("some exception"))
+    mongo_client.monkey_island.agents.replace_one = MagicMock(
+        side_effect=Exception("some exception")
+    )
 
     return mongo_client
 
@@ -61,6 +72,45 @@ def error_raising_mock_mongo_client() -> mongomock.MongoClient:
 @pytest.fixture
 def error_raising_agent_repository(error_raising_mock_mongo_client) -> IAgentRepository:
     return MongoAgentRepository(error_raising_mock_mongo_client)
+
+
+def test_upsert_agent__insert(agent_repository):
+    new_id = uuid4()
+    new_agent = Agent(
+        id=new_id,
+        machine_id=2,
+        start_time=datetime.fromtimestamp(1661858139),
+        parent_id=VICTIM_ZERO_ID,
+    )
+
+    agent_repository.upsert_agent(new_agent)
+
+    assert agent_repository.get_agent_by_id(new_id) == new_agent
+
+    for agent in AGENTS:
+        assert agent_repository.get_agent_by_id(agent.id) == agent
+
+
+def test_upsert_agent__insert_empty_repository(empty_agent_repository):
+    empty_agent_repository.upsert_agent(AGENTS[0])
+
+    assert empty_agent_repository.get_agent_by_id(VICTIM_ZERO_ID) == AGENTS[0]
+
+
+def test_upsert_agent__update(agent_repository):
+    agents = deepcopy(AGENTS)
+    agents[0].stop_time = datetime.now()
+    agents[0].cc_server = "127.0.0.1:1984"
+
+    agent_repository.upsert_agent(agents[0])
+
+    for agent in agents:
+        assert agent_repository.get_agent_by_id(agent.id) == agent
+
+
+def test_upsert_agent__storage_error(error_raising_agent_repository):
+    with pytest.raises(StorageError):
+        error_raising_agent_repository.upsert_agent(AGENTS[0])
 
 
 def test_get_agent_by_id(agent_repository):
