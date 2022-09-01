@@ -31,7 +31,6 @@ def test_ssh_credentials_empty_results(monkeypatch, ssh_creds, patch_telemetry_m
 
 
 def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger):
-
     ssh_creds = [
         {
             "name": "ubuntu",
@@ -56,13 +55,15 @@ def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger):
     patch_ssh_handler(ssh_creds, monkeypatch)
 
     # Expected credentials
-    username = Username("ubuntu")
-    username2 = Username("mcus")
-    username3 = Username("guest")
+    username = Username(username="ubuntu")
+    username2 = Username(username="mcus")
+    username3 = Username(username="guest")
 
-    ssh_keypair1 = SSHKeypair("ExtremelyGoodPrivateKey", "SomePublicKeyUbuntu")
-    ssh_keypair2 = SSHKeypair("", "AnotherPublicKey")
-    ssh_keypair3 = SSHKeypair("PrivKey", "PubKey")
+    ssh_keypair1 = SSHKeypair(
+        private_key="ExtremelyGoodPrivateKey", public_key="SomePublicKeyUbuntu"
+    )
+    ssh_keypair2 = SSHKeypair(private_key="", public_key="AnotherPublicKey")
+    ssh_keypair3 = SSHKeypair(private_key="PrivKey", public_key="PubKey")
 
     expected = [
         Credentials(identity=username, secret=ssh_keypair1),

@@ -2,13 +2,13 @@ from unittest.mock import MagicMock
 
 import pytest
 from tests.data_for_tests.propagation_credentials import (
+    CREDENTIALS,
     LM_HASH,
     NT_HASH,
     PASSWORD_1,
     PASSWORD_2,
     PASSWORD_3,
     PRIVATE_KEY,
-    PROPAGATION_CREDENTIALS,
     PUBLIC_KEY,
     SPECIAL_USERNAME,
     USERNAME,
@@ -17,7 +17,6 @@ from tests.data_for_tests.propagation_credentials import (
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 from infection_monkey.credential_repository import AggregatingPropagationCredentialsRepository
 
-CONTROL_CHANNEL_CREDENTIALS = PROPAGATION_CREDENTIALS
 TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS = {
     "exploit_user_list": {USERNAME, SPECIAL_USERNAME},
     "exploit_password_list": {PASSWORD_1, PASSWORD_2, PASSWORD_3},
@@ -41,26 +40,32 @@ STOLEN_PRIVATE_KEY_1 = "some_private_key_1"
 STOLEN_PRIVATE_KEY_2 = "some_private_key_2"
 STOLEN_CREDENTIALS = [
     Credentials(
-        identity=Username(STOLEN_USERNAME_1),
-        secret=Password(PASSWORD_1),
+        identity=Username(username=STOLEN_USERNAME_1),
+        secret=Password(password=PASSWORD_1),
     ),
-    Credentials(identity=Username(STOLEN_USERNAME_1), secret=Password(STOLEN_PASSWORD_1)),
     Credentials(
-        identity=Username(STOLEN_USERNAME_2),
+        identity=Username(username=STOLEN_USERNAME_1), secret=Password(password=STOLEN_PASSWORD_1)
+    ),
+    Credentials(
+        identity=Username(username=STOLEN_USERNAME_2),
         secret=SSHKeypair(public_key=STOLEN_PUBLIC_KEY_1, private_key=STOLEN_PRIVATE_KEY_1),
     ),
     Credentials(
         identity=None,
-        secret=Password(STOLEN_PASSWORD_2),
+        secret=Password(password=STOLEN_PASSWORD_2),
     ),
-    Credentials(identity=Username(STOLEN_USERNAME_2), secret=LMHash(STOLEN_LM_HASH)),
-    Credentials(identity=Username(STOLEN_USERNAME_2), secret=NTHash(STOLEN_NT_HASH)),
-    Credentials(identity=Username(STOLEN_USERNAME_3), secret=None),
+    Credentials(
+        identity=Username(username=STOLEN_USERNAME_2), secret=LMHash(lm_hash=STOLEN_LM_HASH)
+    ),
+    Credentials(
+        identity=Username(username=STOLEN_USERNAME_2), secret=NTHash(nt_hash=STOLEN_NT_HASH)
+    ),
+    Credentials(identity=Username(username=STOLEN_USERNAME_3), secret=None),
 ]
 
 STOLEN_SSH_KEYS_CREDENTIALS = [
     Credentials(
-        identity=Username(USERNAME),
+        identity=Username(username=USERNAME),
         secret=SSHKeypair(public_key=STOLEN_PUBLIC_KEY_2, private_key=STOLEN_PRIVATE_KEY_2),
     )
 ]
@@ -69,7 +74,7 @@ STOLEN_SSH_KEYS_CREDENTIALS = [
 @pytest.fixture
 def aggregating_credentials_repository() -> AggregatingPropagationCredentialsRepository:
     control_channel = MagicMock()
-    control_channel.get_credentials_for_propagation.return_value = CONTROL_CHANNEL_CREDENTIALS
+    control_channel.get_credentials_for_propagation.return_value = CREDENTIALS
     return AggregatingPropagationCredentialsRepository(control_channel)
 
 

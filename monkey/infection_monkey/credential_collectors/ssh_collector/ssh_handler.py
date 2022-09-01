@@ -147,7 +147,7 @@ def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
         secret = None
 
         if info.get("name", ""):
-            identity = Username(info["name"])
+            identity = Username(username=info["name"])
 
         ssh_keypair = {}
         for key in ["public_key", "private_key"]:
@@ -156,11 +156,12 @@ def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
 
             if len(ssh_keypair):
                 secret = SSHKeypair(
-                    ssh_keypair.get("private_key", ""), ssh_keypair.get("public_key", "")
+                    private_key=ssh_keypair.get("private_key", ""),
+                    public_key=ssh_keypair.get("public_key", ""),
                 )
 
         if any([identity, secret]):
-            ssh_credentials.append(Credentials(identity, secret))
+            ssh_credentials.append(Credentials(identity=identity, secret=secret))
 
     return ssh_credentials
 

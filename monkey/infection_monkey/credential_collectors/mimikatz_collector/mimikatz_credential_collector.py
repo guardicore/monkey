@@ -55,22 +55,22 @@ class MimikatzCredentialCollector(ICredentialCollector):
             identity = None
 
             if wc.username:
-                identity = Username(wc.username)
+                identity = Username(username=wc.username)
 
             if wc.password:
-                password = Password(wc.password)
-                credentials.append(Credentials(identity, password))
+                password = Password(password=wc.password)
+                credentials.append(Credentials(identity=identity, secret=password))
 
             if wc.lm_hash:
                 lm_hash = LMHash(lm_hash=wc.lm_hash)
-                credentials.append(Credentials(identity, lm_hash))
+                credentials.append(Credentials(identity=identity, secret=lm_hash))
 
             if wc.ntlm_hash:
                 ntlm_hash = NTHash(nt_hash=wc.ntlm_hash)
-                credentials.append(Credentials(identity, ntlm_hash))
+                credentials.append(Credentials(identity=identity, secret=ntlm_hash))
 
             if len(credentials) == 0 and identity is not None:
-                credentials.append(Credentials(identity, None))
+                credentials.append(Credentials(identity=identity, secret=None))
 
         return credentials
 

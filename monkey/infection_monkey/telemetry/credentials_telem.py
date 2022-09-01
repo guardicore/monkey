@@ -1,4 +1,3 @@
-import json
 from typing import Iterable
 
 from common.common_consts.telem_categories import TelemCategoryEnum
@@ -24,4 +23,4 @@ class CredentialsTelem(BaseTelem):
         super().send(log_data=False)
 
     def get_data(self):
-        return [json.loads(Credentials.to_json(c)) for c in self._credentials]
+        return [c.dict(simplify=True) for c in self._credentials]

@@ -41,9 +41,9 @@ def test_pypykatz_result_parsing(monkeypatch):
     win_creds = [WindowsCredentials(username="user", password="secret", ntlm_hash="", lm_hash="")]
     patch_pypykatz(win_creds, monkeypatch)
 
-    username = Username("user")
-    password = Password("secret")
-    expected_credentials = Credentials(username, password)
+    username = Username(username="user")
+    password = Password(password="secret")
+    expected_credentials = Credentials(identity=username, secret=password)
 
     collected_credentials = collect_credentials()
     assert len(collected_credentials) == 1
@@ -70,10 +70,13 @@ def test_pypykatz_result_parsing_defaults(monkeypatch):
     patch_pypykatz(win_creds, monkeypatch)
 
     # Expected credentials
-    username = Username("user2")
-    password = Password("secret2")
-    lm_hash = LMHash("0182BD0BD4444BF8FC83B5D9042EED2E")
-    expected_credentials = [Credentials(username, password), Credentials(username, lm_hash)]
+    username = Username(username="user2")
+    password = Password(password="secret2")
+    lm_hash = LMHash(lm_hash="0182BD0BD4444BF8FC83B5D9042EED2E")
+    expected_credentials = [
+        Credentials(identity=username, secret=password),
+        Credentials(identity=username, secret=lm_hash),
+    ]
 
     collected_credentials = collect_credentials()
     assert len(collected_credentials) == 2
@@ -91,9 +94,12 @@ def test_pypykatz_result_parsing_no_identities(monkeypatch):
     ]
     patch_pypykatz(win_creds, monkeypatch)
 
-    lm_hash = LMHash("0182BD0BD4444BF8FC83B5D9042EED2E")
-    nt_hash = NTHash("E9F85516721DDC218359AD5280DB4450")
-    expected_credentials = [Credentials(None, lm_hash), Credentials(None, nt_hash)]
+    lm_hash = LMHash(lm_hash="0182BD0BD4444BF8FC83B5D9042EED2E")
+    nt_hash = NTHash(nt_hash="E9F85516721DDC218359AD5280DB4450")
+    expected_credentials = [
+        Credentials(identity=None, secret=lm_hash),
+        Credentials(identity=None, secret=nt_hash),
+    ]
 
     collected_credentials = collect_credentials()
     assert len(collected_credentials) == 2
@@ -112,7 +118,7 @@ def test_pypykatz_result_parsing_no_secrets(monkeypatch):
     ]
     patch_pypykatz(win_creds, monkeypatch)
 
-    expected_credentials = [Credentials(Username(username), None)]
+    expected_credentials = [Credentials(identity=Username(username=username), secret=None)]
 
     collected_credentials = collect_credentials()
     assert len(collected_credentials) == 1
