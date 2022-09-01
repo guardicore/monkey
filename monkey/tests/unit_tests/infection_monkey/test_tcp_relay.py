@@ -1,6 +1,19 @@
+from ipaddress import IPv4Address
 from threading import Thread
 
+import pytest
+
 from monkey.infection_monkey.tcp_relay import RELAY_CONTROL_MESSAGE, TCPRelay
+
+NEW_USER_ADDRESS = IPv4Address("0.0.0.1")
+LOCAL_PORT = 9975
+TARGET_ADDRESS = "0.0.0.0"
+TARGET_PORT = 9976
+
+
+@pytest.fixture
+def tcp_relay():
+    return TCPRelay(LOCAL_PORT, TARGET_ADDRESS, TARGET_PORT)
 
 
 def join_or_kill_thread(thread: Thread, timeout: float):
@@ -21,34 +34,28 @@ def join_or_kill_thread(thread: Thread, timeout: float):
 #     assert join_or_kill_thread(relay, 0.2)
 
 
-def test_user_added():
-    relay = TCPRelay(9975, "0.0.0.0", 9976)
-    new_user = "0.0.0.1"
-    relay.on_user_connected(new_user)
+def test_user_added(tcp_relay):
+    tcp_relay.on_user_connected(NEW_USER_ADDRESS)
 
-    users = relay.relay_users()
+    users = tcp_relay.relay_users()
     assert len(users) == 1
-    assert users[0].address == new_user
+    assert users[0].address == NEW_USER_ADDRESS
 
 
-def test_user_not_removed_on_disconnect():
+def test_user_not_removed_on_disconnect(tcp_relay):
     # A user should only be disconnected when they send a disconnect request
-    relay = TCPRelay(9975, "0.0.0.0", 9976)
-    new_user = "0.0.0.1"
-    relay.on_user_connected(new_user)
-    relay.on_user_disconnected(new_user)
+    tcp_relay.on_user_connected(NEW_USER_ADDRESS)
+    tcp_relay.on_user_disconnected(NEW_USER_ADDRESS)
 
-    users = relay.relay_users()
+    users = tcp_relay.relay_users()
     assert len(users) == 1
 
 
-def test_user_removed_on_request():
-    relay = TCPRelay(9975, "0.0.0.0", 9976)
-    new_user = "0.0.0.1"
-    relay.on_user_connected(new_user)
-    relay.on_user_data_received(RELAY_CONTROL_MESSAGE, "0.0.0.1")
+def test_user_removed_on_request(tcp_relay):
+    tcp_relay.on_user_connected(NEW_USER_ADDRESS)
+    tcp_relay.on_user_data_received(RELAY_CONTROL_MESSAGE, NEW_USER_ADDRESS)
 
-    users = relay.relay_users()
+    users = tcp_relay.relay_users()
     assert len(users) == 0
 
 
