@@ -46,8 +46,7 @@ class TCPRelay(Thread):
         )
         proxy.start()
 
-        while not self._stopped.is_set():
-            sleep(0.001)
+        self._stopped.wait()
 
         self._wait_for_users_to_disconnect()
 
