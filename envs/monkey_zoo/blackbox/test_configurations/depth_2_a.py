@@ -2,14 +2,7 @@ from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, Password, Username
 
 from .noop import noop_test_configuration
-from .utils import (
-    add_exploiters,
-    add_subnets,
-    add_tcp_ports,
-    replace_agent_configuration,
-    replace_propagation_credentials,
-    set_maximum_depth,
-)
+from .utils import add_exploiters, add_subnets, add_tcp_ports, set_maximum_depth
 
 
 # Tests:
@@ -34,20 +27,16 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
     return add_tcp_ports(agent_configuration, ports)
 
 
-test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 2)
-test_configuration = _add_exploiters(test_configuration)
-test_configuration = _add_subnets(test_configuration)
-test_configuration = _add_tcp_ports(test_configuration)
-
-depth_2_a_test_configuration = replace_agent_configuration(
-    noop_test_configuration, test_configuration
-)
-
+test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 2)
+test_agent_configuration = _add_exploiters(test_agent_configuration)
+test_agent_configuration = _add_subnets(test_agent_configuration)
+test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
 CREDENTIALS = (
     Credentials(Username("m0nk3y"), None),
     Credentials(None, Password("^NgDvY59~8")),
 )
-depth_2_a_test_configuration = replace_propagation_credentials(
-    depth_2_a_test_configuration, CREDENTIALS
-)
+
+depth_2_a_test_configuration = noop_test_configuration.copy()
+depth_2_a_test_configuration.agent_configuration = test_agent_configuration
+depth_2_a_test_configuration.propagation_credentials = CREDENTIALS
