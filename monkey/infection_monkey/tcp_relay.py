@@ -11,7 +11,7 @@ DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients
 @dataclass
 class RelayUser:
     address: str
-    time: float
+    last_update_time: float
 
 
 class TCPRelay(Thread):

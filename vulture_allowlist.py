@@ -288,6 +288,7 @@ serialized_event
 
 # TODO: Remove after #2231 is closed
 relay_users
+last_update_time
 
 # pydantic base models
 underscore_attrs_are_private
