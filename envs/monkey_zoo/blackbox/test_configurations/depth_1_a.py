@@ -9,6 +9,8 @@ from .utils import (
     add_http_ports,
     add_subnets,
     add_tcp_ports,
+    replace_agent_configuration,
+    replace_propagation_credentials,
     set_maximum_depth,
 )
 
@@ -89,5 +91,9 @@ CREDENTIALS = (
 )
 
 depth_1_a_test_configuration = noop_test_configuration.copy()
-depth_1_a_test_configuration.agent_configuration = test_agent_configuration
-depth_1_a_test_configuration.propagation_credentials = CREDENTIALS
+replace_agent_configuration(
+    test_configuration=depth_1_a_test_configuration, agent_configuration=test_agent_configuration
+)
+replace_propagation_credentials(
+    test_configuration=depth_1_a_test_configuration, propagation_credentials=CREDENTIALS
+)
