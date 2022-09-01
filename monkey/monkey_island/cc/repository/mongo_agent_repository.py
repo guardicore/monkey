@@ -5,6 +5,7 @@ from pymongo import MongoClient
 from monkey_island.cc.models import Agent, AgentID
 from monkey_island.cc.repository import (
     IAgentRepository,
+    RemovalError,
     RetrievalError,
     StorageError,
     UnknownRecordError,
@@ -61,4 +62,7 @@ class MongoAgentRepository(IAgentRepository):
         return Agent(**mongo_record)
 
     def reset(self):
-        pass
+        try:
+            self._agents_collection.drop()
+        except Exception as err:
+            raise RemovalError(f"Error resetting the repository: {err}")
