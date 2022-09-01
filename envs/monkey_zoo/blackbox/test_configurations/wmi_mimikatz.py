@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, Password, Username
 
@@ -55,7 +57,7 @@ CREDENTIALS = (
     Credentials(None, Password("Password1!")),
 )
 
-wmi_mimikatz_test_configuration = noop_test_configuration.copy()
+wmi_mimikatz_test_configuration = dataclasses.replace(noop_test_configuration)
 replace_agent_configuration(
     test_configuration=wmi_mimikatz_test_configuration, agent_configuration=test_agent_configuration
 )

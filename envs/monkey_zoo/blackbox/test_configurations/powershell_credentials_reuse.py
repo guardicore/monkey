@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 
 from .noop import noop_test_configuration
@@ -35,7 +37,7 @@ test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
-powershell_credentials_reuse_test_configuration = noop_test_configuration.copy()
+powershell_credentials_reuse_test_configuration = dataclasses.replace(noop_test_configuration)
 replace_agent_configuration(
     test_configuration=powershell_credentials_reuse_test_configuration,
     agent_configuration=test_agent_configuration,

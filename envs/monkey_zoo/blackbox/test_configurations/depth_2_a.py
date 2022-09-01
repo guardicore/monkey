@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, Password, Username
 
@@ -44,7 +46,7 @@ CREDENTIALS = (
     Credentials(None, Password("^NgDvY59~8")),
 )
 
-depth_2_a_test_configuration = noop_test_configuration.copy()
+depth_2_a_test_configuration = dataclasses.replace(noop_test_configuration)
 replace_agent_configuration(
     test_configuration=depth_2_a_test_configuration, agent_configuration=test_agent_configuration
 )

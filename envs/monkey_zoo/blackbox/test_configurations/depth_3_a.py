@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, NTHash, Password, Username
 
@@ -66,7 +68,7 @@ CREDENTIALS = (
     Credentials(None, NTHash("50c9987a6bf1ac59398df9f911122c9b")),
 )
 
-depth_3_a_test_configuration = noop_test_configuration.copy()
+depth_3_a_test_configuration = dataclasses.replace(noop_test_configuration)
 replace_agent_configuration(
     test_configuration=depth_3_a_test_configuration, agent_configuration=test_agent_configuration
 )
