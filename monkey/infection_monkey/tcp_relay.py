@@ -60,7 +60,7 @@ class TCPRelay(Thread):
     def stop(self):
         self._stopped.set()
 
-    def on_user_connected(self, user_address: IPv4Address):
+    def add_relay_user(self, user_address: IPv4Address):
         """
         Handle new user connection.
 
