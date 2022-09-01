@@ -30,7 +30,7 @@ class MonkeyIslandClient(object):
 
     def get_propagation_credentials(self) -> Sequence[Credentials]:
         response = self.requests.get("api/propagation-credentials")
-        return [Credentials.from_mapping(credentials) for credentials in response.json()]
+        return [Credentials(**credentials) for credentials in response.json()]
 
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
@@ -61,7 +61,7 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def _import_credentials(self, propagation_credentials: Credentials):
         serialized_propagation_credentials = [
-            Credentials.to_mapping(credentials) for credentials in propagation_credentials
+            Credentials.dict(credentials) for credentials in propagation_credentials
         ]
         response = self.requests.put_json(
             "/api/propagation-credentials/configured-credentials",

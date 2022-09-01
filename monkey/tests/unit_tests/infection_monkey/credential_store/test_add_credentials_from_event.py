@@ -8,7 +8,11 @@ from infection_monkey.credential_repository import (
     add_credentials_from_event_to_propagation_credentials_repository,
 )
 
-credentials = [Credentials(identity=Username("test_username"), secret=Password("some_password"))]
+credentials = [
+    Credentials(
+        identity=Username(username="test_username"), secret=Password(password="some_password")
+    )
+]
 
 credentials_stolen_event = CredentialsStolenEvent(
     source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),

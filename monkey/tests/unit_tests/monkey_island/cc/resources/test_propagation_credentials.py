@@ -5,15 +5,10 @@ from urllib.parse import urljoin
 
 import pytest
 from tests.common import StubDIContainer
-from tests.data_for_tests.propagation_credentials import (
-    LM_HASH_CREDENTIALS,
-    NT_HASH_CREDENTIALS,
-    PASSWORD_CREDENTIALS_1,
-    PASSWORD_CREDENTIALS_2,
-)
+from tests.data_for_tests.propagation_credentials import LM_HASH, NT_HASH, PASSWORD_1, PASSWORD_2
 from tests.monkey_island import InMemoryCredentialsRepository
 
-from common.credentials import Credentials
+from common.credentials import Credentials, LMHash, NTHash, Password
 from monkey_island.cc.repository import ICredentialsRepository
 from monkey_island.cc.resources import PropagationCredentials
 from monkey_island.cc.resources.propagation_credentials import (
@@ -24,6 +19,10 @@ from monkey_island.cc.resources.propagation_credentials import (
 ALL_CREDENTIALS_URL = PropagationCredentials.urls[0]
 CONFIGURED_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL + "/", _configured_collection)
 STOLEN_CREDENTIALS_URL = urljoin(ALL_CREDENTIALS_URL + "/", _stolen_collection)
+CREDENTIALS_1 = Credentials(identity=None, secret=Password(password=PASSWORD_1))
+CREDENTIALS_2 = Credentials(identity=None, secret=LMHash(lm_hash=LM_HASH))
+CREDENTIALS_3 = Credentials(identity=None, secret=NTHash(nt_hash=NT_HASH))
+CREDENTIALS_4 = Credentials(identity=None, secret=Password(password=PASSWORD_2))
 
 
 @pytest.fixture
@@ -42,20 +41,18 @@ def flask_client(build_flask_client, credentials_repository):
 
 
 def test_propagation_credentials_endpoint_get(flask_client, credentials_repository):
-    credentials_repository.save_configured_credentials(
-        [PASSWORD_CREDENTIALS_1, NT_HASH_CREDENTIALS]
-    )
-    credentials_repository.save_stolen_credentials([LM_HASH_CREDENTIALS, PASSWORD_CREDENTIALS_2])
+    credentials_repository.save_configured_credentials([CREDENTIALS_1, CREDENTIALS_2])
+    credentials_repository.save_stolen_credentials([CREDENTIALS_3, CREDENTIALS_4])
 
     resp = flask_client.get(ALL_CREDENTIALS_URL)
-    actual_propagation_credentials = [Credentials.from_mapping(creds) for creds in resp.json]
+    actual_propagation_credentials = [Credentials(**creds) for creds in resp.json]
 
     assert resp.status_code == HTTPStatus.OK
     assert len(actual_propagation_credentials) == 4
-    assert PASSWORD_CREDENTIALS_1 in actual_propagation_credentials
-    assert LM_HASH_CREDENTIALS in actual_propagation_credentials
-    assert NT_HASH_CREDENTIALS in actual_propagation_credentials
-    assert PASSWORD_CREDENTIALS_2 in actual_propagation_credentials
+    assert CREDENTIALS_1 in actual_propagation_credentials
+    assert CREDENTIALS_2 in actual_propagation_credentials
+    assert CREDENTIALS_3 in actual_propagation_credentials
+    assert CREDENTIALS_4 in actual_propagation_credentials
 
 
 def pre_populate_repository(
@@ -69,24 +66,22 @@ def pre_populate_repository(
 
 @pytest.mark.parametrize("url", [CONFIGURED_CREDENTIALS_URL, STOLEN_CREDENTIALS_URL])
 def test_propagation_credentials_endpoint__get_stolen(flask_client, credentials_repository, url):
-    pre_populate_repository(
-        url, credentials_repository, [PASSWORD_CREDENTIALS_1, LM_HASH_CREDENTIALS]
-    )
+    pre_populate_repository(url, credentials_repository, [CREDENTIALS_1, CREDENTIALS_2])
 
     resp = flask_client.get(url)
-    actual_propagation_credentials = [Credentials.from_mapping(creds) for creds in resp.json]
+    actual_propagation_credentials = [Credentials(**creds) for creds in resp.json]
 
     assert resp.status_code == HTTPStatus.OK
     assert len(actual_propagation_credentials) == 2
-    assert actual_propagation_credentials[0] == PASSWORD_CREDENTIALS_1
-    assert actual_propagation_credentials[1] == LM_HASH_CREDENTIALS
+    assert actual_propagation_credentials[0].secret.password == PASSWORD_1
+    assert actual_propagation_credentials[1].secret.lm_hash == LM_HASH
 
 
 def test_configured_propagation_credentials_endpoint_put(flask_client, credentials_repository):
     pre_populate_repository(
         CONFIGURED_CREDENTIALS_URL,
         credentials_repository,
-        [PASSWORD_CREDENTIALS_1, LM_HASH_CREDENTIALS],
+        [CREDENTIALS_1, CREDENTIALS_2],
     )
     resp = flask_client.put(CONFIGURED_CREDENTIALS_URL, json=[])
     assert resp.status_code == HTTPStatus.NO_CONTENT
