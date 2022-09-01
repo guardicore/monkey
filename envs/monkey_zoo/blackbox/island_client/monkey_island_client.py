@@ -50,7 +50,7 @@ class MonkeyIslandClient(object):
     def _import_config(self, test_configuration: TestConfiguration):
         response = self.requests.put_json(
             "api/agent-configuration",
-            json=test_configuration.agent_configuration.dict(),
+            json=test_configuration.agent_configuration.dict(simplify=True),
         )
         if response.ok:
             LOGGER.info("Configuration is imported.")
