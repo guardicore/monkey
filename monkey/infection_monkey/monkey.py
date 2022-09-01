@@ -27,7 +27,7 @@ from infection_monkey.credential_repository import (
     IPropagationCredentialsRepository,
     add_credentials_from_event_to_propagation_credentials_repository,
 )
-from infection_monkey.exploit import CachingAgentRepository, ExploiterWrapper
+from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
@@ -270,10 +270,12 @@ class InfectionMonkey:
         puppet.load_plugin("smb", SMBFingerprinter(), PluginType.FINGERPRINTER)
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
-        agent_repository = CachingAgentRepository(
+        agent_binary_repository = CachingAgentBinaryRepository(
             f"https://{self._control_client.server_address}", self._control_client.proxies
         )
-        exploit_wrapper = ExploiterWrapper(self._telemetry_messenger, event_queue, agent_repository)
+        exploit_wrapper = ExploiterWrapper(
+            self._telemetry_messenger, event_queue, agent_binary_repository
+        )
 
         puppet.load_plugin(
             "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER

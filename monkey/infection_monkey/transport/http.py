@@ -19,7 +19,7 @@ logger = getLogger(__name__)
 class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     victim_os = ""
-    agent_repository = None
+    agent_binary_repository = None
 
     def version_string(self):
         return "Microsoft-IIS/7.5."
@@ -66,7 +66,7 @@ class FileServHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_error(500, "")
             return None, 0, 0
         try:
-            f = self.agent_repository.get_agent_binary(self.victim_os)
+            f = self.agent_binary_repository.get_agent_binary(self.victim_os)
         except IOError:
             self.send_error(404, "File not found")
             return None, 0, 0
@@ -178,7 +178,7 @@ class LockedHTTPServer(threading.Thread):
         local_port,
         victim_os,
         dropper_target_path,
-        agent_repository,
+        agent_binary_repository,
         lock,
         max_downloads=1,
     ):
@@ -186,7 +186,7 @@ class LockedHTTPServer(threading.Thread):
         self._local_port = local_port
         self._victim_os = victim_os
         self._dropper_target_path = dropper_target_path
-        self._agent_repository = agent_repository
+        self._agent_binary_repository = agent_binary_repository
         self.max_downloads = max_downloads
         self.downloads = 0
         self._stopped = False
@@ -200,7 +200,7 @@ class LockedHTTPServer(threading.Thread):
             from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 
             victim_os = self._victim_os
-            agent_repository = self._agent_repository
+            agent_binary_repository = self._agent_binary_repository
 
             @staticmethod
             def report_download(dest=None):
