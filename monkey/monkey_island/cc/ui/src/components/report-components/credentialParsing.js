@@ -1,4 +1,6 @@
-export function getAllUsernames(stolen, configured){
+import {CredentialTypes, SecretTypes} from '../utils/CredentialTypes.js';
+
+export function getAllUsernames(stolen, configured) {
   let usernames = [];
   usernames.push(...getCredentialsUsernames(stolen));
   usernames.push(...getCredentialsUsernames(configured));
@@ -7,60 +9,62 @@ export function getAllUsernames(stolen, configured){
 
 export function getCredentialsUsernames(credentials) {
   let usernames = [];
-  for(let i = 0; i < credentials.length; i++){
+  for (let i = 0; i < credentials.length; i++) {
     let username = credentials[i]['identity'];
-    if(username !== null) {
+    if (username !== null) {
       usernames.push(username['username']);
     }
   }
   return usernames;
 }
 
-export function getAllSecrets(stolen, configured){
+export function getAllSecrets(stolen, configured) {
   let secrets = [];
-  for(let i = 0; i < stolen.length; i++){
+  for (let i = 0; i < stolen.length; i++) {
     let secret = stolen[i]['secret'];
-    if(secret !== null){
-      secrets.push(getSecretsFromCredential(secret));
+    if (secret !== null) {
+      secrets.push(reformatSecret(secret));
     }
   }
-  for(let i = 0; i < configured.length; i++){
+  for (let i = 0; i < configured.length; i++) {
     let secret = configured[i]['secret'];
-    if(secret !== null){
-      secrets.push(getSecretsFromCredential(secret));
+    if (secret !== null) {
+      secrets.push(reformatSecret(secret));
     }
   }
   return secrets;
 }
 
-function getSecretsFromCredential(credential) {
-  if(credential['credential_type'] === 'SSH_KEYPAIR'){
-    return {'type': 'SSH keypair', 'content': credential['private_key']}
+function reformatSecret(secret) {
+  if (secret.hasOwnProperty(SecretTypes.Password)) {
+    return {'type': CredentialTypes.Password, 'content': secret[SecretTypes.Password]}
   }
-  if(credential['credential_type'] === 'NT_HASH'){
-    return {'type': 'NT hash', 'content': credential['nt_hash']}
+  if (secret.hasOwnProperty(SecretTypes.NTHash)) {
+    return {'type': CredentialTypes.NTHash, 'content': secret[SecretTypes.NTHash]}
   }
-  if(credential['credential_type'] === 'LM_HASH'){
-    return {'type': 'LM hash', 'content': credential['lm_hash']}
+  if (secret.hasOwnProperty(SecretTypes.LMHash)) {
+    return {'type': CredentialTypes.LMHash, 'content': secret[SecretTypes.LMHash]}
   }
-  if(credential['credential_type'] === 'PASSWORD'){
-    return {'type': 'Password', 'content': credential['password']}
+  if (secret.hasOwnProperty(SecretTypes.PrivateKey)) {
+    return {
+      'type': CredentialTypes.SSHKeys,
+      'content': secret[SecretTypes.PrivateKey]
+    }
   }
 }
 
 export function getCredentialsTableData(credentials) {
+  let table_data = [];
 
-    let table_data = [];
+  let identites = getCredentialsUsernames(credentials);
+  let secrets = getAllSecrets(credentials, [])
 
-    let identites = getCredentialsUsernames(credentials);
-    let secrets = getAllSecrets(credentials, [])
+  for (let i = 0; i < credentials.length; i++) {
+    let row_data = {};
+    row_data['username'] = identites[i];
+    row_data['type'] = secrets[i]['type'];
+    table_data.push(row_data);
+  }
 
-    for(let i=0; i<credentials.length; i++) {
-      let row_data = {};
-      row_data['username'] = identites[i];
-      row_data['type'] = secrets[i]['type'];
-      table_data.push(row_data);
-    }
-
-    return table_data;
+  return table_data;
 }
