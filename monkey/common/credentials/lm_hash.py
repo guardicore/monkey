@@ -1,25 +1,16 @@
-from dataclasses import field
-from typing import ClassVar
+import re
 
-from marshmallow import fields
-from pydantic.dataclasses import dataclass
+from pydantic import validator
+from pydantic.main import BaseModel
 
-from . import CredentialComponentType, ICredentialComponent
-from .credential_component_schema import CredentialComponentSchema, CredentialTypeField
-from .validators import credential_component_validator, ntlm_hash_validator
+from .validators import ntlm_hash_regex
 
 
-class LMHashSchema(CredentialComponentSchema):
-    credential_type = CredentialTypeField(CredentialComponentType.LM_HASH)
-    lm_hash = fields.Str(validate=ntlm_hash_validator)
-
-
-@dataclass
-class LMHash(ICredentialComponent):
-    credential_type: ClassVar[CredentialComponentType] = field(
-        default=CredentialComponentType.LM_HASH, init=False
-    )
+class LMHash(BaseModel):
     lm_hash: str
 
-    def __post_init__(self):
-        credential_component_validator(LMHashSchema(), self)
+    @validator("lm_hash")
+    def validate_hash_format(cls, nt_hash):
+        if not re.match(ntlm_hash_regex, nt_hash):
+            raise ValueError(f"Invalid lm hash provided: {nt_hash}")
+        return nt_hash
