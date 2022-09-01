@@ -79,7 +79,7 @@ class TCPRelay(Thread):
         with self._lock:
             return self._relay_users.copy()
 
-    def on_potential_new_user(self, user_address: IPv4Address):
+    def add_potential_user(self, user_address: IPv4Address):
         """
         Notify TCPRelay that a new user may try and connect.
 

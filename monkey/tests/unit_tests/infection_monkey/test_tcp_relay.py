@@ -57,7 +57,7 @@ def test_user_removed_on_request(tcp_relay):
 #     new_user = "0.0.0.1"
 #     relay.start()
 
-#     relay.on_potential_new_user(new_user)
+#     relay.add_potential_user(new_user)
 #     relay.stop()
 
 #     assert not join_or_kill_thread(relay, 0.1)  # Should be waiting
