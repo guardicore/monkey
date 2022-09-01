@@ -7,6 +7,8 @@ from .utils import (
     add_exploiters,
     add_subnets,
     add_tcp_ports,
+    replace_agent_configuration,
+    replace_propagation_credentials,
     set_maximum_depth,
 )
 
@@ -54,5 +56,9 @@ CREDENTIALS = (
 )
 
 wmi_mimikatz_test_configuration = noop_test_configuration.copy()
-wmi_mimikatz_test_configuration.agent_configuration = test_agent_configuration
-wmi_mimikatz_test_configuration.propagation_credentials = CREDENTIALS
+replace_agent_configuration(
+    test_configuration=wmi_mimikatz_test_configuration, agent_configuration=test_agent_configuration
+)
+replace_propagation_credentials(
+    test_configuration=wmi_mimikatz_test_configuration, propagation_credentials=CREDENTIALS
+)

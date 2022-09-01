@@ -1,6 +1,8 @@
-from typing import Sequence
+from typing import Sequence, Tuple
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.credentials import Credentials
+from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
 
 def add_exploiters(
@@ -84,3 +86,15 @@ def set_maximum_depth(
     agent_configuration_copy.propagation.maximum_depth = maximum_depth
 
     return agent_configuration_copy
+
+
+def replace_agent_configuration(
+    test_configuration: TestConfiguration, agent_configuration: AgentConfiguration
+):
+    test_configuration.agent_configuration = agent_configuration
+
+
+def replace_propagation_credentials(
+    test_configuration: TestConfiguration, propagation_credentials: Tuple[Credentials, ...]
+):
+    test_configuration.propagation_credentials = propagation_credentials
