@@ -16,7 +16,9 @@ class RelayUser:
 
 
 class TCPRelay(Thread):
-    """Provides and manages a TCP proxy connection."""
+    """
+    Provides and manages a TCP proxy connection.
+    """
 
     def __init__(
         self,
@@ -58,7 +60,11 @@ class TCPRelay(Thread):
         self._stopped.set()
 
     def on_user_connected(self, user: str):
-        """Handle new user connection."""
+        """
+        Handle new user connection.
+
+        :param user: A user which will be added to the relay
+        """
         with self._lock:
             self._potential_users = [u for u in self._potential_users if u.address != user]
             self._relay_users.append(RelayUser(user, time()))
@@ -68,16 +74,28 @@ class TCPRelay(Thread):
         pass
 
     def relay_users(self) -> List[RelayUser]:
-        """Get the list of users connected to the relay."""
+        """
+        Get the list of users connected to the relay.
+        """
         with self._lock:
             return self._relay_users.copy()
 
     def on_potential_new_user(self, user: str):
-        """Notify TCPRelay that a new user may try and connect."""
+        """
+        Notify TCPRelay that a new user may try and connect.
+
+        :param user: A potential user that tries to connect to the relay
+        """
         with self._lock:
             self._potential_users.append(RelayUser(user, time()))
 
     def on_user_data_received(self, data: bytes, user: str) -> bool:
+        """
+        Disconnect a user which a specific starting data.
+
+        :param data: The data that a relay recieved
+        :param user: User which send the data
+        """
         if data.startswith(RELAY_CONTROL_MESSAGE):
             self._disconnect_user(user)
             return False
