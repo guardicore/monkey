@@ -14,7 +14,7 @@ from monkey_island.cc.repository import (
 )
 
 VICTIM_ZERO_ID = uuid4()
-AGENTS = (
+RUNNING_AGENTS = (
     Agent(id=VICTIM_ZERO_ID, machine_id=1, start_time=datetime.fromtimestamp(1661856718)),
     Agent(
         id=uuid4(),
@@ -22,6 +22,8 @@ AGENTS = (
         start_time=datetime.fromtimestamp(1661856818),
         parent_id=VICTIM_ZERO_ID,
     ),
+)
+STOPPED_AGENTS = (
     Agent(
         id=uuid4(),
         machine_id=3,
@@ -29,6 +31,10 @@ AGENTS = (
         parent_id=VICTIM_ZERO_ID,
         stop_time=datetime.fromtimestamp(1661856773),
     ),
+)
+AGENTS = (
+    *RUNNING_AGENTS,
+    *STOPPED_AGENTS,
 )
 
 
@@ -47,6 +53,7 @@ def error_raising_mock_mongo_client() -> mongomock.MongoClient:
 
     # The first call to find() must succeed
     mongo_client.monkey_island.agents.find_one = MagicMock(side_effect=Exception("some exception"))
+    mongo_client.monkey_island.agents.find = MagicMock(side_effect=Exception("some exception"))
 
     return mongo_client
 
@@ -69,3 +76,16 @@ def test_get_agent_by_id__not_found(agent_repository):
 def test_get_agent_by_id__retrieval_error(error_raising_agent_repository):
     with pytest.raises(RetrievalError):
         error_raising_agent_repository.get_agent_by_id(AGENTS[0].id)
+
+
+def test_get_running_agents(agent_repository):
+    running_agents = agent_repository.get_running_agents()
+
+    assert len(running_agents) == len(RUNNING_AGENTS)
+    for a in running_agents:
+        assert a in RUNNING_AGENTS
+
+
+def test_get_running_agents__retrieval_error(error_raising_agent_repository):
+    with pytest.raises(RetrievalError):
+        error_raising_agent_repository.get_running_agents()

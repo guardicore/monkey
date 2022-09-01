@@ -27,7 +27,11 @@ class MongoAgentRepository(IAgentRepository):
         return MongoAgentRepository._mongo_record_to_agent(agent_dict)
 
     def get_running_agents(self) -> Sequence[Agent]:
-        pass
+        try:
+            cursor = self._agents_collection.find({"stop_time": None})
+            return list(map(MongoAgentRepository._mongo_record_to_agent, cursor))
+        except Exception as err:
+            raise RetrievalError(f"Error retrieving running agents: {err}")
 
     @staticmethod
     def _mongo_record_to_agent(mongo_record: MutableMapping[str, Any]) -> Agent:
