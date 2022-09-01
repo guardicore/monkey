@@ -6,8 +6,6 @@ from .utils import (
     add_exploiters,
     add_subnets,
     add_tcp_ports,
-    replace_agent_configuration,
-    replace_propagation_credentials,
     set_keep_tunnel_open_time,
     set_maximum_depth,
 )
@@ -48,16 +46,11 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
     return add_tcp_ports(agent_configuration, ports)
 
 
-test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 3)
-test_configuration = set_keep_tunnel_open_time(test_configuration, 20)
-test_configuration = _add_exploiters(test_configuration)
-test_configuration = _add_subnets(test_configuration)
-test_configuration = _add_tcp_ports(test_configuration)
-
-depth_3_a_test_configuration = replace_agent_configuration(
-    noop_test_configuration, test_configuration
-)
-
+test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 3)
+test_agent_configuration = set_keep_tunnel_open_time(test_agent_configuration, 20)
+test_agent_configuration = _add_exploiters(test_agent_configuration)
+test_agent_configuration = _add_subnets(test_agent_configuration)
+test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
 CREDENTIALS = (
     Credentials(Username("m0nk3y"), None),
@@ -70,6 +63,7 @@ CREDENTIALS = (
     Credentials(None, NTHash("5da0889ea2081aa79f6852294cba4a5e")),
     Credentials(None, NTHash("50c9987a6bf1ac59398df9f911122c9b")),
 )
-depth_3_a_test_configuration = replace_propagation_credentials(
-    depth_3_a_test_configuration, CREDENTIALS
-)
+
+depth_3_a_test_configuration = noop_test_configuration.copy()
+depth_3_a_test_configuration.agent_configuration = test_agent_configuration
+depth_3_a_test_configuration.propagation_credentials = CREDENTIALS
