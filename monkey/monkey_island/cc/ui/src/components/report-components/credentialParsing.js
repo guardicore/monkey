@@ -1,10 +1,10 @@
 import {CredentialTypes, SecretTypes} from '../utils/CredentialTypes.js';
 
 export function getAllUsernames(stolen, configured) {
-  let usernames = [];
-  usernames.push(...getCredentialsUsernames(stolen));
-  usernames.push(...getCredentialsUsernames(configured));
-  return usernames;
+  let usernames = new Set();
+  usernames.add(...getCredentialsUsernames(stolen));
+  usernames.add(...getCredentialsUsernames(configured));
+  return Array.from(usernames);
 }
 
 export function getCredentialsUsernames(credentials) {
@@ -19,20 +19,20 @@ export function getCredentialsUsernames(credentials) {
 }
 
 export function getAllSecrets(stolen, configured) {
-  let secrets = [];
+  let secrets = new Set();
   for (let i = 0; i < stolen.length; i++) {
     let secret = stolen[i]['secret'];
     if (secret !== null) {
-      secrets.push(reformatSecret(secret));
+      secrets.add(reformatSecret(secret));
     }
   }
   for (let i = 0; i < configured.length; i++) {
     let secret = configured[i]['secret'];
     if (secret !== null) {
-      secrets.push(reformatSecret(secret));
+      secrets.add(reformatSecret(secret));
     }
   }
-  return secrets;
+  return Array.from(secrets);
 }
 
 function reformatSecret(secret) {
