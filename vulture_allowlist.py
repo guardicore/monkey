@@ -7,6 +7,8 @@ from common.agent_configuration.agent_sub_configurations import (
     CustomPBAConfiguration,
     ScanTargetConfiguration,
 )
+from common.credentials import Credentials
+from common.utils import IJSONSerializable
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
@@ -310,3 +312,6 @@ SCANNED
 EXPLOITED
 CC
 CC_TUNNEL
+
+Credentials.from_json
+IJSONSerializable.from_json
