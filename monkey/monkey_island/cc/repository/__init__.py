@@ -8,6 +8,7 @@ from .i_simulation_repository import ISimulationRepository
 from .i_credentials_repository import ICredentialsRepository
 from .i_user_repository import IUserRepository
 from .i_machine_repository import IMachineRepository
+from .i_agent_repository import IAgentRepository
 
 
 from .local_storage_file_repository import LocalStorageFileRepository
@@ -21,3 +22,4 @@ from .file_simulation_repository import FileSimulationRepository
 from .json_file_user_repository import JSONFileUserRepository
 from .mongo_credentials_repository import MongoCredentialsRepository
 from .mongo_machine_repository import MongoMachineRepository
+from .mongo_agent_repository import MongoAgentRepository

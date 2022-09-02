@@ -238,8 +238,9 @@ NetworkMap
 Arc.dst_machine
 IMitigationsRepository.get_mitigations
 IMitigationsRepository.save_mitigations
-IAgentRepository.save_agent
-IAgentRepository.get_agents
+IAgentRepository.upsert_agent
+IAgentRepository.get_agent_by_id
+IAgentRepository.get_running_agents
 agent
 IAttackRepository.get_attack_report
 IAttackRepository.save_attack_report

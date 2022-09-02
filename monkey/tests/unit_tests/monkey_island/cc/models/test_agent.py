@@ -31,8 +31,11 @@ def test_constructor__defaults_from_objects():
 
 
 def test_constructor__defaults_from_simple_dict():
-    a = Agent(**AGENT_SIMPLE_DICT)
+    agent_simple_dict = AGENT_SIMPLE_DICT.copy()
+    del agent_simple_dict["parent_id"]
+    a = Agent(**agent_simple_dict)
 
+    assert a.parent_id is None
     assert a.stop_time is None
     assert a.cc_server == ""
     assert a.log_contents == ""
