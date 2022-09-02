@@ -314,3 +314,7 @@ SCANNED
 EXPLOITED
 CC
 CC_TUNNEL
+
+# TODO Remove with #2217
+IJSONSerializable
+from_json
