@@ -52,11 +52,16 @@ class RelayUserHandler:
         :param user_address: An address defining RelayUser which received the data
         """
         if data.startswith(RELAY_CONTROL_MESSAGE):
-            self._disconnect_user(user_address)
+            self.disconnect_user(user_address)
             return False
         return True
 
-    def _disconnect_user(self, user_address: IPv4Address):
+    def disconnect_user(self, user_address: IPv4Address):
+        """
+        Handle when a user disconnects.
+
+        :param user_address: The address of the disconnecting user.
+        """
         with self._lock:
             if user_address in self._relay_users:
                 del self._relay_users[user_address]
