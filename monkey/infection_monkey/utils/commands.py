@@ -13,7 +13,6 @@ def build_monkey_commandline(target_host: VictimHost, depth: int, location: str 
     return " " + " ".join(
         build_monkey_commandline_explicitly(
             GUID,
-            target_host.default_tunnel,
             target_host.default_server,
             depth,
             location,
@@ -23,7 +22,6 @@ def build_monkey_commandline(target_host: VictimHost, depth: int, location: str 
 
 def build_monkey_commandline_explicitly(
     parent: str = None,
-    tunnel: str = None,
     server: str = None,
     depth: int = None,
     location: str = None,
@@ -33,9 +31,6 @@ def build_monkey_commandline_explicitly(
     if parent is not None:
         cmdline.append("-p")
         cmdline.append(str(parent))
-    if tunnel is not None:
-        cmdline.append("-t")
-        cmdline.append(str(tunnel))
     if server is not None:
         cmdline.append("-s")
         cmdline.append(str(server))
