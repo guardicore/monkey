@@ -19,8 +19,6 @@ class CredentialsParser:
         self._parse_credentials(telemetry_dict, _agent_configuration)
 
     def _parse_credentials(self, telemetry_dict: Mapping, _agent_configuration):
-        credentials = [
-            Credentials.from_mapping(credential) for credential in telemetry_dict["data"]
-        ]
+        credentials = [Credentials(**credential) for credential in telemetry_dict["data"]]
 
         self._credentials_repository.save_stolen_credentials(credentials)
