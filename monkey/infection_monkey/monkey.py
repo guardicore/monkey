@@ -153,7 +153,9 @@ class InfectionMonkey:
         if self._current_server_is_set():
             logger.debug(f"Default server set to: {self._control_client.server_address}")
         else:
-            raise Exception(f"Monkey couldn't find servers: {self._opts.servers} .")
+            raise Exception(
+                f"Failed to connect to the island via any known server address: {self._opts.servers}"
+            )
 
         self._control_client.wakeup(parent=self._opts.parent)
 
