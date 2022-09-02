@@ -32,7 +32,8 @@ class ControlChannel(IControlChannel):
             id=get_agent_id(),
             machine_hardware_id=get_machine_id(),
             start_time=agent_process.get_start_time(),
-            parent_id=parent,
+            # parent_id=parent,
+            parent_id=None,  # None for now, until we change GUID to UUID
             cc_server=self._control_channel_server,
             network_interfaces=get_network_interfaces(),
         )
