@@ -299,10 +299,9 @@ event
 deserialize
 serialized_event
 
-# TODO: Remove after #2231 is closed
-relay_users
-last_update_time
-add_relay_user
+# TODO: Remove when removing Tunnel code
+create_control_tunnel
+set_wait_for_exploited_machines
 
 # pydantic base models
 underscore_attrs_are_private
