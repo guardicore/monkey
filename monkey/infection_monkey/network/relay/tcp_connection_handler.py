@@ -1,6 +1,6 @@
 import socket
 from ipaddress import IPv4Address
-from threading import Thread
+from threading import Event, Thread
 from typing import Callable
 
 PROXY_TIMEOUT = 2.5
@@ -18,9 +18,8 @@ class TCPConnectionHandler(Thread):
         self.local_port = local_port
         self.local_host = local_host
         self._client_connected = client_connected
-        super().__init__()
-        self.daemon = True
-        self._stopped = False
+        super().__init__(name="TCPConnectionHandler", daemon=True)
+        self._stopped = Event()
 
     def run(self):
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,7 +39,7 @@ class TCPConnectionHandler(Thread):
         l_socket.close()
 
     def stop(self):
-        self._stopped = True
+        self._stopped.set()
 
     def notify_client_connected(self, callback: Callable[[socket.socket, IPv4Address], None]):
         """
