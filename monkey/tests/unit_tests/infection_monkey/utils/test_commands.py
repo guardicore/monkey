@@ -12,8 +12,6 @@ def test_build_monkey_commandline_explicitly_arguments():
     expected = [
         "-p",
         "101010",
-        "-t",
-        "10.10.101.10",
         "-s",
         "127.127.127.127:5000",
         "-d",
@@ -22,7 +20,7 @@ def test_build_monkey_commandline_explicitly_arguments():
         "C:\\windows\\abc",
     ]
     actual = build_monkey_commandline_explicitly(
-        "101010", "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc"
+        "101010", "127.127.127.127:5000", 0, "C:\\windows\\abc"
     )
 
     assert expected == actual
@@ -46,16 +44,12 @@ def test_get_monkey_commandline_windows():
         "m0nk3y",
         "-p",
         "101010",
-        "-t",
-        "10.10.101.10",
     ]
     actual = get_monkey_commandline_windows(
         "C:\\windows\\abc",
         [
             "-p",
             "101010",
-            "-t",
-            "10.10.101.10",
         ],
     )
 
@@ -68,16 +62,12 @@ def test_get_monkey_commandline_linux():
         "m0nk3y",
         "-p",
         "101010",
-        "-t",
-        "10.10.101.10",
     ]
     actual = get_monkey_commandline_linux(
         "/home/user/monkey-linux-64",
         [
             "-p",
             "101010",
-            "-t",
-            "10.10.101.10",
         ],
     )
 
