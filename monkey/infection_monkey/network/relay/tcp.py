@@ -19,12 +19,11 @@ class SocketsPipe(Thread):
         timeout=SOCKET_READ_TIMEOUT,
         client_disconnected: Callable[[str], None] = None,
     ):
-        Thread.__init__(self)
         self.source = source
         self.dest = dest
         self.timeout = timeout
         self._keep_connection = True
-        super(SocketsPipe, self).__init__()
+        super().__init__(name=f"SocketsPipeThread-{self.ident}")
         self.daemon = True
         self._client_disconnected = client_disconnected
 
