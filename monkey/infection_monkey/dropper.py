@@ -44,7 +44,7 @@ class MonkeyDrops(object):
     def __init__(self, args):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("-p", "--parent")
-        arg_parser.add_argument("-s", "--server")
+        arg_parser.add_argument("-s", "--servers", type=lambda arg: arg.strip().split(","))
         arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         arg_parser.add_argument("-l", "--location")
         arg_parser.add_argument("-vp", "--vulnerable-port")
@@ -131,7 +131,7 @@ class MonkeyDrops(object):
 
         monkey_options = build_monkey_commandline_explicitly(
             parent=self.opts.parent,
-            server=self.opts.server,
+            servers=self.opts.servers,
             depth=self.opts.depth,
             location=None,
         )
