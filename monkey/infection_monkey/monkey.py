@@ -95,8 +95,8 @@ class InfectionMonkey:
         logger.info("Monkey is initializing...")
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
-        self._control_client = ControlClient(self._opts.server)
+        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.servers)
+        self._control_client = ControlClient(self._opts.servers)
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
         ControlClient.control_client_object = self._control_client
@@ -110,8 +110,7 @@ class InfectionMonkey:
     def _get_arguments(args):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("-p", "--parent")
-        arg_parser.add_argument("-t", "--tunnel")
-        arg_parser.add_argument("-s", "--server")
+        arg_parser.add_argument("-s", "--servers", type=lambda arg: arg.strip().split(","))
         arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         opts = arg_parser.parse_args(args)
         InfectionMonkey._log_arguments(opts)
@@ -154,12 +153,12 @@ class InfectionMonkey:
         if self._current_server_is_set():
             logger.debug(f"Default server set to: {self._control_client.server_address}")
         else:
-            raise Exception(f"Monkey couldn't find server with {self._opts.tunnel} default tunnel.")
+            raise Exception(f"Monkey couldn't find servers: {self._opts.servers} .")
 
         self._control_client.wakeup(parent=self._opts.parent)
 
     def _current_server_is_set(self) -> bool:
-        if self._control_client.find_server(default_tunnel=self._opts.tunnel):
+        if self._control_client.find_server(default_tunnel=self._opts.servers):
             return True
 
         return False
