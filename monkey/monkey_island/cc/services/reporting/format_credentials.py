@@ -7,8 +7,6 @@ logger = logging.getLogger(__name__)
 
 
 def format_creds_for_reporting(credentials: Sequence[Credentials]) -> Sequence[Mapping]:
-    logger.info("Stolen creds generated for reporting")
-
     formatted_creds = []
     cred_type_dict = {
         Password: "Clear Password",
