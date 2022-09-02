@@ -1,16 +1,21 @@
 import socket
 from ipaddress import IPv4Address
-from typing import Callable
+from typing import List
 
 from .tcp import SocketsPipe
 
 
 class TCPPipeSpawner:
+    """
+    Creates bi-directional pipes between the configured client and other clients.
+    """
+
     def __init__(self, target_addr: IPv4Address, target_port: int):
         self._target_addr = target_addr
         self._target_port = target_port
+        self._pipes: List[SocketsPipe] = []
 
-    def spawn_pipe(self, source: socket.socket) -> SocketsPipe:
+    def spawn_pipe(self, source: socket.socket):
         dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             dest.connect((self._target_addr, self._target_port))
@@ -19,7 +24,11 @@ class TCPPipeSpawner:
             dest.close()
             raise err
 
-        return SocketsPipe(source, dest, client_data_received=self._client_data_received)
+        # TODO: have SocketsPipe notify TCPPipeSpawner when it's done
+        pipe = SocketsPipe(source, dest)
+        self._pipes.append(pipe)
+        pipe.run()
 
-    def notify_client_data_received(self, callback: Callable[[bytes], bool]):
-        self._client_data_received = callback
+    def has_open_pipes(self) -> bool:
+        self._pipes = [p for p in self._pipes if p.is_alive()]
+        return len(self._pipes) > 0

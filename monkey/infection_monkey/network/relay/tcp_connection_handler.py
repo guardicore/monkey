@@ -1,7 +1,6 @@
 import socket
-from ipaddress import IPv4Address
 from threading import Event, Thread
-from typing import Callable
+from typing import Callable, List
 
 PROXY_TIMEOUT = 2.5
 
@@ -13,7 +12,7 @@ class TCPConnectionHandler(Thread):
         self,
         local_port: int,
         local_host: str = "",
-        client_connected: Callable[[socket.socket, IPv4Address], None] = None,
+        client_connected: List[Callable[[socket.socket], None]] = [],
     ):
         self.local_port = local_port
         self.local_host = local_host
@@ -29,22 +28,14 @@ class TCPConnectionHandler(Thread):
 
         while not self._stopped:
             try:
-                source, address = l_socket.accept()
+                source, _ = l_socket.accept()
             except socket.timeout:
                 continue
 
-            if self._client_connected:
-                self._client_connected(source, IPv4Address(address[0]))
+            for notify_client_connected in self._client_connected:
+                notify_client_connected(source)
 
         l_socket.close()
 
     def stop(self):
         self._stopped.set()
-
-    def notify_client_connected(self, callback: Callable[[socket.socket, IPv4Address], None]):
-        """
-        Register to be notified when a client connects.
-
-        :param callback: Callable used to notify when a client connects.
-        """
-        self._client_connected = callback

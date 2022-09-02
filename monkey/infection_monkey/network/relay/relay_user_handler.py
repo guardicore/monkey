@@ -4,7 +4,7 @@ from threading import Lock
 from time import time
 from typing import Dict
 
-RELAY_CONTROL_MESSAGE = b"infection-monkey-relay-control-message: -"
+DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients to connect
 
 
 @dataclass
@@ -14,7 +14,8 @@ class RelayUser:
 
 
 class RelayUserHandler:
-    def __init__(self):
+    def __init__(self, new_client_timeout: float = DEFAULT_NEW_CLIENT_TIMEOUT):
+        self._new_client_timeout = new_client_timeout
         self._relay_users: Dict[IPv4Address, RelayUser] = {}
         self._potential_users: Dict[IPv4Address, RelayUser] = {}
 
@@ -44,18 +45,6 @@ class RelayUserHandler:
         with self._lock:
             self._potential_users[user_address] = RelayUser(user_address, time())
 
-    def on_user_data_received(self, data: bytes, user_address: IPv4Address) -> bool:
-        """
-        Disconnect a user with a specific starting data.
-
-        :param data: The data that a relay received
-        :param user_address: An address defining RelayUser which received the data
-        """
-        if data.startswith(RELAY_CONTROL_MESSAGE):
-            self.disconnect_user(user_address)
-            return False
-        return True
-
     def disconnect_user(self, user_address: IPv4Address):
         """
         Handle when a user disconnects.
@@ -66,6 +55,16 @@ class RelayUserHandler:
             if user_address in self._relay_users:
                 del self._relay_users[user_address]
 
-    def get_potential_users(self) -> Dict[IPv4Address, RelayUser]:
-        with self._lock:
-            return self._potential_users.copy()
+    def has_potential_users(self) -> bool:
+        """
+        Return whether or not we have any potential users.
+        """
+        current_time = time()
+        self._potential_users = dict(
+            filter(
+                lambda ru: (current_time - ru[1].last_update_time) < self._new_client_timeout,
+                self._potential_users.items(),
+            )
+        )
+
+        return len(self._potential_users) > 0

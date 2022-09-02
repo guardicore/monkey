@@ -1,23 +1,35 @@
 from ipaddress import IPv4Address
+from time import sleep
+
+import pytest
 
 from monkey.infection_monkey.network.relay import RelayUserHandler
 
-
-def test_potential_users_added():
-    user_address = IPv4Address("0.0.0.0")
-    handler = RelayUserHandler()
-
-    assert len(handler.get_potential_users()) == 0
-    handler.add_potential_user(user_address)
-    assert len(handler.get_potential_users()) == 1
-    assert user_address in handler.get_potential_users()
+USER_ADDRESS = IPv4Address("0.0.0.0")
 
 
-def test_potential_user_removed_on_matching_user_added():
-    user_address = IPv4Address("0.0.0.0")
-    handler = RelayUserHandler()
+@pytest.fixture
+def handler():
+    return RelayUserHandler()
 
-    handler.add_potential_user(user_address)
-    handler.add_relay_user(user_address)
 
-    assert len(handler.get_potential_users()) == 0
+def test_potential_users_added(handler):
+    assert not handler.has_potential_users()
+    handler.add_potential_user(USER_ADDRESS)
+    assert handler.has_potential_users()
+
+
+def test_potential_user_removed_on_matching_user_added(handler):
+    handler.add_potential_user(USER_ADDRESS)
+    handler.add_relay_user(USER_ADDRESS)
+
+    assert not handler.has_potential_users()
+
+
+def test_potential_users_time_out():
+    handler = RelayUserHandler(new_client_timeout=0.001)
+
+    handler.add_potential_user(USER_ADDRESS)
+    sleep(0.003)
+
+    assert not handler.has_potential_users()
