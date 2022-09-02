@@ -103,6 +103,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "/api/configuration/import" endpoint. #2002
 - "/api/configuration/export" endpoint. #2002
 - "/api/island-configuration" endpoint. #2003
+- "-t/--tunnel" from agent command line arguments. #2216
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
