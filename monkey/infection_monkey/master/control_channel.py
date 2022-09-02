@@ -91,9 +91,11 @@ class ControlChannel(IControlChannel):
             )
             response.raise_for_status()
 
-            logger.debug(f"Received configuration:\n{pformat(json.loads(response.text))}")
+            config_dict = json.loads(response.text)
 
-            return AgentConfiguration.from_json(response.text)
+            logger.debug(f"Received configuration:\n{pformat(config_dict)}")
+
+            return AgentConfiguration(**config_dict)
         except (
             json.JSONDecodeError,
             requests.exceptions.ConnectionError,
