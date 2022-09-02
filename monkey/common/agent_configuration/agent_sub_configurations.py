@@ -1,9 +1,18 @@
-from dataclasses import dataclass
 from typing import Dict, Tuple
 
+from pydantic import PositiveFloat, conint, validator
 
-@dataclass(frozen=True)
-class CustomPBAConfiguration:
+from common.base_models import MutableInfectionMonkeyBaseModel
+
+from .validators import (
+    validate_ip,
+    validate_linux_filename,
+    validate_subnet_range,
+    validate_windows_filename,
+)
+
+
+class CustomPBAConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for custom post-breach actions
 
@@ -24,9 +33,18 @@ class CustomPBAConfiguration:
     windows_command: str
     windows_filename: str
 
+    @validator("linux_filename")
+    def linux_filename_valid(cls, filename):
+        validate_linux_filename(filename)
+        return filename
 
-@dataclass(frozen=True)
-class PluginConfiguration:
+    @validator("windows_filename")
+    def windows_filename_valid(cls, filename):
+        validate_windows_filename(filename)
+        return filename
+
+
+class PluginConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for plugins
 
@@ -52,8 +70,7 @@ class PluginConfiguration:
     options: Dict
 
 
-@dataclass(frozen=True)
-class ScanTargetConfiguration:
+class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
     """
     Configuration of network targets to scan and exploit
 
@@ -73,9 +90,23 @@ class ScanTargetConfiguration:
     local_network_scan: bool
     subnets: Tuple[str, ...]
 
+    @validator("blocked_ips", each_item=True)
+    def blocked_ips_valid(cls, ip):
+        validate_ip(ip)
+        return ip
 
-@dataclass(frozen=True)
-class ICMPScanConfiguration:
+    @validator("inaccessible_subnets", each_item=True)
+    def inaccessible_subnets_valid(cls, subnet_range):
+        validate_subnet_range(subnet_range)
+        return subnet_range
+
+    @validator("subnets", each_item=True)
+    def subnets_valid(cls, subnet_range):
+        validate_subnet_range(subnet_range)
+        return subnet_range
+
+
+class ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for ICMP scanning
 
@@ -83,11 +114,10 @@ class ICMPScanConfiguration:
         :param timeout: Maximum time in seconds to wait for a response from the target
     """
 
-    timeout: float
+    timeout: PositiveFloat
 
 
-@dataclass(frozen=True)
-class TCPScanConfiguration:
+class TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for TCP scanning
 
@@ -96,12 +126,11 @@ class TCPScanConfiguration:
         :param ports: Ports to scan
     """
 
-    timeout: float
-    ports: Tuple[int, ...]
+    timeout: PositiveFloat
+    ports: Tuple[conint(ge=0, le=65535), ...]
 
 
-@dataclass(frozen=True)
-class NetworkScanConfiguration:
+class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for network scanning
 
@@ -118,8 +147,7 @@ class NetworkScanConfiguration:
     targets: ScanTargetConfiguration
 
 
-@dataclass(frozen=True)
-class ExploitationOptionsConfiguration:
+class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for exploitation options
 
@@ -127,11 +155,10 @@ class ExploitationOptionsConfiguration:
         :param http_ports: HTTP ports to exploit
     """
 
-    http_ports: Tuple[int, ...]
+    http_ports: Tuple[conint(ge=0, le=65535), ...]
 
 
-@dataclass(frozen=True)
-class ExploitationConfiguration:
+class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for exploitation
 
@@ -146,8 +173,7 @@ class ExploitationConfiguration:
     vulnerability: Tuple[PluginConfiguration, ...]
 
 
-@dataclass(frozen=True)
-class PropagationConfiguration:
+class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     """
     A configuration for propagation
 
@@ -159,6 +185,6 @@ class PropagationConfiguration:
         :param exploitation: Configuration for exploitation
     """
 
-    maximum_depth: int
+    maximum_depth: conint(ge=0)
     network_scan: NetworkScanConfiguration
     exploitation: ExploitationConfiguration

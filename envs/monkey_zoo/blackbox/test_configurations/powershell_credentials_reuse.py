@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 
 from .noop import noop_test_configuration
@@ -30,11 +32,13 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
     return add_tcp_ports(agent_configuration, ports)
 
 
-test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
-test_configuration = _add_exploiters(test_configuration)
-test_configuration = _add_subnets(test_configuration)
-test_configuration = _add_tcp_ports(test_configuration)
+test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+test_agent_configuration = _add_exploiters(test_agent_configuration)
+test_agent_configuration = _add_subnets(test_agent_configuration)
+test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
-powershell_credentials_reuse_test_configuration = replace_agent_configuration(
-    noop_test_configuration, test_configuration
+powershell_credentials_reuse_test_configuration = dataclasses.replace(noop_test_configuration)
+replace_agent_configuration(
+    test_configuration=powershell_credentials_reuse_test_configuration,
+    agent_configuration=test_agent_configuration,
 )

@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, Password, Username
 
@@ -31,7 +33,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 def _add_credential_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     return add_credential_collectors(
-        agent_configuration, [PluginConfiguration("MimikatzCollector", {})]
+        agent_configuration, [PluginConfiguration(name="MimikatzCollector", options={})]
     )
 
 
@@ -40,17 +42,12 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
     return add_tcp_ports(agent_configuration, ports)
 
 
-test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
-test_configuration = _add_exploiters(test_configuration)
-test_configuration = _add_subnets(test_configuration)
-test_configuration = _add_credential_collectors(test_configuration)
-test_configuration = _add_tcp_ports(test_configuration)
-test_configuration = _add_credential_collectors(test_configuration)
-
-wmi_mimikatz_test_configuration = replace_agent_configuration(
-    noop_test_configuration, test_configuration
-)
-
+test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+test_agent_configuration = _add_exploiters(test_agent_configuration)
+test_agent_configuration = _add_subnets(test_agent_configuration)
+test_agent_configuration = _add_credential_collectors(test_agent_configuration)
+test_agent_configuration = _add_tcp_ports(test_agent_configuration)
+test_agent_configuration = _add_credential_collectors(test_agent_configuration)
 
 CREDENTIALS = (
     Credentials(Username("Administrator"), None),
@@ -59,6 +56,11 @@ CREDENTIALS = (
     Credentials(None, Password("Ivrrw5zEzs")),
     Credentials(None, Password("Password1!")),
 )
-wmi_mimikatz_test_configuration = replace_propagation_credentials(
-    wmi_mimikatz_test_configuration, CREDENTIALS
+
+wmi_mimikatz_test_configuration = dataclasses.replace(noop_test_configuration)
+replace_agent_configuration(
+    test_configuration=wmi_mimikatz_test_configuration, agent_configuration=test_agent_configuration
+)
+replace_propagation_credentials(
+    test_configuration=wmi_mimikatz_test_configuration, propagation_credentials=CREDENTIALS
 )

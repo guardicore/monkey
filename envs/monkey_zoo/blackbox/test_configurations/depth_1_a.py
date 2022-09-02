@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, Password, Username
 
@@ -60,7 +62,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
 
 def _add_credential_collectors(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     return add_credential_collectors(
-        agent_configuration, [PluginConfiguration("MimikatzCollector", {})]
+        agent_configuration, [PluginConfiguration(name="MimikatzCollector", options={})]
     )
 
 
@@ -76,22 +78,24 @@ def _add_http_ports(agent_configuration: AgentConfiguration) -> AgentConfigurati
     return add_http_ports(agent_configuration, HTTP_PORTS)
 
 
-test_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
-test_configuration = _add_exploiters(test_configuration)
-test_configuration = _add_fingerprinters(test_configuration)
-test_configuration = _add_subnets(test_configuration)
-test_configuration = _add_tcp_ports(test_configuration)
-test_configuration = _add_credential_collectors(test_configuration)
-test_configuration = _add_http_ports(test_configuration)
+test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+test_agent_configuration = _add_exploiters(test_agent_configuration)
+test_agent_configuration = _add_fingerprinters(test_agent_configuration)
+test_agent_configuration = _add_subnets(test_agent_configuration)
+test_agent_configuration = _add_tcp_ports(test_agent_configuration)
+test_agent_configuration = _add_credential_collectors(test_agent_configuration)
+test_agent_configuration = _add_http_ports(test_agent_configuration)
 
-depth_1_a_test_configuration = replace_agent_configuration(
-    noop_test_configuration, test_configuration
-)
 CREDENTIALS = (
     Credentials(Username("m0nk3y"), None),
     Credentials(None, Password("Ivrrw5zEzs")),
     Credentials(None, Password("Xk8VDTsC")),
 )
-depth_1_a_test_configuration = replace_propagation_credentials(
-    depth_1_a_test_configuration, CREDENTIALS
+
+depth_1_a_test_configuration = dataclasses.replace(noop_test_configuration)
+replace_agent_configuration(
+    test_configuration=depth_1_a_test_configuration, agent_configuration=test_agent_configuration
+)
+replace_propagation_credentials(
+    test_configuration=depth_1_a_test_configuration, propagation_credentials=CREDENTIALS
 )

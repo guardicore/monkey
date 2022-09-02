@@ -1,18 +1,8 @@
-from dataclasses import replace
 from typing import Sequence, Tuple
 
-from common.agent_configuration import (
-    AgentConfiguration,
-    ExploitationConfiguration,
-    ExploitationOptionsConfiguration,
-    NetworkScanConfiguration,
-    PluginConfiguration,
-    PropagationConfiguration,
-    ScanTargetConfiguration,
-)
+from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials
-
-from . import TestConfiguration
+from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 
 
 def add_exploiters(
@@ -20,133 +10,91 @@ def add_exploiters(
     brute_force: Sequence[PluginConfiguration] = [],
     vulnerability: Sequence[PluginConfiguration] = [],
 ) -> AgentConfiguration:
-    exploitation_configuration = replace(
-        agent_configuration.propagation.exploitation,
-        brute_force=brute_force,
-        vulnerability=vulnerability,
-    )
-    return replace_exploitation_configuration(agent_configuration, exploitation_configuration)
+
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.propagation.exploitation.brute_force = brute_force
+    agent_configuration_copy.propagation.exploitation.vulnerability = vulnerability
+
+    return agent_configuration_copy
 
 
 def add_fingerprinters(
     agent_configuration: AgentConfiguration, fingerprinters: Sequence[PluginConfiguration]
 ) -> AgentConfiguration:
-    network_scan_configuration = replace(
-        agent_configuration.propagation.network_scan, fingerprinters=fingerprinters
-    )
 
-    return replace_network_scan_configuration(agent_configuration, network_scan_configuration)
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.propagation.network_scan.fingerprinters = fingerprinters
+
+    return agent_configuration_copy
 
 
 def add_tcp_ports(
     agent_configuration: AgentConfiguration, tcp_ports: Sequence[int]
 ) -> AgentConfiguration:
-    tcp_scan_configuration = replace(
-        agent_configuration.propagation.network_scan.tcp, ports=tuple(tcp_ports)
-    )
-    network_scan_configuration = replace(
-        agent_configuration.propagation.network_scan, tcp=tcp_scan_configuration
-    )
 
-    return replace_network_scan_configuration(agent_configuration, network_scan_configuration)
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.propagation.network_scan.tcp.ports = tuple(tcp_ports)
+
+    return agent_configuration_copy
 
 
 def add_subnets(
     agent_configuration: AgentConfiguration, subnets: Sequence[str]
 ) -> AgentConfiguration:
-    scan_target_configuration = replace(
-        agent_configuration.propagation.network_scan.targets, subnets=subnets
-    )
-    return replace_scan_target_configuration(agent_configuration, scan_target_configuration)
+
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.propagation.network_scan.targets.subnets = subnets
+
+    return agent_configuration_copy
 
 
 def add_credential_collectors(
     agent_configuration: AgentConfiguration, credential_collectors: Sequence[PluginConfiguration]
 ) -> AgentConfiguration:
-    return replace(agent_configuration, credential_collectors=tuple(credential_collectors))
+
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.credential_collectors = tuple(credential_collectors)
+
+    return agent_configuration_copy
 
 
 def add_http_ports(
     agent_configuration: AgentConfiguration, http_ports: Sequence[int]
 ) -> AgentConfiguration:
-    exploitation_options_configuration = agent_configuration.propagation.exploitation.options
-    exploitation_options_configuration = replace(
-        exploitation_options_configuration, http_ports=http_ports
-    )
 
-    return replace_exploitation_options_configuration(
-        agent_configuration, exploitation_options_configuration
-    )
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.propagation.exploitation.options.http_ports = http_ports
+
+    return agent_configuration_copy
 
 
 def set_keep_tunnel_open_time(
     agent_configuration: AgentConfiguration, keep_tunnel_open_time: int
 ) -> AgentConfiguration:
-    return replace(agent_configuration, keep_tunnel_open_time=keep_tunnel_open_time)
+
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.keep_tunnel_open_time = keep_tunnel_open_time
+
+    return agent_configuration_copy
 
 
 def set_maximum_depth(
     agent_configuration: AgentConfiguration, maximum_depth: int
 ) -> AgentConfiguration:
-    propagation_configuration = replace(
-        agent_configuration.propagation, maximum_depth=maximum_depth
-    )
-    return replace_propagation_configuration(agent_configuration, propagation_configuration)
 
+    agent_configuration_copy = agent_configuration.copy()
+    agent_configuration_copy.propagation.maximum_depth = maximum_depth
 
-def replace_exploitation_configuration(
-    agent_configuration: AgentConfiguration, exploitation_configuration: ExploitationConfiguration
-) -> AgentConfiguration:
-    propagation_configuration = replace(
-        agent_configuration.propagation, exploitation=exploitation_configuration
-    )
-
-    return replace_propagation_configuration(agent_configuration, propagation_configuration)
-
-
-def replace_scan_target_configuration(
-    agent_configuration: AgentConfiguration, scan_target_configuration: ScanTargetConfiguration
-) -> AgentConfiguration:
-    network_scan_configuration = replace(
-        agent_configuration.propagation.network_scan, targets=scan_target_configuration
-    )
-
-    return replace_network_scan_configuration(agent_configuration, network_scan_configuration)
-
-
-def replace_network_scan_configuration(
-    agent_configuration: AgentConfiguration, network_scan_configuration: NetworkScanConfiguration
-) -> AgentConfiguration:
-    propagation_configuration = replace(
-        agent_configuration.propagation, network_scan=network_scan_configuration
-    )
-    return replace_propagation_configuration(agent_configuration, propagation_configuration)
-
-
-def replace_propagation_configuration(
-    agent_configuration: AgentConfiguration, propagation_configuration: PropagationConfiguration
-) -> AgentConfiguration:
-    return replace(agent_configuration, propagation=propagation_configuration)
-
-
-def replace_exploitation_options_configuration(
-    agent_configuration: AgentConfiguration,
-    exploitation_options_configuration: ExploitationOptionsConfiguration,
-) -> AgentConfiguration:
-    exploitation_configuration = agent_configuration.propagation.exploitation
-    exploitation_configuration = replace(
-        exploitation_configuration, options=exploitation_options_configuration
-    )
-    return replace_exploitation_configuration(agent_configuration, exploitation_configuration)
+    return agent_configuration_copy
 
 
 def replace_agent_configuration(
     test_configuration: TestConfiguration, agent_configuration: AgentConfiguration
-) -> TestConfiguration:
-    return replace(test_configuration, agent_configuration=agent_configuration)
+):
+    test_configuration.agent_configuration = agent_configuration
 
 
 def replace_propagation_credentials(
     test_configuration: TestConfiguration, propagation_credentials: Tuple[Credentials, ...]
 ):
-    return replace(test_configuration, propagation_credentials=propagation_credentials)
+    test_configuration.propagation_credentials = propagation_credentials

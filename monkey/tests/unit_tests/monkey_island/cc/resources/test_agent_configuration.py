@@ -26,14 +26,15 @@ def flask_client(build_flask_client):
 def test_agent_configuration_endpoint(flask_client):
     resp = flask_client.put(
         AGENT_CONFIGURATION_URL,
-        json=AgentConfiguration.to_mapping(AGENT_CONFIGURATION),
+        json=AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True),
         follow_redirects=True,
     )
     assert resp.status_code == 200
     resp = flask_client.get(AGENT_CONFIGURATION_URL)
 
     assert resp.status_code == 200
-    assert json.loads(resp.data) == AGENT_CONFIGURATION
+
+    assert AgentConfiguration(**json.loads(resp.data)) == AgentConfiguration(**AGENT_CONFIGURATION)
 
 
 def test_agent_configuration_invalid_config(flask_client):

@@ -1,5 +1,4 @@
 import queue
-from collections.abc import MutableSequence
 from typing import Any, List, MutableMapping, TypeVar
 
 T = TypeVar("T")
@@ -49,10 +48,3 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
         del mapping[key]
     except KeyError:
         pass
-
-
-def freeze_lists_in_mapping(mapping: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
-    for key, value in mapping.items():
-        if isinstance(value, MutableSequence):
-            mapping[key] = tuple(value)
-    return mapping
