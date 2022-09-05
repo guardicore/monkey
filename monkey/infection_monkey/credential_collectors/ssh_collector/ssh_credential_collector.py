@@ -2,7 +2,7 @@ import logging
 from typing import Sequence
 
 from common.credentials import Credentials
-from common.event_queue import IEventQueue
+from common.event_queue import IAgentEventQueue
 from infection_monkey.credential_collectors.ssh_collector import ssh_handler
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
@@ -15,7 +15,7 @@ class SSHCredentialCollector(ICredentialCollector):
     SSH keys credential collector
     """
 
-    def __init__(self, telemetry_messenger: ITelemetryMessenger, event_queue: IEventQueue):
+    def __init__(self, telemetry_messenger: ITelemetryMessenger, event_queue: IAgentEventQueue):
         self._telemetry_messenger = telemetry_messenger
         self._event_queue = event_queue
 

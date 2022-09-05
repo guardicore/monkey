@@ -2,7 +2,7 @@ import logging
 from typing import Sequence
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
-from common.event_queue import IEventQueue
+from common.event_queue import IAgentEventQueue
 from common.events import CredentialsStolenEvent
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
@@ -27,7 +27,7 @@ MIMIKATZ_EVENT_TAGS = frozenset(
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-    def __init__(self, event_queue: IEventQueue):
+    def __init__(self, event_queue: IAgentEventQueue):
         self._event_queue = event_queue
 
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
