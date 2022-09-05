@@ -5,14 +5,14 @@ from pubsub.core import Publisher
 
 from common.events import AbstractAgentEvent
 
-from . import EventSubscriber, IEventQueue
+from . import EventSubscriber, IAgentEventQueue
 
 _ALL_EVENTS_TOPIC = "all_events_topic"
 
 logger = logging.getLogger(__name__)
 
 
-class PyPubSubEventQueue(IEventQueue):
+class PyPubSubEventQueue(IAgentEventQueue):
     def __init__(self, pypubsub_publisher: Publisher):
         self._pypubsub_publisher = pypubsub_publisher
         self._refs = []

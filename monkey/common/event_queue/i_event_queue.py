@@ -6,7 +6,7 @@ from common.events import AbstractAgentEvent
 from . import EventSubscriber
 
 
-class IEventQueue(ABC):
+class IAgentEventQueue(ABC):
     """
     Manages subscription and publishing of events
     """
