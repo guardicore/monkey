@@ -10,7 +10,7 @@ from typing import List
 from pubsub.core import Publisher
 
 import infection_monkey.tunnel as tunnel
-from common.event_queue import IAgentEventQueue, PyPubSubEventQueue
+from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.events import CredentialsStolenEvent
 from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
@@ -205,7 +205,7 @@ class InfectionMonkey:
             control_channel
         )
 
-        event_queue = PyPubSubEventQueue(Publisher())
+        event_queue = PyPubSubAgentEventQueue(Publisher())
         InfectionMonkey._subscribe_events(event_queue, propagation_credentials_repository)
 
         puppet = self._build_puppet(propagation_credentials_repository, event_queue)
