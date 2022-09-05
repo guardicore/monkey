@@ -12,7 +12,7 @@ from common.agent_configuration import (
 )
 from common.aws import AWSInstance
 from common.common_consts.telem_categories import TelemCategoryEnum
-from common.event_queue import IEventQueue, PyPubSubEventQueue
+from common.event_queue import IAgentEventQueue, PyPubSubEventQueue
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
@@ -63,7 +63,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
     )
     container.register(Publisher, Publisher)
-    container.register_instance(IEventQueue, container.resolve(PyPubSubEventQueue))
+    container.register_instance(IAgentEventQueue, container.resolve(PyPubSubEventQueue))
 
     _register_repositories(container, data_dir)
     _register_services(container)
