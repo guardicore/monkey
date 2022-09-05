@@ -7,14 +7,14 @@ import pytest
 from pubsub.core import Publisher
 
 from common.event_queue import EventSubscriber, IEventQueue, PyPubSubEventQueue
-from common.events import AbstractEvent
+from common.events import AbstractAgentEvent
 
 EVENT_TAG_1 = "event tag 1"
 EVENT_TAG_2 = "event tag 2"
 
 
 @dataclass(frozen=True)
-class TestEvent1(AbstractEvent):
+class TestEvent1(AbstractAgentEvent):
     __test__ = False
     source: UUID = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
     target: Union[UUID, IPv4Address, None] = None
@@ -23,7 +23,7 @@ class TestEvent1(AbstractEvent):
 
 
 @dataclass(frozen=True)
-class TestEvent2(AbstractEvent):
+class TestEvent2(AbstractAgentEvent):
     __test__ = False
     source: UUID = UUID("e810ad01-6b67-9446-fc58-9b8d717653f7")
     target: Union[UUID, IPv4Address, None] = None
@@ -37,8 +37,8 @@ def event_queue() -> IEventQueue:
 
 
 @pytest.fixture
-def event_queue_subscriber() -> Callable[[AbstractEvent], None]:
-    def fn(event: AbstractEvent):
+def event_queue_subscriber() -> Callable[[AbstractAgentEvent], None]:
+    def fn(event: AbstractAgentEvent):
         fn.call_count += 1
         fn.call_types.add(event.__class__)
         fn.call_tags |= event.tags
@@ -117,7 +117,7 @@ def test_keep_subscriber_in_scope(event_queue: IEventQueue):
     class MyCallable:
         called = False
 
-        def __call__(self, event: AbstractEvent):
+        def __call__(self, event: AbstractAgentEvent):
             MyCallable.called = True
 
     def subscribe():

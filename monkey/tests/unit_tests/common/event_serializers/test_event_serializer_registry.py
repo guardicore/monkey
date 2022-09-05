@@ -4,21 +4,21 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.event_serializers import EventSerializerRegistry, IEventSerializer
-from common.events import AbstractEvent
+from common.events import AbstractAgentEvent
 
 
 @dataclass(frozen=True)
-class SomeEvent(AbstractEvent):
+class SomeEvent(AbstractAgentEvent):
     some_param: int = field(default=435)
 
 
 @dataclass(frozen=True)
-class OtherEvent(AbstractEvent):
+class OtherEvent(AbstractAgentEvent):
     other_param: float = field(default=123.456)
 
 
 @dataclass(frozen=True)
-class NoneEvent(AbstractEvent):
+class NoneEvent(AbstractAgentEvent):
     none_param: float = field(default=1.0)
 
 
