@@ -12,7 +12,7 @@ _ALL_EVENTS_TOPIC = "all_events_topic"
 logger = logging.getLogger(__name__)
 
 
-class PyPubSubEventQueue(IAgentEventQueue):
+class PyPubSubAgentEventQueue(IAgentEventQueue):
     def __init__(self, pypubsub_publisher: Publisher):
         self._pypubsub_publisher = pypubsub_publisher
         self._refs = []
@@ -22,11 +22,11 @@ class PyPubSubEventQueue(IAgentEventQueue):
 
     def subscribe_type(self, event_type: Type[AbstractAgentEvent], subscriber: EventSubscriber):
         # pypubsub.pub.subscribe needs a string as the topic/event name
-        event_type_topic = PyPubSubEventQueue._get_type_topic(event_type)
+        event_type_topic = PyPubSubAgentEventQueue._get_type_topic(event_type)
         self._subscribe(event_type_topic, subscriber)
 
     def subscribe_tag(self, tag: str, subscriber: EventSubscriber):
-        tag_topic = PyPubSubEventQueue._get_tag_topic(tag)
+        tag_topic = PyPubSubAgentEventQueue._get_tag_topic(tag)
         self._subscribe(tag_topic, subscriber)
 
     def _subscribe(self, topic: str, subscriber: EventSubscriber):
@@ -69,12 +69,12 @@ class PyPubSubEventQueue(IAgentEventQueue):
         self._publish_event(_ALL_EVENTS_TOPIC, event)
 
     def _publish_to_type_topic(self, event: AbstractAgentEvent):
-        event_type_topic = PyPubSubEventQueue._get_type_topic(event.__class__)
+        event_type_topic = PyPubSubAgentEventQueue._get_type_topic(event.__class__)
         self._publish_event(event_type_topic, event)
 
     def _publish_to_tags_topics(self, event: AbstractAgentEvent):
         for tag in event.tags:
-            tag_topic = PyPubSubEventQueue._get_tag_topic(tag)
+            tag_topic = PyPubSubAgentEventQueue._get_tag_topic(tag)
             self._publish_event(tag_topic, event)
 
     def _publish_event(self, topic: str, event: AbstractAgentEvent):
