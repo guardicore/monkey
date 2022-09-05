@@ -8,7 +8,7 @@ from . import EventSubscriber
 
 class IAgentEventQueue(ABC):
     """
-    Manages subscription and publishing of events
+    Manages subscription and publishing of events in the Agent
     """
 
     @abstractmethod
