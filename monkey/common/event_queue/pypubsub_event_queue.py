@@ -3,7 +3,7 @@ from typing import Type
 
 from pubsub.core import Publisher
 
-from common.events import AbstractEvent
+from common.events import AbstractAgentEvent
 
 from . import EventSubscriber, IEventQueue
 
@@ -20,7 +20,7 @@ class PyPubSubEventQueue(IEventQueue):
     def subscribe_all_events(self, subscriber: EventSubscriber):
         self._subscribe(_ALL_EVENTS_TOPIC, subscriber)
 
-    def subscribe_type(self, event_type: Type[AbstractEvent], subscriber: EventSubscriber):
+    def subscribe_type(self, event_type: Type[AbstractAgentEvent], subscriber: EventSubscriber):
         # pypubsub.pub.subscribe needs a string as the topic/event name
         event_type_topic = PyPubSubEventQueue._get_type_topic(event_type)
         self._subscribe(event_type_topic, subscriber)
@@ -60,31 +60,31 @@ class PyPubSubEventQueue(IEventQueue):
         #       scope. Adding subscribers to self._refs prevents them from ever going out of scope.
         self._refs.append(subscriber)
 
-    def publish(self, event: AbstractEvent):
+    def publish(self, event: AbstractAgentEvent):
         self._publish_to_all_events_topic(event)
         self._publish_to_type_topic(event)
         self._publish_to_tags_topics(event)
 
-    def _publish_to_all_events_topic(self, event: AbstractEvent):
+    def _publish_to_all_events_topic(self, event: AbstractAgentEvent):
         self._publish_event(_ALL_EVENTS_TOPIC, event)
 
-    def _publish_to_type_topic(self, event: AbstractEvent):
+    def _publish_to_type_topic(self, event: AbstractAgentEvent):
         event_type_topic = PyPubSubEventQueue._get_type_topic(event.__class__)
         self._publish_event(event_type_topic, event)
 
-    def _publish_to_tags_topics(self, event: AbstractEvent):
+    def _publish_to_tags_topics(self, event: AbstractAgentEvent):
         for tag in event.tags:
             tag_topic = PyPubSubEventQueue._get_tag_topic(tag)
             self._publish_event(tag_topic, event)
 
-    def _publish_event(self, topic: str, event: AbstractEvent):
+    def _publish_event(self, topic: str, event: AbstractAgentEvent):
         logger.debug(f"Publishing a {event.__class__.__name__} event to {topic}")
         self._pypubsub_publisher.sendMessage(topic, event=event)
 
     # Appending a unique string to the topics for type and tags prevents bugs caused by collisions
     # between type names and tag names.
     @staticmethod
-    def _get_type_topic(event_type: Type[AbstractEvent]) -> str:
+    def _get_type_topic(event_type: Type[AbstractAgentEvent]) -> str:
         return f"{event_type.__name__}-type"
 
     @staticmethod

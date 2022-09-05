@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Type
 
-from common.events import AbstractEvent
+from common.events import AbstractAgentEvent
 
 from . import EventSubscriber
 
@@ -22,7 +22,7 @@ class IEventQueue(ABC):
         pass
 
     @abstractmethod
-    def subscribe_type(self, event_type: Type[AbstractEvent], subscriber: EventSubscriber):
+    def subscribe_type(self, event_type: Type[AbstractAgentEvent], subscriber: EventSubscriber):
         """
         Subscribes a subscriber to the specified event type
 
@@ -44,7 +44,7 @@ class IEventQueue(ABC):
         pass
 
     @abstractmethod
-    def publish(self, event: AbstractEvent):
+    def publish(self, event: AbstractAgentEvent):
         """
         Publishes an event with the given data
 
