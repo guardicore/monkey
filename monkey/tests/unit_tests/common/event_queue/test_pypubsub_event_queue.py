@@ -6,7 +6,7 @@ from uuid import UUID
 import pytest
 from pubsub.core import Publisher
 
-from common.event_queue import EventSubscriber, IAgentEventQueue, PyPubSubEventQueue
+from common.event_queue import EventSubscriber, IAgentEventQueue, PyPubSubAgentEventQueue
 from common.events import AbstractAgentEvent
 
 EVENT_TAG_1 = "event tag 1"
@@ -33,7 +33,7 @@ class TestEvent2(AbstractAgentEvent):
 
 @pytest.fixture
 def event_queue() -> IAgentEventQueue:
-    return PyPubSubEventQueue(Publisher())
+    return PyPubSubAgentEventQueue(Publisher())
 
 
 @pytest.fixture
