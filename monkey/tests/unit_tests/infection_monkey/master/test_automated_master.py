@@ -14,7 +14,7 @@ INTERVAL = 0.001
 
 
 def test_terminate_without_start():
-    m = AutomatedMaster(None, None, None, None, MagicMock(), [], MagicMock())
+    m = AutomatedMaster(None, [], None, None, None, MagicMock(), [], MagicMock())
 
     # Test that call to terminate does not raise exception
     m.terminate()
@@ -34,7 +34,7 @@ def test_stop_if_cant_get_config_from_island(monkeypatch):
     monkeypatch.setattr(
         "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
     )
-    m = AutomatedMaster(None, None, None, None, cc, [], MagicMock())
+    m = AutomatedMaster(None, [], None, None, None, cc, [], MagicMock())
     m.start()
 
     assert cc.get_config.call_count == CHECK_FOR_CONFIG_COUNT
@@ -73,7 +73,7 @@ def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, sleep_and_return_
         "infection_monkey.master.automated_master.CHECK_FOR_TERMINATE_INTERVAL_SEC", INTERVAL
     )
 
-    m = AutomatedMaster(None, None, None, None, cc, [], MagicMock())
+    m = AutomatedMaster(None, [], None, None, None, cc, [], MagicMock())
     m.start()
 
     assert cc.should_agent_stop.call_count == CHECK_FOR_STOP_AGENT_COUNT

@@ -154,7 +154,8 @@ class InfectionMonkey:
             logger.debug(f"Default server set to: {self._control_client.server_address}")
         else:
             raise Exception(
-                f"Failed to connect to the island via any known server address: {self._opts.servers}"
+                f"Failed to connect to the island via "
+                f"any known server address: {self._opts.servers}"
             )
 
         self._control_client.wakeup(parent=self._opts.parent)
@@ -219,6 +220,7 @@ class InfectionMonkey:
 
         self._master = AutomatedMaster(
             self._current_depth,
+            self._opts.servers,
             puppet,
             telemetry_messenger,
             victim_host_factory,

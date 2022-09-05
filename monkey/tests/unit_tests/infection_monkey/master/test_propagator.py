@@ -110,6 +110,8 @@ os_windows = "windows"
 
 os_linux = "linux"
 
+SERVERS = ["127.0.0.1:5000", "10.10.10.10:5007"]
+
 
 @pytest.fixture
 def mock_ip_scanner():
@@ -134,6 +136,7 @@ class StubExploiter:
         exploiters_to_run,
         hosts_to_exploit,
         current_depth,
+        servers,
         results_callback,
         scan_completed,
         stop,
@@ -171,7 +174,7 @@ def test_scan_result_processing(
         subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
     propagation_config = get_propagation_config(default_agent_configuration, targets)
-    p.propagate(propagation_config, 1, Event())
+    p.propagate(propagation_config, 1, SERVERS, Event())
 
     assert len(telemetry_messenger_spy.telemetries) == 3
 
@@ -204,6 +207,7 @@ class MockExploiter:
         exploiters_to_run,
         hosts_to_exploit,
         current_depth,
+        servers,
         results_callback,
         scan_completed,
         stop,
@@ -269,7 +273,7 @@ def test_exploiter_result_processing(
         subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
     propagation_config = get_propagation_config(default_agent_configuration, targets)
-    p.propagate(propagation_config, 1, Event())
+    p.propagate(propagation_config, 1, SERVERS, Event())
 
     exploit_telems = [t for t in telemetry_messenger_spy.telemetries if isinstance(t, ExploitTelem)]
     assert len(exploit_telems) == 4
@@ -310,7 +314,7 @@ def test_scan_target_generation(
         subnets=["10.0.0.0/29", "172.10.20.30"],
     )
     propagation_config = get_propagation_config(default_agent_configuration, targets)
-    p.propagate(propagation_config, 1, Event())
+    p.propagate(propagation_config, 1, SERVERS, Event())
 
     expected_ip_scan_list = [
         "10.0.0.0",
