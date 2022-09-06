@@ -107,3 +107,12 @@ def interruptible_function(*, msg: Optional[str] = None, default_return_value: A
         return _wrapper
 
     return _decorator
+
+
+class InterruptableThreadMixin:
+    def __init__(self):
+        self._interrupted = Event()
+
+    def stop(self):
+        """Stop a running thread."""
+        self._interrupted.set()

@@ -1,10 +1,11 @@
-from threading import Event, Lock, Thread
+from threading import Lock, Thread
 from time import sleep
 
 from infection_monkey.network.relay import RelayUserHandler, TCPConnectionHandler, TCPPipeSpawner
+from infection_monkey.utils.threading import InterruptableThreadMixin
 
 
-class TCPRelay(Thread):
+class TCPRelay(Thread, InterruptableThreadMixin):
     """
     Provides and manages a TCP proxy connection.
     """
@@ -15,8 +16,6 @@ class TCPRelay(Thread):
         connection_handler: TCPConnectionHandler,
         pipe_spawner: TCPPipeSpawner,
     ):
-        self._stopped = Event()
-
         self._user_handler = relay_user_handler
         self._connection_handler = connection_handler
         self._pipe_spawner = pipe_spawner
@@ -26,15 +25,12 @@ class TCPRelay(Thread):
     def run(self):
         self._connection_handler.start()
 
-        self._stopped.wait()
+        self._interrupted.wait()
         self._wait_for_users_to_disconnect()
 
         self._connection_handler.stop()
         self._connection_handler.join()
         self._wait_for_pipes_to_close()
-
-    def stop(self):
-        self._stopped.set()
 
     def _wait_for_users_to_disconnect(self):
         """
