@@ -49,13 +49,13 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
             self._stored_credentials.setdefault("exploit_user_list", set()).add(identity.username)
 
     def _add_secret(self, secret: Secret):
-        if type(secret) is Password:
+        if isinstance(secret, Password):
             self._stored_credentials.setdefault("exploit_password_list", set()).add(secret.password)
-        elif type(secret) is LMHash:
+        elif isinstance(secret, LMHash):
             self._stored_credentials.setdefault("exploit_lm_hash_list", set()).add(secret.lm_hash)
-        elif type(secret) is NTHash:
+        elif isinstance(secret, NTHash):
             self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).add(secret.nt_hash)
-        elif type(secret) is SSHKeypair:
+        elif isinstance(secret, SSHKeypair):
             self._set_attribute(
                 "exploit_ssh_keys",
                 [{"public_key": secret.public_key, "private_key": secret.private_key}],
