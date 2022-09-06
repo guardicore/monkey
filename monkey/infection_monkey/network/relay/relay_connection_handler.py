@@ -16,7 +16,6 @@ class RelayConnectionHandler:
         control_message = sock.recv(socket.MSG_PEEK)
         addr, _ = sock.getpeername()  # TODO check the type of the addr object
         if control_message.startswith(RELAY_CONTROL_MESSAGE):
-
             self._relay_user_handler.disconnect_user(IPv4Address(addr))
         else:
             self._relay_user_handler.add_relay_user(IPv4Address(addr))
