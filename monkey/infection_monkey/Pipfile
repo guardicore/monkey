@@ -26,6 +26,7 @@ pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement 
 paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/VakarisZ/paramiko.git"}
 pypubsub = "*"
 pydantic = "*"
+egg-timer = "*"
 
 [dev-packages]
 ldap3 = "*"
