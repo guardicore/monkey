@@ -52,7 +52,7 @@ class PyPubSubIslandEventQueue(IIslandEventQueue):
         #       scope. Adding subscribers to self._refs prevents them from ever going out of scope.
         self._refs.append(subscriber)
 
-    def publish(self, topic: IslandEventTopic, event_data: Any = None):
+    def publish(self, topic: IslandEventTopic, event: Any = None):
         topic_value = topic.value  # needs to be a string for pypubsub
 
         logger.debug(f"Publishing {topic_value} event")
@@ -61,4 +61,4 @@ class PyPubSubIslandEventQueue(IIslandEventQueue):
         #       otherwise, errors will arise. The MDS of a topic is set when the topic is created,
         #       which in our case is when a subscriber subscribes to a topic (in `subscribe()`)
         #       which is new (hasn't been subscribed to before).
-        self._pypubsub_publisher.sendMessage(topicName=topic_value, event=event_data)
+        self._pypubsub_publisher.sendMessage(topicName=topic_value, event=event)

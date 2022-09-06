@@ -28,12 +28,12 @@ class IIslandEventQueue(ABC):
         pass
 
     @abstractmethod
-    def publish(self, topic: IslandEventTopic, event_data: Any = None):
+    def publish(self, topic: IslandEventTopic, event: Any = None):
         """
         Publishes an event topic with the given data
 
         :param topic: Event topic to publish
-        :param event_data: Event data to pass to subscribers with the event publish
+        :param event: Event to pass to subscribers with the event publish
         """
 
         pass
