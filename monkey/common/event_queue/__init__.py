@@ -1,4 +1,4 @@
-from .types import AgentEventSubscriber
+from .types import AgentEventSubscriber, IslandEventSubscriber
 from .i_agent_event_queue import IAgentEventQueue
 from .i_island_event_queue import IIslandEventQueue, IslandEventTopic
 from .pypubsub_agent_event_queue import PyPubSubAgentEventQueue

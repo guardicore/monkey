@@ -1,9 +1,9 @@
 import logging
-from typing import Any, Callable
+from typing import Any
 
 from pubsub.core import Publisher
 
-from . import IIslandEventQueue, IslandEventTopic
+from . import IIslandEventQueue, IslandEventSubscriber, IslandEventTopic
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ class PyPubSubIslandEventQueue(IIslandEventQueue):
         self._pypubsub_publisher = pypubsub_publisher
         self._refs = []
 
-    def subscribe(self, topic: IslandEventTopic, subscriber: Callable[..., None]):
+    def subscribe(self, topic: IslandEventTopic, subscriber: IslandEventSubscriber):
         topic_value = topic.value  # needs to be a string for pypubsub
         try:
             subscriber_name = subscriber.__name__
@@ -31,7 +31,7 @@ class PyPubSubIslandEventQueue(IIslandEventQueue):
         self._pypubsub_publisher.subscribe(topicName=topic_value, listener=subscriber)
         self._keep_subscriber_strongref(subscriber)
 
-    def _keep_subscriber_strongref(self, subscriber: Callable[..., None]):
+    def _keep_subscriber_strongref(self, subscriber: IslandEventSubscriber):
         # NOTE: PyPubSub stores subscribers by weak reference. From the documentation:
         #           > PyPubSub holds listeners by weak reference so that the lifetime of the
         #           > callable is not affected by PyPubSub: once the application no longer

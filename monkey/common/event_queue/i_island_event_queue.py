@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+
+from . import IslandEventSubscriber
 
 
 class IslandEventTopic(Enum):
@@ -15,7 +17,7 @@ class IIslandEventQueue(ABC):
     """
 
     @abstractmethod
-    def subscribe(self, topic: IslandEventTopic, subscriber: Callable[..., None]):
+    def subscribe(self, topic: IslandEventTopic, subscriber: IslandEventSubscriber):
         """
         Subscribes a subscriber to the specified event topic
 
