@@ -59,8 +59,8 @@ def test_subscribe_publish__with_event_body(
         event = None
 
         def __call__(self, event):
-            MyCallable.call_count += 1
-            MyCallable.event = event
+            self.call_count += 1
+            self.event = event
 
     event = "my event!"
     my_callable = MyCallable()
