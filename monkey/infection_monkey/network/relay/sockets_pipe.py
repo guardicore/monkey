@@ -20,14 +20,14 @@ class SocketsPipe(Thread):
         self.source = source
         self.dest = dest
         self.timeout = timeout
-        self._keep_connection = True
         super().__init__(name=f"SocketsPipeThread-{self.ident}", daemon=True)
         self._client_disconnected = client_disconnected
 
     def run(self):
         sockets = [self.source, self.dest]
-        while self._keep_connection:
-            self._keep_connection = False
+        keep_connection = True
+        while keep_connection:
+            keep_connection = False
             rlist, _, xlist = select.select(sockets, [], sockets, self.timeout)
             if xlist:
                 break
@@ -42,7 +42,7 @@ class SocketsPipe(Thread):
                         other.sendall(data)
                     except Exception:
                         break
-                    self._keep_connection = True
+                    keep_connection = True
 
         self.source.close()
         self.dest.close()
