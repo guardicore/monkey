@@ -31,7 +31,7 @@ class IIslandEventQueue(ABC):
         Publishes an event topic with the given data
 
         :param topic: Event topic to publish
-        :param event: Event to pass to subscribers with the event publish
+        :param event: Event data to publish
         """
 
         pass
