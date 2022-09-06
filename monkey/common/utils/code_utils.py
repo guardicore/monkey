@@ -1,5 +1,5 @@
 import queue
-from typing import Any, List, MutableMapping, TypeVar
+from typing import Any, Dict, List, MutableMapping, Type, TypeVar
 
 T = TypeVar("T")
 
@@ -15,7 +15,7 @@ class abstractstatic(staticmethod):
 
 
 class Singleton(type):
-    _instances = {}
+    _instances: Dict[Type, type] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:

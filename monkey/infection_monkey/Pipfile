@@ -28,6 +28,7 @@ marshmallow = "*"
 marshmallow-enum = "*"
 pypubsub = "*"
 pydantic = "*"
+egg-timer = "*"
 
 [dev-packages]
 ldap3 = "*"

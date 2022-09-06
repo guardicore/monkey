@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0ae0a7c88cba4dbd3ad91fd472f6bf12399a9819931d1bf3a936623fa2bfcb6d"
+            "sha256": "4035f0b638bdef6971dcf5c52a0aa0f2efc76310ad5a1ea853b6d21495ffa2b0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -45,6 +45,14 @@
                 "sha256:db4e40728b728508912cbb3d44f19ce188f218e9eba635821bb4b68564f8fd67"
             ],
             "version": "==1.5.1"
+        },
+        "asyauth": {
+            "hashes": [
+                "sha256:a7a7998dcfa672ebae9837ba4996df237412a7f335c0f8291bb14091d0e6d19a",
+                "sha256:f20c497b02d17f25298d3701fb65c9a337893b68a9c7dddecc09ab956b09f828"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==0.0.2"
         },
         "asysocks": {
             "hashes": [
@@ -237,6 +245,14 @@
             ],
             "markers": "python_version >= '3.6' and python_version < '4'",
             "version": "==2.2.1"
+        },
+        "egg-timer": {
+            "hashes": [
+                "sha256:125efb1fdc1582e3354dbbf3218010968a875b97bf7c10e00c8ca6010d9c18ad",
+                "sha256:12b789c8d17d1aab11c5b994bad336089a4c1ac5e0565e3ad2dd0470eae34939"
+            ],
+            "index": "pypi",
+            "version": "==1.0.0.post1"
         },
         "flask": {
             "hashes": [
