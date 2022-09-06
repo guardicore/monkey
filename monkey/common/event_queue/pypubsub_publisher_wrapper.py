@@ -19,6 +19,12 @@ class PyPubSubPublisherWrapper:
 
         logging.debug(f"Subscriber {subscriber_name} subscribed to {topic_name}")
 
+        # NOTE: The subscriber's signature needs to match the MDS (message data specification) of
+        #       the topic, otherwise, errors will arise. The MDS of a topic is set when the topic
+        #       is created, which in our case is when a subscriber subscribes to a topic which
+        #       is new (hasn't been subscribed to before). If the topic is being subscribed to by
+        #       a subscriber for the first time, the topic's MDS will automatically be set
+        #       according to that subscriber's signature.
         self._pypubsub_publisher.subscribe(topicName=topic_name, listener=subscriber)
         self._keep_subscriber_strongref(subscriber)
 
@@ -44,4 +50,8 @@ class PyPubSubPublisherWrapper:
         self._refs.append(subscriber)
 
     def publish(self, topic_name: str, event: Any = None):
+        # NOTE: `event` needs to match the MDS (message data specification) of the topic,
+        #       otherwise, errors will arise. The MDS of a topic is set when the topic is created,
+        #       which in our case is when a subscriber subscribes to a topic (in `subscribe()`)
+        #       which is new (hasn't been subscribed to before).
         self._pypubsub_publisher.sendMessage(topicName=topic_name, event=event)
