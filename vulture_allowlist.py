@@ -7,7 +7,7 @@ from common.agent_configuration.agent_sub_configurations import (
     CustomPBAConfiguration,
     ScanTargetConfiguration,
 )
-from common.credentials import LMHash, NTHash
+from common.credentials import Credentials, LMHash, NTHash
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
@@ -166,6 +166,7 @@ strict_slashes  # unused attribute (monkey/monkey_island/cc/app.py:96)
 post_breach_actions  # unused variable (monkey\infection_monkey\config.py:95)
 LMHash.validate_hash_format
 NTHash.validate_hash_format
+Credentials.Config.json_encoders
 
 # Deployments
 DEVELOP  # unused variable (monkey/monkey/monkey_island/cc/deployment.py:5)
