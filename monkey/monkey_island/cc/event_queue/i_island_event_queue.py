@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from enum import Enum, auto
-from typing import Any, Callable
+from enum import Enum
+from typing import Any
 
+from . import IslandEventSubscriber
 
-class IslandEventTopics(Enum):
-    AGENT_CONNECTED = auto()
-    CLEAR_SIMULATION_DATA = auto()
-    RESET_AGENT_CONFIGURATION = auto()
+IslandEventTopic = Enum(
+    "IslandEventTopic", ["AGENT_CONNECTED", "CLEAR_SIMULATION_DATA", "RESET_AGENT_CONFIGURATION"]
+)
 
 
 class IIslandEventQueue(ABC):
@@ -15,7 +15,7 @@ class IIslandEventQueue(ABC):
     """
 
     @abstractmethod
-    def subscribe(self, topic: IslandEventTopics, subscriber: Callable[..., None]):
+    def subscribe(self, topic: IslandEventTopic, subscriber: IslandEventSubscriber):
         """
         Subscribes a subscriber to the specified event topic
 
@@ -26,12 +26,12 @@ class IIslandEventQueue(ABC):
         pass
 
     @abstractmethod
-    def publish(self, topic: IslandEventTopics, event_data: Any = None):
+    def publish(self, topic: IslandEventTopic, event: Any = None):
         """
         Publishes an event topic with the given data
 
         :param topic: Event topic to publish
-        :param event_data: Event data to pass to subscribers with the event publish
+        :param event: Event to pass to subscribers with the event publish
         """
 
         pass
