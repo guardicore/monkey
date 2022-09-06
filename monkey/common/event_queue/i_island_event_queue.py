@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from enum import Enum, auto
+from enum import Enum
 from typing import Any, Callable
 
 
 class IslandEventTopics(Enum):
-    AGENT_CONNECTED = auto()
-    CLEAR_SIMULATION_DATA = auto()
-    RESET_AGENT_CONFIGURATION = auto()
+    AGENT_CONNECTED = "agent_connected"
+    CLEAR_SIMULATION_DATA = "clear_simulation_data"
+    RESET_AGENT_CONFIGURATION = "reset_agent_configuration"
 
 
 class IIslandEventQueue(ABC):
