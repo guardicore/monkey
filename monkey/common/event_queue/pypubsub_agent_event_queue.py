@@ -5,7 +5,7 @@ from pubsub.core import Publisher
 
 from common.events import AbstractAgentEvent
 
-from . import EventSubscriber, IAgentEventQueue
+from . import AgentEventSubscriber, IAgentEventQueue
 
 _ALL_EVENTS_TOPIC = "all_events_topic"
 
@@ -17,19 +17,21 @@ class PyPubSubAgentEventQueue(IAgentEventQueue):
         self._pypubsub_publisher = pypubsub_publisher
         self._refs = []
 
-    def subscribe_all_events(self, subscriber: EventSubscriber):
+    def subscribe_all_events(self, subscriber: AgentEventSubscriber):
         self._subscribe(_ALL_EVENTS_TOPIC, subscriber)
 
-    def subscribe_type(self, event_type: Type[AbstractAgentEvent], subscriber: EventSubscriber):
+    def subscribe_type(
+        self, event_type: Type[AbstractAgentEvent], subscriber: AgentEventSubscriber
+    ):
         # pypubsub.pub.subscribe needs a string as the topic/event name
         event_type_topic = PyPubSubAgentEventQueue._get_type_topic(event_type)
         self._subscribe(event_type_topic, subscriber)
 
-    def subscribe_tag(self, tag: str, subscriber: EventSubscriber):
+    def subscribe_tag(self, tag: str, subscriber: AgentEventSubscriber):
         tag_topic = PyPubSubAgentEventQueue._get_tag_topic(tag)
         self._subscribe(tag_topic, subscriber)
 
-    def _subscribe(self, topic: str, subscriber: EventSubscriber):
+    def _subscribe(self, topic: str, subscriber: AgentEventSubscriber):
         try:
             subscriber_name = subscriber.__name__
         except AttributeError:
@@ -39,7 +41,7 @@ class PyPubSubAgentEventQueue(IAgentEventQueue):
         self._pypubsub_publisher.subscribe(topicName=topic, listener=subscriber)
         self._keep_subscriber_strongref(subscriber)
 
-    def _keep_subscriber_strongref(self, subscriber: EventSubscriber):
+    def _keep_subscriber_strongref(self, subscriber: AgentEventSubscriber):
         # NOTE: PyPubSub stores subscribers by weak reference. From the documentation:
         #           > PyPubSub holds listeners by weak reference so that the lifetime of the
         #           > callable is not affected by PyPubSub: once the application no longer

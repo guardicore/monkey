@@ -3,7 +3,7 @@ from typing import Type
 
 from common.events import AbstractAgentEvent
 
-from . import EventSubscriber
+from . import AgentEventSubscriber
 
 
 class IAgentEventQueue(ABC):
@@ -12,7 +12,7 @@ class IAgentEventQueue(ABC):
     """
 
     @abstractmethod
-    def subscribe_all_events(self, subscriber: EventSubscriber):
+    def subscribe_all_events(self, subscriber: AgentEventSubscriber):
         """
         Subscribes a subscriber to all events
 
@@ -22,7 +22,9 @@ class IAgentEventQueue(ABC):
         pass
 
     @abstractmethod
-    def subscribe_type(self, event_type: Type[AbstractAgentEvent], subscriber: EventSubscriber):
+    def subscribe_type(
+        self, event_type: Type[AbstractAgentEvent], subscriber: AgentEventSubscriber
+    ):
         """
         Subscribes a subscriber to the specified event type
 
@@ -33,7 +35,7 @@ class IAgentEventQueue(ABC):
         pass
 
     @abstractmethod
-    def subscribe_tag(self, tag: str, subscriber: EventSubscriber):
+    def subscribe_tag(self, tag: str, subscriber: AgentEventSubscriber):
         """
         Subscribes a subscriber to the specified event tag
 
