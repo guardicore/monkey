@@ -12,6 +12,8 @@ logger = getLogger(__name__)
 
 
 class SocketsPipe(Thread):
+    """Manages a pipe between two sockets."""
+
     def __init__(
         self,
         source,
