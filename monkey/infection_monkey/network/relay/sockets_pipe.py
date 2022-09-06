@@ -28,13 +28,12 @@ class SocketsPipe(Thread):
     def _pipe(self):
         sockets = [self.source, self.dest]
         while True:
-            # TODO: Figure out how to capture when the socket times out.
             read_list, _, except_list = select.select(sockets, [], sockets, self.timeout)
             if except_list:
-                raise Exception("select() failed")
+                raise Exception("select() failed on sockets {except_list}")
 
             if not read_list:
-                raise TimeoutError("")
+                raise TimeoutError("pipe did not receive data for {self.timeout} seconds")
 
             for r in read_list:
                 other = self.dest if r is self.source else self.source
