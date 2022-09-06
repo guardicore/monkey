@@ -1,5 +1,5 @@
 import {defaultCredentials} from '../../services/configuration/propagation/credentials';
-import {CredentialTypes, SecretTypes} from '../utils/CredentialTypes.js';
+import {PlaintextTypes, SecretTypes} from '../utils/CredentialTitles.js';
 import _ from 'lodash';
 
 export function reformatConfig(config, reverse = false) {
@@ -37,16 +37,16 @@ export function formatCredentialsForForm(credentials) {
     let secret = credentials[i]['secret'];
     if(secret !== null){
       if (secret.hasOwnProperty(SecretTypes.Password)) {
-        formattedCredentials['exploit_password_list'].push(secret['password'])
+        formattedCredentials['exploit_password_list'].push(secret[SecretTypes.Password])
       }
       if (secret.hasOwnProperty(SecretTypes.NTHash)) {
-        formattedCredentials['exploit_ntlm_hash_list'].push(secret['nt_hash'])
+        formattedCredentials['exploit_ntlm_hash_list'].push(secret[SecretTypes.NTHash])
       }
       if (secret.hasOwnProperty(SecretTypes.LMHash)) {
-        formattedCredentials['exploit_lm_hash_list'].push(secret['lm_hash'])
+        formattedCredentials['exploit_lm_hash_list'].push(secret[SecretTypes.LMHash])
       }
       if (secret.hasOwnProperty(SecretTypes.PrivateKey)) {
-        let keypair = {'public_key': secret['public_key'], 'private_key': secret['private_key']}
+        let keypair = {'public_key': secret[PlaintextTypes.PublicKey], 'private_key': secret[SecretTypes.PrivateKey]}
         formattedCredentials['exploit_ssh_keys'].push(keypair)
       }
     }

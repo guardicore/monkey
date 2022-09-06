@@ -1,4 +1,4 @@
-import {CredentialTypes, SecretTypes} from '../utils/CredentialTypes.js';
+import {CredentialTitles, SecretTypes} from '../utils/CredentialTitles.js';
 
 export function getAllUsernames(stolen, configured) {
   let usernames = new Set();
@@ -37,17 +37,17 @@ export function getAllSecrets(stolen, configured) {
 
 function reformatSecret(secret) {
   if (secret.hasOwnProperty(SecretTypes.Password)) {
-    return {'type': CredentialTypes.Password, 'content': secret[SecretTypes.Password]}
+    return {'title': CredentialTitles.Password, 'content': secret[SecretTypes.Password]}
   }
   if (secret.hasOwnProperty(SecretTypes.NTHash)) {
-    return {'type': CredentialTypes.NTHash, 'content': secret[SecretTypes.NTHash]}
+    return {'title': CredentialTitles.NTHash, 'content': secret[SecretTypes.NTHash]}
   }
   if (secret.hasOwnProperty(SecretTypes.LMHash)) {
-    return {'type': CredentialTypes.LMHash, 'content': secret[SecretTypes.LMHash]}
+    return {'title': CredentialTitles.LMHash, 'content': secret[SecretTypes.LMHash]}
   }
   if (secret.hasOwnProperty(SecretTypes.PrivateKey)) {
     return {
-      'type': CredentialTypes.SSHKeys,
+      'title': CredentialTitles.SSHKeys,
       'content': secret[SecretTypes.PrivateKey]
     }
   }
@@ -62,7 +62,7 @@ export function getCredentialsTableData(credentials) {
   for (let i = 0; i < credentials.length; i++) {
     let row_data = {};
     row_data['username'] = identites[i];
-    row_data['type'] = secrets[i]['type'];
+    row_data['title'] = secrets[i]['title'];
     table_data.push(row_data);
   }
 
