@@ -50,7 +50,7 @@ class PyPubSubPublisherWrapper:
         self._refs.append(subscriber)
 
     def publish(self, topic_name: str, **kwargs):
-        # NOTE: `event` needs to match the MDS (message data specification) of the topic,
+        # NOTE: `kwargs` needs to match the MDS (message data specification) of the topic,
         #       otherwise, errors will arise. The MDS of a topic is set when the topic is created,
         #       which in our case is when a subscriber subscribes to a topic (in `subscribe()`)
         #       which is new (hasn't been subscribed to before).
