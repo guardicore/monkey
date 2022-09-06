@@ -21,4 +21,8 @@ class PyPubSubIslandEventQueue(IIslandEventQueue):
     def publish(self, topic: IslandEventTopic, event: Any = None):
         topic_name = topic.name  # needs to be a string for pypubsub
         logger.debug(f"Publishing {topic_name} event")
-        self._pypubsub_publisher_wrapped.publish(topic_name, event)
+
+        if event is None:
+            self._pypubsub_publisher_wrapped.publish(topic_name)
+        else:
+            self._pypubsub_publisher_wrapped.publish(topic_name, event=event)

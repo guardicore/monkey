@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable
+from typing import Callable
 
 from pubsub.core import Publisher
 
@@ -49,9 +49,9 @@ class PyPubSubPublisherWrapper:
         #       scope. Adding subscribers to self._refs prevents them from ever going out of scope.
         self._refs.append(subscriber)
 
-    def publish(self, topic_name: str, event: Any = None):
+    def publish(self, topic_name: str, **kwargs):
         # NOTE: `event` needs to match the MDS (message data specification) of the topic,
         #       otherwise, errors will arise. The MDS of a topic is set when the topic is created,
         #       which in our case is when a subscriber subscribes to a topic (in `subscribe()`)
         #       which is new (hasn't been subscribed to before).
-        self._pypubsub_publisher.sendMessage(topicName=topic_name, event=event)
+        self._pypubsub_publisher.sendMessage(topicName=topic_name, **kwargs)

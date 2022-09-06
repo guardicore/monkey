@@ -53,7 +53,7 @@ class PyPubSubAgentEventQueue(IAgentEventQueue):
 
     def _publish_event(self, topic: str, event: AbstractAgentEvent):
         logger.debug(f"Publishing a {event.__class__.__name__} event to {topic}")
-        self._pypubsub_publisher_wrapped.publish(topic, event)
+        self._pypubsub_publisher_wrapped.publish(topic, event=event)
 
     # Appending a unique string to the topics for type and tags prevents bugs caused by collisions
     # between type names and tag names.
