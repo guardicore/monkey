@@ -108,7 +108,7 @@ def test_stolen_secrets_encrypted(mongo_repository, mongo_client, credentials: C
 
 
 def check_if_stored_credentials_encrypted(mongo_client: MongoClient, original_credentials):
-    original_credentials_mapping = original_credentials.dict()
+    original_credentials_mapping = original_credentials.dict(simplify=True)
     raw_credentials = get_all_credentials_in_mongo(mongo_client)
 
     for rc in raw_credentials:
