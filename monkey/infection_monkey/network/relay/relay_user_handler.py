@@ -5,6 +5,8 @@ from typing import Dict
 
 from egg_timer import EggTimer
 
+from monkey.common.utils.code_utils import del_key
+
 DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients to connect
 
 
@@ -34,7 +36,7 @@ class RelayUserHandler:
 
         with self._lock:
             if user_address in self._potential_users:
-                del self._potential_users[user_address]
+                del_key(self._potential_users, user_address)
 
             timer = EggTimer()
             self._relay_users[user_address] = RelayUser(user_address, timer)
@@ -59,7 +61,7 @@ class RelayUserHandler:
         """
         with self._lock:
             if user_address in self._relay_users:
-                del self._relay_users[user_address]
+                del_key(self._relay_users, user_address)
 
     def has_potential_users(self) -> bool:
         """
