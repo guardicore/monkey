@@ -16,8 +16,8 @@ class TCPConnectionHandler(Thread, InterruptableThreadMixin):
         bind_port: int,
         client_connected: List[Callable[[socket.socket], None]] = [],
     ):
-        self.local_port = bind_port
-        self.local_host = bind_host
+        self.bind_host = bind_host
+        self.bind_port = bind_port
         self._client_connected = client_connected
         super().__init__(name="TCPConnectionHandler", daemon=True)
 
