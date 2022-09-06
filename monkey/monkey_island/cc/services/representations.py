@@ -5,6 +5,7 @@ from typing import Any
 
 import bson
 from flask import make_response
+from pydantic import BaseModel
 
 from common.utils import IJSONSerializable
 
@@ -23,6 +24,8 @@ class APIEncoder(JSONEncoder):
             return loads(value.__class__.to_json(value))
         if issubclass(type(value), set):
             return list(value)
+        if issubclass(type(value), BaseModel):
+            return value.dict(simplify=True)
         try:
             return JSONEncoder.default(self, value)
         except TypeError:
