@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import select
 from logging import getLogger
 from threading import Thread
@@ -14,37 +16,46 @@ class SocketsPipe(Thread):
         self,
         source,
         dest,
+        pipe_closed: Callable[[SocketsPipe], None],
         timeout=SOCKET_READ_TIMEOUT,
-        client_disconnected: Callable[[str], None] = None,
     ):
         self.source = source
         self.dest = dest
         self.timeout = timeout
         super().__init__(name=f"SocketsPipeThread-{self.ident}", daemon=True)
-        self._client_disconnected = client_disconnected
+        self._pipe_closed = pipe_closed
+
+    def _pipe(self):
+        sockets = [self.source, self.dest]
+        while True:
+            # TODO: Figure out how to capture when the socket times out.
+            read_list, _, except_list = select.select(sockets, [], sockets, self.timeout)
+            if except_list:
+                raise Exception("select() failed")
+
+            if not read_list:
+                raise TimeoutError("")
+
+            for r in read_list:
+                other = self.dest if r is self.source else self.source
+                data = r.recv(READ_BUFFER_SIZE)
+                if data:
+                    other.sendall(data)
 
     def run(self):
-        sockets = [self.source, self.dest]
-        keep_connection = True
-        while keep_connection:
-            keep_connection = False
-            rlist, _, xlist = select.select(sockets, [], sockets, self.timeout)
-            if xlist:
-                break
-            for r in rlist:
-                other = self.dest if r is self.source else self.source
-                try:
-                    data = r.recv(READ_BUFFER_SIZE)
-                except Exception:
-                    break
-                if data:
-                    try:
-                        other.sendall(data)
-                    except Exception:
-                        break
-                    keep_connection = True
+        try:
+            self._pipe()
+        except Exception as err:
+            logger.debug(err)
 
-        self.source.close()
-        self.dest.close()
-        if self._client_disconnected:
-            self._client_disconnected()
+        try:
+            self.source.close()
+        except Exception as err:
+            logger.debug(f"Error while closing source socket: {err}")
+
+        try:
+            self.dest.close()
+        except Exception as err:
+            logger.debug(f"Error while closing destination socket: {err}")
+
+        self._pipe_closed(self)
