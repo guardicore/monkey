@@ -1,5 +1,5 @@
 import logging
-from typing import Callable
+from typing import Callable, List
 
 from pubsub.core import Publisher
 
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class PyPubSubPublisherWrapper:
     def __init__(self, pypubsub_publisher: Publisher):
         self._pypubsub_publisher = pypubsub_publisher
-        self._refs = []
+        self._refs: List[Callable] = []
 
     def subscribe(self, topic_name: str, subscriber: Callable):
         try:
