@@ -11,6 +11,7 @@ from common.agent_configuration import (
     ScanTargetConfiguration,
     TCPScanConfiguration,
 )
+from common.credentials import Credentials
 
 from . import TestConfiguration
 
@@ -49,7 +50,7 @@ _agent_configuration = AgentConfiguration(
     payloads=[],
     propagation=_propagation_configuration,
 )
-_propagation_credentials: Tuple = tuple()
+_propagation_credentials: Tuple[Credentials, ...] = tuple()
 
 # This is an empty, NOOP configuration from which other configurations can be built
 noop_test_configuration: TestConfiguration = TestConfiguration(
