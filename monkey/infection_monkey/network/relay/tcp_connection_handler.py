@@ -10,19 +10,19 @@ class TCPConnectionHandler(Thread):
 
     def __init__(
         self,
-        local_port: int,
-        local_host: str = "",
+        bind_host: str,
+        bind_port: int,
         client_connected: List[Callable[[socket.socket], None]] = [],
     ):
-        self.local_port = local_port
-        self.local_host = local_host
+        self.local_port = bind_port
+        self.local_host = bind_host
         self._client_connected = client_connected
         super().__init__(name="TCPConnectionHandler", daemon=True)
         self._stopped = Event()
 
     def run(self):
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        l_socket.bind((self.local_host, self.local_port))
+        l_socket.bind((self.bind_host, self.bind_port))
         l_socket.settimeout(PROXY_TIMEOUT)
         l_socket.listen(5)
 
