@@ -316,3 +316,10 @@ CC_TUNNEL
 
 Credentials.from_json
 IJSONSerializable.from_json
+
+# revisit when implementing PyPubSubIslandEventQueue
+AGENT_CONNECTED
+CLEAR_SIMULATION_DATA
+RESET_AGENT_CONFIGURATION
+IIslandEventQueue
+event_data
