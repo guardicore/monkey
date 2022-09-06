@@ -41,11 +41,11 @@ class TCPRelay(Thread):
         Blocks until the users disconnect or the timeout has elapsed.
         """
         while self._user_handler.has_potential_users():
-            sleep(0.01)
+            sleep(0.5)
 
     def _wait_for_pipes_to_close(self):
         """
         Blocks until the pipes have closed.
         """
         while self._pipe_spawner.has_open_pipes():
-            sleep(0.01)
+            sleep(0.5)
