@@ -12,4 +12,3 @@ class CommunicationType(Enum):
     SCANNED = "scanned"
     EXPLOITED = "exploited"
     CC = "cc"
-    CC_TUNNEL = "cc_tunnel"
