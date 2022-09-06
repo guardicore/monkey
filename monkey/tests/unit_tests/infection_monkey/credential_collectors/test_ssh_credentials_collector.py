@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.credentials import Credentials, SSHKeypair, Username
-from common.event_queue import IEventQueue
+from common.event_queue import IAgentEventQueue
 from infection_monkey.credential_collectors import SSHCredentialCollector
 
 
@@ -25,7 +25,7 @@ def patch_ssh_handler(ssh_creds, monkeypatch):
 def test_ssh_credentials_empty_results(monkeypatch, ssh_creds, patch_telemetry_messenger):
     patch_ssh_handler(ssh_creds, monkeypatch)
     collected = SSHCredentialCollector(
-        patch_telemetry_messenger, MagicMock(spec=IEventQueue)
+        patch_telemetry_messenger, MagicMock(spec=IAgentEventQueue)
     ).collect_credentials()
     assert not collected
 
@@ -71,6 +71,6 @@ def test_ssh_info_result_parsing(monkeypatch, patch_telemetry_messenger):
         Credentials(identity=None, secret=ssh_keypair3),
     ]
     collected = SSHCredentialCollector(
-        patch_telemetry_messenger, MagicMock(spec=IEventQueue)
+        patch_telemetry_messenger, MagicMock(spec=IAgentEventQueue)
     ).collect_credentials()
     assert expected == collected

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
-from common.event_queue import IEventQueue
+from common.event_queue import IAgentEventQueue
 from common.events import CredentialsStolenEvent
 from infection_monkey.credential_collectors import MimikatzCredentialCollector
 from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_credential_collector import (  # noqa: E501
@@ -24,7 +24,7 @@ def patch_pypykatz(win_creds: [WindowsCredentials], monkeypatch):
 
 
 def collect_credentials() -> Sequence[Credentials]:
-    mock_event_queue = MagicMock(spec=IEventQueue)
+    mock_event_queue = MagicMock(spec=IAgentEventQueue)
     return MimikatzCredentialCollector(mock_event_queue).collect_credentials()
 
 
@@ -120,7 +120,7 @@ def test_pypykatz_result_parsing_no_secrets(monkeypatch):
 
 
 def test_mimikatz_credentials_stolen_event_published(monkeypatch):
-    mock_event_queue = MagicMock(spec=IEventQueue)
+    mock_event_queue = MagicMock(spec=IAgentEventQueue)
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue)
@@ -134,7 +134,7 @@ def test_mimikatz_credentials_stolen_event_published(monkeypatch):
 
 
 def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
-    mock_event_queue = MagicMock(spec=IEventQueue)
+    mock_event_queue = MagicMock(spec=IAgentEventQueue)
     patch_pypykatz([], monkeypatch)
 
     mimikatz_credential_collector = MimikatzCredentialCollector(mock_event_queue)
@@ -146,7 +146,7 @@ def test_mimikatz_credentials_stolen_event_tags(monkeypatch):
 
 
 def test_mimikatz_credentials_stolen_event_stolen_credentials(monkeypatch):
-    mock_event_queue = MagicMock(spec=IEventQueue)
+    mock_event_queue = MagicMock(spec=IAgentEventQueue)
     win_creds = [
         WindowsCredentials(
             username="user2", password="secret2", lm_hash="0182BD0BD4444BF8FC83B5D9042EED2E"

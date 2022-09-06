@@ -6,15 +6,15 @@ from uuid import UUID
 import pytest
 from pubsub.core import Publisher
 
-from common.event_queue import EventSubscriber, IEventQueue, PyPubSubEventQueue
-from common.events import AbstractEvent
+from common.event_queue import AgentEventSubscriber, IAgentEventQueue, PyPubSubAgentEventQueue
+from common.events import AbstractAgentEvent
 
 EVENT_TAG_1 = "event tag 1"
 EVENT_TAG_2 = "event tag 2"
 
 
 @dataclass(frozen=True)
-class TestEvent1(AbstractEvent):
+class TestEvent1(AbstractAgentEvent):
     __test__ = False
     source: UUID = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
     target: Union[UUID, IPv4Address, None] = None
@@ -23,7 +23,7 @@ class TestEvent1(AbstractEvent):
 
 
 @dataclass(frozen=True)
-class TestEvent2(AbstractEvent):
+class TestEvent2(AbstractAgentEvent):
     __test__ = False
     source: UUID = UUID("e810ad01-6b67-9446-fc58-9b8d717653f7")
     target: Union[UUID, IPv4Address, None] = None
@@ -32,13 +32,13 @@ class TestEvent2(AbstractEvent):
 
 
 @pytest.fixture
-def event_queue() -> IEventQueue:
-    return PyPubSubEventQueue(Publisher())
+def event_queue() -> IAgentEventQueue:
+    return PyPubSubAgentEventQueue(Publisher())
 
 
 @pytest.fixture
-def event_queue_subscriber() -> Callable[[AbstractEvent], None]:
-    def fn(event: AbstractEvent):
+def event_queue_subscriber() -> Callable[[AbstractAgentEvent], None]:
+    def fn(event: AbstractAgentEvent):
         fn.call_count += 1
         fn.call_types.add(event.__class__)
         fn.call_tags |= event.tags
@@ -50,7 +50,7 @@ def event_queue_subscriber() -> Callable[[AbstractEvent], None]:
     return fn
 
 
-def test_subscribe_all(event_queue: IEventQueue, event_queue_subscriber: EventSubscriber):
+def test_subscribe_all(event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber):
     event_queue.subscribe_all_events(event_queue_subscriber)
 
     event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
@@ -65,7 +65,7 @@ def test_subscribe_all(event_queue: IEventQueue, event_queue_subscriber: EventSu
 
 @pytest.mark.parametrize("type_to_subscribe", [TestEvent1, TestEvent2])
 def test_subscribe_types(
-    event_queue: IEventQueue, event_queue_subscriber: EventSubscriber, type_to_subscribe
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber, type_to_subscribe
 ):
     event_queue.subscribe_type(type_to_subscribe, event_queue_subscriber)
 
@@ -77,7 +77,7 @@ def test_subscribe_types(
 
 
 def test_subscribe_tags_single_type(
-    event_queue: IEventQueue, event_queue_subscriber: EventSubscriber
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber
 ):
     event_queue.subscribe_tag(EVENT_TAG_1, event_queue_subscriber)
 
@@ -91,7 +91,7 @@ def test_subscribe_tags_single_type(
 
 
 def test_subscribe_tags_multiple_types(
-    event_queue: IEventQueue, event_queue_subscriber: EventSubscriber
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber
 ):
     event_queue.subscribe_tag(EVENT_TAG_2, event_queue_subscriber)
 
@@ -105,7 +105,9 @@ def test_subscribe_tags_multiple_types(
     assert {EVENT_TAG_1, EVENT_TAG_2}.issubset(event_queue_subscriber.call_tags)
 
 
-def test_type_tag_collision(event_queue: IEventQueue, event_queue_subscriber: EventSubscriber):
+def test_type_tag_collision(
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber
+):
     event_queue.subscribe_type(TestEvent1, event_queue_subscriber)
 
     event_queue.publish(TestEvent2(tags=frozenset({TestEvent1.__name__})))
@@ -113,11 +115,11 @@ def test_type_tag_collision(event_queue: IEventQueue, event_queue_subscriber: Ev
     assert event_queue_subscriber.call_count == 0
 
 
-def test_keep_subscriber_in_scope(event_queue: IEventQueue):
+def test_keep_subscriber_in_scope(event_queue: IAgentEventQueue):
     class MyCallable:
         called = False
 
-        def __call__(self, event: AbstractEvent):
+        def __call__(self, event: AbstractAgentEvent):
             MyCallable.called = True
 
     def subscribe():

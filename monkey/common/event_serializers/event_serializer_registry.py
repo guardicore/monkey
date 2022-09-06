@@ -1,7 +1,7 @@
 from typing import Type, Union
 
 from common.event_serializers import IEventSerializer
-from common.events import AbstractEvent
+from common.events import AbstractAgentEvent
 
 
 class EventSerializerRegistry:
@@ -21,9 +21,11 @@ class EventSerializerRegistry:
     def __init__(self):
         self._registry = {}
 
-    def __setitem__(self, event_class: Type[AbstractEvent], event_serializer: IEventSerializer):
-        if not issubclass(event_class, AbstractEvent):
-            raise TypeError(f"Event class must be of type: {AbstractEvent.__name__}")
+    def __setitem__(
+        self, event_class: Type[AbstractAgentEvent], event_serializer: IEventSerializer
+    ):
+        if not issubclass(event_class, AbstractAgentEvent):
+            raise TypeError(f"Event class must be of type: {AbstractAgentEvent.__name__}")
 
         if not isinstance(event_serializer, IEventSerializer):
             raise TypeError(f"Event serializer must be of type: {IEventSerializer.__name__}")
@@ -31,10 +33,10 @@ class EventSerializerRegistry:
         self._registry[event_class] = event_serializer
         self._registry[event_class.__name__] = event_serializer
 
-    def __getitem__(self, event_class: Union[str, Type[AbstractEvent]]) -> IEventSerializer:
-        if not (isinstance(event_class, str) or issubclass(event_class, AbstractEvent)):
+    def __getitem__(self, event_class: Union[str, Type[AbstractAgentEvent]]) -> IEventSerializer:
+        if not (isinstance(event_class, str) or issubclass(event_class, AbstractAgentEvent)):
             raise TypeError(
-                f"Registry get key {event_class} must be of type: {AbstractEvent.__name__} or "
+                f"Registry get key {event_class} must be of type: {AbstractAgentEvent.__name__} or "
                 f"{str.__name__}"
             )
 

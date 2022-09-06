@@ -1,3 +1,4 @@
-from .types import EventSubscriber
-from .i_event_queue import IEventQueue
-from .pypubsub_event_queue import PyPubSubEventQueue
+from .types import AgentEventSubscriber
+from .pypubsub_publisher_wrapper import PyPubSubPublisherWrapper
+from .i_agent_event_queue import IAgentEventQueue
+from .pypubsub_agent_event_queue import PyPubSubAgentEventQueue

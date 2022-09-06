@@ -7,13 +7,13 @@ from uuid import UUID, getnode
 
 
 @dataclass(frozen=True)
-class AbstractEvent(ABC):
+class AbstractAgentEvent(ABC):
     """
     An event that was initiated or observed by an agent
 
     Agents perform actions and collect data. These actions and data are represented as "events".
-    Subtypes of `AbstractEvent` will have additional properties that provide context and information
-    about the event.
+    Subtypes of `AbstractAgentEvent` will have additional properties that provide context and
+    information about the event.
 
     Attributes:
         :param source: The UUID of the agent that observed the event

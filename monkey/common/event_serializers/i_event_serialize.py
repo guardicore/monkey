@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Union
 
-from common.events import AbstractEvent
+from common.events import AbstractAgentEvent
 
 JSONSerializable = Union[
     Dict[str, "JSONSerializable"], List["JSONSerializable"], int, str, float, bool, None
@@ -14,7 +14,7 @@ class IEventSerializer(ABC):
     """
 
     @abstractmethod
-    def serialize(self, event: AbstractEvent) -> JSONSerializable:
+    def serialize(self, event: AbstractAgentEvent) -> JSONSerializable:
         """
         Serializes an event
 
@@ -24,7 +24,7 @@ class IEventSerializer(ABC):
         pass
 
     @abstractmethod
-    def deserialize(self, serialized_event: JSONSerializable) -> AbstractEvent:
+    def deserialize(self, serialized_event: JSONSerializable) -> AbstractAgentEvent:
         """
         Deserializes an event
 

@@ -10,6 +10,7 @@ from common.agent_configuration.agent_sub_configurations import (
 from common.credentials import Credentials
 from common.utils import IJSONSerializable
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
+from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -277,16 +278,15 @@ key_list
 simulation
 netmap
 validate_windows_filename_not_reserved
-subscribe_all  # common\event_queue\i_event_queue.py
-subscribe_type  # common\event_queue\i_event_queue.py
-subscribe_tag  # common\event_queue\i_event_queue.py
-publish  # common\event_queue\i_event_queue.py
-subscribe_all  # common\event_queue\pypubsub_event_queue.py
-subscribe_type  # common\event_queue\pypubsub_event_queue.py
-subscribe_tag  # common\event_queue\pypubsub_event_queue.py
-publish  # common\event_queue\pypubsub_event_queue.py
-PyPubSubEventQueue  # common\event_queue\pypubsub_event_queue.py
-subscribe_all_events  # common\event_queue\pypubsub_event_queue.py
+subscribe_all  # common\event_queue\i_agent_event_queue.py
+subscribe_type  # common\event_queue\i_agent_event_queue.py
+subscribe_tag  # common\event_queue\i_agent_event_queue.py
+publish  # common\event_queue\i_agent_event_queue.py
+subscribe_all  # common\event_queue\pypubsub_agent_event_queue.py
+subscribe_type  # common\event_queue\pypubsub_agent_event_queue.py
+subscribe_tag  # common\event_queue\pypubsub_agent_event_queue.py
+publish  # common\event_queue\pypubsub_agent_event_queue.py
+subscribe_all_events  # common\event_queue\pypubsub_agent_event_queue.py
 
 
 # TODO: Remove once #2179 is closed
@@ -316,3 +316,7 @@ CC_TUNNEL
 
 Credentials.from_json
 IJSONSerializable.from_json
+
+IslandEventTopic.AGENT_CONNECTED
+IslandEventTopic.CLEAR_SIMULATION_DATA
+IslandEventTopic.RESET_AGENT_CONFIGURATION

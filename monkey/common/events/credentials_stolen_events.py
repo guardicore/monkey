@@ -3,11 +3,11 @@ from typing import Sequence
 
 from common.credentials import Credentials
 
-from . import AbstractEvent
+from . import AbstractAgentEvent
 
 
 @dataclass(frozen=True)
-class CredentialsStolenEvent(AbstractEvent):
+class CredentialsStolenEvent(AbstractAgentEvent):
     """
     An event that occurs when an agent collects credentials from the victim
 
