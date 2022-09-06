@@ -119,6 +119,10 @@ def check_if_stored_credentials_encrypted(mongo_client: MongoClient, original_cr
                 for key, value in credentials_component.items():
                     assert original_credentials_mapping[identity_or_secret][key] != value.decode()
 
+                    # Since secrets use the pydantic.SecretType, make sure we're not just storing
+                    # all '*' characters.
+                    assert "***" not in value.decode()
+
 
 def get_all_credentials_in_mongo(
     mongo_client: MongoClient,
