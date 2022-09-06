@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class PyPubSubAgentEventQueue(IAgentEventQueue):
     def __init__(self, pypubsub_publisher: Publisher):
-        self._pypubsub_publisher_wrapped = PyPubSubPublisherWrapper(pypubsub_publisher)
+        self._pypubsub_publisher_wrapper = PyPubSubPublisherWrapper(pypubsub_publisher)
 
     def subscribe_all_events(self, subscriber: AgentEventSubscriber):
         self._subscribe(_ALL_EVENTS_TOPIC, subscriber)
@@ -32,7 +32,7 @@ class PyPubSubAgentEventQueue(IAgentEventQueue):
         self._subscribe(tag_topic, subscriber)
 
     def _subscribe(self, topic: str, subscriber: AgentEventSubscriber):
-        self._pypubsub_publisher_wrapped.subscribe(topic, subscriber)
+        self._pypubsub_publisher_wrapper.subscribe(topic, subscriber)
 
     def publish(self, event: AbstractAgentEvent):
         self._publish_to_all_events_topic(event)
@@ -53,7 +53,7 @@ class PyPubSubAgentEventQueue(IAgentEventQueue):
 
     def _publish_event(self, topic: str, event: AbstractAgentEvent):
         logger.debug(f"Publishing a {event.__class__.__name__} event to {topic}")
-        self._pypubsub_publisher_wrapped.publish(topic, event=event)
+        self._pypubsub_publisher_wrapper.publish(topic, event=event)
 
     # Appending a unique string to the topics for type and tags prevents bugs caused by collisions
     # between type names and tag names.
