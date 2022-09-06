@@ -4,11 +4,9 @@ from typing import Any
 
 from . import IslandEventSubscriber
 
-
-class IslandEventTopic(Enum):
-    AGENT_CONNECTED = "agent_connected"
-    CLEAR_SIMULATION_DATA = "clear_simulation_data"
-    RESET_AGENT_CONFIGURATION = "reset_agent_configuration"
+IslandEventTopic = Enum(
+    "IslandEventTopic", ["AGENT_CONNECTED", "CLEAR_SIMULATION_DATA", "RESET_AGENT_CONFIGURATION"]
+)
 
 
 class IIslandEventQueue(ABC):
