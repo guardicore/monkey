@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address
 from threading import Lock
-from time import time
 from typing import Dict
+
+from egg_timer import EggTimer
 
 DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients to connect
 
@@ -10,7 +11,7 @@ DEFAULT_NEW_CLIENT_TIMEOUT = 3  # Wait up to 3 seconds for potential new clients
 @dataclass
 class RelayUser:
     address: IPv4Address
-    last_update_time: float
+    timer: EggTimer
 
 
 class RelayUserHandler:
@@ -35,7 +36,8 @@ class RelayUserHandler:
             if user_address in self._potential_users:
                 del self._potential_users[user_address]
 
-            self._relay_users[user_address] = RelayUser(user_address, time())
+            timer = EggTimer()
+            self._relay_users[user_address] = RelayUser(user_address, timer)
 
     def add_potential_user(self, user_address: IPv4Address):
         """
@@ -45,7 +47,9 @@ class RelayUserHandler:
             that tries to connect to the relay
         """
         with self._lock:
-            self._potential_users[user_address] = RelayUser(user_address, time())
+            timer = EggTimer()
+            timer.set(self._new_client_timeout)
+            self._potential_users[user_address] = RelayUser(user_address, timer)
 
     def disconnect_user(self, user_address: IPv4Address):
         """
@@ -61,12 +65,8 @@ class RelayUserHandler:
         """
         Return whether or not we have any potential users.
         """
-        current_time = time()
         self._potential_users = dict(
-            filter(
-                lambda ru: (current_time - ru[1].last_update_time) < self._new_client_timeout,
-                self._potential_users.items(),
-            )
+            filter(lambda ru: not ru[1].timer.is_expired(), self._potential_users.items())
         )
 
         return len(self._potential_users) > 0
