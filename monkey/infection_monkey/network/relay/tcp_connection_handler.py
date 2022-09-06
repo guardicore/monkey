@@ -19,7 +19,9 @@ class TCPConnectionHandler(Thread, InterruptableThreadMixin):
         self.bind_host = bind_host
         self.bind_port = bind_port
         self._client_connected = client_connected
-        super().__init__(name="TCPConnectionHandler", daemon=True)
+
+        Thread.__init__(self, name="TCPConnectionHandler", daemon=True)
+        InterruptableThreadMixin.__init__(self)
 
     def run(self):
         l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
