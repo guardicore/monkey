@@ -20,8 +20,7 @@ class TCPRelay(Thread):
         self._user_handler = relay_user_handler
         self._connection_handler = connection_handler
         self._pipe_spawner = pipe_spawner
-        super().__init__(name="MonkeyTcpRelayThread")
-        self.daemon = True
+        super().__init__(name="MonkeyTcpRelayThread", daemon=True)
         self._lock = Lock()
 
     def run(self):

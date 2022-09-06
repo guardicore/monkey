@@ -23,8 +23,7 @@ class SocketsPipe(Thread):
         self.dest = dest
         self.timeout = timeout
         self._keep_connection = True
-        super().__init__(name=f"SocketsPipeThread-{self.ident}")
-        self.daemon = True
+        super().__init__(name=f"SocketsPipeThread-{self.ident}", daemon=True)
         self._client_disconnected = client_disconnected
 
     def run(self):
