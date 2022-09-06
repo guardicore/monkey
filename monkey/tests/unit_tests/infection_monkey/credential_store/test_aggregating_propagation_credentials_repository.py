@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import SecretStr
 from tests.data_for_tests.propagation_credentials import (
     CREDENTIALS,
     LM_HASH,
@@ -30,14 +31,14 @@ EMPTY_CHANNEL_CREDENTIALS = []
 STOLEN_USERNAME_1 = "user1"
 STOLEN_USERNAME_2 = "user2"
 STOLEN_USERNAME_3 = "user3"
-STOLEN_PASSWORD_1 = "abcdefg"
-STOLEN_PASSWORD_2 = "super_secret"
+STOLEN_PASSWORD_1 = SecretStr("abcdefg")
+STOLEN_PASSWORD_2 = SecretStr("super_secret")
 STOLEN_PUBLIC_KEY_1 = "some_public_key_1"
 STOLEN_PUBLIC_KEY_2 = "some_public_key_2"
-STOLEN_LM_HASH = "AAD3B435B51404EEAAD3B435B51404EE"
-STOLEN_NT_HASH = "C0172DFF622FE29B5327CB79DC12D24C"
-STOLEN_PRIVATE_KEY_1 = "some_private_key_1"
-STOLEN_PRIVATE_KEY_2 = "some_private_key_2"
+STOLEN_LM_HASH = SecretStr("AAD3B435B51404EEAAD3B435B51404EE")
+STOLEN_NT_HASH = SecretStr("C0172DFF622FE29B5327CB79DC12D24C")
+STOLEN_PRIVATE_KEY_1 = SecretStr("some_private_key_1")
+STOLEN_PRIVATE_KEY_2 = SecretStr("some_private_key_2")
 STOLEN_CREDENTIALS = [
     Credentials(
         identity=Username(username=STOLEN_USERNAME_1),

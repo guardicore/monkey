@@ -1,16 +1,16 @@
 import re
 
-from pydantic import validator
+from pydantic import SecretStr, validator
 
 from ..base_models import InfectionMonkeyBaseModel
 from .validators import ntlm_hash_regex
 
 
 class NTHash(InfectionMonkeyBaseModel):
-    nt_hash: str
+    nt_hash: SecretStr
 
     @validator("nt_hash")
     def validate_hash_format(cls, nt_hash):
-        if not re.match(ntlm_hash_regex, nt_hash):
-            raise ValueError(f"Invalid NT hash provided: {nt_hash}")
+        if not re.match(ntlm_hash_regex, nt_hash.get_secret_value()):
+            raise ValueError("Invalid NT hash provided")
         return nt_hash

@@ -1,16 +1,18 @@
 from itertools import product
 
+from pydantic import SecretStr
+
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 
 USERNAME = "m0nk3y_user"
 SPECIAL_USERNAME = "m0nk3y.user"
-NT_HASH = "C1C58F96CDF212B50837BC11A00BE47C"
-LM_HASH = "299BD128C1101FD6299BD128C1101FD6"
-PASSWORD_1 = "trytostealthis"
-PASSWORD_2 = "password!"
-PASSWORD_3 = "rubberbabybuggybumpers"
+NT_HASH = SecretStr("C1C58F96CDF212B50837BC11A00BE47C")
+LM_HASH = SecretStr("299BD128C1101FD6299BD128C1101FD6")
+PASSWORD_1 = SecretStr("trytostealthis")
+PASSWORD_2 = SecretStr("password!")
+PASSWORD_3 = SecretStr("rubberbabybuggybumpers")
 PUBLIC_KEY = "MY_PUBLIC_KEY"
-PRIVATE_KEY = "MY_PRIVATE_KEY"
+PRIVATE_KEY = SecretStr("MY_PRIVATE_KEY")
 
 IDENTITIES = [Username(username=USERNAME), None, Username(username=SPECIAL_USERNAME)]
 IDENTITY_DICTS = [{"username": USERNAME}, None]
