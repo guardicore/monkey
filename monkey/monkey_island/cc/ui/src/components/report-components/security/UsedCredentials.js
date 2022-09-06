@@ -24,7 +24,7 @@ class UsedCredentials extends React.Component {
         </p>
         <ul>
           {allSecrets.map((x, index) => <li
-            key={index}>{x['type']}: {x['content'].substr(0, 3) + '******'}</li>)}
+            key={index}>{x['title']}: {x['content'].substr(0, 3) + '******'}</li>)}
         </ul>
       </>
       :

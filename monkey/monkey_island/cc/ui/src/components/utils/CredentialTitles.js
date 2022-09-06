@@ -1,4 +1,4 @@
-export const CredentialTypes = {
+export const CredentialTitles = {
   Password: 'Clear Password',
   SSHKeys: 'Clear SSH private key',
   LMHash: 'LM hash',
@@ -11,4 +11,8 @@ export const SecretTypes = {
   PrivateKey: 'private_key',
   LMHash: 'lm_hash',
   NTHash: 'nt_hash'
+}
+
+export const PlaintextTypes = {
+  PublicKey: 'public_key'
 }
