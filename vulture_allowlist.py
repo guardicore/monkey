@@ -8,6 +8,7 @@ from common.agent_configuration.agent_sub_configurations import (
     ScanTargetConfiguration,
 )
 from common.credentials import Credentials
+from common.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from common.utils import IJSONSerializable
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Report
@@ -317,9 +318,7 @@ CC_TUNNEL
 Credentials.from_json
 IJSONSerializable.from_json
 
-# revisit when implementing PyPubSubIslandEventQueue
-AGENT_CONNECTED
-CLEAR_SIMULATION_DATA
-RESET_AGENT_CONFIGURATION
-IIslandEventQueue
-event_data
+PyPubSubIslandEventQueue
+IslandEventTopic.AGENT_CONNECTED
+IslandEventTopic.CLEAR_SIMULATION_DATA
+IslandEventTopic.RESET_AGENT_CONFIGURATION
