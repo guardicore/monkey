@@ -43,8 +43,8 @@ def test_subscribe_publish(
 
     assert event_queue_subscriber.call_count == 2
     assert event_queue_subscriber.call_topics == {
-        IslandEventTopic.AGENT_CONNECTED.value,
-        IslandEventTopic.CLEAR_SIMULATION_DATA.value,
+        IslandEventTopic.AGENT_CONNECTED.name,
+        IslandEventTopic.CLEAR_SIMULATION_DATA.name,
     }
 
 
