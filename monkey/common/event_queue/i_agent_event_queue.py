@@ -49,7 +49,6 @@ class IAgentEventQueue(ABC):
         Publishes an event with the given data
 
         :param event: Event to publish
-        :param data: Data to pass to subscribers with the event publish
         """
 
         pass
