@@ -4,7 +4,7 @@ import pytest
 from pubsub import pub
 from pubsub.core import Publisher
 
-from common.event_queue import (
+from monkey_island.cc.event_queue import (
     IIslandEventQueue,
     IslandEventSubscriber,
     IslandEventTopic,
