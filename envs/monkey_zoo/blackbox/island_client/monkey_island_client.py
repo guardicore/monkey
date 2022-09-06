@@ -61,7 +61,7 @@ class MonkeyIslandClient(object):
     @avoid_race_condition
     def _import_credentials(self, propagation_credentials: List[Credentials]):
         serialized_propagation_credentials = [
-            credentials.dict() for credentials in propagation_credentials
+            credentials.dict(simplify=True) for credentials in propagation_credentials
         ]
         response = self.requests.put_json(
             "/api/propagation-credentials/configured-credentials",
