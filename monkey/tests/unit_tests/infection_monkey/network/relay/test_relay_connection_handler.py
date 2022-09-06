@@ -5,11 +5,11 @@ from unittest.mock import MagicMock
 import pytest
 
 from monkey.infection_monkey.network.relay import (
+    RELAY_CONTROL_MESSAGE,
     RelayConnectionHandler,
     RelayUserHandler,
     TCPPipeSpawner,
 )
-from monkey.infection_monkey.network.relay.relay_connection_handler import RELAY_CONTROL_MESSAGE
 
 USER_ADDRESS = "0.0.0.1"
 
