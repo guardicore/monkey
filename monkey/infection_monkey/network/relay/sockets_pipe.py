@@ -3,8 +3,6 @@ from logging import getLogger
 from threading import Thread
 from typing import Callable
 
-from infection_monkey.transport.base import update_last_serve_time
-
 READ_BUFFER_SIZE = 8192
 SOCKET_READ_TIMEOUT = 10
 
@@ -42,7 +40,6 @@ class SocketsPipe(Thread):
                 if data:
                     try:
                         other.sendall(data)
-                        update_last_serve_time()
                     except Exception:
                         break
                     self._keep_connection = True
