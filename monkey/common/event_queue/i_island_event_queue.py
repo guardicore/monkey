@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any, Callable
 
 
-class IslandEventTopics(Enum):
+class IslandEventTopic(Enum):
     AGENT_CONNECTED = "agent_connected"
     CLEAR_SIMULATION_DATA = "clear_simulation_data"
     RESET_AGENT_CONFIGURATION = "reset_agent_configuration"
@@ -15,7 +15,7 @@ class IIslandEventQueue(ABC):
     """
 
     @abstractmethod
-    def subscribe(self, topic: IslandEventTopics, subscriber: Callable[..., None]):
+    def subscribe(self, topic: IslandEventTopic, subscriber: Callable[..., None]):
         """
         Subscribes a subscriber to the specified event topic
 
@@ -26,7 +26,7 @@ class IIslandEventQueue(ABC):
         pass
 
     @abstractmethod
-    def publish(self, topic: IslandEventTopics, event_data: Any = None):
+    def publish(self, topic: IslandEventTopic, event_data: Any = None):
         """
         Publishes an event topic with the given data
 

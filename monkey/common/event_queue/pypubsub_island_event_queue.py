@@ -3,7 +3,7 @@ from typing import Any, Callable
 
 from pubsub.core import Publisher
 
-from . import IIslandEventQueue, IslandEventTopics
+from . import IIslandEventQueue, IslandEventTopic
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ class PyPubSubIslandEventQueue(IIslandEventQueue):
         self._pypubsub_publisher = pypubsub_publisher
         self._refs = []
 
-    def subscribe(self, topic: IslandEventTopics, subscriber: Callable[..., None]):
+    def subscribe(self, topic: IslandEventTopic, subscriber: Callable[..., None]):
         topic_value = topic.value  # needs to be a string for pypubsub
         try:
             subscriber_name = subscriber.__name__
@@ -52,7 +52,7 @@ class PyPubSubIslandEventQueue(IIslandEventQueue):
         #       scope. Adding subscribers to self._refs prevents them from ever going out of scope.
         self._refs.append(subscriber)
 
-    def publish(self, topic: IslandEventTopics, event_data: Any = None):
+    def publish(self, topic: IslandEventTopic, event_data: Any = None):
         topic_value = topic.value  # needs to be a string for pypubsub
 
         logger.debug(f"Publishing {topic_value} event")
