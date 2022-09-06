@@ -2,7 +2,7 @@ import socket
 from ipaddress import IPv4Address
 from typing import List
 
-from .tcp import SocketsPipe
+from .sockets_pipe import SocketsPipe
 
 
 class TCPPipeSpawner:
