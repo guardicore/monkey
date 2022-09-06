@@ -6,7 +6,7 @@ from typing import Dict
 from egg_timer import EggTimer
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from monkey.common.utils.code_utils import del_key
+from common.utils.code_utils import del_key
 
 # Wait for potential new clients to connect
 DEFAULT_NEW_CLIENT_TIMEOUT = 2.5 * MEDIUM_REQUEST_TIMEOUT
