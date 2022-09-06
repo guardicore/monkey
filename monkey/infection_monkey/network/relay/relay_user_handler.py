@@ -14,6 +14,8 @@ class RelayUser:
 
 
 class RelayUserHandler:
+    """Manages membership to a network relay."""
+
     def __init__(self, new_client_timeout: float = DEFAULT_NEW_CLIENT_TIMEOUT):
         self._new_client_timeout = new_client_timeout
         self._relay_users: Dict[IPv4Address, RelayUser] = {}
@@ -37,7 +39,7 @@ class RelayUserHandler:
 
     def add_potential_user(self, user_address: IPv4Address):
         """
-        Notify TCPRelay that a new user may try and connect
+        Notify RelayUserHandler that a new user may try and connect.
 
         :param user_address: An address defining potential RelayUser
             that tries to connect to the relay
