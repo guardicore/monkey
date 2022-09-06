@@ -6,7 +6,7 @@ from uuid import UUID
 import pytest
 from pubsub.core import Publisher
 
-from common.event_queue import EventSubscriber, IAgentEventQueue, PyPubSubAgentEventQueue
+from common.event_queue import AgentEventSubscriber, IAgentEventQueue, PyPubSubAgentEventQueue
 from common.events import AbstractAgentEvent
 
 EVENT_TAG_1 = "event tag 1"
@@ -50,7 +50,7 @@ def event_queue_subscriber() -> Callable[[AbstractAgentEvent], None]:
     return fn
 
 
-def test_subscribe_all(event_queue: IAgentEventQueue, event_queue_subscriber: EventSubscriber):
+def test_subscribe_all(event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber):
     event_queue.subscribe_all_events(event_queue_subscriber)
 
     event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
@@ -65,7 +65,7 @@ def test_subscribe_all(event_queue: IAgentEventQueue, event_queue_subscriber: Ev
 
 @pytest.mark.parametrize("type_to_subscribe", [TestEvent1, TestEvent2])
 def test_subscribe_types(
-    event_queue: IAgentEventQueue, event_queue_subscriber: EventSubscriber, type_to_subscribe
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber, type_to_subscribe
 ):
     event_queue.subscribe_type(type_to_subscribe, event_queue_subscriber)
 
@@ -77,7 +77,7 @@ def test_subscribe_types(
 
 
 def test_subscribe_tags_single_type(
-    event_queue: IAgentEventQueue, event_queue_subscriber: EventSubscriber
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber
 ):
     event_queue.subscribe_tag(EVENT_TAG_1, event_queue_subscriber)
 
@@ -91,7 +91,7 @@ def test_subscribe_tags_single_type(
 
 
 def test_subscribe_tags_multiple_types(
-    event_queue: IAgentEventQueue, event_queue_subscriber: EventSubscriber
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber
 ):
     event_queue.subscribe_tag(EVENT_TAG_2, event_queue_subscriber)
 
@@ -105,7 +105,9 @@ def test_subscribe_tags_multiple_types(
     assert {EVENT_TAG_1, EVENT_TAG_2}.issubset(event_queue_subscriber.call_tags)
 
 
-def test_type_tag_collision(event_queue: IAgentEventQueue, event_queue_subscriber: EventSubscriber):
+def test_type_tag_collision(
+    event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber
+):
     event_queue.subscribe_type(TestEvent1, event_queue_subscriber)
 
     event_queue.publish(TestEvent2(tags=frozenset({TestEvent1.__name__})))
