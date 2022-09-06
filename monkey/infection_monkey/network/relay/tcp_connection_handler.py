@@ -26,7 +26,7 @@ class TCPConnectionHandler(Thread):
         l_socket.settimeout(PROXY_TIMEOUT)
         l_socket.listen(5)
 
-        while not self._stopped:
+        while not self._stopped.is_set():
             try:
                 source, _ = l_socket.accept()
             except socket.timeout:
