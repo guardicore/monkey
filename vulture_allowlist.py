@@ -317,7 +317,6 @@ CC_TUNNEL
 Credentials.from_json
 IJSONSerializable.from_json
 
-PyPubSubIslandEventQueue
 IslandEventTopic.AGENT_CONNECTED
 IslandEventTopic.CLEAR_SIMULATION_DATA
 IslandEventTopic.RESET_AGENT_CONFIGURATION
