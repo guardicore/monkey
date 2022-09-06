@@ -12,5 +12,5 @@ class LMHash(BaseModel):
     @validator("lm_hash")
     def validate_hash_format(cls, nt_hash):
         if not re.match(ntlm_hash_regex, nt_hash):
-            raise ValueError(f"Invalid lm hash provided: {nt_hash}")
+            raise ValueError(f"Invalid LM hash provided: {nt_hash}")
         return nt_hash

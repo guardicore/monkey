@@ -12,5 +12,5 @@ class NTHash(InfectionMonkeyBaseModel):
     @validator("nt_hash")
     def validate_hash_format(cls, nt_hash):
         if not re.match(ntlm_hash_regex, nt_hash):
-            raise ValueError(f"Invalid nt hash provided: {nt_hash}")
+            raise ValueError(f"Invalid NT hash provided: {nt_hash}")
         return nt_hash

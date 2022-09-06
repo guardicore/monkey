@@ -36,16 +36,16 @@ export function getAllSecrets(stolen, configured) {
 }
 
 function reformatSecret(secret) {
-  if (secret.hasOwnProperty(SecretTypes.Password)) {
+  if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.Password)) {
     return {'title': CredentialTitles.Password, 'content': secret[SecretTypes.Password]}
   }
-  if (secret.hasOwnProperty(SecretTypes.NTHash)) {
+  if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.NTHash)) {
     return {'title': CredentialTitles.NTHash, 'content': secret[SecretTypes.NTHash]}
   }
-  if (secret.hasOwnProperty(SecretTypes.LMHash)) {
+  if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.LMHash)) {
     return {'title': CredentialTitles.LMHash, 'content': secret[SecretTypes.LMHash]}
   }
-  if (secret.hasOwnProperty(SecretTypes.PrivateKey)) {
+  if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.PrivateKey)) {
     return {
       'title': CredentialTitles.SSHKeys,
       'content': secret[SecretTypes.PrivateKey]
