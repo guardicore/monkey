@@ -8,9 +8,9 @@ from common.agent_configuration.agent_sub_configurations import (
     ScanTargetConfiguration,
 )
 from common.credentials import Credentials
-from common.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from common.utils import IJSONSerializable
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
+from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
