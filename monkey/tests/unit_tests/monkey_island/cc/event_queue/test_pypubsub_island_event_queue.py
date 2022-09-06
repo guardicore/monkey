@@ -19,14 +19,15 @@ def event_queue() -> IIslandEventQueue:
 
 @pytest.fixture
 def event_queue_subscriber() -> Callable[..., None]:
-    def fn(topic=pub.AUTO_TOPIC):
-        fn.call_count += 1
-        fn.call_topics |= {topic.getName()}
+    class SubscriberSpy:
+        call_count = 0
+        call_topics = set()
 
-    fn.call_count = 0
-    fn.call_topics = set()
+        def __call__(self, topic=pub.AUTO_TOPIC):
+            self.call_count += 1
+            self.call_topics |= {topic.getName()}
 
-    return fn
+    return SubscriberSpy()
 
 
 def test_subscribe_publish__no_event_body(
