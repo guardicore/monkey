@@ -1,6 +1,7 @@
-from typing import Mapping, Tuple, TypeAlias
+from typing import Mapping, Tuple
 
 from pydantic import Field
+from typing_extensions import TypeAlias
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
