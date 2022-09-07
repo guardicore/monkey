@@ -1,5 +1,6 @@
 import queue
-from typing import Any, Dict, List, MutableMapping, Type, TypeVar
+from bisect import bisect_left
+from typing import Any, Dict, List, MutableMapping, Sequence, Type, TypeVar
 
 T = TypeVar("T")
 
@@ -48,3 +49,15 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
         del mapping[key]
     except KeyError:
         pass
+
+
+def in_sorted_sequence(item: Any, seq: Sequence[Any]) -> bool:
+    """
+    Provides fast search in the case that the sequence is sorted.
+
+    :param item: The item to search in the list.
+    :param seq: The sorted sequence in which to search the item.
+    :return: True if the item was found in the list, otherwise false.
+    """
+    i = bisect_left(seq, item)
+    return i != len(seq) and seq[i] == item
