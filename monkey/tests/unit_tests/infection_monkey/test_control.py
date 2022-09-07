@@ -52,7 +52,7 @@ def test_control_find_server__no_available_relays(monkeypatch, servers):
     assert servers == []
 
 
-def test_control_find_server_socket(monkeypatch, servers):
+def test_control_find_server__control_message_sent_to_necessary_relays(monkeypatch, servers):
     mock_connect = MagicMock()
     mock_send = MagicMock()
     monkeypatch.setattr("infection_monkey.control.requests.get", RequestsGetArgument)
