@@ -98,9 +98,9 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
 
         # TODO: Revisit variable names
-        self._get_server()
-        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self.server)
-        self._control_client = ControlClient(server_address=self.server)
+        server = self._get_server()
+        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
+        self._control_client = ControlClient(server_address=server)
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
@@ -124,8 +124,17 @@ class InfectionMonkey:
 
     def _get_server(self):
         servers_iterator = (s for s in self._opts.servers)
-        self.server = find_server(servers_iterator)
+        server = find_server(servers_iterator)
+        if server:
+            logger.debug(f"Default server set to: {server}")
+        else:
+            # TODO: Exit here
+            raise Exception(
+                f"Failed to connect to the island via any known servers: {self._opts.servers}"
+            )
         send_relay_control_message(servers_iterator)
+
+        return server
 
     @staticmethod
     def _log_arguments(args):
@@ -140,7 +149,7 @@ class InfectionMonkey:
         logger.info("Agent is starting...")
         logger.info(f"Agent GUID: {GUID}")
 
-        self._connect_to_island()
+        self._control_client.wakeup(parent=self._opts.parent)
 
         # TODO: Reevaluate who is responsible to send this information
         if is_windows_os():
@@ -157,23 +166,6 @@ class InfectionMonkey:
 
         self._setup()
         self._master.start()
-
-    def _connect_to_island(self):
-        # Sets island's IP and port for monkey to communicate to
-        if self._current_server_is_set():
-            logger.debug(f"Default server set to: {self._control_client.server_address}")
-        else:
-            raise Exception(
-                f"Failed to connect to the island via " f"any known server address: {self.server}"
-            )
-
-        self._control_client.wakeup(parent=self._opts.parent)
-
-    def _current_server_is_set(self) -> bool:
-        if self.server:
-            return True
-
-        return False
 
     def _setup(self):
         logger.debug("Starting the setup phase.")
