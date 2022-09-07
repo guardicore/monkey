@@ -381,7 +381,7 @@ class InfectionMonkey:
         on_island = self._running_on_island(local_network_interfaces)
         logger.debug(f"This agent is running on the island: {on_island}")
 
-        return VictimHostFactory(None, self._cmd_island_ip, self._cmd_island_port, on_island)
+        return VictimHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
         server_ip, _ = address_to_ip_port(self._control_client.server_address)

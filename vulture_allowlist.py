@@ -299,9 +299,6 @@ event
 deserialize
 serialized_event
 
-# TODO: Remove when removing Tunnel code
-create_control_tunnel
-set_wait_for_exploited_machines
 
 # pydantic base models
 underscore_attrs_are_private
