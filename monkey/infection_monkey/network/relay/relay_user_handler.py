@@ -77,9 +77,7 @@ class RelayUserHandler:
         Return whether or not we have any potential users.
         """
         with self._lock:
-            self._potential_users = dict(
-                filter(lambda ru: not ru[1].timer.is_expired(), self._potential_users.items())
-            )
+            self._potential_users = RelayUserHandler._remove_expired_users(self._potential_users)
 
             return len(self._potential_users) > 0
 
@@ -88,8 +86,12 @@ class RelayUserHandler:
         Return whether or not we have any relay users.
         """
         with self._lock:
-            self._relay_users = dict(
-                filter(lambda ru: not ru[1].timer.is_expired(), self._relay_users.items())
-            )
+            self._relay_users = RelayUserHandler._remove_expired_users(self._relay_users)
 
             return len(self._relay_users) > 0
+
+    @staticmethod
+    def _remove_expired_users(
+        user_list: Dict[IPv4Address, RelayUser]
+    ) -> Dict[IPv4Address, RelayUser]:
+        return dict(filter(lambda ru: not ru[1].timer.is_expired(), user_list.items()))
