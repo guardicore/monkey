@@ -259,6 +259,10 @@ IMachineRepository.get_machine_by_hardware_id
 IMachineRepository.get_machines_by_ip
 INetworkMapRepository.get_map
 INetworkMapRepository.save_netmap
+INodeRepository
+INodeRepository.upsert_communication
+INodeRepository.communication_type
+INodeRepository.get_nodes
 IReportRepository
 ISimulationRepository.save_simulation
 ISimulationRepository.get_simulation
