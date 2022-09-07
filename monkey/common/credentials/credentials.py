@@ -11,7 +11,7 @@ Secret = Union[Password, LMHash, NTHash, SSHKeypair]
 Identity = Username
 
 
-def get_plain_text(secret: Union[SecretStr, SecretBytes, None, str]) -> Optional[str]:
+def get_plaintext(secret: Union[SecretStr, SecretBytes, None, str]) -> Optional[str]:
     if isinstance(secret, (SecretStr, SecretBytes)):
         return secret.get_secret_value()
     else:
