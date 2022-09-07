@@ -43,14 +43,12 @@ def test_control_set_proxies(monkeypatch, is_windows_os, expected_proxy_string):
     assert control_client.proxies["https"] == expected_proxy_string
 
 
-def test_control_find_server_any_exception(monkeypatch, servers):
+def test_control_find_server__no_available_relays(monkeypatch, servers):
     monkeypatch.setattr("infection_monkey.control.requests.get", MockConnectionError)
 
     cc = ControlClient(servers)
 
-    return_value = cc.find_server(servers)
-
-    assert return_value is False
+    assert cc.find_server(servers) is False
     assert servers == []
 
 
