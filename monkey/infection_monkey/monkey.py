@@ -97,6 +97,7 @@ class InfectionMonkey:
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
 
+        # TODO: Revisit variable names
         server = find_server(self._opts.servers)
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
         self._control_client = ControlClient(server_address=server)
