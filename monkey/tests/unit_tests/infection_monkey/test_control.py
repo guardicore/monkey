@@ -1,8 +1,11 @@
+from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
 import requests
 
+from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE
+from monkey.common.network.network_utils import address_to_ip_port
 from monkey.infection_monkey.control import ControlClient
 
 SERVER_1 = "1.1.1.1:12312"
@@ -65,6 +68,12 @@ def test_control_find_server_socket(monkeypatch, servers):
     assert len(servers) == 2
     assert return_value is True
     assert mock_connect.call_count == 2
+
+    server_3_ip, server_3_port = address_to_ip_port(SERVER_3)
+    server_4_ip, server_4_port = address_to_ip_port(SERVER_4)
+    mock_connect.assert_has_calls(
+        [mock.call((server_3_ip, int(server_3_port))), mock.call((server_4_ip, int(server_4_port)))]
+    )
+
     assert mock_send.call_count == 2
-    # TODO: be sure that connect is called with SERVER_3 and SERVER_4
-    # assert mock_connect.call_args == SERVER_3
+    mock_send.assert_called_with(RELAY_CONTROL_MESSAGE)
