@@ -19,7 +19,7 @@ def get_plaintext(secret: Union[SecretStr, SecretBytes, None, str]) -> Optional[
 
 
 class Credentials(InfectionMonkeyBaseModel):
-    """Represents a credential pair (some form of identity and a secret)"""
+    """Represents a credential pair (an identity and a secret)"""
 
     identity: Optional[Identity]
     """Identity part of credentials, like a username or an email"""
@@ -30,6 +30,6 @@ class Credentials(InfectionMonkeyBaseModel):
     class Config:
         json_encoders = {
             # This makes secrets dumpable to json, but not loggable
-            SecretStr: lambda v: v.get_secret_value() if v else None,
-            SecretBytes: lambda v: v.get_secret_value() if v else None,
+            SecretStr: get_plaintext,
+            SecretBytes: get_plaintext,
         }
