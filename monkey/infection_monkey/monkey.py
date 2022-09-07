@@ -3,7 +3,7 @@ import logging
 import os
 import subprocess
 import sys
-from ipaddress import IPv4Interface
+from ipaddress import IPv4Address, IPv4Interface
 from pathlib import Path, WindowsPath
 from typing import List
 
@@ -41,7 +41,8 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.info import get_network_interfaces
+from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces
+from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -100,11 +101,10 @@ class InfectionMonkey:
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
         ControlClient.control_client_object = self._control_client
-        self._monkey_inbound_tunnel = None
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
-        self._inbound_tunnel_opened = False
+        self._relay: TCPRelay
 
     @staticmethod
     def _get_arguments(args):
@@ -180,14 +180,17 @@ class InfectionMonkey:
         control_channel.register_agent(self._opts.parent)
 
         config = control_channel.get_config()
-        self._monkey_inbound_tunnel = self._control_client.create_control_tunnel(
-            config.keep_tunnel_open_time
+
+        relay_port = get_free_tcp_port()
+        self._relay = TCPRelay(
+            relay_port,
+            IPv4Address(self._cmd_island_ip),
+            self._cmd_island_port,
+            client_disconnect_timeout=config.keep_tunnel_open_time,
         )
-        if self._monkey_inbound_tunnel and maximum_depth_reached(
-            config.propagation.maximum_depth, self._current_depth
-        ):
-            self._inbound_tunnel_opened = True
-            self._monkey_inbound_tunnel.start()
+
+        if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+            self._relay.start()
 
         StateTelem(is_done=False, version=get_version()).send()
         TunnelTelem(self._control_client.proxies).send()
@@ -215,7 +218,7 @@ class InfectionMonkey:
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
         telemetry_messenger = ExploitInterceptingTelemetryMessenger(
-            self._telemetry_messenger, self._monkey_inbound_tunnel
+            self._telemetry_messenger, self._relay
         )
 
         self._master = AutomatedMaster(
@@ -374,9 +377,7 @@ class InfectionMonkey:
         on_island = self._running_on_island(local_network_interfaces)
         logger.debug(f"This agent is running on the island: {on_island}")
 
-        return VictimHostFactory(
-            self._monkey_inbound_tunnel, self._cmd_island_ip, self._cmd_island_port, on_island
-        )
+        return VictimHostFactory(None, self._cmd_island_ip, self._cmd_island_port, on_island)
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
         server_ip, _ = address_to_ip_port(self._control_client.server_address)
@@ -394,9 +395,9 @@ class InfectionMonkey:
 
             reset_signal_handlers()
 
-            if self._inbound_tunnel_opened:
-                self._monkey_inbound_tunnel.stop()
-                self._monkey_inbound_tunnel.join()
+            if self._relay and self._relay.is_alive():
+                self._relay.stop()
+                self._relay.join(timeout=60)
 
             if firewall.is_enabled():
                 firewall.remove_firewall_rule()
