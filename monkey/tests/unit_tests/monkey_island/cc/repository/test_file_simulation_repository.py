@@ -12,7 +12,7 @@ def simulation_repository():
 
 @pytest.mark.parametrize("mode", list(IslandMode))
 def test_save_simulation(simulation_repository, mode):
-    simulation = Simulation(mode)
+    simulation = Simulation(mode=mode)
     simulation_repository.save_simulation(simulation)
 
     assert simulation_repository.get_simulation() == simulation
