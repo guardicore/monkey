@@ -19,7 +19,7 @@ class MockConnectionError:
         raise requests.exceptions.ConnectionError
 
 
-class RequestsGetArgument:
+class MockRequestsGetResponsePerServerArgument:
     def __init__(self, *args, **kwargs):
         if SERVER_1 in args[0]:
             MockConnectionError()
@@ -55,7 +55,9 @@ def test_control_find_server__no_available_relays(monkeypatch, servers):
 def test_control_find_server__control_message_sent_to_necessary_relays(monkeypatch, servers):
     mock_connect = MagicMock()
     mock_send = MagicMock()
-    monkeypatch.setattr("infection_monkey.control.requests.get", RequestsGetArgument)
+    monkeypatch.setattr(
+        "infection_monkey.control.requests.get", MockRequestsGetResponsePerServerArgument
+    )
     monkeypatch.setattr("infection_monkey.control.socket.socket.connect", mock_connect)
     monkeypatch.setattr("infection_monkey.control.socket.socket.send", mock_send)
 
