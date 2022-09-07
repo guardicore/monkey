@@ -1,6 +1,6 @@
 from queue import Queue
 
-from common.utils.code_utils import del_key, in_sorted_sequence, queue_to_list
+from common.utils.code_utils import del_key, queue_to_list
 
 
 def test_empty_queue_to_empty_list():
@@ -40,11 +40,3 @@ def test_del_key__nonexistant_key():
 
     # This test passes if the following call does not raise an error
     del_key(my_dict, key_to_delete)
-
-
-def test_in_sorted_sequence__finds_item():
-    assert in_sorted_sequence(99, range(100))
-
-
-def test_in_sorted_sequence__does_not_find_nonexistent_item():
-    assert not in_sorted_sequence(101, range(100))
