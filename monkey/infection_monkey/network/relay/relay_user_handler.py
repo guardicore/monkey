@@ -76,18 +76,20 @@ class RelayUserHandler:
         """
         Return whether or not we have any potential users.
         """
-        self._potential_users = dict(
-            filter(lambda ru: not ru[1].timer.is_expired(), self._potential_users.items())
-        )
+        with self._lock:
+            self._potential_users = dict(
+                filter(lambda ru: not ru[1].timer.is_expired(), self._potential_users.items())
+            )
 
-        return len(self._potential_users) > 0
+            return len(self._potential_users) > 0
 
     def has_connected_users(self) -> bool:
         """
         Return whether or not we have any relay users.
         """
-        self._relay_users = dict(
-            filter(lambda ru: not ru[1].timer.is_expired(), self._relay_users.items())
-        )
+        with self._lock:
+            self._relay_users = dict(
+                filter(lambda ru: not ru[1].timer.is_expired(), self._relay_users.items())
+            )
 
-        return len(self._relay_users) > 0
+            return len(self._relay_users) > 0
