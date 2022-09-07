@@ -189,7 +189,7 @@ class InfectionMonkey:
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
 
-        if maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+        if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()
 
         StateTelem(is_done=False, version=get_version()).send()
