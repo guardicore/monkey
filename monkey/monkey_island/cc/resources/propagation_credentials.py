@@ -29,7 +29,7 @@ class PropagationCredentials(AbstractResource):
         return propagation_credentials, HTTPStatus.OK
 
     def put(self, collection=None):
-        credentials = [Credentials.from_mapping(c) for c in request.json]
+        credentials = [Credentials(**c) for c in request.json]
         if collection == _configured_collection:
             self._credentials_repository.remove_configured_credentials()
             self._credentials_repository.save_configured_credentials(credentials)

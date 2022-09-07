@@ -1,7 +1,8 @@
 import logging
 from typing import Any, Iterable
 
-from common.credentials import CredentialComponentType, Credentials, ICredentialComponent
+from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
+from common.credentials.credentials import Identity, Secret
 from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.utils.decorators import request_cache
@@ -43,18 +44,18 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
             if credentials.secret:
                 self._add_secret(credentials.secret)
 
-    def _add_identity(self, identity: ICredentialComponent):
-        if identity.credential_type is CredentialComponentType.USERNAME:
+    def _add_identity(self, identity: Identity):
+        if isinstance(identity, Username):
             self._stored_credentials.setdefault("exploit_user_list", set()).add(identity.username)
 
-    def _add_secret(self, secret: ICredentialComponent):
-        if secret.credential_type is CredentialComponentType.PASSWORD:
+    def _add_secret(self, secret: Secret):
+        if isinstance(secret, Password):
             self._stored_credentials.setdefault("exploit_password_list", set()).add(secret.password)
-        elif secret.credential_type is CredentialComponentType.LM_HASH:
+        elif isinstance(secret, LMHash):
             self._stored_credentials.setdefault("exploit_lm_hash_list", set()).add(secret.lm_hash)
-        elif secret.credential_type is CredentialComponentType.NT_HASH:
+        elif isinstance(secret, NTHash):
             self._stored_credentials.setdefault("exploit_ntlm_hash_list", set()).add(secret.nt_hash)
-        elif secret.credential_type is CredentialComponentType.SSH_KEYPAIR:
+        elif isinstance(secret, SSHKeypair):
             self._set_attribute(
                 "exploit_ssh_keys",
                 [{"public_key": secret.public_key, "private_key": secret.private_key}],

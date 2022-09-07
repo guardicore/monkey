@@ -1,23 +1,16 @@
-from dataclasses import dataclass, field
+import re
 
-from marshmallow import fields
+from pydantic import SecretStr, validator
 
-from . import CredentialComponentType, ICredentialComponent
-from .credential_component_schema import CredentialComponentSchema, CredentialTypeField
-from .validators import credential_component_validator, ntlm_hash_validator
-
-
-class NTHashSchema(CredentialComponentSchema):
-    credential_type = CredentialTypeField(CredentialComponentType.NT_HASH)
-    nt_hash = fields.Str(validate=ntlm_hash_validator)
+from ..base_models import InfectionMonkeyBaseModel
+from .validators import ntlm_hash_regex
 
 
-@dataclass(frozen=True)
-class NTHash(ICredentialComponent):
-    credential_type: CredentialComponentType = field(
-        default=CredentialComponentType.NT_HASH, init=False
-    )
-    nt_hash: str
+class NTHash(InfectionMonkeyBaseModel):
+    nt_hash: SecretStr
 
-    def __post_init__(self):
-        credential_component_validator(NTHashSchema(), self)
+    @validator("nt_hash")
+    def validate_hash_format(cls, nt_hash):
+        if not re.match(ntlm_hash_regex, nt_hash.get_secret_value()):
+            raise ValueError("Invalid NT hash provided")
+        return nt_hash

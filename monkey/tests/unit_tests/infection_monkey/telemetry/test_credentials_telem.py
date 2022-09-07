@@ -13,13 +13,12 @@ PRIVATE_KEY = "priv_key"
 
 @pytest.fixture
 def credentials_for_test():
-
-    return Credentials(Username(USERNAME), Password(PASSWORD))
+    return Credentials(identity=Username(username=USERNAME), secret=Password(password=PASSWORD))
 
 
 def test_credential_telem_send(spy_send_telemetry, credentials_for_test):
 
-    expected_data = [Credentials.to_mapping(credentials_for_test)]
+    expected_data = [credentials_for_test.dict(simplify=True)]
 
     telem = CredentialsTelem([credentials_for_test])
     telem.send()

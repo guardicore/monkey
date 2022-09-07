@@ -1,23 +1,16 @@
-from dataclasses import dataclass, field
+import re
 
-from marshmallow import fields
+from pydantic import SecretStr, validator
 
-from . import CredentialComponentType, ICredentialComponent
-from .credential_component_schema import CredentialComponentSchema, CredentialTypeField
-from .validators import credential_component_validator, ntlm_hash_validator
-
-
-class LMHashSchema(CredentialComponentSchema):
-    credential_type = CredentialTypeField(CredentialComponentType.LM_HASH)
-    lm_hash = fields.Str(validate=ntlm_hash_validator)
+from ..base_models import InfectionMonkeyBaseModel
+from .validators import ntlm_hash_regex
 
 
-@dataclass(frozen=True)
-class LMHash(ICredentialComponent):
-    credential_type: CredentialComponentType = field(
-        default=CredentialComponentType.LM_HASH, init=False
-    )
-    lm_hash: str
+class LMHash(InfectionMonkeyBaseModel):
+    lm_hash: SecretStr
 
-    def __post_init__(self):
-        credential_component_validator(LMHashSchema(), self)
+    @validator("lm_hash")
+    def validate_hash_format(cls, lm_hash):
+        if not re.match(ntlm_hash_regex, lm_hash.get_secret_value()):
+            raise ValueError("Invalid LM hash provided")
+        return lm_hash

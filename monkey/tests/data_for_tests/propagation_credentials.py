@@ -1,31 +1,64 @@
+from itertools import product
+
+from pydantic import SecretStr
+
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 
 USERNAME = "m0nk3y_user"
 SPECIAL_USERNAME = "m0nk3y.user"
-NT_HASH = "C1C58F96CDF212B50837BC11A00BE47C"
-LM_HASH = "299BD128C1101FD6299BD128C1101FD6"
-PASSWORD_1 = "trytostealthis"
-PASSWORD_2 = "password!"
-PASSWORD_3 = "rubberbabybuggybumpers"
+PLAINTEXT_NT_HASH = "C1C58F96CDF212B50837BC11A00BE47C"
+PLAINTEXT_LM_HASH = "299BD128C1101FD6299BD128C1101FD6"
+PLAINTEXT_PASSWORD = "trytostealthis"
+PLAINTEXT_PRIVATE_KEY = "MY_PRIVATE_KEY"
+NT_HASH = SecretStr(PLAINTEXT_NT_HASH)
+LM_HASH = SecretStr(PLAINTEXT_LM_HASH)
+PASSWORD_1 = SecretStr(PLAINTEXT_PASSWORD)
+PASSWORD_2 = SecretStr("password!")
+PASSWORD_3 = SecretStr("rubberbabybuggybumpers")
 PUBLIC_KEY = "MY_PUBLIC_KEY"
-PRIVATE_KEY = "MY_PRIVATE_KEY"
+PRIVATE_KEY = SecretStr(PLAINTEXT_PRIVATE_KEY)
 
-PASSWORD_CREDENTIALS_1 = Credentials(identity=Username(USERNAME), secret=Password(PASSWORD_1))
-PASSWORD_CREDENTIALS_2 = Credentials(identity=Username(USERNAME), secret=Password(PASSWORD_2))
-LM_HASH_CREDENTIALS = Credentials(identity=Username(SPECIAL_USERNAME), secret=LMHash(LM_HASH))
-NT_HASH_CREDENTIALS = Credentials(identity=Username(USERNAME), secret=NTHash(NT_HASH))
-SSH_KEY_CREDENTIALS = Credentials(
-    identity=Username(USERNAME), secret=SSHKeypair(PRIVATE_KEY, PUBLIC_KEY)
+IDENTITIES = [Username(username=USERNAME), None, Username(username=SPECIAL_USERNAME)]
+IDENTITY_DICTS = [{"username": USERNAME}, None]
+
+SECRETS = (
+    Password(password=PASSWORD_1),
+    Password(password=PASSWORD_2),
+    Password(password=PASSWORD_3),
+    LMHash(lm_hash=LM_HASH),
+    NTHash(nt_hash=NT_HASH),
+    SSHKeypair(private_key=PRIVATE_KEY, public_key=PUBLIC_KEY),
+    None,
 )
-EMPTY_SECRET_CREDENTIALS = Credentials(identity=Username(USERNAME), secret=None)
-EMPTY_IDENTITY_CREDENTIALS = Credentials(identity=None, secret=Password(PASSWORD_3))
+SECRET_DICTS = [
+    {"password": PASSWORD_1},
+    {"lm_hash": LM_HASH},
+    {"nt_hash": NT_HASH},
+    {
+        "public_key": PUBLIC_KEY,
+        "private_key": PRIVATE_KEY,
+    },
+    None,
+]
 
-PROPAGATION_CREDENTIALS = [
-    PASSWORD_CREDENTIALS_1,
-    LM_HASH_CREDENTIALS,
-    NT_HASH_CREDENTIALS,
-    PASSWORD_CREDENTIALS_2,
-    SSH_KEY_CREDENTIALS,
-    EMPTY_SECRET_CREDENTIALS,
-    EMPTY_IDENTITY_CREDENTIALS,
+CREDENTIALS = [
+    Credentials(identity=identity, secret=secret)
+    for identity, secret in product(IDENTITIES, SECRETS)
+]
+
+FULL_CREDENTIALS = [
+    credentials
+    for credentials in CREDENTIALS
+    if not (credentials.identity is None and credentials.secret is None)
+]
+
+CREDENTIALS_DICTS = [
+    {"identity": identity, "secret": secret}
+    for identity, secret in product(IDENTITY_DICTS, SECRET_DICTS)
+]
+
+FULL_CREDENTIALS_DICTS = [
+    credentials
+    for credentials in CREDENTIALS_DICTS
+    if not (credentials["identity"] is None and credentials["secret"] is None)
 ]

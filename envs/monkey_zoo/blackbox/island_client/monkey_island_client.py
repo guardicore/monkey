@@ -1,7 +1,7 @@
 import json
 import logging
 import time
-from typing import Sequence, Union
+from typing import List, Sequence, Union
 
 from bson import json_util
 
@@ -30,7 +30,7 @@ class MonkeyIslandClient(object):
 
     def get_propagation_credentials(self) -> Sequence[Credentials]:
         response = self.requests.get("api/propagation-credentials")
-        return [Credentials.from_mapping(credentials) for credentials in response.json()]
+        return [Credentials(**credentials) for credentials in response.json()]
 
     @avoid_race_condition
     def import_config(self, test_configuration: TestConfiguration):
@@ -59,9 +59,9 @@ class MonkeyIslandClient(object):
             assert False
 
     @avoid_race_condition
-    def _import_credentials(self, propagation_credentials: Credentials):
+    def _import_credentials(self, propagation_credentials: List[Credentials]):
         serialized_propagation_credentials = [
-            Credentials.to_mapping(credentials) for credentials in propagation_credentials
+            credentials.dict(simplify=True) for credentials in propagation_credentials
         ]
         response = self.requests.put_json(
             "/api/propagation-credentials/configured-credentials",

@@ -59,7 +59,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
             for encrypted_credentials in list_collection_result:
                 del encrypted_credentials[MONGO_OBJECT_ID_KEY]
                 plaintext_credentials = self._decrypt_credentials_mapping(encrypted_credentials)
-                collection_result.append(Credentials.from_mapping(plaintext_credentials))
+                collection_result.append(Credentials(**plaintext_credentials))
 
             return collection_result
         except Exception as err:
@@ -68,7 +68,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
     def _save_credentials_to_collection(self, credentials: Sequence[Credentials], collection):
         try:
             for c in credentials:
-                encrypted_credentials = self._encrypt_credentials_mapping(Credentials.to_mapping(c))
+                encrypted_credentials = self._encrypt_credentials_mapping(c.dict(simplify=True))
                 collection.insert_one(encrypted_credentials)
         except Exception as err:
             raise StorageError(err)
