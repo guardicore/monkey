@@ -1,8 +1,8 @@
-from typing import MutableMapping, MutableSequence
+from typing import MutableSequence
 
 import pytest
 
-from monkey_island.cc.models import CommunicationType, MachineID, Node
+from monkey_island.cc.models import CommunicationType, Node
 
 
 def test_constructor():
