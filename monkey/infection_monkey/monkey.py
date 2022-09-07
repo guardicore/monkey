@@ -95,6 +95,7 @@ class InfectionMonkey:
         logger.info("Monkey is initializing...")
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+        # TODO: Change address to ip port to use list of servers
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.servers)
         self._control_client = ControlClient(self._opts.servers)
         # TODO Refactor the telemetry messengers to accept control client
