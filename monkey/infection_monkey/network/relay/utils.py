@@ -1,6 +1,6 @@
 import logging
 import socket
-from typing import Optional, Sequence
+from typing import Iterable, Optional
 
 import requests
 
@@ -12,13 +12,12 @@ from infection_monkey.utils.threading import create_daemon_thread
 logger = logging.getLogger(__name__)
 
 
-def find_server(self, servers: Sequence[str]) -> Optional[str]:
+def find_server(servers: Iterable[str]) -> Optional[str]:
     server_found = None
 
     logger.debug(f"Trying to wake up with servers: {', '.join(servers)}")
 
-    server_iterator = (s for s in servers)
-    for server in server_iterator:
+    for server in servers:
         try:
             debug_message = f"Trying to connect to server: {server}"
             logger.debug(debug_message)
@@ -40,18 +39,20 @@ def find_server(self, servers: Sequence[str]) -> Optional[str]:
                 f"Exception encountered when trying to connect to server/relay {server}: {err}"
             )
 
-    for server in server_iterator:
+    return server_found
+
+
+def send_relay_control_message(servers: Iterable[str]):
+    for server in servers:
         t = create_daemon_thread(
-            target=_send_relay_control_message,
+            target=_open_socket_to_server,
             name="SendControlRelayMessageThread",
             args=(server,),
         )
         t.start()
 
-    return server_found
 
-
-def _send_relay_control_message(server: str):
+def _open_socket_to_server(server: str):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as d_socket:
         d_socket.settimeout(MEDIUM_REQUEST_TIMEOUT)
 
