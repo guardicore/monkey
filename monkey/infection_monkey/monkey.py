@@ -397,7 +397,7 @@ class InfectionMonkey:
 
             if self._relay and self._relay.is_alive():
                 self._relay.stop()
-                self._relay.join()
+                self._relay.join(timeout=60)
 
             if firewall.is_enabled():
                 firewall.remove_firewall_rule()
