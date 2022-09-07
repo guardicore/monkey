@@ -1,6 +1,6 @@
 from typing import Mapping, Tuple, TypeAlias
 
-from pydantic import Field, validator
+from pydantic import Field
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
