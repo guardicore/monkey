@@ -78,9 +78,9 @@ export function formatCredentialsForIsland(credentials) {
     })
   }
 
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_password_list'], 'password'))
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_ntlm_hash_list'], 'nt_hash'))
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_lm_hash_list'], 'lm_hash'))
+  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_password_list'], SecretTypes.Password))
+  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_ntlm_hash_list'], SecretTypes.NTHash))
+  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_lm_hash_list'], SecretTypes.LMHash))
 
   let ssh_keys = credentials['exploit_ssh_keys'];
   for (let i = 0; i < ssh_keys.length; i++) {
