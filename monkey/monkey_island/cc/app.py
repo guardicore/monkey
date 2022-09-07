@@ -52,7 +52,6 @@ from monkey_island.cc.resources.version import Version
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.server_utils.custom_json_encoder import CustomJSONEncoder
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -97,7 +96,6 @@ def init_app_config(app, mongo_url):
     app.config["JSON_SORT_KEYS"] = False
 
     app.url_map.strict_slashes = False
-    app.json_encoder = CustomJSONEncoder
 
 
 def init_app_services(app):
