@@ -42,6 +42,7 @@ from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_network_interfaces
+from infection_monkey.network.relay.utils import find_server
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -162,7 +163,7 @@ class InfectionMonkey:
         self._control_client.wakeup(parent=self._opts.parent)
 
     def _current_server_is_set(self) -> bool:
-        if self._control_client.find_server(default_tunnel=self._opts.servers):
+        if find_server(servers=self._opts.servers):
             return True
 
         return False
