@@ -98,7 +98,6 @@ class ControlClient:
                             args=(ss,),
                         )
                         t.start()
-                        t.join()
 
                 return True
             except ConnectionError as err:
