@@ -70,8 +70,9 @@ class ControlClient:
     def find_server(self, servers: Sequence[str]):
         logger.debug(f"Trying to wake up with servers: {', '.join(servers)}")
 
-        while servers:
-            server = servers[0]
+        server_iterator = (s for s in servers)
+
+        for server in server_iterator:
 
             try:
                 debug_message = f"Trying to connect to server: {server}"
@@ -82,37 +83,26 @@ class ControlClient:
                     timeout=MEDIUM_REQUEST_TIMEOUT,
                 )
 
-                # We remove the server that has been succesfull
-                servers.remove(server)
-
+                break
                 # TODO: Check how we are going to set the server address that the ControlCLient
                 # is going to use
                 # self.server_address = server
-
-                # If we have any other server we send them RELAY_CONTROL_MESSAGE
-                if servers:
-                    for ss in servers:
-                        t = create_daemon_thread(
-                            target=ControlClient._send_relay_control_message,
-                            name="SendControlRelayMessageThread",
-                            args=(ss,),
-                        )
-                        t.start()
-
-                return True
             except ConnectionError as err:
                 logger.error(f"Unable to connect to server/relay {server}: {err}")
-                servers.remove(server)
             except TimeoutError as err:
                 logger.error(f"Timed out while connecting to server/relay {server}: {err}")
-                servers.remove(server)
             except Exception as err:
                 logger.error(
                     f"Exception encountered when trying to connect to server/relay {server}: {err}"
                 )
-                servers.remove(server)
 
-        return False
+        for server in server_iterator:
+            t = create_daemon_thread(
+                target=ControlClient._send_relay_control_message,
+                name="SendControlRelayMessageThread",
+                args=(server,),
+            )
+            t.start()
 
     @staticmethod
     def _send_relay_control_message(server: str):
