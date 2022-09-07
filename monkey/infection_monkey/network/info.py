@@ -9,7 +9,6 @@ from typing import List
 import netifaces
 import psutil
 
-from common.utils.code_utils import in_sorted_sequence
 from infection_monkey.utils.environment import is_windows_os
 
 from .ports import COMMON_PORTS
@@ -123,10 +122,10 @@ else:
 
 def get_free_tcp_port(min_range=1024, max_range=65535):
 
-    in_use = sorted([conn.laddr[1] for conn in psutil.net_connections()])
+    in_use = {conn.laddr[1] for conn in psutil.net_connections()}
 
     for port in COMMON_PORTS:
-        if not in_sorted_sequence(port, in_use):
+        if port not in in_use:
             return port
 
     min_range = max(1, min_range)
@@ -134,7 +133,7 @@ def get_free_tcp_port(min_range=1024, max_range=65535):
     ports = list(range(min_range, max_range))
     shuffle(ports)
     for port in ports:
-        if not in_sorted_sequence(port, in_use):
+        if port not in in_use:
             return port
 
     return None
