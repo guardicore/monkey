@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ba1b2740b5fa2d17cfaf8dafd0a32a5076bfbb87fc3110f3796a13897bd9a07f"
+            "sha256": "7d1e1d151dbf74cf73466f7a73305efc4e5e187245fe789c0db103f4045eb722"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -399,22 +399,6 @@
             "markers": "python_version >= '3.7'",
             "version": "==2.1.1"
         },
-        "marshmallow": {
-            "hashes": [
-                "sha256:1172ce82765bf26c24a3f9299ed6dbeeca4d213f638eaa39a37772656d7ce408",
-                "sha256:48e2d88d4ab431ad5a17c25556d9da529ea6e966876f2a38d274082e270287f0"
-            ],
-            "markers": "python_version >= '3.7'",
-            "version": "==3.17.1"
-        },
-        "marshmallow-enum": {
-            "hashes": [
-                "sha256:38e697e11f45a8e64b4a1e664000897c659b60aa57bfa18d44e226a9920b6e58",
-                "sha256:57161ab3dbfde4f57adeb12090f39592e992b9c86d206d02f6bd03ebec60f072"
-            ],
-            "index": "pypi",
-            "version": "==1.5.1"
-        },
         "minidump": {
             "hashes": [
                 "sha256:6a9d2152f76ae633c609e09b48b42f55bd5a6b65f920dbbec756e5d9134a6201",
@@ -488,14 +472,6 @@
                 "sha256:6f5fef59cb5b3708321db7cca56aed8ad7e662853351e7991fcf60ec606d47a4"
             ],
             "version": "==1.3.0"
-        },
-        "packaging": {
-            "hashes": [
-                "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb",
-                "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"
-            ],
-            "markers": "python_version >= '3.6'",
-            "version": "==21.3"
         },
         "paramiko": {
             "editable": true,
