@@ -13,23 +13,19 @@ logger = logging.getLogger(__name__)
 
 
 def find_server(servers: Iterable[str]) -> Optional[str]:
-    server_found = None
-
     logger.debug(f"Trying to wake up with servers: {', '.join(servers)}")
 
     for server in servers:
+        logger.debug(f"Trying to connect to server: {server}")
+
         try:
-            debug_message = f"Trying to connect to server: {server}"
-            logger.debug(debug_message)
             requests.get(  # noqa: DUO123
                 f"https://{server}/api?action=is-up",
                 verify=False,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
 
-            server_found = server
-
-            break
+            return server
         except requests.exceptions.ConnectionError as err:
             logger.error(f"Unable to connect to server/relay {server}: {err}")
         except TimeoutError as err:
@@ -39,7 +35,7 @@ def find_server(servers: Iterable[str]) -> Optional[str]:
                 f"Exception encountered when trying to connect to server/relay {server}: {err}"
             )
 
-    return server_found
+    return None
 
 
 def send_relay_control_message(servers: Iterable[str]):
