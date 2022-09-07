@@ -18,7 +18,6 @@ from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
 from monkey_island.cc.repository.i_log_repository import ILogRepository
 from monkey_island.cc.repository.i_machine_repository import IMachineRepository
-from monkey_island.cc.repository.i_network_map_repository import INetworkMapRepository
 from monkey_island.cc.repository.i_report_repository import IReportRepository
 from monkey_island.cc.repository.i_simulation_repository import ISimulationRepository
 from monkey_island.cc.repository.i_telemetry_repository import ITelemetryRepository
@@ -260,8 +259,10 @@ IMachineRepository.upsert_machine
 IMachineRepository.get_machine_by_id
 IMachineRepository.get_machine_by_hardware_id
 IMachineRepository.get_machines_by_ip
-INetworkMapRepository.get_map
-INetworkMapRepository.save_netmap
+INodeRepository
+INodeRepository.upsert_communication
+INodeRepository.communication_type
+INodeRepository.get_nodes
 IReportRepository
 ISimulationRepository.save_simulation
 ISimulationRepository.get_simulation

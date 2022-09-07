@@ -9,6 +9,7 @@ from .i_credentials_repository import ICredentialsRepository
 from .i_user_repository import IUserRepository
 from .i_machine_repository import IMachineRepository
 from .i_agent_repository import IAgentRepository
+from .i_node_repository import INodeRepository
 
 
 from .local_storage_file_repository import LocalStorageFileRepository
