@@ -12,7 +12,7 @@ Identity = Username
 
 
 def get_plain_text(secret: Union[SecretStr, SecretBytes, None, str]) -> Optional[str]:
-    if secret:
+    if isinstance(secret, (SecretStr, SecretBytes)):
         return secret.get_secret_value()
     else:
         return secret

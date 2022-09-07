@@ -1,12 +1,23 @@
 import logging
+from pathlib import Path
 
 import pytest
 from pydantic import SecretBytes
 from pydantic.types import SecretStr
-from tests.data_for_tests.propagation_credentials import CREDENTIALS, CREDENTIALS_DICTS
+from tests.data_for_tests.propagation_credentials import (
+    CREDENTIALS,
+    CREDENTIALS_DICTS,
+    LM_HASH,
+    PASSWORD_1,
+    PLAINTEXT_LM_HASH,
+    PLAINTEXT_PASSWORD,
+    PLAINTEXT_PRIVATE_KEY,
+    PRIVATE_KEY,
+)
 
 from common.base_models import InfectionMonkeyBaseModel
 from common.credentials import Credentials
+from common.credentials.credentials import get_plain_text
 
 
 @pytest.mark.parametrize(
@@ -42,3 +53,20 @@ def test_credentials_secrets_not_logged(caplog):
     )
 
     assert sensitive not in caplog.text
+
+
+_plaintext = [
+    PLAINTEXT_PASSWORD,
+    PLAINTEXT_PRIVATE_KEY,
+    PLAINTEXT_LM_HASH,
+    "",
+    "already_plaintext",
+    Path("C:\\jolly_fella"),
+    None,
+]
+_hidden = [PASSWORD_1, PRIVATE_KEY, LM_HASH, "", "already_plaintext", Path("C:\\jolly_fella"), None]
+
+
+@pytest.mark.parametrize("expected, hidden", list(zip(_plaintext, _hidden)))
+def test_get_plain_text(expected, hidden):
+    assert expected == get_plain_text(hidden)
