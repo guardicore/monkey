@@ -45,7 +45,7 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
                 self._add_secret(credentials.secret)
 
     def _add_identity(self, identity: Identity):
-        if type(identity) == Username:
+        if isinstance(identity, Username):
             self._stored_credentials.setdefault("exploit_user_list", set()).add(identity.username)
 
     def _add_secret(self, secret: Secret):
