@@ -10,7 +10,7 @@ from common.utils.code_utils import del_key
 
 # Wait for potential new clients to connect
 DEFAULT_NEW_CLIENT_TIMEOUT = 2.5 * MEDIUM_REQUEST_TIMEOUT
-DEFAULT_DISCONNECT_TIMEOUT = 60 * 10  # Wait up to 10 minutes for clients to disconnect
+DEFAULT_DISCONNECT_TIMEOUT = 60 * 2  # Wait up to 2 minutes for clients to disconnect
 
 
 @dataclass
