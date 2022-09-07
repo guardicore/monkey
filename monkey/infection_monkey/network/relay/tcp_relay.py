@@ -18,7 +18,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
 
     def __init__(
         self,
-        local_port: int,
+        relay_port: int,
         dest_addr: IPv4Address,
         dest_port: int,
         client_disconnect_timeout: float,
@@ -28,7 +28,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
         relay_filter = RelayConnectionHandler(self._pipe_spawner, self._user_handler)
         self._connection_handler = TCPConnectionHandler(
             bind_host="",
-            bind_port=local_port,
+            bind_port=relay_port,
             client_connected=[
                 relay_filter.handle_new_connection,
             ],

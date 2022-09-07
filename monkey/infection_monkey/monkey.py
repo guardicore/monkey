@@ -181,9 +181,9 @@ class InfectionMonkey:
 
         config = control_channel.get_config()
 
-        local_port = get_free_tcp_port()
+        relay_port = get_free_tcp_port()
         self._relay = TCPRelay(
-            local_port,
+            relay_port,
             IPv4Address(self._cmd_island_ip),
             self._cmd_island_port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
