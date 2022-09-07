@@ -29,7 +29,7 @@ def servers():
     "mock_requests_get, expected",
     [(MockConnectionError, None), (MockRequestsGetResponsePerServerArgument, SERVER_2)],
 )
-def test_find_server__no_available_relays(monkeypatch, servers, mock_requests_get, expected):
+def test_find_server(monkeypatch, servers, mock_requests_get, expected):
     monkeypatch.setattr("infection_monkey.control.requests.get", mock_requests_get)
 
     assert find_server(servers) is expected
