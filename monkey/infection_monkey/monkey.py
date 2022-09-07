@@ -415,11 +415,12 @@ class InfectionMonkey:
             ).send()  # Signal the server (before closing the tunnel)
 
             self._close_tunnel()
-            self._singleton.unlock()
         except Exception as e:
             logger.error(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
                 InfectionMonkey._self_delete()
+        finally:
+            self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
 
