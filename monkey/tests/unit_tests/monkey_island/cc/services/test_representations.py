@@ -5,7 +5,6 @@ from enum import Enum
 
 import bson
 
-from common.utils import IJSONSerializable
 from monkey_island.cc.services.representations import APIEncoder
 
 
@@ -73,22 +72,3 @@ def test_api_encoder_tuple():
     bogus_tuple = [{"my_tuple": (bogus_object1, bogus_object2, "string")}]
     expected_tuple = [{"my_tuple": ({"a": 1}, {"a": 2}, "string")}]
     assert json.dumps(expected_tuple) == json.dumps(bogus_tuple, cls=APIEncoder)
-
-
-class BogusSerializableClass(IJSONSerializable):
-    def __init__(self, a):
-        self.a = a
-
-    @classmethod
-    def to_json(cls, class_object: IJSONSerializable) -> str:
-        return json.dumps({"wacky": class_object.a})
-
-    @classmethod
-    def from_json(cls, json_string: str) -> IJSONSerializable:
-        pass
-
-
-def test_api_encoder_json_serializable():
-    bogus_data = {"target": [BogusSerializableClass("macky")]}
-    expected_result = {"target": [{"wacky": "macky"}]}
-    assert json.dumps(expected_result) == json.dumps(bogus_data, cls=APIEncoder)
