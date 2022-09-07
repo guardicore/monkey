@@ -42,11 +42,7 @@ from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces
-from infection_monkey.network.relay import (
-    build_tcprelay_deps,
-    RelayUserHandler,
-    TCPRelay,
-)
+from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.tools import connect
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
@@ -109,7 +105,6 @@ class InfectionMonkey:
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
-        self._relay_user_handler: RelayUserHandler
         self._relay: TCPRelay
 
     @staticmethod
@@ -190,17 +185,11 @@ class InfectionMonkey:
         local_port = get_free_tcp_port()
         sock, ip_str, port = connect([self._opts.server])
         sock.close()
-        user_handler, connection_handler, pipe_spawner = build_tcprelay_deps(
+        self._relay = TCPRelay(
             local_port,
             IPv4Address(ip_str),
             port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
-        )
-        self._relay_user_handler = user_handler
-        self._relay = TCPRelay(
-            self._relay_user_handler,
-            connection_handler,
-            pipe_spawner,
         )
 
         if self._relay and maximum_depth_reached(
@@ -234,7 +223,7 @@ class InfectionMonkey:
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
         telemetry_messenger = ExploitInterceptingTelemetryMessenger(
-            self._telemetry_messenger, self._relay_user_handler
+            self._telemetry_messenger, self._relay
         )
 
         self._master = AutomatedMaster(
