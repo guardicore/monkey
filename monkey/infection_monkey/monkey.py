@@ -42,7 +42,7 @@ from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_network_interfaces
-from infection_monkey.network.relay.utils import find_server
+from infection_monkey.network.relay.utils import find_server, send_relay_control_message
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -98,9 +98,9 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
 
         # TODO: Revisit variable names
-        server = find_server(self._opts.servers)
-        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
-        self._control_client = ControlClient(server_address=server)
+        self._get_server()
+        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self.server)
+        self._control_client = ControlClient(server_address=self.server)
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
@@ -121,6 +121,11 @@ class InfectionMonkey:
         InfectionMonkey._log_arguments(opts)
 
         return opts
+
+    def _get_server(self):
+        servers_iterator = (s for s in self._opts.servers)
+        self.server = find_server(servers_iterator)
+        send_relay_control_message(servers_iterator)
 
     @staticmethod
     def _log_arguments(args):
@@ -159,14 +164,13 @@ class InfectionMonkey:
             logger.debug(f"Default server set to: {self._control_client.server_address}")
         else:
             raise Exception(
-                f"Failed to connect to the island via "
-                f"any known server address: {self._opts.servers}"
+                f"Failed to connect to the island via " f"any known server address: {self.server}"
             )
 
         self._control_client.wakeup(parent=self._opts.parent)
 
     def _current_server_is_set(self) -> bool:
-        if find_server(servers=self._opts.servers):
+        if self.server:
             return True
 
         return False
