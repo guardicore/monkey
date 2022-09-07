@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum
 
-from marshmallow import Schema, post_load
-from marshmallow_enum import EnumField
+from common.base_models import InfectionMonkeyBaseModel
 
 
 class IslandMode(Enum):
@@ -13,14 +11,5 @@ class IslandMode(Enum):
     ADVANCED = "advanced"
 
 
-@dataclass(frozen=True)
-class Simulation:
+class Simulation(InfectionMonkeyBaseModel):
     mode: IslandMode = IslandMode.UNSET
-
-
-class SimulationSchema(Schema):
-    mode = EnumField(IslandMode)
-
-    @post_load
-    def _make_simulation(self, data, **kwargs):
-        return Simulation(**data)

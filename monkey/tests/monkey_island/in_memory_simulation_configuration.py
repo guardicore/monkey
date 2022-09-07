@@ -1,5 +1,3 @@
-import dataclasses
-
 from monkey_island.cc.models import IslandMode, Simulation
 from monkey_island.cc.repository import ISimulationRepository
 
@@ -18,4 +16,4 @@ class InMemorySimulationRepository(ISimulationRepository):
         return self._simulation.mode
 
     def set_mode(self, mode: IslandMode):
-        self._simulation = dataclasses.replace(self._simulation, mode=mode)
+        self._simulation = Simulation(mode=mode)
