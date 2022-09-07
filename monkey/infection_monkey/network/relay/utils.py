@@ -52,10 +52,13 @@ def _open_socket_to_server(server: str):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as d_socket:
         d_socket.settimeout(MEDIUM_REQUEST_TIMEOUT)
 
+        ip, port = address_to_ip_port(server)
+        logger.info(f"Control message was sent to the server/relay {server}")
+
         try:
-            address, port = address_to_ip_port(server)
-            d_socket.connect((address, int(port)))
+            d_socket.connect((ip, int(port)))
             d_socket.send(RELAY_CONTROL_MESSAGE)
-            logger.info(f"Control message was sent to the server/relay {server}")
         except OSError as err:
             logger.error(f"Error connecting to socket {server}: {err}")
+        except TimeoutError as err:
+            logger.error(f"Timed out while connecting to socket {server}: {err}")
