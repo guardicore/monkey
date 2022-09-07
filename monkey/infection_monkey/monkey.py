@@ -43,7 +43,6 @@ from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces
 from infection_monkey.network.relay import TCPRelay
-from infection_monkey.network.tools import connect
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -183,12 +182,10 @@ class InfectionMonkey:
         config = control_channel.get_config()
 
         local_port = get_free_tcp_port()
-        sock, ip_str, port = connect(self._opts.servers)
-        sock.close()
         self._relay = TCPRelay(
             local_port,
-            IPv4Address(ip_str),
-            port,
+            IPv4Address(self._cmd_island_ip),
+            self._cmd_island_port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
 

@@ -3,10 +3,8 @@ import select
 import socket
 import struct
 import sys
-from typing import List, Tuple, Union
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
-from common.network.network_utils import address_to_ip_port
 from infection_monkey.network.info import get_routes
 
 DEFAULT_TIMEOUT = CONNECTION_TIMEOUT
@@ -92,40 +90,3 @@ def get_interface_to_target(dst):
         paths.sort()
         ret = paths[-1][1]
         return ret[1]
-
-
-def connect(connections: List[str]) -> Tuple[socket.socket, str, int]:
-    """
-    Attempt to connect to addresses in the given list.
-
-    :param connections: The addresses to try and connect to.
-    :return: The socket, address, and port of the connection.
-    :raises: ConnectionError if no connection could be established.
-    :raises: ValueError if an improper connection is provided.
-    """
-    for connection in connections:
-        ip, port = address_to_ip_port(connection)
-        if port is None:
-            raise ValueError("Connection does not contain a port")
-        sock = try_connect(ip, int(port))
-        if sock:
-            return sock, ip, int(port)
-
-    raise ConnectionError("Could not connect to a server in the server list")
-
-
-def try_connect(ip: str, port: int) -> Union[socket.socket, None]:
-    """
-    Attempt to establish a connection.
-
-    :param ip: The IP to use.
-    :param port: The port to use.
-    :return: The socket on a successful connection, otherwise None.
-    """
-    try:
-        logging.debug(f"Attempting to connect to {ip}:{port}")
-        sock = socket.create_connection((ip, port), timeout=1)
-    except Exception:
-        return None
-
-    return sock
