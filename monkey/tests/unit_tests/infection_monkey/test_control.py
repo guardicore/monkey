@@ -61,14 +61,12 @@ def test_control_find_server__control_message_sent_to_necessary_relays(monkeypat
 
     cc = ControlClient(servers)
 
-    return_value = cc.find_server(servers)
-
+    assert cc.find_server(servers) is True
     assert len(servers) == 2
-    assert return_value is True
-    assert mock_connect.call_count == 2
 
     server_3_ip, server_3_port = address_to_ip_port(SERVER_3)
     server_4_ip, server_4_port = address_to_ip_port(SERVER_4)
+    assert mock_connect.call_count == 2
     mock_connect.assert_has_calls(
         [mock.call((server_3_ip, int(server_3_port))), mock.call((server_4_ip, int(server_4_port)))]
     )
