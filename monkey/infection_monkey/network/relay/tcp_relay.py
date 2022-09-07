@@ -36,7 +36,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
         """
         Blocks until the users disconnect or the timeout has elapsed.
         """
-        while self._user_handler.has_potential_users():
+        while self._user_handler.has_potential_users() or self._user_handler.has_connected_users():
             sleep(0.5)
 
     def _wait_for_pipes_to_close(self):
