@@ -1,13 +1,11 @@
 from datetime import datetime
 from enum import Enum
-from json import JSONEncoder, dumps, loads
+from json import JSONEncoder, dumps
 from typing import Any
 
 import bson
 from flask import make_response
 from pydantic import BaseModel
-
-from common.utils import IJSONSerializable
 
 
 class APIEncoder(JSONEncoder):
@@ -20,8 +18,6 @@ class APIEncoder(JSONEncoder):
             return str(value)
         if issubclass(type(value), Enum):
             return value.name
-        if issubclass(type(value), IJSONSerializable):
-            return loads(value.__class__.to_json(value))
         if issubclass(type(value), set):
             return list(value)
         if issubclass(type(value), BaseModel):

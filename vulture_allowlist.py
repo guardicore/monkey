@@ -316,10 +316,6 @@ EXPLOITED
 CC
 CC_TUNNEL
 
-# TODO Remove with #2217
-IJSONSerializable
-from_json
-
 IslandEventTopic.AGENT_CONNECTED
 IslandEventTopic.CLEAR_SIMULATION_DATA
 IslandEventTopic.RESET_AGENT_CONFIGURATION
