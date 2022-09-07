@@ -183,7 +183,7 @@ class InfectionMonkey:
         config = control_channel.get_config()
 
         local_port = get_free_tcp_port()
-        sock, ip_str, port = connect([self._opts.server])
+        sock, ip_str, port = connect(self._opts.servers)
         sock.close()
         self._relay = TCPRelay(
             local_port,
