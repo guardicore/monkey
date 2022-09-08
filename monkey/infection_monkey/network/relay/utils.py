@@ -14,8 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 def find_server(servers: Iterable[str]) -> Optional[str]:
-    logger.debug(f"Trying to wake up with servers: {', '.join(servers)}")
-
     for server in servers:
         logger.debug(f"Trying to connect to server: {server}")
 
