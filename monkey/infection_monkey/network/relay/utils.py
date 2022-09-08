@@ -41,14 +41,14 @@ def find_server(servers: Iterable[str]) -> Optional[str]:
 def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
     for server in servers:
         t = create_daemon_thread(
-            target=_open_socket_to_server,
+            target=_send_remove_from_waitlist_control_message_to_relay,
             name="SendRemoveFromWaitlistControlMessageToRelaysThread",
             args=(server,),
         )
         t.start()
 
 
-def _open_socket_to_server(server: str):
+def _send_remove_from_waitlist_control_message_to_relay(server: str):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as d_socket:
         d_socket.settimeout(MEDIUM_REQUEST_TIMEOUT)
 
