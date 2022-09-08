@@ -128,7 +128,6 @@ class InfectionMonkey:
         if server:
             logger.info(f"Successfully connected to the island via {server}")
         else:
-            # TODO: Exit here
             raise Exception(
                 f"Failed to connect to the island via any known servers: {self._opts.servers}"
             )
