@@ -8,4 +8,3 @@ class TelemCategoryEnum:
     SCAN = "scan"
     STATE = "state"
     TRACE = "trace"
-    TUNNEL = "tunnel"
