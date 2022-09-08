@@ -34,6 +34,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
             ],
         )
         super().__init__(name="MonkeyTcpRelayThread", daemon=True)
+        InterruptableThreadMixin.__init__(self)
         self._lock = Lock()
 
     def run(self):
