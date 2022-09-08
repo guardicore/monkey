@@ -4,7 +4,7 @@ from ipaddress import IPv4Address
 from .relay_user_handler import RelayUserHandler
 from .tcp_pipe_spawner import TCPPipeSpawner
 
-RELAY_CONTROL_MESSAGE = b"infection-monkey-relay-control-message: -"
+RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST = b"infection-monkey-relay-control-message: -"
 
 
 class RelayConnectionHandler:
@@ -25,7 +25,7 @@ class RelayConnectionHandler:
 
         control_message = sock.recv(socket.MSG_PEEK)
 
-        if control_message.startswith(RELAY_CONTROL_MESSAGE):
+        if control_message.startswith(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST):
             self._relay_user_handler.disconnect_user(addr)
         else:
             self._relay_user_handler.add_relay_user(addr)
