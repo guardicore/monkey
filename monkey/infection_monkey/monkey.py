@@ -43,6 +43,10 @@ from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces
 from infection_monkey.network.relay import TCPRelay
+from infection_monkey.network.relay.utils import (
+    find_server,
+    send_remove_from_waitlist_control_message_to_relays,
+)
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -96,8 +100,12 @@ class InfectionMonkey:
         logger.info("Monkey is initializing...")
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.servers)
-        self._control_client = ControlClient(self._opts.servers)
+
+        # TODO: Revisit variable names
+        server = self._get_server()
+        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
+        self._control_client = ControlClient(server_address=server)
+
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
         ControlClient.control_client_object = self._control_client
@@ -117,6 +125,19 @@ class InfectionMonkey:
 
         return opts
 
+    def _get_server(self):
+        servers_iterator = (s for s in self._opts.servers)
+        server = find_server(servers_iterator)
+        if server:
+            logger.info(f"Successfully connected to the island via {server}")
+        else:
+            raise Exception(
+                f"Failed to connect to the island via any known servers: {self._opts.servers}"
+            )
+        send_remove_from_waitlist_control_message_to_relays(servers_iterator)
+
+        return server
+
     @staticmethod
     def _log_arguments(args):
         arg_string = " ".join([f"{key}: {value}" for key, value in vars(args).items()])
@@ -130,7 +151,7 @@ class InfectionMonkey:
         logger.info("Agent is starting...")
         logger.info(f"Agent GUID: {GUID}")
 
-        self._connect_to_island()
+        self._control_client.wakeup(parent=self._opts.parent)
 
         # TODO: Reevaluate who is responsible to send this information
         if is_windows_os():
@@ -147,24 +168,6 @@ class InfectionMonkey:
 
         self._setup()
         self._master.start()
-
-    def _connect_to_island(self):
-        # Sets island's IP and port for monkey to communicate to
-        if self._current_server_is_set():
-            logger.debug(f"Default server set to: {self._control_client.server_address}")
-        else:
-            raise Exception(
-                f"Failed to connect to the island via "
-                f"any known server address: {self._opts.servers}"
-            )
-
-        self._control_client.wakeup(parent=self._opts.parent)
-
-    def _current_server_is_set(self) -> bool:
-        if self._control_client.find_server(default_tunnel=self._opts.servers):
-            return True
-
-        return False
 
     def _setup(self):
         logger.debug("Starting the setup phase.")

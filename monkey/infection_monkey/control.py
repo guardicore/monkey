@@ -5,7 +5,6 @@ from socket import gethostname
 from typing import Mapping, Optional
 
 import requests
-from requests.exceptions import ConnectionError
 
 import infection_monkey.tunnel as tunnel
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
@@ -62,38 +61,6 @@ class ControlClient:
             proxies=self.proxies,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
-
-    def find_server(self, default_tunnel=None):
-        logger.debug(f"Trying to wake up with Monkey Island server: {self.server_address}")
-        if default_tunnel:
-            logger.debug("default_tunnel: %s" % (default_tunnel,))
-
-        try:
-            debug_message = "Trying to connect to server: %s" % self.server_address
-            if self.proxies:
-                debug_message += " through proxies: %s" % self.proxies
-            logger.debug(debug_message)
-            requests.get(  # noqa: DUO123
-                f"https://{self.server_address}/api?action=is-up",
-                verify=False,
-                proxies=self.proxies,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
-            return True
-        except ConnectionError as exc:
-            logger.warning("Error connecting to control server %s: %s", self.server_address, exc)
-
-        if self.proxies:
-            return False
-        else:
-            logger.info("Starting tunnel lookup...")
-            proxy_find = tunnel.find_tunnel(default=default_tunnel)
-            if proxy_find:
-                self.set_proxies(proxy_find)
-                return self.find_server()
-            else:
-                logger.info("No tunnel found")
-                return False
 
     def set_proxies(self, proxy_find):
         """

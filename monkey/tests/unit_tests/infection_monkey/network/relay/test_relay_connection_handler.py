@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from monkey.infection_monkey.network.relay import (
-    RELAY_CONTROL_MESSAGE,
+    RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST,
     RelayConnectionHandler,
     RelayUserHandler,
     TCPPipeSpawner,
@@ -27,7 +27,7 @@ def relay_user_handler():
 @pytest.fixture
 def close_socket():
     sock = MagicMock(spec=socket.socket)
-    sock.recv.return_value = RELAY_CONTROL_MESSAGE
+    sock.recv.return_value = RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
     sock.getpeername.return_value = (USER_ADDRESS, 12345)
     return sock
 
