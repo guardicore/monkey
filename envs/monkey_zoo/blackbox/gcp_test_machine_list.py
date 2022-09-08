@@ -11,6 +11,7 @@ GCP_TEST_MACHINE_LIST = {
         "tunneling-10",
         "tunneling-11",
         "tunneling-12",
+        "tunneling-13",
         "zerologon-25",
     ],
     "europe-west1-b": [
@@ -49,10 +50,6 @@ DEPTH_1_A = {
 
 DEPTH_3_A = {
     "europe-west3-a": [
-        "tunneling-9",
-        "tunneling-10",
-        "tunneling-11",
-        "tunneling-12",
         "mimikatz-15",
     ],
     "europe-west1-b": [
@@ -62,6 +59,16 @@ DEPTH_3_A = {
         "powershell-3-48",
     ],
 }
+
+DEPTH_4_A = {
+    "europe-west1-b": [
+        "tunneling-9",
+        "tunneling-10",
+        "tunneling-12",
+        "tunneling-13",
+    ],
+}
+
 
 POWERSHELL_EXPLOITER_REUSE = {
     "europe-west1-b": [
@@ -88,6 +95,7 @@ GCP_SINGLE_TEST_LIST = {
     "test_depth_2_a": DEPTH_2_A,
     "test_depth_1_a": DEPTH_1_A,
     "test_depth_3_a": DEPTH_3_A,
+    "test_depth_4_a": DEPTH_4_A,
     "test_powershell_exploiter_credentials_reuse": POWERSHELL_EXPLOITER_REUSE,
     "test_zerologon_exploiter": ZEROLOGON,
     "test_wmi_and_mimikatz_exploiters": WMI_AND_MIMIKATZ,

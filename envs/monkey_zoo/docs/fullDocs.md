@@ -387,6 +387,38 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
+<th><p><span id="_Toc536021463" class="anchor"></span>Nr. <strong>13</strong> Tunneling M5</p>
+<p>(10.2.0.13)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 18 x64</strong></td>
+</tr>
+<tr class="odd">
+<td>Default service’s port:</td>
+<td>22</td>
+</tr>
+<tr class="even">
+<td>Root password:</td>
+<td>prM2qsroTI</td>
+</tr>
+<tr class="odd">
+<td>Server’s config:</td>
+<td>Configured to disable traffic from/to 10.2.0.10 and 10.2.0.11(via ufw and iptables)</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>Accessible only through Nr.12</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
 <th><p><span id="_Toc526517190" class="anchor"></span>Nr. <strong>11</strong> SSH key steal.</p>
 <p>(10.2.2.11)</p></th>
 <th>(Vulnerable)</th>
