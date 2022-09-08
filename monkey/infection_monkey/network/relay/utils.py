@@ -42,7 +42,7 @@ def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
     for server in servers:
         t = create_daemon_thread(
             target=_open_socket_to_server,
-            name="SendControlRelayMessageThread",
+            name="SendRemoveFromWaitlistControlMessageToRelaysThread",
             args=(server,),
         )
         t.start()
