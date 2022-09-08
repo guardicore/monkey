@@ -60,5 +60,3 @@ def _open_socket_to_server(server: str):
             d_socket.send(RELAY_CONTROL_MESSAGE)
         except OSError as err:
             logger.error(f"Error connecting to socket {server}: {err}")
-        except TimeoutError as err:
-            logger.error(f"Timed out while connecting to socket {server}: {err}")
