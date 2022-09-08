@@ -38,7 +38,7 @@ def find_server(servers: Iterable[str]) -> Optional[str]:
     return None
 
 
-def send_relay_control_message(servers: Iterable[str]):
+def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
     for server in servers:
         t = create_daemon_thread(
             target=_open_socket_to_server,
