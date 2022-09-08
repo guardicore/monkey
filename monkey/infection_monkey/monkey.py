@@ -40,7 +40,7 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces
+from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces, local_ips
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
     find_server,
@@ -189,17 +189,18 @@ class InfectionMonkey:
             self._cmd_island_port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
+        relay_servers = [f"{ip}:{relay_port}" for ip in local_ips()]
 
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()
 
         StateTelem(is_done=False, version=get_version()).send()
 
-        self._build_master()
+        self._build_master(relay_servers)
 
         register_signal_handlers(self._master)
 
-    def _build_master(self):
+    def _build_master(self, relay_servers: List[str]):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
@@ -221,7 +222,7 @@ class InfectionMonkey:
 
         self._master = AutomatedMaster(
             self._current_depth,
-            self._opts.servers,
+            self._opts.servers + relay_servers,
             puppet,
             telemetry_messenger,
             victim_host_factory,
