@@ -126,7 +126,7 @@ class InfectionMonkey:
         servers_iterator = (s for s in self._opts.servers)
         server = find_server(servers_iterator)
         if server:
-            logger.debug(f"Default server set to: {server}")
+            logger.info(f"Successfully connected to the island via {server}")
         else:
             # TODO: Exit here
             raise Exception(
