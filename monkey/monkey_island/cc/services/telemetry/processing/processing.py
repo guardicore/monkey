@@ -8,7 +8,6 @@ from monkey_island.cc.services.telemetry.processing.exploit import process_explo
 from monkey_island.cc.services.telemetry.processing.post_breach import process_post_breach_telemetry
 from monkey_island.cc.services.telemetry.processing.scan import process_scan_telemetry
 from monkey_island.cc.services.telemetry.processing.state import process_state_telemetry
-from monkey_island.cc.services.telemetry.processing.tunnel import process_tunnel_telemetry
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +21,6 @@ TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
     TelemCategoryEnum.SCAN: process_scan_telemetry,
     TelemCategoryEnum.STATE: process_state_telemetry,
     TelemCategoryEnum.TRACE: lambda *args, **kwargs: None,
-    TelemCategoryEnum.TUNNEL: process_tunnel_telemetry,
 }
 
 # Don't save credential telemetries in telemetries collection.
