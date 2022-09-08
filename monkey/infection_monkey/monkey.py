@@ -42,7 +42,10 @@ from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_network_interfaces
-from infection_monkey.network.relay.utils import find_server, send_relay_control_message
+from infection_monkey.network.relay.utils import (
+    find_server,
+    send_remove_from_waitlist_control_message_to_relays,
+)
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -131,7 +134,7 @@ class InfectionMonkey:
             raise Exception(
                 f"Failed to connect to the island via any known servers: {self._opts.servers}"
             )
-        send_relay_control_message(servers_iterator)
+        send_remove_from_waitlist_control_message_to_relays(servers_iterator)
 
         return server
 
