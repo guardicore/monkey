@@ -14,14 +14,31 @@ servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
 
 
 @pytest.mark.parametrize(
-    "expected_server,connection_error_servers,do_nothing_servers",
-    [(None, servers, []), (SERVER_2, [SERVER_1], [SERVER_2, SERVER_3, SERVER_4])],
+    "expected_server,server_response_pairs",
+    [
+        (
+            None,
+            [
+                (SERVER_1, {"exc": requests.exceptions.ConnectionError}),
+                (SERVER_2, {"exc": requests.exceptions.ConnectionError}),
+                (SERVER_3, {"exc": requests.exceptions.ConnectionError}),
+                (SERVER_4, {"exc": requests.exceptions.ConnectionError}),
+            ],
+        ),
+        (
+            SERVER_2,
+            [
+                (SERVER_1, {"exc": requests.exceptions.ConnectionError}),
+                (SERVER_2, {"text": ""}),
+                (SERVER_3, {"text": ""}),
+                (SERVER_4, {"text": ""}),
+            ],
+        ),
+    ],
 )
-def test_find_server(expected_server, connection_error_servers, do_nothing_servers):
+def test_find_server(expected_server, server_response_pairs):
     with requests_mock.Mocker() as mock:
-        for server in connection_error_servers:
-            mock.get(f"https://{server}/api?action=is-up", exc=requests.exceptions.ConnectionError)
-        for server in do_nothing_servers:
-            mock.get(f"https://{server}/api?action=is-up", text="")
+        for server, response in server_response_pairs:
+            mock.get(f"https://{server}/api?action=is-up", **response)
 
         assert find_server(servers) is expected_server
