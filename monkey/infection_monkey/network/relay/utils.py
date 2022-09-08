@@ -6,7 +6,7 @@ import requests
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
-from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE
+from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
 from infection_monkey.utils.threading import create_daemon_thread
 
 logger = logging.getLogger(__name__)
@@ -57,6 +57,6 @@ def _send_remove_from_waitlist_control_message_to_relay(server: str):
 
         try:
             d_socket.connect((ip, int(port)))
-            d_socket.send(RELAY_CONTROL_MESSAGE)
+            d_socket.send(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
         except OSError as err:
             logger.error(f"Error connecting to socket {server}: {err}")
