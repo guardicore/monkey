@@ -189,7 +189,7 @@ class InfectionMonkey:
         self._relay = TCPRelay(
             relay_port,
             IPv4Address(self._cmd_island_ip),
-            self._cmd_island_port,
+            int(self._cmd_island_port),
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
 
@@ -427,7 +427,7 @@ class InfectionMonkey:
 
     def _close_tunnel(self):
         logger.info(f"Quitting tunnel {self._cmd_island_ip}")
-        notify_disconnect(self._cmd_island_ip, self._cmd_island_port)
+        notify_disconnect(self._cmd_island_ip, int(self._cmd_island_port))
 
     def _send_log(self):
         monkey_log_path = get_agent_log_path()
