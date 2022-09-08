@@ -2,7 +2,6 @@ import json
 import logging
 import platform
 from socket import gethostname
-from typing import MutableMapping, Optional
 
 import requests
 from urllib3 import disable_warnings
@@ -25,8 +24,7 @@ class ControlClient:
     # https://github.com/guardicore/monkey/blob/133f7f5da131b481561141171827d1f9943f6aec/monkey/infection_monkey/telemetry/base_telem.py
     control_client_object = None
 
-    def __init__(self, server_address: str, proxies: Optional[MutableMapping[str, str]] = None):
-        self.proxies = {} if not proxies else proxies
+    def __init__(self, server_address: str):
         self.server_address = server_address
 
     def wakeup(self, parent=None):
@@ -47,15 +45,11 @@ class ControlClient:
             "launch_time": agent_process.get_start_time(),
         }
 
-        if self.proxies:
-            monkey["tunnel"] = self.proxies.get("https")
-
         requests.post(  # noqa: DUO123
             f"https://{self.server_address}/api/agent",
             data=json.dumps(monkey),
             headers={"content-type": "application/json"},
             verify=False,
-            proxies=self.proxies,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
@@ -73,7 +67,6 @@ class ControlClient:
                 data=json.dumps(telemetry),
                 headers={"content-type": "application/json"},
                 verify=False,
-                proxies=self.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
@@ -89,7 +82,6 @@ class ControlClient:
                 data=json.dumps(telemetry),
                 headers={"content-type": "application/json"},
                 verify=False,
-                proxies=self.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
@@ -100,7 +92,6 @@ class ControlClient:
             return requests.get(  # noqa: DUO123
                 PBA_FILE_DOWNLOAD % (self.server_address, filename),
                 verify=False,
-                proxies=self.proxies,
                 timeout=LONG_REQUEST_TIMEOUT,
             )
         except requests.exceptions.RequestException:
