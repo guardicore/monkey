@@ -126,6 +126,7 @@ class InfectionMonkey:
         return opts
 
     def _get_server(self):
+        logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
         servers_iterator = (s for s in self._opts.servers)
         server = find_server(servers_iterator)
         if server:
