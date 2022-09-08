@@ -16,23 +16,11 @@ servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
 @pytest.mark.parametrize(
     "expected_server,server_response_pairs",
     [
-        (
-            None,
-            [
-                (SERVER_1, {"exc": requests.exceptions.ConnectionError}),
-                (SERVER_2, {"exc": requests.exceptions.ConnectionError}),
-                (SERVER_3, {"exc": requests.exceptions.ConnectionError}),
-                (SERVER_4, {"exc": requests.exceptions.ConnectionError}),
-            ],
-        ),
+        (None, [(server, {"exc": requests.exceptions.ConnectionError}) for server in servers]),
         (
             SERVER_2,
-            [
-                (SERVER_1, {"exc": requests.exceptions.ConnectionError}),
-                (SERVER_2, {"text": ""}),
-                (SERVER_3, {"text": ""}),
-                (SERVER_4, {"text": ""}),
-            ],
+            [(SERVER_1, {"exc": requests.exceptions.ConnectionError})]
+            + [(server, {"text": ""}) for server in servers[1:]],
         ),
     ],
 )
