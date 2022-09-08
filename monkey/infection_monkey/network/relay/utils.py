@@ -1,5 +1,6 @@
 import logging
 import socket
+from ipaddress import IPv4Address
 from typing import Iterable, Optional
 
 import requests
@@ -49,14 +50,21 @@ def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
 
 
 def _send_remove_from_waitlist_control_message_to_relay(server: str):
+    ip, port = address_to_ip_port(server)
+    notify_disconnect(IPv4Address(ip), int(port))
+
+
+def notify_disconnect(server_ip: IPv4Address, server_port: int):
+    """
+    Tell upstream relay that we no longer need the relay.
+
+    :param server_ip: The IP address of the server to notify.
+    :param server_port: The port of the server to notify.
+    """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as d_socket:
-        d_socket.settimeout(MEDIUM_REQUEST_TIMEOUT)
-
-        ip, port = address_to_ip_port(server)
-        logger.info(f"Control message was sent to the server/relay {server}")
-
         try:
-            d_socket.connect((ip, int(port)))
-            d_socket.send(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
+            d_socket.connect((server_ip, server_port))
+            d_socket.sendall(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
+            logger.info(f"Control message was sent to the server/relay {server_ip}:{server_port}")
         except OSError as err:
-            logger.error(f"Error connecting to socket {server}: {err}")
+            logger.error(f"Error connecting to socket {server_ip}:{server_port}: {err}")

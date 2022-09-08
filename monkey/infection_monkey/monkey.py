@@ -9,7 +9,6 @@ from typing import List
 
 from pubsub.core import Publisher
 
-import infection_monkey.tunnel as tunnel
 from common.event_queue import IEventQueue, PyPubSubEventQueue
 from common.events import CredentialsStolenEvent
 from common.network.network_utils import address_to_ip_port
@@ -45,6 +44,7 @@ from infection_monkey.network.info import get_free_tcp_port, get_network_interfa
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
     find_server,
+    notify_disconnect,
     send_remove_from_waitlist_control_message_to_relays,
 )
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
@@ -415,21 +415,18 @@ class InfectionMonkey:
             ).send()  # Signal the server (before closing the tunnel)
 
             self._close_tunnel()
-            self._singleton.unlock()
         except Exception as e:
             logger.error(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
                 InfectionMonkey._self_delete()
+        finally:
+            self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
 
     def _close_tunnel(self):
-        tunnel_address = (
-            self._control_client.proxies.get("https", "").replace("http://", "").split(":")[0]
-        )
-        if tunnel_address:
-            logger.info("Quitting tunnel %s", tunnel_address)
-            tunnel.quit_tunnel(tunnel_address)
+        logger.info(f"Quitting tunnel {self._cmd_island_ip}")
+        notify_disconnect(self._cmd_island_ip, self._cmd_island_port)
 
     def _send_log(self):
         monkey_log_path = get_agent_log_path()
