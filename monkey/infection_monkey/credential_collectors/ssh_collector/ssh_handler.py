@@ -173,7 +173,7 @@ def _publish_credentials_stolen_event(
 ):
     credentials_stolen_event = CredentialsStolenEvent(
         tags=SSH_COLLECTOR_EVENT_TAGS,
-        stolen_credentials=[collected_credentials],
+        stolen_credentials=collected_credentials,
     )
 
     event_queue.publish(credentials_stolen_event)
