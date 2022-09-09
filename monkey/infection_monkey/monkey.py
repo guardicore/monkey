@@ -104,7 +104,7 @@ class InfectionMonkey:
         server = self._get_server()
         # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
-        self._cmd_island_ip = int(self._cmd_island_ip)
+        self._cmd_island_port = int(self._cmd_island_port)
         self._control_client = ControlClient(server_address=server)
 
         # TODO Refactor the telemetry messengers to accept control client
