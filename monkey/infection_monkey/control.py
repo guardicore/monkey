@@ -2,20 +2,16 @@ import json
 import logging
 import platform
 from socket import gethostname
-from typing import Mapping, Optional
 
 import requests
+from urllib3 import disable_warnings
 
-import infection_monkey.tunnel as tunnel
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from infection_monkey.config import GUID
 from infection_monkey.network.info import get_host_subnets, local_ips
-from infection_monkey.transport.http import HTTPConnectProxy
-from infection_monkey.transport.tcp import TcpProxy
 from infection_monkey.utils import agent_process
-from infection_monkey.utils.environment import is_windows_os
 
-requests.packages.urllib3.disable_warnings()
+disable_warnings()  # noqa DUO131
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +24,7 @@ class ControlClient:
     # https://github.com/guardicore/monkey/blob/133f7f5da131b481561141171827d1f9943f6aec/monkey/infection_monkey/telemetry/base_telem.py
     control_client_object = None
 
-    def __init__(self, server_address: str, proxies: Optional[Mapping[str, str]] = None):
-        self.proxies = {} if not proxies else proxies
+    def __init__(self, server_address: str):
         self.server_address = server_address
 
     def wakeup(self, parent=None):
@@ -50,36 +45,13 @@ class ControlClient:
             "launch_time": agent_process.get_start_time(),
         }
 
-        if self.proxies:
-            monkey["tunnel"] = self.proxies.get("https")
-
         requests.post(  # noqa: DUO123
             f"https://{self.server_address}/api/agent",
             data=json.dumps(monkey),
             headers={"content-type": "application/json"},
             verify=False,
-            proxies=self.proxies,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
-
-    def set_proxies(self, proxy_find):
-        """
-        Note: The proxy schema changes between different versions of requests and urllib3,
-        which causes the machine to not open a tunnel back.
-        If we get "ValueError: check_hostname requires server_hostname" or
-        "Proxy URL had not schema, should start with http:// or https://" errors,
-        the proxy schema needs to be changed.
-        Keep this in mind when upgrading to newer python version or when urllib3 and
-        requests are updated there is possibility that the proxy schema is changed.
-        https://github.com/psf/requests/issues/5297
-        https://github.com/psf/requests/issues/5855
-        """
-        proxy_address, proxy_port = proxy_find
-        logger.info("Found tunnel at %s:%s" % (proxy_address, proxy_port))
-        if is_windows_os():
-            self.proxies["https"] = f"http://{proxy_address}:{proxy_port}"
-        else:
-            self.proxies["https"] = f"{proxy_address}:{proxy_port}"
 
     def send_telemetry(self, telem_category, json_data: str):
         if not self.server_address:
@@ -95,7 +67,6 @@ class ControlClient:
                 data=json.dumps(telemetry),
                 headers={"content-type": "application/json"},
                 verify=False,
-                proxies=self.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
@@ -111,41 +82,16 @@ class ControlClient:
                 data=json.dumps(telemetry),
                 headers={"content-type": "application/json"},
                 verify=False,
-                proxies=self.proxies,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
-
-    def create_control_tunnel(self, keep_tunnel_open_time: int):
-        if not self.server_address:
-            return None
-
-        my_proxy = self.proxies.get("https", "").replace("https://", "")
-        if my_proxy:
-            proxy_class = TcpProxy
-            try:
-                target_addr, target_port = my_proxy.split(":", 1)
-                target_port = int(target_port)
-            except ValueError:
-                return None
-        else:
-            proxy_class = HTTPConnectProxy
-            target_addr, target_port = None, None
-
-        return tunnel.MonkeyTunnel(
-            proxy_class,
-            keep_tunnel_open_time=keep_tunnel_open_time,
-            target_addr=target_addr,
-            target_port=target_port,
-        )
 
     def get_pba_file(self, filename):
         try:
             return requests.get(  # noqa: DUO123
                 PBA_FILE_DOWNLOAD % (self.server_address, filename),
                 verify=False,
-                proxies=self.proxies,
                 timeout=LONG_REQUEST_TIMEOUT,
             )
         except requests.exceptions.RequestException:

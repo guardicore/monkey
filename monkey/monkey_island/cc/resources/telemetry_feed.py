@@ -65,16 +65,6 @@ class TelemetryFeed(AbstractResource):
         return TELEM_PROCESS_DICT[telem_category]
 
     @staticmethod
-    def get_tunnel_telem_brief(telem):
-        tunnel = telem["data"]["proxy"]
-        if tunnel is None:
-            return "No tunnel is used."
-        else:
-            tunnel_host_ip = tunnel.split(":")[-2].replace("//", "")
-            tunnel_host = NodeService.get_monkey_by_ip(tunnel_host_ip)["hostname"]
-            return "Tunnel set up to machine: %s." % tunnel_host
-
-    @staticmethod
     def get_state_telem_brief(telem):
         if telem["data"]["done"]:
             return """Monkey finishing its execution."""
@@ -132,7 +122,6 @@ TELEM_PROCESS_DICT = {
     TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,
     TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
     TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
-    TelemCategoryEnum.TUNNEL: TelemetryFeed.get_tunnel_telem_brief,
 }
 
 

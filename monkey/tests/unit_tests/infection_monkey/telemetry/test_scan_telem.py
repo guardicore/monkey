@@ -14,7 +14,6 @@ HOST_AS_DICT = {
     "os": {},
     "services": {},
     "icmp": False,
-    "default_tunnel": None,
     "default_server": None,
 }
 HOST_SERVICES = {}

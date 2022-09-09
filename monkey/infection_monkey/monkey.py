@@ -78,7 +78,6 @@ from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter im
     LegacyTelemetryMessengerAdapter,
 )
 from infection_monkey.telemetry.state_telem import StateTelem
-from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
@@ -162,9 +161,7 @@ class InfectionMonkey:
 
         run_aws_environment_check(self._telemetry_messenger)
 
-        should_stop = ControlChannel(
-            self._control_client.server_address, GUID, self._control_client.proxies
-        ).should_agent_stop()
+        should_stop = ControlChannel(self._control_client.server_address, GUID).should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
@@ -180,9 +177,7 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        control_channel = ControlChannel(
-            self._control_client.server_address, GUID, self._control_client.proxies
-        )
+        control_channel = ControlChannel(self._control_client.server_address, GUID)
         control_channel.register_agent(self._opts.parent)
 
         config = control_channel.get_config()
@@ -199,7 +194,6 @@ class InfectionMonkey:
             self._relay.start()
 
         StateTelem(is_done=False, version=get_version()).send()
-        TunnelTelem(self._control_client.proxies).send()
 
         self._build_master()
 
@@ -209,9 +203,7 @@ class InfectionMonkey:
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
-        control_channel = ControlChannel(
-            self._control_client.server_address, GUID, self._control_client.proxies
-        )
+        control_channel = ControlChannel(self._control_client.server_address, GUID)
         propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
             control_channel
         )
@@ -283,7 +275,7 @@ class InfectionMonkey:
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
         agent_binary_repository = CachingAgentBinaryRepository(
-            f"https://{self._control_client.server_address}", self._control_client.proxies
+            f"https://{self._control_client.server_address}"
         )
         exploit_wrapper = ExploiterWrapper(
             self._telemetry_messenger, event_queue, agent_binary_repository
@@ -383,7 +375,7 @@ class InfectionMonkey:
         on_island = self._running_on_island(local_network_interfaces)
         logger.debug(f"This agent is running on the island: {on_island}")
 
-        return VictimHostFactory(None, self._cmd_island_ip, self._cmd_island_port, on_island)
+        return VictimHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
         server_ip, _ = address_to_ip_port(self._control_client.server_address)
