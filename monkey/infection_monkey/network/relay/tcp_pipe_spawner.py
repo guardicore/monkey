@@ -22,12 +22,12 @@ class TCPPipeSpawner:
         Attempt to create a pipe on between the configured client and the provided socket
 
         :param source: A socket to the connecting client.
-        :raises socket.error: If a socket to the configured client could not be created.
+        :raises OSError: If a socket to the configured client could not be created.
         """
         dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            dest.connect((self._target_addr, self._target_port))
-        except socket.error as err:
+            dest.connect((str(self._target_addr), self._target_port))
+        except OSError as err:
             source.close()
             dest.close()
             raise err

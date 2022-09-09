@@ -32,7 +32,7 @@ class SocketsPipe(Thread):
         while True:
             read_list, _, except_list = select.select(sockets, [], sockets, self.timeout)
             if except_list:
-                raise Exception("select() failed on sockets {except_list}")
+                raise OSError("select() failed on sockets {except_list}")
 
             if not read_list:
                 raise TimeoutError("pipe did not receive data for {self.timeout} seconds")
@@ -46,17 +46,17 @@ class SocketsPipe(Thread):
     def run(self):
         try:
             self._pipe()
-        except Exception as err:
+        except OSError as err:
             logger.debug(err)
 
         try:
             self.source.close()
-        except Exception as err:
+        except OSError as err:
             logger.debug(f"Error while closing source socket: {err}")
 
         try:
             self.dest.close()
-        except Exception as err:
+        except OSError as err:
             logger.debug(f"Error while closing destination socket: {err}")
 
         self._pipe_closed(self)
