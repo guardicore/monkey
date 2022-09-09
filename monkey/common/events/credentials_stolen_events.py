@@ -1,12 +1,14 @@
-from dataclasses import dataclass, field
+from dataclasses import field
 from typing import Sequence
+
+import pydantic
 
 from common.credentials import Credentials
 
 from . import AbstractAgentEvent
 
 
-@dataclass(frozen=True)
+@pydantic.dataclasses.dataclass(frozen=True)
 class CredentialsStolenEvent(AbstractAgentEvent):
     """
     An event that occurs when an agent collects credentials from the victim
