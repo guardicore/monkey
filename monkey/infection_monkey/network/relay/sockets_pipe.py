@@ -24,7 +24,7 @@ class SocketsPipe(Thread):
         self.source = source
         self.dest = dest
         self.timeout = timeout
-        super().__init__(name=f"SocketsPipeThread-{self.ident}", daemon=True)
+        super().__init__(name="SocketsPipeThread", daemon=True)
         self._pipe_closed = pipe_closed
 
     def _pipe(self):
