@@ -35,7 +35,7 @@ jobs:
         # Python
         - nproc
         - pip install pip --upgrade
-
+        - pipenv --version
         # Install island and monkey requirements as they are needed by UT's
         - pushd monkey/monkey_island
         - pipenv sync --dev  # This installs dependencies from lock
@@ -120,7 +120,7 @@ jobs:
       install:
         # Python
         - nproc
-        - pip install pipenv --upgrade
+        - pip install pipenv==2022.7.4
           # Install island and monkey requirements as they are needed by UT's
         - pushd monkey/monkey_island
         - pipenv sync --dev  # This installs dependencies from lock
