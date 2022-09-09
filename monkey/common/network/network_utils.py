@@ -1,6 +1,7 @@
 from typing import Optional, Tuple
 
 
+# TODO: `address_to_port()` should return the port as an integer.
 def address_to_ip_port(address: str) -> Tuple[str, Optional[str]]:
     """
     Split a string containing an IP address (and optionally a port) into IP and Port components.
