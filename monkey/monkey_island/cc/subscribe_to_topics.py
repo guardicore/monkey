@@ -3,7 +3,7 @@ from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQu
 from monkey_island.cc.services.reset_agent_configuration import reset_agent_configuration
 
 
-def subscribe_to_topics(container: DIContainer):
+def setup_island_event_subscribers(container: DIContainer):
     event_queue = container.resolve(PyPubSubIslandEventQueue)
 
     event_queue.subscribe(
