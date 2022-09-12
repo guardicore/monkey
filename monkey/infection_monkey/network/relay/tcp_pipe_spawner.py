@@ -3,6 +3,7 @@ from ipaddress import IPv4Address
 from threading import Lock
 from typing import Set
 
+from .consts import SOCKET_TIMEOUT
 from .sockets_pipe import SocketsPipe
 
 
@@ -25,6 +26,7 @@ class TCPPipeSpawner:
         :raises OSError: If a socket to the configured client could not be created.
         """
         dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        dest.settimeout(SOCKET_TIMEOUT)
         try:
             dest.connect((str(self._target_addr), self._target_port))
         except OSError as err:

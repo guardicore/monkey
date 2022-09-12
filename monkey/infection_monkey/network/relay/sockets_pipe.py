@@ -5,8 +5,9 @@ from logging import getLogger
 from threading import Thread
 from typing import Callable
 
+from .consts import SOCKET_TIMEOUT
+
 READ_BUFFER_SIZE = 8192
-SOCKET_READ_TIMEOUT = 10
 
 logger = getLogger(__name__)
 
@@ -19,7 +20,7 @@ class SocketsPipe(Thread):
         source,
         dest,
         pipe_closed: Callable[[SocketsPipe], None],
-        timeout=SOCKET_READ_TIMEOUT,
+        timeout=SOCKET_TIMEOUT,
     ):
         self.source = source
         self.dest = dest
