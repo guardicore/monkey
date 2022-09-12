@@ -7,9 +7,9 @@ import monkey_island.cc.services.log
 from monkey_island.cc import models
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
+from monkey_island.cc.server_utils.network_utils import get_ip_addresses
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
 from monkey_island.cc.services.edge.edge import EdgeService
-from monkey_island.cc.services.utils.network_utils import get_ip_addresses
 from monkey_island.cc.services.utils.node_states import NodeStates
 
 
