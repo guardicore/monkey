@@ -1,1 +1,2 @@
 from .pywsgi_logging_filter import PyWSGILoggingFilter
+from .island_event_handlers import setup_island_event_handlers

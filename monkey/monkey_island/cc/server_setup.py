@@ -10,7 +10,7 @@ import gevent.hub
 import requests
 from gevent.pywsgi import WSGIServer
 
-from monkey_island.cc import Version, setup_island_event_handlers
+from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.server_utils.island_logger import get_log_file_path
@@ -35,8 +35,8 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.server_utils.network_utils import get_ip_addresses  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
-from monkey_island.cc.setup import PyWSGILoggingFilter  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
+from monkey_island.cc.setup import PyWSGILoggingFilter, setup_island_event_handlers  # noqa: E402
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
