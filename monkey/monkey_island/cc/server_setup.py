@@ -58,11 +58,11 @@ def run_monkey_island():
 
     _send_analytics(deployment, version)
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
+    setup_island_event_handlers(container)
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
     _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
 
-    setup_island_event_handlers(container)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
