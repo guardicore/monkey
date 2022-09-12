@@ -110,6 +110,7 @@ class InfectionMonkey:
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
         ControlClient.control_client_object = self._control_client
+        self._control_channel = None
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
@@ -177,10 +178,10 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        control_channel = ControlChannel(self._control_client.server_address, GUID)
-        control_channel.register_agent(self._opts.parent)
+        self._control_channel = ControlChannel(self._control_client.server_address, GUID)
+        self._control_channel.register_agent(self._opts.parent)
 
-        config = control_channel.get_config()
+        config = self._control_channel.get_config()
 
         relay_port = get_free_tcp_port()
         self._relay = TCPRelay(
@@ -204,9 +205,8 @@ class InfectionMonkey:
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
-        control_channel = ControlChannel(self._control_client.server_address, GUID)
         propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
-            control_channel
+            self._control_channel
         )
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
@@ -226,7 +226,7 @@ class InfectionMonkey:
             puppet,
             telemetry_messenger,
             victim_host_factory,
-            control_channel,
+            self._control_channel,
             local_network_interfaces,
             propagation_credentials_repository,
         )
@@ -396,7 +396,12 @@ class InfectionMonkey:
 
             if self._relay and self._relay.is_alive():
                 self._relay.stop()
-                self._relay.join(timeout=60)
+
+                while self._relay.is_alive() and not self._control_channel.should_agent_stop():
+                    self._relay.join(timeout=5)
+
+                if self._control_channel.should_agent_stop():
+                    self._relay.join(timeout=60)
 
             if firewall.is_enabled():
                 firewall.remove_firewall_rule()
