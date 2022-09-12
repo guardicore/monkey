@@ -1,3 +1,4 @@
+import logging
 import socket
 from threading import Thread
 from typing import Callable, List
@@ -5,6 +6,8 @@ from typing import Callable, List
 from infection_monkey.utils.threading import InterruptableThreadMixin
 
 PROXY_TIMEOUT = 2.5
+
+logger = logging.getLogger(__name__)
 
 
 class TCPConnectionHandler(Thread, InterruptableThreadMixin):
@@ -24,18 +27,21 @@ class TCPConnectionHandler(Thread, InterruptableThreadMixin):
         InterruptableThreadMixin.__init__(self)
 
     def run(self):
-        l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        l_socket.bind((self.bind_host, self.bind_port))
-        l_socket.settimeout(PROXY_TIMEOUT)
-        l_socket.listen(5)
+        try:
+            l_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            l_socket.bind((self.bind_host, self.bind_port))
+            l_socket.settimeout(PROXY_TIMEOUT)
+            l_socket.listen(5)
 
-        while not self._interrupted.is_set():
-            try:
-                source, _ = l_socket.accept()
-            except socket.timeout:
-                continue
+            while not self._interrupted.is_set():
+                try:
+                    source, _ = l_socket.accept()
+                except socket.timeout:
+                    continue
 
-            for notify_client_connected in self._client_connected:
-                notify_client_connected(source)
-
-        l_socket.close()
+                for notify_client_connected in self._client_connected:
+                    notify_client_connected(source)
+        except:
+            logging.exception("Uncaught error in TCPConnectionHandler thread")
+        finally:
+            l_socket.close()
