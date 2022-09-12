@@ -16,9 +16,13 @@ class push_all_events_to_island:
         self._server_address = server_address
 
     def __call__(self, event: AbstractAgentEvent, topic=pub.AUTO_TOPIC):
+        topic_name = topic.getName()
+
+        logger.debug(f"Pushing event of type {topic_name} to the Island at {self._server_address}")
+
         requests.post(  # noqa: DUO123
             "https://%s/api/events" % (self._server_address,),
-            data=self._serialize_event(event, topic.getName()),
+            data=self._serialize_event(event, topic_name),
             headers={"content-type": "application/json"},
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
