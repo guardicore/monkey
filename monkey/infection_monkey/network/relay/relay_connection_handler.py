@@ -31,8 +31,8 @@ class RelayConnectionHandler:
         if control_message.startswith(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST):
             self._relay_user_handler.disconnect_user(addr)
         else:
-            self._relay_user_handler.add_relay_user(addr)
             try:
                 self._pipe_spawner.spawn_pipe(sock)
+                self._relay_user_handler.add_relay_user(addr)
             except OSError as err:
                 logger.debug(f"Failed to spawn pipe: {err}")
