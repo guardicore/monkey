@@ -37,7 +37,7 @@ class TCPPipeSpawner:
         pipe = SocketsPipe(source, dest, self._handle_pipe_closed)
         with self._lock:
             self._pipes.add(pipe)
-        pipe.run()
+        pipe.start()
 
     def has_open_pipes(self) -> bool:
         """Return whether or not the TCPPipeSpawner has any open pipes."""
