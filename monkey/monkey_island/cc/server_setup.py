@@ -10,7 +10,7 @@ import gevent.hub
 import requests
 from gevent.pywsgi import WSGIServer
 
-from monkey_island.cc import Version
+from monkey_island.cc import Version, subscribe_to_topics
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.server_utils.island_logger import get_log_file_path
@@ -61,6 +61,8 @@ def run_monkey_island():
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
     _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
+
+    subscribe_to_topics(container)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
