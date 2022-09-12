@@ -1,4 +1,5 @@
 from ipaddress import IPv4Address
+from logging import getLogger
 from threading import Lock, Thread
 from time import sleep
 
@@ -9,6 +10,8 @@ from infection_monkey.network.relay import (
     TCPPipeSpawner,
 )
 from infection_monkey.utils.threading import InterruptableThreadMixin
+
+logger = getLogger(__name__)
 
 
 class TCPRelay(Thread, InterruptableThreadMixin):
@@ -23,7 +26,10 @@ class TCPRelay(Thread, InterruptableThreadMixin):
         dest_port: int,
         client_disconnect_timeout: float,
     ):
-        self._user_handler = RelayUserHandler(client_disconnect_timeout=client_disconnect_timeout)
+        self._user_handler = RelayUserHandler(
+            new_client_timeout=client_disconnect_timeout,
+            client_disconnect_timeout=client_disconnect_timeout,
+        )
         self._pipe_spawner = TCPPipeSpawner(dest_addr, dest_port)
         relay_filter = RelayConnectionHandler(self._pipe_spawner, self._user_handler)
         self._connection_handler = TCPConnectionHandler(
@@ -46,6 +52,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
         self._connection_handler.stop()
         self._connection_handler.join()
         self._wait_for_pipes_to_close()
+        logger.info("TCP Relay closed.")
 
     def add_potential_user(self, user_address: IPv4Address):
         """

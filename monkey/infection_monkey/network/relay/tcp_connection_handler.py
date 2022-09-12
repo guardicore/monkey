@@ -39,9 +39,12 @@ class TCPConnectionHandler(Thread, InterruptableThreadMixin):
                 except socket.timeout:
                     continue
 
+                logging.debug(f"New connection received from: {source.getpeername()}")
                 for notify_client_connected in self._client_connected:
                     notify_client_connected(source)
-        except:
+        except OSError:
             logging.exception("Uncaught error in TCPConnectionHandler thread")
         finally:
             l_socket.close()
+
+        logging.info("Exiting connection handler.")

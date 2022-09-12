@@ -1,10 +1,13 @@
 import socket
 from ipaddress import IPv4Address
+from logging import getLogger
 from threading import Lock
 from typing import Set
 
 from .consts import SOCKET_TIMEOUT
 from .sockets_pipe import SocketsPipe
+
+logger = getLogger(__name__)
 
 
 class TCPPipeSpawner:
@@ -37,6 +40,7 @@ class TCPPipeSpawner:
         pipe = SocketsPipe(source, dest, self._handle_pipe_closed)
         with self._lock:
             self._pipes.add(pipe)
+
         pipe.start()
 
     def has_open_pipes(self) -> bool:
@@ -50,4 +54,5 @@ class TCPPipeSpawner:
 
     def _handle_pipe_closed(self, pipe: SocketsPipe):
         with self._lock:
+            logger.debug(f"Closing pipe {pipe}")
             self._pipes.discard(pipe)

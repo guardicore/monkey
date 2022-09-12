@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from ipaddress import IPv4Address
+from logging import getLogger
 from threading import Lock
 from typing import Dict
 
@@ -11,6 +12,9 @@ from common.utils.code_utils import del_key
 # Wait for potential new clients to connect
 DEFAULT_NEW_CLIENT_TIMEOUT = 2.5 * MEDIUM_REQUEST_TIMEOUT
 DEFAULT_DISCONNECT_TIMEOUT = 60 * 2  # Wait up to 2 minutes for clients to disconnect
+
+
+logger = getLogger(__name__)
 
 
 @dataclass
@@ -48,7 +52,9 @@ class RelayUserHandler:
 
             timer = EggTimer()
             timer.set(self._client_disconnect_timeout)
-            self._relay_users[user_address] = RelayUser(user_address, timer)
+            user = RelayUser(user_address, timer)
+            self._relay_users[user_address] = user
+            logger.debug(f"Added relay user {user}")
 
     def add_potential_user(self, user_address: IPv4Address):
         """
@@ -60,7 +66,9 @@ class RelayUserHandler:
         with self._lock:
             timer = EggTimer()
             timer.set(self._new_client_timeout)
-            self._potential_users[user_address] = RelayUser(user_address, timer)
+            user = RelayUser(user_address, timer)
+            self._potential_users[user_address] = user
+            logger.debug(f"Added potential relay user {user}")
 
     def disconnect_user(self, user_address: IPv4Address):
         """
@@ -70,6 +78,7 @@ class RelayUserHandler:
         """
         with self._lock:
             if user_address in self._relay_users:
+                logger.debug(f"Disconnected user {user_address}")
                 del_key(self._relay_users, user_address)
 
     def has_potential_users(self) -> bool:
