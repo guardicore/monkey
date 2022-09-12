@@ -35,8 +35,11 @@ def test_del_key__deletes_key():
 def test_del_key__nonexistant_key():
     key_to_delete = "a"
     my_dict = {"a": 1, "b": 2}
+    assert key_to_delete in my_dict
 
     del_key(my_dict, key_to_delete)
+    assert key_to_delete not in my_dict
 
     # This test passes if the following call does not raise an error
     del_key(my_dict, key_to_delete)
+    assert key_to_delete not in my_dict

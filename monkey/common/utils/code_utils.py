@@ -44,7 +44,4 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
     :param mapping: A mapping from which a key will be deleted
     :param key: A key to delete from `mapping`
     """
-    try:
-        del mapping[key]
-    except KeyError:
-        pass
+    mapping.pop(key, None)
