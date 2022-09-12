@@ -26,7 +26,9 @@ class RelayConnectionHandler:
         addr, _ = sock.getpeername()
         addr = IPv4Address(addr)
 
-        control_message = sock.recv(socket.MSG_PEEK)
+        control_message = sock.recv(
+            len(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST), socket.MSG_PEEK
+        )
 
         if control_message.startswith(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST):
             self._relay_user_handler.disconnect_user(addr)
