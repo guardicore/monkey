@@ -64,7 +64,6 @@ def run_monkey_island():
     _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
 
 
-
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
     try:
         return get_server_config(island_args)
