@@ -298,6 +298,7 @@ serialize
 event
 deserialize
 serialized_event
+PydanticEventSerializer
 
 # pydantic base models
 underscore_attrs_are_private
