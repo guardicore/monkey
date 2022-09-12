@@ -393,15 +393,7 @@ class InfectionMonkey:
                 self._master.cleanup()
 
             reset_signal_handlers()
-
-            if self._relay and self._relay.is_alive():
-                self._relay.stop()
-
-                while self._relay.is_alive() and not self._control_channel.should_agent_stop():
-                    self._relay.join(timeout=5)
-
-                if self._control_channel.should_agent_stop():
-                    self._relay.join(timeout=60)
+            self._stop_relay()
 
             if firewall.is_enabled():
                 firewall.remove_firewall_rule()
@@ -424,6 +416,16 @@ class InfectionMonkey:
             self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
+
+    def _stop_relay(self):
+        if self._relay and self._relay.is_alive():
+            self._relay.stop()
+
+            while self._relay.is_alive() and not self._control_channel.should_agent_stop():
+                self._relay.join(timeout=5)
+
+            if self._control_channel.should_agent_stop():
+                self._relay.join(timeout=60)
 
     def _close_tunnel(self):
         logger.info(f"Quitting tunnel {self._cmd_island_ip}")
