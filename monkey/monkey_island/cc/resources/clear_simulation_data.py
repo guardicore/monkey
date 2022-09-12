@@ -20,4 +20,4 @@ class ClearSimulationData(AbstractResource):
         """
 
         self._repository_service.clear_simulation_data()
-        return make_response({}, HTTPStatus.OK)
+        return make_response({}, HTTPStatus.NO_CONTENT)
