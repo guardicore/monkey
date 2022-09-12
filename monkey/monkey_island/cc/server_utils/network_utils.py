@@ -4,6 +4,8 @@ from typing import Sequence
 from netifaces import AF_INET, ifaddresses, interfaces
 from ring import lru
 
+# TODO: This functionality is duplicated in the agent. Unify them after 2216-tcp-relay is merged
+
 
 # The local IP addresses list should not change often. Therefore, we can cache the result and never
 # call this function more than once. This stopgap measure is here since this function is called a

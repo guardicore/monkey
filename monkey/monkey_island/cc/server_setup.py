@@ -33,8 +33,8 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
     MONKEY_ISLAND_ABS_PATH,
 )
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
+from monkey_island.cc.server_utils.network_utils import get_ip_addresses  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
-from monkey_island.cc.services.utils.network_utils import get_ip_addresses  # noqa: E402
 from monkey_island.cc.setup import PyWSGILoggingFilter  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
