@@ -30,7 +30,9 @@ class SocketsPipe(Thread):
 
     def _pipe(self):
         sockets = [self.source, self.dest]
-        while True:
+        socket_closed = False
+
+        while not socket_closed:
             read_list, _, except_list = select.select(sockets, [], sockets, self.timeout)
             if except_list:
                 raise OSError("select() failed on sockets {except_list}")
@@ -43,6 +45,9 @@ class SocketsPipe(Thread):
                 data = r.recv(READ_BUFFER_SIZE)
                 if data:
                     other.sendall(data)
+                else:
+                    socket_closed = True
+                    break
 
     def run(self):
         try:
