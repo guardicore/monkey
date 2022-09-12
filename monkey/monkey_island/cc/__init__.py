@@ -1,2 +1,2 @@
 from .version import Version
-from .subscribe_to_topics import setup_island_event_subscribers
+from .setup_island_event_handlers import setup_island_event_handlers
