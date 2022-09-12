@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import Enum, auto
 from typing import Any
 
 from . import IslandEventSubscriber
 
-IslandEventTopic = Enum(
-    "IslandEventTopic", ["AGENT_CONNECTED", "CLEAR_SIMULATION_DATA", "RESET_AGENT_CONFIGURATION"]
-)
+
+class IslandEventTopic(Enum):
+    AGENT_CONNECTED = auto()
+    CLEAR_SIMULATION_DATA = auto()
+    RESET_AGENT_CONFIGURATION = auto()
 
 
 class IIslandEventQueue(ABC):
