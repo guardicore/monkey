@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from ipaddress import IPv4Address
 from typing import Callable, FrozenSet, Union
 from uuid import UUID
@@ -13,7 +12,6 @@ EVENT_TAG_1 = "event tag 1"
 EVENT_TAG_2 = "event tag 2"
 
 
-@dataclass(frozen=True)
 class TestEvent1(AbstractAgentEvent):
     __test__ = False
     source: UUID = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
@@ -22,7 +20,6 @@ class TestEvent1(AbstractAgentEvent):
     tags: FrozenSet = frozenset()
 
 
-@dataclass(frozen=True)
 class TestEvent2(AbstractAgentEvent):
     __test__ = False
     source: UUID = UUID("e810ad01-6b67-9446-fc58-9b8d717653f7")

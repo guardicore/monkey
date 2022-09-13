@@ -1,7 +1,8 @@
 from abc import ABC
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import pytest
+from pydantic import Field
 
 from common.base_models import InfectionMonkeyBaseModel
 from common.event_serializers import IEventSerializer, PydanticEventSerializer
@@ -14,9 +15,8 @@ class NotAgentEvent(ABC):
     other_field: float
 
 
-@dataclass(frozen=True)
 class SomeAgentEvent(AbstractAgentEvent):
-    bogus: int = field(default_factory=int)
+    bogus: int = Field(default_factory=int)
 
 
 class PydanticEvent(InfectionMonkeyBaseModel):
@@ -28,7 +28,9 @@ def pydantic_event_serializer() -> IEventSerializer:
     return PydanticEventSerializer(PydanticEvent)
 
 
-@pytest.mark.parametrize("event", [NotAgentEvent(1, 2.0), SomeAgentEvent(2)])
+@pytest.mark.parametrize(
+    "event", [NotAgentEvent(some_field=1, other_field=2.0), SomeAgentEvent(bogus=2)]
+)
 def test_pydantic_event_serializer__serialize_wrong_type(pydantic_event_serializer, event):
     with pytest.raises(TypeError):
         pydantic_event_serializer.serialize(event)
