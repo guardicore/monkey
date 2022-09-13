@@ -2,7 +2,6 @@ import logging
 import queue
 import threading
 from time import sleep
-from typing import Set
 
 import requests
 
@@ -12,7 +11,6 @@ from common.events import AbstractAgentEvent
 logger = logging.getLogger(__name__)
 
 
-WAKES_PER_PERIOD = 4
 DEFAULT_TIME_PERIOD_SECONDS = 5
 EVENTS_API_URL = "https://%s/api/events"
 
@@ -50,7 +48,6 @@ class send_all_events_to_island:
             self._server_address = server_address
             self._time_period = time_period
 
-            self._event_batch: Set = set()
             self._should_run_batch_and_send_thread = True
 
         def start(self):
