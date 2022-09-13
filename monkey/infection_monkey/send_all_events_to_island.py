@@ -12,8 +12,8 @@ from common.events import AbstractAgentEvent
 logger = logging.getLogger(__name__)
 
 
-DEFAULT_TIME_PERIOD = 5
 WAKES_PER_PERIOD = 4
+DEFAULT_TIME_PERIOD_SECONDS = 5
 EVENTS_API_URL = "https://%s/api/events"
 
 
@@ -27,7 +27,7 @@ class send_all_events_to_island:
         self._queue: queue.Queue[AbstractAgentEvent] = queue.Queue()
 
         self._send_to_island_thread = self._batch_and_send_events_thread(
-            self._queue, self._server_address, DEFAULT_TIME_PERIOD
+            self._queue, self._server_address, DEFAULT_TIME_PERIOD_SECONDS
         )
         self._send_to_island_thread.start()
 
@@ -63,7 +63,7 @@ class send_all_events_to_island:
         def _manage_event_batches(self):
             while self._should_run_batch_and_send_thread:
                 self._send_events_to_island()
-                sleep(DEFAULT_TIME_PERIOD)
+                sleep(self._time_period)
 
             self._send_remaining_events()
 
