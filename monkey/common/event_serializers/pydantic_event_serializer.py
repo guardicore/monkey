@@ -18,12 +18,7 @@ class PydanticEventSerializer(IEventSerializer, Generic[T]):
         if not issubclass(event.__class__, self._event_class):
             raise TypeError(f"Event object must be of type: {self._event_class.__name__}")
 
-        try:
-            return event.dict(simplify=True)
-        except AttributeError as err:
-            logger.error(f"Error occured while serializing an event {event}: {err}")
-
-        return None
+        return event.dict(simplify=True)
 
     def deserialize(self, serialized_event: JSONSerializable) -> T:
         return self._event_class(**serialized_event)
