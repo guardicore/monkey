@@ -23,6 +23,10 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 from common import DIContainer  # noqa: E402
+from common.event_serializers import (  # noqa: E402
+    EventSerializerRegistry,
+    register_common_agent_event_serializers,
+)
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -59,6 +63,7 @@ def run_monkey_island():
     _send_analytics(deployment, version)
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
+    _setup_agent_event_serializers(container)
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
     _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
@@ -127,6 +132,13 @@ def _initialize_di_container(
     initialize_services(container, data_dir)
 
     return container
+
+
+def _setup_agent_event_serializers(container: DIContainer):
+    agent_event_serializer_registry = EventSerializerRegistry()
+    register_common_agent_event_serializers(agent_event_serializer_registry)
+
+    container.register_instance(EventSerializerRegistry, agent_event_serializer_registry)
 
 
 def _initialize_mongodb_connection(start_mongodb: bool, data_dir: Path):
