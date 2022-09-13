@@ -16,12 +16,14 @@ from .utils import (
 
 # Tests:
 #     Powershell (10.2.3.45, 10.2.3.46, 10.2.3.47, 10.2.3.48)
+#     Tunneling (SSH brute force) (10.2.2.9, 10.2.1.10, 10.2.0.12, 10.2.0.11)
 #     WMI pass the hash (10.2.2.15)
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     brute_force = [
         PluginConfiguration(name="PowerShellExploiter", options={}),
+        PluginConfiguration(name="SSHExploiter", options={}),
         PluginConfiguration(name="WmiExploiter", options={"smb_download_timeout": 30}),
     ]
 
@@ -30,17 +32,21 @@ def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfigurati
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     subnets = [
+        "10.2.2.9",
         "10.2.3.45",
         "10.2.3.46",
         "10.2.3.47",
         "10.2.3.48",
+        "10.2.1.10",
+        "10.2.0.12",
+        "10.2.0.11",
         "10.2.2.15",
     ]
     return add_subnets(agent_configuration, subnets)
 
 
 def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    ports = [135, 5985, 5986]
+    ports = [22, 135, 5985, 5986]
     return add_tcp_ports(agent_configuration, ports)
 
 
@@ -54,6 +60,9 @@ CREDENTIALS = (
     Credentials(Username("m0nk3y"), None),
     Credentials(Username("m0nk3y-user"), None),
     Credentials(None, Password("Passw0rd!")),
+    Credentials(None, Password("3Q=(Ge(+&w]*")),
+    Credentials(None, Password("`))jU7L(w}")),
+    Credentials(None, Password("t67TC5ZDmz")),
     Credentials(None, NTHash("d0f0132b308a0c4e5d1029cc06f48692")),
     Credentials(None, NTHash("5da0889ea2081aa79f6852294cba4a5e")),
     Credentials(None, NTHash("50c9987a6bf1ac59398df9f911122c9b")),
