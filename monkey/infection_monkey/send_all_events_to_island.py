@@ -6,9 +6,6 @@ from typing import Set
 
 import requests
 
-# TODO: shouldn't leak implementation information; can we do this some other way?
-from pubsub import pub
-
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.events import AbstractAgentEvent
 
@@ -34,13 +31,13 @@ class send_all_events_to_island:
         )
         self._send_to_island_thread.start()
 
-    def __call__(self, event: AbstractAgentEvent, topic=pub.AUTO_TOPIC):
-        topic_name = topic.getName()
-        self._queue.put(self._serialize_event(event, topic_name))
+    def __call__(self, event: AbstractAgentEvent):
+        self._queue.put(self._serialize_event(event))
+        logger.debug(
+            f"Sending event of type {type(event).__name__} to the Island at {self._server_address}"
+        )
 
-        logger.debug(f"Sending event of type {topic_name} to the Island at {self._server_address}")
-
-    def _serialize_event(self, event: AbstractAgentEvent, topic_name: str):
+    def _serialize_event(self, event: AbstractAgentEvent):
         pass
 
     class _batch_and_send_events_thread:
