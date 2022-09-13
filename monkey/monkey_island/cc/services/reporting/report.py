@@ -10,6 +10,7 @@ from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import IAgentConfigurationRepository, ICredentialsRepository
+from monkey_island.cc.server_utils.network_utils import get_ip_addresses, get_subnets
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
@@ -19,7 +20,6 @@ from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
     safe_generate_regular_report,
 )
-from monkey_island.cc.services.utils.network_utils import get_ip_addresses, get_subnets
 
 from .. import AWSService
 from . import aws_exporter
