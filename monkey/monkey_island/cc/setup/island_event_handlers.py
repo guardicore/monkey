@@ -10,11 +10,11 @@ from monkey_island.cc.services.database import Database
 def setup_island_event_handlers(container: DIContainer):
     island_event_queue = container.resolve(IIslandEventQueue)
 
-    _handle_reset_agent_configuration_events(island_event_queue, container)
-    _handle_clear_simulation_data_events(island_event_queue, container)
+    _subscribe_reset_agent_configuration_events(island_event_queue, container)
+    _subscribe_clear_simulation_data_events(island_event_queue, container)
 
 
-def _handle_reset_agent_configuration_events(
+def _subscribe_reset_agent_configuration_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
     island_event_queue.subscribe(
@@ -22,7 +22,7 @@ def _handle_reset_agent_configuration_events(
     )
 
 
-def _handle_clear_simulation_data_events(
+def _subscribe_clear_simulation_data_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
     legacy_database_reset = partial(Database.reset_db, reset_config=False)
