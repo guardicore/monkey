@@ -67,6 +67,7 @@ from infection_monkey.post_breach.actions.use_signed_scripts import SignedScript
 from infection_monkey.post_breach.actions.use_trap_command import TrapCommand
 from infection_monkey.post_breach.custom_pba import CustomPBA
 from infection_monkey.puppet.puppet import Puppet
+from infection_monkey.send_all_events_to_island import send_all_events_to_island
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
@@ -219,7 +220,9 @@ class InfectionMonkey:
         )
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
-        InfectionMonkey._subscribe_events(event_queue, propagation_credentials_repository)
+        InfectionMonkey._subscribe_events(
+            event_queue, propagation_credentials_repository, self._control_client.server_address
+        )
 
         puppet = self._build_puppet(propagation_credentials_repository, event_queue)
 
@@ -243,6 +246,7 @@ class InfectionMonkey:
     def _subscribe_events(
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
+        server_address: str,
     ):
         event_queue.subscribe_type(
             CredentialsStolenEvent,
@@ -250,6 +254,7 @@ class InfectionMonkey:
                 propagation_credentials_repository
             ),
         )
+        event_queue.subscribe_all_events(send_all_events_to_island(server_address))
 
     @staticmethod
     def _get_local_network_interfaces() -> List[IPv4Interface]:
