@@ -76,8 +76,7 @@ class send_all_events_to_island:
             try:
                 requests.post(  # noqa: DUO123
                     EVENTS_API_URL % (self._server_address,),
-                    data=events,
-                    headers={"content-type": "application/json"},
+                    json=events,
                     verify=False,
                     timeout=MEDIUM_REQUEST_TIMEOUT,
                 )
