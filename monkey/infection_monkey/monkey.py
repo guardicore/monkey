@@ -137,6 +137,10 @@ class InfectionMonkey:
             raise Exception(
                 f"Failed to connect to the island via any known servers: {self._opts.servers}"
             )
+
+        # Note: Since we pass the address for each of our interfaces to the exploited
+        # machines, is it possible for a machine to unintentionally unregister itself from the
+        # relay if it is able to connect to the relay over multiple interfaces?
         send_remove_from_waitlist_control_message_to_relays(servers_iterator)
 
         return server
