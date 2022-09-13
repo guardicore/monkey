@@ -1,6 +1,7 @@
 import logging
 import queue
 import threading
+from typing import Set
 
 import requests
 
@@ -43,7 +44,7 @@ class send_all_events_to_island:
             self._server_address = server_address
             self._time_period = time_period
 
-            self._event_batch = set()
+            self._event_batch: Set = set()
             self._should_run_batch_and_send_thread = True
 
         def start(self):
