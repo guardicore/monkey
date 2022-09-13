@@ -1,15 +1,11 @@
 from datetime import datetime
 from typing import Optional
-from uuid import UUID
 
 from pydantic import Field
-from typing_extensions import TypeAlias
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 
-from . import MachineID
-
-AgentID: TypeAlias = UUID
+from . import AgentID, MachineID
 
 
 class Agent(MutableInfectionMonkeyBaseModel):
