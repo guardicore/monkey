@@ -20,6 +20,10 @@ WAKES_PER_PERIOD = 4
 
 
 class send_all_events_to_island:
+    """
+    Sends information about the events carried out by the Agent to the Island in batches
+    """
+
     def __init__(self, server_address: str):
         self._server_address = server_address
         self._queue: queue.Queue[AbstractAgentEvent] = queue.Queue()
@@ -39,6 +43,10 @@ class send_all_events_to_island:
         pass
 
     class _batch_and_send_events_thread:
+        """
+        Handles the batching and sending of the Agent's events to the Island
+        """
+
         def __init__(self, queue_of_events: queue.Queue, server_address: str, time_period: int):
             self._queue = queue_of_events
             self._server_address = server_address
