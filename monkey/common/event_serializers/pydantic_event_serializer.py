@@ -19,7 +19,7 @@ class PydanticEventSerializer(IEventSerializer, Generic[T]):
             raise TypeError(f"Event object must be of type: {self._event_class.__name__}")
 
         try:
-            return event.dict()
+            return event.dict(simplify=True)
         except AttributeError as err:
             logger.error(f"Error occured while serializing an event {event}: {err}")
 
