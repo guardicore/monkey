@@ -299,9 +299,6 @@ event
 deserialize
 serialized_event
 
-# TODO: Remove once #2277 is merged
-clear_simulation_data
-
 # pydantic base models
 underscore_attrs_are_private
 extra

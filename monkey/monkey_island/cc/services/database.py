@@ -10,7 +10,7 @@ from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 logger = logging.getLogger(__name__)
 
 
-# NOTE: This service is being replaced by the RepositoryService
+# NOTE: This service is being replaced a little at a time by repositories
 class Database(object):
     def __init__(self):
         pass

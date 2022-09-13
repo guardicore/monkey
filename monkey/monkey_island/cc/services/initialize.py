@@ -35,7 +35,7 @@ from monkey_island.cc.repository import (
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
-from monkey_island.cc.services import AWSService, IslandModeService, RepositoryService
+from monkey_island.cc.services import AWSService, IslandModeService
 from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
@@ -151,7 +151,6 @@ def _register_services(container: DIContainer):
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
     container.register_instance(IslandModeService, container.resolve(IslandModeService))
     container.register_instance(AuthenticationService, container.resolve(AuthenticationService))
-    container.register_instance(RepositoryService, container.resolve(RepositoryService))
 
 
 def _dirty_hacks(container: DIContainer):
