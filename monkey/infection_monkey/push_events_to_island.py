@@ -18,7 +18,7 @@ DEFAULT_TIME_PERIOD = 5
 WAKES_PER_PERIOD = 4
 
 
-class push_all_events_to_island:
+class send_all_events_to_island:
     def __init__(self, server_address: str):
         self._server_address = server_address
         self._queue: queue.Queue[AbstractAgentEvent] = queue.Queue()
@@ -32,7 +32,7 @@ class push_all_events_to_island:
         topic_name = topic.getName()
         self._queue.put(self._serialize_event(event, topic_name))
 
-        logger.debug(f"Pushing event of type {topic_name} to the Island at {self._server_address}")
+        logger.debug(f"Sending event of type {topic_name} to the Island at {self._server_address}")
 
     def _serialize_event(self, event: AbstractAgentEvent, topic_name: str):
         pass
