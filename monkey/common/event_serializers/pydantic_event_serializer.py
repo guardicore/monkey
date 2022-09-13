@@ -2,8 +2,9 @@ import logging
 from typing import Generic, Type, TypeVar
 
 from common.events import AbstractAgentEvent
+from common.utils.code_utils import del_key
 
-from . import IEventSerializer, JSONSerializable
+from . import EVENT_TYPE_FIELD, IEventSerializer, JSONSerializable
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,19 @@ class PydanticEventSerializer(IEventSerializer, Generic[T]):
         if not isinstance(event, self._event_class):
             raise TypeError(f"Event object must be of type: {self._event_class.__name__}")
 
-        return event.dict(simplify=True)
+        event_dict = event.dict(simplify=True)
+        event_dict[EVENT_TYPE_FIELD] = type(event).__name__
+
+        return event_dict
 
     def deserialize(self, serialized_event: JSONSerializable) -> T:
-        return self._event_class(**serialized_event)
+        if not isinstance(serialized_event, dict):
+            raise TypeError(
+                "Serialized pydantic events must be a dictionary, but got {type(serialized_event)}"
+            )
+
+        # pydantic serialized events will always be dicts with a copy() method
+        event_dict = serialized_event.copy()  # type: ignore[union-attr]
+        del_key(event_dict, EVENT_TYPE_FIELD)
+
+        return self._event_class(**event_dict)
