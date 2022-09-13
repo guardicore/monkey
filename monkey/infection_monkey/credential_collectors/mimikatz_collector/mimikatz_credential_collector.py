@@ -6,6 +6,7 @@ from common.event_queue import IAgentEventQueue
 from common.events import CredentialsStolenEvent
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
+from infection_monkey.utils.ids import get_agent_id
 
 from . import pypykatz_handler
 from .windows_credentials import WindowsCredentials
@@ -76,6 +77,7 @@ class MimikatzCredentialCollector(ICredentialCollector):
 
     def _publish_credentials_stolen_event(self, collected_credentials: Sequence[Credentials]):
         credentials_stolen_event = CredentialsStolenEvent(
+            source=get_agent_id(),
             tags=MIMIKATZ_EVENT_TAGS,
             stolen_credentials=collected_credentials,
         )
