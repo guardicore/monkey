@@ -152,7 +152,7 @@ class TCPPortSelector:
                           1024
         :param max_range: The largest port number a random port can be chosen from, defaults to
                           65535
-        :lease_time_sec: The amount of time a port should be reserved for if the OS does not report
+        :param lease_time_sec: The amount of time a port should be reserved for if the OS does not report
                          it as in use, defaults to 30 seconds
         :return: A TCP port number
         """
