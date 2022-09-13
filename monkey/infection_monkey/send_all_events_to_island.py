@@ -67,7 +67,7 @@ class send_all_events_to_island:
             timer = Timer()
             timer.set(self._time_period)
 
-            self._event_batch = {}
+            self._event_batch.clear()
 
             while self._should_run_batch_and_send_thread:
                 self._add_next_event_to_batch()
@@ -75,7 +75,7 @@ class send_all_events_to_island:
                 if timer.is_expired():
                     self._send_events_to_island()
                     timer.reset()
-                    self._event_batch = {}
+                    self._event_batch.clear()
 
             self._send_remaining_events()
 
@@ -98,7 +98,7 @@ class send_all_events_to_island:
                     )
                 except Exception as exc:
                     logger.warning(
-                        f"Exception caught when connecting to the Island at {self.server_address}"
+                        f"Exception caught when connecting to the Island at {self._server_address}"
                         f": {exc}"
                     )
 
