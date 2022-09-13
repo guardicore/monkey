@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_TIME_PERIOD = 5
 WAKES_PER_PERIOD = 4
+EVENTS_API_URL = "https://%s/api/events"
 
 
 class send_all_events_to_island:
@@ -89,7 +90,7 @@ class send_all_events_to_island:
             for serialized_event in self._event_batch:
                 try:
                     requests.post(  # noqa: DUO123
-                        "https://%s/api/events" % (self._server_address,),
+                        EVENTS_API_URL % (self._server_address,),
                         data=serialized_event,
                         headers={"content-type": "application/json"},
                         verify=False,
