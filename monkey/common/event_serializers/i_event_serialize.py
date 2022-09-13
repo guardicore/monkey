@@ -3,8 +3,14 @@ from typing import Dict, List, Union
 
 from common.events import AbstractAgentEvent
 
-JSONSerializable = Union[
-    Dict[str, "JSONSerializable"], List["JSONSerializable"], int, str, float, bool, None
+JSONSerializable = Union[  # type: ignore[misc]
+    Dict[str, "JSONSerializable"],  # type: ignore[misc]
+    List["JSONSerializable"],  # type: ignore[misc]
+    int,
+    str,
+    float,
+    bool,
+    None,
 ]
 
 

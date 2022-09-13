@@ -1,2 +1,3 @@
-from .i_event_serialize import IEventSerializer
+from .i_event_serialize import IEventSerializer, JSONSerializable
 from .event_serializer_registry import EventSerializerRegistry
+from .pydantic_event_serializer import PydanticEventSerializer
