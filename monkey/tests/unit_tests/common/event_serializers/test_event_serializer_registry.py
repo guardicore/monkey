@@ -1,25 +1,22 @@
-from dataclasses import dataclass, field
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import Field
 
 from common.event_serializers import EventSerializerRegistry, IEventSerializer
 from common.events import AbstractAgentEvent
 
 
-@dataclass(frozen=True)
 class SomeEvent(AbstractAgentEvent):
-    some_param: int = field(default=435)
+    some_param: int = Field(default=435)
 
 
-@dataclass(frozen=True)
 class OtherEvent(AbstractAgentEvent):
-    other_param: float = field(default=123.456)
+    other_param: float = Field(default=123.456)
 
 
-@dataclass(frozen=True)
 class NoneEvent(AbstractAgentEvent):
-    none_param: float = field(default=1.0)
+    none_param: float = Field(default=1.0)
 
 
 SOME_SERIALIZER = MagicMock(spec=IEventSerializer)

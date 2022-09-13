@@ -1,13 +1,15 @@
 import time
 from abc import ABC
-from dataclasses import dataclass, field
 from ipaddress import IPv4Address
 from typing import FrozenSet, Union
-from uuid import UUID, getnode
+
+from pydantic import Field
+
+from common.base_models import InfectionMonkeyBaseModel
+from common.types import AgentID
 
 
-@dataclass(frozen=True)
-class AbstractAgentEvent(ABC):
+class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
     """
     An event that was initiated or observed by an agent
 
@@ -22,7 +24,7 @@ class AbstractAgentEvent(ABC):
         :param tags: The set of tags associated with the event
     """
 
-    source: UUID = field(default_factory=getnode)
-    target: Union[UUID, IPv4Address, None] = field(default=None)
-    timestamp: float = field(default_factory=time.time)
-    tags: FrozenSet[str] = field(default_factory=frozenset)
+    source: AgentID
+    target: Union[int, IPv4Address, None] = Field(default=None)
+    timestamp: float = Field(default_factory=time.time)
+    tags: FrozenSet[str] = Field(default_factory=frozenset)

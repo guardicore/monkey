@@ -11,6 +11,7 @@ from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)
 
@@ -172,6 +173,7 @@ def _publish_credentials_stolen_event(
     collected_credentials: Credentials, event_queue: IAgentEventQueue
 ):
     credentials_stolen_event = CredentialsStolenEvent(
+        source=get_agent_id(),
         tags=SSH_COLLECTOR_EVENT_TAGS,
         stolen_credentials=[collected_credentials],
     )
