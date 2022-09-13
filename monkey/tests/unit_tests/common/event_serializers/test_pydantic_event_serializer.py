@@ -2,10 +2,9 @@ from abc import ABC
 from dataclasses import dataclass, field
 
 import pytest
-from pydantic import ValidationError
 
 from common.base_models import InfectionMonkeyBaseModel
-from common.event_serializers import PydanticEventSerializer
+from common.event_serializers import IEventSerializer, PydanticEventSerializer
 from common.events import AbstractAgentEvent
 
 
@@ -25,7 +24,7 @@ class PydanticEvent(InfectionMonkeyBaseModel):
 
 
 @pytest.fixture
-def pydantic_event_serializer():
+def pydantic_event_serializer() -> IEventSerializer:
     return PydanticEventSerializer(PydanticEvent)
 
 
@@ -36,7 +35,7 @@ def test_pydantic_event_serializer__serialize_wrong_type(pydantic_event_serializ
 
 
 def test_pydantic_event_serializer__deserialize_wrong_type(pydantic_event_serializer):
-    with pytest.raises(ValidationError):
+    with pytest.raises(TypeError):
         pydantic_event_serializer.deserialize("bla")
 
 

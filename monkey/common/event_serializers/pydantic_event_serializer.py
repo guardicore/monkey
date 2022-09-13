@@ -1,21 +1,22 @@
 import logging
-from typing import Type
+from typing import Type, TypeVar
 
-from common.base_models import InfectionMonkeyBaseModel
 from common.events import AbstractAgentEvent
 
 from . import IEventSerializer, JSONSerializable
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T", bound=AbstractAgentEvent)
+
 
 class PydanticEventSerializer(IEventSerializer):
-    def __init__(self, event_class: Type[AbstractAgentEvent]):
+    def __init__(self, event_class: Type[T]):
         self._event_class = event_class
 
-    def serialize(self, event: AbstractAgentEvent) -> JSONSerializable:
+    def serialize(self, event: T) -> JSONSerializable:
         if not issubclass(event.__class__, self._event_class):
-            raise TypeError(f"Event object must be of type: {InfectionMonkeyBaseModel.__name__}")
+            raise TypeError(f"Event object must be of type: {self._event_class.__name__}")
 
         try:
             return event.dict()
@@ -24,5 +25,5 @@ class PydanticEventSerializer(IEventSerializer):
 
         return None
 
-    def deserialize(self, serialized_event: JSONSerializable) -> AbstractAgentEvent:
-        return self._event_class.parse_obj(serialized_event)
+    def deserialize(self, serialized_event: JSONSerializable) -> T:
+        return self._event_class(**serialized_event)
