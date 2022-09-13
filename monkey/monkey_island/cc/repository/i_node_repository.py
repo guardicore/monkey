@@ -33,3 +33,12 @@ class INodeRepository(ABC):
         :return: All known Nodes
         :raises RetrievalError: If an error occurred while attempting to retrieve the nodes
         """
+
+    @abstractmethod
+    def reset(self):
+        """
+        Removes all data from the repository
+
+        :raises RemovalError: If an error occurred while attempting to remove all `Nodes` from the
+                              repository
+        """
