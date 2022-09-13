@@ -23,7 +23,7 @@ class send_all_events_to_island:
         self._server_address = server_address
         self._queue: queue.Queue[AbstractAgentEvent] = queue.Queue()
 
-        self._send_to_island_thread = self.batch_events_thread(
+        self._send_to_island_thread = self._batch_and_send_events_thread(
             self._queue, self._server_address, DEFAULT_TIME_PERIOD
         )
         self._send_to_island_thread.start()
@@ -37,21 +37,21 @@ class send_all_events_to_island:
     def _serialize_event(self, event: AbstractAgentEvent, topic_name: str):
         pass
 
-    class batch_events_thread:
+    class _batch_and_send_events_thread:
         def __init__(self, queue_of_events: queue.Queue, server_address: str, time_period: int):
             self._queue = queue_of_events
             self._server_address = server_address
             self._time_period = time_period
 
             self._event_batch = set()
-            self._should_run_batch_thread = True
+            self._should_run_batch_and_send_thread = True
 
         def start(self):
-            self._should_run_batch_thread = True
-            self._batch_events_thread = threading.Thread(
+            self._should_run_batch_and_send_thread = True
+            self._batch_and_send_thread = threading.Thread(
                 name="SendEventsToIslandInBatchesThread", target=self._manage_event_batches
             )
-            self._batch_events_thread.start()
+            self._batch_and_send_thread.start()
 
         def _manage_event_batches(self):
             timer = Timer()
@@ -59,7 +59,7 @@ class send_all_events_to_island:
 
             self._event_batch = {}
 
-            while self._should_run_batch_thread:
+            while self._should_run_batch_and_send_thread:
                 self._add_next_event_to_batch()
 
                 if timer.is_expired():
@@ -99,5 +99,5 @@ class send_all_events_to_island:
             self._send_events_to_island()
 
         def stop(self):
-            self._should_run_batch_thread = False
-            self._batch_events_thread.join()
+            self._should_run_batch_and_send_thread = False
+            self._batch_and_send_thread.join()
