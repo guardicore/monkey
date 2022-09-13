@@ -15,6 +15,8 @@ logger = getLogger(__name__)
 class SocketsPipe(Thread):
     """Manages a pipe between two sockets."""
 
+    _thread_count: int = 0
+
     def __init__(
         self,
         source,
@@ -25,8 +27,13 @@ class SocketsPipe(Thread):
         self.source = source
         self.dest = dest
         self.timeout = timeout
-        super().__init__(name="SocketsPipeThread", daemon=True)
+        super().__init__(name=f"SocketsPipeThread-{self._next_thread_num()}", daemon=True)
         self._pipe_closed = pipe_closed
+
+    @classmethod
+    def _next_thread_num(cls):
+        cls._thread_count += 1
+        return cls._thread_count
 
     def _pipe(self):
         sockets = [self.source, self.dest]
