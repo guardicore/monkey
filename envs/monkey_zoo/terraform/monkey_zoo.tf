@@ -127,6 +127,10 @@ resource "google_compute_instance_from_template" "tunneling-11" {
     subnetwork="${local.resource_prefix}tunneling2-main"
     network_ip="10.2.0.11"
   }
+  network_interface{
+    subnetwork="${local.resource_prefix}tunneling-main"
+    network_ip="10.2.1.11"
+  }
 }
 
 resource "google_compute_instance_from_template" "tunneling-12" {
