@@ -11,6 +11,10 @@ from pubsub.core import Publisher
 
 import infection_monkey.tunnel as tunnel
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
+from common.event_serializers import (
+    EventSerializerRegistry,
+    register_common_agent_event_serializers,
+)
 from common.events import CredentialsStolenEvent
 from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
@@ -172,6 +176,8 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
+        _ = self._setup_agent_event_serializers()
+
         control_channel = ControlChannel(
             self._control_client.server_address, GUID, self._control_client.proxies
         )
@@ -193,6 +199,13 @@ class InfectionMonkey:
         self._build_master()
 
         register_signal_handlers(self._master)
+
+    # TODO: This is just a placeholder for now. We will modify/integrate it with PR #2279.
+    def _setup_agent_event_serializers(self) -> EventSerializerRegistry:
+        agent_event_serializer_registry = EventSerializerRegistry()
+        register_common_agent_event_serializers(agent_event_serializer_registry)
+
+        return agent_event_serializer_registry
 
     def _build_master(self):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
