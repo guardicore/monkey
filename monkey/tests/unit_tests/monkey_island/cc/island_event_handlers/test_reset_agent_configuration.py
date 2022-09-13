@@ -35,7 +35,10 @@ def mock_file_repository() -> IFileRepository:
 
 
 @pytest.fixture
-def callable_reset_agent_configuration(agent_configuration_repository, mock_file_repository):
+def callable_reset_agent_configuration(
+    agent_configuration_repository: IAgentConfigurationRepository,
+    mock_file_repository: IFileRepository,
+) -> reset_agent_configuration:
     return reset_agent_configuration(agent_configuration_repository, mock_file_repository)
 
 
