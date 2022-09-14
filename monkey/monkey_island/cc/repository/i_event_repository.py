@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Type
+from typing import Sequence, Type, TypeVar
 
 from common.events import AbstractAgentEvent
 from common.types import AgentID
+
+T = TypeVar("T", bound=AbstractAgentEvent)
 
 
 class IEventRepository(ABC):
@@ -27,9 +29,7 @@ class IEventRepository(ABC):
         """
 
     @abstractmethod
-    def get_events_by_type(
-        self, event_type: Type[AbstractAgentEvent]
-    ) -> Sequence[AbstractAgentEvent]:
+    def get_events_by_type(self, event_type: Type[T]) -> Sequence[T]:
         """
         Retrieve all events with same type
 
