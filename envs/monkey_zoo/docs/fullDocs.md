@@ -303,7 +303,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Root password:</td>
-<td>3Q=(Ge(+&amp;w]*</td>
+<td>3Q=(Ge(+&w]*</td>
 </tr>
 <tr class="odd">
 <td>Server’s config:</td>
@@ -343,7 +343,10 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="odd">
 <td>Server’s config:</td>
-<td>Default</td>
+<td>Contains firewall rules to block everything from 10.2.1.10 except ssh.
+This prevents tunneling communication, but allows ssh exploitation.
+Contains firewall rules to allow everything from 10.2.1.9 except ssh.
+This prevents ssh exploitation, but allows tunneling.</td>
 </tr>
 <tr class="even">
 <td>Notes:</td>
