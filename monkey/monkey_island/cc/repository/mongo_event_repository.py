@@ -35,7 +35,9 @@ class MongoEventRepository(IEventRepository):
         self, event_type: Type[AbstractAgentEvent]
     ) -> Sequence[AbstractAgentEvent]:
         try:
-            serialized_events = list(self._events_collection.find({EVENT_TYPE_FIELD: event_type}))
+            serialized_events = list(
+                self._events_collection.find({EVENT_TYPE_FIELD: event_type.__name__})
+            )
             return list(map(self._deserialize, serialized_events))
         except Exception as err:
             raise RetrievalError(f"Error retrieving events for type {event_type}: {err}")
