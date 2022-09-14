@@ -6,6 +6,7 @@ from time import sleep
 import requests
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
+from common.event_serializers.i_event_serializer import JSONSerializable
 from common.events import AbstractAgentEvent
 
 logger = logging.getLogger(__name__)
@@ -23,9 +24,7 @@ class SendAllAgentEventsToIsland:
     def __init__(self, server_address: str):
         self._server_address = server_address
 
-        self._agent_events_to_island_sender = _AgentEventsToIslandSender(
-            self._server_address, DEFAULT_TIME_PERIOD_SECONDS
-        )
+        self._agent_events_to_island_sender = AgentEventsToIslandSender(self._server_address)
         self._agent_events_to_island_sender.start()
 
     def __del__(self):
@@ -43,12 +42,12 @@ class SendAllAgentEventsToIsland:
         pass
 
 
-class _AgentEventsToIslandSender:
+class AgentEventsToIslandSender:
     """
     Handles the batching and sending of the Agent's events to the Island
     """
 
-    def __init__(self, server_address: str, time_period: int):
+    def __init__(self, server_address: str, time_period: int = DEFAULT_TIME_PERIOD_SECONDS):
         self._server_address = server_address
         self._time_period = time_period
 
@@ -61,7 +60,7 @@ class _AgentEventsToIslandSender:
         )
         self._batch_and_send_thread.start()
 
-    def add_event_to_queue(self, serialized_event: AbstractAgentEvent):
+    def add_event_to_queue(self, serialized_event: JSONSerializable):
         self._queue.put(serialized_event)
 
     def _manage_event_batches(self):
