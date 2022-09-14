@@ -29,15 +29,15 @@ class AgentEventForwarder:
         self._server_address = server_address
         self._agent_event_serializer_registry = agent_event_serializer_registry
 
-        self._agent_events_to_island_sender = BatchingAgentEventForwarder(self._server_address)
-        self._agent_events_to_island_sender.start()
+        self._batching_agent_event_forwarder = BatchingAgentEventForwarder(self._server_address)
+        self._batching_agent_event_forwarder.start()
 
     def __del__(self):
-        self._agent_events_to_island_sender.stop()
+        self._batching_agent_event_forwarder.stop()
 
     def send_event(self, event: AbstractAgentEvent):
         serialized_event = self._serialize_event(event)
-        self._agent_events_to_island_sender.add_event_to_queue(serialized_event)
+        self._batching_agent_event_forwarder.add_event_to_queue(serialized_event)
         logger.debug(
             f"Sending event of type {type(event).__name__} to the Island at {self._server_address}"
         )
