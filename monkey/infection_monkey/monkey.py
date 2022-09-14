@@ -177,7 +177,7 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        _ = self._setup_agent_event_serializers()
+        self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         control_channel = ControlChannel(
             self._control_client.server_address, GUID, self._control_client.proxies
@@ -221,7 +221,10 @@ class InfectionMonkey:
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
         InfectionMonkey._subscribe_events(
-            event_queue, propagation_credentials_repository, self._control_client.server_address
+            event_queue,
+            propagation_credentials_repository,
+            self._control_client.server_address,
+            self._agent_event_serializer_registry,
         )
 
         puppet = self._build_puppet(propagation_credentials_repository, event_queue)
@@ -247,6 +250,7 @@ class InfectionMonkey:
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         server_address: str,
+        agent_event_serializer_registry: EventSerializerRegistry,
     ):
         event_queue.subscribe_type(
             CredentialsStolenEvent,
@@ -254,7 +258,9 @@ class InfectionMonkey:
                 propagation_credentials_repository
             ),
         )
-        event_queue.subscribe_all_events(SendAllAgentEventsToIsland(server_address).send_event)
+        event_queue.subscribe_all_events(
+            SendAllAgentEventsToIsland(server_address, agent_event_serializer_registry).send_event
+        )
 
     @staticmethod
     def _get_local_network_interfaces() -> List[IPv4Interface]:

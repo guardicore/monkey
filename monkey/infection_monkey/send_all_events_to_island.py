@@ -6,6 +6,7 @@ from time import sleep
 import requests
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
+from common.event_serializers import EventSerializerRegistry
 from common.event_serializers.i_event_serializer import JSONSerializable
 from common.events import AbstractAgentEvent
 
@@ -21,8 +22,11 @@ class SendAllAgentEventsToIsland:
     Sends information about the events carried out by the Agent to the Island in batches
     """
 
-    def __init__(self, server_address: str):
+    def __init__(
+        self, server_address: str, agent_event_serializer_registry: EventSerializerRegistry
+    ):
         self._server_address = server_address
+        self._agent_event_serializer_registry = agent_event_serializer_registry
 
         self._agent_events_to_island_sender = AgentEventsToIslandSender(self._server_address)
         self._agent_events_to_island_sender.start()
@@ -38,8 +42,8 @@ class SendAllAgentEventsToIsland:
         )
 
     def _serialize_event(self, event: AbstractAgentEvent):
-        # get serializer from registry and serialize
-        pass
+        serializer = self._agent_event_serializer_registry[event.__class__]
+        return serializer.serialize(event)
 
 
 class AgentEventsToIslandSender:
