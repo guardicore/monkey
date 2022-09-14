@@ -20,6 +20,7 @@ from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
+from infection_monkey.agent_event_forwarder import AgentEventForwarder
 from infection_monkey.config import GUID
 from infection_monkey.control import ControlClient
 from infection_monkey.credential_collectors import (
@@ -67,7 +68,6 @@ from infection_monkey.post_breach.actions.use_signed_scripts import SignedScript
 from infection_monkey.post_breach.actions.use_trap_command import TrapCommand
 from infection_monkey.post_breach.custom_pba import CustomPBA
 from infection_monkey.puppet.puppet import Puppet
-from infection_monkey.send_all_events_to_island import AgentEventForwarder
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
