@@ -6,7 +6,7 @@ from typing import FrozenSet, Union
 from pydantic import Field
 
 from common.base_models import InfectionMonkeyBaseModel
-from common.types import AgentID
+from common.types import AgentID, MachineID
 
 
 class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
@@ -25,6 +25,6 @@ class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
     """
 
     source: AgentID
-    target: Union[int, IPv4Address, None] = Field(default=None)
+    target: Union[MachineID, IPv4Address, None] = Field(default=None)
     timestamp: float = Field(default_factory=time.time)
     tags: FrozenSet[str] = Field(default_factory=frozenset)
