@@ -25,6 +25,7 @@ from monkey_island.cc.repository import (
     IAgentBinaryRepository,
     IAgentConfigurationRepository,
     ICredentialsRepository,
+    IEventRepository,
     IFileRepository,
     ISimulationRepository,
     IUserRepository,
@@ -32,6 +33,7 @@ from monkey_island.cc.repository import (
     LocalStorageFileRepository,
     MongoCredentialsRepository,
     RetrievalError,
+    StubbedEventRepository,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
@@ -105,6 +107,9 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         ICredentialsRepository, container.resolve(MongoCredentialsRepository)
     )
     container.register_instance(IUserRepository, container.resolve(JSONFileUserRepository))
+
+    # TODO: Replace with MongoEventRepository
+    container.register_instance(IEventRepository, StubbedEventRepository())
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
