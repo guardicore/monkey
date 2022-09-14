@@ -12,6 +12,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
+from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
 from monkey_island.cc.repository.i_attack_repository import IAttackRepository
@@ -275,6 +276,8 @@ ICredentialsRepository.save_stolen_credentials
 ICredentialsRepository.save_configured_credentials
 IEventRepository.get_events
 IFindingRepository.get_findings
+MongoAgentRepository
+MongoMachineRepository
 key_list
 simulation
 netmap

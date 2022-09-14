@@ -24,3 +24,4 @@ from .json_file_user_repository import JSONFileUserRepository
 from .mongo_credentials_repository import MongoCredentialsRepository
 from .mongo_machine_repository import MongoMachineRepository
 from .mongo_agent_repository import MongoAgentRepository
+from .mongo_node_repository import MongoNodeRepository
