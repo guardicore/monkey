@@ -29,7 +29,7 @@ class AgentEventForwarder:
         self._server_address = server_address
         self._agent_event_serializer_registry = agent_event_serializer_registry
 
-        self._agent_events_to_island_sender = AgentEventsToIslandSender(self._server_address)
+        self._agent_events_to_island_sender = BatchingAgentEventForwarder(self._server_address)
         self._agent_events_to_island_sender.start()
 
     def __del__(self):
@@ -47,7 +47,7 @@ class AgentEventForwarder:
         return serializer.serialize(event)
 
 
-class AgentEventsToIslandSender:
+class BatchingAgentEventForwarder:
     """
     Handles the batching and sending of the Agent's events to the Island
     """
