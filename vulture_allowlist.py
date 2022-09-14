@@ -17,6 +17,7 @@ from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigatio
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
 from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
+from monkey_island.cc.repository.i_event_repository import IEventRepository
 from monkey_island.cc.repository.i_log_repository import ILogRepository
 from monkey_island.cc.repository.i_machine_repository import IMachineRepository
 from monkey_island.cc.repository.i_report_repository import IReportRepository
@@ -300,6 +301,12 @@ event
 deserialize
 serialized_event
 PydanticEventSerializer
+
+# TODO: Remove once #2180 is closed
+IEventRepository.save_event
+IEventRepository.get_events_by_type
+IEventRepository.get_events_by_tag
+IEventRepository.get_events_by_source
 
 # pydantic base models
 underscore_attrs_are_private
