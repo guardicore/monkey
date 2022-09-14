@@ -1,4 +1,4 @@
-from typing import Any, MutableMapping, Sequence
+from typing import Sequence
 
 from pymongo import MongoClient
 
@@ -40,26 +40,23 @@ class MongoAgentRepository(IAgentRepository):
 
     def get_agent_by_id(self, agent_id: AgentID) -> Agent:
         try:
-            agent_dict = self._agents_collection.find_one({"id": str(agent_id)})
+            agent_dict = self._agents_collection.find_one(
+                {"id": str(agent_id)}, {MONGO_OBJECT_ID_KEY: False}
+            )
         except Exception as err:
             raise RetrievalError(f'Error retrieving agent with "id == {agent_id}": {err}')
 
         if agent_dict is None:
             raise UnknownRecordError(f'Unknown ID "{agent_id}"')
 
-        return MongoAgentRepository._mongo_record_to_agent(agent_dict)
+        return Agent(**agent_dict)
 
     def get_running_agents(self) -> Sequence[Agent]:
         try:
-            cursor = self._agents_collection.find({"stop_time": None})
-            return list(map(MongoAgentRepository._mongo_record_to_agent, cursor))
+            cursor = self._agents_collection.find({"stop_time": None}, {MONGO_OBJECT_ID_KEY: False})
+            return list(map(lambda a: Agent(**a), cursor))
         except Exception as err:
             raise RetrievalError(f"Error retrieving running agents: {err}")
-
-    @staticmethod
-    def _mongo_record_to_agent(mongo_record: MutableMapping[str, Any]) -> Agent:
-        del mongo_record[MONGO_OBJECT_ID_KEY]
-        return Agent(**mongo_record)
 
     def reset(self):
         try:
