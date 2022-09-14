@@ -51,7 +51,7 @@ class MongoEventRepository(IEventRepository):
 
     def get_events_by_source(self, source: AgentID) -> Sequence[AbstractAgentEvent]:
         try:
-            serialized_events = list(self._events_collection.find({"source": source}))
+            serialized_events = list(self._events_collection.find({"source": str(source)}))
             return list(map(self._deserialize, serialized_events))
         except Exception as err:
             raise RetrievalError(f"Error retrieving events for source {source}: {err}")
