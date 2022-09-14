@@ -15,8 +15,7 @@ def setup_agent_event_handlers(container: DIContainer):
 def _subscribe_and_store_to_event_repository(container: DIContainer):
     agent_event_queue = container.resolve(IAgentEventQueue)
 
-    event_repository = container.resolve(IEventRepository)
-    save_event_subscriber = save_event_to_event_repository(event_repository)
+    save_event_subscriber = save_event_to_event_repository(container.resolve(IEventRepository))
     agent_event_queue.subscribe_all_events(save_event_subscriber)
 
     save_stolen_credentials_subscriber = save_stolen_credentials_to_repository(
