@@ -14,4 +14,4 @@ class save_event_to_event_repository:
         try:
             self._event_repository.save_event(event)
         except StorageError as err:
-            logger.error(f"Error occured storing event {event}: {err}")
+            logger.error(f"Error occurred while storing event {event}: {err}")
