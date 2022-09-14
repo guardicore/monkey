@@ -9,6 +9,7 @@ from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.event_serializers import EventSerializerRegistry
 from common.event_serializers.i_event_serializer import JSONSerializable
 from common.events import AbstractAgentEvent
+from infection_monkey.utils.threading import create_daemon_thread
 
 logger = logging.getLogger(__name__)
 
@@ -59,8 +60,8 @@ class AgentEventsToIslandSender:
         self._stop_batch_and_send_thread = threading.Event()
 
     def start(self):
-        self._batch_and_send_thread = threading.Thread(
-            name="SendEventsToIslandInBatchesThread", target=self._manage_event_batches
+        self._batch_and_send_thread = create_daemon_thread(
+            target=self._manage_event_batches, name="SendEventsToIslandInBatchesThread"
         )
         self._batch_and_send_thread.start()
 
