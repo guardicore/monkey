@@ -18,6 +18,7 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     wmi_mimikatz_test_configuration,
     zerologon_test_configuration,
 )
+from envs.monkey_zoo.blackbox.test_configurations.depth_4_a import depth_4_a_test_configuration
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
 from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (
@@ -121,6 +122,11 @@ class TestMonkeyBlackbox:
     def test_depth_3_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
             island_client, depth_3_a_test_configuration, "Depth3A test suite"
+        )
+
+    def test_depth_4_a(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, depth_4_a_test_configuration, "Depth4A test suite"
         )
 
     # Not grouped because can only be ran on windows
