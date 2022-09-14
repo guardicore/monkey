@@ -1,10 +1,13 @@
 import socket
 from ipaddress import IPv4Address
+from logging import getLogger
 
 from .relay_user_handler import RelayUserHandler
 from .tcp_pipe_spawner import TCPPipeSpawner
 
 RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST = b"infection-monkey-relay-control-message: -"
+
+logger = getLogger(__name__)
 
 
 class RelayConnectionHandler:
@@ -23,10 +26,15 @@ class RelayConnectionHandler:
         addr, _ = sock.getpeername()
         addr = IPv4Address(addr)
 
-        control_message = sock.recv(socket.MSG_PEEK)
+        control_message = sock.recv(
+            len(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST), socket.MSG_PEEK
+        )
 
         if control_message.startswith(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST):
             self._relay_user_handler.disconnect_user(addr)
         else:
-            self._relay_user_handler.add_relay_user(addr)
-            self._pipe_spawner.spawn_pipe(sock)
+            try:
+                self._pipe_spawner.spawn_pipe(sock)
+                self._relay_user_handler.add_relay_user(addr)
+            except OSError as err:
+                logger.debug(f"Failed to spawn pipe: {err}")

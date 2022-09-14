@@ -1,8 +1,10 @@
 import logging
+from itertools import zip_longest
 from threading import Event, current_thread
 from typing import Any
 
 from infection_monkey.utils.threading import (
+    ThreadSafeIterator,
     create_daemon_thread,
     interruptible_function,
     interruptible_iter,
@@ -127,3 +129,11 @@ def test_interruptible_decorator_returns_default_value_on_interrupt():
 
     assert return_value == 777
     assert fn.call_count == 0
+
+
+def test_thread_safe_iterator():
+    test_list = [1, 2, 3, 4, 5]
+    tsi = ThreadSafeIterator(test_list.__iter__())
+
+    for actual, expected in zip_longest(tsi, test_list):
+        assert actual == expected

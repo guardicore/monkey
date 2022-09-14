@@ -1,9 +1,13 @@
 import socket
 from ipaddress import IPv4Address
+from logging import getLogger
 from threading import Lock
 from typing import Set
 
+from .consts import SOCKET_TIMEOUT
 from .sockets_pipe import SocketsPipe
+
+logger = getLogger(__name__)
 
 
 class TCPPipeSpawner:
@@ -22,12 +26,13 @@ class TCPPipeSpawner:
         Attempt to create a pipe on between the configured client and the provided socket
 
         :param source: A socket to the connecting client.
-        :raises socket.error: If a socket to the configured client could not be created.
+        :raises OSError: If a socket to the configured client could not be created.
         """
         dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        dest.settimeout(SOCKET_TIMEOUT)
         try:
-            dest.connect((self._target_addr, self._target_port))
-        except socket.error as err:
+            dest.connect((str(self._target_addr), self._target_port))
+        except OSError as err:
             source.close()
             dest.close()
             raise err
@@ -35,7 +40,8 @@ class TCPPipeSpawner:
         pipe = SocketsPipe(source, dest, self._handle_pipe_closed)
         with self._lock:
             self._pipes.add(pipe)
-        pipe.run()
+
+        pipe.start()
 
     def has_open_pipes(self) -> bool:
         """Return whether or not the TCPPipeSpawner has any open pipes."""
@@ -48,4 +54,5 @@ class TCPPipeSpawner:
 
     def _handle_pipe_closed(self, pipe: SocketsPipe):
         with self._lock:
+            logger.debug(f"Closing pipe {pipe}")
             self._pipes.discard(pipe)

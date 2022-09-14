@@ -110,6 +110,7 @@ class InfectionMonkey:
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
         ControlClient.control_client_object = self._control_client
+        self._control_channel = None
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
@@ -136,6 +137,10 @@ class InfectionMonkey:
             raise Exception(
                 f"Failed to connect to the island via any known servers: {self._opts.servers}"
             )
+
+        # Note: Since we pass the address for each of our interfaces to the exploited
+        # machines, is it possible for a machine to unintentionally unregister itself from the
+        # relay if it is able to connect to the relay over multiple interfaces?
         send_remove_from_waitlist_control_message_to_relays(servers_iterator)
 
         return server
@@ -177,10 +182,10 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        control_channel = ControlChannel(self._control_client.server_address, GUID)
-        control_channel.register_agent(self._opts.parent)
+        self._control_channel = ControlChannel(self._control_client.server_address, GUID)
+        self._control_channel.register_agent(self._opts.parent)
 
-        config = control_channel.get_config()
+        config = self._control_channel.get_config()
 
         relay_port = get_free_tcp_port()
         self._relay = TCPRelay(
@@ -204,9 +209,8 @@ class InfectionMonkey:
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
-        control_channel = ControlChannel(self._control_client.server_address, GUID)
         propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
-            control_channel
+            self._control_channel
         )
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
@@ -226,7 +230,7 @@ class InfectionMonkey:
             puppet,
             telemetry_messenger,
             victim_host_factory,
-            control_channel,
+            self._control_channel,
             local_network_interfaces,
             propagation_credentials_repository,
         )
@@ -393,10 +397,7 @@ class InfectionMonkey:
                 self._master.cleanup()
 
             reset_signal_handlers()
-
-            if self._relay and self._relay.is_alive():
-                self._relay.stop()
-                self._relay.join(timeout=60)
+            self._stop_relay()
 
             if firewall.is_enabled():
                 firewall.remove_firewall_rule()
@@ -419,6 +420,16 @@ class InfectionMonkey:
             self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
+
+    def _stop_relay(self):
+        if self._relay and self._relay.is_alive():
+            self._relay.stop()
+
+            while self._relay.is_alive() and not self._control_channel.should_agent_stop():
+                self._relay.join(timeout=5)
+
+            if self._control_channel.should_agent_stop():
+                self._relay.join(timeout=60)
 
     def _close_tunnel(self):
         logger.info(f"Quitting tunnel {self._cmd_island_ip}")
