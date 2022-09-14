@@ -1,8 +1,8 @@
 import logging
 from functools import wraps
 from itertools import count
-from threading import Event, Thread
-from typing import Any, Callable, Iterable, Optional, Tuple
+from threading import Event, Lock, Thread
+from typing import Any, Callable, Iterable, Iterator, Optional, Tuple, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -107,3 +107,28 @@ def interruptible_function(*, msg: Optional[str] = None, default_return_value: A
         return _wrapper
 
     return _decorator
+
+
+class InterruptableThreadMixin:
+    def __init__(self):
+        self._interrupted = Event()
+
+    def stop(self):
+        """Stop a running thread."""
+        self._interrupted.set()
+
+
+T = TypeVar("T")
+
+
+class ThreadSafeIterator(Iterator[T]):
+    """Provides a thread-safe iterator that wraps another iterator"""
+
+    def __init__(self, iterator: Iterator[T]):
+        self._lock = Lock()
+        self._iterator = iterator
+
+    def __next__(self) -> T:
+        while True:
+            with self._lock:
+                return next(self._iterator)

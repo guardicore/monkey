@@ -3,13 +3,12 @@ import logging
 import os
 import subprocess
 import sys
-from ipaddress import IPv4Interface
+from ipaddress import IPv4Address, IPv4Interface
 from pathlib import Path, WindowsPath
 from typing import List
 
 from pubsub.core import Publisher
 
-import infection_monkey.tunnel as tunnel
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.event_serializers import (
     EventSerializerRegistry,
@@ -45,7 +44,13 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.info import get_network_interfaces
+from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces, local_ips
+from infection_monkey.network.relay import TCPRelay
+from infection_monkey.network.relay.utils import (
+    find_server,
+    notify_disconnect,
+    send_remove_from_waitlist_control_message_to_relays,
+)
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
@@ -77,7 +82,6 @@ from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter im
     LegacyTelemetryMessengerAdapter,
 )
 from infection_monkey.telemetry.state_telem import StateTelem
-from infection_monkey.telemetry.tunnel_telem import TunnelTelem
 from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
@@ -99,28 +103,51 @@ class InfectionMonkey:
         logger.info("Monkey is initializing...")
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(self._opts.server)
-        self._control_client = ControlClient(self._opts.server)
+
+        # TODO: Revisit variable names
+        server = self._get_server()
+        # TODO: `address_to_port()` should return the port as an integer.
+        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
+        self._cmd_island_port = int(self._cmd_island_port)
+        self._control_client = ControlClient(server_address=server)
+
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
         ControlClient.control_client_object = self._control_client
-        self._monkey_inbound_tunnel = None
+        self._control_channel = None
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
-        self._inbound_tunnel_opened = False
+        self._relay: TCPRelay
 
     @staticmethod
     def _get_arguments(args):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("-p", "--parent")
-        arg_parser.add_argument("-t", "--tunnel")
-        arg_parser.add_argument("-s", "--server")
+        arg_parser.add_argument("-s", "--servers", type=lambda arg: arg.strip().split(","))
         arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         opts = arg_parser.parse_args(args)
         InfectionMonkey._log_arguments(opts)
 
         return opts
+
+    def _get_server(self):
+        logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
+        servers_iterator = (s for s in self._opts.servers)
+        server = find_server(servers_iterator)
+        if server:
+            logger.info(f"Successfully connected to the island via {server}")
+        else:
+            raise Exception(
+                f"Failed to connect to the island via any known servers: {self._opts.servers}"
+            )
+
+        # Note: Since we pass the address for each of our interfaces to the exploited
+        # machines, is it possible for a machine to unintentionally unregister itself from the
+        # relay if it is able to connect to the relay over multiple interfaces?
+        send_remove_from_waitlist_control_message_to_relays(servers_iterator)
+
+        return server
 
     @staticmethod
     def _log_arguments(args):
@@ -135,7 +162,7 @@ class InfectionMonkey:
         logger.info("Agent is starting...")
         logger.info(f"Agent GUID: {GUID}")
 
-        self._connect_to_island()
+        self._control_client.wakeup(parent=self._opts.parent)
 
         # TODO: Reevaluate who is responsible to send this information
         if is_windows_os():
@@ -143,30 +170,13 @@ class InfectionMonkey:
 
         run_aws_environment_check(self._telemetry_messenger)
 
-        should_stop = ControlChannel(
-            self._control_client.server_address, GUID, self._control_client.proxies
-        ).should_agent_stop()
+        should_stop = ControlChannel(self._control_client.server_address, GUID).should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
         self._setup()
         self._master.start()
-
-    def _connect_to_island(self):
-        # Sets island's IP and port for monkey to communicate to
-        if self._current_server_is_set():
-            logger.debug(f"Default server set to: {self._control_client.server_address}")
-        else:
-            raise Exception(f"Monkey couldn't find server with {self._opts.tunnel} default tunnel.")
-
-        self._control_client.wakeup(parent=self._opts.parent)
-
-    def _current_server_is_set(self) -> bool:
-        if self._control_client.find_server(default_tunnel=self._opts.tunnel):
-            return True
-
-        return False
 
     def _setup(self):
         logger.debug("Starting the setup phase.")
@@ -178,25 +188,26 @@ class InfectionMonkey:
 
         _ = self._setup_agent_event_serializers()
 
-        control_channel = ControlChannel(
-            self._control_client.server_address, GUID, self._control_client.proxies
-        )
-        control_channel.register_agent(self._opts.parent)
+        self._control_channel = ControlChannel(self._control_client.server_address, GUID)
+        self._control_channel.register_agent(self._opts.parent)
 
-        config = control_channel.get_config()
-        self._monkey_inbound_tunnel = self._control_client.create_control_tunnel(
-            config.keep_tunnel_open_time
+        config = self._control_channel.get_config()
+
+        relay_port = get_free_tcp_port()
+        self._relay = TCPRelay(
+            relay_port,
+            IPv4Address(self._cmd_island_ip),
+            self._cmd_island_port,
+            client_disconnect_timeout=config.keep_tunnel_open_time,
         )
-        if self._monkey_inbound_tunnel and maximum_depth_reached(
-            config.propagation.maximum_depth, self._current_depth
-        ):
-            self._inbound_tunnel_opened = True
-            self._monkey_inbound_tunnel.start()
+        relay_servers = [f"{ip}:{relay_port}" for ip in local_ips()]
+
+        if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+            self._relay.start()
 
         StateTelem(is_done=False, version=get_version()).send()
-        TunnelTelem(self._control_client.proxies).send()
 
-        self._build_master()
+        self._build_master(relay_servers)
 
         register_signal_handlers(self._master)
 
@@ -207,15 +218,12 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self):
+    def _build_master(self, relay_servers: List[str]):
         local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
-        control_channel = ControlChannel(
-            self._control_client.server_address, GUID, self._control_client.proxies
-        )
         propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
-            control_channel
+            self._control_channel
         )
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
@@ -226,15 +234,16 @@ class InfectionMonkey:
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
         telemetry_messenger = ExploitInterceptingTelemetryMessenger(
-            self._telemetry_messenger, self._monkey_inbound_tunnel
+            self._telemetry_messenger, self._relay
         )
 
         self._master = AutomatedMaster(
             self._current_depth,
+            self._opts.servers + relay_servers,
             puppet,
             telemetry_messenger,
             victim_host_factory,
-            control_channel,
+            self._control_channel,
             local_network_interfaces,
             propagation_credentials_repository,
         )
@@ -284,7 +293,7 @@ class InfectionMonkey:
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
         agent_binary_repository = CachingAgentBinaryRepository(
-            f"https://{self._control_client.server_address}", self._control_client.proxies
+            f"https://{self._control_client.server_address}"
         )
         exploit_wrapper = ExploiterWrapper(
             self._telemetry_messenger, event_queue, agent_binary_repository
@@ -384,9 +393,7 @@ class InfectionMonkey:
         on_island = self._running_on_island(local_network_interfaces)
         logger.debug(f"This agent is running on the island: {on_island}")
 
-        return VictimHostFactory(
-            self._monkey_inbound_tunnel, self._cmd_island_ip, self._cmd_island_port, on_island
-        )
+        return VictimHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
         server_ip, _ = address_to_ip_port(self._control_client.server_address)
@@ -403,10 +410,7 @@ class InfectionMonkey:
                 self._master.cleanup()
 
             reset_signal_handlers()
-
-            if self._inbound_tunnel_opened:
-                self._monkey_inbound_tunnel.stop()
-                self._monkey_inbound_tunnel.join()
+            self._stop_relay()
 
             if firewall.is_enabled():
                 firewall.remove_firewall_rule()
@@ -421,21 +425,28 @@ class InfectionMonkey:
             ).send()  # Signal the server (before closing the tunnel)
 
             self._close_tunnel()
-            self._singleton.unlock()
         except Exception as e:
             logger.error(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
                 InfectionMonkey._self_delete()
+        finally:
+            self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
 
+    def _stop_relay(self):
+        if self._relay and self._relay.is_alive():
+            self._relay.stop()
+
+            while self._relay.is_alive() and not self._control_channel.should_agent_stop():
+                self._relay.join(timeout=5)
+
+            if self._control_channel.should_agent_stop():
+                self._relay.join(timeout=60)
+
     def _close_tunnel(self):
-        tunnel_address = (
-            self._control_client.proxies.get("https", "").replace("http://", "").split(":")[0]
-        )
-        if tunnel_address:
-            logger.info("Quitting tunnel %s", tunnel_address)
-            tunnel.quit_tunnel(tunnel_address)
+        logger.info(f"Quitting tunnel {self._cmd_island_ip}")
+        notify_disconnect(self._cmd_island_ip, self._cmd_island_port)
 
     def _send_log(self):
         monkey_log_path = get_agent_log_path()

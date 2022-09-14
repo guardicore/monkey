@@ -308,6 +308,7 @@ IEventRepository.get_events_by_type
 IEventRepository.get_events_by_tag
 IEventRepository.get_events_by_source
 
+
 # pydantic base models
 underscore_attrs_are_private
 extra

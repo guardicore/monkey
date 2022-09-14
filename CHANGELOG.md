@@ -59,6 +59,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/registration` endpoint to `/api/register`. #2105
 - `/api/file-upload` endpoit to `/api/pba/upload`. #2154
 - Improved the speed of ransomware encryption by 2-3x. #2123
+- "-s/--server" to "-s/--servers". #2216
+- "-s/--servers" accepts list of servers separated by comma. #2216
 
 ### Removed
 - VSFTPD exploiter. #1533
@@ -103,6 +105,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "/api/configuration/import" endpoint. #2002
 - "/api/configuration/export" endpoint. #2002
 - "/api/island-configuration" endpoint. #2003
+- "-t/--tunnel" from agent command line arguments. #2216
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

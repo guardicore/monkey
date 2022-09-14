@@ -1,7 +1,7 @@
 import json
 import logging
 from pprint import pformat
-from typing import MutableMapping, Optional, Sequence
+from typing import Optional, Sequence
 from uuid import UUID
 
 import requests
@@ -22,10 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 class ControlChannel(IControlChannel):
-    def __init__(self, server: str, agent_id: str, proxies: MutableMapping[str, str]):
+    def __init__(self, server: str, agent_id: str):
         self._agent_id = agent_id
         self._control_channel_server = server
-        self._proxies = proxies
 
     def register_agent(self, parent: Optional[UUID] = None):
         agent_registration_data = AgentRegistrationData(
@@ -44,7 +43,6 @@ class ControlChannel(IControlChannel):
                 url,
                 json=agent_registration_data.dict(simplify=True),
                 verify=False,
-                proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()
@@ -68,7 +66,6 @@ class ControlChannel(IControlChannel):
             response = requests.get(  # noqa: DUO123
                 url,
                 verify=False,
-                proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()
@@ -89,7 +86,6 @@ class ControlChannel(IControlChannel):
             response = requests.get(  # noqa: DUO123
                 f"https://{self._control_channel_server}/api/agent-configuration",
                 verify=False,
-                proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()
@@ -116,7 +112,6 @@ class ControlChannel(IControlChannel):
             response = requests.get(  # noqa: DUO123
                 propagation_credentials_url,
                 verify=False,
-                proxies=self._proxies,
                 timeout=SHORT_REQUEST_TIMEOUT,
             )
             response.raise_for_status()

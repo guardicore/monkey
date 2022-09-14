@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from common import OperatingSystem
 
@@ -7,10 +7,9 @@ class VictimHost(object):
     def __init__(self, ip_addr: str, domain_name: str = ""):
         self.ip_addr = ip_addr
         self.domain_name = str(domain_name)
-        self.os = {}
-        self.services = {}
+        self.os: Dict[str, Any] = {}
+        self.services: Dict[str, Any] = {}
         self.icmp = False
-        self.default_tunnel = None
         self.default_server = None
 
     def as_dict(self):

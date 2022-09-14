@@ -303,7 +303,7 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="even">
 <td>Root password:</td>
-<td>3Q=(Ge(+&amp;w]*</td>
+<td>3Q=(Ge(+&w]*</td>
 </tr>
 <tr class="odd">
 <td>Server’s config:</td>
@@ -343,7 +343,10 @@ Update all requirements using deployment script:<br>
 </tr>
 <tr class="odd">
 <td>Server’s config:</td>
-<td>Default</td>
+<td>Contains firewall rules to block everything from 10.2.1.10 except ssh.
+This prevents tunneling communication, but allows ssh exploitation.
+Contains firewall rules to allow everything from 10.2.1.9 except ssh.
+This prevents ssh exploitation, but allows tunneling.</td>
 </tr>
 <tr class="even">
 <td>Notes:</td>
@@ -380,6 +383,38 @@ Update all requirements using deployment script:<br>
 <tr class="even">
 <td>Notes:</td>
 <td>Accessible only through Nr.10</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536021463" class="anchor"></span>Nr. <strong>13</strong> Tunneling M5</p>
+<p>(10.2.0.13)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 18 x64</strong></td>
+</tr>
+<tr class="odd">
+<td>Default service’s port:</td>
+<td>22</td>
+</tr>
+<tr class="even">
+<td>Root password:</td>
+<td>prM2qsroTI</td>
+</tr>
+<tr class="odd">
+<td>Server’s config:</td>
+<td>Configured to disable traffic from/to 10.2.0.10 and 10.2.0.11(via ufw and iptables)</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>Accessible only through Nr.12</td>
 </tr>
 </tbody>
 </table>
