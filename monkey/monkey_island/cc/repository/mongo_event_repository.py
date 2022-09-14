@@ -24,7 +24,7 @@ class MongoEventRepository(IEventRepository):
             serialized_event = serializer.serialize(event)
             self._events_collection.insert_one(serialized_event)
         except Exception as err:
-            raise StorageError(err)
+            raise StorageError(f"Error saving event: {err}")
 
     def get_events(self) -> Sequence[AbstractAgentEvent]:
         try:
