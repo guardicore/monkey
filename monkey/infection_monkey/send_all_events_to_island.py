@@ -24,7 +24,7 @@ class SendAllAgentEventsToIsland:
         self._server_address = server_address
         self._queue: queue.Queue[AbstractAgentEvent] = queue.Queue()
 
-        self._send_to_island_thread = self._batch_and_send_events_thread(
+        self._send_to_island_thread = self._BatchAndSendEventsThread(
             self._queue, self._server_address, DEFAULT_TIME_PERIOD_SECONDS
         )
         self._send_to_island_thread.start()
@@ -38,7 +38,7 @@ class SendAllAgentEventsToIsland:
     def _serialize_event(self, event: AbstractAgentEvent):
         pass
 
-    class _batch_and_send_events_thread:
+    class _BatchAndSendEventsThread:
         """
         Handles the batching and sending of the Agent's events to the Island
         """
