@@ -13,6 +13,11 @@ def event_sender():
     return BatchingAgentEventForwarder(SERVER, time_period=0.001)
 
 
+# NOTE: If these tests are too slow or end up being racey, we can redesign AgentEventForwarder to
+#       handle threading and simply command BatchingAgentEventForwarder when to send events.
+#       BatchingAgentEventForwarder would have unit tests, but AgentEventForwarder would not.
+
+
 def test_send_events(event_sender):
     with requests_mock.Mocker() as mock:
         mock.post(EVENTS_API_URL % SERVER)
