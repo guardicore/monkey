@@ -61,6 +61,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improved the speed of ransomware encryption by 2-3x. #2123
 - "-s/--server" to "-s/--servers". #2216
 - "-s/--servers" accepts list of servers separated by comma. #2216
+- Tunneling to relays to provide better firewall evasion, faster Island
+  connection times, unlimited hops, and a more resilient way for agents to call
+  home. #2216, #1583
 
 ### Removed
 - VSFTPD exploiter. #1533
