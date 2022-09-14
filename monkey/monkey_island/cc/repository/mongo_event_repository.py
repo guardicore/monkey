@@ -64,5 +64,5 @@ class MongoEventRepository(IEventRepository):
         return serializer.deserialize(mongo_record)
 
     def _query_events(self, query: Dict[Any, Any]) -> Sequence[AbstractAgentEvent]:
-        serialized_events = list(self._events_collection.find(query, {MONGO_OBJECT_ID_KEY: False}))
+        serialized_events = self._events_collection.find(query, {MONGO_OBJECT_ID_KEY: False})
         return list(map(self._deserialize, serialized_events))
