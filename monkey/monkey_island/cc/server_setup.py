@@ -40,7 +40,11 @@ from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logg
 from monkey_island.cc.server_utils.network_utils import get_ip_addresses  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
-from monkey_island.cc.setup import PyWSGILoggingFilter, setup_island_event_handlers  # noqa: E402
+from monkey_island.cc.setup import (  # noqa: E402
+    PyWSGILoggingFilter,
+    setup_agent_event_handlers,
+    setup_island_event_handlers,
+)
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
@@ -63,6 +67,7 @@ def run_monkey_island():
     _send_analytics(deployment, version)
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
+    setup_agent_event_handlers(container)
     _setup_agent_event_serializers(container)
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
