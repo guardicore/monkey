@@ -3,14 +3,14 @@ import time
 import pytest
 import requests_mock
 
-from infection_monkey.agent_event_forwarder import EVENTS_API_URL, AgentEventsToIslandSender
+from infection_monkey.agent_event_forwarder import EVENTS_API_URL, BatchingAgentEventForwarder
 
 SERVER = "1.1.1.1:9999"
 
 
 @pytest.fixture
 def event_sender():
-    return AgentEventsToIslandSender(SERVER, time_period=0.001)
+    return BatchingAgentEventForwarder(SERVER, time_period=0.001)
 
 
 def test_send_events(event_sender):
