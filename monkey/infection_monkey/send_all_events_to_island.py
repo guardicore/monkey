@@ -15,7 +15,7 @@ DEFAULT_TIME_PERIOD_SECONDS = 5
 EVENTS_API_URL = "https://%s/api/events"
 
 
-class send_all_events_to_island:
+class SendAllAgentEventsToIsland:
     """
     Sends information about the events carried out by the Agent to the Island in batches
     """
