@@ -1,4 +1,4 @@
-from typing import Mapping, Tuple
+from typing import FrozenSet, Mapping
 
 from pydantic import Field
 from typing_extensions import TypeAlias
@@ -7,7 +7,7 @@ from common.base_models import MutableInfectionMonkeyBaseModel
 
 from . import CommunicationType, MachineID
 
-NodeConnections: TypeAlias = Mapping[MachineID, Tuple[CommunicationType, ...]]
+NodeConnections: TypeAlias = Mapping[MachineID, FrozenSet[CommunicationType]]
 
 
 class Node(MutableInfectionMonkeyBaseModel):
