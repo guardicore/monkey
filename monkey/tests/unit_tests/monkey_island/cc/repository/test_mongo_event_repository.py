@@ -61,16 +61,8 @@ def error_raising_mongo_client(mongo_client) -> mongomock.MongoClient:
     mongo_client.monkey_island = MagicMock(spec=mongomock.Database)
     mongo_client.monkey_island.events = MagicMock(spec=mongomock.Collection)
 
-    # The first call to find() must succeed
-    mongo_client.monkey_island.events.find = MagicMock(
-        # side_effect=chain([MagicMock()], repeat(Exception("some exception")))
-        side_effect=Exception("some exception")
-    )
-    mongo_client.monkey_island.events.find_one = MagicMock(side_effect=Exception("some exception"))
+    mongo_client.monkey_island.events.find = MagicMock(side_effect=Exception("some exception"))
     mongo_client.monkey_island.events.insert_one = MagicMock(
-        side_effect=Exception("some exception")
-    )
-    mongo_client.monkey_island.events.replace_one = MagicMock(
         side_effect=Exception("some exception")
     )
     mongo_client.monkey_island.events.drop = MagicMock(side_effect=Exception("some exception"))
