@@ -21,11 +21,11 @@ def test_send_events(event_sender):
 
         for _ in range(5):
             event_sender.add_event_to_queue({})
-        time.sleep(0.05)
+        time.sleep(0.01)
         assert mock.call_count == 1
 
         event_sender.add_event_to_queue({})
-        time.sleep(0.05)
+        time.sleep(0.01)
         assert mock.call_count == 2
 
         event_sender.stop()
@@ -39,7 +39,7 @@ def test_send_remaining_events(event_sender):
 
         for _ in range(5):
             event_sender.add_event_to_queue({})
-        time.sleep(0.05)
+        time.sleep(0.01)
         assert mock.call_count == 1
 
         event_sender.add_event_to_queue({})
