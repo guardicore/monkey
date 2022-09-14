@@ -158,6 +158,9 @@ def test_mongo_event_repository__get_events_by_source_raises(
 
 
 def test_mongo_event_repository__reset(mongo_repository: IEventRepository):
+    initial_events = mongo_repository.get_events()
+    assert initial_events
+
     mongo_repository.reset()
     events = mongo_repository.get_events()
 
