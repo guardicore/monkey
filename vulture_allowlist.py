@@ -20,7 +20,6 @@ from monkey_island.cc.repository.i_log_repository import ILogRepository
 from monkey_island.cc.repository.i_machine_repository import IMachineRepository
 from monkey_island.cc.repository.i_report_repository import IReportRepository
 from monkey_island.cc.repository.i_simulation_repository import ISimulationRepository
-from monkey_island.cc.repository.i_telemetry_repository import ITelemetryRepository
 from monkey_island.cc.repository.ICredentials import ICredentialsRepository
 from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
@@ -274,7 +273,6 @@ ICredentialsRepository.remove_configured_credentials
 ICredentialsRepository.remove_all_credentials
 ICredentialsRepository.save_stolen_credentials
 ICredentialsRepository.save_configured_credentials
-ITelemetryRepository.get_telemetries
 IEventRepository.get_events
 IFindingRepository.get_findings
 key_list
