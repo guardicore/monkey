@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Any, MutableMapping, Sequence
+from typing import Sequence
 
 from pymongo import MongoClient
 
@@ -20,24 +20,21 @@ class MongoNodeRepository(INodeRepository):
         self, src: MachineID, dst: MachineID, communication_type: CommunicationType
     ):
         try:
-            node_dict = self._nodes_collection.find_one({SRC_FIELD_NAME: src})
+            node_dict = self._nodes_collection.find_one(
+                {SRC_FIELD_NAME: src}, {MONGO_OBJECT_ID_KEY: False}
+            )
         except Exception as err:
             raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
 
         if node_dict is None:
             updated_node = Node(machine_id=src, connections={dst: frozenset((communication_type,))})
         else:
-            node = MongoNodeRepository._mongo_record_to_node(node_dict)
+            node = Node(**node_dict)
             updated_node = MongoNodeRepository._add_connection_to_node(
                 node, dst, communication_type
             )
 
         self._upsert_node(updated_node)
-
-    @staticmethod
-    def _mongo_record_to_node(mongo_record: MutableMapping[str, Any]) -> Node:
-        del mongo_record[MONGO_OBJECT_ID_KEY]
-        return Node(**mongo_record)
 
     @staticmethod
     def _add_connection_to_node(
@@ -75,8 +72,8 @@ class MongoNodeRepository(INodeRepository):
 
     def get_nodes(self) -> Sequence[Node]:
         try:
-            cursor = self._nodes_collection.find()
-            return list(map(MongoNodeRepository._mongo_record_to_node, cursor))
+            cursor = self._nodes_collection.find({}, {MONGO_OBJECT_ID_KEY: False})
+            return list(map(lambda n: Node(**n), cursor))
         except Exception as err:
             raise RetrievalError(f"Error retrieving nodes from the repository: {err}")
 
