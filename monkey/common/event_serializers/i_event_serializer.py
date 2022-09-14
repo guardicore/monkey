@@ -36,5 +36,8 @@ class IEventSerializer(ABC):
 
         :param serialized_event: Serialized event to deserialize
         :return: Deserialized event
+        :raises TypeError: If one or more of the serialized fields contains data of an incompatible
+                           type
+        :raises ValueError: If one or more of the serialized fields contains an incompatible value
         """
         pass
