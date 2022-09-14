@@ -48,17 +48,16 @@ class send_all_events_to_island:
             self._server_address = server_address
             self._time_period = time_period
 
-            self._should_run_batch_and_send_thread = True
+            self._stop_batch_and_send_thread = threading.Event()
 
         def start(self):
-            self._should_run_batch_and_send_thread = True
             self._batch_and_send_thread = threading.Thread(
                 name="SendEventsToIslandInBatchesThread", target=self._manage_event_batches
             )
             self._batch_and_send_thread.start()
 
         def _manage_event_batches(self):
-            while self._should_run_batch_and_send_thread:
+            while not self._stop_batch_and_send_thread.is_set():
                 self._send_events_to_island()
                 sleep(self._time_period)
 
@@ -90,5 +89,5 @@ class send_all_events_to_island:
             self._send_events_to_island()
 
         def stop(self):
-            self._should_run_batch_and_send_thread = False
+            self._stop_batch_and_send_thread.set()
             self._batch_and_send_thread.join()
