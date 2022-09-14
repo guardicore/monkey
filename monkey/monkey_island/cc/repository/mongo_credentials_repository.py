@@ -55,9 +55,8 @@ class MongoCredentialsRepository(ICredentialsRepository):
     def _get_credentials_from_collection(self, collection) -> Sequence[Credentials]:
         try:
             collection_result = []
-            list_collection_result = list(collection.find({}))
+            list_collection_result = list(collection.find({}, {MONGO_OBJECT_ID_KEY: False}))
             for encrypted_credentials in list_collection_result:
-                del encrypted_credentials[MONGO_OBJECT_ID_KEY]
                 plaintext_credentials = self._decrypt_credentials_mapping(encrypted_credentials)
                 collection_result.append(Credentials(**plaintext_credentials))
 
