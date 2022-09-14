@@ -3,8 +3,7 @@ import time
 import pytest
 import requests_mock
 
-from infection_monkey.send_all_events_to_island import AgentEventsToIslandSender
-from monkey.infection_monkey.send_all_events_to_island import EVENTS_API_URL
+from infection_monkey.send_all_events_to_island import EVENTS_API_URL, AgentEventsToIslandSender
 
 SERVER = "1.1.1.1:9999"
 
