@@ -312,6 +312,7 @@ IEventRepository.save_event
 IEventRepository.get_events_by_type
 IEventRepository.get_events_by_tag
 IEventRepository.get_events_by_source
+MongoEventRepository
 
 
 # pydantic base models
