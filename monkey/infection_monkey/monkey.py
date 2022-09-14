@@ -254,7 +254,7 @@ class InfectionMonkey:
                 propagation_credentials_repository
             ),
         )
-        event_queue.subscribe_all_events(SendAllAgentEventsToIsland(server_address))
+        event_queue.subscribe_all_events(SendAllAgentEventsToIsland(server_address).send_event)
 
     @staticmethod
     def _get_local_network_interfaces() -> List[IPv4Interface]:

@@ -29,7 +29,7 @@ class SendAllAgentEventsToIsland:
         )
         self._send_to_island_thread.start()
 
-    def __call__(self, event: AbstractAgentEvent):
+    def send_event(self, event: AbstractAgentEvent):
         self._queue.put(self._serialize_event(event))
         logger.debug(
             f"Sending event of type {type(event).__name__} to the Island at {self._server_address}"
