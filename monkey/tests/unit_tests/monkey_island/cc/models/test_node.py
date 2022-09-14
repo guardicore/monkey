@@ -42,9 +42,7 @@ def test_serialization():
     assert len(serialized_node["connections"]) == len(node_dict["connections"])
 
     for key, value in serialized_node["connections"].items():
-        set_a = set(value)
-        set_b = node_dict["connections"][key]
-        len(set_a.intersection(set_b)) == len(set_a) == len(set_b) == len(value)
+        assert set(value) == set(node_dict["connections"][key])
 
 
 def test_machine_id_immutable():
