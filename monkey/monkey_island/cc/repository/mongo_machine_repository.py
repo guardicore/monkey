@@ -1,6 +1,6 @@
 from ipaddress import IPv4Address
 from threading import Lock
-from typing import Any, MutableMapping, Sequence
+from typing import Any, Sequence
 
 from pymongo import MongoClient
 
@@ -58,35 +58,32 @@ class MongoMachineRepository(IMachineRepository):
 
     def _find_one(self, key: str, search_value: Any) -> Machine:
         try:
-            machine_dict = self._machines_collection.find_one({key: search_value})
+            machine_dict = self._machines_collection.find_one(
+                {key: search_value}, {MONGO_OBJECT_ID_KEY: False}
+            )
         except Exception as err:
             raise RetrievalError(f'Error retrieving machine with "{key} == {search_value}": {err}')
 
         if machine_dict is None:
             raise UnknownRecordError(f'Unknown machine with "{key} == {search_value}"')
 
-        return MongoMachineRepository._mongo_record_to_machine(machine_dict)
+        return Machine(**machine_dict)
 
     def get_machines_by_ip(self, ip: IPv4Address) -> Sequence[Machine]:
         ip_regex = "^" + str(ip).replace(".", "\\.") + "\\/.*$"
         query = {"network_interfaces": {"$elemMatch": {"$regex": ip_regex}}}
 
         try:
-            cursor = self._machines_collection.find(query)
+            cursor = self._machines_collection.find(query, {MONGO_OBJECT_ID_KEY: False})
         except Exception as err:
             raise RetrievalError(f'Error retrieving machines with ip "{ip}": {err}')
 
-        machines = list(map(MongoMachineRepository._mongo_record_to_machine, cursor))
+        machines = list(map(lambda m: Machine(**m), cursor))
 
         if len(machines) == 0:
             raise UnknownRecordError(f'No machines found with IP "{ip}"')
 
         return machines
-
-    @staticmethod
-    def _mongo_record_to_machine(mongo_record: MutableMapping[str, Any]) -> Machine:
-        del mongo_record[MONGO_OBJECT_ID_KEY]
-        return Machine(**mongo_record)
 
     def reset(self):
         try:
