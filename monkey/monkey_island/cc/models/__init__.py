@@ -9,7 +9,8 @@ from .pba_results import PbaResults
 from monkey_island.cc.models.report.report import Report
 from .simulation import Simulation, IslandMode
 from .user_credentials import UserCredentials
-from .machine import Machine, MachineID
+from common.types import MachineID
+from .machine import Machine
 from .communication_type import CommunicationType
 from .node import Node
 from common.types import AgentID
