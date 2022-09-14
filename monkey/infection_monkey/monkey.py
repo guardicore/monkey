@@ -19,6 +19,7 @@ from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
+from infection_monkey.agent_event_forwarder import AgentEventForwarder
 from infection_monkey.config import GUID
 from infection_monkey.control import ControlClient
 from infection_monkey.credential_collectors import (
@@ -186,7 +187,7 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        _ = self._setup_agent_event_serializers()
+        self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         self._control_channel = ControlChannel(self._control_client.server_address, GUID)
         self._control_channel.register_agent(self._opts.parent)
@@ -227,7 +228,12 @@ class InfectionMonkey:
         )
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
-        InfectionMonkey._subscribe_events(event_queue, propagation_credentials_repository)
+        InfectionMonkey._subscribe_events(
+            event_queue,
+            propagation_credentials_repository,
+            self._control_client.server_address,
+            self._agent_event_serializer_registry,
+        )
 
         puppet = self._build_puppet(propagation_credentials_repository, event_queue)
 
@@ -252,12 +258,17 @@ class InfectionMonkey:
     def _subscribe_events(
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
+        server_address: str,
+        agent_event_serializer_registry: EventSerializerRegistry,
     ):
         event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_credentials_from_event_to_propagation_credentials_repository(
                 propagation_credentials_repository
             ),
+        )
+        event_queue.subscribe_all_events(
+            AgentEventForwarder(server_address, agent_event_serializer_registry).send_event
         )
 
     @staticmethod
