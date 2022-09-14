@@ -12,6 +12,8 @@ from .consts import MONGO_OBJECT_ID_KEY
 
 
 class MongoEventRepository(IEventRepository):
+    """A repository for storing and retrieving events in MongoDB"""
+
     def __init__(self, mongo_client: MongoClient, serializer_registry: EventSerializerRegistry):
         self._events_collection = mongo_client.monkey_island.events
         self._serializers = serializer_registry
