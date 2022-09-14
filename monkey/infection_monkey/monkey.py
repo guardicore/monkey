@@ -67,7 +67,7 @@ from infection_monkey.post_breach.actions.use_signed_scripts import SignedScript
 from infection_monkey.post_breach.actions.use_trap_command import TrapCommand
 from infection_monkey.post_breach.custom_pba import CustomPBA
 from infection_monkey.puppet.puppet import Puppet
-from infection_monkey.SendAllAgentEventsToIsland import SendAllAgentEventsToIsland
+from infection_monkey.send_all_events_to_island import SendAllAgentEventsToIsland
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
