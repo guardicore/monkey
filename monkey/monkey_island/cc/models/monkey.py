@@ -19,7 +19,7 @@ from mongoengine import (
 from monkey_island.cc.models.command_control_channel import CommandControlChannel
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
-from monkey_island.cc.server_utils.network_utils import get_ip_addresses
+from monkey_island.cc.server_utils.network_utils import get_cached_local_ip_addresses
 
 
 class ParentNotFoundError(Exception):
@@ -123,7 +123,8 @@ class Monkey(Document):
     def get_label_by_id(object_id):
         current_monkey = Monkey.get_single_monkey_by_id(object_id)
         label = Monkey.get_hostname_by_id(object_id) + " : " + current_monkey.ip_addresses[0]
-        if len(set(current_monkey.ip_addresses).intersection(get_ip_addresses())) > 0:
+        local_ips = map(str, get_cached_local_ip_addresses())
+        if len(set(current_monkey.ip_addresses).intersection(local_ips)) > 0:
             label = "MonkeyIsland - " + label
         return label
 

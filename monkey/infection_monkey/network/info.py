@@ -2,10 +2,9 @@ import itertools
 import socket
 import struct
 from dataclasses import dataclass
-from ipaddress import IPv4Interface
 from random import shuffle  # noqa: DUO102
 from threading import Lock
-from typing import Dict, List, Set
+from typing import Dict, Set
 
 import netifaces
 import psutil
@@ -27,10 +26,6 @@ RTF_REJECT = 0x0200
 class NetworkAddress:
     ip: str
     domain: str
-
-
-def get_network_interfaces() -> List[IPv4Interface]:
-    return [IPv4Interface(f"{i['addr']}/{i['netmask']}") for i in get_host_subnets()]
 
 
 def get_host_subnets():
@@ -60,19 +55,11 @@ def get_host_subnets():
 
 if is_windows_os():
 
-    def local_ips():
-        local_hostname = socket.gethostname()
-        return socket.gethostbyname_ex(local_hostname)[2]
-
     def get_routes():
         raise NotImplementedError()
 
 else:
     from fcntl import ioctl
-
-    def local_ips():
-        valid_ips = [network["addr"] for network in get_host_subnets()]
-        return valid_ips
 
     def get_routes():  # based on scapy implementation for route parsing
         try:

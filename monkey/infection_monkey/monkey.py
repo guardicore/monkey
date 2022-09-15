@@ -15,7 +15,11 @@ from common.event_serializers import (
     register_common_agent_event_serializers,
 )
 from common.events import CredentialsStolenEvent
-from common.network.network_utils import address_to_ip_port
+from common.network.network_utils import (
+    address_to_ip_port,
+    get_local_interfaces,
+    get_local_ip_addresses,
+)
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
@@ -45,7 +49,7 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.info import get_free_tcp_port, get_network_interfaces, local_ips
+from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
     find_server,
@@ -201,7 +205,7 @@ class InfectionMonkey:
             self._cmd_island_port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
-        relay_servers = [f"{ip}:{relay_port}" for ip in local_ips()]
+        relay_servers = [f"{ip}:{relay_port}" for ip in get_local_ip_addresses()]
 
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()
@@ -220,7 +224,7 @@ class InfectionMonkey:
         return agent_event_serializer_registry
 
     def _build_master(self, relay_servers: List[str]):
-        local_network_interfaces = InfectionMonkey._get_local_network_interfaces()
+        local_network_interfaces = get_local_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
         propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
@@ -270,14 +274,6 @@ class InfectionMonkey:
         event_queue.subscribe_all_events(
             AgentEventForwarder(server_address, agent_event_serializer_registry).send_event
         )
-
-    @staticmethod
-    def _get_local_network_interfaces() -> List[IPv4Interface]:
-        local_network_interfaces = get_network_interfaces()
-        for interface in local_network_interfaces:
-            logger.debug(f"Found local interface {str(interface)}")
-
-        return local_network_interfaces
 
     def _build_puppet(
         self,
