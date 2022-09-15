@@ -27,6 +27,7 @@ paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/Vaka
 pypubsub = "*"
 pydantic = "*"
 egg-timer = "*"
+cryptography = "==37.0.4"
 
 [dev-packages]
 ldap3 = "*"
