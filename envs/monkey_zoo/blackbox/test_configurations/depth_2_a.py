@@ -42,8 +42,8 @@ test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
 CREDENTIALS = (
-    Credentials(Username("m0nk3y"), None),
-    Credentials(None, Password("^NgDvY59~8")),
+    Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=None, secret=Password(password="^NgDvY59~8")),
 )
 
 depth_2_a_test_configuration = dataclasses.replace(noop_test_configuration)

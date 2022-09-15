@@ -86,10 +86,6 @@ class TelemetryFeed(AbstractResource):
         return "Monkey discovered machine %s." % telem["data"]["machine"]["ip_addr"]
 
     @staticmethod
-    def get_credentials_telem_brief(_):
-        return "Monkey collected stole some credentials."
-
-    @staticmethod
     def get_trace_telem_brief(telem):
         return "Trace: %s" % telem["data"]["msg"]
 
@@ -116,7 +112,6 @@ class TelemetryFeed(AbstractResource):
 
 
 TELEM_PROCESS_DICT = {
-    TelemCategoryEnum.CREDENTIALS: TelemetryFeed.get_credentials_telem_brief,
     TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
     TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief,
     TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,

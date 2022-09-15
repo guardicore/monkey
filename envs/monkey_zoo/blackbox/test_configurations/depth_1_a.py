@@ -87,9 +87,9 @@ test_agent_configuration = _add_credential_collectors(test_agent_configuration)
 test_agent_configuration = _add_http_ports(test_agent_configuration)
 
 CREDENTIALS = (
-    Credentials(Username("m0nk3y"), None),
-    Credentials(None, Password("Ivrrw5zEzs")),
-    Credentials(None, Password("Xk8VDTsC")),
+    Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=None, secret=Password(password="Ivrrw5zEzs")),
+    Credentials(identity=None, secret=Password(password="Xk8VDTsC")),
 )
 
 depth_1_a_test_configuration = dataclasses.replace(noop_test_configuration)

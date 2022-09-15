@@ -50,11 +50,11 @@ test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 test_agent_configuration = _add_credential_collectors(test_agent_configuration)
 
 CREDENTIALS = (
-    Credentials(Username("Administrator"), None),
-    Credentials(Username("m0nk3y"), None),
-    Credentials(Username("user"), None),
-    Credentials(None, Password("Ivrrw5zEzs")),
-    Credentials(None, Password("Password1!")),
+    Credentials(identity=Username(username="Administrator"), secret=None),
+    Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=Username(username="user"), secret=None),
+    Credentials(identity=None, secret=Password(password="Ivrrw5zEzs")),
+    Credentials(identity=None, secret=Password(password="Password1!")),
 )
 
 wmi_mimikatz_test_configuration = dataclasses.replace(noop_test_configuration)

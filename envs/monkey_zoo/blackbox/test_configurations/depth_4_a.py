@@ -49,11 +49,11 @@ test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
 CREDENTIALS = (
-    Credentials(Username("m0nk3y"), None),
-    Credentials(None, Password("3Q=(Ge(+&w]*")),
-    Credentials(None, Password("`))jU7L(w}")),
-    Credentials(None, Password("prM2qsroTI")),
-    Credentials(None, Password("t67TC5ZDmz")),
+    Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=None, secret=Password(password="3Q=(Ge(+&w]*")),
+    Credentials(identity=None, secret=Password(password="`))jU7L(w}")),
+    Credentials(identity=None, secret=Password(password="prM2qsroTI")),
+    Credentials(identity=None, secret=Password(password="t67TC5ZDmz")),
 )
 
 depth_4_a_test_configuration = dataclasses.replace(noop_test_configuration)
