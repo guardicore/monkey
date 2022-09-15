@@ -109,6 +109,6 @@ class MongoCredentialsRepository(ICredentialsRepository):
     @staticmethod
     def _remove_credentials_fom_collection(collection):
         try:
-            collection.delete_many({})
+            collection.drop()
         except RemovalError as err:
             raise err
