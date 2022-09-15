@@ -15,17 +15,12 @@ TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
     # `lambda *args, **kwargs: None` is a no-op.
     TelemCategoryEnum.ATTACK: lambda *args, **kwargs: None,
     TelemCategoryEnum.AWS_INFO: process_aws_telemetry,
-    TelemCategoryEnum.CREDENTIALS: None,  # this is set in monkey_island/cc/services/initialize.py
     TelemCategoryEnum.EXPLOIT: process_exploit_telemetry,
     TelemCategoryEnum.POST_BREACH: process_post_breach_telemetry,
     TelemCategoryEnum.SCAN: process_scan_telemetry,
     TelemCategoryEnum.STATE: process_state_telemetry,
     TelemCategoryEnum.TRACE: lambda *args, **kwargs: None,
 }
-
-# Don't save credential telemetries in telemetries collection.
-# Credentials are stored in StolenCredentials documents
-UNSAVED_TELEMETRIES = [TelemCategoryEnum.CREDENTIALS]
 
 
 def process_telemetry(telemetry_json, agent_configuration: AgentConfiguration):
@@ -38,8 +33,7 @@ def process_telemetry(telemetry_json, agent_configuration: AgentConfiguration):
         else:
             logger.info("Got unknown type of telemetry: %s" % telem_category)
 
-        if telem_category not in UNSAVED_TELEMETRIES:
-            save_telemetry(telemetry_json)
+        save_telemetry(telemetry_json)
 
     except Exception as ex:
         logger.error(

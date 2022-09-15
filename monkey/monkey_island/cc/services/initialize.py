@@ -11,7 +11,6 @@ from common.agent_configuration import (
     AgentConfiguration,
 )
 from common.aws import AWSInstance
-from common.common_consts.telem_categories import TelemCategoryEnum
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import IIslandEventQueue, PyPubSubIslandEventQueue
@@ -40,12 +39,6 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor, Reposit
 from monkey_island.cc.services import AWSService, IslandModeService
 from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
-from monkey_island.cc.services.telemetry.processing.credentials.credentials_parser import (
-    CredentialsParser,
-)
-from monkey_island.cc.services.telemetry.processing.processing import (
-    TELEMETRY_CATEGORY_TO_PROCESSING_FUNC,
-)
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
 from . import AuthenticationService
@@ -165,9 +158,3 @@ def _dirty_hacks(container: DIContainer):
     # Patches attack technique T1003 which is a static class
     # but it needs stolen credentials from the database
     T1003.get_report_data = container.resolve(T1003GetReportData)
-
-    # Note: A hack to resolve credentials parser
-    # It changes telemetry processing function, this will be refactored!
-    TELEMETRY_CATEGORY_TO_PROCESSING_FUNC[TelemCategoryEnum.CREDENTIALS] = container.resolve(
-        CredentialsParser
-    )
