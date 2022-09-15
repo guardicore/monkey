@@ -1,7 +1,7 @@
 from pprint import pformat
 from typing import List
 
-from common.credentials import CredentialComponentType, Credentials
+from common.credentials import Credentials, LMHash, NTHash, Username
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
@@ -36,11 +36,11 @@ class ZerologonAnalyzer(Analyzer):
         credentials_on_island = set()
 
         for credentials in propagation_credentials:
-            if credentials.identity.credential_type is CredentialComponentType.USERNAME:
+            if isinstance(credentials.identity, Username):
                 credentials_on_island.update([credentials.identity.username])
-            if credentials.secret.credential_type is CredentialComponentType.NT_HASH:
+            if isinstance(credentials.secret, NTHash):
                 credentials_on_island.update([credentials.secret.nt_hash])
-            if credentials.secret.credential_type is CredentialComponentType.LM_HASH:
+            if isinstance(credentials.secret, LMHash):
                 credentials_on_island.update([credentials.secret.lm_hash])
 
         return list(credentials_on_island)
