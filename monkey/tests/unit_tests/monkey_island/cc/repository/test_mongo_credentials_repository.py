@@ -9,7 +9,13 @@ from pymongo.database import Database
 from tests.data_for_tests.propagation_credentials import CREDENTIALS
 
 from common.credentials import Credentials
-from monkey_island.cc.repository import MongoCredentialsRepository
+from monkey_island.cc.repository import (
+    ICredentialsRepository,
+    MongoCredentialsRepository,
+    RemovalError,
+    RetrievalError,
+    StorageError,
+)
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 CONFIGURED_CREDENTIALS = CREDENTIALS[0:3]
@@ -38,6 +44,36 @@ def mongo_client():
 @pytest.fixture
 def mongo_repository(mongo_client, repository_encryptor):
     return MongoCredentialsRepository(mongo_client, repository_encryptor)
+
+
+@pytest.fixture
+def error_raising_mock_mongo_client() -> mongomock.MongoClient:
+    mongo_client = MagicMock(spec=mongomock.MongoClient)
+    mongo_client.monkey_island = MagicMock(spec=mongomock.Database)
+    mongo_client.monkey_island.stolen_credentials = MagicMock(spec=mongomock.Collection)
+    mongo_client.monkey_island.configured_credentials = MagicMock(spec=mongomock.Collection)
+
+    mongo_client.monkey_island.configured_credentials.find = MagicMock(
+        side_effect=Exception("some exception")
+    )
+    mongo_client.monkey_island.stolen_credentials.find = MagicMock(
+        side_effect=Exception("some exception")
+    )
+    mongo_client.monkey_island.stolen_credentials.insert_one = MagicMock(
+        side_effect=Exception("some exception")
+    )
+    mongo_client.monkey_island.stolen_credentials.drop = MagicMock(
+        side_effect=Exception("some exception")
+    )
+
+    return mongo_client
+
+
+@pytest.fixture
+def error_raising_credentials_repository(
+    error_raising_mock_mongo_client: mongomock.MongoClient, repository_encryptor: ILockableEncryptor
+) -> ICredentialsRepository:
+    return MongoCredentialsRepository(error_raising_mock_mongo_client, repository_encryptor)
 
 
 def test_mongo_repository_get_configured(mongo_repository):
@@ -89,6 +125,26 @@ def test_mongo_repository_all(mongo_repository):
     assert mongo_repository.get_all_credentials() == []
     assert mongo_repository.get_stolen_credentials() == []
     assert mongo_repository.get_configured_credentials() == []
+
+
+def test_mongo_repository_get__retrieval_error(error_raising_credentials_repository):
+    with pytest.raises(RetrievalError):
+        error_raising_credentials_repository.get_all_credentials()
+
+
+def test_mongo_repository_save__storage_error(error_raising_credentials_repository):
+    with pytest.raises(StorageError):
+        error_raising_credentials_repository.save_stolen_credentials(STOLEN_CREDENTIALS)
+
+
+def test_mongo_repository_remove_credentials__removal_error(error_raising_credentials_repository):
+    with pytest.raises(RemovalError):
+        error_raising_credentials_repository.remove_stolen_credentials()
+
+
+def test_mongo_repository_reset__removal_error(error_raising_credentials_repository):
+    with pytest.raises(RemovalError):
+        error_raising_credentials_repository.reset()
 
 
 @pytest.mark.parametrize("credentials", CREDENTIALS)

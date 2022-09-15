@@ -20,7 +20,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
     """
 
     def __init__(self, mongo: MongoClient, repository_encryptor: ILockableEncryptor):
-        self._database = mongo.monkeyisland
+        self._database = mongo.monkey_island
         self._repository_encryptor = repository_encryptor
 
     def get_configured_credentials(self) -> Sequence[Credentials]:
@@ -51,6 +51,9 @@ class MongoCredentialsRepository(ICredentialsRepository):
     def remove_all_credentials(self):
         self.remove_configured_credentials()
         self.remove_stolen_credentials()
+
+    def reset(self):
+        self.remove_all_credentials()
 
     def _get_credentials_from_collection(self, collection) -> Sequence[Credentials]:
         try:
@@ -109,6 +112,6 @@ class MongoCredentialsRepository(ICredentialsRepository):
     @staticmethod
     def _remove_credentials_fom_collection(collection):
         try:
-            collection.delete_many({})
-        except RemovalError as err:
-            raise err
+            collection.drop()
+        except Exception as err:
+            raise RemovalError(f"Error removing credentials: {err}")
