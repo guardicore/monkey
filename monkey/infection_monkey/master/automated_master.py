@@ -11,7 +11,6 @@ from infection_monkey.i_control_channel import IControlChannel, IslandCommunicat
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
-from infection_monkey.telemetry.credentials_telem import CredentialsTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.propagation import maximum_depth_reached
@@ -194,9 +193,7 @@ class AutomatedMaster(IMaster):
     def _collect_credentials(self, collector: PluginConfiguration):
         credentials = self._puppet.run_credential_collector(collector.name, collector.options)
 
-        if credentials:
-            self._telemetry_messenger.send_telemetry(CredentialsTelem(credentials))
-        else:
+        if not credentials:
             logger.debug(f"No credentials were collected by {collector}")
 
     def _run_pba(self, pba: PluginConfiguration):
