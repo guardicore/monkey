@@ -21,7 +21,6 @@ class ICredentialsRepository(ABC):
                                 credentials
         :return: Sequence of configured credentials
         """
-        pass
 
     def get_stolen_credentials(self) -> Sequence[Credentials]:
         """
@@ -31,7 +30,6 @@ class ICredentialsRepository(ABC):
                                 credentials
         :return: Sequence of stolen credentials
         """
-        pass
 
     def get_all_credentials(self) -> Sequence[Credentials]:
         """
@@ -41,7 +39,6 @@ class ICredentialsRepository(ABC):
                                 credentials
         :return: Sequence of stolen and configured credentials
         """
-        pass
 
     def save_configured_credentials(self, credentials: Sequence[Credentials]):
         """
@@ -50,7 +47,6 @@ class ICredentialsRepository(ABC):
         :param credentials: Configured Credentials to store in the repository
         :raises StorageError: If an error is encountered while attempting to store the credentials
         """
-        pass
 
     def save_stolen_credentials(self, credentials: Sequence[Credentials]):
         """
@@ -59,7 +55,6 @@ class ICredentialsRepository(ABC):
         :param credentials: Stolen Credentials to store in the repository
         :raises StorageError: If an error is encountered while attempting to store the credentials
         """
-        pass
 
     def remove_configured_credentials(self):
         """
@@ -67,7 +62,6 @@ class ICredentialsRepository(ABC):
 
         :raises RemovalError: If an error is encountered while attempting to remove the credentials
         """
-        pass
 
     def remove_stolen_credentials(self):
         """
@@ -75,7 +69,6 @@ class ICredentialsRepository(ABC):
 
         :raises RemovalError: If an error is encountered while attempting to remove the credentials
         """
-        pass
 
     def remove_all_credentials(self):
         """
@@ -83,7 +76,6 @@ class ICredentialsRepository(ABC):
 
         :raises RemovalError: If an error is encountered while attempting to remove the credentials
         """
-        pass
 
     def reset(self):
         """
