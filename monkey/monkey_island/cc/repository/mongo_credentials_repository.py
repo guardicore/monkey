@@ -110,5 +110,5 @@ class MongoCredentialsRepository(ICredentialsRepository):
     def _remove_credentials_fom_collection(collection):
         try:
             collection.drop()
-        except RemovalError as err:
-            raise err
+        except Exception as err:
+            raise RemovalError(f"Error removing credentials: {err}")
