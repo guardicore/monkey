@@ -114,6 +114,36 @@ def test_upsert_agent__storage_error(error_raising_agent_repository):
         error_raising_agent_repository.upsert_agent(AGENTS[0])
 
 
+def test_upsert_agent__storage_error_update_failed(error_raising_mock_mongo_client):
+    mock_result = MagicMock()
+    mock_result.matched_count = 1
+    mock_result.modified_count = 0
+
+    error_raising_mock_mongo_client.monkey_island.agents.replace_one = MagicMock(
+        return_value=mock_result
+    )
+    agent_repository = MongoAgentRepository(error_raising_mock_mongo_client)
+
+    agent = AGENTS[0]
+    with pytest.raises(StorageError):
+        agent_repository.upsert_agent(agent)
+
+
+def test_upsert_agent__storage_error_insert_failed(error_raising_mock_mongo_client):
+    mock_result = MagicMock()
+    mock_result.matched_count = 0
+    mock_result.upserted_id = None
+
+    error_raising_mock_mongo_client.monkey_island.agents.replace_one = MagicMock(
+        return_value=mock_result
+    )
+    agent_repository = MongoAgentRepository(error_raising_mock_mongo_client)
+
+    agent = AGENTS[0]
+    with pytest.raises(StorageError):
+        agent_repository.upsert_agent(agent)
+
+
 def test_get_agent_by_id(agent_repository):
     for i, expected_agent in enumerate(AGENTS):
         assert agent_repository.get_agent_by_id(expected_agent.id) == expected_agent
