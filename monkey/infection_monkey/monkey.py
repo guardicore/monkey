@@ -239,7 +239,7 @@ class InfectionMonkey:
             self._agent_event_serializer_registry,
         )
 
-        puppet = self._build_puppet(propagation_credentials_repository, event_queue)
+        puppet = self._build_puppet(event_queue)
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
@@ -277,7 +277,6 @@ class InfectionMonkey:
 
     def _build_puppet(
         self,
-        propagation_credentials_repository: IPropagationCredentialsRepository,
         event_queue: IAgentEventQueue,
     ) -> IPuppet:
         puppet = Puppet()
