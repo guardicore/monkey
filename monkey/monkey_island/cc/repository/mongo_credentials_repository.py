@@ -20,7 +20,7 @@ class MongoCredentialsRepository(ICredentialsRepository):
     """
 
     def __init__(self, mongo: MongoClient, repository_encryptor: ILockableEncryptor):
-        self._database = mongo.monkeyisland
+        self._database = mongo.monkey_island
         self._repository_encryptor = repository_encryptor
 
     def get_configured_credentials(self) -> Sequence[Credentials]:
