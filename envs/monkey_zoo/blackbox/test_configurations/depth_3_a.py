@@ -56,14 +56,14 @@ test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_tcp_ports(test_agent_configuration)
 
 CREDENTIALS = (
-    Credentials(identity=Username("m0nk3y"), secret=None),
-    Credentials(identity=Username("m0nk3y-user"), secret=None),
-    Credentials(identity=None, secret=Password("Passw0rd!")),
-    Credentials(identity=None, secret=Password("3Q=(Ge(+&w]*")),
-    Credentials(identity=None, secret=Password("`))jU7L(w}")),
-    Credentials(identity=None, secret=NTHash("d0f0132b308a0c4e5d1029cc06f48692")),
-    Credentials(identity=None, secret=NTHash("5da0889ea2081aa79f6852294cba4a5e")),
-    Credentials(identity=None, secret=NTHash("50c9987a6bf1ac59398df9f911122c9b")),
+    Credentials(identity=Username(username="m0nk3y"), secret=None),
+    Credentials(identity=Username(username="m0nk3y-user"), secret=None),
+    Credentials(identity=None, secret=Password(password="Passw0rd!")),
+    Credentials(identity=None, secret=Password(password="3Q=(Ge(+&w]*")),
+    Credentials(identity=None, secret=Password(password="`))jU7L(w}")),
+    Credentials(identity=None, secret=NTHash(nt_hash="d0f0132b308a0c4e5d1029cc06f48692")),
+    Credentials(identity=None, secret=NTHash(nt_hash="5da0889ea2081aa79f6852294cba4a5e")),
+    Credentials(identity=None, secret=NTHash(nt_hash="50c9987a6bf1ac59398df9f911122c9b")),
 )
 
 depth_3_a_test_configuration = dataclasses.replace(noop_test_configuration)
