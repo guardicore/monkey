@@ -52,6 +52,9 @@ class MongoCredentialsRepository(ICredentialsRepository):
         self.remove_configured_credentials()
         self.remove_stolen_credentials()
 
+    def reset(self):
+        self.remove_all_credentials()
+
     def _get_credentials_from_collection(self, collection) -> Sequence[Credentials]:
         try:
             collection_result = []

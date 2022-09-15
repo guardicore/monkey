@@ -84,3 +84,10 @@ class ICredentialsRepository(ABC):
         :raises RemovalError: If an error is encountered while attempting to remove the credentials
         """
         pass
+
+    def reset(self):
+        """
+        An alias for remove_all_credentials()
+
+        :raises RemovalError: If an error is encountered while attempting to remove the credentials
+        """

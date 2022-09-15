@@ -142,6 +142,11 @@ def test_mongo_repository_remove_credentials__removal_error(error_raising_creden
         error_raising_credentials_repository.remove_stolen_credentials()
 
 
+def test_mongo_repository_reset__removal_error(error_raising_credentials_repository):
+    with pytest.raises(RemovalError):
+        error_raising_credentials_repository.reset()
+
+
 @pytest.mark.parametrize("credentials", CREDENTIALS)
 def test_configured_secrets_encrypted(
     mongo_repository: MongoCredentialsRepository,
