@@ -18,6 +18,7 @@ from monkey_island.cc.repository import (
     RetrievalError,
     StorageError,
 )
+from monkey_island.cc.server_utils.encryption import RepositoryEncryptor
 
 
 class FakeAgentEvent(AbstractAgentEvent):
@@ -54,8 +55,20 @@ def mongo_client(event_serializer_registry):
 
 
 @pytest.fixture
-def mongo_repository(mongo_client, event_serializer_registry) -> IAgentEventRepository:
-    return MongoEventRepository(mongo_client, event_serializer_registry)
+def key_file(tmp_path):
+    return tmp_path / "test_key.bin"
+
+
+@pytest.fixture
+def encryptor(key_file):
+    encryptor = RepositoryEncryptor(key_file)
+    encryptor.unlock(b"password")
+    return encryptor
+
+
+@pytest.fixture
+def mongo_repository(mongo_client, event_serializer_registry, encryptor) -> IAgentEventRepository:
+    return MongoEventRepository(mongo_client, event_serializer_registry, encryptor)
 
 
 @pytest.fixture
@@ -75,9 +88,9 @@ def error_raising_mongo_client(mongo_client) -> mongomock.MongoClient:
 
 @pytest.fixture
 def error_raising_mongo_repository(
-    error_raising_mongo_client, event_serializer_registry
+    error_raising_mongo_client, event_serializer_registry, encryptor
 ) -> IAgentEventRepository:
-    return MongoEventRepository(error_raising_mongo_client, event_serializer_registry)
+    return MongoEventRepository(error_raising_mongo_client, event_serializer_registry, encryptor)
 
 
 def assert_same_contents(a, b):

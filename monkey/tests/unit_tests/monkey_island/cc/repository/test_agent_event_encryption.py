@@ -30,7 +30,7 @@ def encryptor(key_file):
 
 @pytest.fixture
 def serializer():
-    return PydanticAgentEventSerializer()
+    return PydanticAgentEventSerializer(FakeAgentEvent)
 
 
 def test_agent_event_encryption__encrypts(encryptor, serializer):
