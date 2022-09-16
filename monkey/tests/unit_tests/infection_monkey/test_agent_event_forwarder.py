@@ -3,7 +3,7 @@ import time
 import pytest
 import requests_mock
 
-from infection_monkey.agent_event_forwarder import EVENTS_API_URL, BatchingAgentEventForwarder
+from infection_monkey.agent_event_forwarder import AGENT_EVENTS_API_URL, BatchingAgentEventForwarder
 
 SERVER = "1.1.1.1:9999"
 
@@ -20,7 +20,7 @@ def event_sender():
 
 def test_send_events(event_sender):
     with requests_mock.Mocker() as mock:
-        mock.post(EVENTS_API_URL % SERVER)
+        mock.post(AGENT_EVENTS_API_URL % SERVER)
 
         event_sender.start()
 
@@ -38,7 +38,7 @@ def test_send_events(event_sender):
 
 def test_send_remaining_events(event_sender):
     with requests_mock.Mocker() as mock:
-        mock.post(EVENTS_API_URL % SERVER)
+        mock.post(AGENT_EVENTS_API_URL % SERVER)
 
         event_sender.start()
 

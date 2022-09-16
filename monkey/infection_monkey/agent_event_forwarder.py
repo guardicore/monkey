@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_TIME_PERIOD_SECONDS = 5
-EVENTS_API_URL = "https://%s/api/agent-events"
+AGENT_EVENTS_API_URL = "https://%s/api/agent-events"
 
 
 class AgentEventForwarder:
@@ -86,7 +86,7 @@ class BatchingAgentEventForwarder:
         try:
             logger.debug(f"Sending Agent events to Island at {self._server_address}: {events}")
             requests.post(  # noqa: DUO123
-                EVENTS_API_URL % (self._server_address,),
+                AGENT_EVENTS_API_URL % (self._server_address,),
                 json=events,
                 verify=False,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
