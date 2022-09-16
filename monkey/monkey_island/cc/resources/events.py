@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class AgentEvents(AbstractResource):
-    urls = ["/api/events"]
+    urls = ["/api/agent-events"]
 
     def __init__(
         self,
