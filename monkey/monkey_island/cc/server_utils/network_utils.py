@@ -3,12 +3,12 @@ from typing import Sequence
 
 from ring import lru
 
-from common.network.network_utils import get_local_interfaces, get_local_ip_addresses
+from common.network.network_utils import get_local_interfaces, get_my_ip_addresses
 
 
 @lru(maxsize=1)
 def get_cached_local_ip_addresses() -> Sequence[IPv4Address]:
-    return get_local_ip_addresses()
+    return get_my_ip_addresses()
 
 
 # The subnets list should not change often. Therefore, we can cache the result and never call this

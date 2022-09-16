@@ -18,7 +18,7 @@ from common.events import CredentialsStolenEvent
 from common.network.network_utils import (
     address_to_ip_port,
     get_local_interfaces,
-    get_local_ip_addresses,
+    get_my_ip_addresses,
 )
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -205,7 +205,7 @@ class InfectionMonkey:
             self._cmd_island_port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
-        relay_servers = [f"{ip}:{relay_port}" for ip in get_local_ip_addresses()]
+        relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
 
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()

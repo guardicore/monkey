@@ -7,7 +7,7 @@ import requests
 from urllib3 import disable_warnings
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
-from common.network.network_utils import get_local_ip_addresses
+from common.network.network_utils import get_my_ip_addresses
 from infection_monkey.config import GUID
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.utils import agent_process
@@ -39,7 +39,7 @@ class ControlClient:
         monkey = {
             "guid": GUID,
             "hostname": hostname,
-            "ip_addresses": get_local_ip_addresses(),
+            "ip_addresses": get_my_ip_addresses(),
             "networks": get_host_subnets(),
             "description": " ".join(platform.uname()),
             "parent": parent,

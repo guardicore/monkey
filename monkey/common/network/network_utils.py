@@ -5,7 +5,7 @@ from typing import List, Optional, Sequence, Tuple
 from netifaces import AF_INET, ifaddresses, interfaces
 
 
-def get_local_ip_addresses() -> Sequence[str]:
+def get_my_ip_addresses() -> Sequence[str]:
     ip_list = []
     for interface in interfaces():
         addresses = ifaddresses(interface).get(AF_INET, [])
