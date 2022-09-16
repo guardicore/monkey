@@ -10,7 +10,7 @@ from monkey_island.cc.resources.AbstractResource import AbstractResource
 logger = logging.getLogger(__name__)
 
 
-class Events(AbstractResource):
+class AgentEvents(AbstractResource):
     urls = ["/api/events"]
 
     def __init__(
