@@ -5,8 +5,11 @@ from uuid import UUID
 import pytest
 from tests.common import StubDIContainer
 
+from common.agent_event_serializers import (
+    AgentEventSerializerRegistry,
+    PydanticAgentEventSerializer,
+)
 from common.event_queue import IAgentEventQueue
-from common.event_serializers import AgentEventSerializerRegistry, PydanticAgentEventSerializer
 from common.events import AbstractAgentEvent
 from monkey_island.cc.resources import Events
 

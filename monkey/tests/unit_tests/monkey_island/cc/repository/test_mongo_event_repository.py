@@ -6,7 +6,10 @@ import mongomock
 import pytest
 from pydantic import Field
 
-from common.event_serializers import AgentEventSerializerRegistry, PydanticAgentEventSerializer
+from common.agent_event_serializers import (
+    AgentEventSerializerRegistry,
+    PydanticAgentEventSerializer,
+)
 from common.events import AbstractAgentEvent
 from monkey_island.cc.repository import (
     IEventRepository,
