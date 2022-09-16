@@ -1,15 +1,15 @@
 from typing import Sequence, Type, TypeVar
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 from common.types import AgentID
 
-from . import IEventRepository
+from . import IAgentEventRepository
 
 T = TypeVar("T", bound=AbstractAgentEvent)
 
 
 # TODO: Remove this class after #2180 is complete
-class StubbedEventRepository(IEventRepository):
+class StubbedEventRepository(IAgentEventRepository):
     def save_event(self, event: AbstractAgentEvent):
         return
 

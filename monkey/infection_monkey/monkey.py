@@ -9,12 +9,12 @@ from typing import List
 
 from pubsub.core import Publisher
 
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
-from common.event_serializers import (
-    EventSerializerRegistry,
+from common.agent_event_serializers import (
+    AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.events import CredentialsStolenEvent
+from common.agent_events import CredentialsStolenEvent
+from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import (
     address_to_ip_port,
     get_my_ip_addresses,
@@ -217,8 +217,8 @@ class InfectionMonkey:
         register_signal_handlers(self._master)
 
     # TODO: This is just a placeholder for now. We will modify/integrate it with PR #2279.
-    def _setup_agent_event_serializers(self) -> EventSerializerRegistry:
-        agent_event_serializer_registry = EventSerializerRegistry()
+    def _setup_agent_event_serializers(self) -> AgentEventSerializerRegistry:
+        agent_event_serializer_registry = AgentEventSerializerRegistry()
         register_common_agent_event_serializers(agent_event_serializer_registry)
 
         return agent_event_serializer_registry
@@ -263,7 +263,7 @@ class InfectionMonkey:
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         server_address: str,
-        agent_event_serializer_registry: EventSerializerRegistry,
+        agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
         event_queue.subscribe_type(
             CredentialsStolenEvent,

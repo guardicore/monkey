@@ -1,17 +1,17 @@
 import logging
 from typing import Generic, Type, TypeVar
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 from common.utils.code_utils import del_key
 
-from . import EVENT_TYPE_FIELD, IEventSerializer, JSONSerializable
+from . import EVENT_TYPE_FIELD, IAgentEventSerializer, JSONSerializable
 
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=AbstractAgentEvent)
 
 
-class PydanticEventSerializer(IEventSerializer, Generic[T]):
+class PydanticAgentEventSerializer(IAgentEventSerializer, Generic[T]):
     def __init__(self, event_class: Type[T]):
         self._event_class = event_class
 

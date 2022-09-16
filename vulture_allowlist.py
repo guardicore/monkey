@@ -18,16 +18,16 @@ from monkey_island.cc.repository import (
     StubbedEventRepository,
 )
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
+from monkey_island.cc.repository.i_agent_event_repository import IAgentEventRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
 from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
-from monkey_island.cc.repository.i_event_repository import IEventRepository
 from monkey_island.cc.repository.i_log_repository import ILogRepository
 from monkey_island.cc.repository.i_machine_repository import IMachineRepository
 from monkey_island.cc.repository.i_report_repository import IReportRepository
 from monkey_island.cc.repository.i_simulation_repository import ISimulationRepository
 from monkey_island.cc.repository.ICredentials import ICredentialsRepository
-from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
+from monkey_island.cc.repository.zero_trust.IAgentEventRepository import IAgentEventRepository
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -279,7 +279,7 @@ ICredentialsRepository.remove_configured_credentials
 ICredentialsRepository.remove_all_credentials
 ICredentialsRepository.save_stolen_credentials
 ICredentialsRepository.save_configured_credentials
-IEventRepository.get_events
+IAgentEventRepository.get_events
 IFindingRepository.get_findings
 MongoAgentRepository
 MongoMachineRepository
@@ -299,19 +299,11 @@ publish  # common\event_queue\pypubsub_agent_event_queue.py
 subscribe_all_events  # common\event_queue\pypubsub_agent_event_queue.py
 
 
-# TODO: Remove once #2179 is closed
-EventSerializerRegistry
-serialize
-event
-deserialize
-serialized_event
-PydanticEventSerializer
-
 # TODO: Remove once #2180 is closed
-IEventRepository.save_event
-IEventRepository.get_events_by_type
-IEventRepository.get_events_by_tag
-IEventRepository.get_events_by_source
+IAgentEventRepository.save_event
+IAgentEventRepository.get_events_by_type
+IAgentEventRepository.get_events_by_tag
+IAgentEventRepository.get_events_by_source
 MongoEventRepository
 
 

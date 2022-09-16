@@ -5,17 +5,16 @@ from time import sleep
 
 import requests
 
+from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
+from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.event_serializers import EventSerializerRegistry
-from common.event_serializers.i_event_serializer import JSONSerializable
-from common.events import AbstractAgentEvent
 from infection_monkey.utils.threading import create_daemon_thread
 
 logger = logging.getLogger(__name__)
 
 
 DEFAULT_TIME_PERIOD_SECONDS = 5
-EVENTS_API_URL = "https://%s/api/events"
+AGENT_EVENTS_API_URL = "https://%s/api/agent-events"
 
 
 class AgentEventForwarder:
@@ -24,7 +23,7 @@ class AgentEventForwarder:
     """
 
     def __init__(
-        self, server_address: str, agent_event_serializer_registry: EventSerializerRegistry
+        self, server_address: str, agent_event_serializer_registry: AgentEventSerializerRegistry
     ):
         self._server_address = server_address
         self._agent_event_serializer_registry = agent_event_serializer_registry
@@ -85,9 +84,9 @@ class BatchingAgentEventForwarder:
             events.append(self._queue.get(block=False))
 
         try:
-            logger.debug(f"Sending events to Island at {self._server_address}: {events}")
+            logger.debug(f"Sending Agent events to Island at {self._server_address}: {events}")
             requests.post(  # noqa: DUO123
-                EVENTS_API_URL % (self._server_address,),
+                AGENT_EVENTS_API_URL % (self._server_address,),
                 json=events,
                 verify=False,
                 timeout=MEDIUM_REQUEST_TIMEOUT,

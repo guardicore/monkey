@@ -3,20 +3,20 @@ from http import HTTPStatus
 
 from flask import request
 
+from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.event_queue import IAgentEventQueue
-from common.event_serializers import EVENT_TYPE_FIELD, EventSerializerRegistry
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
 
 
-class Events(AbstractResource):
-    urls = ["/api/events"]
+class AgentEvents(AbstractResource):
+    urls = ["/api/agent-events"]
 
     def __init__(
         self,
         agent_event_queue: IAgentEventQueue,
-        event_serializer_registry: EventSerializerRegistry,
+        event_serializer_registry: AgentEventSerializerRegistry,
     ):
         self._agent_event_queue = agent_event_queue
         self._event_serializer_registry = event_serializer_registry

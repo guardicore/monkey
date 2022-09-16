@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Union
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 
 JSONSerializable = Union[  # type: ignore[misc]
     Dict[str, "JSONSerializable"],  # type: ignore[misc]
@@ -14,7 +14,7 @@ JSONSerializable = Union[  # type: ignore[misc]
 ]
 
 
-class IEventSerializer(ABC):
+class IAgentEventSerializer(ABC):
     """
     Manages serialization and deserialization of events
     """

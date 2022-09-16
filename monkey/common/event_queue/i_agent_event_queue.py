@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Type
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 
 from . import AgentEventSubscriber
 

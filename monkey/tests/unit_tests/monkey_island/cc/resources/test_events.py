@@ -5,12 +5,15 @@ from uuid import UUID
 import pytest
 from tests.common import StubDIContainer
 
+from common.agent_event_serializers import (
+    AgentEventSerializerRegistry,
+    PydanticAgentEventSerializer,
+)
+from common.agent_events import AbstractAgentEvent
 from common.event_queue import IAgentEventQueue
-from common.event_serializers import EventSerializerRegistry, PydanticEventSerializer
-from common.events import AbstractAgentEvent
-from monkey_island.cc.resources import Events
+from monkey_island.cc.resources import AgentEvents
 
-EVENTS_URL = Events.urls[0]
+EVENTS_URL = AgentEvents.urls[0]
 
 
 class SomeAgentEvent(AbstractAgentEvent):
@@ -88,11 +91,13 @@ def mock_agent_event_queue():
 
 
 @pytest.fixture
-def event_serializer_registry() -> EventSerializerRegistry:
-    event_serializer_registry = EventSerializerRegistry()
-    event_serializer_registry[SomeAgentEvent] = PydanticEventSerializer(SomeAgentEvent)
-    event_serializer_registry[OtherAgentEvent] = PydanticEventSerializer(OtherAgentEvent)
-    event_serializer_registry[DifferentAgentEvent] = PydanticEventSerializer(DifferentAgentEvent)
+def event_serializer_registry() -> AgentEventSerializerRegistry:
+    event_serializer_registry = AgentEventSerializerRegistry()
+    event_serializer_registry[SomeAgentEvent] = PydanticAgentEventSerializer(SomeAgentEvent)
+    event_serializer_registry[OtherAgentEvent] = PydanticAgentEventSerializer(OtherAgentEvent)
+    event_serializer_registry[DifferentAgentEvent] = PydanticAgentEventSerializer(
+        DifferentAgentEvent
+    )
 
     return event_serializer_registry
 
@@ -102,7 +107,7 @@ def flask_client(build_flask_client, mock_agent_event_queue, event_serializer_re
     container = StubDIContainer()
 
     container.register_instance(IAgentEventQueue, mock_agent_event_queue)
-    container.register_instance(EventSerializerRegistry, event_serializer_registry)
+    container.register_instance(AgentEventSerializerRegistry, event_serializer_registry)
 
     with build_flask_client(container) as flask_client:
         yield flask_client

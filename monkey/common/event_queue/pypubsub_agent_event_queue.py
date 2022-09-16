@@ -3,8 +3,8 @@ from typing import Type
 
 from pubsub.core import Publisher
 
+from common.agent_events import AbstractAgentEvent
 from common.event_queue import PyPubSubPublisherWrapper
-from common.events import AbstractAgentEvent
 
 from . import AgentEventSubscriber, IAgentEventQueue
 
