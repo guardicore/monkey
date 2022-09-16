@@ -16,8 +16,7 @@ from tests.data_for_tests.propagation_credentials import (
 )
 
 from common.base_models import InfectionMonkeyBaseModel
-from common.credentials import Credentials
-from common.credentials.credentials import get_plaintext
+from common.credentials import Credentials, get_plaintext
 
 
 @pytest.mark.parametrize(
