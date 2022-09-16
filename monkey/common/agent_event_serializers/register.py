@@ -1,4 +1,4 @@
-from common.events import CredentialsStolenEvent
+from common.agent_events import CredentialsStolenEvent
 
 from . import AgentEventSerializerRegistry, PydanticAgentEventSerializer
 

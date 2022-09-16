@@ -1,7 +1,7 @@
 import logging
 from typing import Generic, Type, TypeVar
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 from common.utils.code_utils import del_key
 
 from . import EVENT_TYPE_FIELD, IAgentEventSerializer, JSONSerializable

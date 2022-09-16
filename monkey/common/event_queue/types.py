@@ -1,5 +1,5 @@
 from typing import Callable
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 
 AgentEventSubscriber = Callable[[AbstractAgentEvent], None]
