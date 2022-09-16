@@ -299,14 +299,6 @@ publish  # common\event_queue\pypubsub_agent_event_queue.py
 subscribe_all_events  # common\event_queue\pypubsub_agent_event_queue.py
 
 
-# TODO: Remove once #2179 is closed
-EventSerializerRegistry
-serialize
-event
-deserialize
-serialized_event
-PydanticEventSerializer
-
 # TODO: Remove once #2180 is closed
 IEventRepository.save_event
 IEventRepository.get_events_by_type
