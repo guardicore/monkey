@@ -6,11 +6,7 @@ from netifaces import AF_INET, ifaddresses, interfaces
 
 
 def get_my_ip_addresses() -> Sequence[str]:
-    ip_list = []
-    for interface in interfaces():
-        addresses = ifaddresses(interface).get(AF_INET, [])
-        ip_list.extend([link["addr"] for link in addresses if link["addr"] != "127.0.0.1"])
-    return ip_list
+    return [str(interface.ip) for interface in get_network_interfaces()]
 
 
 def get_network_interfaces() -> List[IPv4Interface]:
