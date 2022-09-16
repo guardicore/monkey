@@ -14,7 +14,7 @@ JSONSerializable = Union[  # type: ignore[misc]
 ]
 
 
-class IEventSerializer(ABC):
+class IAgentEventSerializer(ABC):
     """
     Manages serialization and deserialization of events
     """

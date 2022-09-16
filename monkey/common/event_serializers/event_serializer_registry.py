@@ -1,6 +1,6 @@
 from typing import Type, Union
 
-from common.event_serializers import IEventSerializer
+from common.event_serializers import IAgentEventSerializer
 from common.events import AbstractAgentEvent
 
 
@@ -22,18 +22,20 @@ class EventSerializerRegistry:
         self._registry = {}
 
     def __setitem__(
-        self, event_class: Type[AbstractAgentEvent], event_serializer: IEventSerializer
+        self, event_class: Type[AbstractAgentEvent], event_serializer: IAgentEventSerializer
     ):
         if not issubclass(event_class, AbstractAgentEvent):
             raise TypeError(f"Event class must be of type: {AbstractAgentEvent.__name__}")
 
-        if not isinstance(event_serializer, IEventSerializer):
-            raise TypeError(f"Event serializer must be of type: {IEventSerializer.__name__}")
+        if not isinstance(event_serializer, IAgentEventSerializer):
+            raise TypeError(f"Event serializer must be of type: {IAgentEventSerializer.__name__}")
 
         self._registry[event_class] = event_serializer
         self._registry[event_class.__name__] = event_serializer
 
-    def __getitem__(self, event_class: Union[str, Type[AbstractAgentEvent]]) -> IEventSerializer:
+    def __getitem__(
+        self, event_class: Union[str, Type[AbstractAgentEvent]]
+    ) -> IAgentEventSerializer:
         if not (isinstance(event_class, str) or issubclass(event_class, AbstractAgentEvent)):
             raise TypeError(
                 f"Registry get key {event_class} must be of type: {AbstractAgentEvent.__name__} or "
