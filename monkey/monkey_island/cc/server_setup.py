@@ -23,11 +23,6 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 from common import DIContainer  # noqa: E402
-from common.agent_event_serializers import (  # noqa: E402
-    AgentEventSerializerRegistry,
-    register_common_agent_event_serializers,
-)
-from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -45,6 +40,7 @@ from monkey_island.cc.setup import (  # noqa: E402
     setup_agent_event_handlers,
     setup_island_event_handlers,
 )
+from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
@@ -71,7 +67,6 @@ def run_monkey_island():
     container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
-    _setup_agent_event_serializers(container)
 
     _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
 
@@ -139,13 +134,6 @@ def _initialize_di_container(
     initialize_services(container, data_dir)
 
     return container
-
-
-def _setup_agent_event_serializers(container: DIContainer):
-    agent_event_serializer_registry = AgentEventSerializerRegistry()
-    register_common_agent_event_serializers(agent_event_serializer_registry)
-
-    container.register_instance(AgentEventSerializerRegistry, agent_event_serializer_registry)
 
 
 def _initialize_mongodb_connection(start_mongodb: bool, data_dir: Path):

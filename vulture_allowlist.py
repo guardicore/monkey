@@ -304,7 +304,6 @@ IAgentEventRepository.save_event
 IAgentEventRepository.get_events_by_type
 IAgentEventRepository.get_events_by_tag
 IAgentEventRepository.get_events_by_source
-MongoEventRepository
 
 
 # pydantic base models

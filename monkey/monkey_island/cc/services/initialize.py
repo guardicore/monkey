@@ -12,6 +12,10 @@ from common.agent_configuration import (
 )
 from common.aws import AWSInstance
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
+from common.agent_event_serializers import (
+    AgentEventSerializerRegistry,
+    register_common_agent_event_serializers,
+)
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import IIslandEventQueue, PyPubSubIslandEventQueue
 from monkey_island.cc.repository import (
@@ -35,10 +39,10 @@ from monkey_island.cc.repository import (
     LocalStorageFileRepository,
     MongoAgentRepository,
     MongoCredentialsRepository,
+    MongoAgentEventRepository,
     MongoMachineRepository,
     MongoNodeRepository,
     RetrievalError,
-    StubbedEventRepository,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
@@ -68,6 +72,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
     container.register_instance(IAgentEventQueue, container.resolve(PyPubSubAgentEventQueue))
     container.register_instance(IIslandEventQueue, container.resolve(PyPubSubIslandEventQueue))
 
+    _setup_agent_event_serializers(container)
     _register_repositories(container, data_dir)
     _register_services(container)
 
@@ -107,8 +112,8 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     )
     container.register_instance(IUserRepository, container.resolve(JSONFileUserRepository))
 
-    # TODO: Replace with MongoEventRepository
-    container.register_instance(IAgentEventRepository, StubbedEventRepository())
+    # TODO: Figure out how to manage encryptor locking for MongoEventRepository
+    container.register_instance(IAgentEventRepository, container.resolve(MongoAgentEventRepository))
 
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
     container.register_instance(IMachineRepository, container.resolve(MongoMachineRepository))
@@ -130,9 +135,16 @@ def _build_agent_binary_repository():
     return agent_binary_repository
 
 
+def _setup_agent_event_serializers(container: DIContainer):
+    agent_event_serializer_registry = AgentEventSerializerRegistry()
+    register_common_agent_event_serializers(agent_event_serializer_registry)
+
+    container.register_instance(AgentEventSerializerRegistry, agent_event_serializer_registry)
+
+
 def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
     """
-    Logs all the hashes of the agent executables for debbuging ease
+    Logs all the hashes of the agent executables for debugging ease
 
     :param agent_binary_repository: Used to retrieve the agent binaries
     """
