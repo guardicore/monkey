@@ -20,7 +20,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/clear-simulation-data` endpoint. #2036
 - `/api/registration-status` endpoint. #2149
 - authentication to `/api/island/version`. #2109
-- `/api/events` endpoint. #2155
+- `/api/agent-events` endpoint. #2155, #2300
 - The ability to customize the file extension used by ransomware when
   encrypting files. #1242
 - `/api/agents` endpoint.
@@ -64,7 +64,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Tunneling to relays to provide better firewall evasion, faster Island
   connection times, unlimited hops, and a more resilient way for agents to call
   home. #2216, #1583
-- `/api/events` to `/api/agent-events`. #2300
 
 ### Removed
 - VSFTPD exploiter. #1533
