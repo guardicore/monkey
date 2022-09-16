@@ -6,7 +6,7 @@ import pytest
 from tests.common import StubDIContainer
 
 from common.event_queue import IAgentEventQueue
-from common.event_serializers import AgentEventSerializerRegistry, PydanticEventSerializer
+from common.event_serializers import AgentEventSerializerRegistry, PydanticAgentEventSerializer
 from common.events import AbstractAgentEvent
 from monkey_island.cc.resources import Events
 
@@ -90,9 +90,11 @@ def mock_agent_event_queue():
 @pytest.fixture
 def event_serializer_registry() -> AgentEventSerializerRegistry:
     event_serializer_registry = AgentEventSerializerRegistry()
-    event_serializer_registry[SomeAgentEvent] = PydanticEventSerializer(SomeAgentEvent)
-    event_serializer_registry[OtherAgentEvent] = PydanticEventSerializer(OtherAgentEvent)
-    event_serializer_registry[DifferentAgentEvent] = PydanticEventSerializer(DifferentAgentEvent)
+    event_serializer_registry[SomeAgentEvent] = PydanticAgentEventSerializer(SomeAgentEvent)
+    event_serializer_registry[OtherAgentEvent] = PydanticAgentEventSerializer(OtherAgentEvent)
+    event_serializer_registry[DifferentAgentEvent] = PydanticAgentEventSerializer(
+        DifferentAgentEvent
+    )
 
     return event_serializer_registry
 

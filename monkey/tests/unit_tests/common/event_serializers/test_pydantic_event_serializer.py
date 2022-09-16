@@ -8,7 +8,7 @@ from pydantic import Field
 from common.event_serializers import (
     EVENT_TYPE_FIELD,
     IAgentEventSerializer,
-    PydanticEventSerializer,
+    PydanticAgentEventSerializer,
 )
 from common.events import AbstractAgentEvent
 
@@ -31,7 +31,7 @@ class PydanticEvent(AbstractAgentEvent):
 
 @pytest.fixture
 def pydantic_event_serializer() -> IAgentEventSerializer:
-    return PydanticEventSerializer(PydanticEvent)
+    return PydanticAgentEventSerializer(PydanticEvent)
 
 
 @pytest.mark.parametrize(

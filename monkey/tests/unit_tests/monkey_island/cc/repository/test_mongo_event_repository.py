@@ -6,7 +6,7 @@ import mongomock
 import pytest
 from pydantic import Field
 
-from common.event_serializers import AgentEventSerializerRegistry, PydanticEventSerializer
+from common.event_serializers import AgentEventSerializerRegistry, PydanticAgentEventSerializer
 from common.events import AbstractAgentEvent
 from monkey_island.cc.repository import (
     IEventRepository,
@@ -36,8 +36,8 @@ EVENTS: List[AbstractAgentEvent] = [
 @pytest.fixture
 def event_serializer_registry() -> AgentEventSerializerRegistry:
     registry = AgentEventSerializerRegistry()
-    registry[FakeAgentEvent] = PydanticEventSerializer(FakeAgentEvent)
-    registry[FakeAgentItemEvent] = PydanticEventSerializer(FakeAgentItemEvent)
+    registry[FakeAgentEvent] = PydanticAgentEventSerializer(FakeAgentEvent)
+    registry[FakeAgentItemEvent] = PydanticAgentEventSerializer(FakeAgentItemEvent)
     return registry
 
 
