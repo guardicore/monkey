@@ -11,9 +11,9 @@ from common.agent_event_serializers import (
 )
 from common.event_queue import IAgentEventQueue
 from common.events import AbstractAgentEvent
-from monkey_island.cc.resources import Events
+from monkey_island.cc.resources import AgentEvents
 
-EVENTS_URL = Events.urls[0]
+EVENTS_URL = AgentEvents.urls[0]
 
 
 class SomeAgentEvent(AbstractAgentEvent):
