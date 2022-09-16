@@ -6,8 +6,7 @@ from time import sleep
 import requests
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.event_serializers import EventSerializerRegistry
-from common.event_serializers.i_event_serializer import JSONSerializable
+from common.event_serializers import EventSerializerRegistry, JSONSerializable
 from common.events import AbstractAgentEvent
 from infection_monkey.utils.threading import create_daemon_thread
 
