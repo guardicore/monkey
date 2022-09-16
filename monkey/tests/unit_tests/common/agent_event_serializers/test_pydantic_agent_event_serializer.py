@@ -5,7 +5,7 @@ from uuid import UUID
 import pytest
 from pydantic import Field
 
-from common.event_serializers import (
+from common.agent_event_serializers import (
     EVENT_TYPE_FIELD,
     IAgentEventSerializer,
     PydanticAgentEventSerializer,

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from pydantic import Field
 
-from common.event_serializers import AgentEventSerializerRegistry, IAgentEventSerializer
+from common.agent_event_serializers import AgentEventSerializerRegistry, IAgentEventSerializer
 from common.events import AbstractAgentEvent
 
 
