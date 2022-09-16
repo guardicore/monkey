@@ -64,6 +64,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Tunneling to relays to provide better firewall evasion, faster Island
   connection times, unlimited hops, and a more resilient way for agents to call
   home. #2216, #1583
+- `/api/events` to `/api/agent-events`. #2300
 
 ### Removed
 - VSFTPD exploiter. #1533
