@@ -9,11 +9,11 @@ from typing import List
 
 from pubsub.core import Publisher
 
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
-from common.event_serializers import (
+from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
+from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.events import CredentialsStolenEvent
 from common.network.network_utils import address_to_ip_port
 from common.utils.argparse_types import positive_int
