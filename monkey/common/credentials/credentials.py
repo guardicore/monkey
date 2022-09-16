@@ -2,20 +2,12 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-from pydantic import SecretBytes, SecretStr
-
 from ..base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
 from . import LMHash, NTHash, Password, SSHKeypair, Username
+from .encoding import SecretEncodingConfig
 
 Secret = Union[Password, LMHash, NTHash, SSHKeypair]
 Identity = Username
-
-
-def get_plaintext(secret: Union[SecretStr, SecretBytes, None, str]) -> Optional[str]:
-    if isinstance(secret, (SecretStr, SecretBytes)):
-        return secret.get_secret_value()
-    else:
-        return secret
 
 
 class Credentials(InfectionMonkeyBaseModel):
@@ -27,9 +19,5 @@ class Credentials(InfectionMonkeyBaseModel):
     secret: Optional[Secret]
     """Secret part of credentials, like a password or a hash"""
 
-    class Config(InfectionMonkeyModelConfig):
-        json_encoders = {
-            # This makes secrets dumpable to json, but not loggable
-            SecretStr: get_plaintext,
-            SecretBytes: get_plaintext,
-        }
+    class Config(SecretEncodingConfig, InfectionMonkeyModelConfig):
+        pass
