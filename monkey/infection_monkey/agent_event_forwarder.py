@@ -84,7 +84,7 @@ class BatchingAgentEventForwarder:
             events.append(self._queue.get(block=False))
 
         try:
-            logger.debug(f"Sending events to Island at {self._server_address}: {events}")
+            logger.debug(f"Sending Agent events to Island at {self._server_address}: {events}")
             requests.post(  # noqa: DUO123
                 EVENTS_API_URL % (self._server_address,),
                 json=events,
