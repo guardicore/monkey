@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T", bound=AbstractAgentEvent)
 
 
-class PydanticEventSerializer(IAgentEventSerializer, Generic[T]):
+class PydanticAgentEventSerializer(IAgentEventSerializer, Generic[T]):
     def __init__(self, event_class: Type[T]):
         self._event_class = event_class
 
