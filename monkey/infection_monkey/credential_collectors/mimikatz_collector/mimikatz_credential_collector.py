@@ -1,9 +1,9 @@
 import logging
 from typing import Sequence
 
+from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventQueue
-from common.events import CredentialsStolenEvent
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
 from infection_monkey.utils.ids import get_agent_id

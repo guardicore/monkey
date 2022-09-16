@@ -3,9 +3,9 @@ import logging
 import os
 from typing import Dict, Iterable, Sequence
 
+from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventQueue
-from common.events import CredentialsStolenEvent
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
