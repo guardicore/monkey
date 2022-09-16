@@ -7,7 +7,7 @@ from tests.data_for_tests.propagation_credentials import (
 )
 from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
-from common.events import CredentialsStolenEvent
+from common.agent_events import CredentialsStolenEvent
 
 TEST_EVENT = CredentialsStolenEvent(stolen_credentials=CREDENTIALS, source=AGENT_ID)
 
