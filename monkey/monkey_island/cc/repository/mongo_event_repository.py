@@ -2,7 +2,7 @@ from typing import Any, Dict, MutableMapping, Sequence, Type
 
 from pymongo import MongoClient
 
-from common.event_serializers import EVENT_TYPE_FIELD, EventSerializerRegistry
+from common.event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.events import AbstractAgentEvent
 from common.types import AgentID
 from monkey_island.cc.repository import IEventRepository
@@ -14,7 +14,9 @@ from .consts import MONGO_OBJECT_ID_KEY
 class MongoEventRepository(IEventRepository):
     """A repository for storing and retrieving events in MongoDB"""
 
-    def __init__(self, mongo_client: MongoClient, serializer_registry: EventSerializerRegistry):
+    def __init__(
+        self, mongo_client: MongoClient, serializer_registry: AgentEventSerializerRegistry
+    ):
         self._events_collection = mongo_client.monkey_island.events
         self._serializers = serializer_registry
 

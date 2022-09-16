@@ -24,7 +24,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
 
 from common import DIContainer  # noqa: E402
 from common.event_serializers import (  # noqa: E402
-    EventSerializerRegistry,
+    AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
 from common.version import get_version  # noqa: E402
@@ -140,10 +140,10 @@ def _initialize_di_container(
 
 
 def _setup_agent_event_serializers(container: DIContainer):
-    agent_event_serializer_registry = EventSerializerRegistry()
+    agent_event_serializer_registry = AgentEventSerializerRegistry()
     register_common_agent_event_serializers(agent_event_serializer_registry)
 
-    container.register_instance(EventSerializerRegistry, agent_event_serializer_registry)
+    container.register_instance(AgentEventSerializerRegistry, agent_event_serializer_registry)
 
 
 def _initialize_mongodb_connection(start_mongodb: bool, data_dir: Path):
