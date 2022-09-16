@@ -11,8 +11,8 @@ from common import AgentRegistrationData
 from common.agent_configuration import AgentConfiguration
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
+from common.network.network_utils import get_network_interfaces
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
-from infection_monkey.network.info import get_network_interfaces
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 

@@ -5,12 +5,12 @@ from itertools import chain, product
 from typing import List
 
 from common.network.network_range import NetworkRange
+from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import IAgentConfigurationRepository, ICredentialsRepository
-from monkey_island.cc.server_utils.network_utils import get_ip_addresses, get_subnets
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
@@ -175,7 +175,7 @@ class ReportService:
     @staticmethod
     def get_island_cross_segment_issues():
         issues = []
-        island_ips = get_ip_addresses()
+        island_ips = get_my_ip_addresses()
         for monkey in mongo.db.monkey.find(
             {"tunnel": {"$exists": False}}, {"tunnel": 1, "guid": 1, "hostname": 1}
         ):
@@ -194,7 +194,9 @@ class ReportService:
                         "type": "island_cross_segment",
                         "machine": monkey["hostname"],
                         "networks": [str(subnet) for subnet in monkey_subnets],
-                        "server_networks": [str(subnet) for subnet in get_subnets()],
+                        "server_networks": [
+                            str(interface.network) for interface in get_network_interfaces()
+                        ],
                     }
                 )
 

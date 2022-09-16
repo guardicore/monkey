@@ -1,4 +1,26 @@
-from typing import Optional, Tuple
+import ipaddress
+from ipaddress import IPv4Interface
+from typing import List, Optional, Sequence, Tuple
+
+from netifaces import AF_INET, ifaddresses, interfaces
+
+
+def get_my_ip_addresses() -> Sequence[str]:
+    return [str(interface.ip) for interface in get_network_interfaces()]
+
+
+def get_network_interfaces() -> List[IPv4Interface]:
+    local_interfaces = []
+    for interface in interfaces():
+        addresses = ifaddresses(interface).get(AF_INET, [])
+        local_interfaces.extend(
+            [
+                ipaddress.IPv4Interface(link["addr"] + "/" + link["netmask"])
+                for link in addresses
+                if link["addr"] != "127.0.0.1"
+            ]
+        )
+    return local_interfaces
 
 
 # TODO: `address_to_port()` should return the port as an integer.

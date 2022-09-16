@@ -27,6 +27,7 @@ from common.event_serializers import (  # noqa: E402
     EventSerializerRegistry,
     register_common_agent_event_serializers,
 )
+from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -37,7 +38,6 @@ from monkey_island.cc.server_utils.consts import (  # noqa: E402
     MONKEY_ISLAND_ABS_PATH,
 )
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
-from monkey_island.cc.server_utils.network_utils import get_ip_addresses  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
 from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
 from monkey_island.cc.setup import (  # noqa: E402
@@ -106,7 +106,7 @@ def _configure_logging(config_options):
 def _collect_system_info() -> Tuple[Sequence[str], Deployment, Version]:
     deployment = _get_deployment()
     version = Version(get_version(), deployment)
-    return (get_ip_addresses(), deployment, version)
+    return (get_my_ip_addresses(), deployment, version)
 
 
 def _get_deployment() -> Deployment:

@@ -7,8 +7,9 @@ import requests
 from urllib3 import disable_warnings
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
+from common.network.network_utils import get_my_ip_addresses
 from infection_monkey.config import GUID
-from infection_monkey.network.info import get_host_subnets, local_ips
+from infection_monkey.network.info import get_host_subnets
 from infection_monkey.utils import agent_process
 
 disable_warnings()  # noqa DUO131
@@ -38,7 +39,7 @@ class ControlClient:
         monkey = {
             "guid": GUID,
             "hostname": hostname,
-            "ip_addresses": local_ips(),
+            "ip_addresses": get_my_ip_addresses(),
             "networks": get_host_subnets(),
             "description": " ".join(platform.uname()),
             "parent": parent,
