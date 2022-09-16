@@ -1,6 +1,6 @@
 from typing import Type, Union
 
-from common.event_serializers import IAgentEventSerializer
+from common.agent_event_serializers import IAgentEventSerializer
 from common.events import AbstractAgentEvent
 
 
