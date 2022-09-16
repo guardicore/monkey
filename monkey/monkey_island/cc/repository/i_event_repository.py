@@ -7,7 +7,7 @@ from common.types import AgentID
 T = TypeVar("T", bound=AbstractAgentEvent)
 
 
-class IEventRepository(ABC):
+class IAgentEventRepository(ABC):
     """A repository used to store and retrieve event objects"""
 
     @abstractmethod

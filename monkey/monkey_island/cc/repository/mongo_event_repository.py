@@ -5,13 +5,13 @@ from pymongo import MongoClient
 from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.events import AbstractAgentEvent
 from common.types import AgentID
-from monkey_island.cc.repository import IEventRepository
+from monkey_island.cc.repository import IAgentEventRepository
 
 from . import RemovalError, RetrievalError, StorageError
 from .consts import MONGO_OBJECT_ID_KEY
 
 
-class MongoEventRepository(IEventRepository):
+class MongoEventRepository(IAgentEventRepository):
     """A repository for storing and retrieving events in MongoDB"""
 
     def __init__(
