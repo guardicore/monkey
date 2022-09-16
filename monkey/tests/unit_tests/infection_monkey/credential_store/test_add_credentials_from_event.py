@@ -1,8 +1,8 @@
 from unittest.mock import MagicMock
 from uuid import UUID
 
+from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, Password, Username
-from common.events import CredentialsStolenEvent
 from infection_monkey.credential_repository import (
     IPropagationCredentialsRepository,
     add_credentials_from_event_to_propagation_credentials_repository,

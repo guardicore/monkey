@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventQueue
-from common.events import CredentialsStolenEvent
 from infection_monkey.credential_collectors import MimikatzCredentialCollector
 from infection_monkey.credential_collectors.mimikatz_collector.mimikatz_credential_collector import (  # noqa: E501
     MIMIKATZ_EVENT_TAGS,

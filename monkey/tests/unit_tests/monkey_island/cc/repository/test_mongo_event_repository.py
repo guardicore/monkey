@@ -10,7 +10,7 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     PydanticAgentEventSerializer,
 )
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repository import (
     IAgentEventRepository,
     MongoEventRepository,

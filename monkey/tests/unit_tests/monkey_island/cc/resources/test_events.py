@@ -9,8 +9,8 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     PydanticAgentEventSerializer,
 )
+from common.agent_events import AbstractAgentEvent
 from common.event_queue import IAgentEventQueue
-from common.events import AbstractAgentEvent
 from monkey_island.cc.resources import AgentEvents
 
 EVENTS_URL = AgentEvents.urls[0]
