@@ -28,6 +28,7 @@ pypubsub = "*"
 pydantic = "*"
 egg-timer = "*"
 cryptography = "==37.0.4"
+bcrypt = "==3.2.2"
 
 [dev-packages]
 ldap3 = "*"
