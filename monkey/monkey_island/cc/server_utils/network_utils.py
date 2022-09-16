@@ -3,7 +3,7 @@ from typing import Sequence
 
 from ring import lru
 
-from common.network.network_utils import get_local_interfaces, get_my_ip_addresses
+from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 
 
 @lru(maxsize=1)
@@ -17,4 +17,4 @@ def get_cached_local_ip_addresses() -> Sequence[IPv4Address]:
 # change, the Island process needs to be restarted.
 @lru(maxsize=1)
 def get_cached_local_interfaces() -> Sequence[IPv4Interface]:
-    return get_local_interfaces()
+    return get_network_interfaces()

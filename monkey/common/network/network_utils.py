@@ -13,7 +13,7 @@ def get_my_ip_addresses() -> Sequence[str]:
     return ip_list
 
 
-def get_local_interfaces() -> List[IPv4Interface]:
+def get_network_interfaces() -> List[IPv4Interface]:
     local_interfaces = []
     for interface in interfaces():
         addresses = ifaddresses(interface).get(AF_INET, [])

@@ -11,7 +11,7 @@ from common import AgentRegistrationData
 from common.agent_configuration import AgentConfiguration
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
-from common.network.network_utils import get_local_interfaces
+from common.network.network_utils import get_network_interfaces
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
@@ -34,7 +34,7 @@ class ControlChannel(IControlChannel):
             # parent_id=parent,
             parent_id=None,  # None for now, until we change GUID to UUID
             cc_server=self._control_channel_server,
-            network_interfaces=get_local_interfaces(),
+            network_interfaces=get_network_interfaces(),
         )
 
         try:

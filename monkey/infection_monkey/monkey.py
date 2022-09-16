@@ -17,8 +17,8 @@ from common.event_serializers import (
 from common.events import CredentialsStolenEvent
 from common.network.network_utils import (
     address_to_ip_port,
-    get_local_interfaces,
     get_my_ip_addresses,
+    get_network_interfaces,
 )
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -224,7 +224,7 @@ class InfectionMonkey:
         return agent_event_serializer_registry
 
     def _build_master(self, relay_servers: List[str]):
-        local_network_interfaces = get_local_interfaces()
+        local_network_interfaces = get_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
         propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
