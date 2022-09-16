@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_TIME_PERIOD_SECONDS = 5
-EVENTS_API_URL = "https://%s/api/events"
+EVENTS_API_URL = "https://%s/api/agent-events"
 
 
 class AgentEventForwarder:
