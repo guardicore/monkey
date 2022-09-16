@@ -4,12 +4,12 @@ from common.event_serializers import IAgentEventSerializer
 from common.events import AbstractAgentEvent
 
 
-class EventSerializerRegistry:
+class AgentEventSerializerRegistry:
     """
     Registry for event serializers using event class.
 
     Example:
-        event_serializer_registry = EventSerializerRegistry()
+        event_serializer_registry = AgentEventSerializerRegistry()
         event_serializer_registry[MyEvent] = MyEventSerializer()
 
         my_event_dict = {"type": "MyEvent", "data": "123"}
