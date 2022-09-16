@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from flask import request
 
+from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.event_queue import IAgentEventQueue
-from common.event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)

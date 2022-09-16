@@ -2,7 +2,7 @@ from typing import Any, Dict, MutableMapping, Sequence, Type
 
 from pymongo import MongoClient
 
-from common.event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
+from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.events import AbstractAgentEvent
 from common.types import AgentID
 from monkey_island.cc.repository import IEventRepository
