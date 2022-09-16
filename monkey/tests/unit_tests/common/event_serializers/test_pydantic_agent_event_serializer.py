@@ -30,7 +30,7 @@ class PydanticEvent(AbstractAgentEvent):
 
 
 @pytest.fixture
-def pydantic_event_serializer() -> IAgentEventSerializer:
+def pydantic_agent_event_serializer() -> IAgentEventSerializer:
     return PydanticAgentEventSerializer(PydanticEvent)
 
 
@@ -38,28 +38,30 @@ def pydantic_event_serializer() -> IAgentEventSerializer:
     "event",
     [NotAgentEvent(some_field=1, other_field=2.0), SomeAgentEvent(source=AGENT_ID, bogus=2)],
 )
-def test_pydantic_event_serializer__serialize_wrong_type(pydantic_event_serializer, event):
+def test_pydantic_agent_event_serializer__serialize_wrong_type(
+    pydantic_agent_event_serializer, event
+):
     with pytest.raises(TypeError):
-        pydantic_event_serializer.serialize(event)
+        pydantic_agent_event_serializer.serialize(event)
 
 
-def test_pydantic_event_serializer__deserialize_wrong_type(pydantic_event_serializer):
+def test_pydantic_agent_event_serializer__deserialize_wrong_type(pydantic_agent_event_serializer):
     with pytest.raises(TypeError):
-        pydantic_event_serializer.deserialize("bla")
+        pydantic_agent_event_serializer.deserialize("bla")
 
 
-def test_pydanitc_event_serializer__de_serialize(pydantic_event_serializer):
+def test_pydantic_agent_event_serializer__de_serialize(pydantic_agent_event_serializer):
     pydantic_event = PydanticEvent(source=AGENT_ID, some_field="some_field")
 
-    serialized_event = pydantic_event_serializer.serialize(pydantic_event)
-    deserialized_object = pydantic_event_serializer.deserialize(serialized_event)
+    serialized_event = pydantic_agent_event_serializer.serialize(pydantic_event)
+    deserialized_object = pydantic_agent_event_serializer.deserialize(serialized_event)
 
     assert type(serialized_event) != type(deserialized_object)
     assert deserialized_object == pydantic_event
 
 
-def test_pydanitc_event_serializer__serialize_inclued_type(pydantic_event_serializer):
+def test_pydantic_event_serializer__serialize_inclued_type(pydantic_agent_event_serializer):
     pydantic_event = PydanticEvent(source=AGENT_ID, some_field="some_field")
 
-    serialized_event = pydantic_event_serializer.serialize(pydantic_event)
+    serialized_event = pydantic_agent_event_serializer.serialize(pydantic_event)
     assert serialized_event[EVENT_TYPE_FIELD] == PydanticEvent.__name__
