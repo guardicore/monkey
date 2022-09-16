@@ -27,6 +27,9 @@ paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/Vaka
 pypubsub = "*"
 pydantic = "*"
 egg-timer = "*"
+# These are the last versions of bcrypt and cryptography that have
+# manylinux2010 wheels. We need these locked to 3.2.2 and 37.0.4 respectively
+# until we can upgrade our build environment.
 cryptography = "==37.0.4"
 bcrypt = "==3.2.2"
 
