@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from pydantic import Field
 
-from common.event_serializers import EventSerializerRegistry, IAgentEventSerializer
+from common.event_serializers import AgentEventSerializerRegistry, IAgentEventSerializer
 from common.events import AbstractAgentEvent
 
 
@@ -25,7 +25,7 @@ OTHER_SERIALIZER = MagicMock(spec=IAgentEventSerializer)
 
 @pytest.fixture
 def event_serializer_registry():
-    event_serializer_registry = EventSerializerRegistry()
+    event_serializer_registry = AgentEventSerializerRegistry()
 
     event_serializer_registry[SomeEvent] = SOME_SERIALIZER
     event_serializer_registry[OtherEvent] = OTHER_SERIALIZER

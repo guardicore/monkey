@@ -6,7 +6,7 @@ import pytest
 from tests.common import StubDIContainer
 
 from common.event_queue import IAgentEventQueue
-from common.event_serializers import EventSerializerRegistry, PydanticEventSerializer
+from common.event_serializers import AgentEventSerializerRegistry, PydanticEventSerializer
 from common.events import AbstractAgentEvent
 from monkey_island.cc.resources import Events
 
@@ -88,8 +88,8 @@ def mock_agent_event_queue():
 
 
 @pytest.fixture
-def event_serializer_registry() -> EventSerializerRegistry:
-    event_serializer_registry = EventSerializerRegistry()
+def event_serializer_registry() -> AgentEventSerializerRegistry:
+    event_serializer_registry = AgentEventSerializerRegistry()
     event_serializer_registry[SomeAgentEvent] = PydanticEventSerializer(SomeAgentEvent)
     event_serializer_registry[OtherAgentEvent] = PydanticEventSerializer(OtherAgentEvent)
     event_serializer_registry[DifferentAgentEvent] = PydanticEventSerializer(DifferentAgentEvent)
@@ -102,7 +102,7 @@ def flask_client(build_flask_client, mock_agent_event_queue, event_serializer_re
     container = StubDIContainer()
 
     container.register_instance(IAgentEventQueue, mock_agent_event_queue)
-    container.register_instance(EventSerializerRegistry, event_serializer_registry)
+    container.register_instance(AgentEventSerializerRegistry, event_serializer_registry)
 
     with build_flask_client(container) as flask_client:
         yield flask_client
