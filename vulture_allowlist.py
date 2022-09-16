@@ -18,10 +18,10 @@ from monkey_island.cc.repository import (
     StubbedEventRepository,
 )
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
+from monkey_island.cc.repository.i_agent_event_repository import IAgentEventRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
 from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
-from monkey_island.cc.repository.i_event_repository import IAgentEventRepository
 from monkey_island.cc.repository.i_log_repository import ILogRepository
 from monkey_island.cc.repository.i_machine_repository import IMachineRepository
 from monkey_island.cc.repository.i_report_repository import IReportRepository
