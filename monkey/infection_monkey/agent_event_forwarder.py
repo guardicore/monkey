@@ -6,7 +6,7 @@ from time import sleep
 import requests
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.event_serializers import EventSerializerRegistry, JSONSerializable
+from common.event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.events import AbstractAgentEvent
 from infection_monkey.utils.threading import create_daemon_thread
 
@@ -23,7 +23,7 @@ class AgentEventForwarder:
     """
 
     def __init__(
-        self, server_address: str, agent_event_serializer_registry: EventSerializerRegistry
+        self, server_address: str, agent_event_serializer_registry: AgentEventSerializerRegistry
     ):
         self._server_address = server_address
         self._agent_event_serializer_registry = agent_event_serializer_registry
