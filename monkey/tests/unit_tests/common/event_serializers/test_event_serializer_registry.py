@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from pydantic import Field
 
-from common.event_serializers import EventSerializerRegistry, IEventSerializer
+from common.event_serializers import EventSerializerRegistry, IAgentEventSerializer
 from common.events import AbstractAgentEvent
 
 
@@ -19,8 +19,8 @@ class NoneEvent(AbstractAgentEvent):
     none_param: float = Field(default=1.0)
 
 
-SOME_SERIALIZER = MagicMock(spec=IEventSerializer)
-OTHER_SERIALIZER = MagicMock(spec=IEventSerializer)
+SOME_SERIALIZER = MagicMock(spec=IAgentEventSerializer)
+OTHER_SERIALIZER = MagicMock(spec=IAgentEventSerializer)
 
 
 @pytest.fixture
@@ -50,7 +50,7 @@ def test_event_serializer_registry_set_unsupported_type(event_serializer_registr
 
 def test_event_serializer_registry_set_unsupported_type_key(event_serializer_registry):
     with pytest.raises(TypeError):
-        event_serializer_registry["BogusKey"] = MagicMock(spec=IEventSerializer)
+        event_serializer_registry["BogusKey"] = MagicMock(spec=IAgentEventSerializer)
 
 
 def test_event_serializer_registry_get_unsuported_type(event_serializer_registry):

@@ -5,7 +5,11 @@ from uuid import UUID
 import pytest
 from pydantic import Field
 
-from common.event_serializers import EVENT_TYPE_FIELD, IEventSerializer, PydanticEventSerializer
+from common.event_serializers import (
+    EVENT_TYPE_FIELD,
+    IAgentEventSerializer,
+    PydanticEventSerializer,
+)
 from common.events import AbstractAgentEvent
 
 AGENT_ID = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
@@ -26,7 +30,7 @@ class PydanticEvent(AbstractAgentEvent):
 
 
 @pytest.fixture
-def pydantic_event_serializer() -> IEventSerializer:
+def pydantic_event_serializer() -> IAgentEventSerializer:
     return PydanticEventSerializer(PydanticEvent)
 
 
