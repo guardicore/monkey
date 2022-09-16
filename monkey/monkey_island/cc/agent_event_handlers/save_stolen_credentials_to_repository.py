@@ -1,6 +1,6 @@
 import logging
 
-from common.events import CredentialsStolenEvent
+from common.agent_events import CredentialsStolenEvent
 from monkey_island.cc.repository import ICredentialsRepository, StorageError
 
 logger = logging.getLogger(__name__)

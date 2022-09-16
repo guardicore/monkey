@@ -1,6 +1,6 @@
 from common import DIContainer
+from common.agent_events import CredentialsStolenEvent
 from common.event_queue import IAgentEventQueue
-from common.events import CredentialsStolenEvent
 from monkey_island.cc.agent_event_handlers import (
     save_event_to_event_repository,
     save_stolen_credentials_to_repository,

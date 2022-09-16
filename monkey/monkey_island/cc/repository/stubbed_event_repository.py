@@ -1,6 +1,6 @@
 from typing import Sequence, Type, TypeVar
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 from common.types import AgentID
 
 from . import IAgentEventRepository

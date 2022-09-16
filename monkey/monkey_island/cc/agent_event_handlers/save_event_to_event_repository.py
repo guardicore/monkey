@@ -1,6 +1,6 @@
 import logging
 
-from common.events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repository import IAgentEventRepository, StorageError
 
 logger = logging.getLogger(__name__)
