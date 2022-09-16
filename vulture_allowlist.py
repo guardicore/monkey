@@ -12,7 +12,11 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
-from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
+from monkey_island.cc.repository import (
+    MongoAgentEventRepository,
+    MongoAgentRepository,
+    MongoMachineRepository,
+)
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
 from monkey_island.cc.repository.i_agent_event_repository import IAgentEventRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
@@ -299,6 +303,7 @@ IAgentEventRepository.save_event
 IAgentEventRepository.get_events_by_type
 IAgentEventRepository.get_events_by_tag
 IAgentEventRepository.get_events_by_source
+MongoAgentEventRepository
 
 
 # pydantic base models

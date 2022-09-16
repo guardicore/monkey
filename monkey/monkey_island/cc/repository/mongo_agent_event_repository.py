@@ -56,7 +56,7 @@ def decrypt_event(
     return event_data
 
 
-class MongoEventRepository(IAgentEventRepository):
+class MongoAgentEventRepository(IAgentEventRepository):
     """A repository for storing and retrieving events in MongoDB"""
 
     def __init__(

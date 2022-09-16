@@ -13,7 +13,7 @@ from common.agent_event_serializers import (
 from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repository import (
     IAgentEventRepository,
-    MongoEventRepository,
+    MongoAgentEventRepository,
     RemovalError,
     RetrievalError,
     StorageError,
@@ -68,7 +68,7 @@ def encryptor(key_file):
 
 @pytest.fixture
 def mongo_repository(mongo_client, event_serializer_registry, encryptor) -> IAgentEventRepository:
-    return MongoEventRepository(mongo_client, event_serializer_registry, encryptor)
+    return MongoAgentEventRepository(mongo_client, event_serializer_registry, encryptor)
 
 
 @pytest.fixture
@@ -88,9 +88,9 @@ def error_raising_mongo_client(mongo_client) -> mongomock.MongoClient:
 
 @pytest.fixture
 def error_raising_mongo_repository(
-    error_raising_mongo_client, event_serializer_registry, encryptor
+    error_raising_mongo_client, event_serializer_registry
 ) -> IAgentEventRepository:
-    return MongoEventRepository(error_raising_mongo_client, event_serializer_registry, encryptor)
+    return MongoAgentEventRepository(error_raising_mongo_client, event_serializer_registry, encryptor)
 
 
 def assert_same_contents(a, b):
@@ -99,7 +99,7 @@ def assert_same_contents(a, b):
         assert item in b
 
 
-def test_mongo_event_repository__save_event(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__save_event(mongo_repository: IAgentEventRepository):
     event = FakeAgentEvent(source=uuid.uuid4())
     mongo_repository.save_event(event)
     events = mongo_repository.get_events()
@@ -107,7 +107,7 @@ def test_mongo_event_repository__save_event(mongo_repository: IAgentEventReposit
     assert event in events
 
 
-def test_mongo_event_repository__save_event_raises(
+def test_mongo_agent_event_repository__save_event_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     event = FakeAgentEvent(source=uuid.uuid4())
@@ -116,48 +116,50 @@ def test_mongo_event_repository__save_event_raises(
         error_raising_mongo_repository.save_event(event)
 
 
-def test_mongo_event_repository__get_events(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events(mongo_repository: IAgentEventRepository):
     events = mongo_repository.get_events()
 
     assert_same_contents(events, EVENTS)
 
 
-def test_mongo_event_repository__get_events_raises(
+def test_mongo_agent_event_repository__get_events_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
         error_raising_mongo_repository.get_events()
 
 
-def test_mongo_event_repository__get_events_by_type(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events_by_type(mongo_repository: IAgentEventRepository):
     events = mongo_repository.get_events_by_type(FakeAgentItemEvent)
 
     expected_events = [EVENTS[3]]
     assert_same_contents(events, expected_events)
 
 
-def test_mongo_event_repository__get_events_by_type_raises(
+def test_mongo_agent_event_repository__get_events_by_type_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
         error_raising_mongo_repository.get_events_by_type(FakeAgentItemEvent)
 
 
-def test_mongo_event_repository__get_events_by_tag(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events_by_tag(mongo_repository: IAgentEventRepository):
     events = mongo_repository.get_events_by_tag("bar")
 
     expected_events = [EVENTS[1], EVENTS[2]]
     assert_same_contents(events, expected_events)
 
 
-def test_mongo_event_repository__get_events_by_tag_raises(
+def test_mongo_agent_event_repository__get_events_by_tag_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
         error_raising_mongo_repository.get_events_by_tag("bar")
 
 
-def test_mongo_event_repository__get_events_by_source(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events_by_source(
+    mongo_repository: IAgentEventRepository,
+):
     source_event = EVENTS[2]
     events = mongo_repository.get_events_by_source(source_event.source)
 
@@ -165,7 +167,7 @@ def test_mongo_event_repository__get_events_by_source(mongo_repository: IAgentEv
     assert_same_contents(events, expected_events)
 
 
-def test_mongo_event_repository__get_events_by_source_raises(
+def test_mongo_agent_event_repository__get_events_by_source_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
@@ -173,7 +175,7 @@ def test_mongo_event_repository__get_events_by_source_raises(
         error_raising_mongo_repository.get_events_by_source(source_event.source)
 
 
-def test_mongo_event_repository__reset(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__reset(mongo_repository: IAgentEventRepository):
     initial_events = mongo_repository.get_events()
     assert initial_events
 
@@ -183,7 +185,7 @@ def test_mongo_event_repository__reset(mongo_repository: IAgentEventRepository):
     assert not events
 
 
-def test_mongo_event_repository__reset_raises(
+def test_mongo_agent_event_repository__reset_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RemovalError):

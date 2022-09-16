@@ -10,12 +10,12 @@ from common.agent_configuration import (
     DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     AgentConfiguration,
 )
-from common.aws import AWSInstance
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
+from common.aws import AWSInstance
+from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import IIslandEventQueue, PyPubSubIslandEventQueue
 from monkey_island.cc.repository import (
@@ -34,8 +34,8 @@ from monkey_island.cc.repository import (
     IUserRepository,
     JSONFileUserRepository,
     LocalStorageFileRepository,
+    MongoAgentEventRepository,
     MongoCredentialsRepository,
-    MongoEventRepository,
     RetrievalError,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
@@ -106,8 +106,8 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     )
     container.register_instance(IUserRepository, container.resolve(JSONFileUserRepository))
 
-    # TODO: Figure out how to manage encryptor locking for MongoEventRepository
-    container.register_instance(IAgentEventRepository, container.resolve(MongoEventRepository))
+    # TODO: Figure out how to manage encryptor locking for MongoAgentEventRepository
+    container.register_instance(IAgentEventRepository, container.resolve(MongoAgentEventRepository))
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
