@@ -11,6 +11,9 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 3 Hadoop](#_Toc526517183)<br>
 [Nr. 9 Tunneling M1](#_Toc536021462)<br>
 [Nr. 10 Tunneling M2](#_Toc536021463)<br>
+[Nr. 11 Tunneling M1](#_Toc536021464)<br>
+[Nr. 12 Tunneling M2](#_Toc536021465)<br>
+[Nr. 13 Tunneling M2](#_Toc536021466)<br>
 [Nr. 11 SSH key steal](#_Toc526517190)<br>
 [Nr. 12 SSH key steal](#_Toc526517191)<br>
 [Nr. 13 RDP grinder](#_Toc526517192)<br>
@@ -319,7 +322,7 @@ Update all requirements using deployment script:<br>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021463" class="anchor"></span>Nr. <strong>11</strong> Tunneling M3</p>
+<th><p><span id="_Toc536021464" class="anchor"></span>Nr. <strong>11</strong> Tunneling M3</p>
 <p>(10.2.0.11)</p></th>
 <th>(Exploitable)</th>
 </tr>
@@ -358,7 +361,7 @@ This prevents ssh exploitation, but allows tunneling.</td>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021463" class="anchor"></span>Nr. <strong>12</strong> Tunneling M4</p>
+<th><p><span id="_Toc536021465" class="anchor"></span>Nr. <strong>12</strong> Tunneling M4</p>
 <p>(10.2.0.12)</p></th>
 <th>(Exploitable)</th>
 </tr>
@@ -390,7 +393,7 @@ This prevents ssh exploitation, but allows tunneling.</td>
 <table>
 <thead>
 <tr class="header">
-<th><p><span id="_Toc536021463" class="anchor"></span>Nr. <strong>13</strong> Tunneling M5</p>
+<th><p><span id="_Toc536021466" class="anchor"></span>Nr. <strong>13</strong> Tunneling M5</p>
 <p>(10.2.0.13)</p></th>
 <th>(Exploitable)</th>
 </tr>

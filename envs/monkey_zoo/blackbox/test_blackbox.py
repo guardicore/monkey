@@ -13,12 +13,12 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     depth_1_a_test_configuration,
     depth_2_a_test_configuration,
     depth_3_a_test_configuration,
+    depth_4_a_test_configuration,
     powershell_credentials_reuse_test_configuration,
     smb_pth_test_configuration,
     wmi_mimikatz_test_configuration,
     zerologon_test_configuration,
 )
-from envs.monkey_zoo.blackbox.test_configurations.depth_4_a import depth_4_a_test_configuration
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
 from envs.monkey_zoo.blackbox.tests.exploitation import ExploitationTest
 from envs.monkey_zoo.blackbox.utils.gcp_machine_handlers import (

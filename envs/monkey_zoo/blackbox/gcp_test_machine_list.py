@@ -64,7 +64,7 @@ DEPTH_3_A = {
 }
 
 DEPTH_4_A = {
-    "europe-west1-b": [
+    "europe-west3-a": [
         "tunneling-9",
         "tunneling-10",
         "tunneling-12",

@@ -32,7 +32,7 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
         "10.2.2.9",
         "10.2.1.10",
         "10.2.0.12",
-        "10.2.2.13",
+        "10.2.0.13",
     ]
     return add_subnets(agent_configuration, subnets)
 
