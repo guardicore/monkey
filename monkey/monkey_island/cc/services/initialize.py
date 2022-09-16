@@ -10,12 +10,12 @@ from common.agent_configuration import (
     DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     AgentConfiguration,
 )
-from common.aws import AWSInstance
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
+from common.aws import AWSInstance
+from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import IIslandEventQueue, PyPubSubIslandEventQueue
 from monkey_island.cc.repository import (
@@ -37,9 +37,9 @@ from monkey_island.cc.repository import (
     IUserRepository,
     JSONFileUserRepository,
     LocalStorageFileRepository,
+    MongoAgentEventRepository,
     MongoAgentRepository,
     MongoCredentialsRepository,
-    MongoAgentEventRepository,
     MongoMachineRepository,
     MongoNodeRepository,
     RetrievalError,
