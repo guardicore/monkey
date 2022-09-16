@@ -23,7 +23,9 @@ def test_uses_correct_extension(ransomware_options_dict, tmp_path, ransomware_fi
     ransomware_directories["linux_target_dir"] = target_dir
     ransomware_directories["windows_target_dir"] = target_dir
     telemetry_messenger = MagicMock()
-    ransomware = ransomware_builder.build_ransomware(ransomware_options_dict, telemetry_messenger)
+    ransomware = ransomware_builder.build_ransomware(
+        ransomware_options_dict, telemetry_messenger, 0.01
+    )
 
     file = target_dir / "file.txt"
     file.write_text("Do your worst!")

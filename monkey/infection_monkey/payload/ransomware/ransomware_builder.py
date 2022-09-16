@@ -2,6 +2,9 @@ import logging
 from pprint import pformat
 
 from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
+    DEFAULT_PERIOD as DEFAULT_TELEMETRY_BATCH_PERIOD,
+)
+from infection_monkey.telemetry.messengers.batching_telemetry_messenger import (
     BatchingTelemetryMessenger,
 )
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
@@ -19,7 +22,12 @@ CHUNK_SIZE = 4096 * 24
 logger = logging.getLogger(__name__)
 
 
-def build_ransomware(options: dict, telemetry_messenger: ITelemetryMessenger):
+def build_ransomware(
+    options: dict,
+    telemetry_messenger: ITelemetryMessenger,
+    # BatchingTelemetryMessenger will go away soon and so will this parameter
+    telemetry_batch_period: float = DEFAULT_TELEMETRY_BATCH_PERIOD,
+):
     logger.debug(f"Ransomware configuration:\n{pformat(options)}")
     ransomware_options = RansomwareOptions(options)
 
@@ -32,7 +40,7 @@ def build_ransomware(options: dict, telemetry_messenger: ITelemetryMessenger):
         file_encryptor,
         file_selector,
         leave_readme,
-        BatchingTelemetryMessenger(telemetry_messenger),
+        BatchingTelemetryMessenger(telemetry_messenger, telemetry_batch_period),
     )
 
 
