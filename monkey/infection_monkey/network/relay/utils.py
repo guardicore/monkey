@@ -5,13 +5,13 @@ from ipaddress import IPv4Address
 from typing import Dict, Iterable, Iterator, MutableMapping, Optional
 
 from common.network.network_utils import address_to_ip_port
-from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
-from infection_monkey.transport import (
-    IslandAPIClient,
+from infection_monkey.island_api_client import (
+    HTTPIslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPITimeoutError,
 )
+from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
 from infection_monkey.utils.threading import (
     ThreadSafeIterator,
     create_daemon_thread,
@@ -54,7 +54,7 @@ def _check_if_island_server(server: str) -> bool:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        IslandAPIClient(server)
+        HTTPIslandAPIClient(server)
 
         return True
     except IslandAPIConnectionError as err:
