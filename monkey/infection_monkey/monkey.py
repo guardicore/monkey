@@ -138,8 +138,7 @@ class InfectionMonkey:
 
     def _get_server(self):
         logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
-        servers_iterator = (s for s in self._opts.servers)
-        server = find_server(servers_iterator)
+        server = find_server(self._opts.servers)
         if server:
             logger.info(f"Successfully connected to the island via {server}")
         else:
@@ -147,10 +146,11 @@ class InfectionMonkey:
                 f"Failed to connect to the island via any known servers: {self._opts.servers}"
             )
 
-        # Note: Since we pass the address for each of our interfaces to the exploited
+        # NOTE: Since we pass the address for each of our interfaces to the exploited
         # machines, is it possible for a machine to unintentionally unregister itself from the
         # relay if it is able to connect to the relay over multiple interfaces?
-        send_remove_from_waitlist_control_message_to_relays(servers_iterator)
+        servers_to_close = (s for s in self._opts.servers if s != server)
+        send_remove_from_waitlist_control_message_to_relays(servers_to_close)
 
         return server
 
