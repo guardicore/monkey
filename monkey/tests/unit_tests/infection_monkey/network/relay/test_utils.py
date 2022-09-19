@@ -2,7 +2,7 @@ import pytest
 import requests_mock
 
 from infection_monkey.network.relay.utils import find_server
-from infection_monkey.transport.island_api_client_errors import IslandAPIConnectionError
+from infection_monkey.transport import IslandAPIConnectionError
 
 SERVER_1 = "1.1.1.1:12312"
 SERVER_2 = "2.2.2.2:4321"
