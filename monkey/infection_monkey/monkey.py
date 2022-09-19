@@ -53,7 +53,7 @@ from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
-    find_server,
+    find_available_island_apis,
     notify_disconnect,
     send_remove_from_waitlist_control_message_to_relays,
 )
@@ -140,7 +140,7 @@ class InfectionMonkey:
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[str, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
-        server_clients = find_server(self._opts.servers)
+        server_clients = find_available_island_apis(self._opts.servers)
 
         server, island_api_client = self._select_server(server_clients)
 

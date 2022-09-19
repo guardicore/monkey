@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 NUM_FIND_SERVER_WORKERS = 32
 
 
-def find_server(servers: Iterable[str]) -> Mapping[str, Optional[IIslandAPIClient]]:
+def find_available_island_apis(servers: Iterable[str]) -> Mapping[str, Optional[IIslandAPIClient]]:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
     server_results: Dict[str, Tuple[bool, IIslandAPIClient]] = {}
