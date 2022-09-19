@@ -5,6 +5,7 @@ from common import OperatingSystem
 from common.agent_events import AbstractAgentEvent
 
 from common import AgentRegistrationData
+from common.agent_configuration import AgentConfiguration
 
 
 class IIslandAPIClient(ABC):
@@ -117,4 +118,17 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
         :return: True if the agent should stop, otherwise False
+        """
+
+    @abstractmethod
+    def get_config(self, island_server: str) -> AgentConfiguration:
+        """
+        Get agent configuration from the island
+
+        :param island_server: The server to query
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: Agent configuration
         """

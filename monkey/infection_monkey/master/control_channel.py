@@ -1,6 +1,4 @@
-import json
 import logging
-from pprint import pformat
 from typing import Optional, Sequence
 from uuid import UUID
 
@@ -68,24 +66,12 @@ class ControlChannel(IControlChannel):
 
     def get_config(self) -> AgentConfiguration:
         try:
-            response = requests.get(  # noqa: DUO123
-                f"https://{self._control_channel_server}/api/agent-configuration",
-                verify=False,
-                timeout=SHORT_REQUEST_TIMEOUT,
-            )
-            response.raise_for_status()
-
-            config_dict = json.loads(response.text)
-
-            logger.debug(f"Received configuration:\n{pformat(config_dict)}")
-
-            return AgentConfiguration(**config_dict)
+            return self._island_api_client.get_config(self._control_channel_server)
         except (
-            json.JSONDecodeError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-            requests.exceptions.TooManyRedirects,
-            requests.exceptions.HTTPError,
+            IslandAPIConnectionError,
+            IslandAPIRequestError,
+            IslandAPIRequestFailedError,
+            IslandAPITimeoutError,
         ) as e:
             raise IslandCommunicationError(e)
 

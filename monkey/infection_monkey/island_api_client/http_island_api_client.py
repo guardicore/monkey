@@ -1,11 +1,13 @@
 import functools
 import json
 import logging
+from pprint import pformat
 from typing import List, Sequence
 
 import requests
 
 from common import AgentRegistrationData, OperatingSystem
+from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import (
@@ -152,6 +154,35 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
             json_response = json.loads(response.content.decode())
             return json_response["stop_agent"]
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.TooManyRedirects,
+        ) as e:
+            raise IslandAPIConnectionError(e)
+        except requests.exceptions.Timeout as e:
+            raise IslandAPITimeoutError(e)
+        except requests.exceptions.HTTPError as e:
+            if e.errno >= 500:
+                raise IslandAPIRequestFailedError(e)
+            else:
+                raise IslandAPIRequestError(e)
+        except json.JSONDecodeError as e:
+            raise IslandAPIRequestFailedError(e)
+
+    def get_config(self, island_server: str) -> AgentConfiguration:
+        try:
+            response = requests.get(  # noqa: DUO123
+                f"https://{island_server}/api/agent-configuration",
+                verify=False,
+                timeout=SHORT_REQUEST_TIMEOUT,
+            )
+            response.raise_for_status()
+
+            config_dict = json.loads(response.text)
+
+            logger.debug(f"Received configuration:\n{pformat(config_dict)}")
+
+            return AgentConfiguration(**config_dict)
         except (
             requests.exceptions.ConnectionError,
             requests.exceptions.TooManyRedirects,

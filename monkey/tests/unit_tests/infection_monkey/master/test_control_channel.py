@@ -89,3 +89,24 @@ def test_control_channel__should_agent_stop_raises_on_request_failed_error(
 
     with pytest.raises(IslandCommunicationError):
         control_channel.should_agent_stop()
+
+
+def test_control_channel__get_config(control_channel, island_api_client):
+    control_channel.get_config()
+    assert island_api_client.get_config.called_once()
+
+
+@pytest.mark.parametrize(
+    "api_error",
+    [
+        IslandAPIConnectionError,
+        IslandAPIRequestError,
+        IslandAPIRequestFailedError,
+        IslandAPITimeoutError,
+    ],
+)
+def test_control_channel__get_config_raises_error(control_channel, island_api_client, api_error):
+    island_api_client.get_config.side_effect = api_error()
+
+    with pytest.raises(IslandCommunicationError):
+        control_channel.get_config()
