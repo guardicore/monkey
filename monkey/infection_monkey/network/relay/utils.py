@@ -73,10 +73,10 @@ def _check_if_island_server(server: str) -> IIslandAPIClient:
 
 
 def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
-    for server in servers:
+    for i, server in enumerate(servers, start=1):
         t = create_daemon_thread(
             target=_send_remove_from_waitlist_control_message_to_relay,
-            name="SendRemoveFromWaitlistControlMessageToRelaysThread",
+            name=f"SendRemoveFromWaitlistControlMessageToRelaysThread-{i:02d}",
             args=(server,),
         )
         t.start()
