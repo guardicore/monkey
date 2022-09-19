@@ -90,7 +90,9 @@ def error_raising_mongo_client(mongo_client) -> mongomock.MongoClient:
 def error_raising_mongo_repository(
     error_raising_mongo_client, event_serializer_registry
 ) -> IAgentEventRepository:
-    return MongoAgentEventRepository(error_raising_mongo_client, event_serializer_registry, encryptor)
+    return MongoAgentEventRepository(
+        error_raising_mongo_client, event_serializer_registry, encryptor
+    )
 
 
 def assert_same_contents(a, b):
