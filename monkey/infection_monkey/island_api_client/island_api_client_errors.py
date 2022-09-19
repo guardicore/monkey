@@ -22,9 +22,17 @@ class IslandAPIConnectionError(IslandAPIError):
     pass
 
 
+class IslandAPIRequestError(IslandAPIError):
+    """
+    Raised when the API request fails due to an error in the request sent from the client
+    """
+
+    pass
+
+
 class IslandAPIRequestFailedError(IslandAPIError):
     """
-    Raised when the API request fails(malformed request or an error on the API side)
+    Raised when the API request fails due to an error on the server
     """
 
     pass
