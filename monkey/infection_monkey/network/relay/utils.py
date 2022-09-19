@@ -2,7 +2,7 @@ import logging
 import socket
 from contextlib import suppress
 from ipaddress import IPv4Address
-from typing import Dict, Iterable, Iterator, MutableMapping, Optional, Tuple
+from typing import Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 NUM_FIND_SERVER_WORKERS = 32
 
 
-def find_server(servers: Iterable[str]) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
+def find_server(servers: Iterable[str]) -> Mapping[str, Optional[IIslandAPIClient]]:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
     server_results: Dict[str, Tuple[bool, IIslandAPIClient]] = {}
@@ -39,12 +39,7 @@ def find_server(servers: Iterable[str]) -> Tuple[Optional[str], Optional[IIsland
         num_workers=NUM_FIND_SERVER_WORKERS,
     )
 
-    for server in server_list:
-        if server_results[server]:
-            island_api_client = server_results[server]
-            return server, island_api_client
-
-    return (None, None)
+    return server_results
 
 
 def _find_island_server(

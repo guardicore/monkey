@@ -5,7 +5,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Address, IPv4Interface
 from pathlib import Path, WindowsPath
-from typing import List, Tuple
+from typing import List, Mapping, Optional, Tuple
 
 from pubsub.core import Publisher
 
@@ -137,9 +137,13 @@ class InfectionMonkey:
 
         return opts
 
+    # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[str, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
-        server, island_api_client = find_server(self._opts.servers)
+        server_clients = find_server(self._opts.servers)
+
+        server, island_api_client = self._select_server(server_clients)
+
         if server:
             logger.info(f"Successfully connected to the island via {server}")
         else:
@@ -150,10 +154,19 @@ class InfectionMonkey:
         # NOTE: Since we pass the address for each of our interfaces to the exploited
         # machines, is it possible for a machine to unintentionally unregister itself from the
         # relay if it is able to connect to the relay over multiple interfaces?
-        servers_to_close = (s for s in self._opts.servers if s != server)
+        servers_to_close = (s for s in self._opts.servers if s != server and server_clients[s])
         send_remove_from_waitlist_control_message_to_relays(servers_to_close)
 
         return server, island_api_client
+
+    def _select_server(
+        self, server_clients: Mapping[str, IIslandAPIClient]
+    ) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
+        for server in self._opts.servers:
+            if server_clients[server]:
+                return server, server_clients[server]
+
+        return None, None
 
     @staticmethod
     def _log_arguments(args):
