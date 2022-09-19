@@ -3,7 +3,7 @@ import logging
 import requests
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from infection_monkey.transport.island_api_client_errors import (
+from infection_monkey.transport import (
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPITimeoutError,
