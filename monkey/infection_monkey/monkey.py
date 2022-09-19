@@ -120,6 +120,7 @@ class InfectionMonkey:
         self._control_client = ControlClient(
             server_address=server, island_api_client=self._island_api_client
         )
+        self._control_channel = ControlChannel(server, GUID, self._island_api_client)
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
@@ -195,7 +196,7 @@ class InfectionMonkey:
 
         run_aws_environment_check(self._telemetry_messenger)
 
-        should_stop = ControlChannel(self._control_client.server_address, GUID).should_agent_stop()
+        should_stop = self._control_channel.should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
@@ -211,7 +212,6 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        self._control_channel = ControlChannel(self._control_client.server_address, GUID)
         self._control_channel.register_agent(self._opts.parent)
 
         config = self._control_channel.get_config()
