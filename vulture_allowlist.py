@@ -9,6 +9,7 @@ from common.agent_configuration.agent_sub_configurations import (
 )
 from common.credentials import Credentials, LMHash, NTHash
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.transport import IslandAPIClient, IslandAPIRequestFailedError
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
@@ -331,5 +332,6 @@ IslandEventTopic.CLEAR_SIMULATION_DATA
 IslandEventTopic.RESET_AGENT_CONFIGURATION
 
 # TODO: Remove after #2292 is closed
-IslandAPIClient
+IIslandAPIClient
+IslandApiClient
 IslandAPIRequestFailedError
