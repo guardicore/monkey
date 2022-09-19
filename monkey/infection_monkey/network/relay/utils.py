@@ -58,9 +58,7 @@ def _check_if_island_server(server: str) -> IIslandAPIClient:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        island_api_client = HTTPIslandAPIClient(server)
-
-        return island_api_client
+        return HTTPIslandAPIClient(server)
     except IslandAPIConnectionError as err:
         logger.error(f"Unable to connect to server/relay {server}: {err}")
     except IslandAPITimeoutError as err:
