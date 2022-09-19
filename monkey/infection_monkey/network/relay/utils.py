@@ -4,11 +4,14 @@ from contextlib import suppress
 from ipaddress import IPv4Address
 from typing import Dict, Iterable, Iterator, MutableMapping, Optional
 
-import requests
-
-from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
 from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
+from infection_monkey.transport import IslandApiClient
+from infection_monkey.transport.island_api_client_errors import (
+    IslandAPIConnectionError,
+    IslandAPIError,
+    IslandAPITimeoutError,
+)
 from infection_monkey.utils.threading import (
     ThreadSafeIterator,
     create_daemon_thread,
@@ -51,18 +54,14 @@ def _check_if_island_server(server: str) -> bool:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        requests.get(  # noqa: DUO123
-            f"https://{server}/api?action=is-up",
-            verify=False,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
-        )
+        _ = IslandApiClient(server)
 
         return True
-    except requests.exceptions.ConnectionError as err:
+    except IslandAPIConnectionError as err:
         logger.error(f"Unable to connect to server/relay {server}: {err}")
-    except TimeoutError as err:
+    except IslandAPITimeoutError as err:
         logger.error(f"Timed out while connecting to server/relay {server}: {err}")
-    except Exception as err:
+    except IslandAPIError as err:
         logger.error(
             f"Exception encountered when trying to connect to server/relay {server}: {err}"
         )
