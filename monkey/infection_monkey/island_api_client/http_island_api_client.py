@@ -24,19 +24,36 @@ def handle_island_errors(fn):
 
     return decorated
 
-        # TODO: set server address as object property when init is called in find_server and pass
-        #       object around? won't need to pass island server and create object in every function
-        def send_log(self, data: str):
-            requests.post(  # noqa: DUO123
-                "https://%s/api/log" % (self._island_server,),
-                json=data,
-                verify=False,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
 
-        def get_pba_file(self, filename: str):
-            return requests.get(  # noqa: DUO123
-                "https://%s/api/pba/download/%s" % (self.server_address, filename),
-                verify=False,
-                timeout=LONG_REQUEST_TIMEOUT,
-            )
+class HTTPIslandAPIClient(IIslandAPIClient):
+    """
+    A client for the Island's HTTP API
+    """
+
+    @handle_island_errors
+    def __init__(self, island_server: str):
+        requests.get(  # noqa: DUO123
+            f"https://{island_server}/api?action=is-up",
+            verify=False,
+            timeout=MEDIUM_REQUEST_TIMEOUT,
+        )
+        self._island_server = island_server
+
+    # TODO: set server address as object property when init is called in find_server and pass
+    #       object around? won't need to pass island server and create object in every function
+    @handle_island_errors
+    def send_log(self, data: str):
+        requests.post(  # noqa: DUO123
+            "https://%s/api/log" % (self._island_server,),
+            json=data,
+            verify=False,
+            timeout=MEDIUM_REQUEST_TIMEOUT,
+        )
+
+    @handle_island_errors
+    def get_pba_file(self, filename: str):
+        return requests.get(  # noqa: DUO123
+            "https://%s/api/pba/download/%s" % (self.server_address, filename),
+            verify=False,
+            timeout=LONG_REQUEST_TIMEOUT,
+        )
