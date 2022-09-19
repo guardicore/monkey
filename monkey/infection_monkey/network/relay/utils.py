@@ -54,7 +54,7 @@ def _check_if_island_server(server: str) -> bool:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        _ = IslandAPIClient(server)
+        IslandAPIClient(server)
 
         return True
     except IslandAPIConnectionError as err:
