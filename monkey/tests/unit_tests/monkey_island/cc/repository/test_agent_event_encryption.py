@@ -55,3 +55,17 @@ def test_agent_event_encryption__decrypts(encryptor, serializer):
     deserialized_event = serializer.deserialize(decrypted_data)
 
     assert deserialized_event == event
+
+
+def test_agent_event_encryption__encryption_throws(encryptor):
+    data = "Not a dict."
+
+    with pytest.raises(TypeError):
+        encrypt_event(encryptor.encrypt, data, fields=[])
+
+
+def test_agent_event_encryption__decryption_throws(encryptor):
+    data = "Not a dict."
+
+    with pytest.raises(TypeError):
+        decrypt_event(encryptor.decrypt, data)
