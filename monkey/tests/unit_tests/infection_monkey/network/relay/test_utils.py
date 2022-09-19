@@ -1,8 +1,8 @@
 import pytest
-import requests
 import requests_mock
 
-from infection_monkey.network.relay.utils import find_server
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIConnectionError
+from infection_monkey.network.relay.utils import find_available_island_apis
 
 SERVER_1 = "1.1.1.1:12312"
 SERVER_2 = "2.2.2.2:4321"
@@ -14,29 +14,42 @@ servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
 
 
 @pytest.mark.parametrize(
-    "expected_server,server_response_pairs",
+    "expected_available_servers, server_response_pairs",
     [
-        (None, [(server, {"exc": requests.exceptions.ConnectionError}) for server in servers]),
+        ([], [(server, {"exc": IslandAPIConnectionError}) for server in servers]),
         (
-            SERVER_2,
-            [(SERVER_1, {"exc": requests.exceptions.ConnectionError})]
+            servers[1:],
+            [(SERVER_1, {"exc": IslandAPIConnectionError})]
             + [(server, {"text": ""}) for server in servers[1:]],  # type: ignore[dict-item]
         ),
     ],
 )
-def test_find_server(expected_server, server_response_pairs):
+def test_find_available_island_apis(expected_available_servers, server_response_pairs):
     with requests_mock.Mocker() as mock:
         for server, response in server_response_pairs:
             mock.get(f"https://{server}/api?action=is-up", **response)
 
-        assert find_server(servers) is expected_server
+        available_apis = find_available_island_apis(servers)
+
+        assert len(available_apis) == len(server_response_pairs)
+
+        for server, island_api_client in available_apis.items():
+            if server in expected_available_servers:
+                assert island_api_client is not None
+            else:
+                assert island_api_client is None
 
 
-def test_find_server__multiple_successes():
+def test_find_available_island_apis__multiple_successes():
+    available_servers = [SERVER_2, SERVER_3]
     with requests_mock.Mocker() as mock:
-        mock.get(f"https://{SERVER_1}/api?action=is-up", exc=requests.exceptions.ConnectionError)
-        mock.get(f"https://{SERVER_2}/api?action=is-up", text="")
-        mock.get(f"https://{SERVER_3}/api?action=is-up", text="")
-        mock.get(f"https://{SERVER_4}/api?action=is-up", text="")
+        mock.get(f"https://{SERVER_1}/api?action=is-up", exc=IslandAPIConnectionError)
+        for server in available_servers:
+            mock.get(f"https://{server}/api?action=is-up", text="")
 
-        assert find_server(servers) == SERVER_2
+        available_apis = find_available_island_apis(servers)
+
+        assert available_apis[SERVER_1] is None
+        assert available_apis[SERVER_4] is None
+        for server in available_servers:
+            assert isinstance(available_apis[server], IIslandAPIClient)

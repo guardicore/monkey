@@ -5,7 +5,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Address, IPv4Interface
 from pathlib import Path, WindowsPath
-from typing import List, Optional
+from typing import List, Mapping, Optional, Tuple
 
 from pubsub.core import Publisher
 
@@ -45,6 +45,7 @@ from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
@@ -52,7 +53,7 @@ from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
-    find_server,
+    find_available_island_apis,
     notify_disconnect,
     send_remove_from_waitlist_control_message_to_relays,
 )
@@ -110,7 +111,7 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
 
         # TODO: Revisit variable names
-        server = self._get_server()
+        server, island_api_client = self._connect_to_island_api()
         # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
         self._cmd_island_port = int(self._cmd_island_port)
@@ -123,7 +124,7 @@ class InfectionMonkey:
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
-        self._relay: Optional[TCPRelay] = None
+        self._relay: TCPRelay
 
     @staticmethod
     def _get_arguments(args):
@@ -136,10 +137,13 @@ class InfectionMonkey:
 
         return opts
 
-    def _get_server(self):
+    # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
+    def _connect_to_island_api(self) -> Tuple[str, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
-        servers_iterator = (s for s in self._opts.servers)
-        server = find_server(servers_iterator)
+        server_clients = find_available_island_apis(self._opts.servers)
+
+        server, island_api_client = self._select_server(server_clients)
+
         if server:
             logger.info(f"Successfully connected to the island via {server}")
         else:
@@ -147,12 +151,22 @@ class InfectionMonkey:
                 f"Failed to connect to the island via any known servers: {self._opts.servers}"
             )
 
-        # Note: Since we pass the address for each of our interfaces to the exploited
+        # NOTE: Since we pass the address for each of our interfaces to the exploited
         # machines, is it possible for a machine to unintentionally unregister itself from the
         # relay if it is able to connect to the relay over multiple interfaces?
-        send_remove_from_waitlist_control_message_to_relays(servers_iterator)
+        servers_to_close = (s for s in self._opts.servers if s != server and server_clients[s])
+        send_remove_from_waitlist_control_message_to_relays(servers_to_close)
 
-        return server
+        return server, island_api_client
+
+    def _select_server(
+        self, server_clients: Mapping[str, IIslandAPIClient]
+    ) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
+        for server in self._opts.servers:
+            if server_clients[server]:
+                return server, server_clients[server]
+
+        return None, None
 
     @staticmethod
     def _log_arguments(args):

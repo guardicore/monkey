@@ -2,12 +2,17 @@ import logging
 import socket
 from contextlib import suppress
 from ipaddress import IPv4Address
-from typing import Dict, Iterable, Iterator, MutableMapping, Optional
+from typing import Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple
 
-import requests
-
-from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
+from infection_monkey.island_api_client import (
+    HTTPIslandAPIClient,
+    IIslandAPIClient,
+    IslandAPIConnectionError,
+    IslandAPIError,
+    IslandAPITimeoutError,
+)
 from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
 from infection_monkey.utils.threading import (
     ThreadSafeIterator,
@@ -22,10 +27,10 @@ logger = logging.getLogger(__name__)
 NUM_FIND_SERVER_WORKERS = 32
 
 
-def find_server(servers: Iterable[str]) -> Optional[str]:
+def find_available_island_apis(servers: Iterable[str]) -> Mapping[str, Optional[IIslandAPIClient]]:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
-    server_results: Dict[str, bool] = {}
+    server_results: Dict[str, Tuple[bool, IIslandAPIClient]] = {}
 
     run_worker_threads(
         _find_island_server,
@@ -34,47 +39,39 @@ def find_server(servers: Iterable[str]) -> Optional[str]:
         num_workers=NUM_FIND_SERVER_WORKERS,
     )
 
-    for server in server_list:
-        if server_results[server]:
-            return server
-
-    return None
+    return server_results
 
 
-def _find_island_server(servers: Iterator[str], server_status: MutableMapping[str, bool]):
+def _find_island_server(
+    servers: Iterator[str], server_status: MutableMapping[str, Optional[IIslandAPIClient]]
+):
     with suppress(StopIteration):
         server = next(servers)
         server_status[server] = _check_if_island_server(server)
 
 
-def _check_if_island_server(server: str) -> bool:
+def _check_if_island_server(server: str) -> IIslandAPIClient:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        requests.get(  # noqa: DUO123
-            f"https://{server}/api?action=is-up",
-            verify=False,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
-        )
-
-        return True
-    except requests.exceptions.ConnectionError as err:
+        return HTTPIslandAPIClient(server)
+    except IslandAPIConnectionError as err:
         logger.error(f"Unable to connect to server/relay {server}: {err}")
-    except TimeoutError as err:
+    except IslandAPITimeoutError as err:
         logger.error(f"Timed out while connecting to server/relay {server}: {err}")
-    except Exception as err:
+    except IslandAPIError as err:
         logger.error(
             f"Exception encountered when trying to connect to server/relay {server}: {err}"
         )
 
-    return False
+    return None
 
 
 def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
-    for server in servers:
+    for i, server in enumerate(servers, start=1):
         t = create_daemon_thread(
             target=_send_remove_from_waitlist_control_message_to_relay,
-            name="SendRemoveFromWaitlistControlMessageToRelaysThread",
+            name=f"SendRemoveFromWaitlistControlMessageToRelaysThread-{i:02d}",
             args=(server,),
         )
         t.start()
@@ -93,8 +90,10 @@ def notify_disconnect(server_ip: IPv4Address, server_port: int):
     :param server_port: The port of the server to notify.
     """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as d_socket:
+        d_socket.settimeout(LONG_REQUEST_TIMEOUT)
+
         try:
-            d_socket.connect((server_ip, server_port))
+            d_socket.connect((str(server_ip), server_port))
             d_socket.sendall(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
             logger.info(f"Control message was sent to the server/relay {server_ip}:{server_port}")
         except OSError as err:
