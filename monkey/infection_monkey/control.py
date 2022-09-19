@@ -6,7 +6,7 @@ from socket import gethostname
 import requests
 from urllib3 import disable_warnings
 
-from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.network.network_utils import get_my_ip_addresses
 from infection_monkey.config import GUID
 from infection_monkey.island_api_client import HTTPIslandAPIClient
@@ -16,8 +16,6 @@ from infection_monkey.utils import agent_process
 disable_warnings()  # noqa DUO131
 
 logger = logging.getLogger(__name__)
-
-PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
 
 class ControlClient:
@@ -85,10 +83,6 @@ class ControlClient:
 
     def get_pba_file(self, filename):
         try:
-            return requests.get(  # noqa: DUO123
-                PBA_FILE_DOWNLOAD % (self.server_address, filename),
-                verify=False,
-                timeout=LONG_REQUEST_TIMEOUT,
-            )
+            HTTPIslandAPIClient(self.server_address).get_pba_file(filename)
         except requests.exceptions.RequestException:
             return False

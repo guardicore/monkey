@@ -2,7 +2,7 @@ import logging
 
 import requests
 
-from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 
 from . import IIslandAPIClient, IslandAPIConnectionError, IslandAPIError, IslandAPITimeoutError
 
@@ -37,4 +37,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
                 json=data,
                 verify=False,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
+            )
+
+        def get_pba_file(self, filename: str):
+            return requests.get(  # noqa: DUO123
+                "https://%s/api/pba/download/%s" % (self.server_address, filename),
+                verify=False,
+                timeout=LONG_REQUEST_TIMEOUT,
             )
