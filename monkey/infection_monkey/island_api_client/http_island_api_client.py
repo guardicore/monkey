@@ -4,10 +4,14 @@ from typing import List, Sequence
 
 import requests
 
-from common import OperatingSystem
+from common import AgentRegistrationData, OperatingSystem
 from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.agent_events import AbstractAgentEvent
-from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
+from common.common_consts.timeouts import (
+    LONG_REQUEST_TIMEOUT,
+    MEDIUM_REQUEST_TIMEOUT,
+    SHORT_REQUEST_TIMEOUT,
+)
 
 from . import (
     AbstractIslandAPIClientFactory,
@@ -115,6 +119,25 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         )
 
         response.raise_for_status()
+
+    def register_agent(self, agent_registration_data: AgentRegistrationData):
+        try:
+            url = f"https://{agent_registration_data.cc_server}/api/agents"
+            response = requests.post(  # noqa: DUO123
+                url,
+                json=agent_registration_data.dict(simplify=True),
+                verify=False,
+                timeout=SHORT_REQUEST_TIMEOUT,
+            )
+            response.raise_for_status()
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.TooManyRedirects,
+            requests.exceptions.HTTPError,
+        ) as e:
+            raise IslandAPIConnectionError(e)
+        except requests.exceptions.Timeout as e:
+            raise IslandAPITimeoutError(e)
 
     def _serialize_events(self, events: Sequence[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events: List[JSONSerializable] = []

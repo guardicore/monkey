@@ -13,6 +13,11 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.network.network_utils import get_network_interfaces
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
+from infection_monkey.island_api_client import (
+    IIslandAPIClient,
+    IslandAPIConnectionError,
+    IslandAPITimeoutError,
+)
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 
@@ -22,9 +27,10 @@ logger = logging.getLogger(__name__)
 
 
 class ControlChannel(IControlChannel):
-    def __init__(self, server: str, agent_id: str):
+    def __init__(self, server: str, agent_id: str, api_client: IIslandAPIClient):
         self._agent_id = agent_id
         self._control_channel_server = server
+        self._island_api_client = api_client
 
     def register_agent(self, parent: Optional[UUID] = None):
         agent_registration_data = AgentRegistrationData(
@@ -38,20 +44,8 @@ class ControlChannel(IControlChannel):
         )
 
         try:
-            url = f"https://{self._control_channel_server}/api/agents"
-            response = requests.post(  # noqa: DUO123
-                url,
-                json=agent_registration_data.dict(simplify=True),
-                verify=False,
-                timeout=SHORT_REQUEST_TIMEOUT,
-            )
-            response.raise_for_status()
-        except (
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-            requests.exceptions.TooManyRedirects,
-            requests.exceptions.HTTPError,
-        ) as e:
+            self._island_api_client.register_agent(agent_registration_data)
+        except (IslandAPIConnectionError, IslandAPITimeoutError) as e:
             raise IslandCommunicationError(e)
 
     def should_agent_stop(self) -> bool:

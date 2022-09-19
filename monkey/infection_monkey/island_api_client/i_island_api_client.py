@@ -4,6 +4,8 @@ from typing import Optional, Sequence
 from common import OperatingSystem
 from common.agent_events import AbstractAgentEvent
 
+from common import AgentRegistrationData
+
 
 class IIslandAPIClient(ABC):
     """
@@ -74,7 +76,6 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 agent binary
-
         """
 
     @abstractmethod
@@ -91,4 +92,15 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to send events to
                                 the island
+        """
+
+    @abstractmethod
+    def register_agent(self, agent_registration_data: AgentRegistrationData):
+        """
+        Register an agent with the Island
+
+        :param agent_registration_data: Information about the agent to register
+            with the island
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPITimeoutError: If the command timed out
         """
