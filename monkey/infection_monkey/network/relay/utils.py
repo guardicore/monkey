@@ -98,7 +98,7 @@ def notify_disconnect(server_ip: IPv4Address, server_port: int):
         d_socket.settimeout(LONG_REQUEST_TIMEOUT)
 
         try:
-            d_socket.connect((server_ip, server_port))
+            d_socket.connect((str(server_ip), server_port))
             d_socket.sendall(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
             logger.info(f"Control message was sent to the server/relay {server_ip}:{server_port}")
         except OSError as err:
