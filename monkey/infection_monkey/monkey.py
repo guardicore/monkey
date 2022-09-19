@@ -111,7 +111,7 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
 
         # TODO: Revisit variable names
-        server, island_api_client = self._get_server()
+        server, island_api_client = self._connect_to_island_api()
         # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
         self._cmd_island_port = int(self._cmd_island_port)
@@ -137,7 +137,7 @@ class InfectionMonkey:
 
         return opts
 
-    def _get_server(self) -> Tuple[str, IIslandAPIClient]:
+    def _connect_to_island_api(self) -> Tuple[str, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
         server, island_api_client = find_server(self._opts.servers)
         if server:
