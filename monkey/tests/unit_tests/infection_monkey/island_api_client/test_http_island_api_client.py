@@ -3,7 +3,7 @@ import requests
 import requests_mock
 
 from infection_monkey.island_api_client import (
-    IslandAPIClient,
+    HTTPIslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPITimeoutError,
@@ -27,4 +27,4 @@ def test_island_api_client(actual_error, expected_error):
         m.get(ISLAND_URI, exc=actual_error)
 
         with pytest.raises(expected_error):
-            IslandAPIClient(SERVER)
+            HTTPIslandAPIClient(SERVER)

@@ -4,12 +4,12 @@ import requests
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 
-from . import IslandAPIConnectionError, IslandAPIError, IslandAPITimeoutError
+from . import IIslandAPIClient, IslandAPIConnectionError, IslandAPIError, IslandAPITimeoutError
 
 logger = logging.getLogger(__name__)
 
 
-class IslandAPIClient:
+class HTTPIslandAPIClient(IIslandAPIClient):
     """
     A client for requests from the Agent to the Island API
     """

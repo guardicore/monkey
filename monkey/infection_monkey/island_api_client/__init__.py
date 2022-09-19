@@ -5,4 +5,4 @@ from .island_api_client_errors import (
     IslandAPITimeoutError,
 )
 from .i_island_api_client import IIslandAPIClient
-from .island_api_client import IslandAPIClient
+from .http_island_api_client import HTTPIslandAPIClient
