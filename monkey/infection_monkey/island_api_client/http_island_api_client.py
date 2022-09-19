@@ -49,11 +49,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
-    @staticmethod
     @handle_island_errors
-    def get_pba_file(server_address: str, filename: str):
-        return requests.get(  # noqa: DUO123
-            "https://%s/api/pba/download/%s" % (server_address, filename),
+    def get_pba_file(self, filename: str):
+        response = requests.get(  # noqa: DUO123
+            f"https://{self._island_server}/api/pba/download/{filename}",
             verify=False,
             timeout=LONG_REQUEST_TIMEOUT,
         )
+
+        return response.content

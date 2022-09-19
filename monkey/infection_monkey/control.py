@@ -9,7 +9,7 @@ from urllib3 import disable_warnings
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.network.network_utils import get_my_ip_addresses
 from infection_monkey.config import GUID
-from infection_monkey.island_api_client import HTTPIslandAPIClient, IIslandAPIClient
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.utils import agent_process
 
@@ -84,6 +84,6 @@ class ControlClient:
 
     def get_pba_file(self, filename):
         try:
-            HTTPIslandAPIClient.get_pba_file(self.server_address, filename)
+            return self._island_api_client.get_pba_file(filename)
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")

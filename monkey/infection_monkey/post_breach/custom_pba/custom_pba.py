@@ -76,7 +76,7 @@ class CustomPBA(PBA):
         pba_file_contents = self.control_client.get_pba_file(filename)
 
         status = None
-        if not pba_file_contents or not pba_file_contents.content:
+        if not pba_file_contents:
             logger.error("Island didn't respond with post breach file.")
             status = ScanStatus.SCANNED
 
@@ -97,7 +97,7 @@ class CustomPBA(PBA):
 
         try:
             with open(os.path.join(dst_dir, filename), "wb") as written_PBA_file:
-                written_PBA_file.write(pba_file_contents.content)
+                written_PBA_file.write(pba_file_contents)
             return True
         except IOError as e:
             logger.error("Can not upload post breach file to target machine: %s" % e)
