@@ -37,23 +37,24 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
-        self._island_server = island_server
 
     # TODO: set server address as object property when init is called in find_server and pass
     #       object around? won't need to pass island server and create object in every function
+    @staticmethod
     @handle_island_errors
-    def send_log(self, data: str):
+    def send_log(server_address: str, data: str):
         requests.post(  # noqa: DUO123
-            "https://%s/api/log" % (self._island_server,),
+            "https://%s/api/log" % (server_address,),
             json=data,
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
+    @staticmethod
     @handle_island_errors
-    def get_pba_file(self, filename: str):
+    def get_pba_file(server_address: str, filename: str):
         return requests.get(  # noqa: DUO123
-            "https://%s/api/pba/download/%s" % (self.server_address, filename),
+            "https://%s/api/pba/download/%s" % (server_address, filename),
             verify=False,
             timeout=LONG_REQUEST_TIMEOUT,
         )

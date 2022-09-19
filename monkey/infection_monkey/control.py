@@ -77,12 +77,12 @@ class ControlClient:
             return
         try:
             telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
-            HTTPIslandAPIClient(self.server_address).send_log(json.dumps(telemetry))
+            HTTPIslandAPIClient.send_log(self.server_address, json.dumps(telemetry))
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
     def get_pba_file(self, filename):
         try:
-            HTTPIslandAPIClient(self.server_address).get_pba_file(filename)
+            HTTPIslandAPIClient.get_pba_file(self.server_address, filename)
         except requests.exceptions.RequestException:
             return False
