@@ -2,8 +2,8 @@ import pytest
 import requests
 import requests_mock
 
-from infection_monkey.transport import IslandAPIClient
-from infection_monkey.transport.island_api_client_errors import (
+from infection_monkey.transport import (
+    IslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPITimeoutError,
