@@ -2,11 +2,12 @@ import logging
 import socket
 from contextlib import suppress
 from ipaddress import IPv4Address
-from typing import Dict, Iterable, Iterator, MutableMapping, Optional
+from typing import Dict, Iterable, Iterator, MutableMapping, Optional, Tuple
 
 from common.network.network_utils import address_to_ip_port
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
+    IIslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPITimeoutError,
@@ -25,10 +26,10 @@ logger = logging.getLogger(__name__)
 NUM_FIND_SERVER_WORKERS = 32
 
 
-def find_server(servers: Iterable[str]) -> Optional[str]:
+def find_server(servers: Iterable[str]) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
-    server_results: Dict[str, bool] = {}
+    server_results: Dict[str, Tuple[bool, IIslandAPIClient]] = {}
 
     run_worker_threads(
         _find_island_server,
@@ -39,24 +40,27 @@ def find_server(servers: Iterable[str]) -> Optional[str]:
 
     for server in server_list:
         if server_results[server]:
-            return server
+            island_api_client = server_results[server]
+            return server, island_api_client
 
-    return None
+    return (None, None)
 
 
-def _find_island_server(servers: Iterator[str], server_status: MutableMapping[str, bool]):
+def _find_island_server(
+    servers: Iterator[str], server_status: MutableMapping[str, Optional[IIslandAPIClient]]
+):
     with suppress(StopIteration):
         server = next(servers)
         server_status[server] = _check_if_island_server(server)
 
 
-def _check_if_island_server(server: str) -> bool:
+def _check_if_island_server(server: str) -> IIslandAPIClient:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        HTTPIslandAPIClient(server)
+        island_api_client = HTTPIslandAPIClient(server)
 
-        return True
+        return island_api_client
     except IslandAPIConnectionError as err:
         logger.error(f"Unable to connect to server/relay {server}: {err}")
     except IslandAPITimeoutError as err:
@@ -66,7 +70,7 @@ def _check_if_island_server(server: str) -> bool:
             f"Exception encountered when trying to connect to server/relay {server}: {err}"
         )
 
-    return False
+    return None
 
 
 def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):

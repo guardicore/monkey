@@ -1,7 +1,7 @@
 import pytest
 import requests_mock
 
-from infection_monkey.island_api_client import IslandAPIConnectionError
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIConnectionError
 from infection_monkey.network.relay.utils import find_server
 
 SERVER_1 = "1.1.1.1:12312"
@@ -14,7 +14,7 @@ servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
 
 
 @pytest.mark.parametrize(
-    "expected_server,server_response_pairs",
+    "expected_server, server_response_pairs",
     [
         (None, [(server, {"exc": IslandAPIConnectionError}) for server in servers]),
         (
@@ -29,7 +29,9 @@ def test_find_server(expected_server, server_response_pairs):
         for server, response in server_response_pairs:
             mock.get(f"https://{server}/api?action=is-up", **response)
 
-        assert find_server(servers) is expected_server
+        actual_server, _ = find_server(servers)
+
+        assert actual_server is expected_server
 
 
 def test_find_server__multiple_successes():
@@ -39,4 +41,7 @@ def test_find_server__multiple_successes():
         mock.get(f"https://{SERVER_3}/api?action=is-up", text="")
         mock.get(f"https://{SERVER_4}/api?action=is-up", text="")
 
-        assert find_server(servers) == SERVER_2
+        actual_server, actual_island_api_client = find_server(servers)
+
+        assert actual_server == SERVER_2
+        assert isinstance(actual_island_api_client, IIslandAPIClient)

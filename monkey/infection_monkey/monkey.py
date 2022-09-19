@@ -5,7 +5,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Address, IPv4Interface
 from pathlib import Path, WindowsPath
-from typing import List
+from typing import List, Tuple
 
 from pubsub.core import Publisher
 
@@ -45,6 +45,7 @@ from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
@@ -110,7 +111,7 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
 
         # TODO: Revisit variable names
-        server = self._get_server()
+        server, island_api_client = self._get_server()
         # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
         self._cmd_island_port = int(self._cmd_island_port)
@@ -136,9 +137,9 @@ class InfectionMonkey:
 
         return opts
 
-    def _get_server(self):
+    def _get_server(self) -> Tuple[str, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
-        server = find_server(self._opts.servers)
+        server, island_api_client = find_server(self._opts.servers)
         if server:
             logger.info(f"Successfully connected to the island via {server}")
         else:
@@ -152,7 +153,7 @@ class InfectionMonkey:
         servers_to_close = (s for s in self._opts.servers if s != server)
         send_remove_from_waitlist_control_message_to_relays(servers_to_close)
 
-        return server
+        return server, island_api_client
 
     @staticmethod
     def _log_arguments(args):
