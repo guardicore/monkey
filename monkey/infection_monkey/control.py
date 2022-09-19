@@ -9,6 +9,7 @@ from urllib3 import disable_warnings
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 from common.network.network_utils import get_my_ip_addresses
 from infection_monkey.config import GUID
+from infection_monkey.island_api_client import HTTPIslandAPIClient
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.utils import agent_process
 
@@ -78,13 +79,7 @@ class ControlClient:
             return
         try:
             telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
-            requests.post(  # noqa: DUO123
-                "https://%s/api/log" % (self.server_address,),
-                data=json.dumps(telemetry),
-                headers={"content-type": "application/json"},
-                verify=False,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
+            HTTPIslandAPIClient(self.server_address).send_log(json.dumps(telemetry))
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 

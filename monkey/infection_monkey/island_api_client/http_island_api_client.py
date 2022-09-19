@@ -21,9 +21,20 @@ class HTTPIslandAPIClient(IIslandAPIClient):
                 verify=False,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
+            self._island_server = island_server
         except requests.exceptions.ConnectionError as err:
             raise IslandAPIConnectionError(err)
         except TimeoutError as err:
             raise IslandAPITimeoutError(err)
         except Exception as err:
             raise IslandAPIError(err)
+
+        # TODO: set server address as object property when init is called in find_server and pass
+        #       object around? won't need to pass island server and create object in every function
+        def send_log(self, data: str):
+            requests.post(  # noqa: DUO123
+                "https://%s/api/log" % (self._island_server,),
+                json=data,
+                verify=False,
+                timeout=MEDIUM_REQUEST_TIMEOUT,
+            )
