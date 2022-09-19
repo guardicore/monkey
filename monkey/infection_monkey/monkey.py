@@ -5,7 +5,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Address, IPv4Interface
 from pathlib import Path, WindowsPath
-from typing import List
+from typing import List, Optional
 
 from pubsub.core import Publisher
 
@@ -123,7 +123,7 @@ class InfectionMonkey:
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
-        self._relay: TCPRelay
+        self._relay: Optional[TCPRelay] = None
 
     @staticmethod
     def _get_arguments(args):
