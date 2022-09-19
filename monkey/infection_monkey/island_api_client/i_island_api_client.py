@@ -12,8 +12,8 @@ class IIslandAPIClient(ABC):
         Construct and island API client and connect it to the island
 
         :param island_server: The socket address of the API
-        :raises IslandAPIConnectionError: If a connection cannot be made to the island
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
-        :raises IslandAPIError: If an unexpected error occurred while attempting to connect to the
+        :raises IslandAPIError: If an unexpected error occurs while attempting to connect to the
                                 island
         """
