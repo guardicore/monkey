@@ -4,6 +4,7 @@ from contextlib import suppress
 from ipaddress import IPv4Address
 from typing import Dict, Iterable, Iterator, MutableMapping, Optional, Tuple
 
+from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
@@ -94,6 +95,8 @@ def notify_disconnect(server_ip: IPv4Address, server_port: int):
     :param server_port: The port of the server to notify.
     """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as d_socket:
+        d_socket.settimeout(LONG_REQUEST_TIMEOUT)
+
         try:
             d_socket.connect((server_ip, server_port))
             d_socket.sendall(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
