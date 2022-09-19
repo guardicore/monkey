@@ -38,12 +38,13 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
-    @staticmethod
+        self._island_server = island_server
+
     @handle_island_errors
-    def send_log(server_address: str, data: str):
+    def send_log(self, log_contents: str):
         requests.post(  # noqa: DUO123
-            "https://%s/api/log" % (server_address,),
-            json=data,
+            f"https://{self._island_server}/api/log",
+            json=log_contents,
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )

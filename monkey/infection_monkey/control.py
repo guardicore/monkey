@@ -78,7 +78,7 @@ class ControlClient:
             return
         try:
             telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
-            HTTPIslandAPIClient.send_log(self.server_address, json.dumps(telemetry))
+            self._island_api_client.send_log(json.dumps(telemetry))
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
