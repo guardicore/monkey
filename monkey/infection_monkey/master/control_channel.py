@@ -2,12 +2,10 @@ import logging
 from typing import Optional, Sequence
 from uuid import UUID
 
-import requests
 from urllib3 import disable_warnings
 
 from common import AgentRegistrationData
 from common.agent_configuration import AgentConfiguration
-from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.network.network_utils import get_network_interfaces
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
@@ -76,23 +74,14 @@ class ControlChannel(IControlChannel):
             raise IslandCommunicationError(e)
 
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        propagation_credentials_url = (
-            f"https://{self._control_channel_server}/api/propagation-credentials"
-        )
         try:
-            response = requests.get(  # noqa: DUO123
-                propagation_credentials_url,
-                verify=False,
-                timeout=SHORT_REQUEST_TIMEOUT,
+            return self._island_api_client.get_credentials_for_propagation(
+                self._control_channel_server
             )
-            response.raise_for_status()
-
-            return [Credentials(**credentials) for credentials in response.json()]
         except (
-            requests.exceptions.JSONDecodeError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-            requests.exceptions.TooManyRedirects,
-            requests.exceptions.HTTPError,
+            IslandAPIConnectionError,
+            IslandAPIRequestError,
+            IslandAPIRequestFailedError,
+            IslandAPITimeoutError,
         ) as e:
             raise IslandCommunicationError(e)

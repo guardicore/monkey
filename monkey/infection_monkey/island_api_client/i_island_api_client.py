@@ -6,6 +6,7 @@ from common.agent_events import AbstractAgentEvent
 
 from common import AgentRegistrationData
 from common.agent_configuration import AgentConfiguration
+from common.credentials import Credentials
 
 
 class IIslandAPIClient(ABC):
@@ -131,4 +132,17 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
         :return: Agent configuration
+        """
+
+    @abstractmethod
+    def get_credentials_for_propagation(self, island_server: str) -> Sequence[Credentials]:
+        """
+        Get credentials from the island
+
+        :param island_server: The server to query
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: Credentials
         """

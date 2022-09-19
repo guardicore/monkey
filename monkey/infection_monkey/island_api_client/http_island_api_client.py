@@ -15,6 +15,7 @@ from common.common_consts.timeouts import (
     MEDIUM_REQUEST_TIMEOUT,
     SHORT_REQUEST_TIMEOUT,
 )
+from common.credentials import Credentials
 
 from . import (
     AbstractIslandAPIClientFactory,
@@ -183,6 +184,31 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             logger.debug(f"Received configuration:\n{pformat(config_dict)}")
 
             return AgentConfiguration(**config_dict)
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.TooManyRedirects,
+        ) as e:
+            raise IslandAPIConnectionError(e)
+        except requests.exceptions.Timeout as e:
+            raise IslandAPITimeoutError(e)
+        except requests.exceptions.HTTPError as e:
+            if e.errno >= 500:
+                raise IslandAPIRequestFailedError(e)
+            else:
+                raise IslandAPIRequestError(e)
+        except json.JSONDecodeError as e:
+            raise IslandAPIRequestFailedError(e)
+
+    def get_credentials_for_propagation(self, island_server: str) -> Sequence[Credentials]:
+        try:
+            response = requests.get(  # noqa: DUO123
+                f"https://{island_server}/api/propagation-credentials",
+                verify=False,
+                timeout=SHORT_REQUEST_TIMEOUT,
+            )
+            response.raise_for_status()
+
+            return [Credentials(**credentials) for credentials in response.json()]
         except (
             requests.exceptions.ConnectionError,
             requests.exceptions.TooManyRedirects,
