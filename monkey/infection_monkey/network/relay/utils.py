@@ -6,8 +6,8 @@ from typing import Dict, Iterable, Iterator, MutableMapping, Optional
 
 from common.network.network_utils import address_to_ip_port
 from infection_monkey.network.relay import RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST
-from infection_monkey.transport import IslandApiClient
-from infection_monkey.transport.island_api_client_errors import (
+from infection_monkey.transport import (
+    IslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPITimeoutError,
@@ -54,7 +54,7 @@ def _check_if_island_server(server: str) -> bool:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        _ = IslandApiClient(server)
+        _ = IslandAPIClient(server)
 
         return True
     except IslandAPIConnectionError as err:
