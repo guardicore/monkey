@@ -28,9 +28,7 @@ class ZerologonAnalyzer(Analyzer):
 
     def _analyze_credential_gathering(self) -> bool:
         propagation_credentials = self.island_client.get_propagation_credentials()
-        self.log.add_entry(f"Credentials from endpoint: {propagation_credentials}")
         credentials_on_island = ZerologonAnalyzer._get_relevant_credentials(propagation_credentials)
-        self.log.add_entry(f"Relevant credentials: {credentials_on_island}")
         return self._is_all_credentials_in_list(credentials_on_island)
 
     @staticmethod
