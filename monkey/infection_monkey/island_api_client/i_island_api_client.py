@@ -30,3 +30,17 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIError: If an unexpected error occurred while attempting to send the
                                 contents of the agent's log to the island
         """
+
+    @abstractmethod
+    def get_pba_file(self, filename: str) -> bytes:
+        """
+        Get a custom PBA file from the island
+
+        :param filename: The name of the custom PBA file
+        :return: The contents of the custom PBA file in bytes
+        :raises IslandAPIConnectionError: If a connection cannot be made to the island
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
+                                       or retrieve the custom PBA file
+        :raises IslandAPIError: If an unexpected error occurred while attempting to retrieve the
+                                custom PBA file
+        """
