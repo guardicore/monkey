@@ -6,9 +6,14 @@ from infection_monkey.i_control_channel import IslandCommunicationError
 from infection_monkey.island_api_client import (
     IIslandAPIClient,
     IslandAPIConnectionError,
+    IslandAPIRequestError,
+    IslandAPIRequestFailedError,
     IslandAPITimeoutError,
 )
 from infection_monkey.master.control_channel import ControlChannel
+
+SERVER = "server"
+AGENT_ID = "agent"
 
 
 @pytest.fixture
@@ -19,7 +24,7 @@ def island_api_client() -> IIslandAPIClient:
 
 @pytest.fixture
 def control_channel(island_api_client) -> ControlChannel:
-    return ControlChannel("server", "agent-id", island_api_client)
+    return ControlChannel(SERVER, AGENT_ID, island_api_client)
 
 
 def test_control_channel__register_agent(control_channel, island_api_client):
@@ -43,3 +48,44 @@ def test_control_channel__register_agent_raises_on_timeout_error(
 
     with pytest.raises(IslandCommunicationError):
         control_channel.register_agent()
+
+
+def test_control_channel__should_agent_stop(control_channel, island_api_client):
+    control_channel.should_agent_stop()
+    assert island_api_client.should_agent_stop.called_once()
+
+
+def test_control_channel__should_agent_stop_raises_on_connection_error(
+    control_channel, island_api_client
+):
+    island_api_client.should_agent_stop.side_effect = IslandAPIConnectionError()
+
+    with pytest.raises(IslandCommunicationError):
+        control_channel.should_agent_stop()
+
+
+def test_control_channel__should_agent_stop_raises_on_timeout_error(
+    control_channel, island_api_client
+):
+    island_api_client.should_agent_stop.side_effect = IslandAPITimeoutError()
+
+    with pytest.raises(IslandCommunicationError):
+        control_channel.should_agent_stop()
+
+
+def test_control_channel__should_agent_stop_raises_on_request_error(
+    control_channel, island_api_client
+):
+    island_api_client.should_agent_stop.side_effect = IslandAPIRequestError()
+
+    with pytest.raises(IslandCommunicationError):
+        control_channel.should_agent_stop()
+
+
+def test_control_channel__should_agent_stop_raises_on_request_failed_error(
+    control_channel, island_api_client
+):
+    island_api_client.should_agent_stop.side_effect = IslandAPIRequestFailedError()
+
+    with pytest.raises(IslandCommunicationError):
+        control_channel.should_agent_stop()

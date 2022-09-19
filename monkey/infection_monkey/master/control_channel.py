@@ -16,6 +16,8 @@ from infection_monkey.i_control_channel import IControlChannel, IslandCommunicat
 from infection_monkey.island_api_client import (
     IIslandAPIClient,
     IslandAPIConnectionError,
+    IslandAPIRequestError,
+    IslandAPIRequestFailedError,
     IslandAPITimeoutError,
 )
 from infection_monkey.utils import agent_process
@@ -53,25 +55,14 @@ class ControlChannel(IControlChannel):
             logger.error("Agent should stop because it can't connect to the C&C server.")
             return True
         try:
-            url = (
-                f"https://{self._control_channel_server}/api/monkey-control"
-                f"/needs-to-stop/{self._agent_id}"
+            return self._island_api_client.should_agent_stop(
+                self._control_channel_server, self._agent_id
             )
-            response = requests.get(  # noqa: DUO123
-                url,
-                verify=False,
-                timeout=SHORT_REQUEST_TIMEOUT,
-            )
-            response.raise_for_status()
-
-            json_response = json.loads(response.content.decode())
-            return json_response["stop_agent"]
         except (
-            json.JSONDecodeError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-            requests.exceptions.TooManyRedirects,
-            requests.exceptions.HTTPError,
+            IslandAPIConnectionError,
+            IslandAPIRequestError,
+            IslandAPIRequestFailedError,
+            IslandAPITimeoutError,
         ) as e:
             raise IslandCommunicationError(e)
 

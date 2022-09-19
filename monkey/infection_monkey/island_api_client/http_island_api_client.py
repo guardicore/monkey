@@ -1,4 +1,5 @@
 import functools
+import json
 import logging
 from typing import List, Sequence
 
@@ -138,6 +139,33 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             raise IslandAPIConnectionError(e)
         except requests.exceptions.Timeout as e:
             raise IslandAPITimeoutError(e)
+
+    def should_agent_stop(self, island_server: str, agent_id: str) -> bool:
+        try:
+            url = f"https://{island_server}/api/monkey-control" f"/needs-to-stop/{agent_id}"
+            response = requests.get(  # noqa: DUO123
+                url,
+                verify=False,
+                timeout=SHORT_REQUEST_TIMEOUT,
+            )
+            response.raise_for_status()
+
+            json_response = json.loads(response.content.decode())
+            return json_response["stop_agent"]
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.TooManyRedirects,
+        ) as e:
+            raise IslandAPIConnectionError(e)
+        except requests.exceptions.Timeout as e:
+            raise IslandAPITimeoutError(e)
+        except requests.exceptions.HTTPError as e:
+            if e.errno >= 500:
+                raise IslandAPIRequestFailedError(e)
+            else:
+                raise IslandAPIRequestError(e)
+        except json.JSONDecodeError as e:
+            raise IslandAPIRequestFailedError(e)
 
     def _serialize_events(self, events: Sequence[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events: List[JSONSerializable] = []
