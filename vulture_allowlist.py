@@ -12,6 +12,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
     IIslandAPIClient,
+    IslandAPIRequestError,
     IslandAPIRequestFailedError,
 )
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
@@ -338,3 +339,4 @@ IslandEventTopic.RESET_AGENT_CONFIGURATION
 IIslandAPIClient
 HTTPIslandAPIClient
 IslandAPIRequestFailedError
+IslandAPIRequestError
