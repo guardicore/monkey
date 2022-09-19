@@ -38,8 +38,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
-    # TODO: set server address as object property when init is called in find_server and pass
-    #       object around? won't need to pass island server and create object in every function
     @staticmethod
     @handle_island_errors
     def send_log(server_address: str, data: str):
