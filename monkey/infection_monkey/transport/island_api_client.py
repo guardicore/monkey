@@ -12,7 +12,7 @@ from infection_monkey.transport.island_api_client_errors import (
 logger = logging.getLogger(__name__)
 
 
-class IslandApiClient:
+class IslandAPIClient:
     """
     Represents Island API client
     """
