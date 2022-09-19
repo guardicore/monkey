@@ -14,10 +14,8 @@ class save_stolen_credentials_to_repository:
     def __init__(self, credentials_repository: ICredentialsRepository):
         self._credentials_repository = credentials_repository
 
-    def __call__(self, credentials_stolen_event: CredentialsStolenEvent):
+    def __call__(self, event: CredentialsStolenEvent):
         try:
-            self._credentials_repository.save_stolen_credentials(
-                credentials_stolen_event.stolen_credentials
-            )
+            self._credentials_repository.save_stolen_credentials(event.stolen_credentials)
         except StorageError as err:
             logger.error(f"Error occurred while storing stolen credentials: {err}")
