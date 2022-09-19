@@ -11,20 +11,10 @@ logger = logging.getLogger(__name__)
 
 class HTTPIslandAPIClient(IIslandAPIClient):
     """
-    A client for requests from the Agent to the Island API
+    A client for the Island's HTTP API
     """
 
     def __init__(self, island_server: str):
-        """
-        Verifies connection to the Island by raising an error if it can't connect
-
-        :param island_server: Address to the Island
-        :raises IslandAPIConnectionError: If a connection cannot be made with the Island
-        :raises IslandAPITimeoutError: If a timeout occurs before being able to connect
-                                       with the Island
-        :raises IslandAPIError: If an unexpected error occurs with the Island API
-        """
-
         try:
             requests.get(  # noqa: DUO123
                 f"https://{island_server}/api?action=is-up",
