@@ -333,5 +333,5 @@ IslandEventTopic.RESET_AGENT_CONFIGURATION
 
 # TODO: Remove after #2292 is closed
 IIslandAPIClient
-IslandApiClient
+IslandAPIClient
 IslandAPIRequestFailedError
