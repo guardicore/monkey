@@ -34,13 +34,14 @@ def encrypt_event(
     if not isinstance(event_data, dict):
         raise TypeError("Event encryption only supported for dict")
 
+    data = event_data.copy()
     for field in fields:
-        event_data[ENCRYPTED_PREFIX + field] = str(
+        data[ENCRYPTED_PREFIX + field] = str(
             encrypt(json.dumps(event_data[field]).encode()), "utf-8"
         )
-        del event_data[field]
+        del data[field]
 
-    return event_data
+    return data
 
 
 def decrypt_event(
@@ -57,11 +58,12 @@ def decrypt_event(
     if not isinstance(event_data, dict):
         raise TypeError("Event decryption only supported for dict")
 
+    data = event_data.copy()
     for field in event_data.keys():
         if field.startswith("encrypted_"):
-            event_data[field[len(ENCRYPTED_PREFIX) :]] = json.loads(
+            data[field[len(ENCRYPTED_PREFIX) :]] = json.loads(
                 str(decrypt(event_data[field].encode()), "utf-8")
             )
-            del event_data[field]
+            del data[field]
 
-    return event_data
+    return data

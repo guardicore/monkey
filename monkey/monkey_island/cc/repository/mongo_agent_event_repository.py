@@ -1,61 +1,16 @@
-import json
-from typing import Any, Callable, Dict, Iterable, MutableMapping, Sequence, Type
+from typing import Any, Dict, MutableMapping, Sequence, Type
 
 from pymongo import MongoClient
 
-from common.agent_event_serializers import (
-    EVENT_TYPE_FIELD,
-    AgentEventSerializerRegistry,
-    JSONSerializable,
-)
+from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from common.types import AgentID
 from monkey_island.cc.repository import IAgentEventRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import RemovalError, RetrievalError, StorageError
+from .agent_event_encryption import decrypt_event, encrypt_event, get_fields_to_encrypt
 from .consts import MONGO_OBJECT_ID_KEY
-
-ENCRYPTED_PREFIX = "encrypted_"
-
-
-def get_fields_to_encrypt(event: AbstractAgentEvent):
-    return set(vars(AbstractAgentEvent)["__fields__"].keys()) ^ set(event.dict().keys())
-
-
-def encrypt_event(
-    encrypt: Callable[[bytes], bytes],
-    event_data: JSONSerializable,
-    fields: Iterable[str] = [],
-) -> JSONSerializable:
-    if not isinstance(event_data, dict):
-        raise TypeError("Event encryption only supported for dict")
-
-    data = event_data.copy()
-    for field in fields:
-        data[ENCRYPTED_PREFIX + field] = str(
-            encrypt(json.dumps(event_data[field]).encode()), "utf-8"
-        )
-        del data[field]
-
-    return data
-
-
-def decrypt_event(
-    decrypt: Callable[[bytes], bytes], event_data: JSONSerializable
-) -> JSONSerializable:
-    if not isinstance(event_data, dict):
-        raise TypeError("Event decryption only supported for dict")
-
-    data = event_data.copy()
-    for field in event_data.keys():
-        if field.startswith("encrypted_"):
-            data[field[len(ENCRYPTED_PREFIX) :]] = json.loads(
-                str(decrypt(event_data[field].encode()), "utf-8")
-            )
-            del data[field]
-
-    return data
 
 
 class MongoAgentEventRepository(IAgentEventRepository):
