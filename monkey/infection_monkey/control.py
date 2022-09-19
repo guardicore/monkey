@@ -84,5 +84,5 @@ class ControlClient:
     def get_pba_file(self, filename):
         try:
             HTTPIslandAPIClient.get_pba_file(self.server_address, filename)
-        except requests.exceptions.RequestException:
-            return False
+        except Exception as exc:
+            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
