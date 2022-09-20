@@ -7,6 +7,12 @@ from common import OperatingSystem
 #       moment, the Island and Agent have different needs, but at some point we should unify these.
 
 
+class RetrievalError(RuntimeError):
+    """
+    Raised when a repository encounters an error while attempting to retrieve data
+    """
+
+
 class IAgentBinaryRepository(metaclass=abc.ABCMeta):
     """
     IAgentBinaryRepository provides an interface for other components to access agent binaries.
@@ -23,5 +29,6 @@ class IAgentBinaryRepository(metaclass=abc.ABCMeta):
         :param operating_system: The name of the operating system on which the agent binary will run
         :param architecture: Reserved
         :return: A file-like object for the requested agent binary
+        :raises RetrievalError: If an error occurs when retrieving the agent binary
         """
         pass
