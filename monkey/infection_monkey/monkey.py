@@ -14,6 +14,7 @@ from common.agent_event_serializers import (
     register_common_agent_event_serializers,
 )
 from common.agent_events import CredentialsStolenEvent
+from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import (
     address_to_ip_port,
@@ -88,9 +89,11 @@ from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter im
     LegacyTelemetryMessengerAdapter,
 )
 from infection_monkey.telemetry.state_telem import StateTelem
+from infection_monkey.utils import agent_process
 from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
+from infection_monkey.utils.ids import get_agent_id, get_machine_id
 from infection_monkey.utils.monkey_dir import (
     create_monkey_dir,
     get_monkey_dir_path,
@@ -120,6 +123,8 @@ class InfectionMonkey:
         self._control_client = ControlClient(
             server_address=server, island_api_client=self._island_api_client
         )
+        self._control_channel = ControlChannel(server, GUID, self._island_api_client)
+        self._register_agent()
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
@@ -165,6 +170,18 @@ class InfectionMonkey:
 
         return server, island_api_client
 
+    def _register_agent(self, server: str):
+        agent_registration_data = AgentRegistrationData(
+            id=get_agent_id(),
+            machine_hardware_id=get_machine_id(),
+            start_time=agent_process.get_start_time(),
+            # parent_id=parent,
+            parent_id=None,  # None for now, until we change GUID to UUID
+            cc_server=server,
+            network_interfaces=get_network_interfaces(),
+        )
+        self._island_api_client.register_agent(agent_registration_data)
+
     def _select_server(
         self, server_clients: Mapping[str, IIslandAPIClient]
     ) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
@@ -195,7 +212,7 @@ class InfectionMonkey:
 
         run_aws_environment_check(self._telemetry_messenger)
 
-        should_stop = ControlChannel(self._control_client.server_address, GUID).should_agent_stop()
+        should_stop = self._control_channel.should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
@@ -210,9 +227,6 @@ class InfectionMonkey:
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
-
-        self._control_channel = ControlChannel(self._control_client.server_address, GUID)
-        self._control_channel.register_agent(self._opts.parent)
 
         config = self._control_channel.get_config()
 

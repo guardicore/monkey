@@ -1,13 +1,21 @@
 import functools
+import json
 import logging
+from pprint import pformat
 from typing import List, Sequence
 
 import requests
 
-from common import OperatingSystem
+from common import AgentRegistrationData, OperatingSystem
+from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.agent_events import AbstractAgentEvent
-from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
+from common.common_consts.timeouts import (
+    LONG_REQUEST_TIMEOUT,
+    MEDIUM_REQUEST_TIMEOUT,
+    SHORT_REQUEST_TIMEOUT,
+)
+from common.credentials import Credentials
 
 from . import (
     AbstractIslandAPIClientFactory,
@@ -27,7 +35,9 @@ def handle_island_errors(fn):
     def decorated(*args, **kwargs):
         try:
             return fn(*args, **kwargs)
-        except requests.exceptions.ConnectionError as err:
+        except IslandAPIError as err:
+            raise err
+        except (requests.exceptions.ConnectionError, requests.exceptions.TooManyRedirects) as err:
             raise IslandAPIConnectionError(err)
         except requests.exceptions.HTTPError as err:
             if 400 <= err.response.status_code < 500:
@@ -44,6 +54,17 @@ def handle_island_errors(fn):
             raise IslandAPIError(err)
 
     return decorated
+
+
+def convert_json_error_to_island_api_error(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        try:
+            fn(*args, **kwargs)
+        except json.JSONDecodeError as err:
+            raise IslandAPIRequestFailedError(err)
+
+    return wrapper
 
 
 class HTTPIslandAPIClient(IIslandAPIClient):
@@ -115,6 +136,58 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         )
 
         response.raise_for_status()
+
+    @handle_island_errors
+    def register_agent(self, agent_registration_data: AgentRegistrationData):
+        url = f"{self._api_url}/agents"
+        response = requests.post(  # noqa: DUO123
+            url,
+            json=agent_registration_data.dict(simplify=True),
+            verify=False,
+            timeout=SHORT_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+
+    @handle_island_errors
+    @convert_json_error_to_island_api_error
+    def should_agent_stop(self, agent_id: str) -> bool:
+        url = f"{self._api_url}/monkey-control/needs-to-stop/{agent_id}"
+        response = requests.get(  # noqa: DUO123
+            url,
+            verify=False,
+            timeout=SHORT_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+
+        return response.json()["stop_agent"]
+
+    @handle_island_errors
+    @convert_json_error_to_island_api_error
+    def get_config(self) -> AgentConfiguration:
+        response = requests.get(  # noqa: DUO123
+            f"{self._api_url}/agent-configuration",
+            verify=False,
+            timeout=SHORT_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+
+        config_dict = response.json()
+
+        logger.debug(f"Received configuration:\n{pformat(config_dict)}")
+
+        return AgentConfiguration(**config_dict)
+
+    @handle_island_errors
+    @convert_json_error_to_island_api_error
+    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
+        response = requests.get(  # noqa: DUO123
+            f"{self._api_url}/propagation-credentials",
+            verify=False,
+            timeout=SHORT_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+
+        return [Credentials(**credentials) for credentials in response.json()]
 
     def _serialize_events(self, events: Sequence[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events: List[JSONSerializable] = []

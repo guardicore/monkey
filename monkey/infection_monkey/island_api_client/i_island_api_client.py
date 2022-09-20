@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Sequence
 
-from common import OperatingSystem
+from common import AgentRegistrationData, OperatingSystem
+from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
+from common.credentials import Credentials
 
 
 class IIslandAPIClient(ABC):
@@ -13,7 +15,7 @@ class IIslandAPIClient(ABC):
     @abstractmethod
     def connect(self, island_server: str):
         """
-        Connectto the island's API
+        Connect to the island's API
 
         :param island_server: The socket address of the API
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
@@ -74,7 +76,6 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 agent binary
-
         """
 
     @abstractmethod
@@ -91,4 +92,54 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to send events to
                                 the island
+        """
+
+    @abstractmethod
+    def register_agent(self, agent_registration_data: AgentRegistrationData):
+        """
+        Register an agent with the Island
+
+        :param agent_registration_data: Information about the agent to register
+            with the island
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        """
+
+    @abstractmethod
+    def should_agent_stop(self, agent_id: str) -> bool:
+        """
+        Check with the island to see if the agent should stop
+
+        :param agent_id: The agent identifier for the agent to check
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: True if the agent should stop, otherwise False
+        """
+
+    @abstractmethod
+    def get_config(self) -> AgentConfiguration:
+        """
+        Get agent configuration from the island
+
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: Agent configuration
+        """
+
+    @abstractmethod
+    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
+        """
+        Get credentials from the island
+
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: Credentials
         """
