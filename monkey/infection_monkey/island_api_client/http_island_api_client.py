@@ -35,6 +35,14 @@ def handle_island_errors(fn):
     def decorated(*args, **kwargs):
         try:
             return fn(*args, **kwargs)
+        except (
+            IslandAPIConnectionError,
+            IslandAPIError,
+            IslandAPIRequestError,
+            IslandAPIRequestFailedError,
+            IslandAPITimeoutError,
+        ) as e:
+            raise e
         except (requests.exceptions.ConnectionError, requests.exceptions.TooManyRedirects) as err:
             raise IslandAPIConnectionError(err)
         except requests.exceptions.HTTPError as err:
