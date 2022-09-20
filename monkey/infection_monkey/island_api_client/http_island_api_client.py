@@ -3,6 +3,7 @@ import logging
 
 import requests
 
+from common import OperatingSystem
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 
 from . import (
@@ -78,7 +79,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return response.content
 
     @handle_island_errors
-    def get_agent_binary(self, os_name: str):
+    def get_agent_binary(self, operating_system: OperatingSystem):
+        os_name = operating_system.value
         response = requests.get(  # noqa: DUO123
             f"{self._api_url}/agent-binaries/{os_name}",
             verify=False,
