@@ -1,4 +1,5 @@
 import uuid
+from typing import Dict, Sequence
 
 import pytest
 
@@ -14,6 +15,13 @@ from monkey_island.cc.server_utils.encryption import RepositoryEncryptor
 
 class FakeAgentEvent(AbstractAgentEvent):
     data: str
+    list_data: Sequence[str]
+    dict_data: Dict[str, str]
+
+
+EVENT = FakeAgentEvent(
+    source=uuid.uuid4(), data="foo", list_data=["abc", "def"], dict_data={"abc": "def"}
+)
 
 
 @pytest.fixture
@@ -34,27 +42,26 @@ def serializer():
 
 
 def test_agent_event_encryption__encrypts(encryptor, serializer):
-    event = FakeAgentEvent(source=uuid.uuid4(), data="foo")
-    data = serializer.serialize(event)
-    fields = get_fields_to_encrypt(event)
+    data = serializer.serialize(EVENT)
+    fields = get_fields_to_encrypt(EVENT)
     encrypted_data = encrypt_event(encryptor.encrypt, data, fields)
 
     # Encrypted fields have the "encrypted_" prefix
     assert "encrypted_data" in encrypted_data
-    assert encrypted_data["encrypted_data"] is not event.data
+    assert encrypted_data["encrypted_data"] is not EVENT.data
+    assert encrypted_data["encrypted_list_data"] is not EVENT.list_data
+    assert encrypted_data["encrypted_dict_data"] is not EVENT.dict_data
 
 
 def test_agent_event_encryption__decrypts(encryptor, serializer):
-    event = FakeAgentEvent(source=uuid.uuid4(), data="foo")
-
-    data = serializer.serialize(event)
-    fields = get_fields_to_encrypt(event)
+    data = serializer.serialize(EVENT)
+    fields = get_fields_to_encrypt(EVENT)
     encrypted_data = encrypt_event(encryptor.encrypt, data, fields)
 
     decrypted_data = decrypt_event(encryptor.decrypt, encrypted_data)
     deserialized_event = serializer.deserialize(decrypted_data)
 
-    assert deserialized_event == event
+    assert deserialized_event == EVENT
 
 
 def test_agent_event_encryption__encryption_throws(encryptor):
