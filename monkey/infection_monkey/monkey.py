@@ -248,7 +248,7 @@ class InfectionMonkey:
         )
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
-        InfectionMonkey._subscribe_events(
+        self._subscribe_events(
             event_queue,
             propagation_credentials_repository,
             self._control_client.server_address,
@@ -274,8 +274,8 @@ class InfectionMonkey:
             propagation_credentials_repository,
         )
 
-    @staticmethod
     def _subscribe_events(
+        self,
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         server_address: str,
@@ -288,7 +288,7 @@ class InfectionMonkey:
             ),
         )
         event_queue.subscribe_all_events(
-            AgentEventForwarder(server_address, agent_event_serializer_registry).send_event
+            AgentEventForwarder(self.island_api_client, agent_event_serializer_registry).send_event
         )
 
     def _build_puppet(
