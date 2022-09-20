@@ -9,10 +9,14 @@ class IIslandAPIClient(ABC):
     @abstractmethod
     def __init__(self, island_server: str):
         """
-        Construct and island API client and connect it to the island
+        Construct an island API client and connect it to the island
 
         :param island_server: The socket address of the API
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             island due to an error on the server
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to connect to the
                                 island
@@ -24,10 +28,13 @@ class IIslandAPIClient(ABC):
         Send the contents of the agent's log to the island
 
         :param log_contents: The contents of the agent's log
-        :raises IslandAPIConnectionError: If a connection cannot be made to the island
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             island due to an error on the server
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
-                                       or send the log contents
-        :raises IslandAPIError: If an unexpected error occurred while attempting to send the
+        :raises IslandAPIError: If an unexpected error occurs while attempting to send the
                                 contents of the agent's log to the island
         """
 
@@ -38,9 +45,12 @@ class IIslandAPIClient(ABC):
 
         :param filename: The name of the custom PBA file
         :return: The contents of the custom PBA file in bytes
-        :raises IslandAPIConnectionError: If a connection cannot be made to the island
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             island due to an error on the server
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
-                                       or retrieve the custom PBA file
-        :raises IslandAPIError: If an unexpected error occurred while attempting to retrieve the
+        :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 custom PBA file
         """
