@@ -61,9 +61,9 @@ class IIslandAPIClient(ABC):
     @abstractmethod
     def send_events(self, events: Sequence[JSONSerializable]):
         """
-        Send the events to the Island
+        Send a sequence of Agent events to the Island
 
-        :param events: Events that are going to be send to the Island
+        :param events: A sequence of Agent events
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client
