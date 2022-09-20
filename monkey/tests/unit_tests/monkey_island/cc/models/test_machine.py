@@ -12,6 +12,7 @@ MACHINE_OBJECT_DICT = MappingProxyType(
     {
         "id": 1,
         "hardware_id": uuid.getnode(),
+        "island": True,
         "network_interfaces": [IPv4Interface("10.0.0.1/24"), IPv4Interface("192.168.5.32/16")],
         "operating_system": OperatingSystem.WINDOWS,
         "operating_system_version": "eXtra Problems",
@@ -23,6 +24,7 @@ MACHINE_SIMPLE_DICT = MappingProxyType(
     {
         "id": 1,
         "hardware_id": uuid.getnode(),
+        "island": True,
         "network_interfaces": ["10.0.0.1/24", "192.168.5.32/16"],
         "operating_system": "windows",
         "operating_system_version": "eXtra Problems",
@@ -52,6 +54,7 @@ def test_to_dict():
     [
         ("id", "not-an-int"),
         ("hardware_id", "not-an-int"),
+        ("island", "not-a-bool"),
         ("network_interfaces", "not-a-list"),
         ("operating_system", 2.1),
         ("operating_system", "bsd"),
@@ -128,6 +131,21 @@ def test_hardware_id_default():
     m = Machine(**missing_hardware_id_dict)
 
     assert m.hardware_id is None
+
+
+def test_island_immutable():
+    m = Machine(**MACHINE_OBJECT_DICT)
+    with pytest.raises(TypeError):
+        m.island = True
+
+
+def test_island_default():
+    missing_island_dict = MACHINE_OBJECT_DICT.copy()
+    del missing_island_dict["island"]
+
+    m = Machine(**missing_island_dict)
+
+    assert m.island is False
 
 
 def test_network_interfaces_set_valid_value():

@@ -27,3 +27,5 @@ from .mongo_machine_repository import MongoMachineRepository
 from .mongo_agent_repository import MongoAgentRepository
 from .mongo_node_repository import MongoNodeRepository
 from .mongo_agent_event_repository import MongoAgentEventRepository
+
+from .utils import initialize_machine_repository
