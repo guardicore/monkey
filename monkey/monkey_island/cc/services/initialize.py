@@ -24,13 +24,19 @@ from monkey_island.cc.repository import (
     IAgentBinaryRepository,
     IAgentConfigurationRepository,
     IAgentEventRepository,
+    IAgentRepository,
     ICredentialsRepository,
     IFileRepository,
+    IMachineRepository,
+    INodeRepository,
     ISimulationRepository,
     IUserRepository,
     JSONFileUserRepository,
     LocalStorageFileRepository,
+    MongoAgentRepository,
     MongoCredentialsRepository,
+    MongoMachineRepository,
+    MongoNodeRepository,
     RetrievalError,
     StubbedEventRepository,
 )
@@ -103,6 +109,10 @@ def _register_repositories(container: DIContainer, data_dir: Path):
 
     # TODO: Replace with MongoEventRepository
     container.register_instance(IAgentEventRepository, StubbedEventRepository())
+
+    container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
+    container.register_instance(IMachineRepository, container.resolve(MongoMachineRepository))
+    container.register_instance(IAgentRepository, container.resolve(MongoAgentRepository))
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
