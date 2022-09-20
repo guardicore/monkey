@@ -135,6 +135,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         response.raise_for_status()
 
+    @handle_island_errors
     def register_agent(self, agent_registration_data: AgentRegistrationData):
         url = f"https://{agent_registration_data.cc_server}/api/agents"
         response = requests.post(  # noqa: DUO123

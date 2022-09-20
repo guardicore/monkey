@@ -104,6 +104,8 @@ class IIslandAPIClient(ABC):
         :param agent_registration_data: Information about the agent to register
             with the island
         :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
         """
 
