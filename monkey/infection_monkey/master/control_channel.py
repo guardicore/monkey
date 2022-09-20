@@ -18,7 +18,6 @@ def handle_island_api_errors(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            print(args)
             func(*args, **kwargs)
         except IslandAPIError as err:
             raise IslandCommunicationError(err)
