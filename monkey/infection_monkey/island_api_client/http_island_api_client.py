@@ -4,11 +4,12 @@ from typing import List, Sequence
 
 import requests
 
+from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
-from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 
 from . import (
+    AbstractIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
@@ -49,11 +50,16 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     A client for the Island's HTTP API
     """
 
-    @handle_island_errors
     def __init__(
         self,
+        agent_event_serializer_registry: AgentEventSerializerRegistry,
+    ):
+        self._agent_event_serializer_registry = agent_event_serializer_registry
+
+    @handle_island_errors
+    def connect(
+        self,
         island_server: str,
-        agent_event_serializer_registry: AgentEventSerializerRegistry = None,
     ):
         response = requests.get(  # noqa: DUO123
             f"https://{island_server}/api?action=is-up",
@@ -64,8 +70,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         self._island_server = island_server
         self._api_url = f"https://{self._island_server}/api"
-
-        self._agent_event_serializer_registry = agent_event_serializer_registry
 
     @handle_island_errors
     def send_log(self, log_contents: str):
@@ -110,3 +114,14 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             raise IslandAPIRequestError(err)
 
         return serialized_events
+
+
+class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
+    def __init__(
+        self,
+        agent_event_serializer_registry: AgentEventSerializerRegistry = None,
+    ):
+        self._agent_event_serializer_registry = agent_event_serializer_registry
+
+    def create_island_api_client(self):
+        return HTTPIslandAPIClient(self._agent_event_serializer_registry)

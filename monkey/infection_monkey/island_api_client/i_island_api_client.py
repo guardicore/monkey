@@ -10,9 +10,9 @@ class IIslandAPIClient(ABC):
     """
 
     @abstractmethod
-    def __init__(self, island_server: str):
+    def connect(self, island_server: str):
         """
-        Construct an island API client and connect it to the island
+        Connectto the island's API
 
         :param island_server: The socket address of the API
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
