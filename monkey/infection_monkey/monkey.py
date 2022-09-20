@@ -110,7 +110,6 @@ class InfectionMonkey:
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
 
-        # TODO: Revisit variable names
         server, self.island_api_client = self._connect_to_island_api()
         # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
