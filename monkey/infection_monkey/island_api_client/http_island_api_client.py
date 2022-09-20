@@ -1,8 +1,10 @@
 import functools
 import logging
+from typing import Sequence
 
 import requests
 
+from common.agent_event_serializers import JSONSerializable
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 
 from . import (
@@ -76,3 +78,14 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response.raise_for_status()
 
         return response.content
+
+    @handle_island_errors
+    def send_events(self, events: Sequence[JSONSerializable]):
+        response = requests.post(  # noqa: DUO123
+            f"{self._api_url}/agent-events",
+            json=events,
+            verify=False,
+            timeout=MEDIUM_REQUEST_TIMEOUT,
+        )
+
+        response.raise_for_status()
