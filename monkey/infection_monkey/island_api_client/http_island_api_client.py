@@ -5,7 +5,14 @@ import requests
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 
-from . import IIslandAPIClient, IslandAPIConnectionError, IslandAPIError, IslandAPITimeoutError
+from . import (
+    IIslandAPIClient,
+    IslandAPIConnectionError,
+    IslandAPIError,
+    IslandAPIRequestError,
+    IslandAPIRequestFailedError,
+    IslandAPITimeoutError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +24,13 @@ def handle_island_errors(fn):
             return fn(*args, **kwargs)
         except requests.exceptions.ConnectionError as err:
             raise IslandAPIConnectionError(err)
+        except requests.exceptions.HTTPError as err:
+            if 400 <= err.response.status_code < 500:
+                raise IslandAPIRequestError(err)
+            elif 500 <= err.response.status_code < 600:
+                raise IslandAPIRequestFailedError(err)
+            else:
+                raise IslandAPIError(err)
         except TimeoutError as err:
             raise IslandAPITimeoutError(err)
         except Exception as err:
