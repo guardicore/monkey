@@ -296,10 +296,10 @@ def test_island_api_client_send_events__status_code(island_api_client, status_co
         (TimeoutError, IslandAPITimeoutError),
     ],
 )
-def test_island_api_client__register_agent(actual_error, expected_error):
+def test_island_api_client__register_agent(island_api_client, actual_error, expected_error):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.post(ISLAND_REGISTER_AGENT_URI, exc=actual_error)
@@ -313,10 +313,12 @@ def test_island_api_client__register_agent(actual_error, expected_error):
         (501, IslandAPIRequestFailedError),
     ],
 )
-def test_island_api_client_register_agent__status_code(status_code, expected_error):
+def test_island_api_client_register_agent__status_code(
+    island_api_client, status_code, expected_error
+):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.post(ISLAND_REGISTER_AGENT_URI, status_code=status_code)
@@ -330,10 +332,10 @@ def test_island_api_client_register_agent__status_code(status_code, expected_err
         (TimeoutError, IslandAPITimeoutError),
     ],
 )
-def test_island_api_client__should_agent_stop(actual_error, expected_error):
+def test_island_api_client__should_agent_stop(island_api_client, actual_error, expected_error):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.get(ISLAND_AGENT_STOP_URI, exc=actual_error)
@@ -347,20 +349,22 @@ def test_island_api_client__should_agent_stop(actual_error, expected_error):
         (501, IslandAPIRequestFailedError),
     ],
 )
-def test_island_api_client_should_agent_stop__status_code(status_code, expected_error):
+def test_island_api_client_should_agent_stop__status_code(
+    island_api_client, status_code, expected_error
+):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.get(ISLAND_AGENT_STOP_URI, status_code=status_code)
             island_api_client.should_agent_stop(AGENT_ID)
 
 
-def test_island_api_client_should_agent_stop__bad_json():
+def test_island_api_client_should_agent_stop__bad_json(island_api_client):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(IslandAPIRequestFailedError):
             m.get(ISLAND_AGENT_STOP_URI, content=b"bad")
@@ -374,10 +378,10 @@ def test_island_api_client_should_agent_stop__bad_json():
         (TimeoutError, IslandAPITimeoutError),
     ],
 )
-def test_island_api_client__get_config(actual_error, expected_error):
+def test_island_api_client__get_config(island_api_client, actual_error, expected_error):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.get(ISLAND_GET_CONFIG_URI, exc=actual_error)
@@ -391,20 +395,20 @@ def test_island_api_client__get_config(actual_error, expected_error):
         (501, IslandAPIRequestFailedError),
     ],
 )
-def test_island_api_client_get_config__status_code(status_code, expected_error):
+def test_island_api_client_get_config__status_code(island_api_client, status_code, expected_error):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.get(ISLAND_GET_CONFIG_URI, status_code=status_code)
             island_api_client.get_config()
 
 
-def test_island_api_client_get_config__bad_json():
+def test_island_api_client_get_config__bad_json(island_api_client):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(IslandAPIRequestFailedError):
             m.get(ISLAND_GET_CONFIG_URI, content=b"bad")
@@ -418,10 +422,12 @@ def test_island_api_client_get_config__bad_json():
         (TimeoutError, IslandAPITimeoutError),
     ],
 )
-def test_island_api_client__get_credentials_for_propagation(actual_error, expected_error):
+def test_island_api_client__get_credentials_for_propagation(
+    island_api_client, actual_error, expected_error
+):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.get(ISLAND_GET_PROPAGATION_CREDENTIALS_URI, exc=actual_error)
@@ -436,21 +442,21 @@ def test_island_api_client__get_credentials_for_propagation(actual_error, expect
     ],
 )
 def test_island_api_client_get_credentials_for_propagation__status_code(
-    status_code, expected_error
+    island_api_client, status_code, expected_error
 ):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
             m.get(ISLAND_GET_PROPAGATION_CREDENTIALS_URI, status_code=status_code)
             island_api_client.get_credentials_for_propagation()
 
 
-def test_island_api_client_get_credentials_for_propagation__bad_json():
+def test_island_api_client_get_credentials_for_propagation__bad_json(island_api_client):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client.connect(SERVER)
 
         with pytest.raises(IslandAPIRequestFailedError):
             m.get(ISLAND_GET_PROPAGATION_CREDENTIALS_URI, content=b"bad")
