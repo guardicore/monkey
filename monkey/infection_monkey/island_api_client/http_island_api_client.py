@@ -46,23 +46,25 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     def __init__(self, island_server: str):
-        requests.get(  # noqa: DUO123
+        response = requests.get(  # noqa: DUO123
             f"https://{island_server}/api?action=is-up",
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
+        response.raise_for_status()
 
         self._island_server = island_server
         self._api_url = f"https://{self._island_server}/api"
 
     @handle_island_errors
     def send_log(self, log_contents: str):
-        requests.post(  # noqa: DUO123
+        response = requests.post(  # noqa: DUO123
             f"{self._api_url}/log",
             json=log_contents,
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
+        response.raise_for_status()
 
     @handle_island_errors
     def get_pba_file(self, filename: str):
@@ -71,5 +73,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             verify=False,
             timeout=LONG_REQUEST_TIMEOUT,
         )
+        response.raise_for_status()
 
         return response.content
