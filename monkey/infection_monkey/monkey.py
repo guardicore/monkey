@@ -315,7 +315,6 @@ class InfectionMonkey:
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
         agent_binary_repository = CachingAgentBinaryRepository(
-            island_url=f"https://{self._control_client.server_address}",
             island_api_client=self.island_api_client,
         )
         exploit_wrapper = ExploiterWrapper(
