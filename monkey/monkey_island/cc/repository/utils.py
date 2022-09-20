@@ -26,6 +26,7 @@ def initialize_machine_repository(machine_repository: IMachineRepository):
         machine = Machine(
             id=machine_repository.get_new_id(),
             hardware_id=hardware_id,
+            island=True,
             network_interfaces=get_network_interfaces(),
             operating_system=OperatingSystem(platform.system().lower()),
             operating_system_version=platform.version(),
