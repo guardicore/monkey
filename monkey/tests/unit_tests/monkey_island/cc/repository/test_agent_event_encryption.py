@@ -6,7 +6,6 @@ import pytest
 from common.agent_event_serializers import PydanticAgentEventSerializer
 from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repository.agent_event_encryption import decrypt_event, encrypt_event
-from monkey_island.cc.server_utils.encryption import RepositoryEncryptor
 
 
 class FakeAgentEvent(AbstractAgentEvent):
@@ -26,20 +25,13 @@ def key_file(tmp_path):
 
 
 @pytest.fixture
-def encryptor(key_file):
-    encryptor = RepositoryEncryptor(key_file)
-    encryptor.unlock(b"password")
-    return encryptor
-
-
-@pytest.fixture
 def serializer():
     return PydanticAgentEventSerializer(FakeAgentEvent)
 
 
-def test_agent_event_encryption__encrypts(encryptor, serializer):
+def test_agent_event_encryption__encrypts(repository_encryptor, serializer):
     data = serializer.serialize(EVENT)
-    encrypted_data = encrypt_event(encryptor.encrypt, data)
+    encrypted_data = encrypt_event(repository_encryptor.encrypt, data)
 
     # Encrypted fields have the "encrypted_" prefix
     assert "encrypted_data" in encrypted_data
@@ -48,25 +40,25 @@ def test_agent_event_encryption__encrypts(encryptor, serializer):
     assert encrypted_data["encrypted_dict_data"] is not EVENT.dict_data
 
 
-def test_agent_event_encryption__decrypts(encryptor, serializer):
+def test_agent_event_encryption__decrypts(repository_encryptor, serializer):
     data = serializer.serialize(EVENT)
-    encrypted_data = encrypt_event(encryptor.encrypt, data)
+    encrypted_data = encrypt_event(repository_encryptor.encrypt, data)
 
-    decrypted_data = decrypt_event(encryptor.decrypt, encrypted_data)
+    decrypted_data = decrypt_event(repository_encryptor.decrypt, encrypted_data)
     deserialized_event = serializer.deserialize(decrypted_data)
 
     assert deserialized_event == EVENT
 
 
-def test_agent_event_encryption__encryption_throws(encryptor):
+def test_agent_event_encryption__encryption_throws(repository_encryptor):
     data = "Not a dict."
 
     with pytest.raises(TypeError):
-        encrypt_event(encryptor.encrypt, data, fields=[])
+        encrypt_event(repository_encryptor.encrypt, data, fields=[])
 
 
-def test_agent_event_encryption__decryption_throws(encryptor):
+def test_agent_event_encryption__decryption_throws(repository_encryptor):
     data = "Not a dict."
 
     with pytest.raises(TypeError):
-        decrypt_event(encryptor.decrypt, data)
+        decrypt_event(repository_encryptor.decrypt, data)
