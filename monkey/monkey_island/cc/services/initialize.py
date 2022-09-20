@@ -124,7 +124,7 @@ def _decorate_file_repository(file_repository: IFileRepository) -> IFileReposito
     )
 
 
-def _build_agent_binary_repository():
+def _build_agent_binary_repository() -> IAgentBinaryRepository:
     file_repository = _decorate_file_repository(LocalStorageFileRepository(AGENT_BINARIES_PATH))
     agent_binary_repository = AgentBinaryRepository(file_repository)
 
