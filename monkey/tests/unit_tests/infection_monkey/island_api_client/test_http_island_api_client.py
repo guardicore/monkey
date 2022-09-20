@@ -2,6 +2,7 @@ import pytest
 import requests
 import requests_mock
 
+from common import OperatingSystem
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
     IslandAPIConnectionError,
@@ -137,7 +138,7 @@ def test_island_api_client__get_agent_binary(actual_error, expected_error):
 
         with pytest.raises(expected_error):
             m.get(ISLAND_GET_AGENT_BINARY_URI, exc=actual_error)
-            island_api_client.get_agent_binary(os_name=WINDOWS)
+            island_api_client.get_agent_binary(operating_system=OperatingSystem.WINDOWS)
 
 
 @pytest.mark.parametrize(
@@ -154,4 +155,4 @@ def test_island_api_client__get_agent_binary_status_code(status_code, expected_e
 
         with pytest.raises(expected_error):
             m.get(ISLAND_GET_AGENT_BINARY_URI, status_code=status_code)
-            island_api_client.get_agent_binary(os_name=WINDOWS)
+            island_api_client.get_agent_binary(operating_system=OperatingSystem.WINDOWS)
