@@ -3,7 +3,13 @@ from functools import partial
 from common import DIContainer
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import reset_agent_configuration
-from monkey_island.cc.repository import ICredentialsRepository
+from monkey_island.cc.repository import (
+    IAgentEventRepository,
+    IAgentRepository,
+    ICredentialsRepository,
+    IMachineRepository,
+    INodeRepository,
+)
 from monkey_island.cc.services.database import Database
 
 
@@ -32,3 +38,17 @@ def _subscribe_clear_simulation_data_events(
     island_event_queue.subscribe(
         IslandEventTopic.CLEAR_SIMULATION_DATA, credentials_repository.remove_stolen_credentials
     )
+
+    node_repository = container.resolve(INodeRepository)
+    island_event_queue.subscribe(IslandEventTopic.CLEAR_SIMULATION_DATA, node_repository.reset)
+
+    agent_event_repository = container.resolve(IAgentEventRepository)
+    island_event_queue.subscribe(
+        IslandEventTopic.CLEAR_SIMULATION_DATA, agent_event_repository.reset
+    )
+
+    agent_repository = container.resolve(IAgentRepository)
+    island_event_queue.subscribe(IslandEventTopic.CLEAR_SIMULATION_DATA, agent_repository.reset)
+
+    machine_repository = container.resolve(IMachineRepository)
+    island_event_queue.subscribe(IslandEventTopic.CLEAR_SIMULATION_DATA, machine_repository.reset)
