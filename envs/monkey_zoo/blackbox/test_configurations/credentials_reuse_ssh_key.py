@@ -10,6 +10,8 @@ from .utils import (
     add_subnets,
     add_tcp_ports,
     replace_agent_configuration,
+    replace_propagation_credentials,
+    set_keep_tunnel_open_time,
     set_maximum_depth,
 )
 
@@ -45,7 +47,8 @@ def _add_tcp_ports(agent_configuration: AgentConfiguration) -> AgentConfiguratio
     return add_tcp_ports(agent_configuration, ports)
 
 
-test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 1)
+test_agent_configuration = set_maximum_depth(noop_test_configuration.agent_configuration, 3)
+test_agent_configuration = set_keep_tunnel_open_time(test_agent_configuration, 20)
 test_agent_configuration = _add_exploiters(test_agent_configuration)
 test_agent_configuration = _add_subnets(test_agent_configuration)
 test_agent_configuration = _add_credential_collectors(test_agent_configuration)
@@ -57,8 +60,12 @@ CREDENTIALS = (
     Credentials(identity=None, secret=Password(password="5BuYHeVl")),
 )
 
-credential_reuse_ssh_key_test_configuration = dataclasses.replace(noop_test_configuration)
+credentials_reuse_ssh_key_test_configuration = dataclasses.replace(noop_test_configuration)
 replace_agent_configuration(
-    test_configuration=credential_reuse_ssh_key_test_configuration,
+    test_configuration=credentials_reuse_ssh_key_test_configuration,
     agent_configuration=test_agent_configuration,
+)
+replace_propagation_credentials(
+    test_configuration=credentials_reuse_ssh_key_test_configuration,
+    propagation_credentials=CREDENTIALS,
 )
