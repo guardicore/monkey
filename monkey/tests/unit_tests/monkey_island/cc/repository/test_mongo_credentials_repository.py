@@ -22,20 +22,6 @@ CONFIGURED_CREDENTIALS = CREDENTIALS[0:3]
 STOLEN_CREDENTIALS = CREDENTIALS[3:]
 
 
-def reverse(data: bytes) -> bytes:
-    return bytes(reversed(data))
-
-
-@pytest.fixture
-def repository_encryptor():
-    # NOTE: Tests will fail if any inputs to this mock encryptor are palindromes.
-    repository_encryptor = MagicMock(spec=ILockableEncryptor)
-    repository_encryptor.encrypt = MagicMock(side_effect=reverse)
-    repository_encryptor.decrypt = MagicMock(side_effect=reverse)
-
-    return repository_encryptor
-
-
 @pytest.fixture
 def mongo_client():
     return mongomock.MongoClient()
