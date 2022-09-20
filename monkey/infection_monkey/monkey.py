@@ -107,8 +107,11 @@ logging.getLogger("urllib3").setLevel(logging.INFO)
 class InfectionMonkey:
     def __init__(self, args):
         logger.info("Monkey is initializing...")
+
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+
+        self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         # TODO: Revisit variable names
         server, island_api_client = self._connect_to_island_api()
@@ -206,8 +209,6 @@ class InfectionMonkey:
 
         if firewall.is_enabled():
             firewall.add_firewall_rule()
-
-        self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         self._control_channel = ControlChannel(self._control_client.server_address, GUID)
         self._control_channel.register_agent(self._opts.parent)
