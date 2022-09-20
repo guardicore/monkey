@@ -3,18 +3,15 @@ import queue
 import threading
 from time import sleep
 
-import requests
-
 from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.agent_events import AbstractAgentEvent
-from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.utils.threading import create_daemon_thread
 
 logger = logging.getLogger(__name__)
 
 
 DEFAULT_TIME_PERIOD_SECONDS = 5
-AGENT_EVENTS_API_URL = "https://%s/api/agent-events"
 
 
 class AgentEventForwarder:
@@ -23,12 +20,13 @@ class AgentEventForwarder:
     """
 
     def __init__(
-        self, server_address: str, agent_event_serializer_registry: AgentEventSerializerRegistry
+        self,
+        island_api_client: IIslandAPIClient,
+        agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
-        self._server_address = server_address
         self._agent_event_serializer_registry = agent_event_serializer_registry
 
-        self._batching_agent_event_forwarder = BatchingAgentEventForwarder(self._server_address)
+        self._batching_agent_event_forwarder = BatchingAgentEventForwarder(island_api_client)
         self._batching_agent_event_forwarder.start()
 
     def __del__(self):
@@ -37,11 +35,9 @@ class AgentEventForwarder:
     def send_event(self, event: AbstractAgentEvent):
         serialized_event = self._serialize_event(event)
         self._batching_agent_event_forwarder.add_event_to_queue(serialized_event)
-        logger.debug(
-            f"Sending event of type {type(event).__name__} to the Island at {self._server_address}"
-        )
+        logger.debug(f"Sending event of type {type(event).__name__} to the Island")
 
-    def _serialize_event(self, event: AbstractAgentEvent):
+    def _serialize_event(self, event: AbstractAgentEvent) -> JSONSerializable:
         serializer = self._agent_event_serializer_registry[event.__class__]
         return serializer.serialize(event)
 
@@ -51,8 +47,10 @@ class BatchingAgentEventForwarder:
     Handles the batching and sending of the Agent's events to the Island
     """
 
-    def __init__(self, server_address: str, time_period: int = DEFAULT_TIME_PERIOD_SECONDS):
-        self._server_address = server_address
+    def __init__(
+        self, island_api_client: IIslandAPIClient, time_period: int = DEFAULT_TIME_PERIOD_SECONDS
+    ):
+        self._island_api_client = island_api_client
         self._time_period = time_period
 
         self._queue: queue.Queue[AbstractAgentEvent] = queue.Queue()
@@ -84,18 +82,10 @@ class BatchingAgentEventForwarder:
             events.append(self._queue.get(block=False))
 
         try:
-            logger.debug(f"Sending Agent events to Island at {self._server_address}: {events}")
-            requests.post(  # noqa: DUO123
-                AGENT_EVENTS_API_URL % (self._server_address,),
-                json=events,
-                verify=False,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
-        except Exception as exc:
-            logger.warning(
-                f"Exception caught when connecting to the Island at {self._server_address}"
-                f": {exc}"
-            )
+            logger.debug(f"Sending Agent events to Island: {events}")
+            self._island_api_client.send_events(events)
+        except Exception as err:
+            logger.warning(f"Exception caught when connecting to the Island: {err}")
 
     def _send_remaining_events(self):
         self._send_events_to_island()
