@@ -39,16 +39,11 @@ def _subscribe_clear_simulation_data_events(
         IslandEventTopic.CLEAR_SIMULATION_DATA, credentials_repository.remove_stolen_credentials
     )
 
-    node_repository = container.resolve(INodeRepository)
-    island_event_queue.subscribe(IslandEventTopic.CLEAR_SIMULATION_DATA, node_repository.reset)
-
-    agent_event_repository = container.resolve(IAgentEventRepository)
-    island_event_queue.subscribe(
-        IslandEventTopic.CLEAR_SIMULATION_DATA, agent_event_repository.reset
-    )
-
-    agent_repository = container.resolve(IAgentRepository)
-    island_event_queue.subscribe(IslandEventTopic.CLEAR_SIMULATION_DATA, agent_repository.reset)
-
-    machine_repository = container.resolve(IMachineRepository)
-    island_event_queue.subscribe(IslandEventTopic.CLEAR_SIMULATION_DATA, machine_repository.reset)
+    for i_repository in [
+        INodeRepository,
+        IAgentEventRepository,
+        IAgentRepository,
+        IMachineRepository,
+    ]:
+        repository = container.resolve(i_repository)
+        island_event_queue.subscribe(IslandEventTopic.CLEAR_SIMULATION_DATA, repository.reset)
