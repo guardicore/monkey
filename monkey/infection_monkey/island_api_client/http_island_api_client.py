@@ -137,7 +137,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     def register_agent(self, agent_registration_data: AgentRegistrationData):
-        url = f"https://{agent_registration_data.cc_server}/api/agents"
+        url = f"{self._api_url}/agents"
         response = requests.post(  # noqa: DUO123
             url,
             json=agent_registration_data.dict(simplify=True),
@@ -148,8 +148,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     @convert_json_error_to_island_api_error
-    def should_agent_stop(self, island_server: str, agent_id: str) -> bool:
-        url = f"https://{island_server}/api/monkey-control" f"/needs-to-stop/{agent_id}"
+    def should_agent_stop(self, agent_id: str) -> bool:
+        url = f"{self._api_url}/monkey-control/needs-to-stop/{agent_id}"
         response = requests.get(  # noqa: DUO123
             url,
             verify=False,
@@ -162,9 +162,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     @convert_json_error_to_island_api_error
-    def get_config(self, island_server: str) -> AgentConfiguration:
+    def get_config(self) -> AgentConfiguration:
         response = requests.get(  # noqa: DUO123
-            f"https://{island_server}/api/agent-configuration",
+            f"{self._api_url}/agent-configuration",
             verify=False,
             timeout=SHORT_REQUEST_TIMEOUT,
         )
@@ -178,9 +178,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     @convert_json_error_to_island_api_error
-    def get_credentials_for_propagation(self, island_server: str) -> Sequence[Credentials]:
+    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
         response = requests.get(  # noqa: DUO123
-            f"https://{island_server}/api/propagation-credentials",
+            f"{self._api_url}/propagation-credentials",
             verify=False,
             timeout=SHORT_REQUEST_TIMEOUT,
         )

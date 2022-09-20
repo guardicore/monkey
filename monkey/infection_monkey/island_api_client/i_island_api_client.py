@@ -110,11 +110,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def should_agent_stop(self, island_server: str, agent_id: str) -> bool:
+    def should_agent_stop(self, agent_id: str) -> bool:
         """
         Check with the island to see if the agent should stop
 
-        :param island_server: The server to query
         :param agent_id: The agent identifier for the agent to check
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
@@ -124,11 +123,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_config(self, island_server: str) -> AgentConfiguration:
+    def get_config(self) -> AgentConfiguration:
         """
         Get agent configuration from the island
 
-        :param island_server: The server to query
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
@@ -137,11 +135,10 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_credentials_for_propagation(self, island_server: str) -> Sequence[Credentials]:
+    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
         """
         Get credentials from the island
 
-        :param island_server: The server to query
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
