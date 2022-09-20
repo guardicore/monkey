@@ -7,13 +7,7 @@ from urllib3 import disable_warnings
 from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
-from infection_monkey.island_api_client import (
-    IIslandAPIClient,
-    IslandAPIConnectionError,
-    IslandAPIRequestError,
-    IslandAPIRequestFailedError,
-    IslandAPITimeoutError,
-)
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 
 disable_warnings()  # noqa: DUO131
 
@@ -26,13 +20,8 @@ def handle_island_api_errors(func):
         try:
             print(args)
             func(*args, **kwargs)
-        except (
-            IslandAPIConnectionError,
-            IslandAPIRequestError,
-            IslandAPIRequestFailedError,
-            IslandAPITimeoutError,
-        ) as e:
-            raise IslandCommunicationError(e)
+        except IslandAPIError as err:
+            raise IslandCommunicationError(err)
 
     return wrapper
 
