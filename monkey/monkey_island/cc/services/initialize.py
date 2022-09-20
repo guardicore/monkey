@@ -43,6 +43,7 @@ from monkey_island.cc.repository import (
     MongoMachineRepository,
     MongoNodeRepository,
     RetrievalError,
+    initialize_machine_repository,
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
@@ -114,7 +115,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(IAgentEventRepository, container.resolve(MongoAgentEventRepository))
 
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
-    container.register_instance(IMachineRepository, container.resolve(MongoMachineRepository))
+    container.register_instance(IMachineRepository, _build_machine_repository(container))
     container.register_instance(IAgentRepository, container.resolve(MongoAgentRepository))
 
 
@@ -131,6 +132,13 @@ def _build_agent_binary_repository() -> IAgentBinaryRepository:
     _log_agent_binary_hashes(agent_binary_repository)
 
     return agent_binary_repository
+
+
+def _build_machine_repository(container: DIContainer) -> IMachineRepository:
+    machine_repository = container.resolve(MongoMachineRepository)
+    initialize_machine_repository(machine_repository)
+
+    return machine_repository
 
 
 def _setup_agent_event_serializers(container: DIContainer):
