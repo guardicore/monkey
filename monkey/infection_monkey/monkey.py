@@ -110,13 +110,12 @@ class InfectionMonkey:
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
 
-        # TODO: Revisit variable names
-        server, island_api_client = self._connect_to_island_api()
+        server, self._island_api_client = self._connect_to_island_api()
         # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
         self._cmd_island_port = int(self._cmd_island_port)
         self._control_client = ControlClient(
-            server_address=server, island_api_client=island_api_client
+            server_address=server, island_api_client=self._island_api_client
         )
 
         # TODO Refactor the telemetry messengers to accept control client
@@ -315,7 +314,7 @@ class InfectionMonkey:
         puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
 
         agent_binary_repository = CachingAgentBinaryRepository(
-            f"https://{self._control_client.server_address}"
+            island_api_client=self._island_api_client,
         )
         exploit_wrapper = ExploiterWrapper(
             self._telemetry_messenger, event_queue, agent_binary_repository
