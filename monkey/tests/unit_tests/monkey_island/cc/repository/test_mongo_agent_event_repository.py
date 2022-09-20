@@ -1,10 +1,12 @@
 import uuid
-from typing import List
+from typing import Any, Iterable, List, Mapping
 from unittest.mock import MagicMock
 
 import mongomock
 import pytest
 from pydantic import Field
+from pymongo import MongoClient
+from tests.unit_tests.monkey_island.cc.repository.mongo import get_all_collections_in_mongo
 
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
@@ -13,11 +15,16 @@ from common.agent_event_serializers import (
 from common.agent_events import AbstractAgentEvent
 from monkey_island.cc.repository import (
     IAgentEventRepository,
-    MongoEventRepository,
+    MongoAgentEventRepository,
     RemovalError,
     RetrievalError,
     StorageError,
 )
+from monkey_island.cc.repository.agent_event_encryption import (
+    ENCRYPTED_PREFIX,
+    SERIALIZED_EVENT_FIELDS,
+)
+from monkey_island.cc.repository.consts import MONGO_OBJECT_ID_KEY
 
 
 class FakeAgentEvent(AbstractAgentEvent):
@@ -54,8 +61,15 @@ def mongo_client(event_serializer_registry):
 
 
 @pytest.fixture
-def mongo_repository(mongo_client, event_serializer_registry) -> IAgentEventRepository:
-    return MongoEventRepository(mongo_client, event_serializer_registry)
+def key_file(tmp_path):
+    return tmp_path / "test_key.bin"
+
+
+@pytest.fixture
+def mongo_repository(
+    mongo_client, event_serializer_registry, repository_encryptor
+) -> IAgentEventRepository:
+    return MongoAgentEventRepository(mongo_client, event_serializer_registry, repository_encryptor)
 
 
 @pytest.fixture
@@ -75,9 +89,11 @@ def error_raising_mongo_client(mongo_client) -> mongomock.MongoClient:
 
 @pytest.fixture
 def error_raising_mongo_repository(
-    error_raising_mongo_client, event_serializer_registry
+    error_raising_mongo_client, event_serializer_registry, repository_encryptor
 ) -> IAgentEventRepository:
-    return MongoEventRepository(error_raising_mongo_client, event_serializer_registry)
+    return MongoAgentEventRepository(
+        error_raising_mongo_client, event_serializer_registry, repository_encryptor
+    )
 
 
 def assert_same_contents(a, b):
@@ -86,7 +102,7 @@ def assert_same_contents(a, b):
         assert item in b
 
 
-def test_mongo_event_repository__save_event(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__save_event(mongo_repository: IAgentEventRepository):
     event = FakeAgentEvent(source=uuid.uuid4())
     mongo_repository.save_event(event)
     events = mongo_repository.get_events()
@@ -94,7 +110,16 @@ def test_mongo_event_repository__save_event(mongo_repository: IAgentEventReposit
     assert event in events
 
 
-def test_mongo_event_repository__save_event_raises(
+def test_mongo_agent_event_repository__saved_events_are_encrypted(
+    mongo_repository: IAgentEventRepository, mongo_client
+):
+    event = FakeAgentEvent(source=uuid.uuid4())
+    mongo_repository.save_event(event)
+
+    assert_events_are_encrypted(mongo_client, [event])
+
+
+def test_mongo_agent_event_repository__save_event_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     event = FakeAgentEvent(source=uuid.uuid4())
@@ -103,48 +128,50 @@ def test_mongo_event_repository__save_event_raises(
         error_raising_mongo_repository.save_event(event)
 
 
-def test_mongo_event_repository__get_events(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events(mongo_repository: IAgentEventRepository):
     events = mongo_repository.get_events()
 
     assert_same_contents(events, EVENTS)
 
 
-def test_mongo_event_repository__get_events_raises(
+def test_mongo_agent_event_repository__get_events_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
         error_raising_mongo_repository.get_events()
 
 
-def test_mongo_event_repository__get_events_by_type(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events_by_type(mongo_repository: IAgentEventRepository):
     events = mongo_repository.get_events_by_type(FakeAgentItemEvent)
 
     expected_events = [EVENTS[3]]
     assert_same_contents(events, expected_events)
 
 
-def test_mongo_event_repository__get_events_by_type_raises(
+def test_mongo_agent_event_repository__get_events_by_type_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
         error_raising_mongo_repository.get_events_by_type(FakeAgentItemEvent)
 
 
-def test_mongo_event_repository__get_events_by_tag(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events_by_tag(mongo_repository: IAgentEventRepository):
     events = mongo_repository.get_events_by_tag("bar")
 
     expected_events = [EVENTS[1], EVENTS[2]]
     assert_same_contents(events, expected_events)
 
 
-def test_mongo_event_repository__get_events_by_tag_raises(
+def test_mongo_agent_event_repository__get_events_by_tag_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
         error_raising_mongo_repository.get_events_by_tag("bar")
 
 
-def test_mongo_event_repository__get_events_by_source(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__get_events_by_source(
+    mongo_repository: IAgentEventRepository,
+):
     source_event = EVENTS[2]
     events = mongo_repository.get_events_by_source(source_event.source)
 
@@ -152,7 +179,7 @@ def test_mongo_event_repository__get_events_by_source(mongo_repository: IAgentEv
     assert_same_contents(events, expected_events)
 
 
-def test_mongo_event_repository__get_events_by_source_raises(
+def test_mongo_agent_event_repository__get_events_by_source_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RetrievalError):
@@ -160,7 +187,7 @@ def test_mongo_event_repository__get_events_by_source_raises(
         error_raising_mongo_repository.get_events_by_source(source_event.source)
 
 
-def test_mongo_event_repository__reset(mongo_repository: IAgentEventRepository):
+def test_mongo_agent_event_repository__reset(mongo_repository: IAgentEventRepository):
     initial_events = mongo_repository.get_events()
     assert initial_events
 
@@ -170,8 +197,63 @@ def test_mongo_event_repository__reset(mongo_repository: IAgentEventRepository):
     assert not events
 
 
-def test_mongo_event_repository__reset_raises(
+def test_mongo_agent_event_repository__reset_raises(
     error_raising_mongo_repository: IAgentEventRepository,
 ):
     with pytest.raises(RemovalError):
         error_raising_mongo_repository.reset()
+
+
+def get_all_events_in_mongo(
+    mongo_client: MongoClient,
+) -> Iterable[Mapping[str, Mapping[str, Any]]]:
+    events = []
+
+    for collection in get_all_collections_in_mongo(mongo_client):
+        mongo_events = collection.find({}, {MONGO_OBJECT_ID_KEY: False})
+        for mongo_event in mongo_events:
+            events.append(mongo_event)
+
+    return events
+
+
+def is_encrypted_event(original_event: AbstractAgentEvent, other_event) -> bool:
+    """
+    Checks if an event is an encrypted version of the original
+
+    - The number of fields match
+    - The AbstractAgentEvent fields match
+    - The remaining fields have a matching encrypted_ prefix
+    - The remaining fields are the encrypted version of the original fields
+    """
+
+    event = original_event.dict(simplify=True)
+
+    # Note: The serializer adds a "type" field
+    event["type"] = type(original_event).__name__
+
+    if len(event.keys()) != len(other_event.keys()):
+        return False
+
+    for field in event.keys():
+        if field in SERIALIZED_EVENT_FIELDS:
+            if event[field] != other_event[field]:
+                return False
+        else:
+            encrypted_field = ENCRYPTED_PREFIX + field
+            if (
+                encrypted_field not in other_event.keys()
+                or event[field] == other_event[encrypted_field]
+            ):
+                return False
+
+    return True
+
+
+def assert_events_are_encrypted(
+    mongo_client: MongoClient, original_events: Iterable[AbstractAgentEvent]
+):
+    stored_events = get_all_events_in_mongo(mongo_client)
+
+    for event in original_events:
+        assert any([is_encrypted_event(event, se) for se in stored_events])

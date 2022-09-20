@@ -6,25 +6,32 @@ from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerialize
 from common.agent_events import AbstractAgentEvent
 from common.types import AgentID
 from monkey_island.cc.repository import IAgentEventRepository
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import RemovalError, RetrievalError, StorageError
+from .agent_event_encryption import decrypt_event, encrypt_event
 from .consts import MONGO_OBJECT_ID_KEY
 
 
-class MongoEventRepository(IAgentEventRepository):
+class MongoAgentEventRepository(IAgentEventRepository):
     """A repository for storing and retrieving events in MongoDB"""
 
     def __init__(
-        self, mongo_client: MongoClient, serializer_registry: AgentEventSerializerRegistry
+        self,
+        mongo_client: MongoClient,
+        serializer_registry: AgentEventSerializerRegistry,
+        encryptor: ILockableEncryptor,
     ):
         self._events_collection = mongo_client.monkey_island.events
         self._serializers = serializer_registry
+        self._encryptor = encryptor
 
     def save_event(self, event: AbstractAgentEvent):
         try:
             serializer = self._serializers[type(event)]
             serialized_event = serializer.serialize(event)
-            self._events_collection.insert_one(serialized_event)
+            encrypted_event = encrypt_event(self._encryptor.encrypt, serialized_event)
+            self._events_collection.insert_one(encrypted_event)
         except Exception as err:
             raise StorageError(f"Error saving event: {err}")
 
@@ -61,9 +68,10 @@ class MongoEventRepository(IAgentEventRepository):
             raise RemovalError(f"Error resetting the repository: {err}")
 
     def _deserialize(self, mongo_record: MutableMapping[str, Any]) -> AbstractAgentEvent:
+        decrypted_event = decrypt_event(self._encryptor.decrypt, mongo_record)
         event_type = mongo_record[EVENT_TYPE_FIELD]
         serializer = self._serializers[event_type]
-        return serializer.deserialize(mongo_record)
+        return serializer.deserialize(decrypted_event)
 
     def _query_events(self, query: Dict[Any, Any]) -> Sequence[AbstractAgentEvent]:
         serialized_events = self._events_collection.find(query, {MONGO_OBJECT_ID_KEY: False})
