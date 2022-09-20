@@ -6,17 +6,16 @@ from socket import gethostname
 import requests
 from urllib3 import disable_warnings
 
-from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.network.network_utils import get_my_ip_addresses
 from infection_monkey.config import GUID
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.utils import agent_process
 
 disable_warnings()  # noqa DUO131
 
 logger = logging.getLogger(__name__)
-
-PBA_FILE_DOWNLOAD = "https://%s/api/pba/download/%s"
 
 
 class ControlClient:
@@ -25,8 +24,9 @@ class ControlClient:
     # https://github.com/guardicore/monkey/blob/133f7f5da131b481561141171827d1f9943f6aec/monkey/infection_monkey/telemetry/base_telem.py
     control_client_object = None
 
-    def __init__(self, server_address: str):
+    def __init__(self, server_address: str, island_api_client: IIslandAPIClient):
         self.server_address = server_address
+        self._island_api_client = island_api_client
 
     def wakeup(self, parent=None):
         if parent:
@@ -78,22 +78,12 @@ class ControlClient:
             return
         try:
             telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
-            requests.post(  # noqa: DUO123
-                "https://%s/api/log" % (self.server_address,),
-                data=json.dumps(telemetry),
-                headers={"content-type": "application/json"},
-                verify=False,
-                timeout=MEDIUM_REQUEST_TIMEOUT,
-            )
+            self._island_api_client.send_log(json.dumps(telemetry))
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
     def get_pba_file(self, filename):
         try:
-            return requests.get(  # noqa: DUO123
-                PBA_FILE_DOWNLOAD % (self.server_address, filename),
-                verify=False,
-                timeout=LONG_REQUEST_TIMEOUT,
-            )
-        except requests.exceptions.RequestException:
-            return False
+            return self._island_api_client.get_pba_file(filename)
+        except Exception as exc:
+            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
