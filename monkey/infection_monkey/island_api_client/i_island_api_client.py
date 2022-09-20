@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class IIslandAPIClient(ABC):
@@ -53,4 +54,21 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 custom PBA file
+        """
+
+    @abstractmethod
+    def get_agent_binary(self, os_name: str) -> Optional[bytes]:
+        """
+        Get an agent binary for the given OS from the island
+
+        :param os_name: The OS on which the agent binary will run
+        :return: The agent binary file
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             island due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
+                                agent binary
         """
