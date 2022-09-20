@@ -1,7 +1,12 @@
 import pytest
 import requests_mock
 
-from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIConnectionError
+from common.agent_event_serializers import AgentEventSerializerRegistry
+from infection_monkey.island_api_client import (
+    HTTPIslandAPIClientFactory,
+    IIslandAPIClient,
+    IslandAPIConnectionError,
+)
 from infection_monkey.network.relay.utils import find_available_island_apis
 
 SERVER_1 = "1.1.1.1:12312"
@@ -11,6 +16,11 @@ SERVER_4 = "4.4.4.4:5000"
 
 
 servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
+
+
+@pytest.fixture
+def island_api_client_factory():
+    return HTTPIslandAPIClientFactory(AgentEventSerializerRegistry())
 
 
 @pytest.mark.parametrize(
@@ -24,12 +34,14 @@ servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
         ),
     ],
 )
-def test_find_available_island_apis(expected_available_servers, server_response_pairs):
+def test_find_available_island_apis(
+    expected_available_servers, server_response_pairs, island_api_client_factory
+):
     with requests_mock.Mocker() as mock:
         for server, response in server_response_pairs:
             mock.get(f"https://{server}/api?action=is-up", **response)
 
-        available_apis = find_available_island_apis(servers)
+        available_apis = find_available_island_apis(servers, island_api_client_factory)
 
         assert len(available_apis) == len(server_response_pairs)
 
@@ -40,14 +52,14 @@ def test_find_available_island_apis(expected_available_servers, server_response_
                 assert island_api_client is None
 
 
-def test_find_available_island_apis__multiple_successes():
+def test_find_available_island_apis__multiple_successes(island_api_client_factory):
     available_servers = [SERVER_2, SERVER_3]
     with requests_mock.Mocker() as mock:
         mock.get(f"https://{SERVER_1}/api?action=is-up", exc=IslandAPIConnectionError)
         for server in available_servers:
             mock.get(f"https://{server}/api?action=is-up", text="")
 
-        available_apis = find_available_island_apis(servers)
+        available_apis = find_available_island_apis(servers, island_api_client_factory)
 
         assert available_apis[SERVER_1] is None
         assert available_apis[SERVER_4] is None

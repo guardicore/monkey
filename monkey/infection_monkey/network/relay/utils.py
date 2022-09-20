@@ -7,7 +7,7 @@ from typing import Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
 from infection_monkey.island_api_client import (
-    HTTPIslandAPIClient,
+    AbstractIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
@@ -27,7 +27,9 @@ logger = logging.getLogger(__name__)
 NUM_FIND_SERVER_WORKERS = 32
 
 
-def find_available_island_apis(servers: Iterable[str]) -> Mapping[str, Optional[IIslandAPIClient]]:
+def find_available_island_apis(
+    servers: Iterable[str], island_api_client_factory: AbstractIslandAPIClientFactory
+) -> Mapping[str, Optional[IIslandAPIClient]]:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
     server_results: Dict[str, Tuple[bool, IIslandAPIClient]] = {}
@@ -35,7 +37,7 @@ def find_available_island_apis(servers: Iterable[str]) -> Mapping[str, Optional[
     run_worker_threads(
         _find_island_server,
         "FindIslandServer",
-        args=(server_iterator, server_results),
+        args=(server_iterator, server_results, island_api_client_factory),
         num_workers=NUM_FIND_SERVER_WORKERS,
     )
 
@@ -43,18 +45,25 @@ def find_available_island_apis(servers: Iterable[str]) -> Mapping[str, Optional[
 
 
 def _find_island_server(
-    servers: Iterator[str], server_status: MutableMapping[str, Optional[IIslandAPIClient]]
+    servers: Iterator[str],
+    server_status: MutableMapping[str, Optional[IIslandAPIClient]],
+    island_api_client_factory: AbstractIslandAPIClientFactory,
 ):
     with suppress(StopIteration):
         server = next(servers)
-        server_status[server] = _check_if_island_server(server)
+        server_status[server] = _check_if_island_server(server, island_api_client_factory)
 
 
-def _check_if_island_server(server: str) -> IIslandAPIClient:
+def _check_if_island_server(
+    server: str, island_api_client_factory: AbstractIslandAPIClientFactory
+) -> IIslandAPIClient:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        return HTTPIslandAPIClient(server)
+        client = island_api_client_factory.create_island_api_client()
+        client.connect(server)
+
+        return client
     except IslandAPIConnectionError as err:
         logger.error(f"Unable to connect to server/relay {server}: {err}")
     except IslandAPITimeoutError as err:

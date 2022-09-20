@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Sequence
+
+from common.agent_events import AbstractAgentEvent
 
 
 class IIslandAPIClient(ABC):
@@ -8,9 +10,9 @@ class IIslandAPIClient(ABC):
     """
 
     @abstractmethod
-    def __init__(self, island_server: str):
+    def connect(self, island_server: str):
         """
-        Construct an island API client and connect it to the island
+        Connectto the island's API
 
         :param island_server: The socket address of the API
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
@@ -71,4 +73,21 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 agent binary
+
+        """
+
+    @abstractmethod
+    def send_events(self, events: Sequence[AbstractAgentEvent]):
+        """
+        Send a sequence of agent events to the Island
+
+        :param events: A sequence of agent events
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             island due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to send events to
+                                the island
         """

@@ -45,7 +45,7 @@ from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
 from infection_monkey.i_puppet import IPuppet, PluginType
-from infection_monkey.island_api_client import IIslandAPIClient
+from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.model import VictimHostFactory
@@ -107,8 +107,11 @@ logging.getLogger("urllib3").setLevel(logging.INFO)
 class InfectionMonkey:
     def __init__(self, args):
         logger.info("Monkey is initializing...")
+
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+
+        self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         server, self._island_api_client = self._connect_to_island_api()
         # TODO: `address_to_port()` should return the port as an integer.
@@ -141,7 +144,9 @@ class InfectionMonkey:
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[str, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
-        server_clients = find_available_island_apis(self._opts.servers)
+        server_clients = find_available_island_apis(
+            self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
+        )
 
         server, island_api_client = self._select_server(server_clients)
 
@@ -206,8 +211,6 @@ class InfectionMonkey:
         if firewall.is_enabled():
             firewall.add_firewall_rule()
 
-        self._agent_event_serializer_registry = self._setup_agent_event_serializers()
-
         self._control_channel = ControlChannel(self._control_client.server_address, GUID)
         self._control_channel.register_agent(self._opts.parent)
 
@@ -247,7 +250,7 @@ class InfectionMonkey:
         )
 
         event_queue = PyPubSubAgentEventQueue(Publisher())
-        InfectionMonkey._subscribe_events(
+        self._subscribe_events(
             event_queue,
             propagation_credentials_repository,
             self._control_client.server_address,
@@ -273,8 +276,8 @@ class InfectionMonkey:
             propagation_credentials_repository,
         )
 
-    @staticmethod
     def _subscribe_events(
+        self,
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         server_address: str,
@@ -287,7 +290,7 @@ class InfectionMonkey:
             ),
         )
         event_queue.subscribe_all_events(
-            AgentEventForwarder(server_address, agent_event_serializer_registry).send_event
+            AgentEventForwarder(self._island_api_client, agent_event_serializer_registry).send_event
         )
 
     def _build_puppet(

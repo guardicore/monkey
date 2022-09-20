@@ -1,12 +1,16 @@
 import functools
 import logging
+from typing import List, Sequence
 
 import requests
 
 from common import OperatingSystem
+from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
+from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
 
 from . import (
+    AbstractIslandAPIClientFactory,
     IIslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
@@ -34,6 +38,8 @@ def handle_island_errors(fn):
                 raise IslandAPIError(err)
         except TimeoutError as err:
             raise IslandAPITimeoutError(err)
+        except IslandAPIError as err:
+            raise err
         except Exception as err:
             raise IslandAPIError(err)
 
@@ -45,8 +51,17 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     A client for the Island's HTTP API
     """
 
+    def __init__(
+        self,
+        agent_event_serializer_registry: AgentEventSerializerRegistry,
+    ):
+        self._agent_event_serializer_registry = agent_event_serializer_registry
+
     @handle_island_errors
-    def __init__(self, island_server: str):
+    def connect(
+        self,
+        island_server: str,
+    ):
         response = requests.get(  # noqa: DUO123
             f"https://{island_server}/api?action=is-up",
             verify=False,
@@ -89,3 +104,37 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response.raise_for_status()
 
         return response.content
+
+    @handle_island_errors
+    def send_events(self, events: Sequence[JSONSerializable]):
+        response = requests.post(  # noqa: DUO123
+            f"{self._api_url}/agent-events",
+            json=self._serialize_events(events),
+            verify=False,
+            timeout=MEDIUM_REQUEST_TIMEOUT,
+        )
+
+        response.raise_for_status()
+
+    def _serialize_events(self, events: Sequence[AbstractAgentEvent]) -> JSONSerializable:
+        serialized_events: List[JSONSerializable] = []
+
+        try:
+            for e in events:
+                serializer = self._agent_event_serializer_registry[e.__class__]
+                serialized_events.append(serializer.serialize(e))
+        except Exception as err:
+            raise IslandAPIRequestError(err)
+
+        return serialized_events
+
+
+class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
+    def __init__(
+        self,
+        agent_event_serializer_registry: AgentEventSerializerRegistry = None,
+    ):
+        self._agent_event_serializer_registry = agent_event_serializer_registry
+
+    def create_island_api_client(self):
+        return HTTPIslandAPIClient(self._agent_event_serializer_registry)
