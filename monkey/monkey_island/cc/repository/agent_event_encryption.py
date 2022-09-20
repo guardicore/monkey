@@ -44,7 +44,7 @@ def decrypt_event(
     """
     Decrypt a serialized AbstractEventData
 
-    :param encrypt: Callable used to decrypt data
+    :param decrypt: Callable used to decrypt data
     :param event_data: Serialized event to decrypt
     :return: Serialized event with the fields decrypted
     :raises TypeError: If the serialized data is not a dict
