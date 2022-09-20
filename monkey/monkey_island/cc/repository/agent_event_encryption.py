@@ -1,23 +1,17 @@
 import json
-from typing import Callable, Iterable
+from typing import Callable
 
 from common.agent_event_serializers import JSONSerializable
 from common.agent_events import AbstractAgentEvent
 
 ENCRYPTED_PREFIX = "encrypted_"
-
-
-def get_fields_to_encrypt(event: AbstractAgentEvent):
-    """
-    Get the fields of the event that are not part of the base AbstractAgentEvent.
-    """
-    return set(vars(AbstractAgentEvent)["__fields__"].keys()) ^ set(event.dict().keys())
+ABSTRACT_AGENT_EVENT_FIELDS = vars(AbstractAgentEvent)["__fields__"].keys()
+SERIALIZED_EVENT_FIELDS = set(ABSTRACT_AGENT_EVENT_FIELDS) | set(["type"])
 
 
 def encrypt_event(
     encrypt: Callable[[bytes], bytes],
     event_data: JSONSerializable,
-    fields: Iterable[str] = [],
 ) -> JSONSerializable:
     """
     Encrypt a serialized AbstractAgentEvent
@@ -27,7 +21,6 @@ def encrypt_event(
 
     :param encrypt: Callable used to encrypt data
     :param event_data: Serialized event to encrypt
-    :param fields: Fields to encrypt
     :return: Serialized event with the fields encrypted
     :raises TypeError: If the serialized data is not a dict
     """
@@ -35,7 +28,8 @@ def encrypt_event(
         raise TypeError("Event encryption only supported for dict")
 
     data = event_data.copy()
-    for field in fields:
+    fields_to_encrypt = SERIALIZED_EVENT_FIELDS ^ set(event_data.keys())
+    for field in fields_to_encrypt:
         data[ENCRYPTED_PREFIX + field] = str(
             encrypt(json.dumps(event_data[field]).encode()), "utf-8"
         )

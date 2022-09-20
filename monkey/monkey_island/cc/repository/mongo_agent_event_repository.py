@@ -9,7 +9,7 @@ from monkey_island.cc.repository import IAgentEventRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import RemovalError, RetrievalError, StorageError
-from .agent_event_encryption import decrypt_event, encrypt_event, get_fields_to_encrypt
+from .agent_event_encryption import decrypt_event, encrypt_event
 from .consts import MONGO_OBJECT_ID_KEY
 
 
@@ -30,8 +30,7 @@ class MongoAgentEventRepository(IAgentEventRepository):
         try:
             serializer = self._serializers[type(event)]
             serialized_event = serializer.serialize(event)
-            fields = get_fields_to_encrypt(event)
-            encrypted_event = encrypt_event(self._encryptor.encrypt, serialized_event, fields)
+            encrypted_event = encrypt_event(self._encryptor.encrypt, serialized_event)
             self._events_collection.insert_one(encrypted_event)
         except Exception as err:
             raise StorageError(f"Error saving event: {err}")

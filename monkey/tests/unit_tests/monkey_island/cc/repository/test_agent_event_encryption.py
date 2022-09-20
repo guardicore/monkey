@@ -5,11 +5,7 @@ import pytest
 
 from common.agent_event_serializers import PydanticAgentEventSerializer
 from common.agent_events import AbstractAgentEvent
-from monkey_island.cc.repository.agent_event_encryption import (
-    decrypt_event,
-    encrypt_event,
-    get_fields_to_encrypt,
-)
+from monkey_island.cc.repository.agent_event_encryption import decrypt_event, encrypt_event
 from monkey_island.cc.server_utils.encryption import RepositoryEncryptor
 
 
@@ -43,8 +39,7 @@ def serializer():
 
 def test_agent_event_encryption__encrypts(encryptor, serializer):
     data = serializer.serialize(EVENT)
-    fields = get_fields_to_encrypt(EVENT)
-    encrypted_data = encrypt_event(encryptor.encrypt, data, fields)
+    encrypted_data = encrypt_event(encryptor.encrypt, data)
 
     # Encrypted fields have the "encrypted_" prefix
     assert "encrypted_data" in encrypted_data
@@ -55,8 +50,7 @@ def test_agent_event_encryption__encrypts(encryptor, serializer):
 
 def test_agent_event_encryption__decrypts(encryptor, serializer):
     data = serializer.serialize(EVENT)
-    fields = get_fields_to_encrypt(EVENT)
-    encrypted_data = encrypt_event(encryptor.encrypt, data, fields)
+    encrypted_data = encrypt_event(encryptor.encrypt, data)
 
     decrypted_data = decrypt_event(encryptor.decrypt, encrypted_data)
     deserialized_event = serializer.deserialize(decrypted_data)
