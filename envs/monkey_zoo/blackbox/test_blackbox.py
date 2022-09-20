@@ -10,6 +10,7 @@ from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIs
 from envs.monkey_zoo.blackbox.island_client.test_configuration_parser import get_target_ips
 from envs.monkey_zoo.blackbox.log_handlers.test_logs_handler import TestLogsHandler
 from envs.monkey_zoo.blackbox.test_configurations import (
+    credential_reuse_ssh_key_test_configuration,
     depth_1_a_test_configuration,
     depth_2_a_test_configuration,
     depth_3_a_test_configuration,
@@ -162,6 +163,11 @@ class TestMonkeyBlackbox:
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         ).run()
+
+    def test_credentials_reuse_ssh_key(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, credential_reuse_ssh_key_test_configuration, "Credentials_Reuse_SSH_Key"
+        )
 
     # Not grouped because conflicts with SMB.
     # Consider grouping when more depth 1 exploiters collide with group depth_1_a
