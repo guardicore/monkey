@@ -1,4 +1,7 @@
 from abc import ABC, abstractmethod
+from typing import Sequence
+
+from common.agent_event_serializers import JSONSerializable
 
 
 class IIslandAPIClient(ABC):
@@ -53,4 +56,20 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 custom PBA file
+        """
+
+    @abstractmethod
+    def send_events(self, events: Sequence[JSONSerializable]):
+        """
+        Send the events to the Island
+
+        :param events: Events that are going to be send to the Island
+        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
+        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
+                                       island due to an issue in the request sent from the client
+        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
+                                             island due to an error on the server
+        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
+        :raises IslandAPIError: If an unexpected error occurs while attempting to send events to
+                                the island
         """
