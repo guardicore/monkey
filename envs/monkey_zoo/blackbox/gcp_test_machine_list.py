@@ -19,6 +19,9 @@ GCP_TEST_MACHINE_LIST = {
         "powershell-3-46",
         "powershell-3-47",
         "powershell-3-48",
+        "credentials-reuse-14",
+        "credentials-reuse-15",
+        "credentials-reuse-16",
         "log4j-logstash-55",
         "log4j-logstash-56",
         "log4j-solr-49",
@@ -85,6 +88,14 @@ ZEROLOGON = {
     ],
 }
 
+CREDENTIALS_REUSE_SSH_KEY = {
+    "europe-west1-b": [
+        "credentials-reuse-14",
+        "credentials-reuse-15",
+        "credentials-reuse-16",
+    ],
+}
+
 WMI_AND_MIMIKATZ = {
     "europe-west3-a": [
         "mimikatz-14",
@@ -101,6 +112,7 @@ GCP_SINGLE_TEST_LIST = {
     "test_depth_4_a": DEPTH_4_A,
     "test_powershell_exploiter_credentials_reuse": POWERSHELL_EXPLOITER_REUSE,
     "test_zerologon_exploiter": ZEROLOGON,
+    "test_credentials_reuse_ssh_key": CREDENTIALS_REUSE_SSH_KEY,
     "test_wmi_and_mimikatz_exploiters": WMI_AND_MIMIKATZ,
     "test_smb_pth": SMB_PTH,
 }
