@@ -159,8 +159,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         )
         response.raise_for_status()
 
-        json_response = json.loads(response.content.decode())
-        return json_response["stop_agent"]
+        return response.json()["stop_agent"]
 
     @handle_island_errors
     @convert_json_error_to_island_api_error
@@ -172,7 +171,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         )
         response.raise_for_status()
 
-        config_dict = json.loads(response.text)
+        config_dict = response.json()
 
         logger.debug(f"Received configuration:\n{pformat(config_dict)}")
 
