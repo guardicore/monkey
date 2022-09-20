@@ -80,7 +80,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     def get_agent_binary(self, os_name: str):
         response = requests.get(  # noqa: DUO123
-            f"{self._api_url}/api/agent-binaries/{os_name}",
+            f"{self._api_url}/agent-binaries/{os_name}",
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
