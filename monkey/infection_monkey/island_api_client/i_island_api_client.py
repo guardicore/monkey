@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from common.agent_event_serializers import JSONSerializable
+from common.agent_events import AbstractAgentEvent
 
 
 class IIslandAPIClient(ABC):
@@ -59,11 +59,11 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_events(self, events: Sequence[JSONSerializable]):
+    def send_events(self, events: Sequence[AbstractAgentEvent]):
         """
-        Send a sequence of Agent events to the Island
+        Send a sequence of agent events to the Island
 
-        :param events: A sequence of Agent events
+        :param events: A sequence of agent events
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client

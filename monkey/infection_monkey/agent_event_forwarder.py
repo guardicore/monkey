@@ -3,7 +3,7 @@ import queue
 import threading
 from time import sleep
 
-from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
+from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.utils.threading import create_daemon_thread
@@ -33,13 +33,8 @@ class AgentEventForwarder:
         self._batching_agent_event_forwarder.stop()
 
     def send_event(self, event: AbstractAgentEvent):
-        serialized_event = self._serialize_event(event)
-        self._batching_agent_event_forwarder.add_event_to_queue(serialized_event)
+        self._batching_agent_event_forwarder.add_event_to_queue(event)
         logger.debug(f"Sending event of type {type(event).__name__} to the Island")
-
-    def _serialize_event(self, event: AbstractAgentEvent) -> JSONSerializable:
-        serializer = self._agent_event_serializer_registry[event.__class__]
-        return serializer.serialize(event)
 
 
 class BatchingAgentEventForwarder:
@@ -62,7 +57,7 @@ class BatchingAgentEventForwarder:
         )
         self._batch_and_send_thread.start()
 
-    def add_event_to_queue(self, serialized_event: JSONSerializable):
+    def add_event_to_queue(self, serialized_event: AbstractAgentEvent):
         self._queue.put(serialized_event)
 
     def _manage_event_batches(self):

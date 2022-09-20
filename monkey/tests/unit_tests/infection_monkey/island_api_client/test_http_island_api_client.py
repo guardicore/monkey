@@ -1,6 +1,12 @@
 import pytest
+from uuid import UUID
 import requests
 import requests_mock
+from common.agent_events import AbstractAgentEvent
+from common.agent_event_serializers import (
+    AgentEventSerializerRegistry,
+    PydanticAgentEventSerializer,
+)
 
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
@@ -18,6 +24,8 @@ ISLAND_URI = f"https://{SERVER}/api?action=is-up"
 ISLAND_SEND_LOG_URI = f"https://{SERVER}/api/log"
 ISLAND_GET_PBA_FILE_URI = f"https://{SERVER}/api/pba/download/{PBA_FILE}"
 ISLAND_SEND_EVENTS_URI = f"https://{SERVER}/api/agent-events"
+
+AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")
 
 
 @pytest.mark.parametrize(
@@ -121,6 +129,69 @@ def test_island_api_client_get_pba_file__status_code(status_code, expected_error
             island_api_client.get_pba_file(filename=PBA_FILE)
 
 
+class Event1(AbstractAgentEvent):
+    a: int
+
+
+class Event2(AbstractAgentEvent):
+    b: str
+
+
+class Event3(AbstractAgentEvent):
+    c: int
+
+@pytest.fixture
+def agent_event_serializer_registry():
+    agent_event_serializer_registry = AgentEventSerializerRegistry()
+    agent_event_serializer_registry[Event1] = PydanticAgentEventSerializer(Event1)
+    agent_event_serializer_registry[Event2] = PydanticAgentEventSerializer(Event2)
+
+    return agent_event_serializer_registry
+
+
+def test_island_api_client_send_events__serialization(agent_event_serializer_registry):
+    events_to_send = [
+        Event1(source=AGENT_ID, timestamp=0, a=1),
+        Event2(source=AGENT_ID, timestamp=0, b="hello"),
+    ]
+    expected_json = [
+        {
+            "source": "80988359-a1cd-42a2-9b47-5b94b37cd673",
+            "target": None,
+            "timestamp": 0.0,
+            "tags": [],
+            "a": 1,
+            "type": "Event1",
+        },
+        {
+            "source": "80988359-a1cd-42a2-9b47-5b94b37cd673",
+            "target": None,
+            "timestamp": 0.0,
+            "tags": [],
+            "b": "hello",
+            "type": "Event2",
+        },
+    ]
+
+    with requests_mock.Mocker() as m:
+        m.get(ISLAND_URI)
+        m.post(ISLAND_SEND_EVENTS_URI)
+        island_api_client = HTTPIslandAPIClient(SERVER, agent_event_serializer_registry)
+
+        island_api_client.send_events(events=events_to_send)
+
+        assert m.last_request.json() == expected_json
+
+def test_island_api_client_send_events__serialization_failed(agent_event_serializer_registry):
+    with requests_mock.Mocker() as m:
+        m.get(ISLAND_URI)
+        island_api_client = HTTPIslandAPIClient(SERVER, agent_event_serializer_registry)
+
+        with pytest.raises(IslandAPIRequestError):
+            m.post(ISLAND_SEND_EVENTS_URI)
+            island_api_client.send_events(events=[Event3(source=AGENT_ID, c=1)])
+
+
 @pytest.mark.parametrize(
     "actual_error, expected_error",
     [
@@ -129,14 +200,16 @@ def test_island_api_client_get_pba_file__status_code(status_code, expected_error
         (Exception, IslandAPIError),
     ],
 )
-def test_island_api_client__send_events(actual_error, expected_error):
+def test_island_api_client__send_events(
+    actual_error, expected_error, agent_event_serializer_registry
+):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client = HTTPIslandAPIClient(SERVER, agent_event_serializer_registry)
 
         with pytest.raises(expected_error):
             m.post(ISLAND_SEND_EVENTS_URI, exc=actual_error)
-            island_api_client.send_events(events="some_data")
+            island_api_client.send_events(events=[Event1(source=AGENT_ID, a=1)])
 
 
 @pytest.mark.parametrize(
@@ -146,11 +219,13 @@ def test_island_api_client__send_events(actual_error, expected_error):
         (501, IslandAPIRequestFailedError),
     ],
 )
-def test_island_api_client_send_events__status_code(status_code, expected_error):
+def test_island_api_client_send_events__status_code(
+    status_code, expected_error, agent_event_serializer_registry
+):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
-        island_api_client = HTTPIslandAPIClient(SERVER)
+        island_api_client = HTTPIslandAPIClient(SERVER, agent_event_serializer_registry)
 
         with pytest.raises(expected_error):
             m.post(ISLAND_SEND_EVENTS_URI, status_code=status_code)
-            island_api_client.send_events(events="some_data")
+            island_api_client.send_events(events=[Event1(source=AGENT_ID, a=1)])

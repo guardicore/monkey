@@ -1,11 +1,12 @@
 import functools
 import logging
-from typing import Sequence
+from typing import List, Sequence
 
 import requests
 
-from common.agent_event_serializers import JSONSerializable
+from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT, MEDIUM_REQUEST_TIMEOUT
+from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 
 from . import (
     IIslandAPIClient,
@@ -49,7 +50,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     """
 
     @handle_island_errors
-    def __init__(self, island_server: str):
+    def __init__(
+        self,
+        island_server: str,
+        agent_event_serializer_registry: AgentEventSerializerRegistry = None,
+    ):
         response = requests.get(  # noqa: DUO123
             f"https://{island_server}/api?action=is-up",
             verify=False,
@@ -59,6 +64,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         self._island_server = island_server
         self._api_url = f"https://{self._island_server}/api"
+
+        self._agent_event_serializer_registry = agent_event_serializer_registry
 
     @handle_island_errors
     def send_log(self, log_contents: str):
@@ -85,9 +92,21 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def send_events(self, events: Sequence[JSONSerializable]):
         response = requests.post(  # noqa: DUO123
             f"{self._api_url}/agent-events",
-            json=events,
+            json=self._serialize_events(events),
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
 
         response.raise_for_status()
+
+    def _serialize_events(self, events: Sequence[AbstractAgentEvent]) -> JSONSerializable:
+        serialized_events: List[JSONSerializable] = []
+
+        try:
+            for e in events:
+                serializer = self._agent_event_serializer_registry[e.__class__]
+                serialized_events.append(serializer.serialize(e))
+        except Exception as err:
+            raise IslandAPIRequestError(err)
+
+        return serialized_events
