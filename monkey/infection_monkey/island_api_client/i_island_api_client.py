@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Sequence
 
-from common import OperatingSystem
-from common.agent_events import AbstractAgentEvent
-
-from common import AgentRegistrationData
+from common import AgentRegistrationData, OperatingSystem
 from common.agent_configuration import AgentConfiguration
+from common.agent_events import AbstractAgentEvent
 from common.credentials import Credentials
 
 
@@ -17,7 +15,7 @@ class IIslandAPIClient(ABC):
     @abstractmethod
     def connect(self, island_server: str):
         """
-        Connectto the island's API
+        Connect to the island's API
 
         :param island_server: The socket address of the API
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
