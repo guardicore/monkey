@@ -111,8 +111,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         ICredentialsRepository, container.resolve(MongoCredentialsRepository)
     )
     container.register_instance(IUserRepository, container.resolve(JSONFileUserRepository))
-
-    # TODO: Figure out how to manage encryptor locking for MongoEventRepository
     container.register_instance(IAgentEventRepository, container.resolve(MongoAgentEventRepository))
 
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
