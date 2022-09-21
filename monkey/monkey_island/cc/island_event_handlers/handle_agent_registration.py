@@ -1,9 +1,16 @@
 from contextlib import suppress
+from ipaddress import IPv4Address, IPv4Interface
 from typing import Optional
 
 from common import AgentRegistrationData
-from monkey_island.cc.models import Agent, Machine
-from monkey_island.cc.repository import IAgentRepository, IMachineRepository, UnknownRecordError
+from common.network.network_utils import address_to_ip_port
+from monkey_island.cc.models import Agent, CommunicationType, Machine
+from monkey_island.cc.repository import (
+    IAgentRepository,
+    IMachineRepository,
+    INodeRepository,
+    UnknownRecordError,
+)
 
 
 class handle_agent_registration:
@@ -11,13 +18,20 @@ class handle_agent_registration:
     Update repositories when a new agent registers
     """
 
-    def __init__(self, machine_repository: IMachineRepository, agent_repository: IAgentRepository):
+    def __init__(
+        self,
+        machine_repository: IMachineRepository,
+        agent_repository: IAgentRepository,
+        node_repository: INodeRepository,
+    ):
         self._machine_repository = machine_repository
         self._agent_repository = agent_repository
+        self._node_repository = node_repository
 
     def __call__(self, agent_registration_data: AgentRegistrationData):
         machine = self._update_machine_repository(agent_registration_data)
         self._add_agent(agent_registration_data, machine)
+        self._add_node_communication(agent_registration_data, machine)
 
     def _update_machine_repository(self, agent_registration_data: AgentRegistrationData) -> Machine:
         machine = self._find_existing_machine_to_update(agent_registration_data)
@@ -86,3 +100,25 @@ class handle_agent_registration:
             cc_server=agent_registration_data.cc_server,
         )
         self._agent_repository.upsert_agent(new_agent)
+
+    def _add_node_communication(
+        self, agent_registration_data: AgentRegistrationData, src_machine: Machine
+    ):
+        dst_machine = self._get_or_create_cc_machine(agent_registration_data.cc_server)
+
+        self._node_repository.upsert_communication(
+            src_machine.id, dst_machine.id, CommunicationType.CC
+        )
+
+    def _get_or_create_cc_machine(self, cc_server: str) -> Machine:
+        dst_ip = IPv4Address(address_to_ip_port(cc_server)[0])
+
+        try:
+            return self._machine_repository.get_machines_by_ip(dst_ip)[0]
+        except UnknownRecordError:
+            new_machine = Machine(
+                id=self._machine_repository.get_new_id(), network_interfaces=[IPv4Interface(dst_ip)]
+            )
+            self._machine_repository.upsert_machine(new_machine)
+
+            return new_machine
