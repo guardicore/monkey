@@ -28,7 +28,7 @@ class IslandMode(AbstractResource):
     def put(self):
         try:
             mode = IslandModeEnum(request.json)
-            self._island_event_queue.publish(topic=IslandEventTopic.SET_ISLAND_MODE, event=mode)
+            self._island_event_queue.publish(topic=IslandEventTopic.SET_ISLAND_MODE, mode=mode)
             return {}, HTTPStatus.NO_CONTENT
         except (AttributeError, json.decoder.JSONDecodeError):
             return {}, HTTPStatus.BAD_REQUEST

@@ -1,5 +1,4 @@
-from typing import Any
-
+from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repository import ISimulationRepository
 
 
@@ -14,6 +13,5 @@ class set_simulation_mode:
     ):
         self._simulation_repository = simulation_repository
 
-    def __call__(self, event: Any = None):
-        mode = event
+    def __call__(self, mode: IslandMode):
         self._simulation_repository.set_mode(mode)
