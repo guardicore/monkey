@@ -5,7 +5,7 @@ from monkey_island.cc.models import IslandMode
 from monkey_island.cc.repository import IAgentConfigurationRepository
 
 
-class set_island_mode:
+class set_agent_configuration_per_island_mode:
     """
     Callable class that sets the Island's mode
     """
