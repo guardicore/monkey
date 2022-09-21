@@ -44,6 +44,18 @@ resource "google_compute_subnetwork" "tunneling2-main" {
   network         = google_compute_network.tunneling2.self_link
 }
 
+resource "google_compute_subnetwork" "credential-reuse" {
+  name = "${local.resource_prefix}credential-reuse"
+  ip_cidr_range   = "10.2.4.0/24"
+  network         = google_compute_network.credential-reuse.self_link
+}
+
+resource "google_compute_subnetwork" "credential-reuse2" {
+  name = "${local.resource_prefix}credential-reuse2"
+  ip_cidr_range   = "10.2.5.0/24"
+  network         = google_compute_network.credential-reuse2.self_link
+}
+
 resource "google_compute_instance_from_template" "hadoop-2" {
   name = "${local.resource_prefix}hadoop-2"
   source_instance_template = local.default_ubuntu
@@ -309,23 +321,65 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.45"
   }
 }
 
-resource "google_compute_instance_from_template" "powershell-3-45" {
-  name = "${local.resource_prefix}powershell-3-45"
-  source_instance_template = local.default_windows
+resource "google_compute_instance_from_template" "credentials-reuse-14" {
+  name = "${local.resource_prefix}credentials-reuse-14"
+  source_instance_template = local.default_linux
   boot_disk{
     initialize_params {
-      image = data.google_compute_image.powershell-3-45.self_link
+      image = data.google_compute_image.credentials-reuse-14.self_link
     }
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.3.45"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.14"
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}credential-reuse"
+    network_ip="10.2.4.14"
+  }
+}
+
+resource "google_compute_instance_from_template" "credentials-reuse-15" {
+  name = "${local.resource_prefix}credentials-reuse-15"
+  source_instance_template = local.default_linux
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.credentials-reuse-15.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}credential-reuse"
+    network_ip="10.2.4.15"
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}credential-reuse2"
+    network_ip="10.2.5.15"
+  }
+}
+
+resource "google_compute_instance_from_template" "credentials-reuse-16" {
+  name = "${local.resource_prefix}credentials-reuse-16"
+  source_instance_template = local.default_linux
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.credentials-reuse-16.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}credential-reuse2"
+    network_ip="10.2.5.16"
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.16"
   }
 }
 

@@ -7,3 +7,4 @@ from .powershell_credentials_reuse import powershell_credentials_reuse_test_conf
 from .smb_pth import smb_pth_test_configuration
 from .wmi_mimikatz import wmi_mimikatz_test_configuration
 from .zerologon import zerologon_test_configuration
+from .credentials_reuse_ssh_key import credentials_reuse_ssh_key_test_configuration

@@ -28,6 +28,9 @@ This document describes Infection Monkey’s test network, how to deploy and use
 [Nr. 3-46 Powershell](#_Toc536021480)<br>
 [Nr. 3-47 Powershell](#_Toc536021481)<br>
 [Nr. 3-48 Powershell](#_Toc536021482)<br>
+[Nr. 14 Credentials Reuse](#_Toc536121480)<br>
+[Nr. 15 Credentials Reuse](#_Toc536121481)<br>
+[Nr. 16 Credentials Reuse](#_Toc536121482)<br>
 [Nr. 3-49 Log4j Solr](#_Toc536021483)<br>
 [Nr. 3-50 Log4j Solr](#_Toc536021484)<br>
 [Nr. 3-51 Log4j Tomcat](#_Toc536021485)<br>
@@ -873,6 +876,120 @@ Accessiable only through <strong>3-45 Powershell</strong> using credentials reus
 </tr>
 </tbody>
 </table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536121480" class="anchor"></span>Nr. <strong>14</strong> Credentials Reuse</p>
+<p>(10.2.3.14, 10.2.4.14)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 16.04.05 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>OpenSSL</td>
+</tr>
+<tr class="odd">
+<td>Default service’s port:</td>
+<td>22</td>
+</tr>
+<tr class="even">
+<td>Credentials:</td>
+<td>m0nk3y:u26gbVQe</td>
+</tr>
+<tr class="odd">
+<td>Server’s config:</td>
+<td>VPC network that can only access Credentials Reuse 15 and Island.</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>Accessible from the Island with password authentication</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536121481" class="anchor"></span>Nr. <strong>15</strong> Credentials Reuse</p>
+<p>(10.2.4.15, 10.2.5.15)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 16.04.05 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>OpenSSL</td>
+</tr>
+<tr class="odd">
+<td>Default service’s port:</td>
+<td>22</td>
+</tr>
+<tr class="even">
+<td>Credentials:</td>
+<td>m0nk3y:5BuYHeVl</td>
+</tr>
+<tr class="odd">
+<td>Server’s config:</td>
+<td>VPC network that can be only accessed by Credentials Reuse 14 and communicate to<br>
+Credentials Reuse 16.
+</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>Accessible from the Credentials Reuse 14 with password authentication</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
+<th><p><span id="_Toc536121482" class="anchor"></span>Nr. <strong>16</strong> Credentials Reuse</p>
+<p>(10.2.3.16, 10.2.5.16)</p></th>
+<th>(Exploitable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Ubuntu 16.04.05 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>OpenSSL</td>
+</tr>
+<tr class="odd">
+<td>Default service’s port:</td>
+<td>22</td>
+</tr>
+<tr class="even">
+<td>Credentials:</td>
+<td>m0nk3y:lIZl6vTR</td>
+</tr>
+<tr class="odd">
+<td>Server’s config:</td>
+<td>VPC network that can be only accessed by Credentials Reuse 15 and communicate to<br>
+the Island.
+</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>Accessible from the Credentials Reuse 15 with passwordless ssh key authentication.<br>
+We use the ssh key that was stolen from Credentials Reuse 16</td>
+</tr>
+</tbody>
+</table>
+
 
 <table>
 <thead>

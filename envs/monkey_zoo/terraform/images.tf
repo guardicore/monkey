@@ -63,6 +63,18 @@ data "google_compute_image" "powershell-3-45" {
   name = "powershell-3-45"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "credentials-reuse-14" {
+  name = "credentials-reuse-14"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "credentials-reuse-15" {
+  name = "credentials-reuse-15"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "credentials-reuse-16" {
+  name = "credentials-reuse-16"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "log4j-solr-49" {
   name = "log4j-solr-49"
   project = local.monkeyzoo_project
