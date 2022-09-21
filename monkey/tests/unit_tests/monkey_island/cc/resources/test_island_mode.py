@@ -5,27 +5,26 @@ import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemorySimulationRepository
 
+from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.models import IslandMode
-from monkey_island.cc.repository import RetrievalError
+from monkey_island.cc.repository import ISimulationRepository
 from monkey_island.cc.resources.island_mode import IslandMode as IslandModeResource
-from monkey_island.cc.services import IslandModeService
-
-
-class MockIslandModeService(IslandModeService):
-    def __init__(self):
-        self._simulation_repository = InMemorySimulationRepository()
-
-    def get_mode(self) -> IslandMode:
-        return self._simulation_repository.get_mode()
-
-    def set_mode(self, mode: IslandMode):
-        self._simulation_repository.set_mode(mode)
 
 
 @pytest.fixture
 def flask_client(build_flask_client):
     container = StubDIContainer()
-    container.register_instance(IslandModeService, MockIslandModeService())
+
+    in_memory_simulation_repository = InMemorySimulationRepository()
+    container.register_instance(ISimulationRepository, in_memory_simulation_repository)
+
+    def wrap_in_memory_simulation_repository_set_mode(topic, event):
+        mode = event
+        in_memory_simulation_repository.set_mode(mode)
+
+    mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
+    mock_island_event_queue.publish.side_effect = wrap_in_memory_simulation_repository_set_mode
+    container.register_instance(IIslandEventQueue, mock_island_event_queue)
 
     with build_flask_client(container) as flask_client:
         yield flask_client
@@ -54,11 +53,7 @@ def test_island_mode_post__invalid_mode(flask_client):
 
 
 def test_island_mode_post__internal_server_error(build_flask_client):
-    mock_island_mode_service = MagicMock(spec=IslandModeService)
-    mock_island_mode_service.set_mode = MagicMock(side_effect=RetrievalError)
-
     container = StubDIContainer()
-    container.register_instance(IslandModeService, mock_island_mode_service)
 
     with build_flask_client(container) as flask_client:
         resp = flask_client.put(
