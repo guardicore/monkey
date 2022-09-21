@@ -60,5 +60,5 @@ def _subscribe_set_island_mode_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
     island_event_queue.subscribe(
-        IslandEventTopic.SET_MODE, container.resolve(set_agent_configuration_per_island_mode)
+        IslandEventTopic.SET_ISLAND_MODE, container.resolve(set_agent_configuration_per_island_mode)
     )
