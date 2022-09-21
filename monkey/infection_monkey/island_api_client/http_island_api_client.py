@@ -94,7 +94,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return response.content
 
     @handle_island_errors
-    def get_agent_binary(self, operating_system: OperatingSystem):
+    def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
         response = requests.get(  # noqa: DUO123
             f"{self._api_url}/agent-binaries/{os_name}",
@@ -106,7 +106,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return response.content
 
     @handle_island_errors
-    def send_events(self, events: Sequence[JSONSerializable]):
+    def send_events(self, events: Sequence[AbstractAgentEvent]):
         response = requests.post(  # noqa: DUO123
             f"{self._api_url}/agent-events",
             json=self._serialize_events(events),
@@ -132,9 +132,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
     def __init__(
         self,
-        agent_event_serializer_registry: AgentEventSerializerRegistry = None,
+        agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
 
-    def create_island_api_client(self):
+    def create_island_api_client(self) -> IIslandAPIClient:
         return HTTPIslandAPIClient(self._agent_event_serializer_registry)

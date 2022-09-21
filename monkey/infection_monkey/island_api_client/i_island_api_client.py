@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Sequence
+from typing import Sequence
 
 from common import OperatingSystem
 from common.agent_events import AbstractAgentEvent
@@ -60,7 +60,7 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_binary(self, operating_system: OperatingSystem) -> Optional[bytes]:
+    def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         """
         Get an agent binary for the given OS from the island
 
@@ -74,7 +74,6 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 agent binary
-
         """
 
     @abstractmethod
