@@ -2,7 +2,7 @@ import os
 import re
 import uuid
 from datetime import timedelta
-from typing import Iterable, Type
+from typing import Iterable, Set, Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
@@ -120,7 +120,7 @@ class FlaskDIWrapper:
     def __init__(self, api: flask_restful.Api, container: DIContainer):
         self._api = api
         self._container = container
-        self._reserved_urls = set()
+        self._reserved_urls: Set[str] = set()
 
     def add_resource(self, resource: Type[AbstractResource]):
         if len(resource.urls) == 0:
