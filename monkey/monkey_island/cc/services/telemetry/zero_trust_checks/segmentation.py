@@ -67,6 +67,8 @@ def is_segmentation_violation(
 
         return cross_segment_ip is not None
 
+    return False
+
 
 def get_segmentation_violation_event(current_monkey, source_subnet, target_ip, target_subnet):
     return Event.create_event(
