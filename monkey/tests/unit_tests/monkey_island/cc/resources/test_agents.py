@@ -31,7 +31,6 @@ def flask_client(build_flask_client):
 
 
 def test_agent_registration(flask_client):
-    print(AGENTS_URL)
     resp = flask_client.post(
         AGENTS_URL,
         json=AGENT_REGISTRATION_DICT,
