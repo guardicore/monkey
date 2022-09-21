@@ -1,6 +1,6 @@
 from contextlib import suppress
 from ipaddress import IPv4Address, IPv4Interface
-from typing import Optional
+from typing import List, Optional
 
 from common import AgentRegistrationData
 from common.network.network_utils import address_to_ip_port
@@ -84,10 +84,20 @@ class handle_agent_registration:
     def _update_network_interfaces(
         self, machine: Machine, agent_registration_data: AgentRegistrationData
     ):
-        updated_network_interfaces = set(machine.network_interfaces)
-        updated_network_interfaces = updated_network_interfaces.union(
-            agent_registration_data.network_interfaces
+        updated_network_interfaces: List[IPv4Interface] = []
+        agent_registration_data_ips = set(
+            map(lambda iface: iface.ip, agent_registration_data.network_interfaces)
         )
+
+        # Prefer interfaces provided by the AgentRegistrationData to those in the Machine record.
+        # The AgentRegistrationData was collected while running on the machine, whereas the Machine
+        # data may have only been collected from a scan. For example, the Machine and
+        # AgentRedistrationData may have the same IP with a different subnet mask.
+        for interface in machine.network_interfaces:
+            if interface.ip not in agent_registration_data_ips:
+                updated_network_interfaces.append(interface)
+
+        updated_network_interfaces.extend(agent_registration_data.network_interfaces)
 
         machine.network_interfaces = sorted(updated_network_interfaces)
 

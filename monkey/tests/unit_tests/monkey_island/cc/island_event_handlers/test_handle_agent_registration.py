@@ -201,3 +201,35 @@ def test_add_node_connection__unknown_server(handler, machine_repository, node_r
     node_repository.upsert_communication.assert_called_with(
         MACHINE.id, SEED_ID, CommunicationType.CC
     )
+
+
+def test_machine_interfaces_updated(handler, machine_repository):
+    existing_machine = Machine(
+        id=SEED_ID,
+        hardware_id=AGENT_REGISTRATION_DATA.machine_hardware_id,
+        network_interfaces=[IPv4Interface("192.168.1.2/32"), IPv4Interface("192.168.1.5/32")],
+    )
+    machine_repository.get_machine_by_hardware_id = MagicMock(return_value=existing_machine)
+    agent_registration_data = AgentRegistrationData(
+        id=AGENT_ID,
+        machine_hardware_id=MACHINE.hardware_id,
+        start_time=0,
+        parent_id=None,
+        cc_server="192.168.1.1:5000",
+        network_interfaces=[
+            IPv4Interface("192.168.1.2/24"),
+            IPv4Interface("192.168.1.3/16"),
+            IPv4Interface("192.168.1.4/24"),
+        ],
+    )
+    expected_network_interfaces = tuple(
+        sorted(
+            (*agent_registration_data.network_interfaces, existing_machine.network_interfaces[-1])
+        )
+    )
+
+    handler(agent_registration_data)
+    updated_machine = machine_repository.upsert_machine.call_args_list[0][0][0]
+    actual_network_interfaces = updated_machine.network_interfaces
+
+    assert actual_network_interfaces == expected_network_interfaces
