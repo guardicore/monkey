@@ -18,12 +18,10 @@ def flask_client(build_flask_client):
     in_memory_simulation_repository = InMemorySimulationRepository()
     container.register_instance(ISimulationRepository, in_memory_simulation_repository)
 
-    def wrap_in_memory_simulation_repository_set_mode(topic, event):
-        mode = event
-        in_memory_simulation_repository.set_mode(mode)
-
     mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
-    mock_island_event_queue.publish.side_effect = wrap_in_memory_simulation_repository_set_mode
+    mock_island_event_queue.publish.side_effect = (
+        lambda topic, mode: in_memory_simulation_repository.set_mode(mode)
+    )
     container.register_instance(IIslandEventQueue, mock_island_event_queue)
 
     with build_flask_client(container) as flask_client:
