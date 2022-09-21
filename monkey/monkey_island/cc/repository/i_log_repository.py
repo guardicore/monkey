@@ -2,8 +2,12 @@ from abc import ABC
 from typing import Optional, Sequence
 
 
+# TODO: Actually define the Log class
+class Log:
+    pass
+
+
 class ILogRepository(ABC):
-    # Define log object
     def get_logs(self, agent_id: Optional[str] = None) -> Sequence[Log]:  # noqa: F821
         pass
 
