@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from enum import Enum, auto
-from typing import Any
 
 from . import IslandEventSubscriber
 
@@ -29,12 +28,12 @@ class IIslandEventQueue(ABC):
         pass
 
     @abstractmethod
-    def publish(self, topic: IslandEventTopic, event: Any = None):
+    def publish(self, topic: IslandEventTopic, **kwargs):
         """
         Publishes an event topic with the given data
 
         :param topic: Event topic to publish
-        :param event: Event data to publish
+        :param **kwargs: Event data to publish
         """
 
         pass
