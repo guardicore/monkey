@@ -23,8 +23,8 @@ class Agents(AbstractResource):
             agent_registration_data = AgentRegistrationData(**request.json)
 
             logger.debug(f"Agent registered: {agent_registration_data}")
-            self._island_event_queue(
-                IslandEventTopic.AGENT_CONNECTED, agent_registration_data=agent_registration_data
+            self._island_event_queue.publish(
+                IslandEventTopic.AGENT_REGISTERED, agent_registration_data=agent_registration_data
             )
 
             return make_response({}, HTTPStatus.NO_CONTENT)
