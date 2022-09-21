@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Union
+from typing import Dict, List, Union, cast
 
 from bson import SON
 
@@ -30,21 +30,26 @@ class FindingService:
     @staticmethod
     def get_all_findings_for_ui() -> List[EnrichedFinding]:
         findings = FindingService.get_all_findings_from_db()
-        for i in range(len(findings)):
-            details = FindingService._get_finding_details(findings[i])
-            findings[i] = findings[i].to_mongo()
-            findings[i] = FindingService._get_enriched_finding(findings[i])
-            findings[i].details = details
-        return findings
+        enriched_findings: List[EnrichedFinding] = []
+        for finding in findings:
+            finding_data = finding.to_mongo()
+            enriched_finding = FindingService._get_enriched_finding(finding_data)
+            details = FindingService._get_finding_details(finding)
+            enriched_finding.details = details
+            enriched_findings.append(enriched_finding)
+
+        return enriched_findings
 
     @staticmethod
-    def _get_enriched_finding(finding: Finding) -> EnrichedFinding:
+    def _get_enriched_finding(finding: SON) -> EnrichedFinding:
         test_info = zero_trust_consts.TESTS_MAP[finding["test"]]
         enriched_finding = EnrichedFinding(
             finding_id=str(finding["_id"]),
-            test=test_info[zero_trust_consts.FINDING_EXPLANATION_BY_STATUS_KEY][finding["status"]],
+            test=cast(
+                Dict[str, str], test_info[zero_trust_consts.FINDING_EXPLANATION_BY_STATUS_KEY]
+            )[finding["status"]],
             test_key=finding["test"],
-            pillars=test_info[zero_trust_consts.PILLARS_KEY],
+            pillars=cast(List[str], test_info[zero_trust_consts.PILLARS_KEY]),
             status=finding["status"],
             details=None,
         )
