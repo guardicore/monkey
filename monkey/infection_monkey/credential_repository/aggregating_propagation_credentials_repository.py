@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Iterable
+from typing import Any, Dict, Iterable, Sequence
 
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 from common.credentials.credentials import Identity, Secret
@@ -21,7 +21,7 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
     """
 
     def __init__(self, control_channel: IControlChannel):
-        self._stored_credentials = {
+        self._stored_credentials: Dict = {
             "exploit_user_list": set(),
             "exploit_password_list": set(),
             "exploit_lm_hash_list": set(),
@@ -72,7 +72,7 @@ class AggregatingPropagationCredentialsRepository(IPropagationCredentialsReposit
 
         return self._stored_credentials
 
-    def _set_attribute(self, attribute_to_be_set: str, credentials_values: Iterable[Any]):
+    def _set_attribute(self, attribute_to_be_set: str, credentials_values: Sequence[Any]):
         if not credentials_values:
             return
 
