@@ -7,7 +7,7 @@ from monkey_island.cc.repository import IAgentConfigurationRepository
 
 class set_agent_configuration_per_island_mode:
     """
-    Callable class that sets the Island's mode
+    Callable class that sets the default Agent configuration as per the Island's mode
     """
 
     def __init__(
