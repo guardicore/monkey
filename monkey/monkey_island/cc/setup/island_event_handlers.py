@@ -30,7 +30,7 @@ def setup_island_event_handlers(container: DIContainer):
 def _subscribe_agent_registration_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
-    topic = IslandEventTopic.AGENT_CONNECTED
+    topic = IslandEventTopic.AGENT_REGISTERED
 
     island_event_queue.subscribe(topic, container.resolve(handle_agent_registration))
 

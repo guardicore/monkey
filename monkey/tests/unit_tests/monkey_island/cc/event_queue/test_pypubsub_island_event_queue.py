@@ -40,7 +40,7 @@ def test_subscribe_publish__no_event_body(
         topic=IslandEventTopic.CLEAR_SIMULATION_DATA, subscriber=event_queue_subscriber
     )
 
-    event_queue.publish(topic=IslandEventTopic.AGENT_CONNECTED)
+    event_queue.publish(topic=IslandEventTopic.AGENT_REGISTERED)
     event_queue.publish(topic=IslandEventTopic.CLEAR_SIMULATION_DATA)
     event_queue.publish(topic=IslandEventTopic.RESET_AGENT_CONFIGURATION)
 
@@ -64,9 +64,9 @@ def test_subscribe_publish__with_event_body(
 
     event = "my event!"
     my_callable = MyCallable()
-    event_queue.subscribe(topic=IslandEventTopic.AGENT_CONNECTED, subscriber=my_callable)
+    event_queue.subscribe(topic=IslandEventTopic.AGENT_REGISTERED, subscriber=my_callable)
 
-    event_queue.publish(topic=IslandEventTopic.AGENT_CONNECTED, event=event)
+    event_queue.publish(topic=IslandEventTopic.AGENT_REGISTERED, event=event)
     event_queue.publish(topic=IslandEventTopic.CLEAR_SIMULATION_DATA)
     event_queue.publish(topic=IslandEventTopic.RESET_AGENT_CONFIGURATION)
 
@@ -84,10 +84,10 @@ def test_keep_subscriber_in_scope(event_queue: IIslandEventQueue):
     def subscribe():
         # fn will go out of scope after subscribe() returns.
         fn = MyCallable()
-        event_queue.subscribe(topic=IslandEventTopic.AGENT_CONNECTED, subscriber=fn)
+        event_queue.subscribe(topic=IslandEventTopic.AGENT_REGISTERED, subscriber=fn)
 
     subscribe()
 
-    event_queue.publish(topic=IslandEventTopic.AGENT_CONNECTED)
+    event_queue.publish(topic=IslandEventTopic.AGENT_REGISTERED)
 
     assert MyCallable.called
