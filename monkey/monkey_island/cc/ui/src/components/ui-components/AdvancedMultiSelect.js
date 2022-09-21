@@ -32,7 +32,6 @@ function AdvancedMultiSelectHeader(props) {
 class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props);
-
     let selectedPluginNames = this.props.value.map(v => v.name);
     let allPluginNames = this.props.options.enumOptions.map(v => v.value);
 
@@ -160,6 +159,16 @@ class AdvancedMultiSelect extends React.Component {
     let safePluginNames = this.state.allPluginNames.filter(pluginName => this.isSafe(pluginName));
     this.setState({selectedPluginNames: safePluginNames});
     this.onChange(safePluginNames);
+  }
+
+  static getDerivedStateFromProps(props, current_state) {
+    let propsPluginNames = props.value.map(v => v.name);
+    if (current_state.selectedPluginNames !== propsPluginNames) {
+      return {
+      selectedPluginNames: propsPluginNames
+      }
+    }
+    return null
   }
 
   render() {
