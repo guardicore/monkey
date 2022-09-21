@@ -25,4 +25,8 @@ class T1065(AttackTechnique):
     @staticmethod
     def get_tunnel_ports() -> Sequence[str]:
         telems = Telemetry.objects(telem_category="tunnel", data__proxy__ne=None)
-        return [address_to_ip_port(telem["data"]["proxy"])[1] for telem in telems]
+        return [
+            p
+            for p in (address_to_ip_port(telem["data"]["proxy"])[1] for telem in telems)
+            if p is not None
+        ]
