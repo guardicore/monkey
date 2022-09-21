@@ -8,8 +8,8 @@ import pytest
 
 from common import AgentRegistrationData
 from monkey_island.cc.island_event_handlers import handle_agent_registration
-from monkey_island.cc.models import Machine
-from monkey_island.cc.repository import IMachineRepository, UnknownRecordError
+from monkey_island.cc.models import Agent, Machine
+from monkey_island.cc.repository import IAgentRepository, IMachineRepository, UnknownRecordError
 
 AGENT_ID = UUID("860aff5b-d2af-43ea-afb5-62bac3d30b7e")
 
@@ -36,12 +36,21 @@ def machine_repository() -> IMachineRepository:
     machine_repository = MagicMock(spec=IMachineRepository)
     machine_repository.get_new_id = MagicMock(side_effect=count(SEED_ID))
     machine_repository.upsert_machine = MagicMock()
+    machine_repository.get_machine_by_hardware_id = MagicMock(side_effect=UnknownRecordError)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
     return machine_repository
 
 
 @pytest.fixture
-def handler(machine_repository) -> handle_agent_registration:
-    return handle_agent_registration(machine_repository)
+def agent_repository() -> IAgentRepository:
+    agent_repository = MagicMock(spec=IAgentRepository)
+    agent_repository.upsert_agent = MagicMock()
+    return agent_repository
+
+
+@pytest.fixture
+def handler(machine_repository, agent_repository) -> handle_agent_registration:
+    return handle_agent_registration(machine_repository, agent_repository)
 
 
 def test_new_machine_added(handler, machine_repository):
@@ -126,3 +135,16 @@ def test_hardware_id_mismatch(handler, machine_repository):
 
     with pytest.raises(Exception):
         handler(AGENT_REGISTRATION_DATA)
+
+
+def test_add_agent(handler, agent_repository):
+    expected_agent = Agent(
+        id=AGENT_REGISTRATION_DATA.id,
+        machine_id=SEED_ID,
+        start_time=AGENT_REGISTRATION_DATA.start_time,
+        parent_id=AGENT_REGISTRATION_DATA.parent_id,
+        cc_server=AGENT_REGISTRATION_DATA.cc_server,
+    )
+    handler(AGENT_REGISTRATION_DATA)
+
+    agent_repository.upsert_agent.assert_called_with(expected_agent)

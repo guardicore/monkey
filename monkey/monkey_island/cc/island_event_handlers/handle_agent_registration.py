@@ -2,8 +2,8 @@ from contextlib import suppress
 from typing import Optional
 
 from common import AgentRegistrationData
-from monkey_island.cc.models import Machine
-from monkey_island.cc.repository import IMachineRepository, UnknownRecordError
+from monkey_island.cc.models import Agent, Machine
+from monkey_island.cc.repository import IAgentRepository, IMachineRepository, UnknownRecordError
 
 
 class handle_agent_registration:
@@ -11,19 +11,23 @@ class handle_agent_registration:
     Update repositories when a new agent registers
     """
 
-    def __init__(self, machine_repository: IMachineRepository):
+    def __init__(self, machine_repository: IMachineRepository, agent_repository: IAgentRepository):
         self._machine_repository = machine_repository
+        self._agent_repository = agent_repository
 
     def __call__(self, agent_registration_data: AgentRegistrationData):
-        self._update_machine_repository(agent_registration_data)
+        machine = self._update_machine_repository(agent_registration_data)
+        self._add_agent(agent_registration_data, machine)
 
-    def _update_machine_repository(self, agent_registration_data: AgentRegistrationData):
+    def _update_machine_repository(self, agent_registration_data: AgentRegistrationData) -> Machine:
         machine = self._find_existing_machine_to_update(agent_registration_data)
 
         if machine is None:
             machine = Machine(id=self._machine_repository.get_new_id())
 
         self._upsert_machine(machine, agent_registration_data)
+
+        return machine
 
     def _find_existing_machine_to_update(
         self, agent_registration_data: AgentRegistrationData
@@ -72,3 +76,13 @@ class handle_agent_registration:
         )
 
         machine.network_interfaces = sorted(updated_network_interfaces)
+
+    def _add_agent(self, agent_registration_data: AgentRegistrationData, machine: Machine):
+        new_agent = Agent(
+            id=agent_registration_data.id,
+            machine_id=machine.id,
+            start_time=agent_registration_data.start_time,
+            parent_id=agent_registration_data.parent_id,
+            cc_server=agent_registration_data.cc_server,
+        )
+        self._agent_repository.upsert_agent(new_agent)
