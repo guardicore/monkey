@@ -124,7 +124,7 @@ class InfectionMonkey:
             server_address=server, island_api_client=self._island_api_client
         )
         self._control_channel = ControlChannel(server, GUID, self._island_api_client)
-        self._register_agent()
+        self._register_agent(server)
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
