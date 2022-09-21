@@ -5,30 +5,42 @@ import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import InMemorySimulationRepository
 
+from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.models import IslandMode
-from monkey_island.cc.repository import RetrievalError
+from monkey_island.cc.repository import ISimulationRepository
 from monkey_island.cc.resources.island_mode import IslandMode as IslandModeResource
-from monkey_island.cc.services import IslandModeService
-
-
-class MockIslandModeService(IslandModeService):
-    def __init__(self):
-        self._simulation_repository = InMemorySimulationRepository()
-
-    def get_mode(self) -> IslandMode:
-        return self._simulation_repository.get_mode()
-
-    def set_mode(self, mode: IslandMode):
-        self._simulation_repository.set_mode(mode)
 
 
 @pytest.fixture
-def flask_client(build_flask_client):
-    container = StubDIContainer()
-    container.register_instance(IslandModeService, MockIslandModeService())
+def flask_client_builder(build_flask_client):
+    def inner(side_effect=None):
+        container = StubDIContainer()
 
-    with build_flask_client(container) as flask_client:
-        yield flask_client
+        in_memory_simulation_repository = InMemorySimulationRepository()
+        container.register_instance(ISimulationRepository, in_memory_simulation_repository)
+
+        mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
+        mock_island_event_queue.publish.side_effect = (
+            side_effect
+            if side_effect
+            else lambda topic, mode: in_memory_simulation_repository.set_mode(mode)
+        )
+        container.register_instance(IIslandEventQueue, mock_island_event_queue)
+
+        with build_flask_client(container) as flask_client:
+            return flask_client
+
+    return inner
+
+
+@pytest.fixture
+def flask_client(flask_client_builder):
+    return flask_client_builder()
+
+
+@pytest.fixture
+def flask_client__internal_server_error(flask_client_builder):
+    return flask_client_builder(Exception)
 
 
 @pytest.mark.parametrize(
@@ -53,20 +65,12 @@ def test_island_mode_post__invalid_mode(flask_client):
     assert resp.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
-def test_island_mode_post__internal_server_error(build_flask_client):
-    mock_island_mode_service = MagicMock(spec=IslandModeService)
-    mock_island_mode_service.set_mode = MagicMock(side_effect=RetrievalError)
-
-    container = StubDIContainer()
-    container.register_instance(IslandModeService, mock_island_mode_service)
-
-    with build_flask_client(container) as flask_client:
-        resp = flask_client.put(
-            IslandModeResource.urls[0],
-            json=IslandMode.RANSOMWARE.value,
-            follow_redirects=True,
-        )
-
+def test_island_mode_post__internal_server_error(flask_client__internal_server_error):
+    resp = flask_client__internal_server_error.put(
+        IslandModeResource.urls[0],
+        json=IslandMode.RANSOMWARE.value,
+        follow_redirects=True,
+    )
     assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
 
 

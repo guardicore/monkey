@@ -9,6 +9,7 @@ class IslandEventTopic(Enum):
     AGENT_CONNECTED = auto()
     CLEAR_SIMULATION_DATA = auto()
     RESET_AGENT_CONFIGURATION = auto()
+    SET_ISLAND_MODE = auto()
 
 
 class IIslandEventQueue(ABC):
