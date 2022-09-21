@@ -59,15 +59,11 @@ class handle_agent_registration:
 
         return None
 
-    def _upsert_machine(
-        self, existing_machine: Machine, agent_registration_data: AgentRegistrationData
-    ):
-        updated_machine = existing_machine.copy()
+    def _upsert_machine(self, machine: Machine, agent_registration_data: AgentRegistrationData):
+        self._update_hardware_id(machine, agent_registration_data)
+        self._update_network_interfaces(machine, agent_registration_data)
 
-        self._update_hardware_id(updated_machine, agent_registration_data)
-        self._update_network_interfaces(updated_machine, agent_registration_data)
-
-        self._machine_repository.upsert_machine(updated_machine)
+        self._machine_repository.upsert_machine(machine)
 
     def _update_hardware_id(self, machine: Machine, agent_registration_data: AgentRegistrationData):
         if (
