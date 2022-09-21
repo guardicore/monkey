@@ -9,7 +9,6 @@ from monkey_island.cc.models import IslandMode as IslandModeEnum
 from monkey_island.cc.repository import ISimulationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-from monkey_island.cc.services import IslandModeService
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +18,9 @@ class IslandMode(AbstractResource):
 
     def __init__(
         self,
-        island_mode_service: IslandModeService,
         island_event_queue: IIslandEventQueue,
         simulation_repository: ISimulationRepository,
     ):
-        self._island_mode_service = island_mode_service
         self._island_event_queue = island_event_queue
         self._simulation_repository = simulation_repository
 
@@ -31,10 +28,7 @@ class IslandMode(AbstractResource):
     def put(self):
         try:
             mode = IslandModeEnum(request.json)
-
-            self._island_mode_service.set_mode(mode)
             self._island_event_queue.publish(topic=IslandEventTopic.SET_ISLAND_MODE, event=mode)
-
             return {}, HTTPStatus.NO_CONTENT
         except (AttributeError, json.decoder.JSONDecodeError):
             return {}, HTTPStatus.BAD_REQUEST
