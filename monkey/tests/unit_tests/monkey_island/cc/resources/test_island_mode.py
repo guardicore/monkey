@@ -52,6 +52,12 @@ def test_island_mode_post__invalid_mode(flask_client):
 
 def test_island_mode_post__internal_server_error(build_flask_client):
     container = StubDIContainer()
+    in_memory_simulation_repository = InMemorySimulationRepository()
+    container.register_instance(ISimulationRepository, in_memory_simulation_repository)
+
+    mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
+    mock_island_event_queue.publish.side_effect = Exception
+    container.register_instance(IIslandEventQueue, mock_island_event_queue)
 
     with build_flask_client(container) as flask_client:
         resp = flask_client.put(
