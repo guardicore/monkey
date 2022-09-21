@@ -6,6 +6,7 @@ from monkey_island.cc.island_event_handlers import (
     reset_agent_configuration,
     reset_machine_repository,
     set_agent_configuration_per_island_mode,
+    set_simulation_mode,
 )
 from monkey_island.cc.repository import (
     IAgentEventRepository,
@@ -61,4 +62,7 @@ def _subscribe_set_island_mode_events(
 ):
     island_event_queue.subscribe(
         IslandEventTopic.SET_ISLAND_MODE, container.resolve(set_agent_configuration_per_island_mode)
+    )
+    island_event_queue.subscribe(
+        IslandEventTopic.SET_ISLAND_MODE, container.resolve(set_simulation_mode)
     )
