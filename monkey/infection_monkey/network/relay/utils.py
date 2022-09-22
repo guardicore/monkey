@@ -2,7 +2,7 @@ import logging
 import socket
 from contextlib import suppress
 from ipaddress import IPv4Address
-from typing import Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple
+from typing import Dict, Iterable, Iterator, Optional
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
@@ -26,13 +26,15 @@ logger = logging.getLogger(__name__)
 # practical purposes. Revisit this if it's not.
 NUM_FIND_SERVER_WORKERS = 32
 
+IslandAPISearchResults = Dict[str, Optional[IIslandAPIClient]]
+
 
 def find_available_island_apis(
     servers: Iterable[str], island_api_client_factory: AbstractIslandAPIClientFactory
-) -> Mapping[str, Optional[IIslandAPIClient]]:
+) -> IslandAPISearchResults:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
-    server_results: Dict[str, Tuple[bool, IIslandAPIClient]] = {}
+    server_results: IslandAPISearchResults = {}
 
     run_worker_threads(
         _find_island_server,
@@ -46,17 +48,17 @@ def find_available_island_apis(
 
 def _find_island_server(
     servers: Iterator[str],
-    server_status: MutableMapping[str, Optional[IIslandAPIClient]],
+    server_results: IslandAPISearchResults,
     island_api_client_factory: AbstractIslandAPIClientFactory,
 ):
     with suppress(StopIteration):
         server = next(servers)
-        server_status[server] = _check_if_island_server(server, island_api_client_factory)
+        server_results[server] = _check_if_island_server(server, island_api_client_factory)
 
 
 def _check_if_island_server(
     server: str, island_api_client_factory: AbstractIslandAPIClientFactory
-) -> IIslandAPIClient:
+) -> Optional[IIslandAPIClient]:
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
