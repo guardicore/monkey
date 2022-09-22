@@ -10,7 +10,8 @@ from common.agent_configuration.agent_sub_configurations import (
 from common.credentials import Credentials, LMHash, NTHash
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
-from monkey_island.cc.models import Report
+from monkey_island.cc.models import Report, Simulation
+from monkey_island.cc.models import AgentSignals, Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -25,6 +26,7 @@ from monkey_island.cc.repository.i_simulation_repository import ISimulationRepos
 from monkey_island.cc.repository.ICredentials import ICredentialsRepository
 from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
+from monkey_island.cc.services import AgentSignalsService
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
@@ -322,3 +324,10 @@ CC_TUNNEL
 IslandEventTopic.AGENT_CONNECTED
 IslandEventTopic.CLEAR_SIMULATION_DATA
 IslandEventTopic.RESET_AGENT_CONFIGURATION
+# TODO: Remove after #2261 is closed
+IslandEventTopic.TERMINATE_AGENTS
+
+Simulation.terminate_signal_time
+
+AgentSignalsService.get_signals
+AgentSignalsService.on_terminate_agents_signal
