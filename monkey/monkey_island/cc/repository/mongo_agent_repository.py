@@ -58,6 +58,14 @@ class MongoAgentRepository(IAgentRepository):
         except Exception as err:
             raise RetrievalError(f"Error retrieving running agents: {err}")
 
+    def get_progenitor(self, agent: Agent) -> Agent:
+        if agent.parent_id is None:
+            return agent
+
+        parent = self.get_agent_by_id(agent.parent_id)
+
+        return self.get_progenitor(parent)
+
     def reset(self):
         try:
             self._agents_collection.drop()
