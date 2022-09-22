@@ -246,6 +246,8 @@ IMitigationsRepository.save_mitigations
 IAgentRepository.upsert_agent
 IAgentRepository.get_agent_by_id
 IAgentRepository.get_running_agents
+IAgentRepository.get_progenitor
+descendant
 agent
 IAttackRepository.get_attack_report
 IAttackRepository.save_attack_report

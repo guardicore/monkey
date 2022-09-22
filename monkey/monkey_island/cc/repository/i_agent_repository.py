@@ -41,6 +41,17 @@ class IAgentRepository(ABC):
         """
 
     @abstractmethod
+    def get_progenitor(self, agent: Agent) -> Agent:
+        """
+        Gets the progenitor `Agent` for the agent.
+
+        :param agent: The Agent for which we want the progenitor
+        :return: `Agent` progenitor ( an initial agent that started the exploitation chain)
+        :raises RetrievalError: If an error occured while attempting to retrieve the `Agent`
+        :raises UnknownRecordError: If the agent ID is not in the repository
+        """
+
+    @abstractmethod
     def reset(self):
         """
         Removes all data from the repository
