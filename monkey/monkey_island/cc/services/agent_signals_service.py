@@ -1,18 +1,19 @@
 from datetime import datetime
 
-from monkey_island.cc.models import Agent, AgentSignals
+from common.types import AgentID
 from monkey_island.cc.repository import ISimulationRepository
+from monkey_island.cc.models import AgentSignals
 
 
 class AgentSignalsService:
     def __init__(self, simulation_repository: ISimulationRepository):
         self._simulation_repository = simulation_repository
 
-    def get_signals(self, agent: Agent) -> AgentSignals:
+    def get_signals(self, agent_id: AgentID) -> AgentSignals:
         """
         Gets the signals sent to a particular agent
 
-        :param agent: The agent whose signals need to be retrieved
+        :param agent_id: The ID of the agent whose signals need to be retrieved
         :return: Signals sent to the relevant agent
         """
         return AgentSignals(timestamp=datetime.now())
