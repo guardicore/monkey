@@ -222,14 +222,12 @@ def test_machine_interfaces_updated(handler, machine_repository):
             IPv4Interface("192.168.1.4/24"),
         ],
     )
-    expected_network_interfaces = tuple(
-        sorted(
-            (*agent_registration_data.network_interfaces, existing_machine.network_interfaces[-1])
-        )
+    expected_network_interfaces = sorted(
+        (*agent_registration_data.network_interfaces, existing_machine.network_interfaces[-1])
     )
 
     handler(agent_registration_data)
     updated_machine = machine_repository.upsert_machine.call_args_list[0][0][0]
-    actual_network_interfaces = updated_machine.network_interfaces
+    actual_network_interfaces = sorted(updated_machine.network_interfaces)
 
     assert actual_network_interfaces == expected_network_interfaces
