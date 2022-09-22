@@ -50,6 +50,7 @@ tqdm = "*"  # Used in BB tests
 sphinx = "*"  # Used in documentation
 sphinx_rtd_theme = "*"
 sphinx_autodoc_typehints = "*"
+types-python-dateutil = "*"
 
 [requires]
 python_version = "3.7"
