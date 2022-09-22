@@ -15,12 +15,13 @@ AGENT_BINARY_PATH_WIN64 = PureWindowsPath(r"C:\Windows\temp\monkey64.exe")
 
 
 def get_agent_dst_path(host: VictimHost) -> PurePath:
-    if host.is_windows():
-        path = PureWindowsPath(AGENT_BINARY_PATH_WIN64)
-    else:
-        path = PurePosixPath(AGENT_BINARY_PATH_LINUX)
+    return _add_random_suffix(_get_agent_path(host))
 
-    return _add_random_suffix(path)
+
+def _get_agent_path(host: VictimHost) -> PurePath:
+    if host.is_windows():
+        return PureWindowsPath(AGENT_BINARY_PATH_WIN64)
+    return PurePosixPath(AGENT_BINARY_PATH_LINUX)
 
 
 def get_random_file_suffix() -> str:

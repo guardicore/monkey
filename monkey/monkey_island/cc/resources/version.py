@@ -1,6 +1,6 @@
 import logging
 
-from monkey_island.cc import Version
+from monkey_island.cc import Version as IslandVersion
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class Version(AbstractResource):
     urls = ["/api/island/version"]
 
-    def __init__(self, version: Version):
+    def __init__(self, version: IslandVersion):
         self._version = version
 
     @jwt_required

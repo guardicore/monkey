@@ -18,8 +18,8 @@ def get_propagation_stats() -> Dict:
     }
 
 
-def _get_exploit_counts(exploited: List[MonkeyExploitation]) -> Dict:
-    exploit_counts = {}
+def _get_exploit_counts(exploited: List[MonkeyExploitation]) -> Dict[str, int]:
+    exploit_counts: Dict[str, int] = {}
 
     for node in exploited:
         for exploit in node.exploits:

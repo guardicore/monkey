@@ -1,6 +1,6 @@
 import logging
 import subprocess
-from typing import Dict, Iterable
+from typing import Dict, Iterable, List, Tuple
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.utils.attack_utils import ScanStatus
@@ -33,7 +33,7 @@ class PBA:
         """
         self.command = PBA.choose_command(linux_cmd, windows_cmd)
         self.name = name
-        self.pba_data = []
+        self.pba_data: List[PostBreachData] = []
         self.telemetry_messenger = telemetry_messenger
         self.timeout = timeout
 
@@ -73,7 +73,7 @@ class PBA:
         pba_execution_succeeded = pba_execution_result[1]
         return pba_execution_succeeded and self.is_script()
 
-    def _execute_default(self):
+    def _execute_default(self) -> Tuple[str, bool]:
         """
         Default post breach command execution routine
         :return: Tuple of command's output string and boolean, indicating if it succeeded
@@ -84,7 +84,7 @@ class PBA:
             ).decode()
             return output, True
         except subprocess.CalledProcessError as err:
-            return err.output.decode(), False
+            return bytes(err.output).decode(), False
         except subprocess.TimeoutExpired as err:
             return str(err), False
 

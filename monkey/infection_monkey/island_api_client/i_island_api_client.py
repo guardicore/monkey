@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Sequence
+from typing import Sequence
 
 from common import AgentRegistrationData, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -62,7 +62,7 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_binary(self, operating_system: OperatingSystem) -> Optional[bytes]:
+    def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         """
         Get an agent binary for the given OS from the island
 

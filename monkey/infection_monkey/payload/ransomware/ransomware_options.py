@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+from typing import Optional
 
 from common.utils.file_utils import InvalidPath, expand_path
 from infection_monkey.utils.environment import is_windows_os
@@ -12,7 +14,7 @@ class RansomwareOptions:
         self.file_extension = options["encryption"]["file_extension"]
         self.readme_enabled = options["other_behaviors"]["readme"]
 
-        self.target_directory = None
+        self.target_directory: Optional[Path] = None
         self._set_target_directory(options["encryption"]["directories"])
 
     def _set_target_directory(self, os_target_directories: dict):

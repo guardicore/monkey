@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Iterable
 
 from common.network.network_utils import address_to_ip_port
 from common.utils.attack_utils import ScanStatus
@@ -17,12 +17,11 @@ class T1065(AttackTechnique):
 
     @staticmethod
     def get_report_data():
-        tunneling_ports = T1065.get_tunnel_ports()
-        non_standard_ports = [*tunneling_ports, str(ISLAND_PORT)]
+        non_standard_ports = [*T1065.get_tunnel_ports(), str(ISLAND_PORT)]
         T1065.used_msg = T1065.message % ", ".join(non_standard_ports)
         return T1065.get_base_data_by_status(ScanStatus.USED.value)
 
     @staticmethod
-    def get_tunnel_ports() -> Sequence[str]:
+    def get_tunnel_ports() -> Iterable[str]:
         telems = Telemetry.objects(telem_category="tunnel", data__proxy__ne=None)
-        return [address_to_ip_port(telem["data"]["proxy"])[1] for telem in telems]
+        return filter(None, [address_to_ip_port(telem["data"]["proxy"])[1] for telem in telems])

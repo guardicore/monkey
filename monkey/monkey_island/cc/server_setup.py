@@ -4,7 +4,7 @@ import logging
 import sys
 from pathlib import Path
 from threading import Thread
-from typing import Sequence, Tuple
+from typing import Optional, Sequence, Tuple
 
 import gevent.hub
 import requests
@@ -151,7 +151,7 @@ def _start_mongodb(data_dir: Path) -> MongoDbProcess:
     return mongo_db_process
 
 
-def _connect_to_mongodb(mongo_db_process: MongoDbProcess):
+def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
     try:
         mongo_setup.connect_to_mongodb(MONGO_CONNECTION_TIMEOUT)
     except mongo_setup.MongoDBTimeOutError as err:

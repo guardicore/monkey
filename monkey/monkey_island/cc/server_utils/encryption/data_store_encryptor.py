@@ -1,7 +1,7 @@
 import os
 import secrets
 from pathlib import Path
-from typing import Union
+from typing import Optional
 
 from monkey_island.cc.server_utils.encryption.encryption_key_types import EncryptionKey32Bytes
 from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
@@ -12,7 +12,7 @@ from .password_based_bytes_encryptor import PasswordBasedBytesEncryptor
 
 _KEY_FILE_NAME = "mongo_key.bin"
 
-_encryptor: Union[None, IEncryptor] = None
+_encryptor: Optional[IEncryptor] = None
 
 
 # NOTE: This class is being replaced by RepositoryEncryptor
@@ -73,5 +73,5 @@ def _initialize_datastore_encryptor(key_file: Path, secret: str):
     _encryptor = DataStoreEncryptor(secret, key_file)
 
 
-def get_datastore_encryptor() -> IEncryptor:
+def get_datastore_encryptor() -> Optional[IEncryptor]:
     return _encryptor
