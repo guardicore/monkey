@@ -1,9 +1,12 @@
+import logging
 from datetime import datetime
 from typing import Optional
 
 from common.types import AgentID
-from monkey_island.cc.models import AgentSignals
+from monkey_island.cc.models import AgentSignals, Simulation
 from monkey_island.cc.repository import IAgentRepository, ISimulationRepository
+
+logger = logging.getLogger(__name__)
 
 
 class AgentSignalsService:
@@ -45,4 +48,7 @@ class AgentSignalsService:
 
         :param timestamp: Timestamp of the terminate signal
         """
-        pass
+        simulation = self._simulation_repository.get_simulation()
+        updated_simulation = Simulation(mode=simulation.mode, terminate_signal_time=timestamp)
+
+        self._simulation_repository.save_simulation(updated_simulation)
