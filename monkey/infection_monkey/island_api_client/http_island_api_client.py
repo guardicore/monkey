@@ -61,7 +61,7 @@ def convert_json_error_to_island_api_error(fn):
     def wrapper(*args, **kwargs):
         try:
             return fn(*args, **kwargs)
-        except json.JSONDecodeError as err:
+        except (requests.JSONDecodeError, json.JSONDecodeError) as err:
             raise IslandAPIRequestFailedError(err)
 
     return wrapper
