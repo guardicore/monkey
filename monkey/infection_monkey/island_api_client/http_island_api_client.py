@@ -48,8 +48,6 @@ def handle_island_errors(fn):
                 raise IslandAPIError(err)
         except TimeoutError as err:
             raise IslandAPITimeoutError(err)
-        except IslandAPIError as err:
-            raise err
         except Exception as err:
             raise IslandAPIError(err)
 
