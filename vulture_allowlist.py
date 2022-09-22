@@ -15,6 +15,7 @@ from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
 from monkey_island.cc.repository.i_agent_event_repository import IAgentEventRepository
+from monkey_island.cc.repository.i_agent_log_repository import IAgentLogRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
 from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
@@ -299,6 +300,11 @@ IAgentEventRepository.save_event
 IAgentEventRepository.get_events_by_type
 IAgentEventRepository.get_events_by_tag
 IAgentEventRepository.get_events_by_source
+
+# TODO: Remove once #2274 is closed
+IAgentLogRepository
+IAgentLogRepository.upsert_agent_log
+IAgentLogRepository.get_agent_log
 
 
 # pydantic base models
