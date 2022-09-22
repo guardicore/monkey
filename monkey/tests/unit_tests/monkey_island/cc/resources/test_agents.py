@@ -1,8 +1,12 @@
 from http import HTTPStatus
+from unittest.mock import MagicMock
 from uuid import UUID
 
+import pytest
+from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
+from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.resources import Agents
 
 AGENTS_URL = get_url_for_resource(Agents)
@@ -17,8 +21,16 @@ AGENT_REGISTRATION_DICT = {
 }
 
 
+@pytest.fixture
+def flask_client(build_flask_client):
+    container = StubDIContainer()
+    container.register_instance(IIslandEventQueue, MagicMock(spec=IIslandEventQueue))
+
+    with build_flask_client(container) as flask_client:
+        yield flask_client
+
+
 def test_agent_registration(flask_client):
-    print(AGENTS_URL)
     resp = flask_client.post(
         AGENTS_URL,
         json=AGENT_REGISTRATION_DICT,
