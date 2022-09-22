@@ -2,7 +2,7 @@ import itertools
 import logging
 import socket
 from ipaddress import IPv4Interface
-from typing import Dict, List
+from typing import Dict, List, Sequence
 
 from common.network.network_range import InvalidNetworkRangeError, NetworkRange
 from infection_monkey.network import NetworkAddress
@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 def compile_scan_target_list(
-    local_network_interfaces: List[IPv4Interface],
-    ranges_to_scan: List[str],
-    inaccessible_subnets: List[str],
-    blocklisted_ips: List[str],
+    local_network_interfaces: Sequence[IPv4Interface],
+    ranges_to_scan: Sequence[str],
+    inaccessible_subnets: Sequence[str],
+    blocklisted_ips: Sequence[str],
     enable_local_network_scan: bool,
 ) -> List[NetworkAddress]:
     scan_targets = _get_ips_from_subnets_to_scan(ranges_to_scan)

@@ -8,7 +8,6 @@ from typing import Callable, Dict, Sequence
 from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PluginConfiguration,
-    ScanTargetConfiguration,
 )
 from infection_monkey.i_puppet import (
     FingerprintData,
@@ -35,7 +34,7 @@ class IPScanner:
     def scan(
         self,
         addresses_to_scan: Sequence[NetworkAddress],
-        options: ScanTargetConfiguration,
+        options: NetworkScanConfiguration,
         results_callback: Callback,
         stop: Event,
     ):
