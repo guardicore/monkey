@@ -10,7 +10,7 @@ from common.agent_configuration.agent_sub_configurations import (
 from common.credentials import Credentials, LMHash, NTHash
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
-from monkey_island.cc.models import Report
+from monkey_island.cc.models import Report, Simulation
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -323,3 +323,5 @@ IslandEventTopic.AGENT_CONNECTED
 IslandEventTopic.CLEAR_SIMULATION_DATA
 IslandEventTopic.RESET_AGENT_CONFIGURATION
 IslandEventTopic.TERMINATE_AGENTS
+
+Simulation.terminate_signal_time
