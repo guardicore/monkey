@@ -26,7 +26,7 @@ class IMachineRepository(ABC):
         `Machine` already exists, update it.
 
         :param machine: The `Machine` to be inserted or updated
-        :raises StorageError: If an error occurred while attempting to store the `Machine`
+        :raises StorageError: If an error occurs while attempting to store the `Machine`
         """
 
     @abstractmethod
@@ -38,7 +38,7 @@ class IMachineRepository(ABC):
         :return: A `Machine` with a matching `id`
         :raises UnknownRecordError: If a `Machine` with the specified `id` does not exist in the
                                     repository
-        :raises RetrievalError: If an error occurred while attempting to retrieve the `Machine`
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Machine`
         """
 
     @abstractmethod
@@ -50,7 +50,7 @@ class IMachineRepository(ABC):
         :return: A `Machine` with a matching `hardware_id`
         :raises UnknownRecordError: If a `Machine` with the specified `hardware_id` does not exist
                                     in the repository
-        :raises RetrievalError: If an error occurred while attempting to retrieve the `Machine`
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Machine`
         """
 
     @abstractmethod
@@ -62,7 +62,7 @@ class IMachineRepository(ABC):
         :return: A sequence of Machines that have a network interface with a matching IP
         :raises UnknownRecordError: If a `Machine` with the specified `ip` does not exist in the
                                     repository
-        :raises RetrievalError: If an error occurred while attempting to retrieve the `Machine`
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Machine`
         """
 
     @abstractmethod
@@ -70,6 +70,6 @@ class IMachineRepository(ABC):
         """
         Removes all data from the repository
 
-        :raises RemovalError: If an error occurred while attempting to remove all `Machines` from
+        :raises RemovalError: If an error occurs while attempting to remove all `Machines` from
                               the repository
         """
