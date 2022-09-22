@@ -4,7 +4,7 @@ from uuid import UUID
 import pytest
 
 from common.types import AgentID
-from monkey_island.cc.models import Agent, Simulation
+from monkey_island.cc.models import Agent, IslandMode, Simulation
 from monkey_island.cc.repository import IAgentRepository, ISimulationRepository, UnknownRecordError
 from monkey_island.cc.services import AgentSignalsService
 
@@ -117,3 +117,28 @@ def test_progenitor_started_before_terminate(
     signals = agent_signals_service.get_signals(agent.id)
 
     assert signals.terminate.timestamp() == TERMINATE_TIMESTAMP
+
+
+def test_on_terminate_agents_signal__stores_timestamp(
+    agent_signals_service: AgentSignalsService, mock_simulation_repository: ISimulationRepository
+):
+    timestamp = 100
+    mock_simulation_repository.get_simulation = MagicMock(return_value=Simulation())
+    agent_signals_service.on_terminate_agents_signal(timestamp)
+
+    expected_value = Simulation(terminate_signal_time=timestamp)
+    assert mock_simulation_repository.save_simulation.called_once_with(expected_value)
+
+
+def test_on_terminate_agents_signal__updates_timestamp(
+    agent_signals_service: AgentSignalsService, mock_simulation_repository: ISimulationRepository
+):
+    timestamp = 100
+    mock_simulation_repository.get_simulation = MagicMock(
+        return_value=Simulation(mode=IslandMode.RANSOMWARE, terminate_signal_time=50)
+    )
+
+    agent_signals_service.on_terminate_agents_signal(timestamp)
+
+    expected_value = Simulation(mode=IslandMode.RANSOMWARE, terminate_signal_time=timestamp)
+    assert mock_simulation_repository.save_simulation.called_once_with(expected_value)
