@@ -25,7 +25,7 @@ class AgentSignals(AbstractResource):
             signal = Signals(**request.json)
 
             if signal.terminate is None:
-                raise ValueError
+                raise ValueError("Terminate signal's timestamp is empty")
             self._island_event_queue.publish(IslandEventTopic.TERMINATE_AGENTS, signal=signal)
         except (JSONDecodeError, TypeError, ValueError) as err:
             return {"error": err}, HTTPStatus.BAD_REQUEST
