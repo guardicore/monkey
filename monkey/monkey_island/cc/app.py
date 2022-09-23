@@ -24,6 +24,7 @@ from monkey_island.cc.resources import (
     PropagationCredentials,
     RemoteRun,
     ResetAgentConfiguration,
+    TerminateAllAgents,
 )
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.agent_controls import StopAgentCheck
@@ -49,7 +50,6 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
-from monkey_island.cc.resources.terminate_all_agents import TerminateAllAgents
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.resources.zero_trust.finding_event import ZeroTrustFindingEvent
 from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
