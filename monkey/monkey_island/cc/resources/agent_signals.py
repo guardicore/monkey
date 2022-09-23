@@ -24,7 +24,6 @@ class AgentSignals(AbstractResource):
         try:
             signal = Signals(**request.json)
 
-            # We allow an empty timestamp. However, should the agent be able to send us one?
             if signal.terminate is None:
                 raise ValueError
             self._island_event_queue.publish(IslandEventTopic.TERMINATE_AGENTS, signal=signal)
