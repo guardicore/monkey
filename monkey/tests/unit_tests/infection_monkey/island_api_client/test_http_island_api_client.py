@@ -4,7 +4,7 @@ import pytest
 import requests
 import requests_mock
 
-from common import OperatingSystem
+from common import AgentSignals, OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     PydanticAgentEventSerializer,
@@ -456,16 +456,17 @@ def test_island_api_client_get_agent_signals__status_code(
             island_api_client.get_agent_signals(agent_id=AGENT_ID)
 
 
-@pytest.mark.parametrize("expected_timestamp", [TIMESTAMP, None])
-def test_island_api_client_get_agent_signals(island_api_client, expected_timestamp):
+@pytest.mark.parametrize("timestamp", [TIMESTAMP, None])
+def test_island_api_client_get_agent_signals(island_api_client, timestamp):
+    expected_agent_signals = AgentSignals(terminate=timestamp)
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
         island_api_client.connect(SERVER)
 
-        m.get(ISLAND_GET_AGENT_SIGNALS, json={"terminate": expected_timestamp})
-        actual_terminate_timestamp = island_api_client.get_agent_signals(agent_id=AGENT_ID)
+        m.get(ISLAND_GET_AGENT_SIGNALS, json={"terminate": timestamp})
+        actual_agent_signals = island_api_client.get_agent_signals(agent_id=AGENT_ID)
 
-        assert actual_terminate_timestamp == expected_timestamp
+        assert actual_agent_signals == expected_agent_signals
 
 
 def test_island_api_client_get_agent_signals__bad_json(island_api_client):
