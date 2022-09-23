@@ -11,14 +11,14 @@ from monkey_island.cc.repository import RetrievalError, StorageError
 from monkey_island.cc.resources import AgentSignals
 from monkey_island.cc.services import AgentSignalsService
 
-TIMESTAMP = 123456789
-TIMESTAMP_1 = 123546789
+TIMESTAMP_1 = 123456789
+TIMESTAMP_2 = 123546789
 
-SIGNALS = Signals(terminate=TIMESTAMP)
 SIGNALS_1 = Signals(terminate=TIMESTAMP_1)
+SIGNALS_2 = Signals(terminate=TIMESTAMP_2)
 
-AGENT_ID = UUID("c0dd10b3-e21a-4da9-9d96-a99c19ebd7c5")
-AGENT_ID_1 = UUID("9b4279f6-6ec5-4953-821e-893ddc71a988")
+AGENT_ID_1 = UUID("c0dd10b3-e21a-4da9-9d96-a99c19ebd7c5")
+AGENT_ID_2 = UUID("9b4279f6-6ec5-4953-821e-893ddc71a988")
 
 
 @pytest.fixture
@@ -51,7 +51,7 @@ def flask_client(flask_client_builder):
 def test_agent_signals_terminate_all_post(flask_client):
     resp = flask_client.post(
         AgentSignals.urls[0],
-        json={"kill_time": TIMESTAMP},
+        json={"kill_time": TIMESTAMP_1},
         follow_redirects=True,
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
@@ -62,8 +62,8 @@ def test_agent_signals_terminate_all_post(flask_client):
     [
         "bad timestamp",
         {},
-        {"wrong_key": TIMESTAMP},
-        TIMESTAMP,
+        {"wrong_key": TIMESTAMP_1},
+        TIMESTAMP_1,
     ],
 )
 def test_agent_signals_terminate_all_post__invalid_timestamp(flask_client, bad_data):
@@ -77,7 +77,10 @@ def test_agent_signals_terminate_all_post__invalid_timestamp(flask_client, bad_d
 
 @pytest.mark.parametrize(
     "url, signals",
-    [(f"/api/agent-signals/{AGENT_ID}", SIGNALS), (f"/api/agent-signals/{AGENT_ID_1}", SIGNALS_1)],
+    [
+        (f"/api/agent-signals/{AGENT_ID_1}", SIGNALS_1),
+        (f"/api/agent-signals/{AGENT_ID_2}", SIGNALS_2),
+    ],
 )
 def test_agent_signals_get(flask_client, mock_agent_signals_service, url, signals):
     mock_agent_signals_service.get_signals.return_value = signals
@@ -89,8 +92,8 @@ def test_agent_signals_get(flask_client, mock_agent_signals_service, url, signal
 @pytest.mark.parametrize(
     "url, error",
     [
-        (f"/api/agent-signals/{AGENT_ID}", RetrievalError),
-        (f"/api/agent-signals/{AGENT_ID_1}", StorageError),
+        (f"/api/agent-signals/{AGENT_ID_1}", RetrievalError),
+        (f"/api/agent-signals/{AGENT_ID_2}", StorageError),
     ],
 )
 def test_agent_signals_get__internal_server_error(
