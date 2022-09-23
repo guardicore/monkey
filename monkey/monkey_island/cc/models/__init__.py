@@ -15,4 +15,3 @@ from .communication_type import CommunicationType
 from .node import Node
 from common.types import AgentID
 from .agent import Agent
-from .agent_signals import AgentSignals

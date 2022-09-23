@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 from typing import Optional, Sequence
 
-from common import AgentRegistrationData, OperatingSystem
+from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.credentials import Credentials
@@ -133,7 +132,7 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_signals(self, agent_id: str) -> Optional[datetime]:
+    def get_agent_signals(self, agent_id: str) -> AgentSignals:
         """
         Gets an agent's signals from the island
 
@@ -142,5 +141,5 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
-        :return: The relevant agent's terminate signal's timestamp
+        :return: The relevant agent's signals
         """

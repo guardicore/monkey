@@ -2,8 +2,9 @@ import logging
 from datetime import datetime
 from typing import Optional
 
+from common.agent_signals import AgentSignals
 from common.types import AgentID
-from monkey_island.cc.models import AgentSignals, Simulation
+from monkey_island.cc.models import Simulation
 from monkey_island.cc.repository import IAgentRepository, ISimulationRepository
 
 logger = logging.getLogger(__name__)

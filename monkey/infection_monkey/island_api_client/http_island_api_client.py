@@ -1,13 +1,12 @@
 import functools
 import json
 import logging
-from datetime import datetime
 from pprint import pformat
-from typing import List, Optional, Sequence
+from typing import List, Sequence
 
 import requests
 
-from common import AgentRegistrationData, OperatingSystem
+from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.agent_events import AbstractAgentEvent
@@ -189,7 +188,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     @convert_json_error_to_island_api_error
-    def get_agent_signals(self, agent_id: str) -> Optional[datetime]:
+    def get_agent_signals(self, agent_id: str) -> AgentSignals:
         url = f"{self._api_url}/agent-signals/{agent_id}"
         response = requests.get(  # noqa: DUO123
             url,
@@ -197,7 +196,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             timeout=SHORT_REQUEST_TIMEOUT,
         )
         response.raise_for_status()
-        return response.json()["terminate"]
+        return AgentSignals(**response.json())
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
