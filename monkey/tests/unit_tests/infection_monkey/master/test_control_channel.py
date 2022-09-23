@@ -35,14 +35,14 @@ def control_channel(island_api_client) -> ControlChannel:
 
 def test_control_channel__should_agent_stop(control_channel, island_api_client):
     control_channel.should_agent_stop()
-    assert island_api_client.should_agent_stop.called_once()
+    assert island_api_client.get_agent_signals.called_once()
 
 
 @pytest.mark.parametrize("api_error", CONTROL_CHANNEL_API_ERRORS)
 def test_control_channel__should_agent_stop_raises_error(
     control_channel, island_api_client, api_error
 ):
-    island_api_client.should_agent_stop.side_effect = api_error()
+    island_api_client.get_agent_signals.side_effect = api_error()
 
     with pytest.raises(IslandCommunicationError):
         control_channel.should_agent_stop()

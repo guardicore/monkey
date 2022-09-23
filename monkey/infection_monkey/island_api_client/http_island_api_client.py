@@ -1,8 +1,9 @@
 import functools
 import json
 import logging
+from datetime import datetime
 from pprint import pformat
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 import requests
 
@@ -150,19 +151,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     @convert_json_error_to_island_api_error
-    def should_agent_stop(self, agent_id: str) -> bool:
-        url = f"{self._api_url}/monkey-control/needs-to-stop/{agent_id}"
-        response = requests.get(  # noqa: DUO123
-            url,
-            verify=False,
-            timeout=SHORT_REQUEST_TIMEOUT,
-        )
-        response.raise_for_status()
-
-        return response.json()["stop_agent"]
-
-    @handle_island_errors
-    @convert_json_error_to_island_api_error
     def get_config(self) -> AgentConfiguration:
         response = requests.get(  # noqa: DUO123
             f"{self._api_url}/agent-configuration",
@@ -200,6 +188,18 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             raise IslandAPIRequestError(err)
 
         return serialized_events
+
+    @handle_island_errors
+    @convert_json_error_to_island_api_error
+    def get_agent_signals(self, agent_id: str) -> Optional[datetime]:
+        url = f"{self._api_url}/agent-signals/{agent_id}"
+        response = requests.get(  # noqa: DUO123
+            url,
+            verify=False,
+            timeout=SHORT_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+        return response.json()["terminate"]
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
