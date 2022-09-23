@@ -6,6 +6,7 @@ from flask import request
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.services import AgentSignalsService
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +17,10 @@ class AgentSignals(AbstractResource):
     def __init__(
         self,
         island_event_queue: IIslandEventQueue,
+        agent_signals_service: AgentSignalsService,
     ):
         self._island_event_queue = island_event_queue
+        self._agent_signals_service = agent_signals_service
 
     def post(self):
         try:
@@ -35,5 +38,5 @@ class AgentSignals(AbstractResource):
         return {}, HTTPStatus.NO_CONTENT
 
     def get(self, agent_id: str):
-        # TODO: return AgentSignals
-        return {}, HTTPStatus.OK
+        agent_signals = self._agent_signals_service.get_signals(agent_id)
+        return agent_signals.dict(), HTTPStatus.OK
