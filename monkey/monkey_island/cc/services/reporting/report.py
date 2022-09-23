@@ -5,7 +5,7 @@ from itertools import chain, product
 from typing import List
 
 from common.network.network_range import NetworkRange
-from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
+from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
@@ -175,7 +175,7 @@ class ReportService:
     @staticmethod
     def get_island_cross_segment_issues():
         issues = []
-        island_ips = get_my_ip_addresses()
+        island_ips = get_my_ip_addresses_legacy()
         for monkey in mongo.db.monkey.find(
             {"tunnel": {"$exists": False}}, {"tunnel": 1, "guid": 1, "hostname": 1}
         ):

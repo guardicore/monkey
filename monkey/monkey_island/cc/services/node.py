@@ -4,7 +4,7 @@ from datetime import datetime
 from bson import ObjectId
 
 import monkey_island.cc.services.log
-from common.network.network_utils import get_my_ip_addresses
+from common.network.network_utils import get_my_ip_addresses_legacy
 from monkey_island.cc import models
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
@@ -110,7 +110,7 @@ class NodeService:
     def get_monkey_label(monkey):
         # todo
         label = monkey["hostname"] + " : " + monkey["ip_addresses"][0]
-        ip_addresses = get_my_ip_addresses()
+        ip_addresses = get_my_ip_addresses_legacy()
         if len(set(monkey["ip_addresses"]).intersection(ip_addresses)) > 0:
             label = "MonkeyIsland - " + label
         return label
@@ -118,7 +118,7 @@ class NodeService:
     @staticmethod
     def get_monkey_group(monkey):
         keywords = []
-        if len(set(monkey["ip_addresses"]).intersection(get_my_ip_addresses())) != 0:
+        if len(set(monkey["ip_addresses"]).intersection(get_my_ip_addresses_legacy())) != 0:
             keywords.extend(["island", "monkey"])
         else:
             monkey_type = "manual" if NodeService.get_monkey_manual_run(monkey) else "monkey"
@@ -275,7 +275,7 @@ class NodeService:
     # It's better to just initialize the island machine on reset I think
     @staticmethod
     def get_monkey_island_monkey():
-        ip_addresses = get_my_ip_addresses()
+        ip_addresses = get_my_ip_addresses_legacy()
         for ip_address in ip_addresses:
             monkey = NodeService.get_monkey_by_ip(ip_address)
             if monkey is not None:
@@ -297,7 +297,7 @@ class NodeService:
     @staticmethod
     def get_monkey_island_node():
         island_node = NodeService.get_monkey_island_pseudo_net_node()
-        island_node["ip_addresses"] = get_my_ip_addresses()
+        island_node["ip_addresses"] = get_my_ip_addresses_legacy()
         island_node["domain_name"] = socket.gethostname()
         return island_node
 
