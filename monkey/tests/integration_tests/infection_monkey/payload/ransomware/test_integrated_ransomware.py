@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 import infection_monkey.payload.ransomware.ransomware_builder as ransomware_builder
-from monkey.common.agent_configuration.default_agent_configuration import RANSOMWARE_OPTIONS
+from common.agent_configuration.default_agent_configuration import RANSOMWARE_OPTIONS
 
 
 @pytest.fixture

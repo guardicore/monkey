@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from monkey.infection_monkey.network.relay import SocketsPipe
+from infection_monkey.network.relay import SocketsPipe
 
 
 def test_sockets_pipe__name_increments():
