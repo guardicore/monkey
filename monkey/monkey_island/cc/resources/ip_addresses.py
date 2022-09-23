@@ -1,3 +1,4 @@
+from ipaddress import IPv4Address
 from typing import Sequence
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
@@ -11,8 +12,8 @@ class IPAddresses(AbstractResource):
 
     urls = ["/api/island/ip-addresses"]
 
-    def __init__(self, ip_addresses: Sequence[str]):
-        self._ips = ip_addresses
+    def __init__(self, ip_addresses: Sequence[IPv4Address]):
+        self._ips = list(map(str, ip_addresses))
 
     @jwt_required
     def get(self) -> Sequence[str]:
