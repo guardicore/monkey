@@ -16,7 +16,7 @@ class FileEncryptionTelem(BatchableTelemMixin, IBatchableTelem, BaseTelem):
         """
         super().__init__()
 
-        self._telemetry_entries.append({"path": filepath, "success": success, "error": error})
+        self._telemetry_entries.append({"path": str(filepath), "success": success, "error": error})
 
     telem_category = TelemCategoryEnum.FILE_ENCRYPTION
 

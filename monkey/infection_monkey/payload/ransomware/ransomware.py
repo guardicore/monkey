@@ -70,7 +70,7 @@ class Ransomware:
                 self._send_telemetry(filepath, False, str(ex))
 
     def _send_telemetry(self, filepath: Path, success: bool, error: str):
-        encryption_attempt = FileEncryptionTelem(str(filepath), success, error)
+        encryption_attempt = FileEncryptionTelem(filepath, success, error)
         self._telemetry_messenger.send_telemetry(encryption_attempt)
 
     @interruptible_function(msg="Received a stop signal, skipping leave readme")
