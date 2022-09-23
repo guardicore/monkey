@@ -11,23 +11,15 @@ TIMESTAMP = 123456789
 
 
 @pytest.fixture
-def flask_client_builder(build_flask_client):
-    def inner(side_effect=None):
-        container = StubDIContainer()
+def flask_client(build_flask_client):
+    container = StubDIContainer()
 
-        mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
-        mock_island_event_queue.publish.side_effect = side_effect
-        container.register_instance(IIslandEventQueue, mock_island_event_queue)
+    mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
+    mock_island_event_queue.publish.side_effect = None
+    container.register_instance(IIslandEventQueue, mock_island_event_queue)
 
-        with build_flask_client(container) as flask_client:
-            return flask_client
-
-    return inner
-
-
-@pytest.fixture
-def flask_client(flask_client_builder):
-    return flask_client_builder()
+    with build_flask_client(container) as flask_client:
+        yield flask_client
 
 
 def test_terminate_all_agents_post(flask_client):
