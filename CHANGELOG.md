@@ -24,6 +24,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The ability to customize the file extension used by ransomware when
   encrypting files. #1242
 - `/api/agents` endpoint.
+- `/api/agent-signals` endpoint. #2261
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
@@ -64,6 +65,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Tunneling to relays to provide better firewall evasion, faster Island
   connection times, unlimited hops, and a more resilient way for agents to call
   home. #2216, #1583
+- "/api/monkey-control/stop-all-agents" to "/api/agent-signals/terminate-all-agents" #2261
 
 ### Removed
 - VSFTPD exploiter. #1533
@@ -109,6 +111,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "/api/configuration/export" endpoint. #2002
 - "/api/island-configuration" endpoint. #2003
 - "-t/--tunnel" from agent command line arguments. #2216
+- "/api/monkey-control/neets-to-stop". #2261
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
