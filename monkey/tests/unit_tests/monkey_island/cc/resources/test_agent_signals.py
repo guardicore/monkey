@@ -7,6 +7,7 @@ from tests.common import StubDIContainer
 
 from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.resources import AgentSignals
+from monkey_island.cc.services import AgentSignalsService
 
 TIMESTAMP = 123456789
 
@@ -31,10 +32,12 @@ def flask_client_builder(build_flask_client):
     def inner(side_effect=None):
         container = StubDIContainer()
 
-        # TODO: Add AgentSignalsService and add values on publish
         mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
         mock_island_event_queue.publish.side_effect = side_effect
         container.register_instance(IIslandEventQueue, mock_island_event_queue)
+
+        mock_agent_signals_service = MagicMock(spec=AgentSignalsService)
+        container.register_instance(AgentSignalsService, mock_agent_signals_service)
 
         with build_flask_client(container) as flask_client:
             return flask_client
@@ -50,7 +53,7 @@ def flask_client(flask_client_builder):
 def test_agent_signals_terminate_all_post(flask_client):
     resp = flask_client.post(
         AgentSignals.urls[0],
-        json={"terminate": TIMESTAMP},
+        json={"kill_time": TIMESTAMP},
         follow_redirects=True,
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
@@ -62,7 +65,6 @@ def test_agent_signals_terminate_all_post(flask_client):
         "bad timestamp",
         {},
         {"wrong_key": TIMESTAMP},
-        {"extra_key": "blah", "terminate": TIMESTAMP},
         TIMESTAMP,
     ],
 )
