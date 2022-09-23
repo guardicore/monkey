@@ -2,6 +2,7 @@ import logging
 import platform
 import stat
 import subprocess
+from ipaddress import IPv4Address
 from pathlib import Path
 from shutil import copyfileobj
 from typing import Sequence
@@ -19,7 +20,7 @@ class LocalMonkeyRunService:
         self,
         data_dir: Path,
         agent_binary_repository: IAgentBinaryRepository,
-        ip_addresses: Sequence[str],
+        ip_addresses: Sequence[IPv4Address],
     ):
         self._data_dir = data_dir
         self._agent_binary_repository = agent_binary_repository
