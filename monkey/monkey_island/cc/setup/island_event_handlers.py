@@ -24,7 +24,7 @@ def setup_island_event_handlers(container: DIContainer):
     _subscribe_reset_agent_configuration_events(island_event_queue, container)
     _subscribe_clear_simulation_data_events(island_event_queue, container)
     _subscribe_set_island_mode_events(island_event_queue, container)
-    _subscribe_on_terminate_agents_signal(island_event_queue, container)
+    _subscribe_terminate_agents_events(island_event_queue, container)
 
 
 def _subscribe_reset_agent_configuration_events(
@@ -68,7 +68,7 @@ def _subscribe_set_island_mode_events(
     island_event_queue.subscribe(topic, simulation_repository.set_mode)
 
 
-def _subscribe_on_terminate_agents_signal(
+def _subscribe_terminate_agents_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
     topic = IslandEventTopic.TERMINATE_AGENTS
