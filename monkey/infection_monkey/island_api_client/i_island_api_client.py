@@ -135,11 +135,12 @@ class IIslandAPIClient(ABC):
     @abstractmethod
     def get_agent_signals(self, agent_id: str) -> Optional[datetime]:
         """
-        Get agent signals from the island
+        Gets an agent's signals from the island
 
+        :param agent_id: ID of the agent whose signals should be retrieved
         :raises IslandAPIConnectionError: If the client could not connect to the island
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
-        :return: Terminate datetime
+        :return: The relevant agent's terminate signal's timestamp
         """
