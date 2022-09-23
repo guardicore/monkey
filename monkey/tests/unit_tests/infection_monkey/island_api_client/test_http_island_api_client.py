@@ -30,7 +30,7 @@ AGENT_REGISTRATION = AgentRegistrationData(
     machine_hardware_id=1,
     start_time=0,
     parent_id=None,
-    cc_server=SERVER,
+    cc_server=str(SERVER),
     network_interfaces=[],
 )
 

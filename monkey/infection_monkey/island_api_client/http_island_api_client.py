@@ -16,6 +16,7 @@ from common.common_consts.timeouts import (
     SHORT_REQUEST_TIMEOUT,
 )
 from common.credentials import Credentials
+from common.types import SocketAddress
 
 from . import (
     AbstractIslandAPIClientFactory,
@@ -79,7 +80,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     def connect(
         self,
-        island_server: str,
+        island_server: SocketAddress,
     ):
         response = requests.get(  # noqa: DUO123
             f"https://{island_server}/api?action=is-up",
@@ -88,8 +89,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         )
         response.raise_for_status()
 
-        self._island_server = island_server
-        self._api_url = f"https://{self._island_server}/api"
+        self._api_url = f"https://{island_server}/api"
 
     @handle_island_errors
     def send_log(self, log_contents: str):

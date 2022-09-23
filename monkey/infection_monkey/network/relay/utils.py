@@ -1,7 +1,8 @@
 import logging
 import socket
 from contextlib import suppress
-from typing import Dict, Iterable, Iterator, Optional
+from dataclasses import dataclass
+from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.types import SocketAddress
@@ -25,38 +26,47 @@ logger = logging.getLogger(__name__)
 # practical purposes. Revisit this if it's not.
 NUM_FIND_SERVER_WORKERS = 32
 
-IslandAPISearchResults = Dict[str, Optional[IIslandAPIClient]]
+
+@dataclass
+class IslandAPISearchResult:
+    server: SocketAddress
+    client: Optional[IIslandAPIClient]
+
+
+IslandAPISearchResults = List[IslandAPISearchResult]
 
 
 def find_available_island_apis(
-    servers: Iterable[str], island_api_client_factory: AbstractIslandAPIClientFactory
+    servers: Iterable[SocketAddress], island_api_client_factory: AbstractIslandAPIClientFactory
 ) -> IslandAPISearchResults:
     server_list = list(servers)
-    server_iterator = ThreadSafeIterator(server_list.__iter__())
-    server_results: IslandAPISearchResults = {}
+    server_iterator = ThreadSafeIterator(enumerate(server_list.__iter__()))
+    results: Dict[int, IslandAPISearchResult] = {}
 
     run_worker_threads(
         _find_island_server,
         "FindIslandServer",
-        args=(server_iterator, server_results, island_api_client_factory),
+        args=(server_iterator, results, island_api_client_factory),
         num_workers=NUM_FIND_SERVER_WORKERS,
     )
 
-    return server_results
+    return [results[i] for i in sorted(results.keys())]
 
 
 def _find_island_server(
-    servers: Iterator[str],
-    server_results: IslandAPISearchResults,
+    servers: Iterator[Tuple[int, SocketAddress]],
+    server_results: Dict[int, IslandAPISearchResult],
     island_api_client_factory: AbstractIslandAPIClientFactory,
 ):
     with suppress(StopIteration):
-        server = next(servers)
-        server_results[server] = _check_if_island_server(server, island_api_client_factory)
+        index, server = next(servers)
+        server_results[index] = IslandAPISearchResult(
+            server, _check_if_island_server(server, island_api_client_factory)
+        )
 
 
 def _check_if_island_server(
-    server: str, island_api_client_factory: AbstractIslandAPIClientFactory
+    server: SocketAddress, island_api_client_factory: AbstractIslandAPIClientFactory
 ) -> Optional[IIslandAPIClient]:
     logger.debug(f"Trying to connect to server: {server}")
 

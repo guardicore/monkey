@@ -5,7 +5,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
-from typing import List, Mapping, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from pubsub.core import Publisher
 
@@ -55,6 +55,7 @@ from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
+    IslandAPISearchResults,
     find_available_island_apis,
     notify_disconnect,
     send_remove_from_waitlist_control_message_to_relays,
@@ -156,7 +157,7 @@ class InfectionMonkey:
     def _connect_to_island_api(self) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
         logger.debug(f"Trying to wake up with servers: {', '.join(self._server_strings)}")
         server_clients = find_available_island_apis(
-            self._server_strings, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
+            self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
         )
 
         server, island_api_client = self._select_server(server_clients)
@@ -189,11 +190,11 @@ class InfectionMonkey:
         self._island_api_client.register_agent(agent_registration_data)
 
     def _select_server(
-        self, server_clients: Mapping[str, Optional[IIslandAPIClient]]
-    ) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
-        for server in self._server_strings:
-            if server_clients[server]:
-                return server, server_clients[server]
+        self, server_clients: IslandAPISearchResults
+    ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
+        for result in server_clients:
+            if result.client is not None:
+                return result.server, result.client
 
         return None, None
 
