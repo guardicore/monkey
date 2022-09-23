@@ -3,7 +3,7 @@ import threading
 from collections import namedtuple
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, Iterable, List, Mapping, Sequence
+from typing import Dict, Iterable, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
 from infection_monkey.model import VictimHost
@@ -26,8 +26,8 @@ class ExploiterResultData:
     propagation_success: bool = False
     interrupted: bool = False
     os: str = ""
-    info: Mapping = None
-    attempts: Iterable = None
+    info: Optional[Mapping] = None
+    attempts: Optional[Iterable] = None
     error_message: str = ""
 
 
@@ -83,7 +83,7 @@ class IPuppet(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def scan_tcp_ports(
-        self, host: str, ports: List[int], timeout: float = 3
+        self, host: str, ports: Sequence[int], timeout: float = 3
     ) -> Dict[int, PortScanData]:
         """
         Scans a list of TCP ports on a remote host
@@ -125,6 +125,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         name: str,
         host: VictimHost,
         current_depth: int,
+        servers: Sequence[str],
         options: Dict,
         interrupt: threading.Event,
     ) -> ExploiterResultData:
@@ -134,6 +135,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         :param str name: The name of the exploiter to run
         :param VictimHost host: A VictimHost object representing the target to exploit
         :param int current_depth: The current propagation depth
+        :param servers: List of socket addresses for victim to connect back to
         :param Dict options: A dictionary containing options that modify the behavior of the
                              exploiter
         :param threading.Event interrupt: A threading.Event object that signals the exploit to stop
