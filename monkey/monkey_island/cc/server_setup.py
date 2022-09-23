@@ -127,9 +127,6 @@ def _initialize_di_container(
 ) -> DIContainer:
     container = DIContainer()
 
-    # TODO: Remove the Sequence[str] convention for "ip_addresses" when resources and services are
-    #       refactored.
-    container.register_convention(Sequence[str], "ip_addresses", list(map(str, ip_addresses)))
     container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
