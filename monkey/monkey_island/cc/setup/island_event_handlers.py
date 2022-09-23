@@ -15,6 +15,7 @@ from monkey_island.cc.repository import (
     INodeRepository,
     ISimulationRepository,
 )
+from monkey_island.cc.services import AgentSignalsService
 from monkey_island.cc.services.database import Database
 
 
@@ -25,6 +26,7 @@ def setup_island_event_handlers(container: DIContainer):
     _subscribe_reset_agent_configuration_events(island_event_queue, container)
     _subscribe_clear_simulation_data_events(island_event_queue, container)
     _subscribe_set_island_mode_events(island_event_queue, container)
+    _subscribe_terminate_agents_events(island_event_queue, container)
 
 
 def _subscribe_agent_registration_events(
@@ -74,3 +76,13 @@ def _subscribe_set_island_mode_events(
 
     simulation_repository = container.resolve(ISimulationRepository)
     island_event_queue.subscribe(topic, simulation_repository.set_mode)
+
+
+def _subscribe_terminate_agents_events(
+    island_event_queue: IIslandEventQueue, container: DIContainer
+):
+    topic = IslandEventTopic.TERMINATE_AGENTS
+
+    agent_signals_service = container.resolve(AgentSignalsService)
+
+    island_event_queue.subscribe(topic, agent_signals_service.on_terminate_agents_signal)
