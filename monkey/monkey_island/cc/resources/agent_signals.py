@@ -5,7 +5,6 @@ from json import JSONDecodeError
 from flask import request
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import AgentSignals as Signals
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
@@ -22,11 +21,14 @@ class AgentSignals(AbstractResource):
 
     def post(self):
         try:
-            signal = Signals(**request.json)
-
-            if signal.terminate is None:
+            terminate_timestamp = request.json["kill_time"]
+            if terminate_timestamp is None:
                 raise ValueError("Terminate signal's timestamp is empty")
-            self._island_event_queue.publish(IslandEventTopic.TERMINATE_AGENTS, signal=signal)
+
+            self._island_event_queue.publish(
+                IslandEventTopic.TERMINATE_AGENTS, timestamp=terminate_timestamp
+            )
+
         except (JSONDecodeError, TypeError, ValueError) as err:
             return {"error": err}, HTTPStatus.BAD_REQUEST
 
