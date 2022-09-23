@@ -398,7 +398,7 @@ class ReportService:
     @classmethod
     def get_config_scan(cls):
         agent_configuration = cls._agent_configuration_repository.get_configuration()
-        return agent_configuration.propagation.network_scan.targets.local_network_scan
+        return agent_configuration.propagation.network_scan.targets.scan_local_interfaces
 
     @staticmethod
     def get_issue_set(issues):

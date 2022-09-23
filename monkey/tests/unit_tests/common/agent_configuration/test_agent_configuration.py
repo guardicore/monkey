@@ -9,13 +9,13 @@ from tests.common.example_agent_configuration import (
     INACCESSIBLE_SUBNETS,
     LINUX_COMMAND,
     LINUX_FILENAME,
-    LOCAL_NETWORK_SCAN,
     NETWORK_SCAN_CONFIGURATION,
     PLUGIN_CONFIGURATION,
     PLUGIN_NAME,
     PLUGIN_OPTIONS,
     PORTS,
     PROPAGATION_CONFIGURATION,
+    SCAN_LOCAL_INTERFACES,
     SCAN_TARGET_CONFIGURATION,
     SUBNETS,
     TCP_SCAN_CONFIGURATION,
@@ -93,7 +93,7 @@ def test_scan_target_configuration():
 
     assert config.blocked_ips == tuple(BLOCKED_IPS)
     assert config.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
-    assert config.local_network_scan == LOCAL_NETWORK_SCAN
+    assert config.scan_local_interfaces == SCAN_LOCAL_INTERFACES
     assert config.subnets == tuple(SUBNETS)
 
 
@@ -174,7 +174,7 @@ def test_network_scan_configuration():
     assert config.fingerprinters[0].options == FINGERPRINTERS[0]["options"]
     assert config.targets.blocked_ips == tuple(BLOCKED_IPS)
     assert config.targets.inaccessible_subnets == tuple(INACCESSIBLE_SUBNETS)
-    assert config.targets.local_network_scan == LOCAL_NETWORK_SCAN
+    assert config.targets.scan_local_interfaces == SCAN_LOCAL_INTERFACES
     assert config.targets.subnets == tuple(SUBNETS)
 
 

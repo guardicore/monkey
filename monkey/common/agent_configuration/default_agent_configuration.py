@@ -78,7 +78,7 @@ FINGERPRINTERS = (
 )
 
 SCAN_TARGET_CONFIGURATION = ScanTargetConfiguration(
-    blocked_ips=tuple(), inaccessible_subnets=tuple(), local_network_scan=True, subnets=tuple()
+    blocked_ips=tuple(), inaccessible_subnets=tuple(), scan_local_interfaces=True, subnets=tuple()
 )
 NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
     tcp=TCP_SCAN_CONFIGURATION,

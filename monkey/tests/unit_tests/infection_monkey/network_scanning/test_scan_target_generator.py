@@ -14,7 +14,7 @@ def compile_ranges_only(ranges):
         ranges_to_scan=ranges,
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
 
@@ -88,7 +88,7 @@ def test_blocklisted_ips():
         ranges_to_scan=["10.0.0.0/24"],
         inaccessible_subnets=[],
         blocklisted_ips=blocklisted_ips,
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 252
@@ -105,7 +105,7 @@ def test_only_ip_blocklisted(ranges_to_scan):
         ranges_to_scan=ranges_to_scan,
         inaccessible_subnets=[],
         blocklisted_ips=blocklisted_ips,
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 0
@@ -124,7 +124,7 @@ def test_local_network_interface_ips_removed_from_targets():
         ranges_to_scan=["10.0.0.0/24"],
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 252
@@ -142,7 +142,7 @@ def test_no_redundant_targets():
         ranges_to_scan=["127.0.0.0", "127.0.0.1", "localhost"],
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 2
@@ -164,7 +164,7 @@ def test_only_scan_ip_is_local(ranges_to_scan):
         ranges_to_scan=ranges_to_scan,
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 0
@@ -184,7 +184,7 @@ def test_local_network_interface_ips_and_blocked_ips_removed_from_targets():
         ranges_to_scan=["10.0.0.0/24", "192.168.1.0/24"],
         inaccessible_subnets=[],
         blocklisted_ips=blocked_ips,
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == (2 * (256 - 1)) - len(local_network_interfaces) - (
@@ -206,7 +206,7 @@ def test_local_subnet_added():
         ranges_to_scan=[],
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=True,
+        scan_local_interfaces=True,
     )
 
     assert len(scan_targets) == 254
@@ -226,7 +226,7 @@ def test_multiple_local_subnets_added():
         ranges_to_scan=[],
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=True,
+        scan_local_interfaces=True,
     )
 
     assert len(scan_targets) == 2 * (255 - 1)
@@ -250,7 +250,7 @@ def test_blocklisted_ips_missing_from_local_subnets():
         ranges_to_scan=[],
         inaccessible_subnets=[],
         blocklisted_ips=blocklisted_ips,
-        enable_local_network_scan=True,
+        scan_local_interfaces=True,
     )
 
     assert len(scan_targets) == 2 * (255 - 1) - len(blocklisted_ips)
@@ -267,7 +267,7 @@ def test_local_subnets_and_ranges_added():
         ranges_to_scan=["172.33.66.40/30"],
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=True,
+        scan_local_interfaces=True,
     )
 
     assert len(scan_targets) == 254 + 3
@@ -289,7 +289,7 @@ def test_local_network_interfaces_specified_but_disabled():
         ranges_to_scan=["172.33.66.40/30"],
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 3
@@ -309,7 +309,7 @@ def test_local_network_interfaces_subnet_masks():
         ranges_to_scan=[],
         inaccessible_subnets=[],
         blocklisted_ips=[],
-        enable_local_network_scan=True,
+        scan_local_interfaces=True,
     )
 
     assert len(scan_targets) == 4
@@ -328,7 +328,7 @@ def test_segmentation_targets():
         ranges_to_scan=[],
         inaccessible_subnets=inaccessible_subnets,
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 3
@@ -351,7 +351,7 @@ def test_segmentation_clash_with_blocked():
         ranges_to_scan=[],
         inaccessible_subnets=inaccessible_subnets,
         blocklisted_ips=blocked,
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 0
@@ -371,7 +371,7 @@ def test_segmentation_clash_with_targets():
         ranges_to_scan=targets,
         inaccessible_subnets=inaccessible_subnets,
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 3
@@ -394,7 +394,7 @@ def test_segmentation_one_network():
         ranges_to_scan=targets,
         inaccessible_subnets=inaccessible_subnets,
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 3
@@ -413,7 +413,7 @@ def test_segmentation_inaccessible_networks():
         ranges_to_scan=[],
         inaccessible_subnets=inaccessible_subnets,
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 0
@@ -437,7 +437,7 @@ def test_invalid_inputs():
         ranges_to_scan=targets,
         inaccessible_subnets=inaccessible_subnets,
         blocklisted_ips=[],
-        enable_local_network_scan=False,
+        scan_local_interfaces=False,
     )
 
     assert len(scan_targets) == 3
@@ -461,7 +461,7 @@ def test_invalid_blocklisted_ip():
             ranges_to_scan=targets,
             inaccessible_subnets=inaccessible_subnets,
             blocklisted_ips=blocklisted,
-            enable_local_network_scan=False,
+            scan_local_interfaces=False,
         )
 
 

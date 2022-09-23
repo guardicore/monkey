@@ -14,12 +14,12 @@ const PROPAGATION_CONFIGURATION_SCHEMA = {
       'minimum': 0,
       'default': 2,
       'description': 'Amount of hops allowed for the monkey to spread from the ' +
-      'Island server. \n' +
-      ' \u26A0' +
-      ' Note that setting this value too high may result in the ' +
-      'Monkey propagating too far, '+
-      'if "Local network scan" is enabled.\n' +
-      'Setting this to 0 will disable all scanning and exploitation.'
+        'Island server. \n' +
+        ' \u26A0' +
+        ' Note that setting this value too high may result in the ' +
+        'Monkey propagating too far, ' +
+        'if "Scan local interfaces" is enabled.\n' +
+        'Setting this to 0 will disable all scanning and exploitation.'
     },
     'network_scan': NETWORK_SCAN_CONFIGURATION_SCHEMA
   }
