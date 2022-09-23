@@ -35,6 +35,7 @@ bcrypt = "==3.2.2"
 
 [dev-packages]
 ldap3 = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.7"

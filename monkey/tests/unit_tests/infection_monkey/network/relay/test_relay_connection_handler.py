@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from monkey.infection_monkey.network.relay import (
+from infection_monkey.network.relay import (
     RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST,
     RelayConnectionHandler,
     RelayUserHandler,

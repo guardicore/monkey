@@ -3,7 +3,7 @@ from time import sleep
 
 import pytest
 
-from monkey.infection_monkey.network.relay import RelayUserHandler
+from infection_monkey.network.relay import RelayUserHandler
 
 USER_ADDRESS = IPv4Address("0.0.0.0")
 

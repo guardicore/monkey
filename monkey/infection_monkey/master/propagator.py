@@ -2,7 +2,7 @@ import logging
 from ipaddress import IPv4Interface
 from queue import Queue
 from threading import Event
-from typing import List, Sequence
+from typing import List, Mapping, Sequence
 
 from common.agent_configuration import (
     ExploitationConfiguration,
@@ -26,6 +26,7 @@ from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.utils.threading import create_daemon_thread
 
 from . import Exploiter, IPScanner, IPScanResults
+from .ip_scan_results import FingerprinterName, Port
 
 logger = logging.getLogger()
 
@@ -149,8 +150,12 @@ class Propagator:
             victim_host.os["type"] = ping_scan_data.os
 
     @staticmethod
-    def _process_tcp_scan_results(victim_host: VictimHost, port_scan_data: PortScanData):
-        for psd in filter(lambda psd: psd.status == PortStatus.OPEN, port_scan_data.values()):
+    def _process_tcp_scan_results(
+        victim_host: VictimHost, port_scan_data: Mapping[Port, PortScanData]
+    ):
+        for psd in filter(
+            lambda scan_data: scan_data.status == PortStatus.OPEN, port_scan_data.values()
+        ):
             victim_host.services[psd.service] = {}
             victim_host.services[psd.service]["display_name"] = "unknown(TCP)"
             victim_host.services[psd.service]["port"] = psd.port
@@ -158,7 +163,9 @@ class Propagator:
                 victim_host.services[psd.service]["banner"] = psd.banner
 
     @staticmethod
-    def _process_fingerprinter_results(victim_host: VictimHost, fingerprint_data: FingerprintData):
+    def _process_fingerprinter_results(
+        victim_host: VictimHost, fingerprint_data: Mapping[FingerprinterName, FingerprintData]
+    ):
         for fd in fingerprint_data.values():
             # TODO: This logic preserves the existing behavior prior to introducing IMaster and
             #       IPuppet, but it is possibly flawed. Different fingerprinters may detect

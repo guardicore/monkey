@@ -3,7 +3,7 @@ import select
 import socket
 import time
 from pprint import pformat
-from typing import Collection, Iterable, Mapping, Tuple
+from typing import Collection, Dict, Iterable, Mapping, Tuple
 
 from common.utils import Timer
 from infection_monkey.i_puppet import PortScanData, PortStatus
@@ -17,7 +17,7 @@ EMPTY_PORT_SCAN = {-1: PortScanData(-1, PortStatus.CLOSED, None, None)}
 
 def scan_tcp_ports(
     host: str, ports_to_scan: Collection[int], timeout: float
-) -> Mapping[int, PortScanData]:
+) -> Dict[int, PortScanData]:
     try:
         return _scan_tcp_ports(host, ports_to_scan, timeout)
     except Exception:
