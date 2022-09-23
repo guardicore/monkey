@@ -25,20 +25,12 @@ def mock_agent_signals_service():
 
 
 @pytest.fixture
-def flask_client_builder(build_flask_client, mock_agent_signals_service):
-    def inner(side_effect=None):
-        container = StubDIContainer()
-        container.register_instance(AgentSignalsService, mock_agent_signals_service)
+def flask_client(build_flask_client, mock_agent_signals_service):
+    container = StubDIContainer()
+    container.register_instance(AgentSignalsService, mock_agent_signals_service)
 
-        with build_flask_client(container) as flask_client:
-            return flask_client
-
-    return inner
-
-
-@pytest.fixture
-def flask_client(flask_client_builder):
-    return flask_client_builder()
+    with build_flask_client(container) as flask_client:
+        yield flask_client
 
 
 @pytest.mark.parametrize(
