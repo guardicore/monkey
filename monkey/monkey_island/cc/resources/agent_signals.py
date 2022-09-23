@@ -24,7 +24,7 @@ class AgentSignals(AbstractResource):
 
     def post(self):
         try:
-            terminate_timestamp = request.json["kill_time"]
+            terminate_timestamp = request.json["terminate_time"]
             if terminate_timestamp is None:
                 raise ValueError("Terminate signal's timestamp is empty")
 
