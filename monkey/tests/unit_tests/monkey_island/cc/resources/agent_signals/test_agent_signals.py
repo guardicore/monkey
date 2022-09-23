@@ -5,7 +5,7 @@ from uuid import UUID
 import pytest
 from tests.common import StubDIContainer
 
-from monkey_island.cc.models import AgentSignals as Signals
+from common.agent_signals import AgentSignals as Signals
 from monkey_island.cc.repository import RetrievalError, StorageError
 from monkey_island.cc.services import AgentSignalsService
 
