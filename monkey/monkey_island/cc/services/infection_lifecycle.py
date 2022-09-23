@@ -12,16 +12,6 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 logger = logging.getLogger(__name__)
 
 
-def set_stop_all(time: float):
-    # This will use Agent and Simulation repositories
-    for monkey in Monkey.objects():
-        monkey.should_stop = True
-        monkey.save()
-    agent_controls = AgentControls.objects.first()
-    agent_controls.last_stop_all = time
-    agent_controls.save()
-
-
 def should_agent_die(guid: int) -> bool:
     monkey = Monkey.objects(guid=str(guid)).first()
     return _should_agent_stop(monkey) or _is_monkey_killed_manually(monkey)
