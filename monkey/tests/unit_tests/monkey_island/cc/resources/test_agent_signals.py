@@ -51,7 +51,7 @@ def flask_client(flask_client_builder):
 def test_agent_signals_terminate_all_post(flask_client):
     resp = flask_client.post(
         AgentSignals.urls[0],
-        json={"kill_time": TIMESTAMP_1},
+        json={"terminate_time": TIMESTAMP_1},
         follow_redirects=True,
     )
     assert resp.status_code == HTTPStatus.NO_CONTENT
