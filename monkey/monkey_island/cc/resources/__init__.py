@@ -11,3 +11,4 @@ from .pba_file_download import PBAFileDownload
 from .agent_events import AgentEvents
 from .agents import Agents
 from .agent_signals import AgentSignals
+from .terminate_all_agents import TerminateAllAgents
