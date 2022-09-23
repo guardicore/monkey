@@ -51,6 +51,7 @@ sphinx = "*"  # Used in documentation
 sphinx_rtd_theme = "*"
 sphinx_autodoc_typehints = "*"
 types-python-dateutil = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.7"
