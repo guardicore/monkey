@@ -18,7 +18,7 @@ from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import (
     address_to_ip_port,
-    get_my_ip_addresses_legacy,
+    get_my_ip_addresses,
     get_network_interfaces,
 )
 from common.utils.argparse_types import positive_int
@@ -236,14 +236,13 @@ class InfectionMonkey:
             self._cmd_island_port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
-        relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses_legacy()]
 
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()
 
         StateTelem(is_done=False, version=get_version()).send()
 
-        self._build_master(relay_servers)
+        self._build_master(relay_port)
 
         register_signal_handlers(self._master)
 
@@ -254,7 +253,12 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self, relay_servers: List[str]):
+    def _build_server_list(self, relay_port: int):
+        relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
+        return self._opts.servers + relay_servers
+
+    def _build_master(self, relay_port: int):
+        servers = self._build_server_list(relay_port)
         local_network_interfaces = get_network_interfaces()
 
         # TODO control_channel and control_client have same responsibilities, merge them
@@ -280,7 +284,7 @@ class InfectionMonkey:
 
         self._master = AutomatedMaster(
             self._current_depth,
-            self._opts.servers + relay_servers,
+            servers,
             puppet,
             telemetry_messenger,
             victim_host_factory,
