@@ -6,7 +6,7 @@ from typing import List, Sequence
 
 import requests
 
-from common import AgentRegistrationData, OperatingSystem
+from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
 from common.agent_events import AbstractAgentEvent
@@ -148,19 +148,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     @convert_json_error_to_island_api_error
-    def should_agent_stop(self, agent_id: str) -> bool:
-        url = f"{self._api_url}/monkey-control/needs-to-stop/{agent_id}"
-        response = requests.get(  # noqa: DUO123
-            url,
-            verify=False,
-            timeout=SHORT_REQUEST_TIMEOUT,
-        )
-        response.raise_for_status()
-
-        return response.json()["stop_agent"]
-
-    @handle_island_errors
-    @convert_json_error_to_island_api_error
     def get_config(self) -> AgentConfiguration:
         response = requests.get(  # noqa: DUO123
             f"{self._api_url}/agent-configuration",
@@ -198,6 +185,18 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             raise IslandAPIRequestError(err)
 
         return serialized_events
+
+    @handle_island_errors
+    @convert_json_error_to_island_api_error
+    def get_agent_signals(self, agent_id: str) -> AgentSignals:
+        url = f"{self._api_url}/agent-signals/{agent_id}"
+        response = requests.get(  # noqa: DUO123
+            url,
+            verify=False,
+            timeout=SHORT_REQUEST_TIMEOUT,
+        )
+        response.raise_for_status()
+        return AgentSignals(**response.json())
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):

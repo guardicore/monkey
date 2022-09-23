@@ -3,7 +3,7 @@ import uuid
 
 import pytest
 
-from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError, ParentNotFoundError
+from monkey_island.cc.models.monkey import Monkey, MonkeyNotFoundError
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl
 
 logger = logging.getLogger(__name__)
@@ -162,35 +162,3 @@ class TestMonkey:
 
         cache_info_after_query = Monkey.is_monkey.storage.backend.cache_info()
         assert cache_info_after_query.hits == 2
-
-    @pytest.mark.usefixtures("uses_database")
-    def test_has_parent(self):
-        monkey_1 = Monkey(guid=str(uuid.uuid4()))
-        monkey_2 = Monkey(guid=str(uuid.uuid4()))
-        monkey_1.parent = [[monkey_2.guid]]
-        monkey_1.save()
-        assert monkey_1.has_parent()
-
-    @pytest.mark.usefixtures("uses_database")
-    def test_has_no_parent(self):
-        monkey_1 = Monkey(guid=str(uuid.uuid4()))
-        monkey_1.parent = [[monkey_1.guid]]
-        monkey_1.save()
-        assert not monkey_1.has_parent()
-
-    @pytest.mark.usefixtures("uses_database")
-    def test_get_parent(self):
-        monkey_1 = Monkey(guid=str(uuid.uuid4()))
-        monkey_2 = Monkey(guid=str(uuid.uuid4()))
-        monkey_1.parent = [[monkey_2.guid]]
-        monkey_1.save()
-        monkey_2.save()
-        assert monkey_1.get_parent().guid == monkey_2.guid
-
-    @pytest.mark.usefixtures("uses_database")
-    def test_get_parent_no_parent(self):
-        monkey_1 = Monkey(guid=str(uuid.uuid4()))
-        monkey_1.parent = [[monkey_1.guid]]
-        monkey_1.save()
-        with pytest.raises(ParentNotFoundError):
-            monkey_1.get_parent()

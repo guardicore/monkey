@@ -27,6 +27,7 @@ from monkey_island.cc.repository.i_simulation_repository import ISimulationRepos
 from monkey_island.cc.repository.ICredentials import ICredentialsRepository
 from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
+from monkey_island.cc.services import AgentSignalsService
 
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)

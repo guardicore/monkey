@@ -16,7 +16,7 @@ class IAgentRepository(ABC):
         already exists, update it.
 
         :param agent: The `agent` to be inserted or updated
-        :raises StorageError: If an error occurred while attempting to store the `Agent`
+        :raises StorageError: If an error occurs while attempting to store the `Agent`
         """
 
     @abstractmethod
@@ -28,7 +28,7 @@ class IAgentRepository(ABC):
         :return: An `Agent` with a matching `id`
         :raises UnknownRecordError: If an `Agent` with the specified `id` does not exist in the
                                     repository
-        :raises RetrievalError: If an error occurred while attempting to retrieve the `Agent`
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Agent`
         """
 
     @abstractmethod
@@ -37,7 +37,18 @@ class IAgentRepository(ABC):
         Get all `Agents` that are currently running
 
         :return: All `Agents` that are currently running
-        :raises RetrievalError: If an error occurred while attempting to retrieve the `Agents`
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Agents`
+        """
+
+    @abstractmethod
+    def get_progenitor(self, agent: Agent) -> Agent:
+        """
+        Gets the progenitor `Agent` for the agent.
+
+        :param agent: The Agent for which we want the progenitor
+        :return: `Agent` progenitor ( an initial agent that started the exploitation chain)
+        :raises RetrievalError: If an error occurrs while attempting to retrieve the `Agent`
+        :raises UnknownRecordError: If the agent ID is not in the repository
         """
 
     @abstractmethod

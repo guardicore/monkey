@@ -22,10 +22,6 @@ from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_docu
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 
 
-class ParentNotFoundError(Exception):
-    """Raise when trying to get a parent of monkey that doesn't have one"""
-
-
 class Monkey(Document):
     """
     This class has 2 main section:
@@ -97,18 +93,6 @@ class Monkey(Document):
                 # Trying to dereference unknown document - the monkey is MIA.
                 monkey_is_dead = True
         return monkey_is_dead
-
-    def has_parent(self):
-        for p in self.parent:
-            if p[0] != self.guid:
-                return True
-        return False
-
-    def get_parent(self):
-        if self.has_parent():
-            return Monkey.objects(guid=self.parent[0][0]).first()
-        else:
-            raise ParentNotFoundError(f"No parent was found for agent with GUID {self.guid}")
 
     def get_os(self):
         os = "unknown"

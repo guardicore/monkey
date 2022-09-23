@@ -22,7 +22,7 @@ class INodeRepository(ABC):
         :param src: The machine that the connection or communication originated from
         :param dst: The machine that the src communicated with
         :param communication_type: The way the machines communicated
-        :raises StorageError: If an error occurred while attempting to upsert the Node
+        :raises StorageError: If an error occurs while attempting to upsert the Node
         """
 
     @abstractmethod
@@ -31,7 +31,7 @@ class INodeRepository(ABC):
         Return all nodes that are stored in the repository
 
         :return: All known Nodes
-        :raises RetrievalError: If an error occurred while attempting to retrieve the nodes
+        :raises RetrievalError: If an error occurs while attempting to retrieve the nodes
         """
 
     @abstractmethod
@@ -39,6 +39,6 @@ class INodeRepository(ABC):
         """
         Removes all data from the repository
 
-        :raises RemovalError: If an error occurred while attempting to remove all `Nodes` from the
+        :raises RemovalError: If an error occurs while attempting to remove all `Nodes` from the
                               repository
         """

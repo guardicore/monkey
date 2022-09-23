@@ -84,12 +84,12 @@ class MapPageComponent extends AuthComponent {
   }
 
   killAllMonkeys = () => {
-    this.authFetch('/api/monkey-control/stop-all-agents',
+    this.authFetch('/api/agent-signals/terminate-all-agents',
       {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         // Python uses floating point seconds, Date.now uses milliseconds, so convert
-        body: JSON.stringify({kill_time: Date.now() / 1000.0})
+        body: JSON.stringify({terminate_time: Date.now() / 1000.0})
       })
       .then(res => res.json())
       .then(() => {this.setState({killPressed: true})});

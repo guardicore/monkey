@@ -15,6 +15,7 @@ from monkey_island.cc.resources import (
     AgentConfiguration,
     AgentEvents,
     Agents,
+    AgentSignals,
     ClearSimulationData,
     IPAddresses,
     IslandLog,
@@ -23,9 +24,9 @@ from monkey_island.cc.resources import (
     PropagationCredentials,
     RemoteRun,
     ResetAgentConfiguration,
+    TerminateAllAgents,
 )
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
 from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogBlackboxEndpoint
@@ -188,6 +189,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(IPAddresses)
 
     api.add_resource(AgentEvents)
+    api.add_resource(AgentSignals)
 
     # API Spec: These two should be the same resource, GET for download and POST for upload
     api.add_resource(PBAFileDownload)
@@ -196,8 +198,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(PropagationCredentials)
     api.add_resource(RemoteRun)
     api.add_resource(Version)
-    api.add_resource(StopAgentCheck)
-    api.add_resource(StopAllAgents)
 
     # Resources used by black box tests
     # API Spec: Fix all the following endpoints, see comments in the resource classes
@@ -211,6 +211,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 def init_rpc_endpoints(api: FlaskDIWrapper):
     api.add_resource(ResetAgentConfiguration)
     api.add_resource(ClearSimulationData)
+    api.add_resource(TerminateAllAgents)
 
 
 def init_app(mongo_url: str, container: DIContainer):

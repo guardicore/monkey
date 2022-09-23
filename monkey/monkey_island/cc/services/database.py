@@ -4,7 +4,6 @@ from flask import jsonify
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Config
-from monkey_island.cc.models.agent_controls import AgentControls
 from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 
 logger = logging.getLogger(__name__)
@@ -24,7 +23,6 @@ class Database(object):
             for x in mongo.db.collection_names()
             if Database._should_drop(x, reset_config)
         ]
-        Database.init_agent_controls()
         logger.info("DB was reset")
         return jsonify(status="OK")
 
@@ -43,10 +41,6 @@ class Database(object):
     def drop_collection(collection_name: str):
         mongo.db[collection_name].drop()
         logger.info("Dropped collection {}".format(collection_name))
-
-    @staticmethod
-    def init_agent_controls():
-        AgentControls().save()
 
     @staticmethod
     def is_mitigations_missing() -> bool:
