@@ -8,6 +8,7 @@ from common.agent_configuration.agent_sub_configurations import (
     ScanTargetConfiguration,
 )
 from common.credentials import Credentials, LMHash, NTHash
+from common.types import SocketAddress
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
@@ -324,3 +325,6 @@ SCANNED
 EXPLOITED
 CC
 CC_TUNNEL
+
+# TODO: Remove after #2323
+SocketAddress
