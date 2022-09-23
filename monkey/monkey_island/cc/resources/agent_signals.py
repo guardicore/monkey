@@ -32,7 +32,7 @@ class AgentSignals(AbstractResource):
                 IslandEventTopic.TERMINATE_AGENTS, timestamp=terminate_timestamp
             )
 
-        except (JSONDecodeError, TypeError, ValueError) as err:
+        except (JSONDecodeError, TypeError, ValueError, KeyError) as err:
             return {"error": err}, HTTPStatus.BAD_REQUEST
 
         return {}, HTTPStatus.NO_CONTENT
