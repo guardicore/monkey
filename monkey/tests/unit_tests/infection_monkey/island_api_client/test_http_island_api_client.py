@@ -456,15 +456,16 @@ def test_island_api_client_get_agent_signals__status_code(
             island_api_client.get_agent_signals(agent_id=AGENT_ID)
 
 
-def test_island_api_client_get_agent_signals(island_api_client):
+@pytest.mark.parametrize("expected_timestamp", [TIMESTAMP, None])
+def test_island_api_client_get_agent_signals(island_api_client, expected_timestamp):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
         island_api_client.connect(SERVER)
 
-        m.get(ISLAND_GET_AGENT_SIGNALS, json={"terminate": TIMESTAMP})
+        m.get(ISLAND_GET_AGENT_SIGNALS, json={"terminate": expected_timestamp})
         actual_terminate_timestamp = island_api_client.get_agent_signals(agent_id=AGENT_ID)
 
-        assert actual_terminate_timestamp == TIMESTAMP
+        assert actual_terminate_timestamp == expected_timestamp
 
 
 def test_island_api_client_get_agent_signals__bad_json(island_api_client):
