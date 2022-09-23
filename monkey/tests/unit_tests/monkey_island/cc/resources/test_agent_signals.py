@@ -64,6 +64,8 @@ def test_agent_signals_terminate_all_post(flask_client):
         {},
         {"wrong_key": TIMESTAMP_1},
         TIMESTAMP_1,
+        {"terminate_time": 0},
+        {"terminate_time": -1},
     ],
 )
 def test_agent_signals_terminate_all_post__invalid_timestamp(flask_client, bad_data):
