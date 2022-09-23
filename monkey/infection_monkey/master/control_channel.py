@@ -36,7 +36,7 @@ class ControlChannel(IControlChannel):
         if not self._control_channel_server:
             logger.error("Agent should stop because it can't connect to the C&C server.")
             return True
-        return self._island_api_client.should_agent_stop(self._agent_id)
+        return self._island_api_client.get_agent_signals(self._agent_id) is not None
 
     @handle_island_api_errors
     def get_config(self) -> AgentConfiguration:
