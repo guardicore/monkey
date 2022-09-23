@@ -18,7 +18,7 @@ from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import (
     address_to_ip_port,
-    get_my_ip_addresses,
+    get_my_ip_addresses_legacy,
     get_network_interfaces,
 )
 from common.utils.argparse_types import positive_int
@@ -236,7 +236,7 @@ class InfectionMonkey:
             self._cmd_island_port,
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
-        relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
+        relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses_legacy()]
 
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()

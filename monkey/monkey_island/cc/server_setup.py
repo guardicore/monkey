@@ -23,7 +23,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 from common import DIContainer  # noqa: E402
-from common.network.network_utils import get_my_ip_addresses  # noqa: E402
+from common.network.network_utils import get_my_ip_addresses_legacy  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -103,7 +103,7 @@ def _configure_logging(config_options):
 def _collect_system_info() -> Tuple[Sequence[str], Deployment, Version]:
     deployment = _get_deployment()
     version = Version(get_version(), deployment)
-    return (get_my_ip_addresses(), deployment, version)
+    return (get_my_ip_addresses_legacy(), deployment, version)
 
 
 def _get_deployment() -> Deployment:

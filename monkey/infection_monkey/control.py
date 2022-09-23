@@ -7,7 +7,7 @@ import requests
 from urllib3 import disable_warnings
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.network.network_utils import get_my_ip_addresses
+from common.network.network_utils import get_my_ip_addresses_legacy
 from infection_monkey.config import GUID
 from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.network.info import get_host_subnets
@@ -39,7 +39,7 @@ class ControlClient:
         monkey = {
             "guid": GUID,
             "hostname": hostname,
-            "ip_addresses": get_my_ip_addresses(),
+            "ip_addresses": get_my_ip_addresses_legacy(),
             "networks": get_host_subnets(),
             "description": " ".join(platform.uname()),
             "parent": parent,
