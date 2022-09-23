@@ -2,6 +2,7 @@ import atexit
 import json
 import logging
 import sys
+from ipaddress import IPv4Address
 from pathlib import Path
 from threading import Thread
 from typing import Optional, Sequence, Tuple
@@ -23,7 +24,7 @@ if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
 from common import DIContainer  # noqa: E402
-from common.network.network_utils import get_my_ip_addresses_legacy  # noqa: E402
+from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
@@ -100,10 +101,10 @@ def _configure_logging(config_options):
     setup_logging(config_options.data_dir, config_options.log_level)
 
 
-def _collect_system_info() -> Tuple[Sequence[str], Deployment, Version]:
+def _collect_system_info() -> Tuple[Sequence[IPv4Address], Deployment, Version]:
     deployment = _get_deployment()
     version = Version(get_version(), deployment)
-    return (get_my_ip_addresses_legacy(), deployment, version)
+    return (get_my_ip_addresses(), deployment, version)
 
 
 def _get_deployment() -> Deployment:
@@ -122,11 +123,14 @@ def _get_deployment() -> Deployment:
 
 
 def _initialize_di_container(
-    ip_addresses: Sequence[str], version: Version, data_dir: Path
+    ip_addresses: Sequence[IPv4Address], version: Version, data_dir: Path
 ) -> DIContainer:
     container = DIContainer()
 
-    container.register_convention(Sequence[str], "ip_addresses", ip_addresses)
+    # TODO: Remove the Sequence[str] convention for "ip_addresses" when resources and services are
+    #       refactored.
+    container.register_convention(Sequence[str], "ip_addresses", list(map(str, ip_addresses)))
+    container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
     container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
@@ -168,7 +172,7 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
 
 
 def _start_island_server(
-    ip_addresses: Sequence[str],
+    ip_addresses: Sequence[IPv4Address],
     should_setup_only: bool,
     config_options: IslandConfigOptions,
     container: DIContainer,
@@ -217,14 +221,14 @@ def _get_wsgi_server_logger() -> logging.Logger:
     return wsgi_server_logger
 
 
-def _log_init_info(ip_addresses: Sequence[str]):
+def _log_init_info(ip_addresses: Sequence[IPv4Address]):
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
 
     _log_web_interface_access_urls(ip_addresses)
 
 
-def _log_web_interface_access_urls(ip_addresses: Sequence[str]):
+def _log_web_interface_access_urls(ip_addresses: Sequence[IPv4Address]):
     web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in ip_addresses])
     logger.info(
         "To access the web interface, navigate to one of the the following URLs using your "
