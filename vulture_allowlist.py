@@ -8,14 +8,15 @@ from common.agent_configuration.agent_sub_configurations import (
     ScanTargetConfiguration,
 )
 from common.credentials import Credentials, LMHash, NTHash
+from common.types import SocketAddress
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
-from monkey_island.cc.models import Report, Simulation
-from monkey_island.cc.models import AgentSignals, Report
+from monkey_island.cc.models import Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
 from monkey_island.cc.repository.i_agent_event_repository import IAgentEventRepository
+from monkey_island.cc.repository.i_agent_log_repository import IAgentLogRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
 from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
@@ -246,8 +247,6 @@ IMitigationsRepository.save_mitigations
 IAgentRepository.upsert_agent
 IAgentRepository.get_agent_by_id
 IAgentRepository.get_running_agents
-IAgentRepository.get_progenitor
-descendant
 agent
 IAttackRepository.get_attack_report
 IAttackRepository.save_attack_report
@@ -304,6 +303,11 @@ IAgentEventRepository.get_events_by_type
 IAgentEventRepository.get_events_by_tag
 IAgentEventRepository.get_events_by_source
 
+# TODO: Remove once #2274 is closed
+IAgentLogRepository
+IAgentLogRepository.upsert_agent_log
+IAgentLogRepository.get_agent_log
+
 
 # pydantic base models
 underscore_attrs_are_private
@@ -323,13 +327,5 @@ EXPLOITED
 CC
 CC_TUNNEL
 
-IslandEventTopic.AGENT_CONNECTED
-IslandEventTopic.CLEAR_SIMULATION_DATA
-IslandEventTopic.RESET_AGENT_CONFIGURATION
-# TODO: Remove after #2261 is closed
-IslandEventTopic.TERMINATE_AGENTS
-
-Simulation.terminate_signal_time
-
-AgentSignalsService.get_signals
-AgentSignalsService.on_terminate_agents_signal
+# TODO: Remove after #2323
+SocketAddress
