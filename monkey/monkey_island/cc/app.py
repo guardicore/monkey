@@ -26,7 +26,7 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
 )
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.agent_controls import StopAgentCheck, StopAllAgents
+from monkey_island.cc.resources.agent_controls import StopAgentCheck
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
 from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogBlackboxEndpoint
@@ -199,7 +199,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(RemoteRun)
     api.add_resource(Version)
     api.add_resource(StopAgentCheck)
-    api.add_resource(StopAllAgents)
 
     # Resources used by black box tests
     # API Spec: Fix all the following endpoints, see comments in the resource classes
