@@ -109,19 +109,6 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def should_agent_stop(self, agent_id: str) -> bool:
-        """
-        Check with the island to see if the agent should stop
-
-        :param agent_id: The agent identifier for the agent to check
-        :raises IslandAPIConnectionError: If the client could not connect to the island
-        :raises IslandAPIRequestError: If there was a problem with the client request
-        :raises IslandAPIRequestFailedError: If the server experienced an error
-        :raises IslandAPITimeoutError: If the command timed out
-        :return: True if the agent should stop, otherwise False
-        """
-
-    @abstractmethod
     def get_config(self) -> AgentConfiguration:
         """
         Get agent configuration from the island
