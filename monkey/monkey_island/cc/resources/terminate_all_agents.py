@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class TerminateAllAgents(AbstractResource):
-    urls = ["/api/terminate-all-agents"]
+    urls = ["/api/agent-signals/terminate-all-agents"]
 
     def __init__(
         self,
