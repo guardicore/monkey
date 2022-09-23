@@ -5,7 +5,7 @@ from json import JSONDecodeError
 from flask import request
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import AgentSignals as Signal
+from monkey_island.cc.models import AgentSignals as Signals
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class AgentSignals(AbstractResource):
 
     def post(self):
         try:
-            signal = Signal(**request.json)
+            signal = Signals(**request.json)
 
             # We allow an empty timestamp. However, should the agent be able to send us one?
             if signal.terminate is None:
