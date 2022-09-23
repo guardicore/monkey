@@ -27,6 +27,8 @@ class AgentSignals(AbstractResource):
             terminate_timestamp = request.json["terminate_time"]
             if terminate_timestamp is None:
                 raise ValueError("Terminate signal's timestamp is empty")
+            elif terminate_timestamp <= 0:
+                raise ValueError("Terminate signal's timestamp is not a positive integer")
 
             self._island_event_queue.publish(
                 IslandEventTopic.TERMINATE_AGENTS, timestamp=terminate_timestamp
