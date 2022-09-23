@@ -21,6 +21,7 @@ from common.network.network_utils import (
     get_my_ip_addresses,
     get_network_interfaces,
 )
+from common.types.utils import socketaddress_from_string
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
@@ -113,6 +114,7 @@ class InfectionMonkey:
 
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+        self._server_strings = [str(s) for s in self._opts.servers]
 
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
@@ -138,7 +140,11 @@ class InfectionMonkey:
     def _get_arguments(args):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("-p", "--parent")
-        arg_parser.add_argument("-s", "--servers", type=lambda arg: arg.strip().split(","))
+        arg_parser.add_argument(
+            "-s",
+            "--servers",
+            type=lambda arg: [socketaddress_from_string(s) for s in arg.strip().split(",")],
+        )
         arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         opts = arg_parser.parse_args(args)
         InfectionMonkey._log_arguments(opts)
@@ -147,9 +153,9 @@ class InfectionMonkey:
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
-        logger.debug(f"Trying to wake up with servers: {', '.join(self._opts.servers)}")
+        logger.debug(f"Trying to wake up with servers: {', '.join(self._server_strings)}")
         server_clients = find_available_island_apis(
-            self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
+            self._server_strings, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
         )
 
         server, island_api_client = self._select_server(server_clients)
@@ -158,13 +164,13 @@ class InfectionMonkey:
             logger.info(f"Successfully connected to the island via {server}")
         else:
             raise Exception(
-                f"Failed to connect to the island via any known servers: {self._opts.servers}"
+                f"Failed to connect to the island via any known servers: {self._server_strings}"
             )
 
         # NOTE: Since we pass the address for each of our interfaces to the exploited
         # machines, is it possible for a machine to unintentionally unregister itself from the
         # relay if it is able to connect to the relay over multiple interfaces?
-        servers_to_close = (s for s in self._opts.servers if s != server and server_clients[s])
+        servers_to_close = (s for s in self._server_strings if s != server and server_clients[s])
         send_remove_from_waitlist_control_message_to_relays(servers_to_close)
 
         return server, island_api_client
@@ -184,7 +190,7 @@ class InfectionMonkey:
     def _select_server(
         self, server_clients: Mapping[str, Optional[IIslandAPIClient]]
     ) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
-        for server in self._opts.servers:
+        for server in self._server_strings:
             if server_clients[server]:
                 return server, server_clients[server]
 
@@ -192,7 +198,7 @@ class InfectionMonkey:
 
     @staticmethod
     def _log_arguments(args):
-        arg_string = " ".join([f"{key}: {value}" for key, value in vars(args).items()])
+        arg_string = ", ".join([f"{key}: {value}" for key, value in vars(args).items()])
         logger.info(f"Monkey started with arguments: {arg_string}")
 
     def start(self):
@@ -255,7 +261,7 @@ class InfectionMonkey:
 
     def _build_server_list(self, relay_port: int):
         relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
-        return self._opts.servers + relay_servers
+        return self._server_strings + relay_servers
 
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)
