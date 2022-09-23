@@ -88,6 +88,7 @@ class MonkeyIslandClient(object):
 
     @avoid_race_condition
     def kill_all_monkeys(self):
+        # TODO change this request, because monkey-control resource got removed
         response = self.requests.post_json(
             "api/agent-signals/terminate-all-agents", json={"terminate_time": time.time()}
         )
