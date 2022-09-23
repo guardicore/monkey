@@ -335,52 +335,6 @@ def test_island_api_client_register_agent__status_code(
         (TimeoutError, IslandAPITimeoutError),
     ],
 )
-def test_island_api_client__should_agent_stop(island_api_client, actual_error, expected_error):
-    with requests_mock.Mocker() as m:
-        m.get(ISLAND_URI)
-        island_api_client.connect(SERVER)
-
-        with pytest.raises(expected_error):
-            m.get(ISLAND_AGENT_STOP_URI, exc=actual_error)
-            island_api_client.should_agent_stop(AGENT_ID)
-
-
-@pytest.mark.parametrize(
-    "status_code, expected_error",
-    [
-        (401, IslandAPIRequestError),
-        (501, IslandAPIRequestFailedError),
-    ],
-)
-def test_island_api_client_should_agent_stop__status_code(
-    island_api_client, status_code, expected_error
-):
-    with requests_mock.Mocker() as m:
-        m.get(ISLAND_URI)
-        island_api_client.connect(SERVER)
-
-        with pytest.raises(expected_error):
-            m.get(ISLAND_AGENT_STOP_URI, status_code=status_code)
-            island_api_client.should_agent_stop(AGENT_ID)
-
-
-def test_island_api_client_should_agent_stop__bad_json(island_api_client):
-    with requests_mock.Mocker() as m:
-        m.get(ISLAND_URI)
-        island_api_client.connect(SERVER)
-
-        with pytest.raises(IslandAPIRequestFailedError):
-            m.get(ISLAND_AGENT_STOP_URI, content=b"bad")
-            island_api_client.should_agent_stop(AGENT_ID)
-
-
-@pytest.mark.parametrize(
-    "actual_error, expected_error",
-    [
-        (requests.exceptions.ConnectionError, IslandAPIConnectionError),
-        (TimeoutError, IslandAPITimeoutError),
-    ],
-)
 def test_island_api_client__get_config(island_api_client, actual_error, expected_error):
     with requests_mock.Mocker() as m:
         m.get(ISLAND_URI)
