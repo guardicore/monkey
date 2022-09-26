@@ -1,5 +1,5 @@
 from contextlib import suppress
-from ipaddress import IPv4Address, IPv4Interface
+from ipaddress import IPv4Interface
 from typing import List, Optional
 
 from common import AgentRegistrationData
