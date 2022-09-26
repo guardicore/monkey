@@ -1,5 +1,3 @@
-from typing import Callable, Optional
-
 import pytest
 import requests_mock
 
@@ -10,7 +8,7 @@ from infection_monkey.island_api_client import (
     IIslandAPIClient,
     IslandAPIConnectionError,
 )
-from infection_monkey.network.relay.utils import IslandAPISearchResult, find_available_island_apis
+from infection_monkey.network.relay.utils import find_available_island_apis
 
 SERVER_1 = SocketAddress(ip="1.1.1.1", port=12312)
 SERVER_2 = SocketAddress(ip="2.2.2.2", port=4321)
@@ -48,41 +46,11 @@ def test_find_available_island_apis(
 
         assert len(available_apis) == len(server_response_pairs)
 
-        for result in available_apis:
-            if result.server in expected_available_servers:
-                assert result.client is not None
+        for server, island_api_client in available_apis.items():
+            if server in expected_available_servers:
+                assert island_api_client is not None
             else:
-                assert result.client is None
-
-
-def test_find_available_island_apis__preserves_input_order(island_api_client_factory):
-    available_servers = [SERVER_2, SERVER_3]
-
-    with requests_mock.Mocker() as mock:
-        mock.get(f"https://{SERVER_1}/api?action=is-up", exc=IslandAPIConnectionError)
-        for server in available_servers:
-            mock.get(f"https://{server}/api?action=is-up", text="")
-        available_apis = find_available_island_apis(servers, island_api_client_factory)
-
-        for index in range(len(servers)):
-            assert available_apis[index].server == servers[index]
-
-
-def _is_none(value) -> bool:
-    return value is None
-
-
-def _is_island_client(value) -> bool:
-    return isinstance(value, IIslandAPIClient)
-
-
-def _assert_server_and_predicate(
-    result: IslandAPISearchResult,
-    server: SocketAddress,
-    predicate: Callable[[Optional[IIslandAPIClient]], bool],
-):
-    assert result.server == server
-    assert predicate(result.client)
+                assert island_api_client is None
 
 
 def test_find_available_island_apis__multiple_successes(island_api_client_factory):
@@ -94,7 +62,7 @@ def test_find_available_island_apis__multiple_successes(island_api_client_factor
 
         available_apis = find_available_island_apis(servers, island_api_client_factory)
 
-        _assert_server_and_predicate(available_apis[0], SERVER_1, _is_none)
-        _assert_server_and_predicate(available_apis[1], SERVER_2, _is_island_client)
-        _assert_server_and_predicate(available_apis[2], SERVER_3, _is_island_client)
-        _assert_server_and_predicate(available_apis[3], SERVER_4, _is_none)
+        assert available_apis[SERVER_1] is None
+        assert available_apis[SERVER_4] is None
+        for server in available_servers:
+            assert isinstance(available_apis[server], IIslandAPIClient)

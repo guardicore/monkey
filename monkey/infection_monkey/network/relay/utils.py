@@ -1,8 +1,7 @@
 import logging
 import socket
 from contextlib import suppress
-from dataclasses import dataclass
-from typing import Dict, Iterable, Iterator, List, Optional, Tuple
+from typing import Dict, Iterable, Iterator, Optional
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.types import SocketAddress
@@ -27,42 +26,34 @@ logger = logging.getLogger(__name__)
 NUM_FIND_SERVER_WORKERS = 32
 
 
-@dataclass
-class IslandAPISearchResult:
-    server: SocketAddress
-    client: Optional[IIslandAPIClient]
-
-
-IslandAPISearchResults = List[IslandAPISearchResult]
+IslandAPISearchResults = Dict[SocketAddress, Optional[IIslandAPIClient]]
 
 
 def find_available_island_apis(
     servers: Iterable[SocketAddress], island_api_client_factory: AbstractIslandAPIClientFactory
 ) -> IslandAPISearchResults:
     server_list = list(servers)
-    server_iterator = ThreadSafeIterator(enumerate(server_list.__iter__()))
-    results: Dict[int, IslandAPISearchResult] = {}
+    server_iterator = ThreadSafeIterator(server_list.__iter__())
+    server_results: IslandAPISearchResults = {}
 
     run_worker_threads(
         _find_island_server,
         "FindIslandServer",
-        args=(server_iterator, results, island_api_client_factory),
+        args=(server_iterator, server_results, island_api_client_factory),
         num_workers=NUM_FIND_SERVER_WORKERS,
     )
 
-    return [results[i] for i in sorted(results.keys())]
+    return server_results
 
 
 def _find_island_server(
-    servers: Iterator[Tuple[int, SocketAddress]],
-    server_results: Dict[int, IslandAPISearchResult],
+    servers: Iterator[SocketAddress],
+    server_results: IslandAPISearchResults,
     island_api_client_factory: AbstractIslandAPIClientFactory,
 ):
     with suppress(StopIteration):
-        index, server = next(servers)
-        server_results[index] = IslandAPISearchResult(
-            server, _check_if_island_server(server, island_api_client_factory)
-        )
+        server = next(servers)
+        server_results[server] = _check_if_island_server(server, island_api_client_factory)
 
 
 def _check_if_island_server(

@@ -115,7 +115,6 @@ class InfectionMonkey:
 
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        self._server_strings = [str(s) for s in self._opts.servers]
 
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
@@ -155,7 +154,7 @@ class InfectionMonkey:
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
     def _connect_to_island_api(self) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
-        logger.debug(f"Trying to wake up with servers: {', '.join(self._server_strings)}")
+        logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
             self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
         )
@@ -166,13 +165,14 @@ class InfectionMonkey:
             logger.info(f"Successfully connected to the island via {server}")
         else:
             raise Exception(
-                f"Failed to connect to the island via any known servers: {self._server_strings}"
+                "Failed to connect to the island via any known servers: "
+                f"[{', '.join(map(str, self._opts.servers))}]"
             )
 
         # NOTE: Since we pass the address for each of our interfaces to the exploited
         # machines, is it possible for a machine to unintentionally unregister itself from the
         # relay if it is able to connect to the relay over multiple interfaces?
-        servers_to_close = (s for s in self._server_strings if s != server and server_clients[s])
+        servers_to_close = (s for s in self._opts.servers if s != server and server_clients[s])
         send_remove_from_waitlist_control_message_to_relays(servers_to_close)
 
         return server, island_api_client
@@ -192,9 +192,9 @@ class InfectionMonkey:
     def _select_server(
         self, server_clients: IslandAPISearchResults
     ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
-        for result in server_clients:
-            if result.client is not None:
-                return result.server, result.client
+        for server in self._opts.servers:
+            if server_clients[server] is not None:
+                return server, server_clients[server]
 
         return None, None
 
@@ -261,8 +261,9 @@ class InfectionMonkey:
         return agent_event_serializer_registry
 
     def _build_server_list(self, relay_port: int):
+        my_servers = [str(s) for s in self._opts.servers]
         relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
-        return self._server_strings + relay_servers
+        return my_servers + relay_servers
 
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)

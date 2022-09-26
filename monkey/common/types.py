@@ -41,5 +41,8 @@ class SocketAddress(InfectionMonkeyBaseModel):
             raise ValueError("SocketAddress requires a port")
         return SocketAddress(ip=IPv4Address(ip), port=int(port))
 
+    def __hash__(self):
+        return hash(str(self))
+
     def __str__(self):
         return f"{self.ip}:{self.port}"
