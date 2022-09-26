@@ -21,7 +21,7 @@ from common.network.network_utils import (
     get_my_ip_addresses,
     get_network_interfaces,
 )
-from common.types.utils import socketaddress_from_string
+from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
@@ -143,7 +143,7 @@ class InfectionMonkey:
         arg_parser.add_argument(
             "-s",
             "--servers",
-            type=lambda arg: [socketaddress_from_string(s) for s in arg.strip().split(",")],
+            type=lambda arg: [SocketAddress.from_string(s) for s in arg.strip().split(",")],
         )
         arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         opts = arg_parser.parse_args(args)
