@@ -107,11 +107,6 @@ def notify_disconnect(server_address: SocketAddress):
         try:
             d_socket.connect((str(server_address.ip), server_address.port))
             d_socket.sendall(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
-            logger.info(
-                "Control message was sent to the server/relay "
-                f"{server_address.ip}:{server_address.port}"
-            )
+            logger.info(f"Control message was sent to the server/relay {server_address}")
         except OSError as err:
-            logger.error(
-                f"Error connecting to socket {server_address.ip}:{server_address.port}: {err}"
-            )
+            logger.error(f"Error connecting to socket {server_address}: {err}")
