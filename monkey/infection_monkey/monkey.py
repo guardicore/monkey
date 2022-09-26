@@ -131,7 +131,7 @@ class InfectionMonkey:
             server_address=server, island_api_client=self._island_api_client
         )
         self._control_channel = ControlChannel(server, get_agent_id(), self._island_api_client)
-        self._register_agent(server)
+        self._register_agent(self._island_address)
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
@@ -180,7 +180,7 @@ class InfectionMonkey:
 
         return server, island_api_client
 
-    def _register_agent(self, server: str):
+    def _register_agent(self, server: SocketAddress):
         agent_registration_data = AgentRegistrationData(
             id=get_agent_id(),
             machine_hardware_id=get_machine_id(),
