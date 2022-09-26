@@ -52,7 +52,7 @@ def test_from_serialized():
         ("machine_hardware_id", "not-an-int"),
         ("start_time", None),
         ("parent_id", 2.1),
-        ("cc_server", []),
+        ("cc_server", [1]),
         ("network_interfaces", "not-a-list"),
     ],
 )
@@ -70,6 +70,7 @@ def test_construct_invalid_field__type_error(key, value):
         ("machine_hardware_id", -1),
         ("start_time", "not-a-date-time"),
         ("network_interfaces", [1, "stuff", 3]),
+        ("cc_server", []),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
