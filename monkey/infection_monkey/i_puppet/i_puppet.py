@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Iterable, Mapping, Optional, Sequence
 
-from common import OperatingSystem
 from common.credentials import Credentials
+from common.types import PingScanData
 from infection_monkey.model import VictimHost
 
 from . import PluginType
@@ -30,12 +30,6 @@ class ExploiterResultData:
     info: Optional[Mapping] = None
     attempts: Optional[Iterable] = None
     error_message: str = ""
-
-
-@dataclass
-class PingScanData:
-    response_received: bool
-    os: Optional[OperatingSystem]
 
 
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])

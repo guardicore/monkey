@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 from common import OperatingSystem
-from infection_monkey.i_puppet import PingScanData
+from common.types import PingScanData
 from infection_monkey.utils.environment import is_windows_os
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)

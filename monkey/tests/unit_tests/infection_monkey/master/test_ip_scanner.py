@@ -5,12 +5,14 @@ from unittest.mock import MagicMock
 import pytest
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 
+from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
     TCPScanConfiguration,
 )
+from common.types import PingScanData
 from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
@@ -78,10 +80,15 @@ def assert_scan_results(address, scan_results):
         assert_scan_results_host_down(address, ping_scan_data, port_scan_data, fingerprint_data)
 
 
-def assert_scan_results_no_1(domain, ping_scan_data, port_scan_data, fingerprint_data):
+def assert_scan_results_no_1(
+    domain,
+    ping_scan_data: PingScanData,
+    port_scan_data: PortScanData,
+    fingerprint_data: FingerprintData,
+):
     assert domain == "d1"
     assert ping_scan_data.response_received is True
-    assert ping_scan_data.os == WINDOWS_OS
+    assert ping_scan_data.os == OperatingSystem.WINDOWS
 
     assert len(port_scan_data.keys()) == 6
 
@@ -100,7 +107,7 @@ def assert_scan_results_no_1(domain, ping_scan_data, port_scan_data, fingerprint
     assert_fingerprint_results_no_1(fingerprint_data)
 
 
-def assert_fingerprint_results_no_1(fingerprint_data):
+def assert_fingerprint_results_no_1(fingerprint_data: FingerprintData):
     assert len(fingerprint_data.keys()) == 3
     assert fingerprint_data["SSHFinger"].services == {}
     assert fingerprint_data["HTTPFinger"].services == {}
@@ -112,11 +119,16 @@ def assert_fingerprint_results_no_1(fingerprint_data):
     assert fingerprint_data["SMBFinger"].services["tcp-445"]["name"] == "smb_service_name"
 
 
-def assert_scan_results_no_3(domain, ping_scan_data, port_scan_data, fingerprint_data):
+def assert_scan_results_no_3(
+    domain,
+    ping_scan_data: PingScanData,
+    port_scan_data: PortScanData,
+    fingerprint_data: FingerprintData,
+):
     assert domain == "d3"
 
     assert ping_scan_data.response_received is True
-    assert ping_scan_data.os == LINUX_OS
+    assert ping_scan_data.os == OperatingSystem.LINUX
     assert len(port_scan_data.keys()) == 6
 
     psd_443 = port_scan_data[443]
@@ -134,7 +146,7 @@ def assert_scan_results_no_3(domain, ping_scan_data, port_scan_data, fingerprint
     assert_fingerprint_results_no_3(fingerprint_data)
 
 
-def assert_fingerprint_results_no_3(fingerprint_data):
+def assert_fingerprint_results_no_3(fingerprint_data: FingerprintData):
     assert len(fingerprint_data.keys()) == 3
     assert fingerprint_data["SMBFinger"].services == {}
 
@@ -152,7 +164,12 @@ def assert_fingerprint_results_no_3(fingerprint_data):
     assert fingerprint_data["HTTPFinger"].services["tcp-443"]["data"] == ("SERVER_HEADERS_2", True)
 
 
-def assert_scan_results_host_down(address, ping_scan_data, port_scan_data, fingerprint_data):
+def assert_scan_results_host_down(
+    address,
+    ping_scan_data: PingScanData,
+    port_scan_data: PortScanData,
+    fingerprint_data: FingerprintData,
+):
     assert address.ip not in {"10.0.0.1", "10.0.0.3"}
     assert address.domain is None
 

@@ -1,7 +1,8 @@
 import threading
 from unittest.mock import MagicMock
 
-from infection_monkey.i_puppet import PingScanData, PluginType
+from common.types import PingScanData
+from infection_monkey.i_puppet import PluginType
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 

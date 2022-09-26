@@ -5,13 +5,8 @@ from typing import Any, Dict
 import requests
 
 from common.common_consts.network_consts import ES_SERVICE
-from infection_monkey.i_puppet import (
-    FingerprintData,
-    IFingerprinter,
-    PingScanData,
-    PortScanData,
-    PortStatus,
-)
+from common.types import PingScanData
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PortScanData, PortStatus
 
 DISPLAY_NAME = "ElasticSearch"
 ES_PORT = 9200
