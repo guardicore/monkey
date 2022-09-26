@@ -30,7 +30,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
             new_client_timeout=client_disconnect_timeout,
             client_disconnect_timeout=client_disconnect_timeout,
         )
-        self._pipe_spawner = TCPPipeSpawner(dest_address.ip, dest_address.port)
+        self._pipe_spawner = TCPPipeSpawner(dest_address)
         relay_filter = RelayConnectionHandler(self._pipe_spawner, self._user_handler)
         self._connection_handler = TCPConnectionHandler(
             bind_host="",

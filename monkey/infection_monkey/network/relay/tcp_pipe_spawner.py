@@ -1,8 +1,9 @@
 import socket
-from ipaddress import IPv4Address
 from logging import getLogger
 from threading import Lock
 from typing import Set
+
+from common.types import SocketAddress
 
 from .consts import SOCKET_TIMEOUT
 from .sockets_pipe import SocketsPipe
@@ -15,9 +16,9 @@ class TCPPipeSpawner:
     Creates bi-directional pipes between the configured client and other clients.
     """
 
-    def __init__(self, target_addr: IPv4Address, target_port: int):
-        self._target_addr = target_addr
-        self._target_port = target_port
+    def __init__(self, target_addr: SocketAddress):
+        self._target_ip = target_addr.ip
+        self._target_port = target_addr.port
         self._pipes: Set[SocketsPipe] = set()
         self._lock = Lock()
 
@@ -31,7 +32,7 @@ class TCPPipeSpawner:
         dest = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         dest.settimeout(SOCKET_TIMEOUT)
         try:
-            dest.connect((str(self._target_addr), self._target_port))
+            dest.connect((str(self._target_ip), self._target_port))
         except OSError as err:
             source.close()
             dest.close()
