@@ -23,7 +23,7 @@ def compile_scan_target_list(
     scan_targets = _get_ips_from_subnets_to_scan(ranges_to_scan)
 
     if scan_my_networks:
-        scan_targets.extend(_get_ips_to_scan_from_interface(network_interfaces))
+        scan_targets.extend(_get_ips_to_scan_from_interface(local_network_interfaces))
 
     if inaccessible_subnets:
         inaccessible_subnets = _get_segmentation_check_targets(
@@ -76,7 +76,7 @@ def _get_ips_from_ranges_to_scan(network_ranges: List[NetworkRange]) -> List[Net
     return scan_targets
 
 
-def _get_ips_to_scan_from_local_interface(
+def _get_ips_to_scan_from_interface(
     interfaces: List[IPv4Interface],
 ) -> List[NetworkAddress]:
     ranges = [str(interface) for interface in interfaces]
