@@ -7,7 +7,7 @@ from pydantic import validator
 
 from .base_models import InfectionMonkeyBaseModel
 from .transforms import make_immutable_sequence
-from .types import HardwareID
+from .types import HardwareID, SocketAddress
 
 
 class AgentRegistrationData(InfectionMonkeyBaseModel):
@@ -15,7 +15,7 @@ class AgentRegistrationData(InfectionMonkeyBaseModel):
     machine_hardware_id: HardwareID
     start_time: datetime
     parent_id: Optional[UUID]
-    cc_server: str
+    cc_server: SocketAddress
     network_interfaces: Sequence[IPv4Interface]
 
     _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
