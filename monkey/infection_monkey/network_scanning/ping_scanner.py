@@ -78,11 +78,8 @@ def _process_ping_command_output(ping_command_output: str) -> PingScanData:
     # match at all if the group isn't found or the contents of the group are not only digits.
     ttl = int(ttl_match.group(1))
 
-    operating_system = None
-    if ttl <= LINUX_TTL:
-        operating_system = OperatingSystem.LINUX
-    else:  # as far we we know, could also be OSX/BSD, but lets handle that when it comes up.
-        operating_system = OperatingSystem.WINDOWS
+    # could also be OSX/BSD, but lets handle that when it comes up.
+    operating_system = OperatingSystem.LINUX if ttl <= LINUX_TTL else OperatingSystem.WINDOWS
 
     return PingScanData(True, operating_system)
 
