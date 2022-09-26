@@ -4,7 +4,7 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
   'properties': {
     'info_box': {
       'info': 'The Monkey scans for machines on each of the network interfaces of the ' +
-        'machine it is running on if "Scan local interfaces" is checked. ' +
+        'machine it is running on if "Scan Agent\'s networks" is checked. ' +
         'Additionally, the Monkey scans machines according to "Scan target list". '
     },
     'blocked_ips': {
@@ -41,16 +41,15 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
         '\tDefine a segment using an subnet IP mask: "192.168.0.5/24"\n' +
         '\tDefine a single-host segment: "printer.example"'
     },
-    'scan_local_interaces': {
-      'title': 'Scan local interfaces',
+    'scan_my_networks': {
+      'title': 'Scan Agent\'s networks',
       'type': 'boolean',
       'default': false,
-      'description': 'Determines whether the Monkey will scan for machines on each the ' +
-        'network interfaces of every machines it runs on, in addition to the IPs that ' +
-        'are configured manually in the "Scan target list". ' +
-        'Note: If a machine has a network interface that is connected to a public ' +
-        'network, this setting will cause the Monkey to scan and attempt to exploit ' +
-        'machines on the public network.'
+      'description': 'If enabled, the Agent will go over all network interfaces and ' +
+        'will scan their networks,' +
+        ' in addition to the IPs that are configured manually in the "Scan target list". ' +
+        'Note: If the Agent runs on a machine within a public network,' +
+        ' this setting will cause scanning and exploitation attempts on that network.'
     },
     'subnets': {
       'title': 'Scan target list',

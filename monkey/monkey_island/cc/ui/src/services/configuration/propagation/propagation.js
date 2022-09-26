@@ -18,7 +18,7 @@ const PROPAGATION_CONFIGURATION_SCHEMA = {
         ' \u26A0' +
         ' Note that setting this value too high may result in the ' +
         'Monkey propagating too far, ' +
-        'if "Scan local interfaces" is enabled.\n' +
+        'if "Scan Agent\'s networks" is enabled.\n' +
         'Setting this to 0 will disable all scanning and exploitation.'
     },
     'network_scan': NETWORK_SCAN_CONFIGURATION_SCHEMA

@@ -15,12 +15,12 @@ CUSTOM_PBA_CONFIGURATION = {
 
 BLOCKED_IPS = ["10.0.0.1", "192.168.1.1"]
 INACCESSIBLE_SUBNETS = ["172.0.0.0/24", "172.2.2.0/24", "192.168.56.0/24"]
-SCAN_LOCAL_INTERFACES = True
+SCAN_MY_NETWORKS = True
 SUBNETS = ["10.0.0.2", "10.0.0.2/16"]
 SCAN_TARGET_CONFIGURATION = {
     "blocked_ips": BLOCKED_IPS,
     "inaccessible_subnets": INACCESSIBLE_SUBNETS,
-    "scan_local_interfaces": SCAN_LOCAL_INTERFACES,
+    "scan_my_networks": SCAN_MY_NETWORKS,
     "subnets": SUBNETS,
 }
 

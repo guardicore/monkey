@@ -18,12 +18,12 @@ def compile_scan_target_list(
     ranges_to_scan: Sequence[str],
     inaccessible_subnets: Sequence[str],
     blocklisted_ips: Sequence[str],
-    scan_local_interfaces: bool,
+    scan_my_networks: bool,
 ) -> List[NetworkAddress]:
     scan_targets = _get_ips_from_subnets_to_scan(ranges_to_scan)
 
-    if scan_local_interfaces:
-        scan_targets.extend(_get_ips_to_scan_from_local_interface(local_network_interfaces))
+    if scan_my_networks:
+        scan_targets.extend(_get_ips_to_scan_from_interface(network_interfaces))
 
     if inaccessible_subnets:
         inaccessible_subnets = _get_segmentation_check_targets(
