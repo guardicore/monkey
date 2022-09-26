@@ -119,12 +119,13 @@ class InfectionMonkey:
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         server, self._island_api_client = self._connect_to_island_api()
-        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
+        self._cmd_island_ip = server.ip
+        self._cmd_island_port = server.port
 
         self._island_address = SocketAddress(self._cmd_island_ip, self._cmd_island_port)
 
         self._control_client = ControlClient(
-            server_address=server, island_api_client=self._island_api_client
+            server_address=str(server), island_api_client=self._island_api_client
         )
         self._control_channel = ControlChannel(server, get_agent_id(), self._island_api_client)
         self._register_agent(self._island_address)
@@ -153,7 +154,7 @@ class InfectionMonkey:
         return opts
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
-    def _connect_to_island_api(self) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
+    def _connect_to_island_api(self) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
         logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
             self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
@@ -278,7 +279,6 @@ class InfectionMonkey:
         self._subscribe_events(
             event_queue,
             propagation_credentials_repository,
-            self._control_client.server_address,
             self._agent_event_serializer_registry,
         )
 
@@ -305,7 +305,6 @@ class InfectionMonkey:
         self,
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
-        server_address: str,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
         event_queue.subscribe_type(
