@@ -3,7 +3,7 @@ import logging
 import os
 import subprocess
 import sys
-from ipaddress import IPv4Address, IPv4Interface
+from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
 from typing import List, Mapping, Optional, Tuple
 
@@ -123,9 +123,7 @@ class InfectionMonkey:
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
         self._cmd_island_port = int(self._cmd_island_port)
 
-        self._island_address = SocketAddress(
-            IPv4Address(self._cmd_island_ip), self._cmd_island_port
-        )
+        self._island_address = SocketAddress(self._cmd_island_ip, self._cmd_island_port)
 
         self._control_client = ControlClient(
             server_address=server, island_api_client=self._island_api_client

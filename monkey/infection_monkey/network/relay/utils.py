@@ -1,7 +1,6 @@
 import logging
 import socket
 from contextlib import suppress
-from ipaddress import IPv4Address
 from typing import Dict, Iterable, Iterator, Optional
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
@@ -90,8 +89,7 @@ def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
 
 
 def _send_remove_from_waitlist_control_message_to_relay(server: str):
-    ip, port = address_to_ip_port(server)
-    server_address = SocketAddress(IPv4Address(ip), int(port))
+    server_address = SocketAddress(*address_to_ip_port(server))
     notify_disconnect(server_address)
 
 
