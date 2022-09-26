@@ -6,6 +6,7 @@ from typing import Dict, Iterable, Iterator, Optional
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.network.network_utils import address_to_ip_port
+from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     AbstractIslandAPIClientFactory,
     IIslandAPIClient,
@@ -90,22 +91,22 @@ def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
 
 def _send_remove_from_waitlist_control_message_to_relay(server: str):
     ip, port = address_to_ip_port(server)
-    notify_disconnect(IPv4Address(ip), int(port))
+    server_address = SocketAddress(IPv4Address(ip), int(port))
+    notify_disconnect(server_address)
 
 
-def notify_disconnect(server_ip: IPv4Address, server_port: int):
+def notify_disconnect(server_address: SocketAddress):
     """
-    Tell upstream relay that we no longer need the relay.
+    Tell upstream relay that we no longer need the relay
 
-    :param server_ip: The IP address of the server to notify.
-    :param server_port: The port of the server to notify.
+    :param server_address: The address of the server to notify
     """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as d_socket:
         d_socket.settimeout(LONG_REQUEST_TIMEOUT)
 
         try:
-            d_socket.connect((str(server_ip), server_port))
+            d_socket.connect((str(server_address.ip), server_address.port))
             d_socket.sendall(RELAY_CONTROL_MESSAGE_REMOVE_FROM_WAITLIST)
-            logger.info(f"Control message was sent to the server/relay {server_ip}:{server_port}")
+            logger.info(f"Control message was sent to the server/relay {server_address}")
         except OSError as err:
-            logger.error(f"Error connecting to socket {server_ip}:{server_port}: {err}")
+            logger.error(f"Error connecting to socket {server_address}: {err}")
