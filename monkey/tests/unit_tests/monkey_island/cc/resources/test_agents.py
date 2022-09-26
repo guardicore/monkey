@@ -16,7 +16,7 @@ AGENT_REGISTRATION_DICT = {
     "machine_hardware_id": 1,
     "start_time": 0,
     "parent_id": UUID("9d55ba33-95c2-417d-bd86-d3d11e47daeb"),
-    "cc_server": "10.0.0.1:5000",
+    "cc_server": {"ip": "10.0.0.1", "port": "5000"},
     "network_interfaces": ["10.1.1.2/24"],
 }
 

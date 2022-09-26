@@ -11,6 +11,7 @@ from common.agent_event_serializers import (
 )
 from common.agent_events import AbstractAgentEvent
 from common.agent_registration_data import AgentRegistrationData
+from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClient,
     IslandAPIConnectionError,
@@ -20,7 +21,7 @@ from infection_monkey.island_api_client import (
     IslandAPITimeoutError,
 )
 
-SERVER = "1.1.1.1:9999"
+SERVER = SocketAddress(ip="1.1.1.1", port="9999")
 PBA_FILE = "dummy.pba"
 WINDOWS = "windows"
 AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")
