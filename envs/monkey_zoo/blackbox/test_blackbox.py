@@ -15,7 +15,6 @@ from envs.monkey_zoo.blackbox.test_configurations import (
     depth_2_a_test_configuration,
     depth_3_a_test_configuration,
     depth_4_a_test_configuration,
-    powershell_credentials_reuse_test_configuration,
     smb_pth_test_configuration,
     wmi_mimikatz_test_configuration,
     zerologon_test_configuration,
@@ -128,15 +127,6 @@ class TestMonkeyBlackbox:
     def test_depth_4_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
             island_client, depth_4_a_test_configuration, "Depth4A test suite"
-        )
-
-    # Not grouped because can only be ran on windows
-    @pytest.mark.skip_powershell_reuse
-    def test_powershell_exploiter_credentials_reuse(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client,
-            powershell_credentials_reuse_test_configuration,
-            "PowerShell_Remoting_exploiter_credentials_reuse",
         )
 
     # Not grouped because it's slow
