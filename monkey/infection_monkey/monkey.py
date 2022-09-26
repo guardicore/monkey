@@ -21,6 +21,7 @@ from common.network.network_utils import (
     get_my_ip_addresses,
     get_network_interfaces,
 )
+from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
@@ -230,10 +231,10 @@ class InfectionMonkey:
         config = self._control_channel.get_config()
 
         relay_port = get_free_tcp_port()
+        island_address = SocketAddress(IPv4Address(self._cmd_island_ip), self._cmd_island_port)
         self._relay = TCPRelay(
             relay_port,
-            IPv4Address(self._cmd_island_ip),
-            self._cmd_island_port,
+            island_address,
             client_disconnect_timeout=config.keep_tunnel_open_time,
         )
 

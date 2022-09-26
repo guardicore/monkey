@@ -3,6 +3,7 @@ from logging import getLogger
 from threading import Lock, Thread
 from time import sleep
 
+from common.types import SocketAddress
 from infection_monkey.network.relay import (
     RelayConnectionHandler,
     RelayUserHandler,
@@ -22,15 +23,14 @@ class TCPRelay(Thread, InterruptableThreadMixin):
     def __init__(
         self,
         relay_port: int,
-        dest_addr: IPv4Address,
-        dest_port: int,
+        dest_address: SocketAddress,
         client_disconnect_timeout: float,
     ):
         self._user_handler = RelayUserHandler(
             new_client_timeout=client_disconnect_timeout,
             client_disconnect_timeout=client_disconnect_timeout,
         )
-        self._pipe_spawner = TCPPipeSpawner(dest_addr, dest_port)
+        self._pipe_spawner = TCPPipeSpawner(dest_address.ip, dest_address.port)
         relay_filter = RelayConnectionHandler(self._pipe_spawner, self._user_handler)
         self._connection_handler = TCPConnectionHandler(
             bind_host="",
