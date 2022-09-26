@@ -307,6 +307,8 @@ IAgentLogRepository
 IAgentLogRepository.upsert_agent_log
 IAgentLogRepository.get_agent_log
 
+# TODO: Remove once #2268 is closed
+PingScanEvent
 
 # pydantic base models
 underscore_attrs_are_private
