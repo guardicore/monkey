@@ -119,9 +119,7 @@ class InfectionMonkey:
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         server, self._island_api_client = self._connect_to_island_api()
-        # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
-        self._cmd_island_port = int(self._cmd_island_port)
 
         self._island_address = SocketAddress(self._cmd_island_ip, self._cmd_island_port)
 
