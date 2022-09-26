@@ -16,11 +16,7 @@ from common.agent_event_serializers import (
 from common.agent_events import CredentialsStolenEvent
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
-from common.network.network_utils import (
-    address_to_ip_port,
-    get_my_ip_addresses,
-    get_network_interfaces,
-)
+from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
@@ -125,7 +121,7 @@ class InfectionMonkey:
         self._island_address = SocketAddress(self._cmd_island_ip, self._cmd_island_port)
 
         self._control_client = ControlClient(
-            server_address=str(server), island_api_client=self._island_api_client
+            server_address=server, island_api_client=self._island_api_client
         )
         self._control_channel = ControlChannel(str(server), get_agent_id(), self._island_api_client)
         self._register_agent(self._island_address)
@@ -444,8 +440,8 @@ class InfectionMonkey:
         return VictimHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
-        server_ip, _ = address_to_ip_port(self._control_client.server_address)
-        return server_ip in {str(interface.ip) for interface in local_network_interfaces}
+        server_ip = self._control_client.server_address.ip
+        return server_ip in {interface.ip for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()

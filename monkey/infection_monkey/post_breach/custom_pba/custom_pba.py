@@ -83,11 +83,12 @@ class CustomPBA(PBA):
         if not status:
             status = ScanStatus.USED
 
+        server_ip = str(self.control_client.server_address.ip)
         self.telemetry_messenger.send_telemetry(
             T1105Telem(
                 status,
-                self.control_client.server_address.split(":")[0],
-                get_interface_to_target(self.control_client.server_address.split(":")[0]),
+                server_ip,
+                get_interface_to_target(server_ip),
                 filename,
             )
         )

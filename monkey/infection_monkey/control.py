@@ -8,6 +8,7 @@ from urllib3 import disable_warnings
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
 from common.network.network_utils import get_my_ip_addresses_legacy
+from common.types import SocketAddress
 from infection_monkey.config import GUID
 from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.network.info import get_host_subnets
@@ -24,7 +25,7 @@ class ControlClient:
     # https://github.com/guardicore/monkey/blob/133f7f5da131b481561141171827d1f9943f6aec/monkey/infection_monkey/telemetry/base_telem.py
     control_client_object = None
 
-    def __init__(self, server_address: str, island_api_client: IIslandAPIClient):
+    def __init__(self, server_address: SocketAddress, island_api_client: IIslandAPIClient):
         self.server_address = server_address
         self._island_api_client = island_api_client
 
@@ -55,12 +56,6 @@ class ControlClient:
         )
 
     def send_telemetry(self, telem_category, json_data: str):
-        if not self.server_address:
-            logger.error(
-                "Trying to send %s telemetry before current server is established, aborting."
-                % telem_category
-            )
-            return
         try:
             telemetry = {"monkey_guid": GUID, "telem_category": telem_category, "data": json_data}
             requests.post(  # noqa: DUO123
@@ -74,8 +69,6 @@ class ControlClient:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
     def send_log(self, log):
-        if not self.server_address:
-            return
         try:
             telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
             self._island_api_client.send_log(json.dumps(telemetry))

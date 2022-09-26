@@ -51,7 +51,7 @@ def tcp_port_to_service(port):
     return "tcp-" + str(port)
 
 
-def get_interface_to_target(dst):
+def get_interface_to_target(dst: str) -> str:
     """
     :param dst: destination IP address string without port. E.G. '192.168.1.1.'
     :return: IP address string of an interface that can connect to the target. E.G. '192.168.1.4.'
