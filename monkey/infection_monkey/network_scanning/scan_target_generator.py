@@ -4,17 +4,10 @@ import socket
 from ipaddress import IPv4Interface
 from typing import Dict, Iterable, List, Optional, Sequence
 
-from typing_extensions import Protocol, runtime_checkable
-
 from common.network.network_range import InvalidNetworkRangeError, NetworkRange
 from infection_monkey.network import NetworkAddress
 
 logger = logging.getLogger(__name__)
-
-
-@runtime_checkable
-class HasDomain(Protocol):
-    domain_name: str
 
 
 def compile_scan_target_list(
@@ -56,10 +49,11 @@ def _remove_redundant_targets(targets: Sequence[NetworkAddress]) -> List[Network
 def _range_to_addresses(range_obj: NetworkRange) -> List[NetworkAddress]:
     addresses = []
     for address in range_obj:
-        if isinstance(range_obj, HasDomain):
-            addresses.append(NetworkAddress(address, range_obj.domain_name))
-        else:
-            addresses.append(NetworkAddress(address, None))
+        try:
+            domain = range_obj.domain_name  # type: ignore
+        except AttributeError:
+            domain = None
+        addresses.append(NetworkAddress(address, domain))
     return addresses
 
 
