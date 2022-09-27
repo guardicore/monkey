@@ -262,7 +262,7 @@ class InfectionMonkey:
         return agent_event_serializer_registry
 
     def _build_server_list(self, relay_port: int):
-        my_servers = [str(s) for s in self._opts.servers]
+        my_servers = map(str, self._opts.servers)
         relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
         return my_servers + relay_servers
 
