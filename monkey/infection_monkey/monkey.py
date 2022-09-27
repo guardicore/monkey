@@ -272,14 +272,14 @@ class InfectionMonkey:
             self._control_channel
         )
 
-        event_queue = PyPubSubAgentEventQueue(Publisher())
+        agent_event_queue = PyPubSubAgentEventQueue(Publisher())
         self._subscribe_events(
-            event_queue,
+            agent_event_queue,
             propagation_credentials_repository,
             self._agent_event_serializer_registry,
         )
 
-        puppet = self._build_puppet(event_queue)
+        puppet = self._build_puppet(agent_event_queue)
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
@@ -300,34 +300,34 @@ class InfectionMonkey:
 
     def _subscribe_events(
         self,
-        event_queue: IAgentEventQueue,
+        agent_event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
-        event_queue.subscribe_type(
+        agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_credentials_from_event_to_propagation_credentials_repository(
                 propagation_credentials_repository
             ),
         )
-        event_queue.subscribe_all_events(
+        agent_event_queue.subscribe_all_events(
             AgentEventForwarder(self._island_api_client, agent_event_serializer_registry).send_event
         )
 
     def _build_puppet(
         self,
-        event_queue: IAgentEventQueue,
+        agent_event_queue: IAgentEventQueue,
     ) -> IPuppet:
         puppet = Puppet()
 
         puppet.load_plugin(
             "MimikatzCollector",
-            MimikatzCredentialCollector(event_queue),
+            MimikatzCredentialCollector(agent_event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
         puppet.load_plugin(
             "SSHCollector",
-            SSHCredentialCollector(self._telemetry_messenger, event_queue),
+            SSHCredentialCollector(self._telemetry_messenger, agent_event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
 
@@ -341,7 +341,7 @@ class InfectionMonkey:
             island_api_client=self._island_api_client,
         )
         exploit_wrapper = ExploiterWrapper(
-            self._telemetry_messenger, event_queue, agent_binary_repository
+            self._telemetry_messenger, agent_event_queue, agent_binary_repository
         )
 
         puppet.load_plugin(
