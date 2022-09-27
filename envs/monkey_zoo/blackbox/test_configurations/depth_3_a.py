@@ -34,7 +34,6 @@ def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     subnets = [
         "10.2.2.9",
         "10.2.3.45",
-        "10.2.3.46",
         "10.2.3.47",
         "10.2.3.48",
         "10.2.1.10",

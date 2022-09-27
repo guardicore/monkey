@@ -41,7 +41,6 @@ DEPTH_2_A = {
         "powershell-3-46",
         "powershell-3-44",
     ],
-
 }
 
 
@@ -66,7 +65,6 @@ DEPTH_3_A = {
     ],
     "europe-west1-b": [
         "powershell-3-45",
-        "powershell-3-46",
         "powershell-3-47",
         "powershell-3-48",
     ],
