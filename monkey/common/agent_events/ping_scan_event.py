@@ -1,5 +1,3 @@
-from pydantic import Field
-
 from common.types import PingScanData
 
 from . import AbstractAgentEvent
@@ -13,4 +11,4 @@ class PingScanEvent(AbstractAgentEvent):
         :param scan_data: The data collected from the ping scan
     """
 
-    scan_data: PingScanData = Field(default=None)
+    scan_data: PingScanData
