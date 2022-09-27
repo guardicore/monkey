@@ -112,7 +112,7 @@ def _remove_ips_from_scan_targets(
 
 def _get_segmentation_check_targets(
     inaccessible_subnets: Iterable[str], local_interfaces: Iterable[IPv4Interface]
-) -> Sequence[NetworkAddress]:
+) -> List[NetworkAddress]:
     ips_to_scan = []
     local_ips = [str(interface.ip) for interface in local_interfaces]
 
