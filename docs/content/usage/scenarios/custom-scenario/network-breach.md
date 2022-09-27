@@ -15,17 +15,14 @@ Infection Monkey will help you assess the impact of a future breach by attemptin
 
 ## Configuration
 
-- **Exploits -> Exploits** Here you can review the exploits the Infection Monkey will be using. By default all
+- **Propagation -> Exploiters** Here you can review the exploits the Infection Monkey will be using. By default all
 safe exploiters are selected.
-- **Exploits -> Credentials** This configuration value will be used for brute-forcing. The Infection Monkey uses the most popular default passwords and usernames, but feel free to adjust it according to the default passwords common in your network. Keep in mind a longer list means longer scanning times.
-- **Network -> Scope** Make sure to properly configure the scope of the scan. You can select **Local network scan**
+- **Propagation -> Credentials** This configuration value will be used for brute-forcing. The Infection Monkey uses the most popular default passwords and usernames, but feel free to adjust it according to the default passwords common in your network. Keep in mind a longer list means longer scanning times.
+- **Propagation -> Network analysis -> Network** Make sure to properly configure the scope of the scan. You can select **Scan Agent's networks**
  and allow Monkey to propagate until maximum **Scan depth**(hop count) is reached, or you can fine tune it by providing
  specific network ranges in **Scan target list**. Scanning a local network is more realistic, but providing specific
  targets will make the scanning process substantially faster.
-- **(Optional) Internal -> Network -> TCP scanner** Here you can add custom ports your organization is using.
-- **(Optional) Monkey -> Post-Breach Actions** If you only want to test propagation in the network, you can turn off
-all post-breach actions. These actions simulate an attacker's behavior after getting access to a new system but in no
- way helps the Infection Monkey exploit new machines.
+- **(Optional) Propagation -> Network Analysis -> TCP scanner** Here you can add custom ports your organization is using.
 
 ![Exploiter selector](/images/usage/use-cases/network-breach.PNG "Exploiter selector")
 
