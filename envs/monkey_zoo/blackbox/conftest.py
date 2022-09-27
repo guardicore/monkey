@@ -18,12 +18,6 @@ def pytest_addoption(parser):
         default=False,
         help="Use for no interaction with the cloud.",
     )
-    parser.addoption(
-        "--skip-powershell-reuse",
-        action="store_true",
-        default=False,
-        help="Use to run PowerShell credentials reuse test.",
-    )
 
 
 @pytest.fixture(scope="session")
@@ -48,13 +42,3 @@ def gcp_machines_to_start(request: pytest.FixtureRequest) -> Mapping[str, Collec
             machines_to_start.setdefault(zone, set()).update(machines)
 
     return machines_to_start
-
-
-def pytest_runtest_setup(item):
-    if "skip_powershell_reuse" in item.keywords and item.config.getoption(
-        "--skip-powershell-reuse"
-    ):
-        pytest.skip(
-            "Skipping powershell credentials reuse test because "
-            "--skip-powershell-cached flag isn't specified."
-        )
