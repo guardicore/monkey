@@ -109,8 +109,16 @@ def test_handle_scan_data__node_not_upserted_if_no_matching_agent(
     assert not node_repository.upsert_communication.called
 
 
-def test_handle_scan_data__node_not_upserted_if_no_matching_machine(handler: handle_scan_data):
-    pass
+def test_handle_scan_data__node_not_upserted_if_no_matching_machine(
+    handler: handle_scan_data,
+    machine_repository: IMachineRepository,
+    node_repository: INodeRepository,
+):
+    machine_repository.get_machine_by_id = MagicMock(side_effect=UnknownRecordError)
+
+    handler(EVENT)
+
+    assert not node_repository.upsert_communication.called
 
 
 def test_handle_scan_data__upserts_machine_if_did_not_exist(handler: handle_scan_data):
