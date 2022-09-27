@@ -29,6 +29,3 @@ class Agent(MutableInfectionMonkeyBaseModel):
 
     cc_server: Optional[SocketAddress]
     """The address that the agent used to communicate with the island"""
-
-    log_contents: str = Field(default="")
-    """The contents of the agent's log (empty until the agent shuts down)"""
