@@ -4,7 +4,7 @@ import struct
 from dataclasses import dataclass
 from random import shuffle  # noqa: DUO102
 from threading import Lock
-from typing import Dict, Set
+from typing import Dict, Optional, Set
 
 import netifaces
 import psutil
@@ -25,7 +25,7 @@ RTF_REJECT = 0x0200
 @dataclass
 class NetworkAddress:
     ip: str
-    domain: str
+    domain: Optional[str]
 
 
 def get_host_subnets():

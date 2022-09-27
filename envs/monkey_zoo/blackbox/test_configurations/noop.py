@@ -22,7 +22,7 @@ _custom_pba_configuration = CustomPBAConfiguration(
 _tcp_scan_configuration = TCPScanConfiguration(timeout=3.0, ports=[])
 _icmp_scan_configuration = ICMPScanConfiguration(timeout=1.0)
 _scan_target_configuration = ScanTargetConfiguration(
-    blocked_ips=[], inaccessible_subnets=[], local_network_scan=False, subnets=[]
+    blocked_ips=[], inaccessible_subnets=[], scan_my_networks=False, subnets=[]
 )
 _network_scan_configuration = NetworkScanConfiguration(
     tcp=_tcp_scan_configuration,

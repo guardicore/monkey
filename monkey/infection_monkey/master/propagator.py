@@ -116,14 +116,14 @@ class Propagator:
         ranges_to_scan = target_config.subnets
         inaccessible_subnets = target_config.inaccessible_subnets
         blocklisted_ips = target_config.blocked_ips
-        enable_local_network_scan = target_config.local_network_scan
+        scan_my_networks = target_config.scan_my_networks
 
         return compile_scan_target_list(
             self._local_network_interfaces,
             ranges_to_scan,
             inaccessible_subnets,
             blocklisted_ips,
-            enable_local_network_scan,
+            scan_my_networks,
         )
 
     def _process_scan_results(self, address: NetworkAddress, scan_results: IPScanResults):

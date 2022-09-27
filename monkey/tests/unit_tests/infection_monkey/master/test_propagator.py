@@ -166,7 +166,7 @@ def test_scan_result_processing(
     targets = ScanTargetConfiguration(
         blocked_ips=[],
         inaccessible_subnets=[],
-        local_network_scan=False,
+        scan_my_networks=False,
         subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
     propagation_config = get_propagation_config(default_agent_configuration, targets)
@@ -265,7 +265,7 @@ def test_exploiter_result_processing(
     targets = ScanTargetConfiguration(
         blocked_ips=[],
         inaccessible_subnets=[],
-        local_network_scan=False,
+        scan_my_networks=False,
         subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
     )
     propagation_config = get_propagation_config(default_agent_configuration, targets)
@@ -306,7 +306,7 @@ def test_scan_target_generation(
     targets = ScanTargetConfiguration(
         blocked_ips=["10.0.0.3"],
         inaccessible_subnets=["10.0.0.128/30", "10.0.0.8/29"],
-        local_network_scan=True,
+        scan_my_networks=True,
         subnets=["10.0.0.0/29", "172.10.20.30"],
     )
     propagation_config = get_propagation_config(default_agent_configuration, targets)
