@@ -5,6 +5,7 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.credentials import Credentials
+from common.types import SocketAddress
 
 
 class IIslandAPIClient(ABC):
@@ -13,7 +14,7 @@ class IIslandAPIClient(ABC):
     """
 
     @abstractmethod
-    def connect(self, island_server: str):
+    def connect(self, island_server: SocketAddress):
         """
         Connect to the island's API
 

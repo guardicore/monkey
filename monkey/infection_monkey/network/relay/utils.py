@@ -25,11 +25,12 @@ logger = logging.getLogger(__name__)
 # practical purposes. Revisit this if it's not.
 NUM_FIND_SERVER_WORKERS = 32
 
-IslandAPISearchResults = Dict[str, Optional[IIslandAPIClient]]
+
+IslandAPISearchResults = Dict[SocketAddress, Optional[IIslandAPIClient]]
 
 
 def find_available_island_apis(
-    servers: Iterable[str], island_api_client_factory: AbstractIslandAPIClientFactory
+    servers: Iterable[SocketAddress], island_api_client_factory: AbstractIslandAPIClientFactory
 ) -> IslandAPISearchResults:
     server_list = list(servers)
     server_iterator = ThreadSafeIterator(server_list.__iter__())
@@ -46,7 +47,7 @@ def find_available_island_apis(
 
 
 def _find_island_server(
-    servers: Iterator[str],
+    servers: Iterator[SocketAddress],
     server_results: IslandAPISearchResults,
     island_api_client_factory: AbstractIslandAPIClientFactory,
 ):
@@ -56,7 +57,7 @@ def _find_island_server(
 
 
 def _check_if_island_server(
-    server: str, island_api_client_factory: AbstractIslandAPIClientFactory
+    server: SocketAddress, island_api_client_factory: AbstractIslandAPIClientFactory
 ) -> Optional[IIslandAPIClient]:
     logger.debug(f"Trying to connect to server: {server}")
 
@@ -77,13 +78,12 @@ def _check_if_island_server(
     return None
 
 
-def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
+def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[SocketAddress]):
     for i, server in enumerate(servers, start=1):
-        server_address = SocketAddress.from_string(server)
         t = create_daemon_thread(
             target=notify_disconnect,
             name=f"SendRemoveFromWaitlistControlMessageToRelaysThread-{i:02d}",
-            args=(server_address,),
+            args=(server,),
         )
         t.start()
 

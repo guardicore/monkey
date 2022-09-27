@@ -5,7 +5,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
-from typing import List, Mapping, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from pubsub.core import Publisher
 
@@ -55,6 +55,7 @@ from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
+    IslandAPISearchResults,
     find_available_island_apis,
     notify_disconnect,
     send_remove_from_waitlist_control_message_to_relays,
@@ -114,19 +115,19 @@ class InfectionMonkey:
 
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        self._server_strings = [str(s) for s in self._opts.servers]
 
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         server, self._island_api_client = self._connect_to_island_api()
-        self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
+        self._cmd_island_ip = server.ip
+        self._cmd_island_port = server.port
 
         self._island_address = SocketAddress(self._cmd_island_ip, self._cmd_island_port)
 
         self._control_client = ControlClient(
-            server_address=server, island_api_client=self._island_api_client
+            server_address=str(server), island_api_client=self._island_api_client
         )
-        self._control_channel = ControlChannel(server, get_agent_id(), self._island_api_client)
+        self._control_channel = ControlChannel(str(server), get_agent_id(), self._island_api_client)
         self._register_agent(self._island_address)
 
         # TODO Refactor the telemetry messengers to accept control client
@@ -153,10 +154,10 @@ class InfectionMonkey:
         return opts
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
-    def _connect_to_island_api(self) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
-        logger.debug(f"Trying to wake up with servers: {', '.join(self._server_strings)}")
+    def _connect_to_island_api(self) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
+        logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
-            self._server_strings, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
+            self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
         )
 
         server, island_api_client = self._select_server(server_clients)
@@ -165,13 +166,14 @@ class InfectionMonkey:
             logger.info(f"Successfully connected to the island via {server}")
         else:
             raise Exception(
-                f"Failed to connect to the island via any known servers: {self._server_strings}"
+                "Failed to connect to the island via any known servers: "
+                f"[{', '.join(map(str, self._opts.servers))}]"
             )
 
         # NOTE: Since we pass the address for each of our interfaces to the exploited
         # machines, is it possible for a machine to unintentionally unregister itself from the
         # relay if it is able to connect to the relay over multiple interfaces?
-        servers_to_close = (s for s in self._server_strings if s != server and server_clients[s])
+        servers_to_close = (s for s in self._opts.servers if s != server and server_clients[s])
         send_remove_from_waitlist_control_message_to_relays(servers_to_close)
 
         return server, island_api_client
@@ -189,10 +191,10 @@ class InfectionMonkey:
         self._island_api_client.register_agent(agent_registration_data)
 
     def _select_server(
-        self, server_clients: Mapping[str, Optional[IIslandAPIClient]]
-    ) -> Tuple[Optional[str], Optional[IIslandAPIClient]]:
-        for server in self._server_strings:
-            if server_clients[server]:
+        self, server_clients: IslandAPISearchResults
+    ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
+        for server in self._opts.servers:
+            if server_clients[server] is not None:
                 return server, server_clients[server]
 
         return None, None
@@ -260,8 +262,9 @@ class InfectionMonkey:
         return agent_event_serializer_registry
 
     def _build_server_list(self, relay_port: int):
+        my_servers = map(str, self._opts.servers)
         relay_servers = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
-        return self._server_strings + relay_servers
+        return my_servers + relay_servers
 
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)
@@ -276,7 +279,6 @@ class InfectionMonkey:
         self._subscribe_events(
             event_queue,
             propagation_credentials_repository,
-            self._control_client.server_address,
             self._agent_event_serializer_registry,
         )
 
@@ -303,7 +305,6 @@ class InfectionMonkey:
         self,
         event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
-        server_address: str,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
         event_queue.subscribe_type(

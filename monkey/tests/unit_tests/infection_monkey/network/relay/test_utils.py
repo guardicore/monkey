@@ -2,6 +2,7 @@ import pytest
 import requests_mock
 
 from common.agent_event_serializers import AgentEventSerializerRegistry
+from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     HTTPIslandAPIClientFactory,
     IIslandAPIClient,
@@ -9,10 +10,10 @@ from infection_monkey.island_api_client import (
 )
 from infection_monkey.network.relay.utils import find_available_island_apis
 
-SERVER_1 = "1.1.1.1:12312"
-SERVER_2 = "2.2.2.2:4321"
-SERVER_3 = "3.3.3.3:3142"
-SERVER_4 = "4.4.4.4:5000"
+SERVER_1 = SocketAddress(ip="1.1.1.1", port=12312)
+SERVER_2 = SocketAddress(ip="2.2.2.2", port=4321)
+SERVER_3 = SocketAddress(ip="3.3.3.3", port=3142)
+SERVER_4 = SocketAddress(ip="4.4.4.4", port=5000)
 
 
 servers = [SERVER_1, SERVER_2, SERVER_3, SERVER_4]
