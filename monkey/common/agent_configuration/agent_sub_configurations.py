@@ -79,8 +79,8 @@ class ScanTargetConfiguration(MutableInfectionMonkeyBaseModel):
                             Example: ("1.1.1.1", "2.2.2.2")
         :param inaccessible_subnets: Subnet ranges that shouldn't be accessible for the agent
                                      Example: ("1.1.1.1", "2.2.2.2/24", "myserver")
-        :param scan_my_networks: Whether or not the agent should scan the machine's
-            network interfaces in addition to the provided subnet ranges
+        :param scan_my_networks: If true the Agent will scan networks it belongs to
+         in addition to the provided subnet ranges
         :param subnets: Subnet ranges to scan
                         Example: ("192.168.1.1-192.168.2.255", "3.3.3.3", "2.2.2.2/24",
                                   "myHostname")
