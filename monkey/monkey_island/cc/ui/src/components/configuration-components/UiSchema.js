@@ -60,7 +60,7 @@ export default function UiSchema(props) {
       },
       network_scan: {
         targets: {
-          info_box: {
+          info_box_general: {
             'ui:field': InfoBox
           },
           blocked_ips: {
@@ -72,6 +72,9 @@ export default function UiSchema(props) {
             items: {
               classNames: 'config-template-no-header'
             }
+          },
+          info_box_scan_my_networks: {
+            'ui:field': InfoBox
           },
           subnets: {
             items: {
