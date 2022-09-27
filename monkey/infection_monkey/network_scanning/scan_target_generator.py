@@ -76,7 +76,7 @@ def _get_ips_from_ranges_to_scan(network_ranges: Iterable[NetworkRange]) -> List
 
 def _get_ips_to_scan_from_interface(
     interfaces: Sequence[IPv4Interface],
-) -> Sequence[NetworkAddress]:
+) -> List[NetworkAddress]:
     ranges = [str(interface) for interface in interfaces]
 
     ranges = NetworkRange.filter_invalid_ranges(
