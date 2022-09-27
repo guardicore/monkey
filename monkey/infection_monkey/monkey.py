@@ -114,17 +114,17 @@ class InfectionMonkey:
 
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
-        server, self._island_api_client = self._connect_to_island_api()
-        self._cmd_island_ip = server.ip
-        self._cmd_island_port = server.port
-
-        self._island_address = SocketAddress(self._cmd_island_ip, self._cmd_island_port)
+        self._island_address, self._island_api_client = self._connect_to_island_api()
+        self._cmd_island_ip = self._island_address.ip
+        self._cmd_island_port = self._island_address.port
 
         self._control_client = ControlClient(
-            server_address=server, island_api_client=self._island_api_client
+            server_address=self._island_address, island_api_client=self._island_api_client
         )
-        self._control_channel = ControlChannel(str(server), get_agent_id(), self._island_api_client)
-        self._register_agent(self._island_address)
+        self._control_channel = ControlChannel(
+            str(self._island_address), get_agent_id(), self._island_api_client
+        )
+        self._register_agent()
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
@@ -174,14 +174,14 @@ class InfectionMonkey:
 
         return server, island_api_client
 
-    def _register_agent(self, server: SocketAddress):
+    def _register_agent(self):
         agent_registration_data = AgentRegistrationData(
             id=get_agent_id(),
             machine_hardware_id=get_machine_id(),
             start_time=agent_process.get_start_time(),
             # parent_id=parent,
             parent_id=None,  # None for now, until we change GUID to UUID
-            cc_server=server,
+            cc_server=self._island_address,
             network_interfaces=get_network_interfaces(),
         )
         self._island_api_client.register_agent(agent_registration_data)
