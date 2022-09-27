@@ -1,6 +1,6 @@
 import logging
 import subprocess
-from typing import Dict, Iterable, List, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.utils.attack_utils import ScanStatus
@@ -24,7 +24,7 @@ class PBA:
         name="unknown",
         linux_cmd="",
         windows_cmd="",
-        timeout: int = LONG_REQUEST_TIMEOUT,
+        timeout: Optional[float] = LONG_REQUEST_TIMEOUT,
     ):
         """
         :param name: Name of post breach action.
