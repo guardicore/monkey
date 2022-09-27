@@ -79,16 +79,13 @@ def _check_if_island_server(
 
 def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
     for i, server in enumerate(servers, start=1):
+        server_address = SocketAddress.from_string(server)
         t = create_daemon_thread(
-            target=_send_remove_from_waitlist_control_message_to_relay,
+            target=notify_disconnect,
             name=f"SendRemoveFromWaitlistControlMessageToRelaysThread-{i:02d}",
-            args=(server,),
+            args=(server_address,),
         )
         t.start()
-
-
-def _send_remove_from_waitlist_control_message_to_relay(server: str):
-    notify_disconnect(SocketAddress.from_string(server))
 
 
 def notify_disconnect(server_address: SocketAddress):
