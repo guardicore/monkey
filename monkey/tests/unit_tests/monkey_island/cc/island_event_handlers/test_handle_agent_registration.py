@@ -27,12 +27,14 @@ MACHINE = Machine(
     network_interfaces=[IPv4Interface("192.168.2.2/24")],
 )
 
+IP = "192.168.1.1:5000"
+
 AGENT_REGISTRATION_DATA = AgentRegistrationData(
     id=AGENT_ID,
     machine_hardware_id=MACHINE.hardware_id,
     start_time=0,
     parent_id=None,
-    cc_server=SocketAddress(ip="192.168.1.1", port="5000"),
+    cc_server=SocketAddress.from_string(IP),
     network_interfaces=[IPv4Interface("192.168.1.2/24")],
 )
 
