@@ -7,6 +7,7 @@ from uuid import UUID
 import pytest
 
 from common import AgentRegistrationData
+from common.types import SocketAddress
 from monkey_island.cc.island_event_handlers import handle_agent_registration
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
@@ -26,12 +27,14 @@ MACHINE = Machine(
     network_interfaces=[IPv4Interface("192.168.2.2/24")],
 )
 
+IP = "192.168.1.1:5000"
+
 AGENT_REGISTRATION_DATA = AgentRegistrationData(
     id=AGENT_ID,
     machine_hardware_id=MACHINE.hardware_id,
     start_time=0,
     parent_id=None,
-    cc_server="192.168.1.1:5000",
+    cc_server=SocketAddress.from_string(IP),
     network_interfaces=[IPv4Interface("192.168.1.2/24")],
 )
 
@@ -111,7 +114,7 @@ def test_existing_machine_updated__find_by_ip(handler, machine_repository):
         machine_hardware_id=5,
         start_time=0,
         parent_id=None,
-        cc_server="192.168.1.1:5000",
+        cc_server=SocketAddress(ip="192.168.1.1", port="5000"),
         network_interfaces=[
             IPv4Interface("192.168.1.2/24"),
             IPv4Interface("192.168.1.4/24"),
@@ -215,7 +218,7 @@ def test_machine_interfaces_updated(handler, machine_repository):
         machine_hardware_id=MACHINE.hardware_id,
         start_time=0,
         parent_id=None,
-        cc_server="192.168.1.1:5000",
+        cc_server=SocketAddress(ip="192.168.1.1", port="5000"),
         network_interfaces=[
             IPv4Interface("192.168.1.2/24"),
             IPv4Interface("192.168.1.3/16"),

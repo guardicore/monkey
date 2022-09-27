@@ -6,6 +6,7 @@ from uuid import uuid4
 import mongomock
 import pytest
 
+from common.types import SocketAddress
 from monkey_island.cc.models import Agent
 from monkey_island.cc.repository import (
     IAgentRepository,
@@ -54,6 +55,7 @@ AGENTS = (
     *RUNNING_AGENTS,
     *STOPPED_AGENTS,
 )
+CC_SERVER = SocketAddress(ip="127.0.0.1", port="1984")
 
 
 @pytest.fixture
@@ -116,7 +118,7 @@ def test_upsert_agent__insert_empty_repository(empty_agent_repository):
 def test_upsert_agent__update(agent_repository):
     agents = deepcopy(AGENTS)
     agents[0].stop_time = datetime.now()
-    agents[0].cc_server = "127.0.0.1:1984"
+    agents[0].cc_server = CC_SERVER
 
     agent_repository.upsert_agent(agents[0])
 

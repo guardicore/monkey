@@ -27,7 +27,7 @@ def test_constructor__defaults_from_objects():
     a = Agent(**AGENT_OBJECT_DICT)
 
     assert a.stop_time is None
-    assert a.cc_server == ""
+    assert a.cc_server is None
 
 
 def test_constructor__defaults_from_simple_dict():
@@ -37,7 +37,7 @@ def test_constructor__defaults_from_simple_dict():
 
     assert a.parent_id is None
     assert a.stop_time is None
-    assert a.cc_server == ""
+    assert a.cc_server is None
     assert a.log_contents == ""
 
 
@@ -45,7 +45,7 @@ def test_to_dict():
     a = Agent(**AGENT_OBJECT_DICT)
     agent_simple_dict = AGENT_SIMPLE_DICT.copy()
     agent_simple_dict["stop_time"] = None
-    agent_simple_dict["cc_server"] = ""
+    agent_simple_dict["cc_server"] = None
     agent_simple_dict["log_contents"] = ""
 
     assert a.dict(simplify=True) == agent_simple_dict
@@ -59,7 +59,7 @@ def test_to_dict():
         ("start_time", None),
         ("stop_time", []),
         ("parent_id", 2.1),
-        ("cc_server", []),
+        ("cc_server", [1]),
         ("log_contents", None),
     ],
 )
@@ -77,6 +77,7 @@ def test_construct_invalid_field__type_error(key, value):
         ("machine_id", -1),
         ("start_time", "not-a-datetime"),
         ("stop_time", "not-a-datetime"),
+        ("cc_server", []),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -126,7 +127,7 @@ def test_cc_server_set_validated():
     a = Agent(**AGENT_SIMPLE_DICT)
 
     with pytest.raises(ValueError):
-        a.cc_server = None
+        a.cc_server = []
 
 
 def test_log_contents_set_validated():

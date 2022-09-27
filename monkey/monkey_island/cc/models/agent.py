@@ -4,6 +4,7 @@ from typing import Optional
 from pydantic import Field
 
 from common.base_models import MutableInfectionMonkeyBaseModel
+from common.types import SocketAddress
 
 from . import AgentID, MachineID
 
@@ -26,7 +27,7 @@ class Agent(MutableInfectionMonkeyBaseModel):
     parent_id: Optional[AgentID] = Field(allow_mutation=False)
     """The ID of the parent agent that spawned this agent"""
 
-    cc_server: str = Field(default="")
+    cc_server: Optional[SocketAddress]
     """The address that the agent used to communicate with the island"""
 
     log_contents: str = Field(default="")

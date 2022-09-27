@@ -1,9 +1,9 @@
 from contextlib import suppress
-from ipaddress import IPv4Address, IPv4Interface
+from ipaddress import IPv4Interface
 from typing import List, Optional
 
 from common import AgentRegistrationData
-from common.network.network_utils import address_to_ip_port
+from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
     IAgentRepository,
@@ -116,8 +116,8 @@ class handle_agent_registration:
             src_machine.id, dst_machine.id, CommunicationType.CC
         )
 
-    def _get_or_create_cc_machine(self, cc_server: str) -> Machine:
-        dst_ip = IPv4Address(address_to_ip_port(cc_server)[0])
+    def _get_or_create_cc_machine(self, cc_server: SocketAddress) -> Machine:
+        dst_ip = cc_server.ip
 
         try:
             return self._machine_repository.get_machines_by_ip(dst_ip)[0]

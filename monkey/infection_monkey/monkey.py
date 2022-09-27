@@ -3,7 +3,7 @@ import logging
 import os
 import subprocess
 import sys
-from ipaddress import IPv4Address, IPv4Interface
+from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
 from typing import List, Mapping, Optional, Tuple
 
@@ -119,19 +119,15 @@ class InfectionMonkey:
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         server, self._island_api_client = self._connect_to_island_api()
-        # TODO: `address_to_port()` should return the port as an integer.
         self._cmd_island_ip, self._cmd_island_port = address_to_ip_port(server)
-        self._cmd_island_port = int(self._cmd_island_port)
 
-        self._island_address = SocketAddress(
-            IPv4Address(self._cmd_island_ip), self._cmd_island_port
-        )
+        self._island_address = SocketAddress(self._cmd_island_ip, self._cmd_island_port)
 
         self._control_client = ControlClient(
             server_address=server, island_api_client=self._island_api_client
         )
         self._control_channel = ControlChannel(server, get_agent_id(), self._island_api_client)
-        self._register_agent(server)
+        self._register_agent(self._island_address)
 
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
@@ -180,7 +176,7 @@ class InfectionMonkey:
 
         return server, island_api_client
 
-    def _register_agent(self, server: str):
+    def _register_agent(self, server: SocketAddress):
         agent_registration_data = AgentRegistrationData(
             id=get_agent_id(),
             machine_hardware_id=get_machine_id(),
