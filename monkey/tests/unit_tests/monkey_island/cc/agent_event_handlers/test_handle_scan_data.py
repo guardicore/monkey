@@ -34,6 +34,11 @@ STORED_MACHINE = Machine(
     hardware_id=9,
     network_interfaces=[IPv4Interface("10.10.10.1/24")],
 )
+EVENT = PingScanEvent(
+    source=AGENT_ID,
+    target=IPv4Address("10.10.10.1"),
+    scan_data=PingScanData(True, OperatingSystem.LINUX),
+)
 
 
 @pytest.fixture
@@ -67,15 +72,9 @@ def handler(agent_repository, machine_repository, node_repository) -> handle_sca
 def test_handle_scan_data__upserts_machine(
     handler: handle_scan_data,
     machine_repository: IMachineRepository,
-    node_repository: INodeRepository,
 ):
-    event = PingScanEvent(
-        source=AGENT_ID,
-        target=IPv4Address("10.10.10.1"),
-        scan_data=PingScanData(True, OperatingSystem.LINUX),
-    )
     machine_repository.get_machine_by_id = MagicMock(return_value=STORED_MACHINE)
-    handler(event)
+    handler(EVENT)
 
     expected_machine = STORED_MACHINE.copy()
     expected_machine.operating_system = OperatingSystem.LINUX
@@ -88,21 +87,26 @@ def test_handle_scan_data__upserts_node(
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ):
-    event = PingScanEvent(
-        source=AGENT_ID,
-        target=IPv4Address("10.10.10.1"),
-        scan_data=PingScanData(True, OperatingSystem.LINUX),
-    )
     machine_repository.get_machine_by_id = MagicMock(return_value=STORED_MACHINE)
-    handler(event)
+    handler(EVENT)
 
     assert node_repository.upsert_communication.called_with(
         MACHINE.id, STORED_MACHINE.id, CommunicationType.SCANNED
     )
 
 
-def test_handle_scan_data__node_not_upserted_if_no_matching_agent(handler: handle_scan_data):
-    pass
+def test_handle_scan_data__node_not_upserted_if_no_matching_agent(
+    handler: handle_scan_data,
+    agent_repository: IAgentRepository,
+    machine_repository: IMachineRepository,
+    node_repository: INodeRepository,
+):
+    agent_repository.get_agent_by_id = MagicMock(side_effect=UnknownRecordError)
+    machine_repository.get_machine_by_id = MagicMock(return_value=STORED_MACHINE)
+
+    handler(EVENT)
+
+    assert not node_repository.upsert_communication.called
 
 
 def test_handle_scan_data__node_not_upserted_if_no_matching_machine(handler: handle_scan_data):
