@@ -13,9 +13,9 @@ Want to assess your progress in achieving a Zero Trust network? The Infection Mo
 
 ## Configuration
 
-- **Exploits -> Credentials** This configuration value will be used for brute-forcing. The Infection Monkey uses the most popular default passwords and usernames, but feel free to adjust it according to the default passwords common in your network. Keep in mind a longer list means longer scanning times.
-- **Network -> Scope** Disable “Scan Agent's networks” and instead provide specific network ranges in the “Scan target list.”
-- **Network -> Network analysis -> Network segmentation testing** This configuration setting allows you to define
+- **Propagation -> Credentials** This configuration value will be used for brute-forcing. The Infection Monkey uses the most popular default passwords and usernames, but feel free to adjust it according to the default passwords common in your network. Keep in mind a longer list means longer scanning times.
+- **Propagation -> Network analysis -> Network** Disable “Scan Agent's networks” and instead provide specific network ranges in the “Scan target list.”
+- **Propagation -> Network analysis -> Network segmentation testing** This configuration setting allows you to define
 subnets that should be segregated from each other.
 
 In general, other configuration value defaults should be good enough, but feel free to see the “Other” section for tips and tricks about more features and in-depth configuration parameters you can use.
