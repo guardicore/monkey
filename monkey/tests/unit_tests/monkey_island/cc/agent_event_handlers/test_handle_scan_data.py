@@ -81,13 +81,24 @@ def test_handle_scan_data__upserts_machine(
     expected_machine.operating_system = OperatingSystem.LINUX
 
     assert machine_repository.upsert_machine.called_with(expected_machine)
-    assert node_repository.upsert_communication.called_with(
-        MACHINE.id, expected_machine.id, CommunicationType.SCANNED
+
+
+def test_handle_scan_data__upserts_node(
+    handler: handle_scan_data,
+    machine_repository: IMachineRepository,
+    node_repository: INodeRepository,
+):
+    event = PingScanEvent(
+        source=AGENT_ID,
+        target=IPv4Address("10.10.10.1"),
+        scan_data=PingScanData(True, OperatingSystem.LINUX),
     )
+    machine_repository.get_machine_by_id = MagicMock(return_value=STORED_MACHINE)
+    handler(event)
 
-
-def test_handle_scan_data__upserts_node(handler: handle_scan_data):
-    pass
+    assert node_repository.upsert_communication.called_with(
+        MACHINE.id, STORED_MACHINE.id, CommunicationType.SCANNED
+    )
 
 
 def test_handle_scan_data__node_not_upserted_if_no_matching_agent(handler: handle_scan_data):
