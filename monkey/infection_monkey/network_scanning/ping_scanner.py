@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 from common import OperatingSystem
-from infection_monkey.i_puppet import PingScanData
+from common.types import PingScanData
 from infection_monkey.utils.environment import is_windows_os
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
@@ -78,11 +78,8 @@ def _process_ping_command_output(ping_command_output: str) -> PingScanData:
     # match at all if the group isn't found or the contents of the group are not only digits.
     ttl = int(ttl_match.group(1))
 
-    operating_system = None
-    if ttl <= LINUX_TTL:
-        operating_system = OperatingSystem.LINUX
-    else:  # as far we we know, could also be OSX/BSD, but lets handle that when it comes up.
-        operating_system = OperatingSystem.WINDOWS
+    # could also be OSX/BSD, but lets handle that when it comes up.
+    operating_system = OperatingSystem.LINUX if ttl <= LINUX_TTL else OperatingSystem.WINDOWS
 
     return PingScanData(True, operating_system)
 

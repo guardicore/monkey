@@ -4,18 +4,14 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from infection_monkey.i_puppet import (
-    ExploiterResultData,
-    FingerprintData,
-    PingScanData,
-    PortScanData,
-    PortStatus,
-)
+from common.types import PingScanData
+from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData, PortStatus
 from infection_monkey.master import IPScanResults, Propagator
 from infection_monkey.model import VictimHost, VictimHostFactory
 from infection_monkey.network import NetworkAddress
@@ -38,7 +34,7 @@ def mock_victim_host_factory():
 empty_fingerprint_data = FingerprintData(None, None, {})
 
 dot_1_scan_results = IPScanResults(
-    PingScanData(True, "windows"),
+    PingScanData(True, OperatingSystem.WINDOWS),
     {
         22: PortScanData(22, PortStatus.CLOSED, None, None),
         445: PortScanData(445, PortStatus.OPEN, "SMB BANNER", "tcp-445"),
@@ -52,7 +48,7 @@ dot_1_scan_results = IPScanResults(
 )
 
 dot_3_scan_results = IPScanResults(
-    PingScanData(True, "linux"),
+    PingScanData(True, OperatingSystem.LINUX),
     {
         22: PortScanData(22, PortStatus.OPEN, "SSH BANNER", "tcp-22"),
         443: PortScanData(443, PortStatus.OPEN, "HTTPS BANNER", "tcp-443"),

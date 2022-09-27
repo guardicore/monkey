@@ -1,7 +1,9 @@
 from abc import abstractmethod
 from typing import Dict
 
-from . import FingerprintData, PingScanData, PortScanData
+from common.types import PingScanData
+
+from . import FingerprintData, PortScanData
 
 
 class IFingerprinter:

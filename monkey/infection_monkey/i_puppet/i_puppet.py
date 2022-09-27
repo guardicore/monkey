@@ -6,6 +6,7 @@ from enum import Enum
 from typing import Dict, Iterable, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
+from common.types import PingScanData
 from infection_monkey.model import VictimHost
 
 from . import PluginType
@@ -31,7 +32,6 @@ class ExploiterResultData:
     error_message: str = ""
 
 
-PingScanData = namedtuple("PingScanData", ["response_received", "os"])
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
 PostBreachData = namedtuple("PostBreachData", ["display_name", "command", "result"])

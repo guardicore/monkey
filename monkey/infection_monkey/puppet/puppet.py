@@ -4,12 +4,12 @@ from typing import Dict, Iterable, Sequence
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
+from common.types import PingScanData
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
     IPuppet,
-    PingScanData,
     PluginType,
     PortScanData,
     PostBreachData,

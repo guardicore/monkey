@@ -1,17 +1,26 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from ipaddress import IPv4Address
+from typing import Optional
 from uuid import UUID
 
 from pydantic import PositiveInt, conint
 from typing_extensions import TypeAlias
 
+from common import OperatingSystem
 from common.base_models import InfectionMonkeyBaseModel
 from common.network.network_utils import address_to_ip_port
 
 AgentID: TypeAlias = UUID
 HardwareID: TypeAlias = PositiveInt
 MachineID: TypeAlias = PositiveInt
+
+
+@dataclass
+class PingScanData:
+    response_received: bool
+    os: Optional[OperatingSystem]
 
 
 class SocketAddress(InfectionMonkeyBaseModel):

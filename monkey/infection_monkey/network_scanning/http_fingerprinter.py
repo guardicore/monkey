@@ -5,13 +5,8 @@ from typing import Any, Dict, Iterable, Optional, Set, Tuple
 from requests import head
 from requests.exceptions import ConnectionError, Timeout
 
-from infection_monkey.i_puppet import (
-    FingerprintData,
-    IFingerprinter,
-    PingScanData,
-    PortScanData,
-    PortStatus,
-)
+from common.types import PingScanData
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PortScanData, PortStatus
 
 logger = logging.getLogger(__name__)
 

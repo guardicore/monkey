@@ -1,14 +1,14 @@
 import logging
 import threading
-from typing import Dict, Iterable, List, Sequence
+from typing import Dict, Iterable, Sequence
 
 from common import OperatingSystem
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
+from common.types import PingScanData
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
     IPuppet,
-    PingScanData,
     PluginType,
     PortScanData,
     PortStatus,
@@ -25,26 +25,34 @@ logger = logging.getLogger()
 
 
 class MockPuppet(IPuppet):
-    def load_plugin(self, plugin: object, plugin_type: PluginType) -> None:
+    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
         logger.debug(f"load_plugin({plugin}, {plugin_type})")
 
     def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
         logger.debug(f"run_credential_collector({name})")
 
         if name == "SSHCollector":
-            ssh_credentials = Credentials(
-                [Username("m0nk3y")],
-                [
-                    SSHKeypair("Public_Key_0", "Private_Key_0"),
-                    SSHKeypair("Public_Key_1", "Private_Key_1"),
-                ],
-            )
-            return [ssh_credentials]
+            ssh_credentials = [
+                Credentials(
+                    identity=Username(username="m0nk3y"),
+                    secret=SSHKeypair(private_key="Public_Key_0", public_key="Private_Key_0"),
+                ),
+                Credentials(
+                    identity=Username(username="m0nk3y"),
+                    secret=SSHKeypair(private_key="Public_Key_1", public_key="Private_Key_1"),
+                ),
+            ]
+            return ssh_credentials
         elif name == "MimikatzCollector":
-            windows_credentials = Credentials(
-                [Username("test_user")], [Password("1234"), LMHash("DEADBEEF")]
-            )
-            return [windows_credentials]
+            windows_credentials = [
+                Credentials(
+                    identity=Username(username="test_user"), secret=Password(password="1234")
+                ),
+                Credentials(
+                    identity=Username(username="test_user"), secret=LMHash(lm_hash="DEADBEEF")
+                ),
+            ]
+            return windows_credentials
 
         return []
 
@@ -59,13 +67,13 @@ class MockPuppet(IPuppet):
     def ping(self, host: str, timeout: float = 1) -> PingScanData:
         logger.debug(f"run_ping({host}, {timeout})")
         if host == DOT_1:
-            return PingScanData(True, "windows")
+            return PingScanData(True, OperatingSystem.WINDOWS)
 
         if host == DOT_2:
             return PingScanData(False, None)
 
         if host == DOT_3:
-            return PingScanData(True, "linux")
+            return PingScanData(True, OperatingSystem.LINUX)
 
         if host == DOT_4:
             return PingScanData(False, None)
@@ -73,7 +81,7 @@ class MockPuppet(IPuppet):
         return PingScanData(False, None)
 
     def scan_tcp_ports(
-        self, host: str, ports: List[int], timeout: float = 3
+        self, host: str, ports: Sequence[int], timeout: float = 3
     ) -> Dict[int, PortScanData]:
         logger.debug(f"run_scan_tcp_port({host}, {ports}, {timeout})")
         dot_1_results = {
@@ -139,6 +147,7 @@ class MockPuppet(IPuppet):
         name: str,
         host: VictimHost,
         current_depth: int,
+        servers: Sequence[str],
         options: Dict,
         interrupt: threading.Event,
     ) -> ExploiterResultData:
@@ -186,19 +195,19 @@ class MockPuppet(IPuppet):
         successful_exploiters = {
             DOT_1: {
                 "ZerologonExploiter": ExploiterResultData(
-                    False, False, False, OperatingSystem.WINDOWS, {}, [], "Zerologon failed"
+                    False, False, False, OperatingSystem.WINDOWS.value, {}, [], "Zerologon failed"
                 ),
                 "SSHExploiter": ExploiterResultData(
                     False,
                     False,
                     False,
-                    OperatingSystem.LINUX,
+                    OperatingSystem.LINUX.value,
                     info_ssh,
                     attempts,
                     "Failed exploiting",
                 ),
                 "WmiExploiter": ExploiterResultData(
-                    True, True, False, OperatingSystem.WINDOWS, info_wmi, attempts, None
+                    True, True, False, OperatingSystem.WINDOWS.value, info_wmi, attempts
                 ),
             },
             DOT_3: {
@@ -206,7 +215,7 @@ class MockPuppet(IPuppet):
                     False,
                     False,
                     False,
-                    OperatingSystem.WINDOWS,
+                    OperatingSystem.WINDOWS.value,
                     info_wmi,
                     attempts,
                     "PowerShell Exploiter Failed",
@@ -215,13 +224,13 @@ class MockPuppet(IPuppet):
                     False,
                     False,
                     False,
-                    OperatingSystem.LINUX,
+                    OperatingSystem.LINUX.value,
                     info_ssh,
                     attempts,
                     "Failed exploiting",
                 ),
                 "ZerologonExploiter": ExploiterResultData(
-                    True, False, False, OperatingSystem.WINDOWS, {}, [], None
+                    True, False, False, OperatingSystem.WINDOWS.value, {}, []
                 ),
             },
         }
@@ -233,7 +242,7 @@ class MockPuppet(IPuppet):
                 False,
                 False,
                 False,
-                OperatingSystem.LINUX,
+                OperatingSystem.LINUX.value,
                 {},
                 [],
                 f"{name} failed for host {host}",
