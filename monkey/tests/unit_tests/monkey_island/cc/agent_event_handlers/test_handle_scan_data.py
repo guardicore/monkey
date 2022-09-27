@@ -69,11 +69,18 @@ def handler(agent_repository, machine_repository, node_repository) -> handle_sca
     return handle_scan_data(agent_repository, machine_repository, node_repository)
 
 
+machines = {MACHINE_ID: MACHINE, STORED_MACHINE.id: STORED_MACHINE}
+
+
+def machine_from_id(id: int):
+    return machines[id]
+
+
 def test_handle_scan_data__upserts_machine(
     handler: handle_scan_data,
     machine_repository: IMachineRepository,
 ):
-    machine_repository.get_machine_by_id = MagicMock(return_value=STORED_MACHINE)
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     handler(EVENT)
 
     expected_machine = STORED_MACHINE.copy()
@@ -121,5 +128,12 @@ def test_handle_scan_data__node_not_upserted_if_no_matching_machine(
     assert not node_repository.upsert_communication.called
 
 
-def test_handle_scan_data__upserts_machine_if_did_not_exist(handler: handle_scan_data):
-    pass
+def test_handle_scan_data__upserts_machine_if_not_existed(
+    handler: handle_scan_data, machine_repository: IMachineRepository
+):
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    handler(EVENT)
+
+    expected_machine = Machine(id=SEED_ID, operating_system=OperatingSystem.LINUX)
+
+    assert machine_repository.upsert_machine.called_with(expected_machine)
