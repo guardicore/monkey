@@ -8,6 +8,7 @@ from monkey_island.cc.repository import (
     IMachineRepository,
     INodeRepository,
     RetrievalError,
+    StorageError,
     UnknownRecordError,
 )
 
@@ -52,5 +53,5 @@ class handle_scan_data:
             self._node_repository.upsert_communication(
                 src_machine.id, dest_machine.id, CommunicationType.SCANNED
             )
-        except (RetrievalError, UnknownRecordError) as err:
+        except (RetrievalError, StorageError, UnknownRecordError) as err:
             logger.error(f"Unable to process scan data: {err}")
