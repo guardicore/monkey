@@ -4,7 +4,6 @@ from contextlib import suppress
 from typing import Dict, Iterable, Iterator, Optional
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
-from common.network.network_utils import address_to_ip_port
 from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     AbstractIslandAPIClientFactory,
@@ -89,8 +88,7 @@ def send_remove_from_waitlist_control_message_to_relays(servers: Iterable[str]):
 
 
 def _send_remove_from_waitlist_control_message_to_relay(server: str):
-    server_address = SocketAddress(*address_to_ip_port(server))
-    notify_disconnect(server_address)
+    notify_disconnect(SocketAddress.from_string(server))
 
 
 def notify_disconnect(server_address: SocketAddress):
