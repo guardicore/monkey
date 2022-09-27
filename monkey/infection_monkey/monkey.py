@@ -5,7 +5,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
-from typing import List, Optional, Tuple
+from typing import List, Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
 
@@ -258,10 +258,10 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_server_list(self, relay_port: int):
+    def _build_server_list(self, relay_port: int) -> Sequence[str]:
         my_servers = set(map(str, self._opts.servers))
         relay_servers = {f"{ip}:{relay_port}" for ip in get_my_ip_addresses()}
-        return my_servers.union(relay_servers)
+        return list(my_servers.union(relay_servers))
 
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)
