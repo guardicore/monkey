@@ -762,6 +762,38 @@ This prevents ssh exploitation, but allows tunneling.</td>
 <table>
 <thead>
 <tr class="header">
+<th><p><span id="_Toc536021479" class="anchor"></span>Nr. <strong>3-44 Powershell</strong></p>
+<p>(10.2.3.44)</p></th>
+<th>(Vulnerable)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OS:</td>
+<td><strong>Windows Server 2016 x64</strong></td>
+</tr>
+<tr class="even">
+<td>Software:</td>
+<td>WinRM service</td>
+</tr>
+<tr class="odd">
+<td>Default server’s port: 5985, 5986</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td>Notes:</td>
+<td>User: m0nk3y, Password: nPj8rbc3<br>
+Accessible using the same m0nk3y user from powershell-3-46,
+in other words powershell exploiter can exploit
+this machine without credentials as long as the user running the agent has
+the same credentials on both machines</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr class="header">
 <th><p><span id="_Toc536021479" class="anchor"></span>Nr. <strong>3-45 Powershell</strong></p>
 <p>(10.2.3.45)</p></th>
 <th>(Vulnerable)</th>
@@ -804,17 +836,17 @@ Accessibale through Island using m0nk3y-user.</td>
 <tr class="even">
 <td>Software:</td>
 <td>WinRM service</td>
+<td>Tomcat 8.0.36</td>
 </tr>
 <tr class="odd">
-<td>Default server’s port:</td>
+<td>Default server’s port:8080</td>
 <td>-</td>
 </tr>
 <tr class="even">
 <td>Notes:</td>
 <td>User: m0nk3y, Password: nPj8rbc3<br>
-Accessible using the same m0nk3y user from island, in other words powershell exploiter can exploit
-this machine without credentials as long as the user running the agent is the same on both
-machines</td>
+Exploited from island via log4shell(tomcat). Then uses cached powershell credentials to
+propagate to powershell-3-44</td>
 </tr>
 </tbody>
 </table>

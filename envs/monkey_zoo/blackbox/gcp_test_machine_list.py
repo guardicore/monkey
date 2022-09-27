@@ -15,6 +15,7 @@ GCP_TEST_MACHINE_LIST = {
         "zerologon-25",
     ],
     "europe-west1-b": [
+        "powershell-3-44",
         "powershell-3-45",
         "powershell-3-46",
         "powershell-3-47",
@@ -35,7 +36,11 @@ DEPTH_2_A = {
     "europe-west3-a": [
         "sshkeys-11",
         "sshkeys-12",
-    ]
+    ],
+    "europe-west1-b": [
+        "powershell-3-46",
+        "powershell-3-44",
+    ],
 }
 
 
@@ -60,7 +65,6 @@ DEPTH_3_A = {
     ],
     "europe-west1-b": [
         "powershell-3-45",
-        "powershell-3-46",
         "powershell-3-47",
         "powershell-3-48",
     ],
@@ -73,13 +77,6 @@ DEPTH_4_A = {
         "tunneling-12",
         "tunneling-13",
     ],
-}
-
-
-POWERSHELL_EXPLOITER_REUSE = {
-    "europe-west1-b": [
-        "powershell-3-46",
-    ]
 }
 
 ZEROLOGON = {
@@ -110,7 +107,6 @@ GCP_SINGLE_TEST_LIST = {
     "test_depth_1_a": DEPTH_1_A,
     "test_depth_3_a": DEPTH_3_A,
     "test_depth_4_a": DEPTH_4_A,
-    "test_powershell_exploiter_credentials_reuse": POWERSHELL_EXPLOITER_REUSE,
     "test_zerologon_exploiter": ZEROLOGON,
     "test_credentials_reuse_ssh_key": CREDENTIALS_REUSE_SSH_KEY,
     "test_wmi_and_mimikatz_exploiters": WMI_AND_MIMIKATZ,

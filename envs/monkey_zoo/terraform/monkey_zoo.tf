@@ -311,6 +311,21 @@ resource "google_compute_instance_from_template" "powershell-3-46" {
   }
 }
 
+resource "google_compute_instance_from_template" "powershell-3-44" {
+  name = "${local.resource_prefix}powershell-3-44"
+  source_instance_template = local.default_windows
+  boot_disk{
+    initialize_params {
+      image = data.google_compute_image.powershell-3-44.self_link
+    }
+    auto_delete = true
+  }
+  network_interface {
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
+    network_ip="10.2.3.44"
+  }
+}
+
 resource "google_compute_instance_from_template" "powershell-3-45" {
   name = "${local.resource_prefix}powershell-3-45"
   source_instance_template = local.default_windows
