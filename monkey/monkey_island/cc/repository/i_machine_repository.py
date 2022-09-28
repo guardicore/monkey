@@ -54,6 +54,15 @@ class IMachineRepository(ABC):
         """
 
     @abstractmethod
+    def get_machines(self) -> Sequence[Machine]:
+        """
+        Get all machines in the repository
+
+        :return: A sequence of all stored `Machine`s
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Machine`s
+        """
+
+    @abstractmethod
     def get_machines_by_ip(self, ip: IPv4Address) -> Sequence[Machine]:
         """
         Search for machines by IP address
