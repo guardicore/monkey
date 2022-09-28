@@ -162,7 +162,7 @@ class ReportService:
         def is_island(machine: Machine):
             return machine.island
 
-        return chain(filter(is_island, t1), *filterfalse(is_island, t2))
+        return chain(filter(is_island, t1), filterfalse(is_island, t2))
 
     @staticmethod
     def process_exploit(exploit) -> ExploiterReportInfo:
