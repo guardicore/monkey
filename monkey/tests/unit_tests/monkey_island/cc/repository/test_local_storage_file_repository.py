@@ -146,11 +146,11 @@ def test_open_locked_file(tmp_path, monkeypatch):
 
 
 def test_delete_files_by_pattern(tmp_path):
-    for filename in ["xyz-1.txt", "abc-2.txt", "pqr-3.txt", "abc-4.txt"]:
+    for filename in {"xyz-1.txt", "abc-2.txt", "pqr-3.txt", "abc-4.txt", "abc-5.pdf"}:
         (tmp_path / filename).touch()
 
     fss = LocalStorageFileRepository(tmp_path)
-    fss.delete_files_by_pattern("abc-*")
+    fss.delete_files_by_pattern("abc-*.txt")
 
-    files = list(tmp_path.iterdir())
-    assert len(files) == 2
+    files = {f.name for f in tmp_path.iterdir()}
+    assert files == {"xyz-1.txt", "pqr-3.txt", "abc-5.pdf"}
