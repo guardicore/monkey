@@ -1,5 +1,6 @@
-import glob
 import logging
+import os
+import re
 import shutil
 from pathlib import Path
 from typing import BinaryIO
@@ -56,9 +57,10 @@ class LocalStorageFileRepository(IFileRepository):
                 f'Error retrieving file "{unsafe_file_name}" from the repository: {err}'
             )
 
-    def delete_files_by_pattern(self, file_name_pattern: str):
-        for file_name in glob.iglob(f"{self._storage_directory}/{file_name_pattern}"):
-            self.delete_file(file_name)
+    def delete_files_by_regex(self, file_name_regex: re.Pattern):
+        for file_name in os.listdir(self._storage_directory):
+            if re.match(file_name_regex, file_name):
+                self.delete_file(file_name)
 
     def delete_file(self, unsafe_file_name: str):
         try:
