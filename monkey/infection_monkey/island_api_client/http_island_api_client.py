@@ -92,9 +92,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._api_url = f"https://{island_server}/api"
 
     @handle_island_errors
-    def send_log(self, log_contents: str):
+    def send_log(self, agent_id: int, log_contents: str):
         response = requests.post(  # noqa: DUO123
-            f"{self._api_url}/log",
+            f"{self._api_url}/agent-logs/{agent_id}",
             json=log_contents,
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
