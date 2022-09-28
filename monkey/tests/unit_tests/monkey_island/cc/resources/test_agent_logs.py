@@ -3,9 +3,9 @@ from uuid import UUID
 
 import pytest
 from tests.common import StubDIContainer
+from tests.monkey_island import InMemoryAgentLogRepository
 
-from common.types import AgentID
-from monkey_island.cc.repository import IAgentLogRepository, UnknownRecordError
+from monkey_island.cc.repository import IAgentLogRepository
 
 AGENT_ID_1 = UUID("c0dd10b3-e21a-4da9-9d96-a99c19ebd7c5")
 AGENT_ID_2 = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
@@ -14,27 +14,10 @@ AGENT_LOGS_URL_1 = f"/api/agent-logs/{AGENT_ID_1}"
 AGENT_LOGS_URL_2 = f"/api/agent-logs/{AGENT_ID_2}"
 
 
-class StubAgentLogRepository(IAgentLogRepository):
-    def __init__(self):
-        self._agent_logs = {}
-
-    def upsert_agent_log(self, agent_id: AgentID, log_contents: str):
-        if agent_id not in self._agent_logs.keys():
-            self._agent_logs[agent_id] = log_contents
-
-    def get_agent_log(self, agent_id: AgentID) -> str:
-        if agent_id not in self._agent_logs:
-            raise UnknownRecordError("Error occured while getting agent")
-        return self._agent_logs[agent_id]
-
-    def reset(self):
-        self._agent_logs = {}
-
-
 @pytest.fixture
 def flask_client(build_flask_client):
     container = StubDIContainer()
-    container.register_instance(IAgentLogRepository, StubAgentLogRepository())
+    container.register_instance(IAgentLogRepository, InMemoryAgentLogRepository())
 
     with build_flask_client(container) as flask_client:
         yield flask_client
