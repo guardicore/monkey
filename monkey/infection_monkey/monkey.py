@@ -111,6 +111,7 @@ class InfectionMonkey:
 
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+        self._agent_id = get_agent_id()
 
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
@@ -122,7 +123,7 @@ class InfectionMonkey:
             server_address=self._island_address, island_api_client=self._island_api_client
         )
         self._control_channel = ControlChannel(
-            str(self._island_address), get_agent_id(), self._island_api_client
+            str(self._island_address), self._agent_id, self._island_api_client
         )
         self._register_agent()
 
@@ -176,7 +177,7 @@ class InfectionMonkey:
 
     def _register_agent(self):
         agent_registration_data = AgentRegistrationData(
-            id=get_agent_id(),
+            id=self._agent_id,
             machine_hardware_id=get_machine_id(),
             start_time=agent_process.get_start_time(),
             # parent_id=parent,
@@ -496,11 +497,11 @@ class InfectionMonkey:
         monkey_log_path = get_agent_log_path()
         if monkey_log_path.is_file():
             with open(monkey_log_path, "r") as f:
-                log = f.read()
+                log_contents = f.read()
         else:
-            log = ""
+            log_contents = ""
 
-        self._control_client.send_log(log)
+        self._island_api_client.send_log(self._agent_id, log_contents)
 
     @staticmethod
     def _self_delete() -> bool:

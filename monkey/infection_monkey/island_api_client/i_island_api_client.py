@@ -5,7 +5,7 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.credentials import Credentials
-from common.types import SocketAddress
+from common.types import AgentID, SocketAddress
 
 
 class IIslandAPIClient(ABC):
@@ -30,10 +30,11 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_log(self, log_contents: str):
+    def send_log(self, agent_id: AgentID, log_contents: str):
         """
         Send the contents of the agent's log to the island
 
+        :param agent_id: The ID of the agent whose logs are being sent
         :param log_contents: The contents of the agent's log
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the

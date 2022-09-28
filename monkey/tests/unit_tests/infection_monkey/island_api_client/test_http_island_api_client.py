@@ -37,7 +37,7 @@ AGENT_REGISTRATION = AgentRegistrationData(
 TIMESTAMP = 123456789
 
 ISLAND_URI = f"https://{SERVER}/api?action=is-up"
-ISLAND_SEND_LOG_URI = f"https://{SERVER}/api/log"
+ISLAND_SEND_LOG_URI = f"https://{SERVER}/api/agent-logs/{AGENT_ID}"
 ISLAND_GET_PBA_FILE_URI = f"https://{SERVER}/api/pba/download/{PBA_FILE}"
 ISLAND_GET_AGENT_BINARY_URI = f"https://{SERVER}/api/agent-binaries/{WINDOWS}"
 ISLAND_SEND_EVENTS_URI = f"https://{SERVER}/api/agent-events"
@@ -119,8 +119,8 @@ def test_island_api_client__send_log(island_api_client, actual_error, expected_e
         island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
-            m.post(ISLAND_SEND_LOG_URI, exc=actual_error)
-            island_api_client.send_log(log_contents="some_data")
+            m.put(ISLAND_SEND_LOG_URI, exc=actual_error)
+            island_api_client.send_log(agent_id=AGENT_ID, log_contents="some_data")
 
 
 @pytest.mark.parametrize(
@@ -136,8 +136,8 @@ def test_island_api_client_send_log__status_code(island_api_client, status_code,
         island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
-            m.post(ISLAND_SEND_LOG_URI, status_code=status_code)
-            island_api_client.send_log(log_contents="some_data")
+            m.put(ISLAND_SEND_LOG_URI, status_code=status_code)
+            island_api_client.send_log(agent_id=AGENT_ID, log_contents="some_data")
 
 
 @pytest.mark.parametrize(

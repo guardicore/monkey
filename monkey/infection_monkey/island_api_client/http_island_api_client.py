@@ -16,7 +16,7 @@ from common.common_consts.timeouts import (
     SHORT_REQUEST_TIMEOUT,
 )
 from common.credentials import Credentials
-from common.types import SocketAddress
+from common.types import AgentID, SocketAddress
 
 from . import (
     AbstractIslandAPIClientFactory,
@@ -92,9 +92,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._api_url = f"https://{island_server}/api"
 
     @handle_island_errors
-    def send_log(self, log_contents: str):
-        response = requests.post(  # noqa: DUO123
-            f"{self._api_url}/log",
+    def send_log(self, agent_id: AgentID, log_contents: str):
+        response = requests.put(  # noqa: DUO123
+            f"{self._api_url}/agent-logs/{agent_id}",
             json=log_contents,
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
