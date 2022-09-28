@@ -4,10 +4,14 @@ import os
 import re
 import subprocess
 import sys
+from ipaddress import IPv4Address
 
 from common import OperatingSystem
+from common.agent_events import PingScanEvent
+from common.event_queue import IAgentEventQueue
 from common.types import PingScanData
 from infection_monkey.utils.environment import is_windows_os
+from infection_monkey.utils.ids import get_agent_id
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
 LINUX_TTL = 64  # Windows TTL is 128
@@ -17,15 +21,15 @@ EMPTY_PING_SCAN = PingScanData(False, None)
 logger = logging.getLogger(__name__)
 
 
-def ping(host: str, timeout: float) -> PingScanData:
+def ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> PingScanData:
     try:
-        return _ping(host, timeout)
+        return _ping(host, timeout, agent_event_queue)
     except Exception:
         logger.exception("Unhandled exception occurred while running ping")
         return EMPTY_PING_SCAN
 
 
-def _ping(host: str, timeout: float) -> PingScanData:
+def _ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> PingScanData:
     if is_windows_os():
         timeout = math.floor(timeout * 1000)
 
@@ -33,6 +37,10 @@ def _ping(host: str, timeout: float) -> PingScanData:
 
     ping_scan_data = _process_ping_command_output(ping_command_output)
     logger.debug(f"{host} - {ping_scan_data}")
+
+    agent_event_queue.publish(
+        PingScanEvent(source=get_agent_id(), target=IPv4Address(host), scan_data=ping_scan_data)
+    )
 
     return ping_scan_data
 
