@@ -9,7 +9,11 @@ from common import OperatingSystem
 from common.agent_events import PingScanEvent
 
 PING_EVENT = PingScanEvent(
-    source=AGENT_ID, target=IPv4Address("1.1.1.1"), response_received=True, os=OperatingSystem.LINUX
+    source=AGENT_ID,
+    target=IPv4Address("1.1.1.1"),
+    timestamp=1664371327.4067292,
+    response_received=True,
+    os=OperatingSystem.LINUX,
 )
 
 PING_OBJECT_DICT = {
@@ -32,13 +36,11 @@ PING_SIMPLE_DICT = {
 
 
 def test_constructor():
-    # Raises exception_on_failure
-    PingScanEvent(**PING_OBJECT_DICT)
+    assert PingScanEvent(**PING_OBJECT_DICT) == PING_EVENT
 
 
 def test_from_dict():
-    # Raises exception_on_failure
-    PingScanEvent(**PING_SIMPLE_DICT)
+    assert PingScanEvent(**PING_SIMPLE_DICT) == PING_EVENT
 
 
 def test_to_dict():
