@@ -36,6 +36,10 @@ class FileRepositoryCachingDecorator(IFileRepository):
         self._open_file.cache_clear()
         return self._file_repository.delete_file(unsafe_file_name)
 
+    def delete_files_by_pattern(self, file_name_pattern: str):
+        self._open_file.cache_clear()
+        return self._file_repository.delete_files_by_pattern(file_name_pattern)
+
     def delete_all_files(self):
         self._open_file.cache_clear()
         return self._file_repository.delete_all_files()
