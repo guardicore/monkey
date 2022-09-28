@@ -69,6 +69,14 @@ class MongoMachineRepository(IMachineRepository):
 
         return Machine(**machine_dict)
 
+    def get_machines(self) -> Sequence[Machine]:
+        try:
+            cursor = self._machines_collection.find({}, {MONGO_OBJECT_ID_KEY: False})
+        except Exception as err:
+            raise RetrievalError(f"Error retrieving machines: {err}")
+
+        return list(map(lambda m: Machine(**m), cursor))
+
     def get_machines_by_ip(self, ip: IPv4Address) -> Sequence[Machine]:
         ip_regex = "^" + str(ip).replace(".", "\\.") + "\\/.*$"
         query = {"network_interfaces": {"$elemMatch": {"$regex": ip_regex}}}
