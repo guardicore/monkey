@@ -14,6 +14,7 @@ from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
     AgentEvents,
+    AgentLogs,
     Agents,
     AgentSignals,
     ClearSimulationData,
@@ -185,6 +186,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(ZeroTrustFindingEvent)
     api.add_resource(TelemetryFeed)
     api.add_resource(Log)
+    api.add_resource(AgentLogs)
     api.add_resource(IslandLog)
     api.add_resource(IPAddresses)
 
