@@ -1,12 +1,10 @@
 const SCAN_TARGET_CONFIGURATION_SCHEMA = {
   'title': 'Network',
   'type': 'object',
+  'description': 'If "Scan Agent\'s networks" is checked, the Monkey scans for machines on each ' +
+    'of the network interfaces of the machine it is running on.\nAdditionally, the Monkey scans ' +
+    'machines according to "Scan target list" and skips machines in "Blocked IPs".',
   'properties': {
-    'info_box_general': {
-      'info': 'The Monkey scans for machines on each of the network interfaces of the ' +
-        'machine it is running on, if "Scan Agent\'s networks" is checked. ' +
-        'Additionally, the Monkey scans machines according to "Scan target list". '
-    },
     'blocked_ips': {
       'title': 'Blocked IPs',
       'type': 'array',
