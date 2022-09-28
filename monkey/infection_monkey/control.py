@@ -13,7 +13,6 @@ from infection_monkey.config import GUID
 from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.network.info import get_host_subnets
 from infection_monkey.utils import agent_process
-from infection_monkey.utils.ids import get_agent_id
 
 disable_warnings()  # noqa DUO131
 
@@ -66,14 +65,6 @@ class ControlClient:
                 verify=False,
                 timeout=MEDIUM_REQUEST_TIMEOUT,
             )
-        except Exception as exc:
-            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
-
-    def send_log(self, log):
-        try:
-            monkey_guid = get_agent_id()
-            log_contents = json.dumps(log)
-            self._island_api_client.send_log(monkey_guid, log_contents)
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
