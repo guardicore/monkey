@@ -18,29 +18,6 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
       'default': [],
       'description': 'List of IPs that the monkey will not scan.'
     },
-    'inaccessible_subnets': {
-      'title': 'Network segmentation testing',
-      'type': 'array',
-      'uniqueItems': true,
-      'items': {
-        'type': 'string',
-        'format': 'ip-range'
-      },
-      'default': [],
-      'description': 'Test for network segmentation by providing a list of network segments that should NOT be accessible to each other.\n\n ' +
-        'For example, if you configured the following three segments: ' +
-        '"10.0.0.0/24", "11.0.0.2/32" and "12.2.3.0/24",' +
-        'a Monkey running on 10.0.0.5 will try to access machines in ' +
-        'the following subnets: ' +
-        '11.0.0.2/32, 12.2.3.0/24. An alert on successful cross-segment connections ' +
-        'will be shown in the reports. \n\n' +
-        'Network segments can be IPs, subnets or hosts. Examples:\n' +
-        '\tDefine a single-IP segment: "192.168.0.1"\n' +
-        '\tDefine a segment using a network range: ' +
-        '"192.168.0.5-192.168.0.20"\n' +
-        '\tDefine a segment using an subnet IP mask: "192.168.0.5/24"\n' +
-        '\tDefine a single-host segment: "printer.example"'
-    },
     'info_box_scan_my_networks': {
       'info': 'If "Scan Agent\'s networks" is enabled, the Agent will go over all network ' +
         'interfaces and will scan their networks, ' +
@@ -70,8 +47,30 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
         '"192.168.0.5-192.168.0.20"\n' +
         '\tTarget a subnet using an IP mask: "192.168.0.5/24"\n' +
         '\tTarget a specific host: "printer.example"'
-    }
-
+    },
+    'inaccessible_subnets': {
+      'title': 'Network segmentation testing',
+      'type': 'array',
+      'uniqueItems': true,
+      'items': {
+        'type': 'string',
+        'format': 'ip-range'
+      },
+      'default': [],
+      'description': 'Test for network segmentation by providing a list of network segments that should NOT be accessible to each other.\n\n ' +
+        'For example, if you configured the following three segments: ' +
+        '"10.0.0.0/24", "11.0.0.2/32" and "12.2.3.0/24",' +
+        'a Monkey running on 10.0.0.5 will try to access machines in ' +
+        'the following subnets: ' +
+        '11.0.0.2/32, 12.2.3.0/24. An alert on successful cross-segment connections ' +
+        'will be shown in the reports. \n\n' +
+        'Network segments can be IPs, subnets or hosts. Examples:\n' +
+        '\tDefine a single-IP segment: "192.168.0.1"\n' +
+        '\tDefine a segment using a network range: ' +
+        '"192.168.0.5-192.168.0.20"\n' +
+        '\tDefine a segment using an subnet IP mask: "192.168.0.5/24"\n' +
+        '\tDefine a single-host segment: "printer.example"'
+    },
   }
 }
 export default SCAN_TARGET_CONFIGURATION_SCHEMA;
