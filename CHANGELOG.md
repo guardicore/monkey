@@ -66,7 +66,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Tunneling to relays to provide better firewall evasion, faster Island
   connection times, unlimited hops, and a more resilient way for agents to call
   home. #2216, #1583
-- "/api/monkey-control/stop-all-agents" to "/api/agent-signals/terminate-all-agents" #2261
+- "/api/monkey-control/stop-all-agents" to "/api/agent-signals/terminate-all-agents". #2261
+- "Local network scan" option to "Scan Agent's networks". #2299
 
 ### Removed
 - VSFTPD exploiter. #1533
