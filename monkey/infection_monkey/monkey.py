@@ -497,11 +497,11 @@ class InfectionMonkey:
         monkey_log_path = get_agent_log_path()
         if monkey_log_path.is_file():
             with open(monkey_log_path, "r") as f:
-                log = f.read()
+                log_contents = f.read()
         else:
-            log = ""
+            log_contents = ""
 
-        self._control_client.send_log(log)
+        self._island_api_client.send_log(self._agent_id, log_contents)
 
     @staticmethod
     def _self_delete() -> bool:
