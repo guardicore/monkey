@@ -318,7 +318,7 @@ class InfectionMonkey:
         self,
         agent_event_queue: IAgentEventQueue,
     ) -> IPuppet:
-        puppet = Puppet()
+        puppet = Puppet(agent_event_queue)
 
         puppet.load_plugin(
             "MimikatzCollector",
