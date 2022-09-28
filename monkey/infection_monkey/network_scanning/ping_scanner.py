@@ -38,9 +38,8 @@ def _ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> Pin
     ping_scan_data = _process_ping_command_output(ping_command_output)
     logger.debug(f"{host} - {ping_scan_data}")
 
-    agent_event_queue.publish(
-        PingScanEvent(source=get_agent_id(), target=IPv4Address(host), scan_data=ping_scan_data)
-    )
+    ping_scan_event = _generate_ping_scan_event(host, ping_scan_data)
+    agent_event_queue.publish(ping_scan_event)
 
     return ping_scan_data
 
@@ -98,3 +97,12 @@ def _build_ping_command(host: str, timeout: float):
 
     # on older version of ping the timeout must be an integer, thus we use ceil
     return ["ping", ping_count_flag, "1", ping_timeout_flag, str(math.ceil(timeout)), host]
+
+
+def _generate_ping_scan_event(host: str, ping_scan_data: PingScanData) -> PingScanEvent:
+    return PingScanEvent(
+        source=get_agent_id(),
+        target=IPv4Address(host),
+        response_received=ping_scan_data.response_received,
+        os=ping_scan_data.os,
+    )
