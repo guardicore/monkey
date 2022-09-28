@@ -47,13 +47,7 @@ def test_agent_logs_endpoint__get_empty(flask_client):
     "url,log", [(AGENT_LOGS_URL_1, "LoremIpsum1"), (AGENT_LOGS_URL_2, "SecondLoremIpsum")]
 )
 def test_agent_logs_endpoint(flask_client, url, log):
-    flask_client.put(url, json={"log_contents": log}, follow_redirects=True)
+    flask_client.put(url, json=log, follow_redirects=True)
     resp = flask_client.get(url, follow_redirects=True)
     assert resp.status_code == HTTPStatus.OK
     assert resp.json == log
-
-
-def test_agent_logs_endpoint__put_bad_json(flask_client):
-    resp = flask_client.put(AGENT_LOGS_URL_1, json={"bad_key": "bad"}, follow_redirects=True)
-
-    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
