@@ -17,8 +17,8 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
       'description': 'List of IPs that the monkey will not scan.'
     },
     'info_box_scan_my_networks': {
-      'info': 'If the Agent runs on a machine within a public network, ' +
-        'this setting will cause scanning and exploitation attempts on that network.'
+      'info': 'If the agent runs on a machine that has a publicly-facing network interface, ' +
+        'this setting could cause scanning and exploitation of systems outside your organization.'
     },
     'scan_my_networks': {
       'title': 'Scan Agent\'s networks',
