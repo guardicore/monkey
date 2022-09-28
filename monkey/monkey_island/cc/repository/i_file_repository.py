@@ -1,10 +1,11 @@
 import abc
 from typing import BinaryIO
 
-from monkey_island.cc.repository import RetrievalError
+from monkey_island.cc.repository import UnknownRecordError
 
 
-class FileNotFoundError(RetrievalError):
+# TODO: Remove this and use UnknownRecordError directly wherever needed.
+class FileNotFoundError(UnknownRecordError):
     pass
 
 

@@ -1,14 +1,8 @@
 import io
 import re
 
-from monkey_island.cc import repository
 from monkey_island.cc.models import AgentID
-from monkey_island.cc.repository import (
-    IAgentLogRepository,
-    IFileRepository,
-    RetrievalError,
-    UnknownRecordError,
-)
+from monkey_island.cc.repository import IAgentLogRepository, IFileRepository, RetrievalError
 
 AGENT_LOG_FILE_NAME_PATTERN = "agent-*.log"
 AGENT_LOG_FILE_NAME_REGEX = re.compile(r"^agent-[\w-]+.log$")
@@ -28,8 +22,6 @@ class FileAgentLogRepository(IAgentLogRepository):
             with self._file_repository.open_file(self._get_agent_log_file_name(agent_id)) as f:
                 log_contents = f.read().decode()
                 return log_contents
-        except repository.FileNotFoundError as err:
-            raise UnknownRecordError(err)
         except Exception as err:
             raise RetrievalError(f"Error retrieving the agent logs: {err}")
 
