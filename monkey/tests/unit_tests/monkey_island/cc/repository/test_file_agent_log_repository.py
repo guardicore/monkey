@@ -42,6 +42,7 @@ def test_get_agent_log__retrieval_error():
 
 def test_get_agent_log__corrupt_data():
     file_repository = MagicMock(spec=IFileRepository)
+    # Return invalid unicode
     file_repository.open_file = MagicMock(return_value=io.BytesIO(b"\xff\xfe"))
     repository = FileAgentLogRepository(file_repository)
 
