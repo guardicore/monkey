@@ -5,6 +5,7 @@ import re
 import subprocess
 import sys
 from ipaddress import IPv4Address
+from time import time
 
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
@@ -33,12 +34,14 @@ def _ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> Pin
     if is_windows_os():
         timeout = math.floor(timeout * 1000)
 
+    event_timestamp = time()
+
     ping_command_output = _run_ping_command(host, timeout)
 
     ping_scan_data = _process_ping_command_output(ping_command_output)
     logger.debug(f"{host} - {ping_scan_data}")
 
-    ping_scan_event = _generate_ping_scan_event(host, ping_scan_data)
+    ping_scan_event = _generate_ping_scan_event(host, ping_scan_data, event_timestamp)
     agent_event_queue.publish(ping_scan_event)
 
     return ping_scan_data
@@ -99,10 +102,13 @@ def _build_ping_command(host: str, timeout: float):
     return ["ping", ping_count_flag, "1", ping_timeout_flag, str(math.ceil(timeout)), host]
 
 
-def _generate_ping_scan_event(host: str, ping_scan_data: PingScanData) -> PingScanEvent:
+def _generate_ping_scan_event(
+    host: str, ping_scan_data: PingScanData, event_timestamp: float
+) -> PingScanEvent:
     return PingScanEvent(
         source=get_agent_id(),
         target=IPv4Address(host),
+        timestamp=event_timestamp,
         response_received=ping_scan_data.response_received,
         os=ping_scan_data.os,
     )
