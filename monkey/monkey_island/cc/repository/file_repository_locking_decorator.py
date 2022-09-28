@@ -26,6 +26,10 @@ class FileRepositoryLockingDecorator(IFileRepository):
         with self._rwlock.gen_wlock():
             return self._file_repository.delete_file(unsafe_file_name)
 
+    def delete_files_by_pattern(self, file_name_pattern: str):
+        with self._rwlock.gen_wlock():
+            return self._file_repository.delete_files_by_pattern(file_name_pattern)
+
     def delete_all_files(self):
         with self._rwlock.gen_wlock():
             return self._file_repository.delete_all_files()
