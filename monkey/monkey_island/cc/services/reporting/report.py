@@ -113,20 +113,23 @@ class ReportService:
     def get_scanned():
         formatted_nodes = []
 
-        nodes = ReportService.get_all_displayed_nodes()
+        machines = ReportService.get_all_machines()
 
-        for node in nodes:
+        for machine in machines:
             # This information should be evident from the map, not sure a table/list is a good way
             # to display it anyways
-            nodes_that_can_access_current_node = node["accessible_from_nodes_hostnames"]
+            addresses = [str(iface.ip) for iface in machine.network_interfaces]
+            accessible_machines = [
+                m.hostname for m in ReportService.get_accessible_machines(machine)
+            ]
             formatted_nodes.append(
                 {
-                    "label": node["label"],
-                    "ip_addresses": node["ip_addresses"],
-                    "accessible_from_nodes": nodes_that_can_access_current_node,
-                    "services": node["services"],
-                    "domain_name": node["domain_name"],
-                    "pba_results": node["pba_results"] if "pba_results" in node else "None",
+                    "label": machine.hostname,
+                    "ip_addresses": addresses,
+                    "accessible_from_nodes": accessible_machines,
+                    "services": [],
+                    "domain_name": "",
+                    "pba_results": "None",
                 }
             )
 
