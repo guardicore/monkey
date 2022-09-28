@@ -16,7 +16,7 @@ class IAgentEventRepository(ABC):
         Save an event to the repository
 
         :param event: The event to store in the repository
-        :raises StorageError: If an error occured while attempting to save an event
+        :raises StorageError: If an error occurred while attempting to save an event
         """
 
     @abstractmethod
@@ -25,7 +25,7 @@ class IAgentEventRepository(ABC):
         Retrieve all events stored in the repository
 
         :return: All stored events
-        :raises RetrievalError: If an error occured while attempting to retrieve the events
+        :raises RetrievalError: If an error occurred while attempting to retrieve the events
         """
 
     @abstractmethod
@@ -35,7 +35,7 @@ class IAgentEventRepository(ABC):
 
         :param event_type: Type of event
         :return: Stored events that have same type
-        :raises RetrievalError: If an error occured while attempting to retrieve the event
+        :raises RetrievalError: If an error occurred while attempting to retrieve the event
         """
 
     @abstractmethod
@@ -45,7 +45,7 @@ class IAgentEventRepository(ABC):
 
         :param tag: Tag of event
         :return: Stored events that have same tag
-        :raises RetrievalError: If an error occured while attempting to retrieve the event
+        :raises RetrievalError: If an error occurred while attempting to retrieve the event
         """
 
     @abstractmethod
@@ -55,7 +55,7 @@ class IAgentEventRepository(ABC):
 
         :param source: The ID of the agent that observed the events
         :return: Stored events that have same source
-        :raises RetrievalError: If an error occured while attempting to retrieve the event
+        :raises RetrievalError: If an error occurred while attempting to retrieve the event
         """
 
     @abstractmethod
