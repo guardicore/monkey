@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from tests.monkey_island import OpenErrorFileRepository, SingleFileRepository
+from tests.monkey_island import InMemoryFileRepository, OpenErrorFileRepository
 
 from monkey_island.cc.repository import (
     FileAgentLogRepository,
@@ -19,7 +19,7 @@ AGENT_ID = UUID("6bfd8b64-43d8-4449-8c70-d898aca74ad8")
 
 @pytest.fixture
 def repository() -> IAgentLogRepository:
-    return FileAgentLogRepository(SingleFileRepository())
+    return FileAgentLogRepository(InMemoryFileRepository())
 
 
 def test_store_agent_log(repository: IAgentLogRepository):
