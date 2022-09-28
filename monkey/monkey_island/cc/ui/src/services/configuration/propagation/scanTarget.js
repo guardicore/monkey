@@ -68,7 +68,7 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
         '"192.168.0.5-192.168.0.20"\n' +
         '\tDefine a segment using an subnet IP mask: "192.168.0.5/24"\n' +
         '\tDefine a single-host segment: "printer.example"'
-    },
+    }
   }
 }
 export default SCAN_TARGET_CONFIGURATION_SCHEMA;
