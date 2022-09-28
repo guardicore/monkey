@@ -14,7 +14,8 @@ from monkey_island.cc.repository import (
 )
 
 LOG_CONTENTS = "lots of useful information"
-AGENT_ID = UUID("6bfd8b64-43d8-4449-8c70-d898aca74ad8")
+AGENT_ID_1 = UUID("6bfd8b64-43d8-4449-8c70-d898aca74ad8")
+AGENT_ID_2 = UUID("789abcd4-20d7-abcd-ef7a-0123acaabcde")
 
 
 @pytest.fixture
@@ -23,21 +24,21 @@ def repository() -> IAgentLogRepository:
 
 
 def test_store_agent_log(repository: IAgentLogRepository):
-    repository.upsert_agent_log(AGENT_ID, LOG_CONTENTS)
-    retrieved_log_contents = repository.get_agent_log(AGENT_ID)
+    repository.upsert_agent_log(AGENT_ID_1, LOG_CONTENTS)
+    retrieved_log_contents = repository.get_agent_log(AGENT_ID_1)
 
     assert retrieved_log_contents == LOG_CONTENTS
 
 
 def test_get_agent_log__unknown_record_error(repository: IAgentLogRepository):
     with pytest.raises(UnknownRecordError):
-        repository.get_agent_log(AGENT_ID)
+        repository.get_agent_log(AGENT_ID_1)
 
 
 def test_get_agent_log__retrieval_error():
     repository = FileAgentLogRepository(OpenErrorFileRepository())
     with pytest.raises(RetrievalError):
-        repository.get_agent_log(AGENT_ID)
+        repository.get_agent_log(AGENT_ID_1)
 
 
 def test_get_agent_log__corrupt_data():
@@ -47,11 +48,22 @@ def test_get_agent_log__corrupt_data():
     repository = FileAgentLogRepository(file_repository)
 
     with pytest.raises(RetrievalError):
-        repository.get_agent_log(AGENT_ID)
+        repository.get_agent_log(AGENT_ID_1)
+
+
+def test_multiple_logs(repository: IAgentLogRepository):
+    log_contents_1 = "hello"
+    log_contents_2 = "world"
+
+    repository.upsert_agent_log(AGENT_ID_1, log_contents_1)
+    repository.upsert_agent_log(AGENT_ID_2, log_contents_2)
+
+    assert repository.get_agent_log(AGENT_ID_1) == log_contents_1
+    assert repository.get_agent_log(AGENT_ID_2) == log_contents_2
 
 
 def test_reset_agent_logs(repository: IAgentLogRepository):
-    repository.upsert_agent_log(AGENT_ID, LOG_CONTENTS)
+    repository.upsert_agent_log(AGENT_ID_1, LOG_CONTENTS)
     repository.reset()
     with pytest.raises(UnknownRecordError):
-        repository.get_agent_log(AGENT_ID)
+        repository.get_agent_log(AGENT_ID_1)
