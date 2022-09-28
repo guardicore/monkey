@@ -165,19 +165,6 @@ class ReportService:
         return chain(filter(is_island, t1), *filterfalse(is_island, t2))
 
     @staticmethod
-    def get_all_displayed_nodes():
-        nodes_without_monkeys = [
-            NodeService.get_displayed_node_by_id(node["_id"], True)
-            for node in mongo.db.node.find({}, {"_id": 1})
-        ]
-        nodes_with_monkeys = [
-            NodeService.get_displayed_node_by_id(monkey["_id"], True)
-            for monkey in mongo.db.monkey.find({}, {"_id": 1})
-        ]
-        nodes = nodes_without_monkeys + nodes_with_monkeys
-        return nodes
-
-    @staticmethod
     def process_exploit(exploit) -> ExploiterReportInfo:
         exploiter_type = exploit["data"]["exploiter"]
         exploiter_descriptor = ExploiterDescriptorEnum.get_by_class_name(exploiter_type)
