@@ -50,13 +50,13 @@ class IFileRepository(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def delete_files_by_pattern(self, file_name_pattern: str):
+    def delete_files_by_regex(self, file_name_regex: str):
         """
-        Delete files whose names match a particular pattern
+        Delete files whose names match a particular regex
 
         This method matches relevant files and deletes them using `delete_file()`.
 
-        :param file_name_pattern: A file name pattern that should be matched to delete files
+        :param file_name_regex: A regex with which a file's name should match before deleting it
         """
         pass
 
