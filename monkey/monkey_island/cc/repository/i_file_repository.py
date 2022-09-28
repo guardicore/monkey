@@ -1,10 +1,12 @@
 import abc
+import re
 from typing import BinaryIO
 
-from monkey_island.cc.repository import RetrievalError
+from monkey_island.cc.repository import UnknownRecordError
 
 
-class FileNotFoundError(RetrievalError):
+# TODO: Remove this and use UnknownRecordError directly wherever needed.
+class FileNotFoundError(UnknownRecordError):
     pass
 
 
@@ -46,6 +48,17 @@ class IFileRepository(metaclass=abc.ABCMeta):
 
         :param unsafe_file_name: An unsanitized file name that identifies the file to be deleted
         :raises RemovalError: If an error was encountered while attempting to remove a file
+        """
+        pass
+
+    @abc.abstractmethod
+    def delete_files_by_regex(self, file_name_regex: re.Pattern):
+        """
+        Delete files whose names match a particular regex
+
+        This method matches relevant files and deletes them using `delete_file()`.
+
+        :param file_name_regex: A regex with which a file's name should match before deleting it
         """
         pass
 

@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import BinaryIO
 
 from . import IFileRepository
@@ -25,6 +26,10 @@ class FileRepositoryLoggingDecorator(IFileRepository):
     def delete_file(self, unsafe_file_name: str):
         logger.debug(f"Deleting file {unsafe_file_name}")
         return self._file_repository.delete_file(unsafe_file_name)
+
+    def delete_files_by_regex(self, file_name_regex: re.Pattern):
+        logger.debug(f'Deleting files whose names match the regex "{file_name_regex}"')
+        return self._file_repository.delete_files_by_regex(file_name_regex)
 
     def delete_all_files(self):
         logger.debug("Deleting all files in the repository")

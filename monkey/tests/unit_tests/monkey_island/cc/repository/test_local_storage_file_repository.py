@@ -1,4 +1,5 @@
 import io
+import re
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -143,3 +144,14 @@ def test_open_locked_file(tmp_path, monkeypatch):
     with patch("builtins.open", Mock(side_effect=Exception())):
         with pytest.raises(repository.RetrievalError):
             fss.open_file("locked_file.txt")
+
+
+def test_delete_files_by_regex(tmp_path):
+    for filename in {"xyz-1.txt", "abc-2.txt", "pqr-3.txt", "abc-4.txt", "abc-5.pdf"}:
+        (tmp_path / filename).touch()
+
+    fss = LocalStorageFileRepository(tmp_path)
+    fss.delete_files_by_regex(re.compile(r"^abc-[\w-]+.txt$"))
+
+    files = {f.name for f in tmp_path.iterdir()}
+    assert files == {"xyz-1.txt", "pqr-3.txt", "abc-5.pdf"}

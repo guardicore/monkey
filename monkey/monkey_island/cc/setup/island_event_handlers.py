@@ -10,6 +10,7 @@ from monkey_island.cc.island_event_handlers import (
 )
 from monkey_island.cc.repository import (
     IAgentEventRepository,
+    IAgentLogRepository,
     IAgentRepository,
     ICredentialsRepository,
     INodeRepository,
@@ -59,9 +60,10 @@ def _subscribe_clear_simulation_data_events(
     island_event_queue.subscribe(topic, container.resolve(reset_machine_repository))
 
     for i_repository in [
-        INodeRepository,
         IAgentEventRepository,
+        IAgentLogRepository,
         IAgentRepository,
+        INodeRepository,
     ]:
         repository = container.resolve(i_repository)
         island_event_queue.subscribe(topic, repository.reset)

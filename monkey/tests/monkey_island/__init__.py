@@ -4,3 +4,4 @@ from .open_error_file_repository import OpenErrorFileRepository
 from .in_memory_agent_configuration_repository import InMemoryAgentConfigurationRepository
 from .in_memory_simulation_configuration import InMemorySimulationRepository
 from .in_memory_credentials_repository import InMemoryCredentialsRepository
+from .in_memory_file_repository import InMemoryFileRepository
