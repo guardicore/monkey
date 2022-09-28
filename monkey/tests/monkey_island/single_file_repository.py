@@ -24,8 +24,8 @@ class SingleFileRepository(IFileRepository):
         self._file = None
         self._file_name = ""
 
-    def delete_files_by_pattern(self, file_name_pattern: str):
-        if re.match(file_name_pattern, self._file_name):
+    def delete_files_by_regex(self, file_name_regex: re.Pattern):
+        if re.match(file_name_regex, self._file_name):
             self.delete_file("")
 
     def delete_all_files(self):
