@@ -1,4 +1,5 @@
 import io
+import re
 
 from monkey_island.cc import repository
 from monkey_island.cc.models import AgentID
@@ -10,6 +11,7 @@ from monkey_island.cc.repository import (
 )
 
 AGENT_LOG_FILE_NAME_PATTERN = "agent-*.log"
+AGENT_LOG_FILE_NAME_REGEX = re.compile(r"^agent-[\w-]+.log$")
 
 
 class FileAgentLogRepository(IAgentLogRepository):
@@ -18,14 +20,12 @@ class FileAgentLogRepository(IAgentLogRepository):
 
     def upsert_agent_log(self, agent_id: AgentID, log_contents: str):
         self._file_repository.save_file(
-            AGENT_LOG_FILE_NAME_PATTERN.replace("*", agent_id), io.BytesIO(log_contents.encode())
+            self._get_agent_log_file_name(agent_id), io.BytesIO(log_contents.encode())
         )
 
     def get_agent_log(self, agent_id: AgentID) -> str:
         try:
-            with self._file_repository.open_file(
-                AGENT_LOG_FILE_NAME_PATTERN.replace("*", agent_id)
-            ) as f:
+            with self._file_repository.open_file(self._get_agent_log_file_name(agent_id)) as f:
                 log_contents = f.read().decode()
                 return log_contents
         except repository.FileNotFoundError as err:
@@ -34,4 +34,7 @@ class FileAgentLogRepository(IAgentLogRepository):
             raise RetrievalError(f"Error retrieving the agent logs: {err}")
 
     def reset(self):
-        self._file_repository.delete_files_by_pattern(f"{AGENT_LOG_FILE_NAME_PATTERN}")
+        self._file_repository.delete_files_by_regex(AGENT_LOG_FILE_NAME_REGEX)
+
+    def _get_agent_log_file_name(self, agent_id: AgentID) -> str:
+        return AGENT_LOG_FILE_NAME_PATTERN.replace("*", str(agent_id))
