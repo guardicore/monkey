@@ -1,6 +1,7 @@
 import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
+import WarningBox from './WarningBox';
 import PbaInput from './PbaInput';
 import { API_PBA_LINUX, API_PBA_WINDOWS } from '../pages/ConfigurePage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
@@ -60,9 +61,6 @@ export default function UiSchema(props) {
       },
       network_scan: {
         targets: {
-          info_box_general: {
-            'ui:field': InfoBox
-          },
           blocked_ips: {
             items: {
               classNames: 'config-template-no-header'
@@ -74,7 +72,7 @@ export default function UiSchema(props) {
             }
           },
           info_box_scan_my_networks: {
-            'ui:field': InfoBox
+            'ui:field': WarningBox
           },
           subnets: {
             items: {
