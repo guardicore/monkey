@@ -2,7 +2,6 @@ from ipaddress import IPv4Address
 from uuid import UUID
 
 import pytest
-from pydantic.errors import IPv4AddressError, UUIDError
 from tests.unit_tests.monkey_island.cc.models.test_agent import AGENT_ID
 
 from common import OperatingSystem
@@ -53,6 +52,7 @@ def test_to_dict():
     "key, value",
     [
         ("source", "not-an-uuid"),
+        ("source", -1),
         ("timestamp", "not-a-timestamp"),
         ("response_received", "not-a-bool"),
         ("os", 2.1),
@@ -68,17 +68,16 @@ def test_construct_invalid_field__type_error(key, value):
 
 
 @pytest.mark.parametrize(
-    "key, value, expected_error",
+    "key, value",
     [
-        ("source", -1, UUIDError),
-        ("target", "not-a-IPv4Address", IPv4AddressError),
+        ("target", "not-a-IPv4Address"),
     ],
 )
-def test_construct_invalid_field__value_error(key, value, expected_error):
+def test_construct_invalid_field__value_error(key, value):
     invalid_type_dict = PING_SIMPLE_DICT.copy()
     invalid_type_dict[key] = value
 
-    with pytest.raises(expected_error):
+    with pytest.raises(ValueError):
         PingScanEvent(**invalid_type_dict)
 
 
