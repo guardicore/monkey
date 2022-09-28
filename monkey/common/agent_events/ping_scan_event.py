@@ -1,3 +1,4 @@
+from ipaddress import IPv4Address
 from typing import Optional
 
 from common import OperatingSystem
@@ -14,5 +15,6 @@ class PingScanEvent(AbstractAgentEvent):
         :param os: Operating system from the target system
     """
 
+    target: IPv4Address
     response_received: bool
     os: Optional[OperatingSystem]
