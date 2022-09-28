@@ -119,7 +119,7 @@ def test_island_api_client__send_log(island_api_client, actual_error, expected_e
         island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
-            m.post(ISLAND_SEND_LOG_URI, exc=actual_error)
+            m.put(ISLAND_SEND_LOG_URI, exc=actual_error)
             island_api_client.send_log(agent_id=AGENT_ID, log_contents="some_data")
 
 
@@ -136,7 +136,7 @@ def test_island_api_client_send_log__status_code(island_api_client, status_code,
         island_api_client.connect(SERVER)
 
         with pytest.raises(expected_error):
-            m.post(ISLAND_SEND_LOG_URI, status_code=status_code)
+            m.put(ISLAND_SEND_LOG_URI, status_code=status_code)
             island_api_client.send_log(agent_id=AGENT_ID, log_contents="some_data")
 
 

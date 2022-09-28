@@ -93,7 +93,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     def send_log(self, agent_id: AgentID, log_contents: str):
-        response = requests.post(  # noqa: DUO123
+        response = requests.put(  # noqa: DUO123
             f"{self._api_url}/agent-logs/{agent_id}",
             json=log_contents,
             verify=False,
