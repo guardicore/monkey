@@ -6,6 +6,7 @@ import subprocess
 import sys
 from ipaddress import IPv4Address
 from time import time
+from typing import Tuple
 
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
@@ -34,9 +35,7 @@ def _ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> Pin
     if is_windows_os():
         timeout = math.floor(timeout * 1000)
 
-    event_timestamp = time()
-
-    ping_command_output = _run_ping_command(host, timeout)
+    event_timestamp, ping_command_output = _run_ping_command(host, timeout)
 
     ping_scan_data = _process_ping_command_output(ping_command_output)
     logger.debug(f"{host} - {ping_scan_data}")
@@ -47,7 +46,7 @@ def _ping(host: str, timeout: float, agent_event_queue: IAgentEventQueue) -> Pin
     return ping_scan_data
 
 
-def _run_ping_command(host: str, timeout: float) -> str:
+def _run_ping_command(host: str, timeout: float) -> Tuple[float, str]:
     ping_cmd = _build_ping_command(host, timeout)
     logger.debug(f"Running ping command: {' '.join(ping_cmd)}")
 
@@ -55,6 +54,8 @@ def _run_ping_command(host: str, timeout: float) -> str:
     # of os.device_encoding(1) will be None. Setting errors="backslashreplace" prevents a crash
     # in this case. See #1175 and #1403 for more information.
     encoding = os.device_encoding(1)
+
+    ping_event_timestamp = time()
     sub_proc = subprocess.Popen(
         ping_cmd,
         stdout=subprocess.PIPE,
@@ -74,9 +75,9 @@ def _run_ping_command(host: str, timeout: float) -> str:
         logger.debug(output)
     except subprocess.TimeoutExpired as te:
         logger.error(te)
-        return ""
+        return ping_event_timestamp, ""
 
-    return output
+    return ping_event_timestamp, output
 
 
 def _process_ping_command_output(ping_command_output: str) -> PingScanData:
