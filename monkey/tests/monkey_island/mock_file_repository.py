@@ -24,5 +24,8 @@ class MockFileRepository(IFileRepository):
     def delete_file(self, unsafe_file_name: str):
         pass
 
+    def delete_files_by_pattern(self, file_name_pattern: str):
+        pass
+
     def delete_all_files(self):
         pass
