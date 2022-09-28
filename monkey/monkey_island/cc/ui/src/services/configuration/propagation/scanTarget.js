@@ -1,12 +1,10 @@
 const SCAN_TARGET_CONFIGURATION_SCHEMA = {
   'title': 'Network',
   'type': 'object',
+  'description': 'If "Scan Agent\'s networks" is checked, the Monkey scans for machines on each ' +
+    'of the network interfaces of the machine it is running on.\nAdditionally, the Monkey scans ' +
+    'machines according to "Scan target list" and skips machines in "Blocked IPs".',
   'properties': {
-    'info_box': {
-      'info': 'The Monkey scans for machines on each of the network interfaces of the ' +
-        'machine it is running on if "Scan Agent\'s networks" is checked. ' +
-        'Additionally, the Monkey scans machines according to "Scan target list". '
-    },
     'blocked_ips': {
       'title': 'Blocked IPs',
       'type': 'array',
@@ -17,6 +15,33 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
       },
       'default': [],
       'description': 'List of IPs that the monkey will not scan.'
+    },
+    'info_box_scan_my_networks': {
+      'info': 'If the agent runs on a machine that has a publicly-facing network interface, ' +
+        'this setting could cause scanning and exploitation of systems outside your organization.'
+    },
+    'scan_my_networks': {
+      'title': 'Scan Agent\'s networks',
+      'type': 'boolean',
+      'default': false
+    },
+    'subnets': {
+      'title': 'Scan target list',
+      'type': 'array',
+      'uniqueItems': true,
+      'items': {
+        'type': 'string',
+        'format': 'ip-range'
+      },
+      'default': [],
+      'description': 'List of targets the Monkey will try to scan. Targets can be ' +
+        'IPs, subnets or hosts. ' +
+        'Examples:\n' +
+        '\tTarget a specific IP: "192.168.0.1"\n' +
+        '\tTarget a subnet using a network range: ' +
+        '"192.168.0.5-192.168.0.20"\n' +
+        '\tTarget a subnet using an IP mask: "192.168.0.5/24"\n' +
+        '\tTarget a specific host: "printer.example"'
     },
     'inaccessible_subnets': {
       'title': 'Network segmentation testing',
@@ -40,36 +65,7 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
         '"192.168.0.5-192.168.0.20"\n' +
         '\tDefine a segment using an subnet IP mask: "192.168.0.5/24"\n' +
         '\tDefine a single-host segment: "printer.example"'
-    },
-    'scan_my_networks': {
-      'title': 'Scan Agent\'s networks',
-      'type': 'boolean',
-      'default': false,
-      'description': 'If enabled, the Agent will go over all network interfaces and ' +
-        'will scan their networks,' +
-        ' in addition to the IPs that are configured manually in the "Scan target list". ' +
-        'Note: If the Agent runs on a machine within a public network,' +
-        ' this setting will cause scanning and exploitation attempts on that network.'
-    },
-    'subnets': {
-      'title': 'Scan target list',
-      'type': 'array',
-      'uniqueItems': true,
-      'items': {
-        'type': 'string',
-        'format': 'ip-range'
-      },
-      'default': [],
-      'description': 'List of targets the Monkey will try to scan. Targets can be ' +
-        'IPs, subnets or hosts. ' +
-        'Examples:\n' +
-        '\tTarget a specific IP: "192.168.0.1"\n' +
-        '\tTarget a subnet using a network range: ' +
-        '"192.168.0.5-192.168.0.20"\n' +
-        '\tTarget a subnet using an IP mask: "192.168.0.5/24"\n' +
-        '\tTarget a specific host: "printer.example"'
     }
-
   }
 }
 export default SCAN_TARGET_CONFIGURATION_SCHEMA;
