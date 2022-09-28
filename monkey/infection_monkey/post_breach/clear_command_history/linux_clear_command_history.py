@@ -66,7 +66,7 @@ def get_linux_usernames() -> Iterable[str]:
         return USERS
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as err:
         logger.error(
-            f"An exception occured on fetching linux usernames,"
+            f"An exception occurred while fetching linux usernames,"
             f"PBA: {POST_BREACH_CLEAR_CMD_HISTORY}: {str(err)}"
         )
         return []

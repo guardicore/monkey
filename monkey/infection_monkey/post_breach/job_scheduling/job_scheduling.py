@@ -30,6 +30,6 @@ def remove_scheduled_jobs():
                 shell=True,
             )
         except subprocess.CalledProcessError as err:
-            logger.error(f"An error occured removing scheduled jobs on Windows: {err}")
+            logger.error(f"An error occurred while removing scheduled jobs on Windows: {err}")
         except subprocess.TimeoutExpired as err:
-            logger.error(f"A timeout occured removing scheduled jobs on Windows: {err}")
+            logger.error(f"A timeout occurred while removing scheduled jobs on Windows: {err}")
