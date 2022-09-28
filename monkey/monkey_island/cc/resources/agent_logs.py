@@ -1,11 +1,14 @@
+import logging
 from http import HTTPStatus
 
 from flask import request
 
 from common.types import AgentID
-from monkey_island.cc.repository import IAgentLogRepository
+from monkey_island.cc.repository import IAgentLogRepository, UnknownRecordError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
+
+logger = logging.getLogger(__name__)
 
 
 class AgentLogs(AbstractResource):
@@ -16,13 +19,17 @@ class AgentLogs(AbstractResource):
 
     @jwt_required
     def get(self, agent_id: AgentID):
-        log_contents = self._agent_log_repository.get_agent_log(agent_id)
+        try:
+            log_contents = self._agent_log_repository.get_agent_log(agent_id)
+        except UnknownRecordError as err:
+            logger.debug(f"Error occured while getting agent log: {err}")
+            return {}, HTTPStatus.NOT_FOUND
 
         return log_contents, HTTPStatus.OK
 
     def put(self, agent_id: AgentID):
         log_contents = request.json
 
-        self._agent_log_repository.upsert_agent_log(agent_id, agent_data)
+        self._agent_log_repository.upsert_agent_log(agent_id, log_contents)
 
         return {}, HTTPStatus.NO_CONTENT

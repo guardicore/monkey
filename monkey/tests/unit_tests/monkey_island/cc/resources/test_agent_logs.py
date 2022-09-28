@@ -5,7 +5,7 @@ import pytest
 from tests.common import StubDIContainer
 
 from common.types import AgentID
-from monkey_island.cc.repository import IAgentLogRepository
+from monkey_island.cc.repository import IAgentLogRepository, UnknownRecordError
 
 AGENT_ID_1 = UUID("c0dd10b3-e21a-4da9-9d96-a99c19ebd7c5")
 AGENT_ID_2 = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
@@ -23,6 +23,8 @@ class StubAgentLogRepository(IAgentLogRepository):
             self._agent_logs[agent_id] = log_contents
 
     def get_agent_log(self, agent_id: AgentID) -> str:
+        if agent_id not in self._agent_logs:
+            raise UnknownRecordError("Error occured while getting agent")
         return self._agent_logs[agent_id]
 
     def reset(self):
@@ -40,7 +42,8 @@ def flask_client(build_flask_client):
 
 def test_agent_logs_endpoint__get_empty(flask_client):
     resp = flask_client.get(AGENT_LOGS_URL_1, follow_redirects=True)
-    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+    assert resp.status_code == HTTPStatus.NOT_FOUND
+    assert resp.json == {}
 
 
 @pytest.mark.parametrize(
