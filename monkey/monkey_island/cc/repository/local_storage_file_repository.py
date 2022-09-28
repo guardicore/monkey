@@ -1,3 +1,4 @@
+import glob
 import logging
 import shutil
 from pathlib import Path
@@ -54,6 +55,10 @@ class LocalStorageFileRepository(IFileRepository):
             raise RetrievalError(
                 f'Error retrieving file "{unsafe_file_name}" from the repository: {err}'
             )
+
+    def delete_files_by_pattern(self, file_name_pattern: str):
+        for file_name in glob.iglob(f"{self._storage_directory}/{file_name_pattern}"):
+            self.delete_file(file_name)
 
     def delete_file(self, unsafe_file_name: str):
         try:
