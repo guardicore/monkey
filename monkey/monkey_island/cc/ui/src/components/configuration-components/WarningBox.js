@@ -1,12 +1,13 @@
 import * as React from 'react';
-import WarningIcon from '../ui-components/WarningIcon';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 class WarningBox extends React.Component {
 
   render() {
     return (
-      <div className='alert alert-info'>
-        <WarningIcon style={{ 'marginRight': '5px' }} />
+      <div className='alert alert-warning'>
+        <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
         {this.props.schema.info}
       </div>
     );
