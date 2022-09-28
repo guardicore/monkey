@@ -1,4 +1,5 @@
 import abc
+import re
 from typing import BinaryIO
 
 from monkey_island.cc.repository import UnknownRecordError
@@ -51,7 +52,7 @@ class IFileRepository(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def delete_files_by_regex(self, file_name_regex: str):
+    def delete_files_by_regex(self, file_name_regex: re.Pattern):
         """
         Delete files whose names match a particular regex
 

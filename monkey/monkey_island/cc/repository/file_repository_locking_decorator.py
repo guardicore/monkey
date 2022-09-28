@@ -1,3 +1,4 @@
+import re
 from typing import BinaryIO
 
 from readerwriterlock import rwlock
@@ -26,7 +27,7 @@ class FileRepositoryLockingDecorator(IFileRepository):
         with self._rwlock.gen_wlock():
             return self._file_repository.delete_file(unsafe_file_name)
 
-    def delete_files_by_regex(self, file_name_regex: str):
+    def delete_files_by_regex(self, file_name_regex: re.Pattern):
         with self._rwlock.gen_wlock():
             return self._file_repository.delete_files_by_regex(file_name_regex)
 

@@ -1,4 +1,5 @@
 import io
+import re
 from typing import BinaryIO
 
 from monkey_island.cc import repository
@@ -24,7 +25,7 @@ class MockFileRepository(IFileRepository):
     def delete_file(self, unsafe_file_name: str):
         pass
 
-    def delete_files_by_regex(self, file_name_regex: str):
+    def delete_files_by_regex(self, file_name_regex: re.Pattern):
         pass
 
     def delete_all_files(self):
