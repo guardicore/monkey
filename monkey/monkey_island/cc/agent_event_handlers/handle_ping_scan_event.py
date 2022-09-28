@@ -39,13 +39,13 @@ class handle_ping_scan_event:
             logger.exception("Unable to process ping scan data")
 
     def _get_destination_machine(self, event: PingScanEvent) -> Machine:
-        dest_machines = self._machine_repository.get_machines_by_ip(event.target)
-        if not dest_machines:
+        try:
+            dest_machines = self._machine_repository.get_machines_by_ip(event.target)
+            return dest_machines[0]
+        except UnknownRecordError:
             machine = Machine(id=self._machine_repository.get_new_id())
-            dest_machines = [machine]
             self._machine_repository.upsert_machine(machine)
-
-        return dest_machines[0]
+            return machine
 
     def _get_source_machine(self, event: PingScanEvent) -> Machine:
         agent = self._agent_repository.get_agent_by_id(event.source)

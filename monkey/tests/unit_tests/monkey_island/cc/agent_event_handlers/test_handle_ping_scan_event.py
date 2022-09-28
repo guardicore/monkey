@@ -14,6 +14,8 @@ from monkey_island.cc.repository import (
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
+    RetrievalError,
+    StorageError,
     UnknownRecordError,
 )
 
@@ -68,10 +70,51 @@ def handler(agent_repository, machine_repository, node_repository) -> handle_pin
 
 
 machines = {MACHINE_ID: PINGER_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
+machines_by_id = {MACHINE_ID: PINGER_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
+machines_by_ip = {
+    IPv4Address("10.10.10.99"): [PINGER_MACHINE],
+    IPv4Address("10.10.10.1"): [TARGET_MACHINE],
+}
 
 
 def machine_from_id(id: int):
-    return machines[id]
+    return machines_by_id[id]
+
+
+def machines_from_ip(ip: IPv4Address):
+    return machines_by_ip[ip]
+
+
+class error_machine_by_id:
+    """Raise an error if the machine with the called ID matches the stored ID"""
+
+    def __init__(self, id: int, error):
+        self.id = id
+        self.error = error
+
+    def __call__(self, id: int):
+        if id == self.id:
+            raise self.error
+        else:
+            return machine_from_id(id)
+
+
+class error_machine_by_ip:
+    """Raise an error if the machine with the called IP matches the stored ID"""
+
+    def __init__(self, id: int, error):
+        self.id = id
+        self.error = error
+
+    def __call__(self, ip: IPv4Address):
+        print(f"IP is: {ip}")
+        machines = machines_from_ip(ip)
+        if machines[0].id == self.id:
+            print(f"Raise error: {self.error}")
+            raise self.error
+        else:
+            print(f"Return machine: {machines}")
+            return machines
 
 
 def test_handle_ping_scan_event__upserts_machine(
@@ -79,6 +122,7 @@ def test_handle_ping_scan_event__upserts_machine(
     machine_repository: IMachineRepository,
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     handler(EVENT)
 
     expected_machine = TARGET_MACHINE.copy()
@@ -91,7 +135,8 @@ def test_handle_ping_scan_event__machine_already_exists(
     handler: handle_ping_scan_event,
     machine_repository: IMachineRepository,
 ):
-    machine_repository.get_machine_by_id = MagicMock(side_effect=lambda _: [])
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     handler(EVENT)
 
     expected_machine = TARGET_MACHINE.copy()
@@ -105,7 +150,8 @@ def test_handle_ping_scan_event__upserts_node(
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ):
-    machine_repository.get_machine_by_id = MagicMock(return_value=TARGET_MACHINE)
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(return_value=[TARGET_MACHINE])
     handler(EVENT)
 
     node_repository.upsert_communication.assert_called_with(
@@ -143,8 +189,40 @@ def test_handle_ping_scan_event__upserts_machine_if_not_existed(
     handler: handle_ping_scan_event, machine_repository: IMachineRepository
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
     handler(EVENT)
 
     expected_machine = Machine(id=SEED_ID, operating_system=OperatingSystem.LINUX)
 
     machine_repository.upsert_machine.assert_called_with(expected_machine)
+
+
+@pytest.mark.parametrize("id", [PINGER_MACHINE.id, TARGET_MACHINE.id])
+def test_handle_scan_data__node_not_upserted_if_machine_retrievalerror(
+    handler: handle_ping_scan_event,
+    machine_repository: IMachineRepository,
+    node_repository: INodeRepository,
+    id,
+):
+    machine_repository.get_machine_by_id = MagicMock(
+        side_effect=error_machine_by_id(id, RetrievalError)
+    )
+    machine_repository.get_machines_by_ip = MagicMock(
+        side_effect=error_machine_by_ip(id, RetrievalError)
+    )
+
+    handler(EVENT)
+
+    assert not node_repository.upsert_communication.called
+
+
+def test_handle_scan_data__node_not_upserted_if_machine_storageerror(
+    handler: handle_ping_scan_event,
+    machine_repository: IMachineRepository,
+    node_repository: INodeRepository,
+):
+    machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
+
+    handler(EVENT)
+
+    assert not node_repository.upsert_communication.called
