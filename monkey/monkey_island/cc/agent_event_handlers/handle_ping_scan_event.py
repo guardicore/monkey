@@ -15,7 +15,7 @@ from monkey_island.cc.repository import (
 logger = getLogger(__name__)
 
 
-class handle_scan_data:
+class handle_ping_scan_event:
     def __init__(
         self,
         agent_repository: IAgentRepository,

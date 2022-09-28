@@ -2,7 +2,7 @@ from common import DIContainer
 from common.agent_events import CredentialsStolenEvent, PingScanEvent
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.agent_event_handlers import (
-    handle_scan_data,
+    handle_ping_scan_event,
     save_event_to_event_repository,
     save_stolen_credentials_to_repository,
 )
@@ -39,6 +39,6 @@ def _subscribe_ping_scan_event(container: DIContainer):
     machine_repository = container.resolve(IMachineRepository)  # type: ignore
     node_repository = container.resolve(INodeRepository)  # type: ignore
 
-    handler = handle_scan_data(agent_repository, machine_repository, node_repository)
+    handler = handle_ping_scan_event(agent_repository, machine_repository, node_repository)
 
     agent_event_queue.subscribe_type(PingScanEvent, handler)

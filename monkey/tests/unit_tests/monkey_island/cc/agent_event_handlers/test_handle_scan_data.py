@@ -8,7 +8,7 @@ import pytest
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
 from common.types import PingScanData, SocketAddress
-from monkey_island.cc.agent_event_handlers import handle_scan_data
+from monkey_island.cc.agent_event_handlers import handle_ping_scan_event
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
     IAgentRepository,
@@ -65,8 +65,8 @@ def node_repository() -> INodeRepository:
 
 
 @pytest.fixture
-def handler(agent_repository, machine_repository, node_repository) -> handle_scan_data:
-    return handle_scan_data(agent_repository, machine_repository, node_repository)
+def handler(agent_repository, machine_repository, node_repository) -> handle_ping_scan_event:
+    return handle_ping_scan_event(agent_repository, machine_repository, node_repository)
 
 
 machines = {MACHINE_ID: MACHINE, STORED_MACHINE.id: STORED_MACHINE}
@@ -77,7 +77,7 @@ def machine_from_id(id: int):
 
 
 def test_handle_scan_data__upserts_machine(
-    handler: handle_scan_data,
+    handler: handle_ping_scan_event,
     machine_repository: IMachineRepository,
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
@@ -90,7 +90,7 @@ def test_handle_scan_data__upserts_machine(
 
 
 def test_handle_scan_data__upserts_node(
-    handler: handle_scan_data,
+    handler: handle_ping_scan_event,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ):
@@ -103,7 +103,7 @@ def test_handle_scan_data__upserts_node(
 
 
 def test_handle_scan_data__node_not_upserted_if_no_matching_agent(
-    handler: handle_scan_data,
+    handler: handle_ping_scan_event,
     agent_repository: IAgentRepository,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
@@ -117,7 +117,7 @@ def test_handle_scan_data__node_not_upserted_if_no_matching_agent(
 
 
 def test_handle_scan_data__node_not_upserted_if_no_matching_machine(
-    handler: handle_scan_data,
+    handler: handle_ping_scan_event,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ):
@@ -129,7 +129,7 @@ def test_handle_scan_data__node_not_upserted_if_no_matching_machine(
 
 
 def test_handle_scan_data__upserts_machine_if_not_existed(
-    handler: handle_scan_data, machine_repository: IMachineRepository
+    handler: handle_ping_scan_event, machine_repository: IMachineRepository
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     handler(EVENT)
