@@ -9,7 +9,7 @@ from monkey_island.cc.repository import (
     UnknownRecordError,
 )
 
-AGENT_LOG_FILE_NAME_PREFIX = "agent_log_"
+AGENT_LOG_FILE_NAME_PATTERN = "agent-*.log"
 
 
 class FileAgentLogRepository(IAgentLogRepository):
@@ -18,12 +18,14 @@ class FileAgentLogRepository(IAgentLogRepository):
 
     def upsert_agent_log(self, agent_id: AgentID, log_contents: str):
         self._file_repository.save_file(
-            f"{AGENT_LOG_FILE_NAME_PREFIX}{agent_id}", io.BytesIO(log_contents.encode())
+            AGENT_LOG_FILE_NAME_PATTERN.replace("*", agent_id), io.BytesIO(log_contents.encode())
         )
 
     def get_agent_log(self, agent_id: AgentID) -> str:
         try:
-            with self._file_repository.open_file(f"{AGENT_LOG_FILE_NAME_PREFIX}{agent_id}") as f:
+            with self._file_repository.open_file(
+                AGENT_LOG_FILE_NAME_PATTERN.replace("*", agent_id)
+            ) as f:
                 log_contents = f.read().decode()
                 return log_contents
         except repository.FileNotFoundError as err:
@@ -32,4 +34,4 @@ class FileAgentLogRepository(IAgentLogRepository):
             raise RetrievalError(f"Error retrieving the agent logs: {err}")
 
     def reset(self):
-        self._file_repository.delete_files_by_pattern(f"{AGENT_LOG_FILE_NAME_PREFIX}*")
+        self._file_repository.delete_files_by_pattern(f"{AGENT_LOG_FILE_NAME_PATTERN}")
