@@ -15,13 +15,12 @@ class AgentLogs(AbstractResource):
 
     @jwt_required
     def get(self, agent_id: str):
-        agent_log = self._agent_log_repository.get_agent_log(agent_id)
+        log_contents = self._agent_log_repository.get_agent_log(agent_id)
 
-        return agent_log, HTTPStatus.OK
+        return log_contents, HTTPStatus.OK
 
     def put(self, agent_id: str):
-        agent_data = request.json["log_contents"]
-
-        self._agent_log_repository.upsert_agent_log(agent_id, agent_data)
+        log_contents = request.json["log_contents"]
+        self._agent_log_repository.upsert_agent_log(agent_id, log_contents)
 
         return {}, HTTPStatus.NO_CONTENT
