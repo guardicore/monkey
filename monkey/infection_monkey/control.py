@@ -71,7 +71,7 @@ class ControlClient:
     def send_log(self, log):
         try:
             telemetry = {"monkey_guid": GUID, "log": json.dumps(log)}
-            self._island_api_client.send_log(json.dumps(telemetry))
+            self._island_api_client.send_log(GUID, json.dumps(telemetry))
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
 
