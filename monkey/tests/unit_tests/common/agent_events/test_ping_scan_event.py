@@ -97,20 +97,6 @@ def test_construct__extra_fields_forbidden():
         PingScanEvent(**extra_field_dict)
 
 
-def test_ping_scan_event_serialization_json():
-    serialized_event = PING_EVENT.json()
-    assert "1.1.1.1" in serialized_event
-    assert "true" in serialized_event
-    assert OperatingSystem.LINUX.value in serialized_event
-    assert str(AGENT_ID) in serialized_event
-
-
-def test_ping_scan_event_deserialization_json():
-    serialized_event = PING_EVENT.json()
-    deserialized_event = PingScanEvent.parse_raw(serialized_event)
-    assert deserialized_event == PING_EVENT
-
-
 def test_ping_scan_event_deserialization_dict():
     serialized_event = PING_EVENT.dict()
     deserialized_event = PingScanEvent(**serialized_event)
