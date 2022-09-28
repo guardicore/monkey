@@ -21,6 +21,7 @@ from monkey_island.cc.event_queue import IIslandEventQueue, PyPubSubIslandEventQ
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     FileAgentConfigurationRepository,
+    FileAgentLogRepository,
     FileRepositoryCachingDecorator,
     FileRepositoryLockingDecorator,
     FileRepositoryLoggingDecorator,
@@ -28,6 +29,7 @@ from monkey_island.cc.repository import (
     IAgentBinaryRepository,
     IAgentConfigurationRepository,
     IAgentEventRepository,
+    IAgentLogRepository,
     IAgentRepository,
     ICredentialsRepository,
     IFileRepository,
@@ -117,6 +119,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
     container.register_instance(IMachineRepository, _build_machine_repository(container))
     container.register_instance(IAgentRepository, container.resolve(MongoAgentRepository))
+    container.register_instance(IAgentLogRepository, container.resolve(FileAgentLogRepository))
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
