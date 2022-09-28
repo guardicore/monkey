@@ -12,7 +12,8 @@ class InMemoryAgentLogRepository(IAgentLogRepository):
 
     def get_agent_log(self, agent_id: AgentID) -> str:
         if agent_id not in self._agent_logs:
-            raise UnknownRecordError("Error occured while getting agent")
+            raise UnknownRecordError(f"Unknown agent {agent_id}")
+
         return self._agent_logs[agent_id]
 
     def reset(self):
