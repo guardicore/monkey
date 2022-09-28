@@ -1,4 +1,3 @@
-from ipaddress import IPv4Address
 from logging import getLogger
 
 from common.agent_events import PingScanEvent
@@ -36,13 +35,10 @@ class handle_ping_scan_event:
             self._node_repository.upsert_communication(
                 src_machine.id, dest_machine.id, CommunicationType.SCANNED
             )
-        except (RetrievalError, StorageError, TypeError, UnknownRecordError) as err:
-            logger.error(f"Unable to process scan data: {err}")
+        except (RetrievalError, StorageError, TypeError, UnknownRecordError):
+            logger.exception("Unable to process ping scan data")
 
     def _get_destination_machine(self, event: PingScanEvent) -> Machine:
-        # NOTE: Assuming IP's are unique for now
-        if not isinstance(event.target, IPv4Address):
-            raise TypeError("Unknown target")
         dest_machines = self._machine_repository.get_machines_by_ip(event.target)
         if not dest_machines:
             machine = Machine(id=self._machine_repository.get_new_id())
