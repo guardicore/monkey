@@ -1,4 +1,5 @@
 from ipaddress import IPv4Address
+from typing import Dict
 
 from common.types import NetworkPort, PortStatus
 
@@ -10,10 +11,8 @@ class TCPScanEvent(AbstractAgentEvent):
     An event that occurs when the Agent performs a TCP scan on a host
 
     Attributes:
-        :param port: Port on which the scan was performed
-        :param port_status: Status of the port (closed/open)
+        :param ports: The scanned ports and their status (open/closed)
     """
 
     target: IPv4Address
-    port: NetworkPort
-    port_status: PortStatus
+    ports: Dict[NetworkPort, PortStatus]
