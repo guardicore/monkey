@@ -19,7 +19,6 @@ logger = getLogger(__name__)
 class handle_ping_scan_event:
     """
     Handles ping scan event and makes changes to Machine and Node states based on it
-    :param event: Ping scan event
     """
 
     def __init__(
@@ -33,6 +32,9 @@ class handle_ping_scan_event:
         self._node_repository = node_repository
 
     def __call__(self, event: PingScanEvent):
+        """
+        :param event: Ping scan event to process
+        """
         if not event.response_received:
             return
 
