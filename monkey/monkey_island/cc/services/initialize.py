@@ -1,4 +1,5 @@
 import logging
+import threading
 from pathlib import Path
 
 from pubsub.core import Publisher
@@ -15,9 +16,17 @@ from common.agent_event_serializers import (
     register_common_agent_event_serializers,
 )
 from common.aws import AWSInstance
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
+from common.event_queue import (
+    IAgentEventQueue,
+    LockingAgentEventQueueDecorator,
+    PyPubSubAgentEventQueue,
+)
 from common.utils.file_utils import get_binary_io_sha256_hash
-from monkey_island.cc.event_queue import IIslandEventQueue, PyPubSubIslandEventQueue
+from monkey_island.cc.event_queue import (
+    IIslandEventQueue,
+    LockingIslandEventQueueDecorator,
+    PyPubSubIslandEventQueue,
+)
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     FileAgentConfigurationRepository,
@@ -72,8 +81,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
     )
     container.register(Publisher, Publisher)
-    container.register_instance(IAgentEventQueue, container.resolve(PyPubSubAgentEventQueue))
-    container.register_instance(IIslandEventQueue, container.resolve(PyPubSubIslandEventQueue))
+    _register_event_queues(container)
 
     _setup_agent_event_serializers(container)
     _register_repositories(container, data_dir)
@@ -98,6 +106,32 @@ def _register_conventions(container: DIContainer):
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
+
+
+def _register_event_queues(container: DIContainer):
+    event_queue_lock = threading.Lock()
+
+    agent_event_queue = container.resolve(PyPubSubAgentEventQueue)
+    decorated_agent_event_queue = _decorate_agent_event_queue(agent_event_queue, event_queue_lock)
+    container.register_instance(IAgentEventQueue, decorated_agent_event_queue)
+
+    island_event_queue = container.resolve(PyPubSubIslandEventQueue)
+    decorated_island_event_queue = _decorate_island_event_queue(
+        island_event_queue, event_queue_lock
+    )
+    container.register_instance(IIslandEventQueue, decorated_island_event_queue)
+
+
+def _decorate_agent_event_queue(
+    agent_event_queue: IAgentEventQueue, lock: threading.Lock
+) -> IAgentEventQueue:
+    return LockingAgentEventQueueDecorator(agent_event_queue, lock)
+
+
+def _decorate_island_event_queue(
+    island_event_queue: IIslandEventQueue, lock: threading.Lock
+) -> IIslandEventQueue:
+    return LockingIslandEventQueueDecorator(island_event_queue, lock)
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):

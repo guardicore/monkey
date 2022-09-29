@@ -10,6 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 class PyPubSubIslandEventQueue(IIslandEventQueue):
+    """
+    Implements IIslandEventQueue using pypubsub
+    """
+
     def __init__(self, pypubsub_publisher: Publisher):
         self._pypubsub_publisher_wrapper = PyPubSubPublisherWrapper(pypubsub_publisher)
 
