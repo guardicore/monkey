@@ -9,6 +9,7 @@ from common.agent_configuration.agent_sub_configurations import (
 )
 from common.agent_events import PingScanEvent, TCPScanEvent
 from common.credentials import Credentials, LMHash, NTHash
+from common.types import NetworkPort
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
@@ -29,8 +30,8 @@ from monkey_island.cc.repository.zero_trust.IEventRepository import IEventReposi
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
 from monkey_island.cc.services import AgentSignalsService
 
-ge  # unused vairable (monkey/common/types.py:28)
-le  # unused variable (monkey/common/types.py:29)
+NetworkPort.ge  # unused vairable (monkey/common/types.py:28)
+NetworkPort.le  # unused variable (monkey/common/types.py:29)
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:57)
