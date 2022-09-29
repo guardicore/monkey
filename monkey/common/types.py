@@ -6,7 +6,7 @@ from ipaddress import IPv4Address
 from typing import Optional
 from uuid import UUID
 
-from pydantic import PositiveInt, conint
+from pydantic import ConstrainedInt, PositiveInt
 from typing_extensions import TypeAlias
 
 from common import OperatingSystem
@@ -16,6 +16,18 @@ from common.network.network_utils import address_to_ip_port
 AgentID: TypeAlias = UUID
 HardwareID: TypeAlias = PositiveInt
 MachineID: TypeAlias = PositiveInt
+
+
+class NetworkPort(ConstrainedInt):
+    """
+    Define network port as constrainer integer.
+
+    To define a default value with this type:
+        port: NetworkPort = typing.cast(NetworkPort, 1000)
+    """
+
+    ge = 1
+    le = 65535
 
 
 @dataclass
@@ -38,7 +50,7 @@ class PortStatus(Enum):
 
 class SocketAddress(InfectionMonkeyBaseModel):
     ip: IPv4Address
-    port: conint(ge=1, le=65535)  # type: ignore[valid-type]
+    port: NetworkPort
 
     @classmethod
     def from_string(cls, address_str: str) -> SocketAddress:
