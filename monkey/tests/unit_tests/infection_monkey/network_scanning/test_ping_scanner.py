@@ -7,7 +7,6 @@ import pytest
 import infection_monkey.network_scanning.ping_scanner  # noqa: F401
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
-from common.event_queue import IAgentEventQueue
 from common.types import PingScanData
 from infection_monkey.network_scanning import ping
 from infection_monkey.network_scanning.ping_scanner import EMPTY_PING_SCAN
@@ -97,11 +96,6 @@ def set_os_linux(monkeypatch):
 @pytest.fixture
 def set_os_windows(monkeypatch):
     monkeypatch.setattr("sys.platform", "win32")
-
-
-@pytest.fixture
-def mock_agent_event_queue():
-    return MagicMock(spec=IAgentEventQueue)
 
 
 HOST_IP = "192.168.1.1"
