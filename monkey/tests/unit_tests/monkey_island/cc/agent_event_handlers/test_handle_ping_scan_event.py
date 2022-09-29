@@ -131,11 +131,11 @@ def test_handle_ping_scan_event__target_machine_not_exists(
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
+
     handler(EVENT)
 
     expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(EVENT.target)])
     expected_machine.operating_system = EVENT.os
-
     machine_repository.upsert_machine.assert_called_with(expected_machine)
 
 
@@ -145,11 +145,11 @@ def test_handle_ping_scan_event__target_machine_already_exists(
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
+
     handler(EVENT)
 
     expected_machine = TARGET_MACHINE.copy()
     expected_machine.operating_system = OperatingSystem.LINUX
-
     machine_repository.upsert_machine.assert_called_with(expected_machine)
 
 
@@ -160,6 +160,7 @@ def test_handle_ping_scan_event__upserts_node(
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(return_value=[TARGET_MACHINE])
+
     handler(EVENT)
 
     node_repository.upsert_communication.assert_called_with(
