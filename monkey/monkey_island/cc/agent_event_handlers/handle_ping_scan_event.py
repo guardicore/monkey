@@ -26,6 +26,9 @@ class handle_ping_scan_event:
         self._node_repository = node_repository
 
     def __call__(self, event: PingScanEvent):
+        if not event.response_received:
+            return
+
         try:
             dest_machine = self._get_destination_machine(event)
             self._update_destination_machine(dest_machine, event)

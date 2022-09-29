@@ -234,3 +234,18 @@ def test_handle_scan_data__node_not_upserted_if_machine_storageerror(
     handler(EVENT)
 
     assert not node_repository.upsert_communication.called
+
+
+def test_handle_scan_data__failed_ping(
+    handler: handle_ping_scan_event,
+    machine_repository: IMachineRepository,
+    node_repository: INodeRepository,
+):
+    machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
+
+    handler(EVENT_NO_RESPONSE)
+
+    assert not node_repository.upsert_communication.called
+    assert not machine_repository.upsert_machine.called
