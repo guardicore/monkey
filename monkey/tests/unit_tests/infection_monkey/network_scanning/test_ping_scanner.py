@@ -1,7 +1,6 @@
 import math
 import subprocess
 from unittest.mock import MagicMock
-from uuid import UUID
 
 import pytest
 
@@ -54,11 +53,6 @@ TTL=b10
 TTL=1C
 ttl=2d2!
 """
-
-
-@pytest.fixture(scope="module")
-def patch_get_agent_id(monkeypatch):
-    monkeypatch.setattr("get_agent_id", lambda: UUID("9919520c-8650-4a39-aa1e-b2f4d1445159"))
 
 
 TIMESTAMP = 123.321
