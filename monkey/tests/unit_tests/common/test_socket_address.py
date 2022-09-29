@@ -5,7 +5,7 @@ from common.types import SocketAddress
 GOOD_IP = "192.168.1.1"
 BAD_IP = "192.168.1.999"
 GOOD_PORT = 1234
-BAD_PORT = 99999
+BAD_PORTS = [99999, 0, -1]
 
 
 def test_socket_address__from_string():
@@ -26,7 +26,7 @@ def test_socket_address__from_string():
         f"{GOOD_IP}:",
         f":{GOOD_PORT}",
         f"{BAD_IP}:{GOOD_PORT}",
-        f"{GOOD_IP}:{BAD_PORT}",
+        *[f"{GOOD_IP}:{bad_port}" for bad_port in BAD_PORTS],
     ],
 )
 def test_socket_address__from_string_raises(bad_address: str):
