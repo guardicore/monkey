@@ -7,7 +7,7 @@ from . import AbstractAgentEvent
 
 class TCPScanEvent(AbstractAgentEvent):
     """
-    An event that occurs when the Agent performs a TCP scan on its network
+    An event that occurs when the Agent performs a TCP scan on a host
 
     Attributes:
         :param port: Port on which the scan was performed
