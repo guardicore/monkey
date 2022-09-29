@@ -5,6 +5,7 @@ import time
 from pprint import pformat
 from typing import Collection, Dict, Iterable, Mapping, Tuple
 
+from common.event_queue import IAgentEventQueue
 from common.types import PortStatus
 from common.utils import Timer
 from infection_monkey.i_puppet import PortScanData
@@ -17,7 +18,7 @@ EMPTY_PORT_SCAN = {-1: PortScanData(-1, PortStatus.CLOSED, None, None)}
 
 
 def scan_tcp_ports(
-    host: str, ports_to_scan: Collection[int], timeout: float
+    host: str, ports_to_scan: Collection[int], timeout: float, agent_event_queue: IAgentEventQueue
 ) -> Dict[int, PortScanData]:
     try:
         return _scan_tcp_ports(host, ports_to_scan, timeout)

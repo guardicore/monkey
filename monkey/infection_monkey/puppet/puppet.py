@@ -48,7 +48,7 @@ class Puppet(IPuppet):
     def scan_tcp_ports(
         self, host: str, ports: Sequence[int], timeout: float = CONNECTION_TIMEOUT
     ) -> Dict[int, PortScanData]:
-        return network_scanning.scan_tcp_ports(host, ports, timeout)
+        return network_scanning.scan_tcp_ports(host, ports, timeout, self._agent_event_queue)
 
     def fingerprint(
         self,
