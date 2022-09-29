@@ -125,7 +125,7 @@ class error_machine_by_ip:
             return machines
 
 
-def test_handle_ping_scan_event__upserts_machine(
+def test_handle_ping_scan_event__target_machine_not_exists(
     handler: handle_ping_scan_event,
     machine_repository: IMachineRepository,
 ):
@@ -133,13 +133,13 @@ def test_handle_ping_scan_event__upserts_machine(
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
     handler(EVENT)
 
-    expected_machine = TARGET_MACHINE.copy()
-    expected_machine.operating_system = OperatingSystem.LINUX
+    expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(EVENT.target)])
+    expected_machine.operating_system = EVENT.os
 
     machine_repository.upsert_machine.assert_called_with(expected_machine)
 
 
-def test_handle_ping_scan_event__machine_already_exists(
+def test_handle_ping_scan_event__target_machine_already_exists(
     handler: handle_ping_scan_event,
     machine_repository: IMachineRepository,
 ):
