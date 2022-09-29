@@ -11,8 +11,8 @@ class LockingAgentEventQueueDecorator(IAgentEventQueue):
     Makes an IAgentEventQueue thread-safe by locking publish()
     """
 
-    def __init__(self, agent_event_queue: IAgentEventQueue):
-        self._lock = Lock()
+    def __init__(self, agent_event_queue: IAgentEventQueue, lock: Lock):
+        self._lock = lock
         self._agent_event_queue = agent_event_queue
 
     def subscribe_all_events(self, subscriber: AgentEventSubscriber):
