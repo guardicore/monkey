@@ -21,7 +21,7 @@ from infection_monkey.island_api_client import (
     IslandAPITimeoutError,
 )
 
-SERVER = SocketAddress(ip="1.1.1.1", port="9999")
+SERVER = SocketAddress(ip="1.1.1.1", port=9999)
 PBA_FILE = "dummy.pba"
 WINDOWS = "windows"
 AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")

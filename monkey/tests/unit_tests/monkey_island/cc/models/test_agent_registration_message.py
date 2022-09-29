@@ -10,7 +10,7 @@ from common.types import SocketAddress
 
 AGENT_ID = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
 PARENT_ID = UUID("0fc9afcb-1902-436b-bd5c-1ad194252484")
-SOCKET_ADDRESS = SocketAddress(ip="192.168.1.1", port="5000")
+SOCKET_ADDRESS = SocketAddress(ip="192.168.1.1", port=5000)
 
 AGENT_REGISTRATION_MESSAGE_OBJECT_DICT = {
     "id": AGENT_ID,

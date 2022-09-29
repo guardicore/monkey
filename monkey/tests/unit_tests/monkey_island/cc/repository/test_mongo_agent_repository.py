@@ -55,7 +55,7 @@ AGENTS = (
     *RUNNING_AGENTS,
     *STOPPED_AGENTS,
 )
-CC_SERVER = SocketAddress(ip="127.0.0.1", port="1984")
+CC_SERVER = SocketAddress(ip="127.0.0.1", port=1984)
 
 
 @pytest.fixture
