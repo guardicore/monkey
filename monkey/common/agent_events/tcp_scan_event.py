@@ -12,7 +12,7 @@ class TCPScanEvent(AbstractAgentEvent):
     Attributes:
         :param port: Port on which the scan was performed
         :param port_status: Status of the port (closed/open)
-        :param banner: Information from the tcp response
+        :param banner: Information from the TCP response
     """
 
     target: IPv4Address
