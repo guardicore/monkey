@@ -1,4 +1,7 @@
-from common.types import PingScanData
+from ipaddress import IPv4Address
+from typing import Optional
+
+from common import OperatingSystem
 
 from . import AbstractAgentEvent
 
@@ -8,7 +11,10 @@ class PingScanEvent(AbstractAgentEvent):
     An event that occurs when the agent performs a ping scan on its network
 
     Attributes:
-        :param scan_data: The data collected from the ping scan
+        :param response_received: Is any response from ping recieved
+        :param os: Operating system from the target system
     """
 
-    scan_data: PingScanData
+    target: IPv4Address
+    response_received: bool
+    os: Optional[OperatingSystem]

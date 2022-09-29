@@ -4,6 +4,7 @@ from typing import Dict, Iterable, Sequence
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
+from common.event_queue import IAgentEventQueue
 from common.types import PingScanData
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
@@ -24,8 +25,9 @@ logger = logging.getLogger()
 
 
 class Puppet(IPuppet):
-    def __init__(self) -> None:
+    def __init__(self, agent_event_queue: IAgentEventQueue) -> None:
         self._plugin_registry = PluginRegistry()
+        self._agent_event_queue = agent_event_queue
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
         self._plugin_registry.load_plugin(plugin_name, plugin, plugin_type)
@@ -41,7 +43,7 @@ class Puppet(IPuppet):
         return pba.run(options)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
-        return network_scanning.ping(host, timeout)
+        return network_scanning.ping(host, timeout, self._agent_event_queue)
 
     def scan_tcp_ports(
         self, host: str, ports: Sequence[int], timeout: float = CONNECTION_TIMEOUT
