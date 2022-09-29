@@ -109,16 +109,17 @@ def mock_agent_event_queue():
     return MagicMock(spec=IAgentEventQueue)
 
 
+HOST_IP = "192.168.1.1"
+TIMEOUT = 1.0
+
 @pytest.mark.usefixtures("set_os_linux")
 def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue):
     patch_subprocess_running_ping_with_ping_output(LINUX_SUCCESS_OUTPUT)
-    host_ip = "192.168.1.1"
-    timeout = 1.0
-    result = ping(host_ip, timeout, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
 
     event = PingScanEvent(
         source=get_agent_id(),
-        target=host_ip,
+        target=HOST_IP,
         timestamp=TIMESTAMP,
         tags=frozenset(),
         response_received=result.response_received,
@@ -136,7 +137,7 @@ def test_linux_ping_no_response(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(LINUX_NO_RESPONSE_OUTPUT)
-    result = ping("192.168.1.1", 1.0, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
 
     assert not result.response_received
     assert result.os is None
@@ -148,7 +149,7 @@ def test_windows_ping_success(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_SUCCESS_OUTPUT)
-    result = ping("192.168.1.1", 1.0, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
 
     assert result.response_received
     assert result.os == OperatingSystem.WINDOWS
@@ -160,7 +161,7 @@ def test_windows_ping_no_response(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_NO_RESPONSE_OUTPUT)
-    result = ping("192.168.1.1", 1.0, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
 
     assert not result.response_received
     assert result.os is None
@@ -171,7 +172,7 @@ def test_malformed_ping_command_response(
     patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue
 ):
     patch_subprocess_running_ping_with_ping_output(MALFORMED_OUTPUT)
-    result = ping("192.168.1.1", 1.0, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
 
     assert not result.response_received
     assert result.os is None
@@ -180,7 +181,7 @@ def test_malformed_ping_command_response(
 
 @pytest.mark.usefixtures("patch_subprocess_running_ping_to_raise_timeout_expired")
 def test_timeout_expired(mock_agent_event_queue):
-    result = ping("192.168.1.1", 1.0, mock_agent_event_queue)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
 
     assert not result.response_received
     assert result.os is None
@@ -198,7 +199,7 @@ def ping_command_spy(monkeypatch):
 @pytest.fixture
 def assert_expected_timeout(ping_command_spy, mock_agent_event_queue):
     def inner(timeout_flag, timeout_input, expected_timeout):
-        ping("192.168.1.1", timeout_input, mock_agent_event_queue)
+        ping(HOST_IP, timeout_input, mock_agent_event_queue)
 
         assert ping_command_spy.call_args is not None
 
