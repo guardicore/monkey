@@ -17,6 +17,7 @@ from monkey_island.cc.repository import (
 
 def setup_agent_event_handlers(container: DIContainer):
     _subscribe_and_store_to_event_repository(container)
+    _subscribe_ping_scan_event(container)
 
 
 def _subscribe_and_store_to_event_repository(container: DIContainer):
