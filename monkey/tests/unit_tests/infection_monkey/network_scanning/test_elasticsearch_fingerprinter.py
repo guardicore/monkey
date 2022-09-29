@@ -3,7 +3,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.common_consts.network_consts import ES_SERVICE
-from infection_monkey.i_puppet import PortScanData, PortStatus
+from common.types import PortStatus
+from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.elasticsearch_fingerprinter import (
     ES_PORT,
     ElasticSearchFingerprinter,

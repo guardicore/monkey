@@ -2,7 +2,6 @@ import abc
 import threading
 from collections import namedtuple
 from dataclasses import dataclass
-from enum import Enum
 from typing import Dict, Iterable, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
@@ -10,11 +9,6 @@ from common.types import PingScanData
 from infection_monkey.model import VictimHost
 
 from . import PluginType
-
-
-class PortStatus(Enum):
-    OPEN = 1
-    CLOSED = 2
 
 
 class UnknownPluginError(Exception):

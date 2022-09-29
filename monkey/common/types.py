@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from ipaddress import IPv4Address
 from typing import Optional
 from uuid import UUID
@@ -21,6 +22,18 @@ MachineID: TypeAlias = PositiveInt
 class PingScanData:
     response_received: bool
     os: Optional[OperatingSystem]
+
+
+class PortStatus(Enum):
+    """
+    An Enum representing the status of the port.
+
+    This Enum represents the status of a network pork. The value of each
+    member is distincive and unique number.
+    """
+
+    OPEN = 1
+    CLOSED = 2
 
 
 class SocketAddress(InfectionMonkeyBaseModel):

@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.i_puppet import PortStatus
+from common.types import PortStatus
 from infection_monkey.network_scanning import scan_tcp_ports
 from infection_monkey.network_scanning.tcp_scanner import EMPTY_PORT_SCAN
 

@@ -12,8 +12,8 @@ from common.agent_configuration.agent_sub_configurations import (
     PluginConfiguration,
     TCPScanConfiguration,
 )
-from common.types import PingScanData
-from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
+from common.types import PingScanData, PortStatus
+from infection_monkey.i_puppet import FingerprintData, PortScanData
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
 

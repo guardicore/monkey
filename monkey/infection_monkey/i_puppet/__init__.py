@@ -4,7 +4,6 @@ from .i_puppet import (
     ExploiterResultData,
     PortScanData,
     FingerprintData,
-    PortStatus,
     PostBreachData,
     UnknownPluginError,
 )
