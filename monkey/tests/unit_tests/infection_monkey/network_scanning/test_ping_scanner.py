@@ -9,6 +9,7 @@ import infection_monkey.network_scanning.ping_scanner  # noqa: F401
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
+from common.types import PingScanData
 from infection_monkey.network_scanning import ping
 from infection_monkey.network_scanning.ping_scanner import EMPTY_PING_SCAN
 from infection_monkey.utils.ids import get_agent_id
@@ -112,12 +113,9 @@ def mock_agent_event_queue():
 HOST_IP = "192.168.1.1"
 TIMEOUT = 1.0
 
-@pytest.mark.usefixtures("set_os_linux")
-def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue):
-    patch_subprocess_running_ping_with_ping_output(LINUX_SUCCESS_OUTPUT)
-    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
 
-    event = PingScanEvent(
+def _get_ping_scan_event(result: PingScanData):
+    return PingScanEvent(
         source=get_agent_id(),
         target=HOST_IP,
         timestamp=TIMESTAMP,
@@ -125,6 +123,13 @@ def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output, mock
         response_received=result.response_received,
         os=result.os,
     )
+
+
+@pytest.mark.usefixtures("set_os_linux")
+def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue):
+    patch_subprocess_running_ping_with_ping_output(LINUX_SUCCESS_OUTPUT)
+    result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    event = _get_ping_scan_event(result)
 
     assert result.response_received
     assert result.os == OperatingSystem.LINUX
