@@ -1,5 +1,7 @@
 from logging import getLogger
 
+from pydantic.json import IPv4Interface
+
 from common.agent_events import PingScanEvent
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repository import (
@@ -15,6 +17,11 @@ logger = getLogger(__name__)
 
 
 class handle_ping_scan_event:
+    """
+    Handles ping scan event and makes changes to Machine and Node states based on it
+    :param event: Ping scan event
+    """
+
     def __init__(
         self,
         agent_repository: IAgentRepository,
@@ -46,7 +53,10 @@ class handle_ping_scan_event:
             dest_machines = self._machine_repository.get_machines_by_ip(event.target)
             return dest_machines[0]
         except UnknownRecordError:
-            machine = Machine(id=self._machine_repository.get_new_id())
+            machine = Machine(
+                id=self._machine_repository.get_new_id(),
+                network_interfaces=[IPv4Interface(event.target)],
+            )
             self._machine_repository.upsert_machine(machine)
             return machine
 
