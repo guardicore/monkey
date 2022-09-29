@@ -1,13 +1,17 @@
 import math
 import subprocess
 from unittest.mock import MagicMock
+from uuid import UUID
 
 import pytest
 
+import infection_monkey.network_scanning.ping_scanner  # noqa: F401
 from common import OperatingSystem
+from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
 from infection_monkey.network_scanning import ping
 from infection_monkey.network_scanning.ping_scanner import EMPTY_PING_SCAN
+from infection_monkey.utils.ids import get_agent_id
 
 LINUX_SUCCESS_OUTPUT = """
 PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
@@ -49,6 +53,19 @@ TTL=b10
 TTL=1C
 ttl=2d2!
 """
+
+
+@pytest.fixture(scope="module")
+def patch_get_agent_id(monkeypatch):
+    monkeypatch.setattr("get_agent_id", lambda: UUID("9919520c-8650-4a39-aa1e-b2f4d1445159"))
+
+
+TIMESTAMP = 123.321
+
+
+@pytest.fixture(autouse=True)
+def patch_timestamp(monkeypatch):
+    monkeypatch.setattr("infection_monkey.network_scanning.ping_scanner.time", lambda: TIMESTAMP)
 
 
 @pytest.fixture
@@ -95,11 +112,23 @@ def mock_agent_event_queue():
 @pytest.mark.usefixtures("set_os_linux")
 def test_linux_ping_success(patch_subprocess_running_ping_with_ping_output, mock_agent_event_queue):
     patch_subprocess_running_ping_with_ping_output(LINUX_SUCCESS_OUTPUT)
-    result = ping("192.168.1.1", 1.0, mock_agent_event_queue)
+    host_ip = "192.168.1.1"
+    timeout = 1.0
+    result = ping(host_ip, timeout, mock_agent_event_queue)
+
+    event = PingScanEvent(
+        source=get_agent_id(),
+        target=host_ip,
+        timestamp=TIMESTAMP,
+        tags=frozenset(),
+        response_received=result.response_received,
+        os=result.os,
+    )
 
     assert result.response_received
     assert result.os == OperatingSystem.LINUX
     assert mock_agent_event_queue.publish.call_count == 1
+    assert mock_agent_event_queue.publish.call_args[0][0] == event
 
 
 @pytest.mark.usefixtures("set_os_linux")
