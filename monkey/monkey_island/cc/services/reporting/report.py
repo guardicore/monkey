@@ -139,8 +139,10 @@ class ReportService:
 
     @classmethod
     def get_accessible_machines(cls, machine: Machine):
-        if cls._node_repository is None or cls._machine_repository is None:
-            return []
+        if cls._node_repository is None:
+            raise RuntimeError("Node repository does not exist")
+        elif cls._machine_repository is None:
+            raise RuntimeError("Machine repository does not exist")
 
         nodes = cls._node_repository.get_nodes()
         machine_iter = (node for node in nodes if node.machine_id == machine.id)
@@ -155,7 +157,7 @@ class ReportService:
     @classmethod
     def get_all_machines(cls) -> Iterable[Machine]:
         if cls._machine_repository is None:
-            return iter(())
+            raise RuntimeError("Machine repository does not exist")
         machines = cls._machine_repository.get_machines()
         t1, t2 = tee(machines)
 
