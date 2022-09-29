@@ -143,10 +143,12 @@ def test_linux_ping_no_response(
 ):
     patch_subprocess_running_ping_with_ping_output(LINUX_NO_RESPONSE_OUTPUT)
     result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    event = _get_ping_scan_event(result)
 
     assert not result.response_received
     assert result.os is None
     assert mock_agent_event_queue.publish.call_count == 1
+    assert mock_agent_event_queue.publish.call_args[0][0] == event
 
 
 @pytest.mark.usefixtures("set_os_windows")
@@ -155,10 +157,12 @@ def test_windows_ping_success(
 ):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_SUCCESS_OUTPUT)
     result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    event = _get_ping_scan_event(result)
 
     assert result.response_received
     assert result.os == OperatingSystem.WINDOWS
     assert mock_agent_event_queue.publish.call_count == 1
+    assert mock_agent_event_queue.publish.call_args[0][0] == event
 
 
 @pytest.mark.usefixtures("set_os_windows")
@@ -167,10 +171,12 @@ def test_windows_ping_no_response(
 ):
     patch_subprocess_running_ping_with_ping_output(WINDOWS_NO_RESPONSE_OUTPUT)
     result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    event = _get_ping_scan_event(result)
 
     assert not result.response_received
     assert result.os is None
     assert mock_agent_event_queue.publish.call_count == 1
+    assert mock_agent_event_queue.publish.call_args[0][0] == event
 
 
 def test_malformed_ping_command_response(
@@ -178,19 +184,23 @@ def test_malformed_ping_command_response(
 ):
     patch_subprocess_running_ping_with_ping_output(MALFORMED_OUTPUT)
     result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    event = _get_ping_scan_event(result)
 
     assert not result.response_received
     assert result.os is None
     assert mock_agent_event_queue.publish.call_count == 1
+    assert mock_agent_event_queue.publish.call_args[0][0] == event
 
 
 @pytest.mark.usefixtures("patch_subprocess_running_ping_to_raise_timeout_expired")
 def test_timeout_expired(mock_agent_event_queue):
     result = ping(HOST_IP, TIMEOUT, mock_agent_event_queue)
+    event = _get_ping_scan_event(result)
 
     assert not result.response_received
     assert result.os is None
     assert mock_agent_event_queue.publish.call_count == 1
+    assert mock_agent_event_queue.publish.call_args[0][0] == event
 
 
 @pytest.fixture
