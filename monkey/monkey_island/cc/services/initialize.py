@@ -17,7 +17,11 @@ from common.agent_event_serializers import (
 from common.aws import AWSInstance
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.utils.file_utils import get_binary_io_sha256_hash
-from monkey_island.cc.event_queue import IIslandEventQueue, PyPubSubIslandEventQueue
+from monkey_island.cc.event_queue import (
+    IIslandEventQueue,
+    LockingIslandEventQueueDecorator,
+    PyPubSubIslandEventQueue,
+)
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
     FileAgentConfigurationRepository,
@@ -72,8 +76,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
         ILockableEncryptor, RepositoryEncryptor(data_dir / REPOSITORY_KEY_FILE_NAME)
     )
     container.register(Publisher, Publisher)
-    container.register_instance(IAgentEventQueue, container.resolve(PyPubSubAgentEventQueue))
-    container.register_instance(IIslandEventQueue, container.resolve(PyPubSubIslandEventQueue))
+    _register_event_queues(container)
 
     _setup_agent_event_serializers(container)
     _register_repositories(container, data_dir)
@@ -98,6 +101,16 @@ def _register_conventions(container: DIContainer):
         "default_ransomware_agent_configuration",
         DEFAULT_RANSOMWARE_AGENT_CONFIGURATION,
     )
+
+
+def _register_event_queues(container: DIContainer):
+    container.register_instance(IAgentEventQueue, container.resolve(PyPubSubAgentEventQueue))
+    island_event_queue = container.resolve(PyPubSubIslandEventQueue)
+    container.register_instance(IIslandEventQueue, _decorate_island_event_queue(island_event_queue))
+
+
+def _decorate_island_event_queue(island_event_queue: IIslandEventQueue):
+    return LockingIslandEventQueueDecorator(island_event_queue)
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
