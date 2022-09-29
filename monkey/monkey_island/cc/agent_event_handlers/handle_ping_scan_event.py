@@ -65,6 +65,6 @@ class handle_ping_scan_event:
         return self._machine_repository.get_machine_by_id(agent.machine_id)
 
     def _update_destination_machine(self, machine: Machine, event: PingScanEvent):
-        if event.os is not None:
+        if event.os is not None and machine.operating_system is None:
             machine.operating_system = event.os
             self._machine_repository.upsert_machine(machine)
