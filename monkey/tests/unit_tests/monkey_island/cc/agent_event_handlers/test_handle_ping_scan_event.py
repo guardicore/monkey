@@ -212,11 +212,39 @@ def test_handle_scan_data__node_not_upserted_if_machine_retrievalerror(
     assert not node_repository.upsert_communication.called
 
 
+def test_handle_scan_data__machine_not_upserted_if_os_is_none(
+    handler: handle_ping_scan_event, machine_repository: IMachineRepository
+):
+    event = PingScanEvent(source=EVENT.source, target=EVENT.target, response_received=True, os=None)
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
+
+    handler(event)
+
+    assert not machine_repository.upsert_machine.called
+
+
+def test_handle_scan_data__machine_not_upserted_if_existing_machine_has_os(
+    handler: handle_ping_scan_event, machine_repository: IMachineRepository
+):
+    machine_with_os = TARGET_MACHINE
+    machine_with_os.operating_system = OperatingSystem.WINDOWS
+    machine_repository.get_machine_by_ip = MagicMock(return_value=machine_with_os)
+
+    handler(EVENT)
+
+    assert not machine_repository.upsert_machine.called
+
+
 def test_handle_scan_data__node_not_upserted_if_machine_storageerror(
     handler: handle_ping_scan_event,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ):
+    target_machine = TARGET_MACHINE
+    target_machine.operating_system = None
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(return_value=target_machine)
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
 
     handler(EVENT)
