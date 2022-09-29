@@ -4,14 +4,13 @@ from queue import Queue
 from threading import Event
 from typing import List, Mapping, Sequence
 
-from common import PortStatus
 from common.agent_configuration import (
     ExploitationConfiguration,
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import PingScanData
+from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
 from infection_monkey.model import VictimHost, VictimHostFactory
 from infection_monkey.network import NetworkAddress

@@ -5,7 +5,7 @@ import time
 from pprint import pformat
 from typing import Collection, Dict, Iterable, Mapping, Tuple
 
-from common import PortStatus
+from common.types import PortStatus
 from common.utils import Timer
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_port_to_service

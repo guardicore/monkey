@@ -5,14 +5,14 @@ from unittest.mock import MagicMock
 import pytest
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
 
-from common import OperatingSystem, PortStatus
+from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
     ICMPScanConfiguration,
     NetworkScanConfiguration,
     PluginConfiguration,
     TCPScanConfiguration,
 )
-from common.types import PingScanData
+from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import FingerprintData, PortScanData
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress

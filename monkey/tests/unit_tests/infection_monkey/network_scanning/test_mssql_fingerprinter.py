@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from common import PortStatus
+from common.types import PortStatus
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.mssql_fingerprinter import (
     MSSQL_SERVICE,

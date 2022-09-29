@@ -4,9 +4,8 @@ from typing import Any, Dict
 
 import requests
 
-from common import PortStatus
 from common.common_consts.network_consts import ES_SERVICE
-from common.types import PingScanData
+from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PortScanData
 
 DISPLAY_NAME = "ElasticSearch"

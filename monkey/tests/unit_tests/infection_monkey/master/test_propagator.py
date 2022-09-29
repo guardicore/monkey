@@ -4,13 +4,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from common import OperatingSystem, PortStatus
+from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import PingScanData
+from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
 from infection_monkey.master import IPScanResults, Propagator
 from infection_monkey.model import VictimHost, VictimHostFactory
