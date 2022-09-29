@@ -33,12 +33,10 @@ def _subscribe_and_store_to_event_repository(container: DIContainer):
 
 
 def _subscribe_ping_scan_event(container: DIContainer):
-    # Mypy don't handle cases where abstract class is passed as Type[...]
-    # https://github.com/python/mypy/issues/4717
-    agent_event_queue = container.resolve(IAgentEventQueue)  # type: ignore
-    agent_repository = container.resolve(IAgentRepository)  # type: ignore
-    machine_repository = container.resolve(IMachineRepository)  # type: ignore
-    node_repository = container.resolve(INodeRepository)  # type: ignore
+    agent_event_queue = container.resolve(IAgentEventQueue)
+    agent_repository = container.resolve(IAgentRepository)
+    machine_repository = container.resolve(IMachineRepository)
+    node_repository = container.resolve(INodeRepository)
 
     handler = handle_ping_scan_event(agent_repository, machine_repository, node_repository)
 
