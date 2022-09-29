@@ -122,11 +122,15 @@ def _register_event_queues(container: DIContainer):
     container.register_instance(IIslandEventQueue, decorated_island_event_queue)
 
 
-def _decorate_agent_event_queue(agent_event_queue: IAgentEventQueue, lock: threading.Lock):
+def _decorate_agent_event_queue(
+    agent_event_queue: IAgentEventQueue, lock: threading.Lock
+) -> IAgentEventQueue:
     return LockingAgentEventQueueDecorator(agent_event_queue, lock)
 
 
-def _decorate_island_event_queue(island_event_queue: IIslandEventQueue, lock: threading.Lock):
+def _decorate_island_event_queue(
+    island_event_queue: IIslandEventQueue, lock: threading.Lock
+) -> IIslandEventQueue:
     return LockingIslandEventQueueDecorator(island_event_queue, lock)
 
 
