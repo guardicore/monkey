@@ -15,7 +15,11 @@ from common.agent_event_serializers import (
     register_common_agent_event_serializers,
 )
 from common.aws import AWSInstance
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
+from common.event_queue import (
+    IAgentEventQueue,
+    LockingAgentEventQueueDecorator,
+    PyPubSubAgentEventQueue,
+)
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import (
     IIslandEventQueue,
@@ -104,9 +108,15 @@ def _register_conventions(container: DIContainer):
 
 
 def _register_event_queues(container: DIContainer):
-    container.register_instance(IAgentEventQueue, container.resolve(PyPubSubAgentEventQueue))
+    agent_event_queue = container.resolve(PyPubSubAgentEventQueue)
+    container.register_instance(IAgentEventQueue, _decorate_agent_event_queue(agent_event_queue))
+
     island_event_queue = container.resolve(PyPubSubIslandEventQueue)
     container.register_instance(IIslandEventQueue, _decorate_island_event_queue(island_event_queue))
+
+
+def _decorate_agent_event_queue(agent_event_queue: IAgentEventQueue):
+    return LockingAgentEventQueueDecorator(agent_event_queue)
 
 
 def _decorate_island_event_queue(island_event_queue: IIslandEventQueue):
