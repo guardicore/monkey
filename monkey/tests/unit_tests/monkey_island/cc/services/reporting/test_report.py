@@ -3,7 +3,7 @@ from ipaddress import IPv4Interface
 from monkey_island.cc.models import CommunicationType, Machine, Node
 
 ISLAND_MACHINE = Machine(
-    id=0,
+    id=99,
     island=True,
     hardware_id=5,
     network_interfaces=[IPv4Interface("10.10.10.99/24")],
@@ -28,7 +28,7 @@ MACHINE_C = Machine(
 )
 
 NODES = [
-    Node(id=1, connections={"2", CommunicationType.EXPLOITED}),
-    Node(id=0, connections={"1", CommunicationType.SCANNED}),
-    Node(id=3, connections={"0", CommunicationType.CC}),
+    Node(machine_id=1, connections={"2": {CommunicationType.EXPLOITED}}),
+    Node(machine_id=99, connections={"1": {CommunicationType.SCANNED}}),
+    Node(machine_id=3, connections={"99": {CommunicationType.CC}}),
 ]
