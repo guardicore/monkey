@@ -7,7 +7,7 @@ import pytest
 
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
-from common.types import PingScanData, SocketAddress
+from common.types import SocketAddress
 from monkey_island.cc.agent_event_handlers import handle_ping_scan_event
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
@@ -37,7 +37,15 @@ TARGET_MACHINE = Machine(
 EVENT = PingScanEvent(
     source=AGENT_ID,
     target=IPv4Address("10.10.10.1"),
-    scan_data=PingScanData(True, OperatingSystem.LINUX),
+    response_received=True,
+    os=OperatingSystem.LINUX,
+)
+
+EVENT_NO_RESPONSE = PingScanEvent(
+    source=AGENT_ID,
+    target=IPv4Address("10.10.10.1"),
+    response_received=False,
+    os=OperatingSystem.LINUX,
 )
 
 
