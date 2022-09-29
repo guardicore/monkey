@@ -5,9 +5,9 @@ from typing import Dict
 
 from odict import odict
 
-from common import OperatingSystem
+from common import OperatingSystem, PortStatus
 from common.types import PingScanData
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PortScanData, PortStatus
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PortScanData
 
 DISPLAY_NAME = "SMB"
 SMB_PORT = 445

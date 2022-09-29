@@ -2,7 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.i_puppet import PortScanData, PortStatus
+from common import PortStatus
+from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 
 OPTIONS = {"http_ports": [80, 443, 1080, 8080, 9200]}

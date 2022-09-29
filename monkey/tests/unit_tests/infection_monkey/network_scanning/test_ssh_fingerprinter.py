@@ -1,7 +1,7 @@
 import pytest
 
-from common import OperatingSystem
-from infection_monkey.i_puppet import FingerprintData, PortScanData, PortStatus
+from common import OperatingSystem, PortStatus
+from infection_monkey.i_puppet import FingerprintData, PortScanData
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 
 

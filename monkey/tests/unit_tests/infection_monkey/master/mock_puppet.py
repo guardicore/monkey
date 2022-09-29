@@ -2,7 +2,7 @@ import logging
 import threading
 from typing import Dict, Iterable, Sequence
 
-from common import OperatingSystem
+from common import OperatingSystem, PortStatus
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
 from common.types import PingScanData
 from infection_monkey.i_puppet import (
@@ -11,7 +11,6 @@ from infection_monkey.i_puppet import (
     IPuppet,
     PluginType,
     PortScanData,
-    PortStatus,
     PostBreachData,
 )
 from infection_monkey.model import VictimHost
