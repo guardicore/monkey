@@ -39,7 +39,12 @@ class MongoAgentRepository(IAgentRepository):
             )
 
     def get_agents(self) -> Sequence[Agent]:
-        return []
+        try:
+            cursor = self._agents_collection.find({}, {MONGO_OBJECT_ID_KEY: False})
+        except Exception as err:
+            raise RetrievalError(f"Error retrieving agents: {err}")
+
+        return [Agent(**a) for a in cursor]
 
     def get_agent_by_id(self, agent_id: AgentID) -> Agent:
         try:
