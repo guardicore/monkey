@@ -16,6 +16,8 @@ OPEN_PORTS_DATA = {22: "SSH-banner", 80: "", 2222: "SSH2-banner"}
 
 TIMESTAMP = 123.321
 
+HOST_IP = "127.0.0.1"
+
 
 @pytest.fixture(scope="module")
 def patch_timestamp(monkeypatch):
@@ -32,9 +34,6 @@ def patch_check_tcp_ports(monkeypatch, open_ports_data):
         "infection_monkey.network_scanning.tcp_scanner._check_tcp_ports",
         lambda *_: open_ports_data,
     )
-
-
-HOST_IP = "127.0.0.1"
 
 
 def _get_tcp_scan_event(port_scan_data: PortScanData):
