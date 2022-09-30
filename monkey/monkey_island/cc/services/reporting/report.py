@@ -120,7 +120,7 @@ class ReportService:
                 formatted_nodes.append(
                     {
                         "hostname": machine.hostname,
-                        "ip_addresses": list(map(str, machine.network_interfaces)),
+                        "ip_addresses": [str(iface.ip) for iface in machine.network_interfaces],
                         "accessible_from_nodes": list(
                             map(lambda m: m.dict(simplify=True), accessible_from)
                         ),
