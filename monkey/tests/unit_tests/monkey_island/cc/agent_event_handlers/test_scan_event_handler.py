@@ -186,7 +186,6 @@ def test_upserts_node(
     handler,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
-    request,
 ):
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(return_value=[TARGET_MACHINE])
@@ -209,7 +208,6 @@ def test_node_not_upserted_if_no_matching_agent(
     agent_repository: IAgentRepository,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
-    request,
 ):
     agent_repository.get_agent_by_id = MagicMock(side_effect=UnknownRecordError)
     machine_repository.get_machine_by_id = MagicMock(return_value=TARGET_MACHINE)
@@ -229,7 +227,6 @@ def test_node_not_upserted_if_machine_retrievalerror(
     handler,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
-    request,
     machine_id,
 ):
     machine_repository.get_machine_by_id = MagicMock(
@@ -283,7 +280,6 @@ def test_node_not_upserted_if_machine_storageerror(
     handler,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
-    request,
 ):
     if event == PING_SCAN_EVENT:
         target_machine = TARGET_MACHINE
@@ -313,7 +309,6 @@ def test_failed_scan(
     handler,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
-    request,
 ):
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
