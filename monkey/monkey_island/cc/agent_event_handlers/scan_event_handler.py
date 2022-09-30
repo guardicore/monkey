@@ -23,7 +23,7 @@ logger = getLogger(__name__)
 
 class ScanEventHandler:
     """
-    Handles scan event and makes changes to Machine and Node states base on it
+    Handles scan event and makes changes to Machine and Node states based on it
     """
 
     def __init__(
