@@ -2,6 +2,7 @@ from ipaddress import IPv4Address
 from typing import Optional
 
 from common import OperatingSystem
+
 from . import AbstractAgentEvent
 
 
