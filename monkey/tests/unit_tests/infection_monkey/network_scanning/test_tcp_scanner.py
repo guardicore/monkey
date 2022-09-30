@@ -1,3 +1,4 @@
+import time
 from unittest.mock import MagicMock
 
 import pytest
@@ -12,6 +13,17 @@ from infection_monkey.utils.ids import get_agent_id
 PORTS_TO_SCAN = [22, 80, 8080, 143, 445, 2222]
 
 OPEN_PORTS_DATA = {22: "SSH-banner", 80: "", 2222: "SSH2-banner"}
+
+TIMESTAMP = 123.321
+
+
+@pytest.fixture(scope="module")
+def patch_timestamp(monkeypatch):
+    monkeypatch.setattr(
+        time,
+        "time",
+        TIMESTAMP,
+    )
 
 
 @pytest.fixture
