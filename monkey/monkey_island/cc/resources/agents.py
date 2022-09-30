@@ -8,6 +8,7 @@ from common import AgentRegistrationData
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.repository import IAgentRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.request_authentication import jwt_required
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,7 @@ class Agents(AbstractResource):
         self._island_event_queue = island_event_queue
         self._agent_repository = agent_repository
 
+    @jwt_required
     def get(self):
         return self._agent_repository.get_agents(), HTTPStatus.OK
 
