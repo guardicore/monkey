@@ -20,6 +20,7 @@ from monkey_island.cc.resources import (
     ClearSimulationData,
     IPAddresses,
     IslandLog,
+    Machines,
     PBAFileDownload,
     PBAFileUpload,
     PropagationCredentials,
@@ -173,6 +174,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(AgentBinaries)
     api.add_resource(NetMap)
     api.add_resource(Edge)
+    api.add_resource(Machines)
     api.add_resource(Node)
     api.add_resource(NodeStates)
 

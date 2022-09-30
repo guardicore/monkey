@@ -1,7 +1,7 @@
 import os
 import re
 from collections.abc import Callable
-from typing import Set
+from typing import Set, Type
 
 import flask_restful
 import pytest
@@ -47,7 +47,7 @@ def mock_flask_resource_manager(container):
     return flask_resource_manager
 
 
-def get_url_for_resource(resource: AbstractResource, **kwargs):
+def get_url_for_resource(resource: Type[AbstractResource], **kwargs):
     chosen_url = None
     for url in resource.urls:
         if _get_url_keywords(url) == set(kwargs.keys()):
