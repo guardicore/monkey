@@ -98,16 +98,6 @@ def scan_event_handler(agent_repository, machine_repository, node_repository):
     return ScanEventHandler(agent_repository, machine_repository, node_repository)
 
 
-@pytest.fixture
-def handle_ping_scan_event(scan_event_handler):
-    return scan_event_handler.handle_ping_scan_event
-
-
-@pytest.fixture
-def handle_tcp_scan_event(scan_event_handler):
-    return scan_event_handler.handle_tcp_scan_event
-
-
 machines = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
 machines_by_id = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
 machines_by_ip = {
