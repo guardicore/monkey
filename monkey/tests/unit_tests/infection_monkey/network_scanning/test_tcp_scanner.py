@@ -38,6 +38,8 @@ def test_tcp_successful(
         assert port_scan_data[port].status == PortStatus.CLOSED
         assert port_scan_data[port].banner is None
 
+    assert mock_agent_event_queue.publish.call_count == 1
+
 
 @pytest.mark.parametrize("open_ports_data", [{}])
 def test_tcp_empty_response(
@@ -51,6 +53,8 @@ def test_tcp_empty_response(
         assert port_scan_data[port].status == PortStatus.CLOSED
         assert port_scan_data[port].banner is None
 
+    assert mock_agent_event_queue.publish.call_count == 1
+
 
 @pytest.mark.parametrize("open_ports_data", [OPEN_PORTS_DATA])
 def test_tcp_no_ports_to_scan(
@@ -59,6 +63,7 @@ def test_tcp_no_ports_to_scan(
     port_scan_data = scan_tcp_ports("127.0.0.1", [], 0, mock_agent_event_queue)
 
     assert len(port_scan_data) == 0
+    assert mock_agent_event_queue.publish.call_count == 1
 
 
 def test_exception_handling(monkeypatch, mock_agent_event_queue):
@@ -67,3 +72,4 @@ def test_exception_handling(monkeypatch, mock_agent_event_queue):
         MagicMock(side_effect=Exception),
     )
     assert scan_tcp_ports("abc", [123], 123, mock_agent_event_queue) == EMPTY_PORT_SCAN
+    assert mock_agent_event_queue.publish.call_count == 0
