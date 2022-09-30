@@ -75,7 +75,7 @@ class MongoMachineRepository(IMachineRepository):
         except Exception as err:
             raise RetrievalError(f"Error retrieving machines: {err}")
 
-        return list(map(lambda m: Machine(**m), cursor))
+        return [Machine(**m) for m in cursor]
 
     def get_machines_by_ip(self, ip: IPv4Address) -> Sequence[Machine]:
         ip_regex = "^" + str(ip).replace(".", "\\.") + "\\/.*$"
@@ -86,7 +86,7 @@ class MongoMachineRepository(IMachineRepository):
         except Exception as err:
             raise RetrievalError(f'Error retrieving machines with ip "{ip}": {err}')
 
-        machines = list(map(lambda m: Machine(**m), cursor))
+        machines = [Machine(**m) for m in cursor]
 
         if len(machines) == 0:
             raise UnknownRecordError(f'No machines found with IP "{ip}"')
