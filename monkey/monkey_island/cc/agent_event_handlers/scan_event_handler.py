@@ -49,9 +49,9 @@ class ScanEventHandler:
             logger.exception("Unable to process ping scan data")
 
     def handle_tcp_scan_event(self, event: TCPScanEvent):
-        open_ports = [port for port, status in event.ports.items() if status == PortStatus.OPEN]
+        num_open_ports = sum((1 for status in event.ports.values() if status == PortStatus.OPEN))
 
-        if not open_ports:
+        if num_open_ports <= 0:
             return
 
         try:
