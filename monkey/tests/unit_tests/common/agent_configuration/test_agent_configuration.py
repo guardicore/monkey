@@ -179,7 +179,7 @@ def test_network_scan_configuration():
 
 
 def test_exploitation_options_configuration_schema():
-    ports = [1, 2, 3]
+    ports = [0, 1, 2, 3]
 
     config = ExploitationOptionsConfiguration(http_ports=ports)
 

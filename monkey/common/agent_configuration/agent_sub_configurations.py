@@ -157,7 +157,7 @@ class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
         :param http_ports: HTTP ports to exploit
     """
 
-    http_ports: Tuple[conint(ge=0, le=65535), ...]
+    http_ports: Tuple[NetworkPort, ...]
 
 
 class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
