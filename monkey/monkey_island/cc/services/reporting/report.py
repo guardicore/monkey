@@ -1,8 +1,8 @@
 import functools
 import ipaddress
 import logging
-from itertools import chain, filterfalse, product, tee
-from typing import Iterable, List, Optional
+from itertools import chain, product
+from typing import List, Optional
 
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
@@ -35,7 +35,6 @@ logger = logging.getLogger(__name__)
 
 
 class ReportService:
-
     _aws_service: Optional[AWSService] = None
     _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
     _credentials_repository: Optional[ICredentialsRepository] = None
@@ -113,58 +112,42 @@ class ReportService:
     def get_scanned():
         formatted_nodes = []
 
-        machines = ReportService.get_all_machines()
+        machines = ReportService._machine_repository.get_machines()
 
         for machine in machines:
-            # This information should be evident from the map, not sure a table/list is a good way
-            # to display it anyways
-            addresses = [str(iface.ip) for iface in machine.network_interfaces]
-            accessible_machines = [
-                m.hostname for m in ReportService.get_accessible_machines(machine)
-            ]
-            formatted_nodes.append(
-                {
-                    "label": machine.hostname,
-                    "ip_addresses": addresses,
-                    "accessible_from_nodes": accessible_machines,
-                    "services": [],
-                    "domain_name": "",
-                    "pba_results": "None",
-                }
-            )
-
-        logger.info("Scanned nodes generated for reporting")
+            accessible_from = ReportService.get_scanners_of_machine(machine)
+            if accessible_from:
+                formatted_nodes.append(
+                    {
+                        "hostname": machine.hostname,
+                        "ip_addresses": machine.network_interfaces,
+                        "accessible_from_nodes": accessible_from,
+                        "domain_name": "",
+                        # TODO add services
+                        "services": [],
+                    }
+                )
 
         return formatted_nodes
 
     @classmethod
-    def get_accessible_machines(cls, machine: Machine):
-        if cls._node_repository is None:
+    def get_scanners_of_machine(cls, machine: Machine) -> List[Machine]:
+        if not cls._node_repository:
             raise RuntimeError("Node repository does not exist")
-        elif cls._machine_repository is None:
+        if not cls._machine_repository:
             raise RuntimeError("Machine repository does not exist")
 
         nodes = cls._node_repository.get_nodes()
-        machine_iter = (node for node in nodes if node.machine_id == machine.id)
-        accessible_machines = set()
-        for source in machine_iter:
-            for dest, conn in source.connections.items():
-                if CommunicationType.SCANNED in conn:
-                    accessible_machines.add(dest)
+        scanner_machines = set()
+        for node in nodes:
+            for dest, conn in node.connections.items():
+                if CommunicationType.SCANNED in conn and dest == machine.id:
+                    scanner_machine = ReportService._machine_repository.get_machine_by_id(
+                        node.machine_id
+                    )
+                    scanner_machines.add(scanner_machine)
 
-        return [cls._machine_repository.get_machine_by_id(id) for id in accessible_machines]
-
-    @classmethod
-    def get_all_machines(cls) -> Iterable[Machine]:
-        if cls._machine_repository is None:
-            raise RuntimeError("Machine repository does not exist")
-        machines = cls._machine_repository.get_machines()
-        t1, t2 = tee(machines)
-
-        def is_island(machine: Machine):
-            return machine.island
-
-        return chain(filter(is_island, t1), filterfalse(is_island, t2))
+        return list(scanner_machines)
 
     @staticmethod
     def process_exploit(exploit) -> ExploiterReportInfo:
