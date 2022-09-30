@@ -73,6 +73,11 @@ class ScanEventHandler:
             self._machine_repository.upsert_machine(machine)
             return machine
 
+    def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
+        if event.os is not None and machine.operating_system is None:
+            machine.operating_system = event.os
+            self._machine_repository.upsert_machine(machine)
+
     def _update_nodes(self, target_machine: Machine, event: ScanEvent):
         src_machine = self._get_source_machine(event)
 
@@ -83,8 +88,3 @@ class ScanEventHandler:
     def _get_source_machine(self, event: ScanEvent) -> Machine:
         agent = self._agent_repository.get_agent_by_id(event.source)
         return self._machine_repository.get_machine_by_id(agent.machine_id)
-
-    def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
-        if event.os is not None and machine.operating_system is None:
-            machine.operating_system = event.os
-            self._machine_repository.upsert_machine(machine)
