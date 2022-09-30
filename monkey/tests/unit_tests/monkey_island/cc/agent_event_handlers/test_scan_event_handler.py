@@ -267,7 +267,7 @@ def test_machine_not_upserted_if_existing_machine_has_os(
 ):
     machine_with_os = TARGET_MACHINE
     machine_with_os.operating_system = OperatingSystem.WINDOWS
-    machine_repository.get_machine_by_ip = MagicMock(return_value=machine_with_os)
+    machine_repository.get_machines_by_ip = MagicMock(return_value=[machine_with_os])
 
     scan_event_handler.handle_ping_scan_event(PING_SCAN_EVENT)
 
