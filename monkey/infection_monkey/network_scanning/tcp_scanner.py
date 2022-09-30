@@ -5,6 +5,7 @@ import time
 from pprint import pformat
 from typing import Collection, Dict, Iterable, Mapping, Tuple
 
+from common.agent_events import TCPScanEvent
 from common.event_queue import IAgentEventQueue
 from common.types import PortStatus
 from common.utils import Timer
@@ -32,16 +33,20 @@ def _scan_tcp_ports(
 ) -> Dict[int, PortScanData]:
     open_ports = _check_tcp_ports(host, ports_to_scan, timeout)
 
-    tcp_scan_data = _build_port_scan_data(ports_to_scan, open_ports)
+    port_scan_data = _build_port_scan_data(ports_to_scan, open_ports)
 
-    tcp_scan_event = _generate_tcp_scan_event(host, tcp_scan_data)
+    tcp_scan_event = _generate_tcp_scan_event(host, port_scan_data)
     agent_event_queue.publish(tcp_scan_event)
 
-    return tcp_scan_data
+    return port_scan_data
 
 
-def _generate_tcp_scan_event(host: str, tcp_scan_data: Dict[int, PortScanData]):
-    pass
+def _generate_tcp_scan_event(host: str, port_scan_data: Dict[int, PortScanData]):
+    port_statuses = {}
+    for port, data in port_scan_data.items():
+        port_statuses[port] = data.status
+
+    return TCPScanEvent(target=host, ports=port_statuses)
 
 
 def _build_port_scan_data(
