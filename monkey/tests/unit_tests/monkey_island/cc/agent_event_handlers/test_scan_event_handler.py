@@ -161,9 +161,15 @@ class error_machine_by_ip:
             return machines
 
 
+@pytest.fixture
+def handler(scan_event_handler, request):
+    return getattr(scan_event_handler, request.param)
+
+
 @pytest.mark.parametrize(
     "event,handler",
     [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    indirect=["handler"],
 )
 def test_scan_event_handler__target_machine_not_exists(
     event, handler, machine_repository: IMachineRepository, request
@@ -171,7 +177,6 @@ def test_scan_event_handler__target_machine_not_exists(
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(event.target)])
@@ -183,6 +188,7 @@ def test_scan_event_handler__target_machine_not_exists(
 @pytest.mark.parametrize(
     "event,handler",
     [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    indirect=["handler"],
 )
 def test_scan_event_handler__upserts_node(
     event,
@@ -194,7 +200,6 @@ def test_scan_event_handler__upserts_node(
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(return_value=[TARGET_MACHINE])
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     node_repository.upsert_communication.assert_called_with(
@@ -205,6 +210,7 @@ def test_scan_event_handler__upserts_node(
 @pytest.mark.parametrize(
     "event,handler",
     [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    indirect=["handler"],
 )
 def test_scan_event_handler__node_not_upserted_if_no_matching_agent(
     event,
@@ -217,7 +223,6 @@ def test_scan_event_handler__node_not_upserted_if_no_matching_agent(
     agent_repository.get_agent_by_id = MagicMock(side_effect=UnknownRecordError)
     machine_repository.get_machine_by_id = MagicMock(return_value=TARGET_MACHINE)
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     assert not node_repository.upsert_communication.called
@@ -226,6 +231,7 @@ def test_scan_event_handler__node_not_upserted_if_no_matching_agent(
 @pytest.mark.parametrize(
     "event,handler",
     [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    indirect=["handler"],
 )
 def test_scan_event_handler__node_not_upserted_if_machine_retrievalerror(
     event,
@@ -242,7 +248,6 @@ def test_scan_event_handler__node_not_upserted_if_machine_retrievalerror(
         side_effect=error_machine_by_ip(machine_id, RetrievalError)
     )
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     assert not node_repository.upsert_communication.called
@@ -254,6 +259,7 @@ def test_scan_event_handler__node_not_upserted_if_machine_retrievalerror(
         (PING_SCAN_EVENT_NO_OS, "handle_ping_scan_event"),
         (TCP_SCAN_EVENT_CLOSED, "handle_tcp_scan_event"),
     ],
+    indirect=["handler"],
 )
 def test_scan_event_handler__machine_not_upserted(
     event, handler, machine_repository: IMachineRepository, request
@@ -261,7 +267,6 @@ def test_scan_event_handler__machine_not_upserted(
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     assert not machine_repository.upsert_machine.called
@@ -270,6 +275,7 @@ def test_scan_event_handler__machine_not_upserted(
 @pytest.mark.parametrize(
     "event,handler",
     [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    indirect=["handler"],
 )
 def test_scan_event_handler__machine_not_upserted_if_existing_machine_has_os(
     event, handler, machine_repository: IMachineRepository, request
@@ -278,7 +284,6 @@ def test_scan_event_handler__machine_not_upserted_if_existing_machine_has_os(
     machine_with_os.operating_system = OperatingSystem.WINDOWS
     machine_repository.get_machine_by_ip = MagicMock(return_value=machine_with_os)
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     assert not machine_repository.upsert_machine.called
@@ -287,6 +292,7 @@ def test_scan_event_handler__machine_not_upserted_if_existing_machine_has_os(
 @pytest.mark.parametrize(
     "event,handler",
     [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    indirect=["handler"],
 )
 def test_scan_event_handler__node_not_upserted_if_machine_storageerror(
     event,
@@ -305,7 +311,6 @@ def test_scan_event_handler__node_not_upserted_if_machine_storageerror(
         machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     assert not node_repository.upsert_communication.called
@@ -317,6 +322,7 @@ def test_scan_event_handler__node_not_upserted_if_machine_storageerror(
         (PING_SCAN_EVENT_NO_RESPONSE, "handle_ping_scan_event"),
         (TCP_SCAN_EVENT_CLOSED, "handle_tcp_scan_event"),
     ],
+    indirect=["handler"],
 )
 def test_scan_event_handler__failed_scan(
     event,
@@ -329,7 +335,6 @@ def test_scan_event_handler__failed_scan(
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
 
-    handler = request.getfixturevalue(handler)
     handler(event)
 
     assert not node_repository.upsert_communication.called
