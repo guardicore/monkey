@@ -161,6 +161,10 @@ class error_machine_by_ip:
             return machines
 
 
+HANDLE_PING_SCAN_METHOD = "handle_ping_scan_event"
+HANDLE_TCP_SCAN_METHOD = "handle_tcp_scan_event"
+
+
 @pytest.fixture
 def handler(scan_event_handler, request):
     return getattr(scan_event_handler, request.param)
@@ -168,7 +172,7 @@ def handler(scan_event_handler, request):
 
 @pytest.mark.parametrize(
     "event,handler",
-    [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
     indirect=["handler"],
 )
 def test_scan_event_handler__target_machine_not_exists(
@@ -187,7 +191,7 @@ def test_scan_event_handler__target_machine_not_exists(
 
 @pytest.mark.parametrize(
     "event,handler",
-    [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
     indirect=["handler"],
 )
 def test_scan_event_handler__upserts_node(
@@ -209,7 +213,7 @@ def test_scan_event_handler__upserts_node(
 
 @pytest.mark.parametrize(
     "event,handler",
-    [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
     indirect=["handler"],
 )
 def test_scan_event_handler__node_not_upserted_if_no_matching_agent(
@@ -230,7 +234,7 @@ def test_scan_event_handler__node_not_upserted_if_no_matching_agent(
 
 @pytest.mark.parametrize(
     "event,handler",
-    [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
     indirect=["handler"],
 )
 def test_scan_event_handler__node_not_upserted_if_machine_retrievalerror(
@@ -256,8 +260,8 @@ def test_scan_event_handler__node_not_upserted_if_machine_retrievalerror(
 @pytest.mark.parametrize(
     "event,handler",
     [
-        (PING_SCAN_EVENT_NO_OS, "handle_ping_scan_event"),
-        (TCP_SCAN_EVENT_CLOSED, "handle_tcp_scan_event"),
+        (PING_SCAN_EVENT_NO_OS, HANDLE_PING_SCAN_METHOD),
+        (TCP_SCAN_EVENT_CLOSED, HANDLE_TCP_SCAN_METHOD),
     ],
     indirect=["handler"],
 )
@@ -274,7 +278,7 @@ def test_scan_event_handler__machine_not_upserted(
 
 @pytest.mark.parametrize(
     "event,handler",
-    [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
     indirect=["handler"],
 )
 def test_scan_event_handler__machine_not_upserted_if_existing_machine_has_os(
@@ -291,7 +295,7 @@ def test_scan_event_handler__machine_not_upserted_if_existing_machine_has_os(
 
 @pytest.mark.parametrize(
     "event,handler",
-    [(PING_SCAN_EVENT, "handle_ping_scan_event"), (TCP_SCAN_EVENT, "handle_tcp_scan_event")],
+    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
     indirect=["handler"],
 )
 def test_scan_event_handler__node_not_upserted_if_machine_storageerror(
@@ -319,8 +323,8 @@ def test_scan_event_handler__node_not_upserted_if_machine_storageerror(
 @pytest.mark.parametrize(
     "event,handler",
     [
-        (PING_SCAN_EVENT_NO_RESPONSE, "handle_ping_scan_event"),
-        (TCP_SCAN_EVENT_CLOSED, "handle_tcp_scan_event"),
+        (PING_SCAN_EVENT_NO_RESPONSE, HANDLE_PING_SCAN_METHOD),
+        (TCP_SCAN_EVENT_CLOSED, HANDLE_TCP_SCAN_METHOD),
     ],
     indirect=["handler"],
 )
