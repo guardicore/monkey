@@ -81,6 +81,8 @@ def agent_repository() -> IAgentRepository:
 @pytest.fixture
 def machine_repository() -> IMachineRepository:
     machine_repository = MagicMock(spec=IMachineRepository)
+    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     machine_repository.get_new_id = MagicMock(side_effect=count(SEED_ID))
     machine_repository.upsert_machine = MagicMock()
     return machine_repository
@@ -165,7 +167,6 @@ def handler(scan_event_handler, request):
     indirect=["handler"],
 )
 def test_target_machine_not_exists(event, handler, machine_repository: IMachineRepository, request):
-    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
 
     handler(event)
@@ -187,7 +188,6 @@ def test_upserts_node(
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ):
-    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(return_value=[TARGET_MACHINE])
 
     handler(event)
@@ -250,9 +250,6 @@ def test_node_not_upserted_if_machine_retrievalerror(
     indirect=["handler"],
 )
 def test_machine_not_upserted(event, handler, machine_repository: IMachineRepository, request):
-    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
-    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
-
     handler(event)
 
     assert not machine_repository.upsert_machine.called
@@ -285,7 +282,6 @@ def test_node_not_upserted_if_machine_storageerror(
         target_machine = TARGET_MACHINE
         target_machine.operating_system = None
 
-    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
     if event == PING_SCAN_EVENT:
         machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
@@ -311,8 +307,6 @@ def test_failed_scan(
     node_repository: INodeRepository,
 ):
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
-    machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
-    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
 
     handler(event)
 
