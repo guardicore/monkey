@@ -38,6 +38,14 @@ class MongoAgentRepository(IAgentRepository):
                 f"but no agents were inserted"
             )
 
+    def get_agents(self) -> Sequence[Agent]:
+        try:
+            cursor = self._agents_collection.find({}, {MONGO_OBJECT_ID_KEY: False})
+        except Exception as err:
+            raise RetrievalError(f"Error retrieving agents: {err}")
+
+        return [Agent(**a) for a in cursor]
+
     def get_agent_by_id(self, agent_id: AgentID) -> Agent:
         try:
             agent_dict = self._agents_collection.find_one(
@@ -54,7 +62,7 @@ class MongoAgentRepository(IAgentRepository):
     def get_running_agents(self) -> Sequence[Agent]:
         try:
             cursor = self._agents_collection.find({"stop_time": None}, {MONGO_OBJECT_ID_KEY: False})
-            return list(map(lambda a: Agent(**a), cursor))
+            return [Agent(**a) for a in cursor]
         except Exception as err:
             raise RetrievalError(f"Error retrieving running agents: {err}")
 

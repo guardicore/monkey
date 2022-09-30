@@ -6,6 +6,7 @@ from flask import make_response, request
 
 from common import AgentRegistrationData
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.repository import IAgentRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
@@ -14,8 +15,12 @@ logger = logging.getLogger(__name__)
 class Agents(AbstractResource):
     urls = ["/api/agents"]
 
-    def __init__(self, island_event_queue: IIslandEventQueue):
+    def __init__(self, island_event_queue: IIslandEventQueue, agent_repository: IAgentRepository):
         self._island_event_queue = island_event_queue
+        self._agent_repository = agent_repository
+
+    def get(self):
+        return self._agent_repository.get_agents(), HTTPStatus.OK
 
     def post(self):
         try:

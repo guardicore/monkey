@@ -161,6 +161,26 @@ def test_upsert_agent__storage_error_insert_failed(error_raising_mock_mongo_clie
         agent_repository.upsert_agent(agent)
 
 
+def test_get_agents__empty_repo(empty_agent_repository):
+    all_agents = empty_agent_repository.get_agents()
+
+    assert len(all_agents) == 0
+
+
+def test_get_agents(agent_repository):
+    all_agents = agent_repository.get_agents()
+
+    assert len(all_agents) == len(AGENTS)
+
+    for agent in AGENTS:
+        assert agent in all_agents
+
+
+def test_get_agents__retrieval_error(error_raising_agent_repository):
+    with pytest.raises(RetrievalError):
+        error_raising_agent_repository.get_agents()
+
+
 def test_get_agent_by_id(agent_repository):
     for i, expected_agent in enumerate(AGENTS):
         assert agent_repository.get_agent_by_id(expected_agent.id) == expected_agent

@@ -23,7 +23,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/agent-events` endpoint. #2155, #2300
 - The ability to customize the file extension used by ransomware when
   encrypting files. #1242
-- `/api/agents` endpoint.
+- `/api/agents` endpoint. #2362
 - `/api/agent-signals` endpoint. #2261
 - `/api/agent-logs/<uuid:agent_id>` endpoint. #2274
 
