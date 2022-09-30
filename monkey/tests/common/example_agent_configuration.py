@@ -27,7 +27,7 @@ SCAN_TARGET_CONFIGURATION = {
 TIMEOUT = 2.525
 ICMP_CONFIGURATION = {"timeout": TIMEOUT}
 
-PORTS = [8080, 443]
+PORTS = [0, 8080, 443]
 TCP_SCAN_CONFIGURATION = {"timeout": TIMEOUT, "ports": PORTS}
 
 FINGERPRINTERS = [{"name": "mssql", "options": {}}]

@@ -3,6 +3,7 @@ from typing import Dict, Tuple
 from pydantic import PositiveFloat, conint, validator
 
 from common.base_models import MutableInfectionMonkeyBaseModel
+from common.types import NetworkPort
 
 from .validators import (
     validate_ip,
@@ -128,7 +129,7 @@ class TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     timeout: PositiveFloat
-    ports: Tuple[conint(ge=0, le=65535), ...]
+    ports: Tuple[NetworkPort, ...]
 
 
 class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
