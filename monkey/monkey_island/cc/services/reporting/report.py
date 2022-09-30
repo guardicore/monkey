@@ -2,15 +2,20 @@ import functools
 import ipaddress
 import logging
 from itertools import chain, product
-from typing import List
+from typing import List, Optional
 
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey
+from monkey_island.cc.models import CommunicationType, Machine, Monkey
 from monkey_island.cc.models.report import get_report, save_report
-from monkey_island.cc.repository import IAgentConfigurationRepository, ICredentialsRepository
+from monkey_island.cc.repository import (
+    IAgentConfigurationRepository,
+    ICredentialsRepository,
+    IMachineRepository,
+    INodeRepository,
+)
 from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
@@ -30,10 +35,11 @@ logger = logging.getLogger(__name__)
 
 
 class ReportService:
-
-    _aws_service = None
-    _agent_configuration_repository = None
-    _credentials_repository = None
+    _aws_service: Optional[AWSService] = None
+    _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
+    _credentials_repository: Optional[ICredentialsRepository] = None
+    _machine_repository: Optional[IMachineRepository] = None
+    _node_repository: Optional[INodeRepository] = None
 
     class DerivedIssueEnum:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
@@ -44,10 +50,14 @@ class ReportService:
         aws_service: AWSService,
         agent_configuration_repository: IAgentConfigurationRepository,
         credentials_repository: ICredentialsRepository,
+        machine_repository: IMachineRepository,
+        node_repository: INodeRepository,
     ):
         cls._aws_service = aws_service
         cls._agent_configuration_repository = agent_configuration_repository
         cls._credentials_repository = credentials_repository
+        cls._machine_repository = machine_repository
+        cls._node_repository = node_repository
 
     # This should pull from Simulation entity
     @staticmethod
@@ -102,39 +112,42 @@ class ReportService:
     def get_scanned():
         formatted_nodes = []
 
-        nodes = ReportService.get_all_displayed_nodes()
+        machines = ReportService._machine_repository.get_machines()
 
-        for node in nodes:
-            # This information should be evident from the map, not sure a table/list is a good way
-            # to display it anyways
-            nodes_that_can_access_current_node = node["accessible_from_nodes_hostnames"]
-            formatted_nodes.append(
-                {
-                    "label": node["label"],
-                    "ip_addresses": node["ip_addresses"],
-                    "accessible_from_nodes": nodes_that_can_access_current_node,
-                    "services": node["services"],
-                    "domain_name": node["domain_name"],
-                    "pba_results": node["pba_results"] if "pba_results" in node else "None",
-                }
-            )
-
-        logger.info("Scanned nodes generated for reporting")
+        for machine in machines:
+            accessible_from = ReportService.get_scanners_of_machine(machine)
+            if accessible_from:
+                formatted_nodes.append(
+                    {
+                        "hostname": machine.hostname,
+                        "ip_addresses": [str(iface.ip) for iface in machine.network_interfaces],
+                        "accessible_from_nodes": [m.dict(simplify=True) for m in accessible_from],
+                        "domain_name": "",
+                        # TODO add services
+                        "services": [],
+                    }
+                )
 
         return formatted_nodes
 
-    @staticmethod
-    def get_all_displayed_nodes():
-        nodes_without_monkeys = [
-            NodeService.get_displayed_node_by_id(node["_id"], True)
-            for node in mongo.db.node.find({}, {"_id": 1})
-        ]
-        nodes_with_monkeys = [
-            NodeService.get_displayed_node_by_id(monkey["_id"], True)
-            for monkey in mongo.db.monkey.find({}, {"_id": 1})
-        ]
-        nodes = nodes_without_monkeys + nodes_with_monkeys
-        return nodes
+    @classmethod
+    def get_scanners_of_machine(cls, machine: Machine) -> List[Machine]:
+        if not cls._node_repository:
+            raise RuntimeError("Node repository does not exist")
+        if not cls._machine_repository:
+            raise RuntimeError("Machine repository does not exist")
+
+        nodes = cls._node_repository.get_nodes()
+        scanner_machines = set()
+        for node in nodes:
+            for dest, conn in node.connections.items():
+                if CommunicationType.SCANNED in conn and dest == machine.id:
+                    scanner_machine = ReportService._machine_repository.get_machine_by_id(
+                        node.machine_id
+                    )
+                    scanner_machines.add(scanner_machine)
+
+        return list(scanner_machines)
 
     @staticmethod
     def process_exploit(exploit) -> ExploiterReportInfo:

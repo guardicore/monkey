@@ -94,6 +94,8 @@ def initialize_services(container: DIContainer, data_dir: Path):
         container.resolve(AWSService),
         container.resolve(IAgentConfigurationRepository),
         container.resolve(ICredentialsRepository),
+        container.resolve(IMachineRepository),
+        container.resolve(INodeRepository),
     )
 
 

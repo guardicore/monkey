@@ -2,7 +2,6 @@ import React, {Fragment} from 'react';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
-import PostBreach from 'components/report-components/security/PostBreach';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
 import {edgeGroupToColor, getOptions} from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/security/StolenPasswords';
@@ -23,7 +22,7 @@ import {smbPasswordReport, smbPthReport} from './security/issues/SmbIssue';
 import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
 import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
 import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
-import {sshKeysReport, shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
+import {shhIssueReport, sshIssueOverview, sshKeysReport} from './security/issues/SshIssue';
 import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
 import {
   crossSegmentIssueOverview,
@@ -31,11 +30,13 @@ import {
   islandCrossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
 import {
-  sharedCredsDomainIssueReport, sharedCredsIssueReport, sharedLocalAdminsIssueReport,
   sharedAdminsDomainIssueOverview,
+  sharedCredsDomainIssueReport,
+  sharedCredsIssueReport,
+  sharedLocalAdminsIssueReport,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import {tunnelIssueReport, tunnelIssueOverview} from './security/issues/TunnelIssue';
+import {tunnelIssueOverview, tunnelIssueReport} from './security/issues/TunnelIssue';
 import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
 import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
@@ -538,9 +539,11 @@ class ReportPageComponent extends AuthComponent {
           <BreachedServers />
         </div>
 
+        {/* Post breach data should be separated from scanned machines
         <div style={{marginBottom: '20px'}}>
           <PostBreach data={this.state.report.glance.scanned}/>
         </div>
+        */}
 
         <div style={{marginBottom: '20px'}}>
           <StolenPasswords
