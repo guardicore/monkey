@@ -11,6 +11,7 @@ from common.types import PortStatus
 from common.utils import Timer
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_port_to_service
+from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ def _generate_tcp_scan_event(host: str, port_scan_data: Dict[int, PortScanData])
     for port, data in port_scan_data.items():
         port_statuses[port] = data.status
 
-    return TCPScanEvent(target=host, ports=port_statuses)
+    return TCPScanEvent(source=get_agent_id(), target=host, ports=port_statuses)
 
 
 def _build_port_scan_data(
