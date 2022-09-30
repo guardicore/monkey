@@ -21,18 +21,27 @@ def scan_tcp_ports(
     host: str, ports_to_scan: Collection[int], timeout: float, agent_event_queue: IAgentEventQueue
 ) -> Dict[int, PortScanData]:
     try:
-        return _scan_tcp_ports(host, ports_to_scan, timeout)
+        return _scan_tcp_ports(host, ports_to_scan, timeout, agent_event_queue)
     except Exception:
         logger.exception("Unhandled exception occurred while trying to scan tcp ports")
         return EMPTY_PORT_SCAN
 
 
 def _scan_tcp_ports(
-    host: str, ports_to_scan: Collection[int], timeout: float
+    host: str, ports_to_scan: Collection[int], timeout: float, agent_event_queue: IAgentEventQueue
 ) -> Dict[int, PortScanData]:
     open_ports = _check_tcp_ports(host, ports_to_scan, timeout)
 
-    return _build_port_scan_data(ports_to_scan, open_ports)
+    tcp_scan_data = _build_port_scan_data(ports_to_scan, open_ports)
+
+    tcp_scan_event = _generate_tcp_scan_event(host, tcp_scan_data)
+    agent_event_queue.publish(tcp_scan_event)
+
+    return tcp_scan_data
+
+
+def _generate_tcp_scan_event(host: str, tcp_scan_data: Dict[int, PortScanData]):
+    pass
 
 
 def _build_port_scan_data(
