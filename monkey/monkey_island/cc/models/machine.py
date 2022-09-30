@@ -38,3 +38,6 @@ class Machine(MutableInfectionMonkeyBaseModel):
     _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
         make_immutable_sequence
     )
+
+    def __hash__(self):
+        return self.id
