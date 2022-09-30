@@ -9,6 +9,10 @@ export let renderIpAddresses = function (val) {
     </div>;
 };
 
+export let renderMachineArray = function(array) {
+  return <>{array.map(x => <div key={x.network_interfaces[0]}>{x.network_interfaces[0]}</div>)}</>;
+}
+
 export let renderLimitedArray = function (array,
                                           limit,
                                           className='',
