@@ -6,10 +6,11 @@ import pytest
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
+from common.types import SocketAddress
 from monkey_island.cc.event_queue import IIslandEventQueue
+from monkey_island.cc.models import Agent
+from monkey_island.cc.repository import IAgentRepository
 from monkey_island.cc.resources import Agents
-
-AGENTS_URL = get_url_for_resource(Agents)
 
 AGENT_REGISTRATION_DICT = {
     "id": UUID("6bfd8b64-43d8-4449-8c70-d898aca74ad8"),
@@ -20,11 +21,37 @@ AGENT_REGISTRATION_DICT = {
     "network_interfaces": ["10.1.1.2/24"],
 }
 
+AGENTS = (
+    Agent(
+        id=UUID("12345678-1234-1234-1234-123456789abc"),
+        machine_id=2,
+        start_time=0,
+        stop_time=10,
+        cc_server=SocketAddress(ip="10.0.0.1", port=5000),
+    ),
+    Agent(
+        id=UUID("abcdef78-abcd-abcd-abcd-abcdef123456"),
+        machine_id=3,
+        start_time=5,
+        stop_time=15,
+        cc_server=SocketAddress(ip="10.0.0.1", port=5000),
+    ),
+)
+
 
 @pytest.fixture
-def flask_client(build_flask_client):
+def agent_repository() -> IAgentRepository:
+    agent_repository = MagicMock(spec=IAgentRepository)
+    agent_repository.get_agents = MagicMock(return_value=AGENTS)
+
+    return agent_repository
+
+
+@pytest.fixture
+def flask_client(build_flask_client, agent_repository):
     container = StubDIContainer()
     container.register_instance(IIslandEventQueue, MagicMock(spec=IIslandEventQueue))
+    container.register_instance(IAgentRepository, agent_repository)
 
     with build_flask_client(container) as flask_client:
         yield flask_client
@@ -32,7 +59,7 @@ def flask_client(build_flask_client):
 
 def test_agent_registration(flask_client):
     resp = flask_client.post(
-        AGENTS_URL,
+        get_url_for_resource(Agents),
         json=AGENT_REGISTRATION_DICT,
         follow_redirects=True,
     )
@@ -46,9 +73,29 @@ def test_agent_registration_invalid_data(flask_client):
     agent_registration_dict["id"] = 1
 
     resp = flask_client.post(
-        AGENTS_URL,
+        get_url_for_resource(Agents),
         json=agent_registration_dict,
         follow_redirects=True,
     )
 
     assert resp.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_get_agents__status_code(flask_client):
+    resp = flask_client.get(
+        get_url_for_resource(Agents),
+        follow_redirects=True,
+    )
+    assert resp.status_code == HTTPStatus.OK
+
+
+def test_get_agents__data(flask_client):
+    resp = flask_client.get(
+        get_url_for_resource(Agents),
+        follow_redirects=True,
+    )
+
+    agents = [Agent(**a) for a in resp.json]
+    assert len(agents) == len(AGENTS)
+    for a in agents:
+        assert a in AGENTS
