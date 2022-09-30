@@ -73,7 +73,7 @@ class MongoNodeRepository(INodeRepository):
     def get_nodes(self) -> Sequence[Node]:
         try:
             cursor = self._nodes_collection.find({}, {MONGO_OBJECT_ID_KEY: False})
-            return list(map(lambda n: Node(**n), cursor))
+            return [Node(**n) for n in cursor]
         except Exception as err:
             raise RetrievalError(f"Error retrieving nodes from the repository: {err}")
 
