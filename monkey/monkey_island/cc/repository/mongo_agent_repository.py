@@ -62,7 +62,7 @@ class MongoAgentRepository(IAgentRepository):
     def get_running_agents(self) -> Sequence[Agent]:
         try:
             cursor = self._agents_collection.find({"stop_time": None}, {MONGO_OBJECT_ID_KEY: False})
-            return list(map(lambda a: Agent(**a), cursor))
+            return [Agent(**a) for a in cursor]
         except Exception as err:
             raise RetrievalError(f"Error retrieving running agents: {err}")
 
