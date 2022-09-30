@@ -45,7 +45,7 @@ class ScanEventHandler:
 
             self._update_target_machine_os(target_machine, event)
             self._update_nodes(target_machine, event)
-        except (RetrievalError, StorageError, TypeError, UnknownRecordError):
+        except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process ping scan data")
 
     def handle_tcp_scan_event(self, event: TCPScanEvent):
@@ -64,7 +64,6 @@ class ScanEventHandler:
     def _get_target_machine(self, event: ScanEvent) -> Machine:
         try:
             target_machines = self._machine_repository.get_machines_by_ip(event.target)
-            print(target_machines)
             return target_machines[0]
         except UnknownRecordError:
             machine = Machine(
