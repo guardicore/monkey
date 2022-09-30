@@ -245,7 +245,7 @@ def test_handle_scan_data__node_not_upserted_if_machine_storageerror(
     target_machine = TARGET_MACHINE
     target_machine.operating_system = None
     machine_repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
-    machine_repository.get_machines_by_ip = MagicMock(return_value=target_machine)
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
 
     handler(EVENT)
