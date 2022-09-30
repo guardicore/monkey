@@ -161,19 +161,28 @@ def handler(scan_event_handler, request):
     return getattr(scan_event_handler, request.param)
 
 
-@pytest.mark.parametrize(
-    "event,handler",
-    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
-    indirect=["handler"],
-)
-def test_target_machine_not_exists(event, handler, machine_repository: IMachineRepository):
+def test_ping_scan_event_target_machine_not_exists(
+    scan_event_handler, machine_repository: IMachineRepository
+):
+    event = PING_SCAN_EVENT
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
 
-    handler(event)
+    scan_event_handler.handle_ping_scan_event(event)
 
     expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(event.target)])
-    if event == PING_SCAN_EVENT:
-        expected_machine.operating_system = event.os
+    expected_machine.operating_system = event.os
+    machine_repository.upsert_machine.assert_called_with(expected_machine)
+
+
+def test_tcp_scan_event_target_machine_not_exists(
+    scan_event_handler, machine_repository: IMachineRepository
+):
+    event = TCP_SCAN_EVENT
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
+
+    scan_event_handler.handle_tcp_scan_event(event)
+
+    expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(event.target)])
     machine_repository.upsert_machine.assert_called_with(expected_machine)
 
 
