@@ -26,7 +26,7 @@ class NetworkPort(ConstrainedInt):
         port: NetworkPort = typing.cast(NetworkPort, 1000)
     """
 
-    ge = 1
+    ge = 0
     le = 65535
 
 
