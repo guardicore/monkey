@@ -35,9 +35,7 @@ def patch_check_tcp_ports(monkeypatch, open_ports_data):
 
 
 def _get_tcp_scan_event(port_scan_data: PortScanData):
-    port_statuses = {}
-    for port, data in port_scan_data.items():
-        port_statuses[port] = data.status
+    port_statuses = {port: psd.status for port, psd in port_scan_data.items()}
 
     return TCPScanEvent(
         source=get_agent_id(),

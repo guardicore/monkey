@@ -46,9 +46,7 @@ def _scan_tcp_ports(
 def _generate_tcp_scan_event(
     host: str, port_scan_data: Dict[int, PortScanData], event_timestamp: float
 ):
-    port_statuses = {}
-    for port, data in port_scan_data.items():
-        port_statuses[port] = data.status
+    port_statuses = {port: psd.status for port, psd in port_scan_data.items()}
 
     return TCPScanEvent(
         source=get_agent_id(),
