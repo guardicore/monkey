@@ -43,7 +43,7 @@ class handle_ping_scan_event:
 
             self._update_target_machine_os(target_machine, event)
             self._update_nodes(target_machine, event)
-        except (RetrievalError, StorageError, TypeError, UnknownRecordError):
+        except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process ping scan data")
 
     def _get_target_machine(self, event: PingScanEvent) -> Machine:
