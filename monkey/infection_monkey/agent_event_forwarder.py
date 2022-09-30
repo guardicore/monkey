@@ -79,8 +79,8 @@ class BatchingAgentEventForwarder:
         try:
             logger.debug(f"Sending Agent events to Island: {events}")
             self._island_api_client.send_events(events)
-        except Exception as err:
-            logger.warning(f"Exception caught when connecting to the Island: {err}")
+        except Exception:
+            logger.exception("Exception caught when connecting to the Island")
 
     def _send_remaining_events(self):
         self._send_events_to_island()
