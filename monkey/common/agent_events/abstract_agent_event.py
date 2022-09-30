@@ -25,6 +25,6 @@ class AbstractAgentEvent(InfectionMonkeyBaseModel, ABC):
     """
 
     source: AgentID
-    target: Union[MachineID, IPv4Address, None] = Field(default=None)
+    target: Union[IPv4Address, MachineID, None] = Field(default=None)
     timestamp: float = Field(default_factory=time.time)
     tags: FrozenSet[str] = Field(default_factory=frozenset)
