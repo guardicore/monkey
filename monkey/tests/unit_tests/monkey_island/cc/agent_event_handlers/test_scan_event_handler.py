@@ -267,27 +267,30 @@ def test_machine_not_upserted_if_existing_machine_has_os(
     assert not machine_repository.upsert_machine.called
 
 
-@pytest.mark.parametrize(
-    "event,handler",
-    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
-    indirect=["handler"],
-)
-def test_node_not_upserted_if_machine_storageerror(
-    event,
-    handler,
+def test_node_not_upserted_by_ping_scan_event_if_machine_storageerror(
+    scan_event_handler,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ):
-    if event == PING_SCAN_EVENT:
-        target_machine = TARGET_MACHINE
-        target_machine.operating_system = None
-
-    machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
-    if event == PING_SCAN_EVENT:
-        machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
+    target_machine = TARGET_MACHINE
+    target_machine.operating_system = None
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
 
-    handler(event)
+    scan_event_handler.handle_ping_scan_event(PING_SCAN_EVENT)
+
+    assert not node_repository.upsert_communication.called
+
+
+def test_node_not_upserted_by_tcp_scan_event_if_machine_storageerror(
+    scan_event_handler,
+    machine_repository: IMachineRepository,
+    node_repository: INodeRepository,
+):
+    machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
+    machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
+
+    scan_event_handler.handle_tcp_scan_event(TCP_SCAN_EVENT)
 
     assert not node_repository.upsert_communication.called
 
