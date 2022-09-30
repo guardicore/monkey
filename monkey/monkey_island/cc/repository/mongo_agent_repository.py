@@ -38,6 +38,9 @@ class MongoAgentRepository(IAgentRepository):
                 f"but no agents were inserted"
             )
 
+    def get_agents(self) -> Sequence[Agent]:
+        return []
+
     def get_agent_by_id(self, agent_id: AgentID) -> Agent:
         try:
             agent_dict = self._agents_collection.find_one(

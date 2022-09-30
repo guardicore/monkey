@@ -20,6 +20,15 @@ class IAgentRepository(ABC):
         """
 
     @abstractmethod
+    def get_agents(self) -> Sequence[Agent]:
+        """
+        Get all `Agents` stored in the repository
+
+        :return: All agents in the repository
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Agents`
+        """
+
+    @abstractmethod
     def get_agent_by_id(self, agent_id: AgentID) -> Agent:
         """
         Get an `Agent` by ID
