@@ -98,7 +98,6 @@ def scan_event_handler(agent_repository, machine_repository, node_repository):
     return ScanEventHandler(agent_repository, machine_repository, node_repository)
 
 
-MACHINES = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
 MACHINES_BY_ID = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
 MACHINES_BY_IP = {
     IPv4Address("10.10.10.99"): [SOURCE_MACHINE],
