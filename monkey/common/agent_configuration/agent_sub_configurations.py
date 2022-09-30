@@ -187,6 +187,6 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
         :param exploitation: Configuration for exploitation
     """
 
-    maximum_depth: conint(ge=0)
+    maximum_depth: conint(ge=0)  # type: ignore[valid-type]
     network_scan: NetworkScanConfiguration
     exploitation: ExploitationConfiguration

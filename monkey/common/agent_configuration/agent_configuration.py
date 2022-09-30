@@ -12,7 +12,7 @@ from .agent_sub_configurations import (
 
 
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
-    keep_tunnel_open_time: confloat(ge=0)
+    keep_tunnel_open_time: confloat(ge=0)  # type: ignore[valid-type]
     custom_pbas: CustomPBAConfiguration
     post_breach_actions: Tuple[PluginConfiguration, ...]
     credential_collectors: Tuple[PluginConfiguration, ...]
