@@ -27,7 +27,9 @@ def scan_tcp_ports(
         return EMPTY_PORT_SCAN
 
 
-def _scan_tcp_ports(host: str, ports_to_scan: Collection[int], timeout: float):
+def _scan_tcp_ports(
+    host: str, ports_to_scan: Collection[int], timeout: float
+) -> Dict[int, PortScanData]:
     open_ports = _check_tcp_ports(host, ports_to_scan, timeout)
 
     return _build_port_scan_data(ports_to_scan, open_ports)
@@ -35,7 +37,7 @@ def _scan_tcp_ports(host: str, ports_to_scan: Collection[int], timeout: float):
 
 def _build_port_scan_data(
     ports_to_scan: Iterable[int], open_ports: Mapping[int, str]
-) -> Mapping[int, PortScanData]:
+) -> Dict[int, PortScanData]:
     port_scan_data = {}
     for port in ports_to_scan:
         if port in open_ports:
@@ -55,7 +57,7 @@ def _get_closed_port_data(port: int) -> PortScanData:
 
 def _check_tcp_ports(
     ip: str, ports_to_scan: Collection[int], timeout: float = DEFAULT_TIMEOUT
-) -> Mapping[int, str]:
+) -> Dict[int, str]:
     """
     Checks whether any of the given ports are open on a target IP.
     :param ip:  IP of host to attack
