@@ -98,9 +98,9 @@ def scan_event_handler(agent_repository, machine_repository, node_repository):
     return ScanEventHandler(agent_repository, machine_repository, node_repository)
 
 
-machines = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
-machines_by_id = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
-machines_by_ip = {
+MACHINES = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
+MACHINES_BY_ID = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
+MACHINES_BY_IP = {
     IPv4Address("10.10.10.99"): [SOURCE_MACHINE],
     IPv4Address("10.10.10.1"): [TARGET_MACHINE],
 }
@@ -112,11 +112,11 @@ def machine_id(request):
 
 
 def machine_from_id(id: int):
-    return machines_by_id[id]
+    return MACHINES_BY_ID[id]
 
 
 def machines_from_ip(ip: IPv4Address):
-    return machines_by_ip[ip]
+    return MACHINES_BY_IP[ip]
 
 
 class error_machine_by_id:
