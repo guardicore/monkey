@@ -262,19 +262,14 @@ def test_machine_not_upserted(event, handler, machine_repository: IMachineReposi
     assert not machine_repository.upsert_machine.called
 
 
-@pytest.mark.parametrize(
-    "event,handler",
-    [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
-    indirect=["handler"],
-)
 def test_machine_not_upserted_if_existing_machine_has_os(
-    event, handler, machine_repository: IMachineRepository, request
+    scan_event_handler, machine_repository: IMachineRepository, request
 ):
     machine_with_os = TARGET_MACHINE
     machine_with_os.operating_system = OperatingSystem.WINDOWS
     machine_repository.get_machine_by_ip = MagicMock(return_value=machine_with_os)
 
-    handler(event)
+    scan_event_handler.handle_ping_scan_event(PING_SCAN_EVENT)
 
     assert not machine_repository.upsert_machine.called
 
