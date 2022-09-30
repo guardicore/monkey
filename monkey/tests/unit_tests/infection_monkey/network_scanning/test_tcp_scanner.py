@@ -1,4 +1,3 @@
-import time
 from unittest.mock import MagicMock
 
 import pytest
@@ -19,12 +18,11 @@ TIMESTAMP = 123.321
 HOST_IP = "127.0.0.1"
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(autouse=True)
 def patch_timestamp(monkeypatch):
     monkeypatch.setattr(
-        time,
-        "time",
-        TIMESTAMP,
+        "infection_monkey.network_scanning.tcp_scanner.time",
+        lambda: TIMESTAMP,
     )
 
 
@@ -32,7 +30,7 @@ def patch_timestamp(monkeypatch):
 def patch_check_tcp_ports(monkeypatch, open_ports_data):
     monkeypatch.setattr(
         "infection_monkey.network_scanning.tcp_scanner._check_tcp_ports",
-        lambda *_: open_ports_data,
+        lambda *_: (TIMESTAMP, open_ports_data),
     )
 
 
@@ -44,6 +42,7 @@ def _get_tcp_scan_event(port_scan_data: PortScanData):
     return TCPScanEvent(
         source=get_agent_id(),
         target=HOST_IP,
+        timestamp=TIMESTAMP,
         ports=port_statuses,
     )
 
