@@ -1,8 +1,8 @@
 import json
 from typing import Callable
 
-from common.agent_event_serializers import JSONSerializable
 from common.agent_events import AbstractAgentEvent
+from common.types import JSONSerializable
 
 ENCRYPTED_PREFIX = "encrypted_"
 ABSTRACT_AGENT_EVENT_FIELDS = vars(AbstractAgentEvent)["__fields__"].keys()

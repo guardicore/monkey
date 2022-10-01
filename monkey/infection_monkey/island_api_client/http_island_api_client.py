@@ -8,7 +8,7 @@ import requests
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
-from common.agent_event_serializers import AgentEventSerializerRegistry, JSONSerializable
+from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import (
     LONG_REQUEST_TIMEOUT,
@@ -16,7 +16,7 @@ from common.common_consts.timeouts import (
     SHORT_REQUEST_TIMEOUT,
 )
 from common.credentials import Credentials
-from common.types import AgentID, SocketAddress
+from common.types import AgentID, JSONSerializable, SocketAddress
 
 from . import (
     AbstractIslandAPIClientFactory,
