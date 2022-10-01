@@ -2,9 +2,10 @@ import logging
 from typing import Generic, Type, TypeVar
 
 from common.agent_events import AbstractAgentEvent
+from common.types import JSONSerializable
 from common.utils.code_utils import del_key
 
-from . import EVENT_TYPE_FIELD, IAgentEventSerializer, JSONSerializable
+from . import EVENT_TYPE_FIELD, IAgentEventSerializer
 
 logger = logging.getLogger(__name__)
 
