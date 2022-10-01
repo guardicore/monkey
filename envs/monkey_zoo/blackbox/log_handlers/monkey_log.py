@@ -24,6 +24,7 @@ class MonkeyLog(object):
         with open(self.get_log_path_for_monkey(self.monkey), "w") as log_file:
             log_file.write(MonkeyLog.parse_log(log))
 
+    # TODO: What's this for? Can we remove it?
     @staticmethod
     def parse_log(log):
         log = log.strip('"')
