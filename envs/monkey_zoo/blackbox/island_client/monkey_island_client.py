@@ -8,8 +8,10 @@ from bson import json_util
 from common.credentials import Credentials
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
+from monkey_island.cc.models import Agent
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
+GET_AGENTS_ENDPOINT = "api/agents"
 MONKEY_TEST_ENDPOINT = "api/test/monkey"
 TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
 LOG_TEST_ENDPOINT = "api/test/log"
@@ -156,6 +158,11 @@ class MonkeyIslandClient(object):
             MONKEY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(None)
         )
         return MonkeyIslandClient.get_test_query_results(response)
+
+    def get_agents(self) -> Sequence[Agent]:
+        response = self.requests.get(GET_AGENTS_ENDPOINT)
+
+        return [Agent(**a) for a in response.json()]
 
     def find_log_in_db(self, query):
         response = self.requests.get(
