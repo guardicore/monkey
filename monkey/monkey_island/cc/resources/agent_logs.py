@@ -23,7 +23,7 @@ class AgentLogs(AbstractResource):
             log_contents = self._agent_log_repository.get_agent_log(agent_id)
         except UnknownRecordError as err:
             logger.error(f"Error occurred while getting agent log: {err}")
-            return {}, HTTPStatus.NOT_FOUND
+            return "", HTTPStatus.NOT_FOUND
 
         return log_contents, HTTPStatus.OK
 

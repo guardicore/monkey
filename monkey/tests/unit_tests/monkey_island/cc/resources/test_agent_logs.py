@@ -26,7 +26,7 @@ def flask_client(build_flask_client):
 def test_agent_logs_endpoint__get_empty(flask_client):
     resp = flask_client.get(AGENT_LOGS_URL_1, follow_redirects=True)
     assert resp.status_code == HTTPStatus.NOT_FOUND
-    assert resp.json == {}
+    assert resp.json == ""
 
 
 @pytest.mark.parametrize(
