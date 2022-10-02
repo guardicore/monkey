@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
-from typing import Mapping, Sequence
+from threading import Thread
+from typing import List, Mapping
 
 from common.types import MachineID
 from monkey_island.cc.models import Agent, Machine
@@ -12,7 +13,7 @@ class MonkeyLogsDownloader(object):
     def __init__(self, island_client, log_dir_path):
         self.island_client = island_client
         self.log_dir_path = Path(log_dir_path)
-        self.monkey_log_paths: Sequence[Path] = []
+        self.monkey_log_paths: List[Path] = []
 
     def download_monkey_logs(self):
         try:
@@ -21,15 +22,28 @@ class MonkeyLogsDownloader(object):
             agents = self.island_client.get_agents()
             machines = self.island_client.get_machines()
 
+            download_threads: List[Thread] = []
+
+            # TODO: Does downloading logs concurrently still improve performance after resolving
+            #       https://github.com/guardicore/monkey/issues/2383?
             for agent in agents:
-                log_file_path = self._get_log_file_path(agent, machines)
-                log_contents = self.island_client.get_agent_log(agent.id)
+                t = Thread(target=self._download_log, args=(agent, machines), daemon=True)
+                t.start()
+                download_threads.append(t)
 
-                MonkeyLogsDownloader._write_log_to_file(log_file_path, log_contents)
+            for thread in download_threads:
+                thread.join()
 
-                self.monkey_log_paths.append(log_file_path)
         except Exception as err:
             LOGGER.exception(err)
+
+    def _download_log(self, agent: Agent, machines: Mapping[MachineID, Machine]):
+        log_file_path = self._get_log_file_path(agent, machines)
+        log_contents = self.island_client.get_agent_log(agent.id)
+
+        MonkeyLogsDownloader._write_log_to_file(log_file_path, log_contents)
+
+        self.monkey_log_paths.append(log_file_path)
 
     def _get_log_file_path(self, agent: Agent, machines: Mapping[MachineID, Machine]) -> Path:
         try:
