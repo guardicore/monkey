@@ -50,6 +50,7 @@ class MonkeyLogsDownloader(object):
         try:
             machine_ip = machines[agent.machine_id].network_interfaces[0].ip
         except IndexError:
+            LOGGER.error(f"Machine with ID {agent.machine_id} has no network interfaces")
             machine_ip = "UNKNOWN"
 
         start_time = agent.start_time.strftime("%Y-%m-%d_%H-%M-%S")
