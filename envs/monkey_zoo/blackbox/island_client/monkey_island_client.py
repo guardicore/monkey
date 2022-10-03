@@ -139,14 +139,6 @@ class MonkeyIslandClient(object):
             LOGGER.error("Failed to reset island mode")
             assert False
 
-    def find_monkeys_in_db(self, query):
-        if query is None:
-            raise TypeError
-        response = self.requests.get(
-            MONKEY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
-        )
-        return MonkeyIslandClient.get_test_query_results(response)
-
     def find_telems_in_db(self, query: dict):
         if query is None:
             raise TypeError
@@ -186,5 +178,5 @@ class MonkeyIslandClient(object):
         return json.loads(response.content)["results"]
 
     def is_all_monkeys_dead(self):
-        query = {"dead": False}
-        return len(self.find_monkeys_in_db(query)) == 0
+        agents = self.get_agents()
+        return all([a.stop_time is not None for a in agents])
