@@ -15,7 +15,6 @@ SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 GET_AGENTS_ENDPOINT = "api/agents"
 GET_LOG_ENDPOINT = "api/agent-logs"
 GET_MACHINES_ENDPOINT = "api/machines"
-MONKEY_TEST_ENDPOINT = "api/test/monkey"
 TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
 LOGGER = logging.getLogger(__name__)
 
@@ -144,12 +143,6 @@ class MonkeyIslandClient(object):
             raise TypeError
         response = self.requests.get(
             TELEMETRY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
-        )
-        return MonkeyIslandClient.get_test_query_results(response)
-
-    def get_all_monkeys_from_db(self):
-        response = self.requests.get(
-            MONKEY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(None)
         )
         return MonkeyIslandClient.get_test_query_results(response)
 
