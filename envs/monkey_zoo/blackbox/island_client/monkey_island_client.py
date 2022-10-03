@@ -17,7 +17,6 @@ GET_LOG_ENDPOINT = "api/agent-logs"
 GET_MACHINES_ENDPOINT = "api/machines"
 MONKEY_TEST_ENDPOINT = "api/test/monkey"
 TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
-LOG_TEST_ENDPOINT = "api/test/log"
 LOGGER = logging.getLogger(__name__)
 
 
@@ -177,12 +176,6 @@ class MonkeyIslandClient(object):
         response = self.requests.get(f"{GET_LOG_ENDPOINT}/{agent_id}")
 
         return response.json()
-
-    def find_log_in_db(self, query):
-        response = self.requests.get(
-            LOG_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
-        )
-        return MonkeyIslandClient.get_test_query_results(response)
 
     @staticmethod
     def form_find_query_for_request(query: Union[dict, None]) -> dict:
