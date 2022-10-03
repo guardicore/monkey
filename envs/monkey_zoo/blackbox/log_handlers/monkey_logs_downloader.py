@@ -4,13 +4,14 @@ from threading import Thread
 from typing import List, Mapping
 
 from common.types import MachineID
+from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
 from monkey_island.cc.models import Agent, Machine
 
 LOGGER = logging.getLogger(__name__)
 
 
 class MonkeyLogsDownloader(object):
-    def __init__(self, island_client, log_dir_path):
+    def __init__(self, island_client: MonkeyIslandClient, log_dir_path: str):
         self.island_client = island_client
         self.log_dir_path = Path(log_dir_path)
         self.monkey_log_paths: List[Path] = []
