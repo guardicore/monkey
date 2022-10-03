@@ -21,8 +21,7 @@ from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
-from infection_monkey.agent_event_forwarder import AgentEventForwarder
-from infection_monkey.agent_event_handlers import notify_relay_on_propagation
+from infection_monkey.agent_event_handlers import AgentEventForwarder, notify_relay_on_propagation
 from infection_monkey.config import GUID
 from infection_monkey.control import ControlClient
 from infection_monkey.credential_collectors import (

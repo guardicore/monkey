@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from infection_monkey.agent_event_forwarder import BatchingAgentEventForwarder
+from infection_monkey.agent_event_handlers.agent_event_forwarder import BatchingAgentEventForwarder
 from infection_monkey.island_api_client import IIslandAPIClient
 
 SERVER = "1.1.1.1:9999"
