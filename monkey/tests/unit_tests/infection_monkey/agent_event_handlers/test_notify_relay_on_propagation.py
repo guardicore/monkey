@@ -47,7 +47,7 @@ def test_relay_not_notified_on_successful_propation(mock_tcp_relay):
     mock_tcp_relay.add_potential_user.assert_not_called()
 
 
-def test_relay_not_notified_if_none():
+def test_handler_doesnt_raise_if_relay_is_none():
     handler = notify_relay_on_propagation(None)
 
     # Raises AttributeError on failure
