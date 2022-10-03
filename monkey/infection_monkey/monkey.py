@@ -81,9 +81,6 @@ from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
 from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
-from infection_monkey.telemetry.messengers.exploit_intercepting_telemetry_messenger import (
-    ExploitInterceptingTelemetryMessenger,
-)
 from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
     LegacyTelemetryMessengerAdapter,
 )
@@ -279,15 +276,11 @@ class InfectionMonkey:
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
-        telemetry_messenger = ExploitInterceptingTelemetryMessenger(
-            self._telemetry_messenger, self._relay
-        )
-
         self._master = AutomatedMaster(
             self._current_depth,
             servers,
             puppet,
-            telemetry_messenger,
+            self._telemetry_messenger,
             victim_host_factory,
             self._control_channel,
             local_network_interfaces,
