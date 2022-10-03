@@ -7,7 +7,7 @@ from common.agent_configuration.agent_sub_configurations import (
     CustomPBAConfiguration,
     ScanTargetConfiguration,
 )
-from common.agent_events import PingScanEvent, TCPScanEvent
+from common.agent_events import PingScanEvent, PropagationEvent, TCPScanEvent
 from common.credentials import Credentials, LMHash, NTHash
 from common.types import NetworkPort
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
@@ -311,12 +311,12 @@ IAgentLogRepository
 IAgentLogRepository.upsert_agent_log
 IAgentLogRepository.get_agent_log
 
-# TODO: Remove once #2268 is closed
-PingScanEvent
-
 # TODO: Remove once #2267 is closed
 TCPScanEvent
 TCPScanEvent.port_status
+
+# TODO: Remove once #2269 is close
+PropagationEvent
 
 # pydantic base models
 underscore_attrs_are_private
