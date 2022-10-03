@@ -1,13 +1,12 @@
 import logging
 
 from common.agent_events import CredentialsStolenEvent
-
-from . import IPropagationCredentialsRepository
+from infection_monkey.credential_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
 
 
-class add_credentials_from_event_to_propagation_credentials_repository:
+class add_stolen_credentials_to_propagation_credentials_repository:
     def __init__(self, credentials_repository: IPropagationCredentialsRepository):
         self._credentials_repository = credentials_repository
 

@@ -21,7 +21,11 @@ from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
-from infection_monkey.agent_event_handlers import AgentEventForwarder, notify_relay_on_propagation
+from infection_monkey.agent_event_handlers import (
+    AgentEventForwarder,
+    add_stolen_credentials_to_propagation_credentials_repository,
+    notify_relay_on_propagation,
+)
 from infection_monkey.config import GUID
 from infection_monkey.control import ControlClient
 from infection_monkey.credential_collectors import (
@@ -31,7 +35,6 @@ from infection_monkey.credential_collectors import (
 from infection_monkey.credential_repository import (
     AggregatingPropagationCredentialsRepository,
     IPropagationCredentialsRepository,
-    add_credentials_from_event_to_propagation_credentials_repository,
 )
 from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
@@ -299,7 +302,7 @@ class InfectionMonkey:
     ):
         agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
-            add_credentials_from_event_to_propagation_credentials_repository(
+            add_stolen_credentials_to_propagation_credentials_repository(
                 propagation_credentials_repository
             ),
         )
