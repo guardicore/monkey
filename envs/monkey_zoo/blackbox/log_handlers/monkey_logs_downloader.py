@@ -51,9 +51,9 @@ class MonkeyLogsDownloader(object):
         except IndexError:
             machine_ip = "UNKNOWN"
 
-        start_time = agent.start_time.strftime("%Y-%m-%d-%H-%M-%S")
+        start_time = agent.start_time.strftime("%Y-%m-%d_%H-%M-%S")
 
-        return self.log_dir_path / f"agent-{start_time}-{machine_ip}.log"
+        return self.log_dir_path / f"agent_{start_time}_{machine_ip}.log"
 
     @staticmethod
     def _write_log_to_file(log_file_path: Path, log_contents: str):
