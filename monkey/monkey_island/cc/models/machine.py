@@ -1,12 +1,12 @@
 from ipaddress import IPv4Interface
-from typing import Optional, Sequence
+from typing import Mapping, Optional, Sequence
 
 from pydantic import Field, validator
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel
 from common.transforms import make_immutable_sequence
-from common.types import HardwareID
+from common.types import HardwareID, NetworkServiceNameEnum, SocketAddress
 
 from . import MachineID
 
@@ -34,6 +34,9 @@ class Machine(MutableInfectionMonkeyBaseModel):
 
     hostname: str = ""
     """The hostname of the machine"""
+
+    network_services: Mapping[SocketAddress, NetworkServiceNameEnum]
+    """All network services found running on the machine"""
 
     _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
         make_immutable_sequence

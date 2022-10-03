@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import Enum, auto
 from ipaddress import IPv4Address
 from typing import Dict, List, Optional, Union
 from uuid import UUID
@@ -26,6 +26,10 @@ JSONSerializable = Union[  # type: ignore[misc]
     bool,
     None,
 ]
+
+
+class NetworkServiceNameEnum(Enum):
+    UNKNOWN = auto()
 
 
 class NetworkPort(ConstrainedInt):

@@ -9,14 +9,13 @@ from common.agent_configuration.agent_sub_configurations import (
 )
 from common.agent_events import ExploitationEvent, PingScanEvent, PropagationEvent, TCPScanEvent
 from common.credentials import Credentials, LMHash, NTHash
-from common.types import NetworkPort
 from infection_monkey.exploit.HostExploiter.HostExploiter import (
     _publish_exploitation_event,
     _publish_propagation_event,
 )
+from common.types import NetworkPort, NetworkServiceNameEnum
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
-from monkey_island.cc.models import Report
+from monkey_island.cc.models import Machine, Node, Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -340,3 +339,8 @@ SCANNED
 EXPLOITED
 CC
 CC_TUNNEL
+
+# TODO remove when 2267 is done
+NetworkServiceNameEnum.UNKNOWN
+Machine.network_services
+Node.tcp_connections
