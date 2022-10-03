@@ -1,18 +1,22 @@
 import json
 import logging
 import time
-from typing import List, Sequence, Union
+from typing import List, Mapping, Sequence, Union
 
 from bson import json_util
 
 from common.credentials import Credentials
+from common.types import AgentID, MachineID
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
+from monkey_island.cc.models import Agent, Machine
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
+GET_AGENTS_ENDPOINT = "api/agents"
+GET_LOG_ENDPOINT = "api/agent-logs"
+GET_MACHINES_ENDPOINT = "api/machines"
 MONKEY_TEST_ENDPOINT = "api/test/monkey"
 TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
-LOG_TEST_ENDPOINT = "api/test/log"
 LOGGER = logging.getLogger(__name__)
 
 
@@ -157,11 +161,21 @@ class MonkeyIslandClient(object):
         )
         return MonkeyIslandClient.get_test_query_results(response)
 
-    def find_log_in_db(self, query):
-        response = self.requests.get(
-            LOG_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
-        )
-        return MonkeyIslandClient.get_test_query_results(response)
+    def get_agents(self) -> Sequence[Agent]:
+        response = self.requests.get(GET_AGENTS_ENDPOINT)
+
+        return [Agent(**a) for a in response.json()]
+
+    def get_machines(self) -> Mapping[MachineID, Machine]:
+        response = self.requests.get(GET_MACHINES_ENDPOINT)
+        machines = (Machine(**m) for m in response.json())
+
+        return {m.id: m for m in machines}
+
+    def get_agent_log(self, agent_id: AgentID) -> str:
+        response = self.requests.get(f"{GET_LOG_ENDPOINT}/{agent_id}")
+
+        return response.json()
 
     @staticmethod
     def form_find_query_for_request(query: Union[dict, None]) -> dict:
