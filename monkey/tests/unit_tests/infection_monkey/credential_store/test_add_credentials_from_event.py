@@ -3,10 +3,10 @@ from uuid import UUID
 
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, Password, Username
-from infection_monkey.credential_repository import (
-    IPropagationCredentialsRepository,
-    add_credentials_from_event_to_propagation_credentials_repository,
+from infection_monkey.agent_event_handlers import (
+    add_stolen_credentials_to_propagation_credentials_repository,
 )
+from infection_monkey.credential_repository import IPropagationCredentialsRepository
 
 credentials = [
     Credentials(
@@ -25,7 +25,7 @@ credentials_stolen_event = CredentialsStolenEvent(
 
 def test_add_credentials_from_event_to_propagation_credentials_repository():
     mock_propagation_credentials_repository = MagicMock(spec=IPropagationCredentialsRepository)
-    fn = add_credentials_from_event_to_propagation_credentials_repository(
+    fn = add_stolen_credentials_to_propagation_credentials_repository(
         mock_propagation_credentials_repository
     )
 
