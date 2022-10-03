@@ -1,3 +1,6 @@
+from ipaddress import IPv4Address
+from typing import Collection
+
 import pytest
 
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
@@ -40,18 +43,17 @@ def island_client(island):
 @pytest.mark.usefixtures("island_client")
 # noinspection PyUnresolvedReferences
 class TestOSCompatibility(object):
-    def test_os_compat(self, island_client):
+    def test_os_compat(self, island_client: MonkeyIslandClient):
         print()
-        all_monkeys = island_client.get_all_monkeys_from_db()
-        ips_that_communicated = []
-        for monkey in all_monkeys:
-            for ip in monkey["ip_addresses"]:
-                if ip in machine_list:
-                    ips_that_communicated.append(ip)
-                    break
+        ips_that_communicated = self._get_agent_ips(island_client)
         for ip, os in machine_list.items():
-            if ip not in ips_that_communicated:
+            if IPv4Address(ip) not in ips_that_communicated:
                 print("{} didn't communicate to island".format(os))
 
         if len(ips_that_communicated) < len(machine_list):
             assert False
+
+    def _get_agent_ips(self, island_client: MonkeyIslandClient) -> Collection[IPv4Address]:
+        agents = island_client.get_agents()
+        machines = island_client.get_machines()
+        return {i.ip for a in agents for i in machines[a.machine_id].network_interfaces}
