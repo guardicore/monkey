@@ -13,7 +13,7 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.agent_events import CredentialsStolenEvent
+from common.agent_events import CredentialsStolenEvent, PropagationEvent
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
@@ -22,6 +22,7 @@ from common.utils.argparse_types import positive_int
 from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.agent_event_forwarder import AgentEventForwarder
+from infection_monkey.agent_event_handlers import notify_relay_on_propagation
 from infection_monkey.config import GUID
 from infection_monkey.control import ControlClient
 from infection_monkey.credential_collectors import (
@@ -313,6 +314,7 @@ class InfectionMonkey:
         agent_event_queue.subscribe_all_events(
             AgentEventForwarder(self._island_api_client, agent_event_serializer_registry).send_event
         )
+        agent_event_queue.subscribe_type(PropagationEvent, notify_relay_on_propagation(self._relay))
 
     def _build_puppet(
         self,
