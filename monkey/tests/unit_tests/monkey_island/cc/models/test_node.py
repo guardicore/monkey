@@ -2,6 +2,7 @@ from typing import MutableSequence
 
 import pytest
 
+from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
 
 
@@ -11,13 +12,21 @@ def test_constructor():
         6: frozenset((CommunicationType.SCANNED,)),
         7: frozenset((CommunicationType.SCANNED, CommunicationType.EXPLOITED)),
     }
+    tcp_connections = {
+        6: tuple(
+            (SocketAddress(ip="192.168.1.1", port=80), SocketAddress(ip="192.168.1.1", port=443))
+        ),
+        7: tuple((SocketAddress(ip="192.168.1.2", port=22),)),
+    }
     n = Node(
-        machine_id=1,
+        machine_id=machine_id,
         connections=connections,
+        tcp_connections=tcp_connections,
     )
 
     assert n.machine_id == machine_id
     assert n.connections == connections
+    assert n.tcp_connections == tcp_connections
 
 
 def test_serialization():
@@ -27,9 +36,12 @@ def test_serialization():
             "6": [CommunicationType.CC.value, CommunicationType.SCANNED.value],
             "7": [CommunicationType.EXPLOITED.value, CommunicationType.CC.value],
         },
+        "tcp_connections": {
+            "6": [{"ip": "192.168.1.1", "port": 80}, {"ip": "192.168.1.1", "port": 443}],
+            "7": [{"ip": "192.168.1.2", "port": 22}],
+        },
     }
-    # "6": frozenset((CommunicationType.CC, CommunicationType.SCANNED)),
-    # "7": frozenset((CommunicationType.EXPLOITED, CommunicationType.CC)),
+
     n = Node(**node_dict)
 
     serialized_node = n.dict(simplify=True)
@@ -43,6 +55,8 @@ def test_serialization():
 
     for key, value in serialized_node["connections"].items():
         assert set(value) == set(node_dict["connections"][key])
+
+    assert serialized_node["tcp_connections"] == node_dict["tcp_connections"]
 
 
 def test_machine_id_immutable():
