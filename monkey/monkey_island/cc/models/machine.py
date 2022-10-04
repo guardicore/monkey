@@ -6,7 +6,7 @@ from pydantic import Field, validator
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel
 from common.transforms import make_immutable_sequence
-from common.types import HardwareID, NetworkServiceNameEnum, SocketAddress
+from common.types import HardwareID, NetworkService, SocketAddress
 
 from . import MachineID
 
@@ -35,7 +35,7 @@ class Machine(MutableInfectionMonkeyBaseModel):
     hostname: str = ""
     """The hostname of the machine"""
 
-    network_services: Mapping[SocketAddress, NetworkServiceNameEnum]
+    network_services: Mapping[SocketAddress, NetworkService]
     """All network services found running on the machine"""
 
     _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(

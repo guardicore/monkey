@@ -28,7 +28,7 @@ JSONSerializable = Union[  # type: ignore[misc]
 ]
 
 
-class NetworkServiceNameEnum(Enum):
+class NetworkService(Enum):
     UNKNOWN = auto()
 
 

@@ -13,7 +13,7 @@ from infection_monkey.exploit.HostExploiter.HostExploiter import (
     _publish_exploitation_event,
     _publish_propagation_event,
 )
-from common.types import NetworkPort, NetworkServiceNameEnum
+from common.types import NetworkPort, NetworkService
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.models import Machine, Node, Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
