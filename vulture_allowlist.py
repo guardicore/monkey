@@ -10,6 +10,10 @@ from common.agent_configuration.agent_sub_configurations import (
 from common.agent_events import ExploitationEvent, PingScanEvent, PropagationEvent, TCPScanEvent
 from common.credentials import Credentials, LMHash, NTHash
 from common.types import NetworkPort
+from infection_monkey.exploit.HostExploiter.HostExploiter import (
+    _publish_exploitation_event,
+    _publish_propagation_event,
+)
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from monkey_island.cc.event_queue import IslandEventTopic, PyPubSubIslandEventQueue
 from monkey_island.cc.models import Report
@@ -316,8 +320,8 @@ TCPScanEvent
 TCPScanEvent.port_status
 
 # TODO: Remove once #2269 is close
-PropagationEvent
-ExploitationEvent
+_publish_exploitation_event,
+_publish_propagation_event,
 
 # pydantic base models
 underscore_attrs_are_private
