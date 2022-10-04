@@ -343,4 +343,6 @@ CC_TUNNEL
 # TODO remove when 2267 is done
 NetworkServiceNameEnum.UNKNOWN
 Machine.network_services
+Machine.config.json_dumps
+Machine._socketaddress_from_string
 Node.tcp_connections
