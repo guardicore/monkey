@@ -115,6 +115,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "/api/island-configuration" endpoint. #2003
 - "-t/--tunnel" from agent command line arguments. #2216
 - "/api/monkey-control/neets-to-stop". #2261
+- "GET /api/test/monkey" endpoint. #2269
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
