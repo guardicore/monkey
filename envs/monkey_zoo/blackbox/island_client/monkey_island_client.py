@@ -172,4 +172,4 @@ class MonkeyIslandClient(object):
 
     def is_all_monkeys_dead(self):
         agents = self.get_agents()
-        return all([a.stop_time is not None for a in agents])
+        return all((a.stop_time is not None for a in agents))
