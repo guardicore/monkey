@@ -15,7 +15,6 @@ SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 GET_AGENTS_ENDPOINT = "api/agents"
 GET_LOG_ENDPOINT = "api/agent-logs"
 GET_MACHINES_ENDPOINT = "api/machines"
-MONKEY_TEST_ENDPOINT = "api/test/monkey"
 TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
 LOGGER = logging.getLogger(__name__)
 
@@ -139,25 +138,11 @@ class MonkeyIslandClient(object):
             LOGGER.error("Failed to reset island mode")
             assert False
 
-    def find_monkeys_in_db(self, query):
-        if query is None:
-            raise TypeError
-        response = self.requests.get(
-            MONKEY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
-        )
-        return MonkeyIslandClient.get_test_query_results(response)
-
     def find_telems_in_db(self, query: dict):
         if query is None:
             raise TypeError
         response = self.requests.get(
             TELEMETRY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
-        )
-        return MonkeyIslandClient.get_test_query_results(response)
-
-    def get_all_monkeys_from_db(self):
-        response = self.requests.get(
-            MONKEY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(None)
         )
         return MonkeyIslandClient.get_test_query_results(response)
 
@@ -186,5 +171,5 @@ class MonkeyIslandClient(object):
         return json.loads(response.content)["results"]
 
     def is_all_monkeys_dead(self):
-        query = {"dead": False}
-        return len(self.find_monkeys_in_db(query)) == 0
+        agents = self.get_agents()
+        return all((a.stop_time is not None for a in agents))
