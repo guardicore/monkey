@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 from ipaddress import IPv4Address
 from typing import Dict, List, Optional, Union
 from uuid import UUID
@@ -29,7 +29,14 @@ JSONSerializable = Union[  # type: ignore[misc]
 
 
 class NetworkService(Enum):
-    UNKNOWN = auto()
+    """
+    An Enum representing network services
+
+    This Enum represents all network services that Infection Monkey supports. The value of each
+    member is the member's name in all lower-case characters.
+    """
+
+    UNKNOWN = "unknown"
 
 
 class NetworkPort(ConstrainedInt):
