@@ -31,7 +31,6 @@ from monkey_island.cc.resources import (
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
-from monkey_island.cc.resources.blackbox.log_blackbox_endpoint import LogBlackboxEndpoint
 from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
     TelemetryBlackboxEndpoint,
 )
@@ -206,7 +205,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     # API Spec: Fix all the following endpoints, see comments in the resource classes
     # Note: Preferably, the API will provide a rich feature set and allow access to all of the
     #       necessary data. This would make these endpoints obsolete.
-    api.add_resource(LogBlackboxEndpoint)
     api.add_resource(TelemetryBlackboxEndpoint)
 
 
