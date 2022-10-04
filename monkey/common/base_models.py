@@ -10,6 +10,11 @@ class InfectionMonkeyModelConfig:
     extra = Extra.forbid
 
 
+class MutableInfectionMonkeyModelConfig(InfectionMonkeyModelConfig):
+    allow_mutation = True
+    validate_assignment = True
+
+
 class InfectionMonkeyBaseModel(BaseModel):
     class Config(InfectionMonkeyModelConfig):
         pass
@@ -47,6 +52,5 @@ class InfectionMonkeyBaseModel(BaseModel):
 
 
 class MutableInfectionMonkeyBaseModel(InfectionMonkeyBaseModel):
-    class Config(InfectionMonkeyModelConfig):
-        allow_mutation = True
-        validate_assignment = True
+    class Config(MutableInfectionMonkeyModelConfig):
+        pass
