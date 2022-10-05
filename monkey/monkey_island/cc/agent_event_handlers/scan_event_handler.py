@@ -1,6 +1,7 @@
+from copy import deepcopy
 from ipaddress import IPv4Interface
 from logging import getLogger
-from typing import Union
+from typing import List, Union
 
 from typing_extensions import TypeAlias
 
@@ -60,6 +61,7 @@ class ScanEventHandler:
 
             self._update_nodes(target_machine, event)
             self._update_tcp_connections(source_node, target_machine, event)
+            self._update_network_services(target_machine, event)
         except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process tcp scan data")
 
@@ -87,6 +89,17 @@ class ScanEventHandler:
         if event.os is not None and machine.operating_system is None:
             machine.operating_system = event.os
             self._machine_repository.upsert_machine(machine)
+
+    def _update_network_services(self, target: Machine, event: TCPScanEvent):
+        for port in self._get_open_ports(event):
+            socket_addr = SocketAddress(ip=event.target, port=port)
+            target.network_services[socket_addr] = NetworkService.UNKNOWN
+
+        self._machine_repository.upsert_machine(target)
+
+    @staticmethod
+    def _get_open_ports(event: TCPScanEvent) -> List[int]:
+        return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
 
     def _update_nodes(self, target_machine: Machine, event: ScanEvent):
         src_machine = self._get_source_machine(event)
