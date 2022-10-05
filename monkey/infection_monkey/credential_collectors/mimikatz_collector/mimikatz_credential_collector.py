@@ -4,6 +4,7 @@ from typing import Sequence
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, LMHash, NTHash, Password, Username
 from common.event_queue import IAgentEventQueue
+from common.tags import T1003_ATTACK_TECHNIQUE_TAG, T1005_ATTACK_TECHNIQUE_TAG
 from infection_monkey.i_puppet import ICredentialCollector
 from infection_monkey.model import USERNAME_PREFIX
 from infection_monkey.utils.ids import get_agent_id
@@ -15,8 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 MIMIKATZ_CREDENTIAL_COLLECTOR_TAG = "mimikatz-credentials-collector"
-T1003_ATTACK_TECHNIQUE_TAG = "attack-t1003"
-T1005_ATTACK_TECHNIQUE_TAG = "attack-t1005"
 
 MIMIKATZ_EVENT_TAGS = frozenset(
     (
