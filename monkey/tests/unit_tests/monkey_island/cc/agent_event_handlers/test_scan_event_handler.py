@@ -227,7 +227,10 @@ def test_handle_tcp_scan_event__tcp_connections(
     scan_event_handler._update_nodes = MagicMock()
     scan_event_handler.handle_tcp_scan_event(event)
 
-    node_repository.upsert_node.assert_called_with(EXPECTED_NODE)
+    node_passed = node_repository.upsert_node.call_args[0][0]
+    assert set(node_passed.tcp_connections[TARGET_MACHINE_ID]) == set(
+        EXPECTED_NODE.tcp_connections[TARGET_MACHINE_ID]
+    )
 
 
 def test_handle_tcp_scan_event__tcp_connections_upsert(
@@ -238,7 +241,22 @@ def test_handle_tcp_scan_event__tcp_connections_upsert(
     scan_event_handler._update_nodes = MagicMock()
     scan_event_handler.handle_tcp_scan_event(event)
 
-    node_repository.upsert_node.assert_called_with(EXPECTED_NODE)
+    node_passed = node_repository.upsert_node.call_args[0][0]
+    assert set(node_passed.tcp_connections[TARGET_MACHINE_ID]) == set(
+        EXPECTED_NODE.tcp_connections[TARGET_MACHINE_ID]
+    )
+
+
+def test_handle_tcp_scan_event__no_source(
+    caplog, scan_event_handler, machine_repository, node_repository
+):
+    event = TCP_SCAN_EVENT
+    node_repository.get_nodes.return_value = []
+    scan_event_handler._update_nodes = MagicMock()
+
+    scan_event_handler.handle_tcp_scan_event(event)
+    assert "ERROR" in caplog.text
+    assert f"Source node for event {event} does not exist" in caplog.text
 
 
 @pytest.mark.parametrize(

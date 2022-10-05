@@ -70,7 +70,7 @@ class ScanEventHandler:
             return [
                 node for node in self._node_repository.get_nodes() if node.machine_id == machine.id
             ][0]
-        except KeyError:
+        except IndexError:
             raise UnknownRecordError(f"Source node for event {event} does not exist")
 
     def _get_target_machine(self, event: ScanEvent) -> Machine:
@@ -99,10 +99,7 @@ class ScanEventHandler:
 
     def _update_tcp_connections(self, src_node: Node, target_machine: Machine, event: TCPScanEvent):
         node_connections = dict(deepcopy(src_node.tcp_connections))
-        try:
-            machine_connections = set(node_connections[target_machine.id])
-        except KeyError:
-            machine_connections = set()
+        machine_connections = set(node_connections.get(target_machine.id, set()))
         open_ports = [port for port, status in event.ports.items() if status == PortStatus.OPEN]
         for open_port in open_ports:
             socket_address = SocketAddress(ip=event.target, port=open_port)
