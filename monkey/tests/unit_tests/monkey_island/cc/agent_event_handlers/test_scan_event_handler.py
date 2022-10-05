@@ -1,3 +1,4 @@
+from copy import deepcopy
 from ipaddress import IPv4Address, IPv4Interface
 from itertools import count
 from unittest.mock import MagicMock
@@ -9,7 +10,7 @@ from common import OperatingSystem
 from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import PortStatus, SocketAddress
 from monkey_island.cc.agent_event_handlers import ScanEventHandler
-from monkey_island.cc.models import Agent, CommunicationType, Machine
+from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
     IAgentRepository,
     IMachineRepository,
@@ -29,43 +30,74 @@ SOURCE_MACHINE = Machine(
     hardware_id=5,
     network_interfaces=[IPv4Interface("10.10.10.99/24")],
 )
+
+TARGET_MACHINE_ID = 33
+TARGET_MACHINE_IP = "10.10.10.1"
 TARGET_MACHINE = Machine(
-    id=33,
+    id=TARGET_MACHINE_ID,
     hardware_id=9,
-    network_interfaces=[IPv4Interface("10.10.10.1/24")],
+    network_interfaces=[IPv4Interface(f"{TARGET_MACHINE_IP}/24")],
+)
+
+SOURCE_NODE = Node(
+    machine_id=SOURCE_MACHINE.id,
+    connections=[],
+    tcp_connections={
+        44: (SocketAddress(ip="1.1.1.1", port=40), SocketAddress(ip="2.2.2.2", port=50))
+    },
+)
+
+SOURCE_NODE_2 = Node(
+    machine_id=SOURCE_MACHINE.id,
+    connections=[],
+    tcp_connections={
+        44: (SocketAddress(ip="1.1.1.1", port=40), SocketAddress(ip="2.2.2.2", port=50)),
+        TARGET_MACHINE_ID: (SocketAddress(ip=TARGET_MACHINE_IP, port=22),),
+    },
+)
+
+EXPECTED_NODE = Node(
+    machine_id=SOURCE_MACHINE.id,
+    connections=[],
+    tcp_connections={
+        44: (SocketAddress(ip="1.1.1.1", port=40), SocketAddress(ip="2.2.2.2", port=50)),
+        TARGET_MACHINE_ID: (
+            SocketAddress(ip=TARGET_MACHINE_IP, port=22),
+            SocketAddress(ip=TARGET_MACHINE_IP, port=80),
+        ),
+    },
 )
 
 PING_SCAN_EVENT = PingScanEvent(
     source=AGENT_ID,
-    target=IPv4Address("10.10.10.1"),
+    target=IPv4Address(TARGET_MACHINE_IP),
     response_received=True,
     os=OperatingSystem.LINUX,
 )
 
 PING_SCAN_EVENT_NO_RESPONSE = PingScanEvent(
     source=AGENT_ID,
-    target=IPv4Address("10.10.10.1"),
+    target=IPv4Address(TARGET_MACHINE_IP),
     response_received=False,
     os=OperatingSystem.LINUX,
 )
 
 PING_SCAN_EVENT_NO_OS = PingScanEvent(
     source=AGENT_ID,
-    target=IPv4Address("10.10.10.1"),
+    target=IPv4Address(TARGET_MACHINE_IP),
     response_received=True,
     os=None,
 )
 
-
 TCP_SCAN_EVENT = TCPScanEvent(
     source=AGENT_ID,
-    target=IPv4Address("10.10.10.1"),
-    ports={22: PortStatus.OPEN, 8080: PortStatus.CLOSED},
+    target=IPv4Address(TARGET_MACHINE_IP),
+    ports={22: PortStatus.OPEN, 80: PortStatus.OPEN, 8080: PortStatus.CLOSED},
 )
 
 TCP_SCAN_EVENT_CLOSED = TCPScanEvent(
     source=AGENT_ID,
-    target=IPv4Address("10.10.10.1"),
+    target=IPv4Address(TARGET_MACHINE_IP),
     ports={145: PortStatus.CLOSED, 8080: PortStatus.CLOSED},
 )
 
@@ -91,6 +123,8 @@ def machine_repository() -> IMachineRepository:
 @pytest.fixture
 def node_repository() -> INodeRepository:
     node_repository = MagicMock(spec=INodeRepository)
+    node_repository.get_nodes.return_value = [deepcopy(SOURCE_NODE)]
+    node_repository.upsert_node = MagicMock()
     node_repository.upsert_communication = MagicMock()
     return node_repository
 
@@ -103,7 +137,7 @@ def scan_event_handler(agent_repository, machine_repository, node_repository):
 MACHINES_BY_ID = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
 MACHINES_BY_IP = {
     IPv4Address("10.10.10.99"): [SOURCE_MACHINE],
-    IPv4Address("10.10.10.1"): [TARGET_MACHINE],
+    IPv4Address(TARGET_MACHINE_IP): [TARGET_MACHINE],
 }
 
 
@@ -184,6 +218,27 @@ def test_tcp_scan_event_target_machine_not_exists(
 
     expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(event.target)])
     machine_repository.upsert_machine.assert_called_with(expected_machine)
+
+
+def test_handle_tcp_scan_event__tcp_connections(
+    scan_event_handler, machine_repository, node_repository
+):
+    event = TCP_SCAN_EVENT
+    scan_event_handler._update_nodes = MagicMock()
+    scan_event_handler.handle_tcp_scan_event(event)
+
+    node_repository.upsert_node.assert_called_with(EXPECTED_NODE)
+
+
+def test_handle_tcp_scan_event__tcp_connections_upsert(
+    scan_event_handler, machine_repository, node_repository
+):
+    event = TCP_SCAN_EVENT
+    node_repository.get_nodes.return_value = [deepcopy(SOURCE_NODE_2)]
+    scan_event_handler._update_nodes = MagicMock()
+    scan_event_handler.handle_tcp_scan_event(event)
+
+    node_repository.upsert_node.assert_called_with(EXPECTED_NODE)
 
 
 @pytest.mark.parametrize(

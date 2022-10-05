@@ -1,12 +1,13 @@
+from copy import deepcopy
 from ipaddress import IPv4Interface
 from logging import getLogger
 from typing import Union
 
 from typing_extensions import TypeAlias
 
-from common.agent_events import PingScanEvent, TCPScanEvent
-from common.types import PortStatus
-from monkey_island.cc.models import CommunicationType, Machine
+from common.agent_events import AbstractAgentEvent, PingScanEvent, TCPScanEvent
+from common.types import PortStatus, SocketAddress
+from monkey_island.cc.models import CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
     IAgentRepository,
     IMachineRepository,
@@ -56,10 +57,21 @@ class ScanEventHandler:
 
         try:
             target_machine = self._get_target_machine(event)
+            source_node = self._get_source_node(event)
 
             self._update_nodes(target_machine, event)
+            self._update_tcp_connections(source_node, target_machine, event)
         except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process tcp scan data")
+
+    def _get_source_node(self, event: AbstractAgentEvent) -> Node:
+        machine = self._get_source_machine(event)
+        try:
+            return [
+                node for node in self._node_repository.get_nodes() if node.machine_id == machine.id
+            ][0]
+        except KeyError:
+            raise UnknownRecordError(f"Source node for event {event} does not exist")
 
     def _get_target_machine(self, event: ScanEvent) -> Machine:
         try:
@@ -84,6 +96,21 @@ class ScanEventHandler:
         self._node_repository.upsert_communication(
             src_machine.id, target_machine.id, CommunicationType.SCANNED
         )
+
+    def _update_tcp_connections(self, src_node: Node, target_machine: Machine, event: TCPScanEvent):
+        node_connections = dict(deepcopy(src_node.tcp_connections))
+        try:
+            machine_connections = set(node_connections[target_machine.id])
+        except KeyError:
+            machine_connections = set()
+        open_ports = [port for port, status in event.ports.items() if status == PortStatus.OPEN]
+        for open_port in open_ports:
+            socket_address = SocketAddress(ip=event.target, port=open_port)
+            machine_connections.add(socket_address)
+
+        node_connections[target_machine.id] = tuple(machine_connections)
+        src_node.tcp_connections = node_connections
+        self._node_repository.upsert_node(src_node)
 
     def _get_source_machine(self, event: ScanEvent) -> Machine:
         agent = self._agent_repository.get_agent_by_id(event.source)
