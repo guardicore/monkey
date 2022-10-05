@@ -34,7 +34,7 @@ class MongoNodeRepository(INodeRepository):
                 node, dst, communication_type
             )
 
-        self._upsert_node(updated_node)
+        self.upsert_node(updated_node)
 
     @staticmethod
     def _add_connection_to_node(
@@ -50,7 +50,7 @@ class MongoNodeRepository(INodeRepository):
 
         return new_node
 
-    def _upsert_node(self, node: Node):
+    def upsert_node(self, node: Node):
         try:
             result = self._nodes_collection.replace_one(
                 {SRC_FIELD_NAME: node.machine_id}, node.dict(simplify=True), upsert=True

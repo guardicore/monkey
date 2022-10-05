@@ -26,6 +26,14 @@ class INodeRepository(ABC):
         """
 
     @abstractmethod
+    def upsert_node(self, node: Node):
+        """
+        Store the Node object in the repository by creating a new one or updating an existing one.
+        :param node: Node that will be saved
+        :raises StorageError: If an error occurs while attempting to upsert the Node
+        """
+
+    @abstractmethod
     def get_nodes(self) -> Sequence[Node]:
         """
         Return all nodes that are stored in the repository
