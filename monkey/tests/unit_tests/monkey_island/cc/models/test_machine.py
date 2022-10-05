@@ -6,7 +6,11 @@ from typing import MutableSequence
 import pytest
 
 from common import OperatingSystem
+from common.types import NetworkService, SocketAddress
 from monkey_island.cc.models import Machine
+
+SOCKET_ADDR_1 = "192.168.1.10:5000"
+SOCKET_ADDR_2 = "192.168.1.10:8080"
 
 MACHINE_OBJECT_DICT = MappingProxyType(
     {
@@ -17,6 +21,10 @@ MACHINE_OBJECT_DICT = MappingProxyType(
         "operating_system": OperatingSystem.WINDOWS,
         "operating_system_version": "eXtra Problems",
         "hostname": "my.host",
+        "network_services": {
+            SocketAddress.from_string(SOCKET_ADDR_1): NetworkService.UNKNOWN,
+            SocketAddress.from_string(SOCKET_ADDR_2): NetworkService.UNKNOWN,
+        },
     }
 )
 
@@ -26,9 +34,13 @@ MACHINE_SIMPLE_DICT = MappingProxyType(
         "hardware_id": uuid.getnode(),
         "island": True,
         "network_interfaces": ["10.0.0.1/24", "192.168.5.32/16"],
-        "operating_system": "windows",
+        "operating_system": OperatingSystem.WINDOWS.value,
         "operating_system_version": "eXtra Problems",
         "hostname": "my.host",
+        "network_services": {
+            SOCKET_ADDR_1: NetworkService.UNKNOWN.value,
+            SOCKET_ADDR_2: NetworkService.UNKNOWN.value,
+        },
     }
 )
 
@@ -60,6 +72,11 @@ def test_to_dict():
         ("operating_system", "bsd"),
         ("operating_system_version", {}),
         ("hostname", []),
+        ("network_services", 42),
+        ("network_services", [SOCKET_ADDR_1]),
+        ("network_services", None),
+        ("network_services", {SOCKET_ADDR_1: "Hello"}),
+        ("network_services", {SocketAddress.from_string(SOCKET_ADDR_1): "Hello"}),
     ],
 )
 def test_construct_invalid_field__type_error(key, value):
@@ -77,6 +94,7 @@ def test_construct_invalid_field__type_error(key, value):
         ("hardware_id", 0),
         ("network_interfaces", [1, "stuff", 3]),
         ("network_interfaces", ["10.0.0.1/16", 2, []]),
+        ("network_services", {"192.168.": NetworkService.UNKNOWN.value}),
     ],
 )
 def test_construct_invalid_field__value_error(key, value):
@@ -230,3 +248,19 @@ def test_hostname_default_value():
     m = Machine(**missing_hostname_dict)
 
     assert m.hostname == ""
+
+
+def test_set_network_services_validates():
+    m = Machine(**MACHINE_OBJECT_DICT)
+
+    with pytest.raises(ValueError):
+        m.network_services = {"not-an-ip": NetworkService.UNKNOWN.value}
+
+
+def test_set_network_services_default_value():
+    missing_network_services = MACHINE_OBJECT_DICT.copy()
+    del missing_network_services["network_services"]
+
+    m = Machine(**missing_network_services)
+
+    assert m.network_services == {}

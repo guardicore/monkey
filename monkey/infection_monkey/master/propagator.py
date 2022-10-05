@@ -10,7 +10,7 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import PingScanData, PortStatus
+from common.types import NetworkPort, PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
 from infection_monkey.model import VictimHost, VictimHostFactory
 from infection_monkey.network import NetworkAddress
@@ -21,7 +21,7 @@ from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.utils.threading import create_daemon_thread
 
 from . import Exploiter, IPScanner, IPScanResults
-from .ip_scan_results import FingerprinterName, Port
+from .ip_scan_results import FingerprinterName
 
 logger = logging.getLogger()
 
@@ -146,7 +146,7 @@ class Propagator:
 
     @staticmethod
     def _process_tcp_scan_results(
-        victim_host: VictimHost, port_scan_data: Mapping[Port, PortScanData]
+        victim_host: VictimHost, port_scan_data: Mapping[NetworkPort, PortScanData]
     ):
         for psd in filter(
             lambda scan_data: scan_data.status == PortStatus.OPEN, port_scan_data.values()

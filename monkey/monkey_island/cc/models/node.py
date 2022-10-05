@@ -1,9 +1,10 @@
-from typing import FrozenSet, Mapping
+from typing import FrozenSet, Mapping, Tuple
 
 from pydantic import Field
 from typing_extensions import TypeAlias
 
 from common.base_models import MutableInfectionMonkeyBaseModel
+from common.types import SocketAddress
 
 from . import CommunicationType, MachineID
 
@@ -24,3 +25,6 @@ class Node(MutableInfectionMonkeyBaseModel):
 
     connections: NodeConnections
     """All outbound connections from this node to other machines"""
+
+    tcp_connections: Mapping[MachineID, Tuple[SocketAddress, ...]] = {}
+    """All successfull outbound TCP connections"""

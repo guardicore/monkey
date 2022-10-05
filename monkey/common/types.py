@@ -28,6 +28,17 @@ JSONSerializable = Union[  # type: ignore[misc]
 ]
 
 
+class NetworkService(Enum):
+    """
+    An Enum representing network services
+
+    This Enum represents all network services that Infection Monkey supports. The value of each
+    member is the member's name in all lower-case characters.
+    """
+
+    UNKNOWN = "unknown"
+
+
 class NetworkPort(ConstrainedInt):
     """
     Define network port as constrainer integer.
