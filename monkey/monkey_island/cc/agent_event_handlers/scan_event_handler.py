@@ -1,4 +1,3 @@
-from ipaddress import IPv4Interface
 from logging import getLogger
 from typing import List, Union
 
@@ -15,6 +14,8 @@ from monkey_island.cc.repository import (
     StorageError,
     UnknownRecordError,
 )
+
+from .utils import get_or_create_target_machine
 
 ScanEvent: TypeAlias = Union[PingScanEvent, TCPScanEvent]
 
@@ -65,16 +66,7 @@ class ScanEventHandler:
             logger.exception("Unable to process tcp scan data")
 
     def _get_target_machine(self, event: ScanEvent) -> Machine:
-        try:
-            target_machines = self._machine_repository.get_machines_by_ip(event.target)
-            return target_machines[0]
-        except UnknownRecordError:
-            machine = Machine(
-                id=self._machine_repository.get_new_id(),
-                network_interfaces=[IPv4Interface(event.target)],
-            )
-            self._machine_repository.upsert_machine(machine)
-            return machine
+        return get_or_create_target_machine(self._machine_repository, event.target)
 
     def _get_source_node(self, event: ScanEvent) -> Node:
         machine = self._get_source_machine(event)
