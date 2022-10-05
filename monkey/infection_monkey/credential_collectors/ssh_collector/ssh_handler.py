@@ -6,6 +6,11 @@ from typing import Dict, Iterable, Sequence
 from common.agent_events import CredentialsStolenEvent
 from common.credentials import Credentials, SSHKeypair, Username
 from common.event_queue import IAgentEventQueue
+from common.tags import (
+    T1003_ATTACK_TECHNIQUE_TAG,
+    T1005_ATTACK_TECHNIQUE_TAG,
+    T1145_ATTACK_TECHNIQUE_TAG,
+)
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
 from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
@@ -17,9 +22,6 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_DIRS = ["/.ssh/", "/"]
 SSH_CREDENTIAL_COLLECTOR_TAG = "ssh-credentials-collector"
-T1003_ATTACK_TECHNIQUE_TAG = "attack-t1003"
-T1005_ATTACK_TECHNIQUE_TAG = "attack-t1005"
-T1145_ATTACK_TECHNIQUE_TAG = "attack-t1145"
 
 SSH_COLLECTOR_EVENT_TAGS = frozenset(
     (
@@ -170,7 +172,7 @@ def to_credentials(ssh_info: Iterable[Dict]) -> Sequence[Credentials]:
 
 
 def _publish_credentials_stolen_event(
-    collected_credentials: Credentials, event_queue: IAgentEventQueue
+    collected_credentials: Sequence[Credentials], event_queue: IAgentEventQueue
 ):
     credentials_stolen_event = CredentialsStolenEvent(
         source=get_agent_id(),
