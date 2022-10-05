@@ -15,13 +15,15 @@ class SSHCredentialCollector(ICredentialCollector):
     SSH keys credential collector
     """
 
-    def __init__(self, telemetry_messenger: ITelemetryMessenger, event_queue: IAgentEventQueue):
+    def __init__(
+        self, telemetry_messenger: ITelemetryMessenger, agent_event_queue: IAgentEventQueue
+    ):
         self._telemetry_messenger = telemetry_messenger
-        self._event_queue = event_queue
+        self._agent_event_queue = agent_event_queue
 
     def collect_credentials(self, _options=None) -> Sequence[Credentials]:
         logger.info("Started scanning for SSH credentials")
-        ssh_info = ssh_handler.get_ssh_info(self._telemetry_messenger, self._event_queue)
+        ssh_info = ssh_handler.get_ssh_info(self._telemetry_messenger, self._agent_event_queue)
         logger.info("Finished scanning for SSH credentials")
 
         return ssh_handler.to_credentials(ssh_info)
