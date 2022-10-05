@@ -27,8 +27,8 @@ MIMIKATZ_EVENT_TAGS = frozenset(
 
 
 class MimikatzCredentialCollector(ICredentialCollector):
-    def __init__(self, event_queue: IAgentEventQueue):
-        self._event_queue = event_queue
+    def __init__(self, agent_event_queue: IAgentEventQueue):
+        self._agent_event_queue = agent_event_queue
 
     def collect_credentials(self, options=None) -> Sequence[Credentials]:
         logger.info("Attempting to collect windows credentials with pypykatz.")
@@ -81,4 +81,4 @@ class MimikatzCredentialCollector(ICredentialCollector):
             stolen_credentials=collected_credentials,
         )
 
-        self._event_queue.publish(credentials_stolen_event)
+        self._agent_event_queue.publish(credentials_stolen_event)
