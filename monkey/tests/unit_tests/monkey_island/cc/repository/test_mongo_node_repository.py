@@ -163,21 +163,6 @@ def test_upsert_communication__replace_one_fails(
         error_raising_node_repository.upsert_communication(1, 2, CommunicationType.SCANNED)
 
 
-def test_upsert_communication__replace_one_matched_without_modify(
-    error_raising_mock_mongo_client, error_raising_node_repository
-):
-    mock_result = MagicMock()
-    mock_result.matched_count = 1
-    mock_result.modified_count = 0
-    error_raising_mock_mongo_client.monkey_island.nodes.find_one = MagicMock(return_value=None)
-    error_raising_mock_mongo_client.monkey_island.nodes.replace_one = MagicMock(
-        return_value=mock_result
-    )
-
-    with pytest.raises(StorageError):
-        error_raising_node_repository.upsert_communication(1, 2, CommunicationType.SCANNED)
-
-
 def test_upsert_communication__replace_one_insert_fails(
     error_raising_mock_mongo_client, error_raising_node_repository
 ):

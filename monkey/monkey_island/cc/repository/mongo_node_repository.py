@@ -55,12 +55,6 @@ class MongoNodeRepository(INodeRepository):
         except Exception as err:
             raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
 
-        if result.matched_count != 0 and result.modified_count != 1:
-            raise StorageError(
-                f'Error updating node with source ID "{node.machine_id}": Expected to update 1 '
-                f"node, but {result.modified_count} were updated"
-            )
-
         if result.matched_count == 0 and result.upserted_id is None:
             raise StorageError(
                 f'Error inserting node with source ID "{node.machine_id}": Expected to insert 1 '
