@@ -3,6 +3,8 @@ import select
 import socket
 import struct
 import sys
+from ipaddress import IPv4Address
+from typing import Optional
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from infection_monkey.network.info import get_routes
@@ -13,7 +15,7 @@ BANNER_READ = 1024
 logger = logging.getLogger(__name__)
 
 
-def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
+def check_tcp_port(ip: IPv4Address, port: int, timeout=DEFAULT_TIMEOUT, get_banner=False):
     """
     Checks if a given TCP port is open
     :param ip: Target IP
@@ -26,7 +28,7 @@ def check_tcp_port(ip, port, timeout=DEFAULT_TIMEOUT, get_banner=False):
     sock.settimeout(timeout)
 
     try:
-        sock.connect((ip, port))
+        sock.connect((str(ip), port))
     except socket.timeout:
         return False, None
     except socket.error as exc:
@@ -51,7 +53,7 @@ def tcp_port_to_service(port):
     return "tcp-" + str(port)
 
 
-def get_interface_to_target(dst: str) -> str:
+def get_interface_to_target(dst: str) -> Optional[str]:
     """
     :param dst: destination IP address string without port. E.G. '192.168.1.1.'
     :return: IP address string of an interface that can connect to the target. E.G. '192.168.1.4.'
