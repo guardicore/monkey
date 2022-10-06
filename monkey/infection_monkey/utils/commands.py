@@ -1,4 +1,5 @@
-from typing import List, Optional
+from pathlib import PurePath
+from typing import List, Optional, Union
 
 from infection_monkey.config import GUID
 from infection_monkey.exploit.tools.helpers import AGENT_BINARY_PATH_LINUX, AGENT_BINARY_PATH_WIN64
@@ -9,7 +10,9 @@ DROPPER_TARGET_PATH_LINUX = AGENT_BINARY_PATH_LINUX
 DROPPER_TARGET_PATH_WIN64 = AGENT_BINARY_PATH_WIN64
 
 
-def build_monkey_commandline(servers: List[str], depth: int, location: Optional[str] = None) -> str:
+def build_monkey_commandline(
+    servers: List[str], depth: int, location: Union[str, PurePath, None] = None
+) -> str:
 
     return " " + " ".join(
         build_monkey_commandline_explicitly(
@@ -25,7 +28,7 @@ def build_monkey_commandline_explicitly(
     parent: Optional[str] = None,
     servers: Optional[List[str]] = None,
     depth: Optional[int] = None,
-    location: Optional[str] = None,
+    location: Union[str, PurePath, None] = None,
 ) -> List[str]:
     cmdline = []
 
