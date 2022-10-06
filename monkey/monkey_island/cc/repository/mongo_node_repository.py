@@ -51,6 +51,9 @@ class MongoNodeRepository(INodeRepository):
     def add_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
         node = self._get_node_by_id(machine_id)
 
+        if node is None:
+            node = Node(machine_id=machine_id, connections={})
+
         for target, connections in tcp_connections.items():
             if target in node.tcp_connections:
                 node.tcp_connections[target] = tuple({*node.tcp_connections[target], *connections})

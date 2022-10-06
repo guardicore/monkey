@@ -232,3 +232,10 @@ def test_upsert_tcp_connections__port_already_present(node_repository):
     modified_node = [node for node in nodes if node.machine_id == 4][0]
     assert set(modified_node.tcp_connections) == set(ALL_TCP_CONNECTIONS)
     assert len(modified_node.tcp_connections) == len(ALL_TCP_CONNECTIONS)
+
+
+def test_upsert_tcp_connections__node_missing(node_repository):
+    node_repository.add_tcp_connections(999, TCP_CONNECTION_PORT_80)
+    nodes = node_repository.get_nodes()
+    modified_node = [node for node in nodes if node.machine_id == 999][0]
+    assert set(modified_node.tcp_connections) == set(TCP_CONNECTION_PORT_80)
