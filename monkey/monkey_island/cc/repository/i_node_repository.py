@@ -27,7 +27,7 @@ class INodeRepository(ABC):
         """
 
     @abstractmethod
-    def add_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
+    def upsert_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
         """
         Add TCP connections to Node
         :param machine_id: Machine ID of the Node that made the connections

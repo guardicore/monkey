@@ -48,7 +48,7 @@ class MongoNodeRepository(INodeRepository):
 
         return new_node
 
-    def add_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
+    def upsert_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
         node = self._get_node_by_id(machine_id)
 
         if node is None:

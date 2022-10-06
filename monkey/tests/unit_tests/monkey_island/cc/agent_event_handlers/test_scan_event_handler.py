@@ -234,7 +234,7 @@ def test_handle_tcp_scan_event__no_open_ports(
     scan_event_handler._update_nodes = MagicMock()
     scan_event_handler.handle_tcp_scan_event(event)
 
-    assert not node_repository.add_tcp_connections.called
+    assert not node_repository.upsert_tcp_connections.called
 
 
 def test_handle_tcp_scan_event__ports_found(
@@ -244,7 +244,7 @@ def test_handle_tcp_scan_event__ports_found(
     scan_event_handler._update_nodes = MagicMock()
     scan_event_handler.handle_tcp_scan_event(event)
 
-    call_args = node_repository.add_tcp_connections.call_args[0]
+    call_args = node_repository.upsert_tcp_connections.call_args[0]
     assert call_args[0] == MACHINE_ID
     assert TARGET_MACHINE_ID in call_args[1]
     open_socket_addresses = call_args[1][TARGET_MACHINE_ID]

@@ -211,7 +211,7 @@ def test_reset__removal_error(error_raising_node_repository):
 
 
 def test_upsert_tcp_connections__empty_connections(node_repository):
-    node_repository.add_tcp_connections(1, TCP_CONNECTION_PORT_22)
+    node_repository.upsert_tcp_connections(1, TCP_CONNECTION_PORT_22)
     nodes = node_repository.get_nodes()
     for node in nodes:
         if node.machine_id == 1:
@@ -219,7 +219,7 @@ def test_upsert_tcp_connections__empty_connections(node_repository):
 
 
 def test_upsert_tcp_connections__upsert_new_port(node_repository):
-    node_repository.add_tcp_connections(2, TCP_CONNECTION_PORT_80)
+    node_repository.upsert_tcp_connections(2, TCP_CONNECTION_PORT_80)
     nodes = node_repository.get_nodes()
     modified_node = [node for node in nodes if node.machine_id == 2][0]
     assert set(modified_node.tcp_connections) == set(ALL_TCP_CONNECTIONS)
@@ -227,7 +227,7 @@ def test_upsert_tcp_connections__upsert_new_port(node_repository):
 
 
 def test_upsert_tcp_connections__port_already_present(node_repository):
-    node_repository.add_tcp_connections(4, TCP_CONNECTION_PORT_80)
+    node_repository.upsert_tcp_connections(4, TCP_CONNECTION_PORT_80)
     nodes = node_repository.get_nodes()
     modified_node = [node for node in nodes if node.machine_id == 4][0]
     assert set(modified_node.tcp_connections) == set(ALL_TCP_CONNECTIONS)
@@ -235,7 +235,7 @@ def test_upsert_tcp_connections__port_already_present(node_repository):
 
 
 def test_upsert_tcp_connections__node_missing(node_repository):
-    node_repository.add_tcp_connections(999, TCP_CONNECTION_PORT_80)
+    node_repository.upsert_tcp_connections(999, TCP_CONNECTION_PORT_80)
     nodes = node_repository.get_nodes()
     modified_node = [node for node in nodes if node.machine_id == 999][0]
     assert set(modified_node.tcp_connections) == set(TCP_CONNECTION_PORT_80)
