@@ -47,27 +47,6 @@ SOURCE_NODE = Node(
     },
 )
 
-SOURCE_NODE_2 = Node(
-    machine_id=SOURCE_MACHINE.id,
-    connections=[],
-    tcp_connections={
-        44: (SocketAddress(ip="1.1.1.1", port=40), SocketAddress(ip="2.2.2.2", port=50)),
-        TARGET_MACHINE_ID: (SocketAddress(ip=TARGET_MACHINE_IP, port=22),),
-    },
-)
-
-EXPECTED_NODE = Node(
-    machine_id=SOURCE_MACHINE.id,
-    connections=[],
-    tcp_connections={
-        44: (SocketAddress(ip="1.1.1.1", port=40), SocketAddress(ip="2.2.2.2", port=50)),
-        TARGET_MACHINE_ID: (
-            SocketAddress(ip=TARGET_MACHINE_IP, port=22),
-            SocketAddress(ip=TARGET_MACHINE_IP, port=80),
-        ),
-    },
-)
-
 PING_SCAN_EVENT = PingScanEvent(
     source=AGENT_ID,
     target=IPv4Address(TARGET_MACHINE_IP),
