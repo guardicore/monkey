@@ -5,6 +5,7 @@ from pymongo import MongoClient
 
 from monkey_island.cc.models import CommunicationType, MachineID, Node
 
+from ..models.node import TCPConnections
 from . import INodeRepository, RemovalError, RetrievalError, StorageError
 from .consts import MONGO_OBJECT_ID_KEY
 
@@ -47,7 +48,17 @@ class MongoNodeRepository(INodeRepository):
 
         return new_node
 
-    def upsert_node(self, node: Node):
+    def add_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
+        node = self._get_node_by_id(machine_id)
+
+        for target, connections in tcp_connections.items():
+            if target in node.tcp_connections:
+                node.tcp_connections[target] = tuple({*node.tcp_connections[target], *connections})
+            else:
+                node.tcp_connections[target] = connections
+        self._upsert_node(node)
+
+    def _upsert_node(self, node: Node):
         try:
             result = self._nodes_collection.replace_one(
                 {SRC_FIELD_NAME: node.machine_id}, node.dict(simplify=True), upsert=True

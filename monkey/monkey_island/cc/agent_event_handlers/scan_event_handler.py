@@ -1,4 +1,3 @@
-from copy import deepcopy
 from ipaddress import IPv4Interface
 from logging import getLogger
 from typing import Union
@@ -98,16 +97,16 @@ class ScanEventHandler:
         )
 
     def _update_tcp_connections(self, src_node: Node, target_machine: Machine, event: TCPScanEvent):
-        node_connections = dict(deepcopy(src_node.tcp_connections))
-        machine_connections = set(node_connections.get(target_machine.id, set()))
-        open_ports = [port for port, status in event.ports.items() if status == PortStatus.OPEN]
+        tcp_connections = set()
+        open_ports = (port for port, status in event.ports.items() if status == PortStatus.OPEN)
         for open_port in open_ports:
             socket_address = SocketAddress(ip=event.target, port=open_port)
-            machine_connections.add(socket_address)
+            tcp_connections.add(socket_address)
 
-        node_connections[target_machine.id] = tuple(machine_connections)
-        src_node.tcp_connections = node_connections
-        self._node_repository.upsert_node(src_node)
+        if tcp_connections:
+            self._node_repository.add_tcp_connections(
+                src_node.machine_id, {target_machine.id: tcp_connections}
+            )
 
     def _get_source_machine(self, event: ScanEvent) -> Machine:
         agent = self._agent_repository.get_agent_by_id(event.source)

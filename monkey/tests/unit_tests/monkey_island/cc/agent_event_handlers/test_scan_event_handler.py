@@ -95,6 +95,13 @@ TCP_SCAN_EVENT = TCPScanEvent(
     ports={22: PortStatus.OPEN, 80: PortStatus.OPEN, 8080: PortStatus.CLOSED},
 )
 
+TCP_CONNECTIONS = {
+    TARGET_MACHINE_ID: (
+        SocketAddress(ip=TARGET_MACHINE_IP, port=22),
+        SocketAddress(ip=TARGET_MACHINE_IP, port=80),
+    )
+}
+
 TCP_SCAN_EVENT_CLOSED = TCPScanEvent(
     source=AGENT_ID,
     target=IPv4Address(TARGET_MACHINE_IP),
@@ -220,31 +227,29 @@ def test_tcp_scan_event_target_machine_not_exists(
     machine_repository.upsert_machine.assert_called_with(expected_machine)
 
 
-def test_handle_tcp_scan_event__tcp_connections(
+def test_handle_tcp_scan_event__no_open_ports(
+    scan_event_handler, machine_repository, node_repository
+):
+    event = TCP_SCAN_EVENT_CLOSED
+    scan_event_handler._update_nodes = MagicMock()
+    scan_event_handler.handle_tcp_scan_event(event)
+
+    assert not node_repository.add_tcp_connections.called
+
+
+def test_handle_tcp_scan_event__ports_found(
     scan_event_handler, machine_repository, node_repository
 ):
     event = TCP_SCAN_EVENT
     scan_event_handler._update_nodes = MagicMock()
     scan_event_handler.handle_tcp_scan_event(event)
 
-    node_passed = node_repository.upsert_node.call_args[0][0]
-    assert set(node_passed.tcp_connections[TARGET_MACHINE_ID]) == set(
-        EXPECTED_NODE.tcp_connections[TARGET_MACHINE_ID]
-    )
-
-
-def test_handle_tcp_scan_event__tcp_connections_upsert(
-    scan_event_handler, machine_repository, node_repository
-):
-    event = TCP_SCAN_EVENT
-    node_repository.get_nodes.return_value = [deepcopy(SOURCE_NODE_2)]
-    scan_event_handler._update_nodes = MagicMock()
-    scan_event_handler.handle_tcp_scan_event(event)
-
-    node_passed = node_repository.upsert_node.call_args[0][0]
-    assert set(node_passed.tcp_connections[TARGET_MACHINE_ID]) == set(
-        EXPECTED_NODE.tcp_connections[TARGET_MACHINE_ID]
-    )
+    call_args = node_repository.add_tcp_connections.call_args[0]
+    assert call_args[0] == MACHINE_ID
+    assert TARGET_MACHINE_ID in call_args[1]
+    open_socket_addresses = call_args[1][TARGET_MACHINE_ID]
+    assert set(open_socket_addresses) == set(TCP_CONNECTIONS[TARGET_MACHINE_ID])
+    assert len(open_socket_addresses) == len(TCP_CONNECTIONS[TARGET_MACHINE_ID])
 
 
 def test_handle_tcp_scan_event__no_source(

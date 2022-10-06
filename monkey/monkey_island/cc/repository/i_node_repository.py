@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Sequence
 
 from monkey_island.cc.models import CommunicationType, MachineID, Node
+from monkey_island.cc.models.node import TCPConnections
 
 
 class INodeRepository(ABC):
@@ -26,11 +27,12 @@ class INodeRepository(ABC):
         """
 
     @abstractmethod
-    def upsert_node(self, node: Node):
+    def add_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
         """
-        Store the Node object in the repository by creating a new one or updating an existing one.
-        :param node: Node that will be saved
-        :raises StorageError: If an error occurs while attempting to upsert the Node
+        Add TCP connections to Node
+        :param machine_id: Machine ID of the Node that made the connections
+        :param tcp_connections: TCP connections made by node
+        :raises StorageError: If an error occurs while attempting to add connections
         """
 
     @abstractmethod

@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import mongomock
 import pytest
 
+from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
 from monkey_island.cc.repository import (
     INodeRepository,
@@ -11,6 +12,14 @@ from monkey_island.cc.repository import (
     RetrievalError,
     StorageError,
 )
+
+TARGET_MACHINE_IP = "2.2.2.2"
+
+TCP_CONNECTION_PORT_22 = {3: (SocketAddress(ip=TARGET_MACHINE_IP, port=22),)}
+TCP_CONNECTION_PORT_80 = {3: (SocketAddress(ip=TARGET_MACHINE_IP, port=80),)}
+ALL_TCP_CONNECTIONS = {
+    3: (SocketAddress(ip=TARGET_MACHINE_IP, port=22), SocketAddress(ip=TARGET_MACHINE_IP, port=80))
+}
 
 NODES = (
     Node(
@@ -23,6 +32,7 @@ NODES = (
     Node(
         machine_id=2,
         connections={1: frozenset((CommunicationType.CC,))},
+        tcp_connections=TCP_CONNECTION_PORT_22,
     ),
     Node(
         machine_id=3,
@@ -32,10 +42,7 @@ NODES = (
             5: frozenset((CommunicationType.SCANNED, CommunicationType.EXPLOITED)),
         },
     ),
-    Node(
-        machine_id=4,
-        connections={},
-    ),
+    Node(machine_id=4, connections={}, tcp_connections=ALL_TCP_CONNECTIONS),
     Node(
         machine_id=5,
         connections={
@@ -201,3 +208,27 @@ def test_reset(node_repository):
 def test_reset__removal_error(error_raising_node_repository):
     with pytest.raises(RemovalError):
         error_raising_node_repository.reset()
+
+
+def test_upsert_tcp_connections__empty_connections(node_repository):
+    node_repository.add_tcp_connections(1, TCP_CONNECTION_PORT_22)
+    nodes = node_repository.get_nodes()
+    for node in nodes:
+        if node.machine_id == 1:
+            assert node.tcp_connections == TCP_CONNECTION_PORT_22
+
+
+def test_upsert_tcp_connections__upsert_new_port(node_repository):
+    node_repository.add_tcp_connections(2, TCP_CONNECTION_PORT_80)
+    nodes = node_repository.get_nodes()
+    modified_node = [node for node in nodes if node.machine_id == 2][0]
+    assert set(modified_node.tcp_connections) == set(ALL_TCP_CONNECTIONS)
+    assert len(modified_node.tcp_connections) == len(ALL_TCP_CONNECTIONS)
+
+
+def test_upsert_tcp_connections__port_already_present(node_repository):
+    node_repository.add_tcp_connections(4, TCP_CONNECTION_PORT_80)
+    nodes = node_repository.get_nodes()
+    modified_node = [node for node in nodes if node.machine_id == 4][0]
+    assert set(modified_node.tcp_connections) == set(ALL_TCP_CONNECTIONS)
+    assert len(modified_node.tcp_connections) == len(ALL_TCP_CONNECTIONS)

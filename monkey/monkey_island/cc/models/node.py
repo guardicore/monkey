@@ -1,4 +1,4 @@
-from typing import FrozenSet, Mapping, Tuple
+from typing import Dict, FrozenSet, Mapping, Tuple
 
 from pydantic import Field
 from typing_extensions import TypeAlias
@@ -9,6 +9,7 @@ from common.types import SocketAddress
 from . import CommunicationType, MachineID
 
 NodeConnections: TypeAlias = Mapping[MachineID, FrozenSet[CommunicationType]]
+TCPConnections: TypeAlias = Dict[MachineID, Tuple[SocketAddress, ...]]
 
 
 class Node(MutableInfectionMonkeyBaseModel):
@@ -26,5 +27,5 @@ class Node(MutableInfectionMonkeyBaseModel):
     connections: NodeConnections
     """All outbound connections from this node to other machines"""
 
-    tcp_connections: Mapping[MachineID, Tuple[SocketAddress, ...]] = {}
+    tcp_connections: TCPConnections = {}
     """All successfull outbound TCP connections"""
