@@ -78,7 +78,12 @@ class ScanEventHandler:
 
     def _get_source_node(self, event: ScanEvent) -> Node:
         machine = self._get_source_machine(event)
-        return self._node_repository.get_node_by_machine_id(machine.id)
+        try:
+            node = self._node_repository.get_node_by_machine_id(machine.id)
+        except UnknownRecordError:
+            node = Node(machine_id=machine.id)
+            self._node_repository.upsert_node(node)
+        return node
 
     def _get_source_machine(self, event: ScanEvent) -> Machine:
         agent = self._agent_repository.get_agent_by_id(event.source)

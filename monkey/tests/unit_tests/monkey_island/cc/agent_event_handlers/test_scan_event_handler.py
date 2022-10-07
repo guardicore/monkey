@@ -22,11 +22,13 @@ from monkey_island.cc.repository import (
 
 SEED_ID = 99
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
-MACHINE_ID = 11
+SOURCE_MACHINE_ID = 11
 CC_SERVER = SocketAddress(ip="10.10.10.100", port="5000")
-AGENT = Agent(id=AGENT_ID, machine_id=MACHINE_ID, start_time=0, parent_id=None, cc_server=CC_SERVER)
+AGENT = Agent(
+    id=AGENT_ID, machine_id=SOURCE_MACHINE_ID, start_time=0, parent_id=None, cc_server=CC_SERVER
+)
 SOURCE_MACHINE = Machine(
-    id=MACHINE_ID,
+    id=SOURCE_MACHINE_ID,
     hardware_id=5,
     network_interfaces=[IPv4Interface("10.10.10.99/24")],
 )
@@ -125,7 +127,7 @@ def scan_event_handler(agent_repository, machine_repository, node_repository):
     return ScanEventHandler(agent_repository, machine_repository, node_repository)
 
 
-MACHINES_BY_ID = {MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
+MACHINES_BY_ID = {SOURCE_MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
 MACHINES_BY_IP = {
     IPv4Address("10.10.10.99"): [SOURCE_MACHINE],
     IPv4Address(TARGET_MACHINE_IP): [TARGET_MACHINE],
@@ -230,14 +232,14 @@ def test_handle_tcp_scan_event__ports_found(
     scan_event_handler.handle_tcp_scan_event(event)
 
     call_args = node_repository.upsert_tcp_connections.call_args[0]
-    assert call_args[0] == MACHINE_ID
+    assert call_args[0] == SOURCE_MACHINE_ID
     assert TARGET_MACHINE_ID in call_args[1]
     open_socket_addresses = call_args[1][TARGET_MACHINE_ID]
     assert set(open_socket_addresses) == set(TCP_CONNECTIONS[TARGET_MACHINE_ID])
     assert len(open_socket_addresses) == len(TCP_CONNECTIONS[TARGET_MACHINE_ID])
 
 
-def test_handle_tcp_scan_event__no_source(
+def test_handle_tcp_scan_event__no_source_node(
     caplog, scan_event_handler, machine_repository, node_repository
 ):
     event = TCP_SCAN_EVENT
@@ -245,8 +247,11 @@ def test_handle_tcp_scan_event__no_source(
     scan_event_handler._update_nodes = MagicMock()
 
     scan_event_handler.handle_tcp_scan_event(event)
-    assert "ERROR" in caplog.text
-    assert "no source" in caplog.text
+    expected_node = Node(machine_id=SOURCE_MACHINE_ID)
+    node_called = node_repository.upsert_node.call_args[0][0]
+    assert expected_node.machine_id == node_called.machine_id
+    assert expected_node.connections == node_called.connections
+    assert expected_node.tcp_connections == node_called.tcp_connections
 
 
 @pytest.mark.parametrize(

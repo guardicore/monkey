@@ -30,7 +30,7 @@ class MongoNodeRepository(INodeRepository):
         except Exception as err:
             raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
 
-        self._upsert_node(updated_node)
+        self.upsert_node(updated_node)
 
     @staticmethod
     def _add_connection_to_node(
@@ -57,9 +57,9 @@ class MongoNodeRepository(INodeRepository):
                 node.tcp_connections[target] = tuple({*node.tcp_connections[target], *connections})
             else:
                 node.tcp_connections[target] = connections
-        self._upsert_node(node)
+        self.upsert_node(node)
 
-    def _upsert_node(self, node: Node):
+    def upsert_node(self, node: Node):
         try:
             result = self._nodes_collection.replace_one(
                 {SRC_FIELD_NAME: node.machine_id}, node.dict(simplify=True), upsert=True

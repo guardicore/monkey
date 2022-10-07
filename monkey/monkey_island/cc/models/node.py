@@ -24,7 +24,7 @@ class Node(MutableInfectionMonkeyBaseModel):
     machine_id: MachineID = Field(..., allow_mutation=False)
     """The MachineID of the node (source)"""
 
-    connections: NodeConnections
+    connections: NodeConnections = {}
     """All outbound connections from this node to other machines"""
 
     tcp_connections: TCPConnections = {}

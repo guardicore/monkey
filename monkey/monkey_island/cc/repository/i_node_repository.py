@@ -45,6 +45,14 @@ class INodeRepository(ABC):
         """
 
     @abstractmethod
+    def upsert_node(self, node: Node):
+        """
+        Update or insert Node model into the database
+        :param node: Node model to be added to the repository
+        :raises StorageError: If something went wrong when upserting the Node
+        """
+
+    @abstractmethod
     def get_node_by_machine_id(self, machine_id: MachineID) -> Node:
         """
         Fetches network Node from the database based on Machine id
