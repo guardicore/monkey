@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Sequence
 
 from monkey_island.cc.models import CommunicationType, MachineID, Node
+from monkey_island.cc.models.node import TCPConnections
 
 
 class INodeRepository(ABC):
@@ -26,12 +27,30 @@ class INodeRepository(ABC):
         """
 
     @abstractmethod
+    def upsert_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
+        """
+        Add TCP connections to Node
+        :param machine_id: Machine ID of the Node that made the connections
+        :param tcp_connections: TCP connections made by node
+        :raises StorageError: If an error occurs while attempting to add connections
+        """
+
+    @abstractmethod
     def get_nodes(self) -> Sequence[Node]:
         """
         Return all nodes that are stored in the repository
 
         :return: All known Nodes
         :raises RetrievalError: If an error occurs while attempting to retrieve the nodes
+        """
+
+    @abstractmethod
+    def get_node_by_machine_id(self, machine_id: MachineID) -> Node:
+        """
+        Fetches network Node from the database based on Machine id
+        :param machine_id: ID of a Machine that Node represents
+        :return: network Node that represents the Machine
+        :raises UnknownRecordError: If the Node does not exist
         """
 
     @abstractmethod

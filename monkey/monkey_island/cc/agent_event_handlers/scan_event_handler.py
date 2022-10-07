@@ -4,9 +4,9 @@ from typing import Union
 
 from typing_extensions import TypeAlias
 
-from common.agent_events import PingScanEvent, TCPScanEvent
-from common.types import PortStatus
-from monkey_island.cc.models import CommunicationType, Machine
+from common.agent_events import AbstractAgentEvent, PingScanEvent, TCPScanEvent
+from common.types import PortStatus, SocketAddress
+from monkey_island.cc.models import CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
     IAgentRepository,
     IMachineRepository,
@@ -56,10 +56,16 @@ class ScanEventHandler:
 
         try:
             target_machine = self._get_target_machine(event)
+            source_node = self._get_source_node(event)
 
             self._update_nodes(target_machine, event)
+            self._update_tcp_connections(source_node, target_machine, event)
         except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process tcp scan data")
+
+    def _get_source_node(self, event: AbstractAgentEvent) -> Node:
+        machine = self._get_source_machine(event)
+        return self._node_repository.get_node_by_machine_id(machine.id)
 
     def _get_target_machine(self, event: ScanEvent) -> Machine:
         try:
@@ -84,6 +90,18 @@ class ScanEventHandler:
         self._node_repository.upsert_communication(
             src_machine.id, target_machine.id, CommunicationType.SCANNED
         )
+
+    def _update_tcp_connections(self, src_node: Node, target_machine: Machine, event: TCPScanEvent):
+        tcp_connections = set()
+        open_ports = (port for port, status in event.ports.items() if status == PortStatus.OPEN)
+        for open_port in open_ports:
+            socket_address = SocketAddress(ip=event.target, port=open_port)
+            tcp_connections.add(socket_address)
+
+        if tcp_connections:
+            self._node_repository.upsert_tcp_connections(
+                src_node.machine_id, {target_machine.id: tcp_connections}
+            )
 
     def _get_source_machine(self, event: ScanEvent) -> Machine:
         agent = self._agent_repository.get_agent_by_id(event.source)

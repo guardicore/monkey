@@ -5,7 +5,8 @@ from pymongo import MongoClient
 
 from monkey_island.cc.models import CommunicationType, MachineID, Node
 
-from . import INodeRepository, RemovalError, RetrievalError, StorageError
+from ..models.node import TCPConnections
+from . import INodeRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
 from .consts import MONGO_OBJECT_ID_KEY
 
 UPSERT_ERROR_MESSAGE = "An error occurred while attempting to upsert a node"
@@ -20,19 +21,14 @@ class MongoNodeRepository(INodeRepository):
         self, src: MachineID, dst: MachineID, communication_type: CommunicationType
     ):
         try:
-            node_dict = self._nodes_collection.find_one(
-                {SRC_FIELD_NAME: src}, {MONGO_OBJECT_ID_KEY: False}
-            )
-        except Exception as err:
-            raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
-
-        if node_dict is None:
-            updated_node = Node(machine_id=src, connections={dst: frozenset((communication_type,))})
-        else:
-            node = Node(**node_dict)
+            node = self.get_node_by_machine_id(src)
             updated_node = MongoNodeRepository._add_connection_to_node(
                 node, dst, communication_type
             )
+        except UnknownRecordError:
+            updated_node = Node(machine_id=src, connections={dst: frozenset((communication_type,))})
+        except Exception as err:
+            raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
 
         self._upsert_node(updated_node)
 
@@ -50,6 +46,19 @@ class MongoNodeRepository(INodeRepository):
 
         return new_node
 
+    def upsert_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
+        try:
+            node = self.get_node_by_machine_id(machine_id)
+        except UnknownRecordError:
+            node = Node(machine_id=machine_id, connections={})
+
+        for target, connections in tcp_connections.items():
+            if target in node.tcp_connections:
+                node.tcp_connections[target] = tuple({*node.tcp_connections[target], *connections})
+            else:
+                node.tcp_connections[target] = connections
+        self._upsert_node(node)
+
     def _upsert_node(self, node: Node):
         try:
             result = self._nodes_collection.replace_one(
@@ -58,17 +67,19 @@ class MongoNodeRepository(INodeRepository):
         except Exception as err:
             raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
 
-        if result.matched_count != 0 and result.modified_count != 1:
-            raise StorageError(
-                f'Error updating node with source ID "{node.machine_id}": Expected to update 1 '
-                f"node, but {result.modified_count} were updated"
-            )
-
         if result.matched_count == 0 and result.upserted_id is None:
             raise StorageError(
                 f'Error inserting node with source ID "{node.machine_id}": Expected to insert 1 '
                 f"node, but no nodes were inserted"
             )
+
+    def get_node_by_machine_id(self, machine_id: MachineID) -> Node:
+        node_dict = self._nodes_collection.find_one(
+            {SRC_FIELD_NAME: machine_id}, {MONGO_OBJECT_ID_KEY: False}
+        )
+        if not node_dict:
+            raise UnknownRecordError(f"Node with machine ID {machine_id}")
+        return Node(**node_dict)
 
     def get_nodes(self) -> Sequence[Node]:
         try:

@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import mongomock
 import pytest
 
+from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
 from monkey_island.cc.repository import (
     INodeRepository,
@@ -10,7 +11,16 @@ from monkey_island.cc.repository import (
     RemovalError,
     RetrievalError,
     StorageError,
+    UnknownRecordError,
 )
+
+TARGET_MACHINE_IP = "2.2.2.2"
+
+TCP_CONNECTION_PORT_22 = {3: (SocketAddress(ip=TARGET_MACHINE_IP, port=22),)}
+TCP_CONNECTION_PORT_80 = {3: (SocketAddress(ip=TARGET_MACHINE_IP, port=80),)}
+ALL_TCP_CONNECTIONS = {
+    3: (SocketAddress(ip=TARGET_MACHINE_IP, port=22), SocketAddress(ip=TARGET_MACHINE_IP, port=80))
+}
 
 NODES = (
     Node(
@@ -23,6 +33,7 @@ NODES = (
     Node(
         machine_id=2,
         connections={1: frozenset((CommunicationType.CC,))},
+        tcp_connections=TCP_CONNECTION_PORT_22,
     ),
     Node(
         machine_id=3,
@@ -32,10 +43,7 @@ NODES = (
             5: frozenset((CommunicationType.SCANNED, CommunicationType.EXPLOITED)),
         },
     ),
-    Node(
-        machine_id=4,
-        connections={},
-    ),
+    Node(machine_id=4, connections={}, tcp_connections=ALL_TCP_CONNECTIONS),
     Node(
         machine_id=5,
         connections={
@@ -163,21 +171,6 @@ def test_upsert_communication__replace_one_fails(
         error_raising_node_repository.upsert_communication(1, 2, CommunicationType.SCANNED)
 
 
-def test_upsert_communication__replace_one_matched_without_modify(
-    error_raising_mock_mongo_client, error_raising_node_repository
-):
-    mock_result = MagicMock()
-    mock_result.matched_count = 1
-    mock_result.modified_count = 0
-    error_raising_mock_mongo_client.monkey_island.nodes.find_one = MagicMock(return_value=None)
-    error_raising_mock_mongo_client.monkey_island.nodes.replace_one = MagicMock(
-        return_value=mock_result
-    )
-
-    with pytest.raises(StorageError):
-        error_raising_node_repository.upsert_communication(1, 2, CommunicationType.SCANNED)
-
-
 def test_upsert_communication__replace_one_insert_fails(
     error_raising_mock_mongo_client, error_raising_node_repository
 ):
@@ -216,3 +209,43 @@ def test_reset(node_repository):
 def test_reset__removal_error(error_raising_node_repository):
     with pytest.raises(RemovalError):
         error_raising_node_repository.reset()
+
+
+def test_upsert_tcp_connections__empty_connections(node_repository):
+    node_repository.upsert_tcp_connections(1, TCP_CONNECTION_PORT_22)
+    nodes = node_repository.get_nodes()
+    for node in nodes:
+        if node.machine_id == 1:
+            assert node.tcp_connections == TCP_CONNECTION_PORT_22
+
+
+def test_upsert_tcp_connections__upsert_new_port(node_repository):
+    node_repository.upsert_tcp_connections(2, TCP_CONNECTION_PORT_80)
+    nodes = node_repository.get_nodes()
+    modified_node = [node for node in nodes if node.machine_id == 2][0]
+    assert set(modified_node.tcp_connections) == set(ALL_TCP_CONNECTIONS)
+    assert len(modified_node.tcp_connections) == len(ALL_TCP_CONNECTIONS)
+
+
+def test_upsert_tcp_connections__port_already_present(node_repository):
+    node_repository.upsert_tcp_connections(4, TCP_CONNECTION_PORT_80)
+    nodes = node_repository.get_nodes()
+    modified_node = [node for node in nodes if node.machine_id == 4][0]
+    assert set(modified_node.tcp_connections) == set(ALL_TCP_CONNECTIONS)
+    assert len(modified_node.tcp_connections) == len(ALL_TCP_CONNECTIONS)
+
+
+def test_upsert_tcp_connections__node_missing(node_repository):
+    node_repository.upsert_tcp_connections(999, TCP_CONNECTION_PORT_80)
+    nodes = node_repository.get_nodes()
+    modified_node = [node for node in nodes if node.machine_id == 999][0]
+    assert set(modified_node.tcp_connections) == set(TCP_CONNECTION_PORT_80)
+
+
+def test_get_node_by_machine_id(node_repository):
+    assert node_repository.get_node_by_machine_id(1) == NODES[0]
+
+
+def test_get_node_by_machine_id__no_node(node_repository):
+    with pytest.raises(UnknownRecordError):
+        node_repository.get_node_by_machine_id(999)
