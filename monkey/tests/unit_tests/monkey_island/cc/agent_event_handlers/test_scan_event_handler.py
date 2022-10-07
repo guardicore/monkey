@@ -8,7 +8,7 @@ import pytest
 
 from common import OperatingSystem
 from common.agent_events import PingScanEvent, TCPScanEvent
-from common.types import PortStatus, SocketAddress
+from common.types import NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.agent_event_handlers import ScanEventHandler
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
@@ -73,6 +73,11 @@ TCP_SCAN_EVENT = TCPScanEvent(
     target=IPv4Address(TARGET_MACHINE_IP),
     ports={22: PortStatus.OPEN, 80: PortStatus.OPEN, 8080: PortStatus.CLOSED},
 )
+
+EXPECTED_NETWORK_SERVICES = {
+    SocketAddress(ip=TARGET_MACHINE_IP, port=22): NetworkService.UNKNOWN,
+    SocketAddress(ip=TARGET_MACHINE_IP, port=80): NetworkService.UNKNOWN,
+}
 
 TCP_CONNECTIONS = {
     TARGET_MACHINE_ID: (
@@ -382,3 +387,11 @@ def test_failed_scan(
 
     assert not node_repository.upsert_communication.called
     assert not machine_repository.upsert_machine.called
+
+
+def test_network_services_handling(scan_event_handler, machine_repository):
+    scan_event_handler.handle_tcp_scan_event(TCP_SCAN_EVENT)
+
+    machine_repository.upsert_network_services.assert_called_with(
+        TARGET_MACHINE_ID, EXPECTED_NETWORK_SERVICES
+    )

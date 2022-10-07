@@ -7,8 +7,10 @@ from pymongo import MongoClient
 from common.types import HardwareID
 from monkey_island.cc.models import Machine, MachineID
 
+from ..models.machine import NetworkServices
 from . import IMachineRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
 from .consts import MONGO_OBJECT_ID_KEY
+from .utils import DOT_REPLACEMENT, mongo_dot_decoder, mongo_dot_encoder
 
 
 class MongoMachineRepository(IMachineRepository):
@@ -32,8 +34,9 @@ class MongoMachineRepository(IMachineRepository):
 
     def upsert_machine(self, machine: Machine):
         try:
+            machine_dict = mongo_dot_encoder(machine.dict(simplify=True))
             result = self._machines_collection.replace_one(
-                {"id": machine.id}, machine.dict(simplify=True), upsert=True
+                {"id": machine.id}, machine_dict, upsert=True
             )
         except Exception as err:
             raise StorageError(f'Error updating machine with ID "{machine.id}": {err}')
@@ -44,8 +47,19 @@ class MongoMachineRepository(IMachineRepository):
                 f"but no machines were inserted"
             )
 
+    def upsert_network_services(self, machine_id: MachineID, services: NetworkServices):
+        machine = self.get_machine_by_id(machine_id)
+        try:
+            machine.network_services.update(services)
+            self.upsert_machine(machine)
+        except Exception as err:
+            raise StorageError(f"Failed upserting the machine or adding services") from err
+
     def get_machine_by_id(self, machine_id: MachineID) -> Machine:
-        return self._find_one("id", machine_id)
+        machine = self._find_one("id", machine_id)
+        if not machine:
+            raise UnknownRecordError(f"Machine with id {machine_id} not found")
+        return machine
 
     def get_machine_by_hardware_id(self, hardware_id: HardwareID) -> Machine:
         return self._find_one("hardware_id", hardware_id)
@@ -61,6 +75,7 @@ class MongoMachineRepository(IMachineRepository):
         if machine_dict is None:
             raise UnknownRecordError(f'Unknown machine with "{key} == {search_value}"')
 
+        machine_dict = mongo_dot_decoder(machine_dict)
         return Machine(**machine_dict)
 
     def get_machines(self) -> Sequence[Machine]:
@@ -69,10 +84,10 @@ class MongoMachineRepository(IMachineRepository):
         except Exception as err:
             raise RetrievalError(f"Error retrieving machines: {err}")
 
-        return [Machine(**m) for m in cursor]
+        return [Machine(**mongo_dot_decoder(m)) for m in cursor]
 
     def get_machines_by_ip(self, ip: IPv4Address) -> Sequence[Machine]:
-        ip_regex = "^" + str(ip).replace(".", "\\.") + "\\/.*$"
+        ip_regex = "^" + str(ip).replace(".", DOT_REPLACEMENT) + "\\/.*$"
         query = {"network_interfaces": {"$elemMatch": {"$regex": ip_regex}}}
 
         try:
@@ -80,7 +95,7 @@ class MongoMachineRepository(IMachineRepository):
         except Exception as err:
             raise RetrievalError(f'Error retrieving machines with ip "{ip}": {err}')
 
-        machines = [Machine(**m) for m in cursor]
+        machines = [Machine(**mongo_dot_decoder(m)) for m in cursor]
 
         if len(machines) == 0:
             raise UnknownRecordError(f'No machines found with IP "{ip}"')

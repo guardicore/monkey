@@ -4,6 +4,7 @@ from typing import Sequence
 
 from common.types import HardwareID
 from monkey_island.cc.models import Machine, MachineID
+from monkey_island.cc.models.machine import NetworkServices
 
 
 class IMachineRepository(ABC):
@@ -27,6 +28,16 @@ class IMachineRepository(ABC):
 
         :param machine: The `Machine` to be inserted or updated
         :raises StorageError: If an error occurs while attempting to store the `Machine`
+        """
+
+    @abstractmethod
+    def upsert_network_services(self, machine_id: MachineID, services: NetworkServices):
+        """
+        Add/update network services on the machine
+        :param machine_id: ID of machine with services to be updated
+        :param services: Network services to be added to machine model
+        :raises UnknownRecordError: If the Machine is not found
+        :raises StorageError: If an error occurs while attempting to add/store the services
         """
 
     @abstractmethod

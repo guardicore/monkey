@@ -90,15 +90,15 @@ class ScanEventHandler:
             self._machine_repository.upsert_machine(machine)
 
     def _update_network_services(self, target: Machine, event: TCPScanEvent):
-        for port in self._get_open_ports(event):
-            socket_addr = SocketAddress(ip=event.target, port=port)
-            target.network_services[socket_addr] = NetworkService.UNKNOWN
-
-        self._machine_repository.upsert_machine(target)
+        network_services = {
+            SocketAddress(ip=event.target, port=port): NetworkService.UNKNOWN
+            for port in self._get_open_ports(event)
+        }
+        self._machine_repository.upsert_network_services(target.id, network_services)
 
     @staticmethod
     def _get_open_ports(event: TCPScanEvent) -> List[int]:
-        return (port for port, status in event.ports.items() if status == PortStatus.OPEN)
+        return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
 
     def _update_nodes(self, target_machine: Machine, event: ScanEvent):
         src_machine = self._get_source_machine(event)

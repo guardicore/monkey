@@ -3,6 +3,7 @@ from ipaddress import IPv4Interface
 from typing import Any, Dict, Mapping, Optional, Sequence
 
 from pydantic import Field, validator
+from typing_extensions import TypeAlias
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
@@ -10,6 +11,8 @@ from common.transforms import make_immutable_sequence
 from common.types import HardwareID, NetworkService, SocketAddress
 
 from . import MachineID
+
+NetworkServices: TypeAlias = Dict[SocketAddress, NetworkService]
 
 
 def _serialize_network_services(machine_dict: Dict, *, default):
@@ -61,7 +64,7 @@ class Machine(MutableInfectionMonkeyBaseModel):
     hostname: str = ""
     """The hostname of the machine"""
 
-    network_services: Mapping[SocketAddress, NetworkService] = Field(default_factory=dict)
+    network_services: NetworkServices = Field(default_factory=dict)
     """All network services found running on the machine"""
 
     _make_immutable_sequence = validator("network_interfaces", pre=True, allow_reuse=True)(
