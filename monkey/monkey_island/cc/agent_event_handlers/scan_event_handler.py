@@ -4,7 +4,7 @@ from typing import Union
 
 from typing_extensions import TypeAlias
 
-from common.agent_events import AbstractAgentEvent, PingScanEvent, TCPScanEvent
+from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import PortStatus, SocketAddress
 from monkey_island.cc.models import CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
@@ -75,7 +75,7 @@ class ScanEventHandler:
             self._machine_repository.upsert_machine(machine)
             return machine
 
-    def _get_source_node(self, event: AbstractAgentEvent) -> Node:
+    def _get_source_node(self, event: ScanEvent) -> Node:
         machine = self._get_source_machine(event)
         return self._node_repository.get_node_by_machine_id(machine.id)
 
