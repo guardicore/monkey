@@ -70,17 +70,13 @@ class ScanEventHandler:
         return self._node_update_facade.get_or_create_target_machine(event.target)
 
     def _get_source_node(self, event: ScanEvent) -> Node:
-        machine = self._get_source_machine(event)
+        machine = self._node_update_facade.get_event_source_machine(event)
         try:
             node = self._node_repository.get_node_by_machine_id(machine.id)
         except UnknownRecordError:
             node = Node(machine_id=machine.id)
             self._node_repository.upsert_node(node)
         return node
-
-    def _get_source_machine(self, event: ScanEvent) -> Machine:
-        agent = self._agent_repository.get_agent_by_id(event.source)
-        return self._machine_repository.get_machine_by_id(agent.machine_id)
 
     def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
         if event.os is not None and machine.operating_system is None:
@@ -99,7 +95,7 @@ class ScanEventHandler:
         return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
 
     def _update_nodes(self, target_machine: Machine, event: ScanEvent):
-        src_machine = self._get_source_machine(event)
+        src_machine = self._node_update_facade.get_event_source_machine(event)
 
         self._node_repository.upsert_communication(
             src_machine.id, target_machine.id, CommunicationType.SCANNED
