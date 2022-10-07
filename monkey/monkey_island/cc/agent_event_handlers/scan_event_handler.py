@@ -104,5 +104,5 @@ class ScanEventHandler:
 
         if tcp_connections:
             self._node_repository.upsert_tcp_connections(
-                src_node.machine_id, {target_machine.id: tcp_connections}
+                src_node.machine_id, {target_machine.id: tuple(tcp_connections)}
             )
