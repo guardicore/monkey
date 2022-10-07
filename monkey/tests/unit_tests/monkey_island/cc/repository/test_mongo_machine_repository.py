@@ -146,21 +146,6 @@ def test_upsert_machine__storage_error_exception(error_raising_machine_repositor
         error_raising_machine_repository.upsert_machine(machine)
 
 
-def test_upsert_machine__storage_error_update_failed(error_raising_mock_mongo_client):
-    mock_result = MagicMock()
-    mock_result.matched_count = 1
-    mock_result.modified_count = 0
-
-    error_raising_mock_mongo_client.monkey_island.machines.replace_one = MagicMock(
-        return_value=mock_result
-    )
-    machine_repository = MongoMachineRepository(error_raising_mock_mongo_client)
-
-    machine = MACHINES[0]
-    with pytest.raises(StorageError):
-        machine_repository.upsert_machine(machine)
-
-
 def test_upsert_machine__storage_error_insert_failed(error_raising_mock_mongo_client):
     mock_result = MagicMock()
     mock_result.matched_count = 0

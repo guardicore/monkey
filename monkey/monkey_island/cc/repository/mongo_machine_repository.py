@@ -38,12 +38,6 @@ class MongoMachineRepository(IMachineRepository):
         except Exception as err:
             raise StorageError(f'Error updating machine with ID "{machine.id}": {err}')
 
-        if result.matched_count != 0 and result.modified_count != 1:
-            raise StorageError(
-                f'Error updating machine with ID "{machine.id}": Expected to update 1 machine, '
-                f"but {result.modified_count} were updated"
-            )
-
         if result.matched_count == 0 and result.upserted_id is None:
             raise StorageError(
                 f'Error inserting machine with ID "{machine.id}": Expected to insert 1 machine, '
