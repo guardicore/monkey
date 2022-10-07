@@ -65,12 +65,7 @@ class ScanEventHandler:
 
     def _get_source_node(self, event: AbstractAgentEvent) -> Node:
         machine = self._get_source_machine(event)
-        try:
-            return [
-                node for node in self._node_repository.get_nodes() if node.machine_id == machine.id
-            ][0]
-        except IndexError:
-            raise UnknownRecordError(f"Source node for event {event} does not exist")
+        return self._node_repository.get_node_by_machine_id(machine.id)
 
     def _get_target_machine(self, event: ScanEvent) -> Machine:
         try:

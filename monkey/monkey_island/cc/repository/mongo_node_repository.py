@@ -1,12 +1,12 @@
 from copy import deepcopy
-from typing import Optional, Sequence
+from typing import Sequence
 
 from pymongo import MongoClient
 
 from monkey_island.cc.models import CommunicationType, MachineID, Node
 
 from ..models.node import TCPConnections
-from . import INodeRepository, RemovalError, RetrievalError, StorageError
+from . import INodeRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
 from .consts import MONGO_OBJECT_ID_KEY
 
 UPSERT_ERROR_MESSAGE = "An error occurred while attempting to upsert a node"
@@ -21,16 +21,14 @@ class MongoNodeRepository(INodeRepository):
         self, src: MachineID, dst: MachineID, communication_type: CommunicationType
     ):
         try:
-            node = self._get_node_by_id(src)
-        except Exception as err:
-            raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
-
-        if node is None:
-            updated_node = Node(machine_id=src, connections={dst: frozenset((communication_type,))})
-        else:
+            node = self.get_node_by_machine_id(src)
             updated_node = MongoNodeRepository._add_connection_to_node(
                 node, dst, communication_type
             )
+        except UnknownRecordError:
+            updated_node = Node(machine_id=src, connections={dst: frozenset((communication_type,))})
+        except Exception as err:
+            raise StorageError(f"{UPSERT_ERROR_MESSAGE}: {err}")
 
         self._upsert_node(updated_node)
 
@@ -49,9 +47,9 @@ class MongoNodeRepository(INodeRepository):
         return new_node
 
     def upsert_tcp_connections(self, machine_id: MachineID, tcp_connections: TCPConnections):
-        node = self._get_node_by_id(machine_id)
-
-        if node is None:
+        try:
+            node = self.get_node_by_machine_id(machine_id)
+        except UnknownRecordError:
             node = Node(machine_id=machine_id, connections={})
 
         for target, connections in tcp_connections.items():
@@ -75,11 +73,13 @@ class MongoNodeRepository(INodeRepository):
                 f"node, but no nodes were inserted"
             )
 
-    def _get_node_by_id(self, node_id: MachineID) -> Optional[Node]:
+    def get_node_by_machine_id(self, machine_id: MachineID) -> Node:
         node_dict = self._nodes_collection.find_one(
-            {SRC_FIELD_NAME: node_id}, {MONGO_OBJECT_ID_KEY: False}
+            {SRC_FIELD_NAME: machine_id}, {MONGO_OBJECT_ID_KEY: False}
         )
-        return Node(**node_dict) if node_dict else None
+        if not node_dict:
+            raise UnknownRecordError(f"Node with machine ID {machine_id}")
+        return Node(**node_dict)
 
     def get_nodes(self) -> Sequence[Node]:
         try:

@@ -45,6 +45,15 @@ class INodeRepository(ABC):
         """
 
     @abstractmethod
+    def get_node_by_machine_id(self, machine_id: MachineID) -> Node:
+        """
+        Fetches network Node from the database based on Machine id
+        :param machine_id: ID of a Machine that Node represents
+        :return: network Node that represents the Machine
+        :raises UnknownRecordError: If the Node does not exist
+        """
+
+    @abstractmethod
     def reset(self):
         """
         Removes all data from the repository

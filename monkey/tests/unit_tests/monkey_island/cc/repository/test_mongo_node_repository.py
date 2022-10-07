@@ -11,6 +11,7 @@ from monkey_island.cc.repository import (
     RemovalError,
     RetrievalError,
     StorageError,
+    UnknownRecordError,
 )
 
 TARGET_MACHINE_IP = "2.2.2.2"
@@ -239,3 +240,12 @@ def test_upsert_tcp_connections__node_missing(node_repository):
     nodes = node_repository.get_nodes()
     modified_node = [node for node in nodes if node.machine_id == 999][0]
     assert set(modified_node.tcp_connections) == set(TCP_CONNECTION_PORT_80)
+
+
+def test_get_node_by_machine_id(node_repository):
+    assert node_repository.get_node_by_machine_id(1) == NODES[0]
+
+
+def test_get_node_by_machine_id__no_node(node_repository):
+    with pytest.raises(UnknownRecordError):
+        node_repository.get_node_by_machine_id(999)

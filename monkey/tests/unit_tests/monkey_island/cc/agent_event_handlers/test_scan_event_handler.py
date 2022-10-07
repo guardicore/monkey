@@ -221,6 +221,7 @@ def test_handle_tcp_scan_event__ports_found(
 ):
     event = TCP_SCAN_EVENT
     scan_event_handler._update_nodes = MagicMock()
+    node_repository.get_node_by_machine_id.return_value = SOURCE_NODE
     scan_event_handler.handle_tcp_scan_event(event)
 
     call_args = node_repository.upsert_tcp_connections.call_args[0]
@@ -235,12 +236,12 @@ def test_handle_tcp_scan_event__no_source(
     caplog, scan_event_handler, machine_repository, node_repository
 ):
     event = TCP_SCAN_EVENT
-    node_repository.get_nodes.return_value = []
+    node_repository.get_node_by_machine_id = MagicMock(side_effect=UnknownRecordError("no source"))
     scan_event_handler._update_nodes = MagicMock()
 
     scan_event_handler.handle_tcp_scan_event(event)
     assert "ERROR" in caplog.text
-    assert f"Source node for event {event} does not exist" in caplog.text
+    assert "no source" in caplog.text
 
 
 @pytest.mark.parametrize(
