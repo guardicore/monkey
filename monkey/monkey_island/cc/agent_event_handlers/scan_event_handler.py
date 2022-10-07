@@ -15,7 +15,7 @@ from monkey_island.cc.repository import (
     UnknownRecordError,
 )
 
-from .utils import get_or_create_target_machine
+from .node_update_facade import NodeUpdateFacade
 
 ScanEvent: TypeAlias = Union[PingScanEvent, TCPScanEvent]
 
@@ -33,6 +33,7 @@ class ScanEventHandler:
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
+        self._node_update_facade = NodeUpdateFacade(machine_repository)
         self._agent_repository = agent_repository
         self._machine_repository = machine_repository
         self._node_repository = node_repository
@@ -66,7 +67,7 @@ class ScanEventHandler:
             logger.exception("Unable to process tcp scan data")
 
     def _get_target_machine(self, event: ScanEvent) -> Machine:
-        return get_or_create_target_machine(self._machine_repository, event.target)
+        return self._node_update_facade.get_or_create_target_machine(event.target)
 
     def _get_source_node(self, event: ScanEvent) -> Node:
         machine = self._get_source_machine(event)
