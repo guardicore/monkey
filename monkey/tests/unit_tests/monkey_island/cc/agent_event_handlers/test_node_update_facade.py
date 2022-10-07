@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from tests.monkey_island import InMemoryMachineRepository
 
 from common.agent_events import AbstractAgentEvent
 from common.types import AgentID, MachineID, SocketAddress
@@ -57,15 +58,9 @@ def agent_repository() -> IAgentRepository:
 
 @pytest.fixture
 def machine_repository() -> IMachineRepository:
-    def get_machine_by_id(machine_id: MachineID) -> Machine:
-        if machine_id == SOURCE_MACHINE_ID:
-            return SOURCE_MACHINE
+    machine_repository = InMemoryMachineRepository(SEED_ID)
+    machine_repository.upsert_machine(SOURCE_MACHINE)
 
-        raise UnknownRecordError()
-
-    machine_repository = MagicMock(spec=IMachineRepository)
-    machine_repository.get_new_id = MagicMock(return_value=SEED_ID)
-    machine_repository.get_machine_by_id = MagicMock(side_effect=get_machine_by_id)
     return machine_repository
 
 
@@ -90,7 +85,7 @@ def test_create_new_machine(node_update_facade, machine_repository):
     target_machine = node_update_facade.get_or_create_target_machine(IP_ADDRESS)
 
     assert target_machine == EXPECTED_CREATED_MACHINE
-    assert machine_repository.upsert_machine.called_once_with(target_machine)
+    assert machine_repository.get_machine_by_id(target_machine.id) == target_machine
 
 
 def test_get_event_source_machine(node_update_facade):
