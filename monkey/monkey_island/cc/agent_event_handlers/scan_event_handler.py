@@ -63,10 +63,6 @@ class ScanEventHandler:
         except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process tcp scan data")
 
-    def _get_source_node(self, event: AbstractAgentEvent) -> Node:
-        machine = self._get_source_machine(event)
-        return self._node_repository.get_node_by_machine_id(machine.id)
-
     def _get_target_machine(self, event: ScanEvent) -> Machine:
         try:
             target_machines = self._machine_repository.get_machines_by_ip(event.target)
@@ -78,6 +74,14 @@ class ScanEventHandler:
             )
             self._machine_repository.upsert_machine(machine)
             return machine
+
+    def _get_source_node(self, event: AbstractAgentEvent) -> Node:
+        machine = self._get_source_machine(event)
+        return self._node_repository.get_node_by_machine_id(machine.id)
+
+    def _get_source_machine(self, event: ScanEvent) -> Machine:
+        agent = self._agent_repository.get_agent_by_id(event.source)
+        return self._machine_repository.get_machine_by_id(agent.machine_id)
 
     def _update_target_machine_os(self, machine: Machine, event: PingScanEvent):
         if event.os is not None and machine.operating_system is None:
@@ -102,7 +106,3 @@ class ScanEventHandler:
             self._node_repository.upsert_tcp_connections(
                 src_node.machine_id, {target_machine.id: tcp_connections}
             )
-
-    def _get_source_machine(self, event: ScanEvent) -> Machine:
-        agent = self._agent_repository.get_agent_by_id(event.source)
-        return self._machine_repository.get_machine_by_id(agent.machine_id)
