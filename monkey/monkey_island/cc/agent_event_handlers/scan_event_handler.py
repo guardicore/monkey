@@ -33,7 +33,7 @@ class ScanEventHandler:
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
-        self._node_update_facade = NodeUpdateFacade(machine_repository)
+        self._node_update_facade = NodeUpdateFacade(agent_repository, machine_repository)
         self._agent_repository = agent_repository
         self._machine_repository = machine_repository
         self._node_repository = node_repository
