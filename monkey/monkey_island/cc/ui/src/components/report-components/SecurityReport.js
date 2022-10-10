@@ -1,29 +1,29 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
-import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {edgeGroupToColor, getOptions} from 'components/map/MapOptions';
+import { ReactiveGraph } from 'components/reactive-graph/ReactiveGraph';
+import { edgeGroupToColor, getOptions } from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/security/StolenPasswords';
-import {Line} from 'rc-progress';
+import { Line } from 'rc-progress';
 import AuthComponent from '../AuthComponent';
 import StrongUsers from 'components/report-components/security/StrongUsers';
-import ReportHeader, {ReportTypes} from './common/ReportHeader';
+import ReportHeader, { ReportTypes } from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
-import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
-import {smbPasswordReport, smbPthReport} from './security/issues/SmbIssue';
-import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
-import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
-import {wmiPasswordIssueReport, wmiPthIssueReport} from './security/issues/WmiIssue';
-import {shhIssueReport, sshIssueOverview, sshKeysReport} from './security/issues/SshIssue';
-import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
+import { smbReport } from './security/issues/SmbIssue';
+import { hadoopIssueOverview, hadoopIssueReport } from './security/issues/HadoopIssue';
+import { mssqlIssueOverview, mssqlIssueReport } from './security/issues/MssqlIssue';
+import { wmiIssueReport } from './security/issues/WmiIssue';
+import { shhIssueReport, sshIssueOverview } from './security/issues/SshIssue';
+import { log4shellIssueOverview, log4shellIssueReport } from './security/issues/Log4ShellIssue';
 import {
   crossSegmentIssueOverview,
   crossSegmentIssueReport,
@@ -36,15 +36,15 @@ import {
   sharedLocalAdminsIssueReport,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import {tunnelIssueOverview, tunnelIssueReport} from './security/issues/TunnelIssue';
-import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
-import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
+import { tunnelIssueOverview, tunnelIssueReport } from './security/issues/TunnelIssue';
+import { stolenCredsIssueOverview } from './security/issues/StolenCredsIssue';
+import { strongUsersOnCritIssueReport } from './security/issues/StrongUsersOnCritIssue';
 import {
   zerologonIssueOverview,
   zerologonIssueReport,
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
-import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
+import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
 import UsedCredentials from './security/UsedCredentials';
 
 
@@ -70,10 +70,7 @@ class ReportPageComponent extends AuthComponent {
   IssueDescriptorEnum =
     {
       'SmbExploiter': {
-        [this.issueContentTypes.REPORT]: {
-          [this.credentialTypes.PASSWORD]: smbPasswordReport,
-          [this.credentialTypes.HASH]: smbPthReport
-        },
+        [this.issueContentTypes.REPORT]: smbReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'HadoopExploiter': {
@@ -87,18 +84,12 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'WmiExploiter': {
-        [this.issueContentTypes.REPORT]: {
-          [this.credentialTypes.PASSWORD]: wmiPasswordIssueReport,
-          [this.credentialTypes.HASH]: wmiPthIssueReport
-        },
+        [this.issueContentTypes.REPORT]: wmiIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'SSHExploiter': {
         [this.issueContentTypes.OVERVIEW]: sshIssueOverview,
-        [this.issueContentTypes.REPORT]: {
-          [this.credentialTypes.PASSWORD]: shhIssueReport,
-          [this.credentialTypes.KEY]: sshKeysReport
-        },
+        [this.issueContentTypes.REPORT]: shhIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'PowerShellExploiter': {
@@ -159,7 +150,7 @@ class ReportPageComponent extends AuthComponent {
     super(props);
     this.state = {
       report: props.report,
-      graph: {nodes: [], edges: []},
+      graph: { nodes: [], edges: [] },
       nodeStateList: [],
       stolenCredentials: [],
       configuredCredentials: [],
@@ -177,12 +168,12 @@ class ReportPageComponent extends AuthComponent {
     this.authFetch('/api/propagation-credentials/stolen-credentials')
       .then(res => res.json())
       .then(creds => {
-        this.setState({stolenCredentials: creds});
+        this.setState({ stolenCredentials: creds });
       })
     this.authFetch('/api/propagation-credentials/configured-credentials')
       .then(res => res.json())
       .then(creds => {
-        this.setState({configuredCredentials: creds});
+        this.setState({ configuredCredentials: creds });
       })
   }
 
@@ -190,7 +181,7 @@ class ReportPageComponent extends AuthComponent {
     this.authFetch('/api/netmap/node-states')
       .then(res => res.json())
       .then(res => {
-        this.setState({nodeStateList: res.node_states});
+        this.setState({ nodeStateList: res.node_states });
       });
   };
 
@@ -200,7 +191,7 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
-      this.setState({report: this.props.report});
+      this.setState({ report: this.props.report });
       this.addIssuesToOverviewIssues();
     }
   }
@@ -209,7 +200,7 @@ class ReportPageComponent extends AuthComponent {
     let content;
 
     if (this.stillLoadingDataFromServer()) {
-      content = <ReportLoader loading={true}/>;
+      content = <ReportLoader loading={true} />;
     } else {
       content =
         <div>
@@ -223,20 +214,20 @@ class ReportPageComponent extends AuthComponent {
 
     return (
       <Fragment>
-        <div style={{marginBottom: '20px'}}>
+        <div style={{ marginBottom: '20px' }}>
           <PrintReportButton onClick={() => {
             print();
-          }}/>
+          }} />
         </div>
         <div className='report-page'>
-          <ReportHeader report_type={ReportTypes.security}/>
-          <hr/>
+          <ReportHeader report_type={ReportTypes.security} />
+          <hr />
           {content}
         </div>
-        <div style={{marginTop: '20px'}}>
+        <div style={{ marginTop: '20px' }}>
           <PrintReportButton onClick={() => {
             print();
-          }}/>
+          }} />
         </div>
       </Fragment>
     );
@@ -251,9 +242,9 @@ class ReportPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         res.edges.forEach(edge => {
-          edge.color = {'color': edgeGroupToColor(edge.group)};
+          edge.color = { 'color': edgeGroupToColor(edge.group) };
         });
-        this.setState({graph: res});
+        this.setState({ graph: res });
       });
   };
 
@@ -264,21 +255,21 @@ class ReportPageComponent extends AuthComponent {
         <h2>
           Overview
         </h2>
-        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited_cnt > 0}/>
+        <SecurityIssuesGlance issuesFound={this.state.report.glance.exploited_cnt > 0} />
         {
           this.state.report.glance.exploited_cnt > 0 ?
             ''
             :
             <p className='alert alert-info'>
-              <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
+              <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
               To improve the monkey's detection rates, try adding users and passwords and enable the "Local
               network scan" config value under <b>Basic - Network</b>.
             </p>
         }
         <p>
           The first monkey run was started on <span
-          className='badge badge-info'>{this.state.report.overview.monkey_start_time}</span>. After <span
-          className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all monkeys finished
+            className='badge badge-info'>{this.state.report.overview.monkey_start_time}</span>. After <span
+              className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all monkeys finished
           propagation attempts.
         </p>
         <p>
@@ -290,7 +281,7 @@ class ReportPageComponent extends AuthComponent {
         <p>
           The monkeys were run with the following configuration:
         </p>
-        <UsedCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials}/>
+        <UsedCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials} />
         {
           this.state.report.overview.config_exploits.length > 0 ?
             (
@@ -381,7 +372,7 @@ class ReportPageComponent extends AuthComponent {
     issues.push(...state_issues);
     issues = [...new Set(issues)];
 
-    for(let i=0; i < issues.length; i++) {
+    for (let i = 0; i < issues.length; i++) {
       if (this.isIssuePotentialSecurityIssue(issues[i])) {
         overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
       }
@@ -406,12 +397,12 @@ class ReportPageComponent extends AuthComponent {
         <div>During this simulated attack the Monkey uncovered
           {
             <>
-             <span className="badge badge-warning">
-               {threatCount} threats
-             </span>:
-             <ul>
-              {this.getImmediateThreatsOverviews()}
-            </ul>
+              <span className="badge badge-warning">
+                {threatCount} threats
+              </span>:
+              <ul>
+                {this.getImmediateThreatsOverviews()}
+              </ul>
             </>
           }
         </div>
@@ -426,8 +417,8 @@ class ReportPageComponent extends AuthComponent {
     issues.push(...state_issues);
     issues = [...new Set(issues)];
 
-    for(let i=0; i < issues.length; i++) {
-      if(this.isIssueImmediateThreat(issues[i])) {
+    for (let i = 0; i < issues.length; i++) {
+      if (this.isIssueImmediateThreat(issues[i])) {
         threatCount++;
       }
     }
@@ -449,9 +440,9 @@ class ReportPageComponent extends AuthComponent {
     issues.push(...state_issues);
     issues = [...new Set(issues)];
 
-    for(let i=0; i < issues.length; i++) {
+    for (let i = 0; i < issues.length; i++) {
       if (this.isIssueImmediateThreat(issues[i])) {
-        if (issues[i] === 'ZerologonExploiter' && issues.includes('zerologon_pass_restore_failed')){
+        if (issues[i] === 'ZerologonExploiter' && issues.includes('zerologon_pass_restore_failed')) {
           overviews.push(this.getIssueOverview(this.IssueDescriptorEnum['zerologon_pass_restore_failed']));
         } else {
           overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
@@ -497,14 +488,14 @@ class ReportPageComponent extends AuthComponent {
         <div>
           <p>
             The Monkey discovered <span
-            className='badge badge-warning'>{this.state.report.glance.scanned.length}</span> machines and
+              className='badge badge-warning'>{this.state.report.glance.scanned.length}</span> machines and
             successfully breached <span
-            className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
+              className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
           </p>
-          <div className='text-center' style={{margin: '10px'}}>
-            <Line style={{width: '300px', marginRight: '5px'}} percent={exploitPercentage} strokeWidth='4'
-                  trailWidth='4'
-                  strokeColor='#d9534f' trailColor='#f0ad4e'/>
+          <div className='text-center' style={{ margin: '10px' }}>
+            <Line style={{ width: '300px', marginRight: '5px' }} percent={exploitPercentage} strokeWidth='4'
+              trailWidth='4'
+              strokeColor='#d9534f' trailColor='#f0ad4e' />
             <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
           </div>
         </div>
@@ -513,23 +504,23 @@ class ReportPageComponent extends AuthComponent {
         </p>
         <div className='map-legend'>
           <b>Legend: </b>
-          <span>Exploit <FontAwesomeIcon icon={faMinus} size='lg' style={{color: '#cc0200'}}/></span>
-          <b style={{color: '#aeaeae'}}> | </b>
-          <span>Scan <FontAwesomeIcon icon={faMinus} size='lg' style={{color: '#ff9900'}}/></span>
-          <b style={{color: '#aeaeae'}}> | </b>
-          <span>Tunnel <FontAwesomeIcon icon={faMinus} size='lg' style={{color: '#0158aa'}}/></span>
-          <b style={{color: '#aeaeae'}}> | </b>
-          <span>Island Communication <FontAwesomeIcon icon={faMinus} size='lg' style={{color: '#a9aaa9'}}/></span>
+          <span>Exploit <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#cc0200' }} /></span>
+          <b style={{ color: '#aeaeae' }}> | </b>
+          <span>Scan <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#ff9900' }} /></span>
+          <b style={{ color: '#aeaeae' }}> | </b>
+          <span>Tunnel <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#0158aa' }} /></span>
+          <b style={{ color: '#aeaeae' }}> | </b>
+          <span>Island Communication <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#a9aaa9' }} /></span>
         </div>
-        <div style={{position: 'relative', height: '80vh'}}>
-          <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)}/>
-        </div>
-
-        <div style={{marginBottom: '20px'}}>
-          <ScannedServers data={this.state.report.glance.scanned}/>
+        <div style={{ position: 'relative', height: '80vh' }}>
+          <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)} />
         </div>
 
-        <div style={{marginBottom: '20px'}}>
+        <div style={{ marginBottom: '20px' }}>
+          <ScannedServers data={this.state.report.glance.scanned} />
+        </div>
+
+        <div style={{ marginBottom: '20px' }}>
           <p>
             The Monkey successfully breached&nbsp;
             <span className="badge badge-danger">
@@ -545,14 +536,14 @@ class ReportPageComponent extends AuthComponent {
         </div>
         */}
 
-        <div style={{marginBottom: '20px'}}>
+        <div style={{ marginBottom: '20px' }}>
           <StolenPasswords
             data={this.state.stolenCredentials}
             format={true}
           />
         </div>
         <div>
-          <StrongUsers data={this.state.report.glance.strong_users}/>
+          <StrongUsers data={this.state.report.glance.strong_users} />
         </div>
       </div>
     );
@@ -560,24 +551,18 @@ class ReportPageComponent extends AuthComponent {
 
   generateReportFooter() {
     return (
-      <div id='footer' className='text-center' style={{marginTop: '20px'}}>
+      <div id='footer' className='text-center' style={{ marginTop: '20px' }}>
         For questions, suggestions or any other feedback
         contact: <a href='mailto://labs@guardicore.com' className='no-print'>labs@guardicore.com</a>
-        <div className='force-print' style={{display: 'none'}}>labs@guardicore.com</div>
-        <img src={guardicoreLogoImage} alt='GuardiCore' className='center-block' style={{height: '50px'}}/>
+        <div className='force-print' style={{ display: 'none' }}>labs@guardicore.com</div>
+        <img src={guardicoreLogoImage} alt='GuardiCore' className='center-block' style={{ height: '50px' }} />
       </div>
     );
   }
 
   generateIssue = (issue) => {
     let issueDescriptor = this.IssueDescriptorEnum[issue.type];
-
-    let reportFnc = {};
-    if (Object.prototype.hasOwnProperty.call(issue, 'credential_type') && issue.credential_type !== null) {
-      reportFnc = issueDescriptor[this.issueContentTypes.REPORT][issue.credential_type];
-    } else {
-      reportFnc = issueDescriptor[this.issueContentTypes.REPORT];
-    }
+    let reportFnc = issueDescriptor[this.issueContentTypes.REPORT];
     let reportContents = reportFnc(issue);
     return <li key={JSON.stringify(issue)}>{reportContents}</li>;
   };
@@ -611,7 +596,7 @@ class ReportPageComponent extends AuthComponent {
   shouldAddStolenCredentialsIssue() {
     // TODO: This should check if any stolen credentials are used to
     // exploit a machine
-    return ( this.state.stolenCredentials.length > 0 )
+    return (this.state.stolenCredentials.length > 0)
   }
 }
 
