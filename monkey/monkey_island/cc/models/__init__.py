@@ -12,6 +12,6 @@ from .user_credentials import UserCredentials
 from common.types import MachineID
 from .machine import Machine
 from .communication_type import CommunicationType
-from .node import Node
+from .node import Node, TCPConnections
 from common.types import AgentID
 from .agent import Agent
