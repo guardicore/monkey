@@ -3,14 +3,25 @@ from ipaddress import IPv4Address, IPv4Interface
 
 from common.agent_events import AbstractAgentEvent
 from common.types import AgentID, MachineID
-from monkey_island.cc.models import Machine
-from monkey_island.cc.repository import IAgentRepository, IMachineRepository, UnknownRecordError
+from monkey_island.cc.models import CommunicationType, Machine, Node
+from monkey_island.cc.repository import (
+    IAgentRepository,
+    IMachineRepository,
+    INodeRepository,
+    UnknownRecordError,
+)
 
 
 class NodeUpdateFacade:
-    def __init__(self, agent_repository: IAgentRepository, machine_repository: IMachineRepository):
+    def __init__(
+        self,
+        agent_repository: IAgentRepository,
+        machine_repository: IMachineRepository,
+        node_repository: INodeRepository,
+    ):
         self._agent_repository = agent_repository
         self._machine_repository = machine_repository
+        self._node_repository = node_repository
 
     def get_or_create_target_machine(self, target: IPv4Address):
         try:
@@ -31,3 +42,16 @@ class NodeUpdateFacade:
     @lru_cache(maxsize=None)
     def _get_machine_id_from_agent_id(self, agent_id: AgentID) -> MachineID:
         return self._agent_repository.get_agent_by_id(agent_id).machine_id
+
+    def upsert_communication_from_event(
+        self, event: AbstractAgentEvent, communication_type: CommunicationType
+    ):
+        if not isinstance(event.target, IPv4Address):
+            raise TypeError("Event targets must be of type IPv4Address")
+
+        source_machine_id = self._get_machine_id_from_agent_id(event.source)
+        target_machine = self.get_or_create_target_machine(event.target)
+
+        self._node_repository.upsert_communication(
+            source_machine_id, target_machine.id, communication_type
+        )
