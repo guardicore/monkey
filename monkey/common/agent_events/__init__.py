@@ -5,3 +5,4 @@ from .tcp_scan_event import TCPScanEvent
 from .exploitation_event import ExploitationEvent
 from .propagation_event import PropagationEvent
 from .password_restoration_event import PasswordRestorationEvent
+from .agent_shutdown_event import AgentShutdownEvent
