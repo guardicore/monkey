@@ -76,8 +76,6 @@ class AutomatedMaster(IMaster):
         self._master_thread.start()
         self._master_thread.join()
         logger.info("The simulation has been shutdown.")
-        agent_shutdown_event = AgentShutdownEvent(stop_time=time.time())
-        self._agent_event_queue.publish(agent_shutdown_event)
 
     def terminate(self, block: bool = False):
         logger.info("Stopping automated breach and attack simulation")
@@ -88,8 +86,6 @@ class AutomatedMaster(IMaster):
             # We can only have confidence that the master terminated successfully if block is set
             # and join() has returned.
             logger.info("AutomatedMaster successfully terminated.")
-            agent_shutdown_event = AgentShutdownEvent(stop_time=time.time())
-            self._agent_event_queue.publish(agent_shutdown_event)
 
     def _run_master_thread(self):
         self._simulation_thread.start()
@@ -248,4 +244,5 @@ class AutomatedMaster(IMaster):
         logger.info(f"Finished running {plugin_type}s")
 
     def cleanup(self):
-        pass
+        agent_shutdown_event = AgentShutdownEvent(stop_time=time.time())
+        self._agent_event_queue.publish(agent_shutdown_event)
