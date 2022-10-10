@@ -35,10 +35,6 @@ class NodeUpdateFacade:
             self._machine_repository.upsert_machine(machine)
             return machine
 
-    def get_event_source_machine(self, event: AbstractAgentEvent) -> Machine:
-        machine_id = self.get_machine_id_from_agent_id(event.source)
-        return self._machine_repository.get_machine_by_id(machine_id)
-
     @lru_cache(maxsize=None)
     def get_machine_id_from_agent_id(self, agent_id: AgentID) -> MachineID:
         return self._agent_repository.get_agent_by_id(agent_id).machine_id

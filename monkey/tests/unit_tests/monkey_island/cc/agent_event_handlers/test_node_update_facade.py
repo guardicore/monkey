@@ -109,10 +109,6 @@ def test_create_new_machine(node_update_facade, machine_repository):
     assert machine_repository.get_machine_by_id(target_machine.id) == target_machine
 
 
-def test_get_event_source_machine(node_update_facade):
-    assert node_update_facade.get_event_source_machine(TEST_EVENT) == SOURCE_MACHINE
-
-
 def test_get_machine_id_from_agent_id(node_update_facade):
     assert node_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID) == SOURCE_MACHINE_ID
 
