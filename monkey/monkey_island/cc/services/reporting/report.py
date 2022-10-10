@@ -32,7 +32,7 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 from .. import AWSService
 from . import aws_exporter
 from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
-from .issue_processing.exploit_processing.processors.exploit import ExploiterReportInfo
+from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
 
