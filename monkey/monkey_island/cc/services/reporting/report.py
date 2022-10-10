@@ -185,6 +185,19 @@ class ReportService:
                 ips.add(exploit.target)
                 yield exploit
 
+    @classmethod
+    def get_exploits(cls) -> List[dict]:
+        if not cls._agent_event_repository:
+            raise RuntimeError("Agent event repository does not exist")
+
+        # Get the successful exploits
+        exploits = cls._agent_event_repository.get_events_by_type(ExploitationEvent)
+        successful_exploits = filter(lambda x: x.success, exploits)
+        filtered_exploits = ReportService.filter_single_exploit_per_ip(successful_exploits)
+
+        # Convert the ExploitationEvent into an ExploiterReportInfo
+        return [cls.process_exploit_event(e).__dict__ for e in filtered_exploits]
+
     @staticmethod
     def get_monkey_subnets(monkey_guid):
         networks = Monkey.objects.get(guid=monkey_guid).networks
