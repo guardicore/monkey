@@ -154,14 +154,6 @@ class ReportService:
 
         return list(scanner_machines)
 
-    @staticmethod
-    def process_exploit(exploit) -> ExploiterReportInfo:
-        exploiter_type = exploit["data"]["exploiter"]
-        exploiter_descriptor = ExploiterDescriptorEnum.get_by_class_name(exploiter_type)
-        processor = exploiter_descriptor.processor()
-        exploiter_info = processor.get_exploit_info_by_dict(exploiter_type, exploit)
-        return exploiter_info
-
     @classmethod
     def process_exploit_event(cls, exploit: ExploitationEvent) -> ExploiterReportInfo:
         if not cls._machine_repository:
