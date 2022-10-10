@@ -53,14 +53,14 @@ class ZerologonAnalyzer(Analyzer):
     def _analyze_credential_restore(self) -> bool:
         agent_events = self.island_client.get_agent_events()
         password_restoration_events = (
-            PasswordRestorationEvent(**event)
+            event
             for event in agent_events
             if event[EVENT_TYPE_FIELD] == PasswordRestorationEvent.__name__
         )
 
         _password_restored = False
         for password_restoration_event in password_restoration_events:
-            if password_restoration_event.success:
+            if password_restoration_event["success"]:
                 _password_restored = True
 
         self._log_credential_restore(_password_restored)
@@ -69,11 +69,10 @@ class ZerologonAnalyzer(Analyzer):
     def _log_credential_restore(self, password_restored: bool):
         if password_restored:
             self.log.add_entry(
-                "Zerologon exploiter telemetry contains indicators that credentials "
+                "Zerologon exploiter events indicates that credentials "
                 "were successfully restored."
             )
         else:
             self.log.add_entry(
-                "Credential restore failed or credential restore "
-                "telemetry not found on the Monkey Island."
+                "Credential restore failed or credential restore " "events were not sent."
             )
