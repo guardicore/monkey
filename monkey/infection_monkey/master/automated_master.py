@@ -15,6 +15,7 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
+from infection_monkey.utils.ids import get_agent_id
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -244,5 +245,5 @@ class AutomatedMaster(IMaster):
         logger.info(f"Finished running {plugin_type}s")
 
     def cleanup(self):
-        agent_shutdown_event = AgentShutdownEvent(stop_time=time.time())
+        agent_shutdown_event = AgentShutdownEvent(source=get_agent_id(), stop_time=time.time())
         self._agent_event_queue.publish(agent_shutdown_event)
