@@ -1,10 +1,11 @@
 import functools
 import ipaddress
 import logging
+from collections import defaultdict
 from itertools import chain, product
-from typing import Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional
 
-from common.agent_events import ExploitationEvent
+from common.agent_events import ExploitationEvent, PasswordRestorationEvent
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
@@ -153,13 +154,18 @@ class ReportService:
         return list(scanner_machines)
 
     @classmethod
-    def process_exploit_event(cls, exploit: ExploitationEvent) -> ExploiterReportInfo:
+    def process_exploit_event(
+        cls, exploit: ExploitationEvent, password_restored: Dict[ipaddress.IPv4Address, bool]
+    ) -> ExploiterReportInfo:
         if not cls._machine_repository:
             raise RuntimeError("Machine repository does not exist")
 
         target_machine = cls._machine_repository.get_machines_by_ip(exploit.target)[0]
         return ExploiterReportInfo(
-            target_machine.hostname, str(exploit.target), exploit.exploiter_name
+            target_machine.hostname,
+            str(exploit.target),
+            exploit.exploiter_name,
+            password_restored=password_restored[exploit.target],
         )
 
     @staticmethod
@@ -185,8 +191,13 @@ class ReportService:
         successful_exploits = filter(lambda x: x.success, exploits)
         filtered_exploits = ReportService.filter_single_exploit_per_ip(successful_exploits)
 
+        zerologon_events = cls._agent_event_repository.get_events_by_type(PasswordRestorationEvent)
+        password_restored = defaultdict(
+            lambda: None, {e.target: e.success for e in zerologon_events}
+        )
+
         # Convert the ExploitationEvent into an ExploiterReportInfo
-        return [cls.process_exploit_event(e).__dict__ for e in filtered_exploits]
+        return [cls.process_exploit_event(e, password_restored).__dict__ for e in filtered_exploits]
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
