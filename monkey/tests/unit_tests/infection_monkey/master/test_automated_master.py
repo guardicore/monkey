@@ -3,12 +3,14 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.agent_events import AgentShutdownEvent
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.automated_master import (
     CHECK_FOR_CONFIG_COUNT,
     CHECK_FOR_STOP_AGENT_COUNT,
 )
 from infection_monkey.master.control_channel import IslandCommunicationError
+from infection_monkey.utils.ids import get_agent_id
 
 INTERVAL = 0.001
 
@@ -77,3 +79,20 @@ def test_stop_if_cant_get_stop_signal_from_island(monkeypatch, sleep_and_return_
     m.start()
 
     assert cc.should_agent_stop.call_count == CHECK_FOR_STOP_AGENT_COUNT
+
+
+def test_cleanup(monkeypatch):
+    timestamp = 123.321
+    monkeypatch.setattr("infection_monkey.master.automated_master.time.time", lambda: timestamp)
+    mock_agent_event_queue = MagicMock()
+    expected_agent_shutdown_event = AgentShutdownEvent(
+        source=get_agent_id(), stop_time=timestamp, timestamp=timestamp
+    )
+
+    master = AutomatedMaster(
+        None, [], None, None, None, MagicMock(), [], MagicMock(), mock_agent_event_queue
+    )
+    master.cleanup()
+
+    assert mock_agent_event_queue.publish.call_count == 1
+    mock_agent_event_queue.publish.assert_called_with(expected_agent_shutdown_event)
