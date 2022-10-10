@@ -123,7 +123,6 @@ def in_memory_machine_repository() -> IMachineRepository:
 def node_repository() -> INodeRepository:
     node_repository = MagicMock(spec=INodeRepository)
     node_repository.get_nodes.return_value = [deepcopy(SOURCE_NODE)]
-    node_repository.upsert_node = MagicMock()
     node_repository.upsert_communication = MagicMock()
     return node_repository
 
