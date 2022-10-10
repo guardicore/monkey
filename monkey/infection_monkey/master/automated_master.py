@@ -245,5 +245,8 @@ class AutomatedMaster(IMaster):
         logger.info(f"Finished running {plugin_type}s")
 
     def cleanup(self):
-        agent_shutdown_event = AgentShutdownEvent(source=get_agent_id(), stop_time=time.time())
+        timestamp = time.time()
+        agent_shutdown_event = AgentShutdownEvent(
+            source=get_agent_id(), stop_time=timestamp, timestamp=timestamp
+        )
         self._agent_event_queue.publish(agent_shutdown_event)
