@@ -47,7 +47,7 @@ class InMemoryMachineRepository(IMachineRepository):
 
     def get_machines_by_ip(self, ip: IPv4Address) -> Sequence[Machine]:
         matching_machines = []
-        for machine in self._machines:
+        for machine in self._machines.values():
             for interface in machine.network_interfaces:
                 if interface.ip == ip:
                     matching_machines.append(machine)
