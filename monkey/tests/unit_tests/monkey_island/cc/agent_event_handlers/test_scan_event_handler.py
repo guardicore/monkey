@@ -216,21 +216,6 @@ def test_handle_tcp_scan_event__ports_found(
     assert len(open_socket_addresses) == len(TCP_CONNECTIONS[TARGET_MACHINE_ID])
 
 
-def test_handle_tcp_scan_event__no_source_node(
-    caplog, scan_event_handler, machine_repository, node_repository
-):
-    event = TCP_SCAN_EVENT
-    node_repository.get_node_by_machine_id = MagicMock(side_effect=UnknownRecordError("no source"))
-    scan_event_handler._update_nodes = MagicMock()
-
-    scan_event_handler.handle_tcp_scan_event(event)
-    expected_node = Node(machine_id=SOURCE_MACHINE_ID)
-    node_called = node_repository.upsert_node.call_args[0][0]
-    assert expected_node.machine_id == node_called.machine_id
-    assert expected_node.connections == node_called.connections
-    assert expected_node.tcp_connections == node_called.tcp_connections
-
-
 @pytest.mark.parametrize(
     "event,handler",
     [(PING_SCAN_EVENT, HANDLE_PING_SCAN_METHOD), (TCP_SCAN_EVENT, HANDLE_TCP_SCAN_METHOD)],
