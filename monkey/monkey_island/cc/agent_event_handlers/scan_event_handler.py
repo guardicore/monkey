@@ -1,7 +1,5 @@
 from logging import getLogger
-from typing import List, Sequence, Union
-
-from typing_extensions import TypeAlias
+from typing import List, Sequence
 
 from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import NetworkPort, NetworkService, PortStatus, SocketAddress
@@ -16,8 +14,6 @@ from monkey_island.cc.repository import (
 )
 
 from .node_update_facade import NodeUpdateFacade
-
-ScanEvent: TypeAlias = Union[PingScanEvent, TCPScanEvent]
 
 logger = getLogger(__name__)
 
@@ -45,17 +41,14 @@ class ScanEventHandler:
             return
 
         try:
-            target_machine = self._get_target_machine(event)
-
+            target_machine = self._node_update_facade.get_or_create_target_machine(event.target)
             self._update_target_machine_os(target_machine, event)
+
             self._node_update_facade.upsert_communication_from_event(
                 event, CommunicationType.SCANNED
             )
         except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process ping scan data")
-
-    def _get_target_machine(self, event: ScanEvent) -> Machine:
-        return self._node_update_facade.get_or_create_target_machine(event.target)
 
     def handle_tcp_scan_event(self, event: TCPScanEvent):
         num_open_ports = len(self._get_open_ports(event))
