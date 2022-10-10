@@ -25,8 +25,8 @@ class NodeUpdateFacade:
 
     def get_or_create_target_machine(self, target: IPv4Address):
         try:
-            target_machines = self._machine_repository.get_machines_by_ip(target)
-            return target_machines[0]
+            machine_id = self._get_machine_id_by_ip(target)
+            return self._machine_repository.get_machine_by_id(machine_id)
         except UnknownRecordError:
             machine = Machine(
                 id=self._machine_repository.get_new_id(),
@@ -34,6 +34,13 @@ class NodeUpdateFacade:
             )
             self._machine_repository.upsert_machine(machine)
             return machine
+
+    @lru_cache(maxsize=1024)
+    def _get_machine_id_by_ip(self, ip: IPv4Address) -> MachineID:
+        machines = self._machine_repository.get_machines_by_ip(ip)
+
+        # For now, assume that IPs are unique
+        return machines[0].id
 
     @lru_cache(maxsize=None)
     def get_machine_id_from_agent_id(self, agent_id: AgentID) -> MachineID:
