@@ -53,7 +53,7 @@ class MongoMachineRepository(IMachineRepository):
             machine.network_services.update(services)
             self.upsert_machine(machine)
         except Exception as err:
-            raise StorageError(f"Failed upserting the machine or adding services") from err
+            raise StorageError("Failed upserting the machine or adding services") from err
 
     def get_machine_by_id(self, machine_id: MachineID) -> Machine:
         machine = self._find_one("id", machine_id)

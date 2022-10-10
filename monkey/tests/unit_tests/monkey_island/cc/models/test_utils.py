@@ -8,7 +8,8 @@ DATASET = [
     (
         {"192.168.56.1": "monkeys-running-wild.com"},
         {
-            f"192{DOT_REPLACEMENT}168{DOT_REPLACEMENT}56{DOT_REPLACEMENT}1": f"monkeys-running-wild{DOT_REPLACEMENT}com"
+            f"192{DOT_REPLACEMENT}168{DOT_REPLACEMENT}"
+            f"56{DOT_REPLACEMENT}1": f"monkeys-running-wild{DOT_REPLACEMENT}com"
         },
     ),
     (
