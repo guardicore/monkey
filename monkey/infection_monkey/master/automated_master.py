@@ -76,6 +76,8 @@ class AutomatedMaster(IMaster):
         self._master_thread.start()
         self._master_thread.join()
         logger.info("The simulation has been shutdown.")
+        agent_shutdown_event = AgentShutdownEvent(stop_time=time.time())
+        self._agent_event_queue.publish(agent_shutdown_event)
 
     def terminate(self, block: bool = False):
         logger.info("Stopping automated breach and attack simulation")
