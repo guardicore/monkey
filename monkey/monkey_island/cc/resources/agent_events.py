@@ -33,7 +33,7 @@ class AgentEvents(AbstractResource):
                 serializer = self._event_serializer_registry[event[EVENT_TYPE_FIELD]]
                 deserialized_event = serializer.deserialize(event)
             except (TypeError, ValueError) as err:
-                logger.debug(f"Error occurred while deserializing an event {event}: {err}")
+                logger.exception(f"Error occurred while deserializing an event {event}: {err}")
                 return {"error": str(err)}, HTTPStatus.BAD_REQUEST
 
             self._agent_event_queue.publish(deserialized_event)
@@ -53,7 +53,7 @@ class AgentEvents(AbstractResource):
 
                 serialized_events.append(serialized_event)
             except (TypeError, ValueError) as err:
-                logger.debug(f"Error occurred while serializing an event {event}: {err}")
+                logger.exception(f"Error occurred while serializing an event {event}: {err}")
                 return {"error": str(err)}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         return serialized_events, HTTPStatus.OK
