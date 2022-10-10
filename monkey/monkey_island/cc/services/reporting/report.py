@@ -2,7 +2,7 @@ import functools
 import ipaddress
 import logging
 from itertools import chain, product
-from typing import List, Optional
+from typing import Iterable, List, Optional
 
 from common.agent_events import ExploitationEvent
 from common.network.network_range import NetworkRange
@@ -171,6 +171,19 @@ class ReportService:
         return ExploiterReportInfo(
             target_machine.hostname, str(exploit.target), exploit.exploiter_name
         )
+
+    @staticmethod
+    def filter_single_exploit_per_ip(
+        exploits: Iterable[ExploitationEvent],
+    ) -> Iterable[ExploitationEvent]:
+        """
+        Yields the first exploit for each target IP
+        """
+        ips = set()
+        for exploit in exploits:
+            if exploit.target not in ips:
+                ips.add(exploit.target)
+                yield exploit
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
