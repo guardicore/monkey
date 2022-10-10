@@ -27,6 +27,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/agent-signals` endpoint. #2261
 - `/api/agent-logs/<uuid:agent_id>` endpoint. #2274
 - `/api/machines` endpoint. #2362
+- GET method to `/api/agent-events`. #2405
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
