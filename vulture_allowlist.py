@@ -7,7 +7,13 @@ from common.agent_configuration.agent_sub_configurations import (
     CustomPBAConfiguration,
     ScanTargetConfiguration,
 )
-from common.agent_events import ExploitationEvent, PingScanEvent, PropagationEvent, TCPScanEvent
+from common.agent_events import (
+    ExploitationEvent,
+    PasswordRestorationEvent,
+    PingScanEvent,
+    PropagationEvent,
+    TCPScanEvent,
+)
 from common.credentials import Credentials, LMHash, NTHash
 from common.tags import (
     T1021_ATTACK_TECHNIQUE_TAG,
@@ -336,6 +342,7 @@ T1222_ATTACK_TECHNIQUE_TAG
 T1570_ATTACK_TECHNIQUE_TAG
 HostExploiter._publish_propagation_event
 HostExploiter._publish_exploitation_event
+PasswordRestorationEvent
 
 # pydantic base models
 underscore_attrs_are_private
