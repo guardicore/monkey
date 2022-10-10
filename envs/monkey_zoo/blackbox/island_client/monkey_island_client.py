@@ -16,6 +16,8 @@ GET_AGENTS_ENDPOINT = "api/agents"
 GET_LOG_ENDPOINT = "api/agent-logs"
 GET_MACHINES_ENDPOINT = "api/machines"
 TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
+GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -159,6 +161,11 @@ class MonkeyIslandClient(object):
 
     def get_agent_log(self, agent_id: AgentID) -> str:
         response = self.requests.get(f"{GET_LOG_ENDPOINT}/{agent_id}")
+
+        return response.json()
+
+    def get_agent_events(self):
+        response = self.requests.get(GET_AGENT_EVENTS_ENDPOINT)
 
         return response.json()
 
