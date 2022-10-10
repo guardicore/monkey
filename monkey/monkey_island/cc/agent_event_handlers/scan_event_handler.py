@@ -5,7 +5,7 @@ from typing import List, Union
 from typing_extensions import TypeAlias
 
 from common.agent_events import PingScanEvent, TCPScanEvent
-from common.types import NetworkService, PortStatus, SocketAddress
+from common.types import NetworkPort, NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.models import CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
     IAgentRepository,
@@ -102,7 +102,7 @@ class ScanEventHandler:
         self._machine_repository.upsert_network_services(target.id, network_services)
 
     @staticmethod
-    def _get_open_ports(event: TCPScanEvent) -> List[int]:
+    def _get_open_ports(event: TCPScanEvent) -> List[NetworkPort]:
         return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
 
     def _update_nodes(self, target_machine: Machine, event: ScanEvent):
