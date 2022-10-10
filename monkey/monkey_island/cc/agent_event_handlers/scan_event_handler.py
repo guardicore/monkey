@@ -61,10 +61,13 @@ class ScanEventHandler:
             return
 
         try:
+            self._node_update_facade.upsert_communication_from_event(
+                event, CommunicationType.SCANNED
+            )
+
             target_machine = self._get_target_machine(event)
             source_node = self._get_source_node(event)
 
-            self._update_nodes(target_machine, event)
             self._update_tcp_connections(source_node, target_machine, event)
             self._update_network_services(target_machine, event)
         except (RetrievalError, StorageError, UnknownRecordError):
@@ -97,13 +100,6 @@ class ScanEventHandler:
     @staticmethod
     def _get_open_ports(event: TCPScanEvent) -> List[NetworkPort]:
         return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
-
-    def _update_nodes(self, target_machine: Machine, event: ScanEvent):
-        src_machine = self._node_update_facade.get_event_source_machine(event)
-
-        self._node_repository.upsert_communication(
-            src_machine.id, target_machine.id, CommunicationType.SCANNED
-        )
 
     def _update_tcp_connections(self, src_node: Node, target_machine: Machine, event: TCPScanEvent):
         tcp_connections = set()

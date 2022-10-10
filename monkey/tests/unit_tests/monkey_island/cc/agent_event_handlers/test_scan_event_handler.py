@@ -187,7 +187,7 @@ def test_tcp_scan_event_target_machine_not_exists(
     scan_event_handler.handle_tcp_scan_event(event)
 
     expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(event.target)])
-    machine_repository.upsert_machine.assert_called_with(expected_machine)
+    machine_repository.upsert_machine.assert_any_call(expected_machine)
 
 
 def test_handle_tcp_scan_event__no_open_ports(
