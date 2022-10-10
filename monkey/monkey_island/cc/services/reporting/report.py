@@ -4,6 +4,7 @@ import logging
 from itertools import chain, product
 from typing import List, Optional
 
+from common.agent_events import ExploitationEvent
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
@@ -161,24 +162,15 @@ class ReportService:
         exploiter_info = processor.get_exploit_info_by_dict(exploiter_type, exploit)
         return exploiter_info
 
-    @staticmethod
-    def get_exploits() -> List[dict]:
-        query = [
-            {"$match": {"telem_category": "exploit", "data.exploitation_result": True}},
-            {
-                "$group": {
-                    "_id": {"ip_address": "$data.machine.ip_addr"},
-                    "data": {"$first": "$$ROOT"},
-                }
-            },
-            {"$replaceRoot": {"newRoot": "$data"}},
-        ]
-        exploits = []
-        for exploit in mongo.db.telemetry.aggregate(query):
-            new_exploit = ReportService.process_exploit(exploit)
-            if new_exploit not in exploits:
-                exploits.append(new_exploit.__dict__)
-        return exploits
+    @classmethod
+    def process_exploit_event(cls, exploit: ExploitationEvent) -> ExploiterReportInfo:
+        if not cls._machine_repository:
+            raise RuntimeError("Machine repository does not exist")
+
+        target_machine = cls._machine_repository.get_machines_by_ip(exploit.target)[0]
+        return ExploiterReportInfo(
+            target_machine.hostname, str(exploit.target), exploit.exploiter_name
+        )
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
