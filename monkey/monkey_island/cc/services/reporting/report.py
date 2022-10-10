@@ -147,9 +147,7 @@ class ReportService:
         for node in nodes:
             for dest, conn in node.connections.items():
                 if CommunicationType.SCANNED in conn and dest == machine.id:
-                    scanner_machine = ReportService._machine_repository.get_machine_by_id(
-                        node.machine_id
-                    )
+                    scanner_machine = cls._machine_repository.get_machine_by_id(node.machine_id)
                     scanner_machines.add(scanner_machine)
 
         return list(scanner_machines)
