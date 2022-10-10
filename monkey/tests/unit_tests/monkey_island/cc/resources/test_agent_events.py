@@ -14,7 +14,7 @@ from common.event_queue import IAgentEventQueue
 from monkey_island.cc.repository import IAgentEventRepository
 from monkey_island.cc.resources import AgentEvents
 
-EVENTS_URL = AgentEvents.urls[0]
+AGENT_EVENTS_URL = AgentEvents.urls[0]
 
 
 class SomeAgentEvent(AbstractAgentEvent):
@@ -92,6 +92,14 @@ def mock_agent_event_queue():
 
 
 @pytest.fixture
+def error_raising_event_serializer_registry():
+    error_raising_event_serializer_registry = MagicMock(spec=AgentEventSerializerRegistry)
+    error_raising_event_serializer_registry.__getitem__ = MagicMock(side_effect=KeyError)
+
+    return error_raising_event_serializer_registry
+
+
+@pytest.fixture
 def agent_event_repository():
     agent_event_repository = MagicMock(spec=IAgentEventRepository)
     agent_event_repository.get_events = MagicMock(return_value=EXPECTED_EVENTS)
@@ -125,34 +133,57 @@ def flask_client(
         yield flask_client
 
 
-def test_events_endpoint(flask_client, mock_agent_event_queue):
+@pytest.fixture
+def error_raising_flask_client(
+    build_flask_client,
+    mock_agent_event_queue,
+    agent_event_repository,
+    error_raising_event_serializer_registry,
+):
+    container = StubDIContainer()
 
-    resp_post = flask_client.post(EVENTS_URL, json=LIST_EVENTS)
-    resp_get = flask_client.get(EVENTS_URL)
-    actual_serialized_events = resp_get.json
+    container.register_instance(IAgentEventQueue, mock_agent_event_queue)
+    container.register_instance(
+        AgentEventSerializerRegistry, error_raising_event_serializer_registry
+    )
+    container.register_instance(IAgentEventRepository, agent_event_repository)
+
+    with build_flask_client(container) as flask_client:
+        yield flask_client
+
+
+def test_agent_events_endpoint__post(flask_client, mock_agent_event_queue):
+    resp_post = flask_client.post(AGENT_EVENTS_URL, json=LIST_EVENTS)
 
     assert resp_post.status_code == HTTPStatus.NO_CONTENT
-    assert resp_get.status_code == HTTPStatus.OK
-
-    assert actual_serialized_events == LIST_EVENTS
     assert mock_agent_event_queue.publish.call_count == len(EXPECTED_EVENTS)
 
     for call_args in mock_agent_event_queue.publish.call_args_list:
         assert call_args[0][0] in EXPECTED_EVENTS
 
 
+def test_agent_events_endpoint__get(flask_client):
+    resp_get = flask_client.get(AGENT_EVENTS_URL)
+    actual_serialized_events = resp_get.json
+
+    assert resp_get.status_code == HTTPStatus.OK
+    assert actual_serialized_events == LIST_EVENTS
+
+
+def test_agent_events_endpoint__get_error(error_raising_flask_client):
+    resp_get = error_raising_flask_client.get(AGENT_EVENTS_URL)
+
+    assert resp_get.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+
+
 @pytest.mark.parametrize(
     "events, expected_status_code",
     [(["bogus", "vogus"], HTTPStatus.BAD_REQUEST), ([], HTTPStatus.NO_CONTENT)],
 )
-def test_events_endpoint__bogus_events(
+def test_agent_events_endpoint__post_bogus_events(
     flask_client, mock_agent_event_queue, events, expected_status_code
 ):
-    resp_post = flask_client.post(EVENTS_URL, json=events)
-    resp_get = flask_client.get(EVENTS_URL)
-
-    assert resp_get.status_code == HTTPStatus.OK
-    assert resp_get.json == LIST_EVENTS
+    resp_post = flask_client.post(AGENT_EVENTS_URL, json=events)
 
     assert resp_post.status_code == expected_status_code
     mock_agent_event_queue.publish.not_called()
