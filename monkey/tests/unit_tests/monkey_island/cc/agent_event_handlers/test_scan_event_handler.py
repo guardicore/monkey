@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from tests.monkey_island import InMemoryMachineRepository
 
 from common import OperatingSystem
 from common.agent_events import PingScanEvent, TCPScanEvent
@@ -114,6 +115,11 @@ def machine_repository() -> IMachineRepository:
 
 
 @pytest.fixture
+def in_memory_machine_repository() -> IMachineRepository:
+    return InMemoryMachineRepository(SEED_ID)
+
+
+@pytest.fixture
 def node_repository() -> INodeRepository:
     node_repository = MagicMock(spec=INodeRepository)
     node_repository.get_nodes.return_value = [deepcopy(SOURCE_NODE)]
@@ -147,38 +153,6 @@ def machines_from_ip(ip: IPv4Address):
     return MACHINES_BY_IP[ip]
 
 
-class error_machine_by_id:
-    """Raise an error if the machine with the called ID matches the stored ID"""
-
-    def __init__(self, id: int, error):
-        self.id = id
-        self.error = error
-
-    def __call__(self, id: int):
-        if id == self.id:
-            raise self.error
-        else:
-            return machine_from_id(id)
-
-
-class error_machine_by_ip:
-    """Raise an error if the machine with the called IP matches the stored ID"""
-
-    def __init__(self, id: int, error):
-        self.id = id
-        self.error = error
-
-    def __call__(self, ip: IPv4Address):
-        print(f"IP is: {ip}")
-        machines = machines_from_ip(ip)
-        if machines[0].id == self.id:
-            print(f"Raise error: {self.error}")
-            raise self.error
-        else:
-            print(f"Return machine: {machines}")
-            return machines
-
-
 HANDLE_PING_SCAN_METHOD = "handle_ping_scan_event"
 HANDLE_TCP_SCAN_METHOD = "handle_tcp_scan_event"
 
@@ -189,16 +163,19 @@ def handler(scan_event_handler, request):
 
 
 def test_ping_scan_event_target_machine_not_exists(
-    scan_event_handler, machine_repository: IMachineRepository
+    in_memory_machine_repository: IMachineRepository, agent_repository, node_repository
 ):
+    scan_event_handler = ScanEventHandler(
+        agent_repository, in_memory_machine_repository, node_repository
+    )
     event = PING_SCAN_EVENT
-    machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
 
     scan_event_handler.handle_ping_scan_event(event)
 
     expected_machine = Machine(id=SEED_ID, network_interfaces=[IPv4Interface(event.target)])
     expected_machine.operating_system = event.os
-    machine_repository.upsert_machine.assert_called_with(expected_machine)
+
+    assert in_memory_machine_repository.get_machine_by_id(SEED_ID) == expected_machine
 
 
 def test_tcp_scan_event_target_machine_not_exists(
@@ -302,16 +279,11 @@ def test_node_not_upserted_if_no_matching_agent(
 def test_node_not_upserted_if_machine_retrievalerror(
     event,
     handler,
-    machine_repository: IMachineRepository,
+    agent_repository: IAgentRepository,
     node_repository: INodeRepository,
     machine_id,
 ):
-    machine_repository.get_machine_by_id = MagicMock(
-        side_effect=error_machine_by_id(machine_id, RetrievalError)
-    )
-    machine_repository.get_machines_by_ip = MagicMock(
-        side_effect=error_machine_by_ip(machine_id, RetrievalError)
-    )
+    agent_repository.get_agent_by_id = MagicMock(side_effect=RetrievalError)
 
     handler(event)
 

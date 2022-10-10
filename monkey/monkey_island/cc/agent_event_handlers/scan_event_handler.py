@@ -48,7 +48,9 @@ class ScanEventHandler:
             target_machine = self._get_target_machine(event)
 
             self._update_target_machine_os(target_machine, event)
-            self._update_nodes(target_machine, event)
+            self._node_update_facade.upsert_communication_from_event(
+                event, CommunicationType.SCANNED
+            )
         except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process ping scan data")
 
