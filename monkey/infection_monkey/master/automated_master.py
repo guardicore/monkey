@@ -5,6 +5,7 @@ from ipaddress import IPv4Interface
 from typing import Any, Callable, Collection, List, Optional, Sequence
 
 from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
+from common.agent_events import AgentShutdownEvent
 from common.event_queue import IAgentEventQueue
 from common.utils import Timer
 from infection_monkey.credential_repository import IPropagationCredentialsRepository
@@ -85,6 +86,8 @@ class AutomatedMaster(IMaster):
             # We can only have confidence that the master terminated successfully if block is set
             # and join() has returned.
             logger.info("AutomatedMaster successfully terminated.")
+            agent_shutdown_event = AgentShutdownEvent(stop_time=time.time())
+            self._agent_event_queue.publish(agent_shutdown_event)
 
     def _run_master_thread(self):
         self._simulation_thread.start()
