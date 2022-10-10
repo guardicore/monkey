@@ -5,9 +5,8 @@ from typing import Any, Sequence
 from pymongo import MongoClient
 
 from common.types import HardwareID
-from monkey_island.cc.models import Machine, MachineID
+from monkey_island.cc.models import Machine, MachineID, NetworkServices
 
-from ..models.machine import NetworkServices
 from . import IMachineRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
 from .consts import MONGO_OBJECT_ID_KEY
 from .utils import mongo_dot_decoder, mongo_dot_encoder

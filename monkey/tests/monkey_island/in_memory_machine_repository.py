@@ -2,8 +2,7 @@ from ipaddress import IPv4Address
 from typing import Dict, Sequence
 
 from common.types import HardwareID
-from monkey_island.cc.models import Machine, MachineID
-from monkey_island.cc.models.machine import NetworkServices
+from monkey_island.cc.models import Machine, MachineID, NetworkServices
 from monkey_island.cc.repository import IMachineRepository, UnknownRecordError
 
 
