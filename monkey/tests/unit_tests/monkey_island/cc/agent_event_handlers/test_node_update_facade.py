@@ -113,9 +113,11 @@ def test_get_event_source_machine(node_update_facade):
     assert node_update_facade.get_event_source_machine(TEST_EVENT) == SOURCE_MACHINE
 
 
-def test_upsert_communication_from_event__empty_node_repository(
-    node_update_facade, node_repository
-):
+def test_get_machine_id_from_agent_id(node_update_facade):
+    assert node_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID) == SOURCE_MACHINE_ID
+
+
+def test_upsert_communication_from_event(node_update_facade, node_repository):
     node_update_facade.upsert_communication_from_event(TEST_EVENT, CommunicationType.SCANNED)
 
     node_repository.upsert_communication.assert_called_with(
