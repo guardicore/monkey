@@ -6,6 +6,7 @@ from uuid import getnode
 
 from common import OperatingSystem
 from common.network.network_utils import get_network_interfaces
+from common.types import JSONSerializable
 from monkey_island.cc.models import Machine
 
 from . import IMachineRepository, StorageError, UnknownRecordError
@@ -40,17 +41,17 @@ def initialize_machine_repository(machine_repository: IMachineRepository):
 DOT_REPLACEMENT = ",,,"
 
 
-def mongo_dot_encoder(mapping: Mapping[str, Any]) -> Mapping[str, Any]:
+def mongo_dot_encoder(serializable_input: JSONSerializable) -> JSONSerializable:
     """
     Mongo can't store keys with "." symbols (like IP's and filenames). This method
     replaces all occurances of "." with ",,,"
-    :param mapping: Mapping to be converted to mongo compatible mapping
+    :param serializable_input: Mapping to be converted to mongo compatible mapping
     :return: Mongo compatible mapping
     """
-    mapping_json = json.dumps(mapping)
+    mapping_json = json.dumps(serializable_input)
     if DOT_REPLACEMENT in mapping_json:
         raise StorageError(
-            f"Mapping {mapping} already contains {DOT_REPLACEMENT}."
+            f"Mapping {serializable_input} already contains {DOT_REPLACEMENT}."
             f" Aborting the encoding procedure"
         )
     encoded_json = mapping_json.replace(".", DOT_REPLACEMENT)

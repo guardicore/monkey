@@ -10,7 +10,7 @@ from monkey_island.cc.models import Machine, MachineID
 from ..models.machine import NetworkServices
 from . import IMachineRepository, RemovalError, RetrievalError, StorageError, UnknownRecordError
 from .consts import MONGO_OBJECT_ID_KEY
-from .utils import DOT_REPLACEMENT, mongo_dot_decoder, mongo_dot_encoder
+from .utils import mongo_dot_decoder, mongo_dot_encoder
 
 
 class MongoMachineRepository(IMachineRepository):
@@ -57,8 +57,6 @@ class MongoMachineRepository(IMachineRepository):
 
     def get_machine_by_id(self, machine_id: MachineID) -> Machine:
         machine = self._find_one("id", machine_id)
-        if not machine:
-            raise UnknownRecordError(f"Machine with id {machine_id} not found")
         return machine
 
     def get_machine_by_hardware_id(self, hardware_id: HardwareID) -> Machine:
@@ -87,7 +85,7 @@ class MongoMachineRepository(IMachineRepository):
         return [Machine(**mongo_dot_decoder(m)) for m in cursor]
 
     def get_machines_by_ip(self, ip: IPv4Address) -> Sequence[Machine]:
-        ip_regex = "^" + str(ip).replace(".", DOT_REPLACEMENT) + "\\/.*$"
+        ip_regex = "^" + str(mongo_dot_encoder(str(ip))) + "\\/.*$"
         query = {"network_interfaces": {"$elemMatch": {"$regex": ip_regex}}}
 
         try:
