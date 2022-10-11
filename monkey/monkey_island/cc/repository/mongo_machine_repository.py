@@ -56,8 +56,7 @@ class MongoMachineRepository(IMachineRepository):
             raise StorageError("Failed upserting the machine or adding services") from err
 
     def get_machine_by_id(self, machine_id: MachineID) -> Machine:
-        machine = self._find_one("id", machine_id)
-        return machine
+        return self._find_one("id", machine_id)
 
     def get_machine_by_hardware_id(self, hardware_id: HardwareID) -> Machine:
         return self._find_one("hardware_id", hardware_id)
