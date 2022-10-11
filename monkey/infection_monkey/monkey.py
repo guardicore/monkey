@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+import time
 from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
 from typing import List, Optional, Sequence, Tuple
@@ -13,7 +14,7 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.agent_events import CredentialsStolenEvent, PropagationEvent
+from common.agent_events import AgentShutdownEvent, CredentialsStolenEvent, PropagationEvent
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
@@ -113,6 +114,7 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
         self._agent_id = get_agent_id()
 
+        self._agent_event_queue = self._setup_agent_event_queue()
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
         self._island_address, self._island_api_client = self._connect_to_island_api()
@@ -251,6 +253,11 @@ class InfectionMonkey:
 
         register_signal_handlers(self._master)
 
+    def _setup_agent_event_queue(self) -> IAgentEventQueue:
+        publisher = Publisher()
+        pypubsub_agent_event_queue = PyPubSubAgentEventQueue(publisher)
+        return pypubsub_agent_event_queue
+
     # TODO: This is just a placeholder for now. We will modify/integrate it with PR #2279.
     def _setup_agent_event_serializers(self) -> AgentEventSerializerRegistry:
         agent_event_serializer_registry = AgentEventSerializerRegistry()
@@ -267,14 +274,12 @@ class InfectionMonkey:
             self._control_channel
         )
 
-        agent_event_queue = PyPubSubAgentEventQueue(Publisher())
         self._subscribe_events(
-            agent_event_queue,
             propagation_credentials_repository,
             self._agent_event_serializer_registry,
         )
 
-        puppet = self._build_puppet(agent_event_queue)
+        puppet = self._build_puppet()
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
 
@@ -296,35 +301,33 @@ class InfectionMonkey:
 
     def _subscribe_events(
         self,
-        agent_event_queue: IAgentEventQueue,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
-        agent_event_queue.subscribe_type(
+        self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
                 propagation_credentials_repository
             ),
         )
-        agent_event_queue.subscribe_all_events(
+        self._agent_event_queue.subscribe_all_events(
             AgentEventForwarder(self._island_api_client, agent_event_serializer_registry).send_event
         )
-        agent_event_queue.subscribe_type(PropagationEvent, notify_relay_on_propagation(self._relay))
+        self._agent_event_queue.subscribe_type(
+            PropagationEvent, notify_relay_on_propagation(self._relay)
+        )
 
-    def _build_puppet(
-        self,
-        agent_event_queue: IAgentEventQueue,
-    ) -> IPuppet:
-        puppet = Puppet(agent_event_queue)
+    def _build_puppet(self) -> IPuppet:
+        puppet = Puppet(self._agent_event_queue)
 
         puppet.load_plugin(
             "MimikatzCollector",
-            MimikatzCredentialCollector(agent_event_queue),
+            MimikatzCredentialCollector(self._agent_event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
         puppet.load_plugin(
             "SSHCollector",
-            SSHCredentialCollector(self._telemetry_messenger, agent_event_queue),
+            SSHCredentialCollector(self._telemetry_messenger, self._agent_event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
 
@@ -338,7 +341,7 @@ class InfectionMonkey:
             island_api_client=self._island_api_client,
         )
         exploit_wrapper = ExploiterWrapper(
-            self._telemetry_messenger, agent_event_queue, agent_binary_repository
+            self._telemetry_messenger, self._agent_event_queue, agent_binary_repository
         )
 
         puppet.load_plugin(
@@ -462,6 +465,8 @@ class InfectionMonkey:
 
             self._send_log()
 
+            self._publish_agent_shutdown_event()
+
             StateTelem(
                 is_done=True, version=get_version()
             ).send()  # Signal the server (before closing the tunnel)
@@ -485,6 +490,10 @@ class InfectionMonkey:
 
             if self._control_channel.should_agent_stop():
                 self._relay.join(timeout=60)
+
+    def _publish_agent_shutdown_event(self):
+        agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())
+        self._agent_event_queue.publish(agent_shutdown_event)
 
     def _close_tunnel(self):
         logger.info(f"Quitting tunnel {self._cmd_island_ip}")

@@ -34,7 +34,9 @@ class AgentEventForwarder:
 
     def send_event(self, event: AbstractAgentEvent):
         self._batching_agent_event_forwarder.add_event_to_queue(event)
-        logger.debug(f"Sending event of type {type(event).__name__} to the Island")
+        logger.debug(
+            f"Adding event of type {type(event).__name__} to the queue to send to the Island"
+        )
 
 
 class BatchingAgentEventForwarder:
