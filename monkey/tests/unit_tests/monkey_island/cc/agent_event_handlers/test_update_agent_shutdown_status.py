@@ -3,12 +3,13 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from tests.monkey_island import InMemoryAgentRepository
 
 from common.agent_events import AgentShutdownEvent
 from common.types import SocketAddress
 from monkey_island.cc.agent_event_handlers import update_agent_shutdown_status
 from monkey_island.cc.models import Agent
-from monkey_island.cc.repository import IAgentRepository, StorageError
+from monkey_island.cc.repository import IAgentRepository, StorageError, UnknownRecordError
 
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
 MACHINE_ID = 11
@@ -27,22 +28,31 @@ AGENT_SHUTDOWN_EVENT = AgentShutdownEvent(source=AGENT_ID, timestamp=TIMESTAMP)
 
 @pytest.fixture
 def agent_repository() -> IAgentRepository:
-    agent_repository = MagicMock(spec=IAgentRepository)
-    agent_repository.upsert_agent = MagicMock()
-    agent_repository.get_agent_by_id = MagicMock(return_value=get_agent_object())
+    agent_repository = InMemoryAgentRepository()
+    agent_repository.upsert_agent(get_agent_object())
     return agent_repository
 
 
 def test_update_agent_shutdown_status(agent_repository):
     update_agent_shutdown_status_handler = update_agent_shutdown_status(agent_repository)
+
     update_agent_shutdown_status_handler(AGENT_SHUTDOWN_EVENT)
+
     assert agent_repository.get_agent_by_id(AGENT_ID).stop_time == datetime.utcfromtimestamp(
         TIMESTAMP
     )
 
 
-def test_update_agent_shutdown_status__storage_error(agent_repository):
+def test_update_agent_shutdown_status__storage_error_caught(agent_repository):
     agent_repository.upsert_agent = MagicMock(side_effect=StorageError())
     update_agent_shutdown_status_handler = update_agent_shutdown_status(agent_repository)
+
     # error should not be raised
     update_agent_shutdown_status_handler(AGENT_SHUTDOWN_EVENT)
+
+
+def test_update_agent_shutdown_status__unknown_record_error_raised(agent_repository):
+    some_other_agent_id = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
+
+    with pytest.raises(UnknownRecordError):
+        agent_repository.get_agent_by_id(some_other_agent_id)
