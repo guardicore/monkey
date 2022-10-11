@@ -54,7 +54,7 @@ class NodeUpdateFacade:
         # For now, assume that IPs are unique
         return machines[0].id
 
-    @lru_cache(maxsize=None)
+    @lru_cache(maxsize=8192)
     def get_machine_id_from_agent_id(self, agent_id: AgentID) -> MachineID:
         """
         Given an AgentID, get the MachineID of the machine the Agent ran on
