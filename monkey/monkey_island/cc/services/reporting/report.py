@@ -25,7 +25,6 @@ from monkey_island.cc.services.reporting.exploitations.manual_exploitation impor
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
 )
-from monkey_island.cc.services.reporting.pth_report import PTHReportService
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
     safe_generate_regular_report,
 )
@@ -379,26 +378,6 @@ class ReportService:
         return cross_segment_issues
 
     @staticmethod
-    def get_domain_issues():
-        ISSUE_GENERATORS = [
-            PTHReportService.get_duplicated_passwords_issues,
-            PTHReportService.get_shared_admins_issues,
-        ]
-        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
-        domain_issues_dict = {}
-        for issue in issues:
-            if not issue.get("is_local", True):
-                machine = issue.get("machine").upper()
-                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get("machine"))
-                if machine not in domain_issues_dict:
-                    domain_issues_dict[machine] = []
-                if aws_instance_id:
-                    issue["aws_instance_id"] = aws_instance_id
-                domain_issues_dict[machine].append(issue)
-        logger.info("Domain issues generated for reporting")
-        return domain_issues_dict
-
-    @staticmethod
     def get_machine_aws_instance_id(hostname):
         aws_instance_id_list = list(
             mongo.db.monkey.find({"hostname": hostname}, {"aws_instance_id": 1})
@@ -488,7 +467,7 @@ class ReportService:
             "glance": {
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
-                "strong_users": PTHReportService.get_strong_users_on_crit_details(),
+                "strong_users": {},
             },
             "recommendations": {"issues": issues, "domain_issues": domain_issues},
             "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
@@ -503,8 +482,6 @@ class ReportService:
             ReportService.get_exploits,
             ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
-            PTHReportService.get_duplicated_passwords_issues,
-            PTHReportService.get_strong_users_on_crit_issues,
         ]
 
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
