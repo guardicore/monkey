@@ -360,12 +360,13 @@ class ReportService:
         )
 
     @staticmethod
-    def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
+    def get_cross_segment_issues_per_subnet_group(
+        scans: Sequence[Union[PingScanEvent, TCPScanEvent]], subnet_group: str
+    ):
         """
         Gets list of cross segment issues within given subnet_group.
 
-        :param scans: List of all scan telemetry entries. Must have monkey_guid,
-         ip_addr and services. This should be a PyMongo cursor object.
+        :param scans: List of all scan events.
         :param subnet_group: List of subnets which shouldn't be accessible from each other.
         :return: Cross segment issues regarding the subnets in the group.
         """
@@ -390,15 +391,9 @@ class ReportService:
 
     @classmethod
     def get_cross_segment_issues(cls):
-        scans = mongo.db.telemetry.find(
-            {"telem_category": "scan"},
-            {
-                "monkey_guid": 1,
-                "data.machine.ip_addr": 1,
-                "data.machine.services": 1,
-                "data.machine.icmp": 1,
-            },
-        )
+        ping_scans = cls._agent_event_repository.get_events_by_type(PingScanEvent)
+        tcp_scans = cls._agent_event_repository.get_events_by_type(TCPScanEvent)
+        scans = [s for s in chain(ping_scans, tcp_scans)]
 
         cross_segment_issues = []
 
