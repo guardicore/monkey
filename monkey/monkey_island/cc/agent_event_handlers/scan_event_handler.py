@@ -5,7 +5,6 @@ from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import NetworkPort, NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.models import CommunicationType, Machine, NetworkServices
 from monkey_island.cc.repository import (
-    IAgentRepository,
     IMachineRepository,
     INodeRepository,
     RetrievalError,
@@ -30,14 +29,11 @@ class ScanEventHandler:
 
     def __init__(
         self,
-        agent_repository: IAgentRepository,
+        network_model_update_facade: NetworkModelUpdateFacade,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
-        self._network_model_update_facade = NetworkModelUpdateFacade(
-            agent_repository, machine_repository, node_repository
-        )
-        self._agent_repository = agent_repository
+        self._network_model_update_facade = network_model_update_facade
         self._machine_repository = machine_repository
         self._node_repository = node_repository
 

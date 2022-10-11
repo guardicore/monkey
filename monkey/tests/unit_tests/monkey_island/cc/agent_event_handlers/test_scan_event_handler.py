@@ -10,7 +10,7 @@ from tests.monkey_island import InMemoryMachineRepository
 from common import OperatingSystem
 from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import NetworkService, PortStatus, SocketAddress
-from monkey_island.cc.agent_event_handlers import ScanEventHandler
+from monkey_island.cc.agent_event_handlers import NetworkModelUpdateFacade, ScanEventHandler
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
     IAgentRepository,
@@ -128,8 +128,13 @@ def node_repository() -> INodeRepository:
 
 
 @pytest.fixture
-def scan_event_handler(agent_repository, machine_repository, node_repository):
-    return ScanEventHandler(agent_repository, machine_repository, node_repository)
+def network_model_update_facade(agent_repository, machine_repository, node_repository):
+    return NetworkModelUpdateFacade(agent_repository, machine_repository, node_repository)
+
+
+@pytest.fixture
+def scan_event_handler(network_model_update_facade, machine_repository, node_repository):
+    return ScanEventHandler(network_model_update_facade, machine_repository, node_repository)
 
 
 MACHINES_BY_ID = {SOURCE_MACHINE_ID: SOURCE_MACHINE, TARGET_MACHINE.id: TARGET_MACHINE}
@@ -162,10 +167,15 @@ def handler(scan_event_handler, request):
 
 
 def test_ping_scan_event_target_machine_not_exists(
-    in_memory_machine_repository: IMachineRepository, agent_repository, node_repository
+    agent_repository: IAgentRepository,
+    in_memory_machine_repository: IMachineRepository,
+    node_repository,
 ):
-    scan_event_handler = ScanEventHandler(
+    network_model_update_facade = NetworkModelUpdateFacade(
         agent_repository, in_memory_machine_repository, node_repository
+    )
+    scan_event_handler = ScanEventHandler(
+        network_model_update_facade, in_memory_machine_repository, node_repository
     )
     event = PING_SCAN_EVENT
 
