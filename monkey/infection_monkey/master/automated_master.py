@@ -246,7 +246,5 @@ class AutomatedMaster(IMaster):
 
     def cleanup(self):
         timestamp = time.time()
-        agent_shutdown_event = AgentShutdownEvent(
-            source=get_agent_id(), stop_time=timestamp, timestamp=timestamp
-        )
+        agent_shutdown_event = AgentShutdownEvent(source=get_agent_id(), timestamp=timestamp)
         self._agent_event_queue.publish(agent_shutdown_event)
