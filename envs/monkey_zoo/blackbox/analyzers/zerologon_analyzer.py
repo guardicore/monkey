@@ -58,10 +58,7 @@ class ZerologonAnalyzer(Analyzer):
             if event[EVENT_TYPE_FIELD] == PasswordRestorationEvent.__name__
         )
 
-        _password_restored = False
-        for password_restoration_event in password_restoration_events:
-            if password_restoration_event["success"]:
-                _password_restored = True
+        _password_restored = any((event["success"] for event in password_restoration_events))
 
         self._log_credential_restore(_password_restored)
         return _password_restored
