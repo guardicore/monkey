@@ -52,7 +52,10 @@ def test_update_agent_shutdown_status__storage_error_caught(agent_repository):
 
 
 def test_update_agent_shutdown_status__unknown_record_error_raised(agent_repository):
-    some_other_agent_id = UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10")
+    another_agent_shutdown_event = AgentShutdownEvent(
+        source=UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10"), timestamp=TIMESTAMP
+    )
+    update_agent_shutdown_status_handler = update_agent_shutdown_status(agent_repository)
 
     with pytest.raises(UnknownRecordError):
-        agent_repository.get_agent_by_id(some_other_agent_id)
+        update_agent_shutdown_status_handler(another_agent_shutdown_event)
