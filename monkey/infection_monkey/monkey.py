@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 import sys
+import time
 from ipaddress import IPv4Interface
 from pathlib import Path, WindowsPath
 from typing import List, Optional, Sequence, Tuple
@@ -13,7 +14,7 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.agent_events import CredentialsStolenEvent, PropagationEvent
+from common.agent_events import AgentShutdownEvent, CredentialsStolenEvent, PropagationEvent
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
@@ -464,6 +465,9 @@ class InfectionMonkey:
             deleted = InfectionMonkey._self_delete()
 
             self._send_log()
+
+            agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())
+            self._agent_event_queue.publish(agent_shutdown_event)
 
             StateTelem(
                 is_done=True, version=get_version()

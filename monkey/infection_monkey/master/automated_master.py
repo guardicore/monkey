@@ -5,7 +5,6 @@ from ipaddress import IPv4Interface
 from typing import Any, Callable, Collection, List, Optional, Sequence
 
 from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
-from common.agent_events import AgentShutdownEvent
 from common.event_queue import IAgentEventQueue
 from common.utils import Timer
 from infection_monkey.credential_repository import IPropagationCredentialsRepository
@@ -15,7 +14,6 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
-from infection_monkey.utils.ids import get_agent_id
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -245,6 +243,4 @@ class AutomatedMaster(IMaster):
         logger.info(f"Finished running {plugin_type}s")
 
     def cleanup(self):
-        timestamp = time.time()
-        agent_shutdown_event = AgentShutdownEvent(source=get_agent_id(), timestamp=timestamp)
-        self._agent_event_queue.publish(agent_shutdown_event)
+        pass
