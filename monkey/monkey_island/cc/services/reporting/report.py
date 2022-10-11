@@ -443,7 +443,6 @@ class ReportService:
 
     @staticmethod
     def generate_report():
-        domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
         issue_set = ReportService.get_issue_set(issues)
         cross_segment_issues = ReportService.get_cross_segment_issues()
@@ -467,9 +466,8 @@ class ReportService:
             "glance": {
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
-                "strong_users": {},
             },
-            "recommendations": {"issues": issues, "domain_issues": domain_issues},
+            "recommendations": {"issues": issues},
             "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
         }
         save_report(report)
