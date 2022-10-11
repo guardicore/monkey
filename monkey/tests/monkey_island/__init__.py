@@ -6,3 +6,4 @@ from .in_memory_simulation_configuration import InMemorySimulationRepository
 from .in_memory_credentials_repository import InMemoryCredentialsRepository
 from .in_memory_agent_log_repository import InMemoryAgentLogRepository
 from .in_memory_file_repository import InMemoryFileRepository
+from .in_memory_agent_repository import InMemoryAgentRepository
