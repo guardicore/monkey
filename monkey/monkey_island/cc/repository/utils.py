@@ -38,13 +38,13 @@ def initialize_machine_repository(machine_repository: IMachineRepository):
         machine_repository.upsert_machine(machine)
 
 
-DOT_REPLACEMENT = ",,,"
+DOT_REPLACEMENT = "_D0T_"
 
 
 def mongo_dot_encoder(serializable_input: JSONSerializable) -> JSONSerializable:
     """
     Mongo can't store keys with "." symbols (like IP's and filenames). This method
-    replaces all occurances of "." with ",,,"
+    replaces all occurrences of "." with the contents of DOT_REPLACEMENT
     :param serializable_input: Mapping to be converted to mongo compatible mapping
     :return: Mongo compatible mapping
     """
@@ -61,7 +61,8 @@ def mongo_dot_encoder(serializable_input: JSONSerializable) -> JSONSerializable:
 def mongo_dot_decoder(mapping: Mapping[str, Any]):
     """
     Mongo can't store keys with "." symbols (like IP's and filenames). This method
-    reverts changes made by "mongo_dot_encoder" by replacing all occurances of ",,," with "."
+    reverts changes made by "mongo_dot_encoder" by replacing all occurrences of DOT_REPLACEMENT
+    with "."
     :param mapping: Mapping to be converted from mongo compatible mapping to original mapping
     :return: Original mapping
     """
