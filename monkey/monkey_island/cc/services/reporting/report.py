@@ -2,6 +2,7 @@ import functools
 import ipaddress
 import logging
 from collections import defaultdict
+from dataclasses import asdict
 from itertools import chain, product
 from typing import Dict, Iterable, List, Optional
 
@@ -197,7 +198,7 @@ class ReportService:
         )
 
         # Convert the ExploitationEvent into an ExploiterReportInfo
-        return [cls.process_exploit_event(e, password_restored).__dict__ for e in filtered_exploits]
+        return [asdict(cls.process_exploit_event(e, password_restored)) for e in filtered_exploits]
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):
