@@ -4,12 +4,13 @@ import logging
 from collections import defaultdict
 from dataclasses import asdict
 from itertools import chain, product
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Sequence
 
 from common.agent_events import ExploitationEvent, PasswordRestorationEvent
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
+from common.types import AgentID
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommunicationType, Machine, Monkey
 from monkey_island.cc.models.report import get_report, save_report
@@ -205,14 +206,16 @@ class ReportService:
         # Convert the ExploitationEvent into an ExploiterReportInfo
         return [asdict(cls.process_exploit_event(e, password_restored)) for e in filtered_exploits]
 
-    @staticmethod
-    def get_monkey_subnets(monkey_guid):
-        networks = Monkey.objects.get(guid=monkey_guid).networks
+    @classmethod
+    def get_monkey_subnets(cls, agent_id: AgentID) -> Sequence[ipaddress.IPv4Interface]:
+        if cls._agent_repository is None:
+            raise RuntimeError()
+        if cls._machine_repository is None:
+            raise RuntimeError()
 
-        return [
-            ipaddress.ip_interface(f"{network['addr']}/{network['netmask']}").network
-            for network in networks
-        ]
+        agent = cls._agent_repository.get_agent_by_id(agent_id)
+        agent_machine = cls._machine_repository.get_machine_by_id(agent.machine_id)
+        return agent_machine.network_interfaces
 
     @staticmethod
     def get_island_cross_segment_issues():
