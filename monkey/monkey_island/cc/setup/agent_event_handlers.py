@@ -7,7 +7,6 @@ from common.agent_events import (
 )
 from common.event_queue import IAgentEventQueue
 from monkey_island.cc.agent_event_handlers import (
-    NetworkModelUpdateFacade,
     ScanEventHandler,
     save_event_to_event_repository,
     save_stolen_credentials_to_repository,
@@ -17,10 +16,6 @@ from monkey_island.cc.repository import IAgentEventRepository, ICredentialsRepos
 
 
 def setup_agent_event_handlers(container: DIContainer):
-    container.register_instance(
-        NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)
-    )
-
     _subscribe_and_store_to_event_repository(container)
     _subscribe_scan_events(container)
 

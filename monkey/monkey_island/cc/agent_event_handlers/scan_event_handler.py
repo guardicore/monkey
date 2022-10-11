@@ -7,12 +7,11 @@ from monkey_island.cc.models import CommunicationType, Machine, NetworkServices
 from monkey_island.cc.repository import (
     IMachineRepository,
     INodeRepository,
+    NetworkModelUpdateFacade,
     RetrievalError,
     StorageError,
     UnknownRecordError,
 )
-
-from .network_model_update_facade import NetworkModelUpdateFacade
 
 logger = getLogger(__name__)
 

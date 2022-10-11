@@ -7,14 +7,12 @@ from tests.monkey_island import InMemoryAgentRepository, InMemoryMachineReposito
 
 from common.agent_events import AbstractAgentEvent
 from common.types import SocketAddress
-from monkey_island.cc.agent_event_handlers.network_model_update_facade import (
-    NetworkModelUpdateFacade,
-)
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
+    NetworkModelUpdateFacade,
     UnknownRecordError,
 )
 

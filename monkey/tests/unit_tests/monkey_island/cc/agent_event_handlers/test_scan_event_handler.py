@@ -10,12 +10,13 @@ from tests.monkey_island import InMemoryMachineRepository
 from common import OperatingSystem
 from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import NetworkService, PortStatus, SocketAddress
-from monkey_island.cc.agent_event_handlers import NetworkModelUpdateFacade, ScanEventHandler
+from monkey_island.cc.agent_event_handlers import ScanEventHandler
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
+    NetworkModelUpdateFacade,
     RetrievalError,
     StorageError,
     UnknownRecordError,
