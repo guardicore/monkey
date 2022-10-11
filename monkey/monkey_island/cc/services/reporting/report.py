@@ -4,7 +4,7 @@ import logging
 from collections import defaultdict
 from dataclasses import asdict
 from itertools import chain, product
-from typing import Dict, Iterable, List, Optional, Sequence
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 from common.agent_events import ExploitationEvent, PasswordRestorationEvent
 from common.network.network_range import NetworkRange
@@ -247,40 +247,52 @@ class ReportService:
 
         return issues
 
-    @staticmethod
-    def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
+    @classmethod
+    def get_cross_segment_issues_of_single_machine(
+        cls, source_subnet_range: NetworkRange, target_subnet_range: NetworkRange
+    ) -> List[Dict[str, Any]]:
         """
         Gets list of cross segment issues of a single machine.
         Meaning a machine has an interface for each of the subnets
 
         :param source_subnet_range: The subnet range which shouldn't be able to access target_subnet
-        :param target_subnet_range: The subnet range which shouldn't be accessible fromsource_subnet
+        :param target_subnet_range: The subnet range which shouldn't be accessible from
+            source_subnet
         :return:
         """
+        if cls._agent_repository is None:
+            raise RuntimeError()
+        if cls._machine_repository is None:
+            raise RuntimeError()
+
         cross_segment_issues = []
 
-        for monkey in mongo.db.monkey.find({}, {"ip_addresses": 1, "hostname": 1}):
-            ip_in_src = None
-            ip_in_dst = None
-            for ip_addr in monkey["ip_addresses"]:
-                if source_subnet_range.is_in_range(str(ip_addr)):
-                    ip_in_src = ip_addr
+        # Get IP addresses and hostname for each agent
+        # agents = cls._agent_repository.get_agents()
+        # agent_machines = (cls._machine_repository.get_machine_by_id(a.machine_id) for a in agents)
+        for agent in cls._agent_repository.get_agents():
+            machine = cls._machine_repository.get_machine_by_id(agent.machine_id)
+
+            ip_in_src: Optional[ipaddress.IPv4Address] = None
+            for iface in machine.network_interfaces:
+                if source_subnet_range.is_in_range(str(iface.ip)):
+                    ip_in_src = iface.ip
                     break
 
-            # No point searching the dst subnet if there are no IPs in src subnet.
             if not ip_in_src:
                 continue
 
-            for ip_addr in monkey["ip_addresses"]:
-                if target_subnet_range.is_in_range(str(ip_addr)):
-                    ip_in_dst = ip_addr
+            ip_in_dst = None
+            for iface in machine.network_interfaces:
+                if target_subnet_range.is_in_range(str(iface.ip)):
+                    ip_in_dst = iface.ip
                     break
 
             if ip_in_dst:
                 cross_segment_issues.append(
                     {
                         "source": ip_in_src,
-                        "hostname": monkey["hostname"],
+                        "hostname": machine.hostname,
                         "target": ip_in_dst,
                         "services": None,
                         "is_self": True,
