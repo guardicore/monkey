@@ -12,7 +12,7 @@ from monkey_island.cc.repository import (
 )
 
 
-class NodeUpdateFacade:
+class NetworkModelUpdateFacade:
     """
     A facade to simplify updating nodes and machines based on network-related events.
     """

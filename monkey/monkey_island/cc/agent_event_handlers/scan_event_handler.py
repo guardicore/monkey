@@ -13,7 +13,7 @@ from monkey_island.cc.repository import (
     UnknownRecordError,
 )
 
-from .node_update_facade import NodeUpdateFacade
+from .network_model_update_facade import NetworkModelUpdateFacade
 
 logger = getLogger(__name__)
 
@@ -34,7 +34,7 @@ class ScanEventHandler:
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
-        self._node_update_facade = NodeUpdateFacade(
+        self._network_model_update_facade = NetworkModelUpdateFacade(
             agent_repository, machine_repository, node_repository
         )
         self._agent_repository = agent_repository
@@ -46,10 +46,12 @@ class ScanEventHandler:
             return
 
         try:
-            target_machine = self._node_update_facade.get_or_create_target_machine(event.target)
+            target_machine = self._network_model_update_facade.get_or_create_target_machine(
+                event.target
+            )
             self._update_target_machine_os(target_machine, event)
 
-            self._node_update_facade.upsert_communication_from_event(
+            self._network_model_update_facade.upsert_communication_from_event(
                 event, CommunicationType.SCANNED
             )
         except (RetrievalError, StorageError, UnknownRecordError):
@@ -101,8 +103,12 @@ class ScanEventHandler:
         tcp_connections: Sequence[SocketAddress],
         network_services: NetworkServices,
     ):
-        source_machine_id = self._node_update_facade.get_machine_id_from_agent_id(event.source)
-        target_machine = self._node_update_facade.get_or_create_target_machine(event.target)
+        source_machine_id = self._network_model_update_facade.get_machine_id_from_agent_id(
+            event.source
+        )
+        target_machine = self._network_model_update_facade.get_or_create_target_machine(
+            event.target
+        )
 
         self._node_repository.upsert_communication(
             source_machine_id, target_machine.id, CommunicationType.SCANNED

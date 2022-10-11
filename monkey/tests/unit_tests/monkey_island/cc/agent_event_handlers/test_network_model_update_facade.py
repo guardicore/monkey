@@ -7,7 +7,9 @@ from tests.monkey_island import InMemoryAgentRepository, InMemoryMachineReposito
 
 from common.agent_events import AbstractAgentEvent
 from common.types import SocketAddress
-from monkey_island.cc.agent_event_handlers.node_update_facade import NodeUpdateFacade
+from monkey_island.cc.agent_event_handlers.network_model_update_facade import (
+    NetworkModelUpdateFacade,
+)
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
     IAgentRepository,
@@ -79,66 +81,73 @@ def node_repository() -> INodeRepository:
 
 
 @pytest.fixture
-def node_update_facade(
+def network_model_update_facade(
     agent_repository: IAgentRepository,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
-) -> NodeUpdateFacade:
-    return NodeUpdateFacade(agent_repository, machine_repository, node_repository)
+) -> NetworkModelUpdateFacade:
+    return NetworkModelUpdateFacade(agent_repository, machine_repository, node_repository)
 
 
-def test_return_existing_machine(node_update_facade, machine_repository):
+def test_return_existing_machine(network_model_update_facade, machine_repository):
     machine_repository.get_machines_by_ip = MagicMock(return_value=[SOURCE_MACHINE])
 
-    target_machine = node_update_facade.get_or_create_target_machine(SOURCE_IP_ADDRESS)
+    target_machine = network_model_update_facade.get_or_create_target_machine(SOURCE_IP_ADDRESS)
 
     assert target_machine == SOURCE_MACHINE
 
 
-def test_create_new_machine(node_update_facade, machine_repository):
+def test_create_new_machine(network_model_update_facade, machine_repository):
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
 
-    target_machine = node_update_facade.get_or_create_target_machine(SOURCE_IP_ADDRESS)
+    target_machine = network_model_update_facade.get_or_create_target_machine(SOURCE_IP_ADDRESS)
 
     assert target_machine == EXPECTED_CREATED_MACHINE
     assert machine_repository.get_machine_by_id(target_machine.id) == target_machine
 
 
-def test_get_machine_id_from_agent_id(node_update_facade):
-    assert node_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID) == SOURCE_MACHINE_ID
+def test_get_machine_id_from_agent_id(network_model_update_facade):
+    assert (
+        network_model_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID)
+        == SOURCE_MACHINE_ID
+    )
 
 
-def test_upsert_communication_from_event(node_update_facade, node_repository):
-    node_update_facade.upsert_communication_from_event(TEST_EVENT, CommunicationType.SCANNED)
+def test_upsert_communication_from_event(network_model_update_facade, node_repository):
+    network_model_update_facade.upsert_communication_from_event(
+        TEST_EVENT, CommunicationType.SCANNED
+    )
 
     node_repository.upsert_communication.assert_called_with(
         SOURCE_MACHINE_ID, TARGET_MACHINE_ID, CommunicationType.SCANNED
     )
 
 
-def test_upsert_communication_from_event__no_target_ip(node_update_facade):
+def test_upsert_communication_from_event__no_target_ip(network_model_update_facade):
     event = TestEvent(source=SOURCE_AGENT_ID, target=None, success=True)
 
     with pytest.raises(TypeError):
-        node_update_facade.upsert_communication_from_event(event, CommunicationType.SCANNED)
+        network_model_update_facade.upsert_communication_from_event(
+            event, CommunicationType.SCANNED
+        )
 
 
-def test_cache_reset__get_or_create_target_machine(node_update_facade, machine_repository):
-    original_target = node_update_facade.get_or_create_target_machine(TARGET_IP_ADDRESS)
+def test_cache_reset__get_or_create_target_machine(network_model_update_facade, machine_repository):
+    original_target = network_model_update_facade.get_or_create_target_machine(TARGET_IP_ADDRESS)
     original_target_machine_no_interfaces = TARGET_MACHINE.copy()
     original_target_machine_no_interfaces.network_interfaces = []
     machine_repository.upsert_machine(original_target_machine_no_interfaces)
 
-    node_update_facade.reset_cache()
-    new_target = node_update_facade.get_or_create_target_machine(TARGET_IP_ADDRESS)
+    network_model_update_facade.reset_cache()
+    new_target = network_model_update_facade.get_or_create_target_machine(TARGET_IP_ADDRESS)
 
     assert original_target.id != new_target.id
 
 
 def test_cache_reset__get_machine_id_from_agent_id(
-    node_update_facade, agent_repository, machine_repository
+    network_model_update_facade, agent_repository, machine_repository
 ):
-    original_machine_id = node_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID)
+    original_machine_id = network_model_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID)
     new_machine_id = original_machine_id + 100
     new_machine = Machine(
         id=new_machine_id,
@@ -156,7 +165,7 @@ def test_cache_reset__get_machine_id_from_agent_id(
 
     agent_repository.reset()
     agent_repository.upsert_agent(new_agent)
-    node_update_facade.reset_cache()
-    new_machine_id = node_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID)
+    network_model_update_facade.reset_cache()
+    new_machine_id = network_model_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID)
 
     assert original_machine_id != new_machine_id
