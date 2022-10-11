@@ -4,9 +4,14 @@ import logging
 from collections import defaultdict
 from dataclasses import asdict
 from itertools import chain, product
-from typing import Any, Dict, Iterable, List, Optional, Sequence
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 
-from common.agent_events import ExploitationEvent, PasswordRestorationEvent
+from common.agent_events import (
+    ExploitationEvent,
+    PasswordRestorationEvent,
+    PingScanEvent,
+    TCPScanEvent,
+)
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
@@ -301,41 +306,51 @@ class ReportService:
 
         return cross_segment_issues
 
-    @staticmethod
-    def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
+    @classmethod
+    def get_cross_segment_issues_per_subnet_pair(
+        cls,
+        scans: Sequence[Union[PingScanEvent, TCPScanEvent]],
+        source_subnet: str,
+        target_subnet: str,
+    ) -> List[Dict[str, Any]]:
         """
         Gets list of cross segment issues from source_subnet to target_subnet.
 
-        :param scans: List of all scan telemetry entries. Must have monkey_guid,ip_addr and
-         services. This should be a PyMongo cursor object.
+        :param scans: List of all scan events.
         :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
         :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
         :return:
         """
         if source_subnet == target_subnet:
             return []
+
+        if cls._agent_repository is None:
+            raise RuntimeError()
+        if cls._machine_repository is None:
+            raise RuntimeError()
+
         source_subnet_range = NetworkRange.get_range_obj(source_subnet)
         target_subnet_range = NetworkRange.get_range_obj(target_subnet)
 
         cross_segment_issues = []
 
-        scans.rewind()  # If we iterated over scans already we need to rewind.
         for scan in scans:
-            target_ip = scan["data"]["machine"]["ip_addr"]
+            target_ip = scan.target
             if target_subnet_range.is_in_range(str(target_ip)):
-                monkey = NodeService.get_monkey_by_guid(scan["monkey_guid"])
+                agent = cls._agent_repository.get_agent_by_id(scan.source)
+                machine = cls._machine_repository.get_machine_by_id(agent.machine_id)
+                machine_ips = [iface.ip for iface in machine.network_interfaces]
                 cross_segment_ip = get_ip_in_src_and_not_in_dst(
-                    monkey["ip_addresses"], source_subnet_range, target_subnet_range
+                    machine_ips, source_subnet_range, target_subnet_range
                 )
-
                 if cross_segment_ip is not None:
                     cross_segment_issues.append(
                         {
                             "source": cross_segment_ip,
-                            "hostname": monkey["hostname"],
+                            "hostname": machine.hostname,
                             "target": target_ip,
-                            "services": scan["data"]["machine"]["services"],
-                            "icmp": scan["data"]["machine"]["icmp"],
+                            "services": {a: s for a, s in machine.network_services},
+                            "icmp": type(scan) is PingScanEvent,
                             "is_self": False,
                         }
                     )
