@@ -53,6 +53,7 @@ from monkey_island.cc.repository import (
     MongoCredentialsRepository,
     MongoMachineRepository,
     MongoNodeRepository,
+    NetworkModelUpdateFacade,
     RetrievalError,
     initialize_machine_repository,
 )
@@ -156,6 +157,9 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(IMachineRepository, _build_machine_repository(container))
     container.register_instance(IAgentRepository, container.resolve(MongoAgentRepository))
     container.register_instance(IAgentLogRepository, container.resolve(FileAgentLogRepository))
+    container.register_instance(
+        NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)
+    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:

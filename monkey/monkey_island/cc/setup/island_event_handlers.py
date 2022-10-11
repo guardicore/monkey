@@ -15,6 +15,7 @@ from monkey_island.cc.repository import (
     ICredentialsRepository,
     INodeRepository,
     ISimulationRepository,
+    NetworkModelUpdateFacade,
 )
 from monkey_island.cc.services import AgentSignalsService
 from monkey_island.cc.services.database import Database
@@ -58,6 +59,9 @@ def _subscribe_clear_simulation_data_events(
     island_event_queue.subscribe(topic, credentials_repository.remove_stolen_credentials)
 
     island_event_queue.subscribe(topic, container.resolve(reset_machine_repository))
+
+    network_model_update_facade = container.resolve(NetworkModelUpdateFacade)
+    island_event_queue.subscribe(topic, network_model_update_facade.reset_cache)
 
     for i_repository in [
         IAgentEventRepository,

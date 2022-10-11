@@ -28,4 +28,4 @@ class InMemoryAgentRepository(IAgentRepository):
         raise NotImplementedError
 
     def reset(self):
-        raise NotImplementedError
+        self._agents = {}

@@ -3,8 +3,7 @@ from ipaddress import IPv4Address
 from typing import Sequence
 
 from common.types import HardwareID
-from monkey_island.cc.models import Machine, MachineID
-from monkey_island.cc.models.machine import NetworkServices
+from monkey_island.cc.models import Machine, MachineID, NetworkServices
 
 
 class IMachineRepository(ABC):
