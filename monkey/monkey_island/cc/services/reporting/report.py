@@ -16,6 +16,7 @@ from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
+    IAgentRepository,
     ICredentialsRepository,
     IMachineRepository,
     INodeRepository,
@@ -39,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 class ReportService:
     _aws_service: Optional[AWSService] = None
+    _agent_repository: Optional[IAgentRepository] = None
     _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
     _agent_event_repository: Optional[IAgentEventRepository] = None
     _credentials_repository: Optional[ICredentialsRepository] = None
@@ -52,6 +54,7 @@ class ReportService:
     def initialize(
         cls,
         aws_service: AWSService,
+        agent_repository: IAgentRepository,
         agent_configuration_repository: IAgentConfigurationRepository,
         agent_event_repository: IAgentEventRepository,
         credentials_repository: ICredentialsRepository,
@@ -59,6 +62,7 @@ class ReportService:
         node_repository: INodeRepository,
     ):
         cls._aws_service = aws_service
+        cls._agent_repository = agent_repository
         cls._agent_configuration_repository = agent_configuration_repository
         cls._agent_event_repository = agent_event_repository
         cls._credentials_repository = credentials_repository

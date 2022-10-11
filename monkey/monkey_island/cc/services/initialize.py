@@ -93,6 +93,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
     # This is temporary until we get DI all worked out.
     ReportService.initialize(
         container.resolve(AWSService),
+        container.resolve(IAgentRepository),
         container.resolve(IAgentConfigurationRepository),
         container.resolve(IAgentEventRepository),
         container.resolve(ICredentialsRepository),
