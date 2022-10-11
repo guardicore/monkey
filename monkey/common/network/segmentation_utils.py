@@ -1,4 +1,11 @@
-def get_ip_in_src_and_not_in_dst(ip_addresses, source_subnet, target_subnet):
+from common.network.network_range import NetworkRange
+from ipaddress import IPv4Address
+from typing import Optional, Sequence
+
+
+def get_ip_in_src_and_not_in_dst(
+    ip_addresses: Sequence[IPv4Address], source_subnet: NetworkRange, target_subnet: NetworkRange
+) -> Optional[IPv4Address]:
     """
     Finds an IP address in ip_addresses which is in source_subnet but not in target_subnet.
 
@@ -12,13 +19,15 @@ def get_ip_in_src_and_not_in_dst(ip_addresses, source_subnet, target_subnet):
     return get_ip_if_in_subnet(ip_addresses, source_subnet)
 
 
-def get_ip_if_in_subnet(ip_addresses, subnet):
+def get_ip_if_in_subnet(
+    ip_addresses: Sequence[IPv4Address], subnet: NetworkRange
+) -> Optional[IPv4Address]:
     """
 
     :param ip_addresses: IP address list.
     :param subnet: Subnet to check if one of ip_addresses is in there. This is
      common.network.network_range.NetworkRange
-    :return: The first IP in ip_addresses which is in the subnet if there is one, otherwise
+    :return: The first IP in ip_addresses which is in the subnet if there is one, otherwise None
     """
     for ip_address in ip_addresses:
         if subnet.is_in_range(ip_address):
