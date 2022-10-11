@@ -62,22 +62,6 @@ class TestMonkey:
             _ = Monkey.get_single_monkey_by_id("abcdefabcdefabcdefabcdef")
 
     @pytest.mark.usefixtures("uses_database")
-    def test_get_os(self):
-        linux_monkey = Monkey(
-            guid=str(uuid.uuid4()),
-            description="Linux shay-Virtual-Machine 4.15.0-50-generic #54-Ubuntu",
-        )
-        windows_monkey = Monkey(guid=str(uuid.uuid4()), description="Windows bla bla bla")
-        unknown_monkey = Monkey(guid=str(uuid.uuid4()), description="bla bla bla")
-        linux_monkey.save()
-        windows_monkey.save()
-        unknown_monkey.save()
-
-        assert 1 == len([m for m in Monkey.objects() if m.get_os() == "windows"])
-        assert 1 == len([m for m in Monkey.objects() if m.get_os() == "linux"])
-        assert 1 == len([m for m in Monkey.objects() if m.get_os() == "unknown"])
-
-    @pytest.mark.usefixtures("uses_database")
     def test_get_tunneled_monkeys(self):
         linux_monkey = Monkey(guid=str(uuid.uuid4()), description="Linux shay-Virtual-Machine")
         windows_monkey = Monkey(
