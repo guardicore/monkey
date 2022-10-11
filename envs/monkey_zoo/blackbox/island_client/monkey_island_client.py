@@ -1,9 +1,7 @@
 import json
 import logging
 import time
-from typing import List, Mapping, Sequence, Union
-
-from bson import json_util
+from typing import List, Mapping, Sequence
 
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
@@ -15,7 +13,8 @@ SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 GET_AGENTS_ENDPOINT = "api/agents"
 GET_LOG_ENDPOINT = "api/agent-logs"
 GET_MACHINES_ENDPOINT = "api/machines"
-TELEMETRY_TEST_ENDPOINT = "api/test/telemetry"
+GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
+
 LOGGER = logging.getLogger(__name__)
 
 
@@ -138,14 +137,6 @@ class MonkeyIslandClient(object):
             LOGGER.error("Failed to reset island mode")
             assert False
 
-    def find_telems_in_db(self, query: dict):
-        if query is None:
-            raise TypeError
-        response = self.requests.get(
-            TELEMETRY_TEST_ENDPOINT, MonkeyIslandClient.form_find_query_for_request(query)
-        )
-        return MonkeyIslandClient.get_test_query_results(response)
-
     def get_agents(self) -> Sequence[Agent]:
         response = self.requests.get(GET_AGENTS_ENDPOINT)
 
@@ -162,13 +153,10 @@ class MonkeyIslandClient(object):
 
         return response.json()
 
-    @staticmethod
-    def form_find_query_for_request(query: Union[dict, None]) -> dict:
-        return {"find_query": json_util.dumps(query)}
+    def get_agent_events(self):
+        response = self.requests.get(GET_AGENT_EVENTS_ENDPOINT)
 
-    @staticmethod
-    def get_test_query_results(response):
-        return json.loads(response.content)["results"]
+        return response.json()
 
     def is_all_monkeys_dead(self):
         agents = self.get_agents()

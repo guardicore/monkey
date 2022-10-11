@@ -1,17 +1,11 @@
-from pprint import pformat
 from typing import List
 
+from common.agent_event_serializers import EVENT_TYPE_FIELD
+from common.agent_events import PasswordRestorationEvent
 from common.credentials import Credentials, LMHash, NTHash, Username
 from envs.monkey_zoo.blackbox.analyzers.analyzer import Analyzer
 from envs.monkey_zoo.blackbox.analyzers.analyzer_log import AnalyzerLog
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
-
-# Query for telemetry collection to see if password restoration was successful
-TELEM_QUERY = {
-    "telem_category": "exploit",
-    "data.exploiter": "ZerologonExploiter",
-    "data.info.password_restored": True,
-}
 
 
 class ZerologonAnalyzer(Analyzer):
@@ -57,19 +51,25 @@ class ZerologonAnalyzer(Analyzer):
                 self.log.add_entry(f"Credential Zerologon exploiter failed to gathered:{cred}.")
 
     def _analyze_credential_restore(self) -> bool:
-        cred_restore_telems = self.island_client.find_telems_in_db(TELEM_QUERY)
-        self._log_credential_restore(cred_restore_telems)
-        return bool(cred_restore_telems)
+        agent_events = self.island_client.get_agent_events()
+        password_restoration_events = (
+            event
+            for event in agent_events
+            if event[EVENT_TYPE_FIELD] == PasswordRestorationEvent.__name__
+        )
 
-    def _log_credential_restore(self, telem_list: List[dict]):
-        if telem_list:
+        _password_restored = any((event["success"] for event in password_restoration_events))
+
+        self._log_credential_restore(_password_restored)
+        return _password_restored
+
+    def _log_credential_restore(self, password_restored: bool):
+        if password_restored:
             self.log.add_entry(
-                "Zerologon exploiter telemetry contains indicators that credentials "
+                "Zerologon exploiter events indicate that credentials "
                 "were successfully restored."
             )
         else:
             self.log.add_entry(
-                "Credential restore failed or credential restore "
-                "telemetry not found on the Monkey Island."
+                "Credential restore failed or credential restore events were not sent."
             )
-            self.log.add_entry(f"Query for credential restore telem: {pformat(TELEM_QUERY)}")
