@@ -465,7 +465,7 @@ class InfectionMonkey:
 
             self._send_log()
 
-            self.send_agent_shutdown_event()
+            self._publish_agent_shutdown_event()
 
             StateTelem(
                 is_done=True, version=get_version()
@@ -491,7 +491,7 @@ class InfectionMonkey:
             if self._control_channel.should_agent_stop():
                 self._relay.join(timeout=60)
 
-    def send_agent_shutdown_event(self):
+    def _publish_agent_shutdown_event(self):
         agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())
         self._agent_event_queue.publish(agent_shutdown_event)
 
