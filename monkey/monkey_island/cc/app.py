@@ -31,9 +31,6 @@ from monkey_island.cc.resources import (
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
-from monkey_island.cc.resources.blackbox.telemetry_blackbox_endpoint import (
-    TelemetryBlackboxEndpoint,
-)
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
@@ -200,12 +197,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(PropagationCredentials)
     api.add_resource(RemoteRun)
     api.add_resource(Version)
-
-    # Resources used by black box tests
-    # API Spec: Fix all the following endpoints, see comments in the resource classes
-    # Note: Preferably, the API will provide a rich feature set and allow access to all of the
-    #       necessary data. This would make these endpoints obsolete.
-    api.add_resource(TelemetryBlackboxEndpoint)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
