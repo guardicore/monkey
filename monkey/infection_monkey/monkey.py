@@ -466,8 +466,7 @@ class InfectionMonkey:
 
             self._send_log()
 
-            agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())
-            self._agent_event_queue.publish(agent_shutdown_event)
+            self.send_agent_shutdown_event()
 
             StateTelem(
                 is_done=True, version=get_version()
@@ -492,6 +491,10 @@ class InfectionMonkey:
 
             if self._control_channel.should_agent_stop():
                 self._relay.join(timeout=60)
+
+    def send_agent_shutdown_event(self):
+        agent_shutdown_event = AgentShutdownEvent(source=self._agent_id, timestamp=time.time())
+        self._agent_event_queue.publish(agent_shutdown_event)
 
     def _close_tunnel(self):
         logger.info(f"Quitting tunnel {self._cmd_island_ip}")
