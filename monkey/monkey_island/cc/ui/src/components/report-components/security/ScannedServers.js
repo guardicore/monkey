@@ -1,60 +1,102 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-import {renderArray, renderIpAddresses, renderMachineArray} from '../common/RenderArrays';
+import IslandHttpClient from '../../IslandHttpClient';
 
+const machinesEndpoint = '/api/machines';
+const nodesEndpoint = '/api/netmap/node';
+const scanCommunicationType = 'scanned';
+
+function getMachineRepresentationString(machine) {
+  return `${machine.hostname}(${machine.network_interfaces.toString()})`;
+}
+
+
+function getMachineServices(machine) {
+  let services = [];
+  for (const [socketAddress, serviceName] of Object.entries(machine.network_services)) {
+    services.push(<div key="{socketAddress}">{socketAddress} - {serviceName}</div>);
+  }
+  return services
+}
 
 const columns = [
   {
     Header: 'Scanned Servers',
     columns: [
-      {Header: 'Machine', id: 'machine', accessor: x => x.ip_addresses[0]},
-      {
-        Header: 'IP Addresses', id: 'ip_addresses',
-        accessor: x => renderIpAddresses(x)
-      },
-      {Header: 'Accessible From', id: 'accessible_from_nodes',
-        accessor: x => renderMachineArray(x.accessible_from_nodes)},
-      {Header: 'Services', id: 'services', accessor: x => renderArray(x.services)}
+      {Header: 'Machine', id: 'machine', accessor: getMachineRepresentationString},
+      {Header: 'Services found', id: 'services', accessor: getMachineServices}
     ]
   }
 ];
 
 const pageSize = 10;
 
-class ScannedServersComponent extends React.Component {
-  constructor(props) {
-    super(props);
+function ScannedServersComponent(props) {
+
+  const [scannedMachines, setScannedMachines] = useState([]);
+  const [allNodes, setAllNodes] = useState([]);
+  const [allMachines, setAllMachines] = useState([]);
+
+  useEffect(() => {
+    IslandHttpClient.get(nodesEndpoint)
+      .then(res => setAllNodes(res.body))
+    IslandHttpClient.get(machinesEndpoint)
+      .then(res => setAllMachines(res.body))
+  }, [])
+
+  function getScannedMachineIds(nodes) {
+    let machineIds = new Set();
+    for (let i = 0; i < nodes.length; i++) {
+      for (const [machineId, communications] of Object.entries(nodes[i].connections)) {
+        if (communications.includes(scanCommunicationType)) {
+          machineIds.add(parseInt(machineId));
+        }
+      }
+    }
+    return machineIds;
   }
 
-  render() {
-    let defaultPageSize = this.props.data.length > pageSize ? pageSize : this.props.data.length;
-    let showPagination = this.props.data.length > pageSize;
+  useEffect(() => {
+    if (allNodes !== [] && allMachines !== []) {
+      let scannedMachines = [];
+      let scannedIds = getScannedMachineIds(allNodes);
+      for (const scannedId of scannedIds) {
+        let scannedMachine = allMachines.filter(machine => machine.id === scannedId)[0];
+        if (scannedMachine) {
+          scannedMachines.push(scannedMachine);
+        }
+      }
+      setScannedMachines(scannedMachines);
+    }
+  }, [allNodes, allMachines])
 
-    const scannedMachinesCount = this.props.data.length;
-    const reducerFromScannedServerToServicesAmount = (accumulated, scannedServer) => accumulated + scannedServer['services'].length;
-    const scannedServicesAmount = this.props.data.reduce(reducerFromScannedServerToServicesAmount, 0);
+  let defaultPageSize = props.data.length > pageSize ? pageSize : props.data.length;
+  let showPagination = props.data.length > pageSize;
 
-    return (
-      <>
-        <p>
-          The Monkey discovered&nbsp;
-          <span className="badge badge-danger">{scannedServicesAmount}</span> open&nbsp;
-          {Pluralize('service', scannedServicesAmount)} on&nbsp;
-          <span className="badge badge-warning">{scannedMachinesCount}</span>&nbsp;
-          {Pluralize('machine', scannedMachinesCount)}:
-        </p>
-        <div className="data-table-container">
-          <ReactTable
-            columns={columns}
-            data={this.props.data}
-            showPagination={showPagination}
-            defaultPageSize={defaultPageSize}
-          />
-        </div>
-      </>
-    );
-  }
+  const scannedMachinesCount = props.data.length;
+  const reducerFromScannedServerToServicesAmount = (accumulated, scannedServer) => accumulated + scannedServer['services'].length;
+  const scannedServicesAmount = props.data.reduce(reducerFromScannedServerToServicesAmount, 0);
+
+  return (
+    <>
+      <p>
+        The Monkey discovered&nbsp;
+        <span className="badge badge-danger">{scannedServicesAmount}</span> open&nbsp;
+        {Pluralize('service', scannedServicesAmount)} on&nbsp;
+        <span className="badge badge-warning">{scannedMachinesCount}</span>&nbsp;
+        {Pluralize('machine', scannedMachinesCount)}:
+      </p>
+      <div className="data-table-container">
+        <ReactTable
+          columns={columns}
+          data={scannedMachines}
+          showPagination={showPagination}
+          defaultPageSize={defaultPageSize}
+        />
+      </div>
+    </>
+  );
 }
 
 export default ScannedServersComponent;
