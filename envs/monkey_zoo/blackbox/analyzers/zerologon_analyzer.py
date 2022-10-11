@@ -66,10 +66,10 @@ class ZerologonAnalyzer(Analyzer):
     def _log_credential_restore(self, password_restored: bool):
         if password_restored:
             self.log.add_entry(
-                "Zerologon exploiter events indicates that credentials "
+                "Zerologon exploiter events indicate that credentials "
                 "were successfully restored."
             )
         else:
             self.log.add_entry(
-                "Credential restore failed or credential restore " "events were not sent."
+                "Credential restore failed or credential restore events were not sent."
             )
