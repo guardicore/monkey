@@ -23,6 +23,7 @@ def get_report() -> dict:
 
 # TODO remove this unnecessary encoding. I think these are legacy methods from back in the day
 # when usernames were used as keys. If not, we shouldn't use unknown data as keys.
+# Already implemented in monkey_island/cc/repository/utils.py
 def _encode_dot_char_before_mongo_insert(report_dict):
     """
     mongodb doesn't allow for '.' and '$' in a key's name, this function replaces the '.'

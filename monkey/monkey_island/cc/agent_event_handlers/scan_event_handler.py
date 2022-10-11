@@ -1,11 +1,11 @@
 from ipaddress import IPv4Interface
 from logging import getLogger
-from typing import Union
+from typing import List, Union
 
 from typing_extensions import TypeAlias
 
 from common.agent_events import PingScanEvent, TCPScanEvent
-from common.types import PortStatus, SocketAddress
+from common.types import NetworkPort, NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.models import CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
     IAgentRepository,
@@ -49,7 +49,7 @@ class ScanEventHandler:
             logger.exception("Unable to process ping scan data")
 
     def handle_tcp_scan_event(self, event: TCPScanEvent):
-        num_open_ports = sum((1 for status in event.ports.values() if status == PortStatus.OPEN))
+        num_open_ports = len(self._get_open_ports(event))
 
         if num_open_ports <= 0:
             return
@@ -60,6 +60,7 @@ class ScanEventHandler:
 
             self._update_nodes(target_machine, event)
             self._update_tcp_connections(source_node, target_machine, event)
+            self._update_network_services(target_machine, event)
         except (RetrievalError, StorageError, UnknownRecordError):
             logger.exception("Unable to process tcp scan data")
 
@@ -77,7 +78,12 @@ class ScanEventHandler:
 
     def _get_source_node(self, event: ScanEvent) -> Node:
         machine = self._get_source_machine(event)
-        return self._node_repository.get_node_by_machine_id(machine.id)
+        try:
+            node = self._node_repository.get_node_by_machine_id(machine.id)
+        except UnknownRecordError:
+            node = Node(machine_id=machine.id)
+            self._node_repository.upsert_node(node)
+        return node
 
     def _get_source_machine(self, event: ScanEvent) -> Machine:
         agent = self._agent_repository.get_agent_by_id(event.source)
@@ -88,6 +94,17 @@ class ScanEventHandler:
             machine.operating_system = event.os
             self._machine_repository.upsert_machine(machine)
 
+    def _update_network_services(self, target: Machine, event: TCPScanEvent):
+        network_services = {
+            SocketAddress(ip=event.target, port=port): NetworkService.UNKNOWN
+            for port in self._get_open_ports(event)
+        }
+        self._machine_repository.upsert_network_services(target.id, network_services)
+
+    @staticmethod
+    def _get_open_ports(event: TCPScanEvent) -> List[NetworkPort]:
+        return [port for port, status in event.ports.items() if status == PortStatus.OPEN]
+
     def _update_nodes(self, target_machine: Machine, event: ScanEvent):
         src_machine = self._get_source_machine(event)
 
@@ -97,7 +114,7 @@ class ScanEventHandler:
 
     def _update_tcp_connections(self, src_node: Node, target_machine: Machine, event: TCPScanEvent):
         tcp_connections = set()
-        open_ports = (port for port, status in event.ports.items() if status == PortStatus.OPEN)
+        open_ports = self._get_open_ports(event)
         for open_port in open_ports:
             socket_address = SocketAddress(ip=event.target, port=open_port)
             tcp_connections.add(socket_address)

@@ -6,6 +6,7 @@ import mongomock
 import pytest
 
 from common import OperatingSystem
+from common.types import NetworkService, SocketAddress
 from monkey_island.cc.models import Machine
 from monkey_island.cc.repository import (
     IMachineRepository,
@@ -15,6 +16,7 @@ from monkey_island.cc.repository import (
     StorageError,
     UnknownRecordError,
 )
+from monkey_island.cc.repository.utils import mongo_dot_encoder
 
 MACHINES = (
     Machine(
@@ -32,6 +34,10 @@ MACHINES = (
         operating_system=OperatingSystem.WINDOWS,
         operating_system_version="eXtra Problems",
         hostname="hal",
+        network_services={
+            SocketAddress(ip="192.168.1.11", port=80): NetworkService.UNKNOWN,
+            SocketAddress(ip="192.168.1.12", port=80): NetworkService.UNKNOWN,
+        },
     ),
     Machine(
         id=3,
@@ -40,6 +46,10 @@ MACHINES = (
         operating_system=OperatingSystem.WINDOWS,
         operating_system_version="Vista",
         hostname="smith",
+        network_services={
+            SocketAddress(ip="192.168.1.11", port=80): NetworkService.UNKNOWN,
+            SocketAddress(ip="192.168.1.11", port=22): NetworkService.UNKNOWN,
+        },
     ),
     Machine(
         id=4,
@@ -51,11 +61,24 @@ MACHINES = (
     ),
 )
 
+SERVICES_TO_ADD = {
+    SocketAddress(ip="192.168.1.11", port=80): NetworkService.UNKNOWN,
+    SocketAddress(ip="192.168.1.11", port=22): NetworkService.UNKNOWN,
+}
+
+EXPECTED_SERVICES_1 = EXPECTED_SERVICES_3 = SERVICES_TO_ADD
+EXPECTED_SERVICES_2 = {
+    **SERVICES_TO_ADD,
+    SocketAddress(ip="192.168.1.12", port=80): NetworkService.UNKNOWN,
+}
+
 
 @pytest.fixture
 def mongo_client() -> mongomock.MongoClient:
     client = mongomock.MongoClient()
-    client.monkey_island.machines.insert_many((m.dict(simplify=True) for m in MACHINES))
+    client.monkey_island.machines.insert_many(
+        (mongo_dot_encoder(m.dict(simplify=True)) for m in MACHINES)
+    )
     return client
 
 
@@ -144,21 +167,6 @@ def test_upsert_machine__storage_error_exception(error_raising_machine_repositor
 
     with pytest.raises(StorageError):
         error_raising_machine_repository.upsert_machine(machine)
-
-
-def test_upsert_machine__storage_error_update_failed(error_raising_mock_mongo_client):
-    mock_result = MagicMock()
-    mock_result.matched_count = 1
-    mock_result.modified_count = 0
-
-    error_raising_mock_mongo_client.monkey_island.machines.replace_one = MagicMock(
-        return_value=mock_result
-    )
-    machine_repository = MongoMachineRepository(error_raising_mock_mongo_client)
-
-    machine = MACHINES[0]
-    with pytest.raises(StorageError):
-        machine_repository.upsert_machine(machine)
 
 
 def test_upsert_machine__storage_error_insert_failed(error_raising_mock_mongo_client):
@@ -279,3 +287,27 @@ def test_usable_after_reset(machine_repository):
 def test_reset__removal_error(error_raising_machine_repository):
     with pytest.raises(RemovalError):
         error_raising_machine_repository.reset()
+
+
+@pytest.mark.parametrize(
+    "machine_id, expected_services",
+    [
+        (MACHINES[0].id, EXPECTED_SERVICES_1),
+        (MACHINES[1].id, EXPECTED_SERVICES_2),
+        (MACHINES[2].id, EXPECTED_SERVICES_3),
+    ],
+)
+def test_service_upsert(machine_id, expected_services, machine_repository):
+    machine_repository.upsert_network_services(machine_id, SERVICES_TO_ADD)
+    assert machine_repository.get_machine_by_id(machine_id).network_services == expected_services
+
+
+def test_service_upsert__machine_not_found(machine_repository):
+    with pytest.raises(UnknownRecordError):
+        machine_repository.upsert_network_services(machine_id=999, services=SERVICES_TO_ADD)
+
+
+def test_service_upsert__error_on_storage(machine_repository):
+    malformed_services = 3
+    with pytest.raises(StorageError):
+        machine_repository.upsert_network_services(MACHINES[0].id, malformed_services)
