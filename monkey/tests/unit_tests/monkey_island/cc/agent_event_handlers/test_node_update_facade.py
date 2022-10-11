@@ -121,3 +121,42 @@ def test_upsert_communication_from_event__no_target_ip(node_update_facade):
 
     with pytest.raises(TypeError):
         node_update_facade.upsert_communication_from_event(event, CommunicationType.SCANNED)
+
+
+def test_cache_reset__get_or_create_target_machine(node_update_facade, machine_repository):
+    original_target = node_update_facade.get_or_create_target_machine(TARGET_IP_ADDRESS)
+    original_target_machine_no_interfaces = TARGET_MACHINE.copy()
+    original_target_machine_no_interfaces.network_interfaces = []
+    machine_repository.upsert_machine(original_target_machine_no_interfaces)
+
+    node_update_facade.reset_cache()
+    new_target = node_update_facade.get_or_create_target_machine(TARGET_IP_ADDRESS)
+
+    assert original_target.id != new_target.id
+
+
+def test_cache_reset__get_machine_id_from_agent_id(
+    node_update_facade, agent_repository, machine_repository
+):
+    original_machine_id = node_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID)
+    new_machine_id = original_machine_id + 100
+    new_machine = Machine(
+        id=new_machine_id,
+        hardware_id=5,
+        network_interfaces=[IPv4Interface(SOURCE_IP_ADDRESS)],
+    )
+    machine_repository.upsert_machine(new_machine)
+    new_agent = Agent(
+        id=SOURCE_AGENT_ID,
+        machine_id=new_machine_id,
+        start_time=0,
+        parent_id=None,
+        cc_server=(SocketAddress(ip="10.10.10.10", port=5000)),
+    )
+
+    agent_repository.reset()
+    agent_repository.upsert_agent(new_agent)
+    node_update_facade.reset_cache()
+    new_machine_id = node_update_facade.get_machine_id_from_agent_id(SOURCE_AGENT_ID)
+
+    assert original_machine_id != new_machine_id

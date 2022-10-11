@@ -88,3 +88,7 @@ class NodeUpdateFacade:
         self._node_repository.upsert_communication(
             source_machine_id, target_machine.id, communication_type
         )
+
+    def reset_cache(self):
+        self._get_machine_id_by_ip.cache_clear()
+        self.get_machine_id_from_agent_id.cache_clear()
