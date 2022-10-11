@@ -5,7 +5,6 @@ from ipaddress import IPv4Interface
 from typing import Any, Callable, Collection, List, Optional, Sequence
 
 from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
-from common.event_queue import IAgentEventQueue
 from common.utils import Timer
 from infection_monkey.credential_repository import IPropagationCredentialsRepository
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
@@ -42,14 +41,12 @@ class AutomatedMaster(IMaster):
         control_channel: IControlChannel,
         local_network_interfaces: List[IPv4Interface],
         credentials_store: IPropagationCredentialsRepository,
-        agent_event_queue: IAgentEventQueue,
     ):
         self._current_depth = current_depth
         self._servers = servers
         self._puppet = puppet
         self._telemetry_messenger = telemetry_messenger
         self._control_channel = control_channel
-        self._agent_event_queue = agent_event_queue
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
 
