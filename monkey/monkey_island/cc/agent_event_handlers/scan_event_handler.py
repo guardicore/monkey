@@ -18,6 +18,11 @@ from .node_update_facade import NodeUpdateFacade
 logger = getLogger(__name__)
 
 
+# TODO: Split this up into separate TCP handler and Ping handler. When these were merged together,
+#       they were doing basically the same thing. Now they're not.
+#
+#       Pass a `NodeUpdateFacade` into the constructor instead of building one. Register
+#       `NodeUpdateFacade` with the DIContainer. Then simplify the unit tests.
 class ScanEventHandler:
     """
     Handles scan event and makes changes to Machine and Node states based on it
