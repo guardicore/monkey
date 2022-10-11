@@ -20,14 +20,14 @@ from monkey_island.cc.repository import IAgentEventRepository, ICredentialsRepos
 def setup_agent_event_handlers(container: DIContainer):
     agent_event_queue = container.resolve(IAgentEventQueue)
 
-    _subscribe_and_store_to_event_repository(container)
-    _subscribe_scan_events(container)
+    _subscribe_and_store_to_event_repository(container, agent_event_queue)
+    _subscribe_scan_events(container, agent_event_queue)
     _subscribe_exploitation_events(container, agent_event_queue)
 
 
-def _subscribe_and_store_to_event_repository(container: DIContainer):
-    agent_event_queue = container.resolve(IAgentEventQueue)
-
+def _subscribe_and_store_to_event_repository(
+    container: DIContainer, agent_event_queue: IAgentEventQueue
+):
     # TODO: Can't we just `container.resolve(save_event_to_event_repository)`?
     save_event_subscriber = save_event_to_event_repository(container.resolve(IAgentEventRepository))
     agent_event_queue.subscribe_all_events(save_event_subscriber)
@@ -39,8 +39,7 @@ def _subscribe_and_store_to_event_repository(container: DIContainer):
     agent_event_queue.subscribe_type(AgentShutdownEvent, update_agent_shutdown_status)
 
 
-def _subscribe_scan_events(container: DIContainer):
-    agent_event_queue = container.resolve(IAgentEventQueue)
+def _subscribe_scan_events(container: DIContainer, agent_event_queue: IAgentEventQueue):
     scan_event_handler = container.resolve(ScanEventHandler)
 
     agent_event_queue.subscribe_type(PingScanEvent, scan_event_handler.handle_ping_scan_event)
