@@ -85,9 +85,7 @@ def test_cleanup(monkeypatch):
     timestamp = 123.321
     monkeypatch.setattr("infection_monkey.master.automated_master.time.time", lambda: timestamp)
     mock_agent_event_queue = MagicMock()
-    expected_agent_shutdown_event = AgentShutdownEvent(
-        source=get_agent_id(), stop_time=timestamp, timestamp=timestamp
-    )
+    expected_agent_shutdown_event = AgentShutdownEvent(source=get_agent_id(), timestamp=timestamp)
 
     master = AutomatedMaster(
         None, [], None, None, None, MagicMock(), [], MagicMock(), mock_agent_event_queue
