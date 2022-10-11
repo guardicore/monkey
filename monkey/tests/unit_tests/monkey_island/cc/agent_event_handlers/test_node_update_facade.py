@@ -3,10 +3,10 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from tests.monkey_island import InMemoryMachineRepository
+from tests.monkey_island import InMemoryAgentRepository, InMemoryMachineRepository
 
 from common.agent_events import AbstractAgentEvent
-from common.types import AgentID, SocketAddress
+from common.types import SocketAddress
 from monkey_island.cc.agent_event_handlers.node_update_facade import NodeUpdateFacade
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
@@ -57,14 +57,9 @@ TEST_EVENT = TestEvent(source=SOURCE_AGENT_ID, target=TARGET_IP_ADDRESS, success
 
 @pytest.fixture
 def agent_repository() -> IAgentRepository:
-    def get_agent_by_id(agent_id: AgentID) -> Agent:
-        if agent_id == SOURCE_AGENT_ID:
-            return SOURCE_AGENT
+    agent_repository = InMemoryAgentRepository()
+    agent_repository.upsert_agent(SOURCE_AGENT)
 
-        raise UnknownRecordError()
-
-    agent_repository = MagicMock(spec=IAgentRepository)
-    agent_repository.get_agent_by_id = MagicMock(side_effect=get_agent_by_id)
     return agent_repository
 
 
