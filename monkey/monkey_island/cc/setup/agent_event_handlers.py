@@ -36,7 +36,9 @@ def _subscribe_and_store_to_event_repository(
         container.resolve(ICredentialsRepository)
     )
     agent_event_queue.subscribe_type(CredentialsStolenEvent, save_stolen_credentials_subscriber)
-    agent_event_queue.subscribe_type(AgentShutdownEvent, update_agent_shutdown_status)
+    agent_event_queue.subscribe_type(
+        AgentShutdownEvent, container.resolve(update_agent_shutdown_status)
+    )
 
 
 def _subscribe_scan_events(container: DIContainer, agent_event_queue: IAgentEventQueue):
