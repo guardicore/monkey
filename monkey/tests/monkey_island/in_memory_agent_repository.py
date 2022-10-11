@@ -26,10 +26,10 @@ class InMemoryAgentRepository(IAgentRepository):
         raise UnknownRecordError(f'Unknown ID "{agent_id}"')
 
     def get_running_agents(self):
-        pass
+        raise NotImplementedError
 
     def get_progenitor(self, _):
-        pass
+        raise NotImplementedError
 
     def reset(self):
-        pass
+        raise NotImplementedError
