@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
 import IslandHttpClient from '../../IslandHttpClient';
+import _ from 'lodash';
 
 const machinesEndpoint = '/api/machines';
 const nodesEndpoint = '/api/netmap/node';
@@ -35,40 +36,39 @@ const pageSize = 10;
 function ScannedServersComponent(props) {
 
   const [scannedMachines, setScannedMachines] = useState([]);
-  const [allNodes, setAllNodes] = useState([]);
-  const [allMachines, setAllMachines] = useState([]);
+  const [allNodes, setAllNodes] = useState({});
+  const [allMachines, setAllMachines] = useState({});
 
   useEffect(() => {
     IslandHttpClient.get(nodesEndpoint)
-      .then(res => setAllNodes(res.body))
+      .then(res => {
+        let nodes = res.body.reduce((prev, curr) => ({...prev, [curr.machine_id]: curr}), {});
+        setAllNodes(nodes);
+      })
     IslandHttpClient.get(machinesEndpoint)
-      .then(res => setAllMachines(res.body))
+      .then(res => {
+        let machines = res.body.reduce((prev, curr) => ({...prev, [curr.id]: curr}), {});
+        setAllMachines(machines);
+      })
   }, [])
 
-  function getScannedMachineIds(nodes) {
-    let machineIds = new Set();
-    for (let i = 0; i < nodes.length; i++) {
-      for (const [machineId, communications] of Object.entries(nodes[i].connections)) {
+  function getScannedMachines() {
+    let scannedMachines = new Set();
+    for (const node of Object.values(allNodes)) {
+      for (const [targetMachineId, communications] of Object.entries(node.connections)) {
         if (communications.includes(scanCommunicationType)) {
-          machineIds.add(parseInt(machineId));
+          scannedMachines.add(allMachines[targetMachineId]);
         }
       }
     }
-    return machineIds;
+    return Array.from(scannedMachines);
   }
 
   useEffect(() => {
-    if (allNodes !== [] && allMachines !== []) {
-      let scannedMachines = [];
-      let scannedIds = getScannedMachineIds(allNodes);
-      for (const scannedId of scannedIds) {
-        let scannedMachine = allMachines.filter(machine => machine.id === scannedId)[0];
-        if (scannedMachine) {
-          scannedMachines.push(scannedMachine);
-        }
-      }
-      setScannedMachines(scannedMachines);
+    if (_.isEmpty(allNodes) || _.isEmpty(allMachines)) {
+      return;
     }
+    setScannedMachines(getScannedMachines());
   }, [allNodes, allMachines])
 
   let defaultPageSize = props.data.length > pageSize ? pageSize : props.data.length;
