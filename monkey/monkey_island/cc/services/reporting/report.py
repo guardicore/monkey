@@ -362,7 +362,7 @@ class ReportService:
                             "hostname": machine.hostname,
                             "target": str(target_ip),
                             "services": {a: s for a, s in machine.network_services},
-                            "types": [ScanTypeEnum.from_event(s) for s in scan_list],
+                            "types": [ScanTypeEnum.from_event(s).value for s in scan_list],
                             "is_self": False,
                         }
                     )
