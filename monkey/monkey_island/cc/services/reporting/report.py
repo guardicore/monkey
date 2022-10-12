@@ -65,7 +65,7 @@ class ScanTypeEnum(Enum):
 
 
 def has_open_ports(event: TCPScanEvent):
-    return any(s == PortStatus.CLOSED for s in event.ports.values())
+    return any(s == PortStatus.OPEN for s in event.ports.values())
 
 
 class ReportService:
