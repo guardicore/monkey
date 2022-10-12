@@ -259,10 +259,9 @@ class ReportService:
         cross_segment_issues = []
 
         # Get IP addresses and hostname for each agent
-        # agents = cls._agent_repository.get_agents()
-        # agent_machines = (cls._machine_repository.get_machine_by_id(a.machine_id) for a in agents)
+        machine_dict = {m.id: m for m in cls._machine_repository.get_machines()}
         for agent in cls._agent_repository.get_agents():
-            machine = cls._machine_repository.get_machine_by_id(agent.machine_id)
+            machine = machine_dict[agent.machine_id]
 
             ip_in_src: Optional[ipaddress.IPv4Address] = None
             for iface in machine.network_interfaces:
