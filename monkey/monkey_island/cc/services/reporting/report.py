@@ -15,7 +15,6 @@ from common.agent_events import (
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
-from common.types import AgentID
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommunicationType, Machine, Monkey
 from monkey_island.cc.models.report import get_report, save_report
@@ -212,26 +211,14 @@ class ReportService:
         return [asdict(cls.process_exploit_event(e, password_restored)) for e in filtered_exploits]
 
     @classmethod
-    def get_monkey_subnets(cls, agent_id: AgentID) -> Sequence[ipaddress.IPv4Interface]:
-        if cls._agent_repository is None:
-            raise RuntimeError()
-        if cls._machine_repository is None:
-            raise RuntimeError()
-
-        agent = cls._agent_repository.get_agent_by_id(agent_id)
-        agent_machine = cls._machine_repository.get_machine_by_id(agent.machine_id)
-        return agent_machine.network_interfaces
-
-    @staticmethod
-    def get_island_cross_segment_issues():
+    def get_island_cross_segment_issues(cls):
         issues = []
         island_ips = get_my_ip_addresses_legacy()
-        for monkey in mongo.db.monkey.find(
-            {"tunnel": {"$exists": False}}, {"tunnel": 1, "guid": 1, "hostname": 1}
-        ):
+        island_machines = [m for m in cls._machine_repository.get_machines() if m.island]
+        for island_machine in island_machines:
             found_good_ip = False
-            monkey_subnets = ReportService.get_monkey_subnets(monkey["guid"])
-            for subnet in monkey_subnets:
+            island_subnets = island_machine.network_interfaces
+            for subnet in island_subnets:
                 for ip in island_ips:
                     if ipaddress.ip_address(str(ip)) in subnet:
                         found_good_ip = True
@@ -242,8 +229,8 @@ class ReportService:
                 issues.append(
                     {
                         "type": "island_cross_segment",
-                        "machine": monkey["hostname"],
-                        "networks": [str(subnet) for subnet in monkey_subnets],
+                        "machine": island_machine.hostname,
+                        "networks": [str(subnet) for subnet in island_subnets],
                         "server_networks": [
                             str(interface.network) for interface in get_network_interfaces()
                         ],
