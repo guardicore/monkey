@@ -219,10 +219,9 @@ class ReportService:
             found_good_ip = False
             island_subnets = island_machine.network_interfaces
             for subnet in island_subnets:
-                for ip in island_ips:
-                    if ipaddress.ip_address(str(ip)) in subnet:
-                        found_good_ip = True
-                        break
+                if str(subnet.ip) in island_ips:
+                    found_good_ip = True
+                    break
                 if found_good_ip:
                     break
             if not found_good_ip:
