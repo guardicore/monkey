@@ -41,8 +41,8 @@ class ReportPageComponent extends AuthComponent {
     }
   }
 
-  getReportFromServer(res) {
-    if (res['completed_steps']['run_monkey']) {
+  getReportFromServer(completed_steps_from_server) {
+    if (completed_steps_from_server['run_monkey']) {
       this.authFetch('/api/report/security')
         .then(res => res.json())
         .then(res => {
@@ -95,18 +95,32 @@ class ReportPageComponent extends AuthComponent {
   }
 
   updateMonkeysRunning = () => {
+    let is_any_monkey_alive = false;
+    this.authFetch('/api/agents')
+      .then(res => res.json())
+      .then(res => {
+        for (let idx in res) {
+          let agent = res[idx];
+          if (agent["stop_time"] === null) {
+            is_any_monkey_alive = true;
+            break;
+          }
+        }
+    });
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
-        this.setState(extractExecutionStatusFromServerResponse(res));
-        return res;
+        let completed_steps_from_server = res.completed_steps;
+        completed_steps_from_server["run_monkey"] = is_any_monkey_alive;
+        this.setState(extractExecutionStatusFromServerResponse(completed_steps_from_server));
+        return completed_steps_from_server;
       });
   };
 
   componentDidMount() {
     const ztReportRefreshInterval = setInterval(this.updateZeroTrustReportFromServer, 8000);
     this.setState({ztReportRefreshInterval: ztReportRefreshInterval});
-    this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
+    this.updateMonkeysRunning().then(completed_steps_from_server => this.getReportFromServer(completed_steps_from_server));
   }
 
   setSelectedSection = (key) => {

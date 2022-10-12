@@ -1,6 +1,6 @@
-export function extractExecutionStatusFromServerResponse(res) {
+export function extractExecutionStatusFromServerResponse(completed_steps_from_server) {
   return {
-    allMonkeysAreDead: (!res['completed_steps']['run_monkey']) || (res['completed_steps']['infection_done']),
-    runStarted: res['completed_steps']['run_monkey']
+    allMonkeysAreDead: (!completed_steps_from_server['run_monkey']) || (completed_steps_from_server['infection_done']),
+    runStarted: completed_steps_from_server['run_monkey']
   };
 }
