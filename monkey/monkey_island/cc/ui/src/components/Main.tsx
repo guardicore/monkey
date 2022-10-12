@@ -96,10 +96,27 @@ class AppComponent extends AuthComponent {
             if (this.state.islandMode === "unset") {
               return
             }
+
+            // check if any Agent is still running
+            let is_any_monkey_alive = false;
+            this.authFetch('/api/agents')
+              .then(res => res.json())
+              .then(res => {
+                for (let idx in res) {
+                  let agent = res[idx];
+                  if (agent["stop_time"] === null) {
+                    is_any_monkey_alive = true;
+                    break;
+                  }
+                }
+              });
+
             this.authFetch('/api')
               .then(res => res.json())
               .then(res => {
-                let completedSteps = CompletedSteps.buildFromResponse(res.completed_steps);
+                let completed_steps_from_server = res.completed_steps;
+                completed_steps_from_server["run_monkey"] = is_any_monkey_alive;
+                let completedSteps = CompletedSteps.buildFromResponse(completed_steps_from_server);
                 // This check is used to prevent unnecessary re-rendering
                 if (_.isEqual(this.state.completedSteps, completedSteps)) {
                   return;
