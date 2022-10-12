@@ -162,7 +162,7 @@ class InfectionMonkey:
         server, island_api_client = self._select_server(server_clients)
 
         if server:
-            logger.info(f"Successfully connected to the island via {server}")
+            logger.info(f"Using {server} to communicate with the Island")
         else:
             raise Exception(
                 "Failed to connect to the island via any known servers: "

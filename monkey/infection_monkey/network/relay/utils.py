@@ -65,6 +65,7 @@ def _check_if_island_server(
         client = island_api_client_factory.create_island_api_client()
         client.connect(server)
 
+        logger.debug(f"Successfully connected to the Island via {server}")
         return client
     except IslandAPIConnectionError as err:
         logger.error(f"Unable to connect to server/relay {server}: {err}")
