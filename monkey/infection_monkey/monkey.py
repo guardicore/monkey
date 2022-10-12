@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 from ipaddress import IPv4Interface
+from itertools import chain
 from pathlib import Path, WindowsPath
 from typing import List, Optional, Sequence, Tuple
 
@@ -162,7 +163,7 @@ class InfectionMonkey:
         server, island_api_client = self._select_server(server_clients)
 
         if server:
-            logger.info(f"Successfully connected to the island via {server}")
+            logger.info(f"Using {server} to communicate with the Island")
         else:
             raise Exception(
                 "Failed to connect to the island via any known servers: "
@@ -177,6 +178,15 @@ class InfectionMonkey:
 
         return server, island_api_client
 
+    def _select_server(
+        self, server_clients: IslandAPISearchResults
+    ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
+        for server in self._opts.servers:
+            if server_clients[server] is not None:
+                return server, server_clients[server]
+
+        return None, None
+
     def _register_agent(self):
         agent_registration_data = AgentRegistrationData(
             id=self._agent_id,
@@ -188,15 +198,6 @@ class InfectionMonkey:
             network_interfaces=get_network_interfaces(),
         )
         self._island_api_client.register_agent(agent_registration_data)
-
-    def _select_server(
-        self, server_clients: IslandAPISearchResults
-    ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
-        for server in self._opts.servers:
-            if server_clients[server] is not None:
-                return server, server_clients[server]
-
-        return None, None
 
     @staticmethod
     def _log_arguments(args):
@@ -295,9 +296,13 @@ class InfectionMonkey:
         )
 
     def _build_server_list(self, relay_port: int) -> Sequence[str]:
-        my_servers = set(map(str, self._opts.servers))
-        relay_servers = {f"{ip}:{relay_port}" for ip in get_my_ip_addresses()}
-        return list(my_servers.union(relay_servers))
+        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
+        known_servers = chain(map(str, self._opts.servers), my_relays)
+
+        # Dictionaries in Python 3.7 and later preserve key order. Sets do not preserve order.
+        ordered_servers = {s: None for s in known_servers}
+
+        return list(ordered_servers.keys())
 
     def _subscribe_events(
         self,
