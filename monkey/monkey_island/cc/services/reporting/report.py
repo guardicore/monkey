@@ -282,9 +282,9 @@ class ReportService:
             if ip_in_dst:
                 cross_segment_issues.append(
                     {
-                        "source": ip_in_src,
+                        "source": str(ip_in_src),
                         "hostname": machine.hostname,
-                        "target": ip_in_dst,
+                        "target": str(ip_in_dst),
                         "services": None,
                         "is_self": True,
                     }
@@ -332,9 +332,9 @@ class ReportService:
                 if cross_segment_ip is not None:
                     cross_segment_issues.append(
                         {
-                            "source": cross_segment_ip,
+                            "source": str(cross_segment_ip),
                             "hostname": machine.hostname,
-                            "target": target_ip,
+                            "target": str(target_ip),
                             "services": {a: s for a, s in machine.network_services},
                             "icmp": type(scan) is PingScanEvent,
                             "is_self": False,
