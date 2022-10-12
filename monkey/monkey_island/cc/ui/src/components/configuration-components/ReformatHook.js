@@ -32,7 +32,7 @@ export function reformatConfig(config, reverse = false) {
 }
 
 export function formatCredentialsForForm(credentials) {
-  let formattedCredentials = _.clone(defaultCredentials);
+  let formattedCredentials = _.cloneDeep(defaultCredentials);
   for (let i = 0; i < credentials.length; i++) {
     let identity = credentials[i]['identity'];
     if (identity !== null) {
