@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 from ipaddress import IPv4Interface
+from itertools import chain
 from pathlib import Path, WindowsPath
 from typing import List, Optional, Sequence, Tuple
 
@@ -295,9 +296,13 @@ class InfectionMonkey:
         )
 
     def _build_server_list(self, relay_port: int) -> Sequence[str]:
-        my_servers = set(map(str, self._opts.servers))
-        relay_servers = {f"{ip}:{relay_port}" for ip in get_my_ip_addresses()}
-        return list(my_servers.union(relay_servers))
+        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
+        known_servers = chain(map(str, self._opts.servers), my_relays)
+
+        # Dictionaries in Python 3.7 and later preserve key order. Sets do not preserve order.
+        ordered_servers = {s: None for s in known_servers}
+
+        return list(ordered_servers.keys())
 
     def _subscribe_events(
         self,
