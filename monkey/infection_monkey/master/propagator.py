@@ -17,7 +17,6 @@ from infection_monkey.network import NetworkAddress
 from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list
 from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-from infection_monkey.telemetry.scan_telem import ScanTelem
 from infection_monkey.utils.threading import create_daemon_thread
 
 from . import Exploiter, IPScanner, IPScanResults
@@ -135,8 +134,6 @@ class Propagator:
 
         if IPScanner.port_scan_found_open_port(scan_results.port_scan_data):
             self._hosts_to_exploit.put(victim_host)
-
-        self._telemetry_messenger.send_telemetry(ScanTelem(victim_host))
 
     @staticmethod
     def _process_ping_scan_results(victim_host: VictimHost, ping_scan_data: PingScanData):
