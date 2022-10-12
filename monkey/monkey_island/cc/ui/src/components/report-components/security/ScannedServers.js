@@ -15,7 +15,7 @@ function getMachineRepresentationString(machine) {
 function getMachineServices(machine) {
   let services = [];
   for (const [socketAddress, serviceName] of Object.entries(machine.network_services)) {
-    services.push(<div key="{socketAddress}">{socketAddress} - {serviceName}</div>);
+    services.push(<div key={socketAddress}>{socketAddress} - {serviceName}</div>);
   }
   return services
 }
