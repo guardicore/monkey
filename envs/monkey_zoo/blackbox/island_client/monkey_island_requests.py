@@ -1,8 +1,11 @@
 import functools
 import logging
+import time
 from typing import Dict
 
+import jwt
 import requests
+from egg_timer import EggTimer
 
 ISLAND_USERNAME = "test"
 ISLAND_PASSWORD = "test"
@@ -21,6 +24,7 @@ class InvalidRegistrationCredentialsError(Exception):
 class MonkeyIslandRequests(object):
     def __init__(self, server_address):
         self.addr = "https://{IP}/".format(IP=server_address)
+        self.refresh_token_timer = EggTimer()
         self.token = self.try_get_jwt_from_server()
 
     def try_get_jwt_from_server(self):
@@ -38,6 +42,9 @@ class MonkeyIslandRequests(object):
             assert False
 
     def get_jwt_from_server(self):
+        if not self.refresh_token_timer.is_expired():
+            return self.token
+
         resp = requests.post(  # noqa: DUO123
             self.addr + "api/authenticate",
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
@@ -45,7 +52,14 @@ class MonkeyIslandRequests(object):
         )
         if resp.status_code == 401:
             raise AuthenticationFailedError
-        return resp.json()["access_token"]
+
+        token = resp.json()["access_token"]
+        token_expire_time = jwt.decode(
+            token, algorithms="HS256", options={"verify_signature": False}
+        )["exp"]
+        self.refresh_token_timer.set((token_expire_time - time.time()) * 0.8)
+
+        return token
 
     def try_set_island_to_credentials(self):
         resp = requests.post(  # noqa: DUO123
