@@ -47,11 +47,23 @@ export function getCrossSegmentMultiHostMessage(issue) {
       IP {issue['source']} ({issue['hostname']}) was able to communicate with
       IP {issue['target']} using:
       <ul>
-        <li key={issue['type']}>{issue['type']}</li>
+        {getScanTypeListItems(issue)}
         {getCrossSegmentServiceListItems(issue)}
       </ul>
     </li>
   );
+}
+
+export function getScanTypeListItems(issue) {
+  let scan_type_list_items = [];
+
+  for (const [type] of Object.entries(issue['types'])) {
+    scan_type_list_items.push(
+      <li key={type}>{type}</li>
+    );
+  }
+
+  return scan_type_list_items;
 }
 
 export function getCrossSegmentServiceListItems(issue) {

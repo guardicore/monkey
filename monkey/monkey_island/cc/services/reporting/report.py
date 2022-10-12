@@ -349,9 +349,9 @@ class ReportService:
                 machine = machines_dict[agent.machine_id]
                 machine_events[machine][target_ip].append(scan)
 
-        for machine, scan_dict in machine_events:
+        for machine, scan_dict in machine_events.items():
             machine_ips = [iface.ip for iface in machine.network_interfaces]
-            for target_ip, scan_list in scan_dict:
+            for target_ip, scan_list in scan_dict.items():
                 cross_segment_ip = get_ip_in_src_and_not_in_dst(
                     machine_ips, source_subnet_range, target_subnet_range
                 )
