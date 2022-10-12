@@ -27,7 +27,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/agent-signals` endpoint. #2261
 - `/api/agent-logs/<uuid:agent_id>` endpoint. #2274
 - `/api/machines` endpoint. #2362
-- status parameter to `/api/node` endpoint. #2362
 - GET method to `/api/agent-events`. #2405
 
 ### Changed
