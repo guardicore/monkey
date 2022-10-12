@@ -115,6 +115,7 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
         self._agent_id = get_agent_id()
 
+        self._agent_event_forwarder = None
         self._agent_event_queue = self._setup_agent_event_queue()
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
@@ -309,15 +310,16 @@ class InfectionMonkey:
         propagation_credentials_repository: IPropagationCredentialsRepository,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
+        self._agent_event_forwarder = AgentEventForwarder(
+            self._island_api_client, agent_event_serializer_registry
+        )
         self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
                 propagation_credentials_repository
             ),
         )
-        self._agent_event_queue.subscribe_all_events(
-            AgentEventForwarder(self._island_api_client, agent_event_serializer_registry).send_event
-        )
+        self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
         self._agent_event_queue.subscribe_type(
             PropagationEvent, notify_relay_on_propagation(self._relay)
         )
@@ -476,6 +478,7 @@ class InfectionMonkey:
                 is_done=True, version=get_version()
             ).send()  # Signal the server (before closing the tunnel)
 
+            self._agent_event_forwarder.flush()
             self._close_tunnel()
         except Exception as e:
             logger.error(f"An error occurred while cleaning up the monkey agent: {e}")
