@@ -405,7 +405,9 @@ class ReportService:
     def get_cross_segment_issues(cls):
         ping_scans = cls._agent_event_repository.get_events_by_type(PingScanEvent)
         tcp_scans = cls._agent_event_repository.get_events_by_type(TCPScanEvent)
-        scans = [s for s in chain(ping_scans, tcp_scans)]
+        successful_ping_scans = (s for s in ping_scans if s.response_received)
+        successful_tcp_scans = (s for s in tcp_scans if s.ports)
+        scans = [s for s in chain(successful_ping_scans, successful_tcp_scans)]
 
         cross_segment_issues = []
 
