@@ -57,9 +57,9 @@ export function getCrossSegmentMultiHostMessage(issue) {
 export function getScanTypeListItems(issue) {
   let scan_type_list_items = [];
 
-  for (const [type] of Object.entries(issue['types'])) {
+  for (const scan_type of issue['types']) {
     scan_type_list_items.push(
-      <li key={type}>{type}</li>
+      <li key={scan_type}>{scan_type}</li>
     );
   }
 
