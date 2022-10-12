@@ -10,7 +10,6 @@ from common.agent_configuration.agent_sub_configurations import (
 from common.agent_events import (
     ExploitationEvent,
     PasswordRestorationEvent,
-    PingScanEvent,
     PropagationEvent,
     TCPScanEvent,
 )
@@ -24,10 +23,10 @@ from common.tags import (
     T1222_ATTACK_TECHNIQUE_TAG,
     T1570_ATTACK_TECHNIQUE_TAG,
 )
-from common.types import NetworkPort, NetworkService
+from common.types import NetworkPort
 from infection_monkey.exploit.HostExploiter import HostExploiter
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from monkey_island.cc.models import Machine, Node, Report
+from monkey_island.cc.models import CommunicationType, Machine, Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -43,7 +42,6 @@ from monkey_island.cc.repository.i_simulation_repository import ISimulationRepos
 from monkey_island.cc.repository.ICredentials import ICredentialsRepository
 from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
-from monkey_island.cc.services import AgentSignalsService
 
 NetworkPort.ge  # unused vairable (monkey/common/types.py:28)
 NetworkPort.le  # unused variable (monkey/common/types.py:29)
@@ -356,15 +354,7 @@ ScanTargetConfiguration.inaccessible_subnets_valid
 ScanTargetConfiguration.subnets_valid
 
 # CommunicationType
-CommunicationType
-SCANNED
-EXPLOITED
-CC
-CC_TUNNEL
+CommunicationType.EXPLOITED
 
-# TODO remove when 2267 is done
-NetworkServiceNameEnum.UNKNOWN
-Machine.network_services
 Machine.config.json_dumps
 Machine._socketaddress_from_string
-Node.tcp_connections

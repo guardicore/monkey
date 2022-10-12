@@ -69,6 +69,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   connection times, unlimited hops, and a more resilient way for agents to call
   home. #2216, #1583
 - "/api/monkey-control/stop-all-agents" to "/api/agent-signals/terminate-all-agents". #2261
+- Format of scanned machines table in the security report. #2267
 - "Local network scan" option to "Scan Agent's networks". #2299
 
 ### Removed
