@@ -385,7 +385,7 @@ class ReportService:
 
         # For now the feature is limited to 1 group.
         agent_configuration = cls._agent_configuration_repository.get_configuration()
-        subnet_groups = agent_configuration.propagation.network_scan.targets.inaccessible_subnets
+        subnet_groups = [agent_configuration.propagation.network_scan.targets.inaccessible_subnets]
 
         for subnet_group in subnet_groups:
             cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(
