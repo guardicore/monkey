@@ -107,7 +107,7 @@ class ReportPageComponent extends AuthComponent {
       .then(res => res.json())
       .then(res => {
         let completed_steps_from_server = res.completed_steps;
-        completed_steps_from_server["run_monkey"] = any_agent_exists;
+        completed_steps_from_server['run_monkey'] = any_agent_exists;
         this.setState(extractExecutionStatusFromServerResponse(completed_steps_from_server));
         return completed_steps_from_server;
       });
