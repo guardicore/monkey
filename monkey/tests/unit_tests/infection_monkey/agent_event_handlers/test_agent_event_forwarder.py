@@ -50,3 +50,15 @@ def test_send_remaining_events(event_sender, mock_island_api_client):
     event_sender.add_event_to_queue({})
     event_sender.stop()
     assert mock_island_api_client.send_events.call_count == 2
+
+
+def test_flush(event_sender, mock_island_api_client):
+    event_sender.start()
+
+    for _ in range(5):
+        event_sender.add_event_to_queue({})
+
+    event_sender.flush()
+    assert mock_island_api_client.send_events.call_count == 1
+
+    event_sender.stop()
