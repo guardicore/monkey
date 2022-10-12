@@ -33,12 +33,23 @@ class AgentEventForwarder:
         self._batching_agent_event_forwarder.stop()
 
     def send_event(self, event: AbstractAgentEvent):
+        """
+        Send an event to the Island
+
+        :param event: An event to be sent to the Island
+        """
         self._batching_agent_event_forwarder.add_event_to_queue(event)
         logger.debug(
             f"Adding event of type {type(event).__name__} to the queue to send to the Island"
         )
 
     def flush(self):
+        """
+        Forward all events to the Island
+
+        When this method returns, all events that were published prior to the method call are
+        guaranteed to have been sent to the Island.
+        """
         self._batching_agent_event_forwarder.flush()
 
 
