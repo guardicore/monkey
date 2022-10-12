@@ -7,7 +7,7 @@ from dataclasses import asdict
 from enum import Enum
 from ipaddress import IPv4Address
 from itertools import chain, product
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Union
 
 from common.agent_events import (
     AbstractAgentEvent,
@@ -283,6 +283,9 @@ class ReportService:
 
         # Get IP addresses and hostname for each agent
         machine_dict = {m.id: m for m in cls._machine_repository.get_machines()}
+        issues_dict: Dict[Machine, Dict[IPv4Address, Set[IPv4Address]]] = defaultdict(
+            lambda: defaultdict(set)
+        )
         for agent in cls._agent_repository.get_agents():
             machine = machine_dict[agent.machine_id]
 
@@ -302,15 +305,20 @@ class ReportService:
                     break
 
             if ip_in_dst:
-                cross_segment_issues.append(
-                    {
-                        "source": str(ip_in_src),
-                        "hostname": machine.hostname,
-                        "target": str(ip_in_dst),
-                        "services": None,
-                        "is_self": True,
-                    }
-                )
+                issues_dict[machine][ip_in_src].add(ip_in_dst)
+
+        for machine, src_dict in issues_dict.items():
+            for src_ip, target_ips in src_dict.items():
+                for target_ip in sorted(target_ips):
+                    cross_segment_issues.append(
+                        {
+                            "source": str(src_ip),
+                            "hostname": machine.hostname,
+                            "target": str(target_ip),
+                            "services": None,
+                            "is_self": True,
+                        }
+                    )
 
         return cross_segment_issues
 
