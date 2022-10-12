@@ -177,6 +177,15 @@ class InfectionMonkey:
 
         return server, island_api_client
 
+    def _select_server(
+        self, server_clients: IslandAPISearchResults
+    ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
+        for server in self._opts.servers:
+            if server_clients[server] is not None:
+                return server, server_clients[server]
+
+        return None, None
+
     def _register_agent(self):
         agent_registration_data = AgentRegistrationData(
             id=self._agent_id,
@@ -188,15 +197,6 @@ class InfectionMonkey:
             network_interfaces=get_network_interfaces(),
         )
         self._island_api_client.register_agent(agent_registration_data)
-
-    def _select_server(
-        self, server_clients: IslandAPISearchResults
-    ) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
-        for server in self._opts.servers:
-            if server_clients[server] is not None:
-                return server, server_clients[server]
-
-        return None, None
 
     @staticmethod
     def _log_arguments(args):
