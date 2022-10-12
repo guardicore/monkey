@@ -46,6 +46,8 @@ from .issue_processing.exploit_processing.exploiter_report_info import Exploiter
 
 logger = logging.getLogger(__name__)
 
+ScanEvent = Union[PingScanEvent, TCPScanEvent]
+
 
 class ScanTypeEnum(Enum):
     ICMP = "ICMP"
@@ -337,12 +339,21 @@ class ReportService:
 
         cross_segment_issues = []
 
+        agents_dict = {a.id: a for a in cls._agent_repository.get_agents()}
+        machines_dict = {m.id: m for m in cls._machine_repository.get_machines()}
+        machine_events: Dict[Machine, Dict[ipaddress.IPv4Address, List[ScanEvent]]] = defaultdict(
+            lambda: defaultdict(list)
+        )
         for scan in scans:
             target_ip = scan.target
             if target_subnet_range.is_in_range(str(target_ip)):
-                agent = cls._agent_repository.get_agent_by_id(scan.source)
-                machine = cls._machine_repository.get_machine_by_id(agent.machine_id)
+                agent = agents_dict[scan.source]
+                machine = machines_dict[agent.machine_id]
+                machine_events[machine][target_ip].append(scan)
+
+        for machine, scan_dict in machine_events:
                 machine_ips = [iface.ip for iface in machine.network_interfaces]
+            for target_ip, scan_list in scan_dict:
                 cross_segment_ip = get_ip_in_src_and_not_in_dst(
                     machine_ips, source_subnet_range, target_subnet_range
                 )
@@ -353,7 +364,7 @@ class ReportService:
                             "hostname": machine.hostname,
                             "target": str(target_ip),
                             "services": {a: s for a, s in machine.network_services},
-                            "icmp": type(scan) is PingScanEvent,
+                            "types": [ScanTypeEnum.from_event(s) for s in scan_list],
                             "is_self": False,
                         }
                     )
