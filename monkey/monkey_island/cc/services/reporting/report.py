@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import functools
-import ipaddress
 import logging
 from collections import defaultdict
 from dataclasses import asdict
 from enum import Enum
+from ipaddress import IPv4Address
 from itertools import chain, product
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 
@@ -184,9 +184,7 @@ class ReportService:
 
     @classmethod
     def process_exploit_event(
-        cls,
-        exploitation_event: ExploitationEvent,
-        password_restored: Dict[ipaddress.IPv4Address, bool],
+        cls, exploitation_event: ExploitationEvent, password_restored: Dict[IPv4Address, bool]
     ) -> ExploiterReportInfo:
         if not cls._machine_repository:
             raise RuntimeError("Machine repository does not exist")
@@ -283,7 +281,7 @@ class ReportService:
         for agent in cls._agent_repository.get_agents():
             machine = machine_dict[agent.machine_id]
 
-            ip_in_src: Optional[ipaddress.IPv4Address] = None
+            ip_in_src: Optional[IPv4Address] = None
             for iface in machine.network_interfaces:
                 if source_subnet_range.is_in_range(str(iface.ip)):
                     ip_in_src = iface.ip
@@ -292,7 +290,7 @@ class ReportService:
             if not ip_in_src:
                 continue
 
-            ip_in_dst = None
+            ip_in_dst: Optional[IPv4Address] = None
             for iface in machine.network_interfaces:
                 if target_subnet_range.is_in_range(str(iface.ip)):
                     ip_in_dst = iface.ip
@@ -341,7 +339,7 @@ class ReportService:
 
         agents_dict = {a.id: a for a in cls._agent_repository.get_agents()}
         machines_dict = {m.id: m for m in cls._machine_repository.get_machines()}
-        machine_events: Dict[Machine, Dict[ipaddress.IPv4Address, List[ScanEvent]]] = defaultdict(
+        machine_events: Dict[Machine, Dict[IPv4Address, List[ScanEvent]]] = defaultdict(
             lambda: defaultdict(list)
         )
         for scan in scans:
@@ -352,7 +350,7 @@ class ReportService:
                 machine_events[machine][target_ip].append(scan)
 
         for machine, scan_dict in machine_events:
-                machine_ips = [iface.ip for iface in machine.network_interfaces]
+            machine_ips = [iface.ip for iface in machine.network_interfaces]
             for target_ip, scan_list in scan_dict:
                 cross_segment_ip = get_ip_in_src_and_not_in_dst(
                     machine_ips, source_subnet_range, target_subnet_range
