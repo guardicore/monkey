@@ -95,23 +95,19 @@ class ReportPageComponent extends AuthComponent {
   }
 
   updateMonkeysRunning = () => {
-    let is_any_monkey_alive = false;
+    let any_agent_exists = false;
     this.authFetch('/api/agents')
       .then(res => res.json())
       .then(res => {
-        for (let idx in res) {
-          let agent = res[idx];
-          if (agent["stop_time"] === null) {
-            is_any_monkey_alive = true;
-            break;
-          }
+        if (res.length > 0) {
+          any_agent_exists = true;
         }
     });
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
         let completed_steps_from_server = res.completed_steps;
-        completed_steps_from_server["run_monkey"] = is_any_monkey_alive;
+        completed_steps_from_server["run_monkey"] = any_agent_exists;
         this.setState(extractExecutionStatusFromServerResponse(completed_steps_from_server));
         return completed_steps_from_server;
       });
