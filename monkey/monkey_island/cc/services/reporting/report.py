@@ -1,12 +1,16 @@
+from __future__ import annotations
+
 import functools
 import ipaddress
 import logging
 from collections import defaultdict
 from dataclasses import asdict
+from enum import Enum
 from itertools import chain, product
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Union
 
 from common.agent_events import (
+    AbstractAgentEvent,
     ExploitationEvent,
     PasswordRestorationEvent,
     PingScanEvent,
@@ -41,6 +45,20 @@ from .issue_processing.exploit_processing.exploiter_descriptor_enum import Explo
 from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
+
+
+class ScanTypeEnum(Enum):
+    ICMP = "ICMP"
+    TCP = "TCP"
+    UNKNOWN = "Unknown"
+
+    @staticmethod
+    def from_event(event: AbstractAgentEvent) -> ScanTypeEnum:
+        if type(event) is PingScanEvent:
+            return ScanTypeEnum.ICMP
+        if type(event) is TCPScanEvent:
+            return ScanTypeEnum.TCP
+        return ScanTypeEnum.UNKNOWN
 
 
 class ReportService:
