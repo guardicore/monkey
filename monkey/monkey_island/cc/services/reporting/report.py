@@ -19,6 +19,7 @@ from common.agent_events import (
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
+from common.types import PortStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommunicationType, Machine, Monkey
 from monkey_island.cc.models.report import get_report, save_report
@@ -61,6 +62,10 @@ class ScanTypeEnum(Enum):
         if type(event) is TCPScanEvent:
             return ScanTypeEnum.TCP
         return ScanTypeEnum.UNKNOWN
+
+
+def has_open_ports(event: TCPScanEvent):
+    return any(s == PortStatus.CLOSED for s in event.ports.values())
 
 
 class ReportService:
@@ -406,7 +411,7 @@ class ReportService:
         ping_scans = cls._agent_event_repository.get_events_by_type(PingScanEvent)
         tcp_scans = cls._agent_event_repository.get_events_by_type(TCPScanEvent)
         successful_ping_scans = (s for s in ping_scans if s.response_received)
-        successful_tcp_scans = (s for s in tcp_scans if s.ports)
+        successful_tcp_scans = (s for s in tcp_scans if has_open_ports(s))
         scans = [s for s in chain(successful_ping_scans, successful_tcp_scans)]
 
         cross_segment_issues = []
