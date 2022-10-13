@@ -21,6 +21,7 @@ from monkey_island.cc.resources import (
     IPAddresses,
     IslandLog,
     Machines,
+    Nodes,
     PBAFileDownload,
     PBAFileUpload,
     PropagationCredentials,
@@ -197,6 +198,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(PropagationCredentials)
     api.add_resource(RemoteRun)
     api.add_resource(Version)
+
+    api.add_resource(Nodes)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
