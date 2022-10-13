@@ -24,6 +24,6 @@ function didAllAgentsShutdown() {
 function _getAllAgents() {
     return IslandHttpClient.get('/api/agents')
     .then(res => {
-        return res.json()
+        return res.json();
     });
 }
