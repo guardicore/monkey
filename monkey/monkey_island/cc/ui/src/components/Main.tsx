@@ -28,7 +28,7 @@ import IslandHttpClient from "./IslandHttpClient";
 import _ from "lodash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-import doesAnyAgentExist from './utils/ServerUtils.js'
+import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils.js'
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -99,12 +99,14 @@ class AppComponent extends AuthComponent {
 
             // check if any Agent was ever run
             let any_agent_exists = doesAnyAgentExist();
+            let all_agents_shutdown = didAllAgentsShutdown();
 
             this.authFetch('/api')
               .then(res => res.json())
               .then(res => {
                 let completed_steps_from_server = res.completed_steps;
                 completed_steps_from_server["run_monkey"] = any_agent_exists;
+                completed_steps_from_server["infection_done"] = all_agents_shutdown;
                 let completedSteps = CompletedSteps.buildFromResponse(completed_steps_from_server);
                 // This check is used to prevent unnecessary re-rendering
                 if (_.isEqual(this.state.completedSteps, completedSteps)) {

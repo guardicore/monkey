@@ -1,6 +1,6 @@
 import IslandHttpClient from "../IslandHttpClient";
 
-function doesAnyAgentExist() {
+export function doesAnyAgentExist() {
     let any_agent_exists = false;
     all_agents = _getAllAgents();
     if (all_agents.length > 0) {
@@ -9,7 +9,7 @@ function doesAnyAgentExist() {
     return any_agent_exists;
 }
 
-function didAllAgentsShutdown() {
+export function didAllAgentsShutdown() {
     let all_agents_shutdown = true;
     all_agents = _getAllAgents();
     for (idx in all_agents) {
