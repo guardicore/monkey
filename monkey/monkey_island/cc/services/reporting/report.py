@@ -443,15 +443,22 @@ class ReportService:
         generated_report = mongo.db.report.find_one({})
         return generated_report is not None
 
-    @staticmethod
-    def generate_report():
+    @classmethod
+    def generate_report(cls):
+        if cls._agent_event_repository is None:
+            return RuntimeError("Agent event repository does not exist")
+        if cls._machine_repository is None:
+            return RuntimeError("Machine repository does not exist")
+
         issues = ReportService.get_issues()
         issue_set = ReportService.get_issue_set(issues)
         cross_segment_issues = ReportService.get_cross_segment_issues()
         monkey_latest_modify_time = Monkey.get_latest_modifytime()
 
         scanned_nodes = ReportService.get_scanned()
-        exploited_cnt = len(get_monkey_exploited())
+        exploited_cnt = len(
+            get_monkey_exploited(cls._agent_event_repository, cls._machine_repository)
+        )
         report = {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
