@@ -15,7 +15,6 @@ from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, Port
 from infection_monkey.master import IPScanResults, Propagator
 from infection_monkey.model import VictimHost, VictimHostFactory
 from infection_monkey.network import NetworkAddress
-from infection_monkey.telemetry.exploit_telem import ExploitTelem
 
 
 @pytest.fixture
@@ -213,43 +212,6 @@ class MockExploiter:
                     host,
                     ExploiterResultData(True, True, False, os_linux, {}, {}, None),
                 )
-
-
-def test_exploiter_result_processing(
-    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
-):
-    p = Propagator(
-        telemetry_messenger_spy, mock_ip_scanner, MockExploiter(), mock_victim_host_factory, []
-    )
-
-    targets = ScanTargetConfiguration(
-        blocked_ips=[],
-        inaccessible_subnets=[],
-        scan_my_networks=False,
-        subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
-    )
-    propagation_config = get_propagation_config(default_agent_configuration, targets)
-    p.propagate(propagation_config, 1, SERVERS, Event())
-
-    exploit_telems = [t for t in telemetry_messenger_spy.telemetries if isinstance(t, ExploitTelem)]
-    assert len(exploit_telems) == 4
-
-    for t in exploit_telems:
-        data = t.get_data()
-        ip = data["machine"]["ip_addr"]
-
-        assert ip.endswith(".1") or ip.endswith(".3")
-
-        if ip.endswith(".1"):
-            if data["exploiter"].startswith("PowerShell"):
-                assert data["propagation_result"]
-            else:
-                assert not data["propagation_result"]
-        elif ip.endswith(".3"):
-            if data["exploiter"].startswith("PowerShell"):
-                assert not data["propagation_result"]
-            else:
-                assert data["propagation_result"]
 
 
 def test_scan_target_generation(

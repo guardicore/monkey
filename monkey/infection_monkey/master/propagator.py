@@ -15,7 +15,6 @@ from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, Port
 from infection_monkey.model import VictimHost, VictimHostFactory
 from infection_monkey.network import NetworkAddress
 from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list
-from infection_monkey.telemetry.exploit_telem import ExploitTelem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.threading import create_daemon_thread
 
@@ -208,5 +207,3 @@ class Propagator:
                 f"Failed to exploit or propagate to {host} using {exploiter_name}: "
                 f"{result.error_message}"
             )
-
-        self._telemetry_messenger.send_telemetry(ExploitTelem(exploiter_name, host, result))
