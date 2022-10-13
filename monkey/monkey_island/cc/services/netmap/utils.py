@@ -11,5 +11,5 @@ def fixup_group_and_os(formatted_node: Dict[str, Any], machine: Machine) -> Dict
             "unknown", machine.operating_system.value
         )
     if "unknown" in formatted_node["os"]:
-        formatted_node["os"] = formatted_node["os"] = machine.operating_system.value
+        formatted_node["os"] = machine.operating_system.value
     return formatted_node
