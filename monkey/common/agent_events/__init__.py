@@ -1,4 +1,5 @@
 from .abstract_agent_event import AbstractAgentEvent
+from .agent_event_registry import AgentEventRegistry
 from .credentials_stolen_events import CredentialsStolenEvent
 from .ping_scan_event import PingScanEvent
 from .tcp_scan_event import TCPScanEvent
