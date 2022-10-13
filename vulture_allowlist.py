@@ -26,7 +26,7 @@ from common.tags import (
 from common.types import NetworkPort
 from infection_monkey.exploit.HostExploiter import HostExploiter
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from monkey_island.cc.models import CommunicationType, Machine, Report
+from monkey_island.cc.models import CommunicationType, Machine, Monkey, Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -43,6 +43,7 @@ from monkey_island.cc.repository.ICredentials import ICredentialsRepository
 from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
 from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
 
+Monkey.guid  # (monkey_island.cc.models.monkey.py)
 NetworkPort.ge  # unused vairable (monkey/common/types.py:28)
 NetworkPort.le  # unused variable (monkey/common/types.py:29)
 fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
