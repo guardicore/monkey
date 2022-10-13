@@ -106,7 +106,7 @@ class AppComponent extends AuthComponent {
               .then(res => {
                 let completed_steps_from_server = res.completed_steps;
                 completed_steps_from_server["run_monkey"] = any_agent_exists;
-                completed_steps_from_server["infection_done"] = all_agents_shutdown;
+                completed_steps_from_server["infection_done"] = any_agent_exists && all_agents_shutdown;
                 let completedSteps = CompletedSteps.buildFromResponse(completed_steps_from_server);
                 // This check is used to prevent unnecessary re-rendering
                 if (_.isEqual(this.state.completedSteps, completedSteps)) {
