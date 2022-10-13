@@ -47,7 +47,6 @@ class Monkey(Document):
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
     parent = ListField(ListField(DynamicField()))
-    critical_services = ListField(StringField())
     pba_results = ListField()
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
@@ -93,14 +92,6 @@ class Monkey(Document):
                 # Trying to dereference unknown document - the monkey is MIA.
                 monkey_is_dead = True
         return monkey_is_dead
-
-    def get_os(self):
-        os = "unknown"
-        if self.description.lower().find("linux") != -1:
-            os = "linux"
-        elif self.description.lower().find("windows") != -1:
-            os = "windows"
-        return os
 
     @ring.lru()
     @staticmethod

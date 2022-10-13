@@ -7,7 +7,6 @@ import { edgeGroupToColor, getOptions } from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/security/StolenPasswords';
 import { Line } from 'rc-progress';
 import AuthComponent from '../AuthComponent';
-import StrongUsers from 'components/report-components/security/StrongUsers';
 import ReportHeader, { ReportTypes } from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
@@ -459,13 +458,6 @@ class ReportPageComponent extends AuthComponent {
   generateReportRecommendationsSection() {
     return (
       <div id='recommendations'>
-        {/* Checks if there are any domain issues. If there are more then one: render the title. Otherwise,
-         * don't render it (since the issues themselves will be empty. */}
-        {Object.keys(this.state.report.recommendations.domain_issues).length !== 0 ?
-          <h3>Domain related recommendations</h3> : null}
-        <div>
-          {this.generateIssues(this.state.report.recommendations.domain_issues)}
-        </div>
         {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
          * don't render it (since the issues themselves will be empty. */}
         {Object.keys(this.state.report.recommendations.issues).length !== 0 ?
@@ -541,9 +533,6 @@ class ReportPageComponent extends AuthComponent {
             data={this.state.stolenCredentials}
             format={true}
           />
-        </div>
-        <div>
-          <StrongUsers data={this.state.report.glance.strong_users} />
         </div>
       </div>
     );
