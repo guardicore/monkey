@@ -109,7 +109,8 @@ class ReportPageComponent extends AuthComponent {
   componentDidMount() {
     const ztReportRefreshInterval = setInterval(this.updateZeroTrustReportFromServer, 8000);
     this.setState({ztReportRefreshInterval: ztReportRefreshInterval});
-    this.updateMonkeysRunning().then(any_agent_exists => this.getReportFromServer(any_agent_exists));
+    let any_agent_exists = this.updateMonkeysRunning();
+    this.getReportFromServer(any_agent_exists);
   }
 
   setSelectedSection = (key) => {
