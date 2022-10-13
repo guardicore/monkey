@@ -157,46 +157,6 @@ def get_propagation_config(
     return propagation_config
 
 
-def test_scan_result_processing(
-    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
-):
-    p = Propagator(
-        telemetry_messenger_spy, mock_ip_scanner, StubExploiter(), mock_victim_host_factory, []
-    )
-    targets = ScanTargetConfiguration(
-        blocked_ips=[],
-        inaccessible_subnets=[],
-        scan_my_networks=False,
-        subnets=["10.0.0.1", "10.0.0.2", "10.0.0.3"],
-    )
-    propagation_config = get_propagation_config(default_agent_configuration, targets)
-    p.propagate(propagation_config, 1, SERVERS, Event())
-
-    assert len(telemetry_messenger_spy.telemetries) == 3
-
-    for t in telemetry_messenger_spy.telemetries:
-        data = t.get_data()
-        ip = data["machine"]["ip_addr"]
-
-        if ip.endswith(".1"):
-            assert data["service_count"] == 2
-            assert data["machine"]["os"]["type"] == "windows"
-            assert data["machine"]["os"]["version"] == "vista"
-            assert data["machine"]["services"] == dot_1_services
-            assert data["machine"]["icmp"] is True
-        elif ip.endswith(".3"):
-            assert data["service_count"] == 3
-            assert data["machine"]["os"]["type"] == "linux"
-            assert data["machine"]["os"]["version"] == "ubuntu"
-            assert data["machine"]["services"] == dot_3_services
-            assert data["machine"]["icmp"] is True
-        else:
-            assert data["service_count"] == 0
-            assert data["machine"]["os"] == {}
-            assert data["machine"]["services"] == {}
-            assert data["machine"]["icmp"] is False
-
-
 class MockExploiter:
     def exploit_hosts(
         self,
