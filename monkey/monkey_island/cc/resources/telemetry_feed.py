@@ -72,16 +72,6 @@ class TelemetryFeed(AbstractResource):
             return "Monkey started."
 
     @staticmethod
-    def get_exploit_telem_brief(telem):
-        target = telem["data"]["machine"]["ip_addr"]
-        exploiter = telem["data"]["exploiter"]
-        result = telem["data"]["exploitation_result"]
-        if result:
-            return "Monkey successfully exploited %s using the %s exploiter." % (target, exploiter)
-        else:
-            return "Monkey failed exploiting %s using the %s exploiter." % (target, exploiter)
-
-    @staticmethod
     def get_trace_telem_brief(telem):
         return "Trace: %s" % telem["data"]["msg"]
 
@@ -99,7 +89,6 @@ class TelemetryFeed(AbstractResource):
 
 
 TELEM_PROCESS_DICT = {
-    TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
     TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief,
     TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
     TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
