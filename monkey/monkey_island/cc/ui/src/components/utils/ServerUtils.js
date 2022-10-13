@@ -1,8 +1,8 @@
-import IslandHttpClient from "../IslandHttpClient";
+import IslandHttpClient from '../IslandHttpClient';
 
 export function doesAnyAgentExist() {
     let any_agent_exists = false;
-    all_agents = _getAllAgents();
+    let all_agents = _getAllAgents();
     if (all_agents.length > 0) {
         any_agent_exists = true;
     }
@@ -11,9 +11,9 @@ export function doesAnyAgentExist() {
 
 export function didAllAgentsShutdown() {
     let all_agents_shutdown = true;
-    all_agents = _getAllAgents();
-    for (idx in all_agents) {
-        agent = all_agents[idx];
+    let all_agents = _getAllAgents();
+    for (let idx in all_agents) {
+        let agent = all_agents[idx];
         if (agent.stop_time === null) {
             all_agents_shutdown = false;
         }
