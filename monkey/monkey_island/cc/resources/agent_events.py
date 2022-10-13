@@ -1,10 +1,13 @@
 import logging
 from http import HTTPStatus
+from typing import Iterable
 
 from flask import request
 
 from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
+from common.agent_events import AbstractAgentEvent
 from common.event_queue import IAgentEventQueue
+from common.types import JSONSerializable
 from monkey_island.cc.repository import IAgentEventRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
@@ -41,19 +44,25 @@ class AgentEvents(AbstractResource):
         return {}, HTTPStatus.NO_CONTENT
 
     def get(self):
-
         events = self._agent_event_repository.get_events()
 
+        try:
+            serialized_events = self._serialize_events(events)
+        except (TypeError, ValueError) as err:
+            return {"error": str(err)}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        return serialized_events, HTTPStatus.OK
+
+    def _serialize_events(self, events: Iterable[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events = []
 
         for event in events:
             try:
                 serializer = self._event_serializer_registry[event.__class__]
                 serialized_event = serializer.serialize(event)
-
                 serialized_events.append(serialized_event)
             except (TypeError, ValueError) as err:
                 logger.exception(f"Error occurred while serializing an event {event}: {err}")
-                return {"error": str(err)}, HTTPStatus.INTERNAL_SERVER_ERROR
+                raise err
 
-        return serialized_events, HTTPStatus.OK
+        return serialized_events
