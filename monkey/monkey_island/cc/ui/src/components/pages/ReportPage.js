@@ -7,9 +7,8 @@ import AttackReport from '../report-components/AttackReport';
 import SecurityReport from '../report-components/SecurityReport';
 import ZeroTrustReport from '../report-components/ZeroTrustReport';
 import RansomwareReport from '../report-components/RansomwareReport';
-import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
-import doesAnyAgentExist from '../utils/ServerUtils.js'
+import {doesAnyAgentExist, didAllAgentsShutdown} from '../utils/ServerUtils.js'
 
 
 class ReportPageComponent extends AuthComponent {
@@ -97,13 +96,18 @@ class ReportPageComponent extends AuthComponent {
 
   updateMonkeysRunning = () => {
     let any_agent_exists = doesAnyAgentExist();
+    let all_agents_shutdown = didAllAgentsShutdown();
+    this.setState({
+      allMonkeysAreDead: (!any_agent_exists) || (all_agents_shutdown),
+      runStarted: any_agent_exists
+    });
 
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {
         let completed_steps_from_server = res.completed_steps;
         completed_steps_from_server['run_monkey'] = any_agent_exists;
-        this.setState(extractExecutionStatusFromServerResponse(completed_steps_from_server));
+        completed_steps_from_server['infection_done'] = all_agents_shutdown;
         return completed_steps_from_server;
       });
   };
