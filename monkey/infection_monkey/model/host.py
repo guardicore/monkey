@@ -12,9 +12,6 @@ class VictimHost(object):
         self.icmp = False
         self.default_server = None
 
-    def as_dict(self):
-        return self.__dict__
-
     def is_windows(self) -> bool:
         return OperatingSystem.WINDOWS == self.os["type"]
 

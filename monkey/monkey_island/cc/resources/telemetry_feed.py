@@ -82,10 +82,6 @@ class TelemetryFeed(AbstractResource):
             return "Monkey failed exploiting %s using the %s exploiter." % (target, exploiter)
 
     @staticmethod
-    def get_scan_telem_brief(telem):
-        return "Monkey discovered machine %s." % telem["data"]["machine"]["ip_addr"]
-
-    @staticmethod
     def get_trace_telem_brief(telem):
         return "Trace: %s" % telem["data"]["msg"]
 
@@ -99,25 +95,12 @@ class TelemetryFeed(AbstractResource):
 
     @staticmethod
     def should_show_brief(telem) -> bool:
-        should_process_telem = SHOULD_PROCESS_TELEM.get(telem["telem_category"], lambda _: True)
-        return telem["telem_category"] in TELEM_PROCESS_DICT and should_process_telem(telem)
-
-    @staticmethod
-    def should_process_scan_telem(telem) -> bool:
-        return TelemetryFeed._machine_responded(telem["data"]["machine"])
-
-    @staticmethod
-    def _machine_responded(machine) -> bool:
-        return machine["icmp"] and len(machine["services"].keys()) > 0
+        return telem["telem_category"] in TELEM_PROCESS_DICT
 
 
 TELEM_PROCESS_DICT = {
     TelemCategoryEnum.EXPLOIT: TelemetryFeed.get_exploit_telem_brief,
     TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief,
-    TelemCategoryEnum.SCAN: TelemetryFeed.get_scan_telem_brief,
     TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
     TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
 }
-
-
-SHOULD_PROCESS_TELEM = {TelemCategoryEnum.SCAN: TelemetryFeed.should_process_scan_telem}

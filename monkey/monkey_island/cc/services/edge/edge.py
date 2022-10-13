@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 import threading
 from typing import Dict, List
 
@@ -70,16 +69,6 @@ class EdgeService(Edge):
     # Either way this can be done by fetching, modifying and saving
     def disable_tunnel(self):
         self.tunnel = False
-        self.save()
-
-    def update_based_on_scan_telemetry(self, telemetry: Dict):
-        machine_info = copy.deepcopy(telemetry["data"]["machine"])
-        new_scan = {"timestamp": telemetry["timestamp"], "data": machine_info}
-        ip_address = machine_info.pop("ip_addr")
-        domain_name = machine_info.pop("domain_name")
-        self.scans.append(new_scan)
-        self.ip_address = ip_address
-        self.domain_name = domain_name
         self.save()
 
     def update_based_on_exploit(self, exploit: Dict):
