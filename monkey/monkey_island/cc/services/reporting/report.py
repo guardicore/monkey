@@ -18,7 +18,7 @@ from common.agent_events import (
 )
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
-from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
+from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommunicationType, Machine, Monkey
@@ -332,7 +332,7 @@ class ReportService:
         """
         Gets list of cross segment issues from source_subnet to target_subnet.
 
-        :param scans: List of all scan events.
+        :param scans: List of all successful scan events.
         :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
         :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
         :return:
@@ -355,6 +355,9 @@ class ReportService:
         machine_events: Dict[Machine, Dict[IPv4Address, List[ScanEvent]]] = defaultdict(
             lambda: defaultdict(list)
         )
+
+        # Store events for which the target IP is in the target subnet, indexed
+        # by the scanning machine and target IP
         for scan in scans:
             target_ip = scan.target
             if target_subnet_range.is_in_range(str(target_ip)):
@@ -362,12 +365,12 @@ class ReportService:
                 machine = machines_dict[agent.machine_id]
                 machine_events[machine][target_ip].append(scan)
 
+        # Report issues when the machine has an IP in the source subnet range
         for machine, scan_dict in machine_events.items():
             machine_ips = [iface.ip for iface in machine.network_interfaces]
             for target_ip, scan_list in scan_dict.items():
-                cross_segment_ip = get_ip_in_src_and_not_in_dst(
-                    machine_ips, source_subnet_range, target_subnet_range
-                )
+                cross_segment_ip = get_ip_if_in_subnet(machine_ips, source_subnet_range)
+
                 if cross_segment_ip is not None:
                     cross_segment_issues.append(
                         {
