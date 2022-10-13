@@ -1,6 +1,6 @@
 import logging
 
-from monkey_island.cc.services.node import NodeService
+from monkey_island.cc.repository import IAgentRepository
 from monkey_island.cc.services.reporting.report import ReportService
 from monkey_island.cc.services.reporting.report_generation_synchronisation import (
     is_report_being_generated,
@@ -10,8 +10,8 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 logger = logging.getLogger(__name__)
 
 
-def get_completed_steps():
-    infection_done = NodeService.is_monkey_finished_running()
+def get_completed_steps(agent_repository: IAgentRepository):
+    infection_done = _is_infection_done(agent_repository)
 
     if infection_done:
         _on_finished_infection()
@@ -23,6 +23,12 @@ def get_completed_steps():
         run_server=True,
         report_done=report_done,
     )
+
+
+def _is_infection_done(agent_repository: IAgentRepository) -> bool:
+    any_agent_exists = bool(agent_repository.get_agents())
+    any_agent_running = bool(agent_repository.get_running_agents())
+    return any_agent_exists and not any_agent_running
 
 
 def _on_finished_infection():
