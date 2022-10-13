@@ -6,6 +6,7 @@ export function doesAnyAgentExist() {
     if (all_agents.length > 0) {
         any_agent_exists = true;
     }
+
     return any_agent_exists;
 }
 
@@ -18,7 +19,10 @@ export function didAllAgentsShutdown() {
             all_agents_shutdown = false;
         }
     }
-    return all_agents_shutdown;
+
+    let any_agent_exists = doesAnyAgentExist();
+
+    return any_agent_exists && all_agents_shutdown;
 }
 
 function _getAllAgents() {
