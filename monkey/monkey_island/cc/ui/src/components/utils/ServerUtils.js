@@ -1,33 +1,25 @@
 import IslandHttpClient from '../IslandHttpClient';
 
 export function doesAnyAgentExist() {
-    let any_agent_exists = false;
-    let all_agents = _getAllAgents();
-    if (all_agents.length > 0) {
-        any_agent_exists = true;
-    }
-
-    return any_agent_exists;
+  return _getAllAgents().then(all_agents => {
+    if (all_agents.length > 0) {return true;}
+    return false;
+    })
 }
 
 export function didAllAgentsShutdown() {
-    let all_agents_shutdown = true;
-    let all_agents = _getAllAgents();
+  return _getAllAgents().then(all_agents => {
     for (let idx in all_agents) {
-        let agent = all_agents[idx];
-        if (agent.stop_time === null) {
-            all_agents_shutdown = false;
-        }
+      let agent = all_agents[idx];
+      if (agent.stop_time === null) {return false;}
     }
-
-    let any_agent_exists = doesAnyAgentExist();
-
-    return any_agent_exists && all_agents_shutdown;
+    return true;
+  })
 }
 
 function _getAllAgents() {
     return IslandHttpClient.get('/api/agents')
     .then(res => {
-        return res.json();
+        return res.body;
     });
 }
