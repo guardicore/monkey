@@ -1,9 +1,12 @@
 import functools
 import ipaddress
 import logging
+from collections import defaultdict
+from dataclasses import asdict
 from itertools import chain, product
-from typing import List, Optional
+from typing import Dict, Iterable, List, Optional
 
+from common.agent_events import ExploitationEvent, PasswordRestorationEvent
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
@@ -12,6 +15,7 @@ from monkey_island.cc.models import CommunicationType, Machine, Monkey
 from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
+    IAgentEventRepository,
     ICredentialsRepository,
     IMachineRepository,
     INodeRepository,
@@ -29,7 +33,7 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 from .. import AWSService
 from . import aws_exporter
 from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
-from .issue_processing.exploit_processing.processors.exploit import ExploiterReportInfo
+from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +41,7 @@ logger = logging.getLogger(__name__)
 class ReportService:
     _aws_service: Optional[AWSService] = None
     _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
+    _agent_event_repository: Optional[IAgentEventRepository] = None
     _credentials_repository: Optional[ICredentialsRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
@@ -49,12 +54,14 @@ class ReportService:
         cls,
         aws_service: AWSService,
         agent_configuration_repository: IAgentConfigurationRepository,
+        agent_event_repository: IAgentEventRepository,
         credentials_repository: ICredentialsRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
         cls._aws_service = aws_service
         cls._agent_configuration_repository = agent_configuration_repository
+        cls._agent_event_repository = agent_event_repository
         cls._credentials_repository = credentials_repository
         cls._machine_repository = machine_repository
         cls._node_repository = node_repository
@@ -142,39 +149,58 @@ class ReportService:
         for node in nodes:
             for dest, conn in node.connections.items():
                 if CommunicationType.SCANNED in conn and dest == machine.id:
-                    scanner_machine = ReportService._machine_repository.get_machine_by_id(
-                        node.machine_id
-                    )
+                    scanner_machine = cls._machine_repository.get_machine_by_id(node.machine_id)
                     scanner_machines.add(scanner_machine)
 
         return list(scanner_machines)
 
-    @staticmethod
-    def process_exploit(exploit) -> ExploiterReportInfo:
-        exploiter_type = exploit["data"]["exploiter"]
-        exploiter_descriptor = ExploiterDescriptorEnum.get_by_class_name(exploiter_type)
-        processor = exploiter_descriptor.processor()
-        exploiter_info = processor.get_exploit_info_by_dict(exploiter_type, exploit)
-        return exploiter_info
+    @classmethod
+    def process_exploit_event(
+        cls,
+        exploitation_event: ExploitationEvent,
+        password_restored: Dict[ipaddress.IPv4Address, bool],
+    ) -> ExploiterReportInfo:
+        if not cls._machine_repository:
+            raise RuntimeError("Machine repository does not exist")
+
+        target_machine = cls._machine_repository.get_machines_by_ip(exploitation_event.target)[0]
+        return ExploiterReportInfo(
+            target_machine.hostname,
+            str(exploitation_event.target),
+            exploitation_event.exploiter_name,
+            password_restored=password_restored[exploitation_event.target],
+        )
 
     @staticmethod
-    def get_exploits() -> List[dict]:
-        query = [
-            {"$match": {"telem_category": "exploit", "data.exploitation_result": True}},
-            {
-                "$group": {
-                    "_id": {"ip_address": "$data.machine.ip_addr"},
-                    "data": {"$first": "$$ROOT"},
-                }
-            },
-            {"$replaceRoot": {"newRoot": "$data"}},
-        ]
-        exploits = []
-        for exploit in mongo.db.telemetry.aggregate(query):
-            new_exploit = ReportService.process_exploit(exploit)
-            if new_exploit not in exploits:
-                exploits.append(new_exploit.__dict__)
-        return exploits
+    def filter_single_exploit_per_ip(
+        exploitation_events: Iterable[ExploitationEvent],
+    ) -> Iterable[ExploitationEvent]:
+        """
+        Yields the first exploit for each target IP
+        """
+        ips = set()
+        for exploit in exploitation_events:
+            if exploit.target not in ips:
+                ips.add(exploit.target)
+                yield exploit
+
+    @classmethod
+    def get_exploits(cls) -> List[dict]:
+        if not cls._agent_event_repository:
+            raise RuntimeError("Agent event repository does not exist")
+
+        # Get the successful exploits
+        exploits = cls._agent_event_repository.get_events_by_type(ExploitationEvent)
+        successful_exploits = filter(lambda x: x.success, exploits)
+        filtered_exploits = ReportService.filter_single_exploit_per_ip(successful_exploits)
+
+        zerologon_events = cls._agent_event_repository.get_events_by_type(PasswordRestorationEvent)
+        password_restored = defaultdict(
+            lambda: None, {e.target: e.success for e in zerologon_events}
+        )
+
+        # Convert the ExploitationEvent into an ExploiterReportInfo
+        return [asdict(cls.process_exploit_event(e, password_restored)) for e in filtered_exploits]
 
     @staticmethod
     def get_monkey_subnets(monkey_guid):

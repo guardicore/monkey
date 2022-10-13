@@ -240,10 +240,6 @@ class NodeService:
         return mongo.db.monkey.find_one({"ip_addresses": ip_address})
 
     @staticmethod
-    def get_node_by_ip(ip_address):
-        return mongo.db.node.find_one({"ip_addresses": ip_address})
-
-    @staticmethod
     def get_node_by_id(node_id):
         return mongo.db.node.find_one({"_id": ObjectId(node_id)})
 
@@ -321,13 +317,6 @@ class NodeService:
     @staticmethod
     def is_monkey_finished_running():
         return NodeService.is_any_monkey_exists() and not NodeService.is_any_monkey_alive()
-
-    @staticmethod
-    def get_node_or_monkey_by_ip(ip_address):
-        node = NodeService.get_node_by_ip(ip_address)
-        if node is not None:
-            return node
-        return NodeService.get_monkey_by_ip(ip_address)
 
     @staticmethod
     def get_node_or_monkey_by_id(node_id):
