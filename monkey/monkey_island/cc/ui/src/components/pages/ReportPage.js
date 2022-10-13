@@ -9,6 +9,7 @@ import ZeroTrustReport from '../report-components/ZeroTrustReport';
 import RansomwareReport from '../report-components/RansomwareReport';
 import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
+import doesAnyAgentExist from '../utils/ServerUtils.js'
 
 
 class ReportPageComponent extends AuthComponent {
@@ -95,14 +96,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   updateMonkeysRunning = () => {
-    let any_agent_exists = false;
-    this.authFetch('/api/agents')
-      .then(res => res.json())
-      .then(res => {
-        if (res.length > 0) {
-          any_agent_exists = true;
-        }
-    });
+    let any_agent_exists = doesAnyAgentExist();
+
     return this.authFetch('/api')
       .then(res => res.json())
       .then(res => {

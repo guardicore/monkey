@@ -28,7 +28,7 @@ import IslandHttpClient from "./IslandHttpClient";
 import _ from "lodash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-
+import doesAnyAgentExist from './utils/ServerUtils.js'
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -98,14 +98,7 @@ class AppComponent extends AuthComponent {
             }
 
             // check if any Agent was ever run
-            let any_agent_exists = false;
-            this.authFetch('/api/agents')
-              .then(res => res.json())
-              .then(res => {
-                if (res.length > 0) {
-                  any_agent_exists = true;
-                }
-              });
+            let any_agent_exists = doesAnyAgentExist();
 
             this.authFetch('/api')
               .then(res => res.json())
