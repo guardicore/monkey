@@ -7,7 +7,7 @@ from dataclasses import asdict
 from enum import Enum
 from ipaddress import IPv4Address
 from itertools import chain, product
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Union
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
 from common.agent_events import (
     AbstractAgentEvent,
@@ -352,23 +352,23 @@ class ReportService:
 
         agents_dict = {a.id: a for a in cls._agent_repository.get_agents()}
         machines_dict = {m.id: m for m in cls._machine_repository.get_machines()}
-        machine_events: Dict[Machine, Dict[IPv4Address, List[ScanEvent]]] = defaultdict(
-            lambda: defaultdict(list)
+        machine_events: Dict[Machine, Dict[IPv4Address, Dict[Type, ScanEvent]]] = defaultdict(
+            lambda: defaultdict(lambda: defaultdict())
         )
 
         # Store events for which the target IP is in the target subnet, indexed
-        # by the scanning machine and target IP
+        # by the scanning machine, target IP, and event type
         for scan in scans:
             target_ip = scan.target
             if target_subnet_range.is_in_range(str(target_ip)):
                 agent = agents_dict[scan.source]
                 machine = machines_dict[agent.machine_id]
-                machine_events[machine][target_ip].append(scan)
+                machine_events[machine][target_ip][type(scan)] = scan
 
         # Report issues when the machine has an IP in the source subnet range
         for machine, scan_dict in machine_events.items():
             machine_ips = [iface.ip for iface in machine.network_interfaces]
-            for target_ip, scan_list in scan_dict.items():
+            for target_ip, scan_type_dict in scan_dict.items():
                 cross_segment_ip = get_ip_if_in_subnet(machine_ips, source_subnet_range)
 
                 if cross_segment_ip is not None:
@@ -378,7 +378,9 @@ class ReportService:
                             "hostname": machine.hostname,
                             "target": str(target_ip),
                             "services": {a: s for a, s in machine.network_services},
-                            "types": [ScanTypeEnum.from_event(s).value for s in scan_list],
+                            "types": [
+                                ScanTypeEnum.from_event(s).value for _, s in scan_type_dict.items()
+                            ],
                             "is_self": False,
                         }
                     )
