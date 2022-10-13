@@ -120,6 +120,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "/api/monkey-control/neets-to-stop". #2261
 - "GET /api/test/monkey" endpoint. #2269
 - "GET /api/test/log" endpoint. #2269
+- Node Map from Security Report. #2334
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

@@ -2,8 +2,6 @@ import React, { Fragment } from 'react';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
-import { ReactiveGraph } from 'components/reactive-graph/ReactiveGraph';
-import { edgeGroupToColor, getOptions } from 'components/map/MapOptions';
 import StolenPasswords from 'components/report-components/security/StolenPasswords';
 import { Line } from 'rc-progress';
 import AuthComponent from '../AuthComponent';
@@ -13,7 +11,6 @@ import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
@@ -149,8 +146,6 @@ class ReportPageComponent extends AuthComponent {
     super(props);
     this.state = {
       report: props.report,
-      graph: { nodes: [], edges: [] },
-      nodeStateList: [],
       stolenCredentials: [],
       configuredCredentials: [],
       issues: []
@@ -158,9 +153,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   componentDidMount() {
-    this.getNodeStateListFromServer();
     this.getCredentialsFromServer();
-    this.updateMapFromServer();
   }
 
   getCredentialsFromServer = () => {
@@ -175,14 +168,6 @@ class ReportPageComponent extends AuthComponent {
         this.setState({ configuredCredentials: creds });
       })
   }
-
-  getNodeStateListFromServer = () => {
-    this.authFetch('/api/netmap/node-states')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({ nodeStateList: res.node_states });
-      });
-  };
 
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -235,17 +220,6 @@ class ReportPageComponent extends AuthComponent {
   stillLoadingDataFromServer() {
     return Object.keys(this.state.report).length === 0;
   }
-
-  updateMapFromServer = () => {
-    this.authFetch('/api/netmap')
-      .then(res => res.json())
-      .then(res => {
-        res.edges.forEach(edge => {
-          edge.color = { 'color': edgeGroupToColor(edge.group) };
-        });
-        this.setState({ graph: res });
-      });
-  };
 
 
   generateReportOverviewSection() {
@@ -490,22 +464,6 @@ class ReportPageComponent extends AuthComponent {
               strokeColor='#d9534f' trailColor='#f0ad4e' />
             <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
           </div>
-        </div>
-        <p>
-          From the attacker's point of view, the network looks like this:
-        </p>
-        <div className='map-legend'>
-          <b>Legend: </b>
-          <span>Exploit <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#cc0200' }} /></span>
-          <b style={{ color: '#aeaeae' }}> | </b>
-          <span>Scan <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#ff9900' }} /></span>
-          <b style={{ color: '#aeaeae' }}> | </b>
-          <span>Tunnel <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#0158aa' }} /></span>
-          <b style={{ color: '#aeaeae' }}> | </b>
-          <span>Island Communication <FontAwesomeIcon icon={faMinus} size='lg' style={{ color: '#a9aaa9' }} /></span>
-        </div>
-        <div style={{ position: 'relative', height: '80vh' }}>
-          <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)} />
         </div>
 
         <div style={{ marginBottom: '20px' }}>
