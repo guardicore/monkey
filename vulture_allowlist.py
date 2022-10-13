@@ -26,7 +26,7 @@ from common.tags import (
 from common.types import NetworkPort
 from infection_monkey.exploit.HostExploiter import HostExploiter
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
-from monkey_island.cc.models import CommunicationType, Machine, Report
+from monkey_island.cc.models import CommunicationType, Machine, Monkey, Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
 from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
@@ -354,3 +354,5 @@ CommunicationType.EXPLOITED
 
 Machine.config.json_dumps
 Machine._socketaddress_from_string
+
+Monkey.guid
