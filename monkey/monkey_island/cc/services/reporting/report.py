@@ -156,28 +156,30 @@ class ReportService:
 
     @classmethod
     def process_exploit_event(
-        cls, exploit: ExploitationEvent, password_restored: Dict[ipaddress.IPv4Address, bool]
+        cls,
+        exploitation_event: ExploitationEvent,
+        password_restored: Dict[ipaddress.IPv4Address, bool],
     ) -> ExploiterReportInfo:
         if not cls._machine_repository:
             raise RuntimeError("Machine repository does not exist")
 
-        target_machine = cls._machine_repository.get_machines_by_ip(exploit.target)[0]
+        target_machine = cls._machine_repository.get_machines_by_ip(exploitation_event.target)[0]
         return ExploiterReportInfo(
             target_machine.hostname,
-            str(exploit.target),
-            exploit.exploiter_name,
-            password_restored=password_restored[exploit.target],
+            str(exploitation_event.target),
+            exploitation_event.exploiter_name,
+            password_restored=password_restored[exploitation_event.target],
         )
 
     @staticmethod
     def filter_single_exploit_per_ip(
-        exploits: Iterable[ExploitationEvent],
+        exploitation_events: Iterable[ExploitationEvent],
     ) -> Iterable[ExploitationEvent]:
         """
         Yields the first exploit for each target IP
         """
         ips = set()
-        for exploit in exploits:
+        for exploit in exploitation_events:
             if exploit.target not in ips:
                 ips.add(exploit.target)
                 yield exploit
