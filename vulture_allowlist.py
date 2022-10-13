@@ -355,3 +355,5 @@ CommunicationType.EXPLOITED
 
 Machine.config.json_dumps
 Machine._socketaddress_from_string
+
+Monkey.guid
