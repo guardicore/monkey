@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 def get_completed_steps():
-    is_any_exists = NodeService.is_any_monkey_exists()
     infection_done = NodeService.is_monkey_finished_running()
 
     if infection_done:
@@ -22,8 +21,6 @@ def get_completed_steps():
 
     return dict(
         run_server=True,
-        run_monkey=is_any_exists,
-        infection_done=infection_done,
         report_done=report_done,
     )
 
