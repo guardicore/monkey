@@ -10,3 +10,18 @@ function doesAnyAgentExist() {
         }});
     return any_agent_exists;
 }
+
+
+function didAllAgentsShutdown() {
+    let all_agents_shutdown = true;
+    IslandHttpClient.get('/api/agents')
+        .then(res => res.json())
+        .then(res => {
+        for (idx in res) {
+            agent = res[idx];
+            if (agent.stop_time === null) {
+                all_agents_shutdown = false;
+            }
+        }});
+    return all_agents_shutdown;
+}
