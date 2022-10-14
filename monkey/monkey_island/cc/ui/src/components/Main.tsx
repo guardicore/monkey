@@ -58,12 +58,11 @@ class AppComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    let completedSteps = new CompletedSteps(false);
     this.state = {
       loading: true,
       runMonkey: false,
       infectionDone: false,
-      completedSteps: completedSteps,
+      completedSteps: new CompletedSteps(false),
       islandMode: undefined,
     };
     this.interval = undefined;
@@ -102,29 +101,28 @@ class AppComponent extends AuthComponent {
             this.authFetch('/api')
               .then(res => res.json())
               .then(res => {
-                let completed_steps_from_server = res.completed_steps;
+                let isReportGenerationDone = res.completed_steps.report_done;
 
                 doesAnyAgentExist().then(any_agent_exists => {
                   this.setState({
-                    runMonkey: any_agent_exists
+                    completedSteps: new CompletedSteps(
+                                          any_agent_exists,
+                                          this.state.completedSteps.infectionDone,
+                                          isReportGenerationDone
+                                        )
                   });
                 })
 
                 didAllAgentsShutdown().then(all_agents_shutdown => {
                   this.setState({
-                    infectionDone: this.state.runMonkey && all_agents_shutdown
+                    completedSteps: new CompletedSteps(
+                                          this.state.completedSteps.runMonkey,
+                                          this.state.completedSteps.runMonkey && all_agents_shutdown,
+                                          isReportGenerationDone
+                                        )
                   });
                 })
 
-                completed_steps_from_server["run_monkey"] = this.state.runMonkey;
-                completed_steps_from_server["infection_done"] = this.state.infectionDone;
-                let completedSteps = CompletedSteps.buildFromResponse(completed_steps_from_server);
-
-                // This check is used to prevent unnecessary re-rendering
-                if (_.isEqual(this.state.completedSteps, completedSteps)) {
-                  return;
-                }
-                this.setState({completedSteps: completedSteps});
                 this.showInfectionDoneNotification();
               });
           }
