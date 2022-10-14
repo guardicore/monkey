@@ -42,43 +42,7 @@ class Monkey(AbstractResource):
             parent = monkey_json.get("parent")
             parent_to_add = (monkey_json.get("guid"), None)  # default values in case of manual run
             if parent and parent != monkey_json.get("guid"):  # current parent is known
-                exploit_telem = [
-                    x
-                    for x in mongo.db.telemetry.find(
-                        {
-                            "telem_category": {"$eq": "exploit"},
-                            "data.exploitation_result": {"$eq": True},
-                            "data.machine.ip_addr": {"$in": monkey_json["ip_addresses"]},
-                            "monkey_guid": {"$eq": parent},
-                        }
-                    )
-                ]
-                if 1 == len(exploit_telem):
-                    parent_to_add = (
-                        exploit_telem[0].get("monkey_guid"),
-                        exploit_telem[0].get("data").get("exploiter"),
-                    )
-                else:
-                    parent_to_add = (parent, None)
-            elif (
-                not parent or parent == monkey_json.get("guid")
-            ) and "ip_addresses" in monkey_json:
-                exploit_telem = [
-                    x
-                    for x in mongo.db.telemetry.find(
-                        {
-                            "telem_category": {"$eq": "exploit"},
-                            "data.exploitation_result": {"$eq": True},
-                            "data.machine.ip_addr": {"$in": monkey_json["ip_addresses"]},
-                        }
-                    )
-                ]
-
-                if 1 == len(exploit_telem):
-                    parent_to_add = (
-                        exploit_telem[0].get("monkey_guid"),
-                        exploit_telem[0].get("data").get("exploiter"),
-                    )
+                parent_to_add = (parent, None)
 
             if not db_monkey:
                 monkey_json["parent"] = [parent_to_add]
