@@ -10,7 +10,7 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
 logger = logging.getLogger(__name__)
 
 
-def get_completed_steps(agent_repository: IAgentRepository):
+def is_report_done(agent_repository: IAgentRepository) -> bool:
     infection_done = _is_infection_done(agent_repository)
 
     if infection_done:
@@ -19,9 +19,7 @@ def get_completed_steps(agent_repository: IAgentRepository):
     else:  # Infection is not done
         report_done = False
 
-    return dict(
-        report_done=report_done,
-    )
+    return report_done
 
 
 def _is_infection_done(agent_repository: IAgentRepository) -> bool:
