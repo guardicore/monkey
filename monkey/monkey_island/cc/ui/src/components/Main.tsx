@@ -106,7 +106,7 @@ class AppComponent extends AuthComponent {
                 completedSteps: new CompletedSteps(
                                       this.state.completedSteps.runMonkey,
                                       this.state.completedSteps.infectionDone,
-                                      res.completed_steps.report_done
+                                      res.report_done
                                     )
               });
             })
