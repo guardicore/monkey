@@ -112,10 +112,10 @@ class AppComponent extends AuthComponent {
             })
 
           // update status: if any agent ran
-          doesAnyAgentExist().then(any_agent_exists => {
+          doesAnyAgentExist().then(anyAgentExists => {
             this.setState({
               completedSteps: new CompletedSteps(
-                                    any_agent_exists,
+                                    anyAgentExists,
                                     this.state.completedSteps.infectionDone,
                                     this.state.completedSteps.reportDone
                                   )
@@ -123,11 +123,11 @@ class AppComponent extends AuthComponent {
           });
 
           // update status: if infection (running and shutting down of all agents) finished
-          didAllAgentsShutdown().then(all_agents_shutdown => {
+          didAllAgentsShutdown().then(allAgentsShutdown => {
             this.setState({
               completedSteps: new CompletedSteps(
                                     this.state.completedSteps.runMonkey,
-                                    this.state.completedSteps.runMonkey && all_agents_shutdown,
+                                    this.state.completedSteps.runMonkey && allAgentsShutdown,
                                     this.state.completedSteps.reportDone
                                   )
             });

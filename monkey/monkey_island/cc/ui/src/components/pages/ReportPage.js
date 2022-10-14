@@ -95,14 +95,14 @@ class ReportPageComponent extends AuthComponent {
   }
 
   updateMonkeysRunning = () => {
-    doesAnyAgentExist().then(any_agent_exists => {
+    doesAnyAgentExist().then(anyAgentExists => {
       this.setState({
-        runStarted: any_agent_exists
+        runStarted: anyAgentExists
       })
     })
-    didAllAgentsShutdown().then(all_agents_shutdown => {
+    didAllAgentsShutdown().then(allAgentsShutdown => {
       this.setState({
-        allMonkeysAreDead: !this.state.runStarted || all_agents_shutdown
+        allMonkeysAreDead: !this.state.runStarted || allAgentsShutdown
       })
     })
   };
