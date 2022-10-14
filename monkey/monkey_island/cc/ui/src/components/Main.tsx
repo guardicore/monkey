@@ -94,39 +94,48 @@ class AppComponent extends AuthComponent {
     if (res) {
       this.setMode()
         .then(() => {
-            if (this.state.islandMode === "unset") {
-              return
-            }
-
-            this.authFetch('/api')
-              .then(res => res.json())
-              .then(res => {
-                let isReportGenerationDone = res.completed_steps.report_done;
-
-                doesAnyAgentExist().then(any_agent_exists => {
-                  this.setState({
-                    completedSteps: new CompletedSteps(
-                                          any_agent_exists,
-                                          this.state.completedSteps.infectionDone,
-                                          isReportGenerationDone
-                                        )
-                  });
-                })
-
-                didAllAgentsShutdown().then(all_agents_shutdown => {
-                  this.setState({
-                    completedSteps: new CompletedSteps(
-                                          this.state.completedSteps.runMonkey,
-                                          this.state.completedSteps.runMonkey && all_agents_shutdown,
-                                          isReportGenerationDone
-                                        )
-                  });
-                })
-
-                this.showInfectionDoneNotification();
-              });
+          if (this.state.islandMode === "unset") {
+            return
           }
-        )
+
+          // update status: report generation
+          this.authFetch('/api')
+            .then(res => res.json())
+            .then(res => {
+              this.setState({
+                completedSteps: new CompletedSteps(
+                                      this.state.completedSteps.runMonkey,
+                                      this.state.completedSteps.infectionDone,
+                                      res.completed_steps.report_done
+                                    )
+              });
+            })
+
+          // update status: if any agent ran
+          doesAnyAgentExist().then(any_agent_exists => {
+            this.setState({
+              completedSteps: new CompletedSteps(
+                                    any_agent_exists,
+                                    this.state.completedSteps.infectionDone,
+                                    this.state.completedSteps.reportDone
+                                  )
+            });
+          });
+
+          // update status: if infection (running and shutting down of all agents) finished
+          didAllAgentsShutdown().then(all_agents_shutdown => {
+            this.setState({
+              completedSteps: new CompletedSteps(
+                                    this.state.completedSteps.runMonkey,
+                                    this.state.completedSteps.runMonkey && all_agents_shutdown,
+                                    this.state.completedSteps.reportDone
+                                  )
+            });
+          });
+
+          this.showInfectionDoneNotification();
+        }
+      )
     }
   };
 
