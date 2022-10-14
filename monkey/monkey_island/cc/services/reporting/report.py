@@ -7,7 +7,7 @@ from dataclasses import asdict
 from enum import Enum
 from ipaddress import IPv4Address
 from itertools import chain, product
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
+from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
 from common.agent_events import (
     AbstractAgentEvent,
@@ -283,7 +283,7 @@ class ReportService:
 
         # Get IP addresses and hostname for each agent
         machine_dict = {m.id: m for m in cls._machine_repository.get_machines()}
-        issues_dict: Dict[Machine, Dict[IPv4Address, Set[IPv4Address]]] = defaultdict(
+        issues_dict: DefaultDict[Machine, DefaultDict[IPv4Address, Set[IPv4Address]]] = defaultdict(
             lambda: defaultdict(set)
         )
         for agent in cls._agent_repository.get_agents():
@@ -352,9 +352,9 @@ class ReportService:
 
         agents_dict = {a.id: a for a in cls._agent_repository.get_agents()}
         machines_dict = {m.id: m for m in cls._machine_repository.get_machines()}
-        machine_events: Dict[Machine, Dict[IPv4Address, Dict[Type, ScanEvent]]] = defaultdict(
-            lambda: defaultdict(lambda: defaultdict())
-        )
+        machine_events: DefaultDict[
+            Machine, DefaultDict[IPv4Address, Dict[Type, ScanEvent]]
+        ] = defaultdict(lambda: defaultdict(dict))
 
         # Store events for which the target IP is in the target subnet, indexed
         # by the scanning machine, target IP, and event type
