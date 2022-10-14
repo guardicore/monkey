@@ -20,7 +20,6 @@ def get_completed_steps(agent_repository: IAgentRepository):
         report_done = False
 
     return dict(
-        run_server=True,
         report_done=report_done,
     )
 
