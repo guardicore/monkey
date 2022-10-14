@@ -310,7 +310,7 @@ class AppComponent extends AuthComponent {
 
   shouldShowNotification() {
     // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith(Routes.Report));
+    return (this.state.completedSteps.infectionDone && !window.location.pathname.startsWith(Routes.Report));
   }
 }
 
