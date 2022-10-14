@@ -275,9 +275,9 @@ class ReportService:
         :return:
         """
         if cls._agent_repository is None:
-            raise RuntimeError()
+            raise RuntimeError("Agent repository does not exist")
         if cls._machine_repository is None:
-            raise RuntimeError()
+            raise RuntimeError("Machine repository does not exist")
 
         cross_segment_issues = []
 
@@ -341,9 +341,9 @@ class ReportService:
             return []
 
         if cls._agent_repository is None:
-            raise RuntimeError()
+            raise RuntimeError("Agent repository does not exist")
         if cls._machine_repository is None:
-            raise RuntimeError()
+            raise RuntimeError("Machine repository does not exist")
 
         source_subnet_range = NetworkRange.get_range_obj(source_subnet)
         target_subnet_range = NetworkRange.get_range_obj(target_subnet)
