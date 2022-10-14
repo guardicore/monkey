@@ -61,6 +61,8 @@ class AppComponent extends AuthComponent {
     let completedSteps = new CompletedSteps(false);
     this.state = {
       loading: true,
+      runMonkey: false,
+      infectionDone: false,
       completedSteps: completedSteps,
       islandMode: undefined,
     };
@@ -97,17 +99,27 @@ class AppComponent extends AuthComponent {
               return
             }
 
-            // check if any Agent was ever run
-            let any_agent_exists = doesAnyAgentExist();
-            let all_agents_shutdown = didAllAgentsShutdown();
-
             this.authFetch('/api')
               .then(res => res.json())
               .then(res => {
                 let completed_steps_from_server = res.completed_steps;
-                completed_steps_from_server["run_monkey"] = any_agent_exists;
-                completed_steps_from_server["infection_done"] = any_agent_exists && all_agents_shutdown;
+
+                doesAnyAgentExist().then(any_agent_exists => {
+                  this.setState({
+                    runMonkey: any_agent_exists
+                  });
+                })
+
+                didAllAgentsShutdown().then(all_agents_shutdown => {
+                  this.setState({
+                    infectionDone: this.state.runMonkey && all_agents_shutdown
+                  });
+                })
+
+                completed_steps_from_server["run_monkey"] = this.state.runMonkey;
+                completed_steps_from_server["infection_done"] = this.state.infectionDone;
                 let completedSteps = CompletedSteps.buildFromResponse(completed_steps_from_server);
+
                 // This check is used to prevent unnecessary re-rendering
                 if (_.isEqual(this.state.completedSteps, completedSteps)) {
                   return;
