@@ -28,7 +28,7 @@ import IslandHttpClient from "./IslandHttpClient";
 import _ from "lodash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-
+import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils.js'
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -58,10 +58,11 @@ class AppComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    let completedSteps = new CompletedSteps(false);
     this.state = {
       loading: true,
-      completedSteps: completedSteps,
+      runMonkey: false,
+      infectionDone: false,
+      completedSteps: new CompletedSteps(false),
       islandMode: undefined,
     };
     this.interval = undefined;
@@ -93,22 +94,48 @@ class AppComponent extends AuthComponent {
     if (res) {
       this.setMode()
         .then(() => {
-            if (this.state.islandMode === "unset") {
-              return
-            }
-            this.authFetch('/api')
-              .then(res => res.json())
-              .then(res => {
-                let completedSteps = CompletedSteps.buildFromResponse(res.completed_steps);
-                // This check is used to prevent unnecessary re-rendering
-                if (_.isEqual(this.state.completedSteps, completedSteps)) {
-                  return;
-                }
-                this.setState({completedSteps: completedSteps});
-                this.showInfectionDoneNotification();
-              });
+          if (this.state.islandMode === "unset") {
+            return
           }
-        )
+
+          // update status: report generation
+          this.authFetch('/api/report-generation-status')
+            .then(res => res.json())
+            .then(res => {
+              this.setState({
+                completedSteps: new CompletedSteps(
+                                      this.state.completedSteps.runMonkey,
+                                      this.state.completedSteps.infectionDone,
+                                      res.report_done
+                                    )
+              });
+            })
+
+          // update status: if any agent ran
+          doesAnyAgentExist().then(anyAgentExists => {
+            this.setState({
+              completedSteps: new CompletedSteps(
+                                    anyAgentExists,
+                                    this.state.completedSteps.infectionDone,
+                                    this.state.completedSteps.reportDone
+                                  )
+            });
+          });
+
+          // update status: if infection (running and shutting down of all agents) finished
+          didAllAgentsShutdown().then(allAgentsShutdown => {
+            this.setState({
+              completedSteps: new CompletedSteps(
+                                    this.state.completedSteps.runMonkey,
+                                    this.state.completedSteps.runMonkey && allAgentsShutdown,
+                                    this.state.completedSteps.reportDone
+                                  )
+            });
+          });
+
+          this.showInfectionDoneNotification();
+        }
+      )
     }
   };
 
@@ -283,7 +310,7 @@ class AppComponent extends AuthComponent {
 
   shouldShowNotification() {
     // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith(Routes.Report));
+    return (this.state.completedSteps.infectionDone && !window.location.pathname.startsWith(Routes.Report));
   }
 }
 

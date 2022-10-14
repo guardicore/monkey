@@ -26,6 +26,7 @@ from monkey_island.cc.resources import (
     PBAFileUpload,
     PropagationCredentials,
     RemoteRun,
+    ReportGenerationStatus,
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
@@ -200,6 +201,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Version)
 
     api.add_resource(Nodes)
+
+    api.add_resource(ReportGenerationStatus)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):

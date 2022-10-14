@@ -7,8 +7,8 @@ import AttackReport from '../report-components/AttackReport';
 import SecurityReport from '../report-components/SecurityReport';
 import ZeroTrustReport from '../report-components/ZeroTrustReport';
 import RansomwareReport from '../report-components/RansomwareReport';
-import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
+import {doesAnyAgentExist, didAllAgentsShutdown} from '../utils/ServerUtils.js'
 
 
 class ReportPageComponent extends AuthComponent {
@@ -41,8 +41,8 @@ class ReportPageComponent extends AuthComponent {
     }
   }
 
-  getReportFromServer(res) {
-    if (res['completed_steps']['run_monkey']) {
+  getReportFromServer() {
+    if (this.state.runStarted) {
       this.authFetch('/api/report/security')
         .then(res => res.json())
         .then(res => {
@@ -95,18 +95,23 @@ class ReportPageComponent extends AuthComponent {
   }
 
   updateMonkeysRunning = () => {
-    return this.authFetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        this.setState(extractExecutionStatusFromServerResponse(res));
-        return res;
-      });
+    doesAnyAgentExist().then(anyAgentExists => {
+      this.setState({
+        runStarted: anyAgentExists
+      })
+    })
+    didAllAgentsShutdown().then(allAgentsShutdown => {
+      this.setState({
+        allMonkeysAreDead: !this.state.runStarted || allAgentsShutdown
+      })
+    })
   };
 
   componentDidMount() {
     const ztReportRefreshInterval = setInterval(this.updateZeroTrustReportFromServer, 8000);
     this.setState({ztReportRefreshInterval: ztReportRefreshInterval});
-    this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
+    this.updateMonkeysRunning();
+    this.getReportFromServer();
   }
 
   setSelectedSection = (key) => {

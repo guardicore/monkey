@@ -5,7 +5,6 @@ from bson import ObjectId
 
 import monkey_island.cc.services.log
 from common.network.network_utils import get_my_ip_addresses_legacy
-from monkey_island.cc import models
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
 from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
@@ -304,19 +303,6 @@ class NodeService:
     @staticmethod
     def set_node_propagated(node_id):
         mongo.db.node.update({"_id": node_id}, {"$set": {"propagated": True}})
-
-    @staticmethod
-    def is_any_monkey_alive():
-        all_monkeys = models.Monkey.objects()
-        return any(not monkey.is_dead() for monkey in all_monkeys)
-
-    @staticmethod
-    def is_any_monkey_exists():
-        return mongo.db.monkey.find_one({}) is not None
-
-    @staticmethod
-    def is_monkey_finished_running():
-        return NodeService.is_any_monkey_exists() and not NodeService.is_any_monkey_alive()
 
     @staticmethod
     def get_node_or_monkey_by_id(node_id):
