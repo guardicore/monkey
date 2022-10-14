@@ -6,6 +6,7 @@ from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerialize
 from common.agent_events import AbstractAgentEvent
 from common.types import AgentID
 from monkey_island.cc.repository import IAgentEventRepository
+from monkey_island.cc.repository.i_agent_event_repository import T
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import RemovalError, RetrievalError, StorageError
@@ -41,11 +42,9 @@ class MongoAgentEventRepository(IAgentEventRepository):
         except Exception as err:
             raise RetrievalError(f"Error retrieving events: {err}")
 
-    def get_events_by_type(
-        self, event_type: Type[AbstractAgentEvent]
-    ) -> Sequence[AbstractAgentEvent]:
+    def get_events_by_type(self, event_type: Type[T]) -> Sequence[T]:
         try:
-            return self._query_events({EVENT_TYPE_FIELD: event_type.__name__})
+            return self._query_events({EVENT_TYPE_FIELD: event_type.__name__})  # type: ignore[return-value]  # noqa: E501
         except Exception as err:
             raise RetrievalError(f"Error retrieving events for type {event_type}: {err}")
 
