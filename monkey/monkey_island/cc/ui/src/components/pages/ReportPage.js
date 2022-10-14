@@ -41,8 +41,8 @@ class ReportPageComponent extends AuthComponent {
     }
   }
 
-  getReportFromServer(any_agent_exists) {
-    if (any_agent_exists) {
+  getReportFromServer() {
+    if (this.state.runStarted) {
       this.authFetch('/api/report/security')
         .then(res => res.json())
         .then(res => {
@@ -95,22 +95,23 @@ class ReportPageComponent extends AuthComponent {
   }
 
   updateMonkeysRunning = () => {
-    let any_agent_exists = doesAnyAgentExist();
-    let all_agents_shutdown = didAllAgentsShutdown();
-
-    this.setState({
-      allMonkeysAreDead: !any_agent_exists || all_agents_shutdown,
-      runStarted: any_agent_exists
-    });
-
-    return any_agent_exists;
+    doesAnyAgentExist().then(any_agent_exists => {
+      this.setState({
+        runStarted: any_agent_exists
+      })
+    })
+    didAllAgentsShutdown().then(all_agents_shutdown => {
+      this.setState({
+        allMonkeysAreDead: !this.state.runStarted || all_agents_shutdown
+      })
+    })
   };
 
   componentDidMount() {
     const ztReportRefreshInterval = setInterval(this.updateZeroTrustReportFromServer, 8000);
     this.setState({ztReportRefreshInterval: ztReportRefreshInterval});
-    let any_agent_exists = this.updateMonkeysRunning();
-    this.getReportFromServer(any_agent_exists);
+    this.updateMonkeysRunning();
+    this.getReportFromServer();
   }
 
   setSelectedSection = (key) => {
