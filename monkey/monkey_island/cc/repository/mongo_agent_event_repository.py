@@ -1,4 +1,4 @@
-from typing import Any, Dict, MutableMapping, Sequence, Type
+from typing import Any, Dict, Sequence, Type
 
 from pymongo import MongoClient
 
@@ -67,7 +67,7 @@ class MongoAgentEventRepository(IAgentEventRepository):
         except Exception as err:
             raise RemovalError(f"Error resetting the repository: {err}")
 
-    def _deserialize(self, mongo_record: MutableMapping[str, Any]) -> AbstractAgentEvent:
+    def _deserialize(self, mongo_record: Dict[str, Any]) -> AbstractAgentEvent:
         decrypted_event = decrypt_event(self._encryptor.decrypt, mongo_record)
         event_type = mongo_record[EVENT_TYPE_FIELD]
         serializer = self._serializers[event_type]
