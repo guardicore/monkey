@@ -57,9 +57,9 @@ class ScanTypeEnum(Enum):
 
     @staticmethod
     def from_event(event: AbstractAgentEvent) -> ScanTypeEnum:
-        if type(event) is PingScanEvent:
+        if isinstance(event, PingScanEvent):
             return ScanTypeEnum.ICMP
-        if type(event) is TCPScanEvent:
+        if isinstance(event, TCPScanEvent):
             return ScanTypeEnum.TCP
         return ScanTypeEnum.UNKNOWN
 
