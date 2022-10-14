@@ -15,6 +15,7 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
+from common.agent_events import AgentEventRegistry, register_common_agent_events
 from common.aws import AWSInstance
 from common.event_queue import (
     IAgentEventQueue,
@@ -84,6 +85,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
     container.register(Publisher, Publisher)
     _register_event_queues(container)
 
+    _setup_agent_event_registry(container)
     _setup_agent_event_serializers(container)
     _register_repositories(container, data_dir)
     _register_services(container)
@@ -183,6 +185,13 @@ def _build_machine_repository(container: DIContainer) -> IMachineRepository:
     initialize_machine_repository(machine_repository)
 
     return machine_repository
+
+
+def _setup_agent_event_registry(container: DIContainer):
+    agent_event_registry = AgentEventRegistry()
+    register_common_agent_events(agent_event_registry)
+
+    container.register_instance(AgentEventRegistry, agent_event_registry)
 
 
 def _setup_agent_event_serializers(container: DIContainer):
