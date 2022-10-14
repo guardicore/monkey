@@ -8,9 +8,6 @@ from monkey_island.cc.repository import (
     IMachineRepository,
     INodeRepository,
     NetworkModelUpdateFacade,
-    RetrievalError,
-    StorageError,
-    UnknownRecordError,
 )
 
 logger = getLogger(__name__)
@@ -40,17 +37,14 @@ class ScanEventHandler:
         if not event.response_received:
             return
 
-        try:
-            target_machine = self._network_model_update_facade.get_or_create_target_machine(
-                event.target
-            )
-            self._update_target_machine_os(target_machine, event)
+        target_machine = self._network_model_update_facade.get_or_create_target_machine(
+            event.target
+        )
+        self._update_target_machine_os(target_machine, event)
 
-            self._network_model_update_facade.upsert_communication_from_event(
-                event, CommunicationType.SCANNED
-            )
-        except (RetrievalError, StorageError, UnknownRecordError):
-            logger.exception("Unable to process ping scan data")
+        self._network_model_update_facade.upsert_communication_from_event(
+            event, CommunicationType.SCANNED
+        )
 
     def handle_tcp_scan_event(self, event: TCPScanEvent):
         num_open_ports = len(self._get_open_ports(event))
@@ -58,13 +52,10 @@ class ScanEventHandler:
         if num_open_ports <= 0:
             return
 
-        try:
-            tcp_connections = self._get_tcp_connections_from_event(event)
-            network_services = self._get_network_services_from_event(event)
+        tcp_connections = self._get_tcp_connections_from_event(event)
+        network_services = self._get_network_services_from_event(event)
 
-            self._upsert_from_tcp_scan_event(event, tcp_connections, network_services)
-        except (RetrievalError, StorageError, UnknownRecordError):
-            logger.exception("Unable to process tcp scan data")
+        self._upsert_from_tcp_scan_event(event, tcp_connections, network_services)
 
     @staticmethod
     def _get_open_ports(event: TCPScanEvent) -> List[NetworkPort]:

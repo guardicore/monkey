@@ -261,7 +261,8 @@ def test_node_not_upserted_if_no_matching_agent(
     agent_repository.get_agent_by_id = MagicMock(side_effect=UnknownRecordError)
     machine_repository.get_machine_by_id = MagicMock(return_value=TARGET_MACHINE)
 
-    handler(event)
+    with pytest.raises(UnknownRecordError):
+        handler(event)
 
     assert not node_repository.upsert_communication.called
 
@@ -280,7 +281,8 @@ def test_node_not_upserted_if_machine_retrievalerror(
 ):
     agent_repository.get_agent_by_id = MagicMock(side_effect=RetrievalError)
 
-    handler(event)
+    with pytest.raises(RetrievalError):
+        handler(event)
 
     assert not node_repository.upsert_communication.called
 
@@ -321,7 +323,8 @@ def test_node_not_upserted_by_ping_scan_event_if_machine_storageerror(
     machine_repository.get_machines_by_ip = MagicMock(side_effect=machines_from_ip)
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
 
-    scan_event_handler.handle_ping_scan_event(PING_SCAN_EVENT)
+    with pytest.raises(StorageError):
+        scan_event_handler.handle_ping_scan_event(PING_SCAN_EVENT)
 
     assert not node_repository.upsert_communication.called
 
@@ -334,7 +337,8 @@ def test_node_not_upserted_by_tcp_scan_event_if_machine_storageerror(
     machine_repository.get_machines_by_ip = MagicMock(side_effect=UnknownRecordError)
     machine_repository.upsert_machine = MagicMock(side_effect=StorageError)
 
-    scan_event_handler.handle_tcp_scan_event(TCP_SCAN_EVENT)
+    with pytest.raises(StorageError):
+        scan_event_handler.handle_tcp_scan_event(TCP_SCAN_EVENT)
 
     assert not node_repository.upsert_communication.called
 
