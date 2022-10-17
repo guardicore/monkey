@@ -16,7 +16,7 @@ export class MapNode {
     public machine_id: number,
     public network_interfaces: string[],
     public agent_is_running: boolean,
-    public connections: Record<string, CommunicationTypes[]>,
+    public connections: Record<number, CommunicationTypes[]>,
     public operating_system: OS = OS.unknown,
     public hostname: string = "",
     public island: boolean = false,

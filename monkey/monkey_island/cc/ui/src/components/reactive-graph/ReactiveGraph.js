@@ -13,12 +13,14 @@ class GraphWrapper extends React.Component {
     let edges = [];
     console.log(mapNodes);
     for (const mapNode of mapNodes) {
-      for (const [connected_to, connection_type] of Object.entries(mapNode.connections)) {
-        edges.push({
-          from: mapNode.machine_id,
-          to: connected_to,
-          color: edgeGroupToColor(connection_type)
-        });
+      for (const [connected_to, connection_types] of Object.entries(mapNode.connections)) {
+        for (const connection_type of connection_types) {
+          edges.push({
+            from: mapNode.machine_id,
+            to: connected_to,
+            color: edgeGroupToColor(connection_type)
+          });
+        }
       }
     }
 
@@ -51,8 +53,8 @@ class GraphWrapper extends React.Component {
         ['10.10.0.1'],
         true,
         {
-          2: CommunicationTypes.exploited,
-          3: CommunicationTypes.exploited
+          2: [CommunicationTypes.scan, CommunicationTypes.exploited],
+          3: [CommunicationTypes.scan, CommunicationTypes.exploited]
         },
         OS.windows,
         'island',
@@ -66,8 +68,8 @@ class GraphWrapper extends React.Component {
         ['10.10.0.2'],
         true,
         {
-          1: CommunicationTypes.cc,
-          3: CommunicationTypes.scan
+          1: [CommunicationTypes.cc],
+          3: [CommunicationTypes.scan]
         },
         OS.linux,
         'lin-1',
@@ -81,8 +83,8 @@ class GraphWrapper extends React.Component {
         ['10.10.0.3'],
         true,
         {
-          1: CommunicationTypes.cc,
-          4: CommunicationTypes.scan
+          1: [CommunicationTypes.cc],
+          4: [CommunicationTypes.scan]
         },
         OS.windows,
         'win-xp',
@@ -95,7 +97,7 @@ class GraphWrapper extends React.Component {
         4,
         ['10.10.0.4'],
         false,
-        { 3: CommunicationTypes.tunnel },
+        { 3: [CommunicationTypes.tunnel] },
         OS.unknown,
         'lin-2',
         false,
