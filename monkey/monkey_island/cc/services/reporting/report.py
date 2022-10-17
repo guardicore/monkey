@@ -189,7 +189,9 @@ class ReportService:
 
     @classmethod
     def process_exploit_event(
-        cls, exploitation_event: ExploitationEvent, password_restored: Dict[IPv4Address, bool]
+        cls,
+        exploitation_event: ExploitationEvent,
+        password_restored: DefaultDict[IPv4Address, bool],
     ) -> ExploiterReportInfo:
         if not cls._machine_repository:
             raise RuntimeError("Machine repository does not exist")
