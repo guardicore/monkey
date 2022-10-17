@@ -6,7 +6,6 @@ from bson import ObjectId
 #       threading to be compatible with gevent/greenlets.
 from gevent.lock import BoundedSemaphore
 
-from common.common_consts import zero_trust_consts
 from monkey_island.cc.models.zero_trust.event import Event
 from monkey_island.cc.models.zero_trust.monkey_finding import MonkeyFinding
 from monkey_island.cc.models.zero_trust.monkey_finding_details import MonkeyFindingDetails
@@ -59,11 +58,3 @@ class MonkeyZTFindingService:
             {"$replaceRoot": {"newRoot": "$events"}},
         ]
         return list(MonkeyFindingDetails.objects.aggregate(*pipeline))
-
-    @staticmethod
-    def add_malicious_activity_to_timeline(events):
-        MonkeyZTFindingService.create_or_add_to_existing(
-            test=zero_trust_consts.TEST_MALICIOUS_ACTIVITY_TIMELINE,
-            status=zero_trust_consts.STATUS_VERIFY,
-            events=events,
-        )

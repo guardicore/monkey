@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import threading
-from typing import Dict, List
+from typing import List
 
 from bson import ObjectId
 from mongoengine import DoesNotExist
@@ -69,16 +69,6 @@ class EdgeService(Edge):
     # Either way this can be done by fetching, modifying and saving
     def disable_tunnel(self):
         self.tunnel = False
-        self.save()
-
-    def update_based_on_exploit(self, exploit: Dict):
-        self.exploits.append(exploit)
-        self.save()
-        if exploit["exploitation_result"]:
-            self.set_exploited()
-
-    def set_exploited(self):
-        self.exploited = True
         self.save()
 
     def get_group(self) -> str:

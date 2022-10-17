@@ -202,26 +202,6 @@ class NodeService:
         tunnel_edge.save()
 
     @staticmethod
-    def insert_node(ip_address, domain_name=""):
-        new_node_insert_result = mongo.db.node.insert_one(
-            {
-                "ip_addresses": [ip_address],
-                "domain_name": domain_name,
-                "exploited": False,
-                "propagated": False,
-                "os": {"type": "unknown", "version": "unknown"},
-            }
-        )
-        return mongo.db.node.find_one({"_id": new_node_insert_result.inserted_id})
-
-    @staticmethod
-    def get_or_create_node(ip_address, domain_name=""):
-        new_node = mongo.db.node.find_one({"ip_addresses": ip_address})
-        if new_node is None:
-            new_node = NodeService.insert_node(ip_address, domain_name)
-        return new_node
-
-    @staticmethod
     def get_monkey_by_id(monkey_id):
         return mongo.db.monkey.find_one({"_id": ObjectId(monkey_id)})
 
@@ -295,14 +275,6 @@ class NodeService:
         island_node["ip_addresses"] = get_my_ip_addresses_legacy()
         island_node["domain_name"] = socket.gethostname()
         return island_node
-
-    @staticmethod
-    def set_node_exploited(node_id):
-        mongo.db.node.update({"_id": node_id}, {"$set": {"exploited": True}})
-
-    @staticmethod
-    def set_node_propagated(node_id):
-        mongo.db.node.update({"_id": node_id}, {"$set": {"propagated": True}})
 
     @staticmethod
     def get_node_or_monkey_by_id(node_id):
