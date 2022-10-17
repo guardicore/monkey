@@ -25,12 +25,12 @@ export class MapNode {
     public parent_id: string = null) {
   }
 
-  getGroupOperatingSystem() {
-    if (this.operating_system) {
-      return this.operating_system;
+  getGroupOperatingSystem(): OS {
+    if (this.operating_system in OS) {
+      return OS[this.operating_system];
     }
 
-    return 'unknown';
+    return OS.unknown;
   }
 
   calculateNodeGroup() {
