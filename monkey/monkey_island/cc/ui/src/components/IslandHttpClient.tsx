@@ -11,7 +11,7 @@ export class Response {
   }
 }
 
-export enum APIEndpoit {
+export enum APIEndpoint {
   agents = '/api/agent',
   machines = '/api/machines',
   nodes = '/api/netmap/node',
@@ -33,7 +33,7 @@ class IslandHttpClient extends AuthComponent {
       .then(res => new Response(res, status));
   }
 
-  get(endpoint: APIEndpoit): Promise<Response> {
+  get(endpoint: APIEndpoint): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint)
       .then(res => {
