@@ -1,12 +1,14 @@
+import { NodeGroup } from './MapNode';
+
 let getGroupsOptions = (stateList) => {
   let groupOptions = {};
   for (let stateName of stateList) {
     groupOptions[stateName] =
-      {
-        shape: 'image',
-        size: 50,
-        image: require('../../images/nodes/' + stateName + '.png')
-      };
+    {
+      shape: 'image',
+      size: 50,
+      image: require('../../images/nodes/' + stateName + '.png')
+    };
   }
 
   return groupOptions;
@@ -18,11 +20,11 @@ let getGroupsOptionsPth = () => {
   let groupOptions = {};
   for (let groupName of groupNamesPth) {
     groupOptions[groupName] =
-      {
-        shape: 'image',
-        size: 50,
-        image: require('../../images/nodes/pth/' + groupName + '.png')
-      };
+    {
+      shape: 'image',
+      size: 50,
+      image: require('../../images/nodes/pth/' + groupName + '.png')
+    };
   }
   return groupOptions;
 };
@@ -50,7 +52,8 @@ export const basic_options = {
   }
 };
 
-export function getOptions(stateList) {
+export function getOptions() {
+  let stateList = Object.keys(NodeGroup).filter(key => !isNaN(Number(NodeGroup[key])))
   let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
   opts.groups = getGroupsOptions(stateList);
   return opts;

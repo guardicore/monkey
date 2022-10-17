@@ -1,5 +1,6 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
+import { getOptions } from 'components/map/MapOptions';
 
 class GraphWrapper extends React.Component {
 
@@ -8,13 +9,10 @@ class GraphWrapper extends React.Component {
   }
 
   render() {
-    let newOptions = null;
-    if(this.props.options !== undefined){
-      newOptions = this.props.options;
-    }
+    let options = getOptions();
     return (
       <div className={'net-graph-wrapper'}>
-        <Graph graph={this.props.graph} options={newOptions} events={this.props.events}/>
+        <Graph graph={this.props.graph} options={options} events={this.props.events} />
       </div>
     )
   }
