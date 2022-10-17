@@ -1,7 +1,7 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
 import { getOptions, edgeGroupToColor } from 'components/map/MapOptions';
-import { Connection, MapNode, NodeGroup } from 'components/map/MapNode';
+import { CommunicationTypes, MapNode, NodeGroup, OS } from 'components/types/MapNode';
 
 class GraphWrapper extends React.Component {
 
@@ -63,11 +63,11 @@ class GraphWrapper extends React.Component {
     let edges = [];
     console.log(mapNodes);
     for (const mapNode of mapNodes) {
-      for (const connection of mapNode.connections) {
+      for (const [connected_to, connection_type] of Object.entries(mapNode.connections)) {
         edges.push({
           from: mapNode.machine_id,
-          to: connection.to,
-          color: edgeGroupToColor(connection.type)
+          to: connected_to,
+          color: edgeGroupToColor(connection_type)
         });
       }
     }
@@ -98,58 +98,58 @@ class GraphWrapper extends React.Component {
     let mapNodes = [
       new MapNode(
         1,
-        'windows',
-        'island',
         ['10.10.0.1'],
         true,
+        {
+          2: CommunicationTypes.exploited,
+          3: CommunicationTypes.exploited
+        },
+        OS.windows,
+        'island',
         true,
-        false,
-        [
-          new Connection(2, 'exploited'),
-          new Connection(3, 'exploited')
-        ],
+        true,
         1,
         null
       ),
       new MapNode(
         2,
-        'linux',
-        'lin-1',
         ['10.10.0.2'],
         true,
+        {
+          1: CommunicationTypes.cc,
+          3: CommunicationTypes.scan
+        },
+        OS.linux,
+        'lin-1',
         false,
         true,
-        [
-          new Connection(1, 'island'),
-          new Connection(3, 'scan')
-        ],
         2,
         1
       ),
       new MapNode(
         3,
-        'linux',
-        'lin-2',
         ['10.10.0.3'],
         true,
+        {
+          1: CommunicationTypes.cc,
+          4: CommunicationTypes.scan
+        },
+        OS.windows,
+        'win-xp',
         false,
         true,
-        [
-          new Connection(1, 'island'),
-          new Connection(4, 'scan')
-        ],
         3,
         1
       ),
       new MapNode(
         4,
-        'linux',
-        'lin-3',
         ['10.10.0.4'],
         false,
+        {3: CommunicationTypes.tunnel},
+        OS.unknown,
+        'lin-2',
         false,
         true,
-        [],
         null,
         null
       )
