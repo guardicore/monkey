@@ -1,62 +1,12 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
 import { getOptions, edgeGroupToColor } from 'components/map/MapOptions';
-import { CommunicationTypes, MapNode, NodeGroup, OS } from 'components/types/MapNode';
+import { CommunicationTypes, MapNode, OS } from 'components/types/MapNode';
 
 class GraphWrapper extends React.Component {
 
   constructor(props) {
     super(props);
-  }
-
-  getGroupOperatingSystem(mapNode) {
-    if (mapNode.operating_system) {
-      return mapNode.operating_system;
-    }
-
-    return 'unknown';
-  }
-
-  calculateNodeGroup(mapNode) {
-    let group_components = [];
-    if (mapNode.island) {
-      group_components.push('island');
-    }
-
-    if (mapNode.agent_id) {
-      if (!mapNode.island && !mapNode.parent_id) {
-        group_components.push('manual');
-      }
-      else {
-        group_components.push('monkey');
-      }
-    }
-    else if (mapNode.propagated_to) {
-      group_components.push('propagated');
-    }
-    else if (!mapNode.island) { // No "clean" for island
-      group_components.push('clean');
-    }
-
-    group_components.push(this.getGroupOperatingSystem(mapNode));
-
-    if (mapNode.agent_is_running) {
-      group_components.push('running');
-    }
-
-    let group = group_components.join('_');
-    if (!(group in NodeGroup)) {
-      return NodeGroup[NodeGroup.clean_unknown];
-    }
-
-    return group;
-  }
-
-  getLabel(mapNode) {
-    if (mapNode.hostname) {
-      return mapNode.hostname;
-    }
-    return mapNode.network_interfaces[0];
   }
 
   generateEdges(mapNodes) {
@@ -80,8 +30,8 @@ class GraphWrapper extends React.Component {
     for (const mapNode of mapNodes) {
       nodes.push({
         id: mapNode.machine_id,
-        group: this.calculateNodeGroup(mapNode),
-        label: this.getLabel(mapNode)
+        group: mapNode.calculateNodeGroup(),
+        label: mapNode.getLabel()
       });
     }
     return nodes;
@@ -145,7 +95,7 @@ class GraphWrapper extends React.Component {
         4,
         ['10.10.0.4'],
         false,
-        {3: CommunicationTypes.tunnel},
+        { 3: CommunicationTypes.tunnel },
         OS.unknown,
         'lin-2',
         false,
@@ -165,4 +115,4 @@ class GraphWrapper extends React.Component {
 }
 
 let ReactiveGraph = GraphWrapper;
-export {ReactiveGraph};
+export { ReactiveGraph };
