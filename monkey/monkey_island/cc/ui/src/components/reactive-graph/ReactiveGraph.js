@@ -1,6 +1,6 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
-import { getOptions } from 'components/map/MapOptions';
+import { getOptions, edgeGroupToColor } from 'components/map/MapOptions';
 import { Connection, MapNode, NodeGroup } from 'components/map/MapNode';
 
 class GraphWrapper extends React.Component {
@@ -59,6 +59,22 @@ class GraphWrapper extends React.Component {
     return mapNode.network_interfaces[0];
   }
 
+  generateEdges(mapNodes) {
+    let edges = [];
+    console.log(mapNodes);
+    for (const mapNode of mapNodes) {
+      for (const connection of mapNode.connections) {
+        edges.push({
+          from: mapNode.machine_id,
+          to: connection.to,
+          color: edgeGroupToColor(connection.type)
+        });
+      }
+    }
+
+    return edges;
+  }
+
   generateNodes(mapNodes) {
     let nodes = [];
     for (const mapNode of mapNodes) {
@@ -73,7 +89,7 @@ class GraphWrapper extends React.Component {
 
   generateGraph(mapNodes) {
     return {
-      edges: [],
+      edges: this.generateEdges(mapNodes),
       nodes: this.generateNodes(mapNodes)
     };
   }
