@@ -37,7 +37,7 @@ class InfectionMonkeyBaseModel(BaseModel):
                 e = e[0]
             error = e.exc
             if hasattr(e, "_loc"):
-                error.msg_template = f"{e._loc} {error.msg_template}"
+                error.args = (f"{e._loc} {error}",)
             raise error
 
     # We need to be able to convert our models to fully simplified dictionaries. The
