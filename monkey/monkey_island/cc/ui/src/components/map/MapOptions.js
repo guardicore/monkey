@@ -1,4 +1,5 @@
 import { NodeGroup } from './MapNode';
+import { CommunicationTypes } from 'components/types/MapNode';
 
 let getGroupsOptions = (stateList) => {
   let groupOptions = {};
@@ -68,13 +69,13 @@ export const optionsPth = (() => {
 
 export function edgeGroupToColor(group) {
   switch (group) {
-    case 'exploited':
+    case CommunicationTypes.exploited:
       return '#c00';
-    case 'tunnel':
+    case CommunicationTypes.tunnel:
       return '#0058aa';
-    case 'scan':
+    case CommunicationTypes.scan:
       return '#f90';
-    case 'island':
+    case CommunicationTypes.cc:
       return '#aaa';
   }
   return 'black';
