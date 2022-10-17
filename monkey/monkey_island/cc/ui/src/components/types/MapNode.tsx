@@ -1,16 +1,17 @@
 export enum OS {
-  unknown="unknown",
-  linux="linux",
-  windows="windows"
+  unknown = "unknown",
+  linux = "linux",
+  windows = "windows"
 }
 
 export enum CommunicationTypes {
   cc = "cc",
-  scanned = "scanned",
+  scan = "scan",
   exploited = "exploited"
+  tunnel = "tunnel"
 }
 
-export default class MapNode {
+export class MapNode {
   constructor(
     public machine_id: number,
     public network_interfaces: string[],
@@ -23,4 +24,25 @@ export default class MapNode {
     public agent_id: string = null,
     public parent_id: string = null) {
   }
+}
+
+export enum NodeGroup {
+    clean_unknown,
+    clean_linux,
+    clean_windows,
+    propagated_linux,
+    propagated_windows,
+    island,
+    island_monkey_linux,
+    island_monkey_linux_running,
+    island_monkey_windows,
+    island_monkey_windows_running,
+    manual_linux,
+    manual_linux_running,
+    manual_windows,
+    manual_windows_running,
+    monkey_linux,
+    monkey_linux_running,
+    monkey_windows,
+    monkey_windows_running
 }
