@@ -19,6 +19,7 @@ class MapPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
+      mapNodes: [],
       graph: { nodes: [], edges: [] },
       selected: null,
       selectedType: null,
@@ -90,6 +91,7 @@ class MapPageComponent extends AuthComponent {
       ));
     }
 
+    this.setState({ mapNodes: mapNodes });
     this.authFetch('/api/netmap')
       .then(res => res.json())
       .then(res => {
@@ -98,9 +100,9 @@ class MapPageComponent extends AuthComponent {
             edge.color = { 'color': edgeGroupToColor(edge.group) };
           });
           this.setState({ graph: res });
-          this.props.onStatusChange();
         }
       });
+    this.props.onStatusChange();
   };
 
   selectionChanged(event) {
@@ -188,7 +190,7 @@ class MapPageComponent extends AuthComponent {
               <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{ color: '#a9aaa9' }} /></span>
             </div>
             <div style={{ height: '80vh' }} className={'map-window'}>
-              <ReactiveGraph graph={this.state.graph} events={this.events} />
+              <ReactiveGraph mapNodes={this.state.mapNodes} events={this.events} />
               <TelemetryLog onStatusChange={this.props.onStatusChange} />
             </div>
           </Col>
