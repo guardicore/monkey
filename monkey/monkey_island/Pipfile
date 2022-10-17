@@ -35,21 +35,22 @@ pypubsub = "*"
 pydantic = "*"
 
 [dev-packages]
-virtualenv = ">=20.0.26"
+virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue
 mongomock = "==3.23.0"
 pytest = ">=5.4"
 requests-mock = "==1.8.0"
 black = "==22.3.0"
-dlint = "==0.12.0"
-flake8 = "==4.0.1"
+dlint = "==0.13.0"
+importlib-metadata = "==4.2.0" # Required by Flake8 on Python3.7. See https://github.com/python/importlib_metadata/issues/406
+flake8 = "==5.0.4"
 pytest-cov = "*"
 isort = "==5.10.1"
 coverage = "*"
 vulture = "==2.3"
 tqdm = "*"  # Used in BB tests
-sphinx = "*"  # Used in documentation
+sphinx = "==4.3.2"  # Used in documentation - Pinned to 4.3.2 due to importlib-metadat/flake8 issue
 sphinx_rtd_theme = "*"
-sphinx_autodoc_typehints = "*"
+sphinx_autodoc_typehints = "==1.17.1" # Pinned to 1.17.1 due to importlib-metadat/flake8 issue
 types-python-dateutil = "*"
 mypy = "*"
 
