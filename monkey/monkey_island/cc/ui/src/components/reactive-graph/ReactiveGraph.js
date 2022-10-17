@@ -9,6 +9,49 @@ class GraphWrapper extends React.Component {
     super(props);
   }
 
+  getGroupOperatingSystem(mapNode) {
+    if (mapNode.operating_system) {
+      return mapNode.operating_system;
+    }
+
+    return 'unknown';
+  }
+
+  calculateNodeGroup(mapNode) {
+    let group_components = [];
+    if (mapNode.island) {
+      group_components.push('island');
+    }
+
+    if (mapNode.agent_id) {
+      if (!mapNode.island && !mapNode.parent_id) {
+        group_components.push('manual');
+      }
+      else {
+        group_components.push('monkey');
+      }
+    }
+    else if (mapNode.propagated_to) {
+      group_components.push('propagated');
+    }
+    else if (!mapNode.island) { // No "clean" for island
+      group_components.push('clean');
+    }
+
+    group_components.push(this.getGroupOperatingSystem(mapNode));
+
+    if (mapNode.agent_is_running) {
+      group_components.push('running');
+    }
+
+    let group = group_components.join('_');
+    if (!(group in NodeGroup)) {
+      return NodeGroup[NodeGroup.clean_unknown];
+    }
+
+    return group;
+  }
+
   getLabel(mapNode) {
     if (mapNode.hostname) {
       return mapNode.hostname;
@@ -21,7 +64,7 @@ class GraphWrapper extends React.Component {
     for (const mapNode of mapNodes) {
       nodes.push({
         id: mapNode.machine_id,
-        group: NodeGroup.clean_unknown,
+        group: this.calculateNodeGroup(mapNode),
         label: this.getLabel(mapNode)
       });
     }
