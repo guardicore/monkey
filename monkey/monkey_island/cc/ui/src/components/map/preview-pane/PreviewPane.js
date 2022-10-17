@@ -49,6 +49,8 @@ class PreviewPaneComponent extends AuthComponent {
   }
 
   downloadLogsRow(asset) {
+    // TODO: After #2334, on line 81, get the Agent ID from the new MapNode structure instead of
+    // `asset.id` which is the node's ID, not the agent's ID which the endpoint expects
     return (
       <>
         <tr>
