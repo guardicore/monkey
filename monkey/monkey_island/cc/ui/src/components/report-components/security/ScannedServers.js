@@ -4,6 +4,7 @@ import Pluralize from 'pluralize';
 import IslandHttpClient, {APIEndpoit} from '../../IslandHttpClient';
 import _ from 'lodash';
 import {CommunicationTypes} from '../../types/MapNode';
+import {getCollectionObject} from '../../utils/ServerUtils';
 
 
 function getMachineRepresentationString(machine) {
@@ -38,16 +39,10 @@ function ScannedServersComponent(props) {
   const [allMachines, setAllMachines] = useState({});
 
   useEffect(() => {
-    IslandHttpClient.get(APIEndpoit.nodes)
-      .then(res => {
-        let nodes = res.body.reduce((prev, curr) => ({...prev, [curr.machine_id]: curr}), {});
-        setAllNodes(nodes);
-      })
-    IslandHttpClient.get(APIEndpoit.machines)
-      .then(res => {
-        let machines = res.body.reduce((prev, curr) => ({...prev, [curr.id]: curr}), {});
-        setAllMachines(machines);
-      })
+    getCollectionObject(APIEndpoit.nodes, "machine_id")
+      .then(nodesObj => setAllNodes(nodesObj));
+    getCollectionObject(APIEndpoit.machines, "id")
+      .then(machinesObj => setAllMachines(machinesObj));
   }, [])
 
   function getScannedMachines() {
