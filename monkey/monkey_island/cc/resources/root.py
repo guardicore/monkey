@@ -1,6 +1,7 @@
 import logging
+from http import HTTPStatus
 
-from flask import make_response, request
+from flask import request
 
 from monkey_island.cc.repository import IAgentRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
@@ -19,8 +20,8 @@ class Root(AbstractResource):
             action = request.args.get("action")
 
         if not action:
-            return make_response(204)
+            return {}, HTTPStatus.NO_CONTENT
         elif action == "is-up":
             return {"is-up": True}
         else:
-            return make_response(400, {"error": "unknown action"})
+            return {"error": "unknown action"}, HTTPStatus.BAD_REQUEST
