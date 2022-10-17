@@ -6,7 +6,7 @@ import {faStopCircle} from '@fortawesome/free-solid-svg-icons/faStopCircle';
 import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
-import {getOptions, edgeGroupToColor} from 'components/map/MapOptions';
+import { edgeGroupToColor } from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
 import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
@@ -16,8 +16,7 @@ class MapPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      graph: {nodes: [], edges: []},
-      nodeStateList:[],
+      graph: { nodes: [], edges: [] },
       selected: null,
       selectedType: null,
       killPressed: false,
@@ -30,7 +29,6 @@ class MapPageComponent extends AuthComponent {
   };
 
   componentDidMount() {
-    this.getNodeStateListFromServer();
     this.updateMapFromServer();
     this.interval = setInterval(this.updateMapFromServer, 5000);
   }
@@ -38,14 +36,6 @@ class MapPageComponent extends AuthComponent {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
-
-  getNodeStateListFromServer = () => {
-    this.authFetch('/api/netmap/node-states')
-      .then(res => res.json())
-      .then(res => {
-        this.setState({nodeStateList: res.node_states});
-      });
-  };
 
   updateMapFromServer = () => {
     this.authFetch('/api/netmap')
@@ -145,10 +135,9 @@ class MapPageComponent extends AuthComponent {
               <b style={{color: '#aeaeae'}}> | </b>
               <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{color: '#a9aaa9'}}/></span>
             </div>
-            <div style={{height: '80vh'}} className={'map-window'}>
-              <ReactiveGraph graph={this.state.graph} options={getOptions(this.state.nodeStateList)}
-                             events={this.events}/>
-              <TelemetryLog onStatusChange={this.props.onStatusChange}/>
+            <div style={{ height: '80vh' }} className={'map-window'}>
+              <ReactiveGraph graph={this.state.graph} events={this.events} />
+              <TelemetryLog onStatusChange={this.props.onStatusChange} />
             </div>
           </Col>
           <Col xs={4}>
