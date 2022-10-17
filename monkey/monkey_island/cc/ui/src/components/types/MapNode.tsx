@@ -1,34 +1,26 @@
-export class MapNode {
-    machine_id: number
-    operating_system: string
-    hostname: string
-    network_interfaces: object
-    agent_is_running: boolean
-    island: boolean
-    propagated_to: boolean
-    connections: object
-    agent_id?: string
-    parent_id?: string
+export enum OS {
+  unknown="unknown",
+  linux="linux",
+  windows="windows"
+}
 
-    constructor(machine_id: number,
-        operating_system: string,
-        hostname: string,
-        network_interfaces: object,
-        agent_is_running: boolean,
-        island: boolean,
-        propagated_to: boolean,
-        connections: object,
-        agent_id?: string,
-        parent_id?: string) {
-        this.machine_id = machine_id
-        this.operating_system = operating_system
-        this.hostname = hostname
-        this.network_interfaces = network_interfaces
-        this.agent_is_running = agent_is_running
-        this.island = island
-        this.propagated_to = propagated_to
-        this.connections = connections
-        this.agent_id = agent_id
-        this.parent_id = parent_id
-    }
+export enum CommunicationTypes {
+  cc = "cc",
+  scanned = "scanned",
+  exploited = "exploited"
+}
+
+export default class MapNode {
+  constructor(
+    public machine_id: number,
+    public network_interfaces: string[],
+    public agent_is_running: boolean,
+    public connections: Record<string, CommunicationTypes[]>,
+    public operating_system: OS = OS.unknown,
+    public hostname: string = "",
+    public island: boolean = false,
+    public propagated_to: boolean = false,
+    public agent_id: string = null,
+    public parent_id: string = null) {
+  }
 }
