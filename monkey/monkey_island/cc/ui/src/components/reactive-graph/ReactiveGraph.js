@@ -8,11 +8,19 @@ class GraphWrapper extends React.Component {
     super(props);
   }
 
+  generateGraph() {
+    return {
+      edges: [],
+      nodes: []
+    };
+  }
+
   render() {
     let options = getOptions();
+    let graph = this.generateGraph();
     return (
       <div className={'net-graph-wrapper'}>
-        <Graph graph={this.props.graph} options={options} events={this.props.events} />
+        <Graph graph={graph} options={options} events={this.props.events} />
       </div>
     )
   }
