@@ -1,5 +1,4 @@
-import { NodeGroup } from './MapNode';
-import { CommunicationTypes } from 'components/types/MapNode';
+import { CommunicationTypes, NodeGroup } from 'components/types/MapNode';
 
 let getGroupsOptions = (stateList) => {
   let groupOptions = {};
