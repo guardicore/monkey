@@ -22,8 +22,12 @@ export function didAllAgentsShutdown() {
 export function getCollectionObject(collectionEndpoint: APIEndpoint, key: string) {
   return IslandHttpClient.get(collectionEndpoint)
       .then(res => {
-        return res.body.reduce((prev, curr) => ({...prev, [curr[key]]: curr}), {});
+        return _arrayToObject(res.body, key);
       })
+}
+
+function _arrayToObject(array: object[], key: string){
+  return array.reduce((prev, curr) => ({...prev, [curr[key]]: curr}), {});
 }
 
 function _getAllAgents() {
