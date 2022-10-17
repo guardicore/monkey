@@ -101,6 +101,7 @@ def initialize_services(container: DIContainer, data_dir: Path):
         container.resolve(ICredentialsRepository),
         container.resolve(IMachineRepository),
         container.resolve(INodeRepository),
+        container.resolve(IAgentRepository),
     )
 
 

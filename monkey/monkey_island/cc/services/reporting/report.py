@@ -76,6 +76,7 @@ class ReportService:
     _credentials_repository: Optional[ICredentialsRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
+    _agent_repository: Optional[IAgentRepository] = None
 
     class DerivedIssueEnum:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
@@ -90,6 +91,7 @@ class ReportService:
         credentials_repository: ICredentialsRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
+        agent_repository: IAgentRepository,
     ):
         cls._aws_service = aws_service
         cls._agent_repository = agent_repository
@@ -98,6 +100,7 @@ class ReportService:
         cls._credentials_repository = credentials_repository
         cls._machine_repository = machine_repository
         cls._node_repository = node_repository
+        cls._agent_repository = agent_repository
 
     # This should pull from Simulation entity
     @staticmethod
@@ -587,6 +590,9 @@ class ReportService:
 
     @staticmethod
     def get_report():
+        if not ReportService._agent_repository.get_agents():
+            return {}
+
         if not ReportService.is_latest_report_exists():
             return safe_generate_regular_report()
 

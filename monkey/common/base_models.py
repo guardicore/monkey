@@ -35,8 +35,10 @@ class InfectionMonkeyBaseModel(BaseModel):
             e = err.raw_errors[0]
             while isinstance(e, Sequence):
                 e = e[0]
-
-            raise e.exc
+            error = e.exc
+            if hasattr(e, "_loc"):
+                error.args = (f"{e._loc} {error}",)
+            raise error
 
     # We need to be able to convert our models to fully simplified dictionaries. The
     # `BaseModel.dict()` does not support this. There is a proposal to add a `simplify` keyword
