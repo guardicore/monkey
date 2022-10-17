@@ -12,7 +12,7 @@ export class Response {
 }
 
 export enum APIEndpoint {
-  agents = '/api/agent',
+  agents = '/api/agents',
   machines = '/api/machines',
   nodes = '/api/netmap/node',
 }
