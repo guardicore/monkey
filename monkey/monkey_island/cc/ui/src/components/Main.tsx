@@ -25,10 +25,9 @@ import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
 import IslandHttpClient from "./IslandHttpClient";
-import _ from "lodash";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils.js'
+import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils.tsx';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 

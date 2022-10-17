@@ -1,4 +1,6 @@
-import IslandHttpClient from '../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
+
+
 
 export function doesAnyAgentExist() {
   return _getAllAgents().then(all_agents => {
@@ -17,8 +19,19 @@ export function didAllAgentsShutdown() {
   })
 }
 
+export function getCollectionObject(collectionEndpoint: APIEndpoint, key: string) {
+  return IslandHttpClient.get(collectionEndpoint)
+      .then(res => {
+        return _arrayToObject(res.body, key);
+      })
+}
+
+function _arrayToObject(array: object[], key: string){
+  return array.reduce((prev, curr) => ({...prev, [curr[key]]: curr}), {});
+}
+
 function _getAllAgents() {
-    return IslandHttpClient.get('/api/agents')
+    return IslandHttpClient.get(APIEndpoint.agents)
     .then(res => {
         return res.body;
     });

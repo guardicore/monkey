@@ -8,7 +8,7 @@ import SecurityReport from '../report-components/SecurityReport';
 import ZeroTrustReport from '../report-components/ZeroTrustReport';
 import RansomwareReport from '../report-components/RansomwareReport';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
-import {doesAnyAgentExist, didAllAgentsShutdown} from '../utils/ServerUtils.js'
+import {doesAnyAgentExist, didAllAgentsShutdown} from '../utils/ServerUtils.tsx'
 
 
 class ReportPageComponent extends AuthComponent {

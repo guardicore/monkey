@@ -1,7 +1,7 @@
-import AuthComponent from "./AuthComponent";
-import React from "react";
+import AuthComponent from './AuthComponent';
+import React from 'react';
 
-export class Response{
+export class Response {
   body: any
   status: number
 
@@ -11,8 +11,14 @@ export class Response{
   }
 }
 
+export enum APIEndpoint {
+  agents = '/api/agents',
+  machines = '/api/machines',
+  nodes = '/api/netmap/node',
+}
+
 class IslandHttpClient extends AuthComponent {
-  put(endpoint: string, contents: any): Promise<Response>{
+  put(endpoint: string, contents: any): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint,
       {
@@ -20,14 +26,20 @@ class IslandHttpClient extends AuthComponent {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(contents)
       })
-      .then(res => {status = res.status; return res})
+      .then(res => {
+        status = res.status;
+        return res
+      })
       .then(res => new Response(res, status));
   }
 
-  get(endpoint: string): Promise<Response>{
+  get(endpoint: APIEndpoint): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint)
-      .then(res => {status = res.status; return res.json()})
+      .then(res => {
+        status = res.status;
+        return res.json()
+      })
       .then(res => new Response(res, status));
   }
 }
