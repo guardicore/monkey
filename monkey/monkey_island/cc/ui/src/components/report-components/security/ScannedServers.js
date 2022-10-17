@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-import IslandHttpClient from '../../IslandHttpClient';
+import IslandHttpClient, {APIEndpoit} from '../../IslandHttpClient';
 import _ from 'lodash';
+import {CommunicationTypes} from '../../types/MapNode';
 
-const machinesEndpoint = '/api/machines';
-const nodesEndpoint = '/api/netmap/node';
-const scanCommunicationType = 'scanned';
 
 function getMachineRepresentationString(machine) {
   return `${machine.hostname}(${machine.network_interfaces.toString()})`;
@@ -40,12 +38,12 @@ function ScannedServersComponent(props) {
   const [allMachines, setAllMachines] = useState({});
 
   useEffect(() => {
-    IslandHttpClient.get(nodesEndpoint)
+    IslandHttpClient.get(APIEndpoit.nodes)
       .then(res => {
         let nodes = res.body.reduce((prev, curr) => ({...prev, [curr.machine_id]: curr}), {});
         setAllNodes(nodes);
       })
-    IslandHttpClient.get(machinesEndpoint)
+    IslandHttpClient.get(APIEndpoit.machines)
       .then(res => {
         let machines = res.body.reduce((prev, curr) => ({...prev, [curr.id]: curr}), {});
         setAllMachines(machines);
@@ -56,7 +54,7 @@ function ScannedServersComponent(props) {
     let scannedMachines = new Set();
     for (const node of Object.values(allNodes)) {
       for (const [targetMachineId, communications] of Object.entries(node.connections)) {
-        if (communications.includes(scanCommunicationType)) {
+        if (communications.includes(CommunicationTypes.scanned)) {
           scannedMachines.add(allMachines[targetMachineId]);
         }
       }

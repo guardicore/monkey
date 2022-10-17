@@ -1,4 +1,6 @@
-import IslandHttpClient from '../IslandHttpClient';
+import IslandHttpClient, {APIEndpoit} from '../IslandHttpClient';
+
+
 
 export function doesAnyAgentExist() {
   return _getAllAgents().then(all_agents => {
@@ -18,7 +20,7 @@ export function didAllAgentsShutdown() {
 }
 
 function _getAllAgents() {
-    return IslandHttpClient.get('/api/agents')
+    return IslandHttpClient.get(APIEndpoit.agents)
     .then(res => {
         return res.body;
     });
