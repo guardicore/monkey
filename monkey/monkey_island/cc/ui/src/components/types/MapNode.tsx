@@ -33,7 +33,7 @@ export class MapNode {
     return OS.unknown;
   }
 
-  calculateNodeGroup() {
+  calculateNodeGroup(): string {
     let group_components = [];
     if (this.island) {
       group_components.push('island');
@@ -68,7 +68,7 @@ export class MapNode {
     return group;
   }
 
-  getLabel() {
+  getLabel(): string {
     if (this.hostname) {
       return this.hostname;
     }
