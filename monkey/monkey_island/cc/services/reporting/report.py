@@ -1,21 +1,32 @@
+from __future__ import annotations
+
 import functools
-import ipaddress
 import logging
 from collections import defaultdict
 from dataclasses import asdict
+from enum import Enum
+from ipaddress import IPv4Address
 from itertools import chain, product
-from typing import Dict, Iterable, List, Optional
+from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
-from common.agent_events import ExploitationEvent, PasswordRestorationEvent
+from common.agent_events import (
+    AbstractAgentEvent,
+    ExploitationEvent,
+    PasswordRestorationEvent,
+    PingScanEvent,
+    TCPScanEvent,
+)
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
-from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
+from common.network.segmentation_utils import get_ip_if_in_subnet
+from common.types import PortStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommunicationType, Machine, Monkey
 from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
+    IAgentRepository,
     ICredentialsRepository,
     IMachineRepository,
     INodeRepository,
@@ -36,9 +47,30 @@ from .issue_processing.exploit_processing.exploiter_report_info import Exploiter
 
 logger = logging.getLogger(__name__)
 
+ScanEvent = Union[PingScanEvent, TCPScanEvent]
+
+
+class ScanTypeEnum(Enum):
+    ICMP = "ICMP"
+    TCP = "TCP"
+    UNKNOWN = "Unknown"
+
+    @staticmethod
+    def from_event(event: AbstractAgentEvent) -> ScanTypeEnum:
+        if isinstance(event, PingScanEvent):
+            return ScanTypeEnum.ICMP
+        if isinstance(event, TCPScanEvent):
+            return ScanTypeEnum.TCP
+        return ScanTypeEnum.UNKNOWN
+
+
+def has_open_ports(event: TCPScanEvent):
+    return any(s == PortStatus.OPEN for s in event.ports.values())
+
 
 class ReportService:
     _aws_service: Optional[AWSService] = None
+    _agent_repository: Optional[IAgentRepository] = None
     _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
     _agent_event_repository: Optional[IAgentEventRepository] = None
     _credentials_repository: Optional[ICredentialsRepository] = None
@@ -52,6 +84,7 @@ class ReportService:
     def initialize(
         cls,
         aws_service: AWSService,
+        agent_repository: IAgentRepository,
         agent_configuration_repository: IAgentConfigurationRepository,
         agent_event_repository: IAgentEventRepository,
         credentials_repository: ICredentialsRepository,
@@ -59,6 +92,7 @@ class ReportService:
         node_repository: INodeRepository,
     ):
         cls._aws_service = aws_service
+        cls._agent_repository = agent_repository
         cls._agent_configuration_repository = agent_configuration_repository
         cls._agent_event_repository = agent_event_repository
         cls._credentials_repository = credentials_repository
@@ -157,7 +191,7 @@ class ReportService:
     def process_exploit_event(
         cls,
         exploitation_event: ExploitationEvent,
-        password_restored: Dict[ipaddress.IPv4Address, bool],
+        password_restored: DefaultDict[IPv4Address, bool],
     ) -> ExploiterReportInfo:
         if not cls._machine_repository:
             raise RuntimeError("Machine repository does not exist")
@@ -201,37 +235,26 @@ class ReportService:
         # Convert the ExploitationEvent into an ExploiterReportInfo
         return [asdict(cls.process_exploit_event(e, password_restored)) for e in filtered_exploits]
 
-    @staticmethod
-    def get_monkey_subnets(monkey_guid):
-        networks = Monkey.objects.get(guid=monkey_guid).networks
-
-        return [
-            ipaddress.ip_interface(f"{network['addr']}/{network['netmask']}").network
-            for network in networks
-        ]
-
-    @staticmethod
-    def get_island_cross_segment_issues():
+    @classmethod
+    def get_island_cross_segment_issues(cls):
         issues = []
         island_ips = get_my_ip_addresses_legacy()
-        for monkey in mongo.db.monkey.find(
-            {"tunnel": {"$exists": False}}, {"tunnel": 1, "guid": 1, "hostname": 1}
-        ):
+        island_machines = [m for m in cls._machine_repository.get_machines() if m.island]
+        for island_machine in island_machines:
             found_good_ip = False
-            monkey_subnets = ReportService.get_monkey_subnets(monkey["guid"])
-            for subnet in monkey_subnets:
-                for ip in island_ips:
-                    if ipaddress.ip_address(str(ip)) in subnet:
-                        found_good_ip = True
-                        break
+            island_subnets = island_machine.network_interfaces
+            for subnet in island_subnets:
+                if str(subnet.ip) in island_ips:
+                    found_good_ip = True
+                    break
                 if found_good_ip:
                     break
             if not found_good_ip:
                 issues.append(
                     {
                         "type": "island_cross_segment",
-                        "machine": monkey["hostname"],
-                        "networks": [str(subnet) for subnet in monkey_subnets],
+                        "machine": island_machine.hostname,
+                        "networks": [str(subnet) for subnet in island_subnets],
                         "server_networks": [
                             str(interface.network) for interface in get_network_interfaces()
                         ],
@@ -240,83 +263,126 @@ class ReportService:
 
         return issues
 
-    @staticmethod
-    def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
+    @classmethod
+    def get_cross_segment_issues_of_single_machine(
+        cls, source_subnet_range: NetworkRange, target_subnet_range: NetworkRange
+    ) -> List[Dict[str, Any]]:
         """
         Gets list of cross segment issues of a single machine.
         Meaning a machine has an interface for each of the subnets
 
         :param source_subnet_range: The subnet range which shouldn't be able to access target_subnet
-        :param target_subnet_range: The subnet range which shouldn't be accessible fromsource_subnet
+        :param target_subnet_range: The subnet range which shouldn't be accessible from
+            source_subnet
         :return:
         """
+        if cls._agent_repository is None:
+            raise RuntimeError("Agent repository does not exist")
+        if cls._machine_repository is None:
+            raise RuntimeError("Machine repository does not exist")
+
         cross_segment_issues = []
 
-        for monkey in mongo.db.monkey.find({}, {"ip_addresses": 1, "hostname": 1}):
-            ip_in_src = None
-            ip_in_dst = None
-            for ip_addr in monkey["ip_addresses"]:
-                if source_subnet_range.is_in_range(str(ip_addr)):
-                    ip_in_src = ip_addr
+        # Get IP addresses and hostname for each agent
+        machine_dict = {m.id: m for m in cls._machine_repository.get_machines()}
+        issues_dict: DefaultDict[Machine, DefaultDict[IPv4Address, Set[IPv4Address]]] = defaultdict(
+            lambda: defaultdict(set)
+        )
+        for agent in cls._agent_repository.get_agents():
+            machine = machine_dict[agent.machine_id]
+
+            ip_in_src: Optional[IPv4Address] = None
+            for iface in machine.network_interfaces:
+                if source_subnet_range.is_in_range(str(iface.ip)):
+                    ip_in_src = iface.ip
                     break
 
-            # No point searching the dst subnet if there are no IPs in src subnet.
             if not ip_in_src:
                 continue
 
-            for ip_addr in monkey["ip_addresses"]:
-                if target_subnet_range.is_in_range(str(ip_addr)):
-                    ip_in_dst = ip_addr
+            ip_in_dst: Optional[IPv4Address] = None
+            for iface in machine.network_interfaces:
+                if target_subnet_range.is_in_range(str(iface.ip)):
+                    ip_in_dst = iface.ip
                     break
 
             if ip_in_dst:
-                cross_segment_issues.append(
-                    {
-                        "source": ip_in_src,
-                        "hostname": monkey["hostname"],
-                        "target": ip_in_dst,
-                        "services": None,
-                        "is_self": True,
-                    }
-                )
+                issues_dict[machine][ip_in_src].add(ip_in_dst)
+
+        for machine, src_dict in issues_dict.items():
+            for src_ip, target_ips in src_dict.items():
+                for target_ip in sorted(target_ips):
+                    cross_segment_issues.append(
+                        {
+                            "source": str(src_ip),
+                            "hostname": machine.hostname,
+                            "target": str(target_ip),
+                            "services": None,
+                            "is_self": True,
+                        }
+                    )
 
         return cross_segment_issues
 
-    @staticmethod
-    def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
+    @classmethod
+    def get_cross_segment_issues_per_subnet_pair(
+        cls,
+        scans: Sequence[Union[PingScanEvent, TCPScanEvent]],
+        source_subnet: str,
+        target_subnet: str,
+    ) -> List[Dict[str, Any]]:
         """
         Gets list of cross segment issues from source_subnet to target_subnet.
 
-        :param scans: List of all scan telemetry entries. Must have monkey_guid,ip_addr and
-         services. This should be a PyMongo cursor object.
+        :param scans: List of all successful scan events.
         :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
         :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
         :return:
         """
         if source_subnet == target_subnet:
             return []
+
+        if cls._agent_repository is None:
+            raise RuntimeError("Agent repository does not exist")
+        if cls._machine_repository is None:
+            raise RuntimeError("Machine repository does not exist")
+
         source_subnet_range = NetworkRange.get_range_obj(source_subnet)
         target_subnet_range = NetworkRange.get_range_obj(target_subnet)
 
         cross_segment_issues = []
 
-        scans.rewind()  # If we iterated over scans already we need to rewind.
+        agents_dict = {a.id: a for a in cls._agent_repository.get_agents()}
+        machines_dict = {m.id: m for m in cls._machine_repository.get_machines()}
+        machine_events: DefaultDict[
+            Machine, DefaultDict[IPv4Address, Dict[Type, ScanEvent]]
+        ] = defaultdict(lambda: defaultdict(dict))
+
+        # Store events for which the target IP is in the target subnet, indexed
+        # by the scanning machine, target IP, and event type
         for scan in scans:
-            target_ip = scan["data"]["machine"]["ip_addr"]
+            target_ip = scan.target
             if target_subnet_range.is_in_range(str(target_ip)):
-                monkey = NodeService.get_monkey_by_guid(scan["monkey_guid"])
-                cross_segment_ip = get_ip_in_src_and_not_in_dst(
-                    monkey["ip_addresses"], source_subnet_range, target_subnet_range
-                )
+                agent = agents_dict[scan.source]
+                machine = machines_dict[agent.machine_id]
+                machine_events[machine][target_ip][type(scan)] = scan
+
+        # Report issues when the machine has an IP in the source subnet range
+        for machine, scan_dict in machine_events.items():
+            machine_ips = [iface.ip for iface in machine.network_interfaces]
+            for target_ip, scan_type_dict in scan_dict.items():
+                cross_segment_ip = get_ip_if_in_subnet(machine_ips, source_subnet_range)
 
                 if cross_segment_ip is not None:
                     cross_segment_issues.append(
                         {
-                            "source": cross_segment_ip,
-                            "hostname": monkey["hostname"],
-                            "target": target_ip,
-                            "services": scan["data"]["machine"]["services"],
-                            "icmp": scan["data"]["machine"]["icmp"],
+                            "source": str(cross_segment_ip),
+                            "hostname": machine.hostname,
+                            "target": str(target_ip),
+                            "services": {a: s for a, s in machine.network_services},
+                            "types": [
+                                ScanTypeEnum.from_event(s).value for _, s in scan_type_dict.items()
+                            ],
                             "is_self": False,
                         }
                     )
@@ -326,12 +392,13 @@ class ReportService:
         )
 
     @staticmethod
-    def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
+    def get_cross_segment_issues_per_subnet_group(
+        scans: Sequence[Union[PingScanEvent, TCPScanEvent]], subnet_group: str
+    ):
         """
         Gets list of cross segment issues within given subnet_group.
 
-        :param scans: List of all scan telemetry entries. Must have monkey_guid,
-         ip_addr and services. This should be a PyMongo cursor object.
+        :param scans: List of all scan events.
         :param subnet_group: List of subnets which shouldn't be accessible from each other.
         :return: Cross segment issues regarding the subnets in the group.
         """
@@ -356,21 +423,17 @@ class ReportService:
 
     @classmethod
     def get_cross_segment_issues(cls):
-        scans = mongo.db.telemetry.find(
-            {"telem_category": "scan"},
-            {
-                "monkey_guid": 1,
-                "data.machine.ip_addr": 1,
-                "data.machine.services": 1,
-                "data.machine.icmp": 1,
-            },
-        )
+        ping_scans = cls._agent_event_repository.get_events_by_type(PingScanEvent)
+        tcp_scans = cls._agent_event_repository.get_events_by_type(TCPScanEvent)
+        successful_ping_scans = (s for s in ping_scans if s.response_received)
+        successful_tcp_scans = (s for s in tcp_scans if has_open_ports(s))
+        scans = [s for s in chain(successful_ping_scans, successful_tcp_scans)]
 
         cross_segment_issues = []
 
         # For now the feature is limited to 1 group.
         agent_configuration = cls._agent_configuration_repository.get_configuration()
-        subnet_groups = agent_configuration.propagation.network_scan.targets.inaccessible_subnets
+        subnet_groups = [agent_configuration.propagation.network_scan.targets.inaccessible_subnets]
 
         for subnet_group in subnet_groups:
             cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(
