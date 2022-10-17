@@ -6,7 +6,6 @@ import { faStopCircle } from '@fortawesome/free-solid-svg-icons/faStopCircle';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import ReactiveGraph from 'components/reactive-graph/ReactiveGraph';
-import { edgeGroupToColor } from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
@@ -92,16 +91,6 @@ class MapPageComponent extends AuthComponent {
     }
 
     this.setState({ mapNodes: mapNodes });
-    this.authFetch('/api/netmap')
-      .then(res => res.json())
-      .then(res => {
-        if (Object.prototype.hasOwnProperty.call(res, 'edges')) {
-          res.edges.forEach(edge => {
-            edge.color = { 'color': edgeGroupToColor(edge.group) };
-          });
-          this.setState({ graph: res });
-        }
-      });
     this.props.onStatusChange();
   };
 
