@@ -9,13 +9,20 @@ class GraphWrapper extends React.Component {
     super(props);
   }
 
+  getLabel(mapNode) {
+    if (mapNode.hostname) {
+      return mapNode.hostname;
+    }
+    return mapNode.network_interfaces[0];
+  }
+
   generateNodes(mapNodes) {
     let nodes = [];
     for (const mapNode of mapNodes) {
       nodes.push({
         id: mapNode.machine_id,
         group: NodeGroup.clean_unknown,
-        label: 'label'
+        label: this.getLabel(mapNode)
       });
     }
     return nodes;
