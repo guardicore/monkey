@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
-import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
+import {APIEndpoint} from '../../IslandHttpClient';
 import _ from 'lodash';
 import {CommunicationTypes} from '../../types/MapNode';
 import {getCollectionObject} from '../../utils/ServerUtils';
@@ -39,9 +39,9 @@ function ScannedServersComponent(props) {
   const [allMachines, setAllMachines] = useState({});
 
   useEffect(() => {
-    getCollectionObject(APIEndpoint.nodes, "machine_id")
+    getCollectionObject(APIEndpoint.nodes, 'machine_id')
       .then(nodesObj => setAllNodes(nodesObj));
-    getCollectionObject(APIEndpoint.machines, "id")
+    getCollectionObject(APIEndpoint.machines, 'id')
       .then(machinesObj => setAllMachines(machinesObj));
   }, [])
 
