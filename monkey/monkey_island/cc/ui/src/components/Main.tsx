@@ -27,7 +27,7 @@ import Timeout = NodeJS.Timeout;
 import IslandHttpClient, { APIEndpoint } from "./IslandHttpClient";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils.tsx';
+import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
