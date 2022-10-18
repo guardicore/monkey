@@ -22,8 +22,22 @@ class MapPageComponent extends AuthComponent {
     };
   }
 
-  events = {};
+  events = {
+    select: event => this.selectionChanged(event)
+  };
 
+  selectionChanged(event) {
+    if (event.nodes.length === 1) {
+      for (const node in this.props.mapNodes) {
+        if (node.machineId === event.nodes[0].id) {
+          this.setState({ selected: node, selectedType: 'node' })
+          break;
+        }
+      }
+    } else {
+      this.setState({ selected: null, selectedType: null });
+    }
+  }
 
   killAllMonkeys = () => {
     this.authFetch('/api/agent-signals/terminate-all-agents',
