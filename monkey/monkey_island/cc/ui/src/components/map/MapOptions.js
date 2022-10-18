@@ -74,7 +74,7 @@ export function edgeGroupToColor(group) {
       return '#c00';
     case CommunicationTypes.relay:
       return '#0058aa';
-    case CommunicationTypes.scan:
+    case CommunicationTypes.scanned:
       return '#f90';
     case CommunicationTypes.cc:
       return '#aaa';

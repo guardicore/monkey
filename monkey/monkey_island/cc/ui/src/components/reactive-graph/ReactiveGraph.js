@@ -6,7 +6,7 @@ import { CommunicationTypes, MapNode, OS } from 'components/types/MapNode';
 // This determines the priority of the connection types.
 // If an edge has more than one connection type, then this array will be used to determine which communication type to use.
 // The array is in priority order, so the first item has priority over the second, and so on.
-const priorityList = [CommunicationTypes.relay, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scan];
+const priorityList = [CommunicationTypes.relay, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scanned];
 
 class GraphWrapper extends React.Component {
 
@@ -66,8 +66,8 @@ class GraphWrapper extends React.Component {
         ['10.10.0.1'],
         true,
         {
-          2: [CommunicationTypes.scan, CommunicationTypes.exploited],
-          3: [CommunicationTypes.scan, CommunicationTypes.exploited]
+          2: [CommunicationTypes.scanned, CommunicationTypes.exploited],
+          3: [CommunicationTypes.scanned, CommunicationTypes.exploited]
         },
         OS.windows,
         'island',
@@ -82,7 +82,7 @@ class GraphWrapper extends React.Component {
         true,
         {
           1: [CommunicationTypes.cc],
-          3: [CommunicationTypes.scan]
+          3: [CommunicationTypes.scanned]
         },
         OS.linux,
         'lin-1',
@@ -97,7 +97,7 @@ class GraphWrapper extends React.Component {
         true,
         {
           1: [CommunicationTypes.cc],
-          4: [CommunicationTypes.scan]
+          4: [CommunicationTypes.scanned]
         },
         OS.windows,
         'win-xp',

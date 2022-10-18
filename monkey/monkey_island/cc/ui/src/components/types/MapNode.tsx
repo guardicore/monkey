@@ -6,7 +6,7 @@ export enum OS {
 
 export enum CommunicationTypes {
   cc = "cc",
-  scan = "scan",
+  scan = "scanned",
   exploited = "exploited",
   relay = "relay"
 }
