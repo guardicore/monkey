@@ -6,7 +6,7 @@ export enum OS {
 
 export enum CommunicationTypes {
   cc = "cc",
-  scan = "scanned",
+  scanned = "scanned",
   exploited = "exploited",
   relay = "relay"
 }
@@ -98,7 +98,7 @@ export default class MapNode {
   }
 }
 
-export function getMachineIp(machine: Machine): string{
+export function getMachineIp(machine: Machine): string {
   return machine.network_interfaces[0].split('/')[0];
 }
 
