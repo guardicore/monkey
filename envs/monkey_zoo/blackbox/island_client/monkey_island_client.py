@@ -1,7 +1,8 @@
 import json
 import logging
 import time
-from typing import List, Mapping, Sequence
+from http import HTTPStatus
+from typing import List, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
 from common.types import AgentID, MachineID
@@ -148,8 +149,14 @@ class MonkeyIslandClient(object):
 
         return {m.id: m for m in machines}
 
-    def get_agent_log(self, agent_id: AgentID) -> str:
+    def get_agent_log(self, agent_id: AgentID) -> Optional[str]:
         response = self.requests.get(f"{GET_LOG_ENDPOINT}/{agent_id}")
+
+        if response.status_code == HTTPStatus.NOT_FOUND:
+            LOGGER.error(f"No log found for agent: {agent_id}")
+            return None
+        else:
+            response.raise_for_status()
 
         return response.json()
 
