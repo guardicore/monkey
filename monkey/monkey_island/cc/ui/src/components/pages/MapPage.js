@@ -10,16 +10,11 @@ import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import TelemetryLog from '../map/TelemetryLog';
-import { APIEndpoint } from 'components/IslandHttpClient';
-import { MapNode } from 'components/types/MapNode';
-import { getCollectionObject } from 'components/utils/ServerUtils';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      mapNodes: [],
-      graph: { nodes: [], edges: [] },
       selected: null,
       selectedType: null,
       killPressed: false,
@@ -31,79 +26,12 @@ class MapPageComponent extends AuthComponent {
     select: event => this.selectionChanged(event)
   };
 
-  componentDidMount() {
-    this.updateMapFromServer();
-    this.interval = setInterval(this.updateMapFromServer, 5000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  wasMachinePropagated(machine, propagationEvents) {
-    let propagatedTo = false;
-    for (const iface of machine.network_interfaces) {
-      let ip = iface.split('/')[0];
-      if (ip in propagationEvents) {
-        propagatedTo = true;
-        break;
-      }
-    }
-
-    return propagatedTo;
-  }
-
-  updateMapFromServer = () => {
-    let agents = getCollectionObject(APIEndpoint.agents, 'machine_id'); // agents by machine ID
-    let machines = getCollectionObject(APIEndpoint.machines, 'id'); // machines by ID
-    let nodes = getCollectionObject(APIEndpoint.nodes, 'machine_id'); // nodes by machine ID
-    let propagationEvents = getCollectionObject(APIEndpoint.agent_events + '?type=PropagationEvent&success=true', 'target')
-
-    // Build the MapNodes list
-    let mapNodes = [];
-    for (const node of Object.values(nodes)) {
-      let machine = machines[node.machine_id];
-
-      let running = false;
-      let agentID = null;
-      let parentID = null;
-      if (node.machine_id in agents) {
-        let agent = agents[node.machine_id];
-        running = (agent.stop_time > agent.start_time);
-        agentID = agent.id;
-        parentID = agent.parent_id;
-      }
-
-      let propagatedTo = this.wasMachinePropagated(machine, propagationEvents);
-
-      mapNodes.push(new MapNode(
-        machine.id,
-        machine.network_interfaces,
-        running,
-        node.connections,
-        machine.operating_system,
-        machine.hostname,
-        machine.island,
-        propagatedTo,
-        agentID,
-        parentID
-      ));
-    }
-
-    this.setState({ mapNodes: mapNodes });
-    this.props.onStatusChange();
-  };
-
   selectionChanged(event) {
     if (event.nodes.length === 1) {
       this.authFetch('/api/netmap/node?id=' + event.nodes[0])
         .then(res => res.json())
         .then(res => this.setState({ selected: res, selectedType: 'node' }));
     } else if (event.edges.length === 1) {
-      let displayedEdge = this.state.graph.edges.find(
-        function (edge) {
-          return edge['id'] === event.edges[0];
-        });
       if (displayedEdge['group'] === 'island') {
         this.setState({ selected: displayedEdge, selectedType: 'island_edge' });
       } else {
@@ -179,7 +107,7 @@ class MapPageComponent extends AuthComponent {
               <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{ color: '#a9aaa9' }} /></span>
             </div>
             <div style={{ height: '80vh' }} className={'map-window'}>
-              <ReactiveGraph mapNodes={this.state.mapNodes} events={this.events} />
+              <ReactiveGraph mapNodes={this.props.mapNodes} events={this.events} />
               <TelemetryLog onStatusChange={this.props.onStatusChange} />
             </div>
           </Col>
