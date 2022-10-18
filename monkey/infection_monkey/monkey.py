@@ -508,6 +508,7 @@ class InfectionMonkey:
         notify_disconnect(self._island_address)
 
     def _send_log(self):
+        logger.info("Sending agent logs to the Island")
         monkey_log_path = get_agent_log_path()
         if monkey_log_path.is_file():
             with open(monkey_log_path, "r") as f:
