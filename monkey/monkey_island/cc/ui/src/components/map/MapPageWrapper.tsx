@@ -48,8 +48,8 @@ const MapPageWrapper = (props) => {
         connections = [];
       }
       let running = false;
-      let agentID = null;
-      let parentID = null;
+      let agentID: string | null = null;
+      let parentID: string | null = null;
       if (node !== null && machine.id in agents) {
         let agent = agents[machine.id];
         running = isAgentRunning(agent);

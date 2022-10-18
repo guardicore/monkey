@@ -26,7 +26,7 @@ export type Machine = {
 
 export type Agent = {
   id: string;
-  parent_id: number | null;
+  parent_id: string | null;
   start_time: string;
   stop_time: string | null;
 }
@@ -43,8 +43,8 @@ export default class MapNode {
     public hostname: string = "",
     public island: boolean = false,
     public propagatedTo: boolean = false,
-    public agentId: number | null = null,
-    public parentId: number | null = null) {
+    public agentId: string | null = null,
+    public parentId: string | null = null) {
   }
 
   getGroupOperatingSystem(): OS {
