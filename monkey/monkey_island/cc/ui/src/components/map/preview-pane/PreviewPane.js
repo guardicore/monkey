@@ -25,7 +25,7 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <tr>
         <th>Operating System</th>
-        <td>{asset.os.charAt(0).toUpperCase() + asset.os.slice(1)}</td>
+        <td>{asset.operatingSystem.charAt(0).toUpperCase() + asset.os.slice(1)}</td>
       </tr>
     );
   }
@@ -34,7 +34,7 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <tr>
         <th>IP Addresses</th>
-        <td>{asset.ip_addresses.map(val => <div key={val}>{val}</div>)}</td>
+        <td>{asset.networkInterfaces.map(val => <div key={val}>{val}</div>)}</td>
       </tr>
     );
   }
@@ -43,7 +43,7 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <tr>
         <th>Status</th>
-        <td>{(asset.dead) ? 'Dead' : 'Alive'}</td>
+        <td>{(asset.agentRunning) ? 'Alive' : 'Dead'}</td>
       </tr>
     );
   }
@@ -60,7 +60,7 @@ class PreviewPaneComponent extends AuthComponent {
               variant={undefined} />
           </td>
         </tr>
-        {(asset['group'].includes('island')) &&
+        {(asset.island) &&
           <tr>
             <th>
               Download Island Server Log
@@ -76,6 +76,8 @@ class PreviewPaneComponent extends AuthComponent {
 
 
   exploitsTimeline(asset) {
+    return (<div />);
+    /*
     if (asset.exploits.length === 0) {
       return (<div/>);
     }
@@ -97,6 +99,7 @@ class PreviewPaneComponent extends AuthComponent {
         </ul>
       </div>
     )
+    */
   }
 
   islandAssetInfo() {
@@ -185,17 +188,15 @@ class PreviewPaneComponent extends AuthComponent {
     let info = null;
     switch (this.props.type) {
       case 'edge':
-        info = this.scanInfo(this.props.item);
+        /* info = this.scanInfo(this.props.item); */
         break;
       case 'node':
-        if (this.props.item.group.includes('monkey')) {
-          info = this.assetInfo(this.props.item);
-        } else if (this.props.item.group.includes('monkey', 'manual')) {
+        if (this.props.item.agentId) {
           info = this.infectedAssetInfo(this.props.item)
-        } else if (this.props.item.group !== 'island') {
-          info = this.assetInfo(this.props.item)
-        } else {
+        } else if (this.props.item.island) {
           info = this.islandAssetInfo();
+        } else {
+          info = this.assetInfo(this.props.item)
         }
         break;
       case 'island_edge':
@@ -206,10 +207,10 @@ class PreviewPaneComponent extends AuthComponent {
     let label = '';
     if (!this.props.item) {
       label = '';
-    } else if (Object.prototype.hasOwnProperty.call(this.props.item, 'label')) {
-      label = this.props.item['label'];
-    } else if (Object.prototype.hasOwnProperty.call(this.props.item, '_label')) {
-      label = this.props.item['_label'];
+    } else if (Object.prototype.hasOwnProperty.call(this.props.item, 'hostname')) {
+      label = this.props.item.hostname;
+    } else {
+      label = '';
     }
 
     return (
