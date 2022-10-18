@@ -4,7 +4,7 @@ import {Container} from 'react-bootstrap';
 
 import ConfigurePage from './pages/ConfigurePage.js';
 import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
-import MapPage from './pages/MapPage';
+import MapPageWrapper from './map/MapPageWrapper';
 import TelemetryPage from './pages/TelemetryPage';
 import ReportPage from './pages/ReportPage';
 import LicensePage from './pages/LicensePage';
@@ -253,7 +253,7 @@ class AppComponent extends AuthComponent {
             {this.renderRoute(Routes.RunMonkeyPage,
               <SidebarLayoutComponent component={RunMonkeyPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.MapPage,
-              <SidebarLayoutComponent component={MapPage} {...defaultSideNavProps}/>)}
+              <SidebarLayoutComponent component={MapPageWrapper} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.TelemetryPage,
               <SidebarLayoutComponent component={TelemetryPage} {...defaultSideNavProps}/>)}
             {this.redirectToReport()}

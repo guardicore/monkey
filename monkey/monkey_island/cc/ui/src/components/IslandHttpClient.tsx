@@ -15,6 +15,7 @@ export enum APIEndpoint {
   agents = '/api/agents',
   machines = '/api/machines',
   nodes = '/api/netmap/node',
+  agentEvents = '/api/agent-events'
 }
 
 class IslandHttpClient extends AuthComponent {
@@ -33,9 +34,14 @@ class IslandHttpClient extends AuthComponent {
       .then(res => new Response(res, status));
   }
 
-  get(endpoint: APIEndpoint): Promise<Response> {
+  get(endpoint: APIEndpoint, args: Record<string, any>={}): Promise<Response> {
     let status = null;
-    return this.authFetch(endpoint)
+    let params = new URLSearchParams(args);
+    let url = String(endpoint);
+    if(params.toString() !== ''){
+      url = endpoint + '?' + params;
+    }
+    return this.authFetch(url)
       .then(res => {
         status = res.status;
         return res.json()
