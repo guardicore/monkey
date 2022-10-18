@@ -49,8 +49,6 @@ class PreviewPaneComponent extends AuthComponent {
   }
 
   downloadLogsRow(asset) {
-    // TODO: After #2334, on line 81, get the Agent ID from the new MapNode structure instead of
-    // `asset.id` which is the node's ID, not the agent's ID which the endpoint expects
     return (
       <>
         <tr>
@@ -58,8 +56,8 @@ class PreviewPaneComponent extends AuthComponent {
             Download Monkey Agent Log
           </th>
           <td>
-            <AgentLogDownloadButton url={'/api/agent-logs/' + asset.id}
-                               variant={asset.has_log ? undefined : 'disabled'}/>
+            <AgentLogDownloadButton url={'/api/agent-logs/' + asset.agentId}
+              variant={undefined} />
           </td>
         </tr>
         {(asset['group'].includes('island')) &&
