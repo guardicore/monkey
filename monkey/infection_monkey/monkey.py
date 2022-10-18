@@ -137,7 +137,7 @@ class InfectionMonkey:
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
-        self._relay: TCPRelay
+        self._relay: Optional[TCPRelay] = None
 
     @staticmethod
     def _get_arguments(args):
