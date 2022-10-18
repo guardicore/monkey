@@ -35,21 +35,21 @@ type Connections = Record<number, CommunicationTypes[]>;
 
 export default class MapNode {
   constructor(
-    public machine_id: number,
-    public network_interfaces: string[],
-    public agent_is_running: boolean,
-    public connections: Record<number, CommunicationTypes[]>,
-    public operating_system: OS = OS.unknown,
+    public machineId: number,
+    public networkInterfaces: string[],
+    public agentRunning: boolean,
+    public connections: Connections,
+    public operatingSystem: OS = OS.unknown,
     public hostname: string = "",
     public island: boolean = false,
-    public propagated_to: boolean = false,
-    public agent_id: string = null,
-    public parent_id: string = null) {
+    public propagatedTo: boolean = false,
+    public agentId: number | null = null,
+    public parentId: number | null = null) {
   }
 
   getGroupOperatingSystem(): OS {
-    if (this.operating_system in OS) {
-      return OS[this.operating_system];
+    if (this.operatingSystem in OS) {
+      return OS[this.operatingSystem];
     }
 
     return OS.unknown;
@@ -61,15 +61,15 @@ export default class MapNode {
       group_components.push('island');
     }
 
-    if (this.agent_id) {
-      if (!this.island && !this.parent_id) {
+    if (this.agentId) {
+      if (!this.island && !this.parentId) {
         group_components.push('manual');
       }
       else {
         group_components.push('monkey');
       }
     }
-    else if (this.propagated_to) {
+    else if (this.propagatedTo) {
       group_components.push('propagated');
     }
     else if (!this.island) { // No "clean" for island
@@ -78,7 +78,7 @@ export default class MapNode {
 
     group_components.push(this.getGroupOperatingSystem());
 
-    if (this.agent_is_running) {
+    if (this.agentRunning) {
       group_components.push('running');
     }
 
@@ -94,7 +94,7 @@ export default class MapNode {
     if (this.hostname) {
       return this.hostname;
     }
-    return this.network_interfaces[0];
+    return this.networkInterfaces[0];
   }
 }
 
