@@ -42,9 +42,9 @@ class MonkeyLogsDownloader(object):
         log_file_path = self._get_log_file_path(agent, machines)
         log_contents = self.island_client.get_agent_log(agent.id)
 
-        MonkeyLogsDownloader._write_log_to_file(log_file_path, log_contents)
-
-        self.monkey_log_paths.append(log_file_path)
+        if log_contents:
+            MonkeyLogsDownloader._write_log_to_file(log_file_path, log_contents)
+            self.monkey_log_paths.append(log_file_path)
 
     def _get_log_file_path(self, agent: Agent, machines: Mapping[MachineID, Machine]) -> Path:
         try:
