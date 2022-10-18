@@ -21,7 +21,7 @@ class GraphWrapper extends React.Component {
       }
     }
 
-    return connectionTypes[0];
+    throw new Error(`Connection types could not be prioritized: ${connectionTypes}`);
   }
 
   generateEdges(mapNodes) {
