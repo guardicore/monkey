@@ -41,8 +41,6 @@ class NodeService:
             new_node["ip_addresses"] = node["ip_addresses"]
             new_node["domain_name"] = node["domain_name"]
 
-        accessible_from_nodes = []
-        accessible_from_nodes_hostnames = []
         exploits = []
 
         edges = DisplayedEdgeService.get_displayed_edges_by_dst(node_id, for_report)
@@ -50,24 +48,13 @@ class NodeService:
         for edge in edges:
             from_node_id = edge["from"]
             from_node_label = Monkey.get_label_by_id(from_node_id)
-            from_node_hostname = Monkey.get_hostname_by_id(from_node_id)
-
-            accessible_from_nodes.append(from_node_label)
-            accessible_from_nodes_hostnames.append(from_node_hostname)
 
             for edge_exploit in edge["exploits"]:
                 edge_exploit["origin"] = from_node_label
                 exploits.append(edge_exploit)
 
         exploits = sorted(exploits, key=lambda exploit: exploit["timestamp"])
-
         new_node["exploits"] = exploits
-        new_node["accessible_from_nodes"] = accessible_from_nodes
-        new_node["accessible_from_nodes_hostnames"] = accessible_from_nodes_hostnames
-        if len(edges) > 0:
-            new_node["services"] = edges[-1]["services"]
-        else:
-            new_node["services"] = []
 
         new_node["has_log"] = monkey_island.cc.services.log.LogService.log_exists(ObjectId(node_id))
         return new_node
