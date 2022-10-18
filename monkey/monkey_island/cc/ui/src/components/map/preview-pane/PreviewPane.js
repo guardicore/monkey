@@ -58,7 +58,7 @@ class PreviewPaneComponent extends AuthComponent {
           <td>
             <AgentLogDownloadButton url={'/api/agent-logs/' + asset.agentId}
               filename={asset.getLabel().split(/[:/]/).join('-') + '.log'}
-              variant={undefined} />
+              variant={asset.agentId ? undefined : 'disabled'} />
           </td>
         </tr>
         {(asset.island) &&
