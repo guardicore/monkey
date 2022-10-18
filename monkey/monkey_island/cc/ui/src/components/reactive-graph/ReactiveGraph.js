@@ -7,20 +7,30 @@ class GraphWrapper extends React.Component {
 
   constructor(props) {
     super(props);
+    this.priorityList = [CommunicationTypes.tunnel, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scan];
+  }
+
+  getConnectionType(connectionTypes) {
+    for (const priority of this.priorityList) {
+      if (connectionTypes.includes(priority)) {
+        return priority;
+      }
+    }
+
+    return connectionTypes[0];
   }
 
   generateEdges(mapNodes) {
     let edges = [];
     console.log(mapNodes);
     for (const mapNode of mapNodes) {
-      for (const [connected_to, connection_types] of Object.entries(mapNode.connections)) {
-        for (const connection_type of connection_types) {
-          edges.push({
-            from: mapNode.machine_id,
-            to: connected_to,
-            color: edgeGroupToColor(connection_type)
-          });
-        }
+      for (const [connectedTo, connectionTypes] of Object.entries(mapNode.connections)) {
+        const connectionType = this.getConnectionType(connectionTypes);
+        edges.push({
+          from: mapNode.machine_id,
+          to: connectedTo,
+          color: edgeGroupToColor(connectionType)
+        });
       }
     }
 
