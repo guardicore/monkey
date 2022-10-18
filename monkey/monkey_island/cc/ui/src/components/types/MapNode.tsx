@@ -11,6 +11,28 @@ export enum CommunicationTypes {
   relay = "relay"
 }
 
+export type Node = {
+  machine_id: number;
+  connections: Connections;
+}
+
+export type Machine = {
+  id: number;
+  network_interfaces: string[];
+  operating_system: OS;
+  hostname: string;
+  island: boolean;
+}
+
+export type Agent = {
+  id: string;
+  parent_id: number | null;
+  start_time: string;
+  stop_time: string | null;
+}
+
+type Connections = Record<number, CommunicationTypes[]>;
+
 export default class MapNode {
   constructor(
     public machine_id: number,
