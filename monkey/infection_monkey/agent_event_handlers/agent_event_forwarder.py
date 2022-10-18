@@ -29,7 +29,7 @@ class AgentEventForwarder:
         self._batching_agent_event_forwarder = BatchingAgentEventForwarder(island_api_client)
         self._batching_agent_event_forwarder.start()
 
-    def __del__(self):
+    def stop(self):
         self._batching_agent_event_forwarder.stop()
 
     def send_event(self, event: AbstractAgentEvent):

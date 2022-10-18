@@ -1,4 +1,5 @@
 import argparse
+import contextlib
 import logging
 import os
 import subprocess
@@ -34,10 +35,7 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.credential_repository import (
-    AggregatingPropagationCredentialsRepository,
-    IPropagationCredentialsRepository,
-)
+from infection_monkey.credential_repository import AggregatingPropagationCredentialsRepository
 from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
@@ -129,6 +127,9 @@ class InfectionMonkey:
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
         )
+        self._propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
+            self._control_channel
+        )
         self._register_agent()
 
         # TODO Refactor the telemetry messengers to accept control client
@@ -137,7 +138,7 @@ class InfectionMonkey:
         self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
-        self._relay: TCPRelay
+        self._relay: Optional[TCPRelay] = None
 
     @staticmethod
     def _get_arguments(args):
@@ -206,6 +207,8 @@ class InfectionMonkey:
         logger.info(f"Monkey started with arguments: {arg_string}")
 
     def start(self):
+        self._subscribe_events()
+
         if self._is_another_monkey_running():
             logger.info("Another instance of the monkey is already running")
             return
@@ -271,16 +274,6 @@ class InfectionMonkey:
         servers = self._build_server_list(relay_port)
         local_network_interfaces = get_network_interfaces()
 
-        # TODO control_channel and control_client have same responsibilities, merge them
-        propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
-            self._control_channel
-        )
-
-        self._subscribe_events(
-            propagation_credentials_repository,
-            self._agent_event_serializer_registry,
-        )
-
         puppet = self._build_puppet()
 
         victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
@@ -293,7 +286,7 @@ class InfectionMonkey:
             victim_host_factory,
             self._control_channel,
             local_network_interfaces,
-            propagation_credentials_repository,
+            self._propagation_credentials_repository,
         )
 
     def _build_server_list(self, relay_port: int) -> Sequence[str]:
@@ -305,18 +298,14 @@ class InfectionMonkey:
 
         return list(ordered_servers.keys())
 
-    def _subscribe_events(
-        self,
-        propagation_credentials_repository: IPropagationCredentialsRepository,
-        agent_event_serializer_registry: AgentEventSerializerRegistry,
-    ):
+    def _subscribe_events(self):
         self._agent_event_forwarder = AgentEventForwarder(
-            self._island_api_client, agent_event_serializer_registry
+            self._island_api_client, self._agent_event_serializer_registry
         )
         self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
-                propagation_credentials_repository
+                self._propagation_credentials_repository
             ),
         )
         self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
@@ -485,7 +474,9 @@ class InfectionMonkey:
             if deleted is None:
                 InfectionMonkey._self_delete()
         finally:
-            self._singleton.unlock()
+            self._agent_event_forwarder.stop()
+            with contextlib.suppress(AssertionError):
+                self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
 
@@ -508,6 +499,7 @@ class InfectionMonkey:
         notify_disconnect(self._island_address)
 
     def _send_log(self):
+        logger.info("Sending agent logs to the Island")
         monkey_log_path = get_agent_log_path()
         if monkey_log_path.is_file():
             with open(monkey_log_path, "r") as f:
