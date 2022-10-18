@@ -22,7 +22,6 @@ class GraphWrapper extends React.Component {
 
   generateEdges(mapNodes) {
     let edges = [];
-    console.log(mapNodes);
     for (const mapNode of mapNodes) {
       for (const [connectedTo, connectionTypes] of Object.entries(mapNode.connections)) {
         const connectionType = this.getConnectionType(connectionTypes);
