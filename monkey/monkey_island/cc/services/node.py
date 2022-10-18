@@ -54,12 +54,7 @@ class NodeService:
                 exploits.append(edge_exploit)
 
         exploits = sorted(exploits, key=lambda exploit: exploit["timestamp"])
-
         new_node["exploits"] = exploits
-        if len(edges) > 0:
-            new_node["services"] = edges[-1]["services"]
-        else:
-            new_node["services"] = []
 
         new_node["has_log"] = monkey_island.cc.services.log.LogService.log_exists(ObjectId(node_id))
         return new_node
