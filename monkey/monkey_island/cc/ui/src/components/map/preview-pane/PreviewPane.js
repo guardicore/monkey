@@ -39,15 +39,6 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  servicesRow(asset) {
-    return (
-      <tr>
-        <th>Services</th>
-        <td>{asset.services.map(val => <div key={val}>{val}</div>)}</td>
-      </tr>
-    );
-  }
-
   statusRow(asset) {
     return (
       <tr>
@@ -123,7 +114,6 @@ class PreviewPaneComponent extends AuthComponent {
           <tbody>
           {this.osRow(asset)}
           {this.ipsRow(asset)}
-          {this.servicesRow(asset)}
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
@@ -140,7 +130,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.osRow(asset)}
           {this.statusRow(asset)}
           {this.ipsRow(asset)}
-          {this.servicesRow(asset)}
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
@@ -161,10 +150,6 @@ class PreviewPaneComponent extends AuthComponent {
           <tr>
             <th>IP Address</th>
             <td>{edge.ip_address}</td>
-          </tr>
-          <tr>
-            <th>Services</th>
-            <td>{edge.services.map(val => <div key={val}>{val}</div>)}</td>
           </tr>
           </tbody>
         </table>
