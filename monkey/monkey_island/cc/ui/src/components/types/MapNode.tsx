@@ -31,7 +31,7 @@ export type Agent = {
   stop_time: string | null;
 }
 
-type Connections = Record<number, CommunicationTypes[]>;
+export type Connections = Record<number, CommunicationTypes[]>;
 
 export default class MapNode {
   constructor(
