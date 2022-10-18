@@ -8,7 +8,7 @@ export enum CommunicationTypes {
   cc = "cc",
   scan = "scan",
   exploited = "exploited",
-  tunnel = "tunnel"
+  relay = "relay"
 }
 
 export class MapNode {

@@ -70,7 +70,7 @@ export function edgeGroupToColor(group) {
   switch (group) {
     case CommunicationTypes.exploited:
       return '#c00';
-    case CommunicationTypes.tunnel:
+    case CommunicationTypes.relay:
       return '#0058aa';
     case CommunicationTypes.scan:
       return '#f90';

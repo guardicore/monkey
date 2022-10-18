@@ -7,7 +7,7 @@ class GraphWrapper extends React.Component {
 
   constructor(props) {
     super(props);
-    this.priorityList = [CommunicationTypes.tunnel, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scan];
+    this.priorityList = [CommunicationTypes.relay, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scan];
   }
 
   getConnectionType(connectionTypes) {
@@ -106,7 +106,7 @@ class GraphWrapper extends React.Component {
         4,
         ['10.10.0.4'],
         false,
-        { 3: [CommunicationTypes.tunnel] },
+        { 3: [CommunicationTypes.relay] },
         OS.unknown,
         'lin-2',
         false,
