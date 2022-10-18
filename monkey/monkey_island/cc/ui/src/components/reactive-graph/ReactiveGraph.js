@@ -30,7 +30,7 @@ export default class GraphWrapper extends React.Component {
       for (const [connectedTo, connectionTypes] of Object.entries(mapNode.connections)) {
         const connectionType = this.getConnectionType(connectionTypes);
         edges.push({
-          from: mapNode.machine_id,
+          from: mapNode.machineId,
           to: connectedTo,
           color: edgeGroupToColor(connectionType)
         });
@@ -44,7 +44,7 @@ export default class GraphWrapper extends React.Component {
     let nodes = [];
     for (const mapNode of mapNodes) {
       nodes.push({
-        id: mapNode.machine_id,
+        id: mapNode.machineId,
         group: mapNode.calculateNodeGroup(),
         label: mapNode.getLabel()
       });
