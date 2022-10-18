@@ -26,7 +26,7 @@ export function getCollectionObject(collectionEndpoint: APIEndpoint, key: string
       })
 }
 
-function arrayToObject(array: object[], key: string){
+export function arrayToObject(array: object[], key: string){
   return array.reduce((prev, curr) => ({...prev, [curr[key]]: curr}), {});
 }
 
