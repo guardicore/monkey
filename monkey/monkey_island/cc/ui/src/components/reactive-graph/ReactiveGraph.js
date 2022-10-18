@@ -3,15 +3,19 @@ import Graph from 'react-graph-vis';
 import { getOptions, edgeGroupToColor } from 'components/map/MapOptions';
 import { CommunicationTypes, MapNode, OS } from 'components/types/MapNode';
 
+// This determines the priority of the connection types.
+// If an edge has more than one connection type, then this array will be used to determine which communication type to use.
+// The array is in priority order, so the first item has priority over the second, and so on.
+const priorityList = [CommunicationTypes.relay, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scan];
+
 class GraphWrapper extends React.Component {
 
   constructor(props) {
     super(props);
-    this.priorityList = [CommunicationTypes.relay, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scan];
   }
 
   getConnectionType(connectionTypes) {
-    for (const priority of this.priorityList) {
+    for (const priority of priorityList) {
       if (connectionTypes.includes(priority)) {
         return priority;
       }
