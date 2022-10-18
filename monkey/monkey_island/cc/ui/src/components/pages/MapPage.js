@@ -28,8 +28,8 @@ class MapPageComponent extends AuthComponent {
 
   selectionChanged(event) {
     if (event.nodes.length === 1) {
-      for (const node in this.props.mapNodes) {
-        if (node.machineId === event.nodes[0].id) {
+      for (const node of this.props.mapNodes) {
+        if (node.machineId === event.nodes[0]) {
           this.setState({ selected: node, selectedType: 'node' })
           break;
         }
