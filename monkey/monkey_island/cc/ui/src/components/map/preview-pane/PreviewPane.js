@@ -48,18 +48,6 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  accessibleRow(asset) {
-    return (
-      <tr>
-        <th>
-          Accessible From&nbsp;
-          {this.generateToolTip('List of machine which can access this one using a network protocol')}
-        </th>
-        <td>{asset.accessible_from_nodes.map(val => <div key={val}>{val}</div>)}</td>
-      </tr>
-    );
-  }
-
   statusRow(asset) {
     return (
       <tr>
@@ -136,7 +124,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.osRow(asset)}
           {this.ipsRow(asset)}
           {this.servicesRow(asset)}
-          {this.accessibleRow(asset)}
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
@@ -154,7 +141,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.statusRow(asset)}
           {this.ipsRow(asset)}
           {this.servicesRow(asset)}
-          {this.accessibleRow(asset)}
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
