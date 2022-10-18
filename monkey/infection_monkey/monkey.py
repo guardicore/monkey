@@ -473,6 +473,7 @@ class InfectionMonkey:
             if deleted is None:
                 InfectionMonkey._self_delete()
         finally:
+            self._agent_event_forwarder.stop()
             self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
