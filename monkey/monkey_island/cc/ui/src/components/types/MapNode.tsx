@@ -62,7 +62,7 @@ export class MapNode {
 
     let group = group_components.join('_');
     if (!(group in NodeGroup)) {
-      return NodeGroup[NodeGroup.clean_unknown];
+      return NodeGroup.clean_unknown;
     }
 
     return group;
@@ -77,22 +77,22 @@ export class MapNode {
 }
 
 export enum NodeGroup {
-  clean_unknown,
-  clean_linux,
-  clean_windows,
-  propagated_linux,
-  propagated_windows,
-  island,
-  island_monkey_linux,
-  island_monkey_linux_running,
-  island_monkey_windows,
-  island_monkey_windows_running,
-  manual_linux,
-  manual_linux_running,
-  manual_windows,
-  manual_windows_running,
-  monkey_linux,
-  monkey_linux_running,
-  monkey_windows,
-  monkey_windows_running
+  clean_unknown = "clean_unknown",
+  clean_linux = "clean_linux",
+  clean_windows = "clean_windows",
+  propagated_linux = "propagated_linux",
+  propagated_windows = "propagated_windows",
+  island = "island",
+  island_monkey_linux = "island_monkey_linux",
+  island_monkey_linux_running = "island_monkey_linux_running",
+  island_monkey_windows = "island_monkey_windows",
+  island_monkey_windows_running = "island_monkey_windows_running",
+  manual_linux = "manual_linux",
+  manual_linux_running = "manual_linux_running",
+  manual_windows = "manual_windows",
+  manual_windows_running = "manual_windows_running",
+  monkey_linux = "monkey_linux",
+  monkey_linux_running = "monkey_linux_running",
+  monkey_windows = "monkey_windows",
+  monkey_windows_running = "monkey_windows_running"
 }

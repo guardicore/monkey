@@ -52,14 +52,7 @@ export const basic_options = {
   }
 };
 
-// Get the key names of a non-string enum
-function enumKeys(enumClass) {
-  // Object.keys on a non-string enum will have both names and values in the list
-  // so we need to filter out the numeric values
-  return Object.keys(enumClass).filter(key => !isNaN(Number(enumClass[key])))
-}
-
-const nodeStates = enumKeys(NodeGroup);
+const nodeStates = Object.keys(NodeGroup);
 const groupsOptions = getGroupsOptions(nodeStates);
 
 export function getOptions() {
