@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import {arrayToObject, getCollectionObject} from '../utils/ServerUtils';
 import MapPage from '../pages/MapPage';
-import MapNode from '../types/MapNode';
+import MapNode, {Agent, Machine, Node} from '../types/MapNode';
 import _ from 'lodash';
 
 const MapPageWrapper = (props) => {
@@ -13,10 +13,10 @@ const MapPageWrapper = (props) => {
   }
 
   const [mapNodes, setMapNodes] = useState([]);
-  const [nodes, setNodes] = useState({});
-  const [machines, setMachines] = useState({});
+  const [nodes, setNodes] = useState<Record<string, Node>>({});
+  const [machines, setMachines] = useState<Record<string, Machine>>({});
+  const [agents, setAgents] = useState<Record<string, Agent>>({});
   const [propagationEvents, setPropagationEvents] = useState({});
-  const [agents, setAgents] = useState({});
 
   useEffect(() => {
     getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
@@ -70,6 +70,8 @@ const MapPageWrapper = (props) => {
     return mapNodes;
   }
 
+
+
   function wasMachinePropagated(machine, propagationEvents): boolean {
     for (const iface of machine.network_interfaces) {
       let ip = iface.split('/')[0];
@@ -83,6 +85,7 @@ const MapPageWrapper = (props) => {
 
   console.log(nodes)
   console.log(machines)
+  console.log(agents)
   console.log(propagationEvents)
   return (<MapPage mapNodes={mapNodes} {...props}/>);
 }
