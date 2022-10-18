@@ -26,7 +26,8 @@ const MapPageWrapper = (props) => {
   }, []);
 
   function isAllDataFetched(): boolean{
-    return !_.isEmpty(nodes) && !_.isEmpty(machines) && !_.isEmpty(propagationEvents) && !_.isEmpty()
+    return !_.isEmpty(nodes) && !_.isEmpty(machines) &&
+      !_.isEmpty(propagationEvents) && !_.isEmpty(agents);
   }
 
   useEffect(() => {
@@ -69,8 +70,6 @@ const MapPageWrapper = (props) => {
 
     return mapNodes;
   }
-
-
 
   function wasMachinePropagated(machine, propagationEvents): boolean {
     for (const iface of machine.network_interfaces) {
