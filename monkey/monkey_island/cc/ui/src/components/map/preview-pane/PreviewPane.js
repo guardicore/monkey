@@ -25,7 +25,7 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <tr>
         <th>Operating System</th>
-        <td>{asset.operatingSystem.charAt(0).toUpperCase() + asset.os.slice(1)}</td>
+        <td>{asset.operatingSystem.charAt(0).toUpperCase() + asset.operatingSystem.slice(1)}</td>
       </tr>
     );
   }
