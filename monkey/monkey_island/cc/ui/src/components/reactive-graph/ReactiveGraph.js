@@ -8,7 +8,7 @@ import { CommunicationTypes, MapNode, OS } from 'components/types/MapNode';
 // The array is in priority order, so the first item has priority over the second, and so on.
 const priorityList = [CommunicationTypes.relay, CommunicationTypes.cc, CommunicationTypes.exploited, CommunicationTypes.scanned];
 
-class GraphWrapper extends React.Component {
+export default class GraphWrapper extends React.Component {
 
   constructor(props) {
     super(props);
@@ -128,6 +128,3 @@ class GraphWrapper extends React.Component {
     )
   }
 }
-
-let ReactiveGraph = GraphWrapper;
-export { ReactiveGraph };

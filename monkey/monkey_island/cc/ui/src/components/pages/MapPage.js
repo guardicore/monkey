@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faStopCircle} from '@fortawesome/free-solid-svg-icons/faStopCircle';
 import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
 import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
-import {ReactiveGraph} from 'components/reactive-graph/ReactiveGraph';
+import ReactiveGraph from 'components/reactive-graph/ReactiveGraph';
 import { edgeGroupToColor } from 'components/map/MapOptions';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
