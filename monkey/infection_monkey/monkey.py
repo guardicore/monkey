@@ -1,4 +1,5 @@
 import argparse
+import contextlib
 import logging
 import os
 import subprocess
@@ -474,7 +475,8 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
         finally:
             self._agent_event_forwarder.stop()
-            self._singleton.unlock()
+            with contextlib.suppress(AssertionError):
+                self._singleton.unlock()
 
         logger.info("Monkey is shutting down")
 
