@@ -11,7 +11,7 @@ export enum CommunicationTypes {
   relay = "relay"
 }
 
-export class MapNode {
+export default class MapNode {
   constructor(
     public machine_id: number,
     public network_interfaces: string[],

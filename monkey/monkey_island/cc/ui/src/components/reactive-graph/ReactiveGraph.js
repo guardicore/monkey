@@ -1,7 +1,7 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
 import { getOptions, edgeGroupToColor } from 'components/map/MapOptions';
-import { CommunicationTypes, MapNode, OS } from 'components/types/MapNode';
+import MapNode, { CommunicationTypes, OS } from 'components/types/MapNode';
 
 // This determines the priority of the connection types.
 // If an edge has more than one connection type, then this array will be used to determine which communication type to use.
