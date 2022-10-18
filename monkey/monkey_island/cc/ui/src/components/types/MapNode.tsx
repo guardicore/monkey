@@ -98,6 +98,10 @@ export default class MapNode {
   }
 }
 
+export function getMachineIp(machine: Machine): string{
+  return machine.network_interfaces[0].split('/')[0];
+}
+
 export enum NodeGroup {
   clean_unknown = "clean_unknown",
   clean_linux = "clean_linux",

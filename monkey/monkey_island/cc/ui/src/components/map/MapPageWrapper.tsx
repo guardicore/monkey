@@ -72,14 +72,8 @@ const MapPageWrapper = (props) => {
   }
 
   function wasMachinePropagated(machine, propagationEvents): boolean {
-    for (const iface of machine.network_interfaces) {
-      let ip = iface.split('/')[0];
-      if (ip in propagationEvents) {
-        return true;
-      }
-    }
-
-    return false;
+    let ip = getMachineIp(machine);
+    return ip in propagationEvents
   }
 
   console.log(nodes)
