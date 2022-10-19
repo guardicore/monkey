@@ -11,6 +11,12 @@ import {
 import IslandHttpClient from '../../IslandHttpClient';
 
 class PreviewPaneComponent extends AuthComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      exploitsTimeline: (<div/>)
+    };
+  }
 
   generateToolTip(text) {
     return (
@@ -83,37 +89,40 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-
-  exploitsTimeline(asset) {
+  updateExploitsTimeline(asset) {
     IslandHttpClient.get("/api/agent-events?type=ExploitationEvent")
       .then(res => res.body)
-      .then(events => {
+      .then(events =>
         events.filter(event => asset.ip_addresses.includes(event.target)) // TODO: check values and update when MapNode work is done
-      })
+      )
       .then(filteredEvents => {
-        // TODO: Figure out how to return this; use state?
         if (filteredEvents.length === 0) {
-          return (<div/>);
+          this.setState({
+            exploitsTimeline: (<div/>)
+          });
         }
         // TODO: exploitEvent.source is the agent ID, needs to be the IP address
-        return (
-          <div>
-            <h4 style={{'marginTop': '2em'}}>
-              Exploit Timeline&nbsp;
-              {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
-            </h4>
-            <ul className='timeline'>
-              {filteredEvents.map(exploitEvent =>
-                <li key={exploitEvent.timestamp}>
-                  <div className={'bullet ' + (exploitEvent.success ? 'bad' : '')}/>
-                  <div>{new Date(exploitEvent.timestamp).toLocaleString()}</div>
-                  <div>{exploitEvent.source}</div>
-                  <div>{exploitEvent.exploiter_name}</div>
-                </li>
-              )}
-            </ul>
-          </div>
-        )
+        this.setState({
+          exploitsTimeline:
+          (
+            <div>
+              <h4 style={{'marginTop': '2em'}}>
+                Exploit Timeline&nbsp;
+                {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
+              </h4>
+              <ul className='timeline'>
+                {filteredEvents.map(exploitEvent =>
+                  <li key={exploitEvent.timestamp}>
+                    <div className={'bullet ' + (exploitEvent.success ? 'bad' : '')}/>
+                    <div>{new Date(exploitEvent.timestamp).toLocaleString()}</div>
+                    <div>{exploitEvent.source}</div>
+                    <div>{exploitEvent.exploiter_name}</div>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )
+        });
       });
   }
 
@@ -135,7 +144,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.exploitsTimeline(asset)}
+        {this.state.exploitsTimeline}
       </div>
     );
   }
@@ -151,7 +160,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.exploitsTimeline(asset)}
+        {this.state.exploitsTimeline}
       </div>
     );
   }
@@ -164,6 +173,7 @@ class PreviewPaneComponent extends AuthComponent {
   }
 
   render() {
+    this.updateExploitsTimeline(this.props.item);
     let info = null;
     switch (this.props.type) {
       case 'edge':
