@@ -109,7 +109,12 @@ export default class MapNode {
   }
 }
 
+export function interfaceIp(iface: string): string {
+  return iface.split('/')[0];
+}
+
 export function getMachineIp(machine: Machine): string {
+  return interfaceIp(machine.network_interfaces[0]);
   return machine.network_interfaces[0].split('/')[0];
 }
 
