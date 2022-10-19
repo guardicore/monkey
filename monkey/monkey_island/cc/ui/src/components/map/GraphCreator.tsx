@@ -1,9 +1,9 @@
 import {edgeGroupToColor} from './MapOptions';
-import MapNode, {CommunicationTypes} from '../types/MapNode';
+import MapNode, {CommunicationType} from '../types/MapNode';
 
 
-const priorityList = [CommunicationTypes.relay, CommunicationTypes.cc,
-  CommunicationTypes.exploited, CommunicationTypes.scanned];
+const priorityList = [CommunicationType.relay, CommunicationType.cc,
+  CommunicationType.exploited, CommunicationType.scanned];
 
 export type Edge = {
   from: Number;
@@ -22,7 +22,7 @@ export type Graph = {
   nodes: GraphNode[];
 }
 
-function getCommunicationType(communicationTypes: CommunicationTypes[]): CommunicationTypes {
+function getCommunicationType(communicationTypes: CommunicationType[]): CommunicationType {
   for (const priority of priorityList) {
     if (communicationTypes.includes(priority)) {
       return priority;

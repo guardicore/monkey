@@ -4,7 +4,7 @@ export enum OS {
   windows = "windows"
 }
 
-export enum CommunicationTypes {
+export enum CommunicationType {
   cc = "cc",
   scanned = "scanned",
   exploited = "exploited",
@@ -31,7 +31,7 @@ export type Agent = {
   stop_time: string | null;
 }
 
-export type Connections = Record<number, CommunicationTypes[]>;
+export type Connections = Record<number, CommunicationType[]>;
 
 export default class MapNode {
   constructor(

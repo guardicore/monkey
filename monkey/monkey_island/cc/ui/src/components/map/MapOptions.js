@@ -1,4 +1,4 @@
-import { CommunicationTypes, NodeGroup } from 'components/types/MapNode';
+import { CommunicationType, NodeGroup } from 'components/types/MapNode';
 
 let getGroupsOptions = (stateList) => {
   let groupOptions = {};
@@ -70,13 +70,13 @@ export const optionsPth = (() => {
 
 export function edgeGroupToColor(group) {
   switch (group) {
-    case CommunicationTypes.exploited:
+    case CommunicationType.exploited:
       return '#c00';
-    case CommunicationTypes.relay:
+    case CommunicationType.relay:
       return '#0058aa';
-    case CommunicationTypes.scanned:
+    case CommunicationType.scanned:
       return '#f90';
-    case CommunicationTypes.cc:
+    case CommunicationType.cc:
       return '#aaa';
   }
   return 'black';

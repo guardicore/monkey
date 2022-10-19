@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import IslandHttpClient, { APIEndpoint } from '../IslandHttpClient';
 import { arrayToObject, getCollectionObject } from '../utils/ServerUtils';
 import MapPage from '../pages/MapPage';
-import MapNode, { Agent, CommunicationTypes, Connections, getMachineIp, Machine, Node } from '../types/MapNode';
+import MapNode, { Agent, CommunicationType, Connections, getMachineIp, Machine, Node } from '../types/MapNode';
 import _ from 'lodash';
 import generateGraph, {Graph} from './GraphCreator';
 
@@ -49,9 +49,9 @@ const MapPageWrapper = (props) => {
     for (let [machineId, connectionTypes] of Object.entries(connections)) {
       let machine = machines[machineId];
       if (!machine.island
-        && connectionTypes.includes(CommunicationTypes.cc)
-        && !connectionTypes.includes(CommunicationTypes.relay)) {
-        connectionTypes.push(CommunicationTypes.relay);
+        && connectionTypes.includes(CommunicationType.cc)
+        && !connectionTypes.includes(CommunicationType.relay)) {
+        connectionTypes.push(CommunicationType.relay);
       }
     }
   }

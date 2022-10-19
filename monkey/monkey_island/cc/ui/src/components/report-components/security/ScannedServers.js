@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import Pluralize from 'pluralize';
 import {APIEndpoint} from '../../IslandHttpClient';
 import _ from 'lodash';
-import {CommunicationTypes} from '../../types/MapNode';
+import {CommunicationType} from '../../types/MapNode';
 import {getCollectionObject} from '../../utils/ServerUtils';
 
 
@@ -49,7 +49,7 @@ function ScannedServersComponent(props) {
     let scannedMachines = new Set();
     for (const node of Object.values(allNodes)) {
       for (const [targetMachineId, communications] of Object.entries(node.connections)) {
-        if (communications.includes(CommunicationTypes.scanned)) {
+        if (communications.includes(CommunicationType.scanned)) {
           scannedMachines.add(allMachines[targetMachineId]);
         }
       }
