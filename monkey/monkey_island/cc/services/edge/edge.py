@@ -15,10 +15,6 @@ lock = threading.Lock()
 
 class EdgeService(Edge):
     @staticmethod
-    def get_all_edges() -> List[EdgeService]:
-        return EdgeService.objects()
-
-    @staticmethod
     def get_or_create_edge(src_node_id, dst_node_id, src_label, dst_label) -> EdgeService:
         with lock:
             edge = None
