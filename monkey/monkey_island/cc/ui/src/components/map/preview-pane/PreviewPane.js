@@ -8,14 +8,10 @@ import {
   AgentLogDownloadButton,
   IslandLogDownloadButton
 } from '../../ui-components/LogDownloadButtons';
-import IslandHttpClient from '../../IslandHttpClient';
 
 class PreviewPaneComponent extends AuthComponent {
   constructor(props) {
     super(props);
-    this.state = {
-      exploitsTimeline: (<div/>)
-    };
   }
 
   generateToolTip(text) {
@@ -89,41 +85,25 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  updateExploitsTimeline(asset) {
-    IslandHttpClient.get("/api/agent-events?type=ExploitationEvent")
-      .then(res => res.body)
-      .then(events =>
-        events.filter(event => asset.ip_addresses.includes(event.target))
-      )
-      .then(filteredEvents => {
-        if (filteredEvents.length === 0) {
-          this.setState({
-            exploitsTimeline: (<div/>)
-          });
-        }
-        // TODO: exploitEvent.source is the agent ID, needs to be the IP address
-        this.setState({
-          exploitsTimeline:
-          (
-            <div>
-              <h4 style={{'marginTop': '2em'}}>
-                Exploit Timeline&nbsp;
-                {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
-              </h4>
-              <ul className='timeline'>
-                {filteredEvents.map(exploitEvent =>
-                  <li key={exploitEvent.timestamp}>
-                    <div className={'bullet ' + (exploitEvent.success ? 'bad' : '')}/>
-                    <div>{new Date(exploitEvent.timestamp).toLocaleString()}</div>
-                    <div>{exploitEvent.source}</div>
-                    <div>{exploitEvent.exploiter_name}</div>
-                  </li>
-                )}
-              </ul>
-            </div>
-          )
-        });
-      });
+  getExploitsTimeline(asset) {
+    return (
+      <div>
+        <h4 style={{'marginTop': '2em'}}>
+          Exploit Timeline&nbsp;
+          {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
+        </h4>
+        <ul className='timeline'>
+          {asset.exploitationAttempts.map(attempt =>
+            <li key={attempt.timestamp}>
+              <div className={'bullet ' + (attempt.success ? 'bad' : '')}/>
+              <div>{new Date(attempt.timestamp).toLocaleString()}</div>
+              <div>{attempt.source}</div>
+              <div>{attempt.exploiter_name}</div>
+            </li>
+          )}
+        </ul>
+      </div>
+    )
   }
 
   islandAssetInfo() {
@@ -144,7 +124,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.state.exploitsTimeline}
+        {this.getExploitsTimeline(asset)}
       </div>
     );
   }
@@ -160,7 +140,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.state.exploitsTimeline}
+        {this.getExploitsTimeline(asset)}
       </div>
     );
   }
@@ -173,7 +153,6 @@ class PreviewPaneComponent extends AuthComponent {
   }
 
   render() {
-    this.updateExploitsTimeline(this.props.item);
     let info = null;
     switch (this.props.type) {
       case 'edge':
