@@ -8,12 +8,18 @@ import MapNode, {
   Communications,
   getMachineIp,
   Machine,
-  Node
+  Node,
+  ExploitationEvent
 } from '../types/MapNode';
 import _ from 'lodash';
 import generateGraph, {Graph} from './GraphCreator';
 
 const MapPageWrapper = (props) => {
+  function getExploitationEvents() {
+    let url_args = {'type': 'ExploitationEvent'};
+    return IslandHttpClient.get(APIEndpoint.agentEvents, url_args)
+      .then(res => arrayToObject(res.body, 'target'));
+  }
   function getPropagationEvents() {
     let url_args = {'type': 'PropagationEvent', 'success': true};
     return IslandHttpClient.get(APIEndpoint.agentEvents, url_args)
@@ -24,6 +30,7 @@ const MapPageWrapper = (props) => {
   const [nodes, setNodes] = useState<Record<string, Node>>({});
   const [machines, setMachines] = useState<Record<string, Machine>>({});
   const [agents, setAgents] = useState<Record<string, Agent>>({});
+  const [exploitationEvents, setExploitationEvents] = useState<Record<string, ExploitationEvent>>({});
   const [propagationEvents, setPropagationEvents] = useState({});
 
   const [graph, setGraph] = useState<Graph>({edges: [], nodes: []});
@@ -36,6 +43,7 @@ const MapPageWrapper = (props) => {
     getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
     getCollectionObject(APIEndpoint.machines, 'id').then(machineObj => setMachines(machineObj));
     getCollectionObject(APIEndpoint.agents, 'machine_id').then(agentObj => setAgents(agentObj));
+    getExploitationEvents().then(events => setExploitationEvents(events));
     getPropagationEvents().then(events => setPropagationEvents(events));
   }
 
