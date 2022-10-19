@@ -1,11 +1,11 @@
 import React from 'react';
 import AuthComponent from '../AuthComponent';
 import download from 'downloadjs';
-import {Button} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 const authComponent = new AuthComponent({})
 
-type Props = { url: string, filename: string, variant?: string}
+type Props = { url: string, filename: string, variant?: string }
 
 
 
@@ -27,21 +27,19 @@ export const AgentLogDownloadButton = ({ url, filename, variant = 'primary' }: P
     authComponent.authFetch(url)
       .then(res => res.json())
       .then(res => {
-        if (res.ok) {
-          let logContent = unescapeLog(res);
+        let logContent = unescapeLog(res);
         download(logContent, filename, 'text/plain');
-        }
       });
   }
 
   return (<Button variant={variant}
-                  onClick={downloadAgentLog}>
+    onClick={downloadAgentLog}>
     Download Log
   </Button>);
 }
 
 
-export const IslandLogDownloadButton = ({ url, variant = 'primary'}: Props) => {
+export const IslandLogDownloadButton = ({ url, variant = 'primary' }: Props) => {
   function downloadIslandLog() {
     authComponent.authFetch(url)
       .then(res => res.json())
@@ -52,7 +50,7 @@ export const IslandLogDownloadButton = ({ url, variant = 'primary'}: Props) => {
       });
   }
   return (<Button variant={variant}
-                  onClick={downloadIslandLog}>
+    onClick={downloadIslandLog}>
     Download Log
   </Button>);
 }
