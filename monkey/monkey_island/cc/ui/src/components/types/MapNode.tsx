@@ -115,7 +115,13 @@ export function interfaceIp(iface: string): string {
 
 export function getMachineIp(machine: Machine): string {
   return interfaceIp(machine.network_interfaces[0]);
-  return machine.network_interfaces[0].split('/')[0];
+}
+
+export function getMachineLabel(machine: Machine): string {
+  if (machine.hostname) {
+    return machine.hostname;
+  }
+  return machine.network_interfaces[0];
 }
 
 export enum NodeGroup {
