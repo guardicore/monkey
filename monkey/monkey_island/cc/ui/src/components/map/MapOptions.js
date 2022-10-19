@@ -14,21 +14,6 @@ let getGroupsOptions = (stateList) => {
   return groupOptions;
 };
 
-const groupNamesPth = ['normal', 'critical'];
-
-let getGroupsOptionsPth = () => {
-  let groupOptions = {};
-  for (let groupName of groupNamesPth) {
-    groupOptions[groupName] =
-    {
-      shape: 'image',
-      size: 50,
-      image: require('../../images/nodes/pth/' + groupName + '.png')
-    };
-  }
-  return groupOptions;
-};
-
 export const basic_options = {
   autoResize: true,
   layout: {
