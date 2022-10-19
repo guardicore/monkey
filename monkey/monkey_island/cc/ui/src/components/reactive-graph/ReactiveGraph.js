@@ -1,7 +1,7 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
 import { getOptions, edgeGroupToColor } from 'components/map/MapOptions';
-import MapNode, { CommunicationTypes, OS } from 'components/types/MapNode';
+import { CommunicationTypes } from 'components/types/MapNode';
 
 // This determines the priority of the connection types.
 // If an edge has more than one connection type, then this array will be used to determine which communication type to use.
@@ -60,67 +60,8 @@ export default class GraphWrapper extends React.Component {
   }
 
   render() {
-    let mapNodes = [
-      new MapNode(
-        1,
-        ['10.10.0.1'],
-        true,
-        {
-          2: [CommunicationTypes.scanned, CommunicationTypes.exploited],
-          3: [CommunicationTypes.scanned, CommunicationTypes.exploited]
-        },
-        OS.windows,
-        'island',
-        true,
-        true,
-        1,
-        null
-      ),
-      new MapNode(
-        2,
-        ['10.10.0.2'],
-        true,
-        {
-          1: [CommunicationTypes.cc],
-          3: [CommunicationTypes.scanned]
-        },
-        OS.linux,
-        'lin-1',
-        false,
-        true,
-        2,
-        1
-      ),
-      new MapNode(
-        3,
-        ['10.10.0.3'],
-        true,
-        {
-          1: [CommunicationTypes.cc],
-          4: [CommunicationTypes.scanned]
-        },
-        OS.windows,
-        'win-xp',
-        false,
-        true,
-        3,
-        1
-      ),
-      new MapNode(
-        4,
-        ['10.10.0.4'],
-        false,
-        { 3: [CommunicationTypes.relay] },
-        OS.unknown,
-        'lin-2',
-        false,
-        true,
-        null,
-        null
-      )
-    ];
     let options = getOptions();
-    let graph = this.generateGraph(mapNodes);
+    let graph = this.generateGraph(this.props.mapNodes);
     return (
       <div className={'net-graph-wrapper'}>
         <Graph graph={graph} options={options} events={this.props.events} />

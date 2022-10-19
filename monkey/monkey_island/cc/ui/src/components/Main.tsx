@@ -24,10 +24,10 @@ import LoadingScreen from './ui-components/LoadingScreen';
 import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
-import IslandHttpClient from "./IslandHttpClient";
+import IslandHttpClient, { APIEndpoint } from "./IslandHttpClient";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-import {doesAnyAgentExist, didAllAgentsShutdown} from './utils/ServerUtils.tsx';
+import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -139,7 +139,7 @@ class AppComponent extends AuthComponent {
   };
 
   setMode = () => {
-      return IslandHttpClient.get('/api/island/mode')
+    return IslandHttpClient.get(APIEndpoint.mode)
       .then(res => {
         this.setState({islandMode: res.body});
       });
