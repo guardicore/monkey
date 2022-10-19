@@ -14,8 +14,9 @@ export class Response {
 export enum APIEndpoint {
   agents = '/api/agents',
   machines = '/api/machines',
-  nodes = '/api/netmap/node',
-  agentEvents = '/api/agent-events'
+  nodes = '/api/nodes',
+  agentEvents = '/api/agent-events',
+  mode = '/api/island/mode'
 }
 
 class IslandHttpClient extends AuthComponent {

@@ -40,9 +40,7 @@ from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
 from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
-from monkey_island.cc.resources.netmap import NetMap
 from monkey_island.cc.resources.node import Node
-from monkey_island.cc.resources.node_states import NodeStates
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
@@ -169,11 +167,9 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(IslandMode)
     api.add_resource(AgentConfiguration)
     api.add_resource(AgentBinaries)
-    api.add_resource(NetMap)
     api.add_resource(Edge)
     api.add_resource(Machines)
     api.add_resource(Node)
-    api.add_resource(NodeStates)
 
     api.add_resource(SecurityReport)
     api.add_resource(ZeroTrustReport)

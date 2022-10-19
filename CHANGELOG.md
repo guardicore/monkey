@@ -33,6 +33,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
   resetting the configuration and reset procedure requires fewer clicks. #957
+- Reduced the map refresh rate from 5 seconds to 1.
 - "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
   include a timeout. #1577
 - The setup procedure for custom server_config.json files to be simpler. #1576
@@ -45,7 +46,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "Logs" page renamed to "Telemetries". #1640
 - The "/api/fileUpload" endpoint to "/api/file-upload". #1888
 - The "/api/test/clear_caches" endpoint to "/api/test/clear-caches". #1888
-- The "/api/netmap/nodeStates" endpoint to "/api/netmap/node-states". #1888
 - All "/api/monkey_control" endpoints to "/api/monkey-control". #1888
 - All "/api/monkey" endpoints to "/api/agent". #1888
 - Analytics and version update queries are sent separately instead of just one query. #2165
@@ -122,6 +122,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/test/log" endpoint. #2269
 - Node Map from Security Report. #2334
 - "Accessible From" and "Services" from the preview pane in the map page. #2430
+- "GET /api/netmap" endpoint. #2334
+- "GET /api/netmap/node-states" endpoint. #2334
+
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
