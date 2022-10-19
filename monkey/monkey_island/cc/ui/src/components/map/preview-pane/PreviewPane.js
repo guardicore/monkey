@@ -141,43 +141,7 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-  scanInfo(edge) {
-    return (
-      <div>
-        <table className='table table-condensed'>
-          <tbody>
-          <tr>
-            <th>Operating System</th>
-            <td>{edge.os.type}</td>
-          </tr>
-          <tr>
-            <th>IP Address</th>
-            <td>{edge.ip_address}</td>
-          </tr>
-          </tbody>
-        </table>
-        {
-          (edge.exploits.length === 0) ?
-            '' :
-            <div>
-              <h4 style={{'marginTop': '2em'}}>Timeline</h4>
-              <ul className='timeline'>
-                {edge.exploits.map(exploit =>
-                  <li key={exploit.timestamp}>
-                    <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
-                    <div>{new Date(exploit.timestamp).toLocaleString()}</div>
-                    <div>{exploit.origin}</div>
-                    <div>{exploit.exploiter}</div>
-                  </li>
-                )}
-              </ul>
-            </div>
-        }
-      </div>
-    );
-  }
-
-  islandEdgeInfo() {
+  edgeInfo() {
     return (
       <div>
       </div>
@@ -188,7 +152,7 @@ class PreviewPaneComponent extends AuthComponent {
     let info = null;
     switch (this.props.type) {
       case 'edge':
-        /* info = this.scanInfo(this.props.item); */
+        info = this.edgeInfo();
         break;
       case 'node':
         if (this.props.item.agentId) {
@@ -200,7 +164,7 @@ class PreviewPaneComponent extends AuthComponent {
         }
         break;
       case 'island_edge':
-        info = this.islandEdgeInfo();
+        info = this.edgeInfo();
         break;
     }
 
