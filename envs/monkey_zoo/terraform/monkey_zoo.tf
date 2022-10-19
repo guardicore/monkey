@@ -20,6 +20,16 @@ resource "google_compute_network" "tunneling2" {
   auto_create_subnetworks = false
 }
 
+resource "google_compute_network" "credential-reuse" {
+  name = "${local.resource_prefix}credential-reuse"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_network" "credential-reuse2" {
+  name = "${local.resource_prefix}credential-reuse2"
+  auto_create_subnetworks = false
+}
+
 resource "google_compute_subnetwork" "monkeyzoo-main" {
   name = "${local.resource_prefix}monkeyzoo-main"
   ip_cidr_range   = "10.2.2.0/24"
@@ -343,7 +353,7 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
 
 resource "google_compute_instance_from_template" "credentials-reuse-14" {
   name = "${local.resource_prefix}credentials-reuse-14"
-  source_instance_template = local.default_linux
+  source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-14.self_link
@@ -362,7 +372,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-14" {
 
 resource "google_compute_instance_from_template" "credentials-reuse-15" {
   name = "${local.resource_prefix}credentials-reuse-15"
-  source_instance_template = local.default_linux
+  source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-15.self_link
@@ -381,7 +391,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-15" {
 
 resource "google_compute_instance_from_template" "credentials-reuse-16" {
   name = "${local.resource_prefix}credentials-reuse-16"
-  source_instance_template = local.default_linux
+  source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-16.self_link
@@ -400,7 +410,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-16" {
 
 resource "google_compute_instance_from_template" "log4j-solr-49" {
   name = "${local.resource_prefix}log4j-solr-49"
-  source_instance_template = local.default_linux
+  source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-solr-49.self_link
@@ -408,7 +418,7 @@ resource "google_compute_instance_from_template" "log4j-solr-49" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.49"
   }
 }
@@ -423,14 +433,14 @@ resource "google_compute_instance_from_template" "log4j-solr-50" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.50"
   }
 }
 
 resource "google_compute_instance_from_template" "log4j-tomcat-51" {
   name = "${local.resource_prefix}log4j-tomcat-51"
-  source_instance_template = local.default_linux
+  source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-51.self_link
@@ -438,7 +448,7 @@ resource "google_compute_instance_from_template" "log4j-tomcat-51" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.51"
   }
 }
@@ -453,14 +463,14 @@ resource "google_compute_instance_from_template" "log4j-tomcat-52" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.52"
   }
 }
 
 resource "google_compute_instance_from_template" "log4j-logstash-55" {
   name = "${local.resource_prefix}log4j-logstash-55"
-  source_instance_template = local.default_linux
+  source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-logstash-55.self_link
@@ -468,7 +478,7 @@ resource "google_compute_instance_from_template" "log4j-logstash-55" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.55"
   }
 }
@@ -483,38 +493,8 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
     auto_delete = true
   }
   network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
+    subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.56"
-  }
-}
-
-resource "google_compute_instance_from_template" "scan-21" {
-  name = "${local.resource_prefix}scan-21"
-  source_instance_template = local.default_ubuntu
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.scan-21.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.21"
-  }
-}
-
-resource "google_compute_instance_from_template" "scan-22" {
-  name = "${local.resource_prefix}scan-22"
-  source_instance_template = local.default_windows
-  boot_disk{
-    initialize_params {
-      image = data.google_compute_image.scan-22.self_link
-    }
-    auto_delete = true
-  }
-  network_interface {
-    subnetwork="${local.resource_prefix}monkeyzoo-main"
-    network_ip="10.2.2.22"
   }
 }
 
