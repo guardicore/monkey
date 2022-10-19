@@ -8,7 +8,7 @@ resource "google_compute_instance_template" "ubuntu16" {
   can_ip_forward       = false
 
   disk {
-    source_image = "ubuntu-os-cloud/ubuntu-1604-lts"
+    source_image = "ubuntu-os-pro-cloud/ubuntu-pro-1604-lts"
   }
   network_interface {
     subnetwork="monkeyzoo-main"
