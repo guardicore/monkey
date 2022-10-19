@@ -22,27 +22,8 @@ class MapPageComponent extends AuthComponent {
     };
   }
 
-  events = {
-    select: event => this.selectionChanged(event)
-  };
+  events = {};
 
-  selectionChanged(event) {
-    if (event.nodes.length === 1) {
-      this.authFetch('/api/netmap/node?id=' + event.nodes[0])
-        .then(res => res.json())
-        .then(res => this.setState({ selected: res, selectedType: 'node' }));
-    } else if (event.edges.length === 1) {
-      if (displayedEdge['group'] === 'island') {
-        this.setState({ selected: displayedEdge, selectedType: 'island_edge' });
-      } else {
-        this.authFetch('/api/netmap/edge?id=' + event.edges[0])
-          .then(res => res.json())
-          .then(res => this.setState({ selected: res.edge, selectedType: 'edge' }));
-      }
-    } else {
-      this.setState({ selected: null, selectedType: null });
-    }
-  }
 
   killAllMonkeys = () => {
     this.authFetch('/api/agent-signals/terminate-all-agents',
