@@ -70,7 +70,7 @@ const MapPageWrapper = (props) => {
 
   useEffect(() => {
     setMapNodes(buildMapNodes());
-  }, [nodes, machines, propagationEvents]);
+  }, [nodes, machines, exploitationEvents, propagationEvents]);
 
   function addRelayCommunications(communications: Communications) {
     for (let [machineId, commTypes] of Object.entries(communications)) {
