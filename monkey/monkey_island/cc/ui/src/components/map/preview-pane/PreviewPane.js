@@ -133,9 +133,6 @@ class PreviewPaneComponent extends AuthComponent {
           info = this.assetInfo(this.props.item)
         }
         break;
-      case 'island_edge':
-        info = this.edgeInfo();
-        break;
     }
 
     let label = '';
