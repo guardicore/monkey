@@ -52,11 +52,6 @@ const MapPageWrapper = (props) => {
     }
   }, [mapNodes]);
 
-  // TODO remove
-  function isAllDataFetched(): boolean {
-    return !_.isEmpty(nodes) && !_.isEmpty(machines) &&
-      !_.isEmpty(propagationEvents) && !_.isEmpty(agents);
-  }
 
   useEffect(() => {
     setMapNodes(buildMapNodes());

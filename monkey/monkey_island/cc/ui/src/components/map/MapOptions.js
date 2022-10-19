@@ -61,13 +61,6 @@ export function getOptions() {
   return opts;
 }
 
-export const optionsPth = (() => {
-  let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
-  opts.groups = getGroupsOptionsPth();
-  opts.physics.barnesHut.gravitationalConstant = -20000;
-  return opts;
-})();
-
 export function edgeGroupToColor(group) {
   switch (group) {
     case CommunicationType.exploited:
