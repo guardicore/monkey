@@ -91,8 +91,8 @@ data "google_compute_image" "log4j-tomcat-51" {
   name = "log4j-tomcat-51"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "log4j-solr-50" {
-  name = "log4j-solr-50"
+data "google_compute_image" "log4j-tomcat-52" {
+  name = "log4j-tomcat-52"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "log4j-logstash-55" {
@@ -101,14 +101,6 @@ data "google_compute_image" "log4j-logstash-55" {
 }
 data "google_compute_image" "log4j-logstash-56" {
   name = "log4j-logstash-56"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "scan-21" {
-  name = "scan-21"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "scan-22" {
-  name = "scan-22"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "zerologon-25" {
