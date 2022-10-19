@@ -1,15 +1,15 @@
 import React from 'react';
 import AuthComponent from '../AuthComponent';
 import download from 'downloadjs';
-import {Button} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 const authComponent = new AuthComponent({})
 
-type Props = { url: string, filename: string, variant?: string}
+type Props = { url: string, filename: string, variant?: string }
 
 
 
-export const AgentLogDownloadButton = ({ url, variant = 'primary'}: Props) => {
+export const AgentLogDownloadButton = ({ url, filename, variant = 'primary' }: Props) => {
 
   function unescapeLog(st) {
     return st.substr(1, st.length - 2) // remove quotation marks on beginning and end of string.
@@ -27,22 +27,19 @@ export const AgentLogDownloadButton = ({ url, variant = 'primary'}: Props) => {
     authComponent.authFetch(url)
       .then(res => res.json())
       .then(res => {
-        let timestamp = res['timestamp'];
-        timestamp = timestamp.substr(0, timestamp.indexOf('.'));
-        let filename = res['monkey_label'].split(':').join('-') + ' - ' + timestamp + '.log';
-        let logContent = unescapeLog(res['log']);
+        let logContent = unescapeLog(res);
         download(logContent, filename, 'text/plain');
       });
   }
 
   return (<Button variant={variant}
-                  onClick={downloadAgentLog}>
+    onClick={downloadAgentLog}>
     Download Log
   </Button>);
 }
 
 
-export const IslandLogDownloadButton = ({ url, variant = 'primary'}: Props) => {
+export const IslandLogDownloadButton = ({ url, variant = 'primary' }: Props) => {
   function downloadIslandLog() {
     authComponent.authFetch(url)
       .then(res => res.json())
@@ -53,7 +50,7 @@ export const IslandLogDownloadButton = ({ url, variant = 'primary'}: Props) => {
       });
   }
   return (<Button variant={variant}
-                  onClick={downloadIslandLog}>
+    onClick={downloadIslandLog}>
     Download Log
   </Button>);
 }

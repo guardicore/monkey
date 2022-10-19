@@ -88,11 +88,13 @@ const MapPageWrapper = (props) => {
       let running = false;
       let agentID: string | null = null;
       let parentID: string | null = null;
+      let agentStartTime: Date = new Date(0);
       if (node !== null && machine.id in agents) {
         let agent = agents[machine.id];
         running = isAgentRunning(agent);
         agentID = agent.id;
         parentID = agent.parent_id;
+        agentStartTime = new Date(agent.start_time);
       }
 
       let propagatedTo = wasMachinePropagated(machine, propagationEvents);
@@ -106,6 +108,7 @@ const MapPageWrapper = (props) => {
         machine.hostname,
         machine.island,
         propagatedTo,
+        agentStartTime,
         agentID,
         parentID
       ));
