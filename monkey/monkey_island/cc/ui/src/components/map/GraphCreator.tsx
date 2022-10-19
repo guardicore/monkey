@@ -2,6 +2,7 @@ import {edgeGroupToColor} from './MapOptions';
 import MapNode, {CommunicationType} from '../types/MapNode';
 
 
+// This determines the display priority of the connection types, from highest to lowest
 const priorityList = [CommunicationType.relay, CommunicationType.cc,
   CommunicationType.exploited, CommunicationType.scanned];
 
