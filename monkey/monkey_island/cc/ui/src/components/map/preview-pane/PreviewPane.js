@@ -48,6 +48,13 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
+  logFilename(asset) {
+    return asset.agentStartTime.toISOString().split(':').join('.') +
+           '-' +
+           asset.getLabel().split(/[:/]/).join('-') +
+           '.log';
+  }
+
   downloadLogsRow(asset) {
     return (
       <>
@@ -57,7 +64,7 @@ class PreviewPaneComponent extends AuthComponent {
           </th>
           <td>
             <AgentLogDownloadButton url={'/api/agent-logs/' + asset.agentId}
-              filename={asset.getLabel().split(/[:/]/).join('-') + '.log'}
+              filename={this.logFilename(asset)}
               variant={asset.agentId ? undefined : 'disabled'} />
           </td>
         </tr>
