@@ -5,7 +5,7 @@ import MapPage from '../pages/MapPage';
 import MapNode, {
   Agent,
   CommunicationType,
-  Connections,
+  Communications,
   getMachineIp,
   Machine,
   Node
@@ -62,13 +62,13 @@ const MapPageWrapper = (props) => {
     setMapNodes(buildMapNodes());
   }, [nodes, machines, propagationEvents]);
 
-  function addRelayConnections(connections: Connections) {
-    for (let [machineId, connectionTypes] of Object.entries(connections)) {
+  function addRelayCommunications(communications: Communications) {
+    for (let [machineId, commTypes] of Object.entries(communications)) {
       let machine = machines[machineId];
       if (machine !== undefined && !machine.island
-        && connectionTypes.includes(CommunicationType.cc)
-        && !connectionTypes.includes(CommunicationType.relay)) {
-        connectionTypes.push(CommunicationType.relay);
+        && commTypes.includes(CommunicationType.cc)
+        && !commTypes.includes(CommunicationType.relay)) {
+        commTypes.push(CommunicationType.relay);
       }
     }
   }
@@ -78,12 +78,12 @@ const MapPageWrapper = (props) => {
     let mapNodes: MapNode[] = [];
     for (const machine of Object.values(machines)) {
       let node = nodes[machine.id] || null;
-      let connections;
+      let communications;
       if (node !== null) {
-        connections = node.connections;
-        addRelayConnections(connections);
+        communications = node.connections;
+        addRelayCommunications(communications);
       } else {
-        connections = [];
+        communications = [];
       }
       let running = false;
       let agentID: string | null = null;
@@ -101,7 +101,7 @@ const MapPageWrapper = (props) => {
         machine.id,
         machine.network_interfaces,
         running,
-        connections,
+        communications,
         machine.operating_system,
         machine.hostname,
         machine.island,

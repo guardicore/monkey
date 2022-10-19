@@ -35,8 +35,8 @@ function getCommunicationType(communicationTypes: CommunicationType[]): Communic
 function generateEdges(mapNodes: MapNode[]): Edge[] {
   let edges = [];
   for (const mapNode of mapNodes) {
-    for (const [connectedTo, connectionTypes] of Object.entries(mapNode.connections)) {
-      const connectionType = getCommunicationType(connectionTypes);
+    for (const [connectedTo, communicationTypes] of Object.entries(mapNode.communications)) {
+      const commType = getCommunicationType(communicationTypes);
       if(mapNode.island && String(connectedTo) === String(mapNode.machineId)){
         // Don't draw an edge from island to island
         continue;
@@ -44,7 +44,7 @@ function generateEdges(mapNodes: MapNode[]): Edge[] {
       edges.push({
         from: mapNode.machineId,
         to: connectedTo,
-        color: edgeGroupToColor(connectionType)
+        color: edgeGroupToColor(commType)
       });
     }
   }

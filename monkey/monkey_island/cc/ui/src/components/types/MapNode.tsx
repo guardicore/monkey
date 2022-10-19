@@ -13,7 +13,7 @@ export enum CommunicationType {
 
 export type Node = {
   machine_id: number;
-  connections: Connections;
+  connections: Communications;
 }
 
 export type Machine = {
@@ -31,14 +31,14 @@ export type Agent = {
   stop_time: string | null;
 }
 
-export type Connections = Record<number, CommunicationType[]>;
+export type Communications = Record<number, CommunicationType[]>;
 
 export default class MapNode {
   constructor(
     public machineId: number,
     public networkInterfaces: string[],
     public agentRunning: boolean,
-    public connections: Connections,
+    public communications: Communications,
     public operatingSystem: OS = OS.unknown,
     public hostname: string = "",
     public island: boolean = false,
