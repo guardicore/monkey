@@ -74,6 +74,8 @@ export default class MapNode {
     }
     else if (!this.island) { // No "clean" for island
       group_components.push('clean');
+    } else {
+      group_components.push('monkey');
     }
 
     group_components.push(this.getGroupOperatingSystem());
