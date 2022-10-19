@@ -61,7 +61,6 @@ function generateNodes(mapNodes: MapNode[]): GraphNode[] {
 }
 
 function generateGraph(mapNodes: MapNode[]): Graph {
-  console.log(mapNodes)
   return {
     edges: generateEdges(mapNodes),
     nodes: generateNodes(mapNodes)
