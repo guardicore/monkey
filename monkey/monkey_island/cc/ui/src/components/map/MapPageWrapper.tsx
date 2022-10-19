@@ -26,7 +26,11 @@ const MapPageWrapper = (props) => {
   const [agents, setAgents] = useState<Record<string, Agent>>({});
   const [propagationEvents, setPropagationEvents] = useState({});
 
-  const [graph, setGraph] = useState<Graph>({edges: [], nodes: []})
+  const [graph, setGraph] = useState<Graph>({edges: [], nodes: []});
+  // We need to avoid re-drawing the map, but the original data gets modified
+  // by the "react-graph-vis". This snapshot stores unmodified data for comparison
+  const [graphSnapshot, setGraphSnapshot] = useState<Graph>({edges: [], nodes: []});
+
 
   function fetchMapNodes() {
     getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
@@ -37,18 +41,19 @@ const MapPageWrapper = (props) => {
 
   useEffect(() => {
     fetchMapNodes();
-    let threeSeconds = 3000;
+    let oneSecond = 1000;
     const interval = setInterval(() => {
       fetchMapNodes();
-    }, threeSeconds);
+    }, oneSecond);
 
     return () => clearInterval(interval)
-
   }, [])
 
   useEffect(() => {
-    if (mapNodes.length !== 0) {
-      setGraph(generateGraph(mapNodes));
+    let localGraph = generateGraph(mapNodes);
+    if (mapNodes.length !== 0 && ! _.isEqual(localGraph, graphSnapshot)) {
+      setGraphSnapshot(_.cloneDeep(localGraph));
+      setGraph(localGraph);
     }
   }, [mapNodes]);
 
