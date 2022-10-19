@@ -6,9 +6,12 @@ import MapNode, {
   Agent,
   CommunicationType,
   Communications,
+  ExploitationAttempt,
   getMachineIp,
+  interfaceIp,
   Machine,
   Node,
+  getMachineLabel,
   ExploitationEvent
 } from '../types/MapNode';
 import _ from 'lodash';
@@ -65,7 +68,6 @@ const MapPageWrapper = (props) => {
     }
   }, [mapNodes]);
 
-
   useEffect(() => {
     setMapNodes(buildMapNodes());
   }, [nodes, machines, propagationEvents]);
@@ -81,8 +83,36 @@ const MapPageWrapper = (props) => {
     }
   }
 
+  function hasIp(machine: Machine, ip: string) {
+    for (const iface of machine.network_interfaces) {
+      if (interfaceIp(iface) === ip) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function getExploitationAttempts(machine: Machine, agentsById: Record<string, Agent>): ExploitationAttempt[] {
+    let exploitationAttempts = [];
+    for (const attempt of Object.values(exploitationEvents)) {
+      if (hasIp(machine, attempt.target)) {
+        let agent = agentsById[attempt.source];
+        let sourceMachine = machines[agent.machine_id];
+        let label = getMachineLabel(sourceMachine);
+        exploitationAttempts.push({
+          source: label,
+          success: attempt.success,
+          timestamp: attempt.timestamp,
+          exploiter_name: attempt.exploiter_name
+        });
+      }
+    }
+    return exploitationAttempts;
+  }
+
   function buildMapNodes(): MapNode[] {
     // Build the MapNodes list
+    let agentsById = arrayToObject(Object.values(agents), 'id');
     let mapNodes: MapNode[] = [];
     for (const machine of Object.values(machines)) {
       let node = nodes[machine.id] || null;
@@ -105,6 +135,7 @@ const MapPageWrapper = (props) => {
         agentStartTime = new Date(agent.start_time);
       }
 
+      let exploitationAttempts = getExploitationAttempts(machine, agentsById);
       let propagatedTo = wasMachinePropagated(machine, propagationEvents);
 
       mapNodes.push(new MapNode(
@@ -115,6 +146,7 @@ const MapPageWrapper = (props) => {
         machine.operating_system,
         machine.hostname,
         machine.island,
+        exploitationAttempts,
         propagatedTo,
         agentStartTime,
         agentID,
