@@ -25,7 +25,7 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <tr>
         <th>Operating System</th>
-        <td>{asset.os.charAt(0).toUpperCase() + asset.os.slice(1)}</td>
+        <td>{asset.operatingSystem.charAt(0).toUpperCase() + asset.operatingSystem.slice(1)}</td>
       </tr>
     );
   }
@@ -34,7 +34,7 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <tr>
         <th>IP Addresses</th>
-        <td>{asset.ip_addresses.map(val => <div key={val}>{val}</div>)}</td>
+        <td>{asset.networkInterfaces.map(val => <div key={val}>{val}</div>)}</td>
       </tr>
     );
   }
@@ -43,9 +43,16 @@ class PreviewPaneComponent extends AuthComponent {
     return (
       <tr>
         <th>Status</th>
-        <td>{(asset.dead) ? 'Dead' : 'Alive'}</td>
+        <td>{(asset.agentRunning) ? 'Alive' : 'Dead'}</td>
       </tr>
     );
+  }
+
+  logFilename(asset) {
+    return asset.agentStartTime.toISOString().split(':').join('.') +
+           '-' +
+           asset.getLabel().split(/[:/]/).join('-') +
+           '.log';
   }
 
   downloadLogsRow(asset) {
@@ -56,11 +63,12 @@ class PreviewPaneComponent extends AuthComponent {
             Download Monkey Agent Log
           </th>
           <td>
-            <AgentLogDownloadButton url={'/api/log?id=' + asset.id}
-                               variant={asset.has_log ? undefined : 'disabled'}/>
+            <AgentLogDownloadButton url={'/api/agent-logs/' + asset.agentId}
+              filename={this.logFilename(asset)}
+              variant={asset.agentId && ! asset.agentRunning ? undefined : 'disabled'} />
           </td>
         </tr>
-        {(asset['group'].includes('island')) &&
+        {(asset.island) &&
           <tr>
             <th>
               Download Island Server Log
@@ -72,31 +80,6 @@ class PreviewPaneComponent extends AuthComponent {
         }
       </>
     );
-  }
-
-
-  exploitsTimeline(asset) {
-    if (asset.exploits.length === 0) {
-      return (<div/>);
-    }
-    return (
-      <div>
-        <h4 style={{'marginTop': '2em'}}>
-          Exploit Timeline&nbsp;
-          {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
-        </h4>
-        <ul className='timeline'>
-          {asset.exploits.map(exploit =>
-            <li key={exploit.timestamp}>
-              <div className={'bullet ' + (exploit.exploitation_result ? 'bad' : '')}/>
-              <div>{new Date(exploit.timestamp).toLocaleString()}</div>
-              <div>{exploit.origin}</div>
-              <div>{exploit.exploiter}</div>
-            </li>
-          )}
-        </ul>
-      </div>
-    )
   }
 
   islandAssetInfo() {
@@ -117,7 +100,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.exploitsTimeline(asset)}
       </div>
     );
   }
@@ -133,48 +115,11 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.exploitsTimeline(asset)}
       </div>
     );
   }
 
-  scanInfo(edge) {
-    return (
-      <div>
-        <table className='table table-condensed'>
-          <tbody>
-          <tr>
-            <th>Operating System</th>
-            <td>{edge.os.type}</td>
-          </tr>
-          <tr>
-            <th>IP Address</th>
-            <td>{edge.ip_address}</td>
-          </tr>
-          </tbody>
-        </table>
-        {
-          (edge.exploits.length === 0) ?
-            '' :
-            <div>
-              <h4 style={{'marginTop': '2em'}}>Timeline</h4>
-              <ul className='timeline'>
-                {edge.exploits.map(exploit =>
-                  <li key={exploit.timestamp}>
-                    <div className={'bullet ' + (exploit.result ? 'bad' : '')}/>
-                    <div>{new Date(exploit.timestamp).toLocaleString()}</div>
-                    <div>{exploit.origin}</div>
-                    <div>{exploit.exploiter}</div>
-                  </li>
-                )}
-              </ul>
-            </div>
-        }
-      </div>
-    );
-  }
-
-  islandEdgeInfo() {
+  edgeInfo() {
     return (
       <div>
       </div>
@@ -185,31 +130,26 @@ class PreviewPaneComponent extends AuthComponent {
     let info = null;
     switch (this.props.type) {
       case 'edge':
-        info = this.scanInfo(this.props.item);
+        info = this.edgeInfo();
         break;
       case 'node':
-        if (this.props.item.group.includes('monkey')) {
-          info = this.assetInfo(this.props.item);
-        } else if (this.props.item.group.includes('monkey', 'manual')) {
+        if (this.props.item.agentId) {
           info = this.infectedAssetInfo(this.props.item)
-        } else if (this.props.item.group !== 'island') {
-          info = this.assetInfo(this.props.item)
-        } else {
+        } else if (this.props.item.island) {
           info = this.islandAssetInfo();
+        } else {
+          info = this.assetInfo(this.props.item)
         }
-        break;
-      case 'island_edge':
-        info = this.islandEdgeInfo();
         break;
     }
 
     let label = '';
     if (!this.props.item) {
       label = '';
-    } else if (Object.prototype.hasOwnProperty.call(this.props.item, 'label')) {
-      label = this.props.item['label'];
-    } else if (Object.prototype.hasOwnProperty.call(this.props.item, '_label')) {
-      label = this.props.item['_label'];
+    } else if ('getLabel' in this.props.item) {
+      label = this.props.item.getLabel();
+    } else {
+      label = '';
     }
 
     return (
