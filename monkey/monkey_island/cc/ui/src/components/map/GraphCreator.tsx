@@ -37,6 +37,10 @@ function generateEdges(mapNodes: MapNode[]): Edge[] {
   for (const mapNode of mapNodes) {
     for (const [connectedTo, connectionTypes] of Object.entries(mapNode.connections)) {
       const connectionType = getCommunicationType(connectionTypes);
+      if(mapNode.island && String(connectedTo) === String(mapNode.machineId)){
+        // Don't draw an edge from island to island
+        continue;
+      }
       edges.push({
         from: mapNode.machineId,
         to: connectedTo,
