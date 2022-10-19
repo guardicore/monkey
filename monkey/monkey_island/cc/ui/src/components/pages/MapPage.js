@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStopCircle } from '@fortawesome/free-solid-svg-icons/faStopCircle';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
-import ReactiveGraph from 'components/reactive-graph/ReactiveGraph';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import TelemetryLog from '../map/TelemetryLog';
+import ReactiveGraph from '../reactive-graph/ReactiveGraph';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
@@ -107,7 +107,7 @@ class MapPageComponent extends AuthComponent {
               <span>Island Communication <FontAwesomeIcon icon={faMinus} size="lg" style={{ color: '#a9aaa9' }} /></span>
             </div>
             <div style={{ height: '80vh' }} className={'map-window'}>
-              <ReactiveGraph mapNodes={this.props.mapNodes} events={this.events} />
+              <ReactiveGraph graph={this.props.graph} events={this.events} />
               <TelemetryLog onStatusChange={this.props.onStatusChange} />
             </div>
           </Col>

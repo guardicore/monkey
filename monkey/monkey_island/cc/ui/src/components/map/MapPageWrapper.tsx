@@ -4,6 +4,7 @@ import { arrayToObject, getCollectionObject } from '../utils/ServerUtils';
 import MapPage from '../pages/MapPage';
 import MapNode, { Agent, CommunicationTypes, Connections, getMachineIp, Machine, Node } from '../types/MapNode';
 import _ from 'lodash';
+import generateGraph, {Graph} from './GraphCreator';
 
 const MapPageWrapper = (props) => {
   function getPropagationEvents() {
@@ -18,12 +19,20 @@ const MapPageWrapper = (props) => {
   const [agents, setAgents] = useState<Record<string, Agent>>({});
   const [propagationEvents, setPropagationEvents] = useState({});
 
+  const [graph, setGraph] = useState<Graph>({edges: [], nodes: []})
+
   useEffect(() => {
     getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
     getCollectionObject(APIEndpoint.machines, 'id').then(machineObj => setMachines(machineObj));
     getCollectionObject(APIEndpoint.agents, 'machine_id').then(agentObj => setAgents(agentObj));
     getPropagationEvents().then(events => setPropagationEvents(events));
   }, []);
+
+  useEffect(() => {
+    if(mapNodes.length !== 0){
+      setGraph(generateGraph(mapNodes));
+    }
+  }, [mapNodes]);
 
   function isAllDataFetched(): boolean {
     return !_.isEmpty(nodes) && !_.isEmpty(machines) &&
@@ -97,7 +106,7 @@ const MapPageWrapper = (props) => {
     return ip in propagationEvents
   }
 
-  return (<MapPage mapNodes={mapNodes} {...props} />);
+  return (<MapPage mapNodes={mapNodes} graph={graph} {...props} />);
 }
 
 
