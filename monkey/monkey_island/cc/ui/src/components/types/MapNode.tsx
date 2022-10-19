@@ -31,6 +31,14 @@ export type Agent = {
   stop_time: string | null;
 }
 
+export type ExploitationEvent = {
+  source: string;
+  target: string;
+  success: boolean;
+  exploiter_name: string;
+  timestamp: Date;
+}
+
 export type Communications = Record<number, CommunicationType[]>;
 
 export default class MapNode {
