@@ -74,34 +74,6 @@ class PreviewPaneComponent extends AuthComponent {
     );
   }
 
-
-  exploitsTimeline(asset) {
-    return (<div />);
-    /*
-    if (asset.exploits.length === 0) {
-      return (<div/>);
-    }
-    return (
-      <div>
-        <h4 style={{'marginTop': '2em'}}>
-          Exploit Timeline&nbsp;
-          {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
-        </h4>
-        <ul className='timeline'>
-          {asset.exploits.map(exploit =>
-            <li key={exploit.timestamp}>
-              <div className={'bullet ' + (exploit.exploitation_result ? 'bad' : '')}/>
-              <div>{new Date(exploit.timestamp).toLocaleString()}</div>
-              <div>{exploit.origin}</div>
-              <div>{exploit.exploiter}</div>
-            </li>
-          )}
-        </ul>
-      </div>
-    )
-    */
-  }
-
   islandAssetInfo() {
     return (
       <div>
@@ -120,7 +92,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.exploitsTimeline(asset)}
       </div>
     );
   }
@@ -136,7 +107,6 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.exploitsTimeline(asset)}
       </div>
     );
   }
