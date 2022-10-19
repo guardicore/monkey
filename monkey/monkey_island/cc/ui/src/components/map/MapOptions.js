@@ -1,4 +1,4 @@
-import { CommunicationTypes, NodeGroup } from 'components/types/MapNode';
+import { CommunicationType, NodeGroup } from 'components/types/MapNode';
 
 let getGroupsOptions = (stateList) => {
   let groupOptions = {};
@@ -61,22 +61,15 @@ export function getOptions() {
   return opts;
 }
 
-export const optionsPth = (() => {
-  let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
-  opts.groups = getGroupsOptionsPth();
-  opts.physics.barnesHut.gravitationalConstant = -20000;
-  return opts;
-})();
-
 export function edgeGroupToColor(group) {
   switch (group) {
-    case CommunicationTypes.exploited:
+    case CommunicationType.exploited:
       return '#c00';
-    case CommunicationTypes.relay:
+    case CommunicationType.relay:
       return '#0058aa';
-    case CommunicationTypes.scanned:
+    case CommunicationType.scanned:
       return '#f90';
-    case CommunicationTypes.cc:
+    case CommunicationType.cc:
       return '#aaa';
   }
   return 'black';

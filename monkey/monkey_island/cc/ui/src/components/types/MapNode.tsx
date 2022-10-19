@@ -4,7 +4,7 @@ export enum OS {
   windows = "windows"
 }
 
-export enum CommunicationTypes {
+export enum CommunicationType {
   cc = "cc",
   scanned = "scanned",
   exploited = "exploited",
@@ -13,7 +13,7 @@ export enum CommunicationTypes {
 
 export type Node = {
   machine_id: number;
-  connections: Connections;
+  connections: Communications;
 }
 
 export type Machine = {
@@ -31,14 +31,14 @@ export type Agent = {
   stop_time: string | null;
 }
 
-type Connections = Record<number, CommunicationTypes[]>;
+export type Communications = Record<number, CommunicationType[]>;
 
 export default class MapNode {
   constructor(
     public machineId: number,
     public networkInterfaces: string[],
     public agentRunning: boolean,
-    public connections: Connections,
+    public communications: Communications,
     public operatingSystem: OS = OS.unknown,
     public hostname: string = "",
     public island: boolean = false,
@@ -74,6 +74,8 @@ export default class MapNode {
     }
     else if (!this.island) { // No "clean" for island
       group_components.push('clean');
+    } else {
+      group_components.push('monkey');
     }
 
     group_components.push(this.getGroupOperatingSystem());
