@@ -93,7 +93,7 @@ class PreviewPaneComponent extends AuthComponent {
     IslandHttpClient.get("/api/agent-events?type=ExploitationEvent")
       .then(res => res.body)
       .then(events =>
-        events.filter(event => asset.ip_addresses.includes(event.target)) // TODO: check values and update when MapNode work is done
+        events.filter(event => asset.ip_addresses.includes(event.target))
       )
       .then(filteredEvents => {
         if (filteredEvents.length === 0) {
