@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import IslandHttpClient, { APIEndpoint } from '../IslandHttpClient';
-import { arrayToObject, getCollectionObject } from '../utils/ServerUtils';
+import React, {useEffect, useState} from 'react';
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
+import {arrayToObject, getCollectionObject} from '../utils/ServerUtils';
 import MapPage from '../pages/MapPage';
-import MapNode, { Agent, CommunicationType, Connections, getMachineIp, Machine, Node } from '../types/MapNode';
+import MapNode, {
+  Agent,
+  CommunicationType,
+  Connections,
+  getMachineIp,
+  Machine,
+  Node
+} from '../types/MapNode';
 import _ from 'lodash';
 import generateGraph, {Graph} from './GraphCreator';
 
 const MapPageWrapper = (props) => {
   function getPropagationEvents() {
-    let url_args = { 'type': 'PropagationEvent', 'success': true };
+    let url_args = {'type': 'PropagationEvent', 'success': true};
     return IslandHttpClient.get(APIEndpoint.agentEvents, url_args)
       .then(res => arrayToObject(res.body, 'target'));
   }
@@ -21,34 +28,44 @@ const MapPageWrapper = (props) => {
 
   const [graph, setGraph] = useState<Graph>({edges: [], nodes: []})
 
-  useEffect(() => {
+  function fetchMapNodes() {
     getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
     getCollectionObject(APIEndpoint.machines, 'id').then(machineObj => setMachines(machineObj));
     getCollectionObject(APIEndpoint.agents, 'machine_id').then(agentObj => setAgents(agentObj));
     getPropagationEvents().then(events => setPropagationEvents(events));
-  }, []);
+  }
 
   useEffect(() => {
-    if(mapNodes.length !== 0){
+    fetchMapNodes();
+    let threeSeconds = 3000;
+    const interval = setInterval(() => {
+      fetchMapNodes();
+    }, threeSeconds);
+
+    return () => clearInterval(interval)
+
+  }, [])
+
+  useEffect(() => {
+    if (mapNodes.length !== 0) {
       setGraph(generateGraph(mapNodes));
     }
   }, [mapNodes]);
 
+  // TODO remove
   function isAllDataFetched(): boolean {
     return !_.isEmpty(nodes) && !_.isEmpty(machines) &&
       !_.isEmpty(propagationEvents) && !_.isEmpty(agents);
   }
 
   useEffect(() => {
-    if (isAllDataFetched()) {
-      setMapNodes(buildMapNodes());
-    }
+    setMapNodes(buildMapNodes());
   }, [nodes, machines, propagationEvents]);
 
   function addRelayConnections(connections: Connections) {
     for (let [machineId, connectionTypes] of Object.entries(connections)) {
       let machine = machines[machineId];
-      if (!machine.island
+      if (machine !== undefined && !machine.island
         && connectionTypes.includes(CommunicationType.cc)
         && !connectionTypes.includes(CommunicationType.relay)) {
         connectionTypes.push(CommunicationType.relay);
