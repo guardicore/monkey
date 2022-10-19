@@ -1,5 +1,4 @@
 from copy import deepcopy
-from typing import Dict
 
 from bson import ObjectId
 
@@ -39,23 +38,6 @@ class DisplayedEdgeService:
         displayed_edge["exploits"] = deepcopy(edge.exploits)
         displayed_edge["_label"] = edge.get_label()
         return displayed_edge
-
-    @staticmethod
-    def generate_pseudo_edge(edge_id, src_node_id, dst_node_id, src_label, dst_label):
-        edge = {
-            "id": edge_id,
-            "from": src_node_id,
-            "to": dst_node_id,
-            "group": "island",
-            "src_label": src_label,
-            "dst_label": dst_label,
-        }
-        edge["_label"] = DisplayedEdgeService.get_pseudo_label(edge)
-        return edge
-
-    @staticmethod
-    def get_pseudo_label(edge: Dict):
-        return f"{edge['src_label']} {RIGHT_ARROW} {edge['dst_label']}"
 
     @staticmethod
     def services_to_displayed_services(services, for_report=False):
