@@ -99,10 +99,11 @@ const MapPageWrapper = (props) => {
         let agent = agentsById[attempt.source];
         let sourceMachine = machines[agent.machine_id];
         let label = getMachineLabel(sourceMachine);
+        let timestampInMilliseconds = attempt.timestamp * 1000;
         exploitationAttempts.push({
           source: label,
           success: attempt.success,
-          timestamp: attempt.timestamp,
+          timestamp: new Date(timestampInMilliseconds),
           exploiter_name: attempt.exploiter_name
         });
       }
@@ -152,6 +153,7 @@ const MapPageWrapper = (props) => {
         agentID,
         parentID
       ));
+
     }
 
     return mapNodes;
