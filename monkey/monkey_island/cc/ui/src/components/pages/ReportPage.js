@@ -3,7 +3,6 @@ import {Route} from 'react-router-dom';
 import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
-import AttackReport from '../report-components/AttackReport';
 import SecurityReport from '../report-components/SecurityReport';
 import ZeroTrustReport from '../report-components/ZeroTrustReport';
 import RansomwareReport from '../report-components/RansomwareReport';
@@ -15,19 +14,17 @@ class ReportPageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.sections = ['security', 'zeroTrust', 'attack', 'ransomware'];
+    this.sections = ['security', 'zeroTrust', 'ransomware'];
 
     this.state = {
       securityReport: {},
-      attackReport: {},
       zeroTrustReport: {},
       ransomwareReport: {},
       allMonkeysAreDead: false,
       runStarted: true,
       selectedSection: ReportPageComponent.selectReport(this.sections),
       orderedSections: [{key: 'security', title: 'Security report'},
-        {key: 'zeroTrust', title: 'Zero trust report'},
-        {key: 'attack', title: 'ATT&CK report'}]
+        {key: 'zeroTrust', title: 'Zero trust report'}]
     };
 
   }
@@ -48,13 +45,6 @@ class ReportPageComponent extends AuthComponent {
         .then(res => {
           this.setState({
             securityReport: res
-          });
-        });
-      this.authFetch('/api/report/attack')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            attackReport: res
           });
         });
       this.getZeroTrustReportFromServer().then((ztReport) => {
@@ -151,8 +141,6 @@ class ReportPageComponent extends AuthComponent {
     switch (this.state.selectedSection) {
       case 'security':
         return (<SecurityReport report={this.state.securityReport}/>);
-      case 'attack':
-        return (<AttackReport report={this.state.attackReport}/>);
       case 'zeroTrust':
         return (<ZeroTrustReport report={this.state.zeroTrustReport}/>);
       case 'ransomware':

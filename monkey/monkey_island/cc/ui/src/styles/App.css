@@ -463,15 +463,6 @@ body {
   }
 }
 
-/* Attack pages */
-.attack-matrix .messages {
-  margin-bottom: 30px;
-}
-
-.attack-matrix {
-  margin-bottom: 20px;
-}
-
 .icon-info {
   color: #ade3eb !important;
 }
@@ -502,11 +493,6 @@ body {
 
 .status-default {
   color: #575556 !important;
-}
-
-.attack-legend {
-  text-align: center;
-  margin-bottom: 20px;
 }
 
 .version-text {

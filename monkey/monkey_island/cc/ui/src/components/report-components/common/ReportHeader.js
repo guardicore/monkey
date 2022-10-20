@@ -7,7 +7,6 @@ import monkeyLogoImage from '../../../images/monkey-icon.svg';
 export const ReportTypes = {
   zeroTrust: 'Zero Trust',
   security: 'Security',
-  attack: 'ATT&CK',
   ransomware: 'Ransomware',
   null: ''
 };
