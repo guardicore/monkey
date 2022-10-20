@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStopCircle } from '@fortawesome/free-solid-svg-icons/faStopCircle';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
-import PreviewPaneComponent from 'components/map/preview-pane/PreviewPane';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import TelemetryLog from '../map/TelemetryLog';
 import ReactiveGraph from '../reactive-graph/ReactiveGraph';
+import PreviewPaneComponent from '../map/preview-pane/PreviewPane';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
