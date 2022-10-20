@@ -50,9 +50,9 @@ class PreviewPaneComponent extends AuthComponent {
 
   logFilename(asset) {
     return asset.agentStartTime.toISOString().split(':').join('.') +
-           '-' +
-           asset.getLabel().split(/[:/]/).join('-') +
-           '.log';
+      '-' +
+      asset.getLabel().split(/[:/]/).join('-') +
+      '.log';
   }
 
   downloadLogsRow(asset) {
@@ -64,8 +64,8 @@ class PreviewPaneComponent extends AuthComponent {
           </th>
           <td>
             <AgentLogDownloadButton url={'/api/agent-logs/' + asset.agentId}
-              filename={this.logFilename(asset)}
-              variant={asset.agentId && ! asset.agentRunning ? undefined : 'disabled'} />
+                                    filename={this.logFilename(asset)}
+                                    variant={asset.agentId && !asset.agentRunning ? undefined : 'disabled'}/>
           </td>
         </tr>
         {(asset.island) &&
@@ -74,12 +74,26 @@ class PreviewPaneComponent extends AuthComponent {
               Download Island Server Log
             </th>
             <td>
-              <IslandLogDownloadButton url={'/api/island/log'} />
+              <IslandLogDownloadButton url={'/api/island/log'}/>
             </td>
           </tr>
         }
       </>
     );
+  }
+
+
+  exploitsTimeline(asset) {
+    return (
+      <div className={'exploit-timeline'}>
+        <h4 style={{'marginTop': '2em'}}>
+          Exploit Timeline&nbsp;
+          {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
+        </h4>
+        <ul className='timeline'>
+        </ul>
+      </div>
+    )
   }
 
   islandAssetInfo() {
@@ -100,6 +114,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
+        {this.exploitsTimeline(asset)}
       </div>
     );
   }
@@ -115,6 +130,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
+        {this.exploitsTimeline(asset)}
       </div>
     );
   }
