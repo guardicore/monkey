@@ -124,6 +124,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "Accessible From" and "Services" from the preview pane in the map page. #2430
 - "GET /api/netmap" endpoint. #2334
 - "GET /api/netmap/node-states" endpoint. #2334
+- The MITRE ATT&CK report. #2440
 
 
 ### Fixed
