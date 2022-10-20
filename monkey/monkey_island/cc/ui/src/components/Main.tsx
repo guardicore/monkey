@@ -35,7 +35,6 @@ export const Routes = {
   LandingPage: '/landing-page',
   GettingStartedPage: '/',
   Report: '/report',
-  AttackReport: '/report/attack',
   ZeroTrustReport: '/report/zeroTrust',
   SecurityReport: '/report/security',
   RansomwareReport: '/report/ransomware',
@@ -258,10 +257,6 @@ class AppComponent extends AuthComponent {
               <SidebarLayoutComponent component={TelemetryPage} {...defaultSideNavProps}/>)}
             {this.redirectToReport()}
             {this.renderRoute(Routes.SecurityReport,
-              <SidebarLayoutComponent component={ReportPage}
-                                      islandMode={this.state.islandMode}
-                                      {...defaultSideNavProps}/>)}
-            {this.renderRoute(Routes.AttackReport,
               <SidebarLayoutComponent component={ReportPage}
                                       islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
