@@ -336,6 +336,7 @@ resource "google_compute_instance_from_template" "powershell-3-44" {
     }
     auto_delete = true
   }
+  tags = ["powershell", "powershell-44"]
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.44"
