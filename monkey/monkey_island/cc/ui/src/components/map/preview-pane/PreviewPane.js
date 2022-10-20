@@ -1,29 +1,18 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faHandPointLeft} from '@fortawesome/free-solid-svg-icons/faHandPointLeft'
-import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons/faQuestionCircle'
-import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import AuthComponent from '../../AuthComponent';
 import {
   AgentLogDownloadButton,
   IslandLogDownloadButton
 } from '../../ui-components/LogDownloadButtons';
-import _ from 'lodash';
+import ExploitionTimeline from './ExploitionTimeline';
 
 class PreviewPaneComponent extends AuthComponent {
   constructor(props) {
     super(props);
   }
 
-  generateToolTip(text) {
-    return (
-      <OverlayTrigger placement="top"
-                      overlay={<Tooltip id="tooltip">{text}</Tooltip>}
-                      delay={{show: 250, hide: 400}}>
-        <a><FontAwesomeIcon icon={faQuestionCircle} style={{'marginRight': '0.5em'}}/></a>
-      </OverlayTrigger>
-    );
-  }
 
   osRow(asset) {
     return (
@@ -85,31 +74,6 @@ class PreviewPaneComponent extends AuthComponent {
       </>
     );
   }
-_
-  getExploitsTimeline(asset) {
-    if (asset.exploitationAttempts.length === 0) {
-      return (<div/>);
-    }
-
-    return (
-      <div className={'exploit-timeline'}>
-        <h4 style={{'marginTop': '2em'}}>
-          Exploit Timeline&nbsp;
-          {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
-        </h4>
-        <ul className='timeline'>
-          {_.sortBy(asset.exploitationAttempts, 'timestamp').map(attempt =>
-            <li key={attempt.timestamp}>
-              <div className={'bullet ' + (attempt.success ? 'bad' : '')}/>
-              <div>{new Date(attempt.timestamp).toLocaleString()}</div>
-              <div>{attempt.source}</div>
-              <div>{attempt.exploiter_name}</div>
-            </li>
-          )}
-        </ul>
-      </div>
-    )
-  }
 
   islandAssetInfo() {
     return (
@@ -129,7 +93,7 @@ _
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.getExploitsTimeline(asset)}
+        <ExploitionTimeline  asset={asset} />
       </div>
     );
   }
@@ -145,7 +109,7 @@ _
           {this.downloadLogsRow(asset)}
           </tbody>
         </table>
-        {this.getExploitsTimeline(asset)}
+        <ExploitionTimeline  asset={asset} />
       </div>
     );
   }
