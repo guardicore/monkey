@@ -87,6 +87,10 @@ class PreviewPaneComponent extends AuthComponent {
   }
 _
   getExploitsTimeline(asset) {
+    if (asset.exploitationAttempts.length === 0) {
+      return (<div/>);
+    }
+
     return (
       <div className={'exploit-timeline'}>
         <h4 style={{'marginTop': '2em'}}>
