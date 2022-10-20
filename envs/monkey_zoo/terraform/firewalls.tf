@@ -125,62 +125,22 @@ resource "google_compute_firewall" "credentials-reuse-in" {
 
   direction = "INGRESS"
   priority = "1000"
-  source_ranges = ["0.0.0.0/0"]
+  source_tags = ["island", "credentials-reuse"]
 }
 
-resource "google_compute_firewall" "credential-reuse-allow-icmp" {
-  name    = "${local.resource_prefix}credential-reuse-allow-icmp"
-  network = google_compute_network.credential-reuse.name
-
-  allow {
-    protocol = "icmp"
-  }
-
-  direction = "INGRESS"
-  priority = "65534"
-  source_ranges = ["0.0.0.0/0"]
-}
-
-resource "google_compute_firewall" "credential-reuse-allow-ssh" {
-  name    = "${local.resource_prefix}credential-reuse-allow-ssh"
-  network = google_compute_network.credential-reuse.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  direction = "INGRESS"
-  priority = "65534"
-  source_ranges = ["0.0.0.0/0"]
-}
-
-resource "google_compute_firewall" "credential-reuse2-allow-icmp" {
-  name    = "${local.resource_prefix}credential-reuse2-allow-icmp"
+resource "google_compute_firewall" "credentials-reuse2-in" {
+  name    = "${local.resource_prefix}credentials-reuse2-in"
   network = google_compute_network.credential-reuse2.name
 
   allow {
-    protocol = "icmp"
+    protocol = "all"
   }
 
   direction = "INGRESS"
-  priority = "65534"
-  source_ranges = ["0.0.0.0/0"]
+  priority = "1000"
+  source_tags = ["island", "credentials-reuse"]
 }
 
-resource "google_compute_firewall" "credential-reuse2-allow-ssh" {
-  name    = "${local.resource_prefix}credential-reuse2-allow-ssh"
-  network = google_compute_network.credential-reuse2.name
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  direction = "INGRESS"
-  priority = "65534"
-  source_ranges = ["0.0.0.0/0"]
-}
 
 resource "google_compute_firewall" "powershell-48-allow" {
   name    = "${local.resource_prefix}powershell-48-allow"
