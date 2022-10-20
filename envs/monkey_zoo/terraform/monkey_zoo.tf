@@ -107,6 +107,7 @@ resource "google_compute_instance_from_template" "tunneling-9" {
     }
     auto_delete = true
   }
+  tags = ["tunneling-9"]
   network_interface{
     subnetwork="${local.resource_prefix}tunneling-main"
     network_ip="10.2.1.9"
@@ -285,6 +286,7 @@ resource "google_compute_instance_from_template" "powershell-3-48" {
     }
     auto_delete = true
   }
+  tags = ["powershell", "powershell-48"]
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.48"
@@ -300,6 +302,7 @@ resource "google_compute_instance_from_template" "powershell-3-47" {
     }
     auto_delete = true
   }
+  tags = ["powershell", "powershell-47"]
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.47"
@@ -315,6 +318,7 @@ resource "google_compute_instance_from_template" "powershell-3-46" {
     }
     auto_delete = true
   }
+  tags = ["powershell", "powershell-46"]
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.46"
@@ -345,6 +349,7 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
     }
     auto_delete = true
   }
+  tags = ["powershell", "powershell-45"]
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.45"
@@ -353,6 +358,7 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
 
 resource "google_compute_instance_from_template" "credentials-reuse-14" {
   name = "${local.resource_prefix}credentials-reuse-14"
+  tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
@@ -372,6 +378,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-14" {
 
 resource "google_compute_instance_from_template" "credentials-reuse-15" {
   name = "${local.resource_prefix}credentials-reuse-15"
+  tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
@@ -391,6 +398,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-15" {
 
 resource "google_compute_instance_from_template" "credentials-reuse-16" {
   name = "${local.resource_prefix}credentials-reuse-16"
+  tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
   boot_disk{
     initialize_params {
