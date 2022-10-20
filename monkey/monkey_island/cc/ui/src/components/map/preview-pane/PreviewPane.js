@@ -8,6 +8,7 @@ import {
   AgentLogDownloadButton,
   IslandLogDownloadButton
 } from '../../ui-components/LogDownloadButtons';
+import _ from 'lodash';
 
 class PreviewPaneComponent extends AuthComponent {
   constructor(props) {
@@ -84,7 +85,7 @@ class PreviewPaneComponent extends AuthComponent {
       </>
     );
   }
-
+_
   getExploitsTimeline(asset) {
     return (
       <div>
@@ -93,7 +94,7 @@ class PreviewPaneComponent extends AuthComponent {
           {this.generateToolTip('Timeline of exploit attempts. Red is successful. Gray is unsuccessful')}
         </h4>
         <ul className='timeline'>
-          {asset.exploitationAttempts.map(attempt =>
+          {_.sortBy(asset.exploitationAttempts, 'timestamp').map(attempt =>
             <li key={attempt.timestamp}>
               <div className={'bullet ' + (attempt.success ? 'bad' : '')}/>
               <div>{new Date(attempt.timestamp).toLocaleString()}</div>
