@@ -5,6 +5,7 @@ locals {
   default_windows=google_compute_instance_template.windows2016.self_link
 }
 
+// Network
 resource "google_compute_network" "monkeyzoo" {
   name = "${local.resource_prefix}monkeyzoo"
   auto_create_subnetworks = false
@@ -30,6 +31,7 @@ resource "google_compute_network" "credential-reuse2" {
   auto_create_subnetworks = false
 }
 
+// Subnetwork for the above networks
 resource "google_compute_subnetwork" "monkeyzoo-main" {
   name = "${local.resource_prefix}monkeyzoo-main"
   ip_cidr_range   = "10.2.2.0/24"
