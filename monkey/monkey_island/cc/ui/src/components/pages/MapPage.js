@@ -9,7 +9,7 @@ import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import TelemetryLog from '../map/TelemetryLog';
 import ReactiveGraph from '../reactive-graph/ReactiveGraph';
-import PreviewPaneComponent from '../map/preview-pane/PreviewPane';
+import PreviewPaneComponent from '../map/preview-pane/NodePreviewPane';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {

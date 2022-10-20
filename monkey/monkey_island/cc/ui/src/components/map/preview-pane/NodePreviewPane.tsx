@@ -7,43 +7,44 @@ import {
 } from '../../ui-components/LogDownloadButtons';
 import ExploitionTimeline from './ExploitionTimeline';
 
+
 const PreviewPaneComponent = (props: any) => {
 
-  function osRow(asset) {
+  function osRow(node) {
     return (
       <tr>
         <th>Operating System</th>
-        <td>{asset.operatingSystem.charAt(0).toUpperCase() + asset.operatingSystem.slice(1)}</td>
+        <td>{node.operatingSystem.charAt(0).toUpperCase() + node.operatingSystem.slice(1)}</td>
       </tr>
     );
   }
 
-  function ipsRow(asset) {
+  function ipsRow(node) {
     return (
       <tr>
         <th>IP Addresses</th>
-        <td>{asset.networkInterfaces.map(val => <div key={val}>{val}</div>)}</td>
+        <td>{node.networkInterfaces.map(val => <div key={val}>{val}</div>)}</td>
       </tr>
     );
   }
 
-  function statusRow(asset) {
+  function statusRow(node) {
     return (
       <tr>
         <th>Status</th>
-        <td>{(asset.agentRunning) ? 'Alive' : 'Dead'}</td>
+        <td>{(node.agentRunning) ? 'Alive' : 'Dead'}</td>
       </tr>
     );
   }
 
-  function logFilename(asset) {
-    return asset.agentStartTime.toISOString().split(':').join('.') +
+  function logFilename(node) {
+    return node.agentStartTime.toISOString().split(':').join('.') +
       '-' +
-      asset.getLabel().split(/[:/]/).join('-') +
+      node.getLabel().split(/[:/]/).join('-') +
       '.log';
   }
 
-  function downloadLogsRow(asset) {
+  function downloadLogsRow(node) {
     return (
       <>
         <tr>
@@ -51,12 +52,12 @@ const PreviewPaneComponent = (props: any) => {
             Download Monkey Agent Log
           </th>
           <td>
-            <AgentLogDownloadButton url={'/api/agent-logs/' + asset.agentId}
-                                    filename={logFilename(asset)}
-                                    variant={asset.agentId && !asset.agentRunning ? undefined : 'disabled'}/>
+            <AgentLogDownloadButton url={'/api/agent-logs/' + node.agentId}
+                                    filename={logFilename(node)}
+                                    variant={node.agentId && !node.agentRunning ? undefined : 'disabled'}/>
           </td>
         </tr>
-        {(asset.island) &&
+        {(node.island) &&
           <tr>
             <th>
               Download Island Server Log
@@ -78,40 +79,33 @@ const PreviewPaneComponent = (props: any) => {
     );
   }
 
-  function assetInfo(asset) {
+  function nodeInfo(node) {
     return (
       <div>
         <table className='table table-condensed'>
           <tbody>
-          {osRow(asset)}
-          {ipsRow(asset)}
-          {downloadLogsRow(asset)}
+          {osRow(node)}
+          {ipsRow(node)}
+          {downloadLogsRow(node)}
           </tbody>
         </table>
-        <ExploitionTimeline  asset={asset} />
+        <ExploitionTimeline asset={node} />
       </div>
     );
   }
 
-  function infectedAssetInfo(asset) {
+  function infectedAssetInfo(node) {
     return (
       <div>
         <table className='table table-condensed'>
           <tbody>
-          {osRow(asset)}
-          {statusRow(asset)}
-          {ipsRow(asset)}
-          {downloadLogsRow(asset)}
+          {osRow(node)}
+          {statusRow(node)}
+          {ipsRow(node)}
+          {downloadLogsRow(node)}
           </tbody>
         </table>
-        <ExploitionTimeline  asset={asset} />
-      </div>
-    );
-  }
-
-  function edgeInfo() {
-    return (
-      <div>
+        <ExploitionTimeline asset={node} />
       </div>
     );
   }
@@ -119,7 +113,7 @@ const PreviewPaneComponent = (props: any) => {
   let info = null;
   switch (props.type) {
     case 'edge':
-      info = edgeInfo();
+      info = null;
       break;
     case 'node':
       if (props.item.agentId) {
@@ -127,7 +121,7 @@ const PreviewPaneComponent = (props: any) => {
       } else if (props.item.island) {
         info = islandAssetInfo();
       } else {
-        info = assetInfo(props.item)
+        info = nodeInfo(props.item)
       }
       break;
   }
@@ -146,7 +140,7 @@ const PreviewPaneComponent = (props: any) => {
       {!info ?
         <span>
           <FontAwesomeIcon icon={faHandPointLeft} style={{'marginRight': '0.5em'}}/>
-          Select an item on the map for a detailed look
+          Select a node on the map for a detailed look
         </span>
         :
         <div>
