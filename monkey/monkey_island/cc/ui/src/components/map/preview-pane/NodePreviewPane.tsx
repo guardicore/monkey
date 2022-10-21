@@ -5,7 +5,7 @@ import {
   AgentLogDownloadButton,
   IslandLogDownloadButton
 } from '../../ui-components/LogDownloadButtons';
-import ExploitionTimeline from './ExploitionTimeline';
+import ExploitationTimeline from './ExploitationTimeline';
 import MapNode from '../../types/MapNode';
 
 
@@ -91,7 +91,7 @@ const NodePreviewPane = (props: any) => {
           {downloadLogsRow(node)}
           </tbody>
         </table>
-        <ExploitionTimeline node={node} allNodes={props.allNodes}/>
+        <ExploitationTimeline node={node} allNodes={props.allNodes}/>
       </div>
     );
   }

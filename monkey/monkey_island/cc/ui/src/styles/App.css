@@ -290,23 +290,35 @@ body {
 }
 
 .timeline li {
-  margin-left: 1.5em;
   position: relative;
   overflow: visible;
   margin-bottom: 1em;
 }
 
+.timeline .event-count {
+  text-align: center;
+}
+
 .timeline .bullet {
-  width: 16px;
-  height: 16px;
+  height: 25px;
+  width: 35px;
+  left: -1.3em;
   background: #ccc;
   position: absolute;
-  right: 100%;
   top: 0;
   bottom: 0;
   margin: 2px 0.5em;
   z-index: 2;
   border-radius: 10px;
+}
+
+.timeline .timeline-content {
+  margin-left: 1.5em;
+}
+
+.exploit-timeline svg.loading-icon {
+  position: absolute;
+  margin: 0;
 }
 
 .timeline .bullet.bad {
