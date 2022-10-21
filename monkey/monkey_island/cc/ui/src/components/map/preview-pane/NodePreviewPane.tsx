@@ -91,7 +91,7 @@ const NodePreviewPane = (props: any) => {
           {downloadLogsRow(node)}
           </tbody>
         </table>
-        <ExploitionTimeline node={node} />
+        <ExploitionTimeline node={node} allNodes={props.allNodes}/>
       </div>
     );
   }

@@ -123,7 +123,8 @@ class MapPageComponent extends AuthComponent {
               </div>
               : ''}
 
-            <NodePreviewPane item={this.state.selected} type={this.state.selectedType} />
+            <NodePreviewPane item={this.state.selected} type={this.state.selectedType}
+            allNodes={this.props.mapNodes} />
           </Col>
         </Row>
       </Col>
