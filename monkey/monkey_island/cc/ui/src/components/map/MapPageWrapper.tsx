@@ -4,25 +4,18 @@ import {arrayToObject, getCollectionObject} from '../utils/ServerUtils';
 import MapPage from '../pages/MapPage';
 import MapNode, {
   Agent,
-  CommunicationType,
   Communications,
-  ExploitationAttempt,
+  CommunicationType,
   getMachineIp,
   interfaceIp,
   Machine,
-  Node,
-  getMachineLabel,
-  ExploitationEvent
+  Node
 } from '../types/MapNode';
 import _ from 'lodash';
 import generateGraph, {Graph} from './GraphCreator';
 
 const MapPageWrapper = (props) => {
-  function getExploitationEvents() {
-    let url_args = {'type': 'ExploitationEvent'};
-    return IslandHttpClient.get(APIEndpoint.agentEvents, url_args)
-      .then(res => res.body)
-  }
+
   function getPropagationEvents() {
     let url_args = {'type': 'PropagationEvent', 'success': true};
     return IslandHttpClient.get(APIEndpoint.agentEvents, url_args)
@@ -33,7 +26,6 @@ const MapPageWrapper = (props) => {
   const [nodes, setNodes] = useState<Record<string, Node>>({});
   const [machines, setMachines] = useState<Record<string, Machine>>({});
   const [agents, setAgents] = useState<Record<string, Agent>>({});
-  const [exploitationEvents, setExploitationEvents] = useState<Record<string, ExploitationEvent>>({});
   const [propagationEvents, setPropagationEvents] = useState({});
 
   const [graph, setGraph] = useState<Graph>({edges: [], nodes: []});
@@ -46,7 +38,6 @@ const MapPageWrapper = (props) => {
     getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
     getCollectionObject(APIEndpoint.machines, 'id').then(machineObj => setMachines(machineObj));
     getCollectionObject(APIEndpoint.agents, 'machine_id').then(agentObj => setAgents(agentObj));
-    getExploitationEvents().then(events => setExploitationEvents(events));
     getPropagationEvents().then(events => setPropagationEvents(events));
   }
 
@@ -70,7 +61,7 @@ const MapPageWrapper = (props) => {
 
   useEffect(() => {
     setMapNodes(buildMapNodes());
-  }, [nodes, machines, exploitationEvents, propagationEvents]);
+  }, [nodes, machines, propagationEvents]);
 
   function addRelayCommunications(communications: Communications) {
     for (let [machineId, commTypes] of Object.entries(communications)) {
@@ -81,34 +72,6 @@ const MapPageWrapper = (props) => {
         commTypes.push(CommunicationType.relay);
       }
     }
-  }
-
-  function hasIp(machine: Machine, ip: string) {
-    for (const iface of machine.network_interfaces) {
-      if (interfaceIp(iface) === ip) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function getExploitationAttempts(machine: Machine, agentsById: Record<string, Agent>): ExploitationAttempt[] {
-    let exploitationAttempts = [];
-    for (const attempt of Object.values(exploitationEvents)) {
-      if (hasIp(machine, attempt.target)) {
-        let agent = agentsById[attempt.source];
-        let sourceMachine = machines[agent.machine_id];
-        let label = getMachineLabel(sourceMachine);
-        let timestampInMilliseconds = attempt.timestamp * 1000;
-        exploitationAttempts.push({
-          source: label,
-          success: attempt.success,
-          timestamp: new Date(timestampInMilliseconds),
-          exploiter_name: attempt.exploiter_name
-        });
-      }
-    }
-    return exploitationAttempts;
   }
 
   function buildMapNodes(): MapNode[] {
@@ -136,7 +99,6 @@ const MapPageWrapper = (props) => {
         agentStartTime = new Date(agent.start_time);
       }
 
-      let exploitationAttempts = getExploitationAttempts(machine, agentsById);
       let propagatedTo = wasMachinePropagated(machine, propagationEvents);
 
       mapNodes.push(new MapNode(
@@ -147,7 +109,6 @@ const MapPageWrapper = (props) => {
         machine.operating_system,
         machine.hostname,
         machine.island,
-        exploitationAttempts,
         propagatedTo,
         agentStartTime,
         agentID,

@@ -32,21 +32,6 @@ export type Agent = {
   stop_time: string | null;
 }
 
-export type ExploitationEvent = {
-  source: string;
-  target: string;
-  success: boolean;
-  exploiter_name: string;
-  timestamp: Date;
-}
-
-export type ExploitationAttempt = {
-  source: string;
-  success: boolean;
-  timestamp: Date;
-  exploiter_name: string;
-}
-
 export type Communications = Record<number, CommunicationType[]>;
 
 export default class MapNode {
@@ -58,7 +43,6 @@ export default class MapNode {
     public operatingSystem: OS = OS.unknown,
     public hostname: string = "",
     public island: boolean = false,
-    public exploitationAttempts: ExploitationAttempt[],
     public propagatedTo: boolean = false,
     public agentStartTime: Date = new Date(0),
     public agentId: string | null = null,
@@ -108,6 +92,15 @@ export default class MapNode {
     }
 
     return group;
+  }
+
+  hasIp(ip: string) {
+    for (const iface of this.networkInterfaces) {
+      if (iface.includes(ip)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   getLabel(): string {

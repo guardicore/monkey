@@ -6,9 +6,10 @@ import {
   IslandLogDownloadButton
 } from '../../ui-components/LogDownloadButtons';
 import ExploitionTimeline from './ExploitionTimeline';
+import MapNode from '../../types/MapNode';
 
 
-const PreviewPaneComponent = (props: any) => {
+const NodePreviewPane = (props: any) => {
 
   function osRow(node) {
     return (
@@ -79,33 +80,18 @@ const PreviewPaneComponent = (props: any) => {
     );
   }
 
-  function nodeInfo(node) {
+  function nodeInfo(node: MapNode) {
     return (
       <div>
         <table className='table table-condensed'>
           <tbody>
           {osRow(node)}
+          {node.agentId ? statusRow(node) : ''}
           {ipsRow(node)}
           {downloadLogsRow(node)}
           </tbody>
         </table>
-        <ExploitionTimeline asset={node} />
-      </div>
-    );
-  }
-
-  function infectedAssetInfo(node) {
-    return (
-      <div>
-        <table className='table table-condensed'>
-          <tbody>
-          {osRow(node)}
-          {statusRow(node)}
-          {ipsRow(node)}
-          {downloadLogsRow(node)}
-          </tbody>
-        </table>
-        <ExploitionTimeline asset={node} />
+        <ExploitionTimeline node={node} />
       </div>
     );
   }
@@ -116,12 +102,10 @@ const PreviewPaneComponent = (props: any) => {
       info = null;
       break;
     case 'node':
-      if (props.item.agentId) {
-        info = infectedAssetInfo(props.item)
-      } else if (props.item.island) {
+      if (props.item.island) {
         info = islandAssetInfo();
       } else {
-        info = nodeInfo(props.item)
+        info = nodeInfo(props.item);
       }
       break;
   }
@@ -156,4 +140,4 @@ const PreviewPaneComponent = (props: any) => {
   );
 }
 
-export default PreviewPaneComponent;
+export default NodePreviewPane;

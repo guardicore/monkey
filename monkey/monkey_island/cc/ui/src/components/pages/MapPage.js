@@ -9,7 +9,7 @@ import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import TelemetryLog from '../map/TelemetryLog';
 import ReactiveGraph from '../reactive-graph/ReactiveGraph';
-import PreviewPaneComponent from '../map/preview-pane/NodePreviewPane';
+import NodePreviewPane from '../map/preview-pane/NodePreviewPane';
 
 class MapPageComponent extends AuthComponent {
   constructor(props) {
@@ -123,7 +123,7 @@ class MapPageComponent extends AuthComponent {
               </div>
               : ''}
 
-            <PreviewPaneComponent item={this.state.selected} type={this.state.selectedType} />
+            <NodePreviewPane item={this.state.selected} type={this.state.selectedType} />
           </Col>
         </Row>
       </Col>
