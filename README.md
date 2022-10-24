@@ -42,9 +42,6 @@ For more information, or to apply, see the official job post:
 ### Zero trust report
 <img src=".github/zero-trust-report.png"  width="800" height="500">
 
-### ATT&CK report
-<img src=".github/attack-report.png"  width="900" height="500">
-
 ## Main Features
 
 The Infection Monkey uses the following techniques and exploits to propagate to other machines.
