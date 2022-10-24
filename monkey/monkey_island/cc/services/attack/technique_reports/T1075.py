@@ -66,5 +66,4 @@ class T1075(AttackTechnique):
         data.update({"successful_logins": successful_logins})
 
         data.update(T1075.get_message_and_status(status))
-        data.update(T1075.get_mitigation_by_status(status))
         return data

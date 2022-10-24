@@ -74,6 +74,5 @@ class T1086(AttackTechnique):
         status, cmd_data = get_technique_status_and_data()
         data = {"title": T1086.technique_title(), "cmds": cmd_data}
 
-        data.update(T1086.get_mitigation_by_status(status))
         data.update(T1086.get_message_and_status(status))
         return data

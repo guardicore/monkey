@@ -40,7 +40,6 @@ class T1003GetReportData:
         status, _ = get_technique_status_and_data()
 
         data.update(T1003.get_message_and_status(status))
-        data.update(T1003.get_mitigation_by_status(status))
         data["stolen_creds"] = format_creds_for_reporting(
             self._credentials_repository.get_stolen_credentials()
         )

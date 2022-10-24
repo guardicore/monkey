@@ -1,13 +1,11 @@
 import abc
 import logging
-from typing import Dict, List
+from typing import List
 
 from common.utils.attack_utils import ScanStatus
 from common.utils.code_utils import abstractstatic
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 from monkey_island.cc.services.attack.attack_schema import SCHEMA as ATTACK_SCHEMA
-
 
 logger = logging.getLogger(__name__)
 
@@ -149,23 +147,13 @@ class AttackTechnique(object, metaclass=abc.ABCMeta):
         data.update(
             {"status": status, "title": title, "message": cls.get_message_by_status(status)}
         )
-        data.update(cls.get_mitigation_by_status(status))
         return data
 
     @classmethod
     def get_base_data_by_status(cls, status):
         data = cls.get_message_and_status(status)
         data.update({"title": cls.technique_title()})
-        data.update(cls.get_mitigation_by_status(status))
         return data
-
-    @classmethod
-    def get_mitigation_by_status(cls, status: ScanStatus) -> dict:
-        if status == ScanStatus.USED.value:
-            mitigation_document = AttackMitigations.get_mitigation_by_technique_id(str(cls.tech_id))
-            return {"mitigations": mitigation_document.to_mongo().to_dict()["mitigations"]}
-        else:
-            return {}
 
 
 def get_technique(technique_id):

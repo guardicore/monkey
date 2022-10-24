@@ -4,7 +4,6 @@ from flask import jsonify
 
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Config
-from monkey_island.cc.models.attack.attack_mitigations import AttackMitigations
 
 logger = logging.getLogger(__name__)
 
@@ -31,17 +30,9 @@ class Database(object):
         if not drop_config:
             if collection == Config.COLLECTION_NAME:
                 return False
-        return (
-            not collection.startswith("system.")
-            and not collection == AttackMitigations.COLLECTION_NAME
-            and not collection.startswith("config")
-        )
+        return not collection.startswith("system.") and not collection.startswith("config")
 
     @staticmethod
     def drop_collection(collection_name: str):
         mongo.db[collection_name].drop()
         logger.info("Dropped collection {}".format(collection_name))
-
-    @staticmethod
-    def is_mitigations_missing() -> bool:
-        return bool(AttackMitigations.COLLECTION_NAME not in mongo.db.list_collection_names())

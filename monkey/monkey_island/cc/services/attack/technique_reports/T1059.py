@@ -38,5 +38,4 @@ class T1059(AttackTechnique):
         data = {"title": T1059.technique_title(), "cmds": cmd_data}
 
         data.update(T1059.get_message_and_status(status))
-        data.update(T1059.get_mitigation_by_status(status))
         return data
