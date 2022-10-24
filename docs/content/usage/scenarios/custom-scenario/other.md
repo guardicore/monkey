@@ -22,7 +22,7 @@ networks bit by bit with multiple runs.
 
 ## Combining different scenarios
 
-The Infection Monkey is not limited to the scenarios mentioned in this section. Once you get the hang of configuring it, you might come up with your own use case or test all of the suggested scenarios at the same time! Whatever you do, the Infection Monkey's Security, ATT&CK and Zero Trust reports will be waiting for you with your results!
+The Infection Monkey is not limited to the scenarios mentioned in this section. Once you get the hang of configuring it, you might come up with your own use case or test all of the suggested scenarios at the same time! Whatever you do, the Infection Monkey's Security and Zero Trust reports will be waiting for you with your results!
 
 ## Credentials
 

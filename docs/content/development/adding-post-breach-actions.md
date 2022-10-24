@@ -61,7 +61,6 @@ You'll need to add your PBA to the `config_schema.py` file, under `post_breach_a
                         "MyNewPba"
                     ],
                     "title": "My new PBA",
-                    "attack_techniques": []
                 },
             ],
         },
