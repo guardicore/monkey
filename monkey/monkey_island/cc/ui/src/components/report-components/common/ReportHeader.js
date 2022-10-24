@@ -5,7 +5,6 @@ import * as PropTypes from 'prop-types';
 import monkeyLogoImage from '../../../images/monkey-icon.svg';
 
 export const ReportTypes = {
-  zeroTrust: 'Zero Trust',
   security: 'Security',
   ransomware: 'Ransomware',
   null: ''
