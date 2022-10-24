@@ -33,7 +33,6 @@ from monkey_island.cc.repository import MongoAgentRepository, MongoMachineReposi
 from monkey_island.cc.repository.i_agent_event_repository import IAgentEventRepository
 from monkey_island.cc.repository.i_agent_log_repository import IAgentLogRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
-from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
 from monkey_island.cc.repository.i_log_repository import ILogRepository
 from monkey_island.cc.repository.i_machine_repository import IMachineRepository
@@ -260,8 +259,6 @@ IAgentRepository.upsert_agent
 IAgentRepository.get_agent_by_id
 IAgentRepository.get_running_agents
 agent
-IAttackRepository.get_attack_report
-IAttackRepository.save_attack_report
 IConfigRepository.set_config
 IConfigRepository.set_config_field
 IConfigRepository.get_config_field

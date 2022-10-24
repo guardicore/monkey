@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 # the locks, these requests would accumulate, overload the server, eventually causing it to crash.
 logger.debug("Initializing report generation locks.")
 __report_generating_lock = BoundedSemaphore()
-__attack_report_generating_lock = BoundedSemaphore()
 __regular_report_generating_lock = BoundedSemaphore()
 
 
@@ -22,11 +21,10 @@ def safe_generate_reports():
     __report_generating_lock.acquire()
     try:
         report = safe_generate_regular_report()
-        attack_report = safe_generate_attack_report()
     finally:
         # Leaving the critical section.
         __report_generating_lock.release()
-    return report, attack_report
+    return report
 
 
 def safe_generate_regular_report():
@@ -39,18 +37,6 @@ def safe_generate_regular_report():
     finally:
         __regular_report_generating_lock.release()
     return report
-
-
-def safe_generate_attack_report():
-    # Local import to avoid circular imports
-    from monkey_island.cc.services.attack.attack_report import AttackReportService
-
-    try:
-        __attack_report_generating_lock.acquire()
-        attack_report = AttackReportService.generate_new_report()
-    finally:
-        __attack_report_generating_lock.release()
-    return attack_report
 
 
 def is_report_being_generated():
