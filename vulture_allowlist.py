@@ -39,8 +39,6 @@ from monkey_island.cc.repository.i_machine_repository import IMachineRepository
 from monkey_island.cc.repository.i_report_repository import IReportRepository
 from monkey_island.cc.repository.i_simulation_repository import ISimulationRepository
 from monkey_island.cc.repository.ICredentials import ICredentialsRepository
-from monkey_island.cc.repository.zero_trust.IEventRepository import IEventRepository
-from monkey_island.cc.repository.zero_trust.IFindingRepository import IFindingRepository
 
 ExploiterResultData.interrupted  # (infection_monkey.i_puppet.i_puppet.py)
 Monkey.guid  # (monkey_island.cc.models.monkey.py)
@@ -65,8 +63,6 @@ configure_resources  # unused function (monkey/tests/monkey_island/cc/environmen
 change_to_mongo_mock  # unused function (monkey/monkey_island/cc/test_common/fixtures/mongomock_fixtures.py:9)
 uses_database  # unused function (monkey/monkey_island/cc/test_common/fixtures/mongomock_fixtures.py:16)
 datas  # unused variable (monkey/monkey_island/pyinstaller_hooks/hook-stix2.py:9)
-test_key  # unused variable (monkey/monkey_island/cc/services/zero_trust/zero_trust_report/finding_service.py:20)
-pillars  # unused variable (monkey/monkey_island/cc/services/zero_trust/zero_trust_report/finding_service.py:21)
 CLEAN_UNKNOWN  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:9)
 CLEAN_LINUX  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:10)
 CLEAN_WINDOWS  # unused variable (monkey/monkey_island/cc/services/utils/node_states.py:11)
@@ -102,7 +98,6 @@ config_error  # unused variable (monkey/monkey_island/cc/models/monkey.py:53)
 pba_results  # unused variable (monkey/monkey_island/cc/models/monkey.py:55)
 launch_time  # unused variable (monkey/monkey_island/cc/models/monkey.py)
 command_control_channel  # unused variable (monkey/monkey_island/cc/models/monkey.py:58)
-meta  # unused variable (monkey/monkey_island/cc/models/zero_trust/finding.py:37)
 meta  # unused variable (monkey/monkey_island/cc/models/monkey_ttl.py:34)
 expire_at  # unused variable (monkey/monkey_island/cc/models/monkey_ttl.py:36)
 meta  # unused variable (monkey/monkey_island/cc/models/config.py:11)
@@ -285,7 +280,6 @@ ICredentialsRepository.remove_configured_credentials
 ICredentialsRepository.remove_all_credentials
 ICredentialsRepository.save_stolen_credentials
 ICredentialsRepository.save_configured_credentials
-IEventRepository.get_events
 IFindingRepository.get_findings
 MongoAgentRepository
 MongoMachineRepository
