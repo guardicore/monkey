@@ -46,7 +46,6 @@ from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.telemetry_feed import TelemetryFeed
 from monkey_island.cc.resources.version import Version
-from monkey_island.cc.resources.zero_trust.zero_trust_report import ZeroTrustReport
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.representations import output_json
 
@@ -170,7 +169,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Node)
 
     api.add_resource(SecurityReport)
-    api.add_resource(ZeroTrustReport)
     api.add_resource(RansomwareReport)
     api.add_resource(ManualExploitation)
     api.add_resource(MonkeyExploitation)
