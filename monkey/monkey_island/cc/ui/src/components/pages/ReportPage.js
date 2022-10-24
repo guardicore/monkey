@@ -4,7 +4,6 @@ import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
 import SecurityReport from '../report-components/SecurityReport';
-import ZeroTrustReport from '../report-components/ZeroTrustReport';
 import RansomwareReport from '../report-components/RansomwareReport';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
 import {doesAnyAgentExist, didAllAgentsShutdown} from '../utils/ServerUtils.tsx'
@@ -14,17 +13,15 @@ class ReportPageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.sections = ['security', 'zeroTrust', 'ransomware'];
+    this.sections = ['security', 'ransomware'];
 
     this.state = {
       securityReport: {},
-      zeroTrustReport: {},
       ransomwareReport: {},
       allMonkeysAreDead: false,
       runStarted: true,
       selectedSection: ReportPageComponent.selectReport(this.sections),
-      orderedSections: [{key: 'security', title: 'Security report'},
-        {key: 'zeroTrust', title: 'Zero trust report'}]
+      orderedSections: [{key: 'security', title: 'Security report'}]
     };
 
   }
@@ -47,9 +44,6 @@ class ReportPageComponent extends AuthComponent {
             securityReport: res
           });
         });
-      this.getZeroTrustReportFromServer().then((ztReport) => {
-        this.setState({zeroTrustReport: ztReport})
-      });
       this.authFetch('/api/report/ransomware')
         .then(res => res.json())
         .then(res => {
@@ -58,30 +52,6 @@ class ReportPageComponent extends AuthComponent {
           });
         });
     }
-  }
-
-  getZeroTrustReportFromServer = async () => {
-    let ztReport = {findings: {}, principles: {}, pillars: {}};
-    await this.authFetch('/api/report/zero-trust/findings')
-      .then(res => res.json())
-      .then(res => {
-        ztReport.findings = res;
-      });
-    await this.authFetch('/api/report/zero-trust/principles')
-      .then(res => res.json())
-      .then(res => {
-        ztReport.principles = res;
-      });
-    await this.authFetch('/api/report/zero-trust/pillars')
-      .then(res => res.json())
-      .then(res => {
-        ztReport.pillars = res;
-      });
-    return ztReport
-  };
-
-  componentWillUnmount() {
-    clearInterval(this.state.ztReportRefreshInterval);
   }
 
   updateMonkeysRunning = () => {
@@ -98,8 +68,6 @@ class ReportPageComponent extends AuthComponent {
   };
 
   componentDidMount() {
-    const ztReportRefreshInterval = setInterval(this.updateZeroTrustReportFromServer, 8000);
-    this.setState({ztReportRefreshInterval: ztReportRefreshInterval});
     this.updateMonkeysRunning();
     this.getReportFromServer();
   }
@@ -141,8 +109,6 @@ class ReportPageComponent extends AuthComponent {
     switch (this.state.selectedSection) {
       case 'security':
         return (<SecurityReport report={this.state.securityReport}/>);
-      case 'zeroTrust':
-        return (<ZeroTrustReport report={this.state.zeroTrustReport}/>);
       case 'ransomware':
         return (
           <RansomwareReport
