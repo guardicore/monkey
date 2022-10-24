@@ -53,3 +53,8 @@
   z-index: 5;
   margin-top: 30px;
 }
+
+.exploit-timeline {
+  overflow-y: auto;
+  max-height: 500px;
+}

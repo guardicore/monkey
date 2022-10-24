@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export enum OS {
   unknown = "unknown",
   linux = "linux",
@@ -26,6 +28,7 @@ export type Machine = {
 
 export type Agent = {
   id: string;
+  machine_id: number;
   parent_id: string | null;
   start_time: string;
   stop_time: string | null;
@@ -44,8 +47,8 @@ export default class MapNode {
     public island: boolean = false,
     public propagatedTo: boolean = false,
     public agentStartTime: Date = new Date(0),
-    public agentId: string | null = null,
-    public parentId: string | null = null) {
+    public agentIds: string[] = [],
+    public parentIds: string[] = []) {
   }
 
   getGroupOperatingSystem(): OS {
@@ -62,8 +65,8 @@ export default class MapNode {
       group_components.push('island');
     }
 
-    if (this.agentId) {
-      if (!this.island && !this.parentId) {
+    if (this.agentIds) {
+      if (!this.island && _.isEmpty(this.parentIds)) {
         group_components.push('manual');
       }
       else {
@@ -93,6 +96,15 @@ export default class MapNode {
     return group;
   }
 
+  hasIp(ip: string) {
+    for (const iface of this.networkInterfaces) {
+      if (iface.includes(ip)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   getLabel(): string {
     if (this.hostname) {
       return this.hostname;
@@ -101,8 +113,12 @@ export default class MapNode {
   }
 }
 
+export function interfaceIp(iface: string): string {
+  return iface.split('/')[0];
+}
+
 export function getMachineIp(machine: Machine): string {
-  return machine.network_interfaces[0].split('/')[0];
+  return interfaceIp(machine.network_interfaces[0]);
 }
 
 export enum NodeGroup {

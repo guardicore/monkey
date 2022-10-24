@@ -29,6 +29,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/machines` endpoint. #2362
 - GET method to `/api/agent-events`. #2405
 - `/api/nodes` endpoint. #2334
+- Scrollbar to preview pane's exploit timeline in the map page. #2455
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
@@ -72,6 +73,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "/api/monkey-control/stop-all-agents" to "/api/agent-signals/terminate-all-agents". #2261
 - Format of scanned machines table in the security report. #2267
 - "Local network scan" option to "Scan Agent's networks". #2299
+- Information displayed in the preview pane in the map page. #2455
 
 ### Removed
 - VSFTPD exploiter. #1533
