@@ -22,13 +22,5 @@ class NoInternetError(Exception):
     """Raise to indicate problems caused when no internet connection is present"""
 
 
-class UnknownFindingError(Exception):
-    """Raise when provided finding is of unknown type"""
-
-
-class FindingWithoutDetailsError(Exception):
-    """Raise when pulling events for a finding, but get none"""
-
-
 class DomainControllerNameFetchError(FailedExploitationError):
     """Raise on failed attempt to extract domain controller's name"""
