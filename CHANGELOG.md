@@ -127,6 +127,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/netmap" endpoint. #2334
 - "GET /api/netmap/node-states" endpoint. #2334
 - The MITRE ATT&CK report. #2440
+- The Zero Trust report. #2441
 
 
 ### Fixed
