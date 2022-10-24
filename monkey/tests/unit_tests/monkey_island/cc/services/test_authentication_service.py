@@ -40,11 +40,6 @@ def mock_reset_datastore_encryptor():
 
 
 @pytest.fixture
-def mock_reset_database():
-    return MagicMock()
-
-
-@pytest.fixture
 def mock_unlock_datastore_encryptor():
     return MagicMock()
 
@@ -58,13 +53,11 @@ def mock_repository_encryptor():
 def patch_datastore_utils(
     monkeypatch,
     mock_reset_datastore_encryptor,
-    mock_reset_database,
     mock_unlock_datastore_encryptor,
 ):
     monkeypatch.setattr(
         authentication_service, "reset_datastore_encryptor", mock_reset_datastore_encryptor
     )
-    monkeypatch.setattr(authentication_service, "reset_database", mock_reset_database)
     monkeypatch.setattr(
         authentication_service, "unlock_datastore_encryptor", mock_unlock_datastore_encryptor
     )
@@ -91,7 +84,7 @@ def test_needs_registration__false(tmp_path, mock_repository_encryptor):
 @pytest.mark.slow
 @pytest.mark.parametrize("error", [InvalidRegistrationCredentialsError, AlreadyRegisteredError])
 def test_register_new_user__fails(
-    tmp_path, mock_reset_datastore_encryptor, mock_reset_database, mock_repository_encryptor, error
+    tmp_path, mock_reset_datastore_encryptor, mock_repository_encryptor, error
 ):
     mock_user_datastore = MockUserDatastore(lambda: True, MagicMock(side_effect=error), None)
 
@@ -103,11 +96,10 @@ def test_register_new_user__fails(
     mock_reset_datastore_encryptor.assert_not_called()
     mock_repository_encryptor.reset_key().assert_not_called()
     mock_repository_encryptor.unlock.assert_not_called()
-    mock_reset_database.assert_not_called()
 
 
 def test_register_new_user__empty_password_fails(
-    tmp_path, mock_reset_datastore_encryptor, mock_reset_database, mock_repository_encryptor
+    tmp_path, mock_reset_datastore_encryptor, mock_repository_encryptor
 ):
     mock_user_datastore = MockUserDatastore(lambda: False, None, None)
 
@@ -119,13 +111,10 @@ def test_register_new_user__empty_password_fails(
     mock_reset_datastore_encryptor.assert_not_called()
     mock_repository_encryptor.reset_key().assert_not_called()
     mock_repository_encryptor.unlock.assert_not_called()
-    mock_reset_database.assert_not_called()
 
 
 @pytest.mark.slow
-def test_register_new_user(
-    tmp_path, mock_reset_datastore_encryptor, mock_reset_database, mock_repository_encryptor
-):
+def test_register_new_user(tmp_path, mock_reset_datastore_encryptor, mock_repository_encryptor):
     mock_add_user = MagicMock()
     mock_user_datastore = MockUserDatastore(lambda: False, mock_add_user, None)
 
@@ -142,8 +131,6 @@ def test_register_new_user(
     mock_repository_encryptor.reset_key.assert_called_once()
     mock_repository_encryptor.unlock.assert_called_once()
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
-
-    mock_reset_database.assert_called_once()
 
 
 @pytest.mark.slow
