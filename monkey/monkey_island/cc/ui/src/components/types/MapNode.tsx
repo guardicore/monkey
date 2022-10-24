@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export enum OS {
   unknown = "unknown",
   linux = "linux",
@@ -45,8 +47,8 @@ export default class MapNode {
     public island: boolean = false,
     public propagatedTo: boolean = false,
     public agentStartTime: Date = new Date(0),
-    public agentId: string | null = null,
-    public parentId: string | null = null) {
+    public agentIds: string[] = [],
+    public parentIds: string[] = []) {
   }
 
   getGroupOperatingSystem(): OS {
@@ -63,8 +65,8 @@ export default class MapNode {
       group_components.push('island');
     }
 
-    if (this.agentId) {
-      if (!this.island && !this.parentId) {
+    if (this.agentIds) {
+      if (!this.island && _.isEmpty(this.parentIds)) {
         group_components.push('manual');
       }
       else {
@@ -117,13 +119,6 @@ export function interfaceIp(iface: string): string {
 
 export function getMachineIp(machine: Machine): string {
   return interfaceIp(machine.network_interfaces[0]);
-}
-
-export function getMachineLabel(machine: Machine): string {
-  if (machine.hostname) {
-    return machine.hostname;
-  }
-  return machine.network_interfaces[0];
 }
 
 export enum NodeGroup {

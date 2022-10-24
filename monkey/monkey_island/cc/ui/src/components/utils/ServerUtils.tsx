@@ -30,7 +30,7 @@ export function arrayToObject(array: object[], key: string): Record<string, any>
   return array.reduce((prev, curr) => ({...prev, [curr[key]]: curr}), {});
 }
 
-function getAllAgents() {
+export function getAllAgents() {
     return IslandHttpClient.get(APIEndpoint.agents)
     .then(res => {
         return res.body;
