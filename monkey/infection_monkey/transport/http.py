@@ -3,8 +3,6 @@ import threading
 import urllib
 from logging import getLogger
 
-from infection_monkey.network.tools import get_interface_to_target
-
 logger = getLogger(__name__)
 
 
@@ -138,21 +136,12 @@ class LockedHTTPServer(threading.Thread):
 
     def run(self):
         class TempHandler(FileServHTTPRequestHandler):
-            from common.utils.attack_utils import ScanStatus
-            from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
-
             victim_os = self._victim_os
             agent_binary_repository = self._agent_binary_repository
 
             @staticmethod
             def report_download(dest=None):
                 logger.info("File downloaded from (%s,%s)" % (dest[0], dest[1]))
-                TempHandler.T1105Telem(
-                    TempHandler.ScanStatus.USED,
-                    get_interface_to_target(dest[0]),
-                    dest[0],
-                    self._dropper_target_path,
-                ).send()
                 self.downloads += 1
                 if not self.downloads < self.max_downloads:
                     return True

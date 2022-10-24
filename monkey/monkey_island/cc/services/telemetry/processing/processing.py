@@ -10,11 +10,10 @@ from monkey_island.cc.services.telemetry.processing.state import process_state_t
 logger = logging.getLogger(__name__)
 
 TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
-    # `lambda *args, **kwargs: None` is a no-op.
-    TelemCategoryEnum.ATTACK: lambda *args, **kwargs: None,
     TelemCategoryEnum.AWS_INFO: process_aws_telemetry,
     TelemCategoryEnum.POST_BREACH: process_post_breach_telemetry,
     TelemCategoryEnum.STATE: process_state_telemetry,
+    # `lambda *args, **kwargs: None` is a no-op.
     TelemCategoryEnum.TRACE: lambda *args, **kwargs: None,
 }
 
