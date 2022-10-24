@@ -80,18 +80,18 @@ const NodePreviewPane = (props: any) => {
     );
   }
 
-  function nodeInfo(node: MapNode) {
+  function nodeInfo() {
     return (
       <div>
         <table className='table table-condensed'>
           <tbody>
-          {osRow(node)}
-          {node.agentId ? statusRow(node) : ''}
-          {ipsRow(node)}
-          {downloadLogsRow(node)}
+          {osRow(props.item)}
+          {props.item.agentId ? statusRow(props.item) : ''}
+          {ipsRow(props.item)}
+          {downloadLogsRow(props.item)}
           </tbody>
         </table>
-        <ExploitationTimeline node={node} allNodes={props.allNodes}/>
+        <ExploitationTimeline node={props.item} allNodes={props.allNodes}/>
       </div>
     );
   }
@@ -105,7 +105,7 @@ const NodePreviewPane = (props: any) => {
       if (props.item.island) {
         info = islandAssetInfo();
       } else {
-        info = nodeInfo(props.item);
+        info = nodeInfo();
       }
       break;
   }
