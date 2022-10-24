@@ -6,9 +6,6 @@ from common.common_consts.post_breach_consts import (
 )
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.telemetry.zero_trust_checks.antivirus_existence import (
-    check_antivirus_existence,
-)
 
 EXECUTION_WITHOUT_OUTPUT = "(PBA execution produced no output)"
 
@@ -18,7 +15,7 @@ def process_communicate_as_backdoor_user_telemetry(telemetry_json, current_monke
 
 
 def process_process_list_collection_telemetry(telemetry_json, current_monkey):
-    check_antivirus_existence(telemetry_json, current_monkey)
+    pass
 
 
 POST_BREACH_TELEMETRY_PROCESSING_FUNCS = {
