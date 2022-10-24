@@ -35,7 +35,6 @@ export const Routes = {
   LandingPage: '/landing-page',
   GettingStartedPage: '/',
   Report: '/report',
-  ZeroTrustReport: '/report/zeroTrust',
   SecurityReport: '/report/security',
   RansomwareReport: '/report/ransomware',
   LoginPage: '/login',
@@ -260,10 +259,6 @@ class AppComponent extends AuthComponent {
               <SidebarLayoutComponent component={ReportPage}
                                       islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
-            {this.renderRoute(Routes.ZeroTrustReport,
-              <SidebarLayoutComponent component={ReportPage}
-                                      islandMode={this.state.islandMode}
-                                      {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.RansomwareReport,
               <SidebarLayoutComponent component={ReportPage}
                                       islandMode={this.state.islandMode}
@@ -292,7 +287,7 @@ class AppComponent extends AuthComponent {
       const hostname = window.location.hostname;
       const port = window.location.port;
       const protocol = window.location.protocol;
-      const url = `${protocol}//${hostname}:${port}${Routes.ZeroTrustReport}`;
+      const url = `${protocol}//${hostname}:${port}${Routes.SecurityReport}`;
 
       Notifier.start(
         'Monkey Island',
