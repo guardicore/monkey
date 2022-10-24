@@ -56,7 +56,6 @@ IP in the network you wish to test.
 
 Check the infection map and Security report to see how far The Infection Monkey
 managed to propagate in your network and which vulnerabilities it successfully
-exploited. If you left post-breach actions selected, you should also check the
-Zero Trust reports for more details.
+exploited.
 
 ![Map](/images/usage/use-cases/map-full-cropped.png "Map")
