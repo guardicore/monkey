@@ -39,9 +39,6 @@ from monkey_island.cc.services.attack.technique_reports import (
     T1222,
     T1504,
 )
-from monkey_island.cc.services.reporting.report_generation_synchronisation import (
-    safe_generate_attack_report,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -112,21 +109,6 @@ class AttackReportService:
                 )
         mongo.db.attack_report.replace_one({"name": REPORT_NAME}, report, upsert=True)
         return report
-
-    @staticmethod
-    def get_latest_report():
-        """
-        Gets latest report (by retrieving it from db or generating a new one).
-        :return: report dict.
-        """
-        if AttackReportService.is_report_generated():
-            monkey_modifytime = Monkey.get_latest_modifytime()
-            latest_report = mongo.db.attack_report.find_one({"name": REPORT_NAME})
-            report_modifytime = latest_report["meta"]["latest_monkey_modifytime"]
-            if monkey_modifytime and report_modifytime and monkey_modifytime == report_modifytime:
-                return latest_report
-
-        return safe_generate_attack_report()
 
     @staticmethod
     def is_report_generated():
