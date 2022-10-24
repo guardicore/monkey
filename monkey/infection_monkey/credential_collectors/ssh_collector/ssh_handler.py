@@ -11,9 +11,6 @@ from common.tags import (
     T1005_ATTACK_TECHNIQUE_TAG,
     T1145_ATTACK_TECHNIQUE_TAG,
 )
-from common.utils.attack_utils import ScanStatus
-from infection_monkey.telemetry.attack.t1005_telem import T1005Telem
-from infection_monkey.telemetry.attack.t1145_telem import T1145Telem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.ids import get_agent_id
@@ -44,7 +41,7 @@ def get_ssh_info(
         return []
 
     home_dirs = _get_home_dirs()
-    ssh_info = _get_ssh_files(home_dirs, telemetry_messenger, agent_event_queue)
+    ssh_info = _get_ssh_files(home_dirs, agent_event_queue)
 
     return ssh_info
 
@@ -84,7 +81,6 @@ def _get_ssh_struct(name: str, home_dir: str) -> Dict:
 
 def _get_ssh_files(
     user_info: Iterable[Dict],
-    telemetry_messenger: ITelemetryMessenger,
     agent_event_queue: IAgentEventQueue,
 ) -> Iterable[Dict]:
     for info in user_info:
@@ -114,17 +110,6 @@ def _get_ssh_files(
                                         if private_key.find("ENCRYPTED") == -1:
                                             info["private_key"] = private_key
                                             logger.info("Found private key in %s" % private)
-                                            telemetry_messenger.send_telemetry(
-                                                T1005Telem(
-                                                    ScanStatus.USED, "SSH key", "Path: %s" % private
-                                                )
-                                            )
-                                            telemetry_messenger.send_telemetry(
-                                                T1145Telem(
-                                                    ScanStatus.USED, info["name"], info["home_dir"]
-                                                )
-                                            )
-
                                             collected_credentials = to_credentials([info])
                                             _publish_credentials_stolen_event(
                                                 collected_credentials, agent_event_queue

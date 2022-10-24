@@ -14,7 +14,6 @@ from monkey_island.cc.server_utils.encryption import (
     reset_datastore_encryptor,
     unlock_datastore_encryptor,
 )
-from monkey_island.cc.setup.mongo.database_initializer import reset_database
 
 
 class AuthenticationService:
@@ -54,7 +53,6 @@ class AuthenticationService:
         credentials = UserCredentials(username, _hash_password(password))
         self._user_repository.add_user(credentials)
         self._reset_repository_encryptor(username, password)
-        reset_database()
 
     def authenticate(self, username: str, password: str):
         try:

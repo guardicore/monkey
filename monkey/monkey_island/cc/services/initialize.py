@@ -61,7 +61,6 @@ from monkey_island.cc.repository import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import AgentSignalsService, AWSService
-from monkey_island.cc.services.attack.technique_reports.T1003 import T1003, T1003GetReportData
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
@@ -89,8 +88,6 @@ def initialize_services(container: DIContainer, data_dir: Path):
     _setup_agent_event_serializers(container)
     _register_repositories(container, data_dir)
     _register_services(container)
-
-    _dirty_hacks(container)
 
     # This is temporary until we get DI all worked out.
     ReportService.initialize(
@@ -231,12 +228,3 @@ def _register_services(container: DIContainer):
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
     container.register_instance(AuthenticationService, container.resolve(AuthenticationService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
-
-
-def _dirty_hacks(container: DIContainer):
-    # A dirty hacks function that patches some of the things that
-    # are needed at the current point
-
-    # Patches attack technique T1003 which is a static class
-    # but it needs stolen credentials from the database
-    T1003.get_report_data = container.resolve(T1003GetReportData)

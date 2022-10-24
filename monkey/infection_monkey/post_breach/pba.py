@@ -3,9 +3,7 @@ import subprocess
 from typing import Dict, Iterable, List, Optional, Tuple
 
 from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
-from common.utils.attack_utils import ScanStatus
 from infection_monkey.i_puppet.i_puppet import PostBreachData
-from infection_monkey.telemetry.attack.t1064_telem import T1064Telem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 
@@ -44,13 +42,6 @@ class PBA:
         if self.command:
             exec_funct = self._execute_default
             result = exec_funct()
-            if self.scripts_were_used_successfully(result):
-                self.telemetry_messenger.send_telemetry(
-                    T1064Telem(
-                        ScanStatus.USED,
-                        f"Scripts were used to execute {self.name} post breach action.",
-                    )
-                )
             self.pba_data.append(PostBreachData(self.name, self.command, result))
         else:
             logger.debug(f"No command available for PBA '{self.name}' on current OS, skipping.")

@@ -38,7 +38,7 @@ wish to test.
 ## Assessing results
 
 Check the infection map and Security report to see how far The Infection Monkey managed to propagate in your network and which
-vulnerabilities it successfully exploited. If you left post-breach actions selected, you should also check the MITRE ATT&CK and
+vulnerabilities it successfully exploited. If you left post-breach actions selected, you should also check the
 Zero Trust reports for more details.
 
 ![Map](/images/usage/use-cases/map-full-cropped.png "Map")

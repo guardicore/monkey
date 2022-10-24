@@ -22,7 +22,6 @@ from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
-from common.utils.attack_utils import ScanStatus, UsageEnum
 from common.version import get_version
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -81,22 +80,15 @@ from infection_monkey.post_breach.actions.use_trap_command import TrapCommand
 from infection_monkey.post_breach.custom_pba import CustomPBA
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
-from infection_monkey.telemetry.attack.t1107_telem import T1107Telem
 from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
     LegacyTelemetryMessengerAdapter,
 )
 from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.aws_environment_check import run_aws_environment_check
-from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
-from infection_monkey.utils.monkey_dir import (
-    create_monkey_dir,
-    get_monkey_dir_path,
-    remove_monkey_dir,
-)
+from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
 from infection_monkey.utils.monkey_log_path import get_agent_log_path
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
@@ -217,10 +209,6 @@ class InfectionMonkey:
         logger.info(f"Agent GUID: {GUID}")
 
         self._control_client.wakeup(parent=self._opts.parent)
-
-        # TODO: Reevaluate who is responsible to send this information
-        if is_windows_os():
-            T1106Telem(ScanStatus.USED, UsageEnum.SINGLETON_WINAPI).send()
 
         run_aws_environment_check(self._telemetry_messenger)
 
@@ -511,32 +499,23 @@ class InfectionMonkey:
 
     @staticmethod
     def _self_delete() -> bool:
-        InfectionMonkey._remove_monkey_dir()
+        remove_monkey_dir()
 
         if "python" in Path(sys.executable).name:
             return False
 
         try:
             if "win32" == sys.platform:
-                mark_file_for_deletion_on_windows(
-                    WindowsPath(sys.executable), UsageEnum.AGENT_WINAPI
-                )
+                mark_file_for_deletion_on_windows(WindowsPath(sys.executable))
                 InfectionMonkey._self_delete_windows()
             else:
                 InfectionMonkey._self_delete_linux()
 
-            T1107Telem(ScanStatus.USED, sys.executable).send()
             return True
         except Exception as exc:
             logger.error("Exception in self delete: %s", exc)
-            T1107Telem(ScanStatus.SCANNED, sys.executable).send()
 
         return False
-
-    @staticmethod
-    def _remove_monkey_dir():
-        status = ScanStatus.USED if remove_monkey_dir() else ScanStatus.SCANNED
-        T1107Telem(status, get_monkey_dir_path()).send()
 
     @staticmethod
     def _self_delete_windows():

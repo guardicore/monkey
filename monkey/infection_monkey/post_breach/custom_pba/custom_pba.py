@@ -6,9 +6,7 @@ from common.common_consts.post_breach_consts import POST_BREACH_FILE_EXECUTION
 from common.utils.attack_utils import ScanStatus
 from infection_monkey.control import ControlClient
 from infection_monkey.i_puppet import PostBreachData
-from infection_monkey.network.tools import get_interface_to_target
 from infection_monkey.post_breach.pba import PBA
-from infection_monkey.telemetry.attack.t1105_telem import T1105Telem
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.monkey_dir import get_monkey_dir_path
@@ -82,16 +80,6 @@ class CustomPBA(PBA):
 
         if not status:
             status = ScanStatus.USED
-
-        server_ip = str(self.control_client.server_address.ip)
-        self.telemetry_messenger.send_telemetry(
-            T1105Telem(
-                status,
-                server_ip,
-                get_interface_to_target(server_ip),
-                filename,
-            )
-        )
 
         if status == ScanStatus.SCANNED:
             return False

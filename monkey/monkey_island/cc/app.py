@@ -31,7 +31,6 @@ from monkey_island.cc.resources import (
     TerminateAllAgents,
 )
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.attack.attack_report import AttackReport
 from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
 from monkey_island.cc.resources.edge import Edge
 from monkey_island.cc.resources.exploitations.manual_exploitation import ManualExploitation
@@ -173,7 +172,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     api.add_resource(SecurityReport)
     api.add_resource(ZeroTrustReport)
-    api.add_resource(AttackReport)
     api.add_resource(RansomwareReport)
     api.add_resource(ManualExploitation)
     api.add_resource(MonkeyExploitation)

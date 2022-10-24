@@ -30,11 +30,9 @@ from infection_monkey.i_puppet import ExploiterResultData
 from monkey_island.cc.models import CommunicationType, Machine, Monkey, Report
 from monkey_island.cc.models.networkmap import Arc, NetworkMap
 from monkey_island.cc.repository import MongoAgentRepository, MongoMachineRepository
-from monkey_island.cc.repository.attack.IMitigationsRepository import IMitigationsRepository
 from monkey_island.cc.repository.i_agent_event_repository import IAgentEventRepository
 from monkey_island.cc.repository.i_agent_log_repository import IAgentLogRepository
 from monkey_island.cc.repository.i_agent_repository import IAgentRepository
-from monkey_island.cc.repository.i_attack_repository import IAttackRepository
 from monkey_island.cc.repository.i_config_repository import IConfigRepository
 from monkey_island.cc.repository.i_log_repository import ILogRepository
 from monkey_island.cc.repository.i_machine_repository import IMachineRepository
@@ -257,16 +255,10 @@ class_object
 
 NetworkMap
 Arc.dst_machine
-IMitigationsRepository.get_mitigations
-IMitigationsRepository.save_mitigations
 IAgentRepository.upsert_agent
 IAgentRepository.get_agent_by_id
 IAgentRepository.get_running_agents
 agent
-IAttackRepository.get_attack_report
-IAttackRepository.save_attack_report
-IAttackRepository.get_mitigation_by_technique
-IAttackRepository.save_mitigations
 IConfigRepository.set_config
 IConfigRepository.set_config_field
 IConfigRepository.get_config_field

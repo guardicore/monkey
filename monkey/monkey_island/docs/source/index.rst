@@ -56,7 +56,6 @@ Results
 The results of running Monkey Agents are:
  - A map which displays how much of the network an attacker can see, what services are accessible and potential propagation routes.
  - A security report, which displays security issues that Monkey Agents discovered and/or exploited.
- - A MITRE ATT&CK report, which displays the information about the ATT&CK techniques that Monkey Agents tried to use.
  - A Zero Trust report, which displays violations of Zero Trust principles that Monkey Agents found.
 
 ..

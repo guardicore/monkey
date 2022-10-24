@@ -10,7 +10,6 @@ import time
 from pathlib import PosixPath, WindowsPath
 
 from common.utils.argparse_types import positive_int
-from common.utils.attack_utils import UsageEnum
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
@@ -193,9 +192,7 @@ class MonkeyDrops(object):
                     )
 
                     # mark the file for removal on next boot
-                    mark_file_for_deletion_on_windows(
-                        WindowsPath(self._config["source_path"]), UsageEnum.DROPPER_WINAPI
-                    )
+                    mark_file_for_deletion_on_windows(WindowsPath(self._config["source_path"]))
             logger.info("Dropper cleanup complete")
         except AttributeError:
             logger.error("Invalid configuration options. Failing")

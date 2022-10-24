@@ -3,8 +3,6 @@ import logging
 from pathlib import Path, WindowsPath
 from typing import Callable, Iterable, Set
 
-from common.utils.attack_utils import ScanStatus, UsageEnum
-
 logger = logging.getLogger(__name__)
 
 MOVEFILE_DELAY_UNTIL_REBOOT = 4
@@ -35,9 +33,7 @@ def is_not_shortcut_filter(f: Path) -> bool:
     return f.suffix != ".lnk"
 
 
-def mark_file_for_deletion_on_windows(file_path: WindowsPath, usage: UsageEnum):
-    from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
-
+def mark_file_for_deletion_on_windows(file_path: WindowsPath):
     file_source_path_ctypes = ctypes.c_char_p(str(file_path).encode())
 
     mark_file_response = ctypes.windll.kernel32.MoveFileExA(
@@ -52,4 +48,3 @@ def mark_file_for_deletion_on_windows(file_path: WindowsPath, usage: UsageEnum):
         return
 
     logger.debug(f"File {file_path} is marked for deletion on next boot")
-    T1106Telem(ScanStatus.USED, usage).send()
