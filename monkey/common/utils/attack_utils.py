@@ -8,7 +8,3 @@ class ScanStatus(Enum):
     SCANNED = 1
     # Technique was attempted and succeeded
     USED = 2
-
-
-# Dict that describes what BITS job was used for
-BITS_UPLOAD_STRING = "BITS job was used to upload agent to a remote system."
