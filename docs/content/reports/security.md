@@ -27,7 +27,6 @@ The report is split into three main categories:
 - [The network from the Monkey's eyes](#the-network-from-the-monkeys-eyes)
   - [Network infection map](#network-infection-map)
   - [Scanned servers](#scanned-servers)
-  - [Exploits and post-breach actions](#exploits-and-post-breach-actions)
   - [Stolen credentials](#stolen-credentials)
 
 ## Overview
@@ -85,12 +84,6 @@ This section shows the network map and a breakdown of how many machines the Infe
 This section shows the attack surface the Infection Monkey discovered.
 
 ![Scanned servers](/images/usage/reports/sec_report_8_network_services.png "Scanned servers")
-
-### Exploits and post-breach actions
-
-This section shows which exploits and post-beach actions the Infection Monkey performed during the simulation.
-
-![Exploits and PBAs](/images/usage/reports/sec_report_9_exploits_pbas.png "Exploits and PBAs")
 
 ### Stolen credentials
 
