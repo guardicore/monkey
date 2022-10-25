@@ -253,14 +253,6 @@ class ConfigurePageComponent extends AuthComponent {
       .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'})) ;
   };
 
-  sendPbaRemoveRequest(apiEndpoint) {
-    let request_options = {
-      method: 'DELETE',
-      headers: {'Content-Type': 'text/plain'}
-    };
-    this.authFetch(apiEndpoint, request_options);
-  }
-
   exportConfig = async () => {
     await this.setState({lastAction: configExportAction});
     await this.attemptConfigSubmit();
