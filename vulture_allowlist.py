@@ -39,6 +39,9 @@ from monkey_island.cc.repository.i_machine_repository import IMachineRepository
 from monkey_island.cc.repository.i_report_repository import IReportRepository
 from monkey_island.cc.repository.i_simulation_repository import ISimulationRepository
 from monkey_island.cc.repository.ICredentials import ICredentialsRepository
+from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (  # noqa:E501 (Long import)
+    ExploiterDescriptorEnum,
+)
 
 ExploiterResultData.interrupted  # (infection_monkey.i_puppet.i_puppet.py)
 Monkey.guid  # (monkey_island.cc.models.monkey.py)
@@ -345,3 +348,6 @@ Machine.config.json_dumps
 Machine._socketaddress_from_string
 
 Monkey.guid
+
+ExploiterDescriptorEnum.SMB
+ExploiterDescriptorEnum.WMI
