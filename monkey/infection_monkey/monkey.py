@@ -64,20 +64,6 @@ from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerpri
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
-from infection_monkey.post_breach.actions.change_file_privileges import ChangeSetuidSetgid
-from infection_monkey.post_breach.actions.clear_command_history import ClearCommandHistory
-from infection_monkey.post_breach.actions.collect_processes_list import ProcessListCollection
-from infection_monkey.post_breach.actions.communicate_as_backdoor_user import (
-    CommunicateAsBackdoorUser,
-)
-from infection_monkey.post_breach.actions.discover_accounts import AccountDiscovery
-from infection_monkey.post_breach.actions.hide_files import HiddenFiles
-from infection_monkey.post_breach.actions.modify_shell_startup_files import ModifyShellStartupFiles
-from infection_monkey.post_breach.actions.schedule_jobs import ScheduleJobs
-from infection_monkey.post_breach.actions.timestomping import Timestomping
-from infection_monkey.post_breach.actions.use_signed_scripts import SignedScriptProxyExecution
-from infection_monkey.post_breach.actions.use_trap_command import TrapCommand
-from infection_monkey.post_breach.custom_pba import CustomPBA
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
@@ -348,64 +334,6 @@ class InfectionMonkey:
             "ZerologonExploiter",
             exploit_wrapper.wrap(ZerologonExploiter),
             PluginType.EXPLOITER,
-        )
-
-        puppet.load_plugin(
-            "CommunicateAsBackdoorUser",
-            CommunicateAsBackdoorUser(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "ModifyShellStartupFiles",
-            ModifyShellStartupFiles(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "HiddenFiles", HiddenFiles(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
-        )
-        puppet.load_plugin(
-            "TrapCommand",
-            CommunicateAsBackdoorUser(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "ChangeSetuidSetgid",
-            ChangeSetuidSetgid(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "ScheduleJobs", ScheduleJobs(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
-        )
-        puppet.load_plugin(
-            "Timestomping", Timestomping(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
-        )
-        puppet.load_plugin(
-            "AccountDiscovery",
-            AccountDiscovery(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "ProcessListCollection",
-            ProcessListCollection(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "TrapCommand", TrapCommand(self._telemetry_messenger), PluginType.POST_BREACH_ACTION
-        )
-        puppet.load_plugin(
-            "SignedScriptProxyExecution",
-            SignedScriptProxyExecution(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "ClearCommandHistory",
-            ClearCommandHistory(self._telemetry_messenger),
-            PluginType.POST_BREACH_ACTION,
-        )
-        puppet.load_plugin(
-            "CustomPBA",
-            CustomPBA(self._telemetry_messenger, self._control_client),
-            PluginType.POST_BREACH_ACTION,
         )
 
         puppet.load_plugin(
