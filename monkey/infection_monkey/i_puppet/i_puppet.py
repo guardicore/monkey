@@ -28,7 +28,6 @@ class ExploiterResultData:
 
 PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
-PostBreachData = namedtuple("PostBreachData", ["display_name", "command", "result"])
 
 
 class IPuppet(metaclass=abc.ABCMeta):
@@ -52,16 +51,6 @@ class IPuppet(metaclass=abc.ABCMeta):
                              Credential collector
         :return: A sequence of Credentials that have been collected from the system
         :rtype: Sequence[Credentials]
-        """
-
-    @abc.abstractmethod
-    def run_pba(self, name: str, options: Dict) -> Iterable[PostBreachData]:
-        """
-        Runs a post-breach action (PBA)
-
-        :param str name: The name of the post-breach action to run
-        :param Dict options: A dictionary containing options that modify the behavior of the PBA
-        :rtype: Iterable[PostBreachData]
         """
 
     @abc.abstractmethod

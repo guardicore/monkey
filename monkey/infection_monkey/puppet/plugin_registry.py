@@ -14,9 +14,6 @@ class PluginRegistry:
                 PluginType.EXPLOITER: {
                     "ZerologonExploiter": ZerologonExploiter,
                     "SMBExploiter": SMBExploiter
-                },
-                PluginType.PBA: {
-                    "CommunicateAsBackdoorUser": CommunicateAsBackdoorUser
                 }
             }
         """

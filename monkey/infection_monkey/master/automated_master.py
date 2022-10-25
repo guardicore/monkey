@@ -4,7 +4,7 @@ import time
 from ipaddress import IPv4Interface
 from typing import Any, Callable, Collection, List, Optional, Sequence
 
-from common.agent_configuration import CustomPBAConfiguration, PluginConfiguration
+from common.agent_configuration import PluginConfiguration
 from common.utils import Timer
 from infection_monkey.credential_repository import IPropagationCredentialsRepository
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
@@ -12,12 +12,10 @@ from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
-from infection_monkey.telemetry.post_breach_telem import PostBreachTelem
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
 from . import Exploiter, IPScanner, Propagator
-from .option_parsing import custom_pba_is_enabled
 
 CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC = 5
 CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 5
@@ -157,19 +155,9 @@ class AutomatedMaster(IMaster):
                 self._collect_credentials,
             ),
         )
-        pba_thread = create_daemon_thread(
-            target=self._run_pbas,
-            name="PBAThread",
-            args=(config.post_breach_actions, self._run_pba, config.custom_pbas),
-        )
-
+        # We don't need to use multithreading here, but it's likely that in the
+        # future we'll like to run other tasks while credentials are being collected
         credential_collector_thread.start()
-        pba_thread.start()
-
-        # Future stages of the simulation require the output of the system info collectors. Nothing
-        # requires the output of PBAs, so we don't need to join on that thread here. We will join on
-        # the PBA thread later in this function to prevent the simulation from ending while PBAs are
-        # still running.
         credential_collector_thread.join()
 
         current_depth = self._current_depth if self._current_depth is not None else 0
@@ -188,35 +176,14 @@ class AutomatedMaster(IMaster):
         payload_thread.start()
         payload_thread.join()
 
-        pba_thread.join()
-
     def _collect_credentials(self, collector: PluginConfiguration):
         credentials = self._puppet.run_credential_collector(collector.name, collector.options)
 
         if not credentials:
             logger.debug(f"No credentials were collected by {collector}")
 
-    def _run_pba(self, pba: PluginConfiguration):
-        for pba_data in self._puppet.run_pba(pba.name, pba.options):
-            self._telemetry_messenger.send_telemetry(PostBreachTelem(pba_data))
-
     def _run_payload(self, payload: PluginConfiguration):
         self._puppet.run_payload(payload.name, payload.options, self._stop)
-
-    def _run_pbas(
-        self,
-        plugins: Collection[PluginConfiguration],
-        callback: Callable[[Any], None],
-        custom_pba_options: CustomPBAConfiguration,
-    ):
-        self._run_plugins(plugins, "post-breach action", callback)
-
-        if custom_pba_is_enabled(custom_pba_options):
-            self._run_plugins(
-                [PluginConfiguration(name="CustomPBA", options=custom_pba_options.__dict__)],
-                "post-breach action",
-                callback,
-            )
 
     def _run_plugins(
         self,

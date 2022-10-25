@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, Iterable, Sequence
+from typing import Dict, Sequence
 
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
@@ -13,7 +13,6 @@ from infection_monkey.i_puppet import (
     IPuppet,
     PluginType,
     PortScanData,
-    PostBreachData,
 )
 from infection_monkey.model import VictimHost
 
@@ -37,10 +36,6 @@ class Puppet(IPuppet):
             name, PluginType.CREDENTIAL_COLLECTOR
         )
         return credential_collector.collect_credentials(options)
-
-    def run_pba(self, name: str, options: Dict) -> Iterable[PostBreachData]:
-        pba = self._plugin_registry.get_plugin(name, PluginType.POST_BREACH_ACTION)
-        return pba.run(options)
 
     def ping(self, host: str, timeout: float = CONNECTION_TIMEOUT) -> PingScanData:
         return network_scanning.ping(host, timeout, self._agent_event_queue)

@@ -134,7 +134,6 @@ protocol_version  # unused variable (monkey/infection_monkey/transport/http.py:2
 binaries  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-pypsrp.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.exploit.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.network.py:3)
-hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.post_breach.actions.py:4)
 _.wShowWindow  # unused attribute (monkey/infection_monkey/monkey.py:345)
 _.dwFlags  # unused attribute (monkey/infection_monkey/monkey.py:344)
 _.do_get  # unused method (monkey/infection_monkey/exploit/zerologon_utils/remote_shell.py:79)
