@@ -118,13 +118,6 @@ export default function UiSchema(props) {
         'ui:widget': 'hidden'
       }
     },
-    post_breach_actions: {
-      classNames: 'config-template-no-header',
-      'ui:widget': AdvancedMultiSelect,
-      post_breach_actions: {
-        classNames: 'config-template-no-header'
-      }
-    },
     credential_collectors: {
       classNames: 'config-template-no-header',
       'ui:widget': AdvancedMultiSelect,

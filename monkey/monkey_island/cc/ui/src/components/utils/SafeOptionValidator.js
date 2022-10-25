@@ -16,11 +16,6 @@ function getPluginDescriptors(schema, config) {
       selectedPlugins: config.propagation.network_scan.fingerprinters
     },
     {
-      name: 'PostBreachActions',
-      allPlugins: schema.properties.post_breach_actions.items.anyOf,
-      selectedPlugins: config.post_breach_actions
-    },
-    {
       name: 'CredentialCollectors',
       allPlugins: schema.properties.credential_collectors.items.anyOf,
       selectedPlugins: config.credential_collectors

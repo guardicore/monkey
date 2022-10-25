@@ -1,6 +1,5 @@
 import PROPAGATION_CONFIGURATION_SCHEMA from './propagation/propagation.js';
 import CREDENTIAL_COLLECTORS from './credentialCollectors.js';
-import POST_BREACH_ACTIONS from './postBreachActions.js';
 import RANSOMWARE_SCHEMA from './ransomware';
 
 export const SCHEMA = {
@@ -8,12 +7,6 @@ export const SCHEMA = {
   'type': 'object',
   'properties': {
     'propagation': PROPAGATION_CONFIGURATION_SCHEMA,
-    'post_breach_actions': {
-      'title': 'Post-breach actions',
-      'type': 'array',
-      'uniqueItems':  true,
-      'items': POST_BREACH_ACTIONS
-    },
     'payloads': RANSOMWARE_SCHEMA,
     'credential_collectors': {
       'title': 'Credential collectors',
