@@ -4,14 +4,12 @@ from common.agent_configuration import AgentConfiguration
 from common.common_consts.telem_categories import TelemCategoryEnum
 from monkey_island.cc.models.telemetries import save_telemetry
 from monkey_island.cc.services.telemetry.processing.aws_info import process_aws_telemetry
-from monkey_island.cc.services.telemetry.processing.post_breach import process_post_breach_telemetry
 from monkey_island.cc.services.telemetry.processing.state import process_state_telemetry
 
 logger = logging.getLogger(__name__)
 
 TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
     TelemCategoryEnum.AWS_INFO: process_aws_telemetry,
-    TelemCategoryEnum.POST_BREACH: process_post_breach_telemetry,
     TelemCategoryEnum.STATE: process_state_telemetry,
     # `lambda *args, **kwargs: None` is a no-op.
     TelemCategoryEnum.TRACE: lambda *args, **kwargs: None,

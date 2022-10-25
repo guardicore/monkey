@@ -1,11 +1,9 @@
-from unittest.mock import MagicMock
-
 import pytest
 from tests.monkey_island import InMemoryAgentConfigurationRepository
 
 from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.island_event_handlers import reset_agent_configuration
-from monkey_island.cc.repository import IAgentConfigurationRepository, IFileRepository
+from monkey_island.cc.repository import IAgentConfigurationRepository
 
 LINUX_FILENAME = "linux_pba_file.sh"
 WINDOWS_FILENAME = "windows_pba_file.ps1"
@@ -30,25 +28,10 @@ def agent_configuration_repository(
 
 
 @pytest.fixture
-def mock_file_repository() -> IFileRepository:
-    return MagicMock(spec=IFileRepository)
-
-
-@pytest.fixture
 def callable_reset_agent_configuration(
     agent_configuration_repository: IAgentConfigurationRepository,
-    mock_file_repository: IFileRepository,
 ) -> reset_agent_configuration:
-    return reset_agent_configuration(agent_configuration_repository, mock_file_repository)
-
-
-def test_reset_configuration__remove_pba_files(
-    callable_reset_agent_configuration, mock_file_repository
-):
-    callable_reset_agent_configuration()
-
-    assert mock_file_repository.delete_file.called_with(LINUX_FILENAME)
-    assert mock_file_repository.delete_file.called_with(WINDOWS_FILENAME)
+    return reset_agent_configuration(agent_configuration_repository)
 
 
 def test_reset_configuration__agent_configuration_changed(

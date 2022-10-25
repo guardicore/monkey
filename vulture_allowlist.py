@@ -95,7 +95,6 @@ MSSQL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_proce
 VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:45)
 POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
 ExploiterDescriptorEnum.LOG4SHELL
-PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
 internet_access  # unused variable (monkey/monkey_island/cc/models/monkey.py:43)
 config_error  # unused variable (monkey/monkey_island/cc/models/monkey.py:53)
 pba_results  # unused variable (monkey/monkey_island/cc/models/monkey.py:55)
