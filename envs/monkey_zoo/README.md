@@ -22,4 +22,8 @@ and how the network of the vulnerable machines looks.
 
 ## Setting up a MonkeyZoo
 
-To set up and use a MonkeyZoo network on GCP using terraform reffer to [MonkeyZoo setup](docs/zoo_setup.md).
+To set up and use a MonkeyZoo network on GCP using terraform refer to [MonkeyZoo setup](docs/zoo_setup.md).
+
+## Running blackbox tests
+
+To run blackbox tests on the newly created MonkeyZoo network refer to [Blackbox test dcoumentation](blackbox/README.md).
