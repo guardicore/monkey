@@ -49,18 +49,3 @@ passwords (and a username as well) to the configuration:
 ![Exploit password and user
 lists](/images/usage/scenarios/user-password-lists.png "Exploit password and
 user lists")
-
-## Check logged and monitored terminals
-
-To see the Infection Monkey executing in real-time on your servers, add the
-**post-breach action** command:
-`wall “Infection Monkey was here”`. This post-breach command will broadcast a
-message across all open terminals on the servers the Infection Monkey breached
-to achieve the following:
-- Let you know the Monkey ran successfully on the server.
-- Let you follow the breach “live” alongside the infection map.
-- Check which terminals are logged and monitored inside your network.
-
-![How to configure post breach
-commands](/images/usage/scenarios/pba-example.png "How to configure post breach
-commands.")
