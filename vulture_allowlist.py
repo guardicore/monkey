@@ -3,10 +3,7 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
-from common.agent_configuration.agent_sub_configurations import (
-    CustomPBAConfiguration,
-    ScanTargetConfiguration,
-)
+from common.agent_configuration.agent_sub_configurations import ScanTargetConfiguration
 from common.agent_events import (
     ExploitationEvent,
     PasswordRestorationEvent,
@@ -212,7 +209,6 @@ release_convention  # unused method (monkey/common/di_container.py:174)
 
 # Agent Configuration
 _make_plugin_configuration  # unused method (monkey/common/configuration/agent_configuration.py:19)
-_make_custom_pba_configuration  # unused method (monkey/common/configuration/agent_configuration.py:24)
 _make_exploiter_configuration  # unused method (monkey/common/configuration/agent_configuration.py:69)
 _make_exploitation_options_configuration  # unused method (monkey/common/configuration/agent_configuration.py:86)
 _make_scan_target_configuration  # unused method (monkey/common/configuration/agent_configuration.py:105)
@@ -287,7 +283,6 @@ MongoMachineRepository
 key_list
 simulation
 netmap
-validate_windows_filename_not_reserved
 subscribe_all  # common\event_queue\i_agent_event_queue.py
 subscribe_type  # common\event_queue\i_agent_event_queue.py
 subscribe_tag  # common\event_queue\i_agent_event_queue.py
@@ -333,8 +328,6 @@ underscore_attrs_are_private
 extra
 allow_mutation
 validate_assignment
-CustomPBAConfiguration.linux_filename_valid
-CustomPBAConfiguration.windows_filename_valid
 ScanTargetConfiguration.blocked_ips_valid
 ScanTargetConfiguration.inaccessible_subnets_valid
 ScanTargetConfiguration.subnets_valid

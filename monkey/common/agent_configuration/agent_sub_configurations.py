@@ -5,44 +5,7 @@ from pydantic import PositiveFloat, conint, validator
 from common.base_models import MutableInfectionMonkeyBaseModel
 from common.types import NetworkPort
 
-from .validators import (
-    validate_ip,
-    validate_linux_filename,
-    validate_subnet_range,
-    validate_windows_filename,
-)
-
-
-class CustomPBAConfiguration(MutableInfectionMonkeyBaseModel):
-    """
-    A configuration for custom post-breach actions
-
-    Attributes:
-        :param linux_command: Command to run on Linux victim machines. If a file is uploaded,
-                              use this field to change its permissions, execute it, and/or delete it
-                              Example: `chmod +x file.sh; ./file.sh; rm file.sh`
-        :param linux_filename: Name of the file to upload on Linux victim machines
-        :param windows_command: Command to run on Windows victim machines. If a file is uploaded,
-                                use this field to change its permissions, execute it, and/or delete
-                                it
-                                Example: `file.bat & del file.bat`
-        :param windows_filename: Name of the file to upload on Windows victim machines
-    """
-
-    linux_command: str
-    linux_filename: str
-    windows_command: str
-    windows_filename: str
-
-    @validator("linux_filename")
-    def linux_filename_valid(cls, filename):
-        validate_linux_filename(filename)
-        return filename
-
-    @validator("windows_filename")
-    def windows_filename_valid(cls, filename):
-        validate_windows_filename(filename)
-        return filename
+from .validators import validate_ip, validate_subnet_range
 
 
 class PluginConfiguration(MutableInfectionMonkeyBaseModel):

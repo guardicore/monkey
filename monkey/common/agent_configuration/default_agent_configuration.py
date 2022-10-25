@@ -1,6 +1,5 @@
 from . import AgentConfiguration
 from .agent_sub_configurations import (
-    CustomPBAConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
@@ -40,10 +39,6 @@ RANSOMWARE_OPTIONS = {
 }
 
 PAYLOAD_CONFIGURATION = tuple([PluginConfiguration(name="ransomware", options=RANSOMWARE_OPTIONS)])
-
-CUSTOM_PBA_CONFIGURATION = CustomPBAConfiguration(
-    linux_command="", linux_filename="", windows_command="", windows_filename=""
-)
 
 TCP_PORTS = (
     22,
@@ -115,7 +110,6 @@ PROPAGATION_CONFIGURATION = PropagationConfiguration(
 
 DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     keep_tunnel_open_time=30,
-    custom_pbas=CUSTOM_PBA_CONFIGURATION,
     post_breach_actions=PBA_CONFIGURATION,
     credential_collectors=CREDENTIAL_COLLECTOR_CONFIGURATION,
     payloads=PAYLOAD_CONFIGURATION,

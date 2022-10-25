@@ -5,16 +5,10 @@ from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.island_event_handlers import reset_agent_configuration
 from monkey_island.cc.repository import IAgentConfigurationRepository
 
-LINUX_FILENAME = "linux_pba_file.sh"
-WINDOWS_FILENAME = "windows_pba_file.ps1"
-
 
 @pytest.fixture
 def agent_configuration(default_agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    custom_pbas = default_agent_configuration.custom_pbas.copy(
-        update={"linux_filename": LINUX_FILENAME, "windows_filename": WINDOWS_FILENAME},
-    )
-    return default_agent_configuration.copy(update={"custom_pbas": custom_pbas})
+    return default_agent_configuration.copy()
 
 
 @pytest.fixture
@@ -37,6 +31,7 @@ def callable_reset_agent_configuration(
 def test_reset_configuration__agent_configuration_changed(
     callable_reset_agent_configuration, agent_configuration_repository, agent_configuration
 ):
+    agent_configuration.keep_tunnel_open_time = 99
     callable_reset_agent_configuration()
 
     assert agent_configuration_repository.get_configuration() != agent_configuration
