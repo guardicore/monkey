@@ -1,7 +1,8 @@
 # Automatic blackbox tests
 ### Prerequisites
 1. Download google sdk: https://cloud.google.com/sdk/docs/
-2. Download service account key for MonkeyZoo project (if you deployed MonkeyZoo via terraform scripts then you already have it).
+2. Have a MonkeyZoo project set up. For setup instructions refer to [MonkeyZoo setup](../docs/zoo_setup.md).
+3. Download service account key for MonkeyZoo project (if you deployed MonkeyZoo via terraform scripts then you already have it).
 GCP console -> IAM -> service accounts(you can use the same key used to authenticate terraform scripts).
 Place the key in `envs/monkey_zoo/gcp_keys/gcp_key.json`.
 3. Deploy the relevant branch + complied executables to the Island machine on GCP.
