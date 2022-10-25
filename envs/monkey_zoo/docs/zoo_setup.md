@@ -7,7 +7,7 @@ Requirements:
     [link](https://learn.hashicorp.com/tutorials/terraform/install-cli)).
 2.  Have a Google Cloud Platform account (upgraded if you want to test
     whole network at once).
-3.  Have `gcloud` installed (for installation instructions check this
+3.  Have `gcloud` CLI installed (for installation instructions check this
     [link](https://cloud.google.com/sdk/docs/install#linux))
 4.  Have `monkey/envs/monkey_zoo` folder downloaded as all the instructions are done
     in there.
@@ -27,14 +27,14 @@ To deploy:
     or just give
 
         Project -> Owner
-        **Note: Adds more permissions then are needed**
+        Note: Adds more permissions then are needed
 
     c. Create and download its `Service account key` in JSON and place it in `monkey_zoo/gcp_keys` as `gcp_key.json`.
 
 2.  Get these permissions in our monkeyZoo production project (guardicore-22050661) for your service account.<br>
     **Note: Ask monkey developers to add them. Check [Infection Monkey documentation](https://techdocs.akamai.com/infection-monkey/docs/welcome-infection-monkey) on how to recieve usage and support**.
 
-        Compute Engine -\> Compute image user
+        Compute Engine -> Compute image user
 
 3.  Change configurations located in the
     ../monkey/envs/monkey\_zoo/terraform/config.tf file (don’t forget to
@@ -89,56 +89,16 @@ You can find more information on MonkeyZoo machines in [MonkeyZoo network](zoo_n
 
 ### For users
 
-#### Linux
-
-Upload the [`AppImage deployment`](https://github.com/guardicore/monkey/releases/latest)
-option and run it in [`island-linux-250`](zoo_network.md#_Toc536021489).
-
-#### Windows
-
-Upload the [`MSI deployment`](https://github.com/guardicore/monkey/releases/latest)
-option, install it and run it in [`island-windows-251`](zoo_network.md#_Toc536021490).
-After that use the Monkey as you would on local network.
-
+Depending on your preferred operating system login to `island-linux-250` for Linux and
+`island-windows-251` for Windows. After successful login refer to our
+[setup guide](https://techdocs.akamai.com/infection-monkey/docs/setting-up-infection-monkey) on next steps.
 
 ### For developers
 
-#### Linux:
+To set up a development environment in the MonkeyZoo island refer to our
+[development setup](https://techdocs.akamai.com/infection-monkey/docs/development-setup).
 
-Get into `island-linux-250` using SSH from GCP.
+## Using the MonkeyZoo
 
-To run monkey island from source:<br>
-`sudo /usr/run\_island.sh`<br>
-
-To run monkey from source:<br>
-`sudo /usr/run\_monkey.sh`<br>
-
-To update repository:<br>
-`git pull /usr/infection_monkey`<br>
-
-Update all requirements using deployment script:<br>
-1\. `cd /usr/infection_monkey/deployment_scripts`<br>
-2\. `./deploy_linux.sh "/usr/infection_monkey" "develop"`<br>
-
-#### Windows:
-
-RDP into `island-windows-251`.
-
-To run monkey island from source:<br>
-Execute C:\\run\_monkey\_island.bat as administrator
-
-To run monkey from source:<br>
-Execute C:\\run\_monkey.bat as administrator
-
-To update repository:<br>
-1\. Open cmd as an administrator<br>
-2\. `cd C:\infection_monkey`<br>
-3\. `git pull` (updates develop branch)<br>
-
-Update all requirements using deployment script:<br>
-1\. `cd C:\infection_monkey\deployment_scripts`<br>
-2\. `./run_script.bat "C:\infection_monkey" "develop"`<br>
-
-## Running blackbox tests in MonkeyZoo
-
-To run blackbox tests in the MonkeyZoo network refer to [blackbox tests documentation](../blackbox/README.md).
+Refer to the [blackbox tests documentation](../blackbox/README.md) to understand how MonkeyZoo test
+network can be used.

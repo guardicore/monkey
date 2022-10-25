@@ -24,6 +24,31 @@ and how the network of the vulnerable machines looks.
 
 To set up and use a MonkeyZoo network on GCP using terraform refer to [MonkeyZoo setup](docs/zoo_setup.md).
 
+## Running manual tests
+
+MonkeyZoo test network can be used to test the majority of Infection Monkey features.
+
+### Exploiting machines
+
+Most of the machines in [network documentation](docs/zoo_network.md) can be exploited with a
+corresponding exploiter. Navigate to a machine you'd like to exploit and add its IP to the target
+list in the configuration. If it's a brute-force exploiter, you'll also need to add the password/credentials
+shown in the table (if a username is not present it's usually `m0nk3y`).
+
+### Testing other features
+
+Zoo is also used to test other features, like multi-hop exploitation or credential stealing.
+
+Some diagrams for more complex exploitation network topography tests can be found in `envs/monkey_zoo/docs/network_diagrams`.
+If you want to exercise these make sure to configure more hops/exploitation depth in the configuration.
+
+Lastly, feel free to use the Zoo network to configure and test other features. Read through the descriptions
+in the [network documentation](docs/zoo_network.md) and if you can't find a machine to satisfy your test case,
+refer to our [usage documentation](https://techdocs.akamai.com/infection-monkey/docs/usage).
+
+If you run into trouble talk to us on our [Slack channel](https://infectionmonkey.slack.com/join/shared_invite/enQtNDU5MjAxMjg1MjU1LWM0NjVmNWE2ZTMzYzAxOWJiYmMxMzU0NWU3NmUxYjcyNjk0YWY2MDkwODk4NGMyNDU4NzA4MDljOWNmZWViNDU),
+email us at support@infectionmonkey.com or open an issue on [GitHub](https://github.com/guardicore/monkey).
+
 ## Running blackbox tests
 
 To run blackbox tests on the newly created MonkeyZoo network refer to [Blackbox test dcoumentation](blackbox/README.md).
