@@ -46,12 +46,6 @@ import UsedCredentials from './security/UsedCredentials';
 
 class ReportPageComponent extends AuthComponent {
 
-  credentialTypes = {
-    PASSWORD: 'password',
-    HASH: 'hash',
-    KEY: 'key'
-  }
-
   issueContentTypes = {
     OVERVIEW: 'overview',
     REPORT: 'report',
