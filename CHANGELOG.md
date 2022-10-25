@@ -131,7 +131,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/zero-trust/finding-event/<string:finding_id>" endpoint. #2441
 - "GET /api/report/zero-trust/<string:report_data>" endpoint. #2441
 - AWS Security Hub integration. #2443
-
+- The Post breach actions configuration tab. #2442
+- The Custom PBA configuration tab. #2442
+- "GET /api/pba/download/<string:filename>" endpoint. #2442
+- "GET /api/pba/upload/<string:target_os>" endpoint. #2442
+- "POST /api/pba/upload/<string:target_os>?load=<string:filename>" endpoint. #2442
+- "POST /api/pba/upload/<string:target_os>?restore=<string:filename>" endpoint. #2442
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
