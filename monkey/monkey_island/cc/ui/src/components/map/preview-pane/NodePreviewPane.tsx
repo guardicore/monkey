@@ -6,7 +6,7 @@ import {
   IslandLogDownloadButton
 } from '../../ui-components/LogDownloadButtons';
 import ExploitationTimeline from './ExploitationTimeline';
-import MapNode from '../../types/MapNode';
+import _ from 'lodash';
 
 
 const NodePreviewPane = (props: any) => {
@@ -53,9 +53,11 @@ const NodePreviewPane = (props: any) => {
             Download Monkey Agent Log
           </th>
           <td>
-            <AgentLogDownloadButton url={'/api/agent-logs/' + node.agentId}
+            <AgentLogDownloadButton url={'/api/agent-logs/' +
+              node.agentIds[node.agentIds.length - 1]}
                                     filename={logFilename(node)}
-                                    variant={node.agentId && !node.agentRunning ? undefined : 'disabled'}/>
+                                    variant={! _.isEmpty(node.agentIds) &&
+                                    !node.agentRunning ? undefined : 'disabled'}/>
           </td>
         </tr>
         {(node.island) &&
@@ -75,7 +77,14 @@ const NodePreviewPane = (props: any) => {
   function islandAssetInfo() {
     return (
       <div>
-        No info to show
+        <table className='table table-condensed'>
+          <tbody>
+          {osRow(props.item)}
+          {props.item.agentId ? statusRow(props.item) : ''}
+          {ipsRow(props.item)}
+          {downloadLogsRow(props.item)}
+          </tbody>
+        </table>
       </div>
     );
   }
