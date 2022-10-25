@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import IslandHttpClient from '../../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import {renderLimitedArray} from '../common/RenderArrays';
@@ -22,7 +22,7 @@ function BreachSection() {
   const [machines, setMachines] = useState(null);
 
   useEffect(() => {
-    IslandHttpClient.get('/api/exploitations/manual')
+      IslandHttpClient.get(APIEndpoint.manual_exploitation)
       .then(resp => setMachines(resp.body['manual_exploitations']));
   }, []);
 
