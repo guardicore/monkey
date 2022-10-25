@@ -1,14 +1,16 @@
 # Setting up a Monkey Zoo using Terraform
 
-
-
 ## Getting started:
 
 Requirements:
-1.  Have terraform installed (for installation instructions check this
+1.  Have `terraform` installed (for installation instructions check this
     [link](https://learn.hashicorp.com/tutorials/terraform/install-cli)).
 2.  Have a Google Cloud Platform account (upgraded if you want to test
     whole network at once).
+3.  Have `gcloud` installed (for installation instructions check this
+    [link](https://cloud.google.com/sdk/docs/install#linux))
+4.  Have `monkey/envs/monkey_zoo` folder downloaded as all the instructions are done
+    in there.
 
 To deploy:
 1.  Configure service account for your project:
@@ -22,14 +24,17 @@ To deploy:
         Compute Engine -> Compute Security Admin
         Service Account User
 
-    or just give **Project -> Owner** (adds more permissions then are needed)
+    or just give
 
-    c. Create and download its **Service account key** in JSON and place it in **monkey_zoo/gcp_keys** as **gcp_key.json**.
+        Project -> Owner
+        **Note: Adds more permissions then are needed**
 
-2.  Get these permissions in the monkeyZoo project (guardicore-22050661) for your service account.
-    **Note: Ask monkey developers to add them**
+    c. Create and download its `Service account key` in JSON and place it in `monkey_zoo/gcp_keys` as `gcp_key.json`.
 
-    a.  **Compute Engine -\> Compute image user**
+2.  Get these permissions in our monkeyZoo production project (guardicore-22050661) for your service account.<br>
+    **Note: Ask monkey developers to add them. Check [Infection Monkey documentation](https://techdocs.akamai.com/infection-monkey/docs/welcome-infection-monkey) on how to recieve usage and support**.
+
+        Compute Engine -\> Compute image user
 
 3.  Change configurations located in the
     ../monkey/envs/monkey\_zoo/terraform/config.tf file (don’t forget to
@@ -62,31 +67,45 @@ To deploy:
 4.  Run terraform init
 
 To deploy the network run:<br>
+`cd ../monkey/envs/monkey_zoo/terraform`<br>
 `terraform plan` (review the changes it will make on GCP)<br>
 `terraform apply` (adds machines to these networks)
 
 
-## Using islands:
+## Using MonkeyZoo islands:
 
 ### How to get into the islands:
 
-**island-linux-250:** SSH from GCP
+`island-linux-250`: SSH from GCP
 
-**island-windows-251:** In GCP/VM instances page click on
-island-windows-251. Set password for your account and then RDP into
+`island-windows-251`: In GCP/VM instances page click on
+`island-windows-251`. Set password for your account and then RDP into
 the island.
 
-## These are most common steps on monkey islands:
+You can find more information on MonkeyZoo machines in [MonkeyZoo network](zoo_network.md).
+
+
+## Installing Monkey Island in MonkeyZoo
 
 ### For users
 
-Upload the AppImage deployment option and run it in island-linux-250.
-Or upload the MSI deployment option, install it and run it in island-windows-251.
+#### Linux
+
+Upload the [`AppImage deployment`](https://github.com/guardicore/monkey/releases/latest)
+option and run it in [`island-linux-250`](zoo_network.md#_Toc536021489).
+
+#### Windows
+
+Upload the [`MSI deployment`](https://github.com/guardicore/monkey/releases/latest)
+option, install it and run it in [`island-windows-251`](zoo_network.md#_Toc536021490).
 After that use the Monkey as you would on local network.
+
 
 ### For developers
 
-#### island-linux-250:
+#### Linux:
+
+Get into `island-linux-250` using SSH from GCP.
 
 To run monkey island from source:<br>
 `sudo /usr/run\_island.sh`<br>
@@ -101,7 +120,9 @@ Update all requirements using deployment script:<br>
 1\. `cd /usr/infection_monkey/deployment_scripts`<br>
 2\. `./deploy_linux.sh "/usr/infection_monkey" "develop"`<br>
 
-#### island-windows-251:
+#### Windows:
+
+RDP into `island-windows-251`.
 
 To run monkey island from source:<br>
 Execute C:\\run\_monkey\_island.bat as administrator
@@ -117,3 +138,7 @@ To update repository:<br>
 Update all requirements using deployment script:<br>
 1\. `cd C:\infection_monkey\deployment_scripts`<br>
 2\. `./run_script.bat "C:\infection_monkey" "develop"`<br>
+
+## Running blackbox tests in MonkeyZoo
+
+To run blackbox tests in the MonkeyZoo network refer to [blackbox tests documentation](../blackbox/README.md).
