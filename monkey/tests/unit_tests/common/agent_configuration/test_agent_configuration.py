@@ -197,7 +197,6 @@ def test_agent_configuration():
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
-    assert isinstance(config.post_breach_actions[0], PluginConfiguration)
     assert isinstance(config.credential_collectors[0], PluginConfiguration)
     assert isinstance(config.payloads[0], PluginConfiguration)
     assert isinstance(config.propagation, PropagationConfiguration)

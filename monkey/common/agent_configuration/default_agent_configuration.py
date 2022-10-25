@@ -110,12 +110,9 @@ PROPAGATION_CONFIGURATION = PropagationConfiguration(
 
 DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     keep_tunnel_open_time=30,
-    post_breach_actions=PBA_CONFIGURATION,
     credential_collectors=CREDENTIAL_COLLECTOR_CONFIGURATION,
     payloads=PAYLOAD_CONFIGURATION,
     propagation=PROPAGATION_CONFIGURATION,
 )
 
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = DEFAULT_AGENT_CONFIGURATION.copy(
-    update={"post_breach_actions": tuple()}
-)
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = DEFAULT_AGENT_CONFIGURATION.copy()

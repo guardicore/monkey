@@ -173,7 +173,6 @@ Report.meta
 LDAPServerFactory.buildProtocol
 get_file_sha256_hash
 strict_slashes  # unused attribute (monkey/monkey_island/cc/app.py:96)
-post_breach_actions  # unused variable (monkey\infection_monkey\config.py:95)
 LMHash.validate_hash_format
 NTHash.validate_hash_format
 Credentials.Config.json_encoders

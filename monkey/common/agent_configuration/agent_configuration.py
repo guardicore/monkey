@@ -9,7 +9,6 @@ from .agent_sub_configurations import PluginConfiguration, PropagationConfigurat
 
 class AgentConfiguration(MutableInfectionMonkeyBaseModel):
     keep_tunnel_open_time: confloat(ge=0)  # type: ignore[valid-type]
-    post_breach_actions: Tuple[PluginConfiguration, ...]
     credential_collectors: Tuple[PluginConfiguration, ...]
     payloads: Tuple[PluginConfiguration, ...]
     propagation: PropagationConfiguration
