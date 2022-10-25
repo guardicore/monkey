@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table';
 import {renderArray, renderIpAddresses} from '../common/RenderArrays';
 import LoadingIcon from '../../ui-components/LoadingIcon';
-import IslandHttpClient from '../../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 
 
 const columns = [
@@ -26,7 +26,7 @@ function BreachedServersComponent() {
   const [exploitations, setExploitations] = useState(null);
 
   useEffect(() => {
-    IslandHttpClient.get('/api/exploitations/monkey')
+    IslandHttpClient.get(APIEndpoint.monkey_exploitation)
       .then(res => setExploitations(res.body['monkey_exploitations']))
   }, []);
 

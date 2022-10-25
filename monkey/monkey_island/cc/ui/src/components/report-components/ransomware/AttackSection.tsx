@@ -1,5 +1,5 @@
 import React, {ReactElement, ReactFragment, useEffect, useState} from 'react';
-import IslandHttpClient from '../../IslandHttpClient';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 import {FileEncryptionTable, TableRow} from './FileEncryptionTable';
 import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
@@ -25,7 +25,8 @@ function AttackSection(): ReactElement {
   const [tableData, setTableData] = useState(null);
 
   useEffect(() => {
-    IslandHttpClient.get('/api/telemetry?telem_category=file_encryption')
+    let url_args = {'telem_category': 'file_encryption'};
+    IslandHttpClient.get(APIEndpoint.telemetry, url_args)
       .then(resp => setTableData(processTelemetry(resp.body)));
   }, []);
 
