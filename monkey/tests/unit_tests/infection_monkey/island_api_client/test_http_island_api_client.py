@@ -22,7 +22,6 @@ from infection_monkey.island_api_client import (
 )
 
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
-PBA_FILE = "dummy.pba"
 WINDOWS = "windows"
 AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")
 AGENT_REGISTRATION = AgentRegistrationData(
@@ -38,7 +37,6 @@ TIMESTAMP = 123456789
 
 ISLAND_URI = f"https://{SERVER}/api?action=is-up"
 ISLAND_SEND_LOG_URI = f"https://{SERVER}/api/agent-logs/{AGENT_ID}"
-ISLAND_GET_PBA_FILE_URI = f"https://{SERVER}/api/pba/download/{PBA_FILE}"
 ISLAND_GET_AGENT_BINARY_URI = f"https://{SERVER}/api/agent-binaries/{WINDOWS}"
 ISLAND_SEND_EVENTS_URI = f"https://{SERVER}/api/agent-events"
 ISLAND_REGISTER_AGENT_URI = f"https://{SERVER}/api/agents"
