@@ -10,18 +10,6 @@ from .agent_sub_configurations import (
     TCPScanConfiguration,
 )
 
-PBAS = (
-    "CommunicateAsBackdoorUser",
-    "ModifyShellStartupFiles",
-    "HiddenFiles",
-    "TrapCommand",
-    "ChangeSetuidSetgid",
-    "ScheduleJobs",
-    "Timestomping",
-    "AccountDiscovery",
-    "ProcessListCollection",
-)
-
 CREDENTIAL_COLLECTORS = ("MimikatzCollector", "SSHCollector")
 
 CREDENTIAL_COLLECTOR_CONFIGURATION = tuple(
