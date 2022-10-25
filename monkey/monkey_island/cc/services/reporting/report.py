@@ -40,8 +40,6 @@ from monkey_island.cc.services.reporting.report_generation_synchronisation impor
     safe_generate_regular_report,
 )
 
-from .. import AWSService
-from . import aws_exporter
 from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
 from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
 
@@ -69,7 +67,6 @@ def has_open_ports(event: TCPScanEvent):
 
 
 class ReportService:
-    _aws_service: Optional[AWSService] = None
     _agent_repository: Optional[IAgentRepository] = None
     _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
     _agent_event_repository: Optional[IAgentEventRepository] = None
@@ -83,7 +80,6 @@ class ReportService:
     @classmethod
     def initialize(
         cls,
-        aws_service: AWSService,
         agent_repository: IAgentRepository,
         agent_configuration_repository: IAgentConfigurationRepository,
         agent_event_repository: IAgentEventRepository,
@@ -91,7 +87,6 @@ class ReportService:
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
-        cls._aws_service = aws_service
         cls._agent_repository = agent_repository
         cls._agent_configuration_repository = agent_configuration_repository
         cls._agent_event_repository = agent_event_repository
@@ -543,7 +538,6 @@ class ReportService:
             "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
         }
         save_report(report)
-        aws_exporter.handle_report(report, ReportService._aws_service.island_aws_instance)
         return report
 
     @staticmethod

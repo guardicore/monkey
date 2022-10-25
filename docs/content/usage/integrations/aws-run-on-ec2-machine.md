@@ -10,7 +10,6 @@ tags: ["aws", "integration"]
 
 If your network is deployed on Amazon Web Services (with EC2 instances) and you'd like to run the Infection Monkey to test it, this page is for you. You can easily run the Infection Monkey on various instances within your network in a secure fashion, without feeding it credentials or running shell commands on the machines you want to test.
 
-The results will be exported to the AWS Security Hub automatically as well. To learn more about that topic, see the [Infection Monkey and AWS Security Hub documentation](../aws-security-hub/).
 
 ![AWS EC2 logo](/images/usage/integrations/aws-ec2.svg?height=250px "AWS EC2 logo")
 
@@ -28,7 +27,7 @@ In order for the Infection Monkey to successfully view your instances, you'll ne
 
 #### Creating a custom IAM role
 
-Go to the [AWS IAM roles dashboard](https://console.aws.amazon.com/iam/home?#/roles) and create a new IAM role for EC2. The role will need to have some specific permissions (see Appendix A), but you can just create a role with the `AmazonEC2RoleforSSM`, `AWSSecurityHubFullAccess` and `AmazonSSMFullAccess` pre-made permissions. In the end it should look something like this:
+Go to the [AWS IAM roles dashboard](https://console.aws.amazon.com/iam/home?#/roles) and create a new IAM role for EC2. The role will need to have some specific permissions (see Appendix A), but you can just create a role with the `AmazonEC2RoleforSSM` and `AmazonSSMFullAccess` pre-made permissions. In the end it should look something like this:
 
 ![Creating a custom IAM role](/images/usage/integrations/monkey-island-aws-screenshot-3.png "Creating a custom IAM role")
 
@@ -96,54 +95,6 @@ Here's the policy of the IAM role, as a JSON object:
             "Action": [
                 "ssm:SendCommand",
                 "ssm:DescribeInstanceInformation",
-                "ssm:GetCommandInvocation"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
-
-#### For exporting security findings to the AWS Security Hub - security hub
-
-_Note: these can be set on the Monkey Island machine alone, since it's the only one exporting findings to the AWS secutiry hub._
-
-- `"securityhub:UpdateFindings"`
-- `"securityhub:BatchImportFindings"`
-
-Here's the policy for SecurityHub, as a JSON object:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "securityhub:UpdateFindings",
-                "securityhub:BatchImportFindings"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
-
-The JSON object for both of the policies combined is:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "ssm:SendCommand",
-                "ssm:DescribeInstanceInformation",
-                "securityhub:UpdateFindings",
-                "securityhub:BatchImportFindings",
                 "ssm:GetCommandInvocation"
             ],
             "Resource": "*"

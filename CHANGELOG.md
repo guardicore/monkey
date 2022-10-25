@@ -130,6 +130,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Zero Trust report. #2441
 - "GET /api/zero-trust/finding-event/<string:finding_id>" endpoint. #2441
 - "GET /api/report/zero-trust/<string:report_data>" endpoint. #2441
+- AWS Security Hub integration. #2443
 
 
 ### Fixed
