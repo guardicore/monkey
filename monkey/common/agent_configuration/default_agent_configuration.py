@@ -24,7 +24,6 @@ PBAS = (
 
 CREDENTIAL_COLLECTORS = ("MimikatzCollector", "SSHCollector")
 
-PBA_CONFIGURATION = tuple(PluginConfiguration(name=pba, options={}) for pba in PBAS)
 CREDENTIAL_COLLECTOR_CONFIGURATION = tuple(
     PluginConfiguration(name=collector, options={}) for collector in CREDENTIAL_COLLECTORS
 )
