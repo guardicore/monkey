@@ -2,8 +2,6 @@ import AdvancedMultiSelect from '../ui-components/AdvancedMultiSelect';
 import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
 import WarningBox from './WarningBox';
-import PbaInput from './PbaInput';
-import { API_PBA_LINUX, API_PBA_WINDOWS } from '../pages/ConfigurePage';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
 
 export default function UiSchema(props) {
@@ -118,48 +116,6 @@ export default function UiSchema(props) {
       },
       other_behaviors: {
         'ui:widget': 'hidden'
-      }
-    },
-    custom_pbas: {
-      classNames: 'config-template-no-header',
-      linux_command: {
-        'ui:widget': 'textarea',
-        'ui:emptyValue': ''
-      },
-      linux_file: {
-        'ui:widget': PbaInput,
-        'ui:options': {
-          filename: props.linux_filename,
-          apiEndpoint: API_PBA_LINUX,
-          setPbaFilename: props.setPbaFilenameLinux
-        }
-      },
-      windows_command: {
-        'ui:widget': 'textarea',
-        'ui:emptyValue': ''
-      },
-      windows_file: {
-        'ui:widget': PbaInput,
-        'ui:options': {
-          filename: props.windows_filename,
-          apiEndpoint: API_PBA_WINDOWS,
-          setPbaFilename: props.setPbaFilenameWindows
-        }
-      },
-      linux_filename: {
-        classNames: 'linux-pba-file-info',
-        'ui:emptyValue': ''
-      },
-      windows_filename: {
-        classNames: 'windows-pba-file-info',
-        'ui:emptyValue': ''
-      }
-    },
-    post_breach_actions: {
-      classNames: 'config-template-no-header',
-      'ui:widget': AdvancedMultiSelect,
-      post_breach_actions: {
-        classNames: 'config-template-no-header'
       }
     },
     credential_collectors: {

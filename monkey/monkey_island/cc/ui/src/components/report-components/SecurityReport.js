@@ -474,12 +474,6 @@ class ReportPageComponent extends AuthComponent {
           <BreachedServers />
         </div>
 
-        {/* Post breach data should be separated from scanned machines
-        <div style={{marginBottom: '20px'}}>
-          <PostBreach data={this.state.report.glance.scanned}/>
-        </div>
-        */}
-
         <div style={{ marginBottom: '20px' }}>
           <StolenPasswords
             data={this.state.stolenCredentials}

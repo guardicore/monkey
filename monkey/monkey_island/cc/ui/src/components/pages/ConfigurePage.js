@@ -27,8 +27,6 @@ import {
 const CONFIG_URL = '/api/agent-configuration';
 const RESET_URL = '/api/reset-agent-configuration';
 const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
-export const API_PBA_LINUX = '/api/pba/upload/PBAlinux';
-export const API_PBA_WINDOWS = '/api/pba/upload/PBAwindows';
 
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
@@ -255,14 +253,6 @@ class ConfigurePageComponent extends AuthComponent {
       .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'})) ;
   };
 
-  sendPbaRemoveRequest(apiEndpoint) {
-    let request_options = {
-      method: 'DELETE',
-      headers: {'Content-Type': 'text/plain'}
-    };
-    this.authFetch(apiEndpoint, request_options);
-  }
-
   exportConfig = async () => {
     await this.setState({lastAction: configExportAction});
     await this.attemptConfigSubmit();
@@ -318,11 +308,7 @@ class ConfigurePageComponent extends AuthComponent {
     let formProperties = {};
     formProperties['schema'] = displayedSchema
     formProperties['uiSchema'] = UiSchema({
-      selectedSection: this.state.selectedSection,
-      linux_filename: this.state.configuration.custom_pbas.linux_filename,
-      windows_filename: this.state.configuration.custom_pbas.windows_filename,
-      setPbaFilenameWindows: this.setPbaFilenameWindows,
-      setPbaFilenameLinux: this.setPbaFilenameLinux
+      selectedSection: this.state.selectedSection
     })
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['onChange'] = this.onChange;
@@ -355,22 +341,6 @@ class ConfigurePageComponent extends AuthComponent {
       )
     }
   };
-
-  setPbaFilenameWindows = (filename) => {
-    let config = this.state.configuration
-    config.custom_pbas.windows_filename = filename
-    this.setState({
-      configuration: config
-    })
-  }
-
-  setPbaFilenameLinux = (filename) => {
-    let config = this.state.configuration
-    config.custom_pbas.linux_filename = filename
-    this.setState({
-      configuration: config
-    })
-  }
 
   renderNav = () => {
     return (<Nav variant='tabs'
