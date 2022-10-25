@@ -222,6 +222,10 @@ body {
   margin-left: 1em;
 }
 
+.pull-right{
+    float: right;
+}
+
 /*
  * Map Preview Pane
  */
