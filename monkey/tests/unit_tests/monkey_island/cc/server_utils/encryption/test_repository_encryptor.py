@@ -2,8 +2,8 @@ import random
 import string
 
 import pytest
+from tests.utils import get_file_sha256_hash
 
-from common.utils.file_utils import get_file_sha256_hash
 from monkey_island.cc.server_utils.encryption import (
     LockedKeyError,
     RepositoryEncryptor,

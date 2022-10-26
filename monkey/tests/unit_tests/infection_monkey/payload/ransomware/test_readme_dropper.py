@@ -1,8 +1,8 @@
 import filecmp
 
 import pytest
+from tests.utils import get_file_sha256_hash
 
-from common.utils.file_utils import get_file_sha256_hash
 from infection_monkey.payload.ransomware.readme_dropper import leave_readme
 
 DEST_FILE = "README.TXT"

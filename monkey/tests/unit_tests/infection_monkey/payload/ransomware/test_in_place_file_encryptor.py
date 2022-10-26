@@ -9,8 +9,8 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
     TEST_KEYBOARD_TXT_CLEARTEXT_SHA256,
     TEST_KEYBOARD_TXT_ENCRYPTED_SHA256,
 )
+from tests.utils import get_file_sha256_hash
 
-from common.utils.file_utils import get_file_sha256_hash
 from infection_monkey.payload.ransomware.in_place_file_encryptor import InPlaceFileEncryptor
 from infection_monkey.utils.bit_manipulators import flip_bits
 

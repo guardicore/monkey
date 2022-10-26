@@ -17,17 +17,6 @@ def expand_path(path: str) -> Path:
     return Path(os.path.expandvars(os.path.expanduser(path)))
 
 
-def get_file_sha256_hash(filepath: Path) -> str:
-    """
-    Calculates sha256 hash from a file path
-
-    :param filepath: A Path object which defines file on the system
-    :return sha256 hash of the file
-    """
-    with open(filepath, "rb") as f:
-        return get_binary_io_sha256_hash(f)
-
-
 def get_binary_io_sha256_hash(binary: BinaryIO) -> str:
     """
     Calculates sha256 hash from a file-like object
