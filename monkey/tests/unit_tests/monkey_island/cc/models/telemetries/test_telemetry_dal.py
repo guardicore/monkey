@@ -23,10 +23,6 @@ MOCK_DATA_DICT = {
 
 MOCK_TELEMETRY = {
     "timestamp": datetime.now(),
-    "command_control_channel": {
-        "src": "192.168.56.1",
-        "dst": "192.168.56.2",
-    },
     "monkey_guid": "211375648895908",
     "telem_category": "system_info",
     "data": MOCK_DATA_DICT,
@@ -34,10 +30,6 @@ MOCK_TELEMETRY = {
 
 MOCK_NO_ENCRYPTION_NEEDED_TELEMETRY = {
     "timestamp": datetime.now(),
-    "command_control_channel": {
-        "src": "192.168.56.1",
-        "dst": "192.168.56.2",
-    },
     "monkey_guid": "211375648895908",
     "telem_category": "state",
     "data": {"done": False},

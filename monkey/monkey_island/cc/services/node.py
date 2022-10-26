@@ -102,12 +102,6 @@ class NodeService:
 
         mongo.db.monkey.update({"guid": monkey["guid"]}, {"$set": props_to_set}, upsert=False)
 
-    @staticmethod
-    def add_communication_info(monkey, info):
-        mongo.db.monkey.update(
-            {"guid": monkey["guid"]}, {"$set": {"command_control_channel": info}}, upsert=False
-        )
-
     # TODO this returns a mock island agent
     # It's better to just initialize the island machine on reset I think
     @staticmethod

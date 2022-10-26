@@ -1,5 +1,3 @@
-from .command_control_channel import CommandControlChannel
-
 # Order of importing matters here, for registering the embedded and referenced documents before
 # using them.
 from .monkey import Monkey
