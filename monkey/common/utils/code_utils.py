@@ -4,16 +4,6 @@ from typing import Any, Dict, List, MutableMapping, Type, TypeVar
 T = TypeVar("T")
 
 
-class abstractstatic(staticmethod):
-    __slots__ = ()
-
-    def __init__(self, function):
-        super(abstractstatic, self).__init__(function)
-        function.__isabstractmethod__ = True
-
-    __isabstractmethod__ = True
-
-
 class Singleton(type):
     _instances: Dict[Type, type] = {}
 
