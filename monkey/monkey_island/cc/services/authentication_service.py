@@ -9,11 +9,7 @@ from common.utils.exceptions import (
 )
 from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repository import IUserRepository
-from monkey_island.cc.server_utils.encryption import (
-    ILockableEncryptor,
-    reset_datastore_encryptor,
-    unlock_datastore_encryptor,
-)
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 
 class AuthenticationService:
@@ -69,16 +65,10 @@ class AuthenticationService:
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.unlock(secret.encode())
 
-        # Legacy datastore encryptor will be removed soon
-        unlock_datastore_encryptor(self._data_dir, secret)
-
     def _reset_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
-
-        # Legacy datastore encryptor will be removed soon
-        reset_datastore_encryptor(self._data_dir, secret)
 
 
 def _hash_password(plaintext_password: str) -> str:
