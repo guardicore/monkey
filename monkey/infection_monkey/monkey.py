@@ -316,7 +316,7 @@ class InfectionMonkey:
         puppet.load_plugin(
             "PowerShellExploiter", exploit_wrapper.wrap(PowerShellExploiter), PluginType.EXPLOITER
         )
-        puppet.load_plugin("SmbExploiter", exploit_wrapper.wrap(SMBExploiter), PluginType.EXPLOITER)
+        puppet.load_plugin("SMBExploiter", exploit_wrapper.wrap(SMBExploiter), PluginType.EXPLOITER)
         puppet.load_plugin("SSHExploiter", exploit_wrapper.wrap(SSHExploiter), PluginType.EXPLOITER)
         puppet.load_plugin("WmiExploiter", exploit_wrapper.wrap(WmiExploiter), PluginType.EXPLOITER)
         puppet.load_plugin(

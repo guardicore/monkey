@@ -26,7 +26,7 @@ from .utils import (
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     brute_force = [
         PluginConfiguration(name="MSSQLExploiter", options={}),
-        PluginConfiguration(name="SmbExploiter", options={"smb_download_timeout": 30}),
+        PluginConfiguration(name="SMBExploiter", options={"smb_download_timeout": 30}),
     ]
     vulnerability = [
         PluginConfiguration(name="HadoopExploiter", options={}),

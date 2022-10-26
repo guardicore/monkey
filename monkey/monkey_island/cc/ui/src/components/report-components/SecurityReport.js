@@ -59,7 +59,7 @@ class ReportPageComponent extends AuthComponent {
 
   IssueDescriptorEnum =
     {
-      'SmbExploiter': {
+      'SMBExploiter': {
         [this.issueContentTypes.REPORT]: smbReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },

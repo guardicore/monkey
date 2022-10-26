@@ -74,7 +74,7 @@ BRUTE_FORCE_EXPLOITERS = (
     PluginConfiguration(name="MSSQLExploiter", options={}),
     PluginConfiguration(name="PowerShellExploiter", options={}),
     PluginConfiguration(name="SSHExploiter", options={}),
-    PluginConfiguration(name="SmbExploiter", options={"smb_download_timeout": 30}),
+    PluginConfiguration(name="SMBExploiter", options={"smb_download_timeout": 30}),
     PluginConfiguration(name="WmiExploiter", options={"smb_download_timeout": 30}),
 )
 
