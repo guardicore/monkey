@@ -7,7 +7,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import IslandMode, Machine, MonkeyTtl, Report
+from monkey_island.cc.models import IslandMode, Machine, Monkey, MonkeyTtl, Report
 from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.repository import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
@@ -70,6 +70,8 @@ Deployment.DOCKER
 
 # Mongoengine documents
 Edge.meta
+Monkey.guid
+Monkey.launch_time
 MonkeyTtl.expire_at
 Report.overview
 Report.glance
