@@ -72,15 +72,10 @@ class TelemetryFeed(AbstractResource):
             return "Monkey started."
 
     @staticmethod
-    def get_trace_telem_brief(telem):
-        return "Trace: %s" % telem["data"]["msg"]
-
-    @staticmethod
     def should_show_brief(telem) -> bool:
         return telem["telem_category"] in TELEM_PROCESS_DICT
 
 
 TELEM_PROCESS_DICT = {
     TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
-    TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
 }

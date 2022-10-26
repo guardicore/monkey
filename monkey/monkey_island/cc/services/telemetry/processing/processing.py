@@ -11,8 +11,6 @@ logger = logging.getLogger(__name__)
 TELEMETRY_CATEGORY_TO_PROCESSING_FUNC = {
     TelemCategoryEnum.AWS_INFO: process_aws_telemetry,
     TelemCategoryEnum.STATE: process_state_telemetry,
-    # `lambda *args, **kwargs: None` is a no-op.
-    TelemCategoryEnum.TRACE: lambda *args, **kwargs: None,
 }
 
 
