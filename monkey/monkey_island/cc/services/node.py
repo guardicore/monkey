@@ -1,4 +1,3 @@
-import socket
 from datetime import datetime
 
 from bson import ObjectId
@@ -19,24 +18,6 @@ class NodeService:
         if node["domain_name"]:
             domain_name = " (" + node["domain_name"] + ")"
         return node["os"]["version"] + " : " + node["ip_addresses"][0] + domain_name
-
-    # A lot of methods like these duplicate between monkey and node.
-    # That's a result of poor entity model, because both nodes and monkeys
-    # store the same information. It's best to extract the machine specific data
-    # to "Machine" entity (like IP's and os) and agent specific data to "Agent" (like alive,
-    # parent, etc)
-    @staticmethod
-    def get_monkey_os(monkey):
-        os = "unknown"
-        if monkey["description"].lower().find("linux") != -1:
-            os = "linux"
-        elif monkey["description"].lower().find("windows") != -1:
-            os = "windows"
-        return os
-
-    @staticmethod
-    def get_node_os(node):
-        return node["os"]["type"]
 
     @staticmethod
     def get_monkey_manual_run(monkey):
@@ -137,25 +118,6 @@ class NodeService:
             if monkey is not None:
                 return monkey
         return None
-
-    @staticmethod
-    def get_monkey_island_pseudo_id():
-        return ObjectId("000000000000000000000000")
-
-    @staticmethod
-    def get_monkey_island_pseudo_net_node():
-        return {
-            "id": NodeService.get_monkey_island_pseudo_id(),
-            "label": "MonkeyIsland",
-            "group": "island",
-        }
-
-    @staticmethod
-    def get_monkey_island_node():
-        island_node = NodeService.get_monkey_island_pseudo_net_node()
-        island_node["ip_addresses"] = get_my_ip_addresses_legacy()
-        island_node["domain_name"] = socket.gethostname()
-        return island_node
 
     @staticmethod
     def get_node_or_monkey_by_id(node_id):
