@@ -9,6 +9,7 @@ from mongoengine import (
     Document,
     DoesNotExist,
     DynamicField,
+    FloatField,
     ListField,
     ReferenceField,
     StringField,
@@ -29,10 +30,12 @@ class Monkey(Document):
     """
 
     # SCHEMA
+    guid = StringField(required=True)
     should_stop = BooleanField()
     dead = BooleanField()
     hostname = StringField()
     ip_addresses = ListField(StringField())
+    launch_time = FloatField()
     modifytime = DateTimeField()
     # TODO make "parent" an embedded document, so this can be removed and the schema explained (
     #  and validated) verbosely.

@@ -1,4 +1,3 @@
-import itertools
 import socket
 import struct
 from dataclasses import dataclass
@@ -6,7 +5,6 @@ from random import shuffle  # noqa: DUO102
 from threading import Lock
 from typing import Dict, Optional, Set
 
-import netifaces
 import psutil
 from egg_timer import EggTimer
 
@@ -26,31 +24,6 @@ RTF_REJECT = 0x0200
 class NetworkAddress:
     ip: str
     domain: Optional[str]
-
-
-def get_host_subnets():
-    """
-    Returns a list of subnets visible to host (omitting loopback and auto conf networks)
-    Each subnet item contains the host IP in that network + the subnet.
-    :return: List of dict, keys are "addr" and "subnet"
-    """
-    ipv4_nets = [
-        netifaces.ifaddresses(interface)[netifaces.AF_INET]
-        for interface in netifaces.interfaces()
-        if netifaces.AF_INET in netifaces.ifaddresses(interface)
-    ]
-    # flatten
-    ipv4_nets = itertools.chain.from_iterable(ipv4_nets)
-    # remove loopback
-    ipv4_nets = [network for network in ipv4_nets if network["addr"] != "127.0.0.1"]
-    # remove auto conf
-    ipv4_nets = [network for network in ipv4_nets if not network["addr"].startswith("169.254")]
-    for network in ipv4_nets:
-        if "broadcast" in network:
-            network.pop("broadcast")
-        for attr in network:
-            network[attr] = network[attr]
-    return ipv4_nets
 
 
 if is_windows_os():
