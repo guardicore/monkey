@@ -76,20 +76,11 @@ class TelemetryFeed(AbstractResource):
         return "Trace: %s" % telem["data"]["msg"]
 
     @staticmethod
-    def get_post_breach_telem_brief(telem):
-        return "%s post breach action executed on %s (%s) machine." % (
-            telem["data"][0]["name"],
-            telem["data"][0]["hostname"],
-            telem["data"][0]["ip"],
-        )
-
-    @staticmethod
     def should_show_brief(telem) -> bool:
         return telem["telem_category"] in TELEM_PROCESS_DICT
 
 
 TELEM_PROCESS_DICT = {
-    TelemCategoryEnum.POST_BREACH: TelemetryFeed.get_post_breach_telem_brief,
     TelemCategoryEnum.STATE: TelemetryFeed.get_state_telem_brief,
     TelemCategoryEnum.TRACE: TelemetryFeed.get_trace_telem_brief,
 }

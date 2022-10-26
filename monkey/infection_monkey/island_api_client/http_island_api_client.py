@@ -10,11 +10,7 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
-from common.common_consts.timeouts import (
-    LONG_REQUEST_TIMEOUT,
-    MEDIUM_REQUEST_TIMEOUT,
-    SHORT_REQUEST_TIMEOUT,
-)
+from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, SocketAddress
 
@@ -100,17 +96,6 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             timeout=MEDIUM_REQUEST_TIMEOUT,
         )
         response.raise_for_status()
-
-    @handle_island_errors
-    def get_pba_file(self, filename: str):
-        response = requests.get(  # noqa: DUO123
-            f"{self._api_url}/pba/download/{filename}",
-            verify=False,
-            timeout=LONG_REQUEST_TIMEOUT,
-        )
-        response.raise_for_status()
-
-        return response.content
 
     @handle_island_errors
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:

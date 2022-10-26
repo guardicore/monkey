@@ -8,7 +8,6 @@ from multiprocessing import freeze_support
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
-import infection_monkey.post_breach  # noqa: F401
 from common.version import get_version
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG

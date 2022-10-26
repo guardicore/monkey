@@ -4,7 +4,6 @@ from .i_puppet import (
     ExploiterResultData,
     PortScanData,
     FingerprintData,
-    PostBreachData,
     UnknownPluginError,
 )
 from .i_fingerprinter import IFingerprinter

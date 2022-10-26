@@ -3,10 +3,7 @@ Everything in this file is what Vulture found as dead code but either isn't real
 dead or is kept deliberately. Referencing these in a file like this makes sure that
 Vulture doesn't mark these as dead again.
 """
-from common.agent_configuration.agent_sub_configurations import (
-    CustomPBAConfiguration,
-    ScanTargetConfiguration,
-)
+from common.agent_configuration.agent_sub_configurations import ScanTargetConfiguration
 from common.agent_events import (
     ExploitationEvent,
     PasswordRestorationEvent,
@@ -47,21 +44,8 @@ ExploiterResultData.interrupted  # (infection_monkey.i_puppet.i_puppet.py)
 Monkey.guid  # (monkey_island.cc.models.monkey.py)
 NetworkPort.ge  # unused vairable (monkey/common/types.py:28)
 NetworkPort.le  # unused variable (monkey/common/types.py:29)
-fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
-set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:37)
-fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:57)
-set_os_windows  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:57)
-fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:77)
-set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:77)
-fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:92)
-set_os_windows  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:92)
-fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:107)
-set_os_linux  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:107)
-fake_monkey_dir_path  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:122)
-set_os_windows  # unused variable (monkey/tests/infection_monkey/post_breach/actions/test_users_custom_pba.py:122)
 patch_new_user_classes  # unused variable (monkey/tests/infection_monkey/utils/test_auto_new_user_factory.py:25)
 patch_new_user_classes  # unused variable (monkey/tests/infection_monkey/utils/test_auto_new_user_factory.py:31)
-custom_pba_directory  # unused variable (monkey/tests/monkey_island/cc/services/test_post_breach_files.py:20)
 configure_resources  # unused function (monkey/tests/monkey_island/cc/environment/test_environment.py:26)
 change_to_mongo_mock  # unused function (monkey/monkey_island/cc/test_common/fixtures/mongomock_fixtures.py:9)
 uses_database  # unused function (monkey/monkey_island/cc/test_common/fixtures/mongomock_fixtures.py:16)
@@ -95,10 +79,8 @@ MSSQL  # unused variable (monkey/monkey_island/cc/services/reporting/issue_proce
 VSFTPD  # unused variable (monkey/monkey_island/cc/services/reporting/issue_processing/exploit_processing/exploiter_descriptor_enum.py:45)
 POWERSHELL  # (\monkey\monkey_island\cc\services\reporting\issue_processing\exploit_processing\exploiter_descriptor_enum.py:52)
 ExploiterDescriptorEnum.LOG4SHELL
-PbaResults  # unused class (monkey/monkey_island/cc/models/pba_results.py:4)
 internet_access  # unused variable (monkey/monkey_island/cc/models/monkey.py:43)
 config_error  # unused variable (monkey/monkey_island/cc/models/monkey.py:53)
-pba_results  # unused variable (monkey/monkey_island/cc/models/monkey.py:55)
 launch_time  # unused variable (monkey/monkey_island/cc/models/monkey.py)
 command_control_channel  # unused variable (monkey/monkey_island/cc/models/monkey.py:58)
 meta  # unused variable (monkey/monkey_island/cc/models/monkey_ttl.py:34)
@@ -116,12 +98,6 @@ ElasticFinger  # unused class (monkey/infection_monkey/network/elasticfinger.py:
 HTTPFinger  # unused class (monkey/infection_monkey/network/httpfinger.py:9)
 MySQLFinger  # unused class (monkey/infection_monkey/network/mysqlfinger.py:13)
 SSHFinger  # unused class (monkey/infection_monkey/network/sshfinger.py:15)
-ClearCommandHistory  # unused class (monkey/infection_monkey/post_breach/actions/clear_command_history.py:11)
-AccountDiscovery  # unused class (monkey/infection_monkey/post_breach/actions/discover_accounts.py:8)
-ModifyShellStartupFiles  # unused class (monkey/infection_monkey/post_breach/actions/modify_shell_startup_files.py:11)
-Timestomping  # unused class (monkey/infection_monkey/post_breach/actions/timestomping.py:6)
-SignedScriptProxyExecution  # unused class (monkey/infection_monkey/post_breach/actions/use_signed_scripts.py:15)
-ProcessListCollection  # unused class (monkey/infection_monkey/post_breach/actions/collect_processes_list.py:19)
 EnvironmentCollector  # unused class (monkey/infection_monkey/system_info/collectors/environment_collector.py:19)
 HostnameCollector  # unused class (monkey/infection_monkey/system_info/collectors/hostname_collector.py:10)
 _.representations  # unused attribute (monkey/monkey_island/cc/app.py:180)
@@ -134,7 +110,6 @@ protocol_version  # unused variable (monkey/infection_monkey/transport/http.py:2
 binaries  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-pypsrp.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.exploit.py:3)
 hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.network.py:3)
-hiddenimports  # unused variable (monkey/infection_monkey/pyinstaller_hooks/hook-infection_monkey.post_breach.actions.py:4)
 _.wShowWindow  # unused attribute (monkey/infection_monkey/monkey.py:345)
 _.dwFlags  # unused attribute (monkey/infection_monkey/monkey.py:344)
 _.do_get  # unused method (monkey/infection_monkey/exploit/zerologon_utils/remote_shell.py:79)
@@ -178,7 +153,6 @@ Report.meta
 LDAPServerFactory.buildProtocol
 get_file_sha256_hash
 strict_slashes  # unused attribute (monkey/monkey_island/cc/app.py:96)
-post_breach_actions  # unused variable (monkey\infection_monkey\config.py:95)
 LMHash.validate_hash_format
 NTHash.validate_hash_format
 Credentials.Config.json_encoders
@@ -189,7 +163,6 @@ APPIMAGE  # unused variable (monkey/monkey/monkey_island/cc/deployment.py:7)
 DOCKER  # unused variable (monkey/monkey/monkey_island/cc/deployment.py:8)
 
 # these are not needed for it to work, but may be useful extra information to understand what's going on
-WINDOWS_PBA_TYPE  # unused variable (monkey/monkey_island/cc/resources/pba_file_upload.py:23)
 WINDOWS_TTL  # unused variable (monkey/infection_monkey/network/ping_scanner.py:17)
 wlist  # unused variable (monkey/infection_monkey/transport/tcp.py:28)
 wlist  # unused variable (monkey/infection_monkey/transport/http.py:176)
@@ -214,7 +187,6 @@ release_convention  # unused method (monkey/common/di_container.py:174)
 
 # Agent Configuration
 _make_plugin_configuration  # unused method (monkey/common/configuration/agent_configuration.py:19)
-_make_custom_pba_configuration  # unused method (monkey/common/configuration/agent_configuration.py:24)
 _make_exploiter_configuration  # unused method (monkey/common/configuration/agent_configuration.py:69)
 _make_exploitation_options_configuration  # unused method (monkey/common/configuration/agent_configuration.py:86)
 _make_scan_target_configuration  # unused method (monkey/common/configuration/agent_configuration.py:105)
@@ -289,7 +261,6 @@ MongoMachineRepository
 key_list
 simulation
 netmap
-validate_windows_filename_not_reserved
 subscribe_all  # common\event_queue\i_agent_event_queue.py
 subscribe_type  # common\event_queue\i_agent_event_queue.py
 subscribe_tag  # common\event_queue\i_agent_event_queue.py
@@ -335,8 +306,6 @@ underscore_attrs_are_private
 extra
 allow_mutation
 validate_assignment
-CustomPBAConfiguration.linux_filename_valid
-CustomPBAConfiguration.windows_filename_valid
 ScanTargetConfiguration.blocked_ips_valid
 ScanTargetConfiguration.inaccessible_subnets_valid
 ScanTargetConfiguration.subnets_valid

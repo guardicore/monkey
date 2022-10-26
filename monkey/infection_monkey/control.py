@@ -67,9 +67,3 @@ class ControlClient:
             )
         except Exception as exc:
             logger.warning(f"Error connecting to control server {self.server_address}: {exc}")
-
-    def get_pba_file(self, filename):
-        try:
-            return self._island_api_client.get_pba_file(filename)
-        except Exception as exc:
-            logger.warning(f"Error connecting to control server {self.server_address}: {exc}")

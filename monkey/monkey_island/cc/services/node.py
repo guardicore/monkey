@@ -148,7 +148,6 @@ class NodeService:
             # contain "_running". This is a small optimisation, to not call "is_dead" twice.
             "dead": "_running" not in monkey_group,
             "domain_name": "",
-            "pba_results": monkey["pba_results"] if "pba_results" in monkey else [],
         }
 
     @staticmethod

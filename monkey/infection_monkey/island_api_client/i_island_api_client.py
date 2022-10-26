@@ -47,23 +47,6 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_pba_file(self, filename: str) -> bytes:
-        """
-        Get a custom PBA file from the island
-
-        :param filename: The name of the custom PBA file
-        :return: The contents of the custom PBA file in bytes
-        :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
-        :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
-                                       island due to an issue in the request sent from the client
-        :raises IslandAPIRequestFailedError: If an error occurs while attempting to connect to the
-                                             island due to an error on the server
-        :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
-        :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
-                                custom PBA file
-        """
-
-    @abstractmethod
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         """
         Get an agent binary for the given OS from the island

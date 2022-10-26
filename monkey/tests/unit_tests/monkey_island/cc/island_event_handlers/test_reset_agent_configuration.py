@@ -1,22 +1,14 @@
-from unittest.mock import MagicMock
-
 import pytest
 from tests.monkey_island import InMemoryAgentConfigurationRepository
 
 from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.island_event_handlers import reset_agent_configuration
-from monkey_island.cc.repository import IAgentConfigurationRepository, IFileRepository
-
-LINUX_FILENAME = "linux_pba_file.sh"
-WINDOWS_FILENAME = "windows_pba_file.ps1"
+from monkey_island.cc.repository import IAgentConfigurationRepository
 
 
 @pytest.fixture
 def agent_configuration(default_agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    custom_pbas = default_agent_configuration.custom_pbas.copy(
-        update={"linux_filename": LINUX_FILENAME, "windows_filename": WINDOWS_FILENAME},
-    )
-    return default_agent_configuration.copy(update={"custom_pbas": custom_pbas})
+    return default_agent_configuration.copy()
 
 
 @pytest.fixture
@@ -30,30 +22,16 @@ def agent_configuration_repository(
 
 
 @pytest.fixture
-def mock_file_repository() -> IFileRepository:
-    return MagicMock(spec=IFileRepository)
-
-
-@pytest.fixture
 def callable_reset_agent_configuration(
     agent_configuration_repository: IAgentConfigurationRepository,
-    mock_file_repository: IFileRepository,
 ) -> reset_agent_configuration:
-    return reset_agent_configuration(agent_configuration_repository, mock_file_repository)
-
-
-def test_reset_configuration__remove_pba_files(
-    callable_reset_agent_configuration, mock_file_repository
-):
-    callable_reset_agent_configuration()
-
-    assert mock_file_repository.delete_file.called_with(LINUX_FILENAME)
-    assert mock_file_repository.delete_file.called_with(WINDOWS_FILENAME)
+    return reset_agent_configuration(agent_configuration_repository)
 
 
 def test_reset_configuration__agent_configuration_changed(
     callable_reset_agent_configuration, agent_configuration_repository, agent_configuration
 ):
+    agent_configuration.keep_tunnel_open_time = 99
     callable_reset_agent_configuration()
 
     assert agent_configuration_repository.get_configuration() != agent_configuration

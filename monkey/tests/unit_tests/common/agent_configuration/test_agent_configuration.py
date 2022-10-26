@@ -2,13 +2,10 @@ import pytest
 from tests.common.example_agent_configuration import (
     AGENT_CONFIGURATION,
     BLOCKED_IPS,
-    CUSTOM_PBA_CONFIGURATION,
     EXPLOITATION_CONFIGURATION,
     FINGERPRINTERS,
     ICMP_CONFIGURATION,
     INACCESSIBLE_SUBNETS,
-    LINUX_COMMAND,
-    LINUX_FILENAME,
     NETWORK_SCAN_CONFIGURATION,
     PLUGIN_CONFIGURATION,
     PLUGIN_NAME,
@@ -20,13 +17,10 @@ from tests.common.example_agent_configuration import (
     SUBNETS,
     TCP_SCAN_CONFIGURATION,
     TIMEOUT,
-    WINDOWS_COMMAND,
-    WINDOWS_FILENAME,
 )
 
 from common.agent_configuration.agent_configuration import AgentConfiguration
 from common.agent_configuration.agent_sub_configurations import (
-    CustomPBAConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
@@ -45,47 +39,6 @@ def test_build_plugin_configuration():
 
     assert config.name == PLUGIN_NAME
     assert config.options == PLUGIN_OPTIONS
-
-
-def test_custom_pba_configuration_schema():
-    config = CustomPBAConfiguration(**CUSTOM_PBA_CONFIGURATION)
-
-    assert config.linux_command == LINUX_COMMAND
-    assert config.linux_filename == LINUX_FILENAME
-    assert config.windows_command == WINDOWS_COMMAND
-    assert config.windows_filename == WINDOWS_FILENAME
-
-
-def test_custom_pba_configuration_schema__empty_filenames_allowed():
-    empty_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
-    empty_filename_configuration.update({"linux_filename": "", "windows_filename": ""})
-
-    config = CustomPBAConfiguration(**empty_filename_configuration)
-
-    assert config.linux_command == LINUX_COMMAND
-    assert config.linux_filename == ""
-    assert config.windows_command == WINDOWS_COMMAND
-    assert config.windows_filename == ""
-
-
-@pytest.mark.parametrize("linux_filename", ["/", "/abc/", "\0"])
-def test_custom_pba_configuration_schema__invalid_linux_filename(linux_filename):
-    invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
-    invalid_filename_configuration["linux_filename"] = linux_filename
-
-    with pytest.raises(ValueError):
-        CustomPBAConfiguration(**invalid_filename_configuration)
-
-
-@pytest.mark.parametrize(
-    "windows_filename", ["CON", "CON.txt", "con.abc.pdf", " ", "abc.", "a?b", "d\\e"]
-)
-def test_custom_pba_configuration_schema__invalid_windows_filename(windows_filename):
-    invalid_filename_configuration = CUSTOM_PBA_CONFIGURATION.copy()
-    invalid_filename_configuration["windows_filename"] = windows_filename
-
-    with pytest.raises(ValueError):
-        CustomPBAConfiguration(**invalid_filename_configuration)
 
 
 def test_scan_target_configuration():
@@ -244,8 +197,6 @@ def test_agent_configuration():
 
     assert isinstance(config, AgentConfiguration)
     assert config.keep_tunnel_open_time == 30
-    assert isinstance(config.custom_pbas, CustomPBAConfiguration)
-    assert isinstance(config.post_breach_actions[0], PluginConfiguration)
     assert isinstance(config.credential_collectors[0], PluginConfiguration)
     assert isinstance(config.payloads[0], PluginConfiguration)
     assert isinstance(config.propagation, PropagationConfiguration)

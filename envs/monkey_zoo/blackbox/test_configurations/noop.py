@@ -2,7 +2,6 @@ from typing import Tuple
 
 from common.agent_configuration import (
     AgentConfiguration,
-    CustomPBAConfiguration,
     ExploitationConfiguration,
     ExploitationOptionsConfiguration,
     ICMPScanConfiguration,
@@ -14,10 +13,6 @@ from common.agent_configuration import (
 from common.credentials import Credentials
 
 from . import TestConfiguration
-
-_custom_pba_configuration = CustomPBAConfiguration(
-    linux_command="", linux_filename="", windows_command="", windows_filename=""
-)
 
 _tcp_scan_configuration = TCPScanConfiguration(timeout=3.0, ports=[])
 _icmp_scan_configuration = ICMPScanConfiguration(timeout=1.0)
@@ -44,8 +39,6 @@ _propagation_configuration = PropagationConfiguration(
 
 _agent_configuration = AgentConfiguration(
     keep_tunnel_open_time=0,
-    custom_pbas=_custom_pba_configuration,
-    post_breach_actions=[],
     credential_collectors=[],
     payloads=[],
     propagation=_propagation_configuration,

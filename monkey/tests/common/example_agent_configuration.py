@@ -2,17 +2,6 @@ PLUGIN_NAME = "bond"
 PLUGIN_OPTIONS = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
 PLUGIN_CONFIGURATION = {"name": PLUGIN_NAME, "options": PLUGIN_OPTIONS}
 
-LINUX_COMMAND = "a"
-LINUX_FILENAME = "b"
-WINDOWS_COMMAND = "c"
-WINDOWS_FILENAME = "d"
-CUSTOM_PBA_CONFIGURATION = {
-    "linux_command": LINUX_COMMAND,
-    "linux_filename": LINUX_FILENAME,
-    "windows_command": WINDOWS_COMMAND,
-    "windows_filename": WINDOWS_FILENAME,
-}
-
 BLOCKED_IPS = ["10.0.0.1", "192.168.1.1"]
 INACCESSIBLE_SUBNETS = ["172.0.0.0/24", "172.2.2.0/24", "192.168.56.0/24"]
 SCAN_MY_NETWORKS = True
@@ -65,8 +54,6 @@ PROPAGATION_CONFIGURATION = {
 
 AGENT_CONFIGURATION = {
     "keep_tunnel_open_time": 30,
-    "custom_pbas": CUSTOM_PBA_CONFIGURATION,
-    "post_breach_actions": [PLUGIN_CONFIGURATION],
     "credential_collectors": [PLUGIN_CONFIGURATION],
     "payloads": [PLUGIN_CONFIGURATION],
     "propagation": PROPAGATION_CONFIGURATION,

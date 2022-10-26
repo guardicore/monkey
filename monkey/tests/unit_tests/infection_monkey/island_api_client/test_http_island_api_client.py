@@ -22,7 +22,6 @@ from infection_monkey.island_api_client import (
 )
 
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
-PBA_FILE = "dummy.pba"
 WINDOWS = "windows"
 AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")
 AGENT_REGISTRATION = AgentRegistrationData(
@@ -38,7 +37,6 @@ TIMESTAMP = 123456789
 
 ISLAND_URI = f"https://{SERVER}/api?action=is-up"
 ISLAND_SEND_LOG_URI = f"https://{SERVER}/api/agent-logs/{AGENT_ID}"
-ISLAND_GET_PBA_FILE_URI = f"https://{SERVER}/api/pba/download/{PBA_FILE}"
 ISLAND_GET_AGENT_BINARY_URI = f"https://{SERVER}/api/agent-binaries/{WINDOWS}"
 ISLAND_SEND_EVENTS_URI = f"https://{SERVER}/api/agent-events"
 ISLAND_REGISTER_AGENT_URI = f"https://{SERVER}/api/agents"
@@ -138,43 +136,6 @@ def test_island_api_client_send_log__status_code(island_api_client, status_code,
         with pytest.raises(expected_error):
             m.put(ISLAND_SEND_LOG_URI, status_code=status_code)
             island_api_client.send_log(agent_id=AGENT_ID, log_contents="some_data")
-
-
-@pytest.mark.parametrize(
-    "actual_error, expected_error",
-    [
-        (requests.exceptions.ConnectionError, IslandAPIConnectionError),
-        (TimeoutError, IslandAPITimeoutError),
-        (Exception, IslandAPIError),
-    ],
-)
-def test_island_api_client__get_pba_file(island_api_client, actual_error, expected_error):
-    with requests_mock.Mocker() as m:
-        m.get(ISLAND_URI)
-        island_api_client.connect(SERVER)
-
-        with pytest.raises(expected_error):
-            m.get(ISLAND_GET_PBA_FILE_URI, exc=actual_error)
-            island_api_client.get_pba_file(filename=PBA_FILE)
-
-
-@pytest.mark.parametrize(
-    "status_code, expected_error",
-    [
-        (401, IslandAPIRequestError),
-        (501, IslandAPIRequestFailedError),
-    ],
-)
-def test_island_api_client_get_pba_file__status_code(
-    island_api_client, status_code, expected_error
-):
-    with requests_mock.Mocker() as m:
-        m.get(ISLAND_URI)
-        island_api_client.connect(SERVER)
-
-        with pytest.raises(expected_error):
-            m.get(ISLAND_GET_PBA_FILE_URI, status_code=status_code)
-            island_api_client.get_pba_file(filename=PBA_FILE)
 
 
 @pytest.mark.parametrize(

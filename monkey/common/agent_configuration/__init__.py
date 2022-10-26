@@ -1,6 +1,5 @@
 from .agent_configuration import AgentConfiguration
 from .agent_sub_configurations import (
-    CustomPBAConfiguration,
     PluginConfiguration,
     ScanTargetConfiguration,
     ICMPScanConfiguration,

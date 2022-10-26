@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, Iterable, Sequence
+from typing import Dict, Sequence
 
 from common import OperatingSystem
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
@@ -11,7 +11,6 @@ from infection_monkey.i_puppet import (
     IPuppet,
     PluginType,
     PortScanData,
-    PostBreachData,
 )
 from infection_monkey.model import VictimHost
 
@@ -54,14 +53,6 @@ class MockPuppet(IPuppet):
             return windows_credentials
 
         return []
-
-    def run_pba(self, name: str, options: Dict) -> Iterable[PostBreachData]:
-        logger.debug(f"run_pba({name}, {options})")
-
-        if name == "AccountDiscovery":
-            return [PostBreachData(name, "pba command 1", ["pba result 1", True])]
-        else:
-            return [PostBreachData(name, "pba command 2", ["pba result 2", False])]
 
     def ping(self, host: str, timeout: float = 1) -> PingScanData:
         logger.debug(f"run_ping({host}, {timeout})")
