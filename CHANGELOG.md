@@ -133,6 +133,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "POST /api/pba/upload/<string:target_os>?load=<string:filename>" endpoint. #2442
 - "POST /api/pba/upload/<string:target_os>?restore=<string:filename>" endpoint. #2442
 - "GET /api/netmap/node" endpoint. #2453
+- "GET /api/netmap/edge" endpoint. #2453
 - The TelemetryLog component from the Infection Map page. #2500
 
 ### Fixed
