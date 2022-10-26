@@ -35,17 +35,13 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Reset workflow. Now it's possible to delete data gathered by agents without
   resetting the configuration and reset procedure requires fewer clicks. #957
 - Reduced the map refresh rate from 5 seconds to 1.
-- "Communicate as Backdoor User" PBA's HTTP requests to request headers only and
-  include a timeout. #1577
 - The setup procedure for custom server_config.json files to be simpler. #1576
 - The order and content of Monkey Island's initialization logging to give
   clearer instructions to the user and avoid confusion. #1684
-- The process list collection system info collector to now be a post-breach action. #1697
 - The "/api/monkey/download" endpoint to accept an OS and return a file. #1675
 - Log messages to contain human-readable thread names. #1766
 - The log file name to `infection-monkey-agent-<TIMESTAMP>-<RANDOM_STRING>.log`. #1761
 - "Logs" page renamed to "Telemetries". #1640
-- The "/api/fileUpload" endpoint to "/api/file-upload". #1888
 - The "/api/test/clear_caches" endpoint to "/api/test/clear-caches". #1888
 - All "/api/monkey_control" endpoints to "/api/monkey-control". #1888
 - All "/api/monkey" endpoints to "/api/agent". #1888
@@ -63,7 +59,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/log/island/download` endpoint to `/api/island/log`. #2107
 - `/api/auth` endpoint to `/api/authenticate`. #2105
 - `/api/registration` endpoint to `/api/register`. #2105
-- `/api/file-upload` endpoit to `/api/pba/upload`. #2154
 - Improved the speed of ransomware encryption by 2-3x. #2123
 - "-s/--server" to "-s/--servers". #2216
 - "-s/--servers" accepts list of servers separated by comma. #2216
@@ -141,8 +136,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
 - Windows "run as a user" powershell command for manual agent runs. #1556
-- A bug in the "Signed Script Proxy Execution" PBA that downloaded the exe on Linux
-  systems as well. #1557
 - A bug where T1216_random_executable.exe was copied to disk even if the signed
   script proxy execution PBA was disabled. #1864
 - Unnecessary collection of kerberos credentials. #1771
