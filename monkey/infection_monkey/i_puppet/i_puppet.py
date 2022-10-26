@@ -19,7 +19,6 @@ class UnknownPluginError(Exception):
 class ExploiterResultData:
     exploitation_success: bool = False
     propagation_success: bool = False
-    interrupted: bool = False
     os: str = ""
     info: Optional[Mapping] = None
     attempts: Optional[Iterable] = None
