@@ -142,24 +142,6 @@ class MockPuppet(IPuppet):
         interrupt: threading.Event,
     ) -> ExploiterResultData:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
-        attempts = [
-            {
-                "result": False,
-                "user": "Administrator",
-                "password": "",
-                "lm_hash": "",
-                "ntlm_hash": "",
-                "ssh_key": host,
-            },
-            {
-                "result": False,
-                "user": "root",
-                "password": "",
-                "lm_hash": "",
-                "ntlm_hash": "",
-                "ssh_key": host,
-            },
-        ]
         info_wmi = {
             "display_name": "WMI",
             "started": "2021-11-25T15:57:06.307696",
@@ -185,42 +167,36 @@ class MockPuppet(IPuppet):
         successful_exploiters = {
             DOT_1: {
                 "ZerologonExploiter": ExploiterResultData(
-                    False, False, False, OperatingSystem.WINDOWS.value, {}, [], "Zerologon failed"
+                    False, False, OperatingSystem.WINDOWS.value, {}, "Zerologon failed"
                 ),
                 "SSHExploiter": ExploiterResultData(
                     False,
                     False,
-                    False,
                     OperatingSystem.LINUX.value,
                     info_ssh,
-                    attempts,
                     "Failed exploiting",
                 ),
                 "WmiExploiter": ExploiterResultData(
-                    True, True, False, OperatingSystem.WINDOWS.value, info_wmi, attempts
+                    True, True, OperatingSystem.WINDOWS.value, info_wmi
                 ),
             },
             DOT_3: {
                 "PowerShellExploiter": ExploiterResultData(
                     False,
                     False,
-                    False,
                     OperatingSystem.WINDOWS.value,
                     info_wmi,
-                    attempts,
                     "PowerShell Exploiter Failed",
                 ),
                 "SSHExploiter": ExploiterResultData(
                     False,
                     False,
-                    False,
                     OperatingSystem.LINUX.value,
                     info_ssh,
-                    attempts,
                     "Failed exploiting",
                 ),
                 "ZerologonExploiter": ExploiterResultData(
-                    True, False, False, OperatingSystem.WINDOWS.value, {}, []
+                    True, False, OperatingSystem.WINDOWS.value, {}
                 ),
             },
         }
@@ -231,10 +207,8 @@ class MockPuppet(IPuppet):
             return ExploiterResultData(
                 False,
                 False,
-                False,
                 OperatingSystem.LINUX.value,
                 {},
-                [],
                 f"{name} failed for host {host}",
             )
 
