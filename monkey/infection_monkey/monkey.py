@@ -199,7 +199,7 @@ class InfectionMonkey:
         logger.info(f"Monkey started with arguments: {arg_string}")
 
     def start(self):
-        self._subscribe_events()
+        self._setup_agent_event_forwarder()
 
         if self._is_another_monkey_running():
             logger.info("Another instance of the monkey is already running")
@@ -219,6 +219,12 @@ class InfectionMonkey:
 
         self._setup()
         self._master.start()
+
+    def _setup_agent_event_forwarder(self):
+        self._agent_event_forwarder = AgentEventForwarder(
+            self._island_api_client, self._agent_event_serializer_registry
+        )
+        self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
 
     def _setup(self):
         logger.debug("Starting the setup phase.")
@@ -245,6 +251,8 @@ class InfectionMonkey:
         self._build_master(relay_port)
 
         register_signal_handlers(self._master)
+
+        self._subscribe_events()
 
     def _setup_agent_event_queue(self) -> IAgentEventQueue:
         publisher = Publisher()
@@ -285,21 +293,6 @@ class InfectionMonkey:
         ordered_servers = {s: None for s in known_servers}
 
         return list(ordered_servers.keys())
-
-    def _subscribe_events(self):
-        self._agent_event_forwarder = AgentEventForwarder(
-            self._island_api_client, self._agent_event_serializer_registry
-        )
-        self._agent_event_queue.subscribe_type(
-            CredentialsStolenEvent,
-            add_stolen_credentials_to_propagation_credentials_repository(
-                self._propagation_credentials_repository
-            ),
-        )
-        self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
-        self._agent_event_queue.subscribe_type(
-            PropagationEvent, notify_relay_on_propagation(self._relay)
-        )
 
     def _build_puppet(self) -> IPuppet:
         puppet = Puppet(self._agent_event_queue)
@@ -423,6 +416,17 @@ class InfectionMonkey:
         logger.debug(f"This agent is running on the island: {on_island}")
 
         return VictimHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
+
+    def _subscribe_events(self):
+        self._agent_event_queue.subscribe_type(
+            CredentialsStolenEvent,
+            add_stolen_credentials_to_propagation_credentials_repository(
+                self._propagation_credentials_repository
+            ),
+        )
+        self._agent_event_queue.subscribe_type(
+            PropagationEvent, notify_relay_on_propagation(self._relay)
+        )
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
         server_ip = self._control_client.server_address.ip
