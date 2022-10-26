@@ -3,61 +3,15 @@ from datetime import datetime
 
 from bson import ObjectId
 
-import monkey_island.cc.services.log
 from common.network.network_utils import get_my_ip_addresses_legacy
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import Monkey
-from monkey_island.cc.services.edge.displayed_edge import DisplayedEdgeService
 from monkey_island.cc.services.edge.edge import EdgeService
-from monkey_island.cc.services.utils.node_states import NodeStates
 
 
 class NodeService:
     def __init__(self):
         pass
-
-    @staticmethod
-    def get_displayed_node_by_id(node_id, for_report=False):
-        if ObjectId(node_id) == NodeService.get_monkey_island_pseudo_id():
-            return NodeService.get_monkey_island_node()
-
-        new_node = {"id": node_id}
-
-        node = NodeService.get_node_by_id(node_id)
-        if node is None:
-            monkey = NodeService.get_monkey_by_id(node_id)
-            if monkey is None:
-                return new_node
-
-            # node is infected
-            new_node = NodeService.monkey_to_net_node(monkey, for_report)
-            for key in monkey:
-                if key not in ["_id", "modifytime", "parent", "dead", "description"]:
-                    new_node[key] = monkey[key]
-
-        else:
-            # node is uninfected
-            new_node = NodeService.node_to_net_node(node, for_report)
-            new_node["ip_addresses"] = node["ip_addresses"]
-            new_node["domain_name"] = node["domain_name"]
-
-        exploits = []
-
-        edges = DisplayedEdgeService.get_displayed_edges_by_dst(node_id, for_report)
-
-        for edge in edges:
-            from_node_id = edge["from"]
-            from_node_label = Monkey.get_label_by_id(from_node_id)
-
-            for edge_exploit in edge["exploits"]:
-                edge_exploit["origin"] = from_node_label
-                exploits.append(edge_exploit)
-
-        exploits = sorted(exploits, key=lambda exploit: exploit["timestamp"])
-        new_node["exploits"] = exploits
-
-        new_node["has_log"] = monkey_island.cc.services.log.LogService.log_exists(ObjectId(node_id))
-        return new_node
 
     @staticmethod
     def get_node_label(node):
@@ -100,65 +54,6 @@ class NodeService:
         if len(set(monkey["ip_addresses"]).intersection(ip_addresses)) > 0:
             label = "MonkeyIsland - " + label
         return label
-
-    @staticmethod
-    def get_monkey_group(monkey):
-        keywords = []
-        if len(set(monkey["ip_addresses"]).intersection(get_my_ip_addresses_legacy())) != 0:
-            keywords.extend(["island", "monkey"])
-        else:
-            monkey_type = "manual" if NodeService.get_monkey_manual_run(monkey) else "monkey"
-            keywords.append(monkey_type)
-
-        keywords.append(NodeService.get_monkey_os(monkey))
-        if not Monkey.get_single_monkey_by_id(monkey["_id"]).is_dead():
-            keywords.append("running")
-        return NodeStates.get_by_keywords(keywords).value
-
-    @staticmethod
-    def get_node_group(node) -> str:
-        if "group" in node and node["group"]:
-            return node["group"]
-
-        if node.get("propagated"):
-            node_type = "propagated"
-        else:
-            node_type = "clean"
-
-        node_os = NodeService.get_node_os(node)
-
-        return NodeStates.get_by_keywords([node_type, node_os]).value
-
-    @staticmethod
-    def monkey_to_net_node(monkey, for_report=False):
-        monkey_id = monkey["_id"]
-        label = (
-            Monkey.get_hostname_by_id(monkey_id)
-            if for_report
-            else Monkey.get_label_by_id(monkey_id)
-        )
-        monkey_group = NodeService.get_monkey_group(monkey)
-        return {
-            "id": monkey_id,
-            "label": label,
-            "group": monkey_group,
-            "os": NodeService.get_monkey_os(monkey),
-            # The monkey is running IFF the group contains "_running". Therefore it's dead IFF
-            # the group does NOT
-            # contain "_running". This is a small optimisation, to not call "is_dead" twice.
-            "dead": "_running" not in monkey_group,
-            "domain_name": "",
-        }
-
-    @staticmethod
-    def node_to_net_node(node, for_report=False):
-        label = node["os"]["version"] if for_report else NodeService.get_node_label(node)
-        return {
-            "id": node["_id"],
-            "label": label,
-            "group": NodeService.get_node_group(node),
-            "os": NodeService.get_node_os(node),
-        }
 
     @staticmethod
     def unset_all_monkey_tunnels(monkey_id):
