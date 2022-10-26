@@ -8,8 +8,6 @@ from mongoengine import DoesNotExist
 
 from monkey_island.cc.models.edge import Edge
 
-RIGHT_ARROW = "\u2192"
-
 lock = threading.Lock()
 
 
@@ -27,14 +25,6 @@ class EdgeService(Edge):
                     edge.update_label(node_id=src_node_id, label=src_label)
                     edge.update_label(node_id=dst_node_id, label=dst_label)
             return edge
-
-    @staticmethod
-    def get_by_dst_node(dst_node_id: ObjectId) -> List[EdgeService]:
-        return EdgeService.objects(dst_node_id=dst_node_id)
-
-    @staticmethod
-    def get_edge_by_id(edge_id: ObjectId) -> EdgeService:
-        return EdgeService.objects.get(id=edge_id)
 
     def update_label(self, node_id: ObjectId, label: str):
         if self.src_node_id == node_id:
@@ -66,15 +56,3 @@ class EdgeService(Edge):
     def disable_tunnel(self):
         self.tunnel = False
         self.save()
-
-    def get_group(self) -> str:
-        if self.exploited:
-            return "exploited"
-        if self.tunnel:
-            return "tunnel"
-        if self.scans or self.exploits:
-            return "scan"
-        return "empty"
-
-    def get_label(self) -> str:
-        return f"{self.src_label} {RIGHT_ARROW} {self.dst_label}"

@@ -30,19 +30,3 @@ class TestEdgeService:
 
         EdgeService.get_or_create_edge(src_id, dst_id, "Mock label 1", "Mock label 2")
         assert len(Edge.objects()) == 1
-
-    def test_get_edge_group(self):
-        edge = Edge(src_node_id=ObjectId(), dst_node_id=ObjectId(), exploited=True)
-        assert "exploited" == EdgeService.get_group(edge)
-
-        edge.exploited = False
-        edge.tunnel = True
-        assert "tunnel" == EdgeService.get_group(edge)
-
-        edge.tunnel = False
-        edge.exploits.append(["mock_exploit_data"])
-        assert "scan" == EdgeService.get_group(edge)
-
-        edge.exploits = []
-        edge.scans = []
-        assert "empty" == EdgeService.get_group(edge)
