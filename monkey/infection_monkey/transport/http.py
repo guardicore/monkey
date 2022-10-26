@@ -125,7 +125,6 @@ class LockedHTTPServer(threading.Thread):
         self._local_ip = local_ip
         self._local_port = local_port
         self._victim_os = victim_os
-        self._dropper_target_path = dropper_target_path
         self._agent_binary_repository = agent_binary_repository
         self.max_downloads = max_downloads
         self.downloads = 0
