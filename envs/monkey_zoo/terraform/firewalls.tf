@@ -212,3 +212,18 @@ resource "google_compute_firewall" "powershell-allow" {
   source_ranges = ["10.2.2.0/24"]
   target_tags = ["powershell"]
 }
+
+resource "google_compute_firewall" "monkeyzoo-test-in" {
+  name    = "${local.resource_prefix}monkeyzoo-test-in"
+  network = google_compute_network.monkeyzoo.name
+  description = "Allows access to the instances in the MonkeyZoo. Add your public IP under Source filters if you want to SSH/RDP in the instances."
+
+  allow {
+    protocol = "all"
+  }
+
+  direction = "INGRESS"
+  priority = "999"
+  // Here goes your public IP so you can SSH/RDP in the instances
+  source_ranges = ["127.0.0.1/32"]
+}
