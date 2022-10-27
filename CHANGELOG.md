@@ -132,6 +132,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/pba/upload/<string:target_os>" endpoint. #2442
 - "POST /api/pba/upload/<string:target_os>?load=<string:filename>" endpoint. #2442
 - "POST /api/pba/upload/<string:target_os>?restore=<string:filename>" endpoint. #2442
+- The TelemetryLog component from the Infection Map page. #2500
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
