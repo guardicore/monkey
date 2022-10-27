@@ -51,7 +51,7 @@ export default class MapNode {
     public parentIds: string[] = []) {
   }
 
-  getGroupOperatingSystem(): OS {
+  getOperatingSystem(): OS {
     if (this.operatingSystem in OS) {
       return OS[this.operatingSystem];
     }
@@ -82,7 +82,7 @@ export default class MapNode {
       group_components.push('monkey');
     }
 
-    group_components.push(this.getGroupOperatingSystem());
+    group_components.push(this.getOperatingSystem());
 
     if (this.agentRunning) {
       group_components.push('running');
