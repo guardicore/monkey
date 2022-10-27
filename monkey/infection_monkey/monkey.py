@@ -69,7 +69,6 @@ from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter im
     LegacyTelemetryMessengerAdapter,
 )
 from infection_monkey.utils import agent_process
-from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
@@ -193,8 +192,6 @@ class InfectionMonkey:
         logger.info(f"Agent GUID: {GUID}")
 
         self._control_client.wakeup(parent=self._opts.parent)
-
-        run_aws_environment_check(self._telemetry_messenger)
 
         should_stop = self._control_channel.should_agent_stop()
         if should_stop:

@@ -12,7 +12,6 @@ from monkey_island.cc.repository import IAgentConfigurationRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.telemetry.processing.processing import process_telemetry
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +57,6 @@ class Telemetry(AbstractResource):
 
         monkey = NodeService.get_monkey_by_guid(telemetry_json["monkey_guid"])
         NodeService.update_monkey_modify_time(monkey["_id"])
-
-        agent_configuration = self._agent_configuration_repository.get_configuration()
-        process_telemetry(telemetry_json, agent_configuration)
 
         # API Spec: RESTful way is to return an identifier of the updated/newly created resource
         return {}, 201

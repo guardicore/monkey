@@ -1,1 +1,1 @@
-from .telemetry_dal import save_telemetry, get_telemetry_by_query
+from .telemetry_dal import get_telemetry_by_query
