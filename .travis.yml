@@ -89,13 +89,6 @@ jobs:
         - cd $TRAVIS_BUILD_DIR/docs
         - ../hugo --verbose --environment staging
 
-        # verify swimm
-        - cd $TRAVIS_BUILD_DIR
-        - curl -l https://releases.swimm.io/ci/latest/packed-swimm-linux-cli --output swimm-cli
-        - chmod u+x swimm-cli
-        - ./swimm-cli --version
-        - ./swimm-cli verify
-
       after_success:
         # Upload code coverage results to codecov.io, see https://github.com/codecov/codecov-bash for more information
         - bash <(curl -s https://codecov.io/bash)

@@ -30,6 +30,3 @@ export LINUX_64_BINARY_URL="https://github.com/guardicore/monkey/releases/downlo
 
 export WINDOWS_64_BINARY_NAME="monkey-windows-64.exe"
 export WINDOWS_64_BINARY_URL="https://github.com/guardicore/monkey/releases/download/$MONKEY_LATEST_RELEASE/monkey-windows-64.exe"
-
-# Swimm
-export SWIMM_URL=https://github.com/swimmio/SwimmReleases/releases/download/v0.4.4-0/Swimm_0.4.4-0_Setup.deb

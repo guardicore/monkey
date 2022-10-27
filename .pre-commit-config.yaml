@@ -55,10 +55,6 @@ repos:
         files: "monkey/"
         exclude: "monkey/monkey_island/cc/ui"
         stages: [push]
-  - repo: https://github.com/swimmio/pre-commit
-    rev: v0.7
-    hooks:
-      - id: swimm-verify
   - repo: https://github.com/jendrikseipp/vulture
     rev: v2.3
     hooks:

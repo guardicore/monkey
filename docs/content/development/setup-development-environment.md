@@ -31,9 +31,3 @@ Pre-commit is a multi-language package manager for pre-commit hooks. It will run
 Our CI system runs the same checks when pull requests are submitted. This system may report that the build has failed if the pre-commit hooks have not been run or all issues have not been resolved.
 
 To install and configure pre-commit, run `pip install --user pre-commit`. Next, go to the top level directory of this repository and run `pre-commit install -t pre-commit -t pre-push`. Pre-commit will now run automatically whenever you `git commit`.
-
-## Swimm
-
-Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
-
-In order to pass the pre-commit checks, you'll have to [install Swimm successfully](https://www.guardicore.com/infectionmonkey/docs/development/swimm/). Both the Linux and Windows deployment scrips will install [Swimm](https://swimm.io/), but you'll have to sign up [here](https://swimm.io/sign-beta) to complete the process.

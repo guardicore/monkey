@@ -85,9 +85,3 @@ been run or all issues have not been resolved.
 To install and configure pre-commit manually, run `pip install --user
 pre-commit`. Next, go to the top level directory of this repository and run
 `pre-commit install -t pre-commit -t pre-push` Now, pre-commit will automatically run whenever you `git commit`.
-
-## Swimm
-
-Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
-
-In order to pass the pre-commit checks, you'll have to [install Swimm successfully](https://www.guardicore.com/infectionmonkey/docs/development/swimm/). Both the Linux and Windows deployment scrips will install [Swimm](https://swimm.io/), but you'll have to sign up [here](https://swimm.io/sign-beta) to complete the process.
