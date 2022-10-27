@@ -9,7 +9,6 @@ from mongoengine import (
     Document,
     DoesNotExist,
     DynamicField,
-    EmbeddedDocumentField,
     FloatField,
     ListField,
     ReferenceField,
@@ -17,7 +16,6 @@ from mongoengine import (
 )
 
 from common.network.network_utils import get_my_ip_addresses_legacy
-from monkey_island.cc.models.command_control_channel import CommandControlChannel
 from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
 from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 
@@ -35,10 +33,8 @@ class Monkey(Document):
     guid = StringField(required=True)
     should_stop = BooleanField()
     dead = BooleanField()
-    description = StringField()
     hostname = StringField()
     ip_addresses = ListField(StringField())
-    networks = ListField()
     launch_time = FloatField()
     modifytime = DateTimeField()
     # TODO make "parent" an embedded document, so this can be removed and the schema explained (
@@ -49,7 +45,6 @@ class Monkey(Document):
     parent = ListField(ListField(DynamicField()))
     ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
-    command_control_channel = EmbeddedDocumentField(CommandControlChannel)
 
     # This field only exists when the monkey is running on an AWS
     aws_instance_id = StringField(required=False)
@@ -112,13 +107,6 @@ class Monkey(Document):
         """
         return Monkey.get_single_monkey_by_id(object_id).hostname
 
-    def get_network_info(self):
-        """
-        Formats network info from monkey's model
-        :return: dictionary with an array of IP's and a hostname
-        """
-        return {"ips": self.ip_addresses, "hostname": self.hostname}
-
     # data has TTL of 1 second. This is useful for rapid calls for report generation.
     @ring.lru(expire=1)
     @staticmethod
@@ -128,10 +116,6 @@ class Monkey(Document):
             return True
         except:  # noqa: E722
             return False
-
-    @staticmethod
-    def get_tunneled_monkeys():
-        return Monkey.objects(tunnel__exists=True)
 
     def renew_ttl(self, duration=DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS):
         self.ttl_ref = create_monkey_ttl_document(duration)

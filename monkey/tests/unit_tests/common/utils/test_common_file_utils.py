@@ -9,7 +9,6 @@ from common.utils.file_utils import (
     expand_path,
     get_all_regular_files_in_directory,
     get_binary_io_sha256_hash,
-    get_file_sha256_hash,
 )
 
 
@@ -30,10 +29,6 @@ def test_expand_vars(patched_home_env):
 def test_expand_path__empty_path_provided():
     with pytest.raises(InvalidPath):
         expand_path("")
-
-
-def test_get_file_sha256_hash(stable_file, stable_file_sha256_hash):
-    assert get_file_sha256_hash(stable_file) == stable_file_sha256_hash
 
 
 def test_get_binary_sha256_hash():

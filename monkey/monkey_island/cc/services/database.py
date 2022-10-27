@@ -3,7 +3,6 @@ import logging
 from flask import jsonify
 
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Config
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +26,6 @@ class Database(object):
 
     @staticmethod
     def _should_drop(collection: str, drop_config: bool) -> bool:
-        if not drop_config:
-            if collection == Config.COLLECTION_NAME:
-                return False
         return not collection.startswith("system.") and not collection.startswith("config")
 
     @staticmethod

@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from typing import Iterable
 
+from common.utils.file_utils import get_binary_io_sha256_hash
+
 
 def is_user_admin():
     if os.name == "posix":
@@ -31,3 +33,14 @@ def add_files_to_dir(parent_dir: Path, file_names: Iterable[str]) -> Iterable[Pa
         f.touch()
 
     return files
+
+
+def get_file_sha256_hash(filepath: Path) -> str:
+    """
+    Calculates sha256 hash from a file path
+
+    :param filepath: A Path object which defines file on the system
+    :return sha256 hash of the file
+    """
+    with open(filepath, "rb") as f:
+        return get_binary_io_sha256_hash(f)

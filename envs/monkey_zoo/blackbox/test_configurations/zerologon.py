@@ -13,7 +13,7 @@ from .utils import (
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    brute_force = [PluginConfiguration(name="SmbExploiter", options={"smb_download_timeout": 30})]
+    brute_force = [PluginConfiguration(name="SMBExploiter", options={"smb_download_timeout": 30})]
     vulnerability = [PluginConfiguration(name="ZerologonExploiter", options={})]
 
     return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=vulnerability)

@@ -21,13 +21,10 @@ class IAgentBinaryRepository(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def get_agent_binary(
-        self, operating_system: OperatingSystem, architecture: str = None
-    ) -> io.BytesIO:
+    def get_agent_binary(self, operating_system: OperatingSystem) -> io.BytesIO:
         """
         Retrieve the appropriate agent binary from the repository.
         :param operating_system: The name of the operating system on which the agent binary will run
-        :param architecture: Reserved
         :return: A file-like object for the requested agent binary
         :raises RetrievalError: If an error occurs when retrieving the agent binary
         """

@@ -1,6 +1,5 @@
 import json
 import logging
-import platform
 from socket import gethostname
 
 import requests
@@ -11,7 +10,6 @@ from common.network.network_utils import get_my_ip_addresses_legacy
 from common.types import SocketAddress
 from infection_monkey.config import GUID
 from infection_monkey.island_api_client import IIslandAPIClient
-from infection_monkey.network.info import get_host_subnets
 from infection_monkey.utils import agent_process
 
 disable_warnings()  # noqa DUO131
@@ -41,8 +39,6 @@ class ControlClient:
             "guid": GUID,
             "hostname": hostname,
             "ip_addresses": get_my_ip_addresses_legacy(),
-            "networks": get_host_subnets(),
-            "description": " ".join(platform.uname()),
             "parent": parent,
             "launch_time": agent_process.get_start_time(),
         }
