@@ -136,6 +136,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "GET /api/netmap/edge" endpoint. #2453
 - The TelemetryLog component from the Infection Map page. #2500
 - "GET /api/telemetry-feed" endpoint. #2502
+- "GET /api/log" endpoint. #2485
+- "POST /api/log" endpoint. #2485
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

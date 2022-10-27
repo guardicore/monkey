@@ -34,7 +34,6 @@ from monkey_island.cc.resources.exploitations.manual_exploitation import ManualE
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
-from monkey_island.cc.resources.log import Log
 from monkey_island.cc.resources.monkey import Monkey
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
@@ -166,7 +165,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(ManualExploitation)
     api.add_resource(MonkeyExploitation)
 
-    api.add_resource(Log)
     api.add_resource(AgentLogs)
     api.add_resource(IslandLog)
     api.add_resource(IPAddresses)
