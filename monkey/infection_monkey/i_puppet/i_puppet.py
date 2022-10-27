@@ -7,6 +7,7 @@ from typing import Dict, Mapping, Optional, Sequence
 from common.credentials import Credentials
 from common.types import PingScanData
 from infection_monkey.model import VictimHost
+
 from . import PluginType
 
 
