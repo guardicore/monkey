@@ -92,16 +92,6 @@ class NodeService:
             {"_id": monkey_id}, {"$set": {"modifytime": datetime.now()}}, upsert=False
         )
 
-    @staticmethod
-    def set_monkey_dead(monkey, is_dead):
-        props_to_set = {"dead": is_dead}
-
-        # Cancel the force kill once monkey died
-        if is_dead:
-            props_to_set["should_stop"] = False
-
-        mongo.db.monkey.update({"guid": monkey["guid"]}, {"$set": props_to_set}, upsert=False)
-
     # TODO this returns a mock island agent
     # It's better to just initialize the island machine on reset I think
     @staticmethod
