@@ -22,7 +22,6 @@ from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
-from common.version import get_version
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -69,7 +68,6 @@ from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
     LegacyTelemetryMessengerAdapter,
 )
-from infection_monkey.telemetry.state_telem import StateTelem
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.aws_environment_check import run_aws_environment_check
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
@@ -232,8 +230,6 @@ class InfectionMonkey:
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()
 
-        StateTelem(is_done=False, version=get_version()).send()
-
         self._build_master(relay_port)
 
         register_signal_handlers(self._master)
@@ -380,12 +376,7 @@ class InfectionMonkey:
             deleted = InfectionMonkey._self_delete()
 
             self._send_log()
-
             self._publish_agent_shutdown_event()
-
-            StateTelem(
-                is_done=True, version=get_version()
-            ).send()  # Signal the server (before closing the tunnel)
 
             self._agent_event_forwarder.flush()
             self._close_tunnel()
