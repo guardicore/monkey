@@ -678,8 +678,7 @@ the same credentials on both machines</td>
 </tr>
 <tr class="even">
 <td>Notes:</td>
-<td>User: m0nk3y, Password: Passw0rd!<br>User: m0nk3y-user, No Password.<br>
-Accessibale through Island using m0nk3y-user.</td>
+<td>User: m0nk3y, Password: Passw0rd!</td>
 </tr>
 </tbody>
 </table>
