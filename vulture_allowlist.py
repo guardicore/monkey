@@ -43,6 +43,7 @@ DIContainer.release_convention
 LDAPServerFactory.buildProtocol
 NetrServerPasswordSet.structure
 NetrServerPasswordSetResponse.structure
+NetrServerPasswordSet.opnum
 
 # TODO are these exercised?
 dwFlags  # \infection_monkey\monkey\infection_monkey\monkey.py:490:
