@@ -31,6 +31,11 @@ resource "google_compute_network" "credential-reuse2" {
   auto_create_subnetworks = false
 }
 
+resource "google_compute_network" "powershell" {
+  name = "${local.resource_prefix}powershell"
+  auto_create_subnetworks = false
+}
+
 // Subnetwork for the above networks
 resource "google_compute_subnetwork" "monkeyzoo-main" {
   name = "${local.resource_prefix}monkeyzoo-main"
@@ -48,6 +53,12 @@ resource "google_compute_subnetwork" "tunneling-main" {
   name = "${local.resource_prefix}tunneling-main"
   ip_cidr_range   = "10.2.1.0/28"
   network         = google_compute_network.tunneling.self_link
+}
+
+resource "google_compute_subnetwork" "powershell-main" {
+  name = "${local.resource_prefix}powershell-main"
+  ip_cidr_range   = "10.2.4.0/24"
+  network         = google_compute_network.powershell.self_link
 }
 
 resource "google_compute_subnetwork" "tunneling2-main" {
@@ -91,6 +102,7 @@ resource "google_compute_instance_from_template" "hadoop-2" {
 resource "google_compute_instance_from_template" "hadoop-3" {
   name = "${local.resource_prefix}hadoop-3"
   source_instance_template = local.default_windows
+  machine_type = "e2-custom-4-8192"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.hadoop-3.self_link
@@ -109,6 +121,7 @@ resource "google_compute_instance_from_template" "hadoop-3" {
 resource "google_compute_instance_from_template" "tunneling-9" {
   name = "${local.resource_prefix}tunneling-9"
   source_instance_template = local.default_ubuntu
+  machine_type = "n1-standard-2"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.tunneling-9.self_link
@@ -132,6 +145,7 @@ resource "google_compute_instance_from_template" "tunneling-9" {
 resource "google_compute_instance_from_template" "tunneling-10" {
   name = "${local.resource_prefix}tunneling-10"
   source_instance_template = local.default_ubuntu
+  machine_type = "n1-standard-2"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.tunneling-10.self_link
@@ -154,6 +168,7 @@ resource "google_compute_instance_from_template" "tunneling-10" {
 resource "google_compute_instance_from_template" "tunneling-11" {
   name = "${local.resource_prefix}tunneling-11"
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-small"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.tunneling-11.self_link
@@ -173,6 +188,7 @@ resource "google_compute_instance_from_template" "tunneling-11" {
 resource "google_compute_instance_from_template" "tunneling-12" {
   name = "${local.resource_prefix}tunneling-12"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.tunneling-12.self_link
@@ -191,6 +207,7 @@ resource "google_compute_instance_from_template" "tunneling-12" {
 resource "google_compute_instance_from_template" "tunneling-13" {
   name = "${local.resource_prefix}tunneling-13"
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-small"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.tunneling-13.self_link
@@ -209,6 +226,7 @@ resource "google_compute_instance_from_template" "tunneling-13" {
 resource "google_compute_instance_from_template" "sshkeys-11" {
   name = "${local.resource_prefix}sshkeys-11"
   source_instance_template = local.default_ubuntu
+  machine_type = "custom-2-3840"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.sshkeys-11.self_link
@@ -227,6 +245,7 @@ resource "google_compute_instance_from_template" "sshkeys-11" {
 resource "google_compute_instance_from_template" "sshkeys-12" {
   name = "${local.resource_prefix}sshkeys-12"
   source_instance_template = local.default_ubuntu
+  machine_type = "custom-2-3840"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.sshkeys-12.self_link
@@ -297,6 +316,7 @@ resource "google_compute_instance_from_template" "mimikatz-15" {
 resource "google_compute_instance_from_template" "mssql-16" {
   name = "${local.resource_prefix}mssql-16"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.mssql-16.self_link
@@ -315,6 +335,7 @@ resource "google_compute_instance_from_template" "mssql-16" {
 resource "google_compute_instance_from_template" "powershell-3-48" {
   name = "${local.resource_prefix}powershell-3-48"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-48.self_link
@@ -334,6 +355,7 @@ resource "google_compute_instance_from_template" "powershell-3-48" {
 resource "google_compute_instance_from_template" "powershell-3-47" {
   name = "${local.resource_prefix}powershell-3-47"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-47.self_link
@@ -353,6 +375,7 @@ resource "google_compute_instance_from_template" "powershell-3-47" {
 resource "google_compute_instance_from_template" "powershell-3-46" {
   name = "${local.resource_prefix}powershell-3-46"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-46.self_link
@@ -372,6 +395,7 @@ resource "google_compute_instance_from_template" "powershell-3-46" {
 resource "google_compute_instance_from_template" "powershell-3-44" {
   name = "${local.resource_prefix}powershell-3-44"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-44.self_link
@@ -391,6 +415,7 @@ resource "google_compute_instance_from_template" "powershell-3-44" {
 resource "google_compute_instance_from_template" "powershell-3-45" {
   name = "${local.resource_prefix}powershell-3-45"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-45.self_link
@@ -405,12 +430,20 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
     // Allows Ephemeral IPs
     }
   }
+  network_interface {
+    subnetwork="${local.resource_prefix}powershell-main"
+    network_ip="10.2.4.45"
+    access_config {
+    // Allows Ephemeral IPs
+    }
+  }
 }
 
 resource "google_compute_instance_from_template" "credentials-reuse-14" {
   name = "${local.resource_prefix}credentials-reuse-14"
   tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-small"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-14.self_link
@@ -437,6 +470,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-15" {
   name = "${local.resource_prefix}credentials-reuse-15"
   tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-small"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-15.self_link
@@ -463,6 +497,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-16" {
   name = "${local.resource_prefix}credentials-reuse-16"
   tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-small"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-16.self_link
@@ -488,6 +523,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-16" {
 resource "google_compute_instance_from_template" "log4j-solr-49" {
   name = "${local.resource_prefix}log4j-solr-49"
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-solr-49.self_link
@@ -506,6 +542,7 @@ resource "google_compute_instance_from_template" "log4j-solr-49" {
 resource "google_compute_instance_from_template" "log4j-solr-50" {
   name = "${local.resource_prefix}log4j-solr-50"
   source_instance_template = local.default_windows
+  machine_type = "e2-standard-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-solr-50.self_link
@@ -524,6 +561,7 @@ resource "google_compute_instance_from_template" "log4j-solr-50" {
 resource "google_compute_instance_from_template" "log4j-tomcat-51" {
   name = "${local.resource_prefix}log4j-tomcat-51"
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-51.self_link
@@ -542,6 +580,7 @@ resource "google_compute_instance_from_template" "log4j-tomcat-51" {
 resource "google_compute_instance_from_template" "log4j-tomcat-52" {
   name = "${local.resource_prefix}log4j-tomcat-52"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-52.self_link
@@ -560,6 +599,7 @@ resource "google_compute_instance_from_template" "log4j-tomcat-52" {
 resource "google_compute_instance_from_template" "log4j-logstash-55" {
   name = "${local.resource_prefix}log4j-logstash-55"
   source_instance_template = local.default_ubuntu
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-logstash-55.self_link
@@ -578,6 +618,7 @@ resource "google_compute_instance_from_template" "log4j-logstash-55" {
 resource "google_compute_instance_from_template" "log4j-logstash-56" {
   name = "${local.resource_prefix}log4j-logstash-56"
   source_instance_template = local.default_windows
+  machine_type = "e2-highcpu-4"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-logstash-56.self_link
@@ -596,6 +637,7 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
 resource "google_compute_instance_from_template" "zerologon-25" {
   name = "${local.resource_prefix}zerologon-25"
   source_instance_template = local.default_windows
+  machine_type = "e2-custom-4-8192"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.zerologon-25.self_link
@@ -613,7 +655,7 @@ resource "google_compute_instance_from_template" "zerologon-25" {
 
 resource "google_compute_instance_from_template" "island-linux-250" {
   name = "${local.resource_prefix}island-linux-250"
-  machine_type         = "n1-standard-2"
+  machine_type         = "n2-custom-2-4096"
   tags = ["island", "linux", "ubuntu16"]
   source_instance_template = local.default_ubuntu
   boot_disk{
@@ -634,7 +676,7 @@ resource "google_compute_instance_from_template" "island-linux-250" {
 
 resource "google_compute_instance_from_template" "island-windows-251" {
   name = "${local.resource_prefix}island-windows-251"
-  machine_type         = "n1-standard-2"
+  machine_type         = "e2-highcpu-4"
   tags = ["island", "windows", "windowsserver2016"]
   source_instance_template = local.default_windows
   boot_disk{
