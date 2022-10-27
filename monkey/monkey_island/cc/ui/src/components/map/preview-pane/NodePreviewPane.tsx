@@ -12,10 +12,11 @@ import _ from 'lodash';
 const NodePreviewPane = (props: any) => {
 
   function osRow(node) {
+    let os = node.getOperatingSystem();
     return (
       <tr>
         <th>Operating System</th>
-        <td>{node.operatingSystem.charAt(0).toUpperCase() + node.operatingSystem.slice(1)}</td>
+        <td>{os.charAt(0).toUpperCase() + os.slice(1)}</td>
       </tr>
     );
   }
