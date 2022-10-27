@@ -80,6 +80,9 @@ resource "google_compute_instance_from_template" "hadoop-2" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.2"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
   // Add required ssh keys for hadoop service and restart it
   metadata_startup_script = "[ ! -f /home/vakaris_zilius/.ssh/authorized_keys ] && sudo cat /home/vakaris_zilius/.ssh/id_rsa.pub >> /home/vakaris_zilius/.ssh/authorized_keys && sudo reboot"
@@ -97,6 +100,9 @@ resource "google_compute_instance_from_template" "hadoop-3" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.3"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -117,6 +123,9 @@ resource "google_compute_instance_from_template" "tunneling-9" {
   network_interface{
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.9"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -132,6 +141,9 @@ resource "google_compute_instance_from_template" "tunneling-10" {
   network_interface{
     subnetwork="${local.resource_prefix}tunneling-main"
     network_ip="10.2.1.10"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
   network_interface{
     subnetwork="${local.resource_prefix}tunneling2-main"
@@ -170,6 +182,9 @@ resource "google_compute_instance_from_template" "tunneling-12" {
   network_interface{
     subnetwork="${local.resource_prefix}tunneling2-main"
     network_ip="10.2.0.12"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -185,6 +200,9 @@ resource "google_compute_instance_from_template" "tunneling-13" {
   network_interface{
     subnetwork="${local.resource_prefix}tunneling2-main"
     network_ip="10.2.0.13"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -200,6 +218,9 @@ resource "google_compute_instance_from_template" "sshkeys-11" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.11"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -215,6 +236,9 @@ resource "google_compute_instance_from_template" "sshkeys-12" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.12"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -246,6 +270,9 @@ resource "google_compute_instance_from_template" "mimikatz-14" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.14"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -261,6 +288,9 @@ resource "google_compute_instance_from_template" "mimikatz-15" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.15"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -276,6 +306,9 @@ resource "google_compute_instance_from_template" "mssql-16" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.16"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -292,6 +325,9 @@ resource "google_compute_instance_from_template" "powershell-3-48" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.48"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -308,6 +344,9 @@ resource "google_compute_instance_from_template" "powershell-3-47" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.47"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -324,6 +363,9 @@ resource "google_compute_instance_from_template" "powershell-3-46" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.46"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -340,6 +382,9 @@ resource "google_compute_instance_from_template" "powershell-3-44" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.44"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -356,6 +401,9 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.45"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -372,10 +420,16 @@ resource "google_compute_instance_from_template" "credentials-reuse-14" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.14"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
   network_interface {
     subnetwork="${local.resource_prefix}credential-reuse"
     network_ip="10.2.4.14"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -392,10 +446,16 @@ resource "google_compute_instance_from_template" "credentials-reuse-15" {
   network_interface {
     subnetwork="${local.resource_prefix}credential-reuse"
     network_ip="10.2.4.15"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
   network_interface {
     subnetwork="${local.resource_prefix}credential-reuse2"
     network_ip="10.2.5.15"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -412,10 +472,16 @@ resource "google_compute_instance_from_template" "credentials-reuse-16" {
   network_interface {
     subnetwork="${local.resource_prefix}credential-reuse2"
     network_ip="10.2.5.16"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.16"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -431,6 +497,9 @@ resource "google_compute_instance_from_template" "log4j-solr-49" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.49"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -446,6 +515,9 @@ resource "google_compute_instance_from_template" "log4j-solr-50" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.50"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -461,6 +533,9 @@ resource "google_compute_instance_from_template" "log4j-tomcat-51" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.51"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -476,6 +551,9 @@ resource "google_compute_instance_from_template" "log4j-tomcat-52" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.52"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -491,6 +569,9 @@ resource "google_compute_instance_from_template" "log4j-logstash-55" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.55"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -506,6 +587,9 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main-1"
     network_ip="10.2.3.56"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
@@ -521,6 +605,9 @@ resource "google_compute_instance_from_template" "zerologon-25" {
   network_interface {
     subnetwork="${local.resource_prefix}monkeyzoo-main"
     network_ip="10.2.2.25"
+    access_config {
+    // Allows Ephemeral IPs
+    }
   }
 }
 
