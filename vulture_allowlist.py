@@ -5,6 +5,7 @@ from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import NetworkPort
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
+from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine, Monkey, MonkeyTtl, Report
@@ -55,6 +56,10 @@ FileServHTTPRequestHandler.do_POST
 FileServHTTPRequestHandler.do_GET
 FileServHTTPRequestHandler.do_HEAD
 
+# Zerologon uses this to restore password:
+RemoteShell.do_get
+RemoteShell.do_exit
+prompt
 
 agent.stop_time  # \monkey\monkey_island\cc\agent_event_handlers\update_agent_shutdown_status.py:17: unused attribute 'stop_time'
 
