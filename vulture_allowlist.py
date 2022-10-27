@@ -45,7 +45,7 @@ NetrServerPasswordSet.structure
 NetrServerPasswordSetResponse.structure
 NetrServerPasswordSet.opnum
 
-# TODO are these exercised?
+# Passed to Popen from agent
 dwFlags  # \infection_monkey\monkey\infection_monkey\monkey.py:490:
 wShowWindow  # \infection_monkey\monkey\infection_monkey\monkey.py:491:
 
