@@ -7,7 +7,6 @@ import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
 import AuthComponent from '../AuthComponent';
 import '../../styles/components/Map.scss';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons/faInfoCircle';
-import TelemetryLog from '../map/TelemetryLog';
 import ReactiveGraph from '../reactive-graph/ReactiveGraph';
 import NodePreviewPane from '../map/preview-pane/NodePreviewPane';
 
@@ -103,7 +102,6 @@ class MapPageComponent extends AuthComponent {
             </div>
             <div style={{ height: '80vh' }} className={'map-window'}>
               <ReactiveGraph graph={this.props.graph} events={this.events} />
-              <TelemetryLog onStatusChange={this.props.onStatusChange} />
             </div>
           </Col>
           <Col xs={4}>
