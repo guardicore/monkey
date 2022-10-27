@@ -47,6 +47,7 @@ resource "google_compute_subnetwork" "monkeyzoo-main-1" {
   name = "${local.resource_prefix}monkeyzoo-main-1"
   ip_cidr_range   = "10.2.3.0/24"
   network         = google_compute_network.monkeyzoo.self_link
+  region = "europe-west1"
 }
 
 resource "google_compute_subnetwork" "tunneling-main" {
@@ -59,6 +60,7 @@ resource "google_compute_subnetwork" "powershell-main" {
   name = "${local.resource_prefix}powershell-main"
   ip_cidr_range   = "10.2.4.0/24"
   network         = google_compute_network.powershell.self_link
+  region = "europe-west1"
 }
 
 resource "google_compute_subnetwork" "tunneling2-main" {
@@ -71,17 +73,20 @@ resource "google_compute_subnetwork" "credential-reuse" {
   name = "${local.resource_prefix}credential-reuse"
   ip_cidr_range   = "10.2.4.0/24"
   network         = google_compute_network.credential-reuse.self_link
+  region = "europe-west1"
 }
 
 resource "google_compute_subnetwork" "credential-reuse2" {
   name = "${local.resource_prefix}credential-reuse2"
   ip_cidr_range   = "10.2.5.0/24"
   network         = google_compute_network.credential-reuse2.self_link
+  region = "europe-west1"
 }
 
 resource "google_compute_instance_from_template" "hadoop-2" {
   name = "${local.resource_prefix}hadoop-2"
   source_instance_template = local.default_ubuntu
+  zone = "europe-west3-a"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.hadoop-2.self_link
@@ -336,6 +341,7 @@ resource "google_compute_instance_from_template" "powershell-3-48" {
   name = "${local.resource_prefix}powershell-3-48"
   source_instance_template = local.default_windows
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-48.self_link
@@ -356,6 +362,7 @@ resource "google_compute_instance_from_template" "powershell-3-47" {
   name = "${local.resource_prefix}powershell-3-47"
   source_instance_template = local.default_windows
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-47.self_link
@@ -376,6 +383,7 @@ resource "google_compute_instance_from_template" "powershell-3-46" {
   name = "${local.resource_prefix}powershell-3-46"
   source_instance_template = local.default_windows
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-46.self_link
@@ -396,6 +404,7 @@ resource "google_compute_instance_from_template" "powershell-3-44" {
   name = "${local.resource_prefix}powershell-3-44"
   source_instance_template = local.default_windows
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-44.self_link
@@ -416,6 +425,7 @@ resource "google_compute_instance_from_template" "powershell-3-45" {
   name = "${local.resource_prefix}powershell-3-45"
   source_instance_template = local.default_windows
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.powershell-3-45.self_link
@@ -444,6 +454,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-14" {
   tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
   machine_type = "e2-small"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-14.self_link
@@ -471,6 +482,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-15" {
   tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
   machine_type = "e2-small"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-15.self_link
@@ -498,6 +510,7 @@ resource "google_compute_instance_from_template" "credentials-reuse-16" {
   tags = ["credentials-reuse"]
   source_instance_template = local.default_ubuntu
   machine_type = "e2-small"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.credentials-reuse-16.self_link
@@ -524,6 +537,7 @@ resource "google_compute_instance_from_template" "log4j-solr-49" {
   name = "${local.resource_prefix}log4j-solr-49"
   source_instance_template = local.default_ubuntu
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-solr-49.self_link
@@ -543,6 +557,7 @@ resource "google_compute_instance_from_template" "log4j-solr-50" {
   name = "${local.resource_prefix}log4j-solr-50"
   source_instance_template = local.default_windows
   machine_type = "e2-standard-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-solr-50.self_link
@@ -562,6 +577,7 @@ resource "google_compute_instance_from_template" "log4j-tomcat-51" {
   name = "${local.resource_prefix}log4j-tomcat-51"
   source_instance_template = local.default_ubuntu
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-51.self_link
@@ -581,6 +597,7 @@ resource "google_compute_instance_from_template" "log4j-tomcat-52" {
   name = "${local.resource_prefix}log4j-tomcat-52"
   source_instance_template = local.default_windows
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-tomcat-52.self_link
@@ -600,6 +617,7 @@ resource "google_compute_instance_from_template" "log4j-logstash-55" {
   name = "${local.resource_prefix}log4j-logstash-55"
   source_instance_template = local.default_ubuntu
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-logstash-55.self_link
@@ -619,6 +637,7 @@ resource "google_compute_instance_from_template" "log4j-logstash-56" {
   name = "${local.resource_prefix}log4j-logstash-56"
   source_instance_template = local.default_windows
   machine_type = "e2-highcpu-4"
+  zone = "europe-west1-b"
   boot_disk{
     initialize_params {
       image = data.google_compute_image.log4j-logstash-56.self_link
