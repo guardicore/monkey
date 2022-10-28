@@ -2,7 +2,7 @@ from common.agent_events import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
     ExploitationEvent,
-    FileEncryptedEvent,
+    FileEncryptionEvent,
     PasswordRestorationEvent,
     PingScanEvent,
     PropagationEvent,
@@ -22,4 +22,4 @@ def register_common_agent_events(
     agent_event_registry.register(ExploitationEvent)
     agent_event_registry.register(PasswordRestorationEvent)
     agent_event_registry.register(AgentShutdownEvent)
-    agent_event_registry.register(FileEncryptedEvent)
+    agent_event_registry.register(FileEncryptionEvent)
