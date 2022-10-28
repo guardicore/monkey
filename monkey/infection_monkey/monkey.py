@@ -324,7 +324,7 @@ class InfectionMonkey:
 
         puppet.load_plugin(
             "ransomware",
-            RansomwarePayload(self._telemetry_messenger),
+            RansomwarePayload(self._agent_event_queue),
             PluginType.PAYLOAD,
         )
 
