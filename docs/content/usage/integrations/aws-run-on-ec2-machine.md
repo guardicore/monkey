@@ -8,8 +8,9 @@ tags: ["aws", "integration"]
 
 ## When to use this feature
 
-If your network is deployed on Amazon Web Services (with EC2 instances) and you'd like to run the Infection Monkey to test it, this page is for you. You can easily run the Infection Monkey on various instances within your network in a secure fashion, without feeding it credentials or running shell commands on the machines you want to test.
+This feature allows execution of the Infection Monkey agent on EC2 instances with the help of an SSM agent.
 
+Alternatively, you will need to execute a command on an EC2 instance manually (see [running manually](../../running-manually)) or using other management tools.
 
 ![AWS EC2 logo](/images/usage/integrations/aws-ec2.svg?height=250px "AWS EC2 logo")
 

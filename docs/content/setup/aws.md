@@ -28,9 +28,8 @@ To login to the machine, use *ubuntu* username.
 
 ## Integration with AWS services
 
-The Infection Monkey has built-in integrations with AWS services for better
-execution and reporting. See [Usage -> Integrations](../../usage/integrations)
-for more details.
+The Infection Monkey has built-in integrations with AWS that allows running agents on EC2 instances.
+See [Usage -> Integrations](../../usage/integrations) for more details.
 
 ## Upgrading
 
