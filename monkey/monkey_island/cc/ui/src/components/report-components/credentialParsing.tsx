@@ -38,7 +38,7 @@ export function getAllSecrets(stolen, configured=[]) {
   return secrets
 }
 
-function reformatSecret(secret): Secret{
+export function reformatSecret(secret): Secret{
   if (Object.prototype.hasOwnProperty.call(secret, SecretType.Password)) {
     return {'title': CredentialTitle.Password, 'content': secret[SecretType.Password]}
   }

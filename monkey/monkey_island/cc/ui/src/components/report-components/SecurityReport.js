@@ -41,7 +41,7 @@ import {
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
 import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
-import UsedCredentials from './security/UsedCredentials';
+import AvailableCredentials from './security/AvailableCredentials';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -247,7 +247,7 @@ class ReportPageComponent extends AuthComponent {
         <p>
           The monkeys were run with the following configuration:
         </p>
-        <UsedCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials} />
+        <AvailableCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials} />
         {
           this.state.report.overview.config_exploits.length > 0 ?
             (

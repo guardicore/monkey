@@ -2,10 +2,7 @@ import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table'
 import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 import LoadingIcon from '../../ui-components/LoadingIcon';
-import {
-  getAllSecrets,
-  getCredentialsUsernames
-} from '../credentialParsing';
+import {reformatSecret} from '../credentialParsing';
 import _ from 'lodash';
 
 
@@ -29,7 +26,7 @@ const StolenCredentialsTable = () => {
     IslandHttpClient.get(APIEndpoint.stolenCredentials)
       .then(res => res.body)
       .then(creds => setCredentialsTableData(getCredentialsTableData(creds)))
-  })
+  }, [])
 
   if(credentialsTableData === null){
     return (<LoadingIcon />)
@@ -57,13 +54,10 @@ export default StolenCredentialsTable;
 function getCredentialsTableData(credentials){
   let tableData = [];
 
-  let identites = getCredentialsUsernames(credentials);
-  let secrets = getAllSecrets(credentials, [])
-
   for (let i = 0; i < credentials.length; i++) {
     let rowData = {};
-    rowData['username'] = identites[i];
-    rowData['title'] = secrets[i]['title'];
+    rowData['username'] = credentials[i]['identity']['username'];
+    rowData['title'] = reformatSecret(credentials[i]['secret'])['title'];
     if (! _.find(tableData, rowData)){
       tableData.push(rowData);
     }
