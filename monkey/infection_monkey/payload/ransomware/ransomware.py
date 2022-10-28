@@ -5,6 +5,7 @@ from typing import Callable, Iterable
 
 from common.agent_events import FileEncryptionEvent
 from common.event_queue import IAgentEventQueue
+from common.tags import T1485_ATTACK_TECHNIQUE_TAG, T1486_ATTACK_TECHNIQUE_TAG
 from infection_monkey.utils.ids import get_agent_id
 from infection_monkey.utils.threading import interruptible_function, interruptible_iter
 
@@ -12,6 +13,11 @@ from .consts import README_FILE_NAME, README_SRC
 from .ransomware_options import RansomwareOptions
 
 logger = logging.getLogger(__name__)
+
+RANSOMWARE_PAYLOAD_TAG = "ransomware-payload"
+RANSOMWARE_TAGS = frozenset(
+    {RANSOMWARE_PAYLOAD_TAG, T1485_ATTACK_TECHNIQUE_TAG, T1486_ATTACK_TECHNIQUE_TAG}
+)
 
 
 class Ransomware:
@@ -72,7 +78,11 @@ class Ransomware:
 
     def _publish_file_encryption_event(self, filepath: Path, success: bool, error: str):
         file_encryption_event = FileEncryptionEvent(
-            source=get_agent_id(), file_path=filepath, success=success, error_message=error
+            source=get_agent_id(),
+            file_path=filepath,
+            success=success,
+            error_message=error,
+            tags=RANSOMWARE_TAGS,
         )
         self._agent_event_queue.publish(file_encryption_event)
 
