@@ -1,4 +1,11 @@
 import {CredentialTitle, SecretType} from '../utils/CredentialTitle';
+import _ from 'lodash';
+
+export function getAllUsernames(stolen, configured): string[]{
+  let usernames = new Set([...(getCredentialsUsernames(stolen)),
+    ...getCredentialsUsernames(configured)])
+  return Array.from(usernames);
+}
 
 export function getCredentialsUsernames(credentials): string[]{
   let usernames = [];
@@ -17,20 +24,18 @@ export type Secret = {
 }
 
 export function getAllSecrets(stolen, configured=[]) {
-  let secrets = new Set();
-  for (let i = 0; i < stolen.length; i++) {
-    let secret = stolen[i]['secret'];
-    if (secret !== null) {
-      secrets.add(reformatSecret(secret));
+  let secrets = [];
+  let stolenSecrets = stolen.map(cred => cred['secret']).filter(cred => cred !== null);
+  let configuredSecrets = configured.map(cred => cred['secret']).filter(cred => cred !== null);
+  let allSecrets = [...stolenSecrets, ...configuredSecrets];
+
+  for (let i = 0; i < allSecrets.length; i++) {
+    let secret = reformatSecret(allSecrets[i]);
+    if (! _.find(secrets, secret)) {
+      secrets.push(secret);
     }
   }
-  for (let i = 0; i < configured.length; i++) {
-    let secret = configured[i]['secret'];
-    if (secret !== null) {
-      secrets.add(reformatSecret(secret));
-    }
-  }
-  return Array.from(secrets);
+  return secrets
 }
 
 function reformatSecret(secret): Secret{
