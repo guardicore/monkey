@@ -2,8 +2,17 @@ import {CredentialTitles, SecretTypes} from '../utils/CredentialTitles.js';
 
 export function getAllUsernames(stolen, configured) {
   let usernames = new Set();
-  usernames.add(...getCredentialsUsernames(stolen));
-  usernames.add(...getCredentialsUsernames(configured));
+
+  let stolenCredentials = getCredentialsUsernames(stolen);
+  if (stolenCredentials.length !== 0) {
+    usernames.add(...stolenCredentials);
+  }
+
+  let configuredCredentials = getCredentialsUsernames(configured);
+  if (configuredCredentials.length !== 0) {
+    usernames.add(...configuredCredentials);
+  }
+
   return Array.from(usernames);
 }
 
