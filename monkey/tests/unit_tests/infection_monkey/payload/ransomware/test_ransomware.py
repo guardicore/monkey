@@ -1,5 +1,4 @@
 import threading
-from pathlib import PurePosixPath
 from unittest.mock import MagicMock
 
 import pytest
@@ -9,9 +8,15 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
     TEST_KEYBOARD_TXT,
 )
 
+from common.event_queue import IAgentEventQueue
 from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.payload.ransomware.ransomware import Ransomware
 from infection_monkey.payload.ransomware.ransomware_options import RansomwareOptions
+
+
+@pytest.fixture
+def mock_agent_event_queue():
+    return MagicMock(spec=IAgentEventQueue)
 
 
 @pytest.fixture
@@ -21,7 +26,7 @@ def ransomware(build_ransomware, ransomware_options):
 
 @pytest.fixture
 def build_ransomware(
-    mock_file_encryptor, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
+    mock_file_encryptor, mock_file_selector, mock_leave_readme, mock_agent_event_queue
 ):
     def inner(
         config,
@@ -34,7 +39,7 @@ def build_ransomware(
             file_encryptor,
             file_selector,
             leave_readme,
-            telemetry_messenger_spy,
+            mock_agent_event_queue,
         )
 
     return inner
@@ -153,37 +158,6 @@ def test_encryption_skipped_if_no_directory(
     ransomware.run(threading.Event())
 
     assert mock_file_encryptor.call_count == 0
-
-
-def test_telemetry_success(ransomware, telemetry_messenger_spy):
-    ransomware.run(threading.Event())
-
-    assert len(telemetry_messenger_spy.telemetries) == 2
-    telem_1 = telemetry_messenger_spy.telemetries[0]
-    telem_2 = telemetry_messenger_spy.telemetries[1]
-
-    assert ALL_ZEROS_PDF in telem_1.get_data()["files"][0]["path"]
-    assert telem_1.get_data()["files"][0]["success"]
-    assert telem_1.get_data()["files"][0]["error"] == ""
-    assert TEST_KEYBOARD_TXT in telem_2.get_data()["files"][0]["path"]
-    assert telem_2.get_data()["files"][0]["success"]
-    assert telem_2.get_data()["files"][0]["error"] == ""
-
-
-def test_telemetry_failure(build_ransomware, ransomware_options, telemetry_messenger_spy):
-    file_not_exists = "/file/not/exist"
-    mfe = MagicMock(
-        side_effect=FileNotFoundError(f"[Errno 2] No such file or directory: '{file_not_exists}'")
-    )
-    mfs = MagicMock(return_value=[PurePosixPath(file_not_exists)])
-    ransomware = build_ransomware(config=ransomware_options, file_encryptor=mfe, file_selector=mfs)
-
-    ransomware.run(threading.Event())
-    telem = telemetry_messenger_spy.telemetries[0]
-
-    assert file_not_exists in telem.get_data()["files"][0]["path"]
-    assert not telem.get_data()["files"][0]["success"]
-    assert "No such file or directory" in telem.get_data()["files"][0]["error"]
 
 
 def test_readme_false(build_ransomware, ransomware_options, mock_leave_readme):
