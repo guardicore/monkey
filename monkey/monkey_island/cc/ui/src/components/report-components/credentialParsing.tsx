@@ -1,10 +1,10 @@
-import {CredentialTitle, SecretType} from '../utils/CredentialTitle.js';
+import {CredentialTitle, SecretType} from '../utils/CredentialTitle';
 
 export function getCredentialsUsernames(credentials): string[]{
   let usernames = [];
   for (let i = 0; i < credentials.length; i++) {
     let username = credentials[i]['identity'];
-    if (username !== null) {
+    if (username !== null && username !== undefined) {
       usernames.push(username['username']);
     }
   }
@@ -12,10 +12,11 @@ export function getCredentialsUsernames(credentials): string[]{
 }
 
 export type Secret = {
-  title: CredentialTitle
+  title: CredentialTitle,
+  content: string
 }
 
-export function getAllSecrets(stolen, configured) {
+export function getAllSecrets(stolen, configured=[]) {
   let secrets = new Set();
   for (let i = 0; i < stolen.length; i++) {
     let secret = stolen[i]['secret'];
@@ -32,7 +33,7 @@ export function getAllSecrets(stolen, configured) {
   return Array.from(secrets);
 }
 
-function reformatSecret(secret) {
+function reformatSecret(secret): Secret{
   if (Object.prototype.hasOwnProperty.call(secret, SecretType.Password)) {
     return {'title': CredentialTitle.Password, 'content': secret[SecretType.Password]}
   }
@@ -48,20 +49,4 @@ function reformatSecret(secret) {
       'content': secret[SecretType.PrivateKey]
     }
   }
-}
-
-export function getCredentialsTableData(credentials) {
-  let table_data = [];
-
-  let identites = getCredentialsUsernames(credentials);
-  let secrets = getAllSecrets(credentials, [])
-
-  for (let i = 0; i < credentials.length; i++) {
-    let row_data = {};
-    row_data['username'] = identites[i];
-    row_data['title'] = secrets[i]['title'];
-    table_data.push(row_data);
-  }
-
-  return table_data;
 }
