@@ -21,7 +21,7 @@ def _serialize_pure_path(pure_path: PurePath) -> Dict[str, str]:
     return {"path": str(pure_path), "os": serialized_os}
 
 
-class FileEncryptedEvent(AbstractAgentEvent):
+class FileEncryptionEvent(AbstractAgentEvent):
     """
     An event that occurs when the Agent encrypts a file
 
@@ -47,7 +47,7 @@ class FileEncryptedEvent(AbstractAgentEvent):
         if not isinstance(v, Mapping):
             raise TypeError(f"Expected mapping but got {type(v)}")
 
-        path_string, os_string = FileEncryptedEvent._parse_path_dict(v)
+        path_string, os_string = FileEncryptionEvent._parse_path_dict(v)
 
         if not isinstance(os_string, str):
             raise TypeError("Operating system must be a string")
