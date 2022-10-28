@@ -38,8 +38,6 @@ NetworkPort.ge
 NetworkPort.le
 
 FileEncryptedEvent.arbitrary_types_allowed
-# TODO: Remove after #2496
-FileEncryptedEvent
 
 # Unused, but kept for future potential
 DIContainer.release_convention
