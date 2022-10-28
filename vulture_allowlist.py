@@ -38,6 +38,7 @@ NetworkPort.ge
 NetworkPort.le
 
 FileEncryptedEvent.arbitrary_types_allowed
+FileEncryptedEvent._file_path_to_pure_path
 
 # Unused, but kept for future potential
 DIContainer.release_convention
