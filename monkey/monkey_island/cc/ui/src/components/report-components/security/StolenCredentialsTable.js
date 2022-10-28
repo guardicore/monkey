@@ -14,7 +14,7 @@ const columns = [
 
 const pageSize = 10;
 
-class StolenPasswordsComponent extends React.Component {
+class StolenCredentialsTable extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -42,4 +42,4 @@ class StolenPasswordsComponent extends React.Component {
   }
 }
 
-export default StolenPasswordsComponent;
+export default StolenCredentialsTable;

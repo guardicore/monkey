@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
-import StolenPasswords from 'components/report-components/security/StolenPasswords';
+import StolenCredentialsTable from 'components/report-components/security/StolenCredentialsTable';
 import { Line } from 'rc-progress';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, { ReportTypes } from './common/ReportHeader';
@@ -214,7 +214,6 @@ class ReportPageComponent extends AuthComponent {
   stillLoadingDataFromServer() {
     return Object.keys(this.state.report).length === 0;
   }
-
 
   generateReportOverviewSection() {
     return (
@@ -475,7 +474,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <StolenPasswords
+          <StolenCredentialsTable
             data={this.state.stolenCredentials}
             format={true}
           />
