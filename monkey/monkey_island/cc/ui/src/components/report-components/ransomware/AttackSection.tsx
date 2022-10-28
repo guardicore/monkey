@@ -62,7 +62,7 @@ function processEvents(events): Array<TableRow> {
 }
 
 function sortEvents(events): void {
-  events.objects.sort((a, b) => {
+  events.sort((a, b) => {
     if (a.timestamp > b.timestamp) {
       return 1;
     } else if (a.timestamp < b.timestamp) {
@@ -76,9 +76,10 @@ function sortEvents(events): void {
 function getDataForTable(events): Array<TableRow> {
   let tableData = [];
 
-  for (let event in events) {
-    if (event['success']) {
-      tableData.push({'hostname': parseHostname(event['target']), 'file_path': event['path']});
+  for (var i = 0; i < events.length; i++) {
+    let event = events[i];
+    if (event['success'] === true) {
+      tableData.push({'hostname': parseHostname(event['target']), 'file_path': event['file_path']['path']});
     }
   }
 
@@ -86,6 +87,7 @@ function getDataForTable(events): Array<TableRow> {
 }
 
 function parseHostname(monkey: string): string {
+    // TODO: Fix when target is null ie host machine was targeted
     return monkey.match(HOSTNAME_REGEX)[2];
 }
 
