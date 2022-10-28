@@ -1,5 +1,6 @@
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
+from common.agent_events import FileEncryptedEvent
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import NetworkPort
@@ -35,6 +36,10 @@ NTHash.validate_hash_format
 
 NetworkPort.ge
 NetworkPort.le
+
+FileEncryptedEvent.arbitrary_types_allowed
+# TODO: Remove after #2496
+FileEncryptedEvent
 
 # Unused, but kept for future potential
 DIContainer.release_convention
