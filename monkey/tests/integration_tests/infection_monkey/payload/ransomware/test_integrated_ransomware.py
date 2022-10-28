@@ -5,6 +5,7 @@ import pytest
 
 import infection_monkey.payload.ransomware.ransomware_builder as ransomware_builder
 from common.agent_configuration.default_agent_configuration import RANSOMWARE_OPTIONS
+from common.event_queue import IAgentEventQueue
 
 
 @pytest.fixture
@@ -22,9 +23,8 @@ def test_uses_correct_extension(ransomware_options_dict, tmp_path, ransomware_fi
     ransomware_directories = ransomware_options_dict["encryption"]["directories"]
     ransomware_directories["linux_target_dir"] = target_dir
     ransomware_directories["windows_target_dir"] = target_dir
-    telemetry_messenger = MagicMock()
     ransomware = ransomware_builder.build_ransomware(
-        ransomware_options_dict, telemetry_messenger, 0.01
+        ransomware_options_dict, MagicMock(spec=IAgentEventQueue)
     )
 
     file = target_dir / "file.txt"
