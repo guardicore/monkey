@@ -1,5 +1,5 @@
 import {defaultCredentials} from '../../services/configuration/propagation/credentials';
-import {PlaintextTypes, SecretTypes} from '../utils/CredentialTitles.js';
+import {PlaintextType, SecretType} from '../utils/CredentialTitle.tsx';
 import _ from 'lodash';
 
 export function reformatConfig(config, reverse = false) {
@@ -41,19 +41,19 @@ export function formatCredentialsForForm(credentials) {
 
     let secret = credentials[i]['secret'];
     if (secret !== null) {
-      if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.Password)) {
-        formattedCredentials['exploit_password_list'].push(secret[SecretTypes.Password])
+      if (Object.prototype.hasOwnProperty.call(secret, SecretType.Password)) {
+        formattedCredentials['exploit_password_list'].push(secret[SecretType.Password])
       }
-      if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.NTHash)) {
-        formattedCredentials['exploit_ntlm_hash_list'].push(secret[SecretTypes.NTHash])
+      if (Object.prototype.hasOwnProperty.call(secret, SecretType.NTHash)) {
+        formattedCredentials['exploit_ntlm_hash_list'].push(secret[SecretType.NTHash])
       }
-      if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.LMHash)) {
-        formattedCredentials['exploit_lm_hash_list'].push(secret[SecretTypes.LMHash])
+      if (Object.prototype.hasOwnProperty.call(secret, SecretType.LMHash)) {
+        formattedCredentials['exploit_lm_hash_list'].push(secret[SecretType.LMHash])
       }
-      if (Object.prototype.hasOwnProperty.call(secret, SecretTypes.PrivateKey)) {
+      if (Object.prototype.hasOwnProperty.call(secret, SecretType.PrivateKey)) {
         let keypair = {
-          'public_key': secret[PlaintextTypes.PublicKey],
-          'private_key': secret[SecretTypes.PrivateKey]
+          'public_key': secret[PlaintextType.PublicKey],
+          'private_key': secret[SecretType.PrivateKey]
         }
         formattedCredentials['exploit_ssh_keys'].push(keypair)
       }
@@ -78,9 +78,9 @@ export function formatCredentialsForIsland(credentials) {
     })
   }
 
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_password_list'], SecretTypes.Password))
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_ntlm_hash_list'], SecretTypes.NTHash))
-  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_lm_hash_list'], SecretTypes.LMHash))
+  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_password_list'], SecretType.Password))
+  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_ntlm_hash_list'], SecretType.NTHash))
+  formattedCredentials.push(...getFormattedCredentials(credentials['exploit_lm_hash_list'], SecretType.LMHash))
 
   let ssh_keys = credentials['exploit_ssh_keys'];
   for (let i = 0; i < ssh_keys.length; i++) {
