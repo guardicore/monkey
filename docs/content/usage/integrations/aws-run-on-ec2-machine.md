@@ -10,7 +10,7 @@ tags: ["aws", "integration"]
 
 This feature allows execution of the Infection Monkey agent on EC2 instances with the help of an SSM agent.
 
-Alternatively, you will need to execute a command on an EC2 instance manually (see [running manually](../../running-manually)) or using other management tools.
+Alternatively, you can execute a command on an EC2 instance manually (see [running manually](../../running-manually)) or using other management tools.
 
 ![AWS EC2 logo](/images/usage/integrations/aws-ec2.svg?height=250px "AWS EC2 logo")
 
