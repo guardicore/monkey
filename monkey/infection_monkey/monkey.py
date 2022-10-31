@@ -283,7 +283,7 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             "SSHCollector",
-            SSHCredentialCollector(self._telemetry_messenger, self._agent_event_queue),
+            SSHCredentialCollector(self._agent_event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
 
