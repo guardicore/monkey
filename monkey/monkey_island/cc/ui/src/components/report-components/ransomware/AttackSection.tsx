@@ -76,8 +76,7 @@ function sortEvents(events): void {
 function getDataForTable(events): Array<TableRow> {
   let tableData = [];
 
-  for (var i = 0; i < events.length; i++) {
-    let event = events[i];
+  for (let event of events) {
     if (event['success'] === true) {
       tableData.push({'hostname': parseHostname(event['target']), 'file_path': event['file_path']['path']});
     }
