@@ -2,7 +2,6 @@ import abc
 import json
 import logging
 
-from infection_monkey.control import ControlClient
 from infection_monkey.telemetry.i_telem import ITelem
 from infection_monkey.telemetry.telem_encoder import TelemetryJSONEncoder
 
@@ -36,7 +35,6 @@ class BaseTelem(ITelem, metaclass=abc.ABCMeta):
         data = self.get_data()
         serialized_data = json.dumps(data, cls=self.json_encoder)
         self._log_telem_sending(serialized_data, log_data)
-        ControlClient.control_client_object.send_telemetry(self.telem_category, serialized_data)
 
     @property
     def json_encoder(self):

@@ -93,9 +93,7 @@ class InfectionMonkey:
         self._cmd_island_ip = self._island_address.ip
         self._cmd_island_port = self._island_address.port
 
-        self._control_client = ControlClient(
-            server_address=self._island_address, island_api_client=self._island_api_client
-        )
+        self._control_client = ControlClient(server_address=self._island_address)
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
         )
@@ -104,9 +102,6 @@ class InfectionMonkey:
         )
         self._register_agent()
 
-        # TODO Refactor the telemetry messengers to accept control client
-        # and remove control_client_object
-        ControlClient.control_client_object = self._control_client
         self._current_depth = self._opts.depth
         self._master = None
         self._relay: Optional[TCPRelay] = None
