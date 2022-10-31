@@ -2,10 +2,8 @@ import json
 
 from flask import jsonify, make_response, request
 
-from monkey_island.cc.models import Monkey
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
-from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
 
@@ -14,19 +12,6 @@ class LocalRun(AbstractResource):
 
     def __init__(self, local_monkey_run_service: LocalMonkeyRunService):
         self._local_monkey_run_service = local_monkey_run_service
-
-    # API Spec: Both of these methods should be separated to their own resources
-
-    # API Spec: This should be a REST endpoint, /api/monkeys or something
-    @jwt_required
-    def get(self):
-        island_monkey = NodeService.get_monkey_island_monkey()
-        if island_monkey is not None:
-            is_monkey_running = not Monkey.get_single_monkey_by_id(island_monkey["_id"]).is_dead()
-        else:
-            is_monkey_running = False
-
-        return jsonify(is_running=is_monkey_running)
 
     # API Spec: This should be an RPC-style endpoint
     @jwt_required
