@@ -65,9 +65,6 @@ from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
-from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
-    LegacyTelemetryMessengerAdapter,
-)
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
@@ -110,7 +107,6 @@ class InfectionMonkey:
         # TODO Refactor the telemetry messengers to accept control client
         # and remove control_client_object
         ControlClient.control_client_object = self._control_client
-        self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
         self._relay: Optional[TCPRelay] = None
