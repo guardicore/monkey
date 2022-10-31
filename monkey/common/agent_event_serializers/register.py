@@ -2,6 +2,7 @@ from common.agent_events import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
     ExploitationEvent,
+    FileEncryptionEvent,
     PasswordRestorationEvent,
     PingScanEvent,
     PropagationEvent,
@@ -25,3 +26,6 @@ def register_common_agent_event_serializers(
         PasswordRestorationEvent
     )
     event_serializer_registry[AgentShutdownEvent] = PydanticAgentEventSerializer(AgentShutdownEvent)
+    event_serializer_registry[FileEncryptionEvent] = PydanticAgentEventSerializer(
+        FileEncryptionEvent
+    )

@@ -1,5 +1,6 @@
 import threading
 from pathlib import PurePosixPath
+from typing import Type
 from unittest.mock import MagicMock
 
 import pytest
@@ -9,9 +10,35 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
     TEST_KEYBOARD_TXT,
 )
 
+from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
+from common.event_queue import AgentEventSubscriber, IAgentEventQueue
 from infection_monkey.payload.ransomware.consts import README_FILE_NAME, README_SRC
 from infection_monkey.payload.ransomware.ransomware import Ransomware
 from infection_monkey.payload.ransomware.ransomware_options import RansomwareOptions
+
+
+class AgentEventQueueSpy(IAgentEventQueue):
+    def __init__(self):
+        self.events = []
+
+    def subscribe_all_events(self, subscriber: AgentEventSubscriber):
+        pass
+
+    def subscribe_type(
+        self, event_type: Type[AbstractAgentEvent], subscriber: AgentEventSubscriber
+    ):
+        pass
+
+    def subscribe_tag(self, tag: str, subscriber: AgentEventSubscriber):
+        pass
+
+    def publish(self, event: AbstractAgentEvent):
+        self.events.append(event)
+
+
+@pytest.fixture
+def agent_event_queue_spy():
+    return AgentEventQueueSpy()
 
 
 @pytest.fixture
@@ -21,7 +48,7 @@ def ransomware(build_ransomware, ransomware_options):
 
 @pytest.fixture
 def build_ransomware(
-    mock_file_encryptor, mock_file_selector, mock_leave_readme, telemetry_messenger_spy
+    mock_file_encryptor, mock_file_selector, mock_leave_readme, agent_event_queue_spy
 ):
     def inner(
         config,
@@ -34,7 +61,7 @@ def build_ransomware(
             file_encryptor,
             file_selector,
             leave_readme,
-            telemetry_messenger_spy,
+            agent_event_queue_spy,
         )
 
     return inner
@@ -155,37 +182,6 @@ def test_encryption_skipped_if_no_directory(
     assert mock_file_encryptor.call_count == 0
 
 
-def test_telemetry_success(ransomware, telemetry_messenger_spy):
-    ransomware.run(threading.Event())
-
-    assert len(telemetry_messenger_spy.telemetries) == 2
-    telem_1 = telemetry_messenger_spy.telemetries[0]
-    telem_2 = telemetry_messenger_spy.telemetries[1]
-
-    assert ALL_ZEROS_PDF in telem_1.get_data()["files"][0]["path"]
-    assert telem_1.get_data()["files"][0]["success"]
-    assert telem_1.get_data()["files"][0]["error"] == ""
-    assert TEST_KEYBOARD_TXT in telem_2.get_data()["files"][0]["path"]
-    assert telem_2.get_data()["files"][0]["success"]
-    assert telem_2.get_data()["files"][0]["error"] == ""
-
-
-def test_telemetry_failure(build_ransomware, ransomware_options, telemetry_messenger_spy):
-    file_not_exists = "/file/not/exist"
-    mfe = MagicMock(
-        side_effect=FileNotFoundError(f"[Errno 2] No such file or directory: '{file_not_exists}'")
-    )
-    mfs = MagicMock(return_value=[PurePosixPath(file_not_exists)])
-    ransomware = build_ransomware(config=ransomware_options, file_encryptor=mfe, file_selector=mfs)
-
-    ransomware.run(threading.Event())
-    telem = telemetry_messenger_spy.telemetries[0]
-
-    assert file_not_exists in telem.get_data()["files"][0]["path"]
-    assert not telem.get_data()["files"][0]["success"]
-    assert "No such file or directory" in telem.get_data()["files"][0]["error"]
-
-
 def test_readme_false(build_ransomware, ransomware_options, mock_leave_readme):
     ransomware_options.readme_enabled = False
     ransomware = build_ransomware(ransomware_options)
@@ -219,3 +215,47 @@ def test_leave_readme_exceptions_handled(build_ransomware, ransomware_options):
 
     # Test will fail if exception is raised and not handled
     ransomware.run(threading.Event())
+
+
+def test_file_encryption_event_publishing(
+    agent_event_queue_spy, ransomware_test_data, ransomware_options, build_ransomware
+):
+    expected_selected_files = [
+        ransomware_test_data / ALL_ZEROS_PDF,
+        ransomware_test_data / HELLO_TXT,
+        ransomware_test_data / TEST_KEYBOARD_TXT,
+    ]
+    mfs = MagicMock(return_value=expected_selected_files)
+
+    build_ransomware(ransomware_options, MagicMock(), mfs).run(threading.Event())
+
+    assert len(agent_event_queue_spy.events) == 3
+
+    for event in agent_event_queue_spy.events:
+        assert event.__class__ is FileEncryptionEvent
+        assert event.success
+        assert event.target is None
+
+    actual_file_paths = [event.file_path for event in agent_event_queue_spy.events]
+    assert expected_selected_files == actual_file_paths
+
+
+def test_file_encryption_event_publishing__failed(
+    agent_event_queue_spy, ransomware_test_data, ransomware_options, build_ransomware
+):
+    file_not_exists = "/file/not/exist"
+    mfe = MagicMock(
+        side_effect=FileNotFoundError(f"[Errno 2] No such file or directory: '{file_not_exists}'")
+    )
+    mfs = MagicMock(return_value=[PurePosixPath(file_not_exists)])
+    ransomware = build_ransomware(config=ransomware_options, file_encryptor=mfe, file_selector=mfs)
+
+    ransomware.run(threading.Event())
+
+    assert len(agent_event_queue_spy.events) == 1
+
+    for event in agent_event_queue_spy.events:
+        assert event.__class__ is FileEncryptionEvent
+        assert not event.success
+        assert event.target is None
+        assert event.file_path == PurePosixPath(file_not_exists)

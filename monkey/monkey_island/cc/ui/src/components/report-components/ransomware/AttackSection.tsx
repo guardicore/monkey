@@ -25,9 +25,18 @@ function AttackSection(): ReactElement {
   const [tableData, setTableData] = useState(null);
 
   useEffect(() => {
-    let url_args = {'telem_category': 'file_encryption'};
-    IslandHttpClient.get(APIEndpoint.telemetry, url_args)
-      .then(resp => setTableData(processTelemetry(resp.body)));
+    let agents = [];
+    let machines = [];
+
+    let agent_events_url_args = {'type': 'FileEncryptionEvent'};
+    IslandHttpClient.get(APIEndpoint.agents)
+      .then(res => agents = res.body)
+      .then(() => IslandHttpClient.get(APIEndpoint.machines)
+        .then(res => machines = res.body)
+        .then(() => IslandHttpClient.get(APIEndpoint.agentEvents, agent_events_url_args)
+          .then(res => setTableData(processEvents(res.body, agents, machines)))
+        )
+      )
   }, []);
 
 
@@ -54,18 +63,15 @@ function getBody(tableData): ReactFragment {
   );
 }
 
-function processTelemetry(telemetry): Array<TableRow> {
-  // Sort ascending so that newer telemetry records overwrite older ones.
-  sortTelemetry(telemetry);
-
-  let latestTelemetry = getLatestTelemetry(telemetry);
-  let tableData = getDataForTable(latestTelemetry);
-
+function processEvents(events, agents, machines): Array<TableRow> {
+  // Sort events by timestamp, latest first
+  sortEvents(events);
+  let tableData = getDataForTable(events, agents, machines);
   return tableData;
 }
 
-function sortTelemetry(telemetry): void {
-  telemetry.objects.sort((a, b) => {
+function sortEvents(events): void {
+  events.sort((a, b) => {
     if (a.timestamp > b.timestamp) {
       return 1;
     } else if (a.timestamp < b.timestamp) {
@@ -76,39 +82,39 @@ function sortTelemetry(telemetry): void {
   });
 }
 
-function getLatestTelemetry(telemetry) {
-  let latestTelemetry = {};
-  for (let i = 0; i < telemetry.objects.length; i++) {
-    let monkey = telemetry.objects[i].monkey
-
-    if (! (monkey in latestTelemetry)) {
-      latestTelemetry[monkey] = {};
-    }
-
-    telemetry.objects[i].data.files.forEach((file_encryption_telemetry) => {
-      latestTelemetry[monkey][file_encryption_telemetry.path] = file_encryption_telemetry.success
-    });
-  }
-
-  return latestTelemetry;
-}
-
-function getDataForTable(telemetry): Array<TableRow> {
+function getDataForTable(events, agents, machines): Array<TableRow> {
   let tableData = [];
 
-  for (const monkey in telemetry) {
-    for (const path in telemetry[monkey]) {
-      if (telemetry[monkey][path]) {
-        tableData.push({'hostname': parseHostname(monkey), 'file_path': path});
-      }
+  for (let event of events) {
+    if (event['success'] === true) {
+      tableData.push({'hostname': getHostname(event['source'], agents, machines), 'file_path': event['file_path']['path']});
     }
   }
 
   return tableData;
 }
 
-function parseHostname(monkey: string): string {
-    return monkey.match(HOSTNAME_REGEX)[2];
+function getHostname(event_source, agents, machines): string {
+  let hostname = "unknown";
+
+  for (let agent of agents) {
+    if (event_source === agent['id']) {
+      for (let machine of machines) {
+        if (agent['machine_id'] === machine['id']) {
+          if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
+            hostname = machine['hostname'];
+          }
+          else {
+            hostname = machine['network_interfaces'][0].split('/')[0];
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  return hostname;
 }
 
 export default AttackSection;

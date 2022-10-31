@@ -7,4 +7,5 @@ from .exploitation_event import ExploitationEvent
 from .propagation_event import PropagationEvent
 from .password_restoration_event import PasswordRestorationEvent
 from .agent_shutdown_event import AgentShutdownEvent
+from .file_encryption_event import FileEncryptionEvent
 from .register import register_common_agent_events
