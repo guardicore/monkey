@@ -257,7 +257,6 @@ class InfectionMonkey:
             self._current_depth,
             servers,
             puppet,
-            self._telemetry_messenger,
             victim_host_factory,
             self._control_channel,
             local_network_interfaces,
