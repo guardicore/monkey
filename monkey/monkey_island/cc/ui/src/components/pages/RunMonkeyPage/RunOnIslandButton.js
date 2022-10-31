@@ -9,6 +9,7 @@ import AuthComponent from '../../AuthComponent';
 import IslandMonkeyRunErrorModal from '../../ui-components/IslandMonkeyRunErrorModal';
 import '../../../styles/components/RunOnIslandButton.scss';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 
 
 const MONKEY_STATES = {
@@ -23,6 +24,7 @@ class RunOnIslandButton extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // TODO: Can't we just use true/false for this?
       runningOnIslandState: MONKEY_STATES.NOT_RUNNING,
       showModal: false,
       errorDetails: ''
@@ -32,16 +34,42 @@ class RunOnIslandButton extends AuthComponent {
   }
 
   componentDidMount() {
-    this.authFetch('/api/local-monkey')
-      .then(res => res.json())
-      .then(res => {
-        if (res['is_running']) {
+    IslandHttpClient.get(APIEndpoint.machines).then(res => {
+      const island_machine_id = this.get_island_machine_id(res.body)
+
+      IslandHttpClient.get(APIEndpoint.agents).then(res => {
+        if (this.agents_running_on_machine(island_machine_id, res.body)) {
           this.setState({runningOnIslandState: MONKEY_STATES.RUNNING});
         } else {
           this.setState({runningOnIslandState: MONKEY_STATES.NOT_RUNNING});
         }
-      });
+      })
+    })
+
   }
+
+  get_island_machine_id(machines) {
+      for (const i in machines) {
+        if (machines[i].island === true) {
+          return machines[i].id
+        }
+      }
+  }
+
+  agents_running_on_machine(machine_id, agents) {
+    for (const i in agents) {
+      if (agents[i].machine_id !== machine_id) {
+        continue;
+      }
+
+      if (agents[i].stop_time === null) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 
   runIslandMonkey = () => {
     this.setState({runningOnIslandState: MONKEY_STATES.STARTING}, this.sendRunMonkeyRequest)
