@@ -1,4 +1,5 @@
 from ipaddress import IPv4Address
+from itertools import count
 from threading import Lock
 from typing import Any, Sequence
 
@@ -18,7 +19,7 @@ class MongoMachineRepository(IMachineRepository):
     def __init__(self, mongo_client: MongoClient):
         self._machines_collection = mongo_client.monkey_island.machines
         self._id_lock = Lock()
-        self._next_id = self._get_biggest_id()
+        self._id_iterator = count(start=(self._get_biggest_id() + 1))
 
     def _get_biggest_id(self) -> MachineID:
         try:
@@ -28,8 +29,7 @@ class MongoMachineRepository(IMachineRepository):
 
     def get_new_id(self) -> MachineID:
         with self._id_lock:
-            self._next_id += 1
-            return self._next_id
+            return next(self._id_iterator)
 
     def upsert_machine(self, machine: Machine):
         try:
