@@ -92,17 +92,6 @@ class NodeService:
             {"_id": monkey_id}, {"$set": {"modifytime": datetime.now()}}, upsert=False
         )
 
-    # TODO this returns a mock island agent
-    # It's better to just initialize the island machine on reset I think
-    @staticmethod
-    def get_monkey_island_monkey():
-        ip_addresses = get_my_ip_addresses_legacy()
-        for ip_address in ip_addresses:
-            monkey = NodeService.get_monkey_by_ip(ip_address)
-            if monkey is not None:
-                return monkey
-        return None
-
     @staticmethod
     def get_node_or_monkey_by_id(node_id):
         node = NodeService.get_node_by_id(node_id)
