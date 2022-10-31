@@ -295,9 +295,7 @@ class InfectionMonkey:
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
         )
-        exploit_wrapper = ExploiterWrapper(
-            self._telemetry_messenger, self._agent_event_queue, agent_binary_repository
-        )
+        exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
 
         puppet.load_plugin(
             "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER
