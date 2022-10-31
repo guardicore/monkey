@@ -25,9 +25,18 @@ function AttackSection(): ReactElement {
   const [tableData, setTableData] = useState(null);
 
   useEffect(() => {
-    let url_args = {'type': 'FileEncryptionEvent'};
-    IslandHttpClient.get(APIEndpoint.agentEvents, url_args)
-      .then(resp => setTableData(processEvents(resp.body)));
+    let agents = [];
+    let machines = [];
+
+    let agent_events_url_args = {'type': 'FileEncryptionEvent'};
+    IslandHttpClient.get(APIEndpoint.agents)
+      .then(res => agents = res.body)
+      .then(() => IslandHttpClient.get(APIEndpoint.machines)
+        .then(res => machines = res.body)
+        .then(() => IslandHttpClient.get(APIEndpoint.agentEvents, agent_events_url_args)
+          .then(res => setTableData(processEvents(res.body, agents, machines)))
+        )
+      )
   }, []);
 
 
@@ -54,10 +63,10 @@ function getBody(tableData): ReactFragment {
   );
 }
 
-function processEvents(events): Array<TableRow> {
+function processEvents(events, agents, machines): Array<TableRow> {
   // Sort events by timestamp, latest first
   sortEvents(events);
-  let tableData = getDataForTable(events);
+  let tableData = getDataForTable(events, agents, machines);
   return tableData;
 }
 
@@ -73,21 +82,39 @@ function sortEvents(events): void {
   });
 }
 
-function getDataForTable(events): Array<TableRow> {
+function getDataForTable(events, agents, machines): Array<TableRow> {
   let tableData = [];
 
   for (let event of events) {
     if (event['success'] === true) {
-      tableData.push({'hostname': parseHostname(event['target']), 'file_path': event['file_path']['path']});
+      tableData.push({'hostname': getHostname(event['source'], agents, machines), 'file_path': event['file_path']['path']});
     }
   }
 
   return tableData;
 }
 
-function parseHostname(monkey: string): string {
-    // TODO: Fix when target is null ie host machine was targeted
-    return monkey.match(HOSTNAME_REGEX)[2];
+function getHostname(event_source, agents, machines): string {
+  let hostname = "unknown";
+
+  for (let agent of agents) {
+    if (event_source === agent['id']) {
+      for (let machine of machines) {
+        if (agent['machine_id'] === machine['id']) {
+          if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
+            hostname = machine['hostname'];
+          }
+          else {
+            hostname = machine['network_interfaces'][0];
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  return hostname;
 }
 
 export default AttackSection;
