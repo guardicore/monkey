@@ -105,7 +105,7 @@ function getHostname(event_source, agents, machines): string {
             hostname = machine['hostname'];
           }
           else {
-            hostname = machine['network_interfaces'][0];
+            hostname = machine['network_interfaces'][0].split('/')[0];
           }
           break;
         }
