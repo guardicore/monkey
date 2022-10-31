@@ -73,20 +73,6 @@ class Monkey(Document):
             return Monkey.objects.order_by("-modifytime").first().modifytime
         return None
 
-    def is_dead(self):
-        monkey_is_dead = False
-        if self.dead:
-            monkey_is_dead = True
-        else:
-            try:
-                if MonkeyTtl.objects(id=self.ttl_ref.id).count() == 0:
-                    # No TTLs - monkey has timed out. The monkey is MIA.
-                    monkey_is_dead = True
-            except (DoesNotExist, AttributeError):
-                # Trying to dereference unknown document - the monkey is MIA.
-                monkey_is_dead = True
-        return monkey_is_dead
-
     @ring.lru()
     @staticmethod
     def get_label_by_id(object_id):
