@@ -11,7 +11,6 @@ from common.tags import (
     T1005_ATTACK_TECHNIQUE_TAG,
     T1145_ATTACK_TECHNIQUE_TAG,
 )
-from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.ids import get_agent_id
 
@@ -30,9 +29,7 @@ SSH_COLLECTOR_EVENT_TAGS = frozenset(
 )
 
 
-def get_ssh_info(
-    telemetry_messenger: ITelemetryMessenger, agent_event_queue: IAgentEventQueue
-) -> Iterable[Dict]:
+def get_ssh_info(agent_event_queue: IAgentEventQueue) -> Iterable[Dict]:
     # TODO: Remove this check when this is turned into a plugin.
     if is_windows_os():
         logger.debug(

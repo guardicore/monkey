@@ -65,9 +65,6 @@ from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
-from infection_monkey.telemetry.messengers.legacy_telemetry_messenger_adapter import (
-    LegacyTelemetryMessengerAdapter,
-)
 from infection_monkey.utils import agent_process
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
@@ -96,9 +93,7 @@ class InfectionMonkey:
         self._cmd_island_ip = self._island_address.ip
         self._cmd_island_port = self._island_address.port
 
-        self._control_client = ControlClient(
-            server_address=self._island_address, island_api_client=self._island_api_client
-        )
+        self._control_client = ControlClient(server_address=self._island_address)
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
         )
@@ -107,10 +102,6 @@ class InfectionMonkey:
         )
         self._register_agent()
 
-        # TODO Refactor the telemetry messengers to accept control client
-        # and remove control_client_object
-        ControlClient.control_client_object = self._control_client
-        self._telemetry_messenger = LegacyTelemetryMessengerAdapter()
         self._current_depth = self._opts.depth
         self._master = None
         self._relay: Optional[TCPRelay] = None
@@ -257,7 +248,6 @@ class InfectionMonkey:
             self._current_depth,
             servers,
             puppet,
-            self._telemetry_messenger,
             victim_host_factory,
             self._control_channel,
             local_network_interfaces,
@@ -283,7 +273,7 @@ class InfectionMonkey:
         )
         puppet.load_plugin(
             "SSHCollector",
-            SSHCredentialCollector(self._telemetry_messenger, self._agent_event_queue),
+            SSHCredentialCollector(self._agent_event_queue),
             PluginType.CREDENTIAL_COLLECTOR,
         )
 
@@ -296,9 +286,7 @@ class InfectionMonkey:
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
         )
-        exploit_wrapper = ExploiterWrapper(
-            self._telemetry_messenger, self._agent_event_queue, agent_binary_repository
-        )
+        exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
 
         puppet.load_plugin(
             "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER

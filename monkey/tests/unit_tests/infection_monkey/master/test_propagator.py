@@ -215,11 +215,10 @@ class MockExploiter:
 
 
 def test_scan_target_generation(
-    telemetry_messenger_spy, mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
+    mock_ip_scanner, mock_victim_host_factory, default_agent_configuration
 ):
     local_network_interfaces = [IPv4Interface("10.0.0.9/29")]
     p = Propagator(
-        telemetry_messenger_spy,
         mock_ip_scanner,
         StubExploiter(),
         mock_victim_host_factory,

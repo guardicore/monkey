@@ -11,7 +11,6 @@ from infection_monkey.i_control_channel import IControlChannel, IslandCommunicat
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.model import VictimHostFactory
-from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -34,7 +33,6 @@ class AutomatedMaster(IMaster):
         current_depth: Optional[int],
         servers: Sequence[str],
         puppet: IPuppet,
-        telemetry_messenger: ITelemetryMessenger,
         victim_host_factory: VictimHostFactory,
         control_channel: IControlChannel,
         local_network_interfaces: List[IPv4Interface],
@@ -43,14 +41,12 @@ class AutomatedMaster(IMaster):
         self._current_depth = current_depth
         self._servers = servers
         self._puppet = puppet
-        self._telemetry_messenger = telemetry_messenger
         self._control_channel = control_channel
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
 
         exploiter = Exploiter(self._puppet, NUM_EXPLOIT_THREADS, credentials_store.get_credentials)
         self._propagator = Propagator(
-            self._telemetry_messenger,
             ip_scanner,
             exploiter,
             victim_host_factory,

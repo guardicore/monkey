@@ -15,7 +15,6 @@ from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, Port
 from infection_monkey.model import VictimHost, VictimHostFactory
 from infection_monkey.network import NetworkAddress
 from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list
-from infection_monkey.telemetry.messengers.i_telemetry_messenger import ITelemetryMessenger
 from infection_monkey.utils.threading import create_daemon_thread
 
 from . import Exploiter, IPScanner, IPScanResults
@@ -27,13 +26,11 @@ logger = logging.getLogger()
 class Propagator:
     def __init__(
         self,
-        telemetry_messenger: ITelemetryMessenger,
         ip_scanner: IPScanner,
         exploiter: Exploiter,
         victim_host_factory: VictimHostFactory,
         local_network_interfaces: List[IPv4Interface],
     ):
-        self._telemetry_messenger = telemetry_messenger
         self._ip_scanner = ip_scanner
         self._exploiter = exploiter
         self._victim_host_factory = victim_host_factory
