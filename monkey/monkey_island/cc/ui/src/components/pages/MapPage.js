@@ -107,7 +107,7 @@ class MapPageComponent extends AuthComponent {
           <Col xs={4}>
             <div style={{ 'overflow': 'auto', 'marginBottom': '1em' }}>
               <Link to="/infection/events" className="btn btn-light pull-left" style={{ 'width': '48%' }}>Monkey
-                Telemetry</Link>
+                Events</Link>
               <button onClick={() => this.setState({ showKillDialog: true })} className="btn btn-danger pull-right"
                 style={{ 'width': '48%' }}>
                 <FontAwesomeIcon icon={faStopCircle} style={{ 'marginRight': '0.5em' }} />
