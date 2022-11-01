@@ -82,6 +82,8 @@ Deployment.DOCKER
 Edge.meta
 Monkey.guid
 Monkey.launch_time
+Monkey.dead
+Monkey.ttl_ref
 MonkeyTtl.expire_at
 Report.overview
 Report.glance
