@@ -1,7 +1,7 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
 import AuthService from '../../services/AuthService';
-import TelemetryLogTable from '../ui-components/TelemetryLogTable'
+import EventsTable from '../ui-components/EventsTable'
 
 import '../../styles/pages/EventPage.scss';
 
@@ -23,7 +23,7 @@ class EventPageComponent extends React.Component {
            className={'main'}>
         <div>
           <h1 className="page-title">Agent Events</h1>
-          <TelemetryLogTable/>
+          <EventsTable/>
         </div>
       </Col>
     );
