@@ -6,7 +6,7 @@ import TelemetryLogTable from '../ui-components/TelemetryLogTable'
 import '../../styles/pages/TelemetryPage.scss';
 
 
-class TelemetryPageComponent extends React.Component {
+class EventPageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.auth = new AuthService();
@@ -30,4 +30,4 @@ class TelemetryPageComponent extends React.Component {
   }
 }
 
-export default TelemetryPageComponent;
+export default EventPageComponent;
