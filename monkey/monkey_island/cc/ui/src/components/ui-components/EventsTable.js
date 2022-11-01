@@ -4,6 +4,7 @@ import MUIDataTable from 'mui-datatables';
 import AuthService from '../../services/AuthService';
 import '../../styles/pages/EventPage.scss';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
+import LoadingIcon from './LoadingIcon';
 
 const columns = [
   {label: 'Time', name: 'timestamp'},
@@ -126,11 +127,13 @@ class EventsTable extends React.Component {
     this.state = {
       events: [],
       agents: [],
-      machines: []
+      machines: [],
+      loading: false
     };
   }
 
   componentDidMount = () => {
+    this.setState({loading: true})
     IslandHttpClient.get(APIEndpoint.agents)
       .then(res => this.setState({agents: res.body}))
 
@@ -138,13 +141,17 @@ class EventsTable extends React.Component {
       .then(res => this.setState({machines: res.body}))
 
     IslandHttpClient.get(APIEndpoint.agentEvents)
-      .then(res => this.setState({events: res.body}))
+      .then(res => this.setState({events: res.body, loading: false}))
   };
 
   render() {
     return (
     <>
       <div className="data-table-container">
+      {
+        this.state.loading ?
+        <LoadingIcon/>
+        :
         <MUIDataTable
           columns={columns}
           data={this.state.events.map(item => {
@@ -158,6 +165,7 @@ class EventsTable extends React.Component {
             ]})}
           options={table_options}
         />
+      }
       </div>
     </>
     );
