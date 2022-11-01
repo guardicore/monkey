@@ -19,7 +19,8 @@ export enum APIEndpoint {
   mode = '/api/island/mode',
   manual_exploitation = '/api/exploitations/manual',
   monkey_exploitation = '/api/exploitations/monkey',
-  telemetry = '/api/telemetry'
+  telemetry = '/api/telemetry',
+  stolenCredentials = '/api/propagation-credentials/stolen-credentials'
 }
 
 class IslandHttpClient extends AuthComponent {

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
-import StolenPasswords from 'components/report-components/security/StolenPasswords';
+import StolenCredentialsTable from 'components/report-components/security/StolenCredentialsTable';
 import { Line } from 'rc-progress';
 import AuthComponent from '../AuthComponent';
 import ReportHeader, { ReportTypes } from './common/ReportHeader';
@@ -41,7 +41,7 @@ import {
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
 import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
-import UsedCredentials from './security/UsedCredentials';
+import AvailableCredentials from './security/AvailableCredentials';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -215,7 +215,6 @@ class ReportPageComponent extends AuthComponent {
     return Object.keys(this.state.report).length === 0;
   }
 
-
   generateReportOverviewSection() {
     return (
       <div id='overview'>
@@ -248,7 +247,7 @@ class ReportPageComponent extends AuthComponent {
         <p>
           The monkeys were run with the following configuration:
         </p>
-        <UsedCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials} />
+        <AvailableCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials} />
         {
           this.state.report.overview.config_exploits.length > 0 ?
             (
@@ -475,10 +474,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <StolenPasswords
-            data={this.state.stolenCredentials}
-            format={true}
-          />
+          <StolenCredentialsTable stolenCredentials={this.state.stolenCredentials} />
         </div>
       </div>
     );
