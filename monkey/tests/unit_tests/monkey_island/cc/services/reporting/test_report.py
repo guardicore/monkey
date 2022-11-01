@@ -2,6 +2,8 @@ from ipaddress import IPv4Interface
 from unittest.mock import MagicMock
 
 from monkey_island.cc.models import CommunicationType, Machine, Node
+import pytest
+
 from monkey_island.cc.services.reporting.report import ReportService
 
 ISLAND_MACHINE = Machine(
@@ -67,11 +69,15 @@ def get_machine_by_id(machine_id):
     return [machine for machine in MACHINES if machine_id == machine.id][0]
 
 
-def test_get_scanned():
-    ReportService._node_repository = MagicMock()
-    ReportService._node_repository.get_nodes.return_value = NODES
+@pytest.fixture(autouse=True)
+def report_service():
     ReportService._machine_repository = MagicMock()
     ReportService._machine_repository.get_machines.return_value = MACHINES
     ReportService._machine_repository.get_machine_by_id = get_machine_by_id
+    ReportService._node_repository = MagicMock()
+    ReportService._node_repository.get_nodes.return_value = NODES
+
+
+def test_get_scanned():
     scanned = ReportService.get_scanned()
     assert scanned == EXPECTED_SCANNED_MACHINES
