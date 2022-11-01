@@ -65,7 +65,7 @@ AGENTS = [
         id=UUID("e5cd334a-5ca5-4f19-a2ab-a68d515fea46"),
         machine_id=1,
         start_time=600,
-        stop_time=40003,
+        stop_time=40309,
         cc_server=SocketAddress(ip="127.0.0.1", port=5000),
     ),
     Agent(
@@ -142,4 +142,8 @@ def test_get_first_monkey_time():
 
 
 def test_get_last_monkey_time():
-    assert ReportService.get_last_monkey_dead_time() == datetime.fromtimestamp(40003, tz=pytz.UTC)
+    assert ReportService.get_last_monkey_dead_time() == datetime.fromtimestamp(40309, tz=pytz.UTC)
+
+
+def test_get_monkey_duration():
+    assert ReportService.get_monkey_duration() == "11 hours, 10 minutes and 9 seconds"
