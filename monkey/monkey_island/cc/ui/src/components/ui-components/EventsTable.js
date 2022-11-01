@@ -34,7 +34,7 @@ const table_options = {
   selectableRows: 'none'
 };
 
-class TelemetryLogTable extends React.Component {
+class EventsTable extends React.Component {
   constructor(props) {
     super(props);
     this.auth = new AuthService();
@@ -72,4 +72,4 @@ class TelemetryLogTable extends React.Component {
   }
 }
 
-export default TelemetryLogTable;
+export default EventsTable;
