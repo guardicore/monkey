@@ -7,14 +7,14 @@ import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 const columns = [
   {label: 'Time', name: 'timestamp'},
-  {label: 'Monkey', name: 'source'},
+  {label: 'Source', name: 'source'},
   {label: 'Target', name: 'target'},
   {label: 'Type', name: 'type'},
   {label: 'Tags', name: 'tags'},
   {label: 'Fields', name: 'fields',  options: {
       setCellProps: () => ({ style: { width: '30%' }}),
-      filter:false,
-      sort:false
+      filter: false,
+      sort: false
     }
   }
 ];
@@ -33,27 +33,51 @@ const table_options = {
 };
 
 const timestamp_options =  [{year: 'numeric'}, {month: '2-digit'},{day: '2-digit'},{'hour': '2-digit'},{'minutes': '2-digit'},{'second': 'numeric'}];
+
 const renderTime = (val) => new Date(val*1000).toLocaleString('en-us', timestamp_options);
 const renderTarget = (val) => val ?  val : 'Unknown';
 const renderTags = (val) => val.join(', ');
 
-const abstract_agent_event_fields = ['source', 'target', 'timestamp', 'type', 'tags'];
-
-function deleteKeys(myObj, array) {
-  let tempObj = JSON.parse(JSON.stringify(myObj)); /* deepcopy */
-  for (let index = 0; index < array.length; index++) {
-        delete tempObj[array[index]];
-    }
-      return tempObj;
-}
-
-function setEventSpecificFields(event) {
-  console.log(event);
-  let filtered_event = deleteKeys(event, abstract_agent_event_fields);
+function filterEventSpecificFields(event) {
+  let filtered_event = deleteAbstractAgentEventFields(event);
   return <JSONTree data={filtered_event} level={1} theme="eighties" invertTheme={true}/>
 }
 
-const renderEventSpecificFields = (val) => setEventSpecificFields(val);
+function deleteAbstractAgentEventFields(myObj) {
+  let abstract_agent_event_fields = ['source', 'target', 'timestamp', 'type', 'tags'];
+  let tempObj = JSON.parse(JSON.stringify(myObj)); /* deepcopy */
+
+  for (let index = 0; index < abstract_agent_event_fields.length; index++) {
+    delete tempObj[abstract_agent_event_fields[index]];
+  }
+
+  return tempObj;
+}
+
+const renderEventSpecificFields = (val) => filterEventSpecificFields(val);
+
+const renderSource = (event_source, agents, machines) => {
+  let hostname = "unknown";
+
+  for (let agent of agents) {
+    if (event_source === agent['id']) {
+      for (let machine of machines) {
+        if (agent['machine_id'] === machine['id']) {
+          if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
+            hostname = machine['hostname'];
+          }
+          else {
+            hostname = machine['network_interfaces'][0].split('/')[0];
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  return hostname;
+}
 
 class EventsTable extends React.Component {
   constructor(props) {
@@ -61,15 +85,21 @@ class EventsTable extends React.Component {
     this.auth = new AuthService();
     this.authFetch = this.auth.authFetch;
     this.state = {
-      events: []
+      events: [],
+      agents: [],
+      machines: []
     };
   }
 
   componentDidMount = () => {
+    IslandHttpClient.get(APIEndpoint.agents)
+      .then(res => this.setState({agents: res.body}))
+
+    IslandHttpClient.get(APIEndpoint.machines)
+      .then(res => this.setState({machines: res.body}))
+
     IslandHttpClient.get(APIEndpoint.agentEvents)
-      .then(res => res.body)
-      .then(res => {console.log(res);this.setState({events: res})
-      })
+      .then(res => this.setState({events: res.body}))
   };
 
   render() {
@@ -81,7 +111,7 @@ class EventsTable extends React.Component {
           data={this.state.events.map(item => {
             return [
               renderTime(item.timestamp),
-              item.source,
+              renderSource(item.source, this.state.agents, this.state.machines),
               renderTarget(item.target),
               item.type,
               renderTags(item.tags),
