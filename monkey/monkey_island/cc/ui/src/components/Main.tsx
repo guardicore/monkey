@@ -42,7 +42,7 @@ export const Routes = {
   ConfigurePage: '/configure',
   RunMonkeyPage: '/run-monkey',
   MapPage: '/infection/map',
-  EventPage: '/infection/telemetry',
+  EventPage: '/infection/events',
   LicensePage: '/license'
 }
 
