@@ -95,21 +95,17 @@ class ReportService:
         cls._node_repository = node_repository
 
     # This should pull from Simulation entity
-    @staticmethod
-    def get_first_monkey_time():
-        return (
-            mongo.db.telemetry.find({}, {"timestamp": 1})
-            .sort([("$natural", 1)])
-            .limit(1)[0]["timestamp"]
-        )
+    @classmethod
+    def get_first_monkey_time(cls):
+        agents = cls._agent_repository.get_agents()
 
-    @staticmethod
-    def get_last_monkey_dead_time():
-        return (
-            mongo.db.telemetry.find({}, {"timestamp": 1})
-            .sort([("$natural", -1)])
-            .limit(1)[0]["timestamp"]
-        )
+        return min(agents, key=lambda a: a.start_time).start_time
+
+    @classmethod
+    def get_last_monkey_dead_time(cls):
+        agents = filter(lambda a: a.stop_time is not None, cls._agent_repository.get_agents())
+
+        return max(agents, key=lambda a: a.stop_time).stop_time
 
     @staticmethod
     def get_monkey_duration():

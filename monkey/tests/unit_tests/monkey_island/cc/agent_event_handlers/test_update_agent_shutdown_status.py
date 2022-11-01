@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 import pytest
+import pytz
 from tests.monkey_island import InMemoryAgentRepository
 
 from common.agent_events import AgentShutdownEvent
@@ -37,8 +38,8 @@ def test_update_agent_shutdown_status(agent_repository):
 
     update_agent_shutdown_status_handler(AGENT_SHUTDOWN_EVENT)
 
-    assert agent_repository.get_agent_by_id(AGENT_ID).stop_time == datetime.utcfromtimestamp(
-        TIMESTAMP
+    assert agent_repository.get_agent_by_id(AGENT_ID).stop_time == datetime.fromtimestamp(
+        TIMESTAMP, tz=pytz.UTC
     )
 
 
