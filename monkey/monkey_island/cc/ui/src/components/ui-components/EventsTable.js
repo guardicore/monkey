@@ -35,7 +35,46 @@ const table_options = {
 const timestamp_options =  [{year: 'numeric'}, {month: '2-digit'},{day: '2-digit'},{'hour': '2-digit'},{'minutes': '2-digit'},{'second': 'numeric'}];
 
 const renderTime = (val) => new Date(val*1000).toLocaleString('en-us', timestamp_options);
-const renderTarget = (val) => val ?  val : 'Unknown';
+
+const renderTarget = (event_target, event_source, machines) => {
+  // event_target is null
+  if ((event_target === null) || (event_target === event_source)) {
+    return 'Local system';
+  }
+
+  // event_target is a machine ID (positive integer)
+  if ((parseInt(event_target) == event_target) && (event_target > 0)) {
+    for (let machine of machines) {
+      if (event_target === machine['id']) {
+        if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
+          return machine['hostname'];
+        }
+        else {
+          return machine['network_interfaces'][0].split('/')[0];
+        }
+      }
+    }
+  }
+
+  // if none of the above, event_target is an IPv4 address
+  for (let machine of machines) {
+    let machine_ips = machine['network_interfaces'].map(network_interface => {
+      return network_interface.split('/')[0]
+    })
+
+    if (machine_ips.includes(event_target)) {
+      if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
+        return machine['hostname'];
+      }
+      else {
+        return event_target;
+      }
+    }
+  }
+
+  return 'Unknown';
+}
+
 const renderTags = (val) => val.join(', ');
 
 function filterEventSpecificFields(event) {
@@ -112,7 +151,7 @@ class EventsTable extends React.Component {
             return [
               renderTime(item.timestamp),
               renderSource(item.source, this.state.agents, this.state.machines),
-              renderTarget(item.target),
+              renderTarget(item.target, item.source, this.state.machines),
               item.type,
               renderTags(item.tags),
               renderEventSpecificFields(item)
