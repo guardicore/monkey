@@ -105,7 +105,7 @@ const SideNavComponent = ({
         </NavLink></li>
         <li><NavLink to='/infection/telemetry'
                      className={getNavLinkClass()}>
-          Telemetries
+          Events
         </NavLink></li>
       </ul>
 
