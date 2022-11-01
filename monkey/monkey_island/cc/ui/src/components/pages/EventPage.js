@@ -22,7 +22,7 @@ class EventPageComponent extends React.Component {
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
            className={'main'}>
         <div>
-          <h1 className="page-title">Agent telemetries</h1>
+          <h1 className="page-title">Agent Events</h1>
           <TelemetryLogTable/>
         </div>
       </Col>
