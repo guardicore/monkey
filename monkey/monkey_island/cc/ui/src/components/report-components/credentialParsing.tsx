@@ -9,8 +9,8 @@ export function getAllUsernames(stolen, configured): string[]{
 
 export function getCredentialsUsernames(credentials): string[]{
   let usernames = [];
-  for (let i = 0; i < credentials.length; i++) {
-    let username = credentials[i]['identity'];
+  for (let credential of credentials) {
+    let username = credential['identity'];
     if (username !== null && username !== undefined) {
       usernames.push(username['username']);
     }
@@ -29,10 +29,10 @@ export function getAllSecrets(stolen, configured=[]) {
   let configuredSecrets = configured.map(cred => cred['secret']).filter(cred => cred !== null);
   let allSecrets = [...stolenSecrets, ...configuredSecrets];
 
-  for (let i = 0; i < allSecrets.length; i++) {
-    let secret = reformatSecret(allSecrets[i]);
-    if (! _.find(secrets, secret)) {
-      secrets.push(secret);
+  for (let secret of allSecrets) {
+    let formatted_secret = reformatSecret(secret);
+    if (! _.find(secrets, formatted_secret)) {
+      secrets.push(formatted_secret);
     }
   }
   return secrets

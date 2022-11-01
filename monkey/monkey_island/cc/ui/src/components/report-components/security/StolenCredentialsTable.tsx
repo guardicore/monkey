@@ -52,13 +52,13 @@ export default StolenCredentialsTable;
 function getCredentialsTableData(credentials){
   let tableData = [];
 
-  for (let i = 0; i < credentials.length; i++) {
+  for (let credential of credentials) {
     let rowData = {};
     rowData['username'] = '[No username]';
-    if (credentials[i]['identity'] !== null) {
-      rowData['username'] = credentials[i]['identity']['username'];
+    if (credential['identity'] !== null) {
+      rowData['username'] = credential['identity']['username'];
     }
-    rowData['title'] = reformatSecret(credentials[i]['secret'])['title'];
+    rowData['title'] = reformatSecret(credential['secret'])['title'];
     if (! _.find(tableData, rowData)){
       tableData.push(rowData);
     }
