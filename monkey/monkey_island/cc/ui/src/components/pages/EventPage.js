@@ -3,7 +3,7 @@ import {Col} from 'react-bootstrap';
 import AuthService from '../../services/AuthService';
 import TelemetryLogTable from '../ui-components/TelemetryLogTable'
 
-import '../../styles/pages/TelemetryPage.scss';
+import '../../styles/pages/EventPage.scss';
 
 
 class EventPageComponent extends React.Component {
