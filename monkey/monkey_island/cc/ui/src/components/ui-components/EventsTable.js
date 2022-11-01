@@ -36,9 +36,9 @@ const timestamp_options =  [{year: 'numeric'}, {month: '2-digit'},{day: '2-digit
 
 const renderTime = (val) => new Date(val*1000).toLocaleString('en-us', timestamp_options);
 
-const renderTarget = (event_target, event_source, machines) => {
+const renderTarget = (event_target, machines) => {
   // event_target is null
-  if ((event_target === null) || (event_target === event_source)) {
+  if (event_target === null) {
     return 'Local system';
   }
 
@@ -96,7 +96,7 @@ function deleteAbstractAgentEventFields(myObj) {
 const renderEventSpecificFields = (val) => filterEventSpecificFields(val);
 
 const renderSource = (event_source, agents, machines) => {
-  let hostname = "unknown";
+  let hostname = 'unknown';
 
   for (let agent of agents) {
     if (event_source === agent['id']) {
@@ -151,7 +151,7 @@ class EventsTable extends React.Component {
             return [
               renderTime(item.timestamp),
               renderSource(item.source, this.state.agents, this.state.machines),
-              renderTarget(item.target, item.source, this.state.machines),
+              renderTarget(item.target, this.state.machines),
               item.type,
               renderTags(item.tags),
               renderEventSpecificFields(item)
