@@ -18,14 +18,12 @@ const columns = [
 
 const pageSize = 10;
 
-const StolenCredentialsTable = () => {
+const StolenCredentialsTable = (props) => {
 
   const [credentialsTableData, setCredentialsTableData] = useState(null);
 
   useEffect(() => {
-    IslandHttpClient.get(APIEndpoint.stolenCredentials)
-      .then(res => res.body)
-      .then(creds => setCredentialsTableData(getCredentialsTableData(creds)))
+    setCredentialsTableData(getCredentialsTableData(props.stolenCredentials));
   }, [])
 
   if(credentialsTableData === null){
@@ -56,7 +54,10 @@ function getCredentialsTableData(credentials){
 
   for (let i = 0; i < credentials.length; i++) {
     let rowData = {};
-    rowData['username'] = credentials[i]['identity']['username'];
+    rowData['username'] = '[No username]';
+    if (credentials[i]['identity'] !== null) {
+      rowData['username'] = credentials[i]['identity']['username'];
+    }
     rowData['title'] = reformatSecret(credentials[i]['secret'])['title'];
     if (! _.find(tableData, rowData)){
       tableData.push(rowData);

@@ -474,7 +474,7 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <StolenCredentialsTable />
+          <StolenCredentialsTable stolenCredentials={this.state.stolenCredentials} />
         </div>
       </div>
     );
