@@ -2,7 +2,7 @@ import React from 'react';
 import JSONTree from 'react-json-tree';
 import MUIDataTable from 'mui-datatables';
 import AuthService from '../../services/AuthService';
-import '../../styles/pages/TelemetryPage.scss';
+import '../../styles/pages/EventPage.scss';
 
 const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true}/>;
 const renderTime = (val) => val.split('.')[0];
@@ -34,7 +34,7 @@ const table_options = {
   selectableRows: 'none'
 };
 
-class TelemetryLogTable extends React.Component {
+class EventsTable extends React.Component {
   constructor(props) {
     super(props);
     this.auth = new AuthService();
@@ -72,4 +72,4 @@ class TelemetryLogTable extends React.Component {
   }
 }
 
-export default TelemetryLogTable;
+export default EventsTable;

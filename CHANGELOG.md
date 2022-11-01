@@ -69,6 +69,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Format of scanned machines table in the security report. #2267
 - "Local network scan" option to "Scan Agent's networks". #2299
 - Information displayed in the preview pane in the map page. #2455
+- Telemetry page to Event page in the UI. #2501
+- '/infection/telemetry' to 'infection/events'. #2501
 
 ### Removed
 - VSFTPD exploiter. #1533

@@ -1,12 +1,12 @@
 import React from 'react';
 import {Col} from 'react-bootstrap';
 import AuthService from '../../services/AuthService';
-import TelemetryLogTable from '../ui-components/TelemetryLogTable'
+import EventsTable from '../ui-components/EventsTable'
 
-import '../../styles/pages/TelemetryPage.scss';
+import '../../styles/pages/EventPage.scss';
 
 
-class TelemetryPageComponent extends React.Component {
+class EventPageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.auth = new AuthService();
@@ -22,12 +22,12 @@ class TelemetryPageComponent extends React.Component {
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 7}}
            className={'main'}>
         <div>
-          <h1 className="page-title">Agent telemetries</h1>
-          <TelemetryLogTable/>
+          <h1 className="page-title">Agent Events</h1>
+          <EventsTable/>
         </div>
       </Col>
     );
   }
 }
 
-export default TelemetryPageComponent;
+export default EventPageComponent;
