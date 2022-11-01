@@ -3,6 +3,7 @@ import JSONTree from 'react-json-tree';
 import MUIDataTable from 'mui-datatables';
 import AuthService from '../../services/AuthService';
 import '../../styles/pages/EventPage.scss';
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 const timestamp_options =  [{year: 'numeric'}, {month: '2-digit'},{day: '2-digit'},{'hour': '2-digit'},{'minutes': '2-digit'},{'second': 'numeric'}];
 const renderTime = (val) => new Date(val*1000).toLocaleString('en-us', timestamp_options);
@@ -42,8 +43,8 @@ class EventsTable extends React.Component {
   }
 
   componentDidMount = () => {
-    this.authFetch('/api/agent-events')
-      .then(res => res.json())
+    IslandHttpClient.get(APIEndpoint.agentEvents)
+      .then(res => res.body)
       .then(res => {console.log(res);this.setState({events: res})
       })
   };
