@@ -4,21 +4,18 @@ import MUIDataTable from 'mui-datatables';
 import AuthService from '../../services/AuthService';
 import '../../styles/pages/EventPage.scss';
 
+const timestamp_options =  [{year: 'numeric'}, {month: '2-digit'},{day: '2-digit'},{'hour': '2-digit'},{'minutes': '2-digit'},{'second': 'numeric'}];
+const renderTime = (val) => new Date(val*1000).toLocaleString('en-us', timestamp_options);
+const renderTarget = (val) => val ?  val : 'Unknown';
 const renderJson = (val) => <JSONTree data={val} level={1} theme="eighties" invertTheme={true}/>;
-const renderTime = (val) => val.split('.')[0];
+const renderTags = (val) => val.join(', ');
 
 const columns = [
   {label: 'Time', name: 'timestamp'},
-  {label: 'Monkey', name: 'monkey'},
-  {label: 'Type', name: 'telem_category'},
-  {label: 'Details',
-    name: 'data',
-    options: {
-      setCellProps: () => ({ style: { width: '40%' }}),
-      filter:false,
-      sort:false
-    }
-  }
+  {label: 'Monkey', name: 'source'},
+  {label: 'Target', name: 'target'},
+  {label: 'Type', name: 'type'},
+  {label: 'Tags', name: 'tags'}
 ];
 
 const table_options = {
@@ -40,14 +37,14 @@ class EventsTable extends React.Component {
     this.auth = new AuthService();
     this.authFetch = this.auth.authFetch;
     this.state = {
-      data: []
+      events: []
     };
   }
 
   componentDidMount = () => {
-    this.authFetch('/api/telemetry')
+    this.authFetch('/api/agent-events')
       .then(res => res.json())
-      .then(res => {this.setState({data: res.objects})
+      .then(res => {console.log(res);this.setState({events: res})
       })
   };
 
@@ -57,12 +54,14 @@ class EventsTable extends React.Component {
       <div className="data-table-container">
         <MUIDataTable
           columns={columns}
-          data={this.state.data.map(item => {
+          data={this.state.events.map(item => {
             return [
               renderTime(item.timestamp),
-              item.monkey,
-              item.telem_category,
-              renderJson(item.data)
+              item.source,
+              renderTarget(item.target),
+              item.type,
+              renderTags(item.tags)
+              //renderJson(item.data)
             ]})}
           options={table_options}
         />
