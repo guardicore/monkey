@@ -139,3 +139,7 @@ def test_get_scanned():
 
 def test_get_first_monkey_time():
     assert ReportService.get_first_monkey_time() == datetime.fromtimestamp(100, tz=pytz.UTC)
+
+
+def test_get_last_monkey_time():
+    assert ReportService.get_last_monkey_dead_time() == datetime.fromtimestamp(40003, tz=pytz.UTC)

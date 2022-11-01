@@ -101,13 +101,11 @@ class ReportService:
 
         return min(agents, key=lambda a: a.start_time).start_time
 
-    @staticmethod
-    def get_last_monkey_dead_time():
-        return (
-            mongo.db.telemetry.find({}, {"timestamp": 1})
-            .sort([("$natural", -1)])
-            .limit(1)[0]["timestamp"]
-        )
+    @classmethod
+    def get_last_monkey_dead_time(cls):
+        agents = filter(lambda a: a.stop_time is not None, cls._agent_repository.get_agents())
+
+        return max(agents, key=lambda a: a.stop_time).stop_time
 
     @staticmethod
     def get_monkey_duration():
