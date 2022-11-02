@@ -5,7 +5,7 @@ import AuthService from '../../services/AuthService';
 import '../../styles/pages/EventPage.scss';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import LoadingIcon from './LoadingIcon';
-import {getEventSourceHostname} from '../utils/ServerUtils';
+import {getEventSourceHostname, getMachineHostname} from '../utils/ServerUtils';
 
 const columns = [
   {label: 'Time', name: 'timestamp'},
@@ -48,12 +48,7 @@ const renderTarget = (event_target, machines) => {
   if ((parseInt(event_target) == event_target) && (event_target > 0)) {
     for (let machine of machines) {
       if (event_target === machine['id']) {
-        if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
-          return machine['hostname'];
-        }
-        else {
-          return machine['network_interfaces'][0].split('/')[0];
-        }
+        return getMachineHostname(machine);
       }
     }
   }
