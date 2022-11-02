@@ -5,6 +5,7 @@ import AuthService from '../../services/AuthService';
 import '../../styles/pages/EventPage.scss';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import LoadingIcon from './LoadingIcon';
+import {getEventSourceHostname, getMachineHostname} from '../utils/ServerUtils';
 
 const columns = [
   {label: 'Time', name: 'timestamp'},
@@ -47,12 +48,7 @@ const renderTarget = (event_target, machines) => {
   if ((parseInt(event_target) == event_target) && (event_target > 0)) {
     for (let machine of machines) {
       if (event_target === machine['id']) {
-        if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
-          return machine['hostname'];
-        }
-        else {
-          return machine['network_interfaces'][0].split('/')[0];
-        }
+        return getMachineHostname(machine);
       }
     }
   }
@@ -96,28 +92,6 @@ function deleteAbstractAgentEventFields(myObj) {
 
 const renderEventSpecificFields = (val) => filterEventSpecificFields(val);
 
-const renderSource = (event_source, agents, machines) => {
-  let hostname = 'unknown';
-
-  for (let agent of agents) {
-    if (event_source === agent['id']) {
-      for (let machine of machines) {
-        if (agent['machine_id'] === machine['id']) {
-          if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
-            hostname = machine['hostname'];
-          }
-          else {
-            hostname = machine['network_interfaces'][0].split('/')[0];
-          }
-          break;
-        }
-      }
-      break;
-    }
-  }
-
-  return hostname;
-}
 
 class EventsTable extends React.Component {
   constructor(props) {
@@ -157,7 +131,7 @@ class EventsTable extends React.Component {
           data={this.state.events.map(item => {
             return [
               renderTime(item.timestamp),
-              renderSource(item.source, this.state.agents, this.state.machines),
+              getEventSourceHostname(item.source, this.state.agents, this.state.machines),
               renderTarget(item.target, this.state.machines),
               item.type,
               renderTags(item.tags),
