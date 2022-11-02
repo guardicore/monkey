@@ -38,7 +38,6 @@ from monkey_island.cc.resources.monkey import Monkey
 from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
-from monkey_island.cc.resources.telemetry import Telemetry
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services.representations import output_json
@@ -153,7 +152,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Agents)
     api.add_resource(Monkey)
     api.add_resource(LocalRun)
-    api.add_resource(Telemetry)
 
     api.add_resource(IslandMode)
     api.add_resource(AgentConfiguration)
