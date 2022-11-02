@@ -6,52 +6,10 @@
   position: relative;
 }
 
-.telemetry-console {
-  z-index: 2;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 130px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 5px;
-  border: 3px solid #aaa;
-  padding: 0.5em;
-  color: white;
-  font-family: Consolas, "Courier New", monospace;
-  overflow: auto;
-}
-
-.telemetry-console .date {
-  color: #ccc;
-}
-
-.telemetry-console .source {
-  font-weight: bold;
-}
-
-.telemetry-lines {
-  z-index: 3;
-  position: absolute;
-  bottom: 100px;
-  right: 20px;
-  background: #000000cc;
-  border-radius: 5px;
-  padding: 1px;
-  color: white;
-}
-
 .net-graph-wrapper {
   height: calc(100% - 130px);
   width: 100%;
   padding-bottom: 10px;
-}
-
-.telemetry-log-section .loading-icon{
-  position: relative;
-  color: white;
-  z-index: 5;
-  margin-top: 30px;
 }
 
 .exploit-timeline {
