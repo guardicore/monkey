@@ -4,6 +4,7 @@ import {FileEncryptionTable, TableRow} from './FileEncryptionTable';
 import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import ExternalLink from '../common/ExternalLink';
+import {getEventSourceHostname} from '../../utils/ServerUtils';
 
 // TODO: Fix the url
 const ATTACK_DESCRIPTION = <>
@@ -87,34 +88,11 @@ function getDataForTable(events, agents, machines): Array<TableRow> {
 
   for (let event of events) {
     if (event['success'] === true) {
-      tableData.push({'hostname': getHostname(event['source'], agents, machines), 'file_path': event['file_path']['path']});
+      tableData.push({'hostname': getEventSourceHostname(event['source'], agents, machines), 'file_path': event['file_path']['path']});
     }
   }
 
   return tableData;
-}
-
-function getHostname(event_source, agents, machines): string {
-  let hostname = "unknown";
-
-  for (let agent of agents) {
-    if (event_source === agent['id']) {
-      for (let machine of machines) {
-        if (agent['machine_id'] === machine['id']) {
-          if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
-            hostname = machine['hostname'];
-          }
-          else {
-            hostname = machine['network_interfaces'][0].split('/')[0];
-          }
-          break;
-        }
-      }
-      break;
-    }
-  }
-
-  return hostname;
 }
 
 export default AttackSection;
