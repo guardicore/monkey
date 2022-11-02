@@ -36,3 +36,26 @@ export function getAllAgents() {
         return res.body;
     });
 }
+
+export function getEventSourceHostname(event_source, agents, machines): string {
+  let hostname = "unknown";
+
+  for (let agent of agents) {
+    if (event_source === agent['id']) {
+      for (let machine of machines) {
+        if (agent['machine_id'] === machine['id']) {
+          if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
+            hostname = machine['hostname'];
+          }
+          else {
+            hostname = machine['network_interfaces'][0].split('/')[0];
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  return hostname;
+}
