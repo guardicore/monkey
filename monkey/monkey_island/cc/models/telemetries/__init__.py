@@ -1,1 +1,0 @@
-from .telemetry_dal import get_telemetry_by_query
