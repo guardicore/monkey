@@ -56,14 +56,6 @@ class Monkey(Document):
             raise MonkeyNotFoundError("info: {0} | id: {1}".format(ex, str(db_id)))
 
     @staticmethod
-    # See https://www.python.org/dev/peps/pep-0484/#forward-references
-    def get_single_monkey_by_guid(monkey_guid) -> "Monkey":
-        try:
-            return Monkey.objects.get(guid=monkey_guid)
-        except DoesNotExist as ex:
-            raise MonkeyNotFoundError("info: {0} | guid: {1}".format(ex, str(monkey_guid)))
-
-    @staticmethod
     def get_latest_modifytime():
         if Monkey.objects.count() > 0:
             return Monkey.objects.order_by("-modifytime").first().modifytime
