@@ -16,8 +16,6 @@ from mongoengine import (
 )
 
 from common.network.network_utils import get_my_ip_addresses_legacy
-from monkey_island.cc.models.monkey_ttl import MonkeyTtl, create_monkey_ttl_document
-from monkey_island.cc.server_utils.consts import DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS
 
 
 class Monkey(Document):
@@ -32,7 +30,6 @@ class Monkey(Document):
     # SCHEMA
     guid = StringField(required=True)
     should_stop = BooleanField()
-    dead = BooleanField()
     hostname = StringField()
     ip_addresses = ListField(StringField())
     launch_time = FloatField()
@@ -43,7 +40,6 @@ class Monkey(Document):
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
     parent = ListField(ListField(DynamicField()))
-    ttl_ref = ReferenceField(MonkeyTtl)
     tunnel = ReferenceField("self")
 
     # This field only exists when the monkey is running on an AWS
@@ -102,10 +98,6 @@ class Monkey(Document):
             return True
         except:  # noqa: E722
             return False
-
-    def renew_ttl(self, duration=DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS):
-        self.ttl_ref = create_monkey_ttl_document(duration)
-        self.save()
 
 
 class MonkeyNotFoundError(Exception):
