@@ -182,8 +182,6 @@ class InfectionMonkey:
         logger.info("Agent is starting...")
         logger.info(f"Agent GUID: {GUID}")
 
-        self._control_client.wakeup(parent=self._opts.parent)
-
         should_stop = self._control_channel.should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
