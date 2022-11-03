@@ -142,6 +142,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "POST /api/log" endpoint. #2485
 - "GET /api/local-monkey" endpoint. #2506
 - "/api/telemetry" endpoint. #2503
+- "/api/agent" endpoint. #2542
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545
