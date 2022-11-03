@@ -28,7 +28,6 @@ from infection_monkey.agent_event_handlers import (
     notify_relay_on_propagation,
 )
 from infection_monkey.config import GUID
-from infection_monkey.control import ControlClient
 from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
@@ -93,7 +92,6 @@ class InfectionMonkey:
         self._cmd_island_ip = self._island_address.ip
         self._cmd_island_port = self._island_address.port
 
-        self._control_client = ControlClient(server_address=self._island_address)
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
         )
@@ -336,7 +334,7 @@ class InfectionMonkey:
         )
 
     def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
-        server_ip = self._control_client.server_address.ip
+        server_ip = self._island_address.ip
         return server_ip in {interface.ip for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
