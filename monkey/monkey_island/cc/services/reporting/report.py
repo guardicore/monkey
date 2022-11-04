@@ -21,7 +21,7 @@ from common.network.network_utils import get_my_ip_addresses_legacy, get_network
 from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models import CommunicationType, Machine, Monkey
+from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
@@ -496,7 +496,7 @@ class ReportService:
         issues = ReportService.get_issues()
         issue_set = ReportService.get_issue_set(issues)
         cross_segment_issues = ReportService.get_cross_segment_issues()
-        monkey_latest_modify_time = Monkey.get_latest_modifytime()
+        latest_event_timestamp = ReportService.get_latest_event_timestamp()
 
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(
@@ -520,7 +520,7 @@ class ReportService:
                 "exploited_cnt": exploited_cnt,
             },
             "recommendations": {"issues": issues},
-            "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
+            "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
         save_report(report)
         return report
@@ -545,6 +545,16 @@ class ReportService:
         logger.info("Issues generated for reporting")
         return issues_dict
 
+    @classmethod
+    def get_latest_event_timestamp(cls):
+        if not cls._agent_event_repository:
+            raise RuntimeError("Agent event repository does not exist")
+
+        agent_events = cls._agent_event_repository.get_events()
+        latest_timestamp = max(agent_events, key=lambda event: event.timestamp).timestamp
+
+        return str(latest_timestamp)
+
     @staticmethod
     def is_latest_report_exists():
         """
@@ -552,12 +562,14 @@ class ReportService:
         :return: True if report is the latest one, False if there isn't a report or its not the
         latest.
         """
-        latest_report_doc = mongo.db.report.find_one({}, {"meta_info.latest_monkey_modifytime": 1})
+        latest_report_doc = mongo.db.report.find_one({}, {"meta_info.latest_event_timestamp": 1})
 
         if latest_report_doc:
-            report_latest_modifytime = latest_report_doc["meta_info"]["latest_monkey_modifytime"]
-            latest_monkey_modifytime = Monkey.get_latest_modifytime()
-            return report_latest_modifytime == latest_monkey_modifytime
+            report_latest_event_timestamp = latest_report_doc["meta_info"][
+                "latest_event_timestamp"
+            ].replace(",,,", ".")
+            latest_event_timestamp = ReportService.get_latest_event_timestamp()
+            return report_latest_event_timestamp == latest_event_timestamp
 
         return False
 
