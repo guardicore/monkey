@@ -434,17 +434,6 @@ class ReportService:
         return cross_segment_issues
 
     @staticmethod
-    def get_machine_aws_instance_id(hostname):
-        aws_instance_id_list = list(
-            mongo.db.monkey.find({"hostname": hostname}, {"aws_instance_id": 1})
-        )
-        if aws_instance_id_list:
-            if "aws_instance_id" in aws_instance_id_list[0]:
-                return str(aws_instance_id_list[0]["aws_instance_id"])
-        else:
-            return None
-
-    @staticmethod
     def get_manual_monkey_hostnames():
         return [monkey["hostname"] for monkey in get_manual_monkeys()]
 
@@ -550,11 +539,8 @@ class ReportService:
         for issue in issues:
             if issue.get("is_local", True):
                 machine = issue.get("machine").upper()
-                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get("machine"))
                 if machine not in issues_dict:
                     issues_dict[machine] = []
-                if aws_instance_id:
-                    issue["aws_instance_id"] = aws_instance_id
                 issues_dict[machine].append(issue)
         logger.info("Issues generated for reporting")
         return issues_dict

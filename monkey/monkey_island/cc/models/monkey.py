@@ -36,11 +36,6 @@ class Monkey(Document):
     parent = ListField(ListField(DynamicField()))
     tunnel = ReferenceField("self")
 
-    # This field only exists when the monkey is running on an AWS
-    aws_instance_id = StringField(required=False)
-
-    # instance. See https://github.com/guardicore/monkey/issues/426.
-
     @staticmethod
     def get_latest_modifytime():
         if Monkey.objects.count() > 0:
