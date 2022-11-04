@@ -9,3 +9,4 @@ from .in_memory_file_repository import InMemoryFileRepository
 from .in_memory_agent_repository import InMemoryAgentRepository
 from .in_memory_machine_repository import InMemoryMachineRepository
 from .in_memory_node_repository import InMemoryNodeRepository
+from .in_memory_agent_event_repository import InMemoryAgentEventRepository
