@@ -548,6 +548,7 @@ class ReportService:
         if not cls._agent_event_repository:
             raise RuntimeError("Agent event repository does not exist")
 
+        # TODO: Add `get_latest_event` to the IAgentEventRepository
         agent_events = cls._agent_event_repository.get_events()
         latest_timestamp = max(agent_events, key=lambda event: event.timestamp).timestamp
 
