@@ -1,5 +1,5 @@
-import {getAllUsernames, getAllSecrets} from '../credentialParsing';
 import React from 'react';
+import {getAllSecrets, getAllUsernames} from '../credentialParsing';
 
 const AvailableCredentials = (props) => {
   let allUsernames = getAllUsernames(props.stolen, props.configured);
