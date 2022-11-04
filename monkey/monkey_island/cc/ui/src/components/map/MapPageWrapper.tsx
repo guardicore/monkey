@@ -21,6 +21,7 @@ const MapPageWrapper = (props) => {
       .then(res => arrayToObject(res.body, 'target'));
   }
 
+  const [updateInProgress, setUpdateInProgress] = useState(false);
   const [mapNodes, setMapNodes] = useState<MapNode[]>([]);
   const [nodes, setNodes] = useState<Record<string, Node>>({});
   const [machines, setMachines] = useState<Record<string, Machine>>({});
@@ -33,22 +34,22 @@ const MapPageWrapper = (props) => {
   const [graphSnapshot, setGraphSnapshot] = useState<Graph>({edges: [], nodes: []});
 
 
-  function fetchMapNodes() {
-    getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
-    getCollectionObject(APIEndpoint.machines, 'id').then(machineObj => setMachines(machineObj));
-    getAllAgents().then(agents => setAgents(agents.sort()));
-    getPropagationEvents().then(events => setPropagationEvents(events));
+  async function fetchMapNodes() {
+    await getCollectionObject(APIEndpoint.nodes, 'machine_id').then(nodeObj => setNodes(nodeObj));
+    await getCollectionObject(APIEndpoint.machines, 'id').then(machineObj => setMachines(machineObj));
+    await getAllAgents().then(agents => setAgents(agents.sort()));
+    return getPropagationEvents().then(events => setPropagationEvents(events));
   }
 
   useEffect(() => {
-    fetchMapNodes();
-    let oneSecond = 1000;
-    const interval = setInterval(() => {
-      fetchMapNodes();
-    }, oneSecond);
-
-    return () => clearInterval(interval)
-  }, [])
+    if (! updateInProgress) {
+      let oneSecond = 1000;
+      setUpdateInProgress(true);
+      new Promise(r => setTimeout(r, oneSecond * 2))
+        .then(() => fetchMapNodes())
+        .then(() => setUpdateInProgress(false));
+    }
+  }, [updateInProgress])
 
   useEffect(() => {
     let localGraph = generateGraph(mapNodes);
