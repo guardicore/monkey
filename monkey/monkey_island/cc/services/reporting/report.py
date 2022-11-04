@@ -22,7 +22,6 @@ from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommunicationType, Machine
-from monkey_island.cc.models.report import get_report, save_report
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
@@ -73,6 +72,7 @@ class ReportService:
     _credentials_repository: Optional[ICredentialsRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
+    _report: Optional[Dict[str, Dict]] = None
 
     class DerivedIssueEnum:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
@@ -216,7 +216,7 @@ class ReportService:
         # Get the successful exploits
         exploits = cls._agent_event_repository.get_events_by_type(ExploitationEvent)
         successful_exploits = filter(lambda x: x.success, exploits)
-        filtered_exploits = ReportService.filter_single_exploit_per_ip(successful_exploits)
+        filtered_exploits = cls.filter_single_exploit_per_ip(successful_exploits)
 
         zerologon_events = cls._agent_event_repository.get_events_by_type(PasswordRestorationEvent)
         password_restored = defaultdict(
@@ -378,7 +378,7 @@ class ReportService:
                         }
                     )
 
-        return cross_segment_issues + ReportService.get_cross_segment_issues_of_single_machine(
+        return cross_segment_issues + cls.get_cross_segment_issues_of_single_machine(
             source_subnet_range, target_subnet_range
         )
 
@@ -427,7 +427,7 @@ class ReportService:
         subnet_groups = [agent_configuration.propagation.network_scan.targets.inaccessible_subnets]
 
         for subnet_group in subnet_groups:
-            cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(
+            cross_segment_issues += cls.get_cross_segment_issues_per_subnet_group(
                 scans, subnet_group
             )
 
@@ -481,10 +481,9 @@ class ReportService:
             and not issue["password_restored"]
         )
 
-    @staticmethod
-    def is_report_generated():
-        generated_report = mongo.db.report.find_one({})
-        return generated_report is not None
+    @classmethod
+    def is_report_generated(cls):
+        return cls._report is not None
 
     @classmethod
     def generate_report(cls):
@@ -502,7 +501,7 @@ class ReportService:
         exploited_cnt = len(
             get_monkey_exploited(cls._agent_event_repository, cls._machine_repository)
         )
-        report = {
+        cls._report = {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
                 "config_exploits": ReportService.get_config_exploits(),
@@ -522,8 +521,7 @@ class ReportService:
             "recommendations": {"issues": issues},
             "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
-        save_report(report)
-        return report
+        return cls._report
 
     @staticmethod
     def get_issues():
@@ -555,30 +553,27 @@ class ReportService:
 
         return str(latest_timestamp)
 
-    @staticmethod
-    def is_latest_report_exists():
+    @classmethod
+    def is_latest_report_exists(cls):
         """
         This function checks if a monkey report was already generated and if it's the latest one.
         :return: True if report is the latest one, False if there isn't a report or its not the
         latest.
         """
-        latest_report_doc = mongo.db.report.find_one({}, {"meta_info.latest_event_timestamp": 1})
 
-        if latest_report_doc:
-            report_latest_event_timestamp = latest_report_doc["meta_info"][
-                "latest_event_timestamp"
-            ].replace(",,,", ".")
-            latest_event_timestamp = ReportService.get_latest_event_timestamp()
+        if cls._report:
+            report_latest_event_timestamp = cls._report["meta_info"]["latest_event_timestamp"]
+            latest_event_timestamp = cls.get_latest_event_timestamp()
             return report_latest_event_timestamp == latest_event_timestamp
 
         return False
 
-    @staticmethod
-    def get_report():
-        if not ReportService._agent_repository.get_agents():
+    @classmethod
+    def get_report(cls):
+        if not cls._agent_repository.get_agents():
             return {}
 
-        if not ReportService.is_latest_report_exists():
+        if not cls.is_latest_report_exists():
             return safe_generate_regular_report()
 
-        return get_report()
+        return cls._report
