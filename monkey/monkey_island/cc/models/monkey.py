@@ -2,15 +2,7 @@
 Define a Document Schema for the Monkey document.
 
 """
-from mongoengine import (
-    DateTimeField,
-    Document,
-    DynamicField,
-    FloatField,
-    ListField,
-    ReferenceField,
-    StringField,
-)
+from mongoengine import Document, DynamicField, FloatField, ListField, ReferenceField, StringField
 
 
 class Monkey(Document):
@@ -27,7 +19,6 @@ class Monkey(Document):
     hostname = StringField()
     ip_addresses = ListField(StringField())
     launch_time = FloatField()
-    modifytime = DateTimeField()
     # TODO make "parent" an embedded document, so this can be removed and the schema explained (
     #  and validated) verbosely.
     # This is a temporary fix, since mongoengine doesn't allow for lists of strings to be null
@@ -35,9 +26,3 @@ class Monkey(Document):
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
     parent = ListField(ListField(DynamicField()))
     tunnel = ReferenceField("self")
-
-    @staticmethod
-    def get_latest_modifytime():
-        if Monkey.objects.count() > 0:
-            return Monkey.objects.order_by("-modifytime").first().modifytime
-        return None
