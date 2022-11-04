@@ -544,14 +544,14 @@ class ReportService:
         return issues_dict
 
     @classmethod
-    def get_latest_event_timestamp(cls):
+    def get_latest_event_timestamp(cls) -> float:
         if not cls._agent_event_repository:
             raise RuntimeError("Agent event repository does not exist")
 
         agent_events = cls._agent_event_repository.get_events()
         latest_timestamp = max(agent_events, key=lambda event: event.timestamp).timestamp
 
-        return str(latest_timestamp)
+        return latest_timestamp
 
     @classmethod
     def is_latest_report_exists(cls):
