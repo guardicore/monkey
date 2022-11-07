@@ -569,6 +569,9 @@ class ReportService:
 
     @classmethod
     def get_report(cls):
+        if not cls._agent_repository.get_agents():
+            return cls._report
+
         if cls.report_is_outdated():
             cls._report = safe_generate_regular_report()
 
