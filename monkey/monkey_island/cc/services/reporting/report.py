@@ -556,7 +556,8 @@ class ReportService:
     @classmethod
     def report_is_outdated(cls) -> bool:
         """
-        This function checks if a monkey report was already generated and if it's the latest one.
+        This function checks if a report is outadated.
+
         :return: True if the report is outdated, False if there is already a report or it is up to
         date.
         """
@@ -565,12 +566,13 @@ class ReportService:
             latest_event_timestamp = cls.get_latest_event_timestamp()
             return report_latest_event_timestamp != latest_event_timestamp
 
-        return True
+        # Report is not outadated if it is empty and no agents are running
+        return bool(cls._agent_repository.get_agents())
 
     @classmethod
     def get_report(cls):
-        if not cls._agent_repository.get_agents():
-            return cls._report
+        if cls._agent_repository is None:
+            raise RuntimeError("Agent repository does not exists")
 
         if cls.report_is_outdated():
             cls._report = safe_generate_regular_report()

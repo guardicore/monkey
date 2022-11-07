@@ -226,7 +226,7 @@ def test_report_generation(monkeypatch, agent_event_repository):
     monkeypatch.setattr(ReportService, "get_cross_segment_issues", lambda: [])
     monkeypatch.setattr(ReportService, "get_manual_monkey_hostnames", lambda: [])
 
-    actual_report = ReportService.generate_report()
+    actual_report = ReportService.get_report()
     agent_event_repository.save_event(EVENT_6)
 
     generated_report = ReportService.get_report()
@@ -237,3 +237,10 @@ def test_report_generation(monkeypatch, agent_event_repository):
     cached_report = ReportService.get_report()
     assert generated_report == cached_report
     assert cached_report["meta_info"]["latest_event_timestamp"] == EVENT_6.timestamp
+
+
+def test_report_generation__no_agent_repository():
+    ReportService._agent_repository = None
+
+    with pytest.raises(RuntimeError):
+        ReportService.get_report()
