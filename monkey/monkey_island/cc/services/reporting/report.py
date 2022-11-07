@@ -26,7 +26,6 @@ from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
     IAgentRepository,
-    ICredentialsRepository,
     IMachineRepository,
     INodeRepository,
 )
@@ -69,7 +68,6 @@ class ReportService:
     _agent_repository: Optional[IAgentRepository] = None
     _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
     _agent_event_repository: Optional[IAgentEventRepository] = None
-    _credentials_repository: Optional[ICredentialsRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
     _report: Dict[str, Dict] = {}
@@ -83,14 +81,12 @@ class ReportService:
         agent_repository: IAgentRepository,
         agent_configuration_repository: IAgentConfigurationRepository,
         agent_event_repository: IAgentEventRepository,
-        credentials_repository: ICredentialsRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
         cls._agent_repository = agent_repository
         cls._agent_configuration_repository = agent_configuration_repository
         cls._agent_event_repository = agent_event_repository
-        cls._credentials_repository = credentials_repository
         cls._machine_repository = machine_repository
         cls._node_repository = node_repository
 
