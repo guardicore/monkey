@@ -483,7 +483,7 @@ class ReportService:
 
     @classmethod
     def is_report_generated(cls) -> bool:
-        return cls._report is not {}
+        return bool(cls._report)
 
     @classmethod
     def generate_report(cls):
@@ -501,7 +501,7 @@ class ReportService:
         exploited_cnt = len(
             get_monkey_exploited(cls._agent_event_repository, cls._machine_repository)
         )
-        cls._report = {
+        return {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
                 "config_exploits": ReportService.get_config_exploits(),
@@ -521,7 +521,6 @@ class ReportService:
             "recommendations": {"issues": issues},
             "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
-        return cls._report
 
     @staticmethod
     def get_issues():
@@ -561,7 +560,6 @@ class ReportService:
         :return: True if the report is outdated, False if there is already a report or it is up to
         date.
         """
-
         if cls._report:
             report_latest_event_timestamp = cls._report["meta_info"]["latest_event_timestamp"]
             latest_event_timestamp = cls.get_latest_event_timestamp()
@@ -572,6 +570,6 @@ class ReportService:
     @classmethod
     def get_report(cls):
         if cls.report_is_outdated():
-            return safe_generate_regular_report()
+            cls._report = safe_generate_regular_report()
 
         return cls._report
