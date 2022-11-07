@@ -72,7 +72,7 @@ class ReportService:
     _credentials_repository: Optional[ICredentialsRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
-    _report: Optional[Dict[str, Dict]] = None
+    _report: Dict[str, Dict] = {}
 
     class DerivedIssueEnum:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
@@ -482,8 +482,8 @@ class ReportService:
         )
 
     @classmethod
-    def is_report_generated(cls):
-        return cls._report is not None
+    def is_report_generated(cls) -> bool:
+        return cls._report is not {}
 
     @classmethod
     def generate_report(cls):
@@ -571,9 +571,6 @@ class ReportService:
 
     @classmethod
     def get_report(cls):
-        if not cls._agent_repository.get_agents():
-            return {}
-
         if cls.report_is_outdated():
             return safe_generate_regular_report()
 
