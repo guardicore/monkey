@@ -148,6 +148,9 @@ class ReportPageComponent extends AuthComponent {
       agents: [],
       machines: []
     };
+
+    this.tunnelingIssueExists = false;
+    this.tunnelingIssueComponent = <div/>;
   }
 
   componentDidMount() {
@@ -186,6 +189,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   render() {
+    this.createTunnelingIssueComponent(this.state.agents, this.state.machines);
+
     let content;
 
     if (this.stillLoadingDataFromServer()) {
@@ -444,7 +449,7 @@ class ReportPageComponent extends AuthComponent {
           <h3>Machine related recommendations</h3> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
-          {this.generateTunnelingIssue(this.state.agents, this.state.machines)}
+          {this.tunnelingIssueComponent}
         </div>
       </div>
     );
@@ -527,11 +532,11 @@ class ReportPageComponent extends AuthComponent {
     return <ul>{issuesDivArray}</ul>;
   };
 
-  generateTunnelingIssue(agents, machines) {
-    let island_ips = [];
+  createTunnelingIssueComponent(agents, machines) {
+    let islandIPs = [];
     for (let machine of machines) {
       if (machine.island === true) {
-        island_ips.push(
+        islandIPs.push(
           ...(
             machine.network_interfaces.map(network_interface => network_interface.split('/')[0])
           )
@@ -539,9 +544,9 @@ class ReportPageComponent extends AuthComponent {
       }
     }
 
-    let tunneling_issue_machines = [];
+    let tunnelingIssues = [];
     for (let agent of agents) {
-      if (!island_ips.includes(agent.cc_server)) {
+      if (!islandIPs.includes(agent.cc_server)) {
         let issue = {'agent_machine': null, 'agent_tunnel': agent.cc_server};
         for (let machine of machines) {
           if (agent.machine_id === machine.id) {
@@ -549,19 +554,18 @@ class ReportPageComponent extends AuthComponent {
             break;
           }
         }
-        tunneling_issue_machines.push(issue);
+        tunnelingIssues.push(issue);
       }
     }
 
-    if (tunneling_issue_machines === []) {
-      return <div/>;
+    if (tunnelingIssues === []) {
+      return;
     }
 
-    let tunneling_issue_component = [];
-    for (let issue in tunneling_issue_machines) {
-      tunneling_issue_component.push(tunnelIssueReport(issue));
+    this.tunnelingIssueExists = true;
+    for (let issue in tunnelingIssues) {
+      this.tunnelingIssueComponent.push(tunnelIssueReport(issue));
     }
-    return <div>{tunneling_issue_component}</div>;
   }
 
   addIssuesToOverviewIssues() {
