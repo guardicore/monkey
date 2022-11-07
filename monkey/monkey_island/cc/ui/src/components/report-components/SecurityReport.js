@@ -109,7 +109,6 @@ class ReportPageComponent extends AuthComponent {
       },
       'tunnel': {
         [this.issueContentTypes.OVERVIEW]: tunnelIssueOverview,
-        [this.issueContentTypes.REPORT]: tunnelIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_passwords': {
@@ -361,6 +360,11 @@ class ReportPageComponent extends AuthComponent {
         overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
       }
     }
+
+    if (this.tunnelingIssueExists === true) {
+      overviews.push(this.getIssueOverview(this.IssueDescriptorEnum['tunnel']))
+    }
+
     return overviews;
   }
 
@@ -546,8 +550,8 @@ class ReportPageComponent extends AuthComponent {
 
     let tunnelingIssues = [];
     for (let agent of agents) {
-      if (!islandIPs.includes(agent.cc_server)) {
-        let issue = {'agent_machine': null, 'agent_tunnel': agent.cc_server};
+      if (!islandIPs.includes(agent.cc_server.ip)) {
+        let issue = {'agent_machine': null, 'agent_tunnel': agent.cc_server.ip};
         for (let machine of machines) {
           if (agent.machine_id === machine.id) {
             issue['agent_machine'] = machine.network_interfaces[0].split('/')[0];
@@ -563,9 +567,11 @@ class ReportPageComponent extends AuthComponent {
     }
 
     this.tunnelingIssueExists = true;
-    for (let issue in tunnelingIssues) {
-      this.tunnelingIssueComponent.push(tunnelIssueReport(issue));
+    let tunnelingIssueComponent = [];
+    for (let issue of tunnelingIssues) {
+      tunnelingIssueComponent.push(tunnelIssueReport(issue));
     }
+    this.tunnelingIssueComponent = <div>{tunnelingIssueComponent}</div>
   }
 
   addIssuesToOverviewIssues() {
