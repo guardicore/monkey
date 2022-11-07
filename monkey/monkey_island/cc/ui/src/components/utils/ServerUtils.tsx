@@ -37,8 +37,12 @@ export function getAllAgents() {
     });
 }
 
-export function getMachineHostnname(machine): string {
+export function getMachineHostname(machine): string {
   let hostname = "unknown";
+
+  if(machine === null) {
+    return hostname;
+  }
 
   if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
     hostname = machine['hostname'];
@@ -57,7 +61,7 @@ export function getEventSourceHostname(event_source, agents, machines): string {
     if (event_source === agent['id']) {
       for (let machine of machines) {
         if (agent['machine_id'] === machine['id']) {
-          hostname = getMachineHostnname(machine)
+          hostname = getMachineHostname(machine)
           break;
         }
       }
@@ -66,4 +70,29 @@ export function getEventSourceHostname(event_source, agents, machines): string {
   }
 
   return hostname;
+}
+
+export function getManuallyStartedAgents(agents) {
+    let manuallyStartedAgents = [];
+
+    for(let agent of agents) {
+        if(agent['parent_id'] === null){
+            manuallyStartedAgents.push(agent);
+        }
+    }
+
+    return manuallyStartedAgents;
+}
+
+export function getAgentMachine(agent, machines) {
+    let agentMachine = null;
+
+    for(let machine of machines) {
+        if(agent['machine_id'] === machine['id']){
+            agentMachine = machine;
+            break;
+        }
+    }
+
+    return null;
 }

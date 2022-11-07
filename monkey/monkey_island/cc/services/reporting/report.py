@@ -30,7 +30,6 @@ from monkey_island.cc.repository import (
     INodeRepository,
 )
 from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.reporting.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
 )
@@ -429,10 +428,6 @@ class ReportService:
 
         return cross_segment_issues
 
-    @staticmethod
-    def get_manual_monkey_hostnames():
-        return [monkey["hostname"] for monkey in get_manual_monkeys()]
-
     @classmethod
     def get_config_exploits(cls):
         agent_configuration = cls._agent_configuration_repository.get_configuration()
@@ -499,7 +494,6 @@ class ReportService:
         )
         return {
             "overview": {
-                "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
                 "config_exploits": ReportService.get_config_exploits(),
                 "config_ips": ReportService.get_config_ips(),
                 "config_scan": ReportService.get_config_scan(),
