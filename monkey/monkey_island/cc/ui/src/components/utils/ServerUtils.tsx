@@ -37,7 +37,7 @@ export function getAllAgents() {
     });
 }
 
-export function getMachineHostnname(machine): string {
+export function getMachineHostname(machine): string {
   let hostname = "unknown";
 
   if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
@@ -57,7 +57,7 @@ export function getEventSourceHostname(event_source, agents, machines): string {
     if (event_source === agent['id']) {
       for (let machine of machines) {
         if (agent['machine_id'] === machine['id']) {
-          hostname = getMachineHostnname(machine)
+          hostname = getMachineHostname(machine)
           break;
         }
       }

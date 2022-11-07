@@ -43,7 +43,7 @@ import {
 import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
-import {getAllAgents, getAgentMachine, getManuallyStartedAgents, getMachineHostnname} from '../utils/ServerUtils';
+import {getAllAgents, getAgentMachine, getManuallyStartedAgents, getMachineHostname} from '../utils/ServerUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -227,7 +227,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportOverviewSection() {
-    let manual_monkey_hostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostnname(getAgentMachine(agent, this.state.machines)));
+    let manual_monkey_hostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getAgentMachine(agent, this.state.machines)));
 
     return (
       <div id='overview'>
