@@ -555,26 +555,26 @@ class ReportService:
         return latest_timestamp
 
     @classmethod
-    def is_latest_report_exists(cls):
+    def report_is_outdated(cls) -> bool:
         """
         This function checks if a monkey report was already generated and if it's the latest one.
-        :return: True if report is the latest one, False if there isn't a report or its not the
-        latest.
+        :return: True if the report is outdated, False if there is already a report or it is up to
+        date.
         """
 
         if cls._report:
             report_latest_event_timestamp = cls._report["meta_info"]["latest_event_timestamp"]
             latest_event_timestamp = cls.get_latest_event_timestamp()
-            return report_latest_event_timestamp == latest_event_timestamp
+            return report_latest_event_timestamp != latest_event_timestamp
 
-        return False
+        return True
 
     @classmethod
     def get_report(cls):
         if not cls._agent_repository.get_agents():
             return {}
 
-        if not cls.is_latest_report_exists():
+        if cls.report_is_outdated():
             return safe_generate_regular_report()
 
         return cls._report
