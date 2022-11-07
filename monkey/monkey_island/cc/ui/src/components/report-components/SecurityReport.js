@@ -42,6 +42,8 @@ import {
 } from './security/issues/ZerologonIssue';
 import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
+import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
+import {getAllAgents, getAgentMachine, getManuallyStartedAgents, getMachineHostnname} from '../utils/ServerUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -142,12 +144,16 @@ class ReportPageComponent extends AuthComponent {
       report: props.report,
       stolenCredentials: [],
       configuredCredentials: [],
-      issues: []
+      issues: [],
+      agents: [],
+      machines: []
     };
   }
 
   componentDidMount() {
     this.getCredentialsFromServer();
+    this.getMachinesFromServer();
+    getAllAgents().then(agents => this.setState({agents: agents}));
   }
 
   getCredentialsFromServer = () => {
@@ -161,6 +167,11 @@ class ReportPageComponent extends AuthComponent {
       .then(creds => {
         this.setState({ configuredCredentials: creds });
       })
+  }
+
+  getMachinesFromServer(){
+    IslandHttpClient.get(APIEndpoint.machines)
+      .then(res => this.setState({machines: res.body}))
   }
 
   componentWillUnmount() {
@@ -216,6 +227,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportOverviewSection() {
+    let manual_monkey_hostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostnname(getAgentMachine(agent, this.state.machines)));
+
     return (
       <div id='overview'>
         <h2>
@@ -242,7 +255,7 @@ class ReportPageComponent extends AuthComponent {
           The monkey started propagating from the following machines where it was manually installed:
         </p>
         <ul>
-          {this.state.report.overview.manual_monkeys.map(x => <li key={x}>{x}</li>)}
+          {[...new Set(manual_monkey_hostnames)].map(x => <li key={x}>{x}</li>)}
         </ul>
         <p>
           The monkeys were run with the following configuration:

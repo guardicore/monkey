@@ -67,3 +67,28 @@ export function getEventSourceHostname(event_source, agents, machines): string {
 
   return hostname;
 }
+
+export function getManuallyStartedAgents(agents) {
+    let manuallyStartedAgents = [];
+
+    for(let agent of agents) {
+        if(agent['parent_id'] === null){
+            manuallyStartedAgents.push(agent);
+        }
+    }
+
+    return manuallyStartedAgents;
+}
+
+export function getAgentMachine(agent, machines) {
+    let agentMachine = null;
+
+    for(let machine of machines) {
+        if(agent['machine_id'] === machine['id']){
+            agentMachine = machine;
+            break;
+        }
+    }
+
+    return agentMachine;
+}
