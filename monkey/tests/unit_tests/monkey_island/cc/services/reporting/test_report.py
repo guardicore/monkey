@@ -224,7 +224,6 @@ def test_report_service_get_latest_event_timestamp():
 def test_report_generation(monkeypatch, agent_event_repository):
     monkeypatch.setattr(ReportService, "get_issues", lambda: [])
     monkeypatch.setattr(ReportService, "get_cross_segment_issues", lambda: [])
-    monkeypatch.setattr(ReportService, "get_manual_monkey_hostnames", lambda: [])
 
     actual_report = ReportService.get_report()
     agent_event_repository.save_event(EVENT_6)
