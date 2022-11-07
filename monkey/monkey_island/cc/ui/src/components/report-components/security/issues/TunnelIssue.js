@@ -11,8 +11,8 @@ export function tunnelIssueReport(issue) {
         Use micro-segmentation policies to disable communication other than the required.
         <CollapsibleWellComponent>
           Machines are not locked down at port level. Network tunnel was set up from <span
-          className="badge badge-primary">{issue.machine}</span> to <span
-          className="badge badge-primary">{issue.dest}</span>.
+          className="badge badge-primary">{issue.agent_machine}</span> to <span
+          className="badge badge-primary">{issue.agent_tunnel}</span>.
         </CollapsibleWellComponent>
       </>
     );

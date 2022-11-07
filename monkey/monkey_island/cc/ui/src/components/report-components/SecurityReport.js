@@ -444,6 +444,7 @@ class ReportPageComponent extends AuthComponent {
           <h3>Machine related recommendations</h3> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
+          {this.generateTunnelingIssue(this.state.agents, this.state.machines)}
         </div>
       </div>
     );
@@ -525,6 +526,43 @@ class ReportPageComponent extends AuthComponent {
     }
     return <ul>{issuesDivArray}</ul>;
   };
+
+  generateTunnelingIssue(agents, machines) {
+    let island_ips = [];
+    for (let machine of machines) {
+      if (machine.island === true) {
+        island_ips.push(
+          ...(
+            machine.network_interfaces.map(network_interface => network_interface.split('/')[0])
+          )
+        );
+      }
+    }
+
+    let tunneling_issue_machines = [];
+    for (let agent of agents) {
+      if (!island_ips.includes(agent.cc_server)) {
+        let issue = {'agent_machine': null, 'agent_tunnel': agent.cc_server};
+        for (let machine of machines) {
+          if (agent.machine_id === machine.id) {
+            issue['agent_machine'] = machine.network_interfaces[0].split('/')[0];
+            break;
+          }
+        }
+        tunneling_issue_machines.push(issue);
+      }
+    }
+
+    if (tunneling_issue_machines === []) {
+      return <div/>;
+    }
+
+    let tunneling_issue_component = [];
+    for (let issue in tunneling_issue_machines) {
+      tunneling_issue_component.push(tunnelIssueReport(issue));
+    }
+    return <div>{tunneling_issue_component}</div>;
+  }
 
   addIssuesToOverviewIssues() {
     let overview_issues = this.state.issues;
