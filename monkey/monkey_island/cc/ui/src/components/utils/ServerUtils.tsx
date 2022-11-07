@@ -40,6 +40,10 @@ export function getAllAgents() {
 export function getMachineHostname(machine): string {
   let hostname = "unknown";
 
+  if(machine === null) {
+    return hostname;
+  }
+
   if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {
     hostname = machine['hostname'];
   }
@@ -90,5 +94,5 @@ export function getAgentMachine(agent, machines) {
         }
     }
 
-    return agentMachine;
+    return null;
 }
