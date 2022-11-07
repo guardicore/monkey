@@ -21,13 +21,11 @@ from common.network.network_utils import get_my_ip_addresses_legacy, get_network
 from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.database import mongo
-from monkey_island.cc.models import CommunicationType, Machine, Monkey
-from monkey_island.cc.models.report import get_report, save_report
+from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
     IAgentRepository,
-    ICredentialsRepository,
     IMachineRepository,
     INodeRepository,
 )
@@ -70,9 +68,9 @@ class ReportService:
     _agent_repository: Optional[IAgentRepository] = None
     _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
     _agent_event_repository: Optional[IAgentEventRepository] = None
-    _credentials_repository: Optional[ICredentialsRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
+    _report: Dict[str, Dict] = {}
 
     class DerivedIssueEnum:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
@@ -83,14 +81,12 @@ class ReportService:
         agent_repository: IAgentRepository,
         agent_configuration_repository: IAgentConfigurationRepository,
         agent_event_repository: IAgentEventRepository,
-        credentials_repository: ICredentialsRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
         cls._agent_repository = agent_repository
         cls._agent_configuration_repository = agent_configuration_repository
         cls._agent_event_repository = agent_event_repository
-        cls._credentials_repository = credentials_repository
         cls._machine_repository = machine_repository
         cls._node_repository = node_repository
 
@@ -216,7 +212,7 @@ class ReportService:
         # Get the successful exploits
         exploits = cls._agent_event_repository.get_events_by_type(ExploitationEvent)
         successful_exploits = filter(lambda x: x.success, exploits)
-        filtered_exploits = ReportService.filter_single_exploit_per_ip(successful_exploits)
+        filtered_exploits = cls.filter_single_exploit_per_ip(successful_exploits)
 
         zerologon_events = cls._agent_event_repository.get_events_by_type(PasswordRestorationEvent)
         password_restored = defaultdict(
@@ -378,7 +374,7 @@ class ReportService:
                         }
                     )
 
-        return cross_segment_issues + ReportService.get_cross_segment_issues_of_single_machine(
+        return cross_segment_issues + cls.get_cross_segment_issues_of_single_machine(
             source_subnet_range, target_subnet_range
         )
 
@@ -427,7 +423,7 @@ class ReportService:
         subnet_groups = [agent_configuration.propagation.network_scan.targets.inaccessible_subnets]
 
         for subnet_group in subnet_groups:
-            cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(
+            cross_segment_issues += cls.get_cross_segment_issues_per_subnet_group(
                 scans, subnet_group
             )
 
@@ -481,10 +477,9 @@ class ReportService:
             and not issue["password_restored"]
         )
 
-    @staticmethod
-    def is_report_generated():
-        generated_report = mongo.db.report.find_one({})
-        return generated_report is not None
+    @classmethod
+    def is_report_generated(cls) -> bool:
+        return bool(cls._report)
 
     @classmethod
     def generate_report(cls):
@@ -496,13 +491,13 @@ class ReportService:
         issues = ReportService.get_issues()
         issue_set = ReportService.get_issue_set(issues)
         cross_segment_issues = ReportService.get_cross_segment_issues()
-        monkey_latest_modify_time = Monkey.get_latest_modifytime()
+        latest_event_timestamp = ReportService.get_latest_event_timestamp()
 
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(
             get_monkey_exploited(cls._agent_event_repository, cls._machine_repository)
         )
-        report = {
+        return {
             "overview": {
                 "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
                 "config_exploits": ReportService.get_config_exploits(),
@@ -520,10 +515,8 @@ class ReportService:
                 "exploited_cnt": exploited_cnt,
             },
             "recommendations": {"issues": issues},
-            "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
+            "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
-        save_report(report)
-        return report
 
     @staticmethod
     def get_issues():
@@ -545,28 +538,39 @@ class ReportService:
         logger.info("Issues generated for reporting")
         return issues_dict
 
-    @staticmethod
-    def is_latest_report_exists():
+    @classmethod
+    def get_latest_event_timestamp(cls) -> float:
+        if not cls._agent_event_repository:
+            raise RuntimeError("Agent event repository does not exist")
+
+        # TODO: Add `get_latest_event` to the IAgentEventRepository
+        agent_events = cls._agent_event_repository.get_events()
+        latest_timestamp = max(agent_events, key=lambda event: event.timestamp).timestamp
+
+        return latest_timestamp
+
+    @classmethod
+    def report_is_outdated(cls) -> bool:
         """
-        This function checks if a monkey report was already generated and if it's the latest one.
-        :return: True if report is the latest one, False if there isn't a report or its not the
-        latest.
+        This function checks if a report is outadated.
+
+        :return: True if the report is outdated, False if there is already a report or it is up to
+        date.
         """
-        latest_report_doc = mongo.db.report.find_one({}, {"meta_info.latest_monkey_modifytime": 1})
+        if cls._report:
+            report_latest_event_timestamp = cls._report["meta_info"]["latest_event_timestamp"]
+            latest_event_timestamp = cls.get_latest_event_timestamp()
+            return report_latest_event_timestamp != latest_event_timestamp
 
-        if latest_report_doc:
-            report_latest_modifytime = latest_report_doc["meta_info"]["latest_monkey_modifytime"]
-            latest_monkey_modifytime = Monkey.get_latest_modifytime()
-            return report_latest_modifytime == latest_monkey_modifytime
+        # Report is not outadated if it is empty and no agents are running
+        return bool(cls._agent_repository.get_agents())
 
-        return False
+    @classmethod
+    def get_report(cls):
+        if cls._agent_repository is None:
+            raise RuntimeError("Agent repository does not exists")
 
-    @staticmethod
-    def get_report():
-        if not ReportService._agent_repository.get_agents():
-            return {}
+        if cls.report_is_outdated():
+            cls._report = safe_generate_regular_report()
 
-        if not ReportService.is_latest_report_exists():
-            return safe_generate_regular_report()
-
-        return get_report()
+        return cls._report

@@ -94,7 +94,6 @@ def initialize_services(container: DIContainer, data_dir: Path):
         container.resolve(IAgentRepository),
         container.resolve(IAgentConfigurationRepository),
         container.resolve(IAgentEventRepository),
-        container.resolve(ICredentialsRepository),
         container.resolve(IMachineRepository),
         container.resolve(INodeRepository),
     )

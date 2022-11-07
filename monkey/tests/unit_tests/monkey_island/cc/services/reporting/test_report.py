@@ -1,16 +1,64 @@
 from datetime import datetime
-from ipaddress import IPv4Interface
+from ipaddress import IPv4Address, IPv4Interface
 from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
 import pytz
-from tests.monkey_island import InMemoryAgentRepository
+from tests.monkey_island import (
+    InMemoryAgentConfigurationRepository,
+    InMemoryAgentEventRepository,
+    InMemoryAgentRepository,
+)
 
+from common.agent_events import (
+    AgentShutdownEvent,
+    ExploitationEvent,
+    PasswordRestorationEvent,
+    PropagationEvent,
+)
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
-from monkey_island.cc.repository import IAgentRepository
+from monkey_island.cc.repository import IAgentEventRepository, IAgentRepository
 from monkey_island.cc.services.reporting.report import ReportService
+
+EVENT_1 = AgentShutdownEvent(source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"), timestamp=10)
+EVENT_2 = ExploitationEvent(
+    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+    target=IPv4Address("1.1.1.1"),
+    success=False,
+    exploiter_name="ssh",
+    timestamp=1,
+)
+EVENT_3 = ExploitationEvent(
+    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+    target=IPv4Address("1.1.1.1"),
+    success=True,
+    exploiter_name="ssh",
+    timestamp=2,
+)
+EVENT_4 = PropagationEvent(
+    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+    target=IPv4Address("1.1.1.1"),
+    success=True,
+    exploiter_name="ssh",
+    timestamp=3,
+)
+EVENT_5 = PasswordRestorationEvent(
+    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+    target=IPv4Address("1.1.1.1"),
+    success=True,
+    timestamp=4,
+)
+
+EVENT_6 = ExploitationEvent(
+    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+    target=IPv4Address("2.2.2.2"),
+    success=False,
+    exploiter_name="wmi",
+    timestamp=11,
+)
+EVENTS = [EVENT_2, EVENT_3, EVENT_4, EVENT_1, EVENT_5]
 
 ISLAND_MACHINE = Machine(
     id=99,
@@ -122,14 +170,27 @@ def agent_repository() -> IAgentRepository:
     return repo
 
 
+@pytest.fixture
+def agent_event_repository() -> IAgentEventRepository:
+    repo = InMemoryAgentEventRepository()
+    for event in EVENTS:
+        repo.save_event(event)
+
+    return repo
+
+
 @pytest.fixture(autouse=True)
-def report_service(agent_repository):
+def report_service(
+    agent_repository: IAgentRepository, agent_event_repository: IAgentEventRepository
+):
     ReportService._machine_repository = MagicMock()
     ReportService._machine_repository.get_machines.return_value = MACHINES
     ReportService._machine_repository.get_machine_by_id = get_machine_by_id
     ReportService._agent_repository = agent_repository
     ReportService._node_repository = MagicMock()
     ReportService._node_repository.get_nodes.return_value = NODES
+    ReportService._agent_event_repository = agent_event_repository
+    ReportService._agent_configuration_repository = InMemoryAgentConfigurationRepository()
 
 
 def test_get_scanned():
@@ -147,3 +208,39 @@ def test_get_last_monkey_time():
 
 def test_get_monkey_duration():
     assert ReportService.get_monkey_duration() == "11 hours, 10 minutes and 9 seconds"
+
+
+def test_report_service_agent_event_repository_error():
+    ReportService._agent_event_repository = None
+    with pytest.raises(RuntimeError):
+        ReportService.get_latest_event_timestamp()
+
+
+def test_report_service_get_latest_event_timestamp():
+    latest_event_timestamp = ReportService.get_latest_event_timestamp()
+    assert latest_event_timestamp == EVENT_1.timestamp
+
+
+def test_report_generation(monkeypatch, agent_event_repository):
+    monkeypatch.setattr(ReportService, "get_issues", lambda: [])
+    monkeypatch.setattr(ReportService, "get_cross_segment_issues", lambda: [])
+    monkeypatch.setattr(ReportService, "get_manual_monkey_hostnames", lambda: [])
+
+    actual_report = ReportService.get_report()
+    agent_event_repository.save_event(EVENT_6)
+
+    generated_report = ReportService.get_report()
+    assert actual_report != generated_report
+    assert actual_report["meta_info"]["latest_event_timestamp"] == EVENT_1.timestamp
+    assert generated_report["meta_info"]["latest_event_timestamp"] == EVENT_6.timestamp
+
+    cached_report = ReportService.get_report()
+    assert generated_report == cached_report
+    assert cached_report["meta_info"]["latest_event_timestamp"] == EVENT_6.timestamp
+
+
+def test_report_generation__no_agent_repository():
+    ReportService._agent_repository = None
+
+    with pytest.raises(RuntimeError):
+        ReportService.get_report()
