@@ -158,8 +158,7 @@ class InfectionMonkey:
             id=self._agent_id,
             machine_hardware_id=get_machine_id(),
             start_time=agent_process.get_start_time(),
-            # parent_id=parent,
-            parent_id=None,  # None for now, until we change GUID to UUID
+            parent_id=self._opts.parent,
             cc_server=self._island_address,
             network_interfaces=get_network_interfaces(),
         )
