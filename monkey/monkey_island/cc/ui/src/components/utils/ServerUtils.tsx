@@ -47,7 +47,7 @@ export function getAllMachines() {
 export function getMachineHostname(machine): string {
   let hostname = "unknown";
 
-  if(machine === null) {
+  if (machine === null) {
     return hostname;
   }
 
@@ -82,8 +82,8 @@ export function getEventSourceHostname(event_source, agents, machines): string {
 export function getManuallyStartedAgents(agents) {
   let manuallyStartedAgents = [];
 
-  for(let agent of agents) {
-    if(agent['parent_id'] === null){
+  for (let agent of agents) {
+    if (agent['parent_id'] === null) {
       manuallyStartedAgents.push(agent);
     }
   }
@@ -94,12 +94,12 @@ export function getManuallyStartedAgents(agents) {
 export function getAgentMachine(agent, machines) {
   let agentMachine = null;
 
-  for(let machine of machines) {
-    if(agent['machine_id'] === machine['id']){
+  for (let machine of machines) {
+    if (agent['machine_id'] === machine['id']) {
       agentMachine = machine;
       break;
     }
   }
 
-  return null;
+  return agentMachine;
 }
