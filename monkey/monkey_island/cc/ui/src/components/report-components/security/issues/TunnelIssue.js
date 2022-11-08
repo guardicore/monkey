@@ -23,7 +23,7 @@ export function tunnelIssueReport(agents, machines) {
           Network tunnels were set up between the following.
           <ul>
             {tunnels.map(tunnel =>
-              <li>
+              <li key={tunnel.agent_machine+tunnel.agent_tunnel}>
                 from <span className="badge badge-primary">{tunnel.agent_machine}
                 </span> to <span className="badge badge-primary">{tunnel.agent_tunnel}</span>
               </li>
