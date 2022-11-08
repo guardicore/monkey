@@ -9,7 +9,7 @@ from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServer
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import IslandMode, Machine, Monkey
+from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.repository import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
@@ -80,8 +80,6 @@ Deployment.DOCKER
 
 # Mongoengine documents
 Edge.meta
-Monkey.guid
-Monkey.launch_time
 
 # Pymongo models
 Machine.Config.json_dumps
