@@ -42,8 +42,7 @@ import {
 } from './security/issues/ZerologonIssue';
 import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
-import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
-import {getAllAgents, getAgentMachine, getManuallyStartedAgents, getMachineHostname} from '../utils/ServerUtils';
+import {getAllAgents, getAgentMachine, getManuallyStartedAgents, getMachineHostname, getAllMachines} from '../utils/ServerUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -154,8 +153,8 @@ class ReportPageComponent extends AuthComponent {
 
   componentDidMount() {
     this.getCredentialsFromServer();
-    this.getMachinesFromServer();
     getAllAgents().then(agents => this.setState({agents: agents}));
+    getAllMachines().then(machines => this.setState({machines: machines}));
   }
 
   getCredentialsFromServer = () => {
@@ -169,11 +168,6 @@ class ReportPageComponent extends AuthComponent {
       .then(creds => {
         this.setState({ configuredCredentials: creds });
       })
-  }
-
-  getMachinesFromServer(){
-    IslandHttpClient.get(APIEndpoint.machines)
-      .then(res => this.setState({machines: res.body}))
   }
 
   componentWillUnmount() {
