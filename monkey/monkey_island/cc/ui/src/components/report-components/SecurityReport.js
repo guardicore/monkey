@@ -1,25 +1,25 @@
-import React, { Fragment } from 'react';
+import React, {Fragment} from 'react';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
 import StolenCredentialsTable from 'components/report-components/security/StolenCredentialsTable';
-import { Line } from 'rc-progress';
+import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
-import ReportHeader, { ReportTypes } from './common/ReportHeader';
+import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
-import { smbReport } from './security/issues/SmbIssue';
-import { hadoopIssueOverview, hadoopIssueReport } from './security/issues/HadoopIssue';
-import { mssqlIssueOverview, mssqlIssueReport } from './security/issues/MssqlIssue';
-import { wmiIssueReport } from './security/issues/WmiIssue';
-import { shhIssueReport, sshIssueOverview } from './security/issues/SshIssue';
-import { log4shellIssueOverview, log4shellIssueReport } from './security/issues/Log4ShellIssue';
+import {smbReport} from './security/issues/SmbIssue';
+import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
+import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
+import {wmiIssueReport} from './security/issues/WmiIssue';
+import {shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
+import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
 import {
   crossSegmentIssueOverview,
   crossSegmentIssueReport,
@@ -32,18 +32,23 @@ import {
   sharedLocalAdminsIssueReport,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import { tunnelIssueOverview, tunnelIssueReport } from './security/issues/TunnelIssue';
-import { stolenCredsIssueOverview } from './security/issues/StolenCredsIssue';
-import { strongUsersOnCritIssueReport } from './security/issues/StrongUsersOnCritIssue';
+import {tunnelIssueOverview, tunnelIssueReport} from './security/issues/TunnelIssue';
+import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
+import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
   zerologonIssueOverview,
   zerologonIssueReport,
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
-import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
+import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
-import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
-import {getAllAgents, getAgentMachine, getManuallyStartedAgents, getMachineHostname} from '../utils/ServerUtils';
+import {
+  getAllAgents,
+  getAllMachines,
+  getMachineByAgent,
+  getMachineHostname,
+  getManuallyStartedAgents,
+} from '../utils/ServerUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -107,11 +112,6 @@ class ReportPageComponent extends AuthComponent {
         [this.issueContentTypes.REPORT]: islandCrossSegmentIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
-      'tunnel': {
-        [this.issueContentTypes.OVERVIEW]: tunnelIssueOverview,
-        [this.issueContentTypes.REPORT]: tunnelIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
-      },
       'shared_passwords': {
         [this.issueContentTypes.OVERVIEW]: sharedPasswordsIssueOverview,
         [this.issueContentTypes.REPORT]: sharedCredsIssueReport,
@@ -148,12 +148,15 @@ class ReportPageComponent extends AuthComponent {
       agents: [],
       machines: []
     };
+
+    this.tunnelingIssueExists = false;
+    this.tunnelingIssueComponent = <div/>;
   }
 
   componentDidMount() {
     this.getCredentialsFromServer();
-    this.getMachinesFromServer();
     getAllAgents().then(agents => this.setState({agents: agents}));
+    getAllMachines().then(machines => this.setState({machines: machines}));
   }
 
   getCredentialsFromServer = () => {
@@ -167,11 +170,6 @@ class ReportPageComponent extends AuthComponent {
       .then(creds => {
         this.setState({ configuredCredentials: creds });
       })
-  }
-
-  getMachinesFromServer(){
-    IslandHttpClient.get(APIEndpoint.machines)
-      .then(res => this.setState({machines: res.body}))
   }
 
   componentWillUnmount() {
@@ -227,7 +225,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportOverviewSection() {
-    let manual_monkey_hostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getAgentMachine(agent, this.state.machines)));
+    let manualMonkeyHostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getMachineByAgent(agent, this.state.machines)));
 
     return (
       <div id='overview'>
@@ -255,7 +253,7 @@ class ReportPageComponent extends AuthComponent {
           The monkey started propagating from the following machines where it was manually installed:
         </p>
         <ul>
-          {[...new Set(manual_monkey_hostnames)].map(x => <li key={x}>{x}</li>)}
+          {[...new Set(manualMonkeyHostnames)].map(x => <li key={x}>{x}</li>)}
         </ul>
         <p>
           The monkeys were run with the following configuration:
@@ -356,6 +354,9 @@ class ReportPageComponent extends AuthComponent {
         overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
       }
     }
+
+    overviews.push(tunnelIssueOverview(this.state.agents, this.state.machines));
+
     return overviews;
   }
 
@@ -514,15 +515,19 @@ class ReportPageComponent extends AuthComponent {
   generateIssues = (issues) => {
     let issuesDivArray = [];
     for (let machine of Object.keys(issues)) {
+      // TODO fix with #2558
       issuesDivArray.push(
         <li key={JSON.stringify(machine)}>
           <h4><b>{machine}</b></h4>
           <ol>
             {issues[machine].map(this.generateIssue)}
+            <li key={'tunneling-issue'}>{tunnelIssueReport(this.state.agents,
+              this.state.machines)}</li>
           </ol>
         </li>
       );
     }
+
     return <ul>{issuesDivArray}</ul>;
   };
 

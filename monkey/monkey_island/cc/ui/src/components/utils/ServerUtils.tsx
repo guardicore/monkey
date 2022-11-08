@@ -21,9 +21,9 @@ export function didAllAgentsShutdown() {
 
 export function getCollectionObject(collectionEndpoint: APIEndpoint, key: string) {
   return IslandHttpClient.get(collectionEndpoint)
-      .then(res => {
-        return arrayToObject(res.body, key);
-      })
+    .then(res => {
+      return arrayToObject(res.body, key);
+    });
 }
 
 export function arrayToObject(array: object[], key: string): Record<string, any>{
@@ -31,16 +31,23 @@ export function arrayToObject(array: object[], key: string): Record<string, any>
 }
 
 export function getAllAgents() {
-    return IslandHttpClient.get(APIEndpoint.agents)
+  return IslandHttpClient.get(APIEndpoint.agents)
     .then(res => {
-        return res.body;
+      return res.body;
+    });
+}
+
+export function getAllMachines() {
+  return IslandHttpClient.get(APIEndpoint.machines)
+    .then(res => {
+      return res.body;
     });
 }
 
 export function getMachineHostname(machine): string {
   let hostname = "unknown";
 
-  if(machine === null) {
+  if (machine === null) {
     return hostname;
   }
 
@@ -52,6 +59,20 @@ export function getMachineHostname(machine): string {
   }
 
   return hostname;
+}
+
+export function getMachineFromIP(ip, machines) {
+  let machineFromIP = null;
+
+  for (let machine of machines) {
+    let machineIPs = machine['network_interfaces'].map(network_interface => network_interface.split('/')[0]);
+    if (machineIPs.includes(ip)) {
+      machineFromIP = machine;
+      break;
+    }
+  }
+
+  return machineFromIP;
 }
 
 export function getEventSourceHostname(event_source, agents, machines): string {
@@ -73,26 +94,26 @@ export function getEventSourceHostname(event_source, agents, machines): string {
 }
 
 export function getManuallyStartedAgents(agents) {
-    let manuallyStartedAgents = [];
+  let manuallyStartedAgents = [];
 
-    for(let agent of agents) {
-        if(agent['parent_id'] === null){
-            manuallyStartedAgents.push(agent);
-        }
+  for (let agent of agents) {
+    if (agent['parent_id'] === null) {
+      manuallyStartedAgents.push(agent);
     }
+  }
 
-    return manuallyStartedAgents;
+  return manuallyStartedAgents;
 }
 
-export function getAgentMachine(agent, machines) {
-    let agentMachine = null;
+export function getMachineByAgent(agent, machines) {
+  let agentMachine = null;
 
-    for(let machine of machines) {
-        if(agent['machine_id'] === machine['id']){
-            agentMachine = machine;
-            break;
-        }
+  for (let machine of machines) {
+    if (agent['machine_id'] === machine['id']) {
+      agentMachine = machine;
+      break;
     }
+  }
 
-    return null;
+  return agentMachine;
 }

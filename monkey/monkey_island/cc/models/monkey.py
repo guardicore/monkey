@@ -2,7 +2,7 @@
 Define a Document Schema for the Monkey document.
 
 """
-from mongoengine import Document, DynamicField, FloatField, ListField, ReferenceField, StringField
+from mongoengine import Document, DynamicField, FloatField, ListField, StringField
 
 
 class Monkey(Document):
@@ -25,4 +25,3 @@ class Monkey(Document):
     # (even with required=False of null=True).
     # See relevant issue: https://github.com/MongoEngine/mongoengine/issues/1904
     parent = ListField(ListField(DynamicField()))
-    tunnel = ReferenceField("self")
