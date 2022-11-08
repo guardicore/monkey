@@ -20,7 +20,6 @@ from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
-from monkey_island.cc.database import mongo
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repository import (
     IAgentConfigurationRepository,
@@ -29,7 +28,6 @@ from monkey_island.cc.repository import (
     IMachineRepository,
     INodeRepository,
 )
-from monkey_island.cc.services.node import NodeService
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
 )
@@ -116,22 +114,6 @@ class ReportService:
         st += "%d minutes and %d seconds" % (minutes, seconds)
 
         return st
-
-    # This shoud be replaced by a query to edges and get tunnel edges?
-    @staticmethod
-    def get_tunnels():
-        return [
-            {
-                "type": "tunnel",
-                "machine": NodeService.get_node_hostname(
-                    NodeService.get_node_or_monkey_by_id(tunnel["_id"])
-                ),
-                "dest": NodeService.get_node_hostname(
-                    NodeService.get_node_or_monkey_by_id(tunnel["tunnel"])
-                ),
-            }
-            for tunnel in mongo.db.monkey.find({"tunnel": {"$exists": True}}, {"tunnel": 1})
-        ]
 
     # This should be replaced by machine query for "scanned" status
     @staticmethod
@@ -516,7 +498,6 @@ class ReportService:
     def get_issues():
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
-            ReportService.get_tunnels,
             ReportService.get_island_cross_segment_issues,
         ]
 
