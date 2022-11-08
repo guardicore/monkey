@@ -65,7 +65,7 @@ export function getMachineFromIP(ip, machines) {
   let machineFromIP = null;
 
   for (let machine of machines) {
-    let machineIPs = machine['network_interfaces'].map(network_interface => network_interface.split('/')[0]);
+    let machineIPs = getMachineIPs(machine);
     if (machineIPs.includes(ip)) {
       machineFromIP = machine;
       break;
@@ -73,6 +73,14 @@ export function getMachineFromIP(ip, machines) {
   }
 
   return machineFromIP;
+}
+
+export function getMachineIPs(machine) {
+    if(machine !== null) {
+     return machine['network_interfaces'].map(network_interface => network_interface.split('/')[0])
+    }
+
+    return [];
 }
 
 export function getEventSourceHostname(event_source, agents, machines): string {

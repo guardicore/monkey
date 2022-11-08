@@ -1,6 +1,6 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
-import {getMachineByAgent, getMachineFromIP, getMachineHostname} from '../../../utils/ServerUtils';
+import {getMachineByAgent, getMachineFromIP, getMachineHostname, getMachineIPs} from '../../../utils/ServerUtils';
 
 export function tunnelIssueOverview(agents, machines) {
   if(getTunnels(agents, machines).length > 0){
@@ -23,7 +23,7 @@ export function tunnelIssueReport(agents, machines) {
           Network tunnels were set up between the following.
           <ul>
             {tunnels.map(tunnel =>
-              <li>
+              <li key={tunnel.agent_machine+tunnel.agent_tunnel}>
                 from <span className="badge badge-primary">{tunnel.agent_machine}
                 </span> to <span className="badge badge-primary">{tunnel.agent_tunnel}</span>
               </li>
@@ -42,9 +42,7 @@ function getTunnels(agents, machines) {
   for (let machine of machines) {
     if (machine.island === true) {
       islandIPs = islandIPs.concat(
-        ...(
-          machine.network_interfaces.map(network_interface => network_interface.split('/')[0])
-        )
+        ...getMachineIPs(machine)
       );
     }
   }

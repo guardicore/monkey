@@ -47,7 +47,7 @@ import {
   getAllMachines,
   getMachineByAgent,
   getMachineHostname,
-  getManuallyStartedAgents,
+  getManuallyStartedAgents
 } from '../utils/ServerUtils';
 
 

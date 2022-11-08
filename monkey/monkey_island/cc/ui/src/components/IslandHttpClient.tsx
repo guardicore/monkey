@@ -17,7 +17,6 @@ export enum APIEndpoint {
   nodes = '/api/nodes',
   agentEvents = '/api/agent-events',
   mode = '/api/island/mode',
-  manual_exploitation = '/api/exploitations/manual',
   monkey_exploitation = '/api/exploitations/monkey',
   stolenCredentials = '/api/propagation-credentials/stolen-credentials'
 }
