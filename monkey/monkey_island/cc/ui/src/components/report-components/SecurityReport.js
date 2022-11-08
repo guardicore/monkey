@@ -545,14 +545,14 @@ class ReportPageComponent extends AuthComponent {
     let tunnelingIssues = [];
     for (let agent of agents) {
       if (!islandIPs.includes(agent.cc_server.ip)) {
-        let issue = {'agent_machine': null, 'agent_tunnel': agent.cc_server.ip};
-        for (let machine of machines) {
-          if (agent.machine_id === machine.id) {
-            issue['agent_machine'] = machine.network_interfaces[0].split('/')[0];
-            break;
-          }
+        let machine = getAgentMachine(agent, machines);
+        if (machine !== null) {
+          let issue = {
+            'agent_machine': machine.network_interfaces[0].split('/')[0],
+            'agent_tunnel': agent.cc_server.ip
+          };
+          tunnelingIssues.push(issue);
         }
-        tunnelingIssues.push(issue);
       }
     }
 
