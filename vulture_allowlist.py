@@ -11,6 +11,7 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repository import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
     ExploiterDescriptorEnum,
 )
@@ -104,3 +105,5 @@ ExploiterDescriptorEnum.LOG4SHELL
 Database._should_drop.drop_config  # monkey_island/cc/services/database.py:28
 
 AWSCommandResults.response_code  # monkey_island/cc/services/aws/aws_command_runner.py:26
+
+MonkeyExploitation.label
