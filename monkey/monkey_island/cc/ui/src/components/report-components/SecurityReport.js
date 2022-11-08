@@ -232,7 +232,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportOverviewSection() {
-    let manual_monkey_hostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getMachineByAgent(agent, this.state.machines)));
+    let manualMonkeyHostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getMachineByAgent(agent, this.state.machines)));
 
     return (
       <div id='overview'>
@@ -260,7 +260,7 @@ class ReportPageComponent extends AuthComponent {
           The monkey started propagating from the following machines where it was manually installed:
         </p>
         <ul>
-          {[...new Set(manual_monkey_hostnames)].map(x => <li key={x}>{x}</li>)}
+          {[...new Set(manualMonkeyHostnames)].map(x => <li key={x}>{x}</li>)}
         </ul>
         <p>
           The monkeys were run with the following configuration:
