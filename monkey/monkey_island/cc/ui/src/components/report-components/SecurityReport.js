@@ -42,7 +42,7 @@ import {
 } from './security/issues/ZerologonIssue';
 import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
-import {getAllAgents, getAgentMachine, getManuallyStartedAgents, getMachineHostname, getAllMachines} from '../utils/ServerUtils';
+import {getAllAgents, getMachineByAgent, getManuallyStartedAgents, getMachineHostname, getAllMachines, getMachineFromIP} from '../utils/ServerUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -225,7 +225,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportOverviewSection() {
-    let manual_monkey_hostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getAgentMachine(agent, this.state.machines)));
+    let manual_monkey_hostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getMachineByAgent(agent, this.state.machines)));
 
     return (
       <div id='overview'>
@@ -545,13 +545,20 @@ class ReportPageComponent extends AuthComponent {
     let tunnelingIssues = [];
     for (let agent of agents) {
       if (!islandIPs.includes(agent.cc_server.ip)) {
-        let machine = getAgentMachine(agent, machines);
-        if (machine !== null) {
-          let issue = {
-            'agent_machine': machine.network_interfaces[0].split('/')[0],
-            'agent_tunnel': agent.cc_server.ip
-          };
-          tunnelingIssues.push(issue);
+        let agentMachine = getMachineByAgent(agent, machines);
+        if (agentMachine !== null) {
+          let agentMachineHostname = getMachineHostname(agentMachine)
+
+          let agentTunnelMachineHostname = agent.cc_server.ip;
+          let agentTunnelMachine = getMachineFromIP(agent.cc_server.ip, machines)
+          if (agentTunnelMachine !== null) {
+            agentTunnelMachineHostname = getMachineHostname(agentTunnelMachine);
+          }
+
+          tunnelingIssues.push({
+            'agent_machine': agentMachineHostname,
+            'agent_tunnel': agentTunnelMachineHostname
+          });
         }
       }
     }

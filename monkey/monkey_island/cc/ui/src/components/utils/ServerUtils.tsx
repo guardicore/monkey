@@ -61,6 +61,20 @@ export function getMachineHostname(machine): string {
   return hostname;
 }
 
+export function getMachineFromIP(ip, machines) {
+  let machineFromIP = null;
+
+  for (let machine of machines) {
+    let machineIPs = machine['network_interfaces'].map(network_interface => network_interface.split('/')[0]);
+    if (machineIPs.includes(ip)) {
+      machineFromIP = machine;
+      break;
+    }
+  }
+
+  return machineFromIP;
+}
+
 export function getEventSourceHostname(event_source, agents, machines): string {
   let hostname = "unknown";
 
@@ -91,7 +105,7 @@ export function getManuallyStartedAgents(agents) {
   return manuallyStartedAgents;
 }
 
-export function getAgentMachine(agent, machines) {
+export function getMachineByAgent(agent, machines) {
   let agentMachine = null;
 
   for (let machine of machines) {
