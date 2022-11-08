@@ -541,7 +541,7 @@ class ReportPageComponent extends AuthComponent {
     let islandIPs = [];
     for (let machine of machines) {
       if (machine.island === true) {
-        islandIPs.push(
+        islandIPs = islandIPs.concat(
           ...(
             machine.network_interfaces.map(network_interface => network_interface.split('/')[0])
           )
@@ -570,12 +570,10 @@ class ReportPageComponent extends AuthComponent {
       }
     }
 
-    if (tunnelingIssues === []) {
-      return;
+    if (tunnelingIssues.length > 0) {
+      this.tunnelingIssueExists = true;
+      this.tunnelingIssueComponent = tunnelIssueReport(tunnelingIssues);
     }
-
-    this.tunnelingIssueExists = true;
-    this.tunnelingIssueComponent = tunnelIssueReport(tunnelingIssues)
   }
 
   addIssuesToOverviewIssues() {
