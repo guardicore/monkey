@@ -1,25 +1,25 @@
-import React, { Fragment } from 'react';
+import React, {Fragment} from 'react';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
 import StolenCredentialsTable from 'components/report-components/security/StolenCredentialsTable';
-import { Line } from 'rc-progress';
+import {Line} from 'rc-progress';
 import AuthComponent from '../AuthComponent';
-import ReportHeader, { ReportTypes } from './common/ReportHeader';
+import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
-import { smbReport } from './security/issues/SmbIssue';
-import { hadoopIssueOverview, hadoopIssueReport } from './security/issues/HadoopIssue';
-import { mssqlIssueOverview, mssqlIssueReport } from './security/issues/MssqlIssue';
-import { wmiIssueReport } from './security/issues/WmiIssue';
-import { shhIssueReport, sshIssueOverview } from './security/issues/SshIssue';
-import { log4shellIssueOverview, log4shellIssueReport } from './security/issues/Log4ShellIssue';
+import {smbReport} from './security/issues/SmbIssue';
+import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
+import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
+import {wmiIssueReport} from './security/issues/WmiIssue';
+import {shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
+import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
 import {
   crossSegmentIssueOverview,
   crossSegmentIssueReport,
@@ -32,21 +32,20 @@ import {
   sharedLocalAdminsIssueReport,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import { tunnelIssueOverview, tunnelIssueReport } from './security/issues/TunnelIssue';
-import { stolenCredsIssueOverview } from './security/issues/StolenCredsIssue';
-import { strongUsersOnCritIssueReport } from './security/issues/StrongUsersOnCritIssue';
+import {tunnelIssueOverview, tunnelIssueReport} from './security/issues/TunnelIssue';
+import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
+import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
   zerologonIssueOverview,
   zerologonIssueReport,
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
-import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
+import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
 import {
   getAllAgents,
   getAllMachines,
   getMachineByAgent,
-  getMachineFromIP,
   getMachineHostname,
   getManuallyStartedAgents,
 } from '../utils/ServerUtils';
@@ -111,10 +110,6 @@ class ReportPageComponent extends AuthComponent {
       'island_cross_segment': {
         [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
         [this.issueContentTypes.REPORT]: islandCrossSegmentIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
-      },
-      'tunnel': {
-        [this.issueContentTypes.OVERVIEW]: tunnelIssueOverview,
         [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_passwords': {
@@ -189,8 +184,6 @@ class ReportPageComponent extends AuthComponent {
   }
 
   render() {
-    this.createTunnelingIssueComponent(this.state.agents, this.state.machines);
-
     let content;
 
     if (this.stillLoadingDataFromServer()) {
@@ -362,9 +355,7 @@ class ReportPageComponent extends AuthComponent {
       }
     }
 
-    if (this.tunnelingIssueExists === true) {
-      overviews.push(this.getIssueOverview(this.IssueDescriptorEnum['tunnel']))
-    }
+    overviews.push(tunnelIssueOverview(this.state.agents, this.state.machines));
 
     return overviews;
   }
@@ -454,7 +445,6 @@ class ReportPageComponent extends AuthComponent {
           <h3>Machine related recommendations</h3> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
-          {this.tunnelingIssueComponent}
         </div>
       </div>
     );
@@ -525,56 +515,21 @@ class ReportPageComponent extends AuthComponent {
   generateIssues = (issues) => {
     let issuesDivArray = [];
     for (let machine of Object.keys(issues)) {
+      // TODO fix with #2558
       issuesDivArray.push(
         <li key={JSON.stringify(machine)}>
           <h4><b>{machine}</b></h4>
           <ol>
             {issues[machine].map(this.generateIssue)}
+            <li key={'tunneling-issue'}>{tunnelIssueReport(this.state.agents,
+              this.state.machines)}</li>
           </ol>
         </li>
       );
     }
+
     return <ul>{issuesDivArray}</ul>;
   };
-
-  createTunnelingIssueComponent(agents, machines) {
-    let islandIPs = [];
-    for (let machine of machines) {
-      if (machine.island === true) {
-        islandIPs = islandIPs.concat(
-          ...(
-            machine.network_interfaces.map(network_interface => network_interface.split('/')[0])
-          )
-        );
-      }
-    }
-
-    let tunnelingIssues = [];
-    for (let agent of agents) {
-      if (!islandIPs.includes(agent.cc_server.ip)) {
-        let agentMachine = getMachineByAgent(agent, machines);
-        if (agentMachine !== null) {
-          let agentMachineHostname = getMachineHostname(agentMachine)
-
-          let agentTunnelMachineHostname = agent.cc_server.ip;
-          let agentTunnelMachine = getMachineFromIP(agent.cc_server.ip, machines)
-          if (agentTunnelMachine !== null) {
-            agentTunnelMachineHostname = getMachineHostname(agentTunnelMachine);
-          }
-
-          tunnelingIssues.push({
-            'agent_machine': agentMachineHostname,
-            'agent_tunnel': agentTunnelMachineHostname
-          });
-        }
-      }
-    }
-
-    if (tunnelingIssues.length > 0) {
-      this.tunnelingIssueExists = true;
-      this.tunnelingIssueComponent = tunnelIssueReport(tunnelingIssues);
-    }
-  }
 
   addIssuesToOverviewIssues() {
     let overview_issues = this.state.issues;
