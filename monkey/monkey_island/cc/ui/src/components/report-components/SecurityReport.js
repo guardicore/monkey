@@ -561,11 +561,7 @@ class ReportPageComponent extends AuthComponent {
     }
 
     this.tunnelingIssueExists = true;
-    let tunnelingIssueComponent = [];
-    for (let issue of tunnelingIssues) {
-      tunnelingIssueComponent.push(tunnelIssueReport(issue));
-    }
-    this.tunnelingIssueComponent = <div>{tunnelingIssueComponent}</div>
+    this.tunnelingIssueComponent = tunnelIssueReport(tunnelingIssues)
   }
 
   addIssuesToOverviewIssues() {
