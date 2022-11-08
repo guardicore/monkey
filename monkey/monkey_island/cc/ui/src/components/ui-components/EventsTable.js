@@ -5,7 +5,7 @@ import AuthService from '../../services/AuthService';
 import '../../styles/pages/EventPage.scss';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import LoadingIcon from './LoadingIcon';
-import {getEventSourceHostname, getMachineHostname} from '../utils/ServerUtils';
+import {getEventSourceHostname, getMachineHostname, getMachineIPs} from '../utils/ServerUtils';
 import {parseTimeToDateString} from '../utils/DateUtils';
 
 const columns = [
@@ -54,9 +54,7 @@ const renderTarget = (event_target, machines) => {
 
   // if none of the above, event_target is an IPv4 address
   for (let machine of machines) {
-    let machine_ips = machine['network_interfaces'].map(network_interface => {
-      return network_interface.split('/')[0]
-    })
+    let machine_ips = getMachineIPs(machine);
 
     if (machine_ips.includes(event_target)) {
       if ((machine['hostname'] !== null) && (machine['hostname'] !== '')) {

@@ -3,7 +3,7 @@ import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import {renderLimitedArray} from '../common/RenderArrays';
 import ExternalLink from '../common/ExternalLink';
-import {getAllAgents, getAllMachines, getManuallyStartedAgents, getMachineByAgent, getMachineHostname} from '../../utils/ServerUtils';
+import {getAllAgents, getAllMachines, getManuallyStartedAgents, getMachineByAgent, getMachineHostname, getMachineIPs} from '../../utils/ServerUtils';
 import {parseTimeToDateString} from '../../utils/DateUtils';
 
 const BREACH_DESCRIPTION = <>
@@ -45,7 +45,7 @@ function getManuallyExploitedMachines(agents, machines){
     if (machine !== null){
       let manuallyExploitatedMachine = {};
       manuallyExploitatedMachine['hostname'] = getMachineHostname(machine);
-      manuallyExploitatedMachine['ip_addresses'] = machine['network_interfaces'].map(network_interface => network_interface.split('/')[0]);
+      manuallyExploitatedMachine['ip_addresses'] = getMachineIPs(machine);
       manuallyExploitatedMachine['start_time'] = parseTimeToDateString(agent['start_time']);
 
       manuallyExploitedMachines.push(manuallyExploitatedMachine);
