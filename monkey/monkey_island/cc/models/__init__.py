@@ -1,6 +1,5 @@
 # Order of importing matters here, for registering the embedded and referenced documents before
 # using them.
-from .monkey import Monkey
 from .simulation import Simulation, IslandMode
 from .user_credentials import UserCredentials
 from common.types import MachineID
