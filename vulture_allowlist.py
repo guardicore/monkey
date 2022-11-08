@@ -10,7 +10,6 @@ from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
-from monkey_island.cc.models.edge import Edge
 from monkey_island.cc.repository import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
     ExploiterDescriptorEnum,
@@ -77,9 +76,6 @@ hub.exception_stream
 Deployment.DEVELOP
 Deployment.APPIMAGE
 Deployment.DOCKER
-
-# Mongoengine documents
-Edge.meta
 
 # Pymongo models
 Machine.Config.json_dumps
