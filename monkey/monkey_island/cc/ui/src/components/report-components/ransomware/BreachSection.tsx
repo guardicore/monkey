@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import {renderLimitedArray} from '../common/RenderArrays';
 import ExternalLink from '../common/ExternalLink';
+import {getAllAgents, getAllMachines, getManuallyStartedAgents, getMachineByAgent, getMachineHostname} from '../../utils/ServerUtils';
 
 const BREACH_DESCRIPTION = <>
                              Ransomware attacks start after machines in the internal network get
@@ -19,19 +19,47 @@ const BREACH_DESCRIPTION = <>
                            </>
 
 function BreachSection() {
+  const [agents, setAgents] = useState(null);
   const [machines, setMachines] = useState(null);
 
   useEffect(() => {
-      IslandHttpClient.get(APIEndpoint.manual_exploitation)
-      .then(resp => setMachines(resp.body['manual_exploitations']));
+    getAllAgents().then(agents => setAgents(agents));
+    getAllMachines().then(machines => setMachines(machines));
   }, []);
 
-  if(machines !== null){
-    let body = getBreachSectionBody(machines);
+  if((machines !== null) && (agents !== null)){
+    let manuallyExploitedMachines = getManuallyExploitedMachines(agents, machines);
+    let body = getBreachSectionBody(manuallyExploitedMachines);
     return (<NumberedReportSection index={1} title={'Breach'} description={BREACH_DESCRIPTION} body={body}/>)
   } else {
     return <LoadingIcon />
   }
+}
+
+function getManuallyExploitedMachines(agents, machines){
+  let manuallyExploitedMachines = [];
+  let manuallyStartedAgents = getManuallyStartedAgents(agents);
+  for (let agent of manuallyStartedAgents) {
+    let machine = getMachineByAgent(agent, machines);
+    if (machine !== null){
+      let manuallyExploitatedMachine = {};
+      manuallyExploitatedMachine['hostname'] = getMachineHostname(machine);
+      manuallyExploitatedMachine['ip_addresses'] = machine['network_interfaces'].map(network_interface => network_interface.split('/')[0]);
+      manuallyExploitatedMachine['start_time'] = startTimeToLocaleString(agent['start_time']);
+
+      manuallyExploitedMachines.push(manuallyExploitatedMachine);
+    }
+  }
+
+  return manuallyExploitedMachines;
+}
+
+function startTimeToLocaleString(startTime) {
+  let startTimeTimestamp = Date.parse(startTime);
+  let startTimeDate = new Date();
+  startTimeDate.setTime(startTimeTimestamp);
+
+  return startTimeDate.toLocaleString('en-us');
 }
 
 function getBreachSectionBody(machines) {
@@ -51,7 +79,7 @@ function getBreachSectionBody(machines) {
 
 function getMachine(machine) {
   return (
-    <li key={machine['hostname']}>
+    <li key={machine['hostname']+machine['start_time']}>
     <b>{machine['hostname']}</b>&nbsp;
       ({renderLimitedArray(machine['ip_addresses'], 2, 'ip-address')}) at <b>{machine['start_time']}</b>
     </li>
