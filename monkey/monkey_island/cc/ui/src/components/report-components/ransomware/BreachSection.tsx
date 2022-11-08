@@ -4,6 +4,7 @@ import LoadingIcon from '../../ui-components/LoadingIcon';
 import {renderLimitedArray} from '../common/RenderArrays';
 import ExternalLink from '../common/ExternalLink';
 import {getAllAgents, getAllMachines, getManuallyStartedAgents, getMachineByAgent, getMachineHostname} from '../../utils/ServerUtils';
+import {parseTimeToDateString} from '../../utils/DateUtils';
 
 const BREACH_DESCRIPTION = <>
                              Ransomware attacks start after machines in the internal network get
@@ -45,21 +46,13 @@ function getManuallyExploitedMachines(agents, machines){
       let manuallyExploitatedMachine = {};
       manuallyExploitatedMachine['hostname'] = getMachineHostname(machine);
       manuallyExploitatedMachine['ip_addresses'] = machine['network_interfaces'].map(network_interface => network_interface.split('/')[0]);
-      manuallyExploitatedMachine['start_time'] = startTimeToLocaleString(agent['start_time']);
+      manuallyExploitatedMachine['start_time'] = parseTimeToDateString(agent['start_time']);
 
       manuallyExploitedMachines.push(manuallyExploitatedMachine);
     }
   }
 
   return manuallyExploitedMachines;
-}
-
-function startTimeToLocaleString(startTime) {
-  let startTimeTimestamp = Date.parse(startTime);
-  let startTimeDate = new Date();
-  startTimeDate.setTime(startTimeTimestamp);
-
-  return startTimeDate.toLocaleString('en-us');
 }
 
 function getBreachSectionBody(machines) {

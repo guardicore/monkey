@@ -6,6 +6,7 @@ import '../../styles/pages/EventPage.scss';
 import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import LoadingIcon from './LoadingIcon';
 import {getEventSourceHostname, getMachineHostname} from '../utils/ServerUtils';
+import {parseTimeToDateString} from '../utils/DateUtils';
 
 const columns = [
   {label: 'Time', name: 'timestamp'},
@@ -34,9 +35,7 @@ const table_options = {
   selectableRows: 'none'
 };
 
-const timestamp_options =  [{year: 'numeric'}, {month: '2-digit'},{day: '2-digit'},{'hour': '2-digit'},{'minutes': '2-digit'},{'second': 'numeric'}];
-
-const renderTime = (val) => new Date(val*1000).toLocaleString('en-us', timestamp_options);
+const renderTime = (val) => parseTimeToDateString(val*1000);
 
 const renderTarget = (event_target, machines) => {
   // event_target is null
