@@ -42,7 +42,14 @@ import {
 } from './security/issues/ZerologonIssue';
 import { powershellIssueOverview, powershellIssueReport } from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
-import {getAllAgents, getMachineByAgent, getManuallyStartedAgents, getMachineHostname, getAllMachines, getMachineFromIP} from '../utils/ServerUtils';
+import {
+  getAllAgents,
+  getAllMachines,
+  getMachineByAgent,
+  getMachineFromIP,
+  getMachineHostname,
+  getManuallyStartedAgents,
+} from '../utils/ServerUtils';
 
 
 class ReportPageComponent extends AuthComponent {
