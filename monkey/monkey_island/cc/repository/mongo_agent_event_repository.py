@@ -1,9 +1,19 @@
+import logging
 from typing import Any, Dict, Sequence, Type
 
 from pymongo import MongoClient
 
 from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
-from common.agent_events import AbstractAgentEvent
+from common.agent_events import (
+    AbstractAgentEvent,
+    AgentShutdownEvent,
+    ExploitationEvent,
+    FileEncryptionEvent,
+    PasswordRestorationEvent,
+    PingScanEvent,
+    PropagationEvent,
+    TCPScanEvent,
+)
 from common.types import AgentID
 from monkey_island.cc.repository import IAgentEventRepository
 from monkey_island.cc.repository.i_agent_event_repository import T
@@ -12,6 +22,18 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from . import RemovalError, RetrievalError, StorageError
 from .agent_event_encryption import decrypt_event, encrypt_event
 from .consts import MONGO_OBJECT_ID_KEY
+
+logger = logging.getLogger(__name__)
+
+EVENT_WHITELIST = [
+    PingScanEvent,
+    TCPScanEvent,
+    ExploitationEvent,
+    PropagationEvent,
+    PasswordRestorationEvent,
+    AgentShutdownEvent,
+    FileEncryptionEvent,
+]
 
 
 class MongoAgentEventRepository(IAgentEventRepository):
@@ -26,13 +48,16 @@ class MongoAgentEventRepository(IAgentEventRepository):
         self._events_collection = mongo_client.monkey_island.events
         self._serializers = serializer_registry
         self._encryptor = encryptor
+        self._events_collection.create_index(EVENT_TYPE_FIELD)
 
     def save_event(self, event: AbstractAgentEvent):
         try:
             serializer = self._serializers[type(event)]
             serialized_event = serializer.serialize(event)
-            encrypted_event = encrypt_event(self._encryptor.encrypt, serialized_event)
-            self._events_collection.insert_one(encrypted_event)
+            if type(event) not in EVENT_WHITELIST:
+                serialized_event = encrypt_event(self._encryptor.encrypt, serialized_event)
+
+            self._events_collection.insert_one(serialized_event)
         except Exception as err:
             raise StorageError(f"Error saving event: {err}")
 
@@ -67,10 +92,15 @@ class MongoAgentEventRepository(IAgentEventRepository):
             raise RemovalError(f"Error resetting the repository: {err}")
 
     def _deserialize(self, mongo_record: Dict[str, Any]) -> AbstractAgentEvent:
-        decrypted_event = decrypt_event(self._encryptor.decrypt, mongo_record)
         event_type = mongo_record[EVENT_TYPE_FIELD]
         serializer = self._serializers[event_type]
-        return serializer.deserialize(decrypted_event)
+
+        if event_type not in [
+            event_whitelist_type.__name__ for event_whitelist_type in EVENT_WHITELIST
+        ]:
+            mongo_record = decrypt_event(self._encryptor.decrypt, mongo_record)  # type: ignore[assignment]  # noqa: E501
+
+        return serializer.deserialize(mongo_record)
 
     def _query_events(self, query: Dict[Any, Any]) -> Sequence[AbstractAgentEvent]:
         serialized_events = self._events_collection.find(query, {MONGO_OBJECT_ID_KEY: False})
