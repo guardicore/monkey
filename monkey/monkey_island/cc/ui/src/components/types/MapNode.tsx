@@ -65,8 +65,9 @@ export default class MapNode {
       group_components.push('island');
     }
 
-    if (this.agentIds) {
-      if (!this.island && _.isEmpty(this.parentIds)) {
+    if (this.agentIds.length > 0) {
+      if (!this.island &&
+          (_.isEmpty(this.parentIds) || !this.parentIds.some(elem => elem !== null))) {
         group_components.push('manual');
       }
       else {
