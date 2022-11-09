@@ -1,12 +1,12 @@
 import pytest
 
-from infection_monkey.config import GUID
 from infection_monkey.utils.commands import (
     build_monkey_commandline,
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
+from infection_monkey.utils.ids import get_agent_id
 
 
 def test_build_monkey_commandline_explicitly_arguments():
@@ -76,7 +76,7 @@ def test_get_monkey_commandline_linux():
 def test_build_monkey_commandline():
     servers = ["10.10.10.10:5000", "11.11.11.11:5007"]
 
-    expected = f" -p {GUID} -s 10.10.10.10:5000,11.11.11.11:5007 -d 0 -l /home/bla"
+    expected = f" -p {get_agent_id()} -s 10.10.10.10:5000,11.11.11.11:5007 -d 0 -l /home/bla"
     actual = build_monkey_commandline(servers=servers, depth=0, location="/home/bla")
 
     assert expected == actual
@@ -85,7 +85,7 @@ def test_build_monkey_commandline():
 @pytest.mark.parametrize("servers", [None, []])
 def test_build_monkey_commandline_empty_servers(servers):
 
-    expected = f" -p {GUID} -d 0 -l /home/bla"
+    expected = f" -p {get_agent_id()} -d 0 -l /home/bla"
     actual = build_monkey_commandline(servers, depth=0, location="/home/bla")
 
     assert expected == actual
