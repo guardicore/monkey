@@ -30,6 +30,7 @@ from monkey_island.cc.event_queue import (
 )
 from monkey_island.cc.repository import (
     AgentBinaryRepository,
+    AgentMachineFacade,
     FileAgentConfigurationRepository,
     FileAgentLogRepository,
     FileRepositoryCachingDecorator,
@@ -156,6 +157,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(IMachineRepository, _build_machine_repository(container))
     container.register_instance(IAgentRepository, container.resolve(MongoAgentRepository))
     container.register_instance(IAgentLogRepository, container.resolve(FileAgentLogRepository))
+    container.register_instance(AgentMachineFacade, container.resolve(AgentMachineFacade))
     container.register_instance(
         NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)
     )
