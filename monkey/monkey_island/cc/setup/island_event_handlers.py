@@ -1,5 +1,3 @@
-from functools import partial
-
 from common import DIContainer
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import (
@@ -18,7 +16,6 @@ from monkey_island.cc.repository import (
     NetworkModelUpdateFacade,
 )
 from monkey_island.cc.services import AgentSignalsService
-from monkey_island.cc.services.database import Database
 
 
 def setup_island_event_handlers(container: DIContainer):
@@ -51,9 +48,6 @@ def _subscribe_clear_simulation_data_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
     topic = IslandEventTopic.CLEAR_SIMULATION_DATA
-
-    legacy_database_reset = partial(Database.reset_db, reset_config=False)
-    island_event_queue.subscribe(topic, legacy_database_reset)
 
     credentials_repository = container.resolve(ICredentialsRepository)
     island_event_queue.subscribe(topic, credentials_repository.remove_stolen_credentials)
