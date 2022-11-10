@@ -7,6 +7,7 @@ from monkey_island.cc.island_event_handlers import (
     set_agent_configuration_per_island_mode,
 )
 from monkey_island.cc.repository import (
+    AgentMachineFacade,
     IAgentEventRepository,
     IAgentLogRepository,
     IAgentRepository,
@@ -56,6 +57,9 @@ def _subscribe_clear_simulation_data_events(
 
     network_model_update_facade = container.resolve(NetworkModelUpdateFacade)
     island_event_queue.subscribe(topic, network_model_update_facade.reset_cache)
+
+    agent_machine_facade = container.resolve(AgentMachineFacade)
+    island_event_queue.subscribe(topic, agent_machine_facade.reset_cache)
 
     for i_repository in [
         IAgentEventRepository,
