@@ -31,4 +31,5 @@ from .mongo_agent_event_repository import MongoAgentEventRepository
 from .file_agent_log_repository import FileAgentLogRepository
 
 from .utils import initialize_machine_repository
+from .agent_machine_facade import AgentMachineFacade
 from .network_model_update_facade import NetworkModelUpdateFacade
