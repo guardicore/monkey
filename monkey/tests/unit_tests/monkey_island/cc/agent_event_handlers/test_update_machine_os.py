@@ -9,7 +9,12 @@ from common.agent_events import OSDiscoveryEvent
 from common.types import SocketAddress
 from monkey_island.cc.agent_event_handlers import update_machine_os
 from monkey_island.cc.models import Agent, Machine
-from monkey_island.cc.repository import IAgentRepository, IMachineRepository, UnknownRecordError
+from monkey_island.cc.repository import (
+    AgentMachineFacade,
+    IAgentRepository,
+    IMachineRepository,
+    UnknownRecordError,
+)
 
 # The machine
 MACHINE_ID = 99
@@ -48,8 +53,13 @@ def machine_repository() -> IMachineRepository:
 
 
 @pytest.fixture
-def updater(agent_repository, machine_repository) -> update_machine_os:
-    return update_machine_os(agent_repository, machine_repository)
+def agent_machine_facade(agent_repository, machine_repository) -> AgentMachineFacade:
+    return AgentMachineFacade(agent_repository, machine_repository)
+
+
+@pytest.fixture
+def updater(agent_machine_facade, machine_repository) -> update_machine_os:
+    return update_machine_os(agent_machine_facade, machine_repository)
 
 
 def test_machine_updated(updater, machine_repository):
