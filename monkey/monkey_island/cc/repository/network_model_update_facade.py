@@ -6,7 +6,6 @@ from common.types import AgentID, MachineID
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repository import (
     AgentMachineFacade,
-    IAgentRepository,
     IMachineRepository,
     INodeRepository,
     UnknownRecordError,
@@ -21,12 +20,10 @@ class NetworkModelUpdateFacade:
     def __init__(
         self,
         agent_machine_facade: AgentMachineFacade,
-        agent_repository: IAgentRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
         self._agent_machine_facade = agent_machine_facade
-        self._agent_repository = agent_repository
         self._machine_repository = machine_repository
         self._node_repository = node_repository
 
@@ -57,7 +54,6 @@ class NetworkModelUpdateFacade:
         # For now, assume that IPs are unique
         return machines[0].id
 
-    @lru_cache(maxsize=8192)
     def get_machine_id_from_agent_id(self, agent_id: AgentID) -> MachineID:
         """
         Given an AgentID, get the MachineID of the machine the Agent ran on
@@ -65,7 +61,7 @@ class NetworkModelUpdateFacade:
         :param agent_id: An AgentID
         :return: The Machine that the Agent ran on
         """
-        return self._agent_repository.get_agent_by_id(agent_id).machine_id
+        return self._agent_machine_facade.get_machine_id_from_agent_id(agent_id)
 
     def upsert_communication_from_event(
         self, event: AbstractAgentEvent, communication_type: CommunicationType
@@ -94,4 +90,3 @@ class NetworkModelUpdateFacade:
 
     def reset_cache(self):
         self._get_machine_id_by_ip.cache_clear()
-        self.get_machine_id_from_agent_id.cache_clear()

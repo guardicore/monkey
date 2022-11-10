@@ -13,6 +13,7 @@ from common.types import NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.agent_event_handlers import ScanEventHandler
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repository import (
+    AgentMachineFacade,
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
@@ -129,8 +130,13 @@ def node_repository() -> INodeRepository:
 
 
 @pytest.fixture
-def network_model_update_facade(agent_repository, machine_repository, node_repository):
-    return NetworkModelUpdateFacade(agent_repository, machine_repository, node_repository)
+def agent_machine_facade(agent_repository, machine_repository):
+    return AgentMachineFacade(agent_repository, machine_repository)
+
+
+@pytest.fixture
+def network_model_update_facade(agent_machine_facade, machine_repository, node_repository):
+    return NetworkModelUpdateFacade(agent_machine_facade, machine_repository, node_repository)
 
 
 @pytest.fixture
@@ -168,12 +174,13 @@ def handler(scan_event_handler, request):
 
 
 def test_ping_scan_event_target_machine_not_exists(
+    agent_machine_facade: AgentMachineFacade,
     agent_repository: IAgentRepository,
     in_memory_machine_repository: IMachineRepository,
     node_repository,
 ):
     network_model_update_facade = NetworkModelUpdateFacade(
-        agent_repository, in_memory_machine_repository, node_repository
+        agent_machine_facade, in_memory_machine_repository, node_repository
     )
     scan_event_handler = ScanEventHandler(
         network_model_update_facade, in_memory_machine_repository, node_repository
