@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+from tests.monkey_island import InMemoryMachineRepository
 
 from common import OperatingSystem
 from common.agent_events import OSDiscoveryEvent
@@ -17,9 +18,14 @@ from monkey_island.cc.repository import (
 )
 
 # The machine
+SEED_ID = 1
 MACHINE_ID = 99
 MACHINE = Machine(
-    id=MACHINE_ID, hardware_id=33, network_interfaces=[IPv4Interface("10.10.10.55/24")]
+    id=MACHINE_ID,
+    hardware_id=33,
+    operating_system=None,
+    operating_system_version="",
+    network_interfaces=[IPv4Interface("10.10.10.55/24")],
 )
 
 # The agent
@@ -47,8 +53,8 @@ def machine_from_id(id):
 
 @pytest.fixture
 def machine_repository() -> IMachineRepository:
-    repository = MagicMock(spec=IMachineRepository)
-    repository.get_machine_by_id = MagicMock(side_effect=machine_from_id)
+    repository = InMemoryMachineRepository(SEED_ID)
+    repository.upsert_machine(MACHINE)
     return repository
 
 
@@ -64,7 +70,10 @@ def updater(agent_machine_facade) -> update_machine_os:
 
 def test_machine_updated(updater, machine_repository):
     updater(EVENT)
-    assert machine_repository.upsert_machine.called
+
+    machine = machine_repository.get_machines()[0]
+    assert machine.operating_system == EVENT.os
+    assert machine.operating_system_version == EVENT.version
 
 
 def test_machine_not_updated_if_no_agent(updater, agent_repository, machine_repository):
@@ -73,13 +82,14 @@ def test_machine_not_updated_if_no_agent(updater, agent_repository, machine_repo
     with pytest.raises(UnknownRecordError):
         updater(EVENT)
 
-    assert not machine_repository.upsert_machine.called
+    machines = machine_repository.get_machines()
+    assert list(machines) == [MACHINE]
 
 
 def test_machine_not_updated_if_no_machine(updater, machine_repository):
-    machine_repository.get_machine_by_id = MagicMock(side_effect=UnknownRecordError)
+    machine_repository.reset()
 
     with pytest.raises(UnknownRecordError):
         updater(EVENT)
 
-    assert not machine_repository.upsert_machine.called
+    assert not machine_repository.get_machines()
