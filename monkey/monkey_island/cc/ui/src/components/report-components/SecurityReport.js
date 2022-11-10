@@ -32,7 +32,7 @@ import {
   sharedLocalAdminsIssueReport,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import {tunnelIssueOverview, tunnelIssueReport} from './security/issues/TunnelIssue';
+import {getAllTunnels, tunnelIssueOverview, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
 import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
 import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
@@ -149,8 +149,7 @@ class ReportPageComponent extends AuthComponent {
       machines: []
     };
 
-    this.tunnelingIssueExists = false;
-    this.tunnelingIssueComponent = <div/>;
+    this.allTunnels = [];
   }
 
   componentDidMount() {
@@ -184,6 +183,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   render() {
+    this.allTunnels = getAllTunnels(this.state.agents, this.state.machines);
+
     let content;
 
     if (this.stillLoadingDataFromServer()) {
@@ -355,7 +356,7 @@ class ReportPageComponent extends AuthComponent {
       }
     }
 
-    overviews.push(tunnelIssueOverview(this.state.agents, this.state.machines));
+    overviews.push(tunnelIssueOverview(this.allTunnels));
 
     return overviews;
   }
@@ -521,8 +522,7 @@ class ReportPageComponent extends AuthComponent {
           <h4><b>{machine}</b></h4>
           <ol>
             {issues[machine].map(this.generateIssue)}
-            <li key={'tunneling-issue'}>{tunnelIssueReport(this.state.agents,
-              this.state.machines)}</li>
+            <li key={'tunneling-issue'}>{tunnelIssueReportByMachine(machine, this.allTunnels)}</li>
           </ol>
         </li>
       );
