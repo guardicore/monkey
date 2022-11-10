@@ -47,7 +47,7 @@ export function tunnelIssueOverview(allTunnels) {
 
 export function tunnelIssueReportByMachine(machine, allTunnels) {
   if (allTunnels.length > 0) {
-    let tunnelIssuesByMachine = getTunnelIssuesByMachine(machine);
+    let tunnelIssuesByMachine = getTunnelIssuesByMachine(machine, allTunnels);
 
     if (tunnelIssuesByMachine.length > 0) {
       return (
@@ -72,7 +72,7 @@ function getTunnelIssuesByMachine(machine, allTunnels) {
   let tunnelIssues = [];
 
   for (tunnel of allTunnels) {
-    if (getMachineHostname(machine) in tunnel) {
+    if (Object.values(tunnel).includes(machine)) {
       tunnelIssues.push(
         <li key={tunnel.agent_machine+tunnel.agent_tunnel}>
           from <span className="badge badge-primary">{tunnel.agent_machine}

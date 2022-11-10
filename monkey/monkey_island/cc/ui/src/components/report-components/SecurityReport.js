@@ -516,7 +516,6 @@ class ReportPageComponent extends AuthComponent {
   generateIssues = (issues) => {
     let issuesDivArray = [];
     for (let machine of Object.keys(issues)) {
-      // TODO fix with #2558
       issuesDivArray.push(
         <li key={JSON.stringify(machine)}>
           <h4><b>{machine}</b></h4>
@@ -533,7 +532,7 @@ class ReportPageComponent extends AuthComponent {
 
   getTunnelIssue(machine) {
     let tunnelIssue = tunnelIssueReportByMachine(machine, this.allTunnels);
-    if ((tunnelIssue !== null) && (tunnelIssue.length > 0)) {
+    if (tunnelIssue !== null) {
       return <li key={'tunneling-issue'}>{tunnelIssue}</li>
     } else {
       return null;
