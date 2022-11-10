@@ -144,6 +144,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "/api/telemetry" endpoint. #2503
 - "/api/agent" endpoint. #2542
 - "/api/exploitations/manual" endpoint. #2509
+- "/api/island/ip-addresses" endpoint. #2565
 
 ### Fixed
 - A bug in network map page that caused delay of telemetry log loading. #1545

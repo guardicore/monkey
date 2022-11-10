@@ -18,7 +18,6 @@ from monkey_island.cc.resources import (
     Agents,
     AgentSignals,
     ClearSimulationData,
-    IPAddresses,
     IslandLog,
     Machines,
     Nodes,
@@ -161,7 +160,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     api.add_resource(AgentLogs)
     api.add_resource(IslandLog)
-    api.add_resource(IPAddresses)
 
     api.add_resource(AgentEvents)
     api.add_resource(AgentSignals)

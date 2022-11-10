@@ -7,7 +7,7 @@ import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import AwsRunTable from './AWSInstanceTable';
 import AuthComponent from '../../../AuthComponent';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
-
+import {getAllMachines, getIslandIPsFromMachines} from '../../../utils/ServerUtils';
 
 const AWSRunOptions = (props) => {
   return InlineSelection(getContents, {
@@ -32,11 +32,10 @@ const getContents = (props) => {
   }, []);
 
   function getIps() {
-    authComponent.authFetch('/api/island/ip-addresses')
-      .then(res => res.json())
-      .then(ip_addresses => {
-        setAllIPs(ip_addresses);
-        setSelectedIp(ip_addresses[0]);
+    getAllMachines().then(machines => {
+        let islandIPs = getIslandIPsFromMachines(machines);
+        setAllIPs(islandIPs);
+        setSelectedIp(islandIPs[0]);
       });
   }
 

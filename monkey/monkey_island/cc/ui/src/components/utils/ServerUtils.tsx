@@ -125,3 +125,12 @@ export function getMachineByAgent(agent, machines) {
 
   return agentMachine;
 }
+
+export function getIslandIPsFromMachines(machines) {
+  for(let machine of machines) {
+    if(machine.island){
+      return getMachineIPs(machine);
+    }
+  }
+  return [];
+}
