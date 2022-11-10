@@ -9,6 +9,7 @@ from common.agent_events import AbstractAgentEvent
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine
 from monkey_island.cc.repository import (
+    AgentMachineFacade,
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
@@ -79,12 +80,22 @@ def node_repository() -> INodeRepository:
 
 
 @pytest.fixture
+def agent_machine_facade(
+    agent_repository: IAgentRepository, machine_repository: IMachineRepository
+) -> AgentMachineFacade:
+    return AgentMachineFacade(agent_repository, machine_repository)
+
+
+@pytest.fixture
 def network_model_update_facade(
+    agent_machine_facade: AgentMachineFacade,
     agent_repository: IAgentRepository,
     machine_repository: IMachineRepository,
     node_repository: INodeRepository,
 ) -> NetworkModelUpdateFacade:
-    return NetworkModelUpdateFacade(agent_repository, machine_repository, node_repository)
+    return NetworkModelUpdateFacade(
+        agent_machine_facade, agent_repository, machine_repository, node_repository
+    )
 
 
 def test_return_existing_machine(network_model_update_facade, machine_repository):

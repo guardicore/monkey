@@ -5,6 +5,7 @@ from common.agent_events import AbstractAgentEvent
 from common.types import AgentID, MachineID
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repository import (
+    AgentMachineFacade,
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
@@ -19,10 +20,12 @@ class NetworkModelUpdateFacade:
 
     def __init__(
         self,
+        agent_machine_facade: AgentMachineFacade,
         agent_repository: IAgentRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
+        self._agent_machine_facade = agent_machine_facade
         self._agent_repository = agent_repository
         self._machine_repository = machine_repository
         self._node_repository = node_repository
@@ -82,7 +85,7 @@ class NetworkModelUpdateFacade:
         if not isinstance(event.target, IPv4Address):
             raise TypeError("Event targets must be of type IPv4Address")
 
-        source_machine_id = self.get_machine_id_from_agent_id(event.source)
+        source_machine_id = self._agent_machine_facade.get_machine_id_from_agent_id(event.source)
         target_machine = self.get_or_create_target_machine(event.target)
 
         self._node_repository.upsert_communication(
