@@ -71,7 +71,7 @@ export function tunnelIssueReportByMachine(machine, allTunnels) {
 function getTunnelIssuesByMachine(machine, allTunnels) {
   let tunnelIssues = [];
 
-  for (tunnel of allTunnels) {
+  for (let tunnel of allTunnels) {
     // TODO: After #2569, the values in `tunnel` can also be hostnames and not only IP addresses.
     //       Check what values `machine` can be and modify this check if required.
     //       `tunnel` looks like `{"agent_machine": <IP/hostname>, "agent_tunnel": <IP/hostname>}`.
