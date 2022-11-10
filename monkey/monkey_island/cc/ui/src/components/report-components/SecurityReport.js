@@ -32,7 +32,7 @@ import {
   sharedLocalAdminsIssueReport,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import {tunnelIssueOverview, tunnelIssueReport} from './security/issues/TunnelIssue';
+import {getAllTunnels, tunnelIssueOverview, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
 import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
 import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
@@ -149,8 +149,7 @@ class ReportPageComponent extends AuthComponent {
       machines: []
     };
 
-    this.tunnelingIssueExists = false;
-    this.tunnelingIssueComponent = <div/>;
+    this.allTunnels = [];
   }
 
   componentDidMount() {
@@ -184,6 +183,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   render() {
+    this.allTunnels = getAllTunnels(this.state.agents, this.state.machines);
+
     let content;
 
     if (this.stillLoadingDataFromServer()) {
@@ -355,7 +356,7 @@ class ReportPageComponent extends AuthComponent {
       }
     }
 
-    overviews.push(tunnelIssueOverview(this.state.agents, this.state.machines));
+    overviews.push(tunnelIssueOverview(this.allTunnels));
 
     return overviews;
   }
@@ -515,14 +516,12 @@ class ReportPageComponent extends AuthComponent {
   generateIssues = (issues) => {
     let issuesDivArray = [];
     for (let machine of Object.keys(issues)) {
-      // TODO fix with #2558
       issuesDivArray.push(
         <li key={JSON.stringify(machine)}>
           <h4><b>{machine}</b></h4>
           <ol>
             {issues[machine].map(this.generateIssue)}
-            <li key={'tunneling-issue'}>{tunnelIssueReport(this.state.agents,
-              this.state.machines)}</li>
+            {this.getTunnelIssue(machine)}
           </ol>
         </li>
       );
@@ -530,6 +529,15 @@ class ReportPageComponent extends AuthComponent {
 
     return <ul>{issuesDivArray}</ul>;
   };
+
+  getTunnelIssue(machine) {
+    let tunnelIssue = tunnelIssueReportByMachine(machine, this.allTunnels);
+    if (tunnelIssue !== null) {
+      return <li key={'tunneling-issue'}>{tunnelIssue}</li>
+    } else {
+      return null;
+    }
+  }
 
   addIssuesToOverviewIssues() {
     let overview_issues = this.state.issues;

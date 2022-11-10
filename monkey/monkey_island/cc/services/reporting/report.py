@@ -165,8 +165,13 @@ class ReportService:
             raise RuntimeError("Machine repository does not exist")
 
         target_machine = cls._machine_repository.get_machines_by_ip(exploitation_event.target)[0]
+        hostname = (
+            target_machine.hostname
+            if target_machine.hostname
+            else str(target_machine.network_interfaces[0].ip)
+        )
         return ExploiterReportInfo(
-            target_machine.hostname,
+            hostname,
             str(exploitation_event.target),
             exploitation_event.exploiter_name,
             password_restored=password_restored[exploitation_event.target],
