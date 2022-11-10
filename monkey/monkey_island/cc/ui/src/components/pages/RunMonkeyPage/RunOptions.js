@@ -1,34 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
 import LocalManualRunOptions from './RunManually/LocalManualRunOptions';
-import AuthComponent from '../../AuthComponent';
 import {faLaptopCode} from '@fortawesome/free-solid-svg-icons/faLaptopCode';
 import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
 import {cloneDeep} from 'lodash';
 import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
-
-const IP_ADDRESSES_URL = '/api/island/ip-addresses';
+import {getAllMachines, getIslandIPsFromMachines} from '../../utils/ServerUtils';
 
 function RunOptions(props) {
 
   const [currentContent, setCurrentContent] = useState(loadingContents());
-  const [ips, setIps] = useState([]);
+  const [ips, setIPs] = useState([]);
   const [initialized, setInitialized] = useState(false);
-
-  const authComponent = new AuthComponent({})
 
   useEffect(() => {
     if (initialized === false) {
-      authComponent.authFetch(IP_ADDRESSES_URL)
-      .then(res => res.json())
-      .then(ipAddresses => {
-        setIps(ipAddresses);
+      getAllMachines().then(machines => {
+        setIPs(getIslandIPsFromMachines(machines));
         setInitialized(true);
       });
     }
-  })
+  });
 
   useEffect(() => {
     setCurrentContent(getDefaultContents());
