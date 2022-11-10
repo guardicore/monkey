@@ -2,6 +2,7 @@ import argparse
 import contextlib
 import logging
 import os
+import platform
 import subprocess
 import sys
 import time
@@ -16,11 +17,17 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.agent_events import AgentShutdownEvent, CredentialsStolenEvent, PropagationEvent
+from common.agent_events import (
+    AgentShutdownEvent,
+    CredentialsStolenEvent,
+    OSDiscoveryEvent,
+    PropagationEvent,
+)
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
-from common.types import SocketAddress
+from common.tags.attack import T1592_ATTACK_TECHNIQUE_TAG
+from common.types import OperatingSystem, SocketAddress
 from common.utils.argparse_types import positive_int
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -99,6 +106,7 @@ class InfectionMonkey:
             self._control_channel
         )
         self._register_agent()
+        self._send_os_event()
 
         self._current_depth = self._opts.depth
         self._master = None
@@ -163,6 +171,24 @@ class InfectionMonkey:
             network_interfaces=get_network_interfaces(),
         )
         self._island_api_client.register_agent(agent_registration_data)
+
+    @staticmethod
+    def _get_os() -> Optional[OperatingSystem]:
+        system = platform.system()
+        if system == "Windows":
+            return OperatingSystem.WINDOWS
+        if system == "Linux":
+            return OperatingSystem.LINUX
+        return None
+
+    def _send_os_event(self):
+        event = OSDiscoveryEvent(
+            id=self._agent_id,
+            tags=frozenset(T1592_ATTACK_TECHNIQUE_TAG),
+            os=self._get_os(),
+            version=platform.platform(),
+        )
+        self._agent_event_queue.publish(event)
 
     @staticmethod
     def _log_arguments(args):
