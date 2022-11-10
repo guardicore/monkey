@@ -522,7 +522,7 @@ class ReportPageComponent extends AuthComponent {
           <h4><b>{machine}</b></h4>
           <ol>
             {issues[machine].map(this.generateIssue)}
-            <li key={'tunneling-issue'}>{tunnelIssueReportByMachine(machine, this.allTunnels)}</li>
+            {this.getTunnelIssue(machine)}
           </ol>
         </li>
       );
@@ -530,6 +530,15 @@ class ReportPageComponent extends AuthComponent {
 
     return <ul>{issuesDivArray}</ul>;
   };
+
+  getTunnelIssue(machine) {
+    let tunnelIssue = tunnelIssueReportByMachine(machine, this.allTunnels);
+    if ((tunnelIssue !== null) && (tunnelIssue.length > 0)) {
+      return <li key={'tunneling-issue'}>{tunnelIssue}</li>
+    } else {
+      return null;
+    }
+  }
 
   addIssuesToOverviewIssues() {
     let overview_issues = this.state.issues;
