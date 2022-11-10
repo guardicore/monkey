@@ -82,3 +82,10 @@ def test_cache_reset__get_machine_id_from_agent_id(
 
 def test_get_agent_machine(agent_machine_facade):
     assert agent_machine_facade.get_agent_machine(AGENT_ID) == SOURCE_MACHINE
+
+
+def test_update_agent_machine__throws_error_if_machine_id_differs(agent_machine_facade):
+    updated_machine = Machine(id=SOURCE_MACHINE.id + 100)
+
+    with pytest.raises(ValueError):
+        agent_machine_facade.update_agent_machine(AGENT_ID, updated_machine)

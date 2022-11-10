@@ -58,8 +58,8 @@ def agent_machine_facade(agent_repository, machine_repository) -> AgentMachineFa
 
 
 @pytest.fixture
-def updater(agent_machine_facade, machine_repository) -> update_machine_os:
-    return update_machine_os(agent_machine_facade, machine_repository)
+def updater(agent_machine_facade) -> update_machine_os:
+    return update_machine_os(agent_machine_facade)
 
 
 def test_machine_updated(updater, machine_repository):

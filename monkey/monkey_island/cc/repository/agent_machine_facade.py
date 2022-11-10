@@ -21,7 +21,7 @@ class AgentMachineFacade:
 
         :param agent_id: An AgentID
         :return: The MachineID of the Machine that the Agent ran on
-        :raises UnknownRecordError: If no `Agent` with the specified `agent_id` could be found.
+        :raises UnknownRecordError: If no `Agent` with the specified `agent_id` could be found
         :raises RetrievalError: If an error occurs while attempting to retrieve the `Agent`
         """
         return self._agent_repository.get_agent_by_id(agent_id).machine_id
@@ -32,13 +32,28 @@ class AgentMachineFacade:
 
         :param agent_id: AgentID of the Agent
         :return: Machine that the Agent ran on
-        :raises UnknownRecordError: If no `Machine` for the specified `agent_id` could be found.
+        :raises UnknownRecordError: If no `Machine` for the specified `agent_id` could be found
         :raises RetrievalError: If an error occurs while attempting to retrieve the `Machine`
         """
         machine_id = self.get_machine_id_from_agent_id(agent_id)
         return self._machine_repository.get_machine_by_id(machine_id)
 
-    # Should I also add an update method?
+    def update_agent_machine(self, agent_id: AgentID, machine: Machine):
+        """
+        Update the machine for a given Agent
+
+        :param agent_id: The AgentID of the Agent
+        :param machine: The updated Machine
+        :raises UnknownRecordError: If no `Machine` for the specified `agent_id` could be found
+        :raises RetrievalError: If an error occurs while attempting to retrieve the `Machine`
+        :raises ValueError: If `machine`'s ID does not match the Agent's machine ID
+        :raises StorageError: If a problem occurred while attempting to store the `Machine`
+        """
+        machine_id = self.get_machine_id_from_agent_id(agent_id)
+        if machine.id != machine_id:
+            raise ValueError("Machine's ID does not match the agent's machine ID")
+
+        self._machine_repository.upsert_machine(machine)
 
     def reset_cache(self):
         self.get_machine_id_from_agent_id.cache_clear()
