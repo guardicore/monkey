@@ -101,9 +101,6 @@ ExploiterDescriptorEnum.MSSQL
 ExploiterDescriptorEnum.POWERSHELL
 ExploiterDescriptorEnum.LOG4SHELL
 
-# Remove when Database service is removed
-Database._should_drop.drop_config  # monkey_island/cc/services/database.py:28
-
 AWSCommandResults.response_code  # monkey_island/cc/services/aws/aws_command_runner.py:26
 
 MonkeyExploitation.label
