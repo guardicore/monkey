@@ -40,6 +40,17 @@ def test_constructor(event_dict):
     assert OSDiscoveryEvent(**event_dict) == OS_DISCOVERY_EVENT
 
 
+def test_constructor__tags_are_frozenset():
+    dict_with_tags = OS_DISCOVERY_SIMPLE_DICT.copy()
+    dict_with_tags["tags"] = {
+        "tag-1",
+        "tag-2",
+        "tag-3",
+    }
+
+    assert isinstance(OSDiscoveryEvent(**dict_with_tags).tags, frozenset)
+
+
 def test_constructor__extra_fields_forbidden():
     extra_field_dict = OS_DISCOVERY_SIMPLE_DICT.copy()
     extra_field_dict["extra_field"] = 99  # red balloons
