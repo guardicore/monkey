@@ -105,7 +105,6 @@ class InfectionMonkey:
             self._control_channel
         )
         self._register_agent()
-        self._send_os_event()
 
         self._current_depth = self._opts.depth
         self._master = None
@@ -171,20 +170,6 @@ class InfectionMonkey:
         )
         self._island_api_client.register_agent(agent_registration_data)
 
-    def _send_os_event(self):
-        timestamp = time.time()
-        operating_system = environment.get_os()
-        operating_system_version = environment.get_os_version()
-
-        event = OSDiscoveryEvent(
-            source=self._agent_id,
-            timestamp=timestamp,
-            tags={T1592_ATTACK_TECHNIQUE_TAG},
-            os=operating_system,
-            version=operating_system_version,
-        )
-        self._agent_event_queue.publish(event)
-
     @staticmethod
     def _log_arguments(args):
         arg_string = ", ".join([f"{key}: {value}" for key, value in vars(args).items()])
@@ -205,6 +190,8 @@ class InfectionMonkey:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
+        self._send_os_event()
+
         self._setup()
         self._master.start()
 
@@ -213,6 +200,20 @@ class InfectionMonkey:
             self._island_api_client, self._agent_event_serializer_registry
         )
         self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
+
+    def _send_os_event(self):
+        timestamp = time.time()
+        operating_system = environment.get_os()
+        operating_system_version = environment.get_os_version()
+
+        event = OSDiscoveryEvent(
+            source=self._agent_id,
+            timestamp=timestamp,
+            tags={T1592_ATTACK_TECHNIQUE_TAG},
+            os=operating_system,
+            version=operating_system_version,
+        )
+        self._agent_event_queue.publish(event)
 
     def _setup(self):
         logger.debug("Starting the setup phase.")
