@@ -190,7 +190,7 @@ class InfectionMonkey:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
-        self._send_os_event()
+        self._discover_os()
 
         self._setup()
         self._master.start()
@@ -201,7 +201,7 @@ class InfectionMonkey:
         )
         self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
 
-    def _send_os_event(self):
+    def _discover_os(self):
         timestamp = time.time()
         operating_system = environment.get_os()
         operating_system_version = environment.get_os_version()
