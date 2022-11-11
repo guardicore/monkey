@@ -1,3 +1,4 @@
+from copy import deepcopy
 from ipaddress import IPv4Address, IPv4Interface
 from uuid import UUID
 
@@ -84,8 +85,11 @@ def test_get_agent_machine(agent_machine_facade):
     assert agent_machine_facade.get_agent_machine(AGENT_ID) == SOURCE_MACHINE
 
 
-def test_update_agent_machine__throws_error_if_machine_id_differs(agent_machine_facade):
-    updated_machine = Machine(id=SOURCE_MACHINE.id + 100)
+def test_upsert_machine(agent_machine_facade, machine_repository):
+    new_machine = deepcopy(SOURCE_MACHINE)
+    new_machine.hostname = "blah"
 
-    with pytest.raises(ValueError):
-        agent_machine_facade.update_agent_machine(AGENT_ID, updated_machine)
+    agent_machine_facade.upsert_machine(new_machine)
+
+    machines = machine_repository.get_machines()
+    assert list(machines) == [new_machine]

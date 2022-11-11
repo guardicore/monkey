@@ -13,4 +13,4 @@ class update_machine_os:
         # Update the machine
         machine.operating_system = event.os
         machine.operating_system_version = event.version
-        self._agent_machine_facade.update_agent_machine(event.source, machine)
+        self._agent_machine_facade.upsert_machine(machine)

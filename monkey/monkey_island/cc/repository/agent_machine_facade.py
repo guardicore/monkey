@@ -38,21 +38,12 @@ class AgentMachineFacade:
         machine_id = self.get_machine_id_from_agent_id(agent_id)
         return self._machine_repository.get_machine_by_id(machine_id)
 
-    def update_agent_machine(self, agent_id: AgentID, machine: Machine):
+    def upsert_machine(self, machine: Machine):
         """
-        Update the machine for a given Agent
+        Upsert (insert or update) a `Machine`
 
-        :param agent_id: The AgentID of the Agent
-        :param machine: The updated Machine
-        :raises UnknownRecordError: If no `Machine` for the specified `agent_id` could be found
-        :raises RetrievalError: If an error occurs while attempting to retrieve the `Machine`
-        :raises ValueError: If `machine`'s ID does not match the Agent's machine ID
-        :raises StorageError: If a problem occurred while attempting to store the `Machine`
+        See :meth:`monkey_island.cc.models.Machine.upsert_machine`
         """
-        machine_id = self.get_machine_id_from_agent_id(agent_id)
-        if machine.id != machine_id:
-            raise ValueError("Machine's ID does not match the agent's machine ID")
-
         self._machine_repository.upsert_machine(machine)
 
     def reset_cache(self):
