@@ -2,7 +2,6 @@ import argparse
 import contextlib
 import logging
 import os
-import platform
 import subprocess
 import sys
 import time
@@ -71,8 +70,7 @@ from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
-from infection_monkey.utils import agent_process
-from infection_monkey.utils.environment import get_os
+from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
@@ -177,8 +175,8 @@ class InfectionMonkey:
         event = OSDiscoveryEvent(
             source=self._agent_id,
             tags=frozenset(T1592_ATTACK_TECHNIQUE_TAG),
-            os=get_os(),
-            version=platform.platform(),
+            os=environment.get_os(),
+            version=environment.get_os_version(),
         )
         self._agent_event_queue.publish(event)
 
