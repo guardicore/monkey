@@ -179,7 +179,7 @@ class InfectionMonkey:
         event = OSDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags=frozenset(T1592_ATTACK_TECHNIQUE_TAG),
+            tags=frozenset({T1592_ATTACK_TECHNIQUE_TAG}),
             os=operating_system,
             version=operating_system_version,
         )
