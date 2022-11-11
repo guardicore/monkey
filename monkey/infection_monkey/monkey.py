@@ -27,7 +27,7 @@ from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1592_ATTACK_TECHNIQUE_TAG
-from common.types import OperatingSystem, SocketAddress
+from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -72,6 +72,7 @@ from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePay
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.utils import agent_process
+from infection_monkey.utils.environment import get_os
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
@@ -172,20 +173,11 @@ class InfectionMonkey:
         )
         self._island_api_client.register_agent(agent_registration_data)
 
-    @staticmethod
-    def _get_os() -> Optional[OperatingSystem]:
-        system = platform.system()
-        if system == "Windows":
-            return OperatingSystem.WINDOWS
-        if system == "Linux":
-            return OperatingSystem.LINUX
-        return None
-
     def _send_os_event(self):
         event = OSDiscoveryEvent(
             id=self._agent_id,
             tags=frozenset(T1592_ATTACK_TECHNIQUE_TAG),
-            os=self._get_os(),
+            os=get_os(),
             version=platform.platform(),
         )
         self._agent_event_queue.publish(event)
