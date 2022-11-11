@@ -5,7 +5,7 @@ from common.agent_events import AbstractAgentEvent
 from common.types import AgentID, MachineID
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repository import (
-    IAgentRepository,
+    AgentMachineFacade,
     IMachineRepository,
     INodeRepository,
     UnknownRecordError,
@@ -19,11 +19,11 @@ class NetworkModelUpdateFacade:
 
     def __init__(
         self,
-        agent_repository: IAgentRepository,
+        agent_machine_facade: AgentMachineFacade,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
     ):
-        self._agent_repository = agent_repository
+        self._agent_machine_facade = agent_machine_facade
         self._machine_repository = machine_repository
         self._node_repository = node_repository
 
@@ -54,7 +54,6 @@ class NetworkModelUpdateFacade:
         # For now, assume that IPs are unique
         return machines[0].id
 
-    @lru_cache(maxsize=8192)
     def get_machine_id_from_agent_id(self, agent_id: AgentID) -> MachineID:
         """
         Given an AgentID, get the MachineID of the machine the Agent ran on
@@ -62,7 +61,7 @@ class NetworkModelUpdateFacade:
         :param agent_id: An AgentID
         :return: The Machine that the Agent ran on
         """
-        return self._agent_repository.get_agent_by_id(agent_id).machine_id
+        return self._agent_machine_facade.get_machine_id_from_agent_id(agent_id)
 
     def upsert_communication_from_event(
         self, event: AbstractAgentEvent, communication_type: CommunicationType
@@ -82,7 +81,7 @@ class NetworkModelUpdateFacade:
         if not isinstance(event.target, IPv4Address):
             raise TypeError("Event targets must be of type IPv4Address")
 
-        source_machine_id = self.get_machine_id_from_agent_id(event.source)
+        source_machine_id = self._agent_machine_facade.get_machine_id_from_agent_id(event.source)
         target_machine = self.get_or_create_target_machine(event.target)
 
         self._node_repository.upsert_communication(
@@ -91,4 +90,3 @@ class NetworkModelUpdateFacade:
 
     def reset_cache(self):
         self._get_machine_id_by_ip.cache_clear()
-        self.get_machine_id_from_agent_id.cache_clear()

@@ -3,6 +3,7 @@ from common.agent_events import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
     ExploitationEvent,
+    OSDiscoveryEvent,
     PingScanEvent,
     TCPScanEvent,
 )
@@ -12,6 +13,7 @@ from monkey_island.cc.agent_event_handlers import (
     save_event_to_event_repository,
     save_stolen_credentials_to_repository,
     update_agent_shutdown_status,
+    update_machine_os,
     update_nodes_on_exploitation,
 )
 
@@ -22,6 +24,7 @@ def setup_agent_event_handlers(container: DIContainer):
     _subscribe_and_store_to_event_repository(container, agent_event_queue)
     _subscribe_scan_events(container, agent_event_queue)
     _subscribe_exploitation_events(container, agent_event_queue)
+    _subscribe_os_discovery_events(container, agent_event_queue)
 
 
 def _subscribe_and_store_to_event_repository(
@@ -48,3 +51,8 @@ def _subscribe_exploitation_events(container: DIContainer, agent_event_queue: IA
     agent_event_queue.subscribe_type(
         ExploitationEvent, container.resolve(update_nodes_on_exploitation)
     )
+
+
+def _subscribe_os_discovery_events(container: DIContainer, agent_event_queue: IAgentEventQueue):
+    os_discovery_event_handler = container.resolve(update_machine_os)
+    agent_event_queue.subscribe_type(OSDiscoveryEvent, os_discovery_event_handler)
