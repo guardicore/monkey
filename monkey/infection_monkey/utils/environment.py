@@ -16,5 +16,9 @@ def get_os() -> OperatingSystem:
     raise RuntimeError(f"Agent is not supported on OS: '{system}'")
 
 
+def get_os_version() -> str:
+    return platform.platform()
+
+
 def is_windows_os():
     return sys.platform.startswith("win")
