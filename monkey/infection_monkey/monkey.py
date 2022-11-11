@@ -16,10 +16,16 @@ from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
 )
-from common.agent_events import AgentShutdownEvent, CredentialsStolenEvent, PropagationEvent
+from common.agent_events import (
+    AgentShutdownEvent,
+    CredentialsStolenEvent,
+    OSDiscoveryEvent,
+    PropagationEvent,
+)
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
+from common.tags.attack import T1592_ATTACK_TECHNIQUE_TAG
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from infection_monkey.agent_event_handlers import (
@@ -64,7 +70,7 @@ from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
-from infection_monkey.utils import agent_process
+from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
@@ -184,6 +190,8 @@ class InfectionMonkey:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
+        self._discover_os()
+
         self._setup()
         self._master.start()
 
@@ -192,6 +200,20 @@ class InfectionMonkey:
             self._island_api_client, self._agent_event_serializer_registry
         )
         self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
+
+    def _discover_os(self):
+        timestamp = time.time()
+        operating_system = environment.get_os()
+        operating_system_version = environment.get_os_version()
+
+        event = OSDiscoveryEvent(
+            source=self._agent_id,
+            timestamp=timestamp,
+            tags={T1592_ATTACK_TECHNIQUE_TAG},
+            os=operating_system,
+            version=operating_system_version,
+        )
+        self._agent_event_queue.publish(event)
 
     def _setup(self):
         logger.debug("Starting the setup phase.")
