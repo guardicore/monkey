@@ -175,7 +175,7 @@ class InfectionMonkey:
 
     def _send_os_event(self):
         event = OSDiscoveryEvent(
-            id=self._agent_id,
+            source=self._agent_id,
             tags=frozenset(T1592_ATTACK_TECHNIQUE_TAG),
             os=get_os(),
             version=platform.platform(),
