@@ -172,11 +172,16 @@ class InfectionMonkey:
         self._island_api_client.register_agent(agent_registration_data)
 
     def _send_os_event(self):
+        timestamp = time.time()
+        operating_system = environment.get_os()
+        operating_system_version = environment.get_os_version()
+
         event = OSDiscoveryEvent(
             source=self._agent_id,
+            timestamp=timestamp,
             tags=frozenset(T1592_ATTACK_TECHNIQUE_TAG),
-            os=environment.get_os(),
-            version=environment.get_os_version(),
+            os=operating_system,
+            version=operating_system_version,
         )
         self._agent_event_queue.publish(event)
 
