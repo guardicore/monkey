@@ -9,6 +9,8 @@ from common.agent_events import (
     AgentShutdownEvent,
     ExploitationEvent,
     FileEncryptionEvent,
+    HostnameDiscoveryEvent,
+    OSDiscoveryEvent,
     PasswordRestorationEvent,
     PingScanEvent,
     PropagationEvent,
@@ -33,6 +35,8 @@ EVENT_WHITELIST = [
     PasswordRestorationEvent,
     AgentShutdownEvent,
     FileEncryptionEvent,
+    OSDiscoveryEvent,
+    HostnameDiscoveryEvent,
 ]
 
 
