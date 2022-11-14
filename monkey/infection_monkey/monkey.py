@@ -19,13 +19,14 @@ from common.agent_event_serializers import (
 from common.agent_events import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
+    HostnameDiscoveryEvent,
     OSDiscoveryEvent,
     PropagationEvent,
 )
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
-from common.tags.attack import T1592_ATTACK_TECHNIQUE_TAG
+from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from infection_monkey.agent_event_handlers import (
@@ -191,6 +192,7 @@ class InfectionMonkey:
             return
 
         self._discover_os()
+        self._discover_hostname()
 
         self._setup()
         self._master.start()
@@ -209,9 +211,21 @@ class InfectionMonkey:
         event = OSDiscoveryEvent(
             source=self._agent_id,
             timestamp=timestamp,
-            tags={T1592_ATTACK_TECHNIQUE_TAG},
+            tags={T1082_ATTACK_TECHNIQUE_TAG},
             os=operating_system,
             version=operating_system_version,
+        )
+        self._agent_event_queue.publish(event)
+
+    def _discover_hostname(self):
+        timestamp = time.time()
+        hostname = environment.get_hostname()
+
+        event = HostnameDiscoveryEvent(
+            source=self._agent_id,
+            timestamp=timestamp,
+            tags={T1082_ATTACK_TECHNIQUE_TAG},
+            hostname=hostname,
         )
         self._agent_event_queue.publish(event)
 

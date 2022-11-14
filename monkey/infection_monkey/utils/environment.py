@@ -1,4 +1,5 @@
 import platform
+import socket
 import sys
 
 from common import OperatingSystem
@@ -22,3 +23,7 @@ def get_os_version() -> str:
 
 def is_windows_os():
     return sys.platform.startswith("win")
+
+
+def get_hostname():
+    return socket.gethostname()
