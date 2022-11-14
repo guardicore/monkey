@@ -8,7 +8,6 @@ import time
 from ipaddress import IPv4Interface
 from itertools import chain
 from pathlib import Path, WindowsPath
-from socket import gethostname
 from typing import List, Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
@@ -223,7 +222,7 @@ class InfectionMonkey:
             source=self._agent_id,
             timestamp=time.time(),
             tags={T1082_ATTACK_TECHNIQUE_TAG},
-            hostname=gethostname(),
+            hostname=environment.get_hostname(),
         )
         self._agent_event_queue.publish(event)
 
