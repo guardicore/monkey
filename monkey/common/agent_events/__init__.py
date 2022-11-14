@@ -9,4 +9,5 @@ from .password_restoration_event import PasswordRestorationEvent
 from .agent_shutdown_event import AgentShutdownEvent
 from .file_encryption_event import FileEncryptionEvent
 from .os_discovery_event import OSDiscoveryEvent
+from .hostname_discovery_event import HostnameDiscoveryEvent
 from .register import register_common_agent_events
