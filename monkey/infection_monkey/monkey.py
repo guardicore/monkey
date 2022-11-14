@@ -218,11 +218,14 @@ class InfectionMonkey:
         self._agent_event_queue.publish(event)
 
     def _discover_hostname(self):
+        timestamp = time.time()
+        hostname = environment.get_hostname()
+
         event = HostnameDiscoveryEvent(
             source=self._agent_id,
-            timestamp=time.time(),
+            timestamp=timestamp,
             tags={T1082_ATTACK_TECHNIQUE_TAG},
-            hostname=environment.get_hostname(),
+            hostname=hostname,
         )
         self._agent_event_queue.publish(event)
 
