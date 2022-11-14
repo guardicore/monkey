@@ -8,6 +8,7 @@ import time
 from ipaddress import IPv4Interface
 from itertools import chain
 from pathlib import Path, WindowsPath
+from socket import gethostname
 from typing import List, Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
@@ -19,6 +20,7 @@ from common.agent_event_serializers import (
 from common.agent_events import (
     AgentShutdownEvent,
     CredentialsStolenEvent,
+    HostnameDiscoveryEvent,
     OSDiscoveryEvent,
     PropagationEvent,
 )
@@ -191,6 +193,7 @@ class InfectionMonkey:
             return
 
         self._discover_os()
+        self._discover_hostname()
 
         self._setup()
         self._master.start()
@@ -212,6 +215,15 @@ class InfectionMonkey:
             tags={T1592_ATTACK_TECHNIQUE_TAG},
             os=operating_system,
             version=operating_system_version,
+        )
+        self._agent_event_queue.publish(event)
+
+    def _discover_hostname(self):
+        event = HostnameDiscoveryEvent(
+            source=self._agent_id,
+            timestamp=time.time(),
+            tags={T1592_ATTACK_TECHNIQUE_TAG},
+            hostname=gethostname(),
         )
         self._agent_event_queue.publish(event)
 
