@@ -27,16 +27,16 @@ from .consts import MONGO_OBJECT_ID_KEY
 
 logger = logging.getLogger(__name__)
 
-EVENT_WHITELIST = [
-    PingScanEvent,
-    TCPScanEvent,
-    ExploitationEvent,
-    PropagationEvent,
-    PasswordRestorationEvent,
+EVENT_ALLOWLIST = [
     AgentShutdownEvent,
+    ExploitationEvent,
     FileEncryptionEvent,
-    OSDiscoveryEvent,
     HostnameDiscoveryEvent,
+    OSDiscoveryEvent,
+    PasswordRestorationEvent,
+    PingScanEvent,
+    PropagationEvent,
+    TCPScanEvent,
 ]
 
 
@@ -58,7 +58,7 @@ class MongoAgentEventRepository(IAgentEventRepository):
         try:
             serializer = self._serializers[type(event)]
             serialized_event = serializer.serialize(event)
-            if type(event) not in EVENT_WHITELIST:
+            if type(event) not in EVENT_ALLOWLIST:
                 serialized_event = encrypt_event(self._encryptor.encrypt, serialized_event)
 
             self._events_collection.insert_one(serialized_event)
@@ -100,7 +100,7 @@ class MongoAgentEventRepository(IAgentEventRepository):
         serializer = self._serializers[event_type]
 
         if event_type not in [
-            event_whitelist_type.__name__ for event_whitelist_type in EVENT_WHITELIST
+            event_allowlist_type.__name__ for event_allowlist_type in EVENT_ALLOWLIST
         ]:
             mongo_record = decrypt_event(self._encryptor.decrypt, mongo_record)  # type: ignore[assignment]  # noqa: E501
 
