@@ -511,7 +511,7 @@ class ReportService:
         issues_dict = {}
         for issue in issues:
             if issue.get("is_local", True):
-                machine = issue.get("machine").upper()
+                machine = issue.get("machine")
                 if machine not in issues_dict:
                     issues_dict[machine] = []
                 issues_dict[machine].append(issue)
