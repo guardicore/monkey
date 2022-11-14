@@ -1,6 +1,6 @@
 import platform
+import socket
 import sys
-from socket import gethostname
 
 from common import OperatingSystem
 
@@ -26,4 +26,4 @@ def is_windows_os():
 
 
 def get_hostname():
-    return gethostname()
+    return socket.gethostname()
