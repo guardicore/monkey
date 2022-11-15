@@ -352,7 +352,7 @@ class ReportService:
                             "source": str(cross_segment_ip),
                             "hostname": machine.hostname,
                             "target": str(target_ip),
-                            "services": {a: s for a, s in machine.network_services},
+                            "services": {str(a): s for a, s in machine.network_services.items()},
                             "types": [
                                 ScanTypeEnum.from_event(s).value for _, s in scan_type_dict.items()
                             ],

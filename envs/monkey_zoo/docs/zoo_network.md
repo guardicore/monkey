@@ -60,7 +60,7 @@ This document describes Infection Monkey’s test network.
 </tr>
 <tr class="odd">
 <td>Default server’s port:</td>
-<td>8020</td>
+<td>8088</td>
 </tr>
 <tr class="even">
 <td>Server’s config:</td>
@@ -97,7 +97,7 @@ This document describes Infection Monkey’s test network.
 </tr>
 <tr class="odd">
 <td>Default server’s port:</td>
-<td>8020</td>
+<td>8088</td>
 </tr>
 <tr class="even">
 <td>Server’s config:</td>

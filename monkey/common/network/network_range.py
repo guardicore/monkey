@@ -95,7 +95,7 @@ class NetworkRange(object, metaclass=ABCMeta):
 
     @staticmethod
     def _ip_to_number(address):
-        return struct.unpack(">L", socket.inet_aton(address))[0]
+        return struct.unpack(">L", socket.inet_aton(str(address)))[0]
 
     @staticmethod
     def _number_to_ip(num):
@@ -170,7 +170,7 @@ class SingleIpRange(NetworkRange):
             yield self._number_to_ip(self.get_range()[0])
 
     def is_in_range(self, ip_address):
-        return self._ip_address == ip_address
+        return self._ip_address == str(ip_address)
 
     def _get_range(self):
         return [SingleIpRange._ip_to_number(self._ip_address)]
