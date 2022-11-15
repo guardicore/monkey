@@ -72,7 +72,7 @@ export function getCrossSegmentServiceListItems(issue) {
   for (const [service, info] of Object.entries(issue['services'])) {
     service_list_items.push(
       <li key={service}>
-        <span className='cross-segment-service'>{service}</span> ({info['display_name']})
+        <span className='cross-segment-service'>{service}</span> ({info})
       </li>
     );
   }

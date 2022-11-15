@@ -170,7 +170,7 @@ class SingleIpRange(NetworkRange):
             yield self._number_to_ip(self.get_range()[0])
 
     def is_in_range(self, ip_address):
-        return self._ip_address == ip_address
+        return self._ip_address == str(ip_address)
 
     def _get_range(self):
         return [SingleIpRange._ip_to_number(self._ip_address)]
