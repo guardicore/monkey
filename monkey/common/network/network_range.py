@@ -95,7 +95,7 @@ class NetworkRange(object, metaclass=ABCMeta):
 
     @staticmethod
     def _ip_to_number(address):
-        return struct.unpack(">L", socket.inet_aton(address))[0]
+        return struct.unpack(">L", socket.inet_aton(str(address)))[0]
 
     @staticmethod
     def _number_to_ip(num):
