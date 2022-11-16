@@ -93,6 +93,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return requests.get(url, verify=False, timeout=timeout)  # noqa: DUO123
 
+    def _post(self, endpoint: str, data: JSONSerializable, timeout: float) -> requests.Response:
+        url = f"{self._api_url}/{endpoint}"
+        logger.debug(f"POST {url}, timeout={timeout}")
+
+        return requests.post(url, json=data, verify=False, timeout=timeout)  # noqa: DUO123
+
     def _put(self, endpoint: str, data: JSONSerializable, timeout: float) -> requests.Response:
         url = f"{self._api_url}/{endpoint}"
         logger.debug(f"PUT {url}, timeout={timeout}")
@@ -114,23 +120,15 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     def send_events(self, events: Sequence[AbstractAgentEvent]):
-        response = requests.post(  # noqa: DUO123
-            f"{self._api_url}/agent-events",
-            json=self._serialize_events(events),
-            verify=False,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
+        response = self._post(
+            "agent-events", self._serialize_events(events), MEDIUM_REQUEST_TIMEOUT
         )
-
         response.raise_for_status()
 
     @handle_island_errors
     def register_agent(self, agent_registration_data: AgentRegistrationData):
-        url = f"{self._api_url}/agents"
-        response = requests.post(  # noqa: DUO123
-            url,
-            json=agent_registration_data.dict(simplify=True),
-            verify=False,
-            timeout=SHORT_REQUEST_TIMEOUT,
+        response = self._post(
+            "agents", agent_registration_data.dict(simplify=True), SHORT_REQUEST_TIMEOUT
         )
         response.raise_for_status()
 
