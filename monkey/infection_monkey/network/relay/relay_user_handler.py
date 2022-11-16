@@ -22,6 +22,13 @@ class RelayUser:
     address: IPv4Address
     timer: EggTimer
 
+    def __str__(self):
+        class_name = self.__class__.__name__
+        address = f"'{self.address}'"
+        time_remaining = f"{self.timer.time_remaining_sec:.3f}"
+
+        return f"{class_name}(address={address}, time_remaining={time_remaining})"
+
 
 class RelayUserHandler:
     """Manages membership to a network relay."""
