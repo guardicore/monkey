@@ -397,7 +397,7 @@ class InfectionMonkey:
             self._agent_event_forwarder.flush()
             self._close_tunnel()
         except Exception as e:
-            logger.error(f"An error occurred while cleaning up the monkey agent: {e}")
+            logger.exception(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
                 InfectionMonkey._self_delete()
         finally:
@@ -438,6 +438,7 @@ class InfectionMonkey:
 
     @staticmethod
     def _self_delete() -> bool:
+        logger.info("Cleaning up Agent's artefacts")
         remove_monkey_dir()
 
         if "python" in Path(sys.executable).name:
@@ -445,14 +446,16 @@ class InfectionMonkey:
 
         try:
             if "win32" == sys.platform:
+                logger.info("Marking the Agent binary for deletion")
                 mark_file_for_deletion_on_windows(WindowsPath(sys.executable))
                 InfectionMonkey._self_delete_windows()
             else:
+                logger.info("Deleteing the Agent binary")
                 InfectionMonkey._self_delete_linux()
 
             return True
         except Exception as exc:
-            logger.error("Exception in self delete: %s", exc)
+            logger.exception("Exception in self delete: %s", exc)
 
         return False
 
