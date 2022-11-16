@@ -93,14 +93,15 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return requests.get(url, verify=False, timeout=timeout)  # noqa: DUO123
 
+    def _put(self, endpoint: str, data: JSONSerializable, timeout: float) -> requests.Response:
+        url = f"{self._api_url}/{endpoint}"
+        logger.debug(f"PUT {url}, timeout={timeout}")
+
+        return requests.put(url, json=data, verify=False, timeout=timeout)  # noqa: DUO123
+
     @handle_island_errors
     def send_log(self, agent_id: AgentID, log_contents: str):
-        response = requests.put(  # noqa: DUO123
-            f"{self._api_url}/agent-logs/{agent_id}",
-            json=log_contents,
-            verify=False,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
-        )
+        response = self._put(f"agent-logs/{agent_id}", log_contents, MEDIUM_REQUEST_TIMEOUT)
         response.raise_for_status()
 
     @handle_island_errors
