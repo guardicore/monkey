@@ -103,7 +103,7 @@ class BatchingAgentEventForwarder:
                 events.append(self._queue.get(block=False))
 
             try:
-                logger.debug(f"Sending Agent events to Island: {events}")
+                logger.debug(f"Sending {len(events)} Agent events to the Island: {events}")
                 self._island_api_client.send_events(events)
             except Exception:
                 logger.exception("Exception caught when connecting to the Island")
