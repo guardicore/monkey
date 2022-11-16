@@ -34,7 +34,6 @@ from infection_monkey.agent_event_handlers import (
     add_stolen_credentials_to_propagation_credentials_repository,
     notify_relay_on_propagation,
 )
-from infection_monkey.config import GUID
 from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
@@ -184,7 +183,7 @@ class InfectionMonkey:
             return
 
         logger.info("Agent is starting...")
-        logger.info(f"Agent GUID: {GUID}")
+        logger.info(f"Agent ID: {self._agent_id}")
 
         should_stop = self._control_channel.should_agent_stop()
         if should_stop:
