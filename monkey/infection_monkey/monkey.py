@@ -438,7 +438,7 @@ class InfectionMonkey:
 
     @staticmethod
     def _self_delete() -> bool:
-        logger.info("Cleaning up Agent's artefacts")
+        logger.info("Cleaning up the Agent's artifacts")
         remove_monkey_dir()
 
         if "python" in Path(sys.executable).name:
