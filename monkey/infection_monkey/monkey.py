@@ -84,7 +84,7 @@ logging.getLogger("urllib3").setLevel(logging.INFO)
 
 class InfectionMonkey:
     def __init__(self, args):
-        logger.info("Monkey is initializing...")
+        logger.info("Agent is initializing...")
 
         self._agent_id = get_agent_id()
         logger.info(f"Agent ID: {self._agent_id}")
@@ -175,7 +175,7 @@ class InfectionMonkey:
     @staticmethod
     def _log_arguments(args):
         arg_string = ", ".join([f"{key}: {value}" for key, value in vars(args).items()])
-        logger.info(f"Monkey started with arguments: {arg_string}")
+        logger.info(f"Agent started with arguments: {arg_string}")
 
     def start(self):
         self._setup_agent_event_forwarder()
@@ -376,7 +376,7 @@ class InfectionMonkey:
         return not self._singleton.try_lock()
 
     def cleanup(self):
-        logger.info("Monkey cleanup started")
+        logger.info("Agent cleanup started")
         deleted = None
         try:
             if self._master:
@@ -405,7 +405,7 @@ class InfectionMonkey:
             with contextlib.suppress(AssertionError):
                 self._singleton.unlock()
 
-        logger.info("Monkey is shutting down")
+        logger.info("Agent is shutting down")
 
     def _stop_relay(self):
         if self._relay and self._relay.is_alive():
