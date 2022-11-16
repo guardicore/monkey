@@ -87,6 +87,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         self._api_url = f"https://{island_server}/api"
 
+    def _get(self, endpoint: str, timeout: float) -> requests.Response:
+        url = f"{self._api_url}/{endpoint}"
+        logger.debug(f"GET {url}, timeout={timeout}")
+
+        return requests.get(url, verify=False, timeout=timeout)  # noqa: DUO123
+
     @handle_island_errors
     def send_log(self, agent_id: AgentID, log_contents: str):
         response = requests.put(  # noqa: DUO123
@@ -100,11 +106,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
-        response = requests.get(  # noqa: DUO123
-            f"{self._api_url}/agent-binaries/{os_name}",
-            verify=False,
-            timeout=MEDIUM_REQUEST_TIMEOUT,
-        )
+        response = self._get(f"agent-binaries/{os_name}", MEDIUM_REQUEST_TIMEOUT)
         response.raise_for_status()
 
         return response.content
@@ -134,15 +136,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     @convert_json_error_to_island_api_error
     def get_config(self) -> AgentConfiguration:
-        response = requests.get(  # noqa: DUO123
-            f"{self._api_url}/agent-configuration",
-            verify=False,
-            timeout=SHORT_REQUEST_TIMEOUT,
-        )
+        response = self._get("agent-configuration", SHORT_REQUEST_TIMEOUT)
         response.raise_for_status()
 
         config_dict = response.json()
-
         logger.debug(f"Received configuration:\n{pformat(config_dict)}")
 
         return AgentConfiguration(**config_dict)
@@ -150,11 +147,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     @convert_json_error_to_island_api_error
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        response = requests.get(  # noqa: DUO123
-            f"{self._api_url}/propagation-credentials",
-            verify=False,
-            timeout=SHORT_REQUEST_TIMEOUT,
-        )
+        response = self._get("propagation-credentials", SHORT_REQUEST_TIMEOUT)
         response.raise_for_status()
 
         return [Credentials(**credentials) for credentials in response.json()]
@@ -174,13 +167,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     @convert_json_error_to_island_api_error
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
-        url = f"{self._api_url}/agent-signals/{agent_id}"
-        response = requests.get(  # noqa: DUO123
-            url,
-            verify=False,
-            timeout=SHORT_REQUEST_TIMEOUT,
-        )
+        response = self._get(f"agent-signals/{agent_id}", SHORT_REQUEST_TIMEOUT)
         response.raise_for_status()
+
         return AgentSignals(**response.json())
 
 
