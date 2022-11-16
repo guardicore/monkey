@@ -86,9 +86,11 @@ class InfectionMonkey:
     def __init__(self, args):
         logger.info("Monkey is initializing...")
 
+        self._agent_id = get_agent_id()
+        logger.info(f"Agent ID: {self._agent_id}")
+
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
-        self._agent_id = get_agent_id()
 
         self._agent_event_forwarder = None
         self._agent_event_queue = self._setup_agent_event_queue()
@@ -183,7 +185,6 @@ class InfectionMonkey:
             return
 
         logger.info("Agent is starting...")
-        logger.info(f"Agent ID: {self._agent_id}")
 
         should_stop = self._control_channel.should_agent_stop()
         if should_stop:
