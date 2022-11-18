@@ -77,6 +77,8 @@ def island_client(island):
     yield island_client_object
 
 
+# NOTE: These test methods are ordered to give time for the slower zoo machines
+# to boot up and finish starting services.
 @pytest.mark.usefixtures("island_client")
 # noinspection PyUnresolvedReferences
 class TestMonkeyBlackbox:
@@ -107,8 +109,11 @@ class TestMonkeyBlackbox:
     def get_log_dir_path():
         return os.path.abspath(LOG_DIR_PATH)
 
-    # If test_depth_1_a() is run first, some test will fail because machines are not yet fully
-    # booted. Running test_depth_2_a() first gives slow VMs extra time to boot.
+    def test_credentials_reuse_ssh_key(self, island_client):
+        TestMonkeyBlackbox.run_exploitation_test(
+            island_client, credentials_reuse_ssh_key_test_configuration, "Credentials_Reuse_SSH_Key"
+        )
+
     def test_depth_2_a(self, island_client):
         TestMonkeyBlackbox.run_exploitation_test(
             island_client, depth_2_a_test_configuration, "Depth2A test suite"
@@ -153,11 +158,6 @@ class TestMonkeyBlackbox:
             timeout=DEFAULT_TIMEOUT_SECONDS + 30,
             log_handler=log_handler,
         ).run()
-
-    def test_credentials_reuse_ssh_key(self, island_client):
-        TestMonkeyBlackbox.run_exploitation_test(
-            island_client, credentials_reuse_ssh_key_test_configuration, "Credentials_Reuse_SSH_Key"
-        )
 
     # Not grouped because conflicts with SMB.
     # Consider grouping when more depth 1 exploiters collide with group depth_1_a
