@@ -12,16 +12,14 @@ EVENT_TAG_1 = "event tag 1"
 EVENT_TAG_2 = "event tag 2"
 
 
-class TestEvent1(AbstractAgentEvent):
-    __test__ = False
+class FakeEvent1(AbstractAgentEvent):
     source: UUID = UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5")
     target: Union[UUID, IPv4Address, None] = None
     timestamp: float = 0.0
     tags: FrozenSet = frozenset()
 
 
-class TestEvent2(AbstractAgentEvent):
-    __test__ = False
+class FakeEvent2(AbstractAgentEvent):
     source: UUID = UUID("e810ad01-6b67-9446-fc58-9b8d717653f7")
     target: Union[UUID, IPv4Address, None] = None
     timestamp: float = 0.0
@@ -50,24 +48,24 @@ def event_queue_subscriber() -> Callable[[AbstractAgentEvent], None]:
 def test_subscribe_all(event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber):
     event_queue.subscribe_all_events(event_queue_subscriber)
 
-    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
-    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_2})))
-    event_queue.publish(TestEvent1(tags=frozenset({"secret_tag"})))
-    event_queue.publish(TestEvent2())
+    event_queue.publish(FakeEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
+    event_queue.publish(FakeEvent1(tags=frozenset({EVENT_TAG_2})))
+    event_queue.publish(FakeEvent1(tags=frozenset({"secret_tag"})))
+    event_queue.publish(FakeEvent2())
 
     assert event_queue_subscriber.call_count == 4
-    assert TestEvent1 in event_queue_subscriber.call_types
-    assert TestEvent2 in event_queue_subscriber.call_types
+    assert FakeEvent1 in event_queue_subscriber.call_types
+    assert FakeEvent2 in event_queue_subscriber.call_types
 
 
-@pytest.mark.parametrize("type_to_subscribe", [TestEvent1, TestEvent2])
+@pytest.mark.parametrize("type_to_subscribe", [FakeEvent1, FakeEvent2])
 def test_subscribe_types(
     event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber, type_to_subscribe
 ):
     event_queue.subscribe_type(type_to_subscribe, event_queue_subscriber)
 
-    event_queue.publish(TestEvent1())
-    event_queue.publish(TestEvent2())
+    event_queue.publish(FakeEvent1())
+    event_queue.publish(FakeEvent2())
 
     assert event_queue_subscriber.call_count == 1
     assert type_to_subscribe in event_queue_subscriber.call_types
@@ -78,12 +76,12 @@ def test_subscribe_tags_single_type(
 ):
     event_queue.subscribe_tag(EVENT_TAG_1, event_queue_subscriber)
 
-    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
-    event_queue.publish(TestEvent2(tags=frozenset({EVENT_TAG_2})))
+    event_queue.publish(FakeEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
+    event_queue.publish(FakeEvent2(tags=frozenset({EVENT_TAG_2})))
 
     assert event_queue_subscriber.call_count == 1
     assert len(event_queue_subscriber.call_types) == 1
-    assert TestEvent1 in event_queue_subscriber.call_types
+    assert FakeEvent1 in event_queue_subscriber.call_types
     assert EVENT_TAG_1 in event_queue_subscriber.call_tags
 
 
@@ -92,22 +90,22 @@ def test_subscribe_tags_multiple_types(
 ):
     event_queue.subscribe_tag(EVENT_TAG_2, event_queue_subscriber)
 
-    event_queue.publish(TestEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
-    event_queue.publish(TestEvent2(tags=frozenset({EVENT_TAG_2})))
+    event_queue.publish(FakeEvent1(tags=frozenset({EVENT_TAG_1, EVENT_TAG_2})))
+    event_queue.publish(FakeEvent2(tags=frozenset({EVENT_TAG_2})))
 
     assert event_queue_subscriber.call_count == 2
     assert len(event_queue_subscriber.call_types) == 2
-    assert TestEvent1 in event_queue_subscriber.call_types
-    assert TestEvent2 in event_queue_subscriber.call_types
+    assert FakeEvent1 in event_queue_subscriber.call_types
+    assert FakeEvent2 in event_queue_subscriber.call_types
     assert {EVENT_TAG_1, EVENT_TAG_2}.issubset(event_queue_subscriber.call_tags)
 
 
 def test_type_tag_collision(
     event_queue: IAgentEventQueue, event_queue_subscriber: AgentEventSubscriber
 ):
-    event_queue.subscribe_type(TestEvent1, event_queue_subscriber)
+    event_queue.subscribe_type(FakeEvent1, event_queue_subscriber)
 
-    event_queue.publish(TestEvent2(tags=frozenset({TestEvent1.__name__})))
+    event_queue.publish(FakeEvent2(tags=frozenset({FakeEvent1.__name__})))
 
     assert event_queue_subscriber.call_count == 0
 
@@ -126,6 +124,6 @@ def test_keep_subscriber_in_scope(event_queue: IAgentEventQueue):
 
     subscribe()
 
-    event_queue.publish(TestEvent2())
+    event_queue.publish(FakeEvent2())
 
     assert MyCallable.called
