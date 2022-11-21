@@ -37,7 +37,7 @@ egg-timer = "*"
 
 [dev-packages]
 virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue
-mongomock = "==3.23.0"
+mongomock = "==4.1.2"
 pytest = ">=5.4"
 requests-mock = "==1.8.0"
 black = "==22.3.0"
