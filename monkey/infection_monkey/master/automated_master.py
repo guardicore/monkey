@@ -21,8 +21,6 @@ CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 
 SHUTDOWN_TIMEOUT = 5
 NUM_SCAN_THREADS = 16
 NUM_EXPLOIT_THREADS = 6
-CHECK_FOR_STOP_AGENT_COUNT = 5
-CHECK_FOR_CONFIG_COUNT = 3
 
 logger = logging.getLogger()
 
@@ -106,23 +104,9 @@ class AutomatedMaster(IMaster):
 
             time.sleep(CHECK_FOR_TERMINATE_INTERVAL_SEC)
 
-    @staticmethod
-    def _try_communicate_with_island(fn: Callable[[], Any], max_tries: int) -> Any:
-        tries = 0
-        while tries < max_tries:
-            try:
-                return fn()
-            except IslandCommunicationError as e:
-                tries += 1
-                logger.debug(f"{e}. Retries left: {max_tries-tries}")
-                if tries >= max_tries:
-                    raise e
-
     def _check_for_stop(self):
         try:
-            stop = AutomatedMaster._try_communicate_with_island(
-                self._control_channel.should_agent_stop, CHECK_FOR_STOP_AGENT_COUNT
-            )
+            stop = self._control_channel.should_agent_stop()
             if stop:
                 logger.info('Received the "stop" signal from the Island')
                 self._stop.set()
@@ -135,9 +119,7 @@ class AutomatedMaster(IMaster):
 
     def _run_simulation(self):
         try:
-            config = AutomatedMaster._try_communicate_with_island(
-                self._control_channel.get_config, CHECK_FOR_CONFIG_COUNT
-            )
+            config = self._control_channel.get_config()
         except IslandCommunicationError as e:
             logger.error(f"An error occurred while fetching configuration: {e}")
             return
