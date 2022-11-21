@@ -5,6 +5,8 @@ from pprint import pformat
 from typing import List, Sequence
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -67,18 +69,24 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     A client for the Island's HTTP API
     """
 
+    # Retries improve reliability and slightly mitigates performance issues
+    RETRY_COUNT = 5
+
     def __init__(
         self,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
+        self._session = requests.Session()
+        retry_config = Retry(total=HTTPIslandAPIClient.RETRY_COUNT)
+        self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
 
     @handle_island_errors
     def connect(
         self,
         island_server: SocketAddress,
     ):
-        response = requests.get(  # noqa: DUO123
+        response = self._session.get(  # noqa: DUO123
             f"https://{island_server}/api?action=is-up",
             verify=False,
             timeout=MEDIUM_REQUEST_TIMEOUT,
@@ -91,19 +99,19 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         url = f"{self._api_url}/{endpoint}"
         logger.debug(f"GET {url}, timeout={timeout}")
 
-        return requests.get(url, verify=False, timeout=timeout)  # noqa: DUO123
+        return self._session.get(url, verify=False, timeout=timeout)  # noqa: DUO123
 
     def _post(self, endpoint: str, data: JSONSerializable, timeout: float) -> requests.Response:
         url = f"{self._api_url}/{endpoint}"
         logger.debug(f"POST {url}, timeout={timeout}")
 
-        return requests.post(url, json=data, verify=False, timeout=timeout)  # noqa: DUO123
+        return self._session.post(url, json=data, verify=False, timeout=timeout)  # noqa: DUO123
 
     def _put(self, endpoint: str, data: JSONSerializable, timeout: float) -> requests.Response:
         url = f"{self._api_url}/{endpoint}"
         logger.debug(f"PUT {url}, timeout={timeout}")
 
-        return requests.put(url, json=data, verify=False, timeout=timeout)  # noqa: DUO123
+        return self._session.put(url, json=data, verify=False, timeout=timeout)  # noqa: DUO123
 
     @handle_island_errors
     def send_log(self, agent_id: AgentID, log_contents: str):
