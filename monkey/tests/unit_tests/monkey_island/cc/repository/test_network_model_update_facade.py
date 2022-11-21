@@ -18,7 +18,7 @@ from monkey_island.cc.repository import (
 )
 
 
-class TestEvent(AbstractAgentEvent):
+class FakeEvent(AbstractAgentEvent):
     success: bool
 
 
@@ -53,7 +53,7 @@ EXPECTED_CREATED_MACHINE = Machine(
     network_interfaces=[IPv4Interface(SOURCE_IP_ADDRESS)],
 )
 
-TEST_EVENT = TestEvent(source=SOURCE_AGENT_ID, target=TARGET_IP_ADDRESS, success=True)
+TEST_EVENT = FakeEvent(source=SOURCE_AGENT_ID, target=TARGET_IP_ADDRESS, success=True)
 
 
 @pytest.fixture
@@ -123,7 +123,7 @@ def test_upsert_communication_from_event(network_model_update_facade, node_repos
 
 
 def test_upsert_communication_from_event__no_target_ip(network_model_update_facade):
-    event = TestEvent(source=SOURCE_AGENT_ID, target=None, success=True)
+    event = FakeEvent(source=SOURCE_AGENT_ID, target=None, success=True)
 
     with pytest.raises(TypeError):
         network_model_update_facade.upsert_communication_from_event(
