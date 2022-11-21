@@ -47,6 +47,8 @@ ISLAND_GET_CONFIG_URI = f"https://{SERVER}/api/agent-configuration"
 ISLAND_GET_PROPAGATION_CREDENTIALS_URI = f"https://{SERVER}/api/propagation-credentials"
 ISLAND_GET_AGENT_SIGNALS = f"https://{SERVER}/api/agent-signals/{AGENT_ID}"
 
+RETRIES = 3
+
 
 class Event1(AbstractAgentEvent):
     a: int
@@ -71,7 +73,7 @@ def agent_event_serializer_registry():
 
 @pytest.fixture
 def island_api_client(agent_event_serializer_registry):
-    return HTTPIslandAPIClient(agent_event_serializer_registry)
+    return HTTPIslandAPIClient(agent_event_serializer_registry, retries=RETRIES)
 
 
 @pytest.mark.parametrize(
@@ -450,4 +452,4 @@ def test_request_retries(monkeypatch, island_api_client):
         monkeypatch.setattr("urllib3.connectionpool.HTTPSConnectionPool._validate_conn", mock_send)
         island_api_client.connect(SERVER)
 
-    assert mock_send.call_count == HTTPIslandAPIClient.RETRY_COUNT + 1
+    assert mock_send.call_count == RETRIES + 1

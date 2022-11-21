@@ -28,6 +28,9 @@ from . import (
 
 logger = logging.getLogger(__name__)
 
+# Retries improve reliability and slightly mitigates performance issues
+RETRIES = 5
+
 
 def handle_island_errors(fn):
     @functools.wraps(fn)
@@ -69,16 +72,14 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     A client for the Island's HTTP API
     """
 
-    # Retries improve reliability and slightly mitigates performance issues
-    RETRY_COUNT = 5
-
     def __init__(
         self,
         agent_event_serializer_registry: AgentEventSerializerRegistry,
+        retries=RETRIES,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
         self._session = requests.Session()
-        retry_config = Retry(total=HTTPIslandAPIClient.RETRY_COUNT)
+        retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
 
     @handle_island_errors
