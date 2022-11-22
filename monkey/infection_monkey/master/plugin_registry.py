@@ -32,9 +32,13 @@ class PluginRegistry:
         try:
             plugin = self._registry[plugin_type][plugin_name]
         except KeyError:
-            raise UnknownPluginError(
-                f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}'"
-            )
+            response = self._island_api_client.get_plugin(plugin_type, plugin_name)
+            if 400 <= response.status_code < 500:
+                raise UnknownPluginError(
+                    f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}'"
+                )
+            elif 200 <= response.status_code < 300:
+                raise NotImplementedError()
 
         logger.debug(f"Plugin '{plugin_name}' found")
 
