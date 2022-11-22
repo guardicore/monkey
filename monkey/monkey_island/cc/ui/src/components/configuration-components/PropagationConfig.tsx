@@ -8,7 +8,7 @@ const sectionOrder = [
   'exploitation',
   'network_scan',
   'credentials',
-  'maximum_depth'
+  'general'
 ];
 
 const initialSection = sectionOrder[0];
@@ -92,8 +92,5 @@ function getUiSchemaByKey(uiSchema, key) {
 }
 
 function getNavTitle(schema, key) {
-  if (key === 'maximum_depth') {
-    return 'General';
-  }
   return schema['properties'][key].title;
 }
