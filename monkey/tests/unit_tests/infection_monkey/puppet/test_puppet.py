@@ -3,11 +3,12 @@ from unittest.mock import MagicMock
 
 from common.event_queue import IAgentEventQueue
 from common.types import PingScanData, PluginType
+from infection_monkey.master.plugin_registry import PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
 def test_puppet_run_payload_success():
-    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue))
+    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue), plugin_registry=PluginRegistry())
 
     payload = MagicMock()
     payload_name = "PayloadOne"
@@ -19,7 +20,7 @@ def test_puppet_run_payload_success():
 
 
 def test_puppet_run_multiple_payloads():
-    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue))
+    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue), plugin_registry=PluginRegistry())
 
     payload_1 = MagicMock()
     payload1_name = "PayloadOne"
@@ -45,6 +46,6 @@ def test_puppet_run_multiple_payloads():
 
 
 def test_fingerprint_exception_handling(monkeypatch):
-    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue))
+    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue), plugin_registry=PluginRegistry())
     p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert p.fingerprint("", "", PingScanData("windows", False), {}, {}) == EMPTY_FINGERPRINT
