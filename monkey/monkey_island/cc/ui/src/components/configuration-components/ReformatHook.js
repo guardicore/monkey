@@ -19,6 +19,7 @@ export function reformatConfig(config, reverse = false) {
       }];
     }
     formattedConfig['keep_tunnel_open_time'] = formattedConfig['advanced']['keep_tunnel_open_time'];
+    formattedConfig['propagation']['maximum_depth'] = formattedConfig['propagation']['general']['maximum_depth'];
   } else {
     if (formattedConfig['payloads'].length !== 0) {
       formattedConfig['payloads'] = formattedConfig['payloads'][0]['options'];
@@ -27,6 +28,9 @@ export function reformatConfig(config, reverse = false) {
     }
     formattedConfig['advanced'] = {};
     formattedConfig['advanced']['keep_tunnel_open_time'] = formattedConfig['keep_tunnel_open_time'];
+
+    formattedConfig['propagation']['general'] = {};
+    formattedConfig['propagation']['general']['maximum_depth'] = formattedConfig['propagation']['maximum_depth'];
   }
   return formattedConfig;
 }
