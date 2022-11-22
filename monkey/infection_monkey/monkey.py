@@ -296,7 +296,7 @@ class InfectionMonkey:
         return list(ordered_servers.keys())
 
     def _build_puppet(self) -> IPuppet:
-        plugin_registry = PluginRegistry()
+        plugin_registry = PluginRegistry(self._island_api_client)
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(

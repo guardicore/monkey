@@ -3,12 +3,13 @@ from typing import Any
 
 from common.types import PluginType
 from infection_monkey.i_puppet import UnknownPluginError
+from infection_monkey.island_api_client import IIslandAPIClient
 
 logger = logging.getLogger()
 
 
 class PluginRegistry:
-    def __init__(self):
+    def __init__(self, island_api_client: IIslandAPIClient):
         """
         `self._registry` looks like -
             {
@@ -19,6 +20,7 @@ class PluginRegistry:
             }
         """
         self._registry = {}
+        self._island_api_client = island_api_client
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
         self._registry.setdefault(plugin_type, {})
