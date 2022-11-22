@@ -6,6 +6,7 @@ from .reset_agent_configuration import ResetAgentConfiguration
 from .propagation_credentials import PropagationCredentials
 from .agent_configuration import AgentConfiguration
 from .agent_events import AgentEvents
+from .agent_plugins import AgentPlugins
 from .agents import Agents
 from .agent_signals import AgentSignals, TerminateAllAgents
 from .agent_logs import AgentLogs
