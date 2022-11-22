@@ -13,6 +13,7 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
+from common.common_consts.plugin_types import PluginType
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, SocketAddress
@@ -194,6 +195,16 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         )
 
         return AgentSignals(**response.json())
+
+    @handle_island_errors
+    def get_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
+        response = self._send_request(
+            RequestType.GET,
+            f"/api/agent-plugins/{plugin_type.value}/{plugin_name}",
+            MEDIUM_REQUEST_TIMEOUT,
+        )
+
+        return response.content
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
