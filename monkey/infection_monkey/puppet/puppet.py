@@ -14,9 +14,8 @@ from infection_monkey.i_puppet import (
     PluginType,
     PortScanData,
 )
+from infection_monkey.master.plugin_registry import PluginRegistry
 from infection_monkey.model import VictimHost
-
-from .plugin_registry import PluginRegistry
 
 EMPTY_FINGERPRINT = FingerprintData(None, None, [])
 
