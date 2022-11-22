@@ -8,7 +8,10 @@ from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
 def test_puppet_run_payload_success():
-    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue), plugin_registry=PluginRegistry())
+    p = Puppet(
+        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        plugin_registry=PluginRegistry(MagicMock()),
+    )
 
     payload = MagicMock()
     payload_name = "PayloadOne"
@@ -20,7 +23,10 @@ def test_puppet_run_payload_success():
 
 
 def test_puppet_run_multiple_payloads():
-    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue), plugin_registry=PluginRegistry())
+    p = Puppet(
+        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        plugin_registry=PluginRegistry(MagicMock()),
+    )
 
     payload_1 = MagicMock()
     payload1_name = "PayloadOne"
@@ -46,6 +52,9 @@ def test_puppet_run_multiple_payloads():
 
 
 def test_fingerprint_exception_handling(monkeypatch):
-    p = Puppet(agent_event_queue=MagicMock(spec=IAgentEventQueue), plugin_registry=PluginRegistry())
+    p = Puppet(
+        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        plugin_registry=PluginRegistry(MagicMock()),
+    )
     p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert p.fingerprint("", "", PingScanData("windows", False), {}, {}) == EMPTY_FINGERPRINT
