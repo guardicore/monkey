@@ -16,6 +16,7 @@ from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, SocketAddress
 
+from ..i_puppet import PluginType
 from . import (
     AbstractIslandAPIClientFactory,
     IIslandAPIClient,
@@ -179,6 +180,14 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response.raise_for_status()
 
         return AgentSignals(**response.json())
+
+    @handle_island_errors
+    def get_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
+        response = self._get(
+            f"/api/agent-plugins/{plugin_type.value}/{plugin_name}", MEDIUM_REQUEST_TIMEOUT
+        )
+
+        return response.content
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
