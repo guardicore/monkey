@@ -262,6 +262,7 @@ class ConfigurePageComponent extends AuthComponent {
     let config = JSON.parse(JSON.stringify(this.state.configuration))
     config = reformatConfig(config, true);
     delete config['advanced'];
+    delete config['propagation']['general'];
 
     return (
       this.authFetch(CONFIG_URL,
