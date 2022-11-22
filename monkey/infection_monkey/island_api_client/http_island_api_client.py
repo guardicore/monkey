@@ -13,7 +13,7 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
-from common.common_consts.plugin_types import PluginType
+from common.common_consts.plugin_type import PluginType
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, SocketAddress
