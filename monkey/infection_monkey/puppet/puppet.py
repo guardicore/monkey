@@ -23,8 +23,10 @@ logger = logging.getLogger()
 
 
 class Puppet(IPuppet):
-    def __init__(self, agent_event_queue: IAgentEventQueue) -> None:
-        self._plugin_registry = PluginRegistry()
+    def __init__(
+        self, agent_event_queue: IAgentEventQueue, plugin_registry: PluginRegistry
+    ) -> None:
+        self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
