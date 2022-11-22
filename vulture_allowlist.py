@@ -7,6 +7,7 @@ from common.types import NetworkPort
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
+from infection_monkey.island_api_client import HTTPIslandAPIClient
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
@@ -104,3 +105,6 @@ ExploiterDescriptorEnum.LOG4SHELL
 AWSCommandResults.response_code  # monkey_island/cc/services/aws/aws_command_runner.py:26
 
 MonkeyExploitation.label
+
+# Unused plugin infrastructure
+HTTPIslandAPIClient.get_agent_plugin
