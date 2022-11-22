@@ -52,6 +52,7 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
+from infection_monkey.master.plugin_registry import PluginRegistry
 from infection_monkey.model import VictimHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
@@ -295,7 +296,8 @@ class InfectionMonkey:
         return list(ordered_servers.keys())
 
     def _build_puppet(self) -> IPuppet:
-        puppet = Puppet(self._agent_event_queue)
+        plugin_registry = PluginRegistry()
+        puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(
             "MimikatzCollector",
