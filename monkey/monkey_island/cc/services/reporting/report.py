@@ -7,6 +7,7 @@ from dataclasses import asdict
 from enum import Enum
 from ipaddress import IPv4Address
 from itertools import chain, product
+from threading import Lock
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
 from common.agent_events import (
@@ -30,9 +31,6 @@ from monkey_island.cc.repository import (
 )
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
-)
-from monkey_island.cc.services.reporting.report_generation_synchronisation import (
-    safe_generate_regular_report,
 )
 
 from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
@@ -68,6 +66,7 @@ class ReportService:
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
     _report: Dict[str, Dict] = {}
+    _report_generation_lock: Lock = Lock()
 
     class DerivedIssueEnum:
         ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
@@ -550,7 +549,8 @@ class ReportService:
         if cls._agent_repository is None:
             raise RuntimeError("Agent repository does not exists")
 
-        if cls.report_is_outdated():
-            cls._report = safe_generate_regular_report()
+        with cls._report_generation_lock:
+            if cls.report_is_outdated():
+                cls._report = cls.generate_report()
 
         return cls._report
