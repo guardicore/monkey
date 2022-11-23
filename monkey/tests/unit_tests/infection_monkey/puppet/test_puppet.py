@@ -1,12 +1,8 @@
 import threading
 from unittest.mock import MagicMock
 
-import pytest
-from flask import Response
-
 from common.event_queue import IAgentEventQueue
 from common.types import PingScanData, PluginType
-from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.master.plugin_registry import PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
@@ -62,18 +58,3 @@ def test_fingerprint_exception_handling(monkeypatch):
     )
     p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert p.fingerprint("", "", PingScanData("windows", False), {}, {}) == EMPTY_FINGERPRINT
-
-
-class StubIslandAPIClient:
-    def get_plugin(self, _, __):
-        return Response(status=404)
-
-
-def test_load_plugin_not_found(monkeypatch):
-    p = Puppet(
-        agent_event_queue=MagicMock(spec=IAgentEventQueue),
-        plugin_registry=PluginRegistry(StubIslandAPIClient()),
-    )
-
-    with pytest.raises(UnknownPluginError):
-        p.run_credential_collector("Ghost", {})
