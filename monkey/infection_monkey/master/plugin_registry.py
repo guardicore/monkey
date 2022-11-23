@@ -39,6 +39,11 @@ class PluginRegistry:
                 )
             elif 200 <= response.status_code < 300:
                 raise NotImplementedError()
+            else:
+                raise Exception(
+                    f"Unexpected response status code {response.status} received while fetching "
+                    f"plugin '{plugin_name}' of type '{plugin_type.value}' from Island"
+                )
 
         logger.debug(f"Plugin '{plugin_name}' found")
 
