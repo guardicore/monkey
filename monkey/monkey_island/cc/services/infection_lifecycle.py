@@ -10,7 +10,7 @@ def is_report_done(agent_repository: IAgentRepository) -> bool:
     infection_done = _is_infection_done(agent_repository)
 
     if infection_done:
-        _ = ReportService.get_report()
+        ReportService.update_report()
         report_done = ReportService.is_report_generated()
     else:  # Infection is not done
         report_done = False
