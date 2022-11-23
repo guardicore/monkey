@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, call
 
 import pytest
 
@@ -8,7 +8,8 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.models import UserCredentials
+from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.models import IslandMode, UserCredentials
 from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services import AuthenticationService
@@ -39,23 +40,28 @@ def mock_repository_encryptor():
     return MagicMock(spec=ILockableEncryptor)
 
 
-def test_needs_registration__true(tmp_path, mock_repository_encryptor):
+@pytest.fixture
+def mock_island_event_queue():
+    return MagicMock(spec=IIslandEventQueue)
+
+
+def test_needs_registration__true(tmp_path, mock_repository_encryptor, mock_island_event_queue):
     has_registered_users = False
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     assert a_s.needs_registration()
 
 
-def test_needs_registration__false(tmp_path, mock_repository_encryptor):
+def test_needs_registration__false(tmp_path, mock_repository_encryptor, mock_island_event_queue):
     has_registered_users = True
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     assert not a_s.needs_registration()
@@ -63,11 +69,13 @@ def test_needs_registration__false(tmp_path, mock_repository_encryptor):
 
 @pytest.mark.slow
 @pytest.mark.parametrize("error", [InvalidRegistrationCredentialsError, AlreadyRegisteredError])
-def test_register_new_user__fails(tmp_path, mock_repository_encryptor, error):
+def test_register_new_user__fails(
+    tmp_path, mock_repository_encryptor, error, mock_island_event_queue
+):
     mock_user_datastore = MockUserDatastore(lambda: True, MagicMock(side_effect=error), None)
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     with pytest.raises(error):
@@ -77,11 +85,30 @@ def test_register_new_user__fails(tmp_path, mock_repository_encryptor, error):
     mock_repository_encryptor.unlock.assert_not_called()
 
 
-def test_register_new_user__empty_password_fails(tmp_path, mock_repository_encryptor):
+@pytest.mark.slow
+@pytest.mark.parametrize("error", [InvalidRegistrationCredentialsError, AlreadyRegisteredError])
+def test_register_new_user_fails__publish_to_event_topic(
+    tmp_path, mock_repository_encryptor, error, mock_island_event_queue
+):
+    mock_user_datastore = MockUserDatastore(lambda: True, MagicMock(side_effect=error), None)
+
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
+    )
+
+    with pytest.raises(error):
+        a_s.register_new_user(USERNAME, PASSWORD)
+
+    mock_island_event_queue.publish.assert_not_called()
+
+
+def test_register_new_user__empty_password_fails(
+    tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
     mock_user_datastore = MockUserDatastore(lambda: False, None, None)
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     with pytest.raises(InvalidRegistrationCredentialsError):
@@ -89,15 +116,16 @@ def test_register_new_user__empty_password_fails(tmp_path, mock_repository_encry
 
     mock_repository_encryptor.reset_key().assert_not_called()
     mock_repository_encryptor.unlock.assert_not_called()
+    mock_island_event_queue.publish.assert_not_called()
 
 
 @pytest.mark.slow
-def test_register_new_user(tmp_path, mock_repository_encryptor):
+def test_register_new_user(tmp_path, mock_repository_encryptor, mock_island_event_queue):
     mock_add_user = MagicMock()
     mock_user_datastore = MockUserDatastore(lambda: False, mock_add_user, None)
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     a_s.register_new_user(USERNAME, PASSWORD)
@@ -111,7 +139,30 @@ def test_register_new_user(tmp_path, mock_repository_encryptor):
 
 
 @pytest.mark.slow
-def test_authenticate__success(tmp_path, mock_repository_encryptor):
+def test_register_new_user__publish_to_event_topics(
+    tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
+    mock_add_user = MagicMock()
+    mock_user_datastore = MockUserDatastore(lambda: False, mock_add_user, None)
+
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
+    )
+
+    a_s.register_new_user(USERNAME, PASSWORD)
+
+    assert mock_island_event_queue.publish.call_count == 3
+    mock_island_event_queue.publish.assert_has_calls(
+        [
+            call(IslandEventTopic.CLEAR_SIMULATION_DATA),
+            call(IslandEventTopic.RESET_AGENT_CONFIGURATION),
+            call(topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET),
+        ]
+    )
+
+
+@pytest.mark.slow
+def test_authenticate__success(tmp_path, mock_repository_encryptor, mock_island_event_queue):
     mock_user_datastore = MockUserDatastore(
         lambda: True,
         None,
@@ -119,7 +170,7 @@ def test_authenticate__success(tmp_path, mock_repository_encryptor):
     )
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     # If authentication fails, this function will raise an exception and the test will fail.
@@ -132,7 +183,7 @@ def test_authenticate__success(tmp_path, mock_repository_encryptor):
     ("username", "password"), [("wrong_username", PASSWORD), (USERNAME, "wrong_password")]
 )
 def test_authenticate__failed_wrong_credentials(
-    tmp_path, username, password, mock_repository_encryptor
+    tmp_path, username, password, mock_repository_encryptor, mock_island_event_queue
 ):
     mock_user_datastore = MockUserDatastore(
         lambda: True,
@@ -141,7 +192,7 @@ def test_authenticate__failed_wrong_credentials(
     )
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     with pytest.raises(IncorrectCredentialsError):
@@ -150,13 +201,15 @@ def test_authenticate__failed_wrong_credentials(
     mock_repository_encryptor.unlock.assert_not_called()
 
 
-def test_authenticate__failed_no_registered_user(tmp_path, mock_repository_encryptor):
+def test_authenticate__failed_no_registered_user(
+    tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
     mock_user_datastore = MockUserDatastore(
         lambda: True, None, MagicMock(side_effect=UnknownUserError)
     )
 
     a_s = AuthenticationService(
-        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+        tmp_path, mock_user_datastore, mock_repository_encryptor, mock_island_event_queue
     )
 
     with pytest.raises(IncorrectCredentialsError):
