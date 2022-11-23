@@ -8,4 +8,5 @@ class SecurityReport(AbstractResource):
 
     @jwt_required
     def get(self):
+        ReportService.update_report()
         return ReportService.get_report()
