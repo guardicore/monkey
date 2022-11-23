@@ -18,17 +18,27 @@ export function getAllTunnels(agents, machines) {
     if (!islandIPs.includes(agent.cc_server.ip)) {
       let agentMachine = getMachineByAgent(agent, machines);
       if (agentMachine !== null) {
-        let agentMachineHostname = getMachineHostname(agentMachine)
+        let agentMachineInfo = {
+          'id': agentMachine.id,
+          'ip': getMachineIPs(agentMachine)[0],
+          'hostname': getMachineHostname(agentMachine)
+        };
 
-        let agentTunnelMachineHostname = agent.cc_server.ip;
+        let agentTunnelMachineInfo = {
+          'id': -1,
+          'ip': agent.cc_server.ip,
+          'hostname': agent.cc_server.ip
+        };
+
         let agentTunnelMachine = getMachineFromIP(agent.cc_server.ip, machines)
         if (agentTunnelMachine !== null) {
-          agentTunnelMachineHostname = getMachineHostname(agentTunnelMachine);
+          agentTunnelMachineInfo.id = agentTunnelMachine.id;
+          agentTunnelMachineInfo.hostname = getMachineHostname(agentTunnelMachine);
         }
 
         tunnels.push({
-          'agent_machine': agentMachineHostname,
-          'agent_tunnel': agentTunnelMachineHostname
+          'agent_machine': agentMachineInfo,
+          'agent_tunnel': agentTunnelMachineInfo
         });
       }
     }
@@ -45,9 +55,9 @@ export function tunnelIssueOverview(allTunnels) {
   }
 }
 
-export function tunnelIssueReportByMachine(machine, allTunnels) {
+export function tunnelIssueReportByMachine(machineId, allTunnels) {
   if (allTunnels.length > 0) {
-    let tunnelIssuesByMachine = getTunnelIssuesByMachine(machine, allTunnels);
+    let tunnelIssuesByMachine = getTunnelIssuesByMachine(machineId, allTunnels);
 
     if (tunnelIssuesByMachine.length > 0) {
       return (
@@ -68,15 +78,25 @@ export function tunnelIssueReportByMachine(machine, allTunnels) {
   return null;
 }
 
-function getTunnelIssuesByMachine(machine, allTunnels) {
+function tunnelMachineName(tunnelMachineInfo) {
+  if (tunnelMachineInfo.ip === tunnelMachineInfo.hostname) {
+    return tunnelMachineInfo.ip;
+  }
+  return tunnelMachineInfo.hostname + ' (' + tunnelMachineInfo.ip + ')'
+}
+
+function getTunnelIssuesByMachine(machineId, allTunnels) {
   let tunnelIssues = [];
 
   for (let tunnel of allTunnels) {
-    if (Object.values(tunnel).includes(machine)) {
+    if (tunnel.agent_machine.id === machineId || tunnel.agent_tunnel.id === machineId) {
+      let agentMachineName = tunnelMachineName(tunnel.agent_machine);
+      let agentTunnelName = tunnelMachineName(tunnel.agent_tunnel);
+
       tunnelIssues.push(
-        <li key={tunnel.agent_machine+tunnel.agent_tunnel}>
-          from <span className="badge badge-primary">{tunnel.agent_machine}
-          </span> to <span className="badge badge-primary">{tunnel.agent_tunnel}</span>
+        <li key={agentMachineName+agentTunnelName}>
+          from <span className="badge badge-primary">{agentMachineName}
+          </span> to <span className="badge badge-primary">{agentTunnelName}</span>
         </li>
       );
     }

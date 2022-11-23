@@ -46,6 +46,7 @@ import {
   getAllAgents,
   getAllMachines,
   getMachineByAgent,
+  getMachineFromID,
   getMachineHostname,
   getManuallyStartedAgents
 } from '../utils/ServerUtils';
@@ -515,13 +516,15 @@ class ReportPageComponent extends AuthComponent {
 
   generateIssues = (issues) => {
     let issuesDivArray = [];
-    for (let machine of Object.keys(issues)) {
+    for (let machineId of Object.keys(issues)) {
+      let machine = getMachineFromID(parseInt(machineId), this.state.machines);
+      let hostname = getMachineHostname(machine);
       issuesDivArray.push(
-        <li key={JSON.stringify(machine)}>
-          <h4><b>{machine}</b></h4>
+        <li key={machineId}>
+          <h4><b>{hostname}</b></h4>
           <ol>
-            {issues[machine].map(this.generateIssue)}
-            {this.getTunnelIssue(machine)}
+            {issues[machineId].map(this.generateIssue)}
+            {this.getTunnelIssue(parseInt(machineId))}
           </ol>
         </li>
       );
@@ -530,8 +533,8 @@ class ReportPageComponent extends AuthComponent {
     return <ul>{issuesDivArray}</ul>;
   };
 
-  getTunnelIssue(machine) {
-    let tunnelIssue = tunnelIssueReportByMachine(machine, this.allTunnels);
+  getTunnelIssue(machineId) {
+    let tunnelIssue = tunnelIssueReportByMachine(machineId, this.allTunnels);
     if (tunnelIssue !== null) {
       return <li key={'tunneling-issue'}>{tunnelIssue}</li>
     } else {

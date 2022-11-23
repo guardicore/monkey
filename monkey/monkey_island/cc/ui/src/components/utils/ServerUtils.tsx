@@ -61,6 +61,16 @@ export function getMachineHostname(machine): string {
   return hostname;
 }
 
+export function getMachineFromID(id, machines) {
+  for (let machine of machines) {
+    if (machine.id === id) {
+      return machine;
+    }
+  }
+
+  return null;
+}
+
 export function getMachineFromIP(ip, machines) {
   let machineFromIP = null;
 
