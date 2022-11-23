@@ -7,7 +7,8 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from monkey_island.cc.models import UserCredentials
+from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.models import IslandMode, UserCredentials
 from monkey_island.cc.repository import IUserRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
@@ -22,10 +23,12 @@ class AuthenticationService:
         data_dir: Path,
         user_repository: IUserRepository,
         repository_encryptor: ILockableEncryptor,
+        island_event_queue: IIslandEventQueue,
     ):
         self._data_dir = data_dir
         self._user_repository = user_repository
         self._repository_encryptor = repository_encryptor
+        self._island_event_queue = island_event_queue
 
     def needs_registration(self) -> bool:
         """
@@ -48,6 +51,13 @@ class AuthenticationService:
 
         credentials = UserCredentials(username, _hash_password(password))
         self._user_repository.add_user(credentials)
+
+        self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
+        self._island_event_queue.publish(IslandEventTopic.RESET_AGENT_CONFIGURATION)
+        self._island_event_queue.publish(
+            topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET
+        )
+
         self._reset_repository_encryptor(username, password)
 
     def authenticate(self, username: str, password: str):

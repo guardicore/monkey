@@ -43,7 +43,9 @@ def test_needs_registration__true(tmp_path, mock_repository_encryptor):
     has_registered_users = False
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     assert a_s.needs_registration()
 
@@ -52,7 +54,9 @@ def test_needs_registration__false(tmp_path, mock_repository_encryptor):
     has_registered_users = True
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     assert not a_s.needs_registration()
 
@@ -62,7 +66,9 @@ def test_needs_registration__false(tmp_path, mock_repository_encryptor):
 def test_register_new_user__fails(tmp_path, mock_repository_encryptor, error):
     mock_user_datastore = MockUserDatastore(lambda: True, MagicMock(side_effect=error), None)
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     with pytest.raises(error):
         a_s.register_new_user(USERNAME, PASSWORD)
@@ -74,7 +80,9 @@ def test_register_new_user__fails(tmp_path, mock_repository_encryptor, error):
 def test_register_new_user__empty_password_fails(tmp_path, mock_repository_encryptor):
     mock_user_datastore = MockUserDatastore(lambda: False, None, None)
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     with pytest.raises(InvalidRegistrationCredentialsError):
         a_s.register_new_user(USERNAME, "")
@@ -88,7 +96,9 @@ def test_register_new_user(tmp_path, mock_repository_encryptor):
     mock_add_user = MagicMock()
     mock_user_datastore = MockUserDatastore(lambda: False, mock_add_user, None)
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     a_s.register_new_user(USERNAME, PASSWORD)
 
@@ -108,7 +118,9 @@ def test_authenticate__success(tmp_path, mock_repository_encryptor):
         lambda _: UserCredentials(USERNAME, PASSWORD_HASH),
     )
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     # If authentication fails, this function will raise an exception and the test will fail.
     a_s.authenticate(USERNAME, PASSWORD)
@@ -128,7 +140,9 @@ def test_authenticate__failed_wrong_credentials(
         lambda _: UserCredentials(USERNAME, PASSWORD_HASH),
     )
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     with pytest.raises(IncorrectCredentialsError):
         a_s.authenticate(username, password)
@@ -141,7 +155,9 @@ def test_authenticate__failed_no_registered_user(tmp_path, mock_repository_encry
         lambda: True, None, MagicMock(side_effect=UnknownUserError)
     )
 
-    a_s = AuthenticationService(tmp_path, mock_user_datastore, mock_repository_encryptor)
+    a_s = AuthenticationService(
+        tmp_path, mock_user_datastore, mock_repository_encryptor, MagicMock()
+    )
 
     with pytest.raises(IncorrectCredentialsError):
         a_s.authenticate(USERNAME, PASSWORD)
