@@ -225,14 +225,17 @@ def test_report_generation(monkeypatch, agent_event_repository):
     monkeypatch.setattr(ReportService, "get_issues", lambda: [])
     monkeypatch.setattr(ReportService, "get_cross_segment_issues", lambda: [])
 
+    ReportService.update_report()
     actual_report = ReportService.get_report()
     agent_event_repository.save_event(EVENT_6)
 
+    ReportService.update_report()
     generated_report = ReportService.get_report()
     assert actual_report != generated_report
     assert actual_report["meta_info"]["latest_event_timestamp"] == EVENT_1.timestamp
     assert generated_report["meta_info"]["latest_event_timestamp"] == EVENT_6.timestamp
 
+    ReportService.update_report()
     cached_report = ReportService.get_report()
     assert generated_report == cached_report
     assert cached_report["meta_info"]["latest_event_timestamp"] == EVENT_6.timestamp
@@ -242,4 +245,4 @@ def test_report_generation__no_agent_repository():
     ReportService._agent_repository = None
 
     with pytest.raises(RuntimeError):
-        ReportService.get_report()
+        ReportService.update_report()
