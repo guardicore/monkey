@@ -52,7 +52,7 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
         'format': 'ip-range'
       },
       'default': [],
-      'description': 'Test for network segmentation by providing a list of network segments that should NOT be accessible to each other.\n\n ' +
+      'description': 'Test for network segmentation by providing a list of network segments that should not be accessible to each other.\n\n ' +
         'For example, if you configured the following three segments: ' +
         '"10.0.0.0/24", "11.0.0.2/32" and "12.2.3.0/24",' +
         'a Monkey running on 10.0.0.5 will try to access machines in ' +
@@ -64,7 +64,9 @@ const SCAN_TARGET_CONFIGURATION_SCHEMA = {
         '\tDefine a segment using a network range: ' +
         '"192.168.0.5-192.168.0.20"\n' +
         '\tDefine a segment using an subnet IP mask: "192.168.0.5/24"\n' +
-        '\tDefine a single-host segment: "printer.example"'
+        '\tDefine a single-host segment: "printer.example"\n\n' +
+        ' \u26A0 ' +
+        'Note that the networks configured in this section will be scanned using ping sweep.'
     }
   }
 }

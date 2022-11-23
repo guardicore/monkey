@@ -19,7 +19,7 @@ You can use the Infection Monkey's cross-segment traffic feature to verify that 
 
 - **Propagation -> Network analysis -> Network segmentation testing** This configuration setting allows you to define
  subnets that should be segregated from each other. If any of the provided networks can reach each other, you'll see it
- in the security report.
+ in the security report. The networks configured in this section will be scanned using `ping`.
 - **(Optional) Propagation -> Network analysis -> Network** You can disable **Scan Agent's networks** and leave all other options at the default setting if you only want to test for network segmentation without any lateral movement.
 
 ## Suggested run mode
