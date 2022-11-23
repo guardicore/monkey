@@ -5,7 +5,7 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.credentials import Credentials
-from common.types import AgentID, SocketAddress
+from common.types import AgentID, PluginType, SocketAddress
 
 
 class IIslandAPIClient(ABC):
@@ -52,7 +52,6 @@ class IIslandAPIClient(ABC):
         Get an agent binary for the given OS from the island
 
         :param operating_system: The OS on which the agent binary will run
-        :return: The agent binary file
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client
@@ -61,6 +60,7 @@ class IIslandAPIClient(ABC):
         :raises IslandAPITimeoutError: If a timeout occurs while attempting to connect to the island
         :raises IslandAPIError: If an unexpected error occurs while attempting to retrieve the
                                 agent binary
+        :return: The agent binary file
         """
 
     @abstractmethod
@@ -127,4 +127,18 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
         :return: The relevant agent's signals
+        """
+
+    @abstractmethod
+    def get_agent_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
+        """
+        Gets plugin from the Island based on plugin type and name
+
+        :param plugin_type: Type of plugin to be fetched
+        :param plugin_name: Name of plugin to be fetched
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: Binary of the plugin
         """
