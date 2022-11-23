@@ -545,7 +545,7 @@ class ReportService:
         return bool(cls._agent_repository.get_agents())
 
     @classmethod
-    def get_report(cls):
+    def update_report(cls):
         if cls._agent_repository is None:
             raise RuntimeError("Agent repository does not exists")
 
@@ -553,4 +553,6 @@ class ReportService:
             if cls.report_is_outdated():
                 cls._report = cls.generate_report()
 
+    @classmethod
+    def get_report(cls):
         return cls._report
