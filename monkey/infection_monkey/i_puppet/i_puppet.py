@@ -5,10 +5,8 @@ from dataclasses import dataclass
 from typing import Dict, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
-from common.types import PingScanData
+from common.types import PingScanData, PluginType
 from infection_monkey.model import VictimHost
-
-from . import PluginType
 
 
 class UnknownPluginError(Exception):

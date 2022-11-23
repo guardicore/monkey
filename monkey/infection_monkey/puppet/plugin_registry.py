@@ -1,7 +1,8 @@
 import logging
 from typing import Any
 
-from infection_monkey.i_puppet import PluginType, UnknownPluginError
+from common.types import PluginType
+from infection_monkey.i_puppet import UnknownPluginError
 
 logger = logging.getLogger()
 

@@ -27,7 +27,7 @@ from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
-from common.types import SocketAddress
+from common.types import PluginType, SocketAddress
 from common.utils.argparse_types import positive_int
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -48,7 +48,7 @@ from infection_monkey.exploit.smbexec import SMBExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
-from infection_monkey.i_puppet import IPuppet, PluginType
+from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel

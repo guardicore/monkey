@@ -92,3 +92,10 @@ class SocketAddress(InfectionMonkeyBaseModel):
 
     def __str__(self):
         return f"{self.ip}:{self.port}"
+
+
+class PluginType(Enum):
+    CREDENTIAL_COLLECTOR = "CredentialCollector"
+    EXPLOITER = "Exploiter"
+    FINGERPRINTER = "Fingerprinter"
+    PAYLOAD = "Payload"
