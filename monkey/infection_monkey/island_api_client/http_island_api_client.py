@@ -3,7 +3,7 @@ import json
 import logging
 from enum import Enum, auto
 from pprint import pformat
-from typing import Callable, Dict, List, Sequence
+from typing import Callable, List, Sequence
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -68,7 +68,7 @@ def convert_json_error_to_island_api_error(fn):
     return wrapper
 
 
-class RequestType(Enum):
+class RequestMethod(Enum):
     GET = auto()
     POST = auto()
     PUT = auto()
@@ -88,12 +88,19 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         self._session = requests.Session()
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
+        self._add_request_functions()
 
-        self.supported_requests: Dict[RequestType, Callable[..., requests.Response]] = {
-            RequestType.GET: self._session.get,
-            RequestType.POST: self._session.post,
-            RequestType.PUT: self._session.put,
-        }
+    def _add_request_functions(self):
+        for request_method in RequestMethod:
+            request_method_name = str.lower(request_method.name)
+
+            def __get_request_sending_function(method: RequestMethod) -> Callable:
+                def inner(*args, **kwargs):
+                    return self._send_request(method, *args, **kwargs)
+
+                return inner
+
+            setattr(self, f"_{request_method_name}", __get_request_sending_function(request_method))
 
     @handle_island_errors
     def connect(
@@ -110,7 +117,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     def _send_request(
         self,
-        request_type: RequestType,
+        request_type: RequestMethod,
         endpoint: str,
         timeout=MEDIUM_REQUEST_TIMEOUT,
         data=None,
@@ -120,7 +127,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         url = f"{self._api_url}/{endpoint}"
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
 
-        method = self.supported_requests[request_type]
+        method = getattr(self._session, str.lower(request_type.name))
         response = method(url, *args, timeout=timeout, verify=False, json=data, **kwargs)
         response.raise_for_status()
 
@@ -128,28 +135,29 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_island_errors
     def send_log(self, agent_id: AgentID, log_contents: str):
-        self._send_request(
-            RequestType.PUT, f"agent-logs/{agent_id}", MEDIUM_REQUEST_TIMEOUT, log_contents
+        self._put(  # type: ignore [attr-defined]
+            f"agent-logs/{agent_id}",
+            MEDIUM_REQUEST_TIMEOUT,
+            log_contents,
         )
 
     @handle_island_errors
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
-        response = self._send_request(
-            RequestType.GET, f"agent-binaries/{os_name}", MEDIUM_REQUEST_TIMEOUT
+        response = self._get(  # type: ignore [attr-defined]
+            f"agent-binaries/{os_name}", MEDIUM_REQUEST_TIMEOUT
         )
         return response.content
 
     @handle_island_errors
     def send_events(self, events: Sequence[AbstractAgentEvent]):
-        self._send_request(
-            RequestType.POST, "agent-events", MEDIUM_REQUEST_TIMEOUT, self._serialize_events(events)
+        self._post(  # type: ignore [attr-defined]
+            "agent-events", MEDIUM_REQUEST_TIMEOUT, self._serialize_events(events)
         )
 
     @handle_island_errors
     def register_agent(self, agent_registration_data: AgentRegistrationData):
-        self._send_request(
-            RequestType.POST,
+        self._post(  # type: ignore [attr-defined]
             "agents",
             SHORT_REQUEST_TIMEOUT,
             agent_registration_data.dict(simplify=True),
@@ -158,7 +166,9 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     @convert_json_error_to_island_api_error
     def get_config(self) -> AgentConfiguration:
-        response = self._send_request(RequestType.GET, "agent-configuration", SHORT_REQUEST_TIMEOUT)
+        response = self._get(  # type: ignore [attr-defined]
+            "agent-configuration", SHORT_REQUEST_TIMEOUT
+        )
 
         config_dict = response.json()
         logger.debug(f"Received configuration:\n{pformat(config_dict)}")
@@ -168,8 +178,8 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     @convert_json_error_to_island_api_error
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        response = self._send_request(
-            RequestType.GET, "propagation-credentials", SHORT_REQUEST_TIMEOUT
+        response = self._get(  # type: ignore [attr-defined]
+            "propagation-credentials", SHORT_REQUEST_TIMEOUT
         )
 
         return [Credentials(**credentials) for credentials in response.json()]
@@ -189,15 +199,15 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     @handle_island_errors
     @convert_json_error_to_island_api_error
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
-        response = self._send_request(
-            RequestType.GET, f"agent-signals/{agent_id}", SHORT_REQUEST_TIMEOUT
+        response = self._get(  # type: ignore [attr-defined]
+            f"agent-signals/{agent_id}", SHORT_REQUEST_TIMEOUT
         )
 
         return AgentSignals(**response.json())
 
     @handle_island_errors
     def get_agent_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
-        response = self._get(
+        response = self._get(  # type: ignore [attr-defined]
             f"/api/agent-plugins/{plugin_type.value}/{plugin_name}", MEDIUM_REQUEST_TIMEOUT
         )
 
