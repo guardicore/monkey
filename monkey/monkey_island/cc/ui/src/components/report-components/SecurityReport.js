@@ -240,8 +240,8 @@ class ReportPageComponent extends AuthComponent {
             :
             <p className='alert alert-info'>
               <FontAwesomeIcon icon={faExclamationTriangle} style={{ 'marginRight': '5px' }} />
-              To improve the monkey's detection rates, try adding users and passwords and enable the "Local
-              network scan" config value under <b>Basic - Network</b>.
+              To improve Infection Monkey's detection rates, try adding credentials under <b>Propagation - Credentials
+              </b> and updating network settings under <b>Propagation - Network analysis</b>.
             </p>
         }
         <p>
