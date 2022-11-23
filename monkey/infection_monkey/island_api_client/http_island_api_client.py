@@ -181,7 +181,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return AgentSignals(**response.json())
 
     @handle_island_errors
-    def get_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
+    def get_agent_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
         response = self._get(
             f"/api/agent-plugins/{plugin_type.value}/{plugin_name}", MEDIUM_REQUEST_TIMEOUT
         )
