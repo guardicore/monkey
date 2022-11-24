@@ -24,21 +24,21 @@ export function getAllTunnels(agents, machines) {
           'hostname': getMachineHostname(agentMachine)
         };
 
-        let agentTunnelMachineInfo = {
+        let tunnelMachineInfo = {
           'id': -1,
           'ip': agent.cc_server.ip,
           'hostname': agent.cc_server.ip
         };
 
-        let agentTunnelMachine = getMachineByIP(agent.cc_server.ip, machines)
-        if (agentTunnelMachine !== null) {
-          agentTunnelMachineInfo.id = agentTunnelMachine.id;
-          agentTunnelMachineInfo.hostname = getMachineHostname(agentTunnelMachine);
+        let tunnelMachine = getMachineByIP(agent.cc_server.ip, machines)
+        if (tunnelMachine !== null) {
+          tunnelMachineInfo.id = tunnelMachine.id;
+          tunnelMachineInfo.hostname = getMachineHostname(tunnelMachine);
         }
 
         tunnels.push({
           'agent_machine': agentMachineInfo,
-          'agent_tunnel': agentTunnelMachineInfo
+          'tunnel_machine': tunnelMachineInfo
         });
       }
     }
@@ -88,13 +88,13 @@ function getTunnelIssuesByMachine(machineId, allTunnels) {
   let tunnelIssues = [];
 
   for (let tunnel of allTunnels) {
-    if (tunnel.agent_machine.id === machineId || tunnel.agent_tunnel.id === machineId) {
+    if (tunnel.agent_machine.id === machineId || tunnel.tunnel_machine.id === machineId) {
       let agentMachineNameComponent = machineNameComponent(tunnel.agent_machine);
-      let agentTunnelNameComponent = machineNameComponent(tunnel.agent_tunnel);
+      let tunnelMachineNameComponent = machineNameComponent(tunnel.tunnel_machine);
 
       tunnelIssues.push(
-        <li key={tunnel.agent_machine+tunnel.agent_tunnel}>
-          from {agentMachineNameComponent} to {agentTunnelNameComponent}
+        <li key={tunnel.agent_machine+tunnel.tunnel_machine}>
+          from {agentMachineNameComponent} to {tunnelMachineNameComponent}
         </li>
       );
     }
