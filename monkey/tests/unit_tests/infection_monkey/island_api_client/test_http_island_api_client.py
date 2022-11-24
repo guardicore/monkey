@@ -22,7 +22,7 @@ from infection_monkey.island_api_client import (
     IslandAPIRequestFailedError,
     IslandAPITimeoutError,
 )
-from infection_monkey.island_api_client.http_requests_facade import RETRIES
+from infection_monkey.island_api_client.http_client import RETRIES
 
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
 WINDOWS = "windows"

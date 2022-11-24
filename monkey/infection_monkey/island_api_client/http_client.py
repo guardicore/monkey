@@ -29,7 +29,7 @@ class RequestMethod(Enum):
     PUT = auto()
 
 
-class HTTPRequestsFacade:
+class HTTPClient:
     def __init__(self, api_url: str, retries=RETRIES):
         self._session = requests.Session()
         retry_config = Retry(retries)
