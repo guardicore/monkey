@@ -3,7 +3,7 @@ from tests.monkey_island import InMemoryAgentConfigurationRepository
 
 from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.island_event_handlers import reset_agent_configuration
-from monkey_island.cc.repository import IAgentConfigurationRepository
+from monkey_island.cc.repositories import IAgentConfigurationRepository
 
 
 @pytest.fixture

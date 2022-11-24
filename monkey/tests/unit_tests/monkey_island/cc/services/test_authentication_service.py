@@ -10,7 +10,7 @@ from common.utils.exceptions import (
 )
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, UserCredentials
-from monkey_island.cc.repository import IUserRepository
+from monkey_island.cc.repositories import IUserRepository
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services import AuthenticationService
 

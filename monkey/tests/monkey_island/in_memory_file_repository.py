@@ -3,7 +3,7 @@ import re
 from typing import BinaryIO, Dict
 
 from common.utils.code_utils import del_key
-from monkey_island.cc.repository import IFileRepository, UnknownRecordError
+from monkey_island.cc.repositories import IFileRepository, UnknownRecordError
 
 
 class InMemoryFileRepository(IFileRepository):

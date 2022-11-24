@@ -1,6 +1,6 @@
 from typing import BinaryIO
 
-from monkey_island.cc.repository import RetrievalError
+from monkey_island.cc.repositories import RetrievalError
 
 from . import MockFileRepository
 

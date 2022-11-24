@@ -6,25 +6,25 @@ import mongomock
 import pytest
 from pydantic import Field
 from pymongo import MongoClient
-from tests.unit_tests.monkey_island.cc.repository.mongo import get_all_collections_in_mongo
+from tests.unit_tests.monkey_island.cc.repositories.mongo import get_all_collections_in_mongo
 
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     PydanticAgentEventSerializer,
 )
 from common.agent_events import AbstractAgentEvent
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IAgentEventRepository,
     MongoAgentEventRepository,
     RemovalError,
     RetrievalError,
     StorageError,
 )
-from monkey_island.cc.repository.agent_event_encryption import (
+from monkey_island.cc.repositories.agent_event_encryption import (
     ENCRYPTED_PREFIX,
     SERIALIZED_EVENT_FIELDS,
 )
-from monkey_island.cc.repository.consts import MONGO_OBJECT_ID_KEY
+from monkey_island.cc.repositories.consts import MONGO_OBJECT_ID_KEY
 
 
 class FakeAgentEvent(AbstractAgentEvent):

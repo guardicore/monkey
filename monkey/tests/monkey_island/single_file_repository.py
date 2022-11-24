@@ -2,8 +2,8 @@ import io
 import re
 from typing import BinaryIO
 
-from monkey_island.cc import repository
-from monkey_island.cc.repository import IFileRepository
+from monkey_island.cc import repositories
+from monkey_island.cc.repositories import IFileRepository
 
 
 class SingleFileRepository(IFileRepository):
@@ -17,7 +17,7 @@ class SingleFileRepository(IFileRepository):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         if self._file is None:
-            raise repository.FileNotFoundError()
+            raise repositories.FileNotFoundError()
         return self._file
 
     def delete_file(self, unsafe_file_name: str):

@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from monkey_island.cc.repository import IAgentEventRepository, IMachineRepository
+from monkey_island.cc.repositories import IAgentEventRepository, IMachineRepository
 from monkey_island.cc.services.ransomware import ransomware_report
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.report import ReportService

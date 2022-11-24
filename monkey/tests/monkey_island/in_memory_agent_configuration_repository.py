@@ -1,5 +1,5 @@
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION
-from monkey_island.cc.repository import IAgentConfigurationRepository
+from monkey_island.cc.repositories import IAgentConfigurationRepository
 
 
 class InMemoryAgentConfigurationRepository(IAgentConfigurationRepository):

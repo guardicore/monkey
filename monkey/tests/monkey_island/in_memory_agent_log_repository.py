@@ -1,5 +1,5 @@
 from common.types import AgentID
-from monkey_island.cc.repository import IAgentLogRepository, UnknownRecordError
+from monkey_island.cc.repositories import IAgentLogRepository, UnknownRecordError
 
 
 class InMemoryAgentLogRepository(IAgentLogRepository):

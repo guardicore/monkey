@@ -9,7 +9,7 @@ from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 from common.types import SocketAddress
 from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.models import Agent
-from monkey_island.cc.repository import IAgentRepository
+from monkey_island.cc.repositories import IAgentRepository
 from monkey_island.cc.resources import Agents
 
 AGENT_REGISTRATION_DICT = {

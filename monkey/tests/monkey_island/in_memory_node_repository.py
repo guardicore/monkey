@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from monkey_island.cc.models import CommunicationType, MachineID, Node, TCPConnections
-from monkey_island.cc.repository import INodeRepository
+from monkey_island.cc.repositories import INodeRepository
 
 
 class InMemoryNodeRepository(INodeRepository):

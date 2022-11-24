@@ -5,7 +5,7 @@ import pytest
 
 from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     INodeRepository,
     MongoNodeRepository,
     RemovalError,

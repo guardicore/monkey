@@ -7,7 +7,7 @@ from tests.monkey_island import InMemoryAgentConfigurationRepository
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.agent_configuration import AgentConfiguration
-from monkey_island.cc.repository import IAgentConfigurationRepository
+from monkey_island.cc.repositories import IAgentConfigurationRepository
 from monkey_island.cc.resources import AgentConfiguration as AgentConfigurationResource
 
 AGENT_CONFIGURATION_URL = get_url_for_resource(AgentConfigurationResource)

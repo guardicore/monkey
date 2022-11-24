@@ -8,7 +8,7 @@ import pytest
 from common import OperatingSystem
 from common.types import NetworkService, SocketAddress
 from monkey_island.cc.models import Machine
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IMachineRepository,
     MongoMachineRepository,
     RemovalError,
@@ -16,7 +16,7 @@ from monkey_island.cc.repository import (
     StorageError,
     UnknownRecordError,
 )
-from monkey_island.cc.repository.utils import mongo_dot_encoder
+from monkey_island.cc.repositories.utils import mongo_dot_encoder
 
 MACHINES = (
     Machine(
