@@ -1,6 +1,10 @@
+import functools
+import json
 import logging
 from pprint import pformat
 from typing import List, Sequence
+
+import requests
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -10,14 +14,26 @@ from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, PluginType, SocketAddress
 
-from . import AbstractIslandAPIClientFactory, IIslandAPIClient, IslandAPIRequestError
-from .http_requests_facade import (
-    HTTPRequestsFacade,
-    convert_json_error_to_island_api_error,
-    handle_island_errors,
+from . import (
+    AbstractIslandAPIClientFactory,
+    IIslandAPIClient,
+    IslandAPIRequestError,
+    IslandAPIRequestFailedError,
 )
+from .http_requests_facade import HTTPRequestsFacade, handle_island_errors
 
 logger = logging.getLogger(__name__)
+
+
+def convert_json_error_to_island_api_error(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except (requests.JSONDecodeError, json.JSONDecodeError) as err:
+            raise IslandAPIRequestFailedError(err)
+
+    return wrapper
 
 
 class HTTPIslandAPIClient(IIslandAPIClient):

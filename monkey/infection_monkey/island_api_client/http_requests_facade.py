@@ -1,6 +1,5 @@
 # Retries improve reliability and slightly mitigates performance issues
 import functools
-import json
 import logging
 from enum import Enum, auto
 
@@ -86,14 +85,3 @@ def handle_island_errors(fn):
             raise IslandAPIError(err)
 
     return decorated
-
-
-def convert_json_error_to_island_api_error(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        try:
-            return fn(*args, **kwargs)
-        except (requests.JSONDecodeError, json.JSONDecodeError) as err:
-            raise IslandAPIRequestFailedError(err)
-
-    return wrapper
