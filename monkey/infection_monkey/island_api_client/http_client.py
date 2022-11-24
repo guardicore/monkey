@@ -1,6 +1,7 @@
 import functools
 import logging
 from enum import Enum, auto
+from typing import Optional
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -54,11 +55,23 @@ def handle_island_errors(fn):
 
 
 class HTTPClient:
-    def __init__(self, api_url: str, retries=RETRIES):
+    def __init__(self, retries=RETRIES):
         self._session = requests.Session()
         retry_config = Retry(retries)
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
-        self._api_url = api_url
+        self._api_url: Optional[str] = None
+
+    def connect(self, island_server: str):
+        try:
+            self._api_url = f"https://{island_server}/api"
+            self.get(  # noqa: DUO123
+                endpoint="",
+                params={"action": "is-up"},
+            )
+        except Exception as e:
+            logger.debug(f"Connection to {island_server} failed: {e}")
+            self._api_url = None
+            raise e
 
     def get(self, *args, **kwargs) -> requests.Response:
         return self._send_request(RequestMethod.GET, *args, **kwargs)
@@ -79,6 +92,12 @@ class HTTPClient:
         *args,
         **kwargs,
     ) -> requests.Response:
+        if self._api_url is None:
+            raise RuntimeError(
+                "HTTP client is not connected to the Island server,"
+                "establish a connection with 'connect()' before "
+                "attempting to send any requests"
+            )
         url = f"{self._api_url}/{endpoint}".strip("/")
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
 

@@ -46,19 +46,13 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
-        self.http_client = HTTPClient("")
+        self.http_client = HTTPClient()
 
     def connect(
         self,
         island_server: SocketAddress,
     ):
-        api_url = f"https://{island_server}/api"
-        requests_facade = HTTPClient(api_url)
-        requests_facade.get(  # noqa: DUO123 type: ignore [attr-defined]
-            endpoint="",
-            params={"action": "is-up"},
-        )
-        self.http_client = requests_facade
+        self.http_client.connect(island_server)
 
     def send_log(self, agent_id: AgentID, log_contents: str):
         self.http_client.put(
