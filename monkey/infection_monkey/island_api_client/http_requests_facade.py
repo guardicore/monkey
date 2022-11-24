@@ -1,4 +1,3 @@
-# Retries improve reliability and slightly mitigates performance issues
 import functools
 import logging
 from enum import Enum, auto
@@ -8,7 +7,8 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from infection_monkey.island_api_client import (
+
+from .island_api_client_errors import (
     IslandAPIConnectionError,
     IslandAPIError,
     IslandAPIRequestError,
@@ -19,6 +19,7 @@ from infection_monkey.island_api_client import (
 logger = logging.getLogger(__name__)
 
 
+# Retries improve reliability and slightly mitigate performance issues
 RETRIES = 5
 
 
