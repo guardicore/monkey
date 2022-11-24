@@ -8,7 +8,6 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import HTTPIslandAPIClient
-from infection_monkey.island_api_client.http_island_api_client import RequestMethod
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
@@ -41,11 +40,6 @@ NetworkPort.le
 
 FileEncryptedEvent.arbitrary_types_allowed
 FileEncryptedEvent._file_path_to_pure_path
-
-# Used dynamically
-RequestMethod.GET
-RequestMethod.POST
-RequestMethod.PUT
 
 # Unused, but kept for future potential
 DIContainer.release_convention

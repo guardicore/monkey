@@ -22,6 +22,7 @@ from infection_monkey.island_api_client import (
     IslandAPIRequestFailedError,
     IslandAPITimeoutError,
 )
+from infection_monkey.island_api_client.http_requests_facade import RETRIES
 
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
 WINDOWS = "windows"
@@ -47,8 +48,6 @@ ISLAND_GET_CONFIG_URI = f"https://{SERVER}/api/agent-configuration"
 ISLAND_GET_PROPAGATION_CREDENTIALS_URI = f"https://{SERVER}/api/propagation-credentials"
 ISLAND_GET_AGENT_SIGNALS = f"https://{SERVER}/api/agent-signals/{AGENT_ID}"
 
-RETRIES = 3
-
 
 class Event1(AbstractAgentEvent):
     a: int
@@ -73,7 +72,7 @@ def agent_event_serializer_registry():
 
 @pytest.fixture
 def island_api_client(agent_event_serializer_registry):
-    return HTTPIslandAPIClient(agent_event_serializer_registry, retries=RETRIES)
+    return HTTPIslandAPIClient(agent_event_serializer_registry)
 
 
 @pytest.mark.parametrize(
