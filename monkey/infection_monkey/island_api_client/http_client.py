@@ -29,41 +29,6 @@ class RequestMethod(Enum):
     PUT = auto()
 
 
-class HTTPClient:
-    def __init__(self, api_url: str, retries=RETRIES):
-        self._session = requests.Session()
-        retry_config = Retry(retries)
-        self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
-        self._api_url = api_url
-
-    def get(self, *args, **kwargs) -> requests.Response:
-        return self._send_request(RequestMethod.GET, *args, **kwargs)
-
-    def post(self, *args, **kwargs) -> requests.Response:
-        return self._send_request(RequestMethod.POST, *args, **kwargs)
-
-    def put(self, *args, **kwargs) -> requests.Response:
-        return self._send_request(RequestMethod.PUT, *args, **kwargs)
-
-    def _send_request(
-        self,
-        request_type: RequestMethod,
-        endpoint: str,
-        timeout=MEDIUM_REQUEST_TIMEOUT,
-        data=None,
-        *args,
-        **kwargs,
-    ) -> requests.Response:
-        url = f"{self._api_url}/{endpoint}".strip("/")
-        logger.debug(f"{request_type.name} {url}, timeout={timeout}")
-
-        method = getattr(self._session, str.lower(request_type.name))
-        response = method(url, *args, timeout=timeout, verify=False, json=data, **kwargs)
-        response.raise_for_status()
-
-        return response
-
-
 def handle_island_errors(fn):
     @functools.wraps(fn)
     def decorated(*args, **kwargs):
@@ -86,3 +51,39 @@ def handle_island_errors(fn):
             raise IslandAPIError(err)
 
     return decorated
+
+
+class HTTPClient:
+    def __init__(self, api_url: str, retries=RETRIES):
+        self._session = requests.Session()
+        retry_config = Retry(retries)
+        self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
+        self._api_url = api_url
+
+    def get(self, *args, **kwargs) -> requests.Response:
+        return self._send_request(RequestMethod.GET, *args, **kwargs)
+
+    def post(self, *args, **kwargs) -> requests.Response:
+        return self._send_request(RequestMethod.POST, *args, **kwargs)
+
+    def put(self, *args, **kwargs) -> requests.Response:
+        return self._send_request(RequestMethod.PUT, *args, **kwargs)
+
+    @handle_island_errors
+    def _send_request(
+        self,
+        request_type: RequestMethod,
+        endpoint: str,
+        timeout=MEDIUM_REQUEST_TIMEOUT,
+        data=None,
+        *args,
+        **kwargs,
+    ) -> requests.Response:
+        url = f"{self._api_url}/{endpoint}".strip("/")
+        logger.debug(f"{request_type.name} {url}, timeout={timeout}")
+
+        method = getattr(self._session, str.lower(request_type.name))
+        response = method(url, *args, timeout=timeout, verify=False, json=data, **kwargs)
+        response.raise_for_status()
+
+        return response
