@@ -226,7 +226,7 @@ class ReportService:
             if not found_good_ip:
                 issues.append(
                     {
-                        "id": island_machine.id,
+                        "machine_id": island_machine.id,
                         "type": "island_cross_segment",
                         "machine": island_machine.hostname,
                         "networks": [str(subnet) for subnet in island_subnets],
@@ -513,7 +513,7 @@ class ReportService:
         issues_dict = {}
         for issue in issues:
             if issue.get("is_local", True):
-                machine_id = issue.get("id")
+                machine_id = issue.get("machine_id")
                 if machine_id not in issues_dict:
                     issues_dict[machine_id] = []
                 issues_dict[machine_id].append(issue)
