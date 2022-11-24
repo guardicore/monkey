@@ -78,11 +78,10 @@ export function tunnelIssueReportByMachine(machineId, allTunnels) {
   return null;
 }
 
-function tunnelMachineName(tunnelMachineInfo) {
-  if (tunnelMachineInfo.ip === tunnelMachineInfo.hostname) {
-    return tunnelMachineInfo.ip;
-  }
-  return tunnelMachineInfo.hostname + ' (' + tunnelMachineInfo.ip + ')'
+function machineNameComponent(tunnelMachineInfo) {
+  return <>
+      <span className="badge badge-primary">{tunnelMachineInfo.hostname}</span> (
+      <span className="badge badge-info" style={{ margin: '2px' }}>{tunnelMachineInfo.ip}</span>)</>
 }
 
 function getTunnelIssuesByMachine(machineId, allTunnels) {
@@ -90,13 +89,12 @@ function getTunnelIssuesByMachine(machineId, allTunnels) {
 
   for (let tunnel of allTunnels) {
     if (tunnel.agent_machine.id === machineId || tunnel.agent_tunnel.id === machineId) {
-      let agentMachineName = tunnelMachineName(tunnel.agent_machine);
-      let agentTunnelName = tunnelMachineName(tunnel.agent_tunnel);
+      let agentMachineNameComponent = machineNameComponent(tunnel.agent_machine);
+      let agentTunnelNameComponent = machineNameComponent(tunnel.agent_tunnel);
 
       tunnelIssues.push(
-        <li key={agentMachineName+agentTunnelName}>
-          from <span className="badge badge-primary">{agentMachineName}
-          </span> to <span className="badge badge-primary">{agentTunnelName}</span>
+        <li key={tunnel.agent_machine+tunnel.agent_tunnel}>
+          from {agentMachineNameComponent} to {agentTunnelNameComponent}
         </li>
       );
     }
