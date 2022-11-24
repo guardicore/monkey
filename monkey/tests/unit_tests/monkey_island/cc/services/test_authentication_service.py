@@ -35,17 +35,22 @@ class MockUserDatastore(IUserRepository):
         return self._get_user_credentials(username)
 
 
+# Some tests have these fixtures as arguments even though `autouse=True`, because
+# to access the object that a fixture returns, it needs to be specified as an argument.
+# See https://stackoverflow.com/a/37046403.
+
+
 @pytest.fixture
-def mock_repository_encryptor():
+def mock_repository_encryptor(autouse=True):
     return MagicMock(spec=ILockableEncryptor)
 
 
 @pytest.fixture
-def mock_island_event_queue():
+def mock_island_event_queue(autouse=True):
     return MagicMock(spec=IIslandEventQueue)
 
 
-def test_needs_registration__true(tmp_path, mock_repository_encryptor, mock_island_event_queue):
+def test_needs_registration__true(tmp_path):
     has_registered_users = False
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
@@ -56,7 +61,7 @@ def test_needs_registration__true(tmp_path, mock_repository_encryptor, mock_isla
     assert a_s.needs_registration()
 
 
-def test_needs_registration__false(tmp_path, mock_repository_encryptor, mock_island_event_queue):
+def test_needs_registration__false(tmp_path):
     has_registered_users = True
     mock_user_datastore = MockUserDatastore(lambda: has_registered_users, None, None)
 
@@ -69,9 +74,7 @@ def test_needs_registration__false(tmp_path, mock_repository_encryptor, mock_isl
 
 @pytest.mark.slow
 @pytest.mark.parametrize("error", [InvalidRegistrationCredentialsError, AlreadyRegisteredError])
-def test_register_new_user__fails(
-    tmp_path, mock_repository_encryptor, error, mock_island_event_queue
-):
+def test_register_new_user__fails(tmp_path, mock_repository_encryptor, error):
     mock_user_datastore = MockUserDatastore(lambda: True, MagicMock(side_effect=error), None)
 
     a_s = AuthenticationService(
@@ -87,9 +90,7 @@ def test_register_new_user__fails(
 
 @pytest.mark.slow
 @pytest.mark.parametrize("error", [InvalidRegistrationCredentialsError, AlreadyRegisteredError])
-def test_register_new_user_fails__publish_to_event_topic(
-    tmp_path, mock_repository_encryptor, error, mock_island_event_queue
-):
+def test_register_new_user_fails__publish_to_event_topic(tmp_path, error, mock_island_event_queue):
     mock_user_datastore = MockUserDatastore(lambda: True, MagicMock(side_effect=error), None)
 
     a_s = AuthenticationService(
@@ -162,7 +163,7 @@ def test_register_new_user__publish_to_event_topics(
 
 
 @pytest.mark.slow
-def test_authenticate__success(tmp_path, mock_repository_encryptor, mock_island_event_queue):
+def test_authenticate__success(tmp_path, mock_repository_encryptor):
     mock_user_datastore = MockUserDatastore(
         lambda: True,
         None,
@@ -183,7 +184,7 @@ def test_authenticate__success(tmp_path, mock_repository_encryptor, mock_island_
     ("username", "password"), [("wrong_username", PASSWORD), (USERNAME, "wrong_password")]
 )
 def test_authenticate__failed_wrong_credentials(
-    tmp_path, username, password, mock_repository_encryptor, mock_island_event_queue
+    tmp_path, username, password, mock_repository_encryptor
 ):
     mock_user_datastore = MockUserDatastore(
         lambda: True,
@@ -201,9 +202,7 @@ def test_authenticate__failed_wrong_credentials(
     mock_repository_encryptor.unlock.assert_not_called()
 
 
-def test_authenticate__failed_no_registered_user(
-    tmp_path, mock_repository_encryptor, mock_island_event_queue
-):
+def test_authenticate__failed_no_registered_user(tmp_path, mock_repository_encryptor):
     mock_user_datastore = MockUserDatastore(
         lambda: True, None, MagicMock(side_effect=UnknownUserError)
     )
