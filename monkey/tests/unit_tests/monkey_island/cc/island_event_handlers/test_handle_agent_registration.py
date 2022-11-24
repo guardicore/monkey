@@ -10,7 +10,7 @@ from common import AgentRegistrationData
 from common.types import SocketAddress
 from monkey_island.cc.island_event_handlers import handle_agent_registration
 from monkey_island.cc.models import Agent, CommunicationType, Machine
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IAgentRepository,
     IMachineRepository,
     INodeRepository,

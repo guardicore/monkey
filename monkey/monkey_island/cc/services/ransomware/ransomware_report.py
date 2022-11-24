@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from monkey_island.cc.repository import IAgentEventRepository, IMachineRepository
+from monkey_island.cc.repositories import IAgentEventRepository, IMachineRepository
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     MonkeyExploitation,
     get_monkey_exploited,

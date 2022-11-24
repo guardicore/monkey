@@ -17,8 +17,8 @@ from common.agent_events import (
     TCPScanEvent,
 )
 from common.types import AgentID
-from monkey_island.cc.repository import IAgentEventRepository
-from monkey_island.cc.repository.i_agent_event_repository import T
+from monkey_island.cc.repositories import IAgentEventRepository
+from monkey_island.cc.repositories.i_agent_event_repository import T
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 from . import RemovalError, RetrievalError, StorageError

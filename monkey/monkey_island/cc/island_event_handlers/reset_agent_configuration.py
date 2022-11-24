@@ -1,4 +1,4 @@
-from monkey_island.cc.repository import IAgentConfigurationRepository
+from monkey_island.cc.repositories import IAgentConfigurationRepository
 
 
 class reset_agent_configuration:

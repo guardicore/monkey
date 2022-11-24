@@ -6,7 +6,7 @@ import pytest
 from tests.common import StubDIContainer
 
 from common.agent_signals import AgentSignals as Signals
-from monkey_island.cc.repository import RetrievalError, StorageError
+from monkey_island.cc.repositories import RetrievalError, StorageError
 from monkey_island.cc.services import AgentSignalsService
 
 TIMESTAMP_1 = 123456789

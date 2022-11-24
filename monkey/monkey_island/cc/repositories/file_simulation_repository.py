@@ -1,8 +1,8 @@
 import io
 
-from monkey_island.cc import repository
+from monkey_island.cc import repositories
 from monkey_island.cc.models import IslandMode, Simulation
-from monkey_island.cc.repository import IFileRepository, ISimulationRepository, RetrievalError
+from monkey_island.cc.repositories import IFileRepository, ISimulationRepository, RetrievalError
 
 SIMULATION_STATE_FILE_NAME = "simulation_state.json"
 
@@ -17,7 +17,7 @@ class FileSimulationRepository(ISimulationRepository):
                 simulation_json = f.read().decode()
 
             return Simulation.parse_raw(simulation_json)
-        except repository.FileNotFoundError:
+        except repositories.FileNotFoundError:
             return Simulation()
         except Exception as err:
             raise RetrievalError(f"Error retrieving the simulation state: {err}")

@@ -3,7 +3,7 @@ from typing import Dict, Sequence
 
 from common.types import HardwareID
 from monkey_island.cc.models import Machine, MachineID, NetworkServices
-from monkey_island.cc.repository import IMachineRepository, UnknownRecordError
+from monkey_island.cc.repositories import IMachineRepository, UnknownRecordError
 
 
 class InMemoryMachineRepository(IMachineRepository):

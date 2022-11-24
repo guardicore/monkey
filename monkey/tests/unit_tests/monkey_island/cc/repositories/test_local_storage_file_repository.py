@@ -6,8 +6,8 @@ from unittest.mock import Mock, patch
 import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
-from monkey_island.cc import repository
-from monkey_island.cc.repository import LocalStorageFileRepository
+from monkey_island.cc import repositories
+from monkey_island.cc.repositories import LocalStorageFileRepository
 from monkey_island.cc.server_utils.file_utils import is_windows_os
 
 
@@ -134,7 +134,7 @@ def test_remove_nonexistant_file(tmp_path):
 def test_open_nonexistant_file(tmp_path):
     fss = LocalStorageFileRepository(tmp_path)
 
-    with pytest.raises(repository.FileNotFoundError):
+    with pytest.raises(repositories.FileNotFoundError):
         fss.open_file("nonexistant_file.txt")
 
 
@@ -142,7 +142,7 @@ def test_open_locked_file(tmp_path, monkeypatch):
     fss = LocalStorageFileRepository(tmp_path)
 
     with patch("builtins.open", Mock(side_effect=Exception())):
-        with pytest.raises(repository.RetrievalError):
+        with pytest.raises(repositories.RetrievalError):
             fss.open_file("locked_file.txt")
 
 

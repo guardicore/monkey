@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import BinaryIO
 
 from common.utils.file_utils import get_all_regular_files_in_directory
-from monkey_island.cc import repository
-from monkey_island.cc.repository import RemovalError, RetrievalError, StorageError
+from monkey_island.cc import repositories
+from monkey_island.cc.repositories import RemovalError, RetrievalError, StorageError
 from monkey_island.cc.server_utils.file_utils import create_secure_directory
 
 from . import IFileRepository
@@ -48,8 +48,9 @@ class LocalStorageFileRepository(IFileRepository):
             safe_file_path = self._get_safe_file_path(unsafe_file_name)
             return open(safe_file_path, "rb")
         except FileNotFoundError as err:
-            # Wrap Python's FileNotFound error, which is-an OSError, in repository.FileNotFoundError
-            raise repository.FileNotFoundError(
+            # Wrap Python's FileNotFound error, which is-an OSError,
+            # in repositories.FileNotFoundError
+            raise repositories.FileNotFoundError(
                 f'The requested file "{unsafe_file_name}" does not exist: {err}'
             )
         except Exception as err:

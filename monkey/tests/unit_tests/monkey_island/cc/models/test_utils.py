@@ -1,7 +1,11 @@
 import pytest
 
-from monkey_island.cc.repository import StorageError
-from monkey_island.cc.repository.utils import DOT_REPLACEMENT, mongo_dot_decoder, mongo_dot_encoder
+from monkey_island.cc.repositories import StorageError
+from monkey_island.cc.repositories.utils import (
+    DOT_REPLACEMENT,
+    mongo_dot_decoder,
+    mongo_dot_encoder,
+)
 
 DATASET = [
     ({"no:changes;expectes": "Nothing'$ changed"}, {"no:changes;expectes": "Nothing'$ changed"}),

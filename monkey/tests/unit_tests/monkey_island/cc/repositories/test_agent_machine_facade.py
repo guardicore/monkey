@@ -7,7 +7,7 @@ from tests.monkey_island import InMemoryAgentRepository, InMemoryMachineReposito
 
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, Machine
-from monkey_island.cc.repository import AgentMachineFacade, IAgentRepository, IMachineRepository
+from monkey_island.cc.repositories import AgentMachineFacade, IAgentRepository, IMachineRepository
 
 SEED_ID = 99
 SOURCE_IP_ADDRESS = IPv4Address("10.10.10.99")

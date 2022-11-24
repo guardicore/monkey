@@ -2,7 +2,7 @@ import pytest
 from tests.monkey_island import OpenErrorFileRepository, SingleFileRepository
 
 from monkey_island.cc.models import IslandMode, Simulation
-from monkey_island.cc.repository import FileSimulationRepository, RetrievalError
+from monkey_island.cc.repositories import FileSimulationRepository, RetrievalError
 
 
 @pytest.fixture

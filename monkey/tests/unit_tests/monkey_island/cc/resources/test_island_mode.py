@@ -7,7 +7,7 @@ from tests.monkey_island import InMemorySimulationRepository
 
 from monkey_island.cc.event_queue import IIslandEventQueue
 from monkey_island.cc.models import IslandMode
-from monkey_island.cc.repository import ISimulationRepository
+from monkey_island.cc.repositories import ISimulationRepository
 from monkey_island.cc.resources.island_mode import IslandMode as IslandModeResource
 
 

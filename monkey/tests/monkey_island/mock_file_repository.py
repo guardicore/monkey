@@ -2,8 +2,8 @@ import io
 import re
 from typing import BinaryIO
 
-from monkey_island.cc import repository
-from monkey_island.cc.repository import IFileRepository
+from monkey_island.cc import repositories
+from monkey_island.cc.repositories import IFileRepository
 
 FILE_NAME = "test_file"
 FILE_CONTENTS = b"HelloWorld!"
@@ -18,7 +18,7 @@ class MockFileRepository(IFileRepository):
 
     def open_file(self, unsafe_file_name: str) -> BinaryIO:
         if unsafe_file_name != FILE_NAME:
-            raise repository.FileNotFoundError()
+            raise repositories.FileNotFoundError()
 
         return self._file
 

@@ -8,7 +8,7 @@ from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common import OperatingSystem
 from monkey_island.cc.models import Machine
-from monkey_island.cc.repository import IMachineRepository, RetrievalError
+from monkey_island.cc.repositories import IMachineRepository, RetrievalError
 from monkey_island.cc.resources import Machines
 
 MACHINES_URL = get_url_for_resource(Machines)

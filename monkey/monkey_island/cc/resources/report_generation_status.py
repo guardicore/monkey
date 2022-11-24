@@ -1,6 +1,6 @@
 from flask import jsonify
 
-from monkey_island.cc.repository import IAgentRepository
+from monkey_island.cc.repositories import IAgentRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.infection_lifecycle import is_report_done

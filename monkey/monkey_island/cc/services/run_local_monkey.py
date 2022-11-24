@@ -7,7 +7,7 @@ from pathlib import Path
 from shutil import copyfileobj
 from typing import Sequence
 
-from monkey_island.cc.repository import IAgentBinaryRepository, RetrievalError
+from monkey_island.cc.repositories import IAgentBinaryRepository, RetrievalError
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 
 logger = logging.getLogger(__name__)

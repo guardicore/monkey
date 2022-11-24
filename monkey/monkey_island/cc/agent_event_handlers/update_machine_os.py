@@ -1,5 +1,5 @@
 from common.agent_events import OSDiscoveryEvent
-from monkey_island.cc.repository import AgentMachineFacade
+from monkey_island.cc.repositories import AgentMachineFacade
 
 
 class update_machine_os:

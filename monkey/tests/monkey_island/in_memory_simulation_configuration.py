@@ -1,5 +1,5 @@
 from monkey_island.cc.models import IslandMode, Simulation
-from monkey_island.cc.repository import ISimulationRepository
+from monkey_island.cc.repositories import ISimulationRepository
 
 
 class InMemorySimulationRepository(ISimulationRepository):

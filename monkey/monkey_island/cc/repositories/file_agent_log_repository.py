@@ -2,7 +2,7 @@ import io
 import re
 
 from monkey_island.cc.models import AgentID
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IAgentLogRepository,
     IFileRepository,
     RepositoryError,

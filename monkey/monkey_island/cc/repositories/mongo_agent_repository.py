@@ -3,7 +3,7 @@ from typing import Sequence
 from pymongo import MongoClient
 
 from monkey_island.cc.models import Agent, AgentID
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IAgentRepository,
     RemovalError,
     RetrievalError,

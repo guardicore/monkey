@@ -1,7 +1,7 @@
 from typing import Sequence
 
 from common.credentials import Credentials
-from monkey_island.cc.repository import ICredentialsRepository
+from monkey_island.cc.repositories import ICredentialsRepository
 
 
 class InMemoryCredentialsRepository(ICredentialsRepository):

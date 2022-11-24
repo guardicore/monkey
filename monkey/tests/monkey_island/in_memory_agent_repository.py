@@ -2,7 +2,7 @@ from typing import Sequence
 
 from common.types import AgentID
 from monkey_island.cc.models import Agent
-from monkey_island.cc.repository import IAgentRepository, UnknownRecordError
+from monkey_island.cc.repositories import IAgentRepository, UnknownRecordError
 
 
 class InMemoryAgentRepository(IAgentRepository):

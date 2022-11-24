@@ -5,7 +5,7 @@ from typing import Optional
 from common.agent_signals import AgentSignals
 from common.types import AgentID
 from monkey_island.cc.models import Simulation
-from monkey_island.cc.repository import IAgentRepository, ISimulationRepository
+from monkey_island.cc.repositories import IAgentRepository, ISimulationRepository
 
 logger = logging.getLogger(__name__)
 

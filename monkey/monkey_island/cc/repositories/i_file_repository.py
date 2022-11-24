@@ -2,7 +2,7 @@ import abc
 import re
 from typing import BinaryIO
 
-from monkey_island.cc.repository import UnknownRecordError
+from monkey_island.cc.repositories import UnknownRecordError
 
 
 # TODO: Remove this and use UnknownRecordError directly wherever needed.

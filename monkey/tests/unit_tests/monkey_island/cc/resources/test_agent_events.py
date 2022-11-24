@@ -11,7 +11,7 @@ from common.agent_event_serializers import (
 )
 from common.agent_events import AbstractAgentEvent, AgentEventRegistry
 from common.event_queue import IAgentEventQueue
-from monkey_island.cc.repository import IAgentEventRepository
+from monkey_island.cc.repositories import IAgentEventRepository
 from monkey_island.cc.resources import AgentEvents
 
 AGENT_EVENTS_URL = AgentEvents.urls[0]

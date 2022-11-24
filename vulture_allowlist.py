@@ -11,7 +11,7 @@ from infection_monkey.island_api_client import HTTPIslandAPIClient
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
-from monkey_island.cc.repository import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
     ExploiterDescriptorEnum,

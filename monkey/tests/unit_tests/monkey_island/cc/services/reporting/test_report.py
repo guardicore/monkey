@@ -19,7 +19,7 @@ from common.agent_events import (
 )
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
-from monkey_island.cc.repository import IAgentEventRepository, IAgentRepository
+from monkey_island.cc.repositories import IAgentEventRepository, IAgentRepository
 from monkey_island.cc.services.reporting.report import ReportService
 
 EVENT_1 = AgentShutdownEvent(source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"), timestamp=10)

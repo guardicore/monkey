@@ -10,7 +10,7 @@ from common.utils.exceptions import (
     UnknownUserError,
 )
 from monkey_island.cc.models import UserCredentials
-from monkey_island.cc.repository.json_file_user_repository import (
+from monkey_island.cc.repositories.json_file_user_repository import (
     CREDENTIALS_FILE,
     JSONFileUserRepository,
 )

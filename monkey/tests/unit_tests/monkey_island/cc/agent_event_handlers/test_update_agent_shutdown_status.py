@@ -9,7 +9,7 @@ from common.agent_events import AgentShutdownEvent
 from common.types import SocketAddress
 from monkey_island.cc.agent_event_handlers import update_agent_shutdown_status
 from monkey_island.cc.models import Agent
-from monkey_island.cc.repository import IAgentRepository, UnknownRecordError
+from monkey_island.cc.repositories import IAgentRepository, UnknownRecordError
 
 AGENT_ID = UUID("1d8ce743-a0f4-45c5-96af-91106529d3e2")
 MACHINE_ID = 11

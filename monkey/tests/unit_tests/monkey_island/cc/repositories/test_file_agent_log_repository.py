@@ -5,7 +5,7 @@ from uuid import UUID
 import pytest
 from tests.monkey_island import InMemoryFileRepository, OpenErrorFileRepository
 
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     FileAgentLogRepository,
     IAgentLogRepository,
     IFileRepository,

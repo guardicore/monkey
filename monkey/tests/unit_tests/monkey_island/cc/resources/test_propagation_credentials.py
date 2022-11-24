@@ -9,7 +9,7 @@ from tests.data_for_tests.propagation_credentials import LM_HASH, NT_HASH, PASSW
 from tests.monkey_island import InMemoryCredentialsRepository
 
 from common.credentials import Credentials, LMHash, NTHash, Password
-from monkey_island.cc.repository import ICredentialsRepository
+from monkey_island.cc.repositories import ICredentialsRepository
 from monkey_island.cc.resources import PropagationCredentials
 from monkey_island.cc.resources.propagation_credentials import (
     _configured_collection,

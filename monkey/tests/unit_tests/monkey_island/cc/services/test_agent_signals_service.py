@@ -5,7 +5,11 @@ import pytest
 
 from common.types import AgentID
 from monkey_island.cc.models import Agent, IslandMode, Simulation
-from monkey_island.cc.repository import IAgentRepository, ISimulationRepository, UnknownRecordError
+from monkey_island.cc.repositories import (
+    IAgentRepository,
+    ISimulationRepository,
+    UnknownRecordError,
+)
 from monkey_island.cc.services import AgentSignalsService
 
 AGENT_1 = Agent(

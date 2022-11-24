@@ -10,7 +10,7 @@ from common.agent_events import OSDiscoveryEvent
 from common.types import SocketAddress
 from monkey_island.cc.agent_event_handlers import update_machine_os
 from monkey_island.cc.models import Agent, Machine
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     AgentMachineFacade,
     IAgentRepository,
     IMachineRepository,

@@ -6,7 +6,7 @@ from tests.monkey_island import InMemoryNodeRepository
 
 from common.types import SocketAddress
 from monkey_island.cc.models import CommunicationType, Node
-from monkey_island.cc.repository import INodeRepository
+from monkey_island.cc.repositories import INodeRepository
 from monkey_island.cc.resources import Nodes
 
 NODE_CONNECTIONS = {

@@ -8,7 +8,7 @@ from tests.monkey_island import InMemoryAgentRepository, InMemoryMachineReposito
 from common.agent_events import AbstractAgentEvent
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     AgentMachineFacade,
     IAgentRepository,
     IMachineRepository,

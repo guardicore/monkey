@@ -1,7 +1,7 @@
 import logging
 
 from common.agent_events import AbstractAgentEvent
-from monkey_island.cc.repository import IAgentEventRepository
+from monkey_island.cc.repositories import IAgentEventRepository
 
 logger = logging.getLogger(__name__)
 

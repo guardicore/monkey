@@ -3,7 +3,7 @@ from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.monkey_island import OpenErrorFileRepository, SingleFileRepository
 
 from common.agent_configuration import AgentConfiguration
-from monkey_island.cc.repository import FileAgentConfigurationRepository, RetrievalError
+from monkey_island.cc.repositories import FileAgentConfigurationRepository, RetrievalError
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from monkey_island.cc.repository import IMachineRepository
+from monkey_island.cc.repositories import IMachineRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 

@@ -8,7 +8,7 @@ import pytest
 
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IAgentRepository,
     MongoAgentRepository,
     RemovalError,

@@ -1,7 +1,7 @@
 import logging
 
 from common.agent_events import CredentialsStolenEvent
-from monkey_island.cc.repository import ICredentialsRepository
+from monkey_island.cc.repositories import ICredentialsRepository
 
 logger = logging.getLogger(__name__)
 
