@@ -28,7 +28,7 @@ from monkey_island.cc.event_queue import (
     LockingIslandEventQueueDecorator,
     PyPubSubIslandEventQueue,
 )
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     AgentBinaryRepository,
     AgentMachineFacade,
     FileAgentConfigurationRepository,

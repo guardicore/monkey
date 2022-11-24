@@ -22,7 +22,7 @@ from common.network.network_utils import get_my_ip_addresses_legacy, get_network
 from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.models import CommunicationType, Machine
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
     IAgentRepository,

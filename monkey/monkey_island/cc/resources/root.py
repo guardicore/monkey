@@ -3,7 +3,7 @@ from http import HTTPStatus
 
 from flask import request
 
-from monkey_island.cc.repository import IAgentRepository
+from monkey_island.cc.repositories import IAgentRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)

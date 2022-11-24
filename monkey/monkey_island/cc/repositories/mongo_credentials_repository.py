@@ -3,7 +3,7 @@ from typing import Any, Dict, Mapping, Sequence
 from pymongo import MongoClient
 
 from common.credentials import Credentials
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     ICredentialsRepository,
     RemovalError,
     RetrievalError,

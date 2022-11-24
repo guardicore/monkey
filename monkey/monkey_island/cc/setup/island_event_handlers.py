@@ -6,7 +6,7 @@ from monkey_island.cc.island_event_handlers import (
     reset_machine_repository,
     set_agent_configuration_per_island_mode,
 )
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     AgentMachineFacade,
     IAgentEventRepository,
     IAgentLogRepository,

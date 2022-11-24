@@ -1,6 +1,6 @@
 import logging
 
-from monkey_island.cc.repository import IAgentRepository
+from monkey_island.cc.repositories import IAgentRepository
 from monkey_island.cc.services.reporting.report import ReportService
 
 logger = logging.getLogger(__name__)

@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from monkey_island.cc.repository import INodeRepository
+from monkey_island.cc.repositories import INodeRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 

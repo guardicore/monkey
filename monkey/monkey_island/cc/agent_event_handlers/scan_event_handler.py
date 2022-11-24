@@ -4,7 +4,7 @@ from typing import List, Sequence
 from common.agent_events import PingScanEvent, TCPScanEvent
 from common.types import NetworkPort, NetworkService, PortStatus, SocketAddress
 from monkey_island.cc.models import CommunicationType, Machine, NetworkServices
-from monkey_island.cc.repository import (
+from monkey_island.cc.repositories import (
     IMachineRepository,
     INodeRepository,
     NetworkModelUpdateFacade,

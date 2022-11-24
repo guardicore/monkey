@@ -1,4 +1,4 @@
-from monkey_island.cc.repository import IMachineRepository, initialize_machine_repository
+from monkey_island.cc.repositories import IMachineRepository, initialize_machine_repository
 
 
 class reset_machine_repository:

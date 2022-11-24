@@ -1,6 +1,6 @@
 from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.models import IslandMode
-from monkey_island.cc.repository import IAgentConfigurationRepository
+from monkey_island.cc.repositories import IAgentConfigurationRepository
 
 
 class set_agent_configuration_per_island_mode:
