@@ -156,6 +156,36 @@ resource "google_compute_firewall" "powershell-48-allow" {
   target_tags = ["powershell-48"]
 }
 
+
+resource "google_compute_firewall" "powershell-48-allow-egress-45" {
+  name    = "${local.resource_prefix}powershell-48-allow-egress-45"
+  network = google_compute_network.monkeyzoo.name
+
+  allow {
+    protocol = "all"
+  }
+
+  direction = "EGRESS"
+  priority = "5"
+  destination_ranges = ["10.2.3.45/32"]
+  target_tags = ["powershell-48"]
+}
+
+resource "google_compute_firewall" "powershell-48-deny-all-egress" {
+  name    = "${local.resource_prefix}powershell-48-deny-all-egress"
+  network = google_compute_network.monkeyzoo.name
+
+  deny {
+    protocol = "all"
+  }
+
+  direction = "EGRESS"
+  priority = "10"
+  destination_ranges = ["0.0.0.0/0"]
+  target_tags = ["powershell-48"]
+}
+
+
 resource "google_compute_firewall" "powershell-45-deny" {
   name    = "${local.resource_prefix}powershell-45-deny"
   network = google_compute_network.monkeyzoo.name
