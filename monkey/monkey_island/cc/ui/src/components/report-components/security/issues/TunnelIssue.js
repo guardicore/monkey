@@ -1,6 +1,6 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
-import {getMachineByAgent, getMachineFromIP, getMachineHostname, getMachineIPs} from '../../../utils/ServerUtils';
+import {getMachineByAgent, getMachineByIP, getMachineHostname, getMachineIPs} from '../../../utils/ServerUtils';
 
 
 export function getAllTunnels(agents, machines) {
@@ -17,18 +17,24 @@ export function getAllTunnels(agents, machines) {
   for (let agent of agents) {
     if (!islandIPs.includes(agent.cc_server.ip)) {
       let agentMachine = getMachineByAgent(agent, machines);
-      if (agentMachine !== null) {
-        let agentMachineHostname = getMachineHostname(agentMachine)
+      let tunnelMachine = getMachineByIP(agent.cc_server.ip, machines);
 
-        let agentTunnelMachineHostname = agent.cc_server.ip;
-        let agentTunnelMachine = getMachineFromIP(agent.cc_server.ip, machines)
-        if (agentTunnelMachine !== null) {
-          agentTunnelMachineHostname = getMachineHostname(agentTunnelMachine);
-        }
+      if ((agentMachine !== null) && (tunnelMachine !== null)) {
+        let agentMachineInfo = {
+          'id': agentMachine.id,
+          'ip': getMachineIPs(agentMachine)[0],
+          'hostname': getMachineHostname(agentMachine)
+        };
+
+        let tunnelMachineInfo = {
+          'id': tunnelMachine.id,
+          'ip': agent.cc_server.ip,
+          'hostname': getMachineHostname(tunnelMachine)
+        };
 
         tunnels.push({
-          'agent_machine': agentMachineHostname,
-          'agent_tunnel': agentTunnelMachineHostname
+          'agent_machine': agentMachineInfo,
+          'tunnel_machine': tunnelMachineInfo
         });
       }
     }
@@ -45,9 +51,9 @@ export function tunnelIssueOverview(allTunnels) {
   }
 }
 
-export function tunnelIssueReportByMachine(machine, allTunnels) {
+export function tunnelIssueReportByMachine(machineId, allTunnels) {
   if (allTunnels.length > 0) {
-    let tunnelIssuesByMachine = getTunnelIssuesByMachine(machine, allTunnels);
+    let tunnelIssuesByMachine = getTunnelIssuesByMachine(machineId, allTunnels);
 
     if (tunnelIssuesByMachine.length > 0) {
       return (
@@ -68,15 +74,23 @@ export function tunnelIssueReportByMachine(machine, allTunnels) {
   return null;
 }
 
-function getTunnelIssuesByMachine(machine, allTunnels) {
+function machineNameComponent(tunnelMachineInfo) {
+  return <>
+      <span className="badge badge-primary">{tunnelMachineInfo.hostname}</span> (
+      <span className="badge badge-info" style={{ margin: '2px' }}>{tunnelMachineInfo.ip}</span>)</>
+}
+
+function getTunnelIssuesByMachine(machineId, allTunnels) {
   let tunnelIssues = [];
 
   for (let tunnel of allTunnels) {
-    if (Object.values(tunnel).includes(machine)) {
+    if (tunnel.agent_machine.id === machineId || tunnel.tunnel_machine.id === machineId) {
+      let agentMachineNameComponent = machineNameComponent(tunnel.agent_machine);
+      let tunnelMachineNameComponent = machineNameComponent(tunnel.tunnel_machine);
+
       tunnelIssues.push(
-        <li key={tunnel.agent_machine+tunnel.agent_tunnel}>
-          from <span className="badge badge-primary">{tunnel.agent_machine}
-          </span> to <span className="badge badge-primary">{tunnel.agent_tunnel}</span>
+        <li key={tunnel.agent_machine+tunnel.tunnel_machine}>
+          from {agentMachineNameComponent} to {tunnelMachineNameComponent}
         </li>
       );
     }

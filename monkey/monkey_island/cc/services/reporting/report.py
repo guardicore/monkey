@@ -170,6 +170,7 @@ class ReportService:
             else str(target_machine.network_interfaces[0].ip)
         )
         return ExploiterReportInfo(
+            target_machine.id,
             hostname,
             str(exploitation_event.target),
             exploitation_event.exploiter_name,
@@ -224,6 +225,7 @@ class ReportService:
             if not found_good_ip:
                 issues.append(
                     {
+                        "machine_id": island_machine.id,
                         "type": "island_cross_segment",
                         "machine": island_machine.hostname,
                         "networks": [str(subnet) for subnet in island_subnets],
@@ -510,10 +512,10 @@ class ReportService:
         issues_dict = {}
         for issue in issues:
             if issue.get("is_local", True):
-                machine = issue.get("machine")
-                if machine not in issues_dict:
-                    issues_dict[machine] = []
-                issues_dict[machine].append(issue)
+                machine_id = issue.get("machine_id")
+                if machine_id not in issues_dict:
+                    issues_dict[machine_id] = []
+                issues_dict[machine_id].append(issue)
         logger.info("Issues generated for reporting")
         return issues_dict
 
