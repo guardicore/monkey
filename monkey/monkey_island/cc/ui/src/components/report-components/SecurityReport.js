@@ -46,7 +46,7 @@ import {
   getAllAgents,
   getAllMachines,
   getMachineByAgent,
-  getMachineFromID,
+  getMachineByID,
   getMachineHostname,
   getManuallyStartedAgents
 } from '../utils/ServerUtils';
@@ -517,7 +517,7 @@ class ReportPageComponent extends AuthComponent {
   generateIssues = (issues) => {
     let issuesDivArray = [];
     for (let machineId of Object.keys(issues)) {
-      let machine = getMachineFromID(parseInt(machineId), this.state.machines);
+      let machine = getMachineByID(parseInt(machineId), this.state.machines);
       let hostname = getMachineHostname(machine);
       issuesDivArray.push(
         <li key={machineId}>

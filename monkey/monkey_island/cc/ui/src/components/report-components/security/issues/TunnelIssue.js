@@ -1,6 +1,6 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
-import {getMachineByAgent, getMachineFromIP, getMachineHostname, getMachineIPs} from '../../../utils/ServerUtils';
+import {getMachineByAgent, getMachineByIP, getMachineHostname, getMachineIPs} from '../../../utils/ServerUtils';
 
 
 export function getAllTunnels(agents, machines) {
@@ -30,7 +30,7 @@ export function getAllTunnels(agents, machines) {
           'hostname': agent.cc_server.ip
         };
 
-        let agentTunnelMachine = getMachineFromIP(agent.cc_server.ip, machines)
+        let agentTunnelMachine = getMachineByIP(agent.cc_server.ip, machines)
         if (agentTunnelMachine !== null) {
           agentTunnelMachineInfo.id = agentTunnelMachine.id;
           agentTunnelMachineInfo.hostname = getMachineHostname(agentTunnelMachine);
