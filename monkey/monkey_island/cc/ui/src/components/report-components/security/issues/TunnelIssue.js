@@ -17,7 +17,9 @@ export function getAllTunnels(agents, machines) {
   for (let agent of agents) {
     if (!islandIPs.includes(agent.cc_server.ip)) {
       let agentMachine = getMachineByAgent(agent, machines);
-      if (agentMachine !== null) {
+      let tunnelMachine = getMachineByIP(agent.cc_server.ip, machines);
+
+      if ((agentMachine !== null) && (tunnelMachine !== null)) {
         let agentMachineInfo = {
           'id': agentMachine.id,
           'ip': getMachineIPs(agentMachine)[0],
@@ -25,16 +27,10 @@ export function getAllTunnels(agents, machines) {
         };
 
         let tunnelMachineInfo = {
-          'id': -1,
+          'id': tunnelMachine.id,
           'ip': agent.cc_server.ip,
-          'hostname': agent.cc_server.ip
+          'hostname': getMachineHostname(tunnelMachine)
         };
-
-        let tunnelMachine = getMachineByIP(agent.cc_server.ip, machines)
-        if (tunnelMachine !== null) {
-          tunnelMachineInfo.id = tunnelMachine.id;
-          tunnelMachineInfo.hostname = getMachineHostname(tunnelMachine);
-        }
 
         tunnels.push({
           'agent_machine': agentMachineInfo,
