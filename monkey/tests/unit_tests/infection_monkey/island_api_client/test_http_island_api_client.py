@@ -22,6 +22,10 @@ from infection_monkey.island_api_client import (
     IslandAPIRequestFailedError,
     IslandAPITimeoutError,
 )
+from infection_monkey.island_api_client.http_client import RETRIES
+from infection_monkey.island_api_client.island_api_client_errors import (
+    IslandAPIResponseParsingError,
+)
 
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
 WINDOWS = "windows"
@@ -47,8 +51,6 @@ ISLAND_GET_CONFIG_URI = f"https://{SERVER}/api/agent-configuration"
 ISLAND_GET_PROPAGATION_CREDENTIALS_URI = f"https://{SERVER}/api/propagation-credentials"
 ISLAND_GET_AGENT_SIGNALS = f"https://{SERVER}/api/agent-signals/{AGENT_ID}"
 
-RETRIES = 3
-
 
 class Event1(AbstractAgentEvent):
     a: int
@@ -73,7 +75,7 @@ def agent_event_serializer_registry():
 
 @pytest.fixture
 def island_api_client(agent_event_serializer_registry):
-    return HTTPIslandAPIClient(agent_event_serializer_registry, retries=RETRIES)
+    return HTTPIslandAPIClient(agent_event_serializer_registry)
 
 
 @pytest.mark.parametrize(
@@ -333,7 +335,7 @@ def test_island_api_client_get_config__bad_json(island_api_client):
         m.get(ISLAND_URI)
         island_api_client.connect(SERVER)
 
-        with pytest.raises(IslandAPIRequestFailedError):
+        with pytest.raises(IslandAPIResponseParsingError):
             m.get(ISLAND_GET_CONFIG_URI, content=b"bad")
             island_api_client.get_config()
 
@@ -381,7 +383,7 @@ def test_island_api_client_get_credentials_for_propagation__bad_json(island_api_
         m.get(ISLAND_URI)
         island_api_client.connect(SERVER)
 
-        with pytest.raises(IslandAPIRequestFailedError):
+        with pytest.raises(IslandAPIResponseParsingError):
             m.get(ISLAND_GET_PROPAGATION_CREDENTIALS_URI, content=b"bad")
             island_api_client.get_credentials_for_propagation()
 
@@ -443,6 +445,17 @@ def test_island_api_client_get_agent_signals__bad_json(island_api_client):
         with pytest.raises(IslandAPIError):
             m.get(ISLAND_GET_AGENT_SIGNALS, json={"bogus": "vogus"})
             island_api_client.get_agent_signals(agent_id=AGENT_ID)
+
+
+def test_island_api_client__unhandled_exceptions(island_api_client, monkeypatch):
+    # Make sure errors not related to response parsing are not handled
+    get_signals_stub = MagicMock(side_effect=OSError)
+    monkeypatch.setattr(
+        "infection_monkey.island_api_client.HTTPIslandAPIClient.get_agent_signals", get_signals_stub
+    )
+
+    with pytest.raises(OSError):
+        island_api_client.get_agent_signals(agent_id=AGENT_ID)
 
 
 def test_request_retries(monkeypatch, island_api_client):
