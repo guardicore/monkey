@@ -1,7 +1,10 @@
 import functools
+import json
 import logging
 from pprint import pformat
 from typing import List, Sequence
+
+import requests
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -11,12 +14,7 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, PluginType, SocketAddress
 
-from . import (
-    AbstractIslandAPIClientFactory,
-    IIslandAPIClient,
-    IslandAPIError,
-    IslandAPIRequestError,
-)
+from . import AbstractIslandAPIClientFactory, IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
 from .island_api_client_errors import IslandAPIResponseParsingError
 
@@ -28,9 +26,12 @@ def handle_response_parsing_errors(fn):
     def wrapper(*args, **kwargs):
         try:
             return fn(*args, **kwargs)
-        except IslandAPIError:
-            raise
-        except Exception as err:
+        except (
+            requests.exceptions.JSONDecodeError,
+            json.JSONDecodeError,
+            ValueError,
+            TypeError,
+        ) as err:
             raise IslandAPIResponseParsingError(err)
 
     return wrapper

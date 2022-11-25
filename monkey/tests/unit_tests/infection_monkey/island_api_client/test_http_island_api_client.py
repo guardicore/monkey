@@ -447,6 +447,17 @@ def test_island_api_client_get_agent_signals__bad_json(island_api_client):
             island_api_client.get_agent_signals(agent_id=AGENT_ID)
 
 
+def test_island_api_client__unhandled_exceptions(island_api_client, monkeypatch):
+    # Make sure errors not related to response parsing are not handled
+    get_signals_stub = MagicMock(side_effect=OSError)
+    monkeypatch.setattr(
+        "infection_monkey.island_api_client.HTTPIslandAPIClient.get_agent_signals", get_signals_stub
+    )
+
+    with pytest.raises(OSError):
+        island_api_client.get_agent_signals(agent_id=AGENT_ID)
+
+
 def test_request_retries(monkeypatch, island_api_client):
     # requests_mock can't be used for this, because it mocks higher level than we are testing
     with pytest.raises(IslandAPIConnectionError):
