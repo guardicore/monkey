@@ -8,7 +8,7 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
-from common.types import JSONSerializable
+from common.types import JSONSerializable, SocketAddress
 
 from .island_api_client_errors import (
     IslandAPIConnectionError,
@@ -61,17 +61,17 @@ class HTTPClient:
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._api_url: Optional[str] = None
 
-    def connect(self, island_server: str):
+    def connect(self, island_server: SocketAddress):
         try:
             self._api_url = f"https://{island_server}/api"
             self.get(  # noqa: DUO123
                 endpoint="",
                 params={"action": "is-up"},
             )
-        except Exception as e:
-            logger.debug(f"Connection to {island_server} failed: {e}")
+        except Exception as err:
+            logger.debug(f"Connection to {island_server} failed: {err}")
             self._api_url = None
-            raise e
+            raise err
 
     def get(
         self,
