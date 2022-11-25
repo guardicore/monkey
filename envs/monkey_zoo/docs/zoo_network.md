@@ -767,7 +767,9 @@ Accessiable through the Island using NTLM hash</td>
 <tr class="even">
 <td>Notes:</td>
 <td>User: m0nk3y, Password: Passw0rd!<br>
-Accessiable only through <strong>3-45 Powershell</strong> using credentials reuse</td>
+This machine can only communicate with <strong>3-45 Powershell</strong>.<br>
+Enforced by <strong>powershell-48-deny-all-egress</strong> and <strong>powershell-48-allow-egress-45</strong><br>
+to speed up Depth3 test.</td>
 </tr>
 </tbody>
 </table>
