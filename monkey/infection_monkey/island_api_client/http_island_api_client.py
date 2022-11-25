@@ -1,10 +1,7 @@
 import functools
-import json
 import logging
 from pprint import pformat
 from typing import List, Sequence
-
-import requests
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -17,21 +14,24 @@ from common.types import AgentID, JSONSerializable, PluginType, SocketAddress
 from . import (
     AbstractIslandAPIClientFactory,
     IIslandAPIClient,
+    IslandAPIError,
     IslandAPIRequestError,
-    IslandAPIRequestFailedError,
 )
 from .http_client import HTTPClient
+from .island_api_client_errors import IslandAPIResponseParsingError
 
 logger = logging.getLogger(__name__)
 
 
-def convert_json_error_to_island_api_error(fn):
+def handle_response_parsing_errors(fn):
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         try:
             return fn(*args, **kwargs)
-        except (requests.JSONDecodeError, json.JSONDecodeError) as err:
-            raise IslandAPIRequestFailedError(err)
+        except IslandAPIError:
+            raise
+        except Exception as err:
+            raise IslandAPIResponseParsingError(err)
 
     return wrapper
 
@@ -78,7 +78,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             agent_registration_data.dict(simplify=True),
         )
 
-    @convert_json_error_to_island_api_error
+    @handle_response_parsing_errors
     def get_config(self) -> AgentConfiguration:
         response = self.http_client.get("agent-configuration", SHORT_REQUEST_TIMEOUT)
 
@@ -87,7 +87,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return AgentConfiguration(**config_dict)
 
-    @convert_json_error_to_island_api_error
+    @handle_response_parsing_errors
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
         response = self.http_client.get("propagation-credentials", SHORT_REQUEST_TIMEOUT)
 
@@ -105,7 +105,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return serialized_events
 
-    @convert_json_error_to_island_api_error
+    @handle_response_parsing_errors
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
         response = self.http_client.get(f"agent-signals/{agent_id}", SHORT_REQUEST_TIMEOUT)
 

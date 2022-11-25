@@ -23,6 +23,9 @@ from infection_monkey.island_api_client import (
     IslandAPITimeoutError,
 )
 from infection_monkey.island_api_client.http_client import RETRIES
+from infection_monkey.island_api_client.island_api_client_errors import (
+    IslandAPIResponseParsingError,
+)
 
 SERVER = SocketAddress(ip="1.1.1.1", port=9999)
 WINDOWS = "windows"
@@ -332,7 +335,7 @@ def test_island_api_client_get_config__bad_json(island_api_client):
         m.get(ISLAND_URI)
         island_api_client.connect(SERVER)
 
-        with pytest.raises(IslandAPIRequestFailedError):
+        with pytest.raises(IslandAPIResponseParsingError):
             m.get(ISLAND_GET_CONFIG_URI, content=b"bad")
             island_api_client.get_config()
 
@@ -380,7 +383,7 @@ def test_island_api_client_get_credentials_for_propagation__bad_json(island_api_
         m.get(ISLAND_URI)
         island_api_client.connect(SERVER)
 
-        with pytest.raises(IslandAPIRequestFailedError):
+        with pytest.raises(IslandAPIResponseParsingError):
             m.get(ISLAND_GET_PROPAGATION_CREDENTIALS_URI, content=b"bad")
             island_api_client.get_credentials_for_propagation()
 

@@ -36,3 +36,9 @@ class IslandAPIRequestFailedError(IslandAPIError):
     """
 
     pass
+
+
+class IslandAPIResponseParsingError(IslandAPIError):
+    """
+    Raised when IslandAPIClient fails to parse the resonse
+    """
