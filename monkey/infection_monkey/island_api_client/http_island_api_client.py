@@ -7,7 +7,7 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
-from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT, SHORT_REQUEST_TIMEOUT
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, PluginType, SocketAddress
 
@@ -57,30 +57,27 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def send_log(self, agent_id: AgentID, log_contents: str):
         self.http_client.put(
             f"agent-logs/{agent_id}",
-            MEDIUM_REQUEST_TIMEOUT,
             log_contents,
         )
 
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
-        response = self.http_client.get(f"agent-binaries/{os_name}", MEDIUM_REQUEST_TIMEOUT)
+        response = self.http_client.get(f"agent-binaries/{os_name}")
         return response.content
 
     def send_events(self, events: Sequence[AbstractAgentEvent]):
-        self.http_client.post(
-            "agent-events", MEDIUM_REQUEST_TIMEOUT, self._serialize_events(events)
-        )
+        self.http_client.post("agent-events", self._serialize_events(events))
 
     def register_agent(self, agent_registration_data: AgentRegistrationData):
         self.http_client.post(
             "agents",
-            SHORT_REQUEST_TIMEOUT,
             agent_registration_data.dict(simplify=True),
+            SHORT_REQUEST_TIMEOUT,
         )
 
     @handle_response_parsing_errors
     def get_config(self) -> AgentConfiguration:
-        response = self.http_client.get("agent-configuration", SHORT_REQUEST_TIMEOUT)
+        response = self.http_client.get("agent-configuration", timeout=SHORT_REQUEST_TIMEOUT)
 
         config_dict = response.json()
         logger.debug(f"Received configuration:\n{pformat(config_dict)}")
@@ -89,7 +86,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_response_parsing_errors
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        response = self.http_client.get("propagation-credentials", SHORT_REQUEST_TIMEOUT)
+        response = self.http_client.get("propagation-credentials", timeout=SHORT_REQUEST_TIMEOUT)
 
         return [Credentials(**credentials) for credentials in response.json()]
 
@@ -107,14 +104,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
     @handle_response_parsing_errors
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
-        response = self.http_client.get(f"agent-signals/{agent_id}", SHORT_REQUEST_TIMEOUT)
+        response = self.http_client.get(f"agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT)
 
         return AgentSignals(**response.json())
 
     def get_agent_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
-        response = self.http_client.get(
-            f"/api/agent-plugins/{plugin_type.value}/{plugin_name}", MEDIUM_REQUEST_TIMEOUT
-        )
+        response = self.http_client.get(f"/api/agent-plugins/{plugin_type.value}/{plugin_name}")
 
         return response.content
 

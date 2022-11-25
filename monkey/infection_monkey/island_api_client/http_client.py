@@ -1,13 +1,14 @@
 import functools
 import logging
 from enum import Enum, auto
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 from common.common_consts.timeouts import MEDIUM_REQUEST_TIMEOUT
+from common.types import JSONSerializable
 
 from .island_api_client_errors import (
     IslandAPIConnectionError,
@@ -18,7 +19,6 @@ from .island_api_client_errors import (
 )
 
 logger = logging.getLogger(__name__)
-
 
 # Retries improve reliability and slightly mitigate performance issues
 RETRIES = 5
@@ -73,14 +73,41 @@ class HTTPClient:
             self._api_url = None
             raise e
 
-    def get(self, *args, **kwargs) -> requests.Response:
-        return self._send_request(RequestMethod.GET, *args, **kwargs)
+    def get(
+        self,
+        endpoint: str,
+        params: Optional[Dict[str, Any]] = None,
+        timeout=MEDIUM_REQUEST_TIMEOUT,
+        *args,
+        **kwargs,
+    ) -> requests.Response:
+        return self._send_request(
+            RequestMethod.GET, endpoint, params=params, timeout=timeout, *args, **kwargs
+        )
 
-    def post(self, *args, **kwargs) -> requests.Response:
-        return self._send_request(RequestMethod.POST, *args, **kwargs)
+    def post(
+        self,
+        endpoint: str,
+        data: Optional[JSONSerializable] = None,
+        timeout=MEDIUM_REQUEST_TIMEOUT,
+        *args,
+        **kwargs,
+    ) -> requests.Response:
+        return self._send_request(
+            RequestMethod.POST, endpoint, json=data, timeout=timeout, *args, **kwargs
+        )
 
-    def put(self, *args, **kwargs) -> requests.Response:
-        return self._send_request(RequestMethod.PUT, *args, **kwargs)
+    def put(
+        self,
+        endpoint: str,
+        data: Optional[JSONSerializable] = None,
+        timeout=MEDIUM_REQUEST_TIMEOUT,
+        *args,
+        **kwargs,
+    ) -> requests.Response:
+        return self._send_request(
+            RequestMethod.PUT, endpoint, json=data, timeout=timeout, *args, **kwargs
+        )
 
     @handle_island_errors
     def _send_request(
@@ -88,7 +115,6 @@ class HTTPClient:
         request_type: RequestMethod,
         endpoint: str,
         timeout=MEDIUM_REQUEST_TIMEOUT,
-        data=None,
         *args,
         **kwargs,
     ) -> requests.Response:
@@ -102,7 +128,7 @@ class HTTPClient:
         logger.debug(f"{request_type.name} {url}, timeout={timeout}")
 
         method = getattr(self._session, str.lower(request_type.name))
-        response = method(url, *args, timeout=timeout, verify=False, json=data, **kwargs)
+        response = method(url, *args, timeout=timeout, verify=False, **kwargs)
         response.raise_for_status()
 
         return response
