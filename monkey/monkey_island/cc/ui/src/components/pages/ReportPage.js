@@ -140,15 +140,14 @@ class ReportPageComponent extends AuthComponent {
   }
 
   render() {
-    let content;
+    let content = <MustRunMonkeyWarning/>;
 
     this.addRansomwareTab();
 
     if (this.state.runStarted) {
       content = this.getReportContent();
-    } else {
-      content = <MustRunMonkeyWarning/>;
     }
+
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 10}}
