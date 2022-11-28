@@ -61,6 +61,7 @@ class HTTPClient:
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._api_url: Optional[str] = None
 
+    @handle_island_errors
     def connect(self, island_server: SocketAddress):
         try:
             self._api_url = f"https://{island_server}/api"
