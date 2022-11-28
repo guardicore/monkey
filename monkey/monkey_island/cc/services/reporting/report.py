@@ -533,7 +533,9 @@ class ReportService:
 
         # TODO: Add `get_latest_event` to the IAgentEventRepository
         agent_events = cls._agent_event_repository.get_events()
-        latest_timestamp = max(agent_events, key=lambda event: event.timestamp).timestamp
+        latest_timestamp = (
+            max(agent_events, key=lambda event: event.timestamp).timestamp if agent_events else 0
+        )
 
         return latest_timestamp
 
