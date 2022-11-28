@@ -96,9 +96,16 @@ class ReportService:
 
     @classmethod
     def get_last_monkey_dead_time(cls) -> Optional[datetime]:
-        agents = list(filter(lambda a: a.stop_time is not None, cls._agent_repository.get_agents()))
-
+        agents = cls._agent_repository.get_agents()
         if not agents:
+            return None
+
+        # TODO: Make sure that the case where an agent doesn't have a stop time
+        #       because it doesn't send a shutdown event is solved after #2518.
+        #       Till then, if an agent doesn't have stop time, the total run duration
+        #       won't be shown in the report.
+        all_agents_dead = all((agent.stop_time is not None for agent in agents))
+        if not all_agents_dead:
             return None
 
         return max(agents, key=lambda a: a.stop_time).stop_time
