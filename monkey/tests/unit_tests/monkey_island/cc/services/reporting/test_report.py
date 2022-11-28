@@ -116,14 +116,16 @@ AGENTS = [
         stop_time=40309,
         cc_server=SocketAddress(ip="127.0.0.1", port=5000),
     ),
-    Agent(
-        id=UUID("10e603df-609f-42c6-af08-59c63e82b873"),
-        machine_id=2,
-        start_time=601,
-        stop_time=None,
-        cc_server=SocketAddress(ip="127.0.0.1", port=5000),
-    ),
 ]
+
+AGENT_NOT_DEAD = Agent(
+    id=UUID("10e603df-609f-42c6-af08-59c63e82b873"),
+    machine_id=2,
+    start_time=601,
+    stop_time=None,
+    cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+)
+
 
 NODES = [
     Node(
@@ -206,8 +208,18 @@ def test_get_last_monkey_time():
     assert ReportService.get_last_monkey_dead_time() == datetime.fromtimestamp(40309, tz=pytz.UTC)
 
 
+def test_get_last_monkey_time__none():
+    ReportService._agent_repository.upsert_agent(AGENT_NOT_DEAD)
+    assert ReportService.get_last_monkey_dead_time() is None
+
+
 def test_get_monkey_duration():
     assert ReportService.get_monkey_duration() == "11 hours, 10 minutes and 9 seconds"
+
+
+def test_get_monkey_duration__none():
+    ReportService._agent_repository.upsert_agent(AGENT_NOT_DEAD)
+    assert ReportService.get_last_monkey_dead_time() is None
 
 
 def test_report_service_agent_event_repository_error():
