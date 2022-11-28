@@ -227,7 +227,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   getMonkeyDuration() {
-    if (this.state.report.overview.monkey_duration !== 0) {
+    if (this.state.report.overview.monkey_duration) {
       return <>
         After <span
         className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all monkeys finished
