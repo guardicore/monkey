@@ -64,10 +64,12 @@ class HTTPClient:
     def connect(self, island_server: SocketAddress):
         try:
             self._api_url = f"https://{island_server}/api"
-            self.get(  # noqa: DUO123
-                endpoint="",
-                params={"action": "is-up"},
+            response = requests.get(  # noqa: DUO123
+                f"{self._api_url}?action=is-up",
+                verify=False,
+                timeout=MEDIUM_REQUEST_TIMEOUT,
             )
+            response.raise_for_status()
         except Exception as err:
             logger.debug(f"Connection to {island_server} failed: {err}")
             self._api_url = None
