@@ -55,26 +55,21 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     ):
         self.http_client.connect(island_server)
 
-    def send_log(self, agent_id: AgentID, log_contents: str):
-        self.http_client.put(
-            f"agent-logs/{agent_id}",
-            log_contents,
-        )
-
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         os_name = operating_system.value
         response = self.http_client.get(f"agent-binaries/{os_name}")
         return response.content
 
-    def send_events(self, events: Sequence[AbstractAgentEvent]):
-        self.http_client.post("agent-events", self._serialize_events(events))
+    def get_agent_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
+        response = self.http_client.get(f"/api/agent-plugins/{plugin_type.value}/{plugin_name}")
 
-    def register_agent(self, agent_registration_data: AgentRegistrationData):
-        self.http_client.post(
-            "agents",
-            agent_registration_data.dict(simplify=True),
-            SHORT_REQUEST_TIMEOUT,
-        )
+        return response.content
+
+    @handle_response_parsing_errors
+    def get_agent_signals(self, agent_id: str) -> AgentSignals:
+        response = self.http_client.get(f"agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT)
+
+        return AgentSignals(**response.json())
 
     @handle_response_parsing_errors
     def get_config(self) -> AgentConfiguration:
@@ -91,6 +86,16 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return [Credentials(**credentials) for credentials in response.json()]
 
+    def register_agent(self, agent_registration_data: AgentRegistrationData):
+        self.http_client.post(
+            "agents",
+            agent_registration_data.dict(simplify=True),
+            SHORT_REQUEST_TIMEOUT,
+        )
+
+    def send_events(self, events: Sequence[AbstractAgentEvent]):
+        self.http_client.post("agent-events", self._serialize_events(events))
+
     def _serialize_events(self, events: Sequence[AbstractAgentEvent]) -> JSONSerializable:
         serialized_events: List[JSONSerializable] = []
 
@@ -103,16 +108,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return serialized_events
 
-    @handle_response_parsing_errors
-    def get_agent_signals(self, agent_id: str) -> AgentSignals:
-        response = self.http_client.get(f"agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT)
-
-        return AgentSignals(**response.json())
-
-    def get_agent_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
-        response = self.http_client.get(f"/api/agent-plugins/{plugin_type.value}/{plugin_name}")
-
-        return response.content
+    def send_log(self, agent_id: AgentID, log_contents: str):
+        self.http_client.put(
+            f"agent-logs/{agent_id}",
+            log_contents,
+        )
 
 
 class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
