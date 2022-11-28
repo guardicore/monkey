@@ -36,22 +36,24 @@ class ReportPageComponent extends AuthComponent {
   }
 
   getReportFromServer() {
-    if (this.state.runStarted) {
-      this.authFetch('/api/report/security')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            securityReport: res
+    doesAnyAgentExist().then(anyAgentExists => {
+      if (anyAgentExists) {
+        this.authFetch('/api/report/security')
+          .then(res => res.json())
+          .then(res => {
+            this.setState({
+              securityReport: res
+            });
           });
-        });
-      this.authFetch('/api/report/ransomware')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            ransomwareReport: res
+        this.authFetch('/api/report/ransomware')
+          .then(res => res.json())
+          .then(res => {
+            this.setState({
+              ransomwareReport: res
+            });
           });
-        });
-    }
+      }
+    });
   }
 
   updateMonkeysRunning = () => {
