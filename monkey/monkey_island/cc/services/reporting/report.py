@@ -95,13 +95,20 @@ class ReportService:
 
     @classmethod
     def get_last_monkey_dead_time(cls):
-        agents = filter(lambda a: a.stop_time is not None, cls._agent_repository.get_agents())
+        agents = list(filter(lambda a: a.stop_time is not None, cls._agent_repository.get_agents()))
+
+        if not agents:
+            return 0
 
         return max(agents, key=lambda a: a.stop_time).stop_time
 
     @staticmethod
     def get_monkey_duration():
-        delta = ReportService.get_last_monkey_dead_time() - ReportService.get_first_monkey_time()
+        last_monkey_dead_time = ReportService.get_last_monkey_dead_time()
+        if last_monkey_dead_time == 0:
+            return 0
+
+        delta = last_monkey_dead_time - ReportService.get_first_monkey_time()
         st = ""
         hours, rem = divmod(delta.seconds, 60 * 60)
         minutes, seconds = divmod(rem, 60)
