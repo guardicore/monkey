@@ -65,6 +65,7 @@ class HTTPClient:
     def connect(self, island_server: SocketAddress):
         try:
             self._api_url = f"https://{island_server}/api"
+            # Don't use retries here, because we expect to not be able to connect.
             response = requests.get(  # noqa: DUO123
                 f"{self._api_url}?action=is-up",
                 verify=False,
