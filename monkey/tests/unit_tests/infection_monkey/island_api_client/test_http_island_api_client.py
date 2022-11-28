@@ -4,7 +4,6 @@ from uuid import UUID
 import pytest
 import requests
 import requests_mock
-from urllib3.exceptions import ConnectTimeoutError
 
 from common import AgentSignals, OperatingSystem
 from common.agent_event_serializers import (
@@ -22,7 +21,6 @@ from infection_monkey.island_api_client import (
     IslandAPIRequestFailedError,
     IslandAPITimeoutError,
 )
-from infection_monkey.island_api_client.http_client import RETRIES
 from infection_monkey.island_api_client.island_api_client_errors import (
     IslandAPIResponseParsingError,
 )
@@ -456,13 +454,3 @@ def test_island_api_client__unhandled_exceptions(island_api_client, monkeypatch)
 
     with pytest.raises(OSError):
         island_api_client.get_agent_signals(agent_id=AGENT_ID)
-
-
-def test_request_retries(monkeypatch, island_api_client):
-    # requests_mock can't be used for this, because it mocks higher level than we are testing
-    with pytest.raises(IslandAPIConnectionError):
-        mock_send = MagicMock(side_effect=ConnectTimeoutError)
-        monkeypatch.setattr("urllib3.connectionpool.HTTPSConnectionPool._validate_conn", mock_send)
-        island_api_client.connect(SERVER)
-
-    assert mock_send.call_count == RETRIES + 1

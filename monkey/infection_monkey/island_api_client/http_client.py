@@ -61,13 +61,17 @@ class HTTPClient:
         self._session.mount("https://", HTTPAdapter(max_retries=retry_config))
         self._api_url: Optional[str] = None
 
+    @handle_island_errors
     def connect(self, island_server: SocketAddress):
         try:
             self._api_url = f"https://{island_server}/api"
-            self.get(  # noqa: DUO123
-                endpoint="",
-                params={"action": "is-up"},
+            # Don't use retries here, because we expect to not be able to connect.
+            response = requests.get(  # noqa: DUO123
+                f"{self._api_url}?action=is-up",
+                verify=False,
+                timeout=MEDIUM_REQUEST_TIMEOUT,
             )
+            response.raise_for_status()
         except Exception as err:
             logger.debug(f"Connection to {island_server} failed: {err}")
             self._api_url = None

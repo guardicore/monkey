@@ -42,10 +42,10 @@ class SocketsPipe(Thread):
         while not socket_closed:
             read_list, _, except_list = select.select(sockets, [], sockets, self.timeout)
             if except_list:
-                raise OSError("select() failed on sockets {except_list}")
+                raise OSError(f"select() failed on sockets {except_list}")
 
             if not read_list:
-                raise TimeoutError("pipe did not receive data for {self.timeout} seconds")
+                raise TimeoutError(f"pipe did not receive data for {self.timeout} seconds")
 
             for r in read_list:
                 other = self.dest if r is self.source else self.source
