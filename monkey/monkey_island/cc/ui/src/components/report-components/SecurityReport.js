@@ -226,6 +226,18 @@ class ReportPageComponent extends AuthComponent {
     return Object.keys(this.state.report).length === 0;
   }
 
+  getMonkeyDuration() {
+    if (this.state.report.overview.monkey_duration !== 0) {
+      return <>
+        After <span
+        className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all monkeys finished
+        propagation attempts.
+      </>
+    } else {
+      return <></>
+    }
+  }
+
   generateReportOverviewSection() {
     let manualMonkeyHostnames = getManuallyStartedAgents(this.state.agents).map((agent) => getMachineHostname(getMachineByAgent(agent, this.state.machines)));
 
@@ -247,9 +259,7 @@ class ReportPageComponent extends AuthComponent {
         }
         <p>
           The first monkey run was started on <span
-            className='badge badge-info'>{this.state.report.overview.monkey_start_time}</span>. After <span
-              className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all monkeys finished
-          propagation attempts.
+            className='badge badge-info'>{this.state.report.overview.monkey_start_time}</span>. {this.getMonkeyDuration()}
         </p>
         <p>
           The monkey started propagating from the following machines where it was manually installed:
