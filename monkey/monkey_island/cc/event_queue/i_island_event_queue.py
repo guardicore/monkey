@@ -5,6 +5,7 @@ from . import IslandEventSubscriber
 
 
 class IslandEventTopic(Enum):
+    AGENT_HEARTBEAT = auto()
     AGENT_REGISTERED = auto()
     CLEAR_SIMULATION_DATA = auto()
     RESET_AGENT_CONFIGURATION = auto()
