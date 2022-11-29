@@ -38,7 +38,9 @@ def test_agent_heartbeat_post(flask_client, mock_island_event_queue):
     )
 
 
-@pytest.mark.parametrize("request_json", [{"heartbeat_timestamp": -1}, {"???": 0}])
+@pytest.mark.parametrize(
+    "request_json", [{"heartbeat_timestamp": -1}, {"???": 0}, {"heartbeat_timestamp": []}]
+)
 def test_agent_heartbeat_post__bad_request(flask_client, mock_island_event_queue, request_json):
     resp = flask_client.post(
         f"/api/agent/{AGENT_ID}/heartbeat", json=request_json, follow_redirects=True
