@@ -127,11 +127,12 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_heartbeat(self, agent: AgentID):
+    def send_heartbeat(self, agent: AgentID, timestamp: float):
         """
         Send a "heartbeat" to the Island to indicate that the agent is still alive
 
         :param agent_id: The ID of the agent who is sending a heartbeat
+        :param timestamp: The timestamp of the agent's heartbeat
         :raises IslandAPIConnectionError: If the client cannot successfully connect to the island
         :raises IslandAPIRequestError: If an error occurs while attempting to connect to the
                                        island due to an issue in the request sent from the client
