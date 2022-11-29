@@ -282,6 +282,7 @@ class InfectionMonkey:
             self._control_channel,
             local_network_interfaces,
             self._propagation_credentials_repository,
+            self._island_api_client,
         )
 
     def _build_server_list(self, relay_port: int) -> Sequence[str]:
