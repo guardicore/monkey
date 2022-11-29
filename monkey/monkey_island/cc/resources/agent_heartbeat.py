@@ -1,4 +1,3 @@
-import time
 from http import HTTPStatus
 from json import JSONDecodeError
 
@@ -19,10 +18,10 @@ class AgentHeartbeat(AbstractResource):
     def post(self, agent_id: AgentID):
         try:
             heartbeat_timestamp = request.json["heartbeat_timestamp"]
-            if heartbeat_timestamp is None:
-                heartbeat_timestamp = time.time()
+            if not (isinstance(heartbeat_timestamp, int) or isinstance(heartbeat_timestamp, float)):
+                raise TypeError("Terminate signal's timestamp is not a number")
             elif heartbeat_timestamp <= 0:
-                raise ValueError("Terminate signal's timestamp is not a positive integer")
+                raise ValueError("Terminate signal's timestamp is not a positive number")
 
             self._island_event_queue.publish(
                 IslandEventTopic.AGENT_HEARTBEAT, agent_id=agent_id, timestamp=heartbeat_timestamp
