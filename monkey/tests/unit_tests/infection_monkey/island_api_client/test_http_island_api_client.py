@@ -48,6 +48,7 @@ ISLAND_AGENT_STOP_URI = f"https://{SERVER}/api/monkey-control/needs-to-stop/{AGE
 ISLAND_GET_CONFIG_URI = f"https://{SERVER}/api/agent-configuration"
 ISLAND_GET_PROPAGATION_CREDENTIALS_URI = f"https://{SERVER}/api/propagation-credentials"
 ISLAND_GET_AGENT_SIGNALS = f"https://{SERVER}/api/agent-signals/{AGENT_ID}"
+ISLAND_SEND_HEARTBEAT_URI = f"https://{SERVER}/api/agent/{AGENT_ID}/heartbeat"
 
 
 class Event1(AbstractAgentEvent):
@@ -454,3 +455,40 @@ def test_island_api_client__unhandled_exceptions(island_api_client, monkeypatch)
 
     with pytest.raises(OSError):
         island_api_client.get_agent_signals(agent_id=AGENT_ID)
+
+
+@pytest.mark.parametrize(
+    "status_code, expected_error",
+    [
+        (401, IslandAPIRequestError),
+        (501, IslandAPIRequestFailedError),
+    ],
+)
+def test_island_api_client_send_heartbeat__status_code(
+    island_api_client, status_code, expected_error
+):
+    with requests_mock.Mocker() as m:
+        m.get(ISLAND_URI)
+        island_api_client.connect(SERVER)
+
+        with pytest.raises(expected_error):
+            m.post(ISLAND_SEND_HEARTBEAT_URI, status_code=status_code)
+            island_api_client.send_heartbeat(agent_id=AGENT_ID, timestamp=TIMESTAMP)
+
+
+@pytest.mark.parametrize(
+    "actual_error, expected_error",
+    [
+        (requests.exceptions.ConnectionError, IslandAPIConnectionError),
+        (TimeoutError, IslandAPITimeoutError),
+        (Exception, IslandAPIError),
+    ],
+)
+def test_island_api_client_send_heartbeat__errors(island_api_client, actual_error, expected_error):
+    with requests_mock.Mocker() as m:
+        m.get(ISLAND_URI)
+        island_api_client.connect(SERVER)
+
+        with pytest.raises(expected_error):
+            m.post(ISLAND_SEND_HEARTBEAT_URI, exc=actual_error)
+            island_api_client.send_heartbeat(agent_id=AGENT_ID, timestamp=TIMESTAMP)
