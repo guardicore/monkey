@@ -1,6 +1,7 @@
 from common import DIContainer
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import (
+    AgentHeartbeatHandler,
     handle_agent_registration,
     reset_agent_configuration,
     reset_machine_repository,
@@ -22,11 +23,21 @@ from monkey_island.cc.services import AgentSignalsService
 def setup_island_event_handlers(container: DIContainer):
     island_event_queue = container.resolve(IIslandEventQueue)
 
+    _subscribe_agent_heartbeat_events(island_event_queue, container)
     _subscribe_agent_registration_events(island_event_queue, container)
     _subscribe_reset_agent_configuration_events(island_event_queue, container)
     _subscribe_clear_simulation_data_events(island_event_queue, container)
     _subscribe_set_island_mode_events(island_event_queue, container)
     _subscribe_terminate_agents_events(island_event_queue, container)
+
+
+def _subscribe_agent_heartbeat_events(
+    island_event_queue: IIslandEventQueue, container: DIContainer
+):
+    topic = IslandEventTopic.AGENT_HEARTBEAT
+
+    agent_heartbeat_handler = container.resolve(AgentHeartbeatHandler)
+    island_event_queue.subscribe(topic, agent_heartbeat_handler.update_agent_last_heartbeat)
 
 
 def _subscribe_agent_registration_events(
