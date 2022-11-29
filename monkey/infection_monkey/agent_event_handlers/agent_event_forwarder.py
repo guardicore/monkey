@@ -3,7 +3,6 @@ import queue
 import threading
 from time import sleep
 
-from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.utils.threading import create_daemon_thread
@@ -22,10 +21,7 @@ class AgentEventForwarder:
     def __init__(
         self,
         island_api_client: IIslandAPIClient,
-        agent_event_serializer_registry: AgentEventSerializerRegistry,
     ):
-        self._agent_event_serializer_registry = agent_event_serializer_registry
-
         self._batching_agent_event_forwarder = BatchingAgentEventForwarder(island_api_client)
         self._batching_agent_event_forwarder.start()
 
@@ -74,8 +70,8 @@ class BatchingAgentEventForwarder:
         )
         self._batch_and_send_thread.start()
 
-    def add_event_to_queue(self, serialized_event: AbstractAgentEvent):
-        self._queue.put(serialized_event)
+    def add_event_to_queue(self, agent_event: AbstractAgentEvent):
+        self._queue.put(agent_event)
 
     def _manage_event_batches(self):
         while not self._stop_batch_and_send_thread.is_set():

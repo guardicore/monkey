@@ -199,9 +199,7 @@ class InfectionMonkey:
         self._master.start()
 
     def _setup_agent_event_forwarder(self):
-        self._agent_event_forwarder = AgentEventForwarder(
-            self._island_api_client, self._agent_event_serializer_registry
-        )
+        self._agent_event_forwarder = AgentEventForwarder(self._island_api_client)
         self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
 
     def _discover_os(self):
