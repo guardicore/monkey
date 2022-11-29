@@ -36,22 +36,24 @@ class ReportPageComponent extends AuthComponent {
   }
 
   getReportFromServer() {
-    if (this.state.runStarted) {
-      this.authFetch('/api/report/security')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            securityReport: res
+    doesAnyAgentExist().then(anyAgentExists => {
+      if (anyAgentExists) {
+        this.authFetch('/api/report/security')
+          .then(res => res.json())
+          .then(res => {
+            this.setState({
+              securityReport: res
+            });
           });
-        });
-      this.authFetch('/api/report/ransomware')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            ransomwareReport: res
+        this.authFetch('/api/report/ransomware')
+          .then(res => res.json())
+          .then(res => {
+            this.setState({
+              ransomwareReport: res
+            });
           });
-        });
-    }
+      }
+    });
   }
 
   updateMonkeysRunning = () => {
@@ -140,15 +142,14 @@ class ReportPageComponent extends AuthComponent {
   }
 
   render() {
-    let content;
+    let content = <MustRunMonkeyWarning/>;
 
     this.addRansomwareTab();
 
     if (this.state.runStarted) {
       content = this.getReportContent();
-    } else {
-      content = <MustRunMonkeyWarning/>;
     }
+
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 10}}

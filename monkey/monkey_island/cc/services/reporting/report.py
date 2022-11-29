@@ -4,6 +4,7 @@ import functools
 import logging
 from collections import defaultdict
 from dataclasses import asdict
+from datetime import datetime
 from enum import Enum
 from ipaddress import IPv4Address
 from itertools import chain, product
@@ -94,14 +95,28 @@ class ReportService:
         return min(agents, key=lambda a: a.start_time).start_time
 
     @classmethod
-    def get_last_monkey_dead_time(cls):
-        agents = filter(lambda a: a.stop_time is not None, cls._agent_repository.get_agents())
+    def get_last_monkey_dead_time(cls) -> Optional[datetime]:
+        agents = cls._agent_repository.get_agents()
+        if not agents:
+            return None
+
+        # TODO: Make sure that the case where an agent doesn't have a stop time
+        #       because it doesn't send a shutdown event is solved after #2518.
+        #       Till then, if an agent doesn't have stop time, the total run duration
+        #       won't be shown in the report.
+        all_agents_dead = all((agent.stop_time is not None for agent in agents))
+        if not all_agents_dead:
+            return None
 
         return max(agents, key=lambda a: a.stop_time).stop_time
 
     @staticmethod
-    def get_monkey_duration():
-        delta = ReportService.get_last_monkey_dead_time() - ReportService.get_first_monkey_time()
+    def get_monkey_duration() -> Optional[str]:
+        last_monkey_dead_time = ReportService.get_last_monkey_dead_time()
+        if not last_monkey_dead_time:
+            return None
+
+        delta = last_monkey_dead_time - ReportService.get_first_monkey_time()
         st = ""
         hours, rem = divmod(delta.seconds, 60 * 60)
         minutes, seconds = divmod(rem, 60)
@@ -520,13 +535,15 @@ class ReportService:
         return issues_dict
 
     @classmethod
-    def get_latest_event_timestamp(cls) -> float:
+    def get_latest_event_timestamp(cls) -> Optional[float]:
         if not cls._agent_event_repository:
             raise RuntimeError("Agent event repository does not exist")
 
         # TODO: Add `get_latest_event` to the IAgentEventRepository
         agent_events = cls._agent_event_repository.get_events()
-        latest_timestamp = max(agent_events, key=lambda event: event.timestamp).timestamp
+        latest_timestamp = (
+            max(agent_events, key=lambda event: event.timestamp).timestamp if agent_events else None
+        )
 
         return latest_timestamp
 

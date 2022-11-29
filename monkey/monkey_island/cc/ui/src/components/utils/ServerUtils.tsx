@@ -4,8 +4,7 @@ import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 
 export function doesAnyAgentExist() {
   return getAllAgents().then(all_agents => {
-    if (all_agents.length > 0) {return true;}
-    return false;
+      return all_agents.length > 0;
     })
 }
 
