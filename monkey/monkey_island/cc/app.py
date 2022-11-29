@@ -14,6 +14,7 @@ from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
     AgentEvents,
+    AgentHeartbeat,
     AgentLogs,
     AgentPlugins,
     Agents,
@@ -173,6 +174,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Nodes)
 
     api.add_resource(ReportGenerationStatus)
+
+    api.add_resource(AgentHeartbeat)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):

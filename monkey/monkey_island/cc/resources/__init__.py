@@ -13,3 +13,4 @@ from .agent_logs import AgentLogs
 from .machines import Machines
 from .nodes import Nodes
 from .report_generation_status import ReportGenerationStatus
+from .agent_heartbeat import AgentHeartbeat
