@@ -7,7 +7,6 @@ from flask import request
 from common.types import AgentID
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 
 
 class AgentHeartbeat(AbstractResource):
@@ -16,7 +15,7 @@ class AgentHeartbeat(AbstractResource):
     def __init__(self, island_event_queue: IIslandEventQueue):
         self._island_event_queue = island_event_queue
 
-    @jwt_required
+    # Used by the agent. Can't secure.
     def post(self, agent_id: AgentID):
         try:
             heartbeat_timestamp = request.json["heartbeat_timestamp"]
