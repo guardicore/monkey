@@ -1,5 +1,7 @@
 import queue
-from typing import Any, Dict, List, MutableMapping, Type, TypeVar
+import time
+from threading import Thread
+from typing import Any, Callable, Dict, List, MutableMapping, Type, TypeVar
 
 T = TypeVar("T")
 
@@ -35,3 +37,19 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
     :param key: A key to delete from `mapping`
     """
     mapping.pop(key, None)
+
+
+class PeriodicThread(Thread):
+    """
+    Calls a function after some time period.
+    """
+
+    def __init__(self, callback: Callable[[], None], period: float):
+        Thread.__init__(self, daemon=True)
+        self._callback = callback
+        self._period = period
+
+    def run(self):
+        while True:
+            self._callback()
+            time.sleep(self._period)
