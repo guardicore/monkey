@@ -5,7 +5,7 @@ from uuid import UUID
 import pytest
 from tests.common import StubDIContainer
 
-from common.request_data import AgentHeartbeat
+from common import AgentHeartbeat
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 
 AGENT_ID = UUID("7029dfac-8f87-490b-9a82-e5d005040d99")
