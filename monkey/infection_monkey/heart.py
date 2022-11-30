@@ -23,9 +23,13 @@ class Heart:
         self._heartbeat_thread.start()
 
     def _send_heartbeats(self):
+        logger.info("Agent's heart started")
+
         while True:
             self._island_api_client.send_heartbeat(self._agent_id, time.time())
             time.sleep(HEARTBEAT_INTERVAL)
+
+        logger.info("Agent's heart stopped")
 
     def stop(self):
         logger.debug("Stopping the Agent's heart")
