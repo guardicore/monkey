@@ -43,11 +43,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     """
 
     def __init__(
-        self,
-        agent_event_serializer_registry: AgentEventSerializerRegistry,
+        self, agent_event_serializer_registry: AgentEventSerializerRegistry, http_client: HTTPClient
     ):
         self._agent_event_serializer_registry = agent_event_serializer_registry
-        self.http_client = HTTPClient()
+        self.http_client = http_client
 
     def connect(
         self,
@@ -127,4 +126,4 @@ class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
         self._agent_event_serializer_registry = agent_event_serializer_registry
 
     def create_island_api_client(self) -> IIslandAPIClient:
-        return HTTPIslandAPIClient(self._agent_event_serializer_registry)
+        return HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient())
