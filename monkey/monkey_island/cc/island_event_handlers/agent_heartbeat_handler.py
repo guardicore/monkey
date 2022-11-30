@@ -1,8 +1,6 @@
 import logging
-import time
 from datetime import datetime, timezone
-from threading import Lock, Thread
-from typing import Dict, Optional
+from typing import Dict
 
 import pytz
 
@@ -22,22 +20,12 @@ class AgentHeartbeatHandler:
 
     def __init__(self, agent_repository: IAgentRepository):
         self._agent_repository = agent_repository
-        self._last_agent_heartbeats: Dict[AgentID, Optional[datetime]] = {}
-        self._lock: Lock = Lock()
-        Thread(target=self._track_last_agent_heartbeat, args=(), daemon=True).start()
+        self._last_agent_heartbeats: Dict[AgentID, datetime] = {}
 
-    def update_agent_last_heartbeat(self, agent_id: AgentID, timestamp: Optional[datetime]):
-        with self._lock:
-            self._last_agent_heartbeats[agent_id] = datetime.fromtimestamp(timestamp, tz=pytz.UTC)
+    def update_agent_last_heartbeat(self, agent_id: AgentID, timestamp: float):
+        self._last_agent_heartbeats[agent_id] = datetime.fromtimestamp(timestamp, tz=pytz.UTC)
 
-    def _track_last_agent_heartbeat(self):
-        while True:
-            with self._lock:
-                self._update_agents_stop_time_from_heartbeat()
-
-            time.sleep(AGENT_HEARTBEAT_PERIOD)
-
-    def _update_agents_stop_time_from_heartbeat(self):
+    def update_agents_stop_time_from_heartbeat(self):
         agents = self._agent_repository.get_running_agents()
 
         for agent in agents:
