@@ -18,8 +18,7 @@ class AgentHeartbeat(AbstractResource):
     # Used by the agent. Can't secure.
     def post(self, agent_id: AgentID):
         try:
-            heartbeat_timestamp = request.json["timestamp"]
-            heartbeat = AgentHeartbeatObject(timestamp=heartbeat_timestamp)
+            heartbeat = AgentHeartbeatObject(**request.json)
 
             self._island_event_queue.publish(
                 IslandEventTopic.AGENT_HEARTBEAT, agent_id=agent_id, heartbeat=heartbeat
