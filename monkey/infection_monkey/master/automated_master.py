@@ -10,9 +10,7 @@ from infection_monkey.credential_repository import IPropagationCredentialsReposi
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
-from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.model import VictimHostFactory
-from infection_monkey.utils.ids import get_agent_id
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -23,7 +21,6 @@ CHECK_FOR_TERMINATE_INTERVAL_SEC = CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC / 
 SHUTDOWN_TIMEOUT = 5
 NUM_SCAN_THREADS = 16
 NUM_EXPLOIT_THREADS = 6
-HEARTBEAT_INTERVAL = 30
 
 logger = logging.getLogger()
 
@@ -38,13 +35,11 @@ class AutomatedMaster(IMaster):
         control_channel: IControlChannel,
         local_network_interfaces: List[IPv4Interface],
         credentials_store: IPropagationCredentialsRepository,
-        island_api_client: IIslandAPIClient,
     ):
         self._current_depth = current_depth
         self._servers = servers
         self._puppet = puppet
         self._control_channel = control_channel
-        self._island_api_client = island_api_client
 
         ip_scanner = IPScanner(self._puppet, NUM_SCAN_THREADS)
 
@@ -59,9 +54,6 @@ class AutomatedMaster(IMaster):
         self._stop = threading.Event()
         self._master_thread = create_daemon_thread(
             target=self._run_master_thread, name="AutomatedMasterThread"
-        )
-        self._heartbeat_thread = create_daemon_thread(
-            target=self._send_heartbeats, name="HeartbeatThread"
         )
         self._simulation_thread = create_daemon_thread(
             target=self._run_simulation, name="SimulationThread"
@@ -84,7 +76,6 @@ class AutomatedMaster(IMaster):
             logger.info("AutomatedMaster successfully terminated.")
 
     def _run_master_thread(self):
-        self._heartbeat_thread.start()
         self._simulation_thread.start()
 
         self._wait_for_master_stop_condition()
@@ -125,12 +116,6 @@ class AutomatedMaster(IMaster):
 
     def _master_thread_should_run(self):
         return (not self._stop.is_set()) and self._simulation_thread.is_alive()
-
-    def _send_heartbeats(self):
-        agent_id = get_agent_id()
-        while True:
-            self._island_api_client.send_heartbeat(agent_id, time.time())
-            time.sleep(HEARTBEAT_INTERVAL)
 
     def _run_simulation(self):
         try:
