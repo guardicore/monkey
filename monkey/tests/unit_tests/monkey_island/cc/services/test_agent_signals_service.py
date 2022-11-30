@@ -4,8 +4,7 @@ from uuid import UUID
 import pytest
 
 from common.types import AgentID
-from monkey_island.cc.models import Agent, IslandMode, Simulation
-from monkey_island.cc.models.request_data import TerminateAllAgents
+from monkey_island.cc.models import Agent, IslandMode, Simulation, TerminateAllAgents
 from monkey_island.cc.repositories import (
     IAgentRepository,
     ISimulationRepository,

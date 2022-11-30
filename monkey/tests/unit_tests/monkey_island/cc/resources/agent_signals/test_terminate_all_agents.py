@@ -5,7 +5,7 @@ import pytest
 from tests.common import StubDIContainer
 
 from monkey_island.cc.event_queue import IIslandEventQueue
-from monkey_island.cc.models.request_data import TerminateAllAgents as TerminateAllAgentsObject
+from monkey_island.cc.models import TerminateAllAgents as TerminateAllAgentsObject
 from monkey_island.cc.resources import TerminateAllAgents
 
 TIMESTAMP = 123456789
