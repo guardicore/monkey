@@ -22,7 +22,7 @@ class InMemoryAgentRepository(IAgentRepository):
             raise UnknownRecordError(f'Unknown ID "{agent_id}"')
 
     def get_running_agents(self) -> Sequence[Agent]:
-        return [agent for agent in self._agents if agent.stop_time is None]
+        return [agent for agent in self._agents.values() if agent.stop_time is None]
 
     def get_progenitor(self, _: Agent) -> Agent:
         raise NotImplementedError
