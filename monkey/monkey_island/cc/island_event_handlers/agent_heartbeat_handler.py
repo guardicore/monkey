@@ -1,16 +1,11 @@
-import logging
 from datetime import datetime, timezone
 from typing import Dict
 
 import pytz
 
+from common.common_consts import HEARTBEAT_INTERVAL
 from common.types import AgentID
 from monkey_island.cc.repositories import IAgentRepository
-
-logger = logging.getLogger(__name__)
-
-
-AGENT_HEARTBEAT_PERIOD = 30
 
 
 class AgentHeartbeatHandler:
@@ -33,13 +28,13 @@ class AgentHeartbeatHandler:
 
             if last_agent_heartbeat is not None:
                 if (datetime.now(tz=timezone.utc) - last_agent_heartbeat).total_seconds() >= (
-                    3 * AGENT_HEARTBEAT_PERIOD
+                    3 * HEARTBEAT_INTERVAL
                 ):
                     agent.stop_time = last_agent_heartbeat
                     self._agent_repository.upsert_agent(agent)
             else:
                 if (datetime.now(tz=timezone.utc) - agent.start_time).total_seconds() >= (
-                    3 * AGENT_HEARTBEAT_PERIOD
+                    3 * HEARTBEAT_INTERVAL
                 ):
                     agent.stop_time = agent.start_time
                     self._agent_repository.upsert_agent(agent)

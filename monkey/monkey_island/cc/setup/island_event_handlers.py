@@ -1,4 +1,5 @@
 from common import DIContainer
+from common.common_consts import HEARTBEAT_INTERVAL
 from common.utils.code_utils import PeriodicCaller
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import (
@@ -39,7 +40,9 @@ def _subscribe_agent_heartbeat_events(
 
     agent_heartbeat_handler = container.resolve(AgentHeartbeatHandler)
 
-    PeriodicCaller(agent_heartbeat_handler.update_agents_stop_time_from_heartbeat, 30).start()
+    PeriodicCaller(
+        agent_heartbeat_handler.update_agents_stop_time_from_heartbeat, HEARTBEAT_INTERVAL
+    ).start()
 
     island_event_queue.subscribe(topic, agent_heartbeat_handler.update_agent_last_heartbeat)
 
