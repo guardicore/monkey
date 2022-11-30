@@ -4,7 +4,7 @@ from typing import Optional
 
 from common.agent_signals import AgentSignals
 from common.types import AgentID
-from monkey_island.cc.models import Simulation
+from monkey_island.cc.models import Simulation, TerminateAllAgents
 from monkey_island.cc.repositories import IAgentRepository, ISimulationRepository
 
 logger = logging.getLogger(__name__)
@@ -43,13 +43,14 @@ class AgentSignalsService:
 
         return None
 
-    def on_terminate_agents_signal(self, timestamp: datetime):
+    def on_terminate_agents_signal(self, terminate_all_agents: TerminateAllAgents):
         """
         Updates the simulation repository with the terminate signal's timestamp
 
         :param timestamp: Timestamp of the terminate signal
         """
         simulation = self._simulation_repository.get_simulation()
+        timestamp = terminate_all_agents.timestamp
         updated_simulation = Simulation(mode=simulation.mode, terminate_signal_time=timestamp)
 
         self._simulation_repository.save_simulation(updated_simulation)
