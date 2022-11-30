@@ -4,6 +4,7 @@ from json import JSONDecodeError
 
 from flask import request
 
+from common.request_data import TerminateAllAgents as TerminateAllAgentsObject
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
@@ -23,14 +24,11 @@ class TerminateAllAgents(AbstractResource):
     @jwt_required
     def post(self):
         try:
-            terminate_timestamp = request.json["terminate_time"]
-            if terminate_timestamp is None:
-                raise ValueError("Terminate signal's timestamp is empty")
-            elif terminate_timestamp <= 0:
-                raise ValueError("Terminate signal's timestamp is not a positive integer")
+            terminate_timestamp = request.json["timestamp"]
+            terminate_all_agents = TerminateAllAgentsObject(timestamp=terminate_timestamp)
 
             self._island_event_queue.publish(
-                IslandEventTopic.TERMINATE_AGENTS, timestamp=terminate_timestamp
+                IslandEventTopic.TERMINATE_AGENTS, terminate_all_agents=terminate_all_agents
             )
 
         except (JSONDecodeError, TypeError, ValueError, KeyError) as err:
