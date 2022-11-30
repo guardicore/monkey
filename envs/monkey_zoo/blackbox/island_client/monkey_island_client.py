@@ -5,6 +5,7 @@ from http import HTTPStatus
 from typing import List, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
+from common.request_data import TerminateAllAgents
 from common.types import AgentID, MachineID
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
@@ -93,7 +94,8 @@ class MonkeyIslandClient(object):
     def kill_all_monkeys(self):
         # TODO change this request, because monkey-control resource got removed
         response = self.requests.post_json(
-            "api/agent-signals/terminate-all-agents", json={"terminate_time": time.time()}
+            "api/agent-signals/terminate-all-agents",
+            json=TerminateAllAgents(timestamp=time.time()).dict(simplify=True),
         )
         if response.ok:
             LOGGER.info("Killing all monkeys after the test.")
