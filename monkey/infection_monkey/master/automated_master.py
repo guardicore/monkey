@@ -61,7 +61,7 @@ class AutomatedMaster(IMaster):
             target=self._run_master_thread, name="AutomatedMasterThread"
         )
         self._heartbeat_thread = create_daemon_thread(
-            target=self._run_heartbeat_thread, name="HeartbeatThread"
+            target=self._send_heartbeats, name="HeartbeatThread"
         )
         self._simulation_thread = create_daemon_thread(
             target=self._run_simulation, name="SimulationThread"
@@ -126,7 +126,7 @@ class AutomatedMaster(IMaster):
     def _master_thread_should_run(self):
         return (not self._stop.is_set()) and self._simulation_thread.is_alive()
 
-    def _run_heartbeat_thread(self):
+    def _send_heartbeats(self):
         agent_id = get_agent_id()
         while True:
             self._island_api_client.send_heartbeat(agent_id, time.time())
