@@ -6,7 +6,7 @@ from typing import List, Sequence
 
 import requests
 
-from common import AgentRegistrationData, AgentSignals, OperatingSystem
+from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
@@ -109,7 +109,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return serialized_events
 
     def send_heartbeat(self, agent_id: AgentID, timestamp: float):
-        data = {"heartbeat_timestamp": timestamp}
+        data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
         self.http_client.post(f"agent/{agent_id}/heartbeat", data)
 
     def send_log(self, agent_id: AgentID, log_contents: str):
