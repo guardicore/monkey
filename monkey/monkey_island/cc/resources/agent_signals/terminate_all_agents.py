@@ -24,8 +24,7 @@ class TerminateAllAgents(AbstractResource):
     @jwt_required
     def post(self):
         try:
-            terminate_timestamp = request.json["timestamp"]
-            terminate_all_agents = TerminateAllAgentsObject(timestamp=terminate_timestamp)
+            terminate_all_agents = TerminateAllAgentsObject(**request.json)
 
             self._island_event_queue.publish(
                 IslandEventTopic.TERMINATE_AGENTS, terminate_all_agents=terminate_all_agents
