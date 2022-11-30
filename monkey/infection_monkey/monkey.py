@@ -79,6 +79,8 @@ from infection_monkey.utils.monkey_log_path import get_agent_log_path
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
+from .heart import Heart
+
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
@@ -108,6 +110,9 @@ class InfectionMonkey:
             self._control_channel
         )
         self._register_agent()
+
+        self._heart = Heart(self._island_api_client)
+        self._heart.start()
 
         self._current_depth = self._opts.depth
         self._master = None
@@ -392,9 +397,13 @@ class InfectionMonkey:
             deleted = InfectionMonkey._self_delete()
 
             self._send_log()
+
             self._publish_agent_shutdown_event()
 
             self._agent_event_forwarder.flush()
+
+            self._heart.stop()
+
             self._close_tunnel()
         except Exception as e:
             logger.exception(f"An error occurred while cleaning up the monkey agent: {e}")

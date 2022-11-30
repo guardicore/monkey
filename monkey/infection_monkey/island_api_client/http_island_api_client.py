@@ -108,6 +108,10 @@ class HTTPIslandAPIClient(IIslandAPIClient):
 
         return serialized_events
 
+    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
+        data = {"heartbeat_timestamp": timestamp}
+        self.http_client.post(f"agent/{agent_id}/heartbeat", data)
+
     def send_log(self, agent_id: AgentID, log_contents: str):
         self.http_client.put(
             f"agent-logs/{agent_id}",
