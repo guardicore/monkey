@@ -12,6 +12,7 @@ from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
+from common.request_data import AgentHeartbeat
 from common.types import AgentID, JSONSerializable, PluginType, SocketAddress
 
 from . import AbstractIslandAPIClientFactory, IIslandAPIClient, IslandAPIRequestError
@@ -109,7 +110,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return serialized_events
 
     def send_heartbeat(self, agent_id: AgentID, timestamp: float):
-        data = {"heartbeat_timestamp": timestamp}
+        data = AgentHeartbeat(timestamp=timestamp).dict(simplify=True)
         self.http_client.post(f"agent/{agent_id}/heartbeat", data)
 
     def send_log(self, agent_id: AgentID, log_contents: str):
