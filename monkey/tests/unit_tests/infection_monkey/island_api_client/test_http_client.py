@@ -111,3 +111,12 @@ def test_http_client__additional_args(monkeypatch, connected_client):
     connected_client.get(LOG_ENDPOINT, auth="authentication")
 
     assert get.call_args[1]["auth"] == "authentication"
+
+
+def test_http_client__post(connected_client, monkeypatch):
+    post = MagicMock()
+    monkeypatch.setattr("requests.Session.post", post)
+
+    connected_client.post(PROPAGATION_CREDENTIALS_ENDPOINT, data={"foo": "bar"})
+
+    assert post.call_args[1]["json"] == {"foo": "bar"}
