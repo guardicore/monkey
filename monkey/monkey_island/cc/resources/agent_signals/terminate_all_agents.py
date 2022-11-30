@@ -4,8 +4,8 @@ from json import JSONDecodeError
 
 from flask import request
 
-from common.request_data import TerminateAllAgents as TerminateAllAgentsObject
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.models.request_data import TerminateAllAgents as TerminateAllAgentsObject
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 
