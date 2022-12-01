@@ -1,4 +1,5 @@
-from datetime import datetime
+import time
+from datetime import datetime, timedelta
 from uuid import UUID
 
 import pytest
@@ -52,7 +53,7 @@ def agent_heartbeat_handler(in_memory_agent_repository):
     return AgentHeartbeatMonitor(in_memory_agent_repository)
 
 
-def test_agent_heartbeat_handler(agent_heartbeat_handler, in_memory_agent_repository):
+def test_multiple_agents(agent_heartbeat_handler, in_memory_agent_repository):
     in_memory_agent_repository.upsert_agent(AGENT_1)
     in_memory_agent_repository.upsert_agent(AGENT_2)
     in_memory_agent_repository.upsert_agent(AGENT_3)
@@ -69,3 +70,65 @@ def test_agent_heartbeat_handler(agent_heartbeat_handler, in_memory_agent_reposi
     assert agent_1.stop_time == datetime.fromtimestamp(110, tz=pytz.UTC)
     assert agent_2.stop_time == datetime.fromtimestamp(200, tz=pytz.UTC)
     assert agent_3.stop_time == agent_3.start_time
+
+
+def test_no_heartbeat_received(agent_heartbeat_handler, in_memory_agent_repository):
+    in_memory_agent_repository.upsert_agent(AGENT_1)
+
+    agent_heartbeat_handler.set_unresponsive_agents_stop_time()
+
+    assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time == AGENT_1.start_time
+
+
+def test_agent_shutdown_unexpectedly(agent_heartbeat_handler, in_memory_agent_repository):
+    last_heartbeat = datetime.fromtimestamp(8675309, tz=pytz.UTC)
+    in_memory_agent_repository.upsert_agent(AGENT_1)
+    agent_heartbeat_handler.handle_agent_heartbeat(
+        AGENT_ID_1, AgentHeartbeat(timestamp=last_heartbeat)
+    )
+
+    agent_heartbeat_handler.set_unresponsive_agents_stop_time()
+
+    assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time == last_heartbeat
+
+
+def test_leave_stop_time_if_heartbeat_arrives_late(
+    agent_heartbeat_handler, in_memory_agent_repository
+):
+    in_memory_agent_repository.upsert_agent(AGENT_ALREADY_STOPPED)
+    expected_stop_time = AGENT_ALREADY_STOPPED.stop_time
+    heartbeat_time = AGENT_ALREADY_STOPPED.stop_time + timedelta(seconds=1000)
+    agent_heartbeat_handler.handle_agent_heartbeat(
+        AGENT_ID_ALREADY_STOPPED, AgentHeartbeat(timestamp=heartbeat_time)
+    )
+
+    agent_heartbeat_handler.set_unresponsive_agents_stop_time()
+
+    assert (
+        in_memory_agent_repository.get_agent_by_id(AGENT_ID_ALREADY_STOPPED).stop_time
+        == expected_stop_time
+    )
+
+
+def test_use_latest_heartbeat(agent_heartbeat_handler, in_memory_agent_repository):
+    last_heartbeat = datetime.fromtimestamp(8675309, tz=pytz.UTC)
+    in_memory_agent_repository.upsert_agent(AGENT_1)
+    agent_heartbeat_handler.handle_agent_heartbeat(AGENT_ID_1, AgentHeartbeat(timestamp=1000))
+    agent_heartbeat_handler.handle_agent_heartbeat(
+        AGENT_ID_1, AgentHeartbeat(timestamp=last_heartbeat)
+    )
+
+    agent_heartbeat_handler.set_unresponsive_agents_stop_time()
+
+    assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time == last_heartbeat
+
+
+def test_heartbeat_not_expired(agent_heartbeat_handler, in_memory_agent_repository):
+    in_memory_agent_repository.upsert_agent(AGENT_1)
+    agent_heartbeat_handler.handle_agent_heartbeat(
+        AGENT_ID_1, AgentHeartbeat(timestamp=time.time())
+    )
+
+    agent_heartbeat_handler.set_unresponsive_agents_stop_time()
+
+    assert in_memory_agent_repository.get_agent_by_id(AGENT_ID_1).stop_time is None
