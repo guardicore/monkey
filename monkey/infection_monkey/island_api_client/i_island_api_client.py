@@ -5,7 +5,8 @@ from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
 from common.credentials import Credentials
-from common.types import AgentID, PluginType, SocketAddress
+from common.plugins.plugin_type import PluginType
+from common.types import AgentID, SocketAddress
 
 
 class IIslandAPIClient(ABC):

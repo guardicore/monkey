@@ -12,7 +12,8 @@ from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
-from common.types import AgentID, JSONSerializable, PluginType, SocketAddress
+from common.plugins.plugin_type import PluginType
+from common.types import AgentID, JSONSerializable, SocketAddress
 
 from . import AbstractIslandAPIClientFactory, IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient

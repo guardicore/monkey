@@ -4,7 +4,8 @@ from typing import Dict, Sequence
 
 from common import OperatingSystem
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import PingScanData, PluginType, PortStatus
+from common.plugins.plugin_type import PluginType
+from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
 from infection_monkey.model import VictimHost
 

@@ -26,8 +26,9 @@ from common.agent_events import (
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
+from common.plugins.plugin_type import PluginType
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
-from common.types import PluginType, SocketAddress
+from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,

@@ -1,7 +1,7 @@
 import pytest
 from flask import Response
 
-from common.types import PluginType
+from common.plugins.plugin_type import PluginType
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.master.plugin_registry import PluginRegistry
 

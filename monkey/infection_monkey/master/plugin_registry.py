@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from common.types import PluginType
+from common.plugins.plugin_type import PluginType
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient
 
