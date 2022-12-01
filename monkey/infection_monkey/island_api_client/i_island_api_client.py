@@ -4,8 +4,8 @@ from typing import Sequence
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
+from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
-from common.plugins.plugin_type import PluginType
 from common.types import AgentID, SocketAddress
 
 
@@ -48,7 +48,7 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_plugin(self, plugin_type: PluginType, plugin_name: str) -> bytes:
+    def get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> bytes:
         """
         Gets plugin from the Island based on plugin type and name
 

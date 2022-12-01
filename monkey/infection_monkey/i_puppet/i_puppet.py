@@ -4,8 +4,8 @@ from collections import namedtuple
 from dataclasses import dataclass
 from typing import Dict, Mapping, Optional, Sequence
 
+from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
-from common.plugins.plugin_type import PluginType
 from common.types import PingScanData
 from infection_monkey.model import VictimHost
 
@@ -29,13 +29,13 @@ FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "servi
 
 class IPuppet(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
+    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         """
         Loads a plugin into the puppet
 
         :param str plugin_name: The plugin class name
         :param object plugin: The plugin object to load
-        :param PluginType plugin_type: The type of plugin being loaded
+        :param AgentPluginType plugin_type: The type of plugin being loaded
         """
 
     @abc.abstractmethod

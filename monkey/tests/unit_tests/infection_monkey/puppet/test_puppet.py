@@ -1,8 +1,8 @@
 import threading
 from unittest.mock import MagicMock
 
+from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
-from common.plugins.plugin_type import PluginType
 from common.types import PingScanData
 from infection_monkey.master.plugin_registry import PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
@@ -17,7 +17,7 @@ def test_puppet_run_payload_success():
     payload = MagicMock()
     payload_name = "PayloadOne"
 
-    p.load_plugin(payload_name, payload, PluginType.PAYLOAD)
+    p.load_plugin(payload_name, payload, AgentPluginType.PAYLOAD)
     p.run_payload(payload_name, {}, threading.Event())
 
     payload.run.assert_called_once()
@@ -38,9 +38,9 @@ def test_puppet_run_multiple_payloads():
     payload_3 = MagicMock()
     payload3_name = "PayloadThree"
 
-    p.load_plugin(payload1_name, payload_1, PluginType.PAYLOAD)
-    p.load_plugin(payload2_name, payload_2, PluginType.PAYLOAD)
-    p.load_plugin(payload3_name, payload_3, PluginType.PAYLOAD)
+    p.load_plugin(payload1_name, payload_1, AgentPluginType.PAYLOAD)
+    p.load_plugin(payload2_name, payload_2, AgentPluginType.PAYLOAD)
+    p.load_plugin(payload3_name, payload_3, AgentPluginType.PAYLOAD)
 
     p.run_payload(payload1_name, {}, threading.Event())
     payload_1.run.assert_called_once()
