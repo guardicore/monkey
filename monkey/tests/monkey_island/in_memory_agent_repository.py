@@ -1,4 +1,5 @@
 from typing import Sequence
+import copy
 
 from common.types import AgentID
 from monkey_island.cc.models import Agent
@@ -10,7 +11,7 @@ class InMemoryAgentRepository(IAgentRepository):
         self._agents = {}
 
     def upsert_agent(self, agent: Agent):
-        self._agents[agent.id] = agent
+        self._agents[agent.id] = copy.deepcopy(agent)
 
     def get_agents(self) -> Sequence[Agent]:
         return list(self._agents.values())
