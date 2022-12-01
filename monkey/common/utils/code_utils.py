@@ -1,9 +1,11 @@
+import logging
 import queue
-import time
-from threading import Thread
-from typing import Any, Callable, Dict, List, MutableMapping, Type, TypeVar
+from threading import Event, Thread
+from typing import Any, Callable, Dict, List, MutableMapping, Optional, Type, TypeVar
 
 T = TypeVar("T")
+
+logger = logging.getLogger(__name__)
 
 
 class Singleton(type):
@@ -55,22 +57,41 @@ class PeriodicCaller:
         :param callback: A callable to be called periodically
         :param period: The time to wait between calls of `callback`.
         """
-        self._thread = Thread(
-            daemon=True, name="PeriodicCaller-{callback.__name__}", target=self.run
-        )
         self._callback = callback
         self._period = period
+
+        self._name = f"PeriodicCaller-{callback.__name__}"
+        self._thread = Thread(daemon=True, name=self._name, target=self.run)
+
+        self._stop = Event()
 
     def start(self):
         """
         Periodically call the callback in the background
         """
+        self._stop.clear()
         self._thread.start()
 
     def run(self):
         """
         Periodically call the callback and block until `stop()` is called
         """
-        while True:
+        while not self._stop.is_set():
             self._callback()
-            time.sleep(self._period)
+            self._stop.wait(self._period)
+
+    def stop(self, timeout: Optional[float] = None):
+        """
+        Stop this component from making any further calls
+
+        When the timeout argument is not present or None, the operation will block until the
+        PeriodicCaller stops.
+
+        :param timeout: The number of seconds to wait for this component to stop
+        """
+
+        self._stop.set()
+        self._thread.join(timeout=timeout)
+
+        if self._thread.is_alive():
+            logger.warning(f"Timed out waiting for {self._name} to stop")
