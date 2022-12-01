@@ -52,15 +52,16 @@ class PeriodicCaller:
     completes. This prevents multiple calls to the callback occurring concurrently.
     """
 
-    def __init__(self, callback: Callable[[], None], period: float):
+    def __init__(self, callback: Callable[[], None], period: float, name: Optional[str] = None):
         """
         :param callback: A callable to be called periodically
         :param period: The time to wait between calls of `callback`.
+        :param name: A human-readable name for this caller that will be used in debug logging
         """
         self._callback = callback
         self._period = period
 
-        self._name = f"PeriodicCaller-{callback.__name__}"
+        self._name = f"PeriodicCaller-{callback.__name__}" if name is None else name
 
         self._stop = Event()
         self._thread: Optional[Thread] = None
