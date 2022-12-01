@@ -54,6 +54,7 @@ sphinx_rtd_theme = "*"
 sphinx_autodoc_typehints = "==1.17.1" # Pinned to 1.17.1 due to importlib-metadat/flake8 issue
 types-python-dateutil = "*"
 mypy = "*"
+types-pytz = "*"
 
 [requires]
 python_version = "3.7"
