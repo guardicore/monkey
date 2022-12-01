@@ -61,9 +61,9 @@ class PeriodicCaller:
         self._period = period
 
         self._name = f"PeriodicCaller-{callback.__name__}"
-        self._thread = Thread(daemon=True, name=self._name, target=self.run)
 
         self._stop = Event()
+        self._thread: Optional[Thread] = None
 
     def start(self):
         """
@@ -72,6 +72,7 @@ class PeriodicCaller:
         logger.debug(f"Starting {self._name}")
 
         self._stop.clear()
+        self._thread = Thread(daemon=True, name=self._name, target=self.run)
         self._thread.start()
 
     def run(self):
@@ -98,7 +99,9 @@ class PeriodicCaller:
         logger.debug(f"Stopping {self._name}")
 
         self._stop.set()
-        self._thread.join(timeout=timeout)
 
-        if self._thread.is_alive():
-            logger.warning(f"Timed out waiting for {self._name} to stop")
+        if self._thread is not None:
+            self._thread.join(timeout=timeout)
+
+            if self._thread.is_alive():
+                logger.warning(f"Timed out waiting for {self._name} to stop")
