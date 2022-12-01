@@ -21,20 +21,17 @@ class AgentHeartbeatHandler:
 
     def check_status_of_agents_from_latest_heartbeats(self):
         agents = self._agent_repository.get_running_agents()
+        current_time = datetime.now(tz=timezone.utc)
 
         for agent in agents:
             latest_heartbeat = self._latest_heartbeats.get(agent.id)
 
             if latest_heartbeat is None:
-                if (datetime.now(tz=timezone.utc) - agent.start_time).total_seconds() >= (
-                    3 * HEARTBEAT_INTERVAL
-                ):
+                if (current_time - agent.start_time).total_seconds() >= (3 * HEARTBEAT_INTERVAL):
                     agent.stop_time = agent.start_time
                     self._agent_repository.upsert_agent(agent)
 
             else:
-                if (datetime.now(tz=timezone.utc) - latest_heartbeat).total_seconds() >= (
-                    3 * HEARTBEAT_INTERVAL
-                ):
+                if (current_time - latest_heartbeat).total_seconds() >= (3 * HEARTBEAT_INTERVAL):
                     agent.stop_time = latest_heartbeat
                     self._agent_repository.upsert_agent(agent)
