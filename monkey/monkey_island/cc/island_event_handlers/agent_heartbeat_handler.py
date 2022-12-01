@@ -1,8 +1,7 @@
 from datetime import datetime, timezone
 from typing import Dict
 
-import pytz
-
+from common import AgentHeartbeat
 from common.common_consts import HEARTBEAT_INTERVAL
 from common.types import AgentID
 from monkey_island.cc.repositories import IAgentRepository
@@ -17,8 +16,8 @@ class AgentHeartbeatHandler:
         self._agent_repository = agent_repository
         self._last_agent_heartbeats: Dict[AgentID, datetime] = {}
 
-    def update_agent_last_heartbeat(self, agent_id: AgentID, timestamp: float):
-        self._last_agent_heartbeats[agent_id] = datetime.fromtimestamp(timestamp, tz=pytz.UTC)
+    def update_agent_last_heartbeat(self, agent_id: AgentID, heartbeat: AgentHeartbeat):
+        self._last_agent_heartbeats[agent_id] = heartbeat.timestamp
 
     def update_agents_stop_time_from_heartbeat(self):
         agents = self._agent_repository.get_running_agents()
