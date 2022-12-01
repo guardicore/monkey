@@ -41,10 +41,19 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
 
 class PeriodicThread(Thread):
     """
-    Calls a function after some time period.
+    Periodically calls a function
+
+    Given a callable and a period, this component calls the callback in the background periodically.
+    Note that this component is susceptible to "timer creep". In other words, the callable is not
+    called every `period` seconds. It is called `period` seconds after the last call completes. This
+    prevents multiple calls to the callback occurring concurrently.
     """
 
     def __init__(self, callback: Callable[[], None], period: float):
+        """
+        :param callback: A callable to be called periodically
+        :param period: The time to wait between calls of `callback`.
+        """
         Thread.__init__(self, daemon=True)
         self._callback = callback
         self._period = period
