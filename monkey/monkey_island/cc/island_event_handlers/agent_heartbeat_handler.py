@@ -6,14 +6,19 @@ from common.common_consts import HEARTBEAT_INTERVAL
 from common.types import AgentID
 from monkey_island.cc.repositories import IAgentRepository
 
+DEFAULT_HEARTBEAT_TIMEOUT = 3 * HEARTBEAT_INTERVAL
+
 
 class AgentHeartbeatHandler:
     """
     Tracks Agents' latest heartbeats and handles related functionality
     """
 
-    def __init__(self, agent_repository: IAgentRepository):
+    def __init__(
+        self, agent_repository: IAgentRepository, heartbeat_timeout=DEFAULT_HEARTBEAT_TIMEOUT
+    ):
         self._agent_repository = agent_repository
+        self._heartbeat_timeout = heartbeat_timeout
         self._latest_heartbeats: Dict[AgentID, datetime] = {}
 
     def update_latest_heartbeat_of_agent(self, agent_id: AgentID, heartbeat: AgentHeartbeat):
@@ -27,11 +32,11 @@ class AgentHeartbeatHandler:
             latest_heartbeat = self._latest_heartbeats.get(agent.id)
 
             if latest_heartbeat is None:
-                if (current_time - agent.start_time).total_seconds() >= (3 * HEARTBEAT_INTERVAL):
+                if (current_time - agent.start_time).total_seconds() >= self._heartbeat_timeout:
                     agent.stop_time = agent.start_time
                     self._agent_repository.upsert_agent(agent)
 
             else:
-                if (current_time - latest_heartbeat).total_seconds() >= (3 * HEARTBEAT_INTERVAL):
+                if (current_time - latest_heartbeat).total_seconds() >= self._heartbeat_timeout:
                     agent.stop_time = latest_heartbeat
                     self._agent_repository.upsert_agent(agent)
