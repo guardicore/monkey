@@ -3,8 +3,9 @@ import threading
 from typing import Dict, Sequence
 
 from common import OperatingSystem
+from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import PingScanData, PluginType, PortStatus
+from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
 from infection_monkey.model import VictimHost
 
@@ -17,7 +18,7 @@ logger = logging.getLogger()
 
 
 class MockPuppet(IPuppet):
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
+    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         logger.debug(f"load_plugin({plugin}, {plugin_type})")
 
     def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:

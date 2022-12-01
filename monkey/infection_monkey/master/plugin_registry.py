@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from common.types import PluginType
+from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient
 
@@ -22,13 +22,13 @@ class PluginRegistry:
         self._registry = {}
         self._island_api_client = island_api_client
 
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: PluginType) -> None:
+    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         self._registry.setdefault(plugin_type, {})
         self._registry[plugin_type][plugin_name] = plugin
 
         logger.debug(f"Plugin '{plugin_name}' loaded")
 
-    def get_plugin(self, plugin_name: str, plugin_type: PluginType) -> Any:
+    def get_plugin(self, plugin_name: str, plugin_type: AgentPluginType) -> Any:
         try:
             plugin = self._registry[plugin_type][plugin_name]
         except KeyError:

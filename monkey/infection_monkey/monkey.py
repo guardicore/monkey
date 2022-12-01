@@ -23,11 +23,12 @@ from common.agent_events import (
     OSDiscoveryEvent,
     PropagationEvent,
 )
+from common.agent_plugins import AgentPluginType
 from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
-from common.types import PluginType, SocketAddress
+from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
@@ -305,19 +306,19 @@ class InfectionMonkey:
         puppet.load_plugin(
             "MimikatzCollector",
             MimikatzCredentialCollector(self._agent_event_queue),
-            PluginType.CREDENTIAL_COLLECTOR,
+            AgentPluginType.CREDENTIAL_COLLECTOR,
         )
         puppet.load_plugin(
             "SSHCollector",
             SSHCredentialCollector(self._agent_event_queue),
-            PluginType.CREDENTIAL_COLLECTOR,
+            AgentPluginType.CREDENTIAL_COLLECTOR,
         )
 
-        puppet.load_plugin("elastic", ElasticSearchFingerprinter(), PluginType.FINGERPRINTER)
-        puppet.load_plugin("http", HTTPFingerprinter(), PluginType.FINGERPRINTER)
-        puppet.load_plugin("mssql", MSSQLFingerprinter(), PluginType.FINGERPRINTER)
-        puppet.load_plugin("smb", SMBFingerprinter(), PluginType.FINGERPRINTER)
-        puppet.load_plugin("ssh", SSHFingerprinter(), PluginType.FINGERPRINTER)
+        puppet.load_plugin("elastic", ElasticSearchFingerprinter(), AgentPluginType.FINGERPRINTER)
+        puppet.load_plugin("http", HTTPFingerprinter(), AgentPluginType.FINGERPRINTER)
+        puppet.load_plugin("mssql", MSSQLFingerprinter(), AgentPluginType.FINGERPRINTER)
+        puppet.load_plugin("smb", SMBFingerprinter(), AgentPluginType.FINGERPRINTER)
+        puppet.load_plugin("ssh", SSHFingerprinter(), AgentPluginType.FINGERPRINTER)
 
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
@@ -325,31 +326,41 @@ class InfectionMonkey:
         exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
 
         puppet.load_plugin(
-            "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), PluginType.EXPLOITER
+            "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), AgentPluginType.EXPLOITER
         )
         puppet.load_plugin(
-            "Log4ShellExploiter", exploit_wrapper.wrap(Log4ShellExploiter), PluginType.EXPLOITER
+            "Log4ShellExploiter",
+            exploit_wrapper.wrap(Log4ShellExploiter),
+            AgentPluginType.EXPLOITER,
         )
         puppet.load_plugin(
-            "PowerShellExploiter", exploit_wrapper.wrap(PowerShellExploiter), PluginType.EXPLOITER
+            "PowerShellExploiter",
+            exploit_wrapper.wrap(PowerShellExploiter),
+            AgentPluginType.EXPLOITER,
         )
-        puppet.load_plugin("SMBExploiter", exploit_wrapper.wrap(SMBExploiter), PluginType.EXPLOITER)
-        puppet.load_plugin("SSHExploiter", exploit_wrapper.wrap(SSHExploiter), PluginType.EXPLOITER)
-        puppet.load_plugin("WmiExploiter", exploit_wrapper.wrap(WmiExploiter), PluginType.EXPLOITER)
         puppet.load_plugin(
-            "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), PluginType.EXPLOITER
+            "SMBExploiter", exploit_wrapper.wrap(SMBExploiter), AgentPluginType.EXPLOITER
+        )
+        puppet.load_plugin(
+            "SSHExploiter", exploit_wrapper.wrap(SSHExploiter), AgentPluginType.EXPLOITER
+        )
+        puppet.load_plugin(
+            "WmiExploiter", exploit_wrapper.wrap(WmiExploiter), AgentPluginType.EXPLOITER
+        )
+        puppet.load_plugin(
+            "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), AgentPluginType.EXPLOITER
         )
 
         puppet.load_plugin(
             "ZerologonExploiter",
             exploit_wrapper.wrap(ZerologonExploiter),
-            PluginType.EXPLOITER,
+            AgentPluginType.EXPLOITER,
         )
 
         puppet.load_plugin(
             "ransomware",
             RansomwarePayload(self._agent_event_queue),
-            PluginType.PAYLOAD,
+            AgentPluginType.PAYLOAD,
         )
 
         return puppet
