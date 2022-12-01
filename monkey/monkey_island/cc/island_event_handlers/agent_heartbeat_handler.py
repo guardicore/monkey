@@ -29,14 +29,8 @@ class AgentHeartbeatHandler:
         current_time = datetime.now(tz=timezone.utc)
 
         for agent in agents:
-            latest_heartbeat = self._latest_heartbeats.get(agent.id)
+            latest_heartbeat = self._latest_heartbeats.get(agent.id, agent.start_time)
 
-            if latest_heartbeat is None:
-                if (current_time - agent.start_time).total_seconds() >= self._heartbeat_timeout:
-                    agent.stop_time = agent.start_time
-                    self._agent_repository.upsert_agent(agent)
-
-            else:
-                if (current_time - latest_heartbeat).total_seconds() >= self._heartbeat_timeout:
-                    agent.stop_time = latest_heartbeat
-                    self._agent_repository.upsert_agent(agent)
+            if (current_time - latest_heartbeat).total_seconds() >= self._heartbeat_timeout:
+                agent.stop_time = latest_heartbeat
+                self._agent_repository.upsert_agent(agent)
