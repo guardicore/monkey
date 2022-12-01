@@ -39,7 +39,7 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
     mapping.pop(key, None)
 
 
-class PeriodicThread(Thread):
+class PeriodicCaller(Thread):
     """
     Periodically calls a function
 
