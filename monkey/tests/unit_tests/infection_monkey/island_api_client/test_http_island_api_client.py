@@ -3,18 +3,26 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
+import requests
+from tests.common.example_agent_configuration import AGENT_CONFIGURATION
+from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
 
-from common import OperatingSystem
+from common import AgentRegistrationData, AgentSignals, OperatingSystem
+from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     PydanticAgentEventSerializer,
 )
 from common.agent_events import AbstractAgentEvent
+from common.credentials import Credentials
+from common.types import SocketAddress
 from infection_monkey.island_api_client import HTTPIslandAPIClient, IslandAPIRequestError
 from infection_monkey.island_api_client.island_api_client_errors import (
     IslandAPIResponseParsingError,
 )
 
+SERVER = SocketAddress(ip="1.1.1.1", port=9999)
+WINDOWS = "windows"
 AGENT_ID = UUID("80988359-a1cd-42a2-9b47-5b94b37cd673")
 AGENT_REGISTRATION = AgentRegistrationData(
     id=AGENT_ID,
@@ -132,6 +140,73 @@ def test_island_api_client__handled_exceptions():
 
     with pytest.raises(IslandAPIResponseParsingError):
         api_client.get_agent_signals(agent_id=AGENT_ID)
+
+
+@pytest.mark.parametrize("timestamp", [TIMESTAMP, None])
+def test_island_api_client_get_agent_signals(timestamp):
+    expected_agent_signals = AgentSignals(terminate=timestamp)
+    client_spy = MagicMock()
+    client_spy.get.return_value.json.return_value = {"terminate": timestamp}
+    api_client = build_api_client(client_spy)
+
+    actual_agent_signals = api_client.get_agent_signals(agent_id=AGENT_ID)
+
+    assert actual_agent_signals == expected_agent_signals
+
+
+@pytest.mark.parametrize("timestamp", [TIMESTAMP, None])
+def test_island_api_client_get_agent_signals__bad_json(timestamp):
+    client_stub = MagicMock()
+    client_stub.get.return_value.json.return_value = {"terminate": timestamp, "discombobulate": 20}
+    api_client = build_api_client(client_stub)
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.get_agent_signals(agent_id=AGENT_ID)
+
+
+@pytest.mark.parametrize(
+    "raised_error", [json.JSONDecodeError, requests.JSONDecodeError, ValueError, TypeError]
+)
+def test_island_api_client_get_config__parsing_error(raised_error):
+    client_stub = MagicMock()
+    client_stub.get = MagicMock(side_effect=raised_error)
+    api_client = build_api_client(client_stub)
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.get_config()
+
+
+@pytest.mark.parametrize(
+    "raised_error", [json.JSONDecodeError, requests.JSONDecodeError, ValueError, TypeError]
+)
+def test_island_api_client_get_credentials_for_propagation__parsing_error(raised_error):
+    client_stub = MagicMock()
+    client_stub.get = MagicMock(side_effect=raised_error)
+    api_client = build_api_client(client_stub)
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.get_credentials_for_propagation()
+
+
+def test_island_api_client_get_credentials_for_propagation():
+    client_spy = MagicMock()
+    client_spy.get.return_value.json.return_value = CREDENTIALS_DICTS
+    expected_credentials = [Credentials(**cred) for cred in CREDENTIALS_DICTS]
+    api_client = build_api_client(client_spy)
+
+    returned_credentials = api_client.get_credentials_for_propagation()
+
+    assert returned_credentials == expected_credentials
+
+
+def test_island_api_client_get_config():
+    client_stub = MagicMock()
+    client_stub.get.return_value.json.return_value = AgentConfiguration(**AGENT_CONFIGURATION).dict(
+        simplify=True
+    )
+    api_client = build_api_client(client_stub)
+
+    assert api_client.get_config() == AgentConfiguration(**AGENT_CONFIGURATION)
 
 
 @pytest.mark.parametrize(
