@@ -38,7 +38,7 @@ def _subscribe_agent_heartbeat_events(
 ):
     agent_heartbeat_handler = container.resolve(AgentHeartbeatHandler)
     PeriodicCaller(
-        agent_heartbeat_handler.check_status_of_agents_from_latest_heartbeats, HEARTBEAT_INTERVAL
+        agent_heartbeat_handler.set_unresponsive_agents_stop_time, HEARTBEAT_INTERVAL
     ).start()
 
     topic = IslandEventTopic.AGENT_HEARTBEAT

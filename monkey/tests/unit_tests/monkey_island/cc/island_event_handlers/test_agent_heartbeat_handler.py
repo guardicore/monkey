@@ -64,7 +64,7 @@ def test_agent_heartbeat_handler(agent_heartbeat_handler, in_memory_agent_reposi
         AGENT_ID_2, AgentHeartbeat(timestamp=200)
     )
 
-    agent_heartbeat_handler.check_status_of_agents_from_latest_heartbeats()
+    agent_heartbeat_handler.set_unresponsive_agents_stop_time()
 
     agent_1 = in_memory_agent_repository.get_agent_by_id(AGENT_ID_1)
     agent_2 = in_memory_agent_repository.get_agent_by_id(AGENT_ID_2)
