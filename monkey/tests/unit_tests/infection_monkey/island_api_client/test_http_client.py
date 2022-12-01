@@ -117,6 +117,17 @@ def test_http_client__post(connected_client, monkeypatch):
     post = MagicMock()
     monkeypatch.setattr("requests.Session.post", post)
 
-    connected_client.post(PROPAGATION_CREDENTIALS_ENDPOINT, data={"foo": "bar"})
+    connected_client.post(PROPAGATION_CREDENTIALS_ENDPOINT, data={"foo": "bar"}, timeout=10)
 
     assert post.call_args[1]["json"] == {"foo": "bar"}
+    assert post.call_args[1]["timeout"] == 10
+
+
+def test_http_client__put(connected_client, monkeypatch):
+    put = MagicMock()
+    monkeypatch.setattr("requests.Session.put", put)
+
+    connected_client.put(PROPAGATION_CREDENTIALS_ENDPOINT, data={"foo": "bar"}, timeout=10)
+
+    assert put.call_args[1]["json"] == {"foo": "bar"}
+    assert put.call_args[1]["timeout"] == 10
