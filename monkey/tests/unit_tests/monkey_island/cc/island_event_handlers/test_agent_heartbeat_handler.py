@@ -73,19 +73,3 @@ def test_agent_heartbeat_handler(agent_heartbeat_handler, in_memory_agent_reposi
     assert agent_1.stop_time == datetime.fromtimestamp(110, tz=pytz.UTC)
     assert agent_2.stop_time == datetime.fromtimestamp(200, tz=pytz.UTC)
     assert agent_3.stop_time == agent_3.start_time
-
-
-def test_agent_heartbeat_handler__agent_already_stopped(
-    agent_heartbeat_handler, in_memory_agent_repository
-):
-    in_memory_agent_repository.upsert_agent(AGENT_ALREADY_STOPPED)
-
-    running_agents = in_memory_agent_repository.get_running_agents()
-    assert len(running_agents) == 0
-
-    agent_heartbeat_handler.update_latest_heartbeat_of_agent(
-        AGENT_ID_ALREADY_STOPPED, AgentHeartbeat(timestamp=123)
-    )
-
-    running_agents = in_memory_agent_repository.get_running_agents()
-    assert len(running_agents) == 1
