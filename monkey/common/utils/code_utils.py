@@ -69,6 +69,8 @@ class PeriodicCaller:
         """
         Periodically call the callback in the background
         """
+        logger.debug(f"Starting {self._name}")
+
         self._stop.clear()
         self._thread.start()
 
@@ -76,9 +78,13 @@ class PeriodicCaller:
         """
         Periodically call the callback and block until `stop()` is called
         """
+        logger.debug(f"Successfully started {self._name}")
+
         while not self._stop.is_set():
             self._callback()
             self._stop.wait(self._period)
+
+        logger.debug(f"Successfully stopped {self._name}")
 
     def stop(self, timeout: Optional[float] = None):
         """
@@ -89,6 +95,7 @@ class PeriodicCaller:
 
         :param timeout: The number of seconds to wait for this component to stop
         """
+        logger.debug(f"Stopping {self._name}")
 
         self._stop.set()
         self._thread.join(timeout=timeout)
