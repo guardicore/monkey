@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
-from typing import Dict
+from typing import Dict, Sequence
 
 from common import AgentHeartbeat
 from common.common_consts import HEARTBEAT_INTERVAL
 from common.types import AgentID
+from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import IAgentRepository
 
 DEFAULT_HEARTBEAT_TIMEOUT = 3 * HEARTBEAT_INTERVAL
@@ -25,12 +26,25 @@ class AgentHeartbeatMonitor:
         self._latest_heartbeats[agent_id] = heartbeat.timestamp
 
     def set_unresponsive_agents_stop_time(self):
-        agents = self._agent_repository.get_running_agents()
         current_time = datetime.now(tz=timezone.utc)
 
-        for agent in agents:
+        running_agents = self._agent_repository.get_running_agents()
+        self._clean_latest_heartbeats(running_agents)
+
+        for agent in running_agents:
             latest_heartbeat = self._latest_heartbeats.get(agent.id, agent.start_time)
 
             if (current_time - latest_heartbeat).total_seconds() >= self._heartbeat_timeout:
                 agent.stop_time = latest_heartbeat
                 self._agent_repository.upsert_agent(agent)
+
+    def _clean_latest_heartbeats(self, running_agents: Sequence[Agent]):
+        # If an agent is no longer running, then we no longer need to store its most recent
+        # heartbeat
+
+        running_agent_ids = {agent.id for agent in running_agents}
+        self._latest_heartbeats = {
+            agent_id: heartbeat_timestamp
+            for agent_id, heartbeat_timestamp in self._latest_heartbeats.items()
+            if agent_id in running_agent_ids
+        }
