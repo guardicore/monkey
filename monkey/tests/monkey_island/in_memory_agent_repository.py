@@ -1,5 +1,5 @@
-from typing import Sequence
 import copy
+from typing import Sequence
 
 from common.types import AgentID
 from monkey_island.cc.models import Agent
