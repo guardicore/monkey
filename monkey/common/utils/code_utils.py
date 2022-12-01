@@ -39,14 +39,15 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
     mapping.pop(key, None)
 
 
-class PeriodicCaller(Thread):
+class PeriodicCaller:
     """
     Periodically calls a function
 
-    Given a callable and a period, this component calls the callback in the background periodically.
-    Note that this component is susceptible to "timer creep". In other words, the callable is not
-    called every `period` seconds. It is called `period` seconds after the last call completes. This
-    prevents multiple calls to the callback occurring concurrently.
+    Given a callable and a period, this component calls the callback periodically. The calls can
+    occur in the background by calling the `start()` method, or in the foreground by calling the
+    `run()` method. Note that this component is susceptible to "timer creep". In other words, the
+    callable is not called every `period` seconds. It is called `period` seconds after the last call
+    completes. This prevents multiple calls to the callback occurring concurrently.
     """
 
     def __init__(self, callback: Callable[[], None], period: float):
@@ -54,11 +55,22 @@ class PeriodicCaller(Thread):
         :param callback: A callable to be called periodically
         :param period: The time to wait between calls of `callback`.
         """
-        Thread.__init__(self, daemon=True)
+        self._thread = Thread(
+            daemon=True, name="PeriodicCaller-{callback.__name__}", target=self.run
+        )
         self._callback = callback
         self._period = period
 
+    def start(self):
+        """
+        Periodically call the callback in the background
+        """
+        self._thread.start()
+
     def run(self):
+        """
+        Periodically call the callback and block until `stop()` is called
+        """
         while True:
             self._callback()
             time.sleep(self._period)
