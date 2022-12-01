@@ -57,12 +57,8 @@ def test_agent_heartbeat_handler(agent_heartbeat_handler, in_memory_agent_reposi
     in_memory_agent_repository.upsert_agent(AGENT_2)
     in_memory_agent_repository.upsert_agent(AGENT_3)
 
-    agent_heartbeat_handler.update_latest_heartbeat_of_agent(
-        AGENT_ID_1, AgentHeartbeat(timestamp=110)
-    )
-    agent_heartbeat_handler.update_latest_heartbeat_of_agent(
-        AGENT_ID_2, AgentHeartbeat(timestamp=200)
-    )
+    agent_heartbeat_handler.handle_agent_heartbeat(AGENT_ID_1, AgentHeartbeat(timestamp=110))
+    agent_heartbeat_handler.handle_agent_heartbeat(AGENT_ID_2, AgentHeartbeat(timestamp=200))
 
     agent_heartbeat_handler.set_unresponsive_agents_stop_time()
 

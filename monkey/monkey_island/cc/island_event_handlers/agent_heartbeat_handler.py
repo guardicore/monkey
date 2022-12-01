@@ -21,7 +21,7 @@ class AgentHeartbeatHandler:
         self._heartbeat_timeout = heartbeat_timeout
         self._latest_heartbeats: Dict[AgentID, datetime] = {}
 
-    def update_latest_heartbeat_of_agent(self, agent_id: AgentID, heartbeat: AgentHeartbeat):
+    def handle_agent_heartbeat(self, agent_id: AgentID, heartbeat: AgentHeartbeat):
         self._latest_heartbeats[agent_id] = heartbeat.timestamp
 
     def set_unresponsive_agents_stop_time(self):

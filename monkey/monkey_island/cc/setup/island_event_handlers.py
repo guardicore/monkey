@@ -42,7 +42,7 @@ def _subscribe_agent_heartbeat_events(
     ).start()
 
     topic = IslandEventTopic.AGENT_HEARTBEAT
-    island_event_queue.subscribe(topic, agent_heartbeat_handler.update_latest_heartbeat_of_agent)
+    island_event_queue.subscribe(topic, agent_heartbeat_handler.handle_agent_heartbeat)
 
 
 def _subscribe_agent_registration_events(
