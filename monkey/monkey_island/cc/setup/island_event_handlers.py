@@ -1,6 +1,9 @@
 from common import DIContainer
+from common.common_consts import HEARTBEAT_INTERVAL
+from common.utils.code_utils import PeriodicCaller
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.island_event_handlers import (
+    AgentHeartbeatMonitor,
     handle_agent_registration,
     reset_agent_configuration,
     reset_machine_repository,
@@ -22,11 +25,24 @@ from monkey_island.cc.services import AgentSignalsService
 def setup_island_event_handlers(container: DIContainer):
     island_event_queue = container.resolve(IIslandEventQueue)
 
+    _subscribe_agent_heartbeat_events(island_event_queue, container)
     _subscribe_agent_registration_events(island_event_queue, container)
     _subscribe_reset_agent_configuration_events(island_event_queue, container)
     _subscribe_clear_simulation_data_events(island_event_queue, container)
     _subscribe_set_island_mode_events(island_event_queue, container)
     _subscribe_terminate_agents_events(island_event_queue, container)
+
+
+def _subscribe_agent_heartbeat_events(
+    island_event_queue: IIslandEventQueue, container: DIContainer
+):
+    agent_heartbeat_handler = container.resolve(AgentHeartbeatMonitor)
+    PeriodicCaller(
+        agent_heartbeat_handler.set_unresponsive_agents_stop_time, HEARTBEAT_INTERVAL
+    ).start()
+
+    topic = IslandEventTopic.AGENT_HEARTBEAT
+    island_event_queue.subscribe(topic, agent_heartbeat_handler.handle_agent_heartbeat)
 
 
 def _subscribe_agent_registration_events(

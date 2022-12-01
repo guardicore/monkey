@@ -2,11 +2,10 @@ import logging
 import time
 from threading import Event
 
+from common.common_consts import HEARTBEAT_INTERVAL
 from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.utils.ids import get_agent_id
 from infection_monkey.utils.threading import create_daemon_thread
-
-HEARTBEAT_INTERVAL = 30
 
 logger = logging.getLogger(__name__)
 
