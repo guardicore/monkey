@@ -36,15 +36,13 @@ def setup_island_event_handlers(container: DIContainer):
 def _subscribe_agent_heartbeat_events(
     island_event_queue: IIslandEventQueue, container: DIContainer
 ):
-    topic = IslandEventTopic.AGENT_HEARTBEAT
-
     agent_heartbeat_handler = container.resolve(AgentHeartbeatHandler)
-
     PeriodicCaller(
-        agent_heartbeat_handler.update_agents_stop_time_from_heartbeat, HEARTBEAT_INTERVAL
+        agent_heartbeat_handler.check_status_of_agents_from_latest_heartbeats, HEARTBEAT_INTERVAL
     ).start()
 
-    island_event_queue.subscribe(topic, agent_heartbeat_handler.update_agent_last_heartbeat)
+    topic = IslandEventTopic.AGENT_HEARTBEAT
+    island_event_queue.subscribe(topic, agent_heartbeat_handler.update_latest_heartbeat_of_agent)
 
 
 def _subscribe_agent_registration_events(
