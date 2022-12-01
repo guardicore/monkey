@@ -1,6 +1,7 @@
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import FileEncryptedEvent
+from common.agent_plugins import AgentPlugin
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.event_queue import QueuedAgentEventPublisher
@@ -122,3 +123,10 @@ Lock.locked
 
 # Remove after #2640
 QueuedAgentEventPublisher
+
+# Remove after #2638
+AgentPlugin
+AgentPlugin.plugin_manifest
+AgentPlugin.config_schema
+AgentPlugin.source_archive
+AgentPlugin.default_config
