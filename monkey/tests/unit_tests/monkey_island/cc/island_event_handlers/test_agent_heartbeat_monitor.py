@@ -6,7 +6,7 @@ import pytz
 from tests.monkey_island import InMemoryAgentRepository
 
 from common import AgentHeartbeat
-from monkey_island.cc.island_event_handlers import AgentHeartbeatHandler
+from monkey_island.cc.island_event_handlers import AgentHeartbeatMonitor
 from monkey_island.cc.models import Agent
 
 AGENT_ID_1 = UUID("2d56f972-78a8-4026-9f47-2dfd550ee207")
@@ -49,7 +49,7 @@ def in_memory_agent_repository():
 
 @pytest.fixture
 def agent_heartbeat_handler(in_memory_agent_repository):
-    return AgentHeartbeatHandler(in_memory_agent_repository)
+    return AgentHeartbeatMonitor(in_memory_agent_repository)
 
 
 def test_agent_heartbeat_handler(agent_heartbeat_handler, in_memory_agent_repository):

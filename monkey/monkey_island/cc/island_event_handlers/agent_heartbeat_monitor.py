@@ -9,7 +9,7 @@ from monkey_island.cc.repositories import IAgentRepository
 DEFAULT_HEARTBEAT_TIMEOUT = 3 * HEARTBEAT_INTERVAL
 
 
-class AgentHeartbeatHandler:
+class AgentHeartbeatMonitor:
     """
     Tracks Agents' latest heartbeats and handles related functionality
     """
