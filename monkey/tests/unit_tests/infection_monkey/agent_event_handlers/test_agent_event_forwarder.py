@@ -31,3 +31,19 @@ def test_api_not_called_if_no_events(event_sender, mock_island_api_client):
     event_sender.flush()
 
     assert mock_island_api_client.send_events.call_count == 0
+
+
+def test_resend_events_on_failure(event_sender, mock_island_api_client):
+    mock_island_api_client.send_events = MagicMock(side_effect=Exception)
+    events = [{"value": 1}, {"value": 2}, {"value": 3}]
+    for e in events:
+        event_sender.add_event_to_queue(e)
+
+    event_sender.flush()
+    event_sender.flush()
+
+    assert mock_island_api_client.send_events.call_count == 2
+    assert (
+        mock_island_api_client.send_events.call_args_list[0]
+        == mock_island_api_client.send_events.call_args_list[1]
+    )

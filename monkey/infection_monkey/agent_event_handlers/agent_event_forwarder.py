@@ -93,3 +93,7 @@ class BatchingAgentEventForwarder:
                 self._island_api_client.send_events(events)
             except Exception:
                 logger.exception("Exception caught when connecting to the Island")
+
+                # Put all unsent events back on the queue so we can attempt to resend them later
+                for event in events:
+                    self._queue.put(event)
