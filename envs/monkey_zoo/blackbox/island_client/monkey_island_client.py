@@ -5,11 +5,10 @@ from http import HTTPStatus
 from typing import List, Mapping, Optional, Sequence
 
 from common.credentials import Credentials
-from common.request_data import TerminateAllAgents
 from common.types import AgentID, MachineID
 from envs.monkey_zoo.blackbox.island_client.monkey_island_requests import MonkeyIslandRequests
 from envs.monkey_zoo.blackbox.test_configurations.test_configuration import TestConfiguration
-from monkey_island.cc.models import Agent, Machine
+from monkey_island.cc.models import Agent, Machine, TerminateAllAgents
 
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 GET_AGENTS_ENDPOINT = "api/agents"
