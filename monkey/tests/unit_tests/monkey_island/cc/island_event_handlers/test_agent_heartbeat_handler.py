@@ -6,6 +6,7 @@ import pytest
 import pytz
 from tests.monkey_island import InMemoryAgentRepository
 
+from common import AgentHeartbeat
 from common.types import SocketAddress
 from monkey_island.cc.island_event_handlers import AgentHeartbeatHandler
 from monkey_island.cc.models import Agent
@@ -73,8 +74,8 @@ def test_agent_heartbeat_handler__no_heartbeats(
 
 
 def test_agent_heartbeat_handler__heartbeats(agent_heartbeat_handler, in_memory_agent_repository):
-    agent_heartbeat_handler.update_agent_last_heartbeat(AGENT_ID_1, 110)
-    agent_heartbeat_handler.update_agent_last_heartbeat(AGENT_ID_2, 200)
+    agent_heartbeat_handler.update_agent_last_heartbeat(AGENT_ID_1, AgentHeartbeat(timestamp=110))
+    agent_heartbeat_handler.update_agent_last_heartbeat(AGENT_ID_2, AgentHeartbeat(timestamp=200))
 
     agent_heartbeat_handler.update_agents_stop_time_from_heartbeat()
 
