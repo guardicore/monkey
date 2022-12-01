@@ -1,7 +1,7 @@
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import FileEncryptedEvent
-from common.agent_plugins import AgentPlugin
+from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.event_queue import QueuedAgentEventPublisher
@@ -130,3 +130,12 @@ AgentPlugin.plugin_manifest
 AgentPlugin.config_schema
 AgentPlugin.source_archive
 AgentPlugin.default_config
+
+AgentPluginManifest
+AgentPluginManifest.supported_operating_systems
+AgentPluginManifest.description
+AgentPluginManifest.name
+AgentPluginManifest.plugin_type
+AgentPluginManifest.title
+AgentPluginManifest.link_to_documentation
+AgentPluginManifest.safe
