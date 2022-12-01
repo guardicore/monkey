@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 from typing import Dict, Sequence
 
@@ -8,6 +9,8 @@ from monkey_island.cc.models import Agent
 from monkey_island.cc.repositories import IAgentRepository
 
 DEFAULT_HEARTBEAT_TIMEOUT = 3 * HEARTBEAT_INTERVAL
+
+logger = logging.getLogger(__name__)
 
 
 class AgentHeartbeatMonitor:
@@ -35,6 +38,10 @@ class AgentHeartbeatMonitor:
             latest_heartbeat = self._latest_heartbeats.get(agent.id, agent.start_time)
 
             if (current_time - latest_heartbeat).total_seconds() >= self._heartbeat_timeout:
+                logger.warning(
+                    f"The last hearbeat from {agent.id} was received at {latest_heartbeat} "
+                    "-- marking the agent as stopped"
+                )
                 agent.stop_time = latest_heartbeat
                 self._agent_repository.upsert_agent(agent)
 
