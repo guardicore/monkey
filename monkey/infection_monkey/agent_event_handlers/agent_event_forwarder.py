@@ -70,9 +70,9 @@ class BatchingAgentEventForwarder:
     def add_event_to_queue(self, agent_event: AbstractAgentEvent):
         self._queue.put(agent_event)
 
-    def _send_events_to_island(self):
+    def flush(self):
         # This method could be called simultaneously from different threads. For example,
-        # the PeriodicCaller calls this at the same time as flush() is called from another
+        # the PeriodicCaller calls flush() at the same time as flush() is called from another
         # thread (likely the main thread).
         #
         # The goal of this lock is to ensure that when flush() returns, the queue has been fully
@@ -93,6 +93,3 @@ class BatchingAgentEventForwarder:
                 self._island_api_client.send_events(events)
             except Exception:
                 logger.exception("Exception caught when connecting to the Island")
-
-    def flush(self):
-        self._send_events_to_island()
