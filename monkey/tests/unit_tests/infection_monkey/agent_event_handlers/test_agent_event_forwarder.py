@@ -1,4 +1,3 @@
-import time
 from unittest.mock import MagicMock
 
 import pytest
@@ -16,49 +15,19 @@ def mock_island_api_client():
 
 @pytest.fixture
 def event_sender(mock_island_api_client):
-    return BatchingAgentEventForwarder(mock_island_api_client, time_period=0.001)
+    return BatchingAgentEventForwarder(mock_island_api_client)
 
 
-# NOTE: If these tests are too slow or end up being racey, we can redesign AgentEventForwarder to
-#       handle threading and simply command BatchingAgentEventForwarder when to send events.
-#       BatchingAgentEventForwarder would have unit tests, but AgentEventForwarder would not.
-
-
-def test_send_events(event_sender, mock_island_api_client):
-    event_sender.start()
-
-    for _ in range(5):
-        event_sender.add_event_to_queue({})
-    time.sleep(0.05)
-    assert mock_island_api_client.send_events.call_count == 1
-
-    event_sender.add_event_to_queue({})
-    time.sleep(0.05)
-    assert mock_island_api_client.send_events.call_count == 2
-
-    event_sender.stop()
-
-
-def test_send_remaining_events(event_sender, mock_island_api_client):
-    event_sender.start()
-
-    for _ in range(5):
-        event_sender.add_event_to_queue({})
-    time.sleep(0.05)
-    assert mock_island_api_client.send_events.call_count == 1
-
-    event_sender.add_event_to_queue({})
-    event_sender.stop()
-    assert mock_island_api_client.send_events.call_count == 2
-
-
-def test_flush(event_sender, mock_island_api_client):
-    event_sender.start()
-
+def test_send_multiple_events_in_one_api_call(event_sender, mock_island_api_client):
     for _ in range(5):
         event_sender.add_event_to_queue({})
 
     event_sender.flush()
+
     assert mock_island_api_client.send_events.call_count == 1
 
-    event_sender.stop()
+
+def test_api_not_called_if_no_events(event_sender, mock_island_api_client):
+    event_sender.flush()
+
+    assert mock_island_api_client.send_events.call_count == 0
