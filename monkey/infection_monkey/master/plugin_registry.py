@@ -13,7 +13,7 @@ class PluginRegistry:
         """
         `self._registry` looks like -
             {
-                PluginType.EXPLOITER: {
+                AgentPluginType.EXPLOITER: {
                     "ZerologonExploiter": ZerologonExploiter,
                     "SMBExploiter": SMBExploiter
                 }
