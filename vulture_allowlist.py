@@ -3,6 +3,7 @@ from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import FileEncryptedEvent
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
+from common.event_queue import IAgentEventPublisher
 from common.types import Event, Lock, NetworkPort
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
@@ -118,3 +119,6 @@ Lock.exc_val
 Lock.exc_tb
 Lock.blocking
 Lock.locked
+
+# Remove after #2640
+IAgentEventPublisher
