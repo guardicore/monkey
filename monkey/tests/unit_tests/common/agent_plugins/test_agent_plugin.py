@@ -61,9 +61,9 @@ FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
 )
 
 
-def test_agent_plugin_serialization():
+def test_agent_plugin__serialization():
     assert FAKE_AGENT_PLUGIN_OBJECT.dict(simplify=True) == FAKE_AGENT_PLUGIN_DICT_OUT
 
 
-def test_agent_plugin_deserialization():
+def test_agent_plugin__deserialization():
     assert AgentPlugin(**FAKE_AGENT_PLUGIN_DICT_IN) == FAKE_AGENT_PLUGIN_OBJECT

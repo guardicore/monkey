@@ -40,9 +40,9 @@ FAKE_MANIFEST_OBJECT = AgentPluginManifest(
 )
 
 
-def test_agent_plugin_manifest_serialization():
+def test_agent_plugin_manifest__serialization():
     assert FAKE_MANIFEST_OBJECT.dict(simplify=True) == FAKE_AGENT_MANIFEST_DICT_OUT
 
 
-def test_agent_plugin_manifest_deserialization():
+def test_agent_plugin_manifest__deserialization():
     assert AgentPluginManifest(**FAKE_AGENT_MANIFEST_DICT_IN) == FAKE_MANIFEST_OBJECT
