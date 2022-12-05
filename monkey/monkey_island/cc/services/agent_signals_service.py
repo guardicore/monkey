@@ -29,18 +29,20 @@ class AgentSignalsService:
 
     def _get_terminate_signal_timestamp(self, agent_id: AgentID) -> Optional[datetime]:
         agent = self._agent_repository.get_agent_by_id(agent_id)
-        simulation = self._simulation_repository.get_simulation()
-        terminate_all_signal_time = simulation.terminate_signal_time
-        progenitor = self._agent_repository.get_progenitor(agent)
-
         if agent.stop_time is not None:
             return agent.stop_time
 
-        if terminate_all_signal_time is not None:
-            if (agent.start_time <= terminate_all_signal_time) or (
-                progenitor.start_time <= terminate_all_signal_time
-            ):
-                return terminate_all_signal_time
+        simulation = self._simulation_repository.get_simulation()
+        terminate_all_signal_time = simulation.terminate_signal_time
+        if terminate_all_signal_time is None:
+            return None
+
+        if agent.start_time <= terminate_all_signal_time:
+            return terminate_all_signal_time
+
+        progenitor = self._agent_repository.get_progenitor(agent)
+        if progenitor.start_time <= terminate_all_signal_time:
+            return terminate_all_signal_time
 
         return None
 
