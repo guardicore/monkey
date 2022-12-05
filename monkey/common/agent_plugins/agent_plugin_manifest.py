@@ -1,11 +1,11 @@
 from typing import Optional, Tuple
 
 from common import OperatingSystem
+from common.agent_plugins import AgentPluginType
+from common.base_models import InfectionMonkeyBaseModel
 
-from .agent_plugin_type import AgentPluginType
 
-
-class AgentPluginManifest:
+class AgentPluginManifest(InfectionMonkeyBaseModel):
     name: str
     plugin_type: AgentPluginType
     supported_operating_systems: Tuple[OperatingSystem, ...] = (
