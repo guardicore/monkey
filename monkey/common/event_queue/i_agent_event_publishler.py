@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from commong.agent_events import AbstractAgentEvent
+from common.agent_events import AbstractAgentEvent
 
 
 class IAgentEventPublisher(ABC):
