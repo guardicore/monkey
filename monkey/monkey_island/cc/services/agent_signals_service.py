@@ -24,6 +24,22 @@ class AgentSignalsService:
         :param agent_id: The ID of the agent whose signals need to be retrieved
         :return: Signals sent to the relevant agent
         """
+        # NOTE: At the moment, we're not prepared to handle per-agent terminate signals. The
+        #       AgentHeartbeatMonitor should set an agent-specific terminate signal when it sets
+        #       the agent's stop time, which would make this logic unnecessary. For the moment, this
+        #       hack represents an implicit coupling between AgentHeartbeatMonitor and
+        #       AgentSignalsService. The solution is to support per-agent terminate signals.
+        #
+        #       The short-term solution is the below logic, which assumes that an agent which is
+        #       thought to be stopped is asking if it's been terminated. This would represent an
+        #       error and the agent should be signaled to stop. In the future, it can not be assumed
+        #       that only agents ask about their terminate signals. If another component begins to
+        #       query terminate signal times for agents, the below logic will result in an incorrect
+        #       answer for any stopped agent.
+        agent = self._agent_repository.get_agent_by_id(agent_id)
+        if agent.stop_time is not None:
+            return AgentSignals(terminate=agent.stop_time)
+
         terminate_timestamp = self._get_terminate_signal_timestamp(agent_id)
         return AgentSignals(terminate=terminate_timestamp)
 

@@ -32,7 +32,18 @@ AGENT_3 = Agent(
     start_time=300,
     parent_id=AGENT_2.id,
 )
+
 AGENTS = [AGENT_1, AGENT_2, AGENT_3]
+
+STOPPED_AGENT = Agent(
+    id=UUID("e810ad01-6b67-9446-fc58-9b8d717653f7"),
+    machine_id=4,
+    start_time=400,
+    stop_time=500,
+    parent_id=AGENT_3.id,
+)
+
+ALL_AGENTS = [*AGENTS, STOPPED_AGENT]
 
 
 @pytest.fixture
@@ -43,7 +54,7 @@ def mock_simulation_repository() -> IAgentRepository:
 @pytest.fixture(scope="session")
 def mock_agent_repository() -> IAgentRepository:
     def get_agent_by_id(agent_id: AgentID) -> Agent:
-        for agent in AGENTS:
+        for agent in ALL_AGENTS:
             if agent.id == agent_id:
                 return agent
 
@@ -59,6 +70,19 @@ def mock_agent_repository() -> IAgentRepository:
 @pytest.fixture
 def agent_signals_service(mock_simulation_repository, mock_agent_repository) -> AgentSignalsService:
     return AgentSignalsService(mock_simulation_repository, mock_agent_repository)
+
+
+def test_stopped_agent(
+    agent_signals_service: AgentSignalsService,
+    mock_simulation_repository: ISimulationRepository,
+):
+    agent = STOPPED_AGENT
+    mock_simulation_repository.get_simulation = MagicMock(
+        return_value=Simulation(terminate_signal_time=None)
+    )
+
+    signals = agent_signals_service.get_signals(agent.id)
+    assert signals.terminate == agent.stop_time
 
 
 @pytest.mark.parametrize("agent", AGENTS)
