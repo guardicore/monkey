@@ -4,3 +4,4 @@ from .i_agent_event_queue import IAgentEventQueue
 from .pypubsub_agent_event_queue import PyPubSubAgentEventQueue
 from .locking_agent_event_queue_decorator import LockingAgentEventQueueDecorator
 from .i_agent_event_publishler import IAgentEventPublisher
+from .queued_agent_event_publisher import QueuedAgentEventPublisher
