@@ -3,29 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from ipaddress import IPv4Address
-from typing import Dict, List, Optional, Union
-from uuid import UUID
+from typing import Optional
 
-from pydantic import ConstrainedInt, PositiveInt
-from typing_extensions import TypeAlias
+from pydantic import ConstrainedInt
 
 from common import OperatingSystem
 from common.base_models import InfectionMonkeyBaseModel
 from common.network.network_utils import address_to_ip_port
-
-AgentID: TypeAlias = UUID
-HardwareID: TypeAlias = PositiveInt
-MachineID: TypeAlias = PositiveInt
-
-JSONSerializable = Union[  # type: ignore[misc]
-    Dict[str, "JSONSerializable"],  # type: ignore[misc]
-    List["JSONSerializable"],  # type: ignore[misc]
-    int,
-    str,
-    float,
-    bool,
-    None,
-]
 
 
 class NetworkService(Enum):

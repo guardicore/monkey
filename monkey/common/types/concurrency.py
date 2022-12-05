@@ -1,5 +1,7 @@
 from types import TracebackType
-from typing import Optional, Protocol, Type
+from typing import Optional, Type
+
+from typing_extensions import Protocol
 
 
 class Lock(Protocol):

@@ -2,9 +2,8 @@ from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import FileEncryptedEvent
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
-from common.concurrency import Event, Lock
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
-from common.types import NetworkPort
+from common.types import Event, Lock, NetworkPort
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
