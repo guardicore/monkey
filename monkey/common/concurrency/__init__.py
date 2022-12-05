@@ -1,1 +1,1 @@
-from .protocols import Lock
+from .protocols import Lock, Event

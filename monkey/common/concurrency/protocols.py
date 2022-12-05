@@ -22,3 +22,17 @@ class Lock(Protocol):
 
     def locked(self) -> bool:
         ...
+
+
+class Event(Protocol):
+    def is_set(self) -> bool:
+        ...
+
+    def set(self) -> None:
+        ...
+
+    def clear(self) -> None:
+        ...
+
+    def wait(self, timeout: Optional[float] = ...) -> bool:
+        ...
