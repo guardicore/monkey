@@ -41,7 +41,7 @@ class PluginEventForwarder:
                 event = self._queue.get(timeout=self._queue_event_timeout)
                 self._agent_event_queue.publish(event)
 
-    def stop(self):
+    def stop(self, timeout=None):
         logger.info("Stopping plugin event forwarder")
         self._stop.set()
-        self._thread.join()
+        self._thread.join(timeout)
