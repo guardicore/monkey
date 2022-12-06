@@ -1,7 +1,7 @@
 import logging
 import queue
 from contextlib import suppress
-from multiprocessing import Queue
+from queue import Queue
 from threading import Event
 
 from common.event_queue import IAgentEventQueue
