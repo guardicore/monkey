@@ -25,4 +25,5 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     source_archive: B64Bytes
 
     class Config:
+        # b64encode() returns bytes, so we call decode() to transform bytes to str
         json_encoders = {bytes: lambda byte_field: b64encode(byte_field).decode()}
