@@ -44,11 +44,20 @@ def test_no_events_in_queue(plugin_event_forwarder, mock_agent_event_queue):
 def test_multiple_events_in_queue_published(
     plugin_event_forwarder, multiprocessing_queue, mock_agent_event_queue
 ):
+    plugin_event_forwarder.start()
+
     for timestamp in range(5):
         multiprocessing_queue.put(FakeEvent(timestamp=timestamp))
 
-    plugin_event_forwarder.start()
-    # sleep(0.01)
+    # Wait until the PluginEventForwarder has had the chance to process all events on the queue.
+    # Timeout after 25ms.
+    for i in range(0, 5):
+        # Timeout after 25ms.
+        if multiprocessing_queue.empty():
+            break
+
+        sleep(0.005)
+
     plugin_event_forwarder.stop()
 
     assert mock_agent_event_queue.publish.call_count == 5
