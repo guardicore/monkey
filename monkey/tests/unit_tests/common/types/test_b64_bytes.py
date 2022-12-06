@@ -5,22 +5,22 @@ from pydantic.errors import BytesError
 
 from common.types.b64_bytes import b64_bytes_validator
 
-FAKE_BYTES = b"random bytes"
+BYTES = b"random bytes"
 
 
 def test_b64_bytes_validator__bytes():
-    fake_bytes = FAKE_BYTES
+    fake_bytes = BYTES
     assert b64_bytes_validator(fake_bytes) == fake_bytes
 
 
 def test_b64_bytes_validator__bytearray():
-    fake_byte_array = bytearray(FAKE_BYTES)
+    fake_byte_array = bytearray(BYTES)
     assert b64_bytes_validator(fake_byte_array) == fake_byte_array
 
 
 def test_b64_bytes_validator__b64_string():
-    fake_b64_string = b64encode(FAKE_BYTES).decode()
-    assert b64_bytes_validator(fake_b64_string) == FAKE_BYTES
+    fake_b64_string = b64encode(BYTES).decode()
+    assert b64_bytes_validator(fake_b64_string) == BYTES
 
 
 def test_64_bytes_validator__bad_b64():
