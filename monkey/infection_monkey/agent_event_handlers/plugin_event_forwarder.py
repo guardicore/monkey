@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 QUEUE_EVENT_TIMEOUT = 2
 
 
-class PluginEventForwarder(Thread):
+class PluginEventForwarder:
     """
     Publishes events from the Agent's Plugin queue to the Agent's Event queue
     """
@@ -25,9 +25,13 @@ class PluginEventForwarder(Thread):
         self._queue = queue
         self._agent_event_queue = agent_event_queue
         self._queue_event_timeout = queue_event_timeout
-        super().__init__(name="PluginEventForwarder", daemon=True)
 
+        self._thread = Thread(name="PluginEventForwarder", target=self.run, daemon=True)
         self._stop = Event()
+
+    def start(self):
+        self._stop.clear()
+        self._thread.start()
 
     def run(self):
         logger.info("Starting plugin event forwarder")
@@ -40,3 +44,4 @@ class PluginEventForwarder(Thread):
     def stop(self):
         logger.info("Stopping plugin event forwarder")
         self._stop.set()
+        self._thread.join()
