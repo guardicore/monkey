@@ -1,4 +1,5 @@
 import copy
+from base64 import b64encode
 from typing import Any, Dict
 
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
@@ -40,8 +41,7 @@ FAKE_ZEROLOGON_PLUGIN_CONFIG = {
     "dc_ip_address": "localhost",
 }
 
-# TODO fix byte serialization, this should be bytes
-FAKE_ZEROLOGON_PLUGIN_ARCHIVE = "fake archive"
+FAKE_ZEROLOGON_PLUGIN_ARCHIVE = b"random bytes"
 
 FAKE_AGENT_PLUGIN_DICT_IN: Dict[str, Any] = {
     "plugin_manifest": FAKE_AGENT_MANIFEST_DICT_IN,
@@ -52,6 +52,7 @@ FAKE_AGENT_PLUGIN_DICT_IN: Dict[str, Any] = {
 
 FAKE_AGENT_PLUGIN_DICT_OUT = copy.deepcopy(FAKE_AGENT_PLUGIN_DICT_IN)
 FAKE_AGENT_PLUGIN_DICT_OUT["plugin_manifest"] = FAKE_AGENT_MANIFEST_DICT_OUT
+FAKE_AGENT_PLUGIN_DICT_OUT["source_archive"] = b64encode(FAKE_ZEROLOGON_PLUGIN_ARCHIVE).decode()
 
 FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
     plugin_manifest=FAKE_MANIFEST_OBJECT,
@@ -63,6 +64,10 @@ FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
 
 def test_agent_plugin__serialization():
     assert FAKE_AGENT_PLUGIN_OBJECT.dict(simplify=True) == FAKE_AGENT_PLUGIN_DICT_OUT
+
+
+def test_agent_plugin__full_serialization():
+    assert AgentPlugin(**FAKE_AGENT_PLUGIN_OBJECT.dict(simplify=True)) == FAKE_AGENT_PLUGIN_OBJECT
 
 
 def test_agent_plugin__deserialization():

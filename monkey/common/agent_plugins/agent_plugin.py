@@ -1,7 +1,9 @@
+from base64 import b64encode
 from typing import Any, Dict
 
 from common.agent_plugins import AgentPluginManifest
 from common.base_models import InfectionMonkeyBaseModel
+from common.types.b64_bytes import B64Bytes
 
 
 class AgentPlugin(InfectionMonkeyBaseModel):
@@ -20,4 +22,7 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     # https://github.com/pydantic/pydantic/pull/1844
     config_schema: Dict[str, Any]
     default_config: Dict[str, Any]
-    source_archive: bytes
+    source_archive: B64Bytes
+
+    class Config:
+        json_encoders = {bytes: lambda byte_field: b64encode(byte_field).decode()}
