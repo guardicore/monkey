@@ -14,6 +14,7 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.repositories.i_agent_plugin_repository import IAgentPluginRepository
 from monkey_island.cc.resources.agent_heartbeat import AgentHeartbeat
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
@@ -142,3 +143,5 @@ AgentPluginManifest.plugin_type
 AgentPluginManifest.title
 AgentPluginManifest.link_to_documentation
 AgentPluginManifest.safe
+
+IAgentPluginRepository
