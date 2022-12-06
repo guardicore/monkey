@@ -70,7 +70,7 @@ def test_plugin_event_forwarder_flush(
     for timestamp in range(5):
         multiprocessing_queue.put(MyEvent(timestamp=timestamp))
 
-    # multiprocessing.Queue.put is racey so we put a small sleep after inserting an events
+    # multiprocessing.Queue.put is racey so we put a small sleep after inserting events
     sleep(0.005)
 
     plugin_event_forwarder.flush()
