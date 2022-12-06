@@ -55,3 +55,12 @@ class PluginEventForwarder:
         logger.info("Stopping plugin event forwarder")
         self._stop.set()
         self._thread.join(timeout)
+        self.flush()
+
+    def flush(self):
+        """
+        Publishes the events until the queue is empty
+        """
+        while not self._queue.empty():
+            event = self._queue.get(timeout=self._queue_event_timeout)
+            self._agent_event_queue.publish(event)
