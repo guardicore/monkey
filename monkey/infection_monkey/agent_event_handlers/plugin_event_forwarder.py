@@ -35,6 +35,9 @@ class PluginEventForwarder:
         self._thread.start()
 
     def run(self):
+        """
+        Publishes events that are on a queue
+        """
         logger.info("Starting plugin event forwarder")
 
         while not self._stop.is_set():
@@ -43,6 +46,12 @@ class PluginEventForwarder:
                 self._agent_event_queue.publish(event)
 
     def stop(self, timeout=None):
+        """
+        Stops the thread from running
+
+        :param timeout: Timeout that tells the current thread how much is willing to wait
+        for the target thread to terminate, in seconds.
+        """
         logger.info("Stopping plugin event forwarder")
         self._stop.set()
         self._thread.join(timeout)
