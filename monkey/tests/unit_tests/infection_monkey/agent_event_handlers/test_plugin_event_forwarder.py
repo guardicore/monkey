@@ -52,7 +52,6 @@ def test_multiple_events_in_queue_published(
     # Wait until the PluginEventForwarder has had the chance to process all events on the queue.
     # Timeout after 25ms.
     for i in range(0, 5):
-        # Timeout after 25ms.
         if multiprocessing_queue.empty():
             break
 
