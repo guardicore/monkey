@@ -3,4 +3,3 @@ from .agent_event_forwarder import AgentEventForwarder
 from .add_stolen_credentials_to_repository import (
     add_stolen_credentials_to_propagation_credentials_repository,
 )
-from .plugin_event_forwarder import PluginEventForwarder

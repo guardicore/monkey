@@ -9,7 +9,7 @@ import pytest
 
 from common.agent_events import AbstractAgentEvent
 from common.event_queue import IAgentEventQueue
-from infection_monkey.agent_event_handlers import PluginEventForwarder
+from infection_monkey.plugin_event_forwarder import PluginEventForwarder
 
 
 class MyEvent(AbstractAgentEvent):
