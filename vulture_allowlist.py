@@ -5,7 +5,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.event_queue import QueuedAgentEventPublisher
-from common.types import Event, Lock, NetworkPort
+from common.types import Lock, NetworkPort
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
@@ -56,6 +56,9 @@ NetrServerPasswordSet.opnum
 # Passed to Popen from agent
 dwFlags  # \infection_monkey\monkey\infection_monkey\monkey.py:490:
 wShowWindow  # \infection_monkey\monkey\infection_monkey\monkey.py:491:
+
+# Attribute used by pydantic errors
+msg_template
 
 # Presumably overrides http.server.BaseHTTPRequestHandler properties
 FileServHTTPRequestHandler.protocol_version
