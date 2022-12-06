@@ -46,7 +46,6 @@ FAKE_ZEROLOGON_PLUGIN_ARCHIVE = b"random bytes"
 FAKE_AGENT_PLUGIN_DICT_IN: Dict[str, Any] = {
     "plugin_manifest": FAKE_AGENT_MANIFEST_DICT_IN,
     "config_schema": FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA,
-    "default_config": FAKE_ZEROLOGON_PLUGIN_CONFIG,
     "source_archive": FAKE_ZEROLOGON_PLUGIN_ARCHIVE,
 }
 
@@ -57,7 +56,6 @@ FAKE_AGENT_PLUGIN_DICT_OUT["source_archive"] = b64encode(FAKE_ZEROLOGON_PLUGIN_A
 FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
     plugin_manifest=FAKE_MANIFEST_OBJECT,
     config_schema=FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA,
-    default_config=FAKE_ZEROLOGON_PLUGIN_CONFIG,
     source_archive=FAKE_ZEROLOGON_PLUGIN_ARCHIVE,
 )
 
