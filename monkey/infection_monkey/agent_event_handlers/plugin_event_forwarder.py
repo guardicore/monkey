@@ -2,9 +2,10 @@ import logging
 import queue
 from contextlib import suppress
 from multiprocessing import Queue
-from threading import Event, Thread
+from threading import Event
 
 from common.event_queue import IAgentEventQueue
+from infection_monkey.utils.threading import create_daemon_thread
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class PluginEventForwarder:
         self._agent_event_queue = agent_event_queue
         self._queue_event_timeout = queue_event_timeout
 
-        self._thread = Thread(name="PluginEventForwarder", target=self.run, daemon=True)
+        self._thread = create_daemon_thread(target=self.run, name="PluginEventForwarder")
         self._stop = Event()
 
     def start(self):
