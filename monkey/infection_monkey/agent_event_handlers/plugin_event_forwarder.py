@@ -31,12 +31,18 @@ class PluginEventForwarder:
         self._stop = Event()
 
     def start(self):
+        """
+        Starts the PluginEventForwarder in the background
+        """
         self._stop.clear()
         self._thread.start()
 
     def run(self):
         """
         Publishes events that are on a queue
+
+        Watch the queue for new events and forward them to the IAgentEventQueue. Block until
+        `stop()` is called.
         """
         logger.info("Starting plugin event forwarder")
 
@@ -47,10 +53,15 @@ class PluginEventForwarder:
 
     def stop(self, timeout=None):
         """
-        Stops the thread from running
+        Stops the PluginEventForwarder
 
-        :param timeout: Timeout that tells the current thread how much is willing to wait
-        for the target thread to terminate, in seconds.
+        When this function returns, all events on the queue will have been forwarded to the
+        IAgentEventQueue.
+
+        When the timeout argument is not present or None, the operation will block until the
+        PluginEventForwarder stops.
+
+        :param timeout: The number of seconds to wait for the PluginEventForwarder to stop
         """
         logger.info("Stopping plugin event forwarder")
         self._stop.set()
