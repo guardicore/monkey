@@ -14,11 +14,6 @@ from monkey_island.cc.repositories.plugin_archive_parser import (
 
 
 @pytest.fixture
-def manifest_file(plugin_data_dir) -> Path:
-    return plugin_data_dir / "manifest.yaml"
-
-
-@pytest.fixture
 def plugin_file(plugin_data_dir) -> Path:
     return plugin_data_dir / "test-exploiter.tar"
 
