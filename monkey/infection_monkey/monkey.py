@@ -423,8 +423,8 @@ class InfectionMonkey:
 
             self._publish_agent_shutdown_event()
 
-            self._agent_event_forwarder.flush()
             self._plugin_event_forwarder.flush()
+            self._agent_event_forwarder.flush()
 
             self._heart.stop()
 
@@ -434,8 +434,8 @@ class InfectionMonkey:
             if deleted is None:
                 InfectionMonkey._self_delete()
         finally:
-            self._agent_event_forwarder.stop()
             self._plugin_event_forwarder.stop()
+            self._agent_event_forwarder.stop()
             with contextlib.suppress(AssertionError):
                 self._singleton.unlock()
 
