@@ -17,7 +17,7 @@ def agent_plugin_repository(plugin_data_dir) -> FileAgentPluginRepository:
 
 
 def test_get_plugin(agent_plugin_repository):
-    plugin = agent_plugin_repository.get_plugin("test", AgentPluginType.EXPLOITER)
+    plugin = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "test")
 
     assert plugin.plugin_manifest == EXPECTED_MANIFEST
     assert isinstance(plugin.config_schema, dict)
@@ -26,9 +26,9 @@ def test_get_plugin(agent_plugin_repository):
 
 def test_get_plugin__RetrievalError_if_not_exist(agent_plugin_repository):
     with pytest.raises(RetrievalError):
-        agent_plugin_repository.get_plugin("does_not_exist", AgentPluginType.EXPLOITER)
+        agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "does_not_exist")
 
 
 def test_get_plugin__RetrievalError_if_bad_plugin(agent_plugin_repository):
     with pytest.raises(RetrievalError):
-        agent_plugin_repository.get_plugin("bad", AgentPluginType.EXPLOITER)
+        agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "bad")

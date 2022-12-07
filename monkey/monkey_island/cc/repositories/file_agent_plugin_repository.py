@@ -15,7 +15,7 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         """
         self._file_repository = file_repository
 
-    def get_plugin(self, name: str, plugin_type: AgentPluginType) -> AgentPlugin:
+    def get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
         plugin_file_name = f"{name}-{plugin_type.value.lower()}.tar"
 
         try:
