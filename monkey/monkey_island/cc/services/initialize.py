@@ -138,9 +138,8 @@ def _decorate_island_event_queue(
 
 
 def _register_repositories(container: DIContainer, data_dir: Path):
-    container.register_convention(
+    container.register_instance(
         IFileRepository,
-        "file_repository",
         _decorate_file_repository(LocalStorageFileRepository(data_dir / "runtime_data")),
     )
     container.register_convention(
