@@ -44,12 +44,14 @@ def test_get_plugin_manifest(plugin_tarfile):
 
 
 def test_get_plugin_schema(plugin_tarfile):
+    expected = {"type": "object", "properties": {"name": {"type": "string"}}}
+
     schema = get_plugin_schema(plugin_tarfile)
 
-    assert isinstance(schema, dict)
+    assert schema == expected
 
 
 def test_get_plugin_source(plugin_tarfile):
     data = get_plugin_source(plugin_tarfile)
 
-    assert len(data) > 0
+    assert len(data) == 10240
