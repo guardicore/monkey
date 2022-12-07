@@ -29,7 +29,7 @@ def parse_plugin(file: BinaryIO) -> AgentPlugin:
     """
     Load a plugin from a tar file.
 
-    :raises ValueError: if the file is not a valid plugin
+    :raises ValueError: If the file is not a valid plugin
     """
     tar_file = TarFile(fileobj=file)
     try:
@@ -46,8 +46,8 @@ def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
     """
     Retrieve the plugin manifest from a tar file.
 
-    :raises KeyError: if the manifest is not found in the tar file
-    :raises ValueError: if the manifest is not a file
+    :raises KeyError: If the manifest is not found in the tar file
+    :raises ValueError: If the manifest is not a file
     """
     manifest_info = tar.getmember(MANIFEST_FILENAME)
     manifest_buf = tar.extractfile(manifest_info)
@@ -62,8 +62,8 @@ def get_plugin_schema(tar: TarFile) -> Dict[str, Any]:
     """
     Retrieve the plugin schema from a tar file.
 
-    :raises KeyError: if the schema is not found in the tar file
-    :raises ValueError: if the schema is not a file
+    :raises KeyError: If the schema is not found in the tar file
+    :raises ValueError: If the schema is not a file
     """
     schema_info = tar.getmember(CONFIG_SCHEMA_FILENAME)
     schema_buf = tar.extractfile(schema_info)
@@ -79,8 +79,8 @@ def get_plugin_source(tar: TarFile) -> bytes:
     """
     Retrieve the plugin source from a tar file.
 
-    :raises KeyError: if the source is not found in the tar file
-    :raises ValueError: if the source is not a file
+    :raises KeyError: If the source is not found in the tar file
+    :raises ValueError: If the source is not a file
     """
     archive_info = tar.getmember(SOURCE_ARCHIVE_FILENAME)
     archive_buf = tar.extractfile(archive_info)
