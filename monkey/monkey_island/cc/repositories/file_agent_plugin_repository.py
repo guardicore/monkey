@@ -21,5 +21,5 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         try:
             with self._file_repository.open_file(plugin_file_name) as f:
                 return parse_plugin(f)
-        except Exception as err:
+        except ValueError as err:
             raise RetrievalError(f"Error retrieving the agent plugin {plugin_file_name}: {err}")

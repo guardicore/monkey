@@ -4,7 +4,11 @@ import pytest
 from tests.monkey_island import InMemoryFileRepository
 
 from common.agent_plugins import AgentPluginType
-from monkey_island.cc.repositories import FileAgentPluginRepository, RetrievalError
+from monkey_island.cc.repositories import (
+    FileAgentPluginRepository,
+    RetrievalError,
+    UnknownRecordError,
+)
 
 from .test_plugin_archive_parser import EXPECTED_MANIFEST
 
@@ -29,8 +33,8 @@ def test_get_plugin(plugin_file, file_repository: InMemoryFileRepository, agent_
     assert len(plugin.source_archive) > 0
 
 
-def test_get_plugin__RetrievalError_if_not_exist(agent_plugin_repository):
-    with pytest.raises(RetrievalError):
+def test_get_plugin__UnknownRecordError_if_not_exist(agent_plugin_repository):
+    with pytest.raises(UnknownRecordError):
         agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "does_not_exist")
 
 
