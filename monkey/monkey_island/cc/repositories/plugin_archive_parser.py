@@ -46,7 +46,7 @@ def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
     """
     Retrieve the plugin manifest from a tar file.
 
-    :raises KeyError: if the manifest was not found in the tar file
+    :raises KeyError: if the manifest is not found in the tar file
     :raises ValueError: if the manifest is not a file
     """
     manifest_info = tar.getmember(MANIFEST_FILENAME)
@@ -62,7 +62,7 @@ def get_plugin_schema(tar: TarFile) -> Dict[str, Any]:
     """
     Retrieve the plugin schema from a tar file.
 
-    :raises KeyError: if the schema was not found in the tar file
+    :raises KeyError: if the schema is not found in the tar file
     :raises ValueError: if the schema is not a file
     """
     schema_info = tar.getmember(CONFIG_SCHEMA_FILENAME)
@@ -79,7 +79,7 @@ def get_plugin_source(tar: TarFile) -> bytes:
     """
     Retrieve the plugin source from a tar file.
 
-    :raises KeyError: if the source was not found in the tar file
+    :raises KeyError: if the source is not found in the tar file
     :raises ValueError: if the source is not a file
     """
     archive_info = tar.getmember(SOURCE_ARCHIVE_FILENAME)
