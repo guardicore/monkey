@@ -7,6 +7,7 @@ import sys
 import time
 from ipaddress import IPv4Interface
 from itertools import chain
+from multiprocessing import Queue
 from pathlib import Path, WindowsPath
 from typing import List, Optional, Sequence, Tuple
 
@@ -81,6 +82,7 @@ from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
 from .heart import Heart
+from .plugin_event_forwarder import PluginEventForwarder
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
@@ -99,6 +101,8 @@ class InfectionMonkey:
         self._agent_event_forwarder = None
         self._agent_event_queue = self._setup_agent_event_queue()
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
+
+        self._plugin_event_forwarder = self._setup_plugin_event_forwarder()
 
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._cmd_island_ip = self._island_address.ip
@@ -202,6 +206,8 @@ class InfectionMonkey:
         self._discover_hostname()
 
         self._setup()
+        self._plugin_event_forwarder.start()
+
         self._master.start()
 
     def _setup_agent_event_forwarder(self):
@@ -271,6 +277,12 @@ class InfectionMonkey:
         register_common_agent_event_serializers(agent_event_serializer_registry)
 
         return agent_event_serializer_registry
+
+    def _setup_plugin_event_forwarder(self) -> PluginEventForwarder:
+        plugin_event_queue: Queue = Queue()
+        plugin_event_forwarder = PluginEventForwarder(plugin_event_queue, self._agent_event_queue)
+
+        return plugin_event_forwarder
 
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)
@@ -412,6 +424,7 @@ class InfectionMonkey:
             self._publish_agent_shutdown_event()
 
             self._agent_event_forwarder.flush()
+            self._plugin_event_forwarder.flush()
 
             self._heart.stop()
 
@@ -422,6 +435,7 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
         finally:
             self._agent_event_forwarder.stop()
+            self._plugin_event_forwarder.stop()
             with contextlib.suppress(AssertionError):
                 self._singleton.unlock()
 
