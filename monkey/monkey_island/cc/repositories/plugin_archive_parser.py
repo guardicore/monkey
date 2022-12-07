@@ -25,7 +25,7 @@ def tarinfo_type(tar: TarInfo) -> str:
     return "unknown"
 
 
-def load_plugin(file: BinaryIO) -> AgentPlugin:
+def parse_plugin(file: BinaryIO) -> AgentPlugin:
     """
     Load a plugin from a tar file.
 
