@@ -12,12 +12,15 @@ from .i_agent_repository import IAgentRepository
 from .i_node_repository import INodeRepository
 from .i_agent_event_repository import IAgentEventRepository
 from .i_agent_log_repository import IAgentLogRepository
+from .i_agent_plugin_repository import IAgentPluginRepository
 
 
 from .local_storage_file_repository import LocalStorageFileRepository
 from .file_repository_caching_decorator import FileRepositoryCachingDecorator
 from .file_repository_locking_decorator import FileRepositoryLockingDecorator
 from .file_repository_logging_decorator import FileRepositoryLoggingDecorator
+
+from .agent_plugin_repository_logging_decorator import AgentPluginRepositoryLoggingDecorator
 
 from .agent_binary_repository import AgentBinaryRepository
 from .file_agent_configuration_repository import FileAgentConfigurationRepository
