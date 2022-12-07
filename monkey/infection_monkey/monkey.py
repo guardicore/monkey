@@ -206,9 +206,6 @@ class InfectionMonkey:
         self._discover_hostname()
 
         self._setup()
-        self._plugin_event_forwarder.start()
-
-        self._master.start()
 
     def _setup_agent_event_forwarder(self):
         self._agent_event_forwarder = AgentEventForwarder(self._island_api_client)
@@ -265,6 +262,9 @@ class InfectionMonkey:
         register_signal_handlers(self._master)
 
         self._subscribe_events()
+
+        self._plugin_event_forwarder.start()
+        self._master.start()
 
     def _setup_agent_event_queue(self) -> IAgentEventQueue:
         publisher = Publisher()
