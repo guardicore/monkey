@@ -42,10 +42,10 @@ def agent_plugin_repository(in_memory_agent_plugin_repository) -> IAgentPluginRe
 
 def test_get_cached_plugin(agent_plugin_repository, in_memory_agent_plugin_repository):
     in_memory_agent_plugin_repository.save_plugin("ssh_one", FAKE_AGENT_PLUGIN_1)
-    request_1_plugin = agent_plugin_repository.get_plugin("ssh_one", AgentPluginType.EXPLOITER)
+    request_1_plugin = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "ssh_one")
 
     in_memory_agent_plugin_repository.save_plugin("ssh_one", FAKE_AGENT_PLUGIN_2)
-    request_2_plugin = agent_plugin_repository.get_plugin("ssh_one", AgentPluginType.EXPLOITER)
+    request_2_plugin = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "ssh_one")
 
     assert request_2_plugin == request_1_plugin
     assert request_2_plugin != FAKE_AGENT_PLUGIN_2
