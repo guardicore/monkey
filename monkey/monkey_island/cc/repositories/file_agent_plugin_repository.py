@@ -5,7 +5,14 @@ from .plugin_archive_parser import parse_plugin
 
 
 class FileAgentPluginRepository(IAgentPluginRepository):
+    """
+    A repository for retrieving agent plugins.
+    """
+
     def __init__(self, file_repository: IFileRepository):
+        """
+        :param file_repository: IFileRepository containing the plugins
+        """
         self._file_repository = file_repository
 
     def get_plugin(self, name: str, plugin_type: AgentPluginType) -> AgentPlugin:
