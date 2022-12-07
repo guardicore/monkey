@@ -8,7 +8,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
 MANIFEST_FILENAME = "plugin.yaml"
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
-SOURCE_ARCHIVE_FILENAME = "data.tar"
+SOURCE_ARCHIVE_FILENAME = "plugin.tar"
 
 
 def tarinfo_type(tar: TarInfo) -> str:
