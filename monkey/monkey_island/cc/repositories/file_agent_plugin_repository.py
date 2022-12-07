@@ -9,17 +9,17 @@ class FileAgentPluginRepository(IAgentPluginRepository):
     A repository for retrieving agent plugins.
     """
 
-    def __init__(self, file_repository: IFileRepository):
+    def __init__(self, plugin_file_repository: IFileRepository):
         """
-        :param file_repository: IFileRepository containing the plugins
+        :param plugin_file_repository: IFileRepository containing the plugins
         """
-        self._file_repository = file_repository
+        self._plugin_file_repository = plugin_file_repository
 
     def get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
         plugin_file_name = f"{name}-{plugin_type.value.lower()}.tar"
 
         try:
-            with self._file_repository.open_file(plugin_file_name) as f:
+            with self._plugin_file_repository.open_file(plugin_file_name) as f:
                 return parse_plugin(f)
         except ValueError as err:
             raise RetrievalError(f"Error retrieving the agent plugin {plugin_file_name}: {err}")
