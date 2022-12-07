@@ -14,25 +14,22 @@ from monkey_island.cc.repositories.plugin_archive_parser import (
 
 
 @pytest.fixture
-def plugin_file(plugin_data_dir) -> Path:
-    return plugin_data_dir / "test-exploiter.tar"
-
-
-@pytest.fixture
 def plugin_tarfile(plugin_file) -> TarFile:
     return tarfile.open(plugin_file)
 
 
-def test_get_plugin_manifest(plugin_tarfile):
-    expected = AgentPluginManifest(
-        name="test",
-        plugin_type=AgentPluginType.EXPLOITER,
-        supported_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
-        title="dummy-exploiter",
-        description="A dummy exploiter",
-        safe=True,
-    )
+EXPECTED_MANIFEST = AgentPluginManifest(
+    name="test",
+    plugin_type=AgentPluginType.EXPLOITER,
+    supported_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
+    title="dummy-exploiter",
+    description="A dummy exploiter",
+    safe=True,
+)
 
+
+def test_get_plugin_manifest(plugin_tarfile):
+    expected = EXPECTED_MANIFEST
     actual = get_plugin_manifest(plugin_tarfile)
 
     assert actual == expected
