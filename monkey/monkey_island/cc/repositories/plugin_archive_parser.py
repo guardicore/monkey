@@ -68,7 +68,9 @@ def get_plugin_schema(tar: TarFile) -> Dict[str, Any]:
     schema_info = tar.getmember(CONFIG_SCHEMA_FILENAME)
     schema_buf = tar.extractfile(schema_info)
     if schema_buf is None:
-        raise ValueError(f"Plugin schema file has incorrect type {tarinfo_type(schema_info)}")
+        raise ValueError(
+            f"Plugin configuration schema file has incorrect type {tarinfo_type(schema_info)}"
+        )
 
     return json.load(schema_buf)
 
@@ -83,6 +85,6 @@ def get_plugin_source(tar: TarFile) -> bytes:
     archive_info = tar.getmember(SOURCE_ARCHIVE_FILENAME)
     archive_buf = tar.extractfile(archive_info)
     if archive_buf is None:
-        raise ValueError(f"Plugin source file has incorrect type {tarinfo_type(archive_info)}")
+        raise ValueError(f"Plugin source archive has incorrect type {tarinfo_type(archive_info)}")
 
     return archive_buf.read()
