@@ -16,6 +16,7 @@ from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import (
     AgentPluginRepositoryLoggingDecorator,
+    AgentPluginRepositoryCachingDecorator,
     IAgentEventRepository,
     MongoAgentEventRepository,
 )
@@ -155,3 +156,4 @@ PluginEventForwarder
 
 # Remove after #2639
 AgentPluginRepositoryLoggingDecorator
+AgentPluginRepositoryCachingDecorator
