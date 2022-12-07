@@ -42,18 +42,18 @@ const MapPageWrapper = (props) => {
   }
 
   useEffect(() => {
-    if (! updateInProgress) {
+    if (!updateInProgress) {
       let oneSecond = 1000;
       setUpdateInProgress(true);
-      new Promise(r => setTimeout(r, oneSecond * 2))
-        .then(() => fetchMapNodes())
+      fetchMapNodes()
+        .then(() => new Promise(r => setTimeout(r, oneSecond * 2)))
         .then(() => setUpdateInProgress(false));
     }
   }, [updateInProgress])
 
   useEffect(() => {
     let localGraph = generateGraph(mapNodes);
-    if (mapNodes.length !== 0 && ! _.isEqual(localGraph, graphSnapshot)) {
+    if (mapNodes.length !== 0 && !_.isEqual(localGraph, graphSnapshot)) {
       setGraphSnapshot(_.cloneDeep(localGraph));
       setGraph(localGraph);
     }
@@ -90,16 +90,16 @@ const MapPageWrapper = (props) => {
       let agentIDs: string[] = [];
       let parentIDs: string[] = [];
       let lastAgentStartTime: Date = new Date(0);
-      if (node !== null ) {
+      if (node !== null) {
         const nodeAgents = agents.filter(a => a.machine_id === machine.id);
         nodeAgents.forEach((nodeAgent) => {
-          if(!running){
+          if (!running) {
             running = isAgentRunning(nodeAgent);
           }
           agentIDs.push(nodeAgent.id);
           parentIDs.push(nodeAgent.parent_id);
           let agentStartTime = new Date(nodeAgent.start_time);
-          if(agentStartTime > lastAgentStartTime){
+          if (agentStartTime > lastAgentStartTime) {
             lastAgentStartTime = agentStartTime;
           }
         });
