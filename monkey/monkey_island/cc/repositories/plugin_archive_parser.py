@@ -36,8 +36,8 @@ def parse_plugin(file: BinaryIO) -> AgentPlugin:
         manifest = get_plugin_manifest(tar_file)
         schema = get_plugin_schema(tar_file)
         source = get_plugin_source(tar_file)
-    except KeyError as e:
-        raise ValueError("Bad plugin") from e
+    except KeyError as err:
+        raise ValueError(f"Invalid plugin archive: {err}")
 
     return AgentPlugin(plugin_manifest=manifest, config_schema=schema, source_archive=source)
 
