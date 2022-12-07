@@ -6,7 +6,7 @@ import pytest
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
-from monkey_island.cc.repositories.plugin_utils import (
+from monkey_island.cc.repositories.plugin_archive_parser import (
     get_plugin_manifest,
     get_plugin_schema,
     get_plugin_source,
