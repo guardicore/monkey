@@ -48,5 +48,10 @@ def monkey_configs_dir(data_for_tests_dir) -> Path:
 
 
 @pytest.fixture
+def plugin_data_dir(data_for_tests_dir) -> Path:
+    return data_for_tests_dir / "plugins"
+
+
+@pytest.fixture
 def default_agent_configuration() -> AgentConfiguration:
     return DEFAULT_AGENT_CONFIGURATION

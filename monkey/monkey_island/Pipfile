@@ -34,6 +34,7 @@ semantic-version = "*"
 pypubsub = "*"
 pydantic = "*"
 egg-timer = "*"
+pyyaml = "*"
 
 [dev-packages]
 virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue
@@ -55,6 +56,7 @@ sphinx_autodoc_typehints = "==1.17.1" # Pinned to 1.17.1 due to importlib-metada
 types-python-dateutil = "*"
 mypy = "*"
 types-pytz = "*"
+types-pyyaml = "*"
 
 [requires]
 python_version = "3.7"
