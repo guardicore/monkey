@@ -65,7 +65,6 @@ from infection_monkey.network.relay.utils import (
     notify_disconnect,
     send_remove_from_waitlist_control_message_to_relays,
 )
-from infection_monkey.network_scanning.elasticsearch_fingerprinter import ElasticSearchFingerprinter
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerprinter
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
@@ -326,7 +325,6 @@ class InfectionMonkey:
             AgentPluginType.CREDENTIAL_COLLECTOR,
         )
 
-        puppet.load_plugin("elastic", ElasticSearchFingerprinter(), AgentPluginType.FINGERPRINTER)
         puppet.load_plugin("http", HTTPFingerprinter(), AgentPluginType.FINGERPRINTER)
         puppet.load_plugin("mssql", MSSQLFingerprinter(), AgentPluginType.FINGERPRINTER)
         puppet.load_plugin("smb", SMBFingerprinter(), AgentPluginType.FINGERPRINTER)

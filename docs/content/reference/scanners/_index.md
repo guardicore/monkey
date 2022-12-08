@@ -29,7 +29,6 @@ The currently implemented Fingerprint modules are:
 2. [`SSHFinger`][ssh-finger] - Fingerprints target machines over SSH (port 22) and extracts the computer version and SSH banner.
 3. [`PingScanner`][ping-scanner] - Fingerprints target machine's TTL to differentiate between Linux and Windows hosts.
 4. [`HTTPFinger`][http-finger] - Detects HTTP/HTTPS services, using the ports listed in `HTTP_PORTS` in the configuration, will return the server type and if it supports SSL.
-5. [`ElasticFinger`][elastic-finger] - Fingerprints ElasticSearch (port 9200) and will extract the cluster name, node name and node version.
 
 ## Adding a scanner/fingerprinter
 
@@ -39,7 +38,6 @@ To use the new scanner/fingerprinter by default, modify [`infection_monkey/confi
 
 At this point, the Infection Monkey knows how to use the new scanner/fingerprinter but to make it easy to use, the UI needs to be updated. The relevant UI file is [`monkey_island/cc/services/config.py`](https://github.com/guardicore/monkey/blob/master/monkey/monkey_island/cc/services/config.py).
 
- [elastic-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/elasticfinger.py
  [http-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/httpfinger.py
  [host-finger]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/__init__.py
  [host-scanner]: https://github.com/guardicore/monkey/blob/develop/monkey/infection_monkey/network/__init__.py
