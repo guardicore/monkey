@@ -31,8 +31,11 @@ from monkey_island.cc.event_queue import (
 from monkey_island.cc.repositories import (
     AgentBinaryRepository,
     AgentMachineFacade,
+    AgentPluginRepositoryCachingDecorator,
+    AgentPluginRepositoryLoggingDecorator,
     FileAgentConfigurationRepository,
     FileAgentLogRepository,
+    FileAgentPluginRepository,
     FileRepositoryCachingDecorator,
     FileRepositoryLockingDecorator,
     FileRepositoryLoggingDecorator,
@@ -41,6 +44,7 @@ from monkey_island.cc.repositories import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
     IAgentLogRepository,
+    IAgentPluginRepository,
     IAgentRepository,
     ICredentialsRepository,
     IFileRepository,
@@ -145,7 +149,9 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_convention(
         IFileRepository,
         "plugin_file_repository",
-        _decorate_file_repository(LocalStorageFileRepository(data_dir / "plugins")),
+        FileRepositoryLockingDecorator(
+            FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / "plugins"))
+        ),
     )
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
     container.register_instance(
@@ -165,6 +171,10 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(AgentMachineFacade, container.resolve(AgentMachineFacade))
     container.register_instance(
         NetworkModelUpdateFacade, container.resolve(NetworkModelUpdateFacade)
+    )
+    container.register_instance(
+        IAgentPluginRepository,
+        _decorate_agent_plugin_repository(container.resolve(FileAgentPluginRepository)),
     )
 
 
@@ -188,6 +198,14 @@ def _build_machine_repository(container: DIContainer) -> IMachineRepository:
     initialize_machine_repository(machine_repository)
 
     return machine_repository
+
+
+def _decorate_agent_plugin_repository(
+    plugin_repository: IAgentPluginRepository,
+) -> IAgentPluginRepository:
+    return AgentPluginRepositoryLoggingDecorator(
+        AgentPluginRepositoryCachingDecorator(plugin_repository)
+    )
 
 
 def _setup_agent_event_registry(container: DIContainer):
