@@ -7,8 +7,7 @@ const FINGERPRINTER_CLASSES = {
     'smb' : {'name':'smb', 'options':{}},
     'ssh' : {'name':'ssh', 'options':{}},
     'http' : {'name':'http', 'options':{}},
-    'mssql' : {'name':'mssql', 'options':{}},
-    'elastic' : {'name':'elastic', 'options':{}}
+    'mssql' : {'name':'mssql', 'options':{}}
   },
   'anyOf': [
     {
@@ -39,13 +38,6 @@ const FINGERPRINTER_CLASSES = {
       'safe': true,
       'info': 'Checks if Microsoft SQL service is running and tries to gather ' +
       'information about it.'
-    },
-    {
-      'type': 'string',
-      'enum': ['elastic'],
-      'title': 'Elastic Fingerprinter',
-      'safe': true,
-      'info': 'Checks if ElasticSearch is running and attempts to find it\'s version.'
     }
   ]
 
