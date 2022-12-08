@@ -1,6 +1,6 @@
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import FileEncryptedEvent
+from common.agent_events import AbstractAgentEvent, FileEncryptedEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
@@ -14,8 +14,8 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import (
-    AgentPluginRepositoryLoggingDecorator,
     AgentPluginRepositoryCachingDecorator,
+    AgentPluginRepositoryLoggingDecorator,
     IAgentEventRepository,
     MongoAgentEventRepository,
 )
@@ -49,6 +49,8 @@ NetworkPort.le
 
 FileEncryptedEvent.arbitrary_types_allowed
 FileEncryptedEvent._file_path_to_pure_path
+
+AbstractAgentEvent.smart_union
 
 # Unused, but kept for future potential
 DIContainer.release_convention

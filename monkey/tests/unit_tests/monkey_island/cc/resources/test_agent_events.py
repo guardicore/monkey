@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from ipaddress import IPv4Address
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -33,7 +34,7 @@ SERIALIZED_EVENT_1 = {
     "type": SomeAgentEvent.__name__,
     "some_field": 1,
     "source": "f811ad00-5a68-4437-bd51-7b5cc1768ad5",
-    "target": None,
+    "target": 1,
     "timestamp": 0.0,
     "tags": ["some-event"],
 }
@@ -41,7 +42,7 @@ SERIALIZED_EVENT_1 = {
 EXPECTED_EVENT_1 = SomeAgentEvent(
     some_field=1,
     source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),
-    target=None,
+    target=1,
     timestamp=0.0,
     tags=frozenset({"some-event"}),
 )
@@ -50,7 +51,7 @@ SERIALIZED_EVENT_2 = {
     "type": OtherAgentEvent.__name__,
     "other_field": 2.0,
     "source": "012e7238-7b81-4108-8c7f-0787bc3f3c10",
-    "target": None,
+    "target": "127.0.0.1",
     "timestamp": 1.0,
     "tags": [],
 }
@@ -58,7 +59,7 @@ SERIALIZED_EVENT_2 = {
 EXPECTED_EVENT_2 = OtherAgentEvent(
     other_field=2.0,
     source=UUID("012e7238-7b81-4108-8c7f-0787bc3f3c10"),
-    target=None,
+    target=IPv4Address("127.0.0.1"),
     timestamp=1.0,
     tags=frozenset(),
 )
@@ -95,13 +96,13 @@ class PassFailAgentEvent_type2(AbstractAgentEvent):
 
 
 PFAE1_1 = PassFailAgentEvent_type1(
-    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"), timestamp=42, success=False
+    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"), timestamp=42, success=False, target=1
 )
 SERIALIZED_PFAE1_1 = {
     "type": PassFailAgentEvent_type1.__name__,
     "success": False,
     "source": "f811ad00-5a68-4437-bd51-7b5cc1768ad5",
-    "target": None,
+    "target": 1,
     "timestamp": 42.0,
     "tags": [],
 }
@@ -117,13 +118,16 @@ SERIALIZED_PFAE1_2 = {
     "tags": [],
 }
 PFAE2_1 = PassFailAgentEvent_type2(
-    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"), timestamp=42, success=True
+    source=UUID("f811ad00-5a68-4437-bd51-7b5cc1768ad5"),
+    timestamp=42,
+    success=True,
+    target=IPv4Address("127.0.0.1"),
 )
 SERIALIZED_PFAE2_1 = {
     "type": PassFailAgentEvent_type2.__name__,
     "success": True,
     "source": "f811ad00-5a68-4437-bd51-7b5cc1768ad5",
-    "target": None,
+    "target": "127.0.0.1",
     "timestamp": 42.0,
     "tags": [],
 }

@@ -3,6 +3,7 @@ from pathlib import PurePosixPath, PureWindowsPath
 from uuid import UUID
 
 import pytest
+from pydantic.errors import IntegerError
 
 from common import OperatingSystem
 from common.agent_events import FileEncryptionEvent
@@ -85,7 +86,6 @@ def test_construct_invalid_field__type_error(key, value):
     "key, value",
     [
         ("file_path", {"bogus_field": "bogus"}),
-        ("target", "not-an-ip"),
         ("file_path", {"path": str(LINUX_FILE_ENCRYPTED_PATH), "os": "FakeOS"}),
     ],
 )
@@ -94,6 +94,14 @@ def test_construct_invalid_field__value_error(key, value):
     invalid_value_dict[key] = value
 
     with pytest.raises(ValueError):
+        FileEncryptionEvent(**invalid_value_dict)
+
+
+def test_construct_invalid_field__integer_error():
+    invalid_value_dict = LINUX_FILE_ENCRYPTION_SIMPLE_DICT.copy()
+    invalid_value_dict["target"] = "not-an-ip-or-integer"
+
+    with pytest.raises(IntegerError):
         FileEncryptionEvent(**invalid_value_dict)
 
 
