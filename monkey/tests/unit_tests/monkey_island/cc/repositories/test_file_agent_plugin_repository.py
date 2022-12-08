@@ -30,7 +30,7 @@ def test_get_plugin(plugin_file, file_repository: InMemoryFileRepository, agent_
 
     assert plugin.plugin_manifest == EXPECTED_MANIFEST
     assert isinstance(plugin.config_schema, dict)
-    assert len(plugin.source_archive) > 0
+    assert len(plugin.source_archive) == 10240
 
 
 def test_get_plugin__UnknownRecordError_if_not_exist(agent_plugin_repository):
