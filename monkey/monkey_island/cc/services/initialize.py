@@ -149,7 +149,9 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_convention(
         IFileRepository,
         "plugin_file_repository",
-        _decorate_file_repository(LocalStorageFileRepository(data_dir / "plugins")),
+        FileRepositoryLockingDecorator(
+            FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / "plugins"))
+        ),
     )
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
     container.register_instance(
