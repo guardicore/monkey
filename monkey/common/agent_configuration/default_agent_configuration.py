@@ -51,7 +51,6 @@ TCP_SCAN_CONFIGURATION = TCPScanConfiguration(timeout=3.0, ports=TCP_PORTS)
 ICMP_CONFIGURATION = ICMPScanConfiguration(timeout=1.0)
 HTTP_PORTS = (80, 443, 7001, 8008, 8080, 8983, 9200, 9600)
 FINGERPRINTERS = (
-    PluginConfiguration(name="elastic", options={}),
     # Plugin configuration option contents are not converted to tuples
     PluginConfiguration(name="http", options={"http_ports": list(HTTP_PORTS)}),
     PluginConfiguration(name="mssql", options={}),
