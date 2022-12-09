@@ -4,7 +4,7 @@ from ipaddress import IPv4Address
 from threading import Event
 from typing import Any, Dict, Sequence
 
-import bcrypt
+import mock_dependency
 
 from common.agent_events import ExploitationEvent, PropagationEvent
 from common.event_queue import IAgentEventPublisher
@@ -26,7 +26,7 @@ def run(
     event_publisher: IAgentEventPublisher,
 ) -> ExploiterResultData:
 
-    logger.info(f"Package version: {bcrypt.__version__}")
+    logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
     event_fields = {
         "source": get_agent_id(),
