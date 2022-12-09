@@ -1,1 +1,23 @@
-{}
+{
+    "title": "Mock exploiter",
+    "description": "Configuration settings for Mock exploiter.",
+    "type": "object",
+    "required": [
+        "exploitation_success_rate",
+        "propagation_success_rate"
+    ],
+    "properties": {
+        "exploitation_success_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.5
+        },
+        "propagation_success_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.5
+        }
+    }
+}
