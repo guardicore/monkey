@@ -34,6 +34,21 @@ def run(
         "exploiter_name": "MockExploiter",
     }
 
+    exploitation_success = _exploit(options, event_fields, event_publisher)
+    propagation_success = (
+        False if not exploitation_success else _propagate(options, event_fields, event_publisher)
+    )
+
+    return ExploiterResultData(
+        exploitation_success=exploitation_success,
+        propagation_success=propagation_success,
+        os=host.os.get("type"),
+    )
+
+
+def _exploit(
+    options: Dict[str, Any], event_fields: Dict[str, Any], event_publisher: IAgentEventPublisher
+) -> bool:
     exploitation_success = _get_random_result_from_success_rate("exploitation", options)
     event_publisher.publish(
         ExploitationEvent(
@@ -43,6 +58,12 @@ def run(
         )
     )
 
+    return exploitation_success
+
+
+def _propagate(
+    options: Dict[str, Any], event_fields: Dict[str, Any], event_publisher: IAgentEventPublisher
+) -> bool:
     propagation_success = _get_random_result_from_success_rate("propagation", options)
     event_publisher.publish(
         PropagationEvent(
@@ -52,11 +73,7 @@ def run(
         )
     )
 
-    return ExploiterResultData(
-        exploitation_success=exploitation_success,
-        propagation_success=propagation_success,
-        os=host.os.get("type"),
-    )
+    return propagation_success
 
 
 def _get_random_result_from_success_rate(result_name: str, options: Dict[str, Any]):
