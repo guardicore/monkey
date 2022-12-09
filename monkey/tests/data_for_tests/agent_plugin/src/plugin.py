@@ -26,52 +26,41 @@ def run(
     event_publisher: IAgentEventPublisher,
 ) -> ExploiterResultData:
 
-    agent_id = get_agent_id()
-    target = IPv4Address(host.ip_addr)
-    name = "Mock"
-    exploitation_tags = "mock-plugin-exploitation"
-    propagation_tags = "mock-plugin-propagation"
-    os = host.os.get("type")
-
-    success_choices = [True, False]
-
     logger.info(f"Package version: {bcrypt.__version__}")
 
-    exploitation_success_rate = options.get("exploitation_success_rate", 50)
-    exploitation_success_weights = [exploitation_success_rate, 100 - exploitation_success_rate]
-    exploitation_success = random.choices(  # noqa: DUO102
-        success_choices, exploitation_success_weights
-    )
-    exploitation_event = ExploitationEvent(
-        source=agent_id,
-        target=target,
-        success=exploitation_success,
-        exploiter_name=name,
-        tags=exploitation_tags,
-    )
-    event_publisher.publish(exploitation_event)
+    event_fields = {
+        "source": get_agent_id(),
+        "target": IPv4Address(host.ip_addr),
+        "exploiter_name": "MockExploiter",
+    }
 
-    propagation_success = False
-
-    if exploitation_success:
-        propagation_success_rate = options.get("propagation_success_rate", 50)
-        propagation_success_weights = [propagation_success_rate, 100 - propagation_success_rate]
-        propagation_success = random.choices(  # noqa: DUO102
-            success_choices, propagation_success_weights
+    exploitation_success = _get_random_result_from_success_rate("exploitation", options)
+    event_publisher.publish(
+        ExploitationEvent(
+            success=exploitation_success,
+            tags=frozenset(["mock-plugin-exploitation"]),
+            **event_fields,
         )
-        propagation_event = PropagationEvent(
-            source=agent_id,
-            target=target,
+    )
+
+    propagation_success = _get_random_result_from_success_rate("propagation", options)
+    event_publisher.publish(
+        PropagationEvent(
             success=propagation_success,
-            exploiter_name=name,
-            tags=propagation_tags,
+            tags=frozenset(["mock-plugin-propagation"]),
+            **event_fields,
         )
-        event_publisher.publish(propagation_event)
+    )
 
     return ExploiterResultData(
         exploitation_success=exploitation_success,
         propagation_success=propagation_success,
-        os=os,
-        info=None,
-        error_message="",
+        os=host.os.get("type"),
     )
+
+
+def _get_random_result_from_success_rate(result_name: str, options: Dict[str, Any]):
+    success_rate = options.get(f"{result_name}_success_rate", 50)
+    success_weights = [success_rate, 100 - success_rate]
+
+    return random.choices([True, False], success_weights)  # noqa: DUO102
