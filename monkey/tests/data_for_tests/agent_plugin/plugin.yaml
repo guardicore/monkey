@@ -1,0 +1,9 @@
+name: Test
+plugin_type: Exploiter
+supported_operating_systems:
+  - windows
+  - linux
+title: Test plugin
+description: An exploiter plugin for testing purposes
+safe: true
+link_to_documentation: https://www.akamai.com/infectionmonkey
