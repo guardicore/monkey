@@ -28,9 +28,9 @@ def run(
 
     agent_id = get_agent_id()
     target = IPv4Address(host.ip_addr)
-    name = "Test"
-    exploitation_tags = "test-plugin-exploitation"
-    propagation_tags = "test-plugin-propagation"
+    name = "Mock"
+    exploitation_tags = "mock-plugin-exploitation"
+    propagation_tags = "mock-plugin-propagation"
     os = host.os.get("type")
 
     success_choices = [True, False]
