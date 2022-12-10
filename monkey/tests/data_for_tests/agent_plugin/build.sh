@@ -41,8 +41,11 @@ cd "$ROOT/src" || exit 1
 tar -cf "$tempdir/plugin.tar" plugin.py vendor
 
 cd "$tempdir" || exit 1
-name=$(get_value_from_key $MANIFEST_FILENAME name)
-type=$(lower "$(get_value_from_key $MANIFEST_FILENAME plugin_type)")
+
+# xargs strips leading whitespace
+name=$(get_value_from_key $MANIFEST_FILENAME name | xargs)
+type=$(lower "$(get_value_from_key $MANIFEST_FILENAME plugin_type | xargs)")
+
 plugin_filename="${name}-${type}.tar"
 mkdir -p "$OUTDIR"
 tar -cf "$OUTDIR/$plugin_filename" $MANIFEST_FILENAME $SCHEMA_FILENAME plugin.tar
