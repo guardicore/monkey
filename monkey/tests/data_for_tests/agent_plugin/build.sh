@@ -8,7 +8,6 @@ MANIFEST_FILENAME=plugin.yaml
 SCHEMA_FILENAME=config-schema.json
 DEPENDENCY_FILE="src/vendor/mock_dependency.py"
 ROOT="$( cd "$( dirname "$0" )" && pwd )"
-OUTDIR="$ROOT"
 
 get_value_from_key() {
     _file="$1"
@@ -33,19 +32,17 @@ if [ "$1" ]; then
 fi
 echo "__version__ = \"${version}\"" > "$ROOT/$DEPENDENCY_FILE"
 
-tempdir=$(mktemp -d)
-cp "$ROOT/$MANIFEST_FILENAME" "$ROOT/$SCHEMA_FILENAME" "$tempdir/"
 
 # Package everything up
 cd "$ROOT/src" || exit 1
-tar -cf "$tempdir/plugin.tar" plugin.py vendor
+tar -cf "$ROOT/plugin.tar" plugin.py vendor
+cd "$ROOT" || exit 1
 
-cd "$tempdir" || exit 1
 
 # xargs strips leading whitespace
 name=$(get_value_from_key $MANIFEST_FILENAME name | xargs)
 type=$(lower "$(get_value_from_key $MANIFEST_FILENAME plugin_type | xargs)")
 
 plugin_filename="${name}-${type}.tar"
-mkdir -p "$OUTDIR"
-tar -cf "$OUTDIR/$plugin_filename" $MANIFEST_FILENAME $SCHEMA_FILENAME plugin.tar
+tar -cf "$ROOT/$plugin_filename" $MANIFEST_FILENAME $SCHEMA_FILENAME plugin.tar
+rm "$ROOT/plugin.tar"
