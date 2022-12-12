@@ -120,12 +120,14 @@ def _register_event_queues(container: DIContainer):
     event_queue_lock = threading.RLock()
 
     agent_event_queue = container.resolve(PyPubSubAgentEventQueue)
-    decorated_agent_event_queue = _decorate_agent_event_queue(agent_event_queue, event_queue_lock)
+    decorated_agent_event_queue = _decorate_agent_event_queue(
+        agent_event_queue, event_queue_lock  # type: ignore
+    )
     container.register_instance(IAgentEventQueue, decorated_agent_event_queue)
 
     island_event_queue = container.resolve(PyPubSubIslandEventQueue)
     decorated_island_event_queue = _decorate_island_event_queue(
-        island_event_queue, event_queue_lock
+        island_event_queue, event_queue_lock  # type: ignore
     )
     container.register_instance(IIslandEventQueue, decorated_island_event_queue)
 
