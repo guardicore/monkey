@@ -1,4 +1,4 @@
-from threading import Lock
+from common.types.concurrency import RLock
 
 from . import IIslandEventQueue, IslandEventSubscriber, IslandEventTopic
 
@@ -8,7 +8,7 @@ class LockingIslandEventQueueDecorator(IIslandEventQueue):
     Makes an IIslandEventQueue thread-safe by locking publish()
     """
 
-    def __init__(self, island_event_queue: IIslandEventQueue, lock: Lock):
+    def __init__(self, island_event_queue: IIslandEventQueue, lock: RLock):
         self._lock = lock
         self._island_event_queue = island_event_queue
 

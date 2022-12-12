@@ -26,6 +26,25 @@ class Lock(Protocol):
         ...
 
 
+class RLock(Protocol):
+    def __enter__(self, blocking: bool = ..., timeout: float = ...) -> bool:
+        ...
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
+        ...
+
+    def acquire(self, blocking: bool = ..., timeout: float = ...) -> bool:
+        ...
+
+    def release(self) -> None:
+        ...
+
+
 class Event(Protocol):
     def is_set(self) -> bool:
         ...

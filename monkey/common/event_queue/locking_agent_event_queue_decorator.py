@@ -1,7 +1,7 @@
-from threading import Lock
 from typing import Type
 
 from common.agent_events import AbstractAgentEvent
+from common.types.concurrency import RLock
 
 from . import AgentEventSubscriber, IAgentEventQueue
 
@@ -11,7 +11,7 @@ class LockingAgentEventQueueDecorator(IAgentEventQueue):
     Makes an IAgentEventQueue thread-safe by locking publish()
     """
 
-    def __init__(self, agent_event_queue: IAgentEventQueue, lock: Lock):
+    def __init__(self, agent_event_queue: IAgentEventQueue, lock: RLock):
         self._lock = lock
         self._agent_event_queue = agent_event_queue
 
