@@ -29,8 +29,5 @@ class AgentPlugins(AbstractResource):
                 plugin_type=AgentPluginType(type), name=name
             )
             return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
-        except (UnknownRecordError, ValueError) as ex:
-            logger.info(
-                f"Exception encountered while getting plugin {name} of type {type}: {str(ex)}"
-            )
+        except (UnknownRecordError, ValueError):
             return make_response({}, HTTPStatus.NOT_FOUND)
