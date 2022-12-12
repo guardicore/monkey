@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask import make_response
 
 from common.agent_plugins import AgentPluginType
-from monkey_island.cc.repositories import IAgentPluginRepository, RepositoryError
+from monkey_island.cc.repositories import IAgentPluginRepository, UnknownRecordError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class AgentPlugins(AbstractResource):
                 plugin_type=AgentPluginType(type), name=name
             )
             return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
-        except (RepositoryError, ValueError) as ex:
+        except (UnknownRecordError, ValueError) as ex:
             logger.info(
                 f"Exception encountered while getting plugin {name} of type {type}: {str(ex)}"
             )
