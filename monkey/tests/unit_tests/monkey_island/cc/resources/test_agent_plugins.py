@@ -45,7 +45,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
     }
 
     resp = flask_client.get(
-        get_url_for_resource(AgentPlugins, type=FAKE_TYPE, name=FAKE_PLUGIN_NAME)
+        get_url_for_resource(AgentPlugins, plugin_type=FAKE_TYPE, name=FAKE_PLUGIN_NAME)
     )
 
     assert resp.status_code == HTTPStatus.OK
@@ -53,7 +53,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
 
 
 def test_get_plugins__not_found_if_name_does_not_exist(flask_client):
-    resp = flask_client.get(get_url_for_resource(AgentPlugins, type="Payload", name="name"))
+    resp = flask_client.get(get_url_for_resource(AgentPlugins, plugin_type="Payload", name="name"))
 
     assert resp.status_code == HTTPStatus.NOT_FOUND
 
@@ -63,7 +63,7 @@ def test_get_plugins__not_found_if_name_does_not_exist(flask_client):
     ["DummyType", "ExploiteR"],
 )
 def test_get_plugins__not_found_if_type_is_invalid(flask_client, type_):
-    resp = flask_client.get(get_url_for_resource(AgentPlugins, type=type_, name="name"))
+    resp = flask_client.get(get_url_for_resource(AgentPlugins, plugin_type=type_, name="name"))
 
     assert resp.status_code == HTTPStatus.NOT_FOUND
 
@@ -74,6 +74,6 @@ def test_get_plugins__server_error(flask_client, agent_plugin_repository):
 
     agent_plugin_repository.get_plugin = raise_retrieval_error
 
-    resp = flask_client.get(get_url_for_resource(AgentPlugins, type="Payload", name="name"))
+    resp = flask_client.get(get_url_for_resource(AgentPlugins, plugin_type="Payload", name="name"))
 
     assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
