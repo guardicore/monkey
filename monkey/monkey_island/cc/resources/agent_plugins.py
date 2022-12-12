@@ -28,10 +28,13 @@ class AgentPlugins(AbstractResource):
             plugin_type = AgentPluginType(type)
         except ValueError:
             return make_response({"message": f"Invalid type '{type}'."}, HTTPStatus.NOT_FOUND)
+
         try:
             agent_plugin = self._agent_plugin_repository.get_plugin(
                 plugin_type=plugin_type, name=name
             )
             return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
         except UnknownRecordError:
-            return make_response({"message": f"Plugin '{name}' not found."}, HTTPStatus.NOT_FOUND)
+            return make_response(
+                {"message": f"Plugin '{name}' of type '{type}' not found."}, HTTPStatus.NOT_FOUND
+            )
