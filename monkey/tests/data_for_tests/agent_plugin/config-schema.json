@@ -1,1 +1,27 @@
-{}
+{
+    "title": "Mock exploiter",
+    "description": "Configuration settings for Mock exploiter.",
+    "type": "object",
+    "required": [
+        "exploitation_success_rate",
+        "propagation_success_rate"
+    ],
+    "properties": {
+        "exploitation_success_rate": {
+            "title": "Exploitation success rate",
+            "description": "The rate of successful exploitation in percentage",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "default": 50
+        },
+        "propagation_success_rate": {
+            "title": "Propagation success rate",
+            "description": "The rate of successful propagation in percentage",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "default": 50
+        }
+    }
+}
