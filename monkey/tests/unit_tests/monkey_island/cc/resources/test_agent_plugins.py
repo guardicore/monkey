@@ -7,7 +7,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from monkey_island.cc.repositories import IAgentPluginRepository
+from monkey_island.cc.repositories import IAgentPluginRepository, UnknownRecordError
 from monkey_island.cc.resources import AgentPlugins
 
 FAKE_PLUGIN_NAME = "plugin_abc"
@@ -53,16 +53,21 @@ def test_get_plugin(flask_client, agent_plugin_repository):
 
 
 @pytest.mark.parametrize(
-    "type, name",
-    [
-        ("DummyType", FAKE_PLUGIN_NAME),
-        ("ExploiteR", FAKE_PLUGIN_NAME),
-        ("Exploiter", "XYZ"),
-        ("Payload", ""),
-        ("", ""),
-    ],
+    "type_",
+    ["DummyType", "ExploiteR"],
 )
-def test_plugins_not_found(flask_client, type, name):
-    resp = flask_client.get(get_url_for_resource(AgentPlugins, type=type, name=name))
+def test_get_plugins__internal_server_error(flask_client, type_):
+    resp = flask_client.get(get_url_for_resource(AgentPlugins, type=type_, name="name"))
+
+    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+def test_get_plugins__not_found(flask_client, agent_plugin_repository):
+    def raise_unknown_record_error(**kwargs):
+        raise UnknownRecordError()
+
+    agent_plugin_repository.get_plugin = raise_unknown_record_error
+
+    resp = flask_client.get(get_url_for_resource(AgentPlugins, type="Payload", name="name"))
 
     assert resp.status_code == HTTPStatus.NOT_FOUND
