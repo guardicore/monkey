@@ -4,7 +4,7 @@ from typing import Optional, Type
 from typing_extensions import Protocol
 
 
-class Lock(Protocol):
+class BaseLock(Protocol):
     def __enter__(self) -> bool:
         ...
 
@@ -22,8 +22,14 @@ class Lock(Protocol):
     def release(self) -> None:
         ...
 
+
+class Lock(BaseLock):
     def locked(self) -> bool:
         ...
+
+
+class RLock(BaseLock):
+    ...
 
 
 class Event(Protocol):
