@@ -29,7 +29,7 @@ class AgentPlugins(AbstractResource):
                 plugin_type=AgentPluginType(type), name=name
             )
             return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
-        except RepositoryError as ex:
+        except (RepositoryError, ValueError) as ex:
             logger.info(
                 f"Exception encountered while getting plugin {name} of type {type}: {str(ex)}"
             )
