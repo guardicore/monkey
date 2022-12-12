@@ -28,7 +28,7 @@ class AgentPlugins(AbstractResource):
             agent_plugin = self._agent_plugin_repository.get_plugin(
                 plugin_type=AgentPluginType(type), name=name
             )
-            return make_response(agent_plugin, HTTPStatus.OK)
+            return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
         except Exception as ex:
             logger.info(
                 f"Exception encountered while getting plugin {name} of type {type}: {str(ex)}"
