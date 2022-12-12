@@ -22,7 +22,7 @@ from common.event_queue import (
     LockingAgentEventQueueDecorator,
     PyPubSubAgentEventQueue,
 )
-from common.types.concurrency import BaseLock, RLock
+from common.types.concurrency import RLock
 from common.utils.file_utils import get_binary_io_sha256_hash
 from monkey_island.cc.event_queue import (
     IIslandEventQueue,
@@ -120,20 +120,18 @@ def _register_event_queues(container: DIContainer):
     event_queue_lock = threading.RLock()
 
     agent_event_queue = container.resolve(PyPubSubAgentEventQueue)
-    decorated_agent_event_queue = _decorate_agent_event_queue(
-        agent_event_queue, event_queue_lock  # type: ignore
-    )
+    decorated_agent_event_queue = _decorate_agent_event_queue(agent_event_queue, event_queue_lock)
     container.register_instance(IAgentEventQueue, decorated_agent_event_queue)
 
     island_event_queue = container.resolve(PyPubSubIslandEventQueue)
     decorated_island_event_queue = _decorate_island_event_queue(
-        island_event_queue, event_queue_lock  # type: ignore
+        island_event_queue, event_queue_lock
     )
     container.register_instance(IIslandEventQueue, decorated_island_event_queue)
 
 
 def _decorate_agent_event_queue(
-    agent_event_queue: IAgentEventQueue, lock: BaseLock
+    agent_event_queue: IAgentEventQueue, lock: RLock
 ) -> IAgentEventQueue:
     return LockingAgentEventQueueDecorator(agent_event_queue, lock)
 
