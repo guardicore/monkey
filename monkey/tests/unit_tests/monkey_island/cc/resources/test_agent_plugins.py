@@ -7,7 +7,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import FAKE_AGENT_PLUGIN_1
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
-from monkey_island.cc.repositories import IAgentPluginRepository
+from monkey_island.cc.repositories import IAgentPluginRepository, RetrievalError
 from monkey_island.cc.resources import AgentPlugins
 
 FAKE_PLUGIN_NAME = "plugin_abc"
@@ -66,3 +66,14 @@ def test_get_plugins__not_found_if_type_is_invalid(flask_client, type_):
     resp = flask_client.get(get_url_for_resource(AgentPlugins, type=type_, name="name"))
 
     assert resp.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_get_plugins__server_error(flask_client, agent_plugin_repository):
+    def raise_retrieval_error(plugin_type, name):
+        raise RetrievalError
+
+    agent_plugin_repository.get_plugin = raise_retrieval_error
+
+    resp = flask_client.get(get_url_for_resource(AgentPlugins, type="Payload", name="name"))
+
+    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
