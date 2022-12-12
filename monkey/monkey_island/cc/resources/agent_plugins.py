@@ -19,7 +19,7 @@ class AgentPlugins(AbstractResource):
     # Used by monkey. can't secure.
     def get(self, type: str, name: str):
         """
-        Gets the plugin of the specified type and name.
+        Get the plugin of the specified type and name.
 
         :param type: The type of plugin (e.g. Exploiter)
         :param name: The name of the plugin
