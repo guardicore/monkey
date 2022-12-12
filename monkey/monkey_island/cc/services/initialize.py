@@ -116,7 +116,7 @@ def _register_conventions(container: DIContainer):
 
 
 def _register_event_queues(container: DIContainer):
-    event_queue_lock = threading.Lock()
+    event_queue_lock = threading.RLock()
 
     agent_event_queue = container.resolve(PyPubSubAgentEventQueue)
     decorated_agent_event_queue = _decorate_agent_event_queue(agent_event_queue, event_queue_lock)
