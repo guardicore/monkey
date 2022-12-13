@@ -1,3 +1,9 @@
-.preview-pane a>svg{
-  color: $monkey-yellow !important;
+.preview-pane a>svg {
+  color: $monkey-yellow  !important;
+}
+
+#map-preview-column {
+  position: absolute;
+  right: 0;
+  z-index: 1;
 }

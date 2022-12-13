@@ -8,6 +8,11 @@
   position: relative;
 }
 
+#map-column {
+  flex: auto;
+  max-width: 100%;
+}
+
 .net-graph-wrapper {
   height: calc(100% - 130px);
   width: 100%;
