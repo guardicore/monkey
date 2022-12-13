@@ -1,6 +1,8 @@
 import atexit
+import http.server
 import json
 import logging
+import socketserver
 import sys
 from ipaddress import IPv4Address
 from pathlib import Path
@@ -187,6 +189,14 @@ def _start_island_server(
         f"{config_options.key_path}."
     )
 
+    class RedirectHandler(http.server.SimpleHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(301)
+            self.send_header("Location", f"https://0.0.0.0:{ISLAND_PORT}")
+            self.end_headers()
+
+    handler = socketserver.TCPServer(("0.0.0.0", 8000), RedirectHandler)
+
     http_server = WSGIServer(
         ("0.0.0.0", ISLAND_PORT),
         app,
@@ -195,8 +205,11 @@ def _start_island_server(
         log=_get_wsgi_server_logger(),
         error_log=logger,
     )
+
     _log_init_info(ip_addresses)
+
     http_server.serve_forever()
+    handler.serve_forever()
 
 
 def _configure_gevent_exception_handling(data_dir: Path):
