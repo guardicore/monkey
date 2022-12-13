@@ -4,7 +4,7 @@ from typing import Optional, Type
 from typing_extensions import Protocol
 
 
-class Lock(Protocol):
+class BasicLock(Protocol):
     def __enter__(self) -> bool:
         ...
 
@@ -22,26 +22,14 @@ class Lock(Protocol):
     def release(self) -> None:
         ...
 
+
+class Lock(BasicLock, Protocol):
     def locked(self) -> bool:
         ...
 
 
-class RLock(Protocol):
+class RLock(BasicLock, Protocol):
     def __enter__(self, blocking: bool = ..., timeout: float = ...) -> bool:
-        ...
-
-    def __exit__(
-        self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
-    ) -> None:
-        ...
-
-    def acquire(self, blocking: bool = ..., timeout: float = ...) -> bool:
-        ...
-
-    def release(self) -> None:
         ...
 
 
