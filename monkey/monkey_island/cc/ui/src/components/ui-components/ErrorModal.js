@@ -30,7 +30,7 @@ class ErrorModal extends React.PureComponent {
         </Modal.Header>
         <Modal.Body>
           <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
-            <div className="alert alert-danger">
+            <div className={this.props.errorLevel !== undefined ? this.props.errorLevel : "alert alert-danger"}>
               <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
               {this.props.errorMessage}
             </div>
