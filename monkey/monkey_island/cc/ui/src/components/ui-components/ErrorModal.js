@@ -4,13 +4,15 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 
 
-class Error404Modal extends React.PureComponent {
+class ErrorModal extends React.PureComponent {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      showModal: this.props.showModal
+      showModal: this.props.showModal,
+      errorMessage: this.props.errorMessage,
+      errorDetails: (this.props.errorDetails !== undefined) ? this.props.errorDetails : null
     };
   }
 
@@ -32,13 +34,20 @@ class Error404Modal extends React.PureComponent {
           <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
             <p className="alert alert-danger">
               <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
-              The server returned a 404 (NOT FOUND) response.
+              {this.state.errorMessage}
             </p>
           </div>
+          {this.state.errorDetails !== null ?
+            (<div>
+              <h4>Error Details</h4>
+              <hr/>
+              <div>{this.state.errorDetails}</div>
+            </div>) : <></>
+          }
         </Modal.Body>
       </Modal>
     )
   };
 }
 
-export default Error404Modal;
+export default ErrorModal;
