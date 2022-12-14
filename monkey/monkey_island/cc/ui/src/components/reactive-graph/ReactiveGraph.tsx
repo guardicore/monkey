@@ -1,6 +1,6 @@
 import React from 'react';
 import Graph from 'react-graph-vis';
-import {getOptions} from '../map/MapOptions';
+import {getOptions, startingPosition} from '../map/MapOptions';
 
 
 const GraphWrapper = (props: { graph: Graph, events: any }) => {
@@ -10,9 +10,7 @@ const GraphWrapper = (props: { graph: Graph, events: any }) => {
     <div className={'net-graph-wrapper'}>
       <Graph graph={props.graph} options={options} events={props.events}
       getNetwork={network => {
-        // Move the center of the camera to the right
-        // to compensate for the side panel on the right
-        network.moveTo({'position': {'x': 130, 'y': 0}})
+        network.moveTo(startingPosition);
       }}/>
     </div>
   )

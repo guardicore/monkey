@@ -38,6 +38,11 @@ export const basic_options = {
   }
 };
 
+// Move the camera to the right
+// to compensate for the side panel on the right
+export const startingPosition = {'position': {'x': 130, 'y': 0}}
+
+
 const nodeStates = Object.keys(NodeGroup);
 const groupsOptions = getGroupsOptions(nodeStates);
 
