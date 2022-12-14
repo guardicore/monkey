@@ -54,8 +54,8 @@ const NodePreviewPane = (props: any) => {
             Download Monkey Agent Log
           </th>
           <td>
-            <AgentLogDownloadButton url={'/api/agent-logs/' +
-              node.agentIds[node.agentIds.length - 1]}
+            <AgentLogDownloadButton url={'/api/agent-logs/'}
+                                    agentIds={node.agentIds}
                                     filename={logFilename(node)}
                                     variant={! _.isEmpty(node.agentIds) &&
                                     !node.agentRunning ? undefined : 'disabled'}/>
