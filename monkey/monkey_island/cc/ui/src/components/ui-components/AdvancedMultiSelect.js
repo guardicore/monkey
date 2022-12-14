@@ -32,9 +32,14 @@ function AdvancedMultiSelectHeader(props) {
 class AdvancedMultiSelect extends React.Component {
   constructor(props) {
     super(props);
-    let allPluginNames = this.props.options.enumOptions.map(v => v.value);
+    let nameOptions = this.getOptions();
+    let allPluginNames = nameOptions.map(v => v.value);
 
     this.state = {
+      nameOptions: nameOptions
+    };
+    this.state = {
+      nameOptions: nameOptions,
       infoPaneParams: getDefaultPaneParams(
         this.props.schema.items,
         this.isUnsafeOptionSelected(this.getSelectedPluginNames())
@@ -45,12 +50,17 @@ class AdvancedMultiSelect extends React.Component {
     };
   }
 
+  getOptions() {
+    let names = this.props.schema.items.properties.name.anyOf;
+    return names.map(v => ({label: v.title, schema: v, value: v.enum[0]}));
+  }
+
   getSelectedPluginNames = () => {
     return this.props.value.map(v => v.name);
   }
 
   getOptionList = () => {
-    return this.props.options.enumOptions.sort(this.compareOptions);
+    return this.state.nameOptions.sort(this.compareOptions);
   }
 
   onChange = (strValues) => {
@@ -138,12 +148,12 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   isSafe = (itemKey) => {
-    let fullDef = getFullDefinitionByKey(this.props.schema.items, itemKey);
+    let fullDef = getFullDefinitionByKey(this.props.schema.items.properties.name, itemKey);
     return fullDef.safe;
   }
 
   setPaneInfo = (itemKey) => {
-    let definitionObj = getFullDefinitionByKey(this.props.schema.items, itemKey);
+    let definitionObj = getFullDefinitionByKey(this.props.schema.items.properties.name, itemKey);
     this.setState(
       {
         infoPaneParams: {
@@ -176,9 +186,9 @@ class AdvancedMultiSelect extends React.Component {
         <AdvancedMultiSelectHeader title={schema.title}
                                    onCheckboxClick={this.onMasterCheckboxClick}
                                    checkboxState={this.getMasterCheckboxState(
-                                     this.getSelectedPluginNames())}
+                                      this.getSelectedPluginNames())}
                                    hideReset={this.getHideResetState(
-                                     this.getSelectedPluginNames())}
+                                      this.getSelectedPluginNames())}
                                    onResetClick={this.onResetClick}/>
 
         <ChildCheckboxContainer id={id} multiple={multiple} required={required}
@@ -186,7 +196,7 @@ class AdvancedMultiSelect extends React.Component {
                                 onPaneClick={this.setPaneInfo}
                                 onCheckboxClick={this.onChildCheckboxClick}
                                 selectedValues={this.getSelectedPluginNames()}
-                                enumOptions={this.getOptionList()}/>
+                                enumOptions={this.state.nameOptions}/>
 
         <InfoPane title={this.state.infoPaneParams.title}
                   body={this.state.infoPaneParams.content}
