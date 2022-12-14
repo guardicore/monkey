@@ -11,11 +11,17 @@ type Props = { url: string, filename: string, variant?: string }
 const LOG_FILE_NOT_FOUND_ERROR = "The server returned a 404 (NOT FOUND) response: " +
                                  "The requested log files do not exist."
 
-export const AgentLogDownloadButton = ({ url, filename, variant = 'primary' }: Props) => {
+export const AgentLogDownloadButton = ({ url, agentIds, filename, variant = 'primary' }: Props) => {
   const [noLogFileExistsComponent, setNoLogFileExistsComponent] = useState(false);
 
-  function downloadAgentLog() {
-    authComponent.authFetch(url)
+  function downloadAllAgentLogs(){
+    for(let agentId of agentIds){
+       downloadAgentLog(agentId);
+    }
+  }
+
+  function downloadAgentLog(agentId) {
+    authComponent.authFetch(url + agentId)
       .then(res => {
         if (res.status === 404) {
           setNoLogFileExistsComponent(true);
@@ -34,7 +40,7 @@ export const AgentLogDownloadButton = ({ url, filename, variant = 'primary' }: P
   };
 
   return (<>
-    <Button variant={variant} onClick={downloadAgentLog}>
+    <Button variant={variant} onClick={downloadAllAgentLogs}>
       Download Log
     </Button>
     <ErrorModal
