@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import AuthComponent from '../AuthComponent';
 import download from 'downloadjs';
 import { Button } from 'react-bootstrap';
-import Error404Modal from './Error404Modal';
+import ErrorModal from './ErrorModal';
 
 const authComponent = new AuthComponent({})
 
 type Props = { url: string, filename: string, variant?: string }
 
+const LOG_FILE_NOT_FOUND_ERROR = "The server returned a 404 (NOT FOUND) response. " +
+                                 "The log file/files was/were not found on the machine."
 
 export const AgentLogDownloadButton = ({ url, filename, variant = 'primary' }: Props) => {
   const [noLogFileExistsComponent, setNoLogFileExistsComponent] = useState(false);
@@ -35,8 +37,9 @@ export const AgentLogDownloadButton = ({ url, filename, variant = 'primary' }: P
     <Button variant={variant} onClick={downloadAgentLog}>
       Download Log
     </Button>
-    <Error404Modal
+    <ErrorModal
       showModal={noLogFileExistsComponent}
+      errorMessage={LOG_FILE_NOT_FOUND_ERROR}
       onClose={closeModal}
     />
   </>);
@@ -71,8 +74,9 @@ export const IslandLogDownloadButton = ({url, variant = 'primary'}: IslandLogDow
     <Button variant={variant} onClick={downloadIslandLog}>
       Download Log
     </Button>
-    <Error404Modal
+    <ErrorModal
       showModal={noLogFileExistsComponent}
+      errorMessage={LOG_FILE_NOT_FOUND_ERROR}
       onClose={closeModal}
     />
   </>);
