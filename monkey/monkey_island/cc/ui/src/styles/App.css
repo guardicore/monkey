@@ -154,6 +154,10 @@ body {
   font-family: 'Alegreya', serif;
 }
 
+.map-page-title {
+  margin-bottom: 10px;
+}
+
 @media (min-width: 768px) {
   .main {
     padding-right: 40px;

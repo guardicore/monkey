@@ -17,7 +17,8 @@ let getGroupsOptions = (stateList) => {
 export const basic_options = {
   autoResize: true,
   layout: {
-    improvedLayout: false
+    improvedLayout: false,
+    randomSeed: 1
   },
   edges: {
     width: 2,
@@ -36,6 +37,11 @@ export const basic_options = {
     maxVelocity: 25
   }
 };
+
+// Move the camera to the right
+// to compensate for the side panel on the right
+export const startingPosition = {'position': {'x': 130, 'y': 0}}
+
 
 const nodeStates = Object.keys(NodeGroup);
 const groupsOptions = getGroupsOptions(nodeStates);

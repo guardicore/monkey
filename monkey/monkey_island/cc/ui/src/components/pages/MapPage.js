@@ -85,10 +85,10 @@ class MapPageComponent extends AuthComponent {
         className={'main'}>
         <Row>
           {this.renderKillDialogModal()}
-          <Col xs={12} lg={8}>
-            <h1 className="page-title">2. Infection Map</h1>
+          <Col xs={12} >
+            <h1 className="page-title map-page-title">2. Infection Map</h1>
           </Col>
-          <Col xs={8}>
+          <Col xs={8} id="map-column">
             <div className="map-legend">
               <b>Legend: </b>
               <span>Exploit <FontAwesomeIcon icon={faMinus} size="lg" style={{ color: '#cc0200' }} /></span>
@@ -103,26 +103,28 @@ class MapPageComponent extends AuthComponent {
               <ReactiveGraph graph={this.props.graph} events={this.events} />
             </div>
           </Col>
-          <Col xs={4}>
-            <div style={{ 'overflow': 'auto', 'marginBottom': '1em' }}>
-              <Link to="/infection/events" className="btn btn-light pull-left" style={{ 'width': '48%' }}>Monkey
-                Events</Link>
-              <button onClick={() => this.setState({ showKillDialog: true })} className="btn btn-danger pull-right"
-                style={{ 'width': '48%' }}>
-                <FontAwesomeIcon icon={faStopCircle} style={{ 'marginRight': '0.5em' }} />
-                Kill All Monkeys
-              </button>
-            </div>
-            {this.state.killPressed ?
-              <div className="alert alert-info">
-                <FontAwesomeIcon icon={faInfoCircle} style={{ 'marginRight': '5px' }} />
-                Kill command sent to all monkeys
+          <div>
+            <Col xs={4} id="map-preview-column">
+              <div style={{ 'overflow': 'auto', 'marginBottom': '1em' }}>
+                <Link to="/infection/events" className="btn btn-light pull-left" style={{ 'width': '48%' }}>Monkey
+                  Events</Link>
+                <button onClick={() => this.setState({ showKillDialog: true })} className="btn btn-danger pull-right"
+                  style={{ 'width': '48%' }}>
+                  <FontAwesomeIcon icon={faStopCircle} style={{ 'marginRight': '0.5em' }} />
+                  Kill All Monkeys
+                </button>
               </div>
-              : ''}
+              {this.state.killPressed ?
+                <div className="alert alert-info">
+                  <FontAwesomeIcon icon={faInfoCircle} style={{ 'marginRight': '5px' }} />
+                  Kill command sent to all monkeys
+                </div>
+                : ''}
 
-            <NodePreviewPane item={this.state.selected} type={this.state.selectedType}
-            allNodes={this.props.mapNodes} />
-          </Col>
+              <NodePreviewPane item={this.state.selected} type={this.state.selectedType}
+              allNodes={this.props.mapNodes} />
+            </Col>
+          </div>
         </Row>
       </Col>
     );
