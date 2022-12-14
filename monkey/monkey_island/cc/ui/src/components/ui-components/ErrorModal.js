@@ -11,8 +11,6 @@ class ErrorModal extends React.PureComponent {
 
     this.state = {
       showModal: this.props.showModal,
-      errorMessage: this.props.errorMessage,
-      errorDetails: (this.props.errorDetails !== undefined) ? this.props.errorDetails : null
     };
   }
 
@@ -32,16 +30,18 @@ class ErrorModal extends React.PureComponent {
         </Modal.Header>
         <Modal.Body>
           <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
-            <p className="alert alert-danger">
+            <div className="alert alert-danger">
               <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
-              {this.state.errorMessage}
-            </p>
+              {this.props.errorMessage}
+            </div>
           </div>
-          {this.state.errorDetails !== null ?
+          {this.props.errorDetails !== undefined ?
             (<div>
-              <h4>Error Details</h4>
               <hr/>
-              <div>{this.state.errorDetails}</div>
+              <h4>Error Details</h4>
+              <p style={{'word-wrap': 'break-word'}}>
+                {this.props.errorDetails}
+              </p>
             </div>) : <></>
           }
         </Modal.Body>
