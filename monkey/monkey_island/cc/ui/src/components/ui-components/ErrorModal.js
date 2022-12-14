@@ -35,14 +35,14 @@ class ErrorModal extends React.PureComponent {
               {this.props.errorMessage}
             </div>
           </div>
-          {this.props.errorDetails !== undefined ?
-            (<div>
+          {this.props.errorDetails !== undefined &&
+            <div>
               <hr/>
               <h4>Error Details</h4>
               <p style={{'word-wrap': 'break-word'}}>
                 {this.props.errorDetails}
               </p>
-            </div>) : <></>
+            </div>
           }
         </Modal.Body>
       </Modal>
