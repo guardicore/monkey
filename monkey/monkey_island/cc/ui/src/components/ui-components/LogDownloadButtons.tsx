@@ -6,12 +6,12 @@ import ErrorModal from './ErrorModal';
 
 const authComponent = new AuthComponent({})
 
-type Props = { url: string, filename: string, variant?: string }
+type Props = { url: string, agentIds: string[], agentsStartTime: Record<string, Date>, nodeLabel: string, variant?: string }
 
 const LOG_FILE_NOT_FOUND_ERROR = "The server returned a 404 (NOT FOUND) response: " +
                                  "The requested log files do not exist."
 
-export const AgentLogDownloadButton = ({ url, agentIds, filename, variant = 'primary' }: Props) => {
+export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLabel, variant = 'primary' }: Props) => {
   const [noLogFileExistsComponent, setNoLogFileExistsComponent] = useState(false);
 
   function downloadAllAgentLogs(){
@@ -30,9 +30,17 @@ export const AgentLogDownloadButton = ({ url, agentIds, filename, variant = 'pri
       })
       .then(res => {
         if (res !== "") {
-          download(res, filename, 'text/plain');
+          download(res, logFilename(agentId), 'text/plain');
         }
       });
+  }
+
+  function logFilename(agentId) {
+    let agentStartTime = agentsStartTime[agentId];
+    return agentStartTime.toISOString().split(':').join('.') +
+      '-' +
+      nodeLabel.split(/[:/]/).join('-') +
+      '.log';
   }
 
   function closeModal() {
