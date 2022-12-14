@@ -39,12 +39,7 @@ const NodePreviewPane = (props: any) => {
     );
   }
 
-  function logFilename(node) {
-    return node.agentStartTime.toISOString().split(':').join('.') +
-      '-' +
-      node.getLabel().split(/[:/]/).join('-') +
-      '.log';
-  }
+
 
   function downloadLogsRow(node) {
     return (
@@ -56,7 +51,8 @@ const NodePreviewPane = (props: any) => {
           <td>
             <AgentLogDownloadButton url={'/api/agent-logs/'}
                                     agentIds={node.agentIds}
-                                    filename={logFilename(node)}
+                                    agentsStartTime={node.agentsStartTime}
+                                    nodeLabel={node.getLabel()}
                                     variant={! _.isEmpty(node.agentIds) &&
                                     !node.agentRunning ? undefined : 'disabled'}/>
           </td>

@@ -89,7 +89,7 @@ const MapPageWrapper = (props) => {
       let running = false;
       let agentIDs: string[] = [];
       let parentIDs: string[] = [];
-      let lastAgentStartTime: Date = new Date(0);
+      let agentsStartTime: Record<string, Date> = {};
       if (node !== null) {
         const nodeAgents = agents.filter(a => a.machine_id === machine.id);
         nodeAgents.forEach((nodeAgent) => {
@@ -98,10 +98,7 @@ const MapPageWrapper = (props) => {
           }
           agentIDs.push(nodeAgent.id);
           parentIDs.push(nodeAgent.parent_id);
-          let agentStartTime = new Date(nodeAgent.start_time);
-          if (agentStartTime > lastAgentStartTime) {
-            lastAgentStartTime = agentStartTime;
-          }
+          agentsStartTime[nodeAgent.id] = new Date(nodeAgent.start_time);
         });
       }
 
@@ -116,7 +113,7 @@ const MapPageWrapper = (props) => {
         machine.hostname,
         machine.island,
         propagatedTo,
-        lastAgentStartTime,
+        agentsStartTime,
         agentIDs,
         parentIDs
       ));

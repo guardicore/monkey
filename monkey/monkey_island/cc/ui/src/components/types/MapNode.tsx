@@ -46,7 +46,7 @@ export default class MapNode {
     public hostname: string = "",
     public island: boolean = false,
     public propagatedTo: boolean = false,
-    public agentStartTime: Date = new Date(0),
+    public agentsStartTime: Record<string, Date> = {},
     public agentIds: string[] = [],
     public parentIds: string[] = []) {
   }
