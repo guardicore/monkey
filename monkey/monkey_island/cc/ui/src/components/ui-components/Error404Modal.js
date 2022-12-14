@@ -1,8 +1,7 @@
 import {Modal} from 'react-bootstrap';
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faExclamationTriangle, faTimes} from '@fortawesome/free-solid-svg-icons';
-import {Button, Row, Col} from 'react-bootstrap';
+import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 
 
 class Error404Modal extends React.PureComponent {
@@ -11,14 +10,14 @@ class Error404Modal extends React.PureComponent {
     super(props);
 
     this.state = {
-      showModal: this.props.showModal,
+      showModal: this.props.showModal
     };
   }
 
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
       this.setState({
-        showModal: this.props.showModal,
+        showModal: this.props.showModal
       })
     }
   }
