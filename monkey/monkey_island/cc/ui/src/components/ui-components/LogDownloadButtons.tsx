@@ -8,8 +8,8 @@ const authComponent = new AuthComponent({})
 
 type Props = { url: string, filename: string, variant?: string }
 
-const LOG_FILE_NOT_FOUND_ERROR = "The server returned a 404 (NOT FOUND) response. " +
-                                 "The log file/files was/were not found on the machine."
+const LOG_FILE_NOT_FOUND_ERROR = "The server returned a 404 (NOT FOUND) response: " +
+                                 "The requested log files do not exist."
 
 export const AgentLogDownloadButton = ({ url, filename, variant = 'primary' }: Props) => {
   const [noLogFileExistsComponent, setNoLogFileExistsComponent] = useState(false);
