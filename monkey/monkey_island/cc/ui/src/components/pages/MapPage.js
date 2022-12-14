@@ -85,8 +85,8 @@ class MapPageComponent extends AuthComponent {
         className={'main'}>
         <Row>
           {this.renderKillDialogModal()}
-          <Col xs={12} lg={8}>
-            <h1 className="page-title">2. Infection Map</h1>
+          <Col xs={12} >
+            <h1 className="page-title map-page-title">2. Infection Map</h1>
           </Col>
           <Col xs={8} id="map-column">
             <div className="map-legend">
