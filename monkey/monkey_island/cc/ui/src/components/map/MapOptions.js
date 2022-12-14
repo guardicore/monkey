@@ -17,7 +17,8 @@ let getGroupsOptions = (stateList) => {
 export const basic_options = {
   autoResize: true,
   layout: {
-    improvedLayout: false
+    improvedLayout: false,
+    randomSeed: 1
   },
   edges: {
     width: 2,

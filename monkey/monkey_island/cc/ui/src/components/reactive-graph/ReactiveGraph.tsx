@@ -12,7 +12,7 @@ const GraphWrapper = (props: { graph: Graph, events: any }) => {
       getNetwork={network => {
         // Move the center of the camera to the right
         // to compensate for the side panel on the right
-        network.moveTo({'position': {'x': 100, 'y': 0}})
+        network.moveTo({'position': {'x': 130, 'y': 0}})
       }}/>
     </div>
   )
