@@ -1,15 +1,25 @@
 import {Modal} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 
 
-export const ErrorModal = ({showModal,
-                            onClose,
-                            errorMessage,
-                            errorDetails = undefined,
-                            errorLevel = 'alert alert-danger'}
-                          ) => {
+interface Props {
+  showModal: boolean,
+  onClose: () => void,
+  errorMessage: string,
+  errorDetails?: string,
+  errorLevel?: string
+}
+
+
+export const ErrorModal = ({
+                             showModal,
+                             onClose,
+                             errorMessage,
+                             errorDetails = undefined,
+                             errorLevel = 'danger'
+                           }: Props) => {
   return (
     <Modal show={showModal} onHide={() => onClose()}>
       <Modal.Header closeButton>
@@ -17,7 +27,7 @@ export const ErrorModal = ({showModal,
       </Modal.Header>
       <Modal.Body>
         <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
-          <div className={errorLevel !== undefined ? errorLevel : "alert alert-danger"}>
+          <div className={`alert alert-${errorLevel}`}>
             <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
             {errorMessage}
           </div>
