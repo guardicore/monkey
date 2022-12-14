@@ -1,5 +1,5 @@
 import React from 'react';
-import Form from 'react-jsonschema-form-bs4';
+import Form from '@rjsf/bootstrap-4';
 import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import UiSchema from '../configuration-components/UiSchema';
@@ -23,6 +23,7 @@ import {
   formatCredentialsForForm,
   formatCredentialsForIsland
 } from '../configuration-components/ReformatHook';
+import validator from '@rjsf/validator-ajv8';
 
 const CONFIG_URL = '/api/agent-configuration';
 const RESET_URL = '/api/reset-agent-configuration';
@@ -319,6 +320,7 @@ class ConfigurePageComponent extends AuthComponent {
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
     formProperties['formData'] = this.state.currentFormData;
+    formProperties['validator'] = validator;
 
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],

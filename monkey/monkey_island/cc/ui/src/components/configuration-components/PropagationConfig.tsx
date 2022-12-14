@@ -1,8 +1,9 @@
-import Form from 'react-jsonschema-form-bs4';
+import Form from '@rjsf/bootstrap-4';
 import React, {useState} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import CredentialsConfig from './CredentialsConfig';
+import validator from '@rjsf/validator-ajv8';
 
 const sectionOrder = [
   'exploitation',
@@ -64,6 +65,7 @@ export default function PropagationConfig(props) {
       return <Form schema={displayedSchema}
                    uiSchema={displayedUiSchema}
                    formData={selectedSectionData}
+                   validator={validator}
                    onChange={onFormDataChange}
                    // @ts-ignore
                    customFormats={customFormats}
