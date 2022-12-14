@@ -109,7 +109,7 @@ class RunOnIslandButton extends AuthComponent {
   getErrorMessageFromErrorText(errorText) {
     if (errorText.includes('Permission denied:') || errorText.includes('Text file busy')) {
       return this.getMonkeyAlreadyRunningContent()
-    } else if (errorText.startsWith('Copy file failed')) {
+    } else if (errorText.startsWith('Copy file failed') || errorText.includes('No such file or directory')) {
       return this.getMissingBinariesContent()
     } else {
       return this.getUndefinedErrorContent()
