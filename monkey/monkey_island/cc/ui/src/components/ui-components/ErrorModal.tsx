@@ -36,7 +36,7 @@ export const ErrorModal = ({
           <div>
             <hr/>
             <h4>Error Details</h4>
-            <p style={{'word-wrap': 'break-word'}}>
+            <p style={{'word-wrap': 'break-word', 'white-space': 'pre-wrap'}}>
               {errorDetails}
             </p>
           </div>
