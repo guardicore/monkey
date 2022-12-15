@@ -16,7 +16,8 @@ class FileRepositoryLockingDecorator(IFileRepository):
         self._rwlock = rwlock.RWLockFair()
 
     def get_all_file_names(self) -> Sequence[str]:
-        raise NotImplementedError()
+        with self._rwlock.gen_rlock():
+            return self._file_repository.get_all_file_names()
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         with self._rwlock.gen_wlock():
