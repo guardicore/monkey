@@ -14,7 +14,7 @@ class MockFileRepository(IFileRepository):
         self._file = io.BytesIO(FILE_CONTENTS)
 
     def get_all_file_names(self) -> Sequence[str]:
-        raise NotImplementedError()
+        return [FILE_NAME]
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         pass
