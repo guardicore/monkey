@@ -22,7 +22,7 @@ class IAgentPluginRepository(ABC):
     @abstractmethod
     def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
         """
-        Retrieve a list of pairs of agent plugin type and their name.
+        Retrieve a sequence of pairs of agent plugin type and plugin name.
 
         :raises RetrievalError: If an error occurs while attempting to retrieve the catalog
         """
