@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
+from tests.utils import raise_
 
 from monkey_island.cc import repositories
 from monkey_island.cc.repositories import LocalStorageFileRepository
@@ -155,3 +156,32 @@ def test_delete_files_by_regex(tmp_path):
 
     files = {f.name for f in tmp_path.iterdir()}
     assert files == {"xyz-1.txt", "pqr-3.txt", "abc-5.pdf"}
+
+
+def test_get_all_files__empty_repository(tmp_path):
+    fss = LocalStorageFileRepository(tmp_path)
+
+    assert len(fss.get_all_file_names()) == 0
+
+
+def test_get_all_files(tmp_path):
+    file_names = {"f1", "f2.txt", "f3.tar.gz", "f4.so"}
+    for filename in file_names:
+        (tmp_path / filename).touch()
+
+    fss = LocalStorageFileRepository(tmp_path)
+    retrieved_file_names = fss.get_all_file_names()
+
+    assert set(retrieved_file_names) == file_names
+
+
+def test_get_all_files__retrieval_error(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "monkey_island.cc.repositories.local_storage_file_repository.get_all_regular_files_in_directory",  # noqa: E501
+        lambda _: raise_(OSError()),
+    )
+
+    fss = LocalStorageFileRepository(tmp_path)
+
+    with pytest.raises(repositories.RetrievalError):
+        fss.get_all_file_names()
