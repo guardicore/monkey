@@ -45,3 +45,28 @@ def test_get_plugin__RetrievalError_if_bad_plugin(
         file_repository.save_file(basename(bad_plugin_file), file)
     with pytest.raises(RetrievalError):
         agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "bad")
+
+
+def test_get_plugin_catalog(
+    plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
+):
+    with open(plugin_file, "rb") as file:
+        file_repository.save_file(basename(plugin_file), file)
+        file_repository.save_file("ssh-payload.tar", file)
+
+    actual_plugin_catalog = agent_plugin_repository.get_plugin_catalog()
+
+    assert actual_plugin_catalog == [
+        (AgentPluginType.EXPLOITER, "test"),
+        (AgentPluginType.PAYLOAD, "ssh"),
+    ]
+
+
+def test_get_plugin_catalog__RetrievalError_if_bad_plugin_type(
+    plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
+):
+    with open(plugin_file, "rb") as file:
+        file_repository.save_file("ssh-bogus.tar", file)
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_plugin_catalog()

@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Sequence, Tuple
 
 from common.agent_plugins import AgentPlugin, AgentPluginType
 
@@ -16,3 +17,7 @@ class AgentPluginRepositoryCachingDecorator(IAgentPluginRepository):
     @lru_cache()
     def get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
         return self._agent_plugin_repository.get_plugin(plugin_type, name)
+
+    @lru_cache()
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+        return self._agent_plugin_repository.get_plugin_catalog()
