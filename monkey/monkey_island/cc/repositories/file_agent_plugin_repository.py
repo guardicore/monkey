@@ -1,3 +1,5 @@
+from typing import Sequence, Tuple
+
 from common.agent_plugins import AgentPlugin, AgentPluginType
 
 from . import IAgentPluginRepository, IFileRepository, RetrievalError
@@ -23,3 +25,19 @@ class FileAgentPluginRepository(IAgentPluginRepository):
                 return parse_plugin(f)
         except ValueError as err:
             raise RetrievalError(f"Error retrieving the agent plugin {plugin_file_name}: {err}")
+
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+        plugin_catalog = []
+
+        plugin_file_names = self._plugin_file_repository.get_all_file_names()
+        for plugin_file_name in plugin_file_names:
+            plugin_name, plugin_type = plugin_file_name.split(".")[0].split("-")
+            try:
+                plugin_catalog.append((AgentPluginType[plugin_type.upper()], plugin_name))
+            except KeyError as err:
+                raise RetrievalError(
+                    f"Error retrieving plugin catalog for plugin {plugin_name} of "
+                    f"type {plugin_type.upper()}: {err}"
+                )
+
+        return plugin_catalog
