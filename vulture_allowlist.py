@@ -153,4 +153,5 @@ AgentPluginManifest.safe
 IAgentPluginRepository
 
 # Remove after #2710
-IFileRepository.get_all_file_names()
+IFileRepository.get_all_file_names
+IAgentPluginRepository.get_plugin_catalog

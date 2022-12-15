@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Sequence, Tuple
 
 from common.agent_plugins import AgentPlugin, AgentPluginType
 
@@ -17,3 +18,11 @@ class IAgentPluginRepository(ABC):
         :raises UnknownRecordError: If a plugin with specified name and type doesn't exist
         """
         pass
+
+    @abstractmethod
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+        """
+        Retrieve a list of pairs of agent plugin type and their name.
+
+        :raises RetrievalError: If an error occurs while attempting to retrieve the catalog
+        """
