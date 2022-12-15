@@ -136,11 +136,9 @@ Lock.locked
 QueuedAgentEventPublisher
 
 # Remove after #2638
-AgentPlugin
 AgentPlugin.plugin_manifest
 AgentPlugin.config_schema
 AgentPlugin.source_archive
-AgentPlugin.default_config
 
 AgentPluginManifest
 AgentPluginManifest.supported_operating_systems
@@ -152,7 +150,3 @@ AgentPluginManifest.link_to_documentation
 AgentPluginManifest.safe
 
 IAgentPluginRepository
-
-# Remove after #2639
-AgentPluginRepositoryLoggingDecorator
-AgentPluginRepositoryCachingDecorator
