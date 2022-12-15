@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthComponent from '../AuthComponent';
 import download from 'downloadjs';
 import { Button } from 'react-bootstrap';
@@ -12,11 +12,16 @@ const LOG_FILE_NOT_FOUND_ERROR = "The server returned a 404 (NOT FOUND) response
                                  "The requested log files do not exist."
 
 export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLabel, variant = 'primary' }: Props) => {
-  const [noLogFileExistsComponent, setNoLogFileExistsComponent] = useState(false);
+  const [nonExistingAgentLogsIds, setNonExistingAgentLogsIds] = useState([]);
+  const [errorDetails, setErrorDetails] = useState(null);
+
+  useEffect(() => {
+    setErrorDetails(getAgentErrorDetails());
+  }, [nonExistingAgentLogsIds]);
 
   function downloadAllAgentLogs(){
     for(let agentId of agentIds){
-       downloadAgentLog(agentId);
+      downloadAgentLog(agentId);
     }
   }
 
@@ -24,9 +29,9 @@ export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLab
     authComponent.authFetch(url + agentId)
       .then(res => {
         if (res.status === 404) {
-          setNoLogFileExistsComponent(true);
+          setNonExistingAgentLogsIds((prevIds) => [...prevIds, agentId]);
         }
-        return res.json()
+        return res.json();
       })
       .then(res => {
         if (res !== "") {
@@ -43,17 +48,27 @@ export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLab
       '.log';
   }
 
+  function getAgentErrorDetails(){
+    let agentLogFileNotFoundErrorDetails = "The following agent log files do not exist: \n";
+    for(let agentId of nonExistingAgentLogsIds){
+        agentLogFileNotFoundErrorDetails = agentLogFileNotFoundErrorDetails.concat(logFilename(agentId) + '\n');
+    }
+
+    return agentLogFileNotFoundErrorDetails;
+  }
+
   function closeModal() {
-    setNoLogFileExistsComponent(false);
-  };
+    setNonExistingAgentLogsIds([]);
+  }
 
   return (<>
     <Button variant={variant} onClick={downloadAllAgentLogs}>
       Download Log
     </Button>
     <ErrorModal
-      showModal={noLogFileExistsComponent}
+      showModal={nonExistingAgentLogsIds.length !== 0}
       errorMessage={LOG_FILE_NOT_FOUND_ERROR}
+      errorDetails={errorDetails}
       onClose={closeModal}
     />
   </>);
@@ -82,7 +97,7 @@ export const IslandLogDownloadButton = ({url, variant = 'primary'}: IslandLogDow
 
   function closeModal() {
     setNoLogFileExistsComponent(false);
-  };
+  }
 
   return (<>
     <Button variant={variant} onClick={downloadIslandLog}>
