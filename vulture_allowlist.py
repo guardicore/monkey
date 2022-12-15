@@ -17,7 +17,6 @@ from monkey_island.cc.repositories import (
     AgentPluginRepositoryCachingDecorator,
     AgentPluginRepositoryLoggingDecorator,
     IAgentEventRepository,
-    IFileRepository,
     MongoAgentEventRepository,
 )
 from monkey_island.cc.repositories.i_agent_plugin_repository import IAgentPluginRepository
@@ -153,5 +152,4 @@ AgentPluginManifest.safe
 IAgentPluginRepository
 
 # Remove after #2710
-IFileRepository.get_all_file_names
 IAgentPluginRepository.get_plugin_catalog
