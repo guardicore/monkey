@@ -16,7 +16,11 @@ class FileRepositoryLoggingDecorator(IFileRepository):
         self._file_repository = file_repository
 
     def get_all_file_names(self) -> Sequence[str]:
-        raise NotImplementedError()
+        logger.debug("Getting all file names")
+        file_names = self._file_repository.get_all_file_names()
+        logger.debug(f"Found {len(file_names)} files")
+
+        return file_names
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         logger.debug(f"Saving file {unsafe_file_name}")
