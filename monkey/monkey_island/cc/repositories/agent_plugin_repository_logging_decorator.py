@@ -1,4 +1,5 @@
 import logging
+from typing import Sequence, Tuple
 
 from common.agent_plugins import AgentPlugin, AgentPluginType
 
@@ -19,3 +20,7 @@ class AgentPluginRepositoryLoggingDecorator(IAgentPluginRepository):
     def get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
         logger.debug(f"Retrieving plugin {name} of type {plugin_type}")
         return self._agent_plugin_repository.get_plugin(plugin_type, name)
+
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+        logger.debug("Retrieving plugin catalog")
+        return self._agent_plugin_repository.get_plugin_catalog()
