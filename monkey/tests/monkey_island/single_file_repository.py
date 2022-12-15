@@ -12,7 +12,10 @@ class SingleFileRepository(IFileRepository):
         self._file_name = ""
 
     def get_all_file_names(self) -> Sequence[str]:
-        raise NotImplementedError()
+        if self._file is None:
+            return []
+
+        return [self._file_name]
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         self._file = io.BytesIO(file_contents.read())
