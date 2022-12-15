@@ -1,6 +1,6 @@
 import io
 import re
-from typing import BinaryIO
+from typing import BinaryIO, Sequence
 
 from monkey_island.cc import repositories
 from monkey_island.cc.repositories import IFileRepository
@@ -12,6 +12,9 @@ FILE_CONTENTS = b"HelloWorld!"
 class MockFileRepository(IFileRepository):
     def __init__(self):
         self._file = io.BytesIO(FILE_CONTENTS)
+
+    def get_all_file_names(self) -> Sequence[str]:
+        raise NotImplementedError()
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         pass

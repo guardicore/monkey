@@ -3,7 +3,7 @@ import os
 import re
 import shutil
 from pathlib import Path
-from typing import BinaryIO
+from typing import BinaryIO, Sequence
 
 from common.utils.file_utils import get_all_regular_files_in_directory
 from monkey_island.cc import repositories
@@ -33,6 +33,9 @@ class LocalStorageFileRepository(IFileRepository):
             create_secure_directory(storage_directory)
 
         self._storage_directory = storage_directory
+
+    def get_all_file_names(self) -> Sequence[str]:
+        raise NotImplementedError()
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         try:

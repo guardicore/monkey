@@ -2,7 +2,7 @@ import io
 import re
 import shutil
 from functools import lru_cache
-from typing import BinaryIO
+from typing import BinaryIO, Sequence
 
 from . import IFileRepository
 
@@ -14,6 +14,9 @@ class FileRepositoryCachingDecorator(IFileRepository):
 
     def __init__(self, file_repository: IFileRepository):
         self._file_repository = file_repository
+
+    def get_all_file_names(self) -> Sequence[str]:
+        raise NotImplementedError()
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         self._open_file.cache_clear()
