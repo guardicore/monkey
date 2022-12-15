@@ -42,6 +42,7 @@ const NodePreviewPane = (props: any) => {
 
 
   function downloadLogsRow(node) {
+    const agentLogDownloadDisabled = _.isEmpty(node.agentIds) || node.agentRunning;
     return (
       <>
         <tr>
@@ -53,8 +54,7 @@ const NodePreviewPane = (props: any) => {
                                     agentIds={node.agentIds}
                                     agentsStartTime={node.agentsStartTime}
                                     nodeLabel={node.getLabel()}
-                                    variant={! _.isEmpty(node.agentIds) &&
-                                    !node.agentRunning ? undefined : 'disabled'}/>
+                                    disabled={agentLogDownloadDisabled}/>
           </td>
         </tr>
         {(node.island) &&
