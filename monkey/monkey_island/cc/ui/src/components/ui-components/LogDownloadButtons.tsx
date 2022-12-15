@@ -56,9 +56,9 @@ export const AgentLogDownloadButton = ({
   }
 
   function getAgentErrorDetails() {
-    let agentLogFileNotFoundErrorDetails = 'The following agent log files do not exist: \n';
+    let agentLogFileNotFoundErrorDetails = 'The log files do not exists from the following agents: \n';
     for (let agentId of nonExistingAgentLogsIds) {
-      agentLogFileNotFoundErrorDetails = agentLogFileNotFoundErrorDetails.concat(logFilename(agentId) + '\n');
+        agentLogFileNotFoundErrorDetails = agentLogFileNotFoundErrorDetails.concat(agentId + '\n');
     }
 
     return agentLogFileNotFoundErrorDetails;
