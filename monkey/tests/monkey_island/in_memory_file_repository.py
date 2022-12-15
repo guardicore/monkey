@@ -23,7 +23,7 @@ class InMemoryFileRepository(IFileRepository):
             raise UnknownRecordError(f"Unknown file {unsafe_file_name}")
 
     def delete_file(self, unsafe_file_name: str):
-        del_key(self._files, "unsafe_file_name")
+        del_key(self._files, unsafe_file_name)
 
     def delete_files_by_regex(self, file_name_regex: re.Pattern):
         self._files = {

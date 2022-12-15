@@ -35,7 +35,12 @@ class LocalStorageFileRepository(IFileRepository):
         self._storage_directory = storage_directory
 
     def get_all_file_names(self) -> Sequence[str]:
-        raise NotImplementedError()
+        try:
+            return [
+                file.name for file in get_all_regular_files_in_directory(self._storage_directory)
+            ]
+        except Exception as err:
+            raise RetrievalError(f"Error while attempting to get all file names: {err}")
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         try:
