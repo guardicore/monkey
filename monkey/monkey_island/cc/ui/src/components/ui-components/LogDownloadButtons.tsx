@@ -1,17 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import AuthComponent from '../AuthComponent';
 import download from 'downloadjs';
-import { Button } from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import ErrorModal from './ErrorModal';
 
 const authComponent = new AuthComponent({})
 
-type Props = { url: string, agentIds: string[], agentsStartTime: Record<string, Date>, nodeLabel: string, variant?: string }
+type Props = {
+  url: string, agentIds: string[], agentsStartTime: Record<string, Date>,
+  nodeLabel: string, variant?: string, disabled?: boolean
+}
 
-const LOG_FILE_NOT_FOUND_ERROR = "The server returned a 404 (NOT FOUND) response: " +
-                                 "The requested log files do not exist."
+const LOG_FILE_NOT_FOUND_ERROR = 'The server returned a 404 (NOT FOUND) response: ' +
+  'The requested log files do not exist.'
 
-export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLabel, variant = 'primary' }: Props) => {
+export const AgentLogDownloadButton = ({
+                                         url, agentIds, agentsStartTime,
+                                         nodeLabel, variant = 'primary',
+                                         disabled = false
+                                       }: Props) => {
   const [nonExistingAgentLogsIds, setNonExistingAgentLogsIds] = useState([]);
   const [errorDetails, setErrorDetails] = useState(null);
 
@@ -19,8 +26,8 @@ export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLab
     setErrorDetails(getAgentErrorDetails());
   }, [nonExistingAgentLogsIds]);
 
-  function downloadAllAgentLogs(){
-    for(let agentId of agentIds){
+  function downloadAllAgentLogs() {
+    for (let agentId of agentIds) {
       downloadAgentLog(agentId);
     }
   }
@@ -34,7 +41,7 @@ export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLab
         return res.json();
       })
       .then(res => {
-        if (res !== "") {
+        if (res !== '') {
           download(res, logFilename(agentId), 'text/plain');
         }
       });
@@ -48,10 +55,10 @@ export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLab
       '.log';
   }
 
-  function getAgentErrorDetails(){
-    let agentLogFileNotFoundErrorDetails = "The following agent log files do not exist: \n";
-    for(let agentId of nonExistingAgentLogsIds){
-        agentLogFileNotFoundErrorDetails = agentLogFileNotFoundErrorDetails.concat(logFilename(agentId) + '\n');
+  function getAgentErrorDetails() {
+    let agentLogFileNotFoundErrorDetails = 'The following agent log files do not exist: \n';
+    for (let agentId of nonExistingAgentLogsIds) {
+      agentLogFileNotFoundErrorDetails = agentLogFileNotFoundErrorDetails.concat(logFilename(agentId) + '\n');
     }
 
     return agentLogFileNotFoundErrorDetails;
@@ -62,7 +69,7 @@ export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLab
   }
 
   return (<>
-    <Button variant={variant} onClick={downloadAllAgentLogs}>
+    <Button variant={variant} onClick={downloadAllAgentLogs} disabled={disabled}>
       Download Log
     </Button>
     <ErrorModal
@@ -74,25 +81,26 @@ export const AgentLogDownloadButton = ({ url, agentIds, agentsStartTime, nodeLab
   </>);
 }
 
-type IslandLogDownloadProps = {url: string, variant?: string}
+type IslandLogDownloadProps = { url: string, variant?: string, disabled?: boolean};
 
-export const IslandLogDownloadButton = ({url, variant = 'primary'}: IslandLogDownloadProps) => {
+export const IslandLogDownloadButton = ({url, variant = 'primary', disabled = false}:
+                                          IslandLogDownloadProps) => {
   const [noLogFileExistsComponent, setNoLogFileExistsComponent] = useState(false);
 
   function downloadIslandLog() {
     authComponent.authFetch(url)
-    .then(res => {
-      if (res.status === 404) {
-        setNoLogFileExistsComponent(true);
-      }
-      return res.json()
-    })
-    .then(res => {
-      if (res !== "") {
-        let filename = 'Island_log';
-        download(res, filename, 'text/plain');
-      }
-    });
+      .then(res => {
+        if (res.status === 404) {
+          setNoLogFileExistsComponent(true);
+        }
+        return res.json()
+      })
+      .then(res => {
+        if (res !== '') {
+          let filename = 'Island_log';
+          download(res, filename, 'text/plain');
+        }
+      });
   }
 
   function closeModal() {
@@ -100,7 +108,7 @@ export const IslandLogDownloadButton = ({url, variant = 'primary'}: IslandLogDow
   }
 
   return (<>
-    <Button variant={variant} onClick={downloadIslandLog}>
+    <Button variant={variant} onClick={downloadIslandLog} disabled={disabled}>
       Download Log
     </Button>
     <ErrorModal
