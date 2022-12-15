@@ -1,6 +1,6 @@
 import io
 import re
-from typing import BinaryIO, Dict
+from typing import BinaryIO, Dict, Sequence
 
 from common.utils.code_utils import del_key
 from monkey_island.cc.repositories import IFileRepository, UnknownRecordError
@@ -9,6 +9,9 @@ from monkey_island.cc.repositories import IFileRepository, UnknownRecordError
 class InMemoryFileRepository(IFileRepository):
     def __init__(self):
         self._files: Dict[str, bytes] = {}
+
+    def get_all_file_names(self) -> Sequence[str]:
+        raise NotImplementedError()
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         self._files[unsafe_file_name] = file_contents.read()

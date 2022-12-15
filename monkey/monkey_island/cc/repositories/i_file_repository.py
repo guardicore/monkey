@@ -1,6 +1,6 @@
 import abc
 import re
-from typing import BinaryIO
+from typing import BinaryIO, Sequence
 
 from monkey_island.cc.repositories import UnknownRecordError
 
@@ -14,6 +14,15 @@ class IFileRepository(metaclass=abc.ABCMeta):
     """
     A service that allows the storage and retrieval of individual files.
     """
+
+    @abc.abstractmethod
+    def get_all_file_names(self) -> Sequence[str]:
+        """
+        Return the names of all files in the repository
+
+        :return: The names of all files in the repository
+        :raises RetrievalError: If an error occurs while attempting get all file names
+        """
 
     @abc.abstractmethod
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):

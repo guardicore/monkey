@@ -1,5 +1,5 @@
 import re
-from typing import BinaryIO
+from typing import BinaryIO, Sequence
 
 from readerwriterlock import rwlock
 
@@ -14,6 +14,9 @@ class FileRepositoryLockingDecorator(IFileRepository):
     def __init__(self, file_repository: IFileRepository):
         self._file_repository = file_repository
         self._rwlock = rwlock.RWLockFair()
+
+    def get_all_file_names(self) -> Sequence[str]:
+        raise NotImplementedError()
 
     def save_file(self, unsafe_file_name: str, file_contents: BinaryIO):
         with self._rwlock.gen_wlock():
