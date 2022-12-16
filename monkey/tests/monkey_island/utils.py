@@ -1,6 +1,6 @@
 from pathlib import WindowsPath
 
-from monkey_island.cc.server_utils.file_utils import is_windows_os
+from common.utils.file_utils import is_windows_os
 
 if is_windows_os():
     import win32api
