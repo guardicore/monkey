@@ -1,3 +1,7 @@
+# isort: off
+from serpentarium import PluginLoader
+
+# isort: on
 import argparse
 import contextlib
 import logging
@@ -9,6 +13,7 @@ from ipaddress import IPv4Interface
 from itertools import chain
 from multiprocessing import Queue
 from pathlib import Path, WindowsPath
+from tempfile import gettempdir
 from typing import List, Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
@@ -31,6 +36,7 @@ from common.network.network_utils import get_my_ip_addresses, get_network_interf
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
+from common.utils.file_utils import create_secure_directory
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -85,6 +91,9 @@ from .plugin_event_forwarder import PluginEventForwarder
 
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
+
+
+PLUGIN_DIR = Path(gettempdir()) / "plugins"
 
 
 class InfectionMonkey:
@@ -311,7 +320,8 @@ class InfectionMonkey:
         return list(ordered_servers.keys())
 
     def _build_puppet(self) -> IPuppet:
-        plugin_registry = PluginRegistry(self._island_api_client)
+        create_secure_directory(PLUGIN_DIR)
+        plugin_registry = PluginRegistry(self._island_api_client, PluginLoader(PLUGIN_DIR))
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(
