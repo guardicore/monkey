@@ -23,8 +23,8 @@
   background-color: $light-gray;
 }
 
-.config-form legend {
-  border-bottom: 1px solid $light-gray;
+.config-form hr.border-0.bg-secondary {
+  background-color: $light-gray !important;
   margin-bottom: 15px;
 }
 
