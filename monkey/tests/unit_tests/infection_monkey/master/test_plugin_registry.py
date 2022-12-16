@@ -1,3 +1,7 @@
+# isort: off
+from serpentarium import PluginLoader
+
+# isort: on
 import pytest
 from flask import Response
 
@@ -14,23 +18,28 @@ class StubIslandAPIClient:
         return Response(status=self._status)
 
 
-def test_get_plugin_not_found():
-    plugin_registry = PluginRegistry(StubIslandAPIClient(status=404))
+@pytest.fixture
+def plugin_loader(tmp_path):
+    return PluginLoader(tmp_path)
+
+
+def test_get_plugin_not_found(plugin_loader: PluginLoader):
+    plugin_registry = PluginRegistry(StubIslandAPIClient(status=404), plugin_loader)
 
     with pytest.raises(UnknownPluginError):
         plugin_registry.get_plugin("Ghost", AgentPluginType.PAYLOAD)
 
 
 # modify when plugin architecture is fully implemented
-def test_get_plugin_not_implemented():
-    plugin_registry = PluginRegistry(StubIslandAPIClient(status=200))
+def test_get_plugin_not_implemented(plugin_loader: PluginLoader):
+    plugin_registry = PluginRegistry(StubIslandAPIClient(status=200), plugin_loader)
 
     with pytest.raises(NotImplementedError):
         plugin_registry.get_plugin("Ghost", AgentPluginType.PAYLOAD)
 
 
-def test_get_plugin_unexpected_response():
-    plugin_registry = PluginRegistry(StubIslandAPIClient(status=100))
+def test_get_plugin_unexpected_response(plugin_loader: PluginLoader):
+    plugin_registry = PluginRegistry(StubIslandAPIClient(status=100), plugin_loader)
 
     with pytest.raises(Exception):
         plugin_registry.get_plugin("Ghost", AgentPluginType.PAYLOAD)

@@ -1,3 +1,7 @@
+# isort: off
+from serpentarium import PluginLoader
+
+# isort: on
 import logging
 from typing import Any
 
@@ -9,7 +13,7 @@ logger = logging.getLogger()
 
 
 class PluginRegistry:
-    def __init__(self, island_api_client: IIslandAPIClient):
+    def __init__(self, island_api_client: IIslandAPIClient, plugin_loader: PluginLoader):
         """
         `self._registry` looks like -
             {
@@ -21,6 +25,7 @@ class PluginRegistry:
         """
         self._registry = {}
         self._island_api_client = island_api_client
+        self._plugin_loader = plugin_loader
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         self._registry.setdefault(plugin_type, {})
