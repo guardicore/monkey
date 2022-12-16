@@ -1,96 +1,20 @@
-import hashlib
 import logging
 import os
-import platform
 import stat
 from contextlib import contextmanager
-from pathlib import Path
-from typing import BinaryIO, Generator, Iterable
+from typing import Generator
 
-
-def is_windows_os() -> bool:
-    return platform.system() == "Windows"
-
+from ..operating_system import is_windows_os
 
 if is_windows_os():
     import win32file
     import win32job
     import win32security
 
-    from . import windows_permissions
+    from .. import windows_permissions
 
 
 logger = logging.getLogger(__name__)
-
-
-MAX_BLOCK_SIZE = 65536
-
-
-class InvalidPath(Exception):
-    pass
-
-
-def expand_path(path: str) -> Path:
-    if not path:
-        raise InvalidPath("Empty path provided")
-
-    return Path(os.path.expandvars(os.path.expanduser(path)))
-
-
-def get_binary_io_sha256_hash(binary: BinaryIO) -> str:
-    """
-    Calculates sha256 hash from a file-like object
-
-    :param binary: file-like object from which we calculate the hash
-    :return: sha256 hash from the file-like object
-    """
-    sha256 = hashlib.sha256()
-    for block in iter(lambda: binary.read(MAX_BLOCK_SIZE), b""):
-        sha256.update(block)
-
-    return sha256.hexdigest()
-
-
-def get_all_regular_files_in_directory(dir_path: Path) -> Iterable[Path]:
-    return filter(lambda f: f.is_file(), dir_path.iterdir())
-
-
-def get_text_file_contents(file_path: Path) -> str:
-    with open(file_path, "rt") as f:
-        file_contents = f.read()
-    return file_contents
-
-
-def create_secure_directory(path: Path):
-    if not path.is_dir():
-        if is_windows_os():
-            _create_secure_directory_windows(path)
-        else:
-            _create_secure_directory_linux(path)
-
-
-def _create_secure_directory_linux(path: Path):
-    try:
-        # Don't split directory creation and permission setting
-        # because it will temporarily create an accessible directory which anyone can use.
-        path.mkdir(mode=stat.S_IRWXU)
-
-    except Exception as ex:
-        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
-        raise ex
-
-
-def _create_secure_directory_windows(path: Path):
-    try:
-        security_attributes = win32security.SECURITY_ATTRIBUTES()
-        security_attributes.SECURITY_DESCRIPTOR = (
-            windows_permissions.get_security_descriptor_for_owner_only_perms()
-        )
-        win32file.CreateDirectory(str(path), security_attributes)
-
-    except Exception as ex:
-        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
-        raise ex
 
 
 @contextmanager

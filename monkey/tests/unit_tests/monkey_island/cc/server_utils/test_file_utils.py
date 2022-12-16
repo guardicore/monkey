@@ -4,11 +4,8 @@ import stat
 import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 
-from common.utils.file_utils import (
-    create_secure_directory,
-    is_windows_os,
-    open_new_securely_permissioned_file,
-)
+from common.utils.file_utils import create_secure_directory, open_new_securely_permissioned_file
+from common.utils.operating_system import is_windows_os
 
 
 @pytest.fixture
