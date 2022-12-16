@@ -2,7 +2,7 @@ import secrets
 from pathlib import Path
 from typing import Optional
 
-from common.utils.file_utils import open_new_securely_permissioned_file
+from common.utils.secure_file import open_new_securely_permissioned_file
 from monkey_island.cc.server_utils.encryption.encryption_key_types import EncryptionKey32Bytes
 
 from . import IEncryptor, ILockableEncryptor, LockedKeyError, ResetKeyError, UnlockError
