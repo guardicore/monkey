@@ -6,9 +6,9 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
+from common.utils.file_utils import open_new_securely_permissioned_file
 from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repositories import IUserRepository
-from monkey_island.cc.server_utils.file_utils import open_new_securely_permissioned_file
 
 CREDENTIALS_FILE = "credentials.json"
 

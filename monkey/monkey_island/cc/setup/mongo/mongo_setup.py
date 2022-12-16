@@ -4,8 +4,8 @@ import os
 import time
 from pathlib import Path
 
+from common.utils.file_utils import create_secure_directory
 from monkey_island.cc.database import get_db_version, is_db_server_up
-from monkey_island.cc.server_utils.file_utils import create_secure_directory
 from monkey_island.cc.setup.mongo import mongo_connector
 from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
