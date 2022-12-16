@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+from tarfile import TarFile
 from typing import Any
 
 from serpentarium import PluginLoader
@@ -8,6 +10,22 @@ from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient
 
 logger = logging.getLogger()
+
+
+def check_safe_archive(dest_path: Path, archive: TarFile) -> bool:
+    path = Path.resolve(dest_path)
+    for name in archive.getnames():
+        if path not in Path.resolve(dest_path / name).parents:
+            return False
+    return True
+
+
+def extract_plugin(data: bytes, dest_path: Path):
+    archive = TarFile(data, "r")
+    if not check_safe_archive(dest_path, archive):
+        raise ValueError("Unsafe archive")
+
+    archive.extractall(dest_path)  # noqa: DUO115
 
 
 class PluginRegistry:
