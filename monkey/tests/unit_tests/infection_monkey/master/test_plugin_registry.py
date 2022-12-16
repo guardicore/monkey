@@ -1,7 +1,5 @@
-# isort: off
-from serpentarium import PluginLoader
+from unittest.mock import MagicMock
 
-# isort: on
 import pytest
 from flask import Response
 
@@ -19,11 +17,11 @@ class StubIslandAPIClient:
 
 
 @pytest.fixture
-def plugin_loader(tmp_path):
-    return PluginLoader(tmp_path)
+def plugin_loader():
+    return MagicMock()
 
 
-def test_get_plugin_not_found(plugin_loader: PluginLoader):
+def test_get_plugin_not_found(plugin_loader):
     plugin_registry = PluginRegistry(StubIslandAPIClient(status=404), plugin_loader)
 
     with pytest.raises(UnknownPluginError):
@@ -31,14 +29,14 @@ def test_get_plugin_not_found(plugin_loader: PluginLoader):
 
 
 # modify when plugin architecture is fully implemented
-def test_get_plugin_not_implemented(plugin_loader: PluginLoader):
+def test_get_plugin_not_implemented(plugin_loader):
     plugin_registry = PluginRegistry(StubIslandAPIClient(status=200), plugin_loader)
 
     with pytest.raises(NotImplementedError):
         plugin_registry.get_plugin("Ghost", AgentPluginType.PAYLOAD)
 
 
-def test_get_plugin_unexpected_response(plugin_loader: PluginLoader):
+def test_get_plugin_unexpected_response(plugin_loader):
     plugin_registry = PluginRegistry(StubIslandAPIClient(status=100), plugin_loader)
 
     with pytest.raises(Exception):
