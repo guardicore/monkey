@@ -9,7 +9,7 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from common.utils.file_utils import is_windows_os
+from common.utils.operating_system import is_windows_os
 from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repositories.json_file_user_repository import (
     CREDENTIALS_FILE,

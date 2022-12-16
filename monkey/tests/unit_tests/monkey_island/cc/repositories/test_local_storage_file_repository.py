@@ -7,7 +7,7 @@ import pytest
 from tests.monkey_island.utils import assert_linux_permissions, assert_windows_permissions
 from tests.utils import raise_
 
-from common.utils.file_utils import is_windows_os
+from common.utils.operating_system import is_windows_os
 from monkey_island.cc import repositories
 from monkey_island.cc.repositories import LocalStorageFileRepository
 
