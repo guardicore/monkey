@@ -33,7 +33,7 @@ from common.network.network_utils import get_my_ip_addresses, get_network_interf
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
-from common.utils.file_utils import create_secure_directory
+from common.utils.file_utils import create_secure_directory, random_filename
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -89,8 +89,8 @@ from .plugin_event_forwarder import PluginEventForwarder
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
-
-PLUGIN_DIR = Path(gettempdir()) / "plugins"
+TMP_DIR = Path(gettempdir()) / random_filename()
+PLUGIN_DIR = TMP_DIR / "plugins"
 
 
 class InfectionMonkey:
