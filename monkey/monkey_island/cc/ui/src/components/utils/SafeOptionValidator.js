@@ -17,7 +17,7 @@ function getPluginDescriptors(schema, config) {
     },
     {
       name: 'CredentialCollectors',
-      allPlugins: schema.properties.credential_collectors.items.anyOf,
+      allPlugins: schema.properties.credential_collectors.items.properties.name.anyOf,
       selectedPlugins: config.credential_collectors
     }
   ]);
