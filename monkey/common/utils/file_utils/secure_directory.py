@@ -2,13 +2,13 @@ import logging
 import stat
 from pathlib import Path
 
-from .operating_system import is_windows_os
+from ..operating_system import is_windows_os
 
 if is_windows_os():
     import win32file
     import win32security
 
-    from . import windows_permissions
+    from .. import windows_permissions
 
 logger = logging.getLogger(__name__)
 
