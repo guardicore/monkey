@@ -154,6 +154,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
 
     api.add_resource(IslandMode)
     api.add_resource(AgentConfiguration)
+    api.add_resource(AgentConfigurationSchema)
     api.add_resource(AgentBinaries)
     api.add_resource(AgentPlugins)
     api.add_resource(Machines)
@@ -177,8 +178,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(ReportGenerationStatus)
 
     api.add_resource(AgentHeartbeat)
-
-    api.add_resource(AgentConfigurationSchema)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
