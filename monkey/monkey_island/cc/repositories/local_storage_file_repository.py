@@ -5,8 +5,7 @@ import shutil
 from pathlib import Path
 from typing import BinaryIO, Sequence
 
-from common.utils.file_utils import get_all_regular_files_in_directory
-from common.utils.secure_directory import create_secure_directory
+from common.utils.file_utils import create_secure_directory, get_all_regular_files_in_directory
 from monkey_island.cc import repositories
 from monkey_island.cc.repositories import RemovalError, RetrievalError, StorageError
 

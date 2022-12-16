@@ -6,7 +6,7 @@ from common.utils.exceptions import (
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from common.utils.secure_file import open_new_securely_permissioned_file
+from common.utils.file_utils import open_new_securely_permissioned_file
 from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repositories import IUserRepository
 
