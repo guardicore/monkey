@@ -13,6 +13,7 @@ from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
+    AgentConfigurationSchema,
     AgentEvents,
     AgentHeartbeat,
     AgentLogs,
@@ -176,6 +177,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(ReportGenerationStatus)
 
     api.add_resource(AgentHeartbeat)
+
+    api.add_resource(AgentConfigurationSchema)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):
