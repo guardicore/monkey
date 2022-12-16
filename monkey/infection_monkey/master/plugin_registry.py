@@ -1,6 +1,8 @@
 import logging
+from copy import copy
 from pathlib import Path
 from tarfile import TarFile
+from threading import current_thread
 from typing import Any
 
 from serpentarium import PluginLoader
@@ -61,7 +63,10 @@ class PluginRegistry:
                 plugin_folder_name = f"{plugin_name}-{plugin_type.value.lower()}"
                 plugin_dir = self._plugin_dir / plugin_folder_name
                 extract_plugin(agent_plugin.source_archive, plugin_dir)
-                raise NotImplementedError()
+                multiprocessing_plugin = self._plugin_loader.load_multiprocessing_plugin(
+                    plugin_name=plugin_folder_name, main_thread_name=current_thread().name
+                )
+                plugin = copy(multiprocessing_plugin)
             except IslandAPIRequestError:
                 raise UnknownPluginError(
                     f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}'"
