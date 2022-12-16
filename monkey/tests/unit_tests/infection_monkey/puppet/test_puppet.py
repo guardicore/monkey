@@ -8,10 +8,10 @@ from infection_monkey.master.plugin_registry import PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
-def test_puppet_run_payload_success():
+def test_puppet_run_payload_success(tmp_path):
     p = Puppet(
         agent_event_queue=MagicMock(spec=IAgentEventQueue),
-        plugin_registry=PluginRegistry(MagicMock(), MagicMock()),
+        plugin_registry=PluginRegistry(MagicMock(), MagicMock(), tmp_path),
     )
 
     payload = MagicMock()
@@ -23,10 +23,10 @@ def test_puppet_run_payload_success():
     payload.run.assert_called_once()
 
 
-def test_puppet_run_multiple_payloads():
+def test_puppet_run_multiple_payloads(tmp_path):
     p = Puppet(
         agent_event_queue=MagicMock(spec=IAgentEventQueue),
-        plugin_registry=PluginRegistry(MagicMock(), MagicMock()),
+        plugin_registry=PluginRegistry(MagicMock(), MagicMock(), tmp_path),
     )
 
     payload_1 = MagicMock()
@@ -52,10 +52,10 @@ def test_puppet_run_multiple_payloads():
     payload_3.run.assert_called_once()
 
 
-def test_fingerprint_exception_handling(monkeypatch):
+def test_fingerprint_exception_handling(monkeypatch, tmp_path):
     p = Puppet(
         agent_event_queue=MagicMock(spec=IAgentEventQueue),
-        plugin_registry=PluginRegistry(MagicMock(), MagicMock()),
+        plugin_registry=PluginRegistry(MagicMock(), MagicMock(), tmp_path),
     )
     p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert p.fingerprint("", "", PingScanData("windows", False), {}, {}) == EMPTY_FINGERPRINT
