@@ -1,7 +1,3 @@
-# isort: off
-from serpentarium import PluginLoader
-
-# isort: on
 import argparse
 import contextlib
 import logging
@@ -17,6 +13,7 @@ from tempfile import gettempdir
 from typing import List, Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
+from serpentarium import PluginLoader
 
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,

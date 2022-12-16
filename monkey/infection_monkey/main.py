@@ -1,3 +1,9 @@
+# serpentarium must be the first import, as it needs to save the state of the
+# import system prior to any imports
+# isort: off
+import serpentarium  # noqa: F401
+
+# isort: on
 import argparse
 import logging
 import logging.config

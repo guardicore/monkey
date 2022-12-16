@@ -1,9 +1,7 @@
-# isort: off
-from serpentarium import PluginLoader
-
-# isort: on
 import logging
 from typing import Any
+
+from serpentarium import PluginLoader
 
 from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
