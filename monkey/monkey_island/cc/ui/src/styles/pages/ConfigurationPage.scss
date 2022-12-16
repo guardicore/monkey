@@ -44,6 +44,24 @@
   display: none;
 }
 
+div.form-group.field.field-array label.form-label {
+  display: none;
+}
+
+div.form-group.field.field-array button{
+    height: calc(1.5em + 0.75rem + 5px);
+}
+
+
+div.form-group.field.field-array .align-items-center{
+  align-items: flex-start !important;
+}
+
+
+div.form-group.field.field-array .py-4.col-lg-3.col-3{
+  padding: 0 !important;
+}
+
 .config-form .form-group.field>label {
   margin-top: 10px;
   margin-bottom: 5px;
