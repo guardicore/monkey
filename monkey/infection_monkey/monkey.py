@@ -89,9 +89,6 @@ from .plugin_event_forwarder import PluginEventForwarder
 logger = logging.getLogger(__name__)
 logging.getLogger("urllib3").setLevel(logging.INFO)
 
-TMP_DIR = Path(gettempdir()) / random_filename()
-PLUGIN_DIR = TMP_DIR / "plugins"
-
 
 class InfectionMonkey:
     def __init__(self, args):
@@ -317,9 +314,13 @@ class InfectionMonkey:
         return list(ordered_servers.keys())
 
     def _build_puppet(self) -> IPuppet:
-        create_secure_directory(TMP_DIR)
-        create_secure_directory(PLUGIN_DIR)
-        plugin_registry = PluginRegistry(self._island_api_client, PluginLoader(PLUGIN_DIR))
+        temp_dir = Path(gettempdir()) / random_filename()
+        plugin_dir = temp_dir / "plugins"
+
+        create_secure_directory(temp_dir)
+        create_secure_directory(plugin_dir)
+
+        plugin_registry = PluginRegistry(self._island_api_client, PluginLoader(plugin_dir))
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(
