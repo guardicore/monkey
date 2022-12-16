@@ -4,12 +4,12 @@ import stat
 import pytest
 from tests.monkey_island.utils import assert_windows_permissions
 
+from common.utils.environment import is_windows_os
 from common.utils.exceptions import (
     AlreadyRegisteredError,
     InvalidRegistrationCredentialsError,
     UnknownUserError,
 )
-from common.utils.operating_system import is_windows_os
 from monkey_island.cc.models import UserCredentials
 from monkey_island.cc.repositories.json_file_user_repository import (
     CREDENTIALS_FILE,

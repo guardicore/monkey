@@ -3,7 +3,6 @@ import math
 import os
 import re
 import subprocess
-import sys
 from ipaddress import IPv4Address
 from time import time
 from typing import Tuple
@@ -12,7 +11,7 @@ from common import OperatingSystem
 from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
 from common.types import PingScanData
-from infection_monkey.utils.environment import is_windows_os
+from common.utils.environment import is_windows_os
 from infection_monkey.utils.ids import get_agent_id
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
@@ -96,8 +95,8 @@ def _process_ping_command_output(ping_command_output: str) -> PingScanData:
 
 
 def _build_ping_command(host: str, timeout: float):
-    ping_count_flag = "-n" if "win32" == sys.platform else "-c"
-    ping_timeout_flag = "-w" if "win32" == sys.platform else "-W"
+    ping_count_flag = "-n" if is_windows_os() else "-c"
+    ping_timeout_flag = "-w" if is_windows_os() else "-W"
 
     # on older version of ping the timeout must be an integer, thus we use ceil
     return ["ping", ping_count_flag, "1", ping_timeout_flag, str(math.ceil(timeout)), host]

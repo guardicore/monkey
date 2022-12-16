@@ -8,7 +8,7 @@ from typing import Dict, Optional, Set
 import psutil
 from egg_timer import EggTimer
 
-from infection_monkey.utils.environment import is_windows_os
+from common.utils.environment import is_windows_os
 
 from .ports import COMMON_PORTS
 

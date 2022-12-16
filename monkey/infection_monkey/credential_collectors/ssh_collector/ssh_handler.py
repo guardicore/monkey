@@ -11,7 +11,7 @@ from common.tags import (
     T1005_ATTACK_TECHNIQUE_TAG,
     T1145_ATTACK_TECHNIQUE_TAG,
 )
-from infection_monkey.utils.environment import is_windows_os
+from common.utils.environment import is_windows_os
 from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)

@@ -90,12 +90,12 @@ def patch_subprocess_running_ping_to_raise_timeout_expired(patch_subprocess_runn
 
 @pytest.fixture
 def set_os_linux(monkeypatch):
-    monkeypatch.setattr("sys.platform", "linux")
+    monkeypatch.setattr("platform.system", lambda: "Linux")
 
 
 @pytest.fixture
 def set_os_windows(monkeypatch):
-    monkeypatch.setattr("sys.platform", "win32")
+    monkeypatch.setattr("platform.system", lambda: "Windows")
 
 
 HOST_IP = "192.168.1.1"

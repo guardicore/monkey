@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
+from common.utils.environment import is_windows_os
 from common.utils.file_utils import expand_path
-from common.utils.operating_system import is_windows_os
 
 
 def get_default_data_dir() -> str:

@@ -2,8 +2,8 @@ import logging
 from pathlib import Path
 from typing import Optional
 
+from common.utils.environment import is_windows_os
 from common.utils.file_utils import InvalidPath, expand_path
-from infection_monkey.utils.environment import is_windows_os
 
 logger = logging.getLogger(__name__)
 

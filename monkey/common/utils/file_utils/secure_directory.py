@@ -2,7 +2,7 @@ import logging
 import stat
 from pathlib import Path
 
-from ..operating_system import is_windows_os
+from ..environment import is_windows_os
 
 if is_windows_os():
     import win32file

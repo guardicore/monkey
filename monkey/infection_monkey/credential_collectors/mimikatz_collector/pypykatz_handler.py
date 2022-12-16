@@ -4,7 +4,7 @@ from typing import Any, Dict, List, NewType
 
 from pypykatz.pypykatz import pypykatz
 
-from infection_monkey.utils.environment import is_windows_os
+from common.utils.environment import is_windows_os
 
 from .windows_credentials import WindowsCredentials
 

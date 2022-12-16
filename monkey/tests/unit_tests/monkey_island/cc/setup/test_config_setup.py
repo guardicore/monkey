@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 import monkey_island.cc.setup.config_setup  # noqa: F401
-from common.utils.operating_system import is_windows_os
+from common.utils.environment import is_windows_os
 from monkey_island.cc.arg_parser import IslandCmdArgs
 from monkey_island.cc.setup.config_setup import get_server_config
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions

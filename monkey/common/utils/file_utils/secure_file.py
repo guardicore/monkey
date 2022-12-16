@@ -4,7 +4,7 @@ import stat
 from contextlib import contextmanager
 from typing import Generator
 
-from ..operating_system import is_windows_os
+from ..environment import is_windows_os
 
 if is_windows_os():
     import win32file

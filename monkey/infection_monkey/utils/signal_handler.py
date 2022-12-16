@@ -2,8 +2,8 @@ import logging
 import signal
 from typing import Optional
 
+from common.utils.environment import is_windows_os
 from infection_monkey.i_master import IMaster
-from infection_monkey.utils.environment import is_windows_os
 
 logger = logging.getLogger(__name__)
 

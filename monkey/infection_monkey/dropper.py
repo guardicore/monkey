@@ -10,12 +10,12 @@ import time
 from pathlib import PosixPath, WindowsPath
 
 from common.utils.argparse_types import positive_int
+from common.utils.environment import is_windows_os
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
-from infection_monkey.utils.environment import is_windows_os
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 if "win32" == sys.platform:
