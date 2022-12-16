@@ -53,6 +53,10 @@ div.form-group.field.field-array button.btn-sm{
     height: calc(1.5em + 0.75rem + 5px);
 }
 
+div.form-group.field.field-array .align-items-center div.m-0.p-0{
+  width: 100%;
+  display: flex;
+}
 
 div.form-group.field.field-array .align-items-center{
   align-items: flex-start !important;
