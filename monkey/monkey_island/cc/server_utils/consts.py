@@ -1,8 +1,7 @@
 import os
 from pathlib import Path
 
-from common.utils.file_utils import expand_path
-from monkey_island.cc.server_utils.file_utils import is_windows_os
+from common.utils.file_utils import expand_path, is_windows_os
 
 
 def get_default_data_dir() -> str:
