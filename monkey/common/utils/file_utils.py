@@ -17,7 +17,7 @@ if is_windows_os():
     import win32job
     import win32security
 
-    import monkey_island.cc.server_utils.windows_permissions as windows_permissions
+    from . import windows_permissions
 
 
 logger = logging.getLogger(__name__)
