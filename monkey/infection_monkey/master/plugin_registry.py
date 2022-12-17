@@ -1,6 +1,8 @@
 import logging
 from typing import Any
 
+from serpentarium import PluginLoader
+
 from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient
@@ -9,7 +11,7 @@ logger = logging.getLogger()
 
 
 class PluginRegistry:
-    def __init__(self, island_api_client: IIslandAPIClient):
+    def __init__(self, island_api_client: IIslandAPIClient, plugin_loader: PluginLoader):
         """
         `self._registry` looks like -
             {
@@ -21,6 +23,7 @@ class PluginRegistry:
         """
         self._registry = {}
         self._island_api_client = island_api_client
+        self._plugin_loader = plugin_loader
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         self._registry.setdefault(plugin_type, {})

@@ -9,9 +9,11 @@ from ipaddress import IPv4Interface
 from itertools import chain
 from multiprocessing import Queue
 from pathlib import Path, WindowsPath
+from tempfile import gettempdir
 from typing import List, Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
+from serpentarium import PluginLoader
 
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
@@ -31,6 +33,7 @@ from common.network.network_utils import get_my_ip_addresses, get_network_interf
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
+from common.utils.file_utils import create_secure_directory, random_filename
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -311,7 +314,13 @@ class InfectionMonkey:
         return list(ordered_servers.keys())
 
     def _build_puppet(self) -> IPuppet:
-        plugin_registry = PluginRegistry(self._island_api_client)
+        temp_dir = Path(gettempdir()) / random_filename()
+        plugin_dir = temp_dir / "plugins"
+
+        create_secure_directory(temp_dir)
+        create_secure_directory(plugin_dir)
+
+        plugin_registry = PluginRegistry(self._island_api_client, PluginLoader(plugin_dir))
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(

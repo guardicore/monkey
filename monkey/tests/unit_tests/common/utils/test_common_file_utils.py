@@ -9,6 +9,7 @@ from common.utils.file_utils import (
     expand_path,
     get_all_regular_files_in_directory,
     get_binary_io_sha256_hash,
+    random_filename,
 )
 
 
@@ -63,3 +64,17 @@ def test_get_all_regular_files_in_directory__subdir_has_files(tmp_path, monkeypa
 
     expected_return_value = sorted(files)
     assert sorted(get_all_regular_files_in_directory(tmp_path)) == expected_return_value
+
+
+def test_random_filename__differs_across_calls():
+    f1 = random_filename()
+    f2 = random_filename()
+
+    assert f1 != f2
+
+
+def test_random_filename__has_correct_length():
+    length = 10
+    f1 = random_filename(length)
+
+    assert len(f1) == length

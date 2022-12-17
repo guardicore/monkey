@@ -1,7 +1,9 @@
 import hashlib
 import logging
 import os
+import string
 from pathlib import Path
+from random import SystemRandom
 from typing import BinaryIO, Iterable
 
 logger = logging.getLogger(__name__)
@@ -43,3 +45,9 @@ def get_text_file_contents(file_path: Path) -> str:
     with open(file_path, "rt") as f:
         file_contents = f.read()
     return file_contents
+
+
+def random_filename(length: int = 20) -> str:
+    sys_random = SystemRandom()
+    allowed_characters = string.ascii_letters + string.digits
+    return "".join(sys_random.choices(allowed_characters, k=length))
