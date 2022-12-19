@@ -1,1 +1,2 @@
+from .plugin_source_extractor import PluginSourceExtractor
 from .plugin_registry import PluginRegistry
