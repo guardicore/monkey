@@ -15,16 +15,15 @@ logger = logging.getLogger()
 
 
 def check_safe_archive(destination_path: Path, archive: TarFile) -> bool:
-    destination_path = Path.resolve(destination_path)
     for name in archive.getnames():
         file_path = Path.resolve(destination_path / name)
+        # check that the archive has no files whose names start with "/" or ".."
+        if destination_path not in file_path.parents:
+            return False
 
-        if (
-            # check if archive has files whose names start with "/" or ".."
-            destination_path not in file_path.parents
-            or not file_path.is_file()
-            or not file_path.is_dir()
-        ):
+    for member in archive.getmembers():
+        # check that the file is not a link or device
+        if not member.isfile() or not member.isdir():
             return False
 
     return True
