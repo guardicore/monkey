@@ -2,6 +2,7 @@ import {Modal} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
+import '../../styles/components/ErrorModal.scss';
 
 
 interface Props {
@@ -26,7 +27,7 @@ export const ErrorModal = ({
         <Modal.Title> Uh oh... </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div style={{'marginTop': '1em', 'marginBottom': '1em'}}>
+        <div className={'error-modal'}>
           <div className={`alert alert-${errorLevel}`}>
             <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
             {errorMessage}
@@ -36,7 +37,7 @@ export const ErrorModal = ({
           <div>
             <hr/>
             <h4>Error Details</h4>
-            <p style={{'word-wrap': 'break-word', 'white-space': 'pre-wrap'}}>
+            <p className={'error-details'}>
               {errorDetails}
             </p>
           </div>
