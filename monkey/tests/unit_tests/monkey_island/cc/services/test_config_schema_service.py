@@ -18,6 +18,10 @@ from monkey_island.cc.services import ConfigSchemaService
 def expected_config_schema() -> Dict[str, Any]:
     expected_schema = deepcopy(AgentConfiguration.schema())
     expected_schema["definitions"]["AgentPluginsConfiguration"] = {
+        "title": "AgentPluginsConfiguration",
+        "type": "object",
+        "description": "A configuration for agent plugins.\n It provides a full"
+        + " set of available plugins that can be used by the agent.\n",
         "exploiter": {
             "anyOf": [
                 expected_plugin_schema(FAKE_AGENT_PLUGIN_1),
