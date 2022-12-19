@@ -32,7 +32,6 @@ class ConfigSchemaService:
             raise RuntimeError(err)
 
     def _add_plugins_to_schema(self, schema: Dict[str, Any]):
-        # Note: Can throw RetrievalError, UnknownRecordError
         plugins = self._agent_plugin_repository.get_plugin_catalog()
         if plugins:
             schema["plugins"] = {}
@@ -41,14 +40,12 @@ class ConfigSchemaService:
             plugin = self._agent_plugin_repository.get_plugin(plugin_type, name)
             plugin_schema = self._create_plugin_schema(plugin)
 
-            plugin_type_name = str(plugin_type.name).lower()
+            plugin_type_name = plugin_type.name.lower()
             if plugin_type_name not in schema["plugins"]:
                 schema["plugins"][plugin_type_name] = {"anyOf": []}
             schema["plugins"][plugin_type_name]["anyOf"].append(plugin_schema)
 
             # Add reference, based on type
-            # TODO: It would actually probably be easier to forego the
-            # reference and just add the schema here
             if plugin_type == AgentPluginType.EXPLOITER:
                 exploitation = schema["definitions"]["ExploitationConfiguration"]
                 brute_force = exploitation["properties"]["brute_force"]
