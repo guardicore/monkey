@@ -17,7 +17,7 @@ from monkey_island.cc.services import ConfigSchemaService
 @pytest.fixture
 def expected_config_schema() -> Dict[str, Any]:
     expected_schema = deepcopy(AgentConfiguration.schema())
-    expected_schema["plugins"] = {
+    expected_schema["definitions"]["AgentPluginsConfiguration"] = {
         "exploiter": {
             "anyOf": [
                 expected_plugin_schema(FAKE_AGENT_PLUGIN_1),
@@ -27,7 +27,7 @@ def expected_config_schema() -> Dict[str, Any]:
     }
     expected_exploitation = expected_schema["definitions"]["ExploitationConfiguration"]
     expected_brute_force = expected_exploitation["properties"]["brute_force"]
-    expected_brute_force["items"] = {"$ref": "#/plugins/exploiter"}
+    expected_brute_force["items"] = {"$ref": "#/definitions/AgentPluginsConfiguration/exploiter"}
 
     return expected_schema
 

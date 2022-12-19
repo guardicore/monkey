@@ -35,7 +35,7 @@ class ConfigSchemaService:
     def _add_plugins_to_schema(self, schema: Dict[str, Any]):
         plugins = self._agent_plugin_repository.get_plugin_catalog()
         if plugins:
-            schema["plugins"] = {}
+            schema["definitions"].setdefault("AgentPluginsConfiguration", {})
 
         self._set_exploiters_reference(schema, plugins)
 
@@ -44,7 +44,9 @@ class ConfigSchemaService:
             plugin_schema = self._create_plugin_schema(plugin)
 
             plugin_type_name = plugin_type.name.lower()
-            plugin_type_schema = schema["plugins"].setdefault(plugin_type_name, {})
+            plugin_type_schema = schema["definitions"]["AgentPluginsConfiguration"].setdefault(
+                plugin_type_name, {}
+            )
             plugin_type_schema.setdefault("anyOf", []).append(plugin_schema)
 
     def _set_exploiters_reference(
@@ -57,7 +59,7 @@ class ConfigSchemaService:
             if plugin_type == AgentPluginType.EXPLOITER:
                 exploitation = schema["definitions"]["ExploitationConfiguration"]
                 brute_force = exploitation["properties"]["brute_force"]
-                brute_force["items"] = {"$ref": "#/plugins/exploiter"}
+                brute_force["items"] = {"$ref": "#/definitions/AgentPluginsConfiguration/exploiter"}
             else:
                 raise Exception("Error occurred while getting configuration schema")
 
