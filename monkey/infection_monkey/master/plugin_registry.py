@@ -25,7 +25,7 @@ def check_safe_archive(dest_path: Path, archive: TarFile) -> bool:
 def extract_plugin(data: bytes, dest_path: Path):
     archive = TarFile(data, "r")
     if not check_safe_archive(dest_path, archive):
-        raise ValueError("Unsafe archive")
+        raise ValueError("Unsafe archive; contains unexpected file paths. Plugin may be malicious.")
 
     archive.extractall(dest_path)  # noqa: DUO115
 
