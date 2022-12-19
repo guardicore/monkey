@@ -1,9 +1,11 @@
+from http import HTTPStatus
 from unittest.mock import MagicMock
 
 import pytest
 from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
+from monkey_island.cc.repositories import RetrievalError
 from monkey_island.cc.resources import AgentConfigurationSchema
 from monkey_island.cc.services import ConfigSchemaService
 
@@ -29,7 +31,7 @@ def test_agent_configuration_schema_endpoint(flask_client, mock_config_schema_se
 
     resp = flask_client.get(AGENT_CONFIGURATION_SCHEMA_URL)
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
 
 
 def test_agent_configuration_schema_endpoint_error(flask_client, mock_config_schema_service):
@@ -40,4 +42,17 @@ def test_agent_configuration_schema_endpoint_error(flask_client, mock_config_sch
 
     resp = flask_client.get(AGENT_CONFIGURATION_SCHEMA_URL)
 
-    assert resp.status_code == 500
+    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+def test_agent_configuration_schema_endpoint_retrievalerror(
+    flask_client, mock_config_schema_service
+):
+    def raise_retrieval_error():
+        raise RetrievalError
+
+    mock_config_schema_service.get_schema = raise_retrieval_error
+
+    resp = flask_client.get(AGENT_CONFIGURATION_SCHEMA_URL)
+
+    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR

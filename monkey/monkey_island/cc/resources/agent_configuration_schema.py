@@ -13,8 +13,5 @@ class AgentConfigurationSchema(AbstractResource):
 
     @jwt_required
     def get(self):
-        try:
-            schema = self._config_schema_service.get_schema()
-            return schema, HTTPStatus.OK
-        except RuntimeError as err:
-            return {"error": str(err)}, HTTPStatus.INTERNAL_SERVER_ERROR
+        schema = self._config_schema_service.get_schema()
+        return schema, HTTPStatus.OK
