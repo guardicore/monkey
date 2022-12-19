@@ -10,7 +10,7 @@ UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE = (
 )
 
 
-def check_safe_archive(destination_path: Path, archive: TarFile):
+def detect_malicious_archive(destination_path: Path, archive: TarFile):
     canonical_destination_path = destination_path.resolve()
     for member in archive.getmembers():
         _raise_on_unsafe_extraction_conditions(canonical_destination_path, member)
@@ -64,7 +64,7 @@ class PluginSourceExtractor:
         # files. This is a paranoid approach that prevents against partial extraction of malicious
         # archives; either the whole archive is judged to be safe and extracted, or nothing is
         # extracted.
-        check_safe_archive(destination, archive)
+        detect_malicious_archive(destination, archive)
         safe_extract(destination, archive)
 
     @property
