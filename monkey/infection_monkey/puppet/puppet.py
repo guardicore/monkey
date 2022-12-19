@@ -9,8 +9,9 @@ from common.event_queue import IAgentEventQueue
 from common.types import PingScanData
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
-from infection_monkey.master.plugin_registry import PluginRegistry
 from infection_monkey.model import VictimHost
+
+from . import PluginRegistry
 
 EMPTY_FINGERPRINT = FingerprintData(None, None, [])
 

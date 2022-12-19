@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
 from common.types import PingScanData
-from infection_monkey.master.plugin_registry import PluginRegistry
+from infection_monkey.puppet import PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
