@@ -47,7 +47,6 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^5.5.0",
     "npm": "^8.11.0",
-    "null-loader": "^0.1.1",
     "rimraf": "^2.7.1",
     "sass": "^1.42.1",
     "sass-loader": "^12.6.0",
