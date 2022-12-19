@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Any, Dict
+from typing import Any, Dict, Sequence, Tuple
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.agent_plugins import AgentPlugin, AgentPluginType
@@ -37,6 +37,8 @@ class ConfigSchemaService:
         if plugins:
             schema["plugins"] = {}
 
+        self._set_exploiters_reference(schema, plugins)
+
         for (plugin_type, name) in plugins:
             plugin = self._agent_plugin_repository.get_plugin(plugin_type, name)
             plugin_schema = self._create_plugin_schema(plugin)
@@ -45,11 +47,19 @@ class ConfigSchemaService:
             plugin_type_schema = schema["plugins"].setdefault(plugin_type_name, {})
             plugin_type_schema.setdefault("anyOf", []).append(plugin_schema)
 
+    def _set_exploiters_reference(
+        self, schema: Dict[str, Any], plugin_catalog: Sequence[Tuple[AgentPluginType, str]]
+    ):
+        plugin_types = set([plugin_type for (plugin_type, _) in plugin_catalog])
+
+        for plugin_type in plugin_types:
             # Add reference, based on type
             if plugin_type == AgentPluginType.EXPLOITER:
                 exploitation = schema["definitions"]["ExploitationConfiguration"]
                 brute_force = exploitation["properties"]["brute_force"]
                 brute_force["items"] = {"$ref": "#/plugins/exploiter"}
+            else:
+                raise Exception("Error occurred while getting configuration schema")
 
     def _create_plugin_schema(self, plugin: AgentPlugin) -> Dict[str, Any]:
         schema = deepcopy(PluginConfiguration.schema())
