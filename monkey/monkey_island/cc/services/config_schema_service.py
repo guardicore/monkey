@@ -16,12 +16,20 @@ class ConfigSchemaService:
     ):
         self._agent_plugin_repository = agent_plugin_repository
 
-    def _create_plugin_schema(self, plugin: AgentPlugin) -> Dict[str, Any]:
-        schema = PluginConfiguration.schema()
-        schema["properties"]["name"]["enum"] = [plugin.plugin_manifest.name]
-        schema["properties"]["options"]["properties"] = plugin.config_schema
+    def get_schema(self) -> Dict[str, Any]:
+        """
+        Get the schema.
 
-        return schema
+        :raises RuntimeError: If the schema could not be retrieved
+        """
+        try:
+            agent_config_schema = AgentConfiguration.schema()
+
+            self._add_plugins_to_schema(agent_config_schema)
+
+            return agent_config_schema
+        except Exception as err:
+            raise RuntimeError(err)
 
     def _add_plugins_to_schema(self, schema: Dict[str, Any]):
         # Note: Can throw RetrievalError, UnknownRecordError
@@ -46,17 +54,9 @@ class ConfigSchemaService:
                 brute_force = exploitation["properties"]["brute_force"]
                 brute_force["items"] = {"$ref": "#/plugins/exploiter"}
 
-    def get_schema(self) -> Dict[str, Any]:
-        """
-        Get the schema.
+    def _create_plugin_schema(self, plugin: AgentPlugin) -> Dict[str, Any]:
+        schema = PluginConfiguration.schema()
+        schema["properties"]["name"]["enum"] = [plugin.plugin_manifest.name]
+        schema["properties"]["options"]["properties"] = plugin.config_schema
 
-        :raises RuntimeError: If the schema could not be retrieved
-        """
-        try:
-            agent_config_schema = AgentConfiguration.schema()
-
-            self._add_plugins_to_schema(agent_config_schema)
-
-            return agent_config_schema
-        except Exception as err:
-            raise RuntimeError(err)
+        return schema
