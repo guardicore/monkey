@@ -33,8 +33,8 @@ form.config-form > div.form-group {
   margin-left: 0;
 }
 
-.config-form .form-group {
-  margin-left: 1.5em;
+.config-form div.form-group>div.form-group {
+  margin-left: 2em;
 }
 
 
@@ -78,7 +78,7 @@ div.form-group.field.field-array .py-4.col-lg-3.col-3{
   font-size: 1.2em;
 }
 
-div.form-group div{
+div.form-group div:not([class]){
   white-space: pre-wrap;
 }
 
