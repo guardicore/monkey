@@ -14,10 +14,10 @@ from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIReques
 logger = logging.getLogger()
 
 
-def check_safe_archive(dest_path: Path, archive: TarFile) -> bool:
-    destination_path = Path.resolve(dest_path)
+def check_safe_archive(destination_path: Path, archive: TarFile) -> bool:
+    destination_path = Path.resolve(destination_path)
     for name in archive.getnames():
-        file_path = Path.resolve(dest_path / name)
+        file_path = Path.resolve(destination_path / name)
 
         if (
             # check if archive has files whose names start with "/" or ".."
@@ -30,12 +30,12 @@ def check_safe_archive(dest_path: Path, archive: TarFile) -> bool:
     return True
 
 
-def extract_plugin(data: bytes, dest_path: Path):
+def extract_plugin(data: bytes, destination_path: Path):
     archive = TarFile(data, "r")
-    if not check_safe_archive(dest_path, archive):
+    if not check_safe_archive(destination_path, archive):
         raise ValueError("Unsafe archive; contains unexpected file paths. Plugin may be malicious.")
 
-    archive.extractall(dest_path)  # noqa: DUO115
+    archive.extractall(destination_path)  # noqa: DUO115
 
 
 class PluginRegistry:
