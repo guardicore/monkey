@@ -61,6 +61,13 @@ def test_symlink_tar_raises_exception(plugin_data_dir, extractor: PluginSourceEx
         extractor.extract_plugin_source(agent_plugin)
 
 
+def test_device_tar_raises_exception(plugin_data_dir, extractor: PluginSourceExtractor):
+    agent_plugin = build_agent_plugin(plugin_data_dir / "device.tar")
+
+    with pytest.raises(ValueError):
+        extractor.extract_plugin_source(agent_plugin)
+
+
 @pytest.mark.parametrize(
     "malicious_plugin_name",
     [
