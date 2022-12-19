@@ -100,7 +100,6 @@
     "react-spinners": "^0.9.0",
     "react-table": "^6.10.3",
     "react-tsparticles": "^1.42.4",
-    "redux": "^4.1.1",
     "semver": "^7.3.7",
     "sha3": "^2.1.4",
     "source-map-loader": "^3.0.1",
