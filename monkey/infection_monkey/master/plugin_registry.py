@@ -1,7 +1,7 @@
 import logging
-from typing import Any
+from typing import Any, Dict
 
-from serpentarium import PluginLoader
+from serpentarium import PluginLoader, SingleUsePlugin
 
 from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
@@ -21,7 +21,7 @@ class PluginRegistry:
                 }
             }
         """
-        self._registry = {}
+        self._registry: Dict[AgentPluginType, Dict[str, SingleUsePlugin]] = {}
         self._island_api_client = island_api_client
         self._plugin_loader = plugin_loader
 
@@ -35,7 +35,7 @@ class PluginRegistry:
         try:
             plugin = self._registry[plugin_type][plugin_name]
         except KeyError:
-            response = self._island_api_client.get_plugin(plugin_type, plugin_name)
+            response = self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
             if 400 <= response.status_code < 500:
                 raise UnknownPluginError(
                     f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}'"

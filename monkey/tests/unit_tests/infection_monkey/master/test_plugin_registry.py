@@ -12,7 +12,7 @@ class StubIslandAPIClient:
     def __init__(self, status: int):
         self._status = status
 
-    def get_plugin(self, _, __):
+    def get_agent_plugin(self, _, __):
         return Response(status=self._status)
 
 
