@@ -94,7 +94,6 @@
     "react-copy-to-clipboard": "^5.0.4",
     "react-desktop-notification": "^1.0.9",
     "react-dom": "^16.14.0",
-    "react-fa": "^5.0.0",
     "react-filepond": "^7.1.0",
     "react-graph-vis": "^1.0.7",
     "react-hot-loader": "^4.13.0",
