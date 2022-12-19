@@ -7,14 +7,36 @@ from common.utils.file_utils import create_secure_directory
 
 
 class PluginSourceExtractor:
+    """
+    Extracts a plugin's source code archive to disk"""
+
     def __init__(self, plugin_directory: Path):
+        """
+        :param plugin_directory: A directory where this component will extract plugin source code
+                                 archives
+        """
         self._plugin_directory = plugin_directory.resolve()
 
     @property
     def plugin_directory(self) -> Path:
+        """
+        The directory where this component will extract plugin source code archives
+        """
         return self._plugin_directory
 
     def extract_plugin_source(self, agent_plugin: AgentPlugin):
+        """
+        Extracts an `AgentPlugin's` source code archive
+
+        The `AgentPlugin's` source code archive will be extracted to
+        `self.plugin_directory / agent_plugin.manifest.name`. While this method attempts to prevent
+        directory traversal and other relevant vulnerabilities, it is still advisable that you not
+        use this to extract archives/plugins from untrusted sources.
+
+        :param agent_plugin: An `AgentPlugin` to extract
+        :raises ValueError: If the agent's source code archive is potentially malicious or otherwise
+                            can not be extracted
+        """
         destination = self._get_plugin_destination_directory(agent_plugin)
         create_secure_directory(destination)
 
