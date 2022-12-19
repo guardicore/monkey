@@ -1,14 +1,14 @@
 import logging
 from typing import Optional, Tuple
 
-from infection_monkey.model import VictimHost
+from infection_monkey.model import TargetHost
 from infection_monkey.network import NetworkAddress
 from infection_monkey.network.tools import get_interface_to_target
 
 logger = logging.getLogger(__name__)
 
 
-class VictimHostFactory:
+class TargetHostFactory:
     def __init__(
         self,
         island_ip: Optional[str],
@@ -19,17 +19,17 @@ class VictimHostFactory:
         self.island_port = island_port
         self.on_island = on_island
 
-    def build_victim_host(self, network_address: NetworkAddress) -> VictimHost:
+    def build_target_host(self, network_address: NetworkAddress) -> TargetHost:
         domain = network_address.domain or ""
-        victim_host = VictimHost(network_address.ip, domain)
+        target_host = TargetHost(network_address.ip, domain)
 
         if self.island_ip:
-            ip, port = self._choose_island_address(victim_host.ip_addr)
-            victim_host.set_island_address(ip, port)
+            ip, port = self._choose_island_address(target_host.ip_addr)
+            target_host.set_island_address(ip, port)
 
-        logger.debug(f"Default server for {victim_host} set to {victim_host.default_server}")
+        logger.debug(f"Default server for {target_host} set to {target_host.default_server}")
 
-        return victim_host
+        return target_host
 
     def _choose_island_address(self, victim_ip: str) -> Tuple[Optional[str], Optional[str]]:
         # Victims need to connect back to the interface they can reach

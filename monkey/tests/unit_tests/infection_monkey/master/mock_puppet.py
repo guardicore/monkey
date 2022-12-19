@@ -7,7 +7,7 @@ from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
 from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
-from infection_monkey.model import VictimHost
+from infection_monkey.model import TargetHost
 
 DOT_1 = "10.0.0.1"
 DOT_2 = "10.0.0.2"
@@ -130,7 +130,7 @@ class MockPuppet(IPuppet):
     def exploit_host(
         self,
         name: str,
-        host: VictimHost,
+        host: TargetHost,
         current_depth: int,
         servers: Sequence[str],
         options: Dict,

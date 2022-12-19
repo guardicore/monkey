@@ -7,7 +7,7 @@ from typing import Dict, Mapping, Optional, Sequence
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
 from common.types import PingScanData
-from infection_monkey.model import VictimHost
+from infection_monkey.model import TargetHost
 
 
 class UnknownPluginError(Exception):
@@ -103,7 +103,7 @@ class IPuppet(metaclass=abc.ABCMeta):
     def exploit_host(
         self,
         name: str,
-        host: VictimHost,
+        host: TargetHost,
         current_depth: int,
         servers: Sequence[str],
         options: Dict,
@@ -113,7 +113,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         Runs an exploiter against a remote host
 
         :param str name: The name of the exploiter to run
-        :param VictimHost host: A VictimHost object representing the target to exploit
+        :param TargetHost host: A TargetHost object representing the target to exploit
         :param int current_depth: The current propagation depth
         :param servers: List of socket addresses for victim to connect back to
         :param Dict options: A dictionary containing options that modify the behavior of the
