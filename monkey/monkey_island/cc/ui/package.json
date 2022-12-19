@@ -102,7 +102,6 @@
     "react-tsparticles": "^1.42.4",
     "semver": "^7.3.7",
     "source-map-loader": "^3.0.1",
-    "terser": "^5.14.2",
     "tsparticles": "^1.35.4"
   },
   "snyk": true
