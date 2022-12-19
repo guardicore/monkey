@@ -80,7 +80,6 @@
     "core-js": "^3.18.2",
     "crypto-js": "^4.1.1",
     "downloadjs": "^1.4.7",
-    "fetch": "^1.1.0",
     "file-saver": "^2.0.5",
     "filepond": "^4.30.3",
     "jwt-decode": "^2.2.0",
