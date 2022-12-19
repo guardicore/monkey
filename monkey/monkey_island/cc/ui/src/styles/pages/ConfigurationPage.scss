@@ -26,6 +26,7 @@
 .config-form hr.border-0.bg-secondary {
   background-color: $light-gray !important;
   margin-bottom: 15px;
+  margin-top: 0;
 }
 
 .config-form .form-group {
@@ -87,4 +88,12 @@ div.form-group div{
   text-transform: uppercase;
   color: #FFC107;
   margin-right: .5em;
+}
+
+.form-group h5 {
+  font-size: 1.4rem;
+}
+
+.form-group label.form-label {
+  font-weight: bold;
 }
