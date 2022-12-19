@@ -81,7 +81,6 @@
     "crypto-js": "^4.1.1",
     "downloadjs": "^1.4.7",
     "file-saver": "^2.0.5",
-    "filepond": "^4.30.3",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.21",
     "marked": "^4.0.10",
