@@ -5,7 +5,7 @@ from flask import Response
 
 from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
-from infection_monkey.puppet.plugin_registry import PluginRegistry
+from infection_monkey.puppet import PluginRegistry
 
 
 class StubIslandAPIClient:
