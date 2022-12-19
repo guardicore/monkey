@@ -5,6 +5,10 @@ from tarfile import TarFile, TarInfo
 from common.agent_plugins import AgentPlugin
 from common.utils.file_utils import create_secure_directory
 
+UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE = (
+    'The provided archive contains a file type other than "directory" or "regular"'
+)
+
 
 def check_safe_archive(destination_path: Path, archive: TarFile):
     canonical_destination_path = destination_path.resolve()
@@ -24,15 +28,13 @@ def safe_extract(destination_path: Path, archive: TarFile):
                 f.write(archive.extractfile(member).read())  # type: ignore [union-attr]
         else:
             # Note: This code should never run, since _raise_on_unsafe_extraction_conditions()
-            # should have already checked this. But this if/else structure is here for extra
-            # paranoia.
-            raise ValueError(
-                'The provided archive contains a file type other than "directory" or "regular"'
-            )
+            # should have already checked this. But this `else` clause is here for extra paranoia.
+            raise ValueError(UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE)
 
 
 def _raise_on_unsafe_extraction_conditions(canonical_destination_path, archive_member: TarInfo):
     _check_for_zip_slip(canonical_destination_path, archive_member)
+    _check_for_unsupported_file_types(canonical_destination_path, archive_member)
 
 
 def _check_for_zip_slip(canonical_destination_path: Path, archive_member: TarInfo):
@@ -44,18 +46,24 @@ def _check_for_zip_slip(canonical_destination_path: Path, archive_member: TarInf
         )
 
 
+def _check_for_unsupported_file_types(canonical_destination_path: Path, archive_member: TarInfo):
+    if not (archive_member.isdir() or archive_member.isfile()):
+        raise ValueError(UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE)
+
+
 class PluginSourceExtractor:
     def __init__(self, plugin_directory: Path):
         self._plugin_directory = plugin_directory
 
-    # TODO: This function contains security vulnerabilities. Fix it.
     def extract_plugin_source(self, agent_plugin: AgentPlugin):
         destination = self.plugin_directory / agent_plugin.plugin_manifest.name
         create_secure_directory(destination)
         archive = TarFile(fileobj=io.BytesIO(agent_plugin.source_archive), mode="r")
 
         # We check the entire archive to detect any malicious activity **before** we extract any
-        # files. This is a paranoid approach.
+        # files. This is a paranoid approach that prevents against partial extraction of malicious
+        # archives; either the whole archive is judged to be safe and extracted, or nothing is
+        # extracted.
         check_safe_archive(destination, archive)
         safe_extract(destination, archive)
 
