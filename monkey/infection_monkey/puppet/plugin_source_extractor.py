@@ -33,11 +33,11 @@ def safe_extract(destination_path: Path, archive: TarFile):
 
 
 def _raise_on_unsafe_extraction_conditions(canonical_destination_path, archive_member: TarInfo):
-    _check_for_zip_slip(canonical_destination_path, archive_member)
+    _detect_zip_slip(canonical_destination_path, archive_member)
     _check_for_unsupported_file_types(canonical_destination_path, archive_member)
 
 
-def _check_for_zip_slip(canonical_destination_path: Path, archive_member: TarInfo):
+def _detect_zip_slip(canonical_destination_path: Path, archive_member: TarInfo):
     member_destination_path = (canonical_destination_path / archive_member.name).resolve()
     if canonical_destination_path not in member_destination_path.parents:
         raise ValueError(
