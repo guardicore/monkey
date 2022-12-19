@@ -38,7 +38,7 @@ def safe_extract(destination_path: Path, archive: TarFile):
         # It's wise to perform this check for each member immediately before extraction, even if the
         # archive has already been vetted by `detect_malicious_archive()`. This may help to mitigate
         # TOCTOU attacks.
-        _raise_on_unsafe_extraction_conditions(canonical_destination_path, member)
+        _detect_unsafe_extraction_conditions(canonical_destination_path, member)
 
         if member.isdir():
             create_secure_directory(canonical_destination_path / member.name)
@@ -46,7 +46,7 @@ def safe_extract(destination_path: Path, archive: TarFile):
             with open(canonical_destination_path / member.name, "wb") as f:
                 f.write(archive.extractfile(member).read())  # type: ignore [union-attr]
         else:
-            # Note: This code should never run, since _raise_on_unsafe_extraction_conditions()
+            # Note: This code should never run, since _detect_unsafe_extraction_conditions()
             # should have already checked this. But this `else` clause is here for extra paranoia.
             raise ValueError(UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE)
 
@@ -54,10 +54,10 @@ def safe_extract(destination_path: Path, archive: TarFile):
 def detect_malicious_archive(destination_path: Path, archive: TarFile):
     canonical_destination_path = destination_path.resolve()
     for member in archive.getmembers():
-        _raise_on_unsafe_extraction_conditions(canonical_destination_path, member)
+        _detect_unsafe_extraction_conditions(canonical_destination_path, member)
 
 
-def _raise_on_unsafe_extraction_conditions(canonical_destination_path, archive_member: TarInfo):
+def _detect_unsafe_extraction_conditions(canonical_destination_path, archive_member: TarInfo):
     _detect_zip_slip(canonical_destination_path, archive_member)
     _detect_unsupported_file_types(canonical_destination_path, archive_member)
 
