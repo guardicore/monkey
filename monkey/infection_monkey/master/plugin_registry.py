@@ -15,10 +15,18 @@ logger = logging.getLogger()
 
 
 def check_safe_archive(dest_path: Path, archive: TarFile) -> bool:
-    path = Path.resolve(dest_path)
+    destination_path = Path.resolve(dest_path)
     for name in archive.getnames():
-        if path not in Path.resolve(dest_path / name).parents:
+        file_path = Path.resolve(dest_path / name)
+
+        if (
+            # check if archive has files whose names start with "/" or ".."
+            destination_path not in file_path.parents
+            or not file_path.is_file()
+            or not file_path.is_dir()
+        ):
             return False
+
     return True
 
 
