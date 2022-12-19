@@ -19,6 +19,9 @@ def detect_malicious_archive(destination_path: Path, archive: TarFile):
 def safe_extract(destination_path: Path, archive: TarFile):
     canonical_destination_path = destination_path.resolve()
     for member in archive.getmembers():
+        # It's wise to perform this check for each member immediately before extraction, even if the
+        # archive has already been vetted by `detect_malicious_archive()`. This may help to mitigate
+        # TOCTOU attacks.
         _raise_on_unsafe_extraction_conditions(canonical_destination_path, member)
 
         if member.isdir():
