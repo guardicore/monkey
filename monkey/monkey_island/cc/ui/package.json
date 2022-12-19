@@ -44,7 +44,6 @@
     "eslint-loader": "^4.0.1",
     "eslint-plugin-react": "^7.26.1",
     "fork-ts-checker-webpack-plugin": "^7.2.4",
-    "glob": "^7.2.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^5.5.0",
     "minimist": "^1.2.6",
