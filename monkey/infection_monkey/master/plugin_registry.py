@@ -1,7 +1,7 @@
 import logging
-from typing import Any
+from typing import Any, Dict
 
-from serpentarium import PluginLoader
+from serpentarium import PluginLoader, SingleUsePlugin
 
 from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
@@ -21,7 +21,7 @@ class PluginRegistry:
                 }
             }
         """
-        self._registry = {}
+        self._registry: Dict[AgentPluginType, Dict[str, SingleUsePlugin]] = {}
         self._island_api_client = island_api_client
         self._plugin_loader = plugin_loader
 
