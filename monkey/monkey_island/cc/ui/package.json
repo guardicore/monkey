@@ -79,7 +79,6 @@
     "bootstrap": "^4.5.3",
     "core-js": "^3.18.2",
     "crypto-js": "^4.1.1",
-    "d3": "^7.6.1",
     "downloadjs": "^1.4.7",
     "fetch": "^1.1.0",
     "file-saver": "^2.0.5",
