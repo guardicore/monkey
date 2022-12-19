@@ -8,7 +8,7 @@ from common.utils.file_utils import create_secure_directory
 
 class PluginSourceExtractor:
     def __init__(self, plugin_directory: Path):
-        self._plugin_directory = plugin_directory
+        self._plugin_directory = plugin_directory.resolve()
 
     @property
     def plugin_directory(self) -> Path:
