@@ -1,4 +1,4 @@
-from copy import copy
+from copy import deepcopy
 from typing import Any, Dict
 
 import pytest
@@ -16,7 +16,7 @@ from monkey_island.cc.services import ConfigSchemaService
 
 @pytest.fixture
 def expected_config_schema() -> Dict[str, Any]:
-    expected_schema = copy(AgentConfiguration.schema())
+    expected_schema = deepcopy(AgentConfiguration.schema())
     expected_schema["plugins"] = {
         "exploiter": {
             "anyOf": [
@@ -45,7 +45,7 @@ def config_schema_service(
 
 
 def expected_plugin_schema(plugin: AgentPlugin):
-    schema = PluginConfiguration.schema()
+    schema = deepcopy(PluginConfiguration.schema())
     # Need to specify the name here, otherwise the options can be matched with
     # any plugin's configuration
     schema["properties"]["name"]["enum"] = [plugin.plugin_manifest.name]
@@ -56,7 +56,7 @@ def expected_plugin_schema(plugin: AgentPlugin):
 
 def test_get_schema__returns_config_schema(config_schema_service):
     schema = config_schema_service.get_schema()
-    assert schema == copy(AgentConfiguration.schema())
+    assert schema == deepcopy(AgentConfiguration.schema())
 
 
 def test_get_schema__adds_exploiter_plugins_to_schema(

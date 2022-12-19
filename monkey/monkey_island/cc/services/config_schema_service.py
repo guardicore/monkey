@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Any, Dict
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
@@ -23,7 +24,7 @@ class ConfigSchemaService:
         :raises RuntimeError: If the schema could not be retrieved
         """
         try:
-            agent_config_schema = AgentConfiguration.schema()
+            agent_config_schema = deepcopy(AgentConfiguration.schema())
 
             self._add_plugins_to_schema(agent_config_schema)
 
@@ -41,9 +42,8 @@ class ConfigSchemaService:
             plugin_schema = self._create_plugin_schema(plugin)
 
             plugin_type_name = plugin_type.name.lower()
-            if plugin_type_name not in schema["plugins"]:
-                schema["plugins"][plugin_type_name] = {"anyOf": []}
-            schema["plugins"][plugin_type_name]["anyOf"].append(plugin_schema)
+            plugin_type_schema = schema["plugins"].setdefault(plugin_type_name, {})
+            plugin_type_schema.setdefault("anyOf", []).append(plugin_schema)
 
             # Add reference, based on type
             if plugin_type == AgentPluginType.EXPLOITER:
@@ -52,7 +52,7 @@ class ConfigSchemaService:
                 brute_force["items"] = {"$ref": "#/plugins/exploiter"}
 
     def _create_plugin_schema(self, plugin: AgentPlugin) -> Dict[str, Any]:
-        schema = PluginConfiguration.schema()
+        schema = deepcopy(PluginConfiguration.schema())
         schema["properties"]["name"]["enum"] = [plugin.plugin_manifest.name]
         schema["properties"]["options"]["properties"] = plugin.config_schema
 
