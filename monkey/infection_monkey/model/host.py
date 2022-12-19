@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 from common import OperatingSystem
 
 
-class VictimHost(object):
+class TargetHost(object):
     def __init__(self, ip_addr: str, domain_name: str = ""):
         self.ip_addr = ip_addr
         self.domain_name = str(domain_name)
@@ -19,19 +19,19 @@ class VictimHost(object):
         return hash(self.ip_addr)
 
     def __eq__(self, other):
-        if not isinstance(other, VictimHost):
+        if not isinstance(other, TargetHost):
             return False
 
         return self.ip_addr.__eq__(other.ip_addr)
 
     def __cmp__(self, other):
-        if not isinstance(other, VictimHost):
+        if not isinstance(other, TargetHost):
             return -1
 
         return self.ip_addr.__cmp__(other.ip_addr)
 
     def __repr__(self):
-        return "VictimHost({0!r})".format(self.ip_addr)
+        return "TargetHost({0!r})".format(self.ip_addr)
 
     def __str__(self):
         victim = "Victim Host %s: " % self.ip_addr

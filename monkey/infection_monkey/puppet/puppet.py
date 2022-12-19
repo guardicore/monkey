@@ -9,7 +9,7 @@ from common.event_queue import IAgentEventQueue
 from common.types import PingScanData
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
-from infection_monkey.model import VictimHost
+from infection_monkey.model import TargetHost
 
 from . import PluginRegistry
 
@@ -62,7 +62,7 @@ class Puppet(IPuppet):
     def exploit_host(
         self,
         name: str,
-        host: VictimHost,
+        host: TargetHost,
         current_depth: int,
         servers: Sequence[str],
         options: Dict,

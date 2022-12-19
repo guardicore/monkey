@@ -12,7 +12,7 @@ from common.agent_configuration import (
 )
 from common.types import NetworkPort, PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
-from infection_monkey.model import VictimHost, VictimHostFactory
+from infection_monkey.model import TargetHost, TargetHostFactory
 from infection_monkey.network import NetworkAddress
 from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list
 from infection_monkey.utils.threading import create_daemon_thread
@@ -28,12 +28,12 @@ class Propagator:
         self,
         ip_scanner: IPScanner,
         exploiter: Exploiter,
-        victim_host_factory: VictimHostFactory,
+        target_host_factory: TargetHostFactory,
         local_network_interfaces: List[IPv4Interface],
     ):
         self._ip_scanner = ip_scanner
         self._exploiter = exploiter
-        self._victim_host_factory = victim_host_factory
+        self._target_host_factory = target_host_factory
         self._local_network_interfaces = local_network_interfaces
         self._hosts_to_exploit: Queue = Queue()
 
@@ -122,37 +122,37 @@ class Propagator:
         )
 
     def _process_scan_results(self, address: NetworkAddress, scan_results: IPScanResults):
-        victim_host = self._victim_host_factory.build_victim_host(address)
+        target_host = self._target_host_factory.build_target_host(address)
 
-        Propagator._process_ping_scan_results(victim_host, scan_results.ping_scan_data)
-        Propagator._process_tcp_scan_results(victim_host, scan_results.port_scan_data)
-        Propagator._process_fingerprinter_results(victim_host, scan_results.fingerprint_data)
+        Propagator._process_ping_scan_results(target_host, scan_results.ping_scan_data)
+        Propagator._process_tcp_scan_results(target_host, scan_results.port_scan_data)
+        Propagator._process_fingerprinter_results(target_host, scan_results.fingerprint_data)
 
         if IPScanner.port_scan_found_open_port(scan_results.port_scan_data):
-            self._hosts_to_exploit.put(victim_host)
+            self._hosts_to_exploit.put(target_host)
 
     @staticmethod
-    def _process_ping_scan_results(victim_host: VictimHost, ping_scan_data: PingScanData):
-        victim_host.icmp = ping_scan_data.response_received
+    def _process_ping_scan_results(target_host: TargetHost, ping_scan_data: PingScanData):
+        target_host.icmp = ping_scan_data.response_received
         if ping_scan_data.os is not None:
-            victim_host.os["type"] = ping_scan_data.os
+            target_host.os["type"] = ping_scan_data.os
 
     @staticmethod
     def _process_tcp_scan_results(
-        victim_host: VictimHost, port_scan_data: Mapping[NetworkPort, PortScanData]
+        target_host: TargetHost, port_scan_data: Mapping[NetworkPort, PortScanData]
     ):
         for psd in filter(
             lambda scan_data: scan_data.status == PortStatus.OPEN, port_scan_data.values()
         ):
-            victim_host.services[psd.service] = {}
-            victim_host.services[psd.service]["display_name"] = "unknown(TCP)"
-            victim_host.services[psd.service]["port"] = psd.port
+            target_host.services[psd.service] = {}
+            target_host.services[psd.service]["display_name"] = "unknown(TCP)"
+            target_host.services[psd.service]["port"] = psd.port
             if psd.banner is not None:
-                victim_host.services[psd.service]["banner"] = psd.banner
+                target_host.services[psd.service]["banner"] = psd.banner
 
     @staticmethod
     def _process_fingerprinter_results(
-        victim_host: VictimHost, fingerprint_data: Mapping[FingerprinterName, FingerprintData]
+        target_host: TargetHost, fingerprint_data: Mapping[FingerprinterName, FingerprintData]
     ):
         for fd in fingerprint_data.values():
             # TODO: This logic preserves the existing behavior prior to introducing IMaster and
@@ -160,13 +160,13 @@ class Propagator:
             #       different os types or versions, and this logic isn't sufficient to handle those
             #       conflicts. Reevaluate this logic when we overhaul our scanners/fingerprinters.
             if fd.os_type is not None:
-                victim_host.os["type"] = fd.os_type
+                target_host.os["type"] = fd.os_type
 
-            if ("version" not in victim_host.os) and (fd.os_version is not None):
-                victim_host.os["version"] = fd.os_version
+            if ("version" not in target_host.os) and (fd.os_version is not None):
+                target_host.os["version"] = fd.os_version
 
             for service, details in fd.services.items():
-                victim_host.services.setdefault(service, {}).update(details)
+                target_host.services.setdefault(service, {}).update(details)
 
     def _exploit_hosts(
         self,
@@ -191,7 +191,7 @@ class Propagator:
         logger.info("Finished exploiting victims")
 
     def _process_exploit_attempts(
-        self, exploiter_name: str, host: VictimHost, result: ExploiterResultData
+        self, exploiter_name: str, host: TargetHost, result: ExploiterResultData
     ):
         if result.propagation_success:
             logger.info(f"Successfully propagated to {host} using {exploiter_name}")

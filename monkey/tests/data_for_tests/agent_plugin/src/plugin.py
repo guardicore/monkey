@@ -10,14 +10,14 @@ from common.agent_events import ExploitationEvent, PropagationEvent
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import ExploiterResultData
-from infection_monkey.model import VictimHost
+from infection_monkey.model import TargetHost
 from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)
 
 
 def run(
-    host: VictimHost,
+    host: TargetHost,
     servers: Sequence[str],
     current_depth: int,
     options: Dict[str, Any],

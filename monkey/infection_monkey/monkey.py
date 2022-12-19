@@ -57,7 +57,7 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.model import VictimHostFactory
+from infection_monkey.model import TargetHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
@@ -292,13 +292,13 @@ class InfectionMonkey:
 
         puppet = self._build_puppet()
 
-        victim_host_factory = self._build_victim_host_factory(local_network_interfaces)
+        target_host_factory = self._build_target_host_factory(local_network_interfaces)
 
         self._master = AutomatedMaster(
             self._current_depth,
             servers,
             puppet,
-            victim_host_factory,
+            target_host_factory,
             self._control_channel,
             local_network_interfaces,
             self._propagation_credentials_repository,
@@ -384,13 +384,13 @@ class InfectionMonkey:
 
         return puppet
 
-    def _build_victim_host_factory(
+    def _build_target_host_factory(
         self, local_network_interfaces: List[IPv4Interface]
-    ) -> VictimHostFactory:
+    ) -> TargetHostFactory:
         on_island = self._running_on_island(local_network_interfaces)
         logger.debug(f"This agent is running on the island: {on_island}")
 
-        return VictimHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
+        return TargetHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
 
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
