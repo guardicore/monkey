@@ -23,12 +23,17 @@
   background-color: $light-gray;
 }
 
-.config-form legend {
-  border-bottom: 1px solid $light-gray;
+.config-form hr.border-0.bg-secondary {
+  background-color: $light-gray !important;
   margin-bottom: 15px;
+  margin-top: 0;
 }
 
-.config-form .form-group {
+form.config-form > div.form-group {
+  margin-left: 0;
+}
+
+.config-form div.form-group>div.form-group {
   margin-left: 2em;
 }
 
@@ -53,6 +58,10 @@ div.form-group.field.field-array button.btn-sm{
     height: calc(1.5em + 0.75rem + 5px);
 }
 
+div.form-group.field.field-array .align-items-center div.m-0.p-0{
+  width: 100%;
+  display: flex;
+}
 
 div.form-group.field.field-array .align-items-center{
   align-items: flex-start !important;
@@ -69,7 +78,7 @@ div.form-group.field.field-array .py-4.col-lg-3.col-3{
   font-size: 1.2em;
 }
 
-.field-description {
+div.form-group div:not([class]){
   white-space: pre-wrap;
 }
 
@@ -83,4 +92,12 @@ div.form-group.field.field-array .py-4.col-lg-3.col-3{
   text-transform: uppercase;
   color: #FFC107;
   margin-right: .5em;
+}
+
+.form-group h5 {
+  font-size: 1.4rem;
+}
+
+.form-group label.form-label {
+  font-weight: bold;
 }
