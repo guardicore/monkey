@@ -5,15 +5,31 @@ from tarfile import TarFile, TarInfo
 from common.agent_plugins import AgentPlugin
 from common.utils.file_utils import create_secure_directory
 
+
+class PluginSourceExtractor:
+    def __init__(self, plugin_directory: Path):
+        self._plugin_directory = plugin_directory
+
+    @property
+    def plugin_directory(self) -> Path:
+        return self._plugin_directory
+
+    def extract_plugin_source(self, agent_plugin: AgentPlugin):
+        destination = self.plugin_directory / agent_plugin.plugin_manifest.name
+        create_secure_directory(destination)
+        archive = TarFile(fileobj=io.BytesIO(agent_plugin.source_archive), mode="r")
+
+        # We check the entire archive to detect any malicious activity **before** we extract any
+        # files. This is a paranoid approach that prevents against partial extraction of malicious
+        # archives; either the whole archive is judged to be safe and extracted, or nothing is
+        # extracted.
+        detect_malicious_archive(destination, archive)
+        safe_extract(destination, archive)
+
+
 UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE = (
     'The provided archive contains a file type other than "directory" or "regular"'
 )
-
-
-def detect_malicious_archive(destination_path: Path, archive: TarFile):
-    canonical_destination_path = destination_path.resolve()
-    for member in archive.getmembers():
-        _raise_on_unsafe_extraction_conditions(canonical_destination_path, member)
 
 
 def safe_extract(destination_path: Path, archive: TarFile):
@@ -35,6 +51,12 @@ def safe_extract(destination_path: Path, archive: TarFile):
             raise ValueError(UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE)
 
 
+def detect_malicious_archive(destination_path: Path, archive: TarFile):
+    canonical_destination_path = destination_path.resolve()
+    for member in archive.getmembers():
+        _raise_on_unsafe_extraction_conditions(canonical_destination_path, member)
+
+
 def _raise_on_unsafe_extraction_conditions(canonical_destination_path, archive_member: TarInfo):
     _detect_zip_slip(canonical_destination_path, archive_member)
     _detect_unsupported_file_types(canonical_destination_path, archive_member)
@@ -53,24 +75,3 @@ def _detect_unsupported_file_types(canonical_destination_path: Path, archive_mem
     # It's not safe for us to extract other file types, especially symlinks, hardlinks, and devices
     if not (archive_member.isdir() or archive_member.isfile()):
         raise ValueError(UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE)
-
-
-class PluginSourceExtractor:
-    def __init__(self, plugin_directory: Path):
-        self._plugin_directory = plugin_directory
-
-    def extract_plugin_source(self, agent_plugin: AgentPlugin):
-        destination = self.plugin_directory / agent_plugin.plugin_manifest.name
-        create_secure_directory(destination)
-        archive = TarFile(fileobj=io.BytesIO(agent_plugin.source_archive), mode="r")
-
-        # We check the entire archive to detect any malicious activity **before** we extract any
-        # files. This is a paranoid approach that prevents against partial extraction of malicious
-        # archives; either the whole archive is judged to be safe and extracted, or nothing is
-        # extracted.
-        detect_malicious_archive(destination, archive)
-        safe_extract(destination, archive)
-
-    @property
-    def plugin_directory(self) -> Path:
-        return self._plugin_directory
