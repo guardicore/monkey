@@ -66,7 +66,7 @@ from monkey_island.cc.repositories import (
 )
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
-from monkey_island.cc.services import AgentSignalsService, AWSService
+from monkey_island.cc.services import AgentSignalsService, AWSService, ConfigSchemaService
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
@@ -252,3 +252,4 @@ def _register_services(container: DIContainer):
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
     container.register_instance(AuthenticationService, container.resolve(AuthenticationService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
+    container.register_instance(ConfigSchemaService, container.resolve(ConfigSchemaService))
