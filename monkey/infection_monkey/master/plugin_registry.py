@@ -32,10 +32,14 @@ def check_safe_archive(destination_path: Path, archive: TarFile) -> bool:
 
 def extract_plugin(data: bytes, destination_path: Path):
     archive = TarFile(data, "r")
+
     if not check_safe_archive(destination_path, archive):
         raise ValueError("Unsafe archive; contains unexpected file paths. Plugin may be malicious.")
 
-    archive.extractall(destination_path)  # noqa: DUO115
+    for name in archive.getnames():
+        destination_file_path = Path.resolve(destination_path / name)
+        with open(destination_file_path, "b") as f:
+            f.write(archive.extractfile(name).read())
 
 
 class PluginRegistry:
