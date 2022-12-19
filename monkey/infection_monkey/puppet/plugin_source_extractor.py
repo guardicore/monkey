@@ -34,7 +34,7 @@ def safe_extract(destination_path: Path, archive: TarFile):
 
 def _raise_on_unsafe_extraction_conditions(canonical_destination_path, archive_member: TarInfo):
     _detect_zip_slip(canonical_destination_path, archive_member)
-    _check_for_unsupported_file_types(canonical_destination_path, archive_member)
+    _detect_unsupported_file_types(canonical_destination_path, archive_member)
 
 
 def _detect_zip_slip(canonical_destination_path: Path, archive_member: TarInfo):
@@ -46,7 +46,8 @@ def _detect_zip_slip(canonical_destination_path: Path, archive_member: TarInfo):
         )
 
 
-def _check_for_unsupported_file_types(canonical_destination_path: Path, archive_member: TarInfo):
+def _detect_unsupported_file_types(canonical_destination_path: Path, archive_member: TarInfo):
+    # It's not safe for us to extract other file types, especially symlinks, hardlinks, and devices
     if not (archive_member.isdir() or archive_member.isfile()):
         raise ValueError(UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE)
 
