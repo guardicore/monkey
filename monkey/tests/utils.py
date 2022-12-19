@@ -1,4 +1,5 @@
 import ctypes
+import filecmp
 import os
 from pathlib import Path
 from typing import Iterable
@@ -44,3 +45,20 @@ def get_file_sha256_hash(filepath: Path) -> str:
     """
     with open(filepath, "rb") as f:
         return get_binary_io_sha256_hash(f)
+
+
+def assert_directories_equal(dir1: Path, dir2: Path):
+    assert dir1.is_dir()
+    assert dir2.is_dir()
+
+    dircmp = filecmp.dircmp(dir1, dir2, ignore=[])
+
+    _assert_dircmp_equal(dircmp)
+
+
+def _assert_dircmp_equal(dircmp: filecmp.dircmp):
+    assert len(dircmp.diff_files) == 0
+    assert dircmp.left_list == dircmp.right_list
+
+    for subdir_cmp in dircmp.subdirs.values():
+        _assert_dircmp_equal(subdir_cmp)
