@@ -320,9 +320,7 @@ class InfectionMonkey:
         create_secure_directory(temp_dir)
         create_secure_directory(plugin_dir)
 
-        plugin_registry = PluginRegistry(
-            self._island_api_client, PluginLoader(plugin_dir), plugin_dir
-        )
+        plugin_registry = PluginRegistry(self._island_api_client, PluginLoader(plugin_dir))
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(
