@@ -15,8 +15,9 @@ class PluginSourceExtractor:
         return self._plugin_directory
 
     def extract_plugin_source(self, agent_plugin: AgentPlugin):
-        destination = self.plugin_directory / agent_plugin.plugin_manifest.name
+        destination = self._get_plugin_destination_directory(agent_plugin)
         create_secure_directory(destination)
+
         archive = TarFile(fileobj=io.BytesIO(agent_plugin.source_archive), mode="r")
 
         # We check the entire archive to detect any malicious activity **before** we extract any
@@ -25,6 +26,19 @@ class PluginSourceExtractor:
         # extracted.
         detect_malicious_archive(destination, archive)
         safe_extract(destination, archive)
+
+    def _get_plugin_destination_directory(self, agent_plugin: AgentPlugin) -> Path:
+        destination = (self.plugin_directory / agent_plugin.plugin_manifest.name).resolve()
+        self._detect_directory_traversal_in_plugin_name(destination)
+
+        return destination
+
+    def _detect_directory_traversal_in_plugin_name(self, destination: Path):
+        if self.plugin_directory.resolve() not in destination.resolve().parents:
+            raise ValueError(
+                f'Can not create directory "{destination}": directories must children of '
+                f'"{self.plugin_directory}"'
+            )
 
 
 UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE = (

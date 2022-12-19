@@ -7,8 +7,8 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginTy
 from infection_monkey.puppet import PluginSourceExtractor
 
 
-def build_agent_plugin(source_tar_path: Path) -> AgentPlugin:
-    manifest = AgentPluginManifest(name="test_plugin", plugin_type=AgentPluginType.EXPLOITER)
+def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin:
+    manifest = AgentPluginManifest(name=name, plugin_type=AgentPluginType.EXPLOITER)
     return AgentPlugin(
         plugin_manifest=manifest,
         config_schema={},
@@ -56,6 +56,31 @@ def test_zipslip_tar_raises_exception(plugin_data_dir, extractor: PluginSourceEx
 
 def test_symlink_tar_raises_exception(plugin_data_dir, extractor: PluginSourceExtractor):
     agent_plugin = build_agent_plugin(plugin_data_dir / "symlink_file.tar")
+
+    with pytest.raises(ValueError):
+        extractor.extract_plugin_source(agent_plugin)
+
+
+@pytest.mark.parametrize(
+    "malicious_plugin_name",
+    [
+        "../test_dir12341234",
+        "../../test_dir12341234",
+        "../../../../../../../test_dir12341234",
+        "/test_dir12341234",
+        "test_dir/../../../12341234",
+        "test_dir/../../../",
+        "../../../",
+        "..",
+        ".",
+    ],
+)
+def test_plugin_name_directory_traversal(
+    agent_source_archive_path, extractor: PluginSourceExtractor, malicious_plugin_name: str
+):
+    agent_plugin = build_agent_plugin(
+        agent_source_archive_path / "plugin.tar", malicious_plugin_name
+    )
 
     with pytest.raises(ValueError):
         extractor.extract_plugin_source(agent_plugin)
