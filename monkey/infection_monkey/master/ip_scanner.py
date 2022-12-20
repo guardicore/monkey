@@ -2,14 +2,13 @@ import logging
 import queue
 import threading
 from queue import Queue
-from threading import Event
 from typing import Callable, Dict, Sequence
 
 from common.agent_configuration.agent_sub_configurations import (
     NetworkScanConfiguration,
     PluginConfiguration,
 )
-from common.types import PingScanData, PortStatus
+from common.types import Event, PingScanData, PortStatus
 from infection_monkey.i_puppet import FingerprintData, IPuppet, PortScanData
 from infection_monkey.network import NetworkAddress
 from infection_monkey.utils.threading import interruptible_iter, run_worker_threads

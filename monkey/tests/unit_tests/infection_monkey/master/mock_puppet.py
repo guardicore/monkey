@@ -1,11 +1,10 @@
 import logging
-import threading
 from typing import Dict, Sequence
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import PingScanData, PortStatus
+from common.types import Event, PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
 from infection_monkey.model import TargetHost
 
@@ -134,7 +133,7 @@ class MockPuppet(IPuppet):
         current_depth: int,
         servers: Sequence[str],
         options: Dict,
-        interrupt: threading.Event,
+        interrupt: Event,
     ) -> ExploiterResultData:
         logger.debug(f"exploit_hosts({name}, {host}, {options})")
         info_wmi = {
@@ -207,7 +206,7 @@ class MockPuppet(IPuppet):
                 f"{name} failed for host {host}",
             )
 
-    def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
+    def run_payload(self, name: str, options: Dict, interrupt: Event):
         logger.debug(f"run_payload({name}, {options})")
 
     def cleanup(self) -> None:

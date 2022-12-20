@@ -1,7 +1,7 @@
 import logging
+import threading
 from ipaddress import IPv4Interface
 from queue import Queue
-from threading import Event
 from typing import List, Mapping, Sequence
 
 from common.agent_configuration import (
@@ -10,7 +10,7 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import NetworkPort, PingScanData, PortStatus
+from common.types import Event, NetworkPort, PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
 from infection_monkey.model import TargetHost, TargetHostFactory
 from infection_monkey.network import NetworkAddress
@@ -46,7 +46,7 @@ class Propagator:
     ):
         logger.info("Attempting to propagate")
 
-        network_scan_completed = Event()
+        network_scan_completed = threading.Event()
         self._hosts_to_exploit = Queue()
 
         network_scan = self._add_http_ports_to_fingerprinters(
@@ -173,7 +173,7 @@ class Propagator:
         exploitation_config: ExploitationConfiguration,
         current_depth: int,
         servers: Sequence[str],
-        network_scan_completed: Event,
+        network_scan_completed: threading.Event,
         stop: Event,
     ):
         logger.info("Exploiting victims")
