@@ -1,9 +1,11 @@
+import os
 from pathlib import Path
 
 import pytest
 from tests.utils import assert_directories_equal
 
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.utils.environment import is_windows_os
 from infection_monkey.puppet import PluginSourceExtractor
 
 
@@ -35,6 +37,12 @@ def test_plugin_destination_directory_property(tmp_path: Path, extractor: Plugin
     assert extractor.plugin_destination_directory == tmp_path
 
 
+TRAVIS = os.environ.get("TRAVIS") in ("true", "True", True)
+
+
+@pytest.mark.skipif(
+    TRAVIS and is_windows_os(), reason="This test doesn't play well with travis on Windows"
+)
 def test_extract_plugin_source(tmp_path: Path, dircmp_path: Path, extractor: PluginSourceExtractor):
     agent_plugin = build_agent_plugin(dircmp_path / "dir1.tar")
 
