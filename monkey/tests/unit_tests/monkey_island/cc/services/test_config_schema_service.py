@@ -17,21 +17,19 @@ from monkey_island.cc.services import ConfigSchemaService
 @pytest.fixture
 def expected_config_schema() -> Dict[str, Any]:
     expected_schema = deepcopy(AgentConfiguration.schema())
-    expected_schema["definitions"]["AgentPluginsConfiguration"] = {
-        "title": "AgentPluginsConfiguration",
+    expected_schema["definitions"]["exploiter"] = {
+        "title": "Exploiter Plugins",
         "type": "object",
-        "description": "A configuration for agent plugins.\n It provides a full"
-        + " set of available plugins that can be used by the agent.\n",
-        "exploiter": {
-            "anyOf": [
-                expected_plugin_schema(FAKE_AGENT_PLUGIN_1),
-                expected_plugin_schema(FAKE_AGENT_PLUGIN_2),
-            ]
+        "description": "A configuration for agent exploiter plugins.\n "
+        + "It provides a full set of available exploiter plugins that can be used by the agent.\n",
+        "properties": {
+            "ssh_exploiter": expected_plugin_schema(FAKE_AGENT_PLUGIN_1),
+            "wmi_exploiter": expected_plugin_schema(FAKE_AGENT_PLUGIN_2),
         },
     }
     expected_exploitation = expected_schema["definitions"]["ExploitationConfiguration"]
     expected_brute_force = expected_exploitation["properties"]["brute_force"]
-    expected_brute_force["items"] = {"$ref": "#/definitions/AgentPluginsConfiguration/exploiter"}
+    expected_brute_force["items"] = {"$ref": "#/definitions/exploiter"}
 
     return expected_schema
 
@@ -52,7 +50,7 @@ def expected_plugin_schema(plugin: AgentPlugin):
     schema = deepcopy(PluginConfiguration.schema())
     # Need to specify the name here, otherwise the options can be matched with
     # any plugin's configuration
-    schema["properties"]["name"]["title"] = [plugin.plugin_manifest.name]
+    schema["properties"]["name"]["title"] = plugin.plugin_manifest.title
     schema["properties"]["options"]["properties"] = plugin.config_schema
 
     return schema

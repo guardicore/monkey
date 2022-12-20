@@ -33,46 +33,74 @@ class ConfigSchemaService:
             raise RuntimeError(err)
 
     def _add_plugins_to_schema(self, schema: Dict[str, Any]):
-        plugin_catalog = self._agent_plugin_repository.get_plugin_catalog()
-        if plugin_catalog:
-            schema["definitions"].setdefault("AgentPluginsConfiguration", {})
-            schema["definitions"]["AgentPluginsConfiguration"][
-                "title"
-            ] = "AgentPluginsConfiguration"
-            schema["definitions"]["AgentPluginsConfiguration"]["type"] = "object"
-            schema["definitions"]["AgentPluginsConfiguration"]["description"] = (
-                "A configuration for agent plugins.\n It provides a full"
-                " set of available plugins that can be used by the agent.\n"
-            )
+        """
+        Add all plugins to the schema provided,
 
-        self._set_exploiters_reference(schema, plugin_catalog)
+        :param schema: The schema which will be modified
+        """
+        plugin_catalog = self._agent_plugin_repository.get_plugin_catalog()
+
+        self._set_plugin_type_schema(schema, plugin_catalog)
 
         for (plugin_type, name) in plugin_catalog:
             plugin = self._agent_plugin_repository.get_plugin(plugin_type, name)
-            plugin_schema = self._create_plugin_schema(plugin)
 
             plugin_type_name = plugin_type.name.lower()
-            plugin_type_schema = schema["definitions"]["AgentPluginsConfiguration"].setdefault(
-                plugin_type_name, {}
+            schema["definitions"][plugin_type_name]["properties"].setdefault(
+                name, self._create_plugin_schema(plugin)
             )
-            plugin_type_schema.setdefault("anyOf", []).append(plugin_schema)
 
-    def _set_exploiters_reference(
+    def _set_plugin_type_schema(
         self, schema: Dict[str, Any], plugin_catalog: Sequence[Tuple[AgentPluginType, str]]
     ):
+        """
+        Modifies main schema with plugin schema and reference based on plugin type.
+
+        :param schema: The schema which will be modified
+        :param plugin_catalog: The catalog with all available plugin types and name
+        :raises Exception: When unsupported plugin type is provided
+        """
         plugin_types = set([plugin_type for (plugin_type, _) in plugin_catalog])
 
         for plugin_type in plugin_types:
-            # Add reference, based on type
             if plugin_type == AgentPluginType.EXPLOITER:
+                plugin_type_name = plugin_type.name.lower()
+                # Add exploiter definition
+                self._set_exploiter_definition(schema, plugin_type_name)
+
+                # Add exploiter reference to brute_force
+                # TODO: Remove distinction in exploiter and change the reference
                 exploitation = schema["definitions"]["ExploitationConfiguration"]
                 brute_force = exploitation["properties"]["brute_force"]
-                brute_force["items"] = {"$ref": "#/definitions/AgentPluginsConfiguration/exploiter"}
+                brute_force["items"] = {"$ref": f"#/definitions/{plugin_type_name}"}
             else:
-                raise Exception("Error occurred while getting configuration schema")
+                raise Exception(
+                    "Error occurred while setting schema for {plugin_type} plugin type."
+                )
+
+    def _set_exploiter_definition(self, schema: Dict[str, Any], plugin_type_name: str):
+        """
+        Construct exploiter plugins schema.
+
+        :param schema: The schema which will be modified
+        :param plugin_type_name: The plugin type name used in the schema
+        """
+        plugin_type_schema = schema["definitions"].setdefault(plugin_type_name, {})
+        plugin_type_schema["title"] = "Exploiter Plugins"
+        plugin_type_schema["type"] = "object"
+        plugin_type_schema["description"] = (
+            "A configuration for agent exploiter plugins.\n It provides a full"
+            " set of available exploiter plugins that can be used by the agent.\n"
+        )
+        plugin_type_schema.setdefault("properties", {})
 
     def _create_plugin_schema(self, plugin: AgentPlugin) -> Dict[str, Any]:
+        """
+        Generate plugin configuration schema.
+
+        :param plugin: The AgentPlugin for which we generate the schema
+        """
         schema = deepcopy(PluginConfiguration.schema())
-        schema["properties"]["name"]["title"] = [plugin.plugin_manifest.name]
+        schema["properties"]["name"]["title"] = plugin.plugin_manifest.title
         schema["properties"]["options"]["properties"] = plugin.config_schema
         return schema
