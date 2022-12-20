@@ -5,12 +5,11 @@ import os
 import subprocess
 import sys
 import time
-from ipaddress import IPv4Interface
 from itertools import chain
 from multiprocessing import Queue
 from pathlib import Path, WindowsPath
 from tempfile import gettempdir
-from typing import List, Optional, Sequence, Tuple
+from typing import Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
 from serpentarium import PluginLoader
@@ -286,8 +285,6 @@ class InfectionMonkey:
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)
         local_network_interfaces = get_network_interfaces()
-        on_island = self._running_on_island(local_network_interfaces)
-        logger.debug(f"This agent is running on the island: {on_island}")
 
         puppet = self._build_puppet()
 
@@ -308,10 +305,6 @@ class InfectionMonkey:
         ordered_servers = {s: None for s in known_servers}
 
         return list(ordered_servers.keys())
-
-    def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
-        server_ip = self._island_address.ip
-        return server_ip in {interface.ip for interface in local_network_interfaces}
 
     def _build_puppet(self) -> IPuppet:
         temp_dir = Path(gettempdir()) / random_filename()
