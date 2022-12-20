@@ -1,5 +1,5 @@
 import logging
-import threading
+import multiprocessing
 import time
 from ipaddress import IPv4Interface
 from typing import Any, Callable, Collection, List, Optional, Sequence
@@ -51,7 +51,9 @@ class AutomatedMaster(IMaster):
             local_network_interfaces,
         )
 
-        self._stop = threading.Event()
+        multiprocessing_context = multiprocessing.get_context(method="spawn")
+        self._stop = multiprocessing_context.Event()
+
         self._master_thread = create_daemon_thread(
             target=self._run_master_thread, name="AutomatedMasterThread"
         )
