@@ -4,9 +4,8 @@ from common import OperatingSystem
 
 
 class TargetHost(object):
-    def __init__(self, ip_addr: str, domain_name: str = ""):
+    def __init__(self, ip_addr: str):
         self.ip_addr = ip_addr
-        self.domain_name = str(domain_name)
         self.os: Dict[str, Any] = {}
         self.services: Dict[str, Any] = {}
         self.icmp = False

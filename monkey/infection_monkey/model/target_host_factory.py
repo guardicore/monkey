@@ -20,8 +20,7 @@ class TargetHostFactory:
         self.on_island = on_island
 
     def build_target_host(self, network_address: NetworkAddress) -> TargetHost:
-        domain = network_address.domain or ""
-        target_host = TargetHost(network_address.ip, domain)
+        target_host = TargetHost(network_address.ip)
 
         if self.island_ip:
             ip, port = self._choose_island_address(target_host.ip_addr)
