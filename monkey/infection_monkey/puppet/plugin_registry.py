@@ -43,14 +43,19 @@ class PluginRegistry:
         try:
             plugin = self._registry[plugin_type][plugin_name]
         except KeyError:
-            try:
-                plugin = self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
-            except IslandAPIRequestError as err:
-                raise UnknownPluginError(
-                    f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}': {err}"
-                )
-
-            logger.debug(f"Plugin '{plugin_name}' found")
+            self._load_plugin_from_island(plugin_name, plugin_type)
+            plugin = self._registry[plugin_type][plugin_name]
             raise NotImplementedError()
 
         return plugin
+
+    def _load_plugin_from_island(self, plugin_name: str, plugin_type: AgentPluginType):
+        try:
+            plugin = self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
+            # self._registry.setdefault(plugin_type, {})[plugin_name] = plugin
+        except IslandAPIRequestError as err:
+            raise UnknownPluginError(
+                f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}': {err}"
+            )
+
+        logger.debug(f"Plugin '{plugin_name}' found")
