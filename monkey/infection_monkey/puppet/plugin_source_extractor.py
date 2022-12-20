@@ -47,8 +47,8 @@ class PluginSourceExtractor:
         # files. This is a paranoid approach that prevents against partial extraction of malicious
         # archives; either the whole archive is judged to be safe and extracted, or nothing is
         # extracted.
-        detect_malicious_archive(destination, archive)
-        safe_extract(destination, archive)
+        _detect_malicious_archive(destination, archive)
+        _safe_extract(destination, archive)
 
     def _get_plugin_destination_directory(self, agent_plugin: AgentPlugin) -> Path:
         destination = (self.plugin_directory / agent_plugin.plugin_manifest.name).resolve()
@@ -69,7 +69,7 @@ UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE = (
 )
 
 
-def safe_extract(destination_path: Path, archive: TarFile):
+def _safe_extract(destination_path: Path, archive: TarFile):
     canonical_destination_path = destination_path.resolve()
     for member in archive.getmembers():
         # It's wise to perform this check for each member immediately before extraction, even if the
@@ -88,7 +88,7 @@ def safe_extract(destination_path: Path, archive: TarFile):
             raise ValueError(UNSUPPORTED_MEMBER_TYPE_ERROR_MESSAGE)
 
 
-def detect_malicious_archive(destination_path: Path, archive: TarFile):
+def _detect_malicious_archive(destination_path: Path, archive: TarFile):
     canonical_destination_path = destination_path.resolve()
     for member in archive.getmembers():
         _detect_unsafe_extraction_conditions(canonical_destination_path, member)
