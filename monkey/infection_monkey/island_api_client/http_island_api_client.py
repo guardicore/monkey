@@ -61,7 +61,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return response.content
 
     def get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> AgentPlugin:
-        response = self.http_client.get(f"/api/agent-plugins/{plugin_type.value}/{plugin_name}")
+        response = self.http_client.get(f"agent-plugins/bogus/{plugin_name}")
 
         return AgentPlugin(**response.json())
 
