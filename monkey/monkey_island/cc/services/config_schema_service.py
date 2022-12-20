@@ -73,7 +73,6 @@ class ConfigSchemaService:
 
     def _create_plugin_schema(self, plugin: AgentPlugin) -> Dict[str, Any]:
         schema = deepcopy(PluginConfiguration.schema())
-        schema["properties"]["name"]["enum"] = [plugin.plugin_manifest.name]
+        schema["properties"]["name"]["title"] = [plugin.plugin_manifest.name]
         schema["properties"]["options"]["properties"] = plugin.config_schema
-
         return schema
