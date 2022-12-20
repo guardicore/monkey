@@ -68,7 +68,13 @@ class Puppet(IPuppet):
         interrupt: Event,
     ) -> ExploiterResultData:
         exploiter = self._plugin_registry.get_plugin(name, AgentPluginType.EXPLOITER)
-        return exploiter.exploit_host(host, servers, current_depth, options, interrupt)
+        return exploiter.run(
+            host=host,
+            servers=servers,
+            current_depth=current_depth,
+            options=options,
+            interrupt=interrupt,
+        )
 
     def run_payload(self, name: str, options: Dict, interrupt: Event):
         payload = self._plugin_registry.get_plugin(name, AgentPluginType.PAYLOAD)
