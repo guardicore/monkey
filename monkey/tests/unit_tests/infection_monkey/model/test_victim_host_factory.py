@@ -19,7 +19,6 @@ def test_factory_no_tunnel():
 
     assert victim.default_server == "192.168.56.1:5000"
     assert victim.ip_addr == "192.168.56.2"
-    assert victim.domain_name == ""
 
 
 def test_factory_on_island():
@@ -29,7 +28,6 @@ def test_factory_on_island():
     victim = factory.build_target_host(network_address)
 
     assert victim.default_server == "1.1.1.1:99"
-    assert victim.domain_name == "www.bogus.monkey"
     assert victim.ip_addr == "192.168.56.2"
 
 
