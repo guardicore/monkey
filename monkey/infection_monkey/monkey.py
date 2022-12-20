@@ -70,7 +70,7 @@ from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerpri
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
-from infection_monkey.puppet import PluginRegistry
+from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.utils import agent_process, environment
@@ -313,7 +313,9 @@ class InfectionMonkey:
         create_secure_directory(temp_dir)
         create_secure_directory(plugin_dir)
 
-        plugin_registry = PluginRegistry(self._island_api_client, PluginLoader(plugin_dir))
+        plugin_registry = PluginRegistry(
+            self._island_api_client, PluginSourceExtractor(plugin_dir), PluginLoader(plugin_dir)
+        )
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(

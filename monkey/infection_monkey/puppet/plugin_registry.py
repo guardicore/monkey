@@ -7,11 +7,18 @@ from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient
 
+from . import PluginSourceExtractor
+
 logger = logging.getLogger()
 
 
 class PluginRegistry:
-    def __init__(self, island_api_client: IIslandAPIClient, plugin_loader: PluginLoader):
+    def __init__(
+        self,
+        island_api_client: IIslandAPIClient,
+        plugin_source_extractor: PluginSourceExtractor,
+        plugin_loader: PluginLoader,
+    ):
         """
         `self._registry` looks like -
             {
@@ -23,6 +30,7 @@ class PluginRegistry:
         """
         self._registry: Dict[AgentPluginType, Dict[str, SingleUsePlugin]] = {}
         self._island_api_client = island_api_client
+        self._plugin_source_extractor = plugin_source_extractor
         self._plugin_loader = plugin_loader
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
