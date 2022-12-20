@@ -31,8 +31,8 @@ class PluginSourceExtractor:
 
         The `AgentPlugin`'s source code archive will be extracted to
         `self.plugin_directory / agent_plugin.manifest.name`. While this method attempts to prevent
-        directory traversal and other relevant vulnerabilities, it is still advisable that you not
-        use this to extract archives/plugins from untrusted sources.
+        directory traversal and other relevant vulnerabilities, it is still advisable that you do
+        not use this to extract archives/plugins from untrusted sources.
 
         :param agent_plugin: An `AgentPlugin` to extract
         :raises ValueError: If the agent's source code archive is potentially malicious or otherwise
