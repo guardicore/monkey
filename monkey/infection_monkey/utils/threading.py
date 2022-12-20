@@ -1,7 +1,7 @@
 import logging
+import threading
 from functools import wraps
 from itertools import count
-from threading import Event as ThreadingEvent
 from threading import Lock, Thread
 from typing import Any, Callable, Iterable, Iterator, Optional, Tuple, TypeVar
 
@@ -114,7 +114,7 @@ def interruptible_function(*, msg: Optional[str] = None, default_return_value: A
 
 class InterruptableThreadMixin:
     def __init__(self):
-        self._interrupted = ThreadingEvent()
+        self._interrupted = threading.Event()
 
     def stop(self):
         """Stop a running thread."""
