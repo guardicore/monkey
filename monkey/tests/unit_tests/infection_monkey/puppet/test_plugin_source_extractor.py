@@ -43,8 +43,6 @@ def test_extract_plugin_source(
     extractor.extract_plugin_source(agent_plugin)
 
     assert_directories_equal(tmp_path / "test_plugin", agent_source_archive_path / "src")
-    print(tmp_path / "test_plugin")
-    print(agent_source_archive_path / "src")
 
 
 def test_zipslip_tar_raises_exception(plugin_data_dir, extractor: PluginSourceExtractor):
