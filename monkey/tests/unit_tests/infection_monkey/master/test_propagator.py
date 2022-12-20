@@ -24,8 +24,7 @@ def mock_target_host_factory():
             pass
 
         def build_target_host(self, network_address: NetworkAddress) -> TargetHost:
-            domain = network_address.domain or ""
-            return TargetHost(network_address.ip, domain)
+            return TargetHost(network_address.ip)
 
     return MockTargetHostFactory()
 
