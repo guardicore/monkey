@@ -8,6 +8,8 @@ from common.credentials import Credentials
 from common.types import Event, PingScanData
 from infection_monkey.model import TargetHost
 
+from . import PortScanData
+
 
 class UnknownPluginError(Exception):
     pass
@@ -22,7 +24,6 @@ class ExploiterResultData:
     error_message: str = ""
 
 
-PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
 
 

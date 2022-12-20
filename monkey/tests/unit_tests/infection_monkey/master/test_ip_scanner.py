@@ -253,13 +253,13 @@ def test_stop_after_callback(scan_config, stop):
 
 
 def test_interrupt_before_fingerprinting(callback, scan_config, stop):
-    def stoppable_scan_tcp_ports(port, *_):
+    def stoppable_scan_tcp_ports(host_, ports, *_):
         # Block all threads here until 2 threads reach this barrier, then set stop
         # and test that neither thread scans any more ports
         stoppable_scan_tcp_ports.barrier.wait()
         stop.set()
 
-        return {port: PortScanData(port, False, None, None)}
+        return {port: PortScanData(port=port, status=PortStatus.CLOSED) for port in ports}
 
     stoppable_scan_tcp_ports.barrier = Barrier(2)
 
