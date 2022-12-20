@@ -24,7 +24,6 @@ class TargetHostFactory:
 
         if self.island_ip:
             ip, port = self._choose_island_address(target_host.ip_addr)
-            target_host.set_island_address(ip, port)
 
         logger.debug(f"Default server for {target_host} set to {target_host.default_server}")
 
