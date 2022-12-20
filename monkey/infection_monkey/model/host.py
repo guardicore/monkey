@@ -9,7 +9,6 @@ class TargetHost(object):
         self.os: Dict[str, Any] = {}
         self.services: Dict[str, Any] = {}
         self.icmp = False
-        self.default_server = None
 
     def is_windows(self) -> bool:
         return OperatingSystem.WINDOWS == self.os["type"]
