@@ -259,7 +259,7 @@ def test_interrupt_before_fingerprinting(callback, scan_config, stop):
         stoppable_scan_tcp_ports.barrier.wait()
         stop.set()
 
-        return {port: PortScanData(port, False, None, None)}
+        return {port: PortScanData(port=port, status=PortStatus.CLOSED)}
 
     stoppable_scan_tcp_ports.barrier = Barrier(2)
 

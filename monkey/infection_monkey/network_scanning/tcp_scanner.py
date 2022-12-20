@@ -65,7 +65,9 @@ def _build_port_scan_data(
             service = tcp_port_to_service(port)
             banner = open_ports[port]
 
-            port_scan_data[port] = PortScanData(port, PortStatus.OPEN, banner, service)
+            port_scan_data[port] = PortScanData(
+                port=port, status=PortStatus.OPEN, banner=banner, service=service
+            )
         else:
             port_scan_data[port] = _get_closed_port_data(port)
 
@@ -73,7 +75,7 @@ def _build_port_scan_data(
 
 
 def _get_closed_port_data(port: int) -> PortScanData:
-    return PortScanData(port, PortStatus.CLOSED, None, None)
+    return PortScanData(port=port, status=PortStatus.CLOSED)
 
 
 def _check_tcp_ports(

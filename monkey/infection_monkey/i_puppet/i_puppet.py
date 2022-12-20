@@ -3,9 +3,12 @@ from collections import namedtuple
 from dataclasses import dataclass
 from typing import Dict, Mapping, Optional, Sequence
 
+from pydantic import Field
+
 from common.agent_plugins import AgentPluginType
+from common.base_models import InfectionMonkeyBaseModel
 from common.credentials import Credentials
-from common.types import Event, PingScanData
+from common.types import Event, NetworkPort, PingScanData, PortStatus
 from infection_monkey.model import TargetHost
 
 
@@ -22,7 +25,13 @@ class ExploiterResultData:
     error_message: str = ""
 
 
-PortScanData = namedtuple("PortScanData", ["port", "status", "banner", "service"])
+class PortScanData(InfectionMonkeyBaseModel):
+    port: NetworkPort
+    status: PortStatus
+    banner: Optional[str] = Field(default=None)
+    service: Optional[str] = Field(default=None)
+
+
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
 
 

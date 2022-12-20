@@ -69,14 +69,20 @@ class MockPuppet(IPuppet):
     ) -> Dict[int, PortScanData]:
         logger.debug(f"run_scan_tcp_port({host}, {ports}, {timeout})")
         dot_1_results = {
-            22: PortScanData(22, PortStatus.CLOSED, None, None),
-            445: PortScanData(445, PortStatus.OPEN, "SMB BANNER", "tcp-445"),
-            3389: PortScanData(3389, PortStatus.OPEN, "", "tcp-3389"),
+            22: PortScanData(port=22, status=PortStatus.CLOSED),
+            445: PortScanData(
+                port=445, status=PortStatus.OPEN, banner="SMB BANNER", service="tcp-445"
+            ),
+            3389: PortScanData(port=3389, status=PortStatus.OPEN, banner="", service="tcp-3389"),
         }
         dot_3_results = {
-            22: PortScanData(22, PortStatus.OPEN, "SSH BANNER", "tcp-22"),
-            443: PortScanData(443, PortStatus.OPEN, "HTTPS BANNER", "tcp-443"),
-            3389: PortScanData(3389, PortStatus.CLOSED, "", None),
+            22: PortScanData(
+                port=22, status=PortStatus.OPEN, banner="SSH BANNER", service="tcp-22"
+            ),
+            443: PortScanData(
+                port=443, status=PortStatus.OPEN, banner="HTTPS BANNER", service="tcp-443"
+            ),
+            3389: PortScanData(port=3389, status=PortStatus.CLOSED, banner=""),
         }
 
         if host == DOT_1:
@@ -215,4 +221,4 @@ class MockPuppet(IPuppet):
 
 
 def _get_empty_results(port: int):
-    return PortScanData(port, PortStatus.CLOSED, None, None)
+    return PortScanData(port=port, status=PortStatus.CLOSED)
