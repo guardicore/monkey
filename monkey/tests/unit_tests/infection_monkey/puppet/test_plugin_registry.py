@@ -17,12 +17,12 @@ class StubIslandAPIClient:
 
 
 @pytest.fixture
-def plugin_source_extractor():
+def stub_plugin_source_extractor():
     return MagicMock()
 
 
 @pytest.fixture
-def plugin_loader():
+def stub_plugin_loader():
     return MagicMock()
 
 
