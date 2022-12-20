@@ -31,8 +31,8 @@ def extractor(tmp_path: Path) -> PluginSourceExtractor:
     return PluginSourceExtractor(tmp_path)
 
 
-def test_plugin_directory_property(tmp_path: Path, extractor: PluginSourceExtractor):
-    assert extractor.plugin_directory == tmp_path
+def test_plugin_destination_directory_property(tmp_path: Path, extractor: PluginSourceExtractor):
+    assert extractor.plugin_destination_directory == tmp_path
 
 
 def test_extract_plugin_source(

@@ -11,28 +11,28 @@ class PluginSourceExtractor:
     Extracts a plugin's source code archive to disk
     """
 
-    def __init__(self, plugin_directory: Path):
+    def __init__(self, plugin_destination_directory: Path):
         """
-        :param plugin_directory: A directory where this component will extract plugin source code
-                                 archives
+        :param plugin_destination directory: A directory where this component will extract plugin
+                                             source code archives
         """
-        self._plugin_directory = plugin_directory.resolve()
+        self._plugin_destination_directory = plugin_destination_directory.resolve()
 
     @property
-    def plugin_directory(self) -> Path:
+    def plugin_destination_directory(self) -> Path:
         """
         The directory where this component will extract plugin source code archives
         """
-        return self._plugin_directory
+        return self._plugin_destination_directory
 
     def extract_plugin_source(self, agent_plugin: AgentPlugin):
         """
         Extracts an `AgentPlugin`'s source code archive
 
         The `AgentPlugin`'s source code archive will be extracted to
-        `self.plugin_directory / agent_plugin.manifest.name`. While this method attempts to prevent
-        directory traversal and other relevant vulnerabilities, it is still advisable that you do
-        not use this to extract archives/plugins from untrusted sources.
+        `self.plugin_destination_directory / agent_plugin.manifest.name`. While this method attempts
+        to prevent directory traversal and other relevant vulnerabilities, it is still advisable
+        that you do not use this to extract archives/plugins from untrusted sources.
 
         :param agent_plugin: An `AgentPlugin` to extract
         :raises ValueError: If the agent's source code archive is potentially malicious or otherwise
@@ -51,16 +51,18 @@ class PluginSourceExtractor:
         _safe_extract(destination, archive)
 
     def _get_plugin_destination_directory(self, agent_plugin: AgentPlugin) -> Path:
-        destination = (self.plugin_directory / agent_plugin.plugin_manifest.name).resolve()
+        destination = (
+            self.plugin_destination_directory / agent_plugin.plugin_manifest.name
+        ).resolve()
         self._detect_directory_traversal_in_plugin_name(destination)
 
         return destination
 
     def _detect_directory_traversal_in_plugin_name(self, destination: Path):
-        if self.plugin_directory.resolve() not in destination.resolve().parents:
+        if self.plugin_destination_directory.resolve() not in destination.resolve().parents:
             raise ValueError(
                 f'Can not create directory "{destination}": directories must children of '
-                f'"{self.plugin_directory}"'
+                f'"{self.plugin_destination_directory}"'
             )
 
 
