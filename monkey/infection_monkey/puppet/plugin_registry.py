@@ -5,7 +5,7 @@ from serpentarium import PluginLoader, SingleUsePlugin
 
 from common.agent_plugins import AgentPluginType
 from infection_monkey.i_puppet import UnknownPluginError
-from infection_monkey.island_api_client import IIslandAPIClient
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 
 from . import PluginSourceExtractor
 
@@ -43,19 +43,14 @@ class PluginRegistry:
         try:
             plugin = self._registry[plugin_type][plugin_name]
         except KeyError:
-            response = self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
-            if 400 <= response.status_code < 500:
+            try:
+                plugin = self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
+            except IslandAPIRequestError as err:
                 raise UnknownPluginError(
-                    f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}'"
-                )
-            elif 200 <= response.status_code < 300:
-                raise NotImplementedError()
-            else:
-                raise Exception(
-                    f"Unexpected response status code {response.status} received while fetching "
-                    f"plugin '{plugin_name}' of type '{plugin_type.value}' from Island"
+                    f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}': {err}"
                 )
 
-        logger.debug(f"Plugin '{plugin_name}' found")
+            logger.debug(f"Plugin '{plugin_name}' found")
+            raise NotImplementedError()
 
         return plugin
