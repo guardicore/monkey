@@ -106,8 +106,6 @@ class InfectionMonkey:
         self._plugin_event_forwarder = self._setup_plugin_event_forwarder()
 
         self._island_address, self._island_api_client = self._connect_to_island_api()
-        self._cmd_island_ip = self._island_address.ip
-        self._cmd_island_port = self._island_address.port
 
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
@@ -453,7 +451,7 @@ class InfectionMonkey:
         self._agent_event_queue.publish(agent_shutdown_event)
 
     def _close_tunnel(self):
-        logger.info(f"Quitting tunnel {self._cmd_island_ip}")
+        logger.info(f"Quitting tunnel {self._island_address.ip}")
         notify_disconnect(self._island_address)
 
     def _send_log(self):
