@@ -41,21 +41,25 @@ class PluginRegistry:
 
     def get_plugin(self, plugin_name: str, plugin_type: AgentPluginType) -> Any:
         try:
-            plugin = self._registry[plugin_type][plugin_name]
+            return self._registry[plugin_type][plugin_name]
         except KeyError:
             self._load_plugin_from_island(plugin_name, plugin_type)
-            plugin = self._registry[plugin_type][plugin_name]
-            raise NotImplementedError()
-
-        return plugin
+            return self._registry[plugin_type][plugin_name]
 
     def _load_plugin_from_island(self, plugin_name: str, plugin_type: AgentPluginType):
         try:
             plugin = self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
-            # self._registry.setdefault(plugin_type, {})[plugin_name] = plugin
+            logger.debug(f"Plugin '{plugin_name}' downloaded from the island")
         except IslandAPIRequestError as err:
             raise UnknownPluginError(
                 f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}': {err}"
             )
 
-        logger.debug(f"Plugin '{plugin_name}' found")
+        self._plugin_source_extractor.extract_plugin_source(plugin)
+        multiprocessing_plugin = self._plugin_loader.load_multiprocessing_plugin(
+            plugin_name=plugin_name
+        )
+
+        self.load_plugin(plugin_name, multiprocessing_plugin, plugin_type)
+
+        return multiprocessing_plugin
