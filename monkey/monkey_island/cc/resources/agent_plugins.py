@@ -27,9 +27,9 @@ class AgentPlugins(AbstractResource):
         try:
             agent_plugin_type = AgentPluginType(plugin_type)
         except ValueError:
-            return make_response(
-                {"message": f"Invalid type '{plugin_type}'."}, HTTPStatus.NOT_FOUND
-            )
+            message = f"Invalid type '{plugin_type}'."
+            logger.warning(message)
+            return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
         try:
             agent_plugin = self._agent_plugin_repository.get_plugin(
@@ -37,7 +37,6 @@ class AgentPlugins(AbstractResource):
             )
             return make_response(agent_plugin.dict(simplify=True), HTTPStatus.OK)
         except UnknownRecordError:
-            return make_response(
-                {"message": f"Plugin '{name}' of type '{plugin_type}' not found."},
-                HTTPStatus.NOT_FOUND,
-            )
+            message = f"Plugin '{name}' of type '{plugin_type}' not found."
+            logger.warning(message)
+            return make_response({"message": message}, HTTPStatus.NOT_FOUND)
