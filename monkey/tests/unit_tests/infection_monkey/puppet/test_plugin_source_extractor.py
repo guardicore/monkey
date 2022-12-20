@@ -22,8 +22,8 @@ def read_file_to_bytes(file_path: Path) -> bytes:
 
 
 @pytest.fixture
-def agent_source_archive_path(data_for_tests_dir: Path) -> Path:
-    return data_for_tests_dir / "agent_source_archive"
+def dircmp_path(data_for_tests_dir: Path) -> Path:
+    return data_for_tests_dir / "dircmp"
 
 
 @pytest.fixture
@@ -35,14 +35,12 @@ def test_plugin_destination_directory_property(tmp_path: Path, extractor: Plugin
     assert extractor.plugin_destination_directory == tmp_path
 
 
-def test_extract_plugin_source(
-    tmp_path: Path, agent_source_archive_path: Path, extractor: PluginSourceExtractor
-):
-    agent_plugin = build_agent_plugin(agent_source_archive_path / "plugin.tar")
+def test_extract_plugin_source(tmp_path: Path, dircmp_path: Path, extractor: PluginSourceExtractor):
+    agent_plugin = build_agent_plugin(dircmp_path / "dir1.tar")
 
     extractor.extract_plugin_source(agent_plugin)
 
-    assert_directories_equal(tmp_path / "test_plugin", agent_source_archive_path / "src")
+    assert_directories_equal(tmp_path / "test_plugin", dircmp_path / "dir1")
 
 
 def test_zipslip_tar_raises_exception(plugin_data_dir, extractor: PluginSourceExtractor):
@@ -81,11 +79,9 @@ def test_device_tar_raises_exception(plugin_data_dir, extractor: PluginSourceExt
     ],
 )
 def test_plugin_name_directory_traversal(
-    agent_source_archive_path, extractor: PluginSourceExtractor, malicious_plugin_name: str
+    dircmp_path, extractor: PluginSourceExtractor, malicious_plugin_name: str
 ):
-    agent_plugin = build_agent_plugin(
-        agent_source_archive_path / "plugin.tar", malicious_plugin_name
-    )
+    agent_plugin = build_agent_plugin(dircmp_path / "dir1.tar", malicious_plugin_name)
 
     with pytest.raises(ValueError):
         extractor.extract_plugin_source(agent_plugin)
