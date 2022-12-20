@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from common import OperatingSystem
 
@@ -9,7 +9,6 @@ class TargetHost(object):
         self.os: Dict[str, Any] = {}
         self.services: Dict[str, Any] = {}
         self.icmp = False
-        self.default_server = None
 
     def is_windows(self) -> bool:
         return OperatingSystem.WINDOWS == self.os["type"]
@@ -42,6 +41,3 @@ class TargetHost(object):
             victim += "%s-%s " % (k, v)
         victim += "] ICMP: %s " % (self.icmp)
         return victim
-
-    def set_island_address(self, ip: str, port: Optional[str]):
-        self.default_server = f"{ip}:{port}" if port else f"{ip}"

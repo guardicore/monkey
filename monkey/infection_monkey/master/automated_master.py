@@ -10,7 +10,6 @@ from infection_monkey.credential_repository import IPropagationCredentialsReposi
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
-from infection_monkey.model import TargetHostFactory
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -31,7 +30,6 @@ class AutomatedMaster(IMaster):
         current_depth: Optional[int],
         servers: Sequence[str],
         puppet: IPuppet,
-        target_host_factory: TargetHostFactory,
         control_channel: IControlChannel,
         local_network_interfaces: List[IPv4Interface],
         credentials_store: IPropagationCredentialsRepository,
@@ -47,7 +45,6 @@ class AutomatedMaster(IMaster):
         self._propagator = Propagator(
             ip_scanner,
             exploiter,
-            target_host_factory,
             local_network_interfaces,
         )
 

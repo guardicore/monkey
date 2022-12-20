@@ -13,21 +13,6 @@ from common.agent_configuration.agent_sub_configurations import (
 from common.types import PingScanData, PortStatus
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
 from infection_monkey.master import IPScanResults, Propagator
-from infection_monkey.model import TargetHost, TargetHostFactory
-from infection_monkey.network import NetworkAddress
-
-
-@pytest.fixture
-def mock_target_host_factory():
-    class MockTargetHostFactory(TargetHostFactory):
-        def __init__(self):
-            pass
-
-        def build_target_host(self, network_address: NetworkAddress) -> TargetHost:
-            return TargetHost(network_address.ip)
-
-    return MockTargetHostFactory()
-
 
 empty_fingerprint_data = FingerprintData(None, None, {})
 
@@ -213,14 +198,11 @@ class MockExploiter:
                 )
 
 
-def test_scan_target_generation(
-    mock_ip_scanner, mock_target_host_factory, default_agent_configuration
-):
+def test_scan_target_generation(mock_ip_scanner, default_agent_configuration):
     local_network_interfaces = [IPv4Interface("10.0.0.9/29")]
     p = Propagator(
         mock_ip_scanner,
         StubExploiter(),
-        mock_target_host_factory,
         local_network_interfaces,
     )
     targets = ScanTargetConfiguration(
