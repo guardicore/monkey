@@ -71,8 +71,9 @@ class ConfigSchemaService:
                 # Add exploiter reference to brute_force
                 # TODO: Remove distinction in exploiter and change the reference
                 exploitation = schema["definitions"]["ExploitationConfiguration"]
-                brute_force = exploitation["properties"]["brute_force"]
-                brute_force["items"] = {"$ref": f"#/definitions/{plugin_type_name}"}
+                exploitation["properties"]["brute_force"] = {
+                    "$ref": f"#/definitions/{plugin_type_name}"
+                }
             else:
                 raise Exception(
                     "Error occurred while setting schema for {plugin_type} plugin type."

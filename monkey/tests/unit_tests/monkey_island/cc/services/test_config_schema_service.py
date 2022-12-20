@@ -28,8 +28,7 @@ def expected_config_schema() -> Dict[str, Any]:
         },
     }
     expected_exploitation = expected_schema["definitions"]["ExploitationConfiguration"]
-    expected_brute_force = expected_exploitation["properties"]["brute_force"]
-    expected_brute_force["items"] = {"$ref": "#/definitions/exploiter"}
+    expected_exploitation["properties"]["brute_force"] = {"$ref": "#/definitions/exploiter"}
 
     return expected_schema
 
