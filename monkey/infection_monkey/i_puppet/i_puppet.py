@@ -1,12 +1,11 @@
 import abc
-import threading
 from collections import namedtuple
 from dataclasses import dataclass
 from typing import Dict, Mapping, Optional, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
-from common.types import PingScanData
+from common.types import Event, PingScanData
 from infection_monkey.model import TargetHost
 
 
@@ -107,7 +106,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         current_depth: int,
         servers: Sequence[str],
         options: Dict,
-        interrupt: threading.Event,
+        interrupt: Event,
     ) -> ExploiterResultData:
         """
         Runs an exploiter against a remote host
@@ -118,20 +117,20 @@ class IPuppet(metaclass=abc.ABCMeta):
         :param servers: List of socket addresses for victim to connect back to
         :param Dict options: A dictionary containing options that modify the behavior of the
                              exploiter
-        :param threading.Event interrupt: A threading.Event object that signals the exploit to stop
+        :param Event interrupt: An `Event` object that signals the exploit to stop
                                           executing and clean itself up.
         :return: True if exploitation was successful, False otherwise
         :rtype: ExploiterResultData
         """
 
     @abc.abstractmethod
-    def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
+    def run_payload(self, name: str, options: Dict, interrupt: Event):
         """
         Runs a payload
 
         :param str name: The name of the payload to run
         :param Dict options: A dictionary containing options that modify the behavior of the payload
-        :param threading.Event interrupt: A threading.Event object that signals the payload to stop
+        :param Event interrupt: An `Event` object that signals the payload to stop
                                           executing and clean itself up.
         """
 

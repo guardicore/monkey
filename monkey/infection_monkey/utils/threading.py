@@ -1,8 +1,11 @@
 import logging
 from functools import wraps
 from itertools import count
-from threading import Event, Lock, Thread
+from threading import Event as ThreadingEvent
+from threading import Lock, Thread
 from typing import Any, Callable, Iterable, Iterator, Optional, Tuple, TypeVar
+
+from common.types import Event
 
 logger = logging.getLogger(__name__)
 
@@ -36,11 +39,11 @@ def interruptible_iter(
     iterator: Iterable, interrupt: Event, log_message: str = None, log_level: int = logging.DEBUG
 ) -> Any:
     """
-    Wraps an iterator so that the iterator can be interrupted if the `interrupt` Event is set. This
+    Wraps an iterator so that the iterator can be interrupted if the `interrupt` event is set. This
     is a convinient way to make loops interruptible and avoids the need to add an `if` to each and
     every loop.
     :param Iterable iterator: An iterator that will be made interruptible.
-    :param Event interrupt: A `threading.Event` that, if set, will prevent the remainder of the
+    :param Event interrupt: An `Event` that, if set, will prevent the remainder of the
                             iterator's items from being processed.
     :param str log_message: A message to be logged if the iterator is interrupted. If `log_message`
                             is `None` (default), then no message is logged.
@@ -58,7 +61,7 @@ def interruptible_iter(
 
 def interruptible_function(*, msg: Optional[str] = None, default_return_value: Any = None):
     """
-    This decorator allows a function to be skipped if an interrupt (threading.Event) is set. This is
+    This decorator allows a function to be skipped if an interrupt (`Event`) is set. This is
     useful for interrupting running code without introducing duplicate `if` checks at the beginning
     of each function.
 
@@ -66,7 +69,7 @@ def interruptible_function(*, msg: Optional[str] = None, default_return_value: A
     "interrupt".
 
     Example:
-        def run_algorithm(*inputs, interrupt: threading.Event):
+        def run_algorithm(*inputs, interrupt: Event):
             return_value = do_action_1(inputs[1], interrupt=interrupt)
             return_value = do_action_2(return_value + inputs[2], interrupt=interrupt)
             return_value = do_action_3(return_value + inputs[3], interrupt=interrupt)
@@ -74,17 +77,17 @@ def interruptible_function(*, msg: Optional[str] = None, default_return_value: A
             return return_value
 
         @interruptible_function(msg="Interrupt detected, skipping action 1", default_return_value=0)
-        def do_action_1(input, *, interrupt: threading.Event):
+        def do_action_1(input, *, interrupt: Event):
             # Process input
             ...
 
         @interruptible_function(msg="Interrupt detected, skipping action 2", default_return_value=0)
-        def do_action_2(input, *, interrupt: threading.Event):
+        def do_action_2(input, *, interrupt: Event):
             # Process input
             ...
 
         @interruptible_function(msg="Interrupt detected, skipping action 2", default_return_value=0)
-        def do_action_2(input, *, interrupt: threading.Event):
+        def do_action_2(input, *, interrupt: Event):
             # Process input
             ...
 
@@ -111,7 +114,7 @@ def interruptible_function(*, msg: Optional[str] = None, default_return_value: A
 
 class InterruptableThreadMixin:
     def __init__(self):
-        self._interrupted = Event()
+        self._interrupted = ThreadingEvent()
 
     def stop(self):
         """Stop a running thread."""

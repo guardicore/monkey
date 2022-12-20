@@ -1,12 +1,11 @@
 import logging
-import threading
 from typing import Dict, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue
-from common.types import PingScanData
+from common.types import Event, PingScanData
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
 from infection_monkey.model import TargetHost
@@ -66,12 +65,12 @@ class Puppet(IPuppet):
         current_depth: int,
         servers: Sequence[str],
         options: Dict,
-        interrupt: threading.Event,
+        interrupt: Event,
     ) -> ExploiterResultData:
         exploiter = self._plugin_registry.get_plugin(name, AgentPluginType.EXPLOITER)
         return exploiter.exploit_host(host, servers, current_depth, options, interrupt)
 
-    def run_payload(self, name: str, options: Dict, interrupt: threading.Event):
+    def run_payload(self, name: str, options: Dict, interrupt: Event):
         payload = self._plugin_registry.get_plugin(name, AgentPluginType.PAYLOAD)
         payload.run(options, interrupt)
 
