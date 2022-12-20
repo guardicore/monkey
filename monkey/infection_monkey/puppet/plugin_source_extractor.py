@@ -82,6 +82,9 @@ def _safe_extract(destination_path: Path, archive: TarFile):
         if member.isdir():
             create_secure_directory(canonical_destination_path / member.name)
         elif member.isfile():
+            # Writing files like this instead of using `TarFile.extract()` or `extractall()` has the
+            # added benefit of stripping out any SUID, SGID, and sticky bits (on Linux), as well as
+            # ownership and permissions information.
             with open(canonical_destination_path / member.name, "wb") as f:
                 f.write(archive.extractfile(member).read())  # type: ignore [union-attr]
         else:
