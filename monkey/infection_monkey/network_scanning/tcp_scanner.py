@@ -17,7 +17,7 @@ from infection_monkey.utils.ids import get_agent_id
 logger = logging.getLogger(__name__)
 
 POLL_INTERVAL = 0.5
-EMPTY_PORT_SCAN = {-1: PortScanData(-1, PortStatus.CLOSED, None, None)}
+EMPTY_PORT_SCAN = {}
 
 
 def scan_tcp_ports(
