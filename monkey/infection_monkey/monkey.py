@@ -57,7 +57,6 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
-from infection_monkey.model import TargetHostFactory
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
@@ -289,16 +288,15 @@ class InfectionMonkey:
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)
         local_network_interfaces = get_network_interfaces()
+        on_island = self._running_on_island(local_network_interfaces)
+        logger.debug(f"This agent is running on the island: {on_island}")
 
         puppet = self._build_puppet()
-
-        target_host_factory = self._build_target_host_factory(local_network_interfaces)
 
         self._master = AutomatedMaster(
             self._current_depth,
             servers,
             puppet,
-            target_host_factory,
             self._control_channel,
             local_network_interfaces,
             self._propagation_credentials_repository,
@@ -312,6 +310,10 @@ class InfectionMonkey:
         ordered_servers = {s: None for s in known_servers}
 
         return list(ordered_servers.keys())
+
+    def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
+        server_ip = self._island_address.ip
+        return server_ip in {interface.ip for interface in local_network_interfaces}
 
     def _build_puppet(self) -> IPuppet:
         temp_dir = Path(gettempdir()) / random_filename()
@@ -384,14 +386,6 @@ class InfectionMonkey:
 
         return puppet
 
-    def _build_target_host_factory(
-        self, local_network_interfaces: List[IPv4Interface]
-    ) -> TargetHostFactory:
-        on_island = self._running_on_island(local_network_interfaces)
-        logger.debug(f"This agent is running on the island: {on_island}")
-
-        return TargetHostFactory(self._cmd_island_ip, self._cmd_island_port, on_island)
-
     def _subscribe_events(self):
         self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
@@ -402,10 +396,6 @@ class InfectionMonkey:
         self._agent_event_queue.subscribe_type(
             PropagationEvent, notify_relay_on_propagation(self._relay)
         )
-
-    def _running_on_island(self, local_network_interfaces: List[IPv4Interface]) -> bool:
-        server_ip = self._island_address.ip
-        return server_ip in {interface.ip for interface in local_network_interfaces}
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
