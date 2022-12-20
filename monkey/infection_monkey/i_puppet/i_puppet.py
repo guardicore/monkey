@@ -3,13 +3,12 @@ from collections import namedtuple
 from dataclasses import dataclass
 from typing import Dict, Mapping, Optional, Sequence
 
-from pydantic import Field
-
 from common.agent_plugins import AgentPluginType
-from common.base_models import InfectionMonkeyBaseModel
 from common.credentials import Credentials
-from common.types import Event, NetworkPort, PingScanData, PortStatus
+from common.types import Event, PingScanData
 from infection_monkey.model import TargetHost
+
+from . import PortScanData
 
 
 class UnknownPluginError(Exception):
@@ -23,13 +22,6 @@ class ExploiterResultData:
     os: str = ""
     info: Optional[Mapping] = None
     error_message: str = ""
-
-
-class PortScanData(InfectionMonkeyBaseModel):
-    port: NetworkPort
-    status: PortStatus
-    banner: Optional[str] = Field(default=None)
-    service: Optional[str] = Field(default=None)
 
 
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
