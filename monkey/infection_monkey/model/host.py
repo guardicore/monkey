@@ -1,6 +1,21 @@
-from typing import Any, Dict
+from ipaddress import IPv4Address
+from typing import Any, Dict, Optional
+
+from pydantic import Field
 
 from common import OperatingSystem
+from common.base_models import InfectionMonkeyBaseModel
+
+
+class TargetHost(InfectionMonkeyBaseModel):
+    ip: IPv4Address
+    operating_system: Optional[OperatingSystem]
+    services: Dict[str, Any] = Field(default={})  # deprecated
+    icmp: bool = Field(default=False)
+
+
+def host_is_windows(host: TargetHost) -> bool:
+    return host.operating_system == OperatingSystem.WINDOWS
 
 
 class TargetHost(object):
