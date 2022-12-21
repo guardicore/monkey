@@ -20,7 +20,7 @@ def get_agent_dst_path(host: TargetHost) -> PurePath:
 
 
 def _get_agent_path(host: TargetHost) -> PurePath:
-    if host.os == OperatingSystem.WINDOWS:
+    if host.operating_system == OperatingSystem.WINDOWS:
         return PureWindowsPath(AGENT_BINARY_PATH_WIN64)
     return PurePosixPath(AGENT_BINARY_PATH_LINUX)
 
