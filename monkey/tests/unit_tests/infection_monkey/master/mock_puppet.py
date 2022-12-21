@@ -208,7 +208,7 @@ class MockPuppet(IPuppet):
         }
 
         try:
-            return successful_exploiters[host.ip_addr][name]
+            return successful_exploiters[host.ip][name]
         except KeyError:
             return ExploiterResultData(
                 False,
