@@ -113,7 +113,9 @@ class ICMPScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     timeout: PositiveFloat = Field(
-        title="Ping scan timeout", description="Maximum time to wait for ping response", default=1.0
+        title="Ping scan timeout",
+        description="Maximum time to wait for ping response in seconds",
+        default=1.0,
     )
 
 
@@ -127,7 +129,9 @@ class TCPScanConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     timeout: PositiveFloat = Field(
-        title="TCP scan timeout", description="Maximum time to wait for TCP response", default=3.0
+        title="TCP scan timeout",
+        description="Maximum time to wait for TCP response in seconds",
+        default=3.0,
     )
     ports: Tuple[NetworkPort, ...] = Field(
         title="TCP target ports",
