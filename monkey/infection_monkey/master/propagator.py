@@ -125,7 +125,7 @@ class Propagator:
         )
 
     def _process_scan_results(self, address: NetworkAddress, scan_results: IPScanResults):
-        target_host = TargetHost(address.ip)
+        target_host = TargetHost(ip=address.ip)
 
         Propagator._process_ping_scan_results(target_host, scan_results.ping_scan_data)
         Propagator._process_tcp_scan_results(target_host, scan_results.port_scan_data)
@@ -138,7 +138,7 @@ class Propagator:
     def _process_ping_scan_results(target_host: TargetHost, ping_scan_data: PingScanData):
         target_host.icmp = ping_scan_data.response_received
         if ping_scan_data.os is not None:
-            target_host.os["type"] = ping_scan_data.os
+            target_host.operating_system = ping_scan_data.os
 
     @staticmethod
     def _process_tcp_scan_results(
@@ -163,10 +163,10 @@ class Propagator:
             #       different os types or versions, and this logic isn't sufficient to handle those
             #       conflicts. Reevaluate this logic when we overhaul our scanners/fingerprinters.
             if fd.os_type is not None:
-                target_host.os["type"] = fd.os_type
+                target_host.operating_system = fd.os_type
 
-            if ("version" not in target_host.os) and (fd.os_version is not None):
-                target_host.os["version"] = fd.os_version
+            if (target_host.operating_system_version is None) and (fd.os_version is not None):
+                target_host.operating_system_version = fd.os_version
 
             for service, details in fd.services.items():
                 target_host.services.setdefault(service, {}).update(details)
