@@ -59,6 +59,6 @@ def test_fingerprint_exception_handling(monkeypatch):
     )
     p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert (
-        p.fingerprint("", "", PingScanData(response_received="windows", os=False), {}, {})
+        p.fingerprint("", "", PingScanData(response_received=False, os="windows"), {}, {})
         == EMPTY_FINGERPRINT
     )
