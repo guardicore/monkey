@@ -6,6 +6,7 @@ from serpentarium import PluginLoader, SingleUsePlugin
 
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from common.event_queue import IAgentEventPublisher
+from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
 from infection_monkey.utils.ids import get_agent_id
@@ -21,6 +22,7 @@ class PluginRegistry:
         island_api_client: IIslandAPIClient,
         plugin_source_extractor: PluginSourceExtractor,
         plugin_loader: PluginLoader,
+        agent_binary_repository: IAgentBinaryRepository,
         agent_event_publisher: IAgentEventPublisher,
     ):
         """
@@ -36,6 +38,7 @@ class PluginRegistry:
         self._island_api_client = island_api_client
         self._plugin_source_extractor = plugin_source_extractor
         self._plugin_loader = plugin_loader
+        self._agent_binary_repository = agent_binary_repository
         self._agent_event_publisher = agent_event_publisher
 
         self._agent_id = get_agent_id()
@@ -60,6 +63,7 @@ class PluginRegistry:
             plugin_name=plugin_name,
             reset_modules_cache=False,
             agent_id=self._agent_id,
+            agent_binary_repository=self._agent_binary_repository,
             agent_event_publisher=self._agent_event_publisher,
         )
 

@@ -311,10 +311,15 @@ class InfectionMonkey:
         create_secure_directory(temp_dir)
         create_secure_directory(plugin_dir)
 
+        agent_binary_repository = CachingAgentBinaryRepository(
+            island_api_client=self._island_api_client,
+        )
+
         plugin_registry = PluginRegistry(
             self._island_api_client,
             PluginSourceExtractor(plugin_dir),
             PluginLoader(plugin_dir),
+            agent_binary_repository,
             self._agent_event_publisher,
         )
         puppet = Puppet(self._agent_event_queue, plugin_registry)
@@ -335,9 +340,6 @@ class InfectionMonkey:
         puppet.load_plugin("smb", SMBFingerprinter(), AgentPluginType.FINGERPRINTER)
         puppet.load_plugin("ssh", SSHFingerprinter(), AgentPluginType.FINGERPRINTER)
 
-        agent_binary_repository = CachingAgentBinaryRepository(
-            island_api_client=self._island_api_client,
-        )
         exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
 
         puppet.load_plugin(

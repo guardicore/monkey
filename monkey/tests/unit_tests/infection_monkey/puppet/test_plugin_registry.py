@@ -5,6 +5,7 @@ from serpentarium import MultiprocessingPlugin, PluginLoader
 
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.event_queue import IAgentEventPublisher
+from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import (
     IIslandAPIClient,
@@ -25,6 +26,11 @@ def dummy_plugin_loader() -> PluginLoader:
 
 
 @pytest.fixture
+def dummy_agent_binary_repository() -> IAgentBinaryRepository:
+    return MagicMock(spec=IAgentBinaryRepository)
+
+
+@pytest.fixture
 def dummy_agent_event_publisher() -> IAgentEventPublisher:
     return MagicMock(spec=IAgentEventPublisher)
 
@@ -36,6 +42,7 @@ def dummy_agent_event_publisher() -> IAgentEventPublisher:
 def test_get_plugin__error_handling(
     dummy_plugin_source_extractor: PluginSourceExtractor,
     dummy_plugin_loader: PluginLoader,
+    dummy_agent_binary_repository: IAgentBinaryRepository,
     dummy_agent_event_publisher: IAgentEventPublisher,
     error_raised_by_island_api_client: Exception,
     error_raised_by_plugin_registry: Exception,
@@ -48,6 +55,7 @@ def test_get_plugin__error_handling(
         mock_island_api_client,
         dummy_plugin_source_extractor,
         dummy_plugin_loader,
+        dummy_agent_binary_repository,
         dummy_agent_event_publisher,
     )
 
@@ -91,12 +99,14 @@ def plugin_registry(
     mock_island_api_client: IIslandAPIClient,
     mock_plugin_source_extractor: PluginSourceExtractor,
     mock_plugin_loader: PluginLoader,
+    dummy_agent_binary_repository: IAgentBinaryRepository,
     dummy_agent_event_publisher: IAgentEventPublisher,
 ) -> PluginRegistry:
     return PluginRegistry(
         mock_island_api_client,
         mock_plugin_source_extractor,
         mock_plugin_loader,
+        dummy_agent_binary_repository,
         dummy_agent_event_publisher,
     )
 

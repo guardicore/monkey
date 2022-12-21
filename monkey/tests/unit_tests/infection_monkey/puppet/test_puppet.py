@@ -12,7 +12,7 @@ from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 @pytest.fixture
 def mock_plugin_registry() -> PluginRegistry:
-    return PluginRegistry(MagicMock(), MagicMock(), MagicMock(), MagicMock())
+    return PluginRegistry(MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock())
 
 
 def test_puppet_run_payload_success(mock_plugin_registry):
