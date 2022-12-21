@@ -1,6 +1,6 @@
 import logging
 import threading
-from ipaddress import IPv4Interface
+from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
 from typing import List, Mapping, Sequence
 
@@ -125,7 +125,7 @@ class Propagator:
         )
 
     def _process_scan_results(self, address: NetworkAddress, scan_results: IPScanResults):
-        target_host = TargetHost(ip=address.ip)
+        target_host = TargetHost(ip=IPv4Address(address.ip))
 
         Propagator._process_ping_scan_results(target_host, scan_results.ping_scan_data)
         Propagator._process_tcp_scan_results(target_host, scan_results.port_scan_data)
