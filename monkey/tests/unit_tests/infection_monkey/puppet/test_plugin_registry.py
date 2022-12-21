@@ -23,29 +23,25 @@ def dummy_plugin_loader() -> PluginLoader:
     return MagicMock(spec=PluginLoader)
 
 
-def test_get_plugin__unexpected_response(
-    dummy_plugin_source_extractor: PluginSourceExtractor, dummy_plugin_loader: PluginLoader
+@pytest.mark.parametrize(
+    "error_raised_by_island_api_client, error_raised_by_plugin_registry",
+    [(IslandAPIRequestError, UnknownPluginError), (IslandAPIError, IslandAPIError)],
+)
+def test_get_plugin__error_handling(
+    dummy_plugin_source_extractor: PluginSourceExtractor,
+    dummy_plugin_loader: PluginLoader,
+    error_raised_by_island_api_client: Exception,
+    error_raised_by_plugin_registry: Exception,
 ):
     mock_island_api_client = MagicMock()
-    mock_island_api_client.get_agent_plugin = MagicMock(side_effect=IslandAPIError)
+    mock_island_api_client.get_agent_plugin = MagicMock(
+        side_effect=error_raised_by_island_api_client
+    )
     plugin_registry = PluginRegistry(
         mock_island_api_client, dummy_plugin_source_extractor, dummy_plugin_loader
     )
 
-    with pytest.raises(IslandAPIError):
-        plugin_registry.get_plugin("Ghost", AgentPluginType.PAYLOAD)
-
-
-def test_get_plugin__unknown_plugin(
-    dummy_plugin_source_extractor: PluginSourceExtractor, dummy_plugin_loader: PluginLoader
-):
-    mock_island_api_client = MagicMock()
-    mock_island_api_client.get_agent_plugin = MagicMock(side_effect=IslandAPIRequestError)
-    plugin_registry = PluginRegistry(
-        mock_island_api_client, dummy_plugin_source_extractor, dummy_plugin_loader
-    )
-
-    with pytest.raises(UnknownPluginError):
+    with pytest.raises(error_raised_by_plugin_registry):
         plugin_registry.get_plugin("Ghost", AgentPluginType.PAYLOAD)
 
 
