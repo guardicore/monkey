@@ -24,7 +24,3 @@ class TargetHost(InfectionMonkeyBaseModel):
             victim += "%s-%s " % (k, v)
         victim += "] ICMP: %s " % (self.icmp)
         return victim
-
-
-def host_is_windows(host: TargetHost) -> bool:
-    return host.operating_system == OperatingSystem.WINDOWS
