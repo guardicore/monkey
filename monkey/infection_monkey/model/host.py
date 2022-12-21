@@ -10,7 +10,6 @@ from common.base_models import InfectionMonkeyBaseModel
 class TargetHost(InfectionMonkeyBaseModel):
     ip: IPv4Address
     operating_system: Optional[OperatingSystem]
-    operating_system_version: Optional[str]
     services: Dict[str, Any] = Field(default={})  # deprecated
     icmp: bool = Field(default=False)
 
