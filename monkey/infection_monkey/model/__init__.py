@@ -1,4 +1,4 @@
-from infection_monkey.model.host import TargetHost
+from infection_monkey.model.host import TargetHost, host_is_windows
 
 MONKEY_ARG = "m0nk3y"
 DROPPER_ARG = "dr0pp3r"
