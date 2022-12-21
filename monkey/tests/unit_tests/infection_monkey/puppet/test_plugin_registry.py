@@ -80,19 +80,40 @@ def mock_plugin_loader() -> PluginLoader:
     return mock_plugin_loader
 
 
+@pytest.fixture
+def plugin_registry(
+    mock_island_api_client: IIslandAPIClient,
+    mock_plugin_source_extractor: PluginSourceExtractor,
+    mock_plugin_loader: PluginLoader,
+) -> PluginRegistry:
+    return PluginRegistry(mock_island_api_client, mock_plugin_source_extractor, mock_plugin_loader)
+
+
 def test_load_plugin_from_island__only_downloaded_once(
     agent_plugin: AgentPlugin,
     mock_island_api_client: IIslandAPIClient,
     mock_plugin_source_extractor: PluginSourceExtractor,
     mock_plugin_loader: PluginLoader,
+    plugin_registry: PluginRegistry,
 ):
-    plugin_registry = PluginRegistry(
-        mock_island_api_client, mock_plugin_source_extractor, mock_plugin_loader
-    )
-
     plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
     plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
 
     mock_island_api_client.get_agent_plugin.assert_called_once()
     mock_plugin_source_extractor.extract_plugin_source.assert_called_once()
     mock_plugin_loader.load_multiprocessing_plugin.assert_called_once()
+
+
+def test_load_plugin_from_island__return_copy(
+    agent_plugin: AgentPlugin,
+    mock_island_api_client: IIslandAPIClient,
+    mock_plugin_source_extractor: PluginSourceExtractor,
+    mock_plugin_loader: PluginLoader,
+    plugin_registry: PluginRegistry,
+):
+    plugin1 = plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
+    plugin2 = plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
+
+    assert plugin1.__class__ == plugin2.__class__
+    assert plugin1.name == plugin2.name
+    assert id(plugin1) != id(plugin2)

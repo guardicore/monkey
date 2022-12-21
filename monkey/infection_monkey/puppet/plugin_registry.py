@@ -1,4 +1,5 @@
 import logging
+from copy import copy
 from typing import Any, Dict
 
 from serpentarium import PluginLoader, SingleUsePlugin
@@ -41,7 +42,7 @@ class PluginRegistry:
 
     def get_plugin(self, plugin_name: str, plugin_type: AgentPluginType) -> Any:
         try:
-            return self._registry[plugin_type][plugin_name]
+            return copy(self._registry[plugin_type][plugin_name])
         except KeyError:
             self._load_plugin_from_island(plugin_name, plugin_type)
             return self._registry[plugin_type][plugin_name]
@@ -62,4 +63,4 @@ class PluginRegistry:
 
         self.load_plugin(plugin_name, multiprocessing_plugin, plugin_type)
 
-        return multiprocessing_plugin
+        return copy(multiprocessing_plugin)
