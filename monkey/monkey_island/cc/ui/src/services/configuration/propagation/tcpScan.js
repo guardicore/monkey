@@ -14,7 +14,7 @@ const TCP_SCAN_CONFIGURATION_SCHEMA = {
     'timeout': {
       'title': 'TCP scan timeout',
       'type': 'number',
-      'description': 'Maximum time to wait for TCP response.'
+      'description': 'Maximum time to wait for TCP response in seconds'
     }
   }
 }

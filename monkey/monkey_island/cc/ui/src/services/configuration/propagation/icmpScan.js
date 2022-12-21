@@ -5,7 +5,7 @@ const ICMP_SCAN_CONFIGURATION_SCHEMA = {
     'timeout': {
       'title': 'Ping scan timeout',
       'type': 'number',
-      'description': 'Maximum time to wait for ping response'
+      'description': 'Maximum time to wait for ping response in seconds'
     }
   }
 }
