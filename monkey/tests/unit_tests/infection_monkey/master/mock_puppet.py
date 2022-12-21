@@ -4,8 +4,14 @@ from typing import Dict, Sequence
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import Event, PingScanData, PortStatus
-from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
+from common.types import Event, PortStatus
+from infection_monkey.i_puppet import (
+    ExploiterResultData,
+    FingerprintData,
+    IPuppet,
+    PingScanData,
+    PortScanData,
+)
 from infection_monkey.model import TargetHost
 
 DOT_1 = "10.0.0.1"
@@ -51,18 +57,18 @@ class MockPuppet(IPuppet):
     def ping(self, host: str, timeout: float = 1) -> PingScanData:
         logger.debug(f"run_ping({host}, {timeout})")
         if host == DOT_1:
-            return PingScanData(True, OperatingSystem.WINDOWS)
+            return PingScanData(response_received=True, os=OperatingSystem.WINDOWS)
 
         if host == DOT_2:
-            return PingScanData(False, None)
+            return PingScanData(response_received=False, os=None)
 
         if host == DOT_3:
-            return PingScanData(True, OperatingSystem.LINUX)
+            return PingScanData(response_received=True, os=OperatingSystem.LINUX)
 
         if host == DOT_4:
-            return PingScanData(False, None)
+            return PingScanData(response_received=False, os=None)
 
-        return PingScanData(False, None)
+        return PingScanData(response_received=False, os=None)
 
     def scan_tcp_ports(
         self, host: str, ports: Sequence[int], timeout: float = 3
