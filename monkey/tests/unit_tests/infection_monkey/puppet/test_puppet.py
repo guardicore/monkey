@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
-from common.types import PingScanData
+from infection_monkey.i_puppet import PingScanData
 from infection_monkey.puppet import PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
@@ -58,4 +58,7 @@ def test_fingerprint_exception_handling(monkeypatch):
         plugin_registry=PluginRegistry(MagicMock(), MagicMock(), MagicMock()),
     )
     p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
-    assert p.fingerprint("", "", PingScanData("windows", False), {}, {}) == EMPTY_FINGERPRINT
+    assert (
+        p.fingerprint("", "", PingScanData(response_received=False, os="windows"), {}, {})
+        == EMPTY_FINGERPRINT
+    )

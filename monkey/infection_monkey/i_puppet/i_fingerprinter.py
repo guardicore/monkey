@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Dict
 
-from common.types import PingScanData
+from infection_monkey.i_puppet import PingScanData
 
 from . import FingerprintData, PortScanData
 

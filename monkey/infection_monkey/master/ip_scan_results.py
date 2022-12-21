@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict
 
-from common.types import NetworkPort, PingScanData
-from infection_monkey.i_puppet import FingerprintData, PortScanData
+from common.types import NetworkPort
+from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
 
 FingerprinterName = str
 

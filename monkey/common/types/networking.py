@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum
 from ipaddress import IPv4Address
-from typing import Optional
 
 from pydantic import ConstrainedInt
 
-from common import OperatingSystem
 from common.base_models import InfectionMonkeyBaseModel
 from common.network.network_utils import address_to_ip_port
 
@@ -33,12 +30,6 @@ class NetworkPort(ConstrainedInt):
 
     ge = 0
     le = 65535
-
-
-@dataclass
-class PingScanData:
-    response_received: bool
-    os: Optional[OperatingSystem]
 
 
 class PortStatus(Enum):

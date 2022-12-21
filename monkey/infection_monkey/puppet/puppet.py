@@ -5,9 +5,15 @@ from common.agent_plugins import AgentPluginType
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue
-from common.types import Event, PingScanData
+from common.types import Event
 from infection_monkey import network_scanning
-from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, IPuppet, PortScanData
+from infection_monkey.i_puppet import (
+    ExploiterResultData,
+    FingerprintData,
+    IPuppet,
+    PingScanData,
+    PortScanData,
+)
 from infection_monkey.model import TargetHost
 
 from . import PluginRegistry

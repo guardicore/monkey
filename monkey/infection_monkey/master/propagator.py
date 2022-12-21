@@ -10,8 +10,13 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import Event, NetworkPort, PingScanData, PortStatus
-from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
+from common.types import Event, NetworkPort, PortStatus
+from infection_monkey.i_puppet import (
+    ExploiterResultData,
+    FingerprintData,
+    PingScanData,
+    PortScanData,
+)
 from infection_monkey.model import TargetHost
 from infection_monkey.network import NetworkAddress
 from infection_monkey.network_scanning.scan_target_generator import compile_scan_target_list

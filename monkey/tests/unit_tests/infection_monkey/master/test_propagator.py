@@ -10,14 +10,19 @@ from common.agent_configuration.agent_sub_configurations import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import PingScanData, PortStatus
-from infection_monkey.i_puppet import ExploiterResultData, FingerprintData, PortScanData
+from common.types import PortStatus
+from infection_monkey.i_puppet import (
+    ExploiterResultData,
+    FingerprintData,
+    PingScanData,
+    PortScanData,
+)
 from infection_monkey.master import IPScanResults, Propagator
 
 empty_fingerprint_data = FingerprintData(None, None, {})
 
 dot_1_scan_results = IPScanResults(
-    PingScanData(True, OperatingSystem.WINDOWS),
+    PingScanData(response_received=True, os=OperatingSystem.WINDOWS),
     {
         22: PortScanData(port=22, status=PortStatus.CLOSED),
         445: PortScanData(port=445, status=PortStatus.OPEN, banner="SMB BANNER", service="tcp-445"),
@@ -31,7 +36,7 @@ dot_1_scan_results = IPScanResults(
 )
 
 dot_3_scan_results = IPScanResults(
-    PingScanData(True, OperatingSystem.LINUX),
+    PingScanData(response_received=True, os=OperatingSystem.LINUX),
     {
         22: PortScanData(port=22, status=PortStatus.OPEN, banner="SSH BANNER", service="tcp-22"),
         443: PortScanData(
@@ -56,7 +61,7 @@ dot_3_scan_results = IPScanResults(
 )
 
 dead_host_scan_results = IPScanResults(
-    PingScanData(False, None),
+    PingScanData(response_received=False, os=None),
     {
         22: PortScanData(port=22, status=PortStatus.CLOSED),
         443: PortScanData(port=443, status=PortStatus.CLOSED),
