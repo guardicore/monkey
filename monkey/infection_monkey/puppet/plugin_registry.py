@@ -45,7 +45,7 @@ class PluginRegistry:
             return copy(self._registry[plugin_type][plugin_name])
         except KeyError:
             self._load_plugin_from_island(plugin_name, plugin_type)
-            return self._registry[plugin_type][plugin_name]
+            return copy(self._registry[plugin_type][plugin_name])
 
     def _load_plugin_from_island(self, plugin_name: str, plugin_type: AgentPluginType):
         try:
@@ -62,5 +62,3 @@ class PluginRegistry:
         )
 
         self.load_plugin(plugin_name, multiprocessing_plugin, plugin_type)
-
-        return copy(multiprocessing_plugin)
