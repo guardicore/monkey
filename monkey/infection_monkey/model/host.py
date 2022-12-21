@@ -18,8 +18,9 @@ class TargetHost(MutableInfectionMonkeyBaseModel):
 
     def __str__(self):
         victim = "Target Host %s: " % self.ip
-        victim += "OS - [ %s " % self.operating_system.value
-        victim += "] Services - ["
+        if self.operating_system is not None:
+            victim += "OS - [ %s ]" % self.operating_system.value
+        victim += "Services - ["
         for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
         victim += "] ICMP: %s " % (self.icmp)
