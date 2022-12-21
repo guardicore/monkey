@@ -4,10 +4,10 @@ from typing import Any, Dict, Optional
 from pydantic import Field
 
 from common import OperatingSystem
-from common.base_models import InfectionMonkeyBaseModel
+from common.base_models import MutableInfectionMonkeyBaseModel
 
 
-class TargetHost(InfectionMonkeyBaseModel):
+class TargetHost(MutableInfectionMonkeyBaseModel):
     ip: IPv4Address
     operating_system: Optional[OperatingSystem] = Field(default=None)
     services: Dict[str, Any] = Field(default={})  # deprecated
@@ -18,7 +18,7 @@ class TargetHost(InfectionMonkeyBaseModel):
 
     def __str__(self):
         victim = "Target Host %s: " % self.ip
-        victim += "OS - [ %s " % self.os.name
+        victim += "OS - [ %s " % self.operating_system.value
         victim += "] Services - ["
         for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
