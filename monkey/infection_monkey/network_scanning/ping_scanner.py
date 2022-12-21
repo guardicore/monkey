@@ -10,14 +10,14 @@ from typing import Tuple
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
-from common.types import PingScanData
 from common.utils.environment import is_windows_os
+from infection_monkey.i_puppet import PingScanData
 from infection_monkey.utils.ids import get_agent_id
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)
 LINUX_TTL = 64  # Windows TTL is 128
 PING_EXIT_TIMEOUT = 10
-EMPTY_PING_SCAN = PingScanData(False, None)
+EMPTY_PING_SCAN = PingScanData(response_received=False, os=None)
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ def _run_ping_command(host: str, timeout: float) -> Tuple[float, str]:
 def _process_ping_command_output(ping_command_output: str) -> PingScanData:
     ttl_match = TTL_REGEX.search(ping_command_output)
     if not ttl_match:
-        return PingScanData(False, None)
+        return PingScanData(response_received=False, os=None)
 
     # It should be impossible for this next line to raise any errors, since the TTL_REGEX won't
     # match at all if the group isn't found or the contents of the group are not only digits.
@@ -91,7 +91,7 @@ def _process_ping_command_output(ping_command_output: str) -> PingScanData:
     # could also be OSX/BSD, but lets handle that when it comes up.
     operating_system = OperatingSystem.LINUX if ttl <= LINUX_TTL else OperatingSystem.WINDOWS
 
-    return PingScanData(True, operating_system)
+    return PingScanData(response_received=True, os=operating_system)
 
 
 def _build_ping_command(host: str, timeout: float):

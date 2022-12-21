@@ -5,7 +5,8 @@ from typing import Dict, Mapping, Optional, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
-from common.types import Event, PingScanData
+from common.types import Event
+from infection_monkey.i_puppet import PingScanData
 from infection_monkey.model import TargetHost
 
 from . import PortScanData
