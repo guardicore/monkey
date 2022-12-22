@@ -47,7 +47,7 @@ class Plugin:
         event_fields = {
             "source": self._agent_id,
             "target": host.ip,
-            "exploiter_name": "MockExploiter",
+            "exploiter_name": "Mock1Exploiter",
         }
 
         exploitation_success = self._exploit(options, event_fields)
@@ -92,7 +92,7 @@ class Plugin:
         self._agent_event_publisher.publish(
             ExploitationEvent(
                 success=exploitation_success,
-                tags=frozenset(["mock-plugin-exploitation"]),
+                tags=frozenset(["mock1-plugin-exploitation"]),
                 **event_fields,
             )
         )
@@ -104,7 +104,7 @@ class Plugin:
         self._agent_event_publisher.publish(
             PropagationEvent(
                 success=propagation_success,
-                tags=frozenset(["mock-plugin-propagation"]),
+                tags=frozenset(["mock1-plugin-propagation"]),
                 **event_fields,
             )
         )

@@ -1,6 +1,6 @@
 {
-    "title": "Mock exploiter",
-    "description": "Configuration settings for Mock exploiter.",
+    "title": "Mock1 exploiter",
+    "description": "Configuration settings for Mock1 exploiter.",
     "type": "object",
     "required": [
         "exploitation_success_rate",
