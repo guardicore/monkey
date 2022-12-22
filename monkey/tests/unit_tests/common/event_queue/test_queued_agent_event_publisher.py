@@ -30,6 +30,6 @@ def test_queue_agent_event_publisher(queued_agent_event_publisher, multiprocessi
     expected_event = FakeEvent()
     queued_agent_event_publisher.publish(expected_event)
 
-    actual_event = multiprocessing_queue.get(timeout=0.0001)
+    actual_event = multiprocessing_queue.get(timeout=0.001)
 
     assert actual_event == expected_event
