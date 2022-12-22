@@ -1,7 +1,7 @@
 import logging
 import random
 import time
-from threading import Event
+from threading import Event, current_thread
 from typing import Any, Dict, Sequence
 
 import mock_dependency
@@ -38,6 +38,7 @@ class Plugin:
         interrupt: Event,
     ) -> ExploiterResultData:
 
+        logger.info(f"Main thread name {current_thread().name}")
         logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
         Plugin._log_options(options)

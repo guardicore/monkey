@@ -2,7 +2,7 @@ import logging
 from copy import copy
 from typing import Any, Dict
 
-from serpentarium import PluginLoader, SingleUsePlugin
+from serpentarium import PluginLoader, PluginThreadName, SingleUsePlugin
 
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from common.event_queue import IAgentEventPublisher
@@ -62,6 +62,7 @@ class PluginRegistry:
         multiprocessing_plugin = self._plugin_loader.load_multiprocessing_plugin(
             plugin_name=plugin_name,
             reset_modules_cache=False,
+            main_thread_name=PluginThreadName.CALLING_THREAD,
             agent_id=self._agent_id,
             agent_binary_repository=self._agent_binary_repository,
             agent_event_publisher=self._agent_event_publisher,
