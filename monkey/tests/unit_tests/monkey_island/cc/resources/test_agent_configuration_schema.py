@@ -27,31 +27,27 @@ def flask_client(build_flask_client, mock_config_schema_service):
 
 
 def test_agent_configuration_schema_endpoint(flask_client, mock_config_schema_service):
-    mock_config_schema_service.get_schema = lambda: {}
+    fake_schema = {"schema": True}
+    mock_config_schema_service.get_schema = lambda: fake_schema
 
     resp = flask_client.get(AGENT_CONFIGURATION_SCHEMA_URL)
 
     assert resp.status_code == HTTPStatus.OK
+    assert resp.json == fake_schema
 
 
 def test_agent_configuration_schema_endpoint_error(flask_client, mock_config_schema_service):
-    def raise_runtime_error():
-        raise RuntimeError
-
-    mock_config_schema_service.get_schema = raise_runtime_error
+    mock_config_schema_service.get_schema = MagicMock(side_effect=RuntimeError)
 
     resp = flask_client.get(AGENT_CONFIGURATION_SCHEMA_URL)
 
     assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-def test_agent_configuration_schema_endpoint_retrievalerror(
+def test_agent_configuration_schema_endpoint_retrieval_error(
     flask_client, mock_config_schema_service
 ):
-    def raise_retrieval_error():
-        raise RetrievalError
-
-    mock_config_schema_service.get_schema = raise_retrieval_error
+    mock_config_schema_service.get_schema = MagicMock(side_effect=RetrievalError)
 
     resp = flask_client.get(AGENT_CONFIGURATION_SCHEMA_URL)
 
