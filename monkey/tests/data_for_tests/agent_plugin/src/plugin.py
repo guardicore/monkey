@@ -81,9 +81,9 @@ class Plugin:
 
     @staticmethod
     def _sleep(duration: float, interrupt: Event):
-        logger.error(f"Sleeping for {duration} seconds")
+        logger.info(f"Sleeping for {duration} seconds")
         for time_passed in interruptible_iter(range(int(duration)), interrupt):
-            logger.error(f"Passed {time_passed} seconds")
+            logger.info(f"Passed {time_passed} seconds")
             time.sleep(1)
 
     def _exploit(self, options: Dict[str, Any], event_fields: Dict[str, Any]) -> bool:
