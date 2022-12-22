@@ -1,4 +1,5 @@
 import logging
+import threading
 from copy import copy
 from typing import Any, Dict
 
@@ -51,7 +52,7 @@ class PluginRegistry:
         agent_plugin = self._download_plugin_from_island(plugin_name, plugin_type)
         self._plugin_source_extractor.extract_plugin_source(agent_plugin)
         multiprocessing_plugin = self._plugin_loader.load_multiprocessing_plugin(
-            plugin_name=plugin_name
+            plugin_name=plugin_name, main_thread_name=threading.current_thread().name
         )
 
         self.load_plugin(plugin_name, multiprocessing_plugin, plugin_type)
