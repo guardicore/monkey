@@ -12,7 +12,7 @@ from common.agent_configuration import PluginConfiguration
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.services import AgentConfigurationSchemaService
-from monkey_island.cc.services.config_schema_service import SUPPORTED_PLUGINS
+from monkey_island.cc.services.agent_configuration_schema_service import SUPPORTED_PLUGINS
 
 
 @pytest.fixture
