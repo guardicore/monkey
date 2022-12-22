@@ -12,6 +12,7 @@ from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import ExploiterResultData
 from infection_monkey.model import TargetHost
+from infection_monkey.utils.threading import interruptible_iter
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,7 @@ class Plugin:
         logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
         Plugin._log_options(options)
-        Plugin._sleep(options.get("sleep_duration", 0))
+        Plugin._sleep(options.get("sleep_duration", 0), interrupt)
 
         event_fields = {
             "source": self._agent_id,
@@ -79,9 +80,11 @@ class Plugin:
         logger.info(f"Random boolean: {random_boolean}")
 
     @staticmethod
-    def _sleep(duration: float):
-        logger.info(f"Sleeping for {duration} seconds")
-        time.sleep(duration)
+    def _sleep(duration: float, interrupt: Event):
+        logger.error(f"Sleeping for {duration} seconds")
+        for time_passed in interruptible_iter(range(int(duration)), interrupt):
+            logger.error(f"Passed {time_passed} seconds")
+            time.sleep(1)
 
     def _exploit(self, options: Dict[str, Any], event_fields: Dict[str, Any]) -> bool:
         exploitation_success = _get_random_result_from_success_rate("exploitation", options)
