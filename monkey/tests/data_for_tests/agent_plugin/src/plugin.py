@@ -1,6 +1,5 @@
 import logging
 import random
-from ipaddress import IPv4Address
 from threading import Event
 from typing import Any, Dict, Sequence
 
