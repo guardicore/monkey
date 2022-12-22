@@ -12,7 +12,7 @@ from common.agent_configuration import PluginConfiguration
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.services import ConfigSchemaService
-from monkey_island.cc.services.config_schema_service import PLUGIN_SCHEMAS
+from monkey_island.cc.services.config_schema_service import SUPPORTED_PLUGINS
 
 
 @pytest.fixture
@@ -37,8 +37,8 @@ def expected_plugin_schema(plugin: AgentPlugin):
     return schema
 
 
-EXPECTED_PLUGIN_SCHEMA = PLUGIN_SCHEMAS[AgentPluginType.EXPLOITER]
-EXPECTED_PLUGIN_SCHEMA["properties"] = {
+EXPECTED_PLUGIN_SCHEMA = SUPPORTED_PLUGINS[AgentPluginType.EXPLOITER]["subschema"]
+EXPECTED_PLUGIN_SCHEMA["properties"] = {  # type: ignore[index]
     FAKE_NAME: FAKE_AGENT_PLUGIN_1,
     FAKE_NAME2: FAKE_AGENT_PLUGIN_2,
 }
