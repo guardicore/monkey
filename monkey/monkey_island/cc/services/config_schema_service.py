@@ -21,7 +21,7 @@ SUPPORTED_PLUGINS = {
 }
 
 
-class AgentConfigSchemaService:
+class AgentConfigurationSchemaService:
     """
     A service for retrieving the agent configuration schema.
     """
