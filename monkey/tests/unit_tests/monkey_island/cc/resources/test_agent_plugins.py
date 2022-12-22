@@ -28,7 +28,7 @@ def flask_client(build_flask_client, agent_plugin_repository):
 
 
 def test_get_plugin(flask_client, agent_plugin_repository):
-    agent_plugin_repository.save_plugin(FAKE_PLUGIN_NAME, FAKE_AGENT_PLUGIN_1)
+    agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
 
     expected_response = {
         "config_schema": {"plugin_options": {"some_option": "some_value"}},
@@ -45,7 +45,9 @@ def test_get_plugin(flask_client, agent_plugin_repository):
     }
 
     resp = flask_client.get(
-        get_url_for_resource(AgentPlugins, plugin_type=FAKE_TYPE, name=FAKE_PLUGIN_NAME)
+        get_url_for_resource(
+            AgentPlugins, plugin_type=FAKE_TYPE, name=FAKE_AGENT_PLUGIN_1.plugin_manifest.name
+        )
     )
 
     assert resp.status_code == HTTPStatus.OK
