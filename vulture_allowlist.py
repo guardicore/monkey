@@ -1,6 +1,6 @@
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
-from common.agent_events import AbstractAgentEvent, FileEncryptedEvent
+from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
@@ -13,14 +13,10 @@ from infection_monkey.island_api_client import HTTPIslandAPIClient
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
-from monkey_island.cc.repositories import (
-    AgentPluginRepositoryCachingDecorator,
-    AgentPluginRepositoryLoggingDecorator,
-    IAgentEventRepository,
-    MongoAgentEventRepository,
-)
+from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.repositories.i_agent_plugin_repository import IAgentPluginRepository
 from monkey_island.cc.resources.agent_heartbeat import AgentHeartbeat
+from monkey_island.cc.services import AgentConfigSchemaService
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
     ExploiterDescriptorEnum,
@@ -47,8 +43,8 @@ NTHash.validate_hash_format
 NetworkPort.ge
 NetworkPort.le
 
-FileEncryptedEvent.arbitrary_types_allowed
-FileEncryptedEvent._file_path_to_pure_path
+FileEncryptionEvent.arbitrary_types_allowed
+FileEncryptionEvent._file_path_to_pure_path
 
 AbstractAgentEvent.smart_union
 
@@ -153,3 +149,6 @@ IAgentPluginRepository
 
 # Remove after #2710
 IAgentPluginRepository.get_plugin_catalog
+
+# Remove after plugins are fetched from back end
+AgentConfigSchemaService.get_schema

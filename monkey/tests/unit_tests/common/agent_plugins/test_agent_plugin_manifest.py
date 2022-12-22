@@ -6,6 +6,7 @@ from common.agent_plugins.agent_plugin_manifest import AgentPluginManifest
 from common.agent_plugins.agent_plugin_type import AgentPluginType
 
 FAKE_NAME = "rdp_exploiter"
+FAKE_NAME2 = "ssh_exploiter"
 FAKE_TYPE = "Exploiter"
 FAKE_OPERATING_SYSTEMS = ["linux"]
 FAKE_TITLE = "Remote Desktop Protocol exploiter"

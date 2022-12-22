@@ -3,9 +3,11 @@ from tests.monkey_island import InMemoryAgentPluginRepository
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_1,
     FAKE_AGENT_PLUGIN_2,
+    FAKE_PLUGIN_ARCHIVE_2,
+    FAKE_PLUGIN_CONFIG_SCHEMA_2,
 )
 
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories import (
     AgentPluginRepositoryCachingDecorator,
     IAgentPluginRepository,
@@ -23,18 +25,24 @@ def agent_plugin_repository(in_memory_agent_plugin_repository) -> IAgentPluginRe
 
 
 def test_get_cached_plugin(agent_plugin_repository, in_memory_agent_plugin_repository):
+    common_name = FAKE_AGENT_PLUGIN_1.plugin_manifest.name
+
+    manifest_params = FAKE_AGENT_PLUGIN_2.plugin_manifest.dict(simplify=True)
+    manifest_params["name"] = common_name
+    agent_plugin_with_same_name = AgentPlugin(
+        plugin_manifest=AgentPluginManifest(**manifest_params),
+        config_schema=FAKE_PLUGIN_CONFIG_SCHEMA_2,
+        source_archive=FAKE_PLUGIN_ARCHIVE_2,
+    )
+
     in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
-    request_1_plugin = agent_plugin_repository.get_plugin(
-        AgentPluginType.EXPLOITER, FAKE_AGENT_PLUGIN_1.plugin_manifest.name
-    )
+    retrieved_plugin_1 = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, common_name)
 
-    in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
-    request_2_plugin = agent_plugin_repository.get_plugin(
-        AgentPluginType.EXPLOITER, FAKE_AGENT_PLUGIN_2.plugin_manifest.name
-    )
+    in_memory_agent_plugin_repository.save_plugin(agent_plugin_with_same_name)
+    retrieved_plugin_2 = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, common_name)
 
-    assert request_2_plugin == request_1_plugin
-    assert request_2_plugin != FAKE_AGENT_PLUGIN_2
+    assert retrieved_plugin_1 == retrieved_plugin_2
+    assert retrieved_plugin_2.config_schema != agent_plugin_with_same_name.config_schema
 
 
 def test_get_cached_plugin_catalog(agent_plugin_repository, in_memory_agent_plugin_repository):
