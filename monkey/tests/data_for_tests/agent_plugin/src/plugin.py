@@ -30,7 +30,7 @@ def run(
 
     event_fields = {
         "source": get_agent_id(),
-        "target": IPv4Address(host.ip_addr),
+        "target": IPv4Address(host.ip),
         "exploiter_name": "MockExploiter",
     }
 
@@ -42,7 +42,7 @@ def run(
     return ExploiterResultData(
         exploitation_success=exploitation_success,
         propagation_success=propagation_success,
-        os=host.os.get("type"),
+        os=host.operating_system,
     )
 
 
