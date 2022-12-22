@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e07a51be559fbf0ec174332af9e2d008a5f73228918ff53f22673c8c1d4e9d3b"
+            "sha256": "9f87fa8e2e9fffafb0c39ff314db34d190f3cec2b009f5adc19e760f62c1d0cb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -243,7 +243,7 @@
                 "sha256:0f7569a4a6ff151958b64304071d370daa3243d15941a7beedf0c9fe5105603e",
                 "sha256:a851e51367fb93e9e1361732c1d60dab63eff98712e503ea7d92e6eccb109b4f"
             ],
-            "markers": "python_version >= '3.6' and python_version < '4.0'",
+            "markers": "python_version >= '3.6' and python_version < '4'",
             "version": "==2.2.1"
         },
         "egg-timer": {
@@ -822,11 +822,11 @@
         },
         "serpentarium": {
             "hashes": [
-                "sha256:00cf5cef31571b18c2b56d38b8d2ad63bf46888e61991c0a083313fc2911ceba",
-                "sha256:3a567a7fa19825eafcdb4fb28a3f0fe7b93f4fecd5945efbdc105898eedac522"
+                "sha256:15b74de4b01d654411812b60b94e316e754c7f608a3149708f18c57aa0ddc311",
+                "sha256:d5329c5a2963d474bb876ca67582c8f344f8e3fa0bd4adf14e3ce319a50742ef"
             ],
             "index": "pypi",
-            "version": "==0.4.0"
+            "version": "==0.5.0"
         },
         "service-identity": {
             "hashes": [
