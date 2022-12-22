@@ -3,7 +3,7 @@
 # Build the plugin package
 # Usage: ./build.sh <version>
 
-DEFAULT_DEPENDENCY_VERSION=1.0.0
+DEFAULT_DEPENDENCY_VERSION=2.4.0
 MANIFEST_FILENAME=plugin.yaml
 SCHEMA_FILENAME=config-schema.json
 DEPENDENCY_FILE="src/vendor/mock_dependency.py"
