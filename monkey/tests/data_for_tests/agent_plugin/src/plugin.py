@@ -1,5 +1,6 @@
 import logging
 import random
+import time
 from threading import Event
 from typing import Any, Dict, Sequence
 
@@ -38,6 +39,9 @@ class Plugin:
 
         logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
+        Plugin._log_options(options)
+        Plugin._sleep(options.get("sleep_duration", 0))
+
         event_fields = {
             "source": self._agent_id,
             "target": host.ip,
@@ -60,6 +64,24 @@ class Plugin:
         logger.debug(f"Returning ExploiterResultData: {exploiter_result_data}")
 
         return exploiter_result_data
+
+    @staticmethod
+    def _log_options(options: Dict[str, Any]):
+        logger.info("Plugin options:")
+
+        list_of_strings = options.get("list_of_strings", None)
+        logger.info(f"List of strings: {list_of_strings}")
+
+        ssh_key = options.get("ssh_key", None)
+        logger.info(f"SSH key: {ssh_key}")
+
+        random_boolean = options.get("random_boolean", None)
+        logger.info(f"Random boolean: {random_boolean}")
+
+    @staticmethod
+    def _sleep(duration: float):
+        logger.info(f"Sleeping for {duration} seconds")
+        time.sleep(duration)
 
     def _exploit(self, options: Dict[str, Any], event_fields: Dict[str, Any]) -> bool:
         exploitation_success = _get_random_result_from_success_rate("exploitation", options)
