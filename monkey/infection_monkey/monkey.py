@@ -1,12 +1,12 @@
 import argparse
 import contextlib
 import logging
+import multiprocessing
 import os
 import subprocess
 import sys
 import time
 from itertools import chain
-from multiprocessing import Queue
 from pathlib import Path, WindowsPath
 from tempfile import gettempdir
 from typing import Optional, Sequence, Tuple
@@ -27,7 +27,7 @@ from common.agent_events import (
 )
 from common.agent_plugins import AgentPluginType
 from common.agent_registration_data import AgentRegistrationData
-from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue
+from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import SocketAddress
@@ -102,7 +102,11 @@ class InfectionMonkey:
         self._agent_event_queue = self._setup_agent_event_queue()
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
-        self._plugin_event_forwarder = self._setup_plugin_event_forwarder()
+        plugin_event_queue = multiprocessing.get_context("spawn").Queue()
+        self._plugin_event_forwarder = PluginEventForwarder(
+            plugin_event_queue, self._agent_event_queue
+        )
+        self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
 
         self._island_address, self._island_api_client = self._connect_to_island_api()
 
@@ -276,12 +280,6 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _setup_plugin_event_forwarder(self) -> PluginEventForwarder:
-        plugin_event_queue: Queue = Queue()
-        plugin_event_forwarder = PluginEventForwarder(plugin_event_queue, self._agent_event_queue)
-
-        return plugin_event_forwarder
-
     def _build_master(self, relay_port: int):
         servers = self._build_server_list(relay_port)
         local_network_interfaces = get_network_interfaces()
@@ -313,8 +311,16 @@ class InfectionMonkey:
         create_secure_directory(temp_dir)
         create_secure_directory(plugin_dir)
 
+        agent_binary_repository = CachingAgentBinaryRepository(
+            island_api_client=self._island_api_client,
+        )
+
         plugin_registry = PluginRegistry(
-            self._island_api_client, PluginSourceExtractor(plugin_dir), PluginLoader(plugin_dir)
+            self._island_api_client,
+            PluginSourceExtractor(plugin_dir),
+            PluginLoader(plugin_dir),
+            agent_binary_repository,
+            self._agent_event_publisher,
         )
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
@@ -334,9 +340,6 @@ class InfectionMonkey:
         puppet.load_plugin("smb", SMBFingerprinter(), AgentPluginType.FINGERPRINTER)
         puppet.load_plugin("ssh", SSHFingerprinter(), AgentPluginType.FINGERPRINTER)
 
-        agent_binary_repository = CachingAgentBinaryRepository(
-            island_api_client=self._island_api_client,
-        )
         exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
 
         puppet.load_plugin(

@@ -8,76 +8,87 @@ import mock_dependency
 
 from common.agent_events import ExploitationEvent, PropagationEvent
 from common.event_queue import IAgentEventPublisher
+from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import ExploiterResultData
 from infection_monkey.model import TargetHost
-from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)
 
 
-def run(
-    host: TargetHost,
-    servers: Sequence[str],
-    current_depth: int,
-    options: Dict[str, Any],
-    interrupt: Event,
-    agent_binary_repository: IAgentBinaryRepository,
-    event_publisher: IAgentEventPublisher,
-) -> ExploiterResultData:
+class Plugin:
+    def __init__(
+        self,
+        agent_id: AgentID,
+        agent_binary_repository: IAgentBinaryRepository,
+        agent_event_publisher: IAgentEventPublisher,
+        plugin_name="",
+    ):
+        self._agent_id = agent_id
+        self._agent_binary_repository = agent_binary_repository
+        self._agent_event_publisher = agent_event_publisher
 
-    logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
+    def run(
+        self,
+        host: TargetHost,
+        servers: Sequence[str],
+        current_depth: int,
+        options: Dict[str, Any],
+        interrupt: Event,
+    ) -> ExploiterResultData:
 
-    event_fields = {
-        "source": get_agent_id(),
-        "target": IPv4Address(host.ip),
-        "exploiter_name": "MockExploiter",
-    }
+        logger.info(f"Mock dependency package version: {mock_dependency.__version__}")
 
-    exploitation_success = _exploit(options, event_fields, event_publisher)
-    propagation_success = (
-        False if not exploitation_success else _propagate(options, event_fields, event_publisher)
-    )
+        event_fields = {
+            "source": self._agent_id,
+            "target": host.ip,
+            "exploiter_name": "MockExploiter",
+        }
 
-    return ExploiterResultData(
-        exploitation_success=exploitation_success,
-        propagation_success=propagation_success,
-        os=host.operating_system,
-    )
-
-
-def _exploit(
-    options: Dict[str, Any], event_fields: Dict[str, Any], event_publisher: IAgentEventPublisher
-) -> bool:
-    exploitation_success = _get_random_result_from_success_rate("exploitation", options)
-    event_publisher.publish(
-        ExploitationEvent(
-            success=exploitation_success,
-            tags=frozenset(["mock-plugin-exploitation"]),
-            **event_fields,
+        exploitation_success = self._exploit(options, event_fields)
+        propagation_success = (
+            False if not exploitation_success else self._propagate(options, event_fields)
         )
-    )
 
-    return exploitation_success
-
-
-def _propagate(
-    options: Dict[str, Any], event_fields: Dict[str, Any], event_publisher: IAgentEventPublisher
-) -> bool:
-    propagation_success = _get_random_result_from_success_rate("propagation", options)
-    event_publisher.publish(
-        PropagationEvent(
-            success=propagation_success,
-            tags=frozenset(["mock-plugin-propagation"]),
-            **event_fields,
+        logger.debug(f"Exploit success: {exploitation_success}")
+        logger.debug(f"Prop success: {propagation_success}")
+        logger.debug("OS: str(host.os)")
+        exploiter_result_data = ExploiterResultData(
+            exploitation_success=exploitation_success,
+            propagation_success=propagation_success,
+            os=str(host.operating_system),
         )
-    )
+        logger.debug(f"Returning ExploiterResultData: {exploiter_result_data}")
 
-    return propagation_success
+        return exploiter_result_data
+
+    def _exploit(self, options: Dict[str, Any], event_fields: Dict[str, Any]) -> bool:
+        exploitation_success = _get_random_result_from_success_rate("exploitation", options)
+        self._agent_event_publisher.publish(
+            ExploitationEvent(
+                success=exploitation_success,
+                tags=frozenset(["mock-plugin-exploitation"]),
+                **event_fields,
+            )
+        )
+
+        return exploitation_success
+
+    def _propagate(self, options: Dict[str, Any], event_fields: Dict[str, Any]) -> bool:
+        propagation_success = _get_random_result_from_success_rate("propagation", options)
+        self._agent_event_publisher.publish(
+            PropagationEvent(
+                success=propagation_success,
+                tags=frozenset(["mock-plugin-propagation"]),
+                **event_fields,
+            )
+        )
+
+        return propagation_success
 
 
-def _get_random_result_from_success_rate(result_name: str, options: Dict[str, Any]):
+def _get_random_result_from_success_rate(result_name: str, options: Dict[str, Any]) -> bool:
     success_rate = options.get(f"{result_name}_success_rate", 50)
     success_weights = [success_rate, 100 - success_rate]
 
-    return random.choices([True, False], success_weights)  # noqa: DUO102
+    return random.choices([True, False], success_weights)[0]  # noqa: DUO102

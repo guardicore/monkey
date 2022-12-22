@@ -1,6 +1,8 @@
 import threading
 from unittest.mock import MagicMock
 
+import pytest
+
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
 from infection_monkey.i_puppet import PingScanData
@@ -8,10 +10,15 @@ from infection_monkey.puppet import PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
-def test_puppet_run_payload_success():
+@pytest.fixture
+def mock_plugin_registry() -> PluginRegistry:
+    return PluginRegistry(MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock())
+
+
+def test_puppet_run_payload_success(mock_plugin_registry):
     p = Puppet(
         agent_event_queue=MagicMock(spec=IAgentEventQueue),
-        plugin_registry=PluginRegistry(MagicMock(), MagicMock(), MagicMock()),
+        plugin_registry=mock_plugin_registry,
     )
 
     payload = MagicMock()
@@ -23,10 +30,10 @@ def test_puppet_run_payload_success():
     payload.run.assert_called_once()
 
 
-def test_puppet_run_multiple_payloads():
+def test_puppet_run_multiple_payloads(mock_plugin_registry):
     p = Puppet(
         agent_event_queue=MagicMock(spec=IAgentEventQueue),
-        plugin_registry=PluginRegistry(MagicMock(), MagicMock(), MagicMock()),
+        plugin_registry=mock_plugin_registry,
     )
 
     payload_1 = MagicMock()
@@ -52,10 +59,10 @@ def test_puppet_run_multiple_payloads():
     payload_3.run.assert_called_once()
 
 
-def test_fingerprint_exception_handling(monkeypatch):
+def test_fingerprint_exception_handling(monkeypatch, mock_plugin_registry):
     p = Puppet(
         agent_event_queue=MagicMock(spec=IAgentEventQueue),
-        plugin_registry=PluginRegistry(MagicMock(), MagicMock(), MagicMock()),
+        plugin_registry=mock_plugin_registry,
     )
     p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert (

@@ -4,6 +4,8 @@ import pytest
 from serpentarium import MultiprocessingPlugin, PluginLoader
 
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common.event_queue import IAgentEventPublisher
+from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import (
     IIslandAPIClient,
@@ -23,6 +25,16 @@ def dummy_plugin_loader() -> PluginLoader:
     return MagicMock(spec=PluginLoader)
 
 
+@pytest.fixture
+def dummy_agent_binary_repository() -> IAgentBinaryRepository:
+    return MagicMock(spec=IAgentBinaryRepository)
+
+
+@pytest.fixture
+def dummy_agent_event_publisher() -> IAgentEventPublisher:
+    return MagicMock(spec=IAgentEventPublisher)
+
+
 @pytest.mark.parametrize(
     "error_raised_by_island_api_client, error_raised_by_plugin_registry",
     [(IslandAPIRequestError, UnknownPluginError), (IslandAPIError, IslandAPIError)],
@@ -30,6 +42,8 @@ def dummy_plugin_loader() -> PluginLoader:
 def test_get_plugin__error_handling(
     dummy_plugin_source_extractor: PluginSourceExtractor,
     dummy_plugin_loader: PluginLoader,
+    dummy_agent_binary_repository: IAgentBinaryRepository,
+    dummy_agent_event_publisher: IAgentEventPublisher,
     error_raised_by_island_api_client: Exception,
     error_raised_by_plugin_registry: Exception,
 ):
@@ -38,7 +52,11 @@ def test_get_plugin__error_handling(
         side_effect=error_raised_by_island_api_client
     )
     plugin_registry = PluginRegistry(
-        mock_island_api_client, dummy_plugin_source_extractor, dummy_plugin_loader
+        mock_island_api_client,
+        dummy_plugin_source_extractor,
+        dummy_plugin_loader,
+        dummy_agent_binary_repository,
+        dummy_agent_event_publisher,
     )
 
     with pytest.raises(error_raised_by_plugin_registry):
@@ -81,8 +99,16 @@ def plugin_registry(
     mock_island_api_client: IIslandAPIClient,
     mock_plugin_source_extractor: PluginSourceExtractor,
     mock_plugin_loader: PluginLoader,
+    dummy_agent_binary_repository: IAgentBinaryRepository,
+    dummy_agent_event_publisher: IAgentEventPublisher,
 ) -> PluginRegistry:
-    return PluginRegistry(mock_island_api_client, mock_plugin_source_extractor, mock_plugin_loader)
+    return PluginRegistry(
+        mock_island_api_client,
+        mock_plugin_source_extractor,
+        mock_plugin_loader,
+        dummy_agent_binary_repository,
+        dummy_agent_event_publisher,
+    )
 
 
 def test_load_plugin_from_island__only_downloaded_once(

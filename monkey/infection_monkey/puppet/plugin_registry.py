@@ -5,8 +5,11 @@ from typing import Any, Dict
 from serpentarium import PluginLoader, SingleUsePlugin
 
 from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.event_queue import IAgentEventPublisher
+from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
+from infection_monkey.utils.ids import get_agent_id
 
 from . import PluginSourceExtractor
 
@@ -19,6 +22,8 @@ class PluginRegistry:
         island_api_client: IIslandAPIClient,
         plugin_source_extractor: PluginSourceExtractor,
         plugin_loader: PluginLoader,
+        agent_binary_repository: IAgentBinaryRepository,
+        agent_event_publisher: IAgentEventPublisher,
     ):
         """
         `self._registry` looks like -
@@ -33,6 +38,10 @@ class PluginRegistry:
         self._island_api_client = island_api_client
         self._plugin_source_extractor = plugin_source_extractor
         self._plugin_loader = plugin_loader
+        self._agent_binary_repository = agent_binary_repository
+        self._agent_event_publisher = agent_event_publisher
+
+        self._agent_id = get_agent_id()
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
         self._registry.setdefault(plugin_type, {})
@@ -51,7 +60,11 @@ class PluginRegistry:
         agent_plugin = self._download_plugin_from_island(plugin_name, plugin_type)
         self._plugin_source_extractor.extract_plugin_source(agent_plugin)
         multiprocessing_plugin = self._plugin_loader.load_multiprocessing_plugin(
-            plugin_name=plugin_name
+            plugin_name=plugin_name,
+            reset_modules_cache=False,
+            agent_id=self._agent_id,
+            agent_binary_repository=self._agent_binary_repository,
+            agent_event_publisher=self._agent_event_publisher,
         )
 
         self.load_plugin(plugin_name, multiprocessing_plugin, plugin_type)
