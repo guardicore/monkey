@@ -5,7 +5,7 @@ expected_tcp_schema = {
     "properties": {
         "timeout": {
             "title": "TCP scan timeout",
-            "description": "Maximum time to wait for TCP response",
+            "description": "Maximum time to wait for TCP response in seconds",
             "default": 3.0,
             "exclusiveMinimum": 0,
             "type": "number",
