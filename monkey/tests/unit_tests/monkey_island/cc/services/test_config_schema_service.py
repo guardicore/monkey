@@ -47,8 +47,8 @@ EXPECTED_PLUGIN_SCHEMA["properties"] = {
 def test_get_schema__adds_exploiter_plugins_to_schema(
     config_schema_service, agent_plugin_repository
 ):
-    agent_plugin_repository.save_plugin(FAKE_NAME, FAKE_AGENT_PLUGIN_1)
-    agent_plugin_repository.save_plugin(FAKE_NAME2, FAKE_AGENT_PLUGIN_2)
+    agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
+    agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
 
     actual_config_schema = config_schema_service.get_schema()
     assert actual_config_schema["definitions"]["exploiter"] == EXPECTED_PLUGIN_SCHEMA
