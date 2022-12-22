@@ -1,36 +1,18 @@
 from copy import deepcopy
-from typing import Any, Dict
 
 import pytest
 from tests.monkey_island import InMemoryAgentPluginRepository
+from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_NAME2
 from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_1,
     FAKE_AGENT_PLUGIN_2,
 )
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
-from common.agent_plugins import AgentPlugin
+from common.agent_configuration import PluginConfiguration
+from common.agent_plugins import AgentPlugin, AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.services import ConfigSchemaService
-
-
-@pytest.fixture
-def expected_config_schema() -> Dict[str, Any]:
-    expected_schema = deepcopy(AgentConfiguration.schema())
-    expected_schema["definitions"]["exploiter"] = {
-        "title": "Exploiter Plugins",
-        "type": "object",
-        "description": "A configuration for agent exploiter plugins.\n "
-        + "It provides a full set of available exploiter plugins that can be used by the agent.\n",
-        "properties": {
-            "ssh_exploiter": expected_plugin_schema(FAKE_AGENT_PLUGIN_1),
-            "wmi_exploiter": expected_plugin_schema(FAKE_AGENT_PLUGIN_2),
-        },
-    }
-    expected_exploitation = expected_schema["definitions"]["ExploitationConfiguration"]
-    expected_exploitation["properties"]["brute_force"] = {"$ref": "#/definitions/exploiter"}
-
-    return expected_schema
+from monkey_island.cc.services.config_schema_service import PLUGIN_SCHEMAS
 
 
 @pytest.fixture
@@ -55,17 +37,18 @@ def expected_plugin_schema(plugin: AgentPlugin):
     return schema
 
 
-def test_get_schema__returns_config_schema(config_schema_service):
-    schema = config_schema_service.get_schema()
-    assert schema == deepcopy(AgentConfiguration.schema())
+EXPECTED_PLUGIN_SCHEMA = PLUGIN_SCHEMAS[AgentPluginType.EXPLOITER]
+EXPECTED_PLUGIN_SCHEMA["properties"] = {
+    FAKE_NAME: FAKE_AGENT_PLUGIN_1,
+    FAKE_NAME2: FAKE_AGENT_PLUGIN_2,
+}
 
 
 def test_get_schema__adds_exploiter_plugins_to_schema(
-    config_schema_service, agent_plugin_repository, expected_config_schema
+    config_schema_service, agent_plugin_repository
 ):
-    agent_plugin_repository.save_plugin("ssh_exploiter", FAKE_AGENT_PLUGIN_1)
-    agent_plugin_repository.save_plugin("wmi_exploiter", FAKE_AGENT_PLUGIN_2)
+    agent_plugin_repository.save_plugin(FAKE_NAME, FAKE_AGENT_PLUGIN_1)
+    agent_plugin_repository.save_plugin(FAKE_NAME2, FAKE_AGENT_PLUGIN_2)
 
     actual_config_schema = config_schema_service.get_schema()
-
-    assert actual_config_schema == expected_config_schema
+    assert actual_config_schema["definitions"]["exploiter"] == EXPECTED_PLUGIN_SCHEMA
