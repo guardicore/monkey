@@ -71,15 +71,6 @@ class ConfigSchemaService:
 
         return schema
 
-    def _add_plugin_to_schema(
-        self, schema: Dict[str, Any], plugin_type: AgentPluginType, plugin: AgentPlugin
-    ):
-        plugin_type_string = self._get_plugin_type_string(plugin_type)
-        schema["definitions"][plugin_type_string]["properties"][
-            plugin.plugin_manifest.name
-        ] = plugin.config_schema
-        return schema
-
     def _set_exploiter_definition(
         self, schema: Dict[str, Any], plugin_type: AgentPluginType
     ) -> Dict[str, Any]:
@@ -97,3 +88,12 @@ class ConfigSchemaService:
     @staticmethod
     def _get_plugin_type_string(plugin_type: AgentPluginType):
         return plugin_type.name.lower()
+
+    def _add_plugin_to_schema(
+        self, schema: Dict[str, Any], plugin_type: AgentPluginType, plugin: AgentPlugin
+    ):
+        plugin_type_string = self._get_plugin_type_string(plugin_type)
+        schema["definitions"][plugin_type_string]["properties"][
+            plugin.plugin_manifest.name
+        ] = plugin.config_schema
+        return schema
