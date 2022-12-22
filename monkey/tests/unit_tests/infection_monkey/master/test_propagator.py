@@ -11,12 +11,7 @@ from common.agent_configuration.agent_sub_configurations import (
     ScanTargetConfiguration,
 )
 from common.types import PortStatus
-from infection_monkey.i_puppet import (
-    ExploiterResultData,
-    FingerprintData,
-    PingScanData,
-    PortScanData,
-)
+from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
 from infection_monkey.master import IPScanResults, Propagator
 
 empty_fingerprint_data = FingerprintData(None, None, {})
@@ -145,64 +140,6 @@ def get_propagation_config(
         exploitation=default_agent_configuration.propagation.exploitation,
     )
     return propagation_config
-
-
-class MockExploiter:
-    def exploit_hosts(
-        self,
-        exploiters_to_run,
-        hosts_to_exploit,
-        current_depth,
-        servers,
-        results_callback,
-        scan_completed,
-        stop,
-    ):
-        scan_completed.wait()
-        hte = []
-        for _ in range(0, 2):
-            hte.append(hosts_to_exploit.get())
-
-        assert hosts_to_exploit.empty()
-
-        for host in hte:
-            if host.ip_addr.endswith(".1"):
-                results_callback(
-                    "PowerShellExploiter",
-                    host,
-                    ExploiterResultData(True, True, False, os_windows, {}, {}, None),
-                )
-                results_callback(
-                    "SSHExploiter",
-                    host,
-                    ExploiterResultData(False, False, False, os_linux, {}, {}, "SSH FAILED for .1"),
-                )
-            elif host.ip_addr.endswith(".2"):
-                results_callback(
-                    "PowerShellExploiter",
-                    host,
-                    ExploiterResultData(
-                        False, False, False, os_windows, {}, {}, "POWERSHELL FAILED for .2"
-                    ),
-                )
-                results_callback(
-                    "SSHExploiter",
-                    host,
-                    ExploiterResultData(False, False, False, os_linux, {}, {}, "SSH FAILED for .2"),
-                )
-            elif host.ip_addr.endswith(".3"):
-                results_callback(
-                    "PowerShellExploiter",
-                    host,
-                    ExploiterResultData(
-                        False, False, False, os_windows, {}, {}, "POWERSHELL FAILED for .3"
-                    ),
-                )
-                results_callback(
-                    "SSHExploiter",
-                    host,
-                    ExploiterResultData(True, True, False, os_linux, {}, {}, None),
-                )
 
 
 def test_scan_target_generation(mock_ip_scanner, default_agent_configuration):
