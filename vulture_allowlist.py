@@ -16,7 +16,7 @@ from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.repositories.i_agent_plugin_repository import IAgentPluginRepository
 from monkey_island.cc.resources.agent_heartbeat import AgentHeartbeat
-from monkey_island.cc.services import ConfigSchemaService
+from monkey_island.cc.services import AgentConfigSchemaService
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
     ExploiterDescriptorEnum,
@@ -151,4 +151,4 @@ IAgentPluginRepository
 IAgentPluginRepository.get_plugin_catalog
 
 # Remove after plugins are fetched from back end
-ConfigSchemaService.get_schema
+AgentConfigSchemaService.get_schema

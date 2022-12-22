@@ -11,7 +11,7 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
 from common.agent_configuration import PluginConfiguration
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
-from monkey_island.cc.services import ConfigSchemaService
+from monkey_island.cc.services import AgentConfigSchemaService
 from monkey_island.cc.services.config_schema_service import SUPPORTED_PLUGINS
 
 
@@ -23,8 +23,8 @@ def agent_plugin_repository() -> IAgentPluginRepository:
 @pytest.fixture
 def config_schema_service(
     agent_plugin_repository: IAgentPluginRepository,
-) -> ConfigSchemaService:
-    return ConfigSchemaService(agent_plugin_repository)
+) -> AgentConfigSchemaService:
+    return AgentConfigSchemaService(agent_plugin_repository)
 
 
 def expected_plugin_schema(plugin: AgentPlugin):
