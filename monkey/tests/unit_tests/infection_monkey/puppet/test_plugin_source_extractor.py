@@ -9,6 +9,8 @@ from infection_monkey.puppet import PluginSourceExtractor
 
 
 def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin:
+    # We're using construct() here because we want to be able to construct plugins with invalid
+    # names. Specifically, this is used for in test_plugin_name_directory_traversal()
     manifest = AgentPluginManifest.construct(name=name, plugin_type=AgentPluginType.EXPLOITER)
     return AgentPlugin.construct(
         plugin_manifest=manifest,
