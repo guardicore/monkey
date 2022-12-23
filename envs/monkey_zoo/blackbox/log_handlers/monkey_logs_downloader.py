@@ -36,6 +36,8 @@ class MonkeyLogsDownloader(object):
             for thread in download_threads:
                 thread.join()
 
+            self._download_island_log()
+
         except Exception as err:
             LOGGER.exception(err)
 
