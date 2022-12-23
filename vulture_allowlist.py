@@ -146,7 +146,6 @@ AgentPluginManifest.plugin_type
 AgentPluginManifest.title
 AgentPluginManifest.link_to_documentation
 AgentPluginManifest.safe
-AgentPluginManifest.validate_name
 
 IAgentPluginRepository
 
