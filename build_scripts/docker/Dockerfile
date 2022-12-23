@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y iputils-ping && apt-get clean
 COPY --from=builder /monkey /monkey
 WORKDIR /monkey
 EXPOSE 5000
-EXPOSE 5001
 ENV MONKEY_DOCKER_CONTAINER=true
 RUN groupadd -r monkey-island && useradd --no-log-init -r -g monkey-island monkey-island
 RUN chmod 444 /monkey/monkey_island/cc/server.key
