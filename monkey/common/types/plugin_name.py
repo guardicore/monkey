@@ -5,7 +5,9 @@ from pydantic import ConstrainedStr
 
 class PluginName(ConstrainedStr):
     """
-    Plugin name in snake_case
+    A plugin name
+
+    Allowed characters are alphanumerics and underscore.
     """
 
     strip_whitespace = True
