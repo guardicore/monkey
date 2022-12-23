@@ -13,6 +13,7 @@ from monkey_island.cc.models import Agent, Machine, TerminateAllAgents
 SLEEP_BETWEEN_REQUESTS_SECONDS = 0.5
 GET_AGENTS_ENDPOINT = "api/agents"
 GET_LOG_ENDPOINT = "api/agent-logs"
+ISLAND_LOG_ENDPOINT = "api/island/log"
 GET_MACHINES_ENDPOINT = "api/machines"
 GET_AGENT_EVENTS_ENDPOINT = "api/agent-events"
 
@@ -158,6 +159,13 @@ class MonkeyIslandClient(object):
             return None
         else:
             response.raise_for_status()
+
+        return response.json()
+
+    def get_island_log(self):
+        response = self.requests.get(f"{ISLAND_LOG_ENDPOINT}")
+
+        response.raise_for_status()
 
         return response.json()
 
