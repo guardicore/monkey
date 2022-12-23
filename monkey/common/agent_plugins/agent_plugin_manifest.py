@@ -1,4 +1,7 @@
+import re
 from typing import Optional, Tuple
+
+from pydantic import validator
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
@@ -31,3 +34,11 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     description: Optional[str]
     link_to_documentation: Optional[str]
     safe: bool = False
+
+    @validator("name")
+    def validate_name(cls, name):
+        valid_name_regex = re.compile("^[a-zA-Z0-9_-]+$")
+        if not re.match(valid_name_regex, name):
+            raise ValueError(f"Agent plugin name contains invalid characters: {name}")
+
+        return name
