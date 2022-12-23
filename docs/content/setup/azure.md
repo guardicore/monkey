@@ -19,7 +19,7 @@ Select the [Infection Monkey from the Azure Marketplace](https://azuremarketplac
     1. Choose a machine size with at least 1GB of RAM for optimal performance.
 1. Under **Settings**
     1. Choose the network for the new instance.
-    1. In the **Network Security Group** field, make sure ports 5000 and 5001 on the machine are accessible for inbound TCP traffic.
+    1. In the **Network Security Group** field, make sure port 5000 on the machine is accessible for inbound TCP traffic.
 1. Under **Summary**
     1. Review the details of the offer and click **Create**.
 

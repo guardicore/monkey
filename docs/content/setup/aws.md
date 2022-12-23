@@ -14,7 +14,7 @@ On the [Infection Monkey's AWS Marketplace page](https://aws.amazon.com/marketpl
 1. Choose the desired region.
 1. Choose an EC2 instance type with at least 1GB of RAM for optimal performance or stick with the default recommendation.
 1. Select the VPC and subnet you want to use for the new instance.
-1. In the Security Group section, make sure ports 5000 and 5001 on the machine are accessible for inbound TCP traffic.
+1. In the Security Group section, make sure port 5000 on the machine is accessible for inbound TCP traffic.
 1. Choose an existing EC2 key pair for authenticating with the new instance.
 1. Click **Launch with 1-click.**
 
