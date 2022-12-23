@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.base_models import InfectionMonkeyBaseModel
+from common.types import PluginName
 
 
 class AgentPluginManifest(InfectionMonkeyBaseModel):
@@ -21,7 +22,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
          disrupt the regular activities of the servers or the network, then the plugin is not safe.
     """
 
-    name: str
+    name: PluginName
     plugin_type: AgentPluginType
     supported_operating_systems: Tuple[OperatingSystem, ...] = (
         OperatingSystem.WINDOWS,

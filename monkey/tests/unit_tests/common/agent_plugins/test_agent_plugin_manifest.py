@@ -1,6 +1,8 @@
 import copy
 from typing import Any, Dict
 
+import pytest
+
 from common import OperatingSystem
 from common.agent_plugins.agent_plugin_manifest import AgentPluginManifest
 from common.agent_plugins.agent_plugin_type import AgentPluginType
@@ -47,3 +49,35 @@ def test_agent_plugin_manifest__serialization():
 
 def test_agent_plugin_manifest__deserialization():
     assert AgentPluginManifest(**FAKE_AGENT_MANIFEST_DICT_IN) == FAKE_MANIFEST_OBJECT
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "../../test_dir12341234",
+        "/test_dir12341234",
+        "test_dir/../../../12341234",
+        "../../../",
+        "..",
+        ".",
+        "$HOME",
+        "~/",
+        "!!",
+        "!#",
+        "!$",
+        "name with spaces",
+        "name; malicious command",
+        "`shell_injection`",
+        "$(shell_injection)",
+        "bash -c shell_injection",
+    ],
+)
+def test_agent_plugin_manifest__invalid_name(name):
+    with pytest.raises(ValueError):
+        AgentPluginManifest(
+            name=name,
+            plugin_type=FAKE_TYPE,
+            supported_operating_systems=FAKE_OPERATING_SYSTEMS,
+            title=FAKE_TITLE,
+            link_to_documentation=FAKE_LINK,
+        )
