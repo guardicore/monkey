@@ -1,16 +1,44 @@
 from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
 
 import pytest
 from tests.utils import assert_directories_equal
 
-from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
+from common import OperatingSystem
+from common.agent_plugins import AgentPluginType
+from common.base_models import InfectionMonkeyBaseModel
+from common.types.b64_bytes import B64Bytes
 from common.utils.environment import is_windows_os
 from infection_monkey.puppet import PluginSourceExtractor
 
 
-def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin:
-    manifest = AgentPluginManifest(name=name, plugin_type=AgentPluginType.EXPLOITER)
-    return AgentPlugin(
+# These tests verify that PluginSourceExtractor does not extract any potentially malicious files.
+# It does this by validating the file name and file type. However, the file name is already
+# validated in the AgentPluginManifest pydantic object. So, fake pydantic objects are being used
+# here instead. The fake pydantic objects are the same as the actual ones but without the
+# validation.
+class FakeAgentPluginManifest(InfectionMonkeyBaseModel):
+    name: str
+    plugin_type: AgentPluginType
+    supported_operating_systems: Tuple[OperatingSystem, ...] = (
+        OperatingSystem.WINDOWS,
+        OperatingSystem.LINUX,
+    )
+    title: Optional[str]
+    description: Optional[str]
+    link_to_documentation: Optional[str]
+    safe: bool = False
+
+
+class FakeAgentPlugin(InfectionMonkeyBaseModel):
+    plugin_manifest: FakeAgentPluginManifest
+    config_schema: Dict[str, Any]
+    source_archive: B64Bytes
+
+
+def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> FakeAgentPlugin:
+    manifest = FakeAgentPluginManifest(name=name, plugin_type=AgentPluginType.EXPLOITER)
+    return FakeAgentPlugin(
         plugin_manifest=manifest,
         config_schema={},
         source_archive=read_file_to_bytes(source_tar_path),
