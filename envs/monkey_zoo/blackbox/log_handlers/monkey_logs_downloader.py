@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from pathlib import Path
 from threading import Thread
 from typing import List, Mapping
@@ -28,7 +29,7 @@ class MonkeyLogsDownloader(object):
             # TODO: Does downloading logs concurrently still improve performance after resolving
             #       https://github.com/guardicore/monkey/issues/2383?
             for agent in agents:
-                t = Thread(target=self._download_log, args=(agent, machines), daemon=True)
+                t = Thread(target=self._download_agent_log, args=(agent, machines), daemon=True)
                 t.start()
                 download_threads.append(t)
 
@@ -38,7 +39,7 @@ class MonkeyLogsDownloader(object):
         except Exception as err:
             LOGGER.exception(err)
 
-    def _download_log(self, agent: Agent, machines: Mapping[MachineID, Machine]):
+    def _download_agent_log(self, agent: Agent, machines: Mapping[MachineID, Machine]):
         log_file_path = self._get_log_file_path(agent, machines)
         log_contents = self.island_client.get_agent_log(agent.id)
 
@@ -46,9 +47,19 @@ class MonkeyLogsDownloader(object):
             MonkeyLogsDownloader._write_log_to_file(log_file_path, log_contents)
             self.monkey_log_paths.append(log_file_path)
 
+    def _download_island_log(self):
+        log_contents = self.island_client.get_island_log()
+
+        island_log_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        dst_path = self.log_dir_path / f"island_{island_log_time}.log"
+
+        if log_contents:
+            MonkeyLogsDownloader._write_log_to_file(dst_path, log_contents)
+            self.monkey_log_paths.append(dst_path)
+
     def _get_log_file_path(self, agent: Agent, machines: Mapping[MachineID, Machine]) -> Path:
         try:
-            machine_ip = machines[agent.machine_id].network_interfaces[0].ip
+            machine_ip = str(machines[agent.machine_id].network_interfaces[0].ip)
         except IndexError:
             LOGGER.error(f"Machine with ID {agent.machine_id} has no network interfaces")
             machine_ip = "UNKNOWN"
