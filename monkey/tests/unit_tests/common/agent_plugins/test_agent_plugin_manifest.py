@@ -62,6 +62,14 @@ def test_agent_plugin_manifest__deserialization():
         ".",
         "$HOME",
         "~/",
+        "!!",
+        "!#",
+        "!$",
+        "name with spaces",
+        "name; malicious command",
+        "`shell_injection`",
+        "$(shell_injection)",
+        "bash -c shell_injection",
     ],
 )
 def test_agent_plugin_manifest__invalid_name(name):
