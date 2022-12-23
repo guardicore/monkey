@@ -35,7 +35,6 @@ MutableInfectionMonkeyModelConfig.allow_mutation
 MutableInfectionMonkeyModelConfig.validate_assignment
 
 PluginName.strip_whitespace
-PluginName.to_lower
 PluginName.regex
 
 SecretEncodingConfig.json_encoders
