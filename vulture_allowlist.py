@@ -5,7 +5,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.event_queue import QueuedAgentEventPublisher
-from common.types import Lock, NetworkPort
+from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
@@ -33,6 +33,10 @@ InfectionMonkeyModelConfig.extra
 
 MutableInfectionMonkeyModelConfig.allow_mutation
 MutableInfectionMonkeyModelConfig.validate_assignment
+
+PluginName.strip_whitespace
+PluginName.to_lower
+PluginName.regex
 
 SecretEncodingConfig.json_encoders
 
