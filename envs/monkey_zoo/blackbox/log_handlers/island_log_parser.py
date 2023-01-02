@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from typing import Optional
 
 LOGGER = logging.getLogger(__name__)
 
@@ -9,25 +8,22 @@ class IslandLogParser:
     def __init__(self, log_contents: str):
         self.log_contents = log_contents
 
-    def filter_date(self, start: Optional[datetime] = None, end: Optional[datetime] = None) -> str:
+    def filter_date(self, start: datetime) -> str:
         log_lines = self.log_contents.split("\n")
-        if start:
+        test_start_index = 0
+        for i in range(len(log_lines)):
+            try:
+                if self._get_date_from_line(log_lines[i]) < start:
+                    continue
+            except (ValueError, IndexError):
+                continue
+            test_start_index = i
+            break
 
-            def filter_early(line):
-                return self._get_date_from_line(line) > start
-
-            log_lines = list(filter(filter_early, log_lines))
-        if end:
-
-            def filter_late(line):
-                return self._get_date_from_line(line) < end
-
-            log_lines = list(filter(filter_late, log_lines))
-        return "\n".join(log_lines)
+        return "\n".join(log_lines[test_start_index:])
 
     @staticmethod
     def _get_date_from_line(line: str) -> datetime:
-        logging.basicConfig()
         line_parts = line.split(" ")
         datetime_str = f"{line_parts[0]} {line_parts[1]}"
 
