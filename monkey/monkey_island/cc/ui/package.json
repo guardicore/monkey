@@ -44,7 +44,7 @@
     "eslint-loader": "^4.0.1",
     "eslint-plugin-react": "^7.26.1",
     "fork-ts-checker-webpack-plugin": "^7.2.4",
-    "html-loader": "^0.5.5",
+    "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.5.0",
     "npm": "^8.11.0",
     "rimraf": "^2.7.1",
