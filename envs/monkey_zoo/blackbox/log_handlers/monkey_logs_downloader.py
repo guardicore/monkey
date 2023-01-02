@@ -6,6 +6,8 @@ from typing import List, Mapping
 
 from common.types import MachineID
 from envs.monkey_zoo.blackbox.island_client.monkey_island_client import MonkeyIslandClient
+from envs.monkey_zoo.blackbox.log_handlers.island_log_parser import IslandLogParser
+from envs.monkey_zoo.blackbox.utils import bb_singleton
 from monkey_island.cc.models import Agent, Machine
 
 LOGGER = logging.getLogger(__name__)
@@ -56,6 +58,7 @@ class MonkeyLogsDownloader(object):
         dst_path = self.log_dir_path / f"island_{island_log_time}.log"
 
         if log_contents:
+            log_contents = IslandLogParser(log_contents).filter_date(start=bb_singleton.start_time)
             MonkeyLogsDownloader._write_log_to_file(dst_path, log_contents)
             self.monkey_log_paths.append(dst_path)
 
