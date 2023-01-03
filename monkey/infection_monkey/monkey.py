@@ -94,6 +94,7 @@ class InfectionMonkey:
 
         self._agent_id = get_agent_id()
         logger.info(f"Agent ID: {self._agent_id}")
+        logger.info(f"Process ID: {os.getpid()}")
 
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
