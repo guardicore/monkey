@@ -3,6 +3,7 @@ import contextlib
 import logging
 import multiprocessing
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -425,6 +426,7 @@ class InfectionMonkey:
             self._heart.stop()
 
             self._close_tunnel()
+
         except Exception as e:
             logger.exception(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
@@ -432,6 +434,7 @@ class InfectionMonkey:
         finally:
             self._plugin_event_forwarder.stop()
             self._agent_event_forwarder.stop()
+            self._delete_plugin_dir()
             with contextlib.suppress(AssertionError):
                 self._singleton.unlock()
 
@@ -465,6 +468,12 @@ class InfectionMonkey:
             log_contents = ""
 
         self._island_api_client.send_log(self._agent_id, log_contents)
+
+    def _delete_plugin_dir(self):
+        try:
+            shutil.rmtree(self._plugin_dir)
+        except Exception as err:
+            logger.warning(f"Failed to cleanup the plugin directory: {err}")
 
     @staticmethod
     def _self_delete() -> bool:
