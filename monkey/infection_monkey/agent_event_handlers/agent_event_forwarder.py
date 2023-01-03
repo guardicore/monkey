@@ -27,6 +27,8 @@ class AgentEventForwarder:
             DEFAULT_TIME_PERIOD_SECONDS,
             name="AgentEventForwarder",
         )
+
+    def start(self):
         self._periodic_caller.start()
 
     def stop(self):
