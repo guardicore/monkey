@@ -16,3 +16,8 @@ def bad_plugin_file(plugin_data_dir) -> Path:
 @pytest.fixture
 def symlink_plugin_file(plugin_data_dir) -> Path:
     return plugin_data_dir / "symlink-exploiter.tar"
+
+
+@pytest.fixture
+def dir_plugin_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "dir-exploiter.tar"
