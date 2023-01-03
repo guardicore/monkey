@@ -30,12 +30,12 @@ class Puppet(IPuppet):
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
 
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
-        self._plugin_registry.load_plugin(plugin_name, plugin, plugin_type)
+    def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
+        self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
 
     def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
         credential_collector = self._plugin_registry.get_plugin(
-            name, AgentPluginType.CREDENTIAL_COLLECTOR
+            AgentPluginType.CREDENTIAL_COLLECTOR, name
         )
         return credential_collector.collect_credentials(options)
 
@@ -56,7 +56,7 @@ class Puppet(IPuppet):
         options: Dict,
     ) -> FingerprintData:
         try:
-            fingerprinter = self._plugin_registry.get_plugin(name, AgentPluginType.FINGERPRINTER)
+            fingerprinter = self._plugin_registry.get_plugin(AgentPluginType.FINGERPRINTER, name)
             return fingerprinter.get_host_fingerprint(host, ping_scan_data, port_scan_data, options)
         except Exception:
             logger.exception(
@@ -73,7 +73,7 @@ class Puppet(IPuppet):
         options: Dict,
         interrupt: Event,
     ) -> ExploiterResultData:
-        exploiter = self._plugin_registry.get_plugin(name, AgentPluginType.EXPLOITER)
+        exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         return exploiter.run(
             host=host,
             servers=servers,
@@ -83,7 +83,7 @@ class Puppet(IPuppet):
         )
 
     def run_payload(self, name: str, options: Dict, interrupt: Event):
-        payload = self._plugin_registry.get_plugin(name, AgentPluginType.PAYLOAD)
+        payload = self._plugin_registry.get_plugin(AgentPluginType.PAYLOAD, name)
         payload.run(options, interrupt)
 
     def cleanup(self) -> None:

@@ -24,7 +24,7 @@ def test_puppet_run_payload_success(mock_plugin_registry):
     payload = MagicMock()
     payload_name = "PayloadOne"
 
-    p.load_plugin(payload_name, payload, AgentPluginType.PAYLOAD)
+    p.load_plugin(AgentPluginType.PAYLOAD, payload_name, payload)
     p.run_payload(payload_name, {}, threading.Event())
 
     payload.run.assert_called_once()
@@ -45,9 +45,9 @@ def test_puppet_run_multiple_payloads(mock_plugin_registry):
     payload_3 = MagicMock()
     payload3_name = "PayloadThree"
 
-    p.load_plugin(payload1_name, payload_1, AgentPluginType.PAYLOAD)
-    p.load_plugin(payload2_name, payload_2, AgentPluginType.PAYLOAD)
-    p.load_plugin(payload3_name, payload_3, AgentPluginType.PAYLOAD)
+    p.load_plugin(AgentPluginType.PAYLOAD, payload1_name, payload_1)
+    p.load_plugin(AgentPluginType.PAYLOAD, payload2_name, payload_2)
+    p.load_plugin(AgentPluginType.PAYLOAD, payload3_name, payload_3)
 
     p.run_payload(payload1_name, {}, threading.Event())
     payload_1.run.assert_called_once()

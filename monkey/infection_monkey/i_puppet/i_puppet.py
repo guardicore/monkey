@@ -30,13 +30,13 @@ FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "servi
 
 class IPuppet(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
+    def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         """
         Loads a plugin into the puppet
 
+        :param AgentPluginType plugin_type: The type of plugin being loaded
         :param str plugin_name: The plugin class name
         :param object plugin: The plugin object to load
-        :param AgentPluginType plugin_type: The type of plugin being loaded
         """
 
     @abc.abstractmethod

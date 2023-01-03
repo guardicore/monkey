@@ -45,7 +45,7 @@ class PluginRegistry:
         self._agent_id = get_agent_id()
         self._lock = RLock()
 
-    def get_plugin(self, plugin_name: str, plugin_type: AgentPluginType) -> Any:
+    def get_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Any:
         with self._lock:
             try:
                 return copy(self._registry[plugin_type][plugin_name])
@@ -65,7 +65,7 @@ class PluginRegistry:
             agent_event_publisher=self._agent_event_publisher,
         )
 
-        self.load_plugin(plugin_name, multiprocessing_plugin, plugin_type)
+        self.load_plugin(plugin_type, plugin_name, multiprocessing_plugin)
 
     def _download_plugin_from_island(
         self, plugin_name: str, plugin_type: AgentPluginType
@@ -80,7 +80,7 @@ class PluginRegistry:
         logger.debug(f"Plugin '{plugin_name}' downloaded from the island")
         return plugin
 
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
+    def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         with self._lock:
             self._registry.setdefault(plugin_type, {})
 

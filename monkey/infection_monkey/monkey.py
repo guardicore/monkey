@@ -328,59 +328,57 @@ class InfectionMonkey:
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 
         puppet.load_plugin(
+            AgentPluginType.CREDENTIAL_COLLECTOR,
             "MimikatzCollector",
             MimikatzCredentialCollector(self._agent_event_queue),
-            AgentPluginType.CREDENTIAL_COLLECTOR,
         )
         puppet.load_plugin(
+            AgentPluginType.CREDENTIAL_COLLECTOR,
             "SSHCollector",
             SSHCredentialCollector(self._agent_event_queue),
-            AgentPluginType.CREDENTIAL_COLLECTOR,
         )
 
-        puppet.load_plugin("http", HTTPFingerprinter(), AgentPluginType.FINGERPRINTER)
-        puppet.load_plugin("mssql", MSSQLFingerprinter(), AgentPluginType.FINGERPRINTER)
-        puppet.load_plugin("smb", SMBFingerprinter(), AgentPluginType.FINGERPRINTER)
-        puppet.load_plugin("ssh", SSHFingerprinter(), AgentPluginType.FINGERPRINTER)
+        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "http", HTTPFingerprinter())
+        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "mssql", MSSQLFingerprinter())
+        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter())
+        puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
 
         exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
 
         puppet.load_plugin(
-            "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter), AgentPluginType.EXPLOITER
+            AgentPluginType.EXPLOITER, "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter)
         )
         puppet.load_plugin(
+            AgentPluginType.EXPLOITER,
             "Log4ShellExploiter",
             exploit_wrapper.wrap(Log4ShellExploiter),
-            AgentPluginType.EXPLOITER,
         )
         puppet.load_plugin(
+            AgentPluginType.EXPLOITER,
             "PowerShellExploiter",
             exploit_wrapper.wrap(PowerShellExploiter),
-            AgentPluginType.EXPLOITER,
         )
         puppet.load_plugin(
-            "SMBExploiter", exploit_wrapper.wrap(SMBExploiter), AgentPluginType.EXPLOITER
+            AgentPluginType.EXPLOITER, "SMBExploiter", exploit_wrapper.wrap(SMBExploiter)
         )
         puppet.load_plugin(
-            "SSHExploiter", exploit_wrapper.wrap(SSHExploiter), AgentPluginType.EXPLOITER
+            AgentPluginType.EXPLOITER, "SSHExploiter", exploit_wrapper.wrap(SSHExploiter)
         )
         puppet.load_plugin(
-            "WmiExploiter", exploit_wrapper.wrap(WmiExploiter), AgentPluginType.EXPLOITER
+            AgentPluginType.EXPLOITER, "WmiExploiter", exploit_wrapper.wrap(WmiExploiter)
         )
         puppet.load_plugin(
-            "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter), AgentPluginType.EXPLOITER
+            AgentPluginType.EXPLOITER, "MSSQLExploiter", exploit_wrapper.wrap(MSSQLExploiter)
         )
 
         puppet.load_plugin(
+            AgentPluginType.EXPLOITER,
             "ZerologonExploiter",
             exploit_wrapper.wrap(ZerologonExploiter),
-            AgentPluginType.EXPLOITER,
         )
 
         puppet.load_plugin(
-            "ransomware",
-            RansomwarePayload(self._agent_event_queue),
-            AgentPluginType.PAYLOAD,
+            AgentPluginType.PAYLOAD, "ransomware", RansomwarePayload(self._agent_event_queue)
         )
 
         return puppet
