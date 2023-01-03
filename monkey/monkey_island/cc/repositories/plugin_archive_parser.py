@@ -54,7 +54,7 @@ def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
         raise ValueError(f"Plugin manifest file is of incorrect type {tarinfo_type(manifest_info)}")
     manifest_buf = tar.extractfile(manifest_info)
 
-    manifest = yaml.safe_load(manifest_buf)
+    manifest = yaml.safe_load(manifest_buf)  # type: ignore [arg-type]
     return AgentPluginManifest(**manifest)
 
 
@@ -72,7 +72,7 @@ def get_plugin_schema(tar: TarFile) -> Dict[str, Any]:
         )
     schema_buf = tar.extractfile(schema_info)
 
-    return json.load(schema_buf)
+    return json.load(schema_buf)  # type: ignore [arg-type]
 
 
 def get_plugin_source(tar: TarFile) -> bytes:
@@ -87,4 +87,4 @@ def get_plugin_source(tar: TarFile) -> bytes:
         raise ValueError(f"Plugin source archive has incorrect type {tarinfo_type(archive_info)}")
     archive_buf = tar.extractfile(archive_info)
 
-    return archive_buf.read()
+    return archive_buf.read()  # type: ignore [union-attr]
