@@ -1,6 +1,6 @@
 import json
 from tarfile import TarFile, TarInfo
-from typing import Any, BinaryIO, Dict
+from typing import IO, Any, BinaryIO, Dict
 
 import yaml
 
@@ -49,14 +49,8 @@ def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
     :raises KeyError: If the manifest is not found in the tar file
     :raises ValueError: If the manifest is not a file
     """
-    manifest_info = tar.getmember(MANIFEST_FILENAME)
-
-    # SECURITY: File types other than "regular file" have security implications. Don't extract them.
-    if not manifest_info.isfile():
-        raise ValueError(f"Plugin manifest file is of incorrect type {tarinfo_type(manifest_info)}")
-
-    manifest_buf = tar.extractfile(manifest_info)
-    manifest = yaml.safe_load(manifest_buf)  # type: ignore [arg-type]
+    manifest_buf = _safe_extract_file(tar, MANIFEST_FILENAME)
+    manifest = yaml.safe_load(manifest_buf)
 
     return AgentPluginManifest(**manifest)
 
@@ -68,17 +62,9 @@ def get_plugin_schema(tar: TarFile) -> Dict[str, Any]:
     :raises KeyError: If the schema is not found in the tar file
     :raises ValueError: If the schema is not a file
     """
-    schema_info = tar.getmember(CONFIG_SCHEMA_FILENAME)
+    schema_buf = _safe_extract_file(tar, CONFIG_SCHEMA_FILENAME)
 
-    # SECURITY: File types other than "regular file" have security implications. Don't extract them.
-    if not schema_info.isfile():
-        raise ValueError(
-            f"Plugin configuration schema file has incorrect type {tarinfo_type(schema_info)}"
-        )
-
-    schema_buf = tar.extractfile(schema_info)
-
-    return json.load(schema_buf)  # type: ignore [arg-type]
+    return json.load(schema_buf)
 
 
 def get_plugin_source(tar: TarFile) -> bytes:
@@ -88,12 +74,20 @@ def get_plugin_source(tar: TarFile) -> bytes:
     :raises KeyError: If the source is not found in the tar file
     :raises ValueError: If the source is not a file
     """
-    archive_info = tar.getmember(SOURCE_ARCHIVE_FILENAME)
+    return _safe_extract_file(tar, SOURCE_ARCHIVE_FILENAME).read()
+
+
+def _safe_extract_file(tar: TarFile, filename: str) -> IO[bytes]:
+    member = tar.getmember(filename)
 
     # SECURITY: File types other than "regular file" have security implications. Don't extract them.
-    if not archive_info.isfile():
-        raise ValueError(f"Plugin source archive has incorrect type {tarinfo_type(archive_info)}")
+    if not member.isfile():
+        raise ValueError(f'File "{filename}" has incorrect type {tarinfo_type(member)}')
 
-    archive_buf = tar.extractfile(archive_info)
+    file_obj = tar.extractfile(member)
 
-    return archive_buf.read()  # type: ignore [union-attr]
+    # Since we're sure that `member.isfile()`, then `TarFile.extractfile()` should never return
+    # None. This assert prevents mypy errors, since technically `extractfile()` returns
+    # `Optional[IO[bytes]]`.
+    assert file_obj is not None
+    return file_obj
