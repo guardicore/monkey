@@ -30,7 +30,7 @@ class Puppet(IPuppet):
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
 
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
+    def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
 
     def run_credential_collector(self, name: str, options: Dict) -> Sequence[Credentials]:
