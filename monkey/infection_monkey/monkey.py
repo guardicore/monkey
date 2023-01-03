@@ -315,7 +315,7 @@ class InfectionMonkey:
         # SECURITY: Don't log the plugin directory name before it's created! This could introduce a
         #           race condition where the attacker may tail the log and create the directory with
         #           insecure permissions.
-        logger.debug("Created {plugin_dir} to store agent plugins")
+        logger.debug(f"Created {self._plugin_dir} to store agent plugins")
 
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
