@@ -50,11 +50,14 @@ def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
     :raises ValueError: If the manifest is not a file
     """
     manifest_info = tar.getmember(MANIFEST_FILENAME)
+
+    # SECURITY: File types other than "regular file" have security implications. Don't extract them.
     if not manifest_info.isfile():
         raise ValueError(f"Plugin manifest file is of incorrect type {tarinfo_type(manifest_info)}")
-    manifest_buf = tar.extractfile(manifest_info)
 
+    manifest_buf = tar.extractfile(manifest_info)
     manifest = yaml.safe_load(manifest_buf)  # type: ignore [arg-type]
+
     return AgentPluginManifest(**manifest)
 
 
@@ -66,10 +69,13 @@ def get_plugin_schema(tar: TarFile) -> Dict[str, Any]:
     :raises ValueError: If the schema is not a file
     """
     schema_info = tar.getmember(CONFIG_SCHEMA_FILENAME)
+
+    # SECURITY: File types other than "regular file" have security implications. Don't extract them.
     if not schema_info.isfile():
         raise ValueError(
             f"Plugin configuration schema file has incorrect type {tarinfo_type(schema_info)}"
         )
+
     schema_buf = tar.extractfile(schema_info)
 
     return json.load(schema_buf)  # type: ignore [arg-type]
@@ -83,8 +89,11 @@ def get_plugin_source(tar: TarFile) -> bytes:
     :raises ValueError: If the source is not a file
     """
     archive_info = tar.getmember(SOURCE_ARCHIVE_FILENAME)
+
+    # SECURITY: File types other than "regular file" have security implications. Don't extract them.
     if not archive_info.isfile():
         raise ValueError(f"Plugin source archive has incorrect type {tarinfo_type(archive_info)}")
+
     archive_buf = tar.extractfile(archive_info)
 
     return archive_buf.read()  # type: ignore [union-attr]
