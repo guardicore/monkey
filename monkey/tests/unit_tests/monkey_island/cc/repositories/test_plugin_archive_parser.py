@@ -22,6 +22,16 @@ def bad_plugin_tarfile(bad_plugin_file) -> TarFile:
     return tarfile.open(bad_plugin_file)
 
 
+@pytest.fixture
+def symlink_tarfile(symlink_plugin_file) -> TarFile:
+    return tarfile.open(symlink_plugin_file)
+
+
+@pytest.fixture
+def dir_tarfile(dir_plugin_file) -> TarFile:
+    return tarfile.open(dir_plugin_file)
+
+
 EXPECTED_MANIFEST = AgentPluginManifest(
     name="test",
     plugin_type=AgentPluginType.EXPLOITER,
@@ -68,19 +78,22 @@ def test_get_plugin_source_KeyError_if_missing(bad_plugin_tarfile):
         get_plugin_source(bad_plugin_tarfile)
 
 
-def test_get_plugin_manifest__ValueError_if_bad(monkeypatch, plugin_tarfile):
-    monkeypatch.setattr(tarfile.TarFile, "extractfile", lambda a, b: None)
+@pytest.mark.parametrize("tarfile_fixture_name", ["symlink_tarfile", "dir_tarfile"])
+def test_get_plugin_manifest__ValueError_if_bad(tarfile_fixture_name, request):
+    tarfile = request.getfixturevalue(tarfile_fixture_name)
     with pytest.raises(ValueError):
-        get_plugin_manifest(plugin_tarfile)
+        get_plugin_manifest(tarfile)
 
 
-def test_get_plugin_schema__ValueError_if_bad(monkeypatch, plugin_tarfile):
-    monkeypatch.setattr(tarfile.TarFile, "extractfile", lambda a, b: None)
+@pytest.mark.parametrize("tarfile_fixture_name", ["symlink_tarfile", "dir_tarfile"])
+def test_get_plugin_schema__ValueError_if_bad(tarfile_fixture_name, request):
+    tarfile = request.getfixturevalue(tarfile_fixture_name)
     with pytest.raises(ValueError):
-        get_plugin_schema(plugin_tarfile)
+        get_plugin_schema(tarfile)
 
 
-def test_get_plugin_source__ValueError_if_bad(monkeypatch, plugin_tarfile):
-    monkeypatch.setattr(tarfile.TarFile, "extractfile", lambda a, b: None)
+@pytest.mark.parametrize("tarfile_fixture_name", ["symlink_tarfile", "dir_tarfile"])
+def test_get_plugin_source__ValueError_if_bad(tarfile_fixture_name, request):
+    tarfile = request.getfixturevalue(tarfile_fixture_name)
     with pytest.raises(ValueError):
-        get_plugin_source(plugin_tarfile)
+        get_plugin_source(tarfile)
