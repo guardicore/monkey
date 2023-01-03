@@ -193,6 +193,7 @@ class InfectionMonkey:
 
     def start(self):
         self._setup_agent_event_forwarder()
+        self._agent_event_forwarder.start()
 
         if self._is_another_monkey_running():
             logger.info("Another instance of the monkey is already running")
