@@ -43,12 +43,6 @@ class PluginRegistry:
 
         self._agent_id = get_agent_id()
 
-    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
-        self._registry.setdefault(plugin_type, {})
-        self._registry[plugin_type][plugin_name] = plugin
-
-        logger.debug(f"Plugin '{plugin_name}' loaded")
-
     def get_plugin(self, plugin_name: str, plugin_type: AgentPluginType) -> Any:
         try:
             return copy(self._registry[plugin_type][plugin_name])
@@ -82,3 +76,9 @@ class PluginRegistry:
 
         logger.debug(f"Plugin '{plugin_name}' downloaded from the island")
         return plugin
+
+    def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
+        self._registry.setdefault(plugin_type, {})
+        self._registry[plugin_type][plugin_name] = plugin
+
+        logger.debug(f"Plugin '{plugin_name}' loaded")
