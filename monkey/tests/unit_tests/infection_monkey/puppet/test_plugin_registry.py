@@ -60,7 +60,7 @@ def test_get_plugin__error_handling(
     )
 
     with pytest.raises(error_raised_by_plugin_registry):
-        plugin_registry.get_plugin("Ghost", AgentPluginType.PAYLOAD)
+        plugin_registry.get_plugin(AgentPluginType.PAYLOAD, "Ghost")
 
 
 PLUGIN_NAME = "test_plugin"
@@ -118,8 +118,8 @@ def test_load_plugin_from_island__only_downloaded_once(
     mock_plugin_loader: PluginLoader,
     plugin_registry: PluginRegistry,
 ):
-    plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
-    plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
+    plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
+    plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
 
     mock_island_api_client.get_agent_plugin.assert_called_once()
     mock_plugin_source_extractor.extract_plugin_source.assert_called_once()
@@ -133,8 +133,8 @@ def test_load_plugin_from_island__return_copy(
     mock_plugin_loader: PluginLoader,
     plugin_registry: PluginRegistry,
 ):
-    plugin1 = plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
-    plugin2 = plugin_registry.get_plugin(PLUGIN_NAME, AgentPluginType.EXPLOITER)
+    plugin1 = plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
+    plugin2 = plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
 
     assert plugin1.__class__ == plugin2.__class__
     assert plugin1.name == plugin2.name

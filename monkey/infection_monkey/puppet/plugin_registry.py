@@ -45,7 +45,7 @@ class PluginRegistry:
         self._agent_id = get_agent_id()
         self._lock = RLock()
 
-    def get_plugin(self, plugin_name: str, plugin_type: AgentPluginType) -> Any:
+    def get_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> Any:
         with self._lock:
             try:
                 return copy(self._registry[plugin_type][plugin_name])
