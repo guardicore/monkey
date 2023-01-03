@@ -1,5 +1,6 @@
 import logging
 from copy import copy
+from threading import RLock
 from typing import Any, Dict
 
 from serpentarium import PluginLoader, PluginThreadName, SingleUsePlugin
@@ -42,13 +43,15 @@ class PluginRegistry:
         self._agent_event_publisher = agent_event_publisher
 
         self._agent_id = get_agent_id()
+        self._lock = RLock()
 
     def get_plugin(self, plugin_name: str, plugin_type: AgentPluginType) -> Any:
-        try:
-            return copy(self._registry[plugin_type][plugin_name])
-        except KeyError:
-            self._load_plugin_from_island(plugin_name, plugin_type)
-            return copy(self._registry[plugin_type][plugin_name])
+        with self._lock:
+            try:
+                return copy(self._registry[plugin_type][plugin_name])
+            except KeyError:
+                self._load_plugin_from_island(plugin_name, plugin_type)
+                return copy(self._registry[plugin_type][plugin_name])
 
     def _load_plugin_from_island(self, plugin_name: str, plugin_type: AgentPluginType):
         agent_plugin = self._download_plugin_from_island(plugin_name, plugin_type)
@@ -78,7 +81,8 @@ class PluginRegistry:
         return plugin
 
     def load_plugin(self, plugin_name: str, plugin: object, plugin_type: AgentPluginType) -> None:
-        self._registry.setdefault(plugin_type, {})
-        self._registry[plugin_type][plugin_name] = plugin
+        with self._lock:
+            self._registry.setdefault(plugin_type, {})
 
+        self._registry[plugin_type][plugin_name] = plugin
         logger.debug(f"Plugin '{plugin_name}' loaded")
