@@ -305,11 +305,14 @@ class InfectionMonkey:
         return list(ordered_servers.keys())
 
     def _build_puppet(self) -> IPuppet:
-        temp_dir = Path(gettempdir()) / random_filename()
-        plugin_dir = temp_dir / "plugins"
-
-        create_secure_directory(temp_dir)
+        plugin_dir = (
+            Path(gettempdir()) / f"infection_monkey_plugins_{self._agent_id}_{random_filename()}"
+        )
         create_secure_directory(plugin_dir)
+        # SECURITY: Don't log the plugin directory name before it's created! This could introduce a
+        #           race condition where the attacker may tail the log and create the directory with
+        #           insecure permissions.
+        logger.debug("Created {plugin_dir} to store agent plugins")
 
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
