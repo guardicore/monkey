@@ -75,16 +75,22 @@ def main():
 
     try:
         monkey.start()
-        return True
-    except Exception as e:
-        logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))
-    finally:
+    except Exception as err:
+        logger.exception("Exception thrown from monkey's start function. More info: {}".format(err))
+
+    try:
         monkey.cleanup()
-        queue_listener.stop()
+    except Exception as err:
+        logger.exception(
+            "Exception thrown from monkey's cleanup function: More info: {}".format(err)
+        )
+
+    queue_listener.stop()
 
 
-def _configure_queue_listener(ipc_logger_queue: Queue,
-                              log_file_path: Path) -> logging.handlers.QueueListener:
+def _configure_queue_listener(
+    ipc_logger_queue: Queue, log_file_path: Path
+) -> logging.handlers.QueueListener:
     """
     Gets unstarted configured QueueListener object
 
