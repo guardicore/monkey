@@ -45,9 +45,9 @@ def main():
             log_path = get_dropper_log_path()
             monkey_cls = MonkeyDrops
         else:
-            return True
+            return
     except ValueError:
-        return True
+        return
 
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
@@ -116,5 +116,4 @@ def _configure_queue_listener(
 
 
 if "__main__" == __name__:
-    if not main():
-        sys.exit(1)
+    main()
