@@ -3,6 +3,7 @@ import contextlib
 import logging
 import multiprocessing
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -109,6 +110,9 @@ class InfectionMonkey:
         )
         self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
 
+        self._plugin_dir = (
+            Path(gettempdir()) / f"infection_monkey_plugins_{self._agent_id}_{random_filename()}"
+        )
         self._island_address, self._island_api_client = self._connect_to_island_api()
 
         self._control_channel = ControlChannel(
@@ -307,14 +311,11 @@ class InfectionMonkey:
         return list(ordered_servers.keys())
 
     def _build_puppet(self) -> IPuppet:
-        plugin_dir = (
-            Path(gettempdir()) / f"infection_monkey_plugins_{self._agent_id}_{random_filename()}"
-        )
-        create_secure_directory(plugin_dir)
+        create_secure_directory(self._plugin_dir)
         # SECURITY: Don't log the plugin directory name before it's created! This could introduce a
         #           race condition where the attacker may tail the log and create the directory with
         #           insecure permissions.
-        logger.debug("Created {plugin_dir} to store agent plugins")
+        logger.debug(f"Created {self._plugin_dir} to store agent plugins")
 
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
@@ -322,8 +323,8 @@ class InfectionMonkey:
 
         plugin_registry = PluginRegistry(
             self._island_api_client,
-            PluginSourceExtractor(plugin_dir),
-            PluginLoader(plugin_dir),
+            PluginSourceExtractor(self._plugin_dir),
+            PluginLoader(self._plugin_dir),
             agent_binary_repository,
             self._agent_event_publisher,
         )
@@ -425,6 +426,7 @@ class InfectionMonkey:
             self._heart.stop()
 
             self._close_tunnel()
+
         except Exception as e:
             logger.exception(f"An error occurred while cleaning up the monkey agent: {e}")
             if deleted is None:
@@ -432,6 +434,7 @@ class InfectionMonkey:
         finally:
             self._plugin_event_forwarder.stop()
             self._agent_event_forwarder.stop()
+            self._delete_plugin_dir()
             with contextlib.suppress(AssertionError):
                 self._singleton.unlock()
 
@@ -465,6 +468,15 @@ class InfectionMonkey:
             log_contents = ""
 
         self._island_api_client.send_log(self._agent_id, log_contents)
+
+    def _delete_plugin_dir(self):
+        if not self._plugin_dir.exists():
+            return
+
+        try:
+            shutil.rmtree(self._plugin_dir)
+        except Exception as err:
+            logger.warning(f"Failed to cleanup the plugin directory: {err}")
 
     @staticmethod
     def _self_delete() -> bool:
