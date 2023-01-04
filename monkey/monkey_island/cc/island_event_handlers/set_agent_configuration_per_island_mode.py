@@ -20,10 +20,10 @@ class set_agent_configuration_per_island_mode:
 
     def __call__(self, mode: IslandMode):
         if mode == IslandMode.RANSOMWARE:
-            self._agent_configuration_repository.store_configuration(
+            self._agent_configuration_repository.update_configuration(
                 self._default_ransomware_agent_configuration
             )
         else:
-            self._agent_configuration_repository.store_configuration(
+            self._agent_configuration_repository.update_configuration(
                 self._default_agent_configuration
             )

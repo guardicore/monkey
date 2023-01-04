@@ -26,7 +26,7 @@ class AgentConfiguration(AbstractResource):
     def put(self):
         try:
             configuration_object = AgentConfigurationObject(**request.json)
-            self._agent_configuration_repository.store_configuration(configuration_object)
+            self._agent_configuration_repository.update_configuration(configuration_object)
             # API Spec: Should return 204 (NO CONTENT)
             return make_response({}, 200)
         except (ValueError, TypeError, json.JSONDecodeError) as err:

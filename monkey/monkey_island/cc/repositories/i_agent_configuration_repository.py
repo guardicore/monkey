@@ -20,19 +20,19 @@ class IAgentConfigurationRepository(ABC):
         pass
 
     @abstractmethod
-    def store_configuration(self, agent_configuration: AgentConfiguration):
+    def update_configuration(self, agent_configuration: AgentConfiguration):
         """
-        Store the agent configuration in the repository
+        Update the agent configuration in the repository
 
-        :param agent_configuration: The agent configuration to store in the repository
-        :raises StorageError: If the configuration could not be stored
+        :param agent_configuration: The new agent configuration to store in the repository
+        :raises StorageError: If the configuration could not be updated
         """
         pass
 
     @abstractmethod
     def reset_to_default(self):
         """
-        Remove any stored configuration from the repository
+        Reset the repository's configuration to the default values
 
         :raises RemovalError: If the repository could not be reset
         """

@@ -14,7 +14,7 @@ def repository(default_agent_configuration):
 def test_store_agent_config(repository):
     agent_configuration = AgentConfiguration(**AGENT_CONFIGURATION)
 
-    repository.store_configuration(agent_configuration)
+    repository.update_configuration(agent_configuration)
     retrieved_agent_configuration = repository.get_configuration()
 
     assert retrieved_agent_configuration == agent_configuration
@@ -38,7 +38,7 @@ def test_get_agent_config_retrieval_error(default_agent_configuration):
 def test_reset_to_default(repository, default_agent_configuration):
     agent_configuration = AgentConfiguration(**AGENT_CONFIGURATION)
 
-    repository.store_configuration(agent_configuration)
+    repository.update_configuration(agent_configuration)
     repository.reset_to_default()
     retrieved_agent_configuration = repository.get_configuration()
 

@@ -16,7 +16,7 @@ def agent_configuration_repository(
     agent_configuration: AgentConfiguration,
 ) -> IAgentConfigurationRepository:
     agent_configuration_repository = InMemoryAgentConfigurationRepository()
-    agent_configuration_repository.store_configuration(agent_configuration)
+    agent_configuration_repository.update_configuration(agent_configuration)
 
     return agent_configuration_repository
 

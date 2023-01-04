@@ -10,7 +10,7 @@ class InMemoryAgentConfigurationRepository(IAgentConfigurationRepository):
     def get_configuration(self):
         return self._configuration
 
-    def store_configuration(self, agent_configuration):
+    def update_configuration(self, agent_configuration):
         self._configuration = agent_configuration
 
     def reset_to_default(self):
