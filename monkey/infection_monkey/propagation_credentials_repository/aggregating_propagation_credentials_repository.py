@@ -7,14 +7,14 @@ from infection_monkey.custom_types import PropagationCredentials
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.utils.decorators import request_cache
 
-from .i_propagation_credentials_repository import IPropagationCredentialsRepository
+from .i_legacy_propagation_credentials_repository import ILegacyPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
 
 CREDENTIALS_POLL_PERIOD_SEC = 10
 
 
-class AggregatingPropagationCredentialsRepository(IPropagationCredentialsRepository):
+class AggregatingPropagationCredentialsRepository(ILegacyPropagationCredentialsRepository):
     """
     Repository that stores credentials on the island and saves/gets credentials by using
     command and control channel

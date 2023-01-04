@@ -9,7 +9,9 @@ from common.utils import Timer
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
+from infection_monkey.propagation_credentials_repository import (
+    ILegacyPropagationCredentialsRepository,
+)
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 
@@ -32,7 +34,7 @@ class AutomatedMaster(IMaster):
         puppet: IPuppet,
         control_channel: IControlChannel,
         local_network_interfaces: List[IPv4Interface],
-        credentials_store: IPropagationCredentialsRepository,
+        credentials_store: ILegacyPropagationCredentialsRepository,
     ):
         self._current_depth = current_depth
         self._servers = servers

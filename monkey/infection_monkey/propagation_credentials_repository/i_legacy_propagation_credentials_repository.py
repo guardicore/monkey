@@ -5,7 +5,7 @@ from common.credentials import Credentials
 from infection_monkey.custom_types import PropagationCredentials
 
 
-class IPropagationCredentialsRepository(metaclass=abc.ABCMeta):
+class ILegacyPropagationCredentialsRepository(metaclass=abc.ABCMeta):
     """
     Repository that stores and provides credentials for the Agent to use in propagation
     """
