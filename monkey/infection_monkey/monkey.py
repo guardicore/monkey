@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import time
+from functools import partial
 from itertools import chain
 from pathlib import Path, WindowsPath
 from tempfile import gettempdir
@@ -14,6 +15,7 @@ from typing import Optional, Sequence, Tuple
 
 from pubsub.core import Publisher
 from serpentarium import PluginLoader
+from serpentarium.logging import configure_child_process_logger
 
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
@@ -90,7 +92,7 @@ logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
 class InfectionMonkey:
-    def __init__(self, args):
+    def __init__(self, args, ipc_logger_queue: multiprocessing.Queue):
         logger.info("Agent is initializing...")
 
         self._agent_id = get_agent_id()
@@ -99,6 +101,8 @@ class InfectionMonkey:
 
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
+
+        self._ipc_logger_queue = ipc_logger_queue
 
         self._agent_event_forwarder = None
         self._agent_event_queue = self._setup_agent_event_queue()
@@ -321,10 +325,13 @@ class InfectionMonkey:
             island_api_client=self._island_api_client,
         )
 
+        plugin_loader = PluginLoader(
+            self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
+        )
         plugin_registry = PluginRegistry(
             self._island_api_client,
             PluginSourceExtractor(self._plugin_dir),
-            PluginLoader(self._plugin_dir),
+            plugin_loader,
             agent_binary_repository,
             self._agent_event_publisher,
         )
