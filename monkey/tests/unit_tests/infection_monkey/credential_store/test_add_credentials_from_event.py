@@ -6,7 +6,9 @@ from common.credentials import Credentials, Password, Username
 from infection_monkey.agent_event_handlers import (
     add_stolen_credentials_to_propagation_credentials_repository,
 )
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
+from infection_monkey.propagation_credentials_repository import (
+    ILegacyPropagationCredentialsRepository,
+)
 
 credentials = [
     Credentials(
@@ -24,7 +26,9 @@ credentials_stolen_event = CredentialsStolenEvent(
 
 
 def test_add_credentials_from_event_to_propagation_credentials_repository():
-    mock_propagation_credentials_repository = MagicMock(spec=IPropagationCredentialsRepository)
+    mock_propagation_credentials_repository = MagicMock(
+        spec=ILegacyPropagationCredentialsRepository
+    )
     fn = add_stolen_credentials_to_propagation_credentials_repository(
         mock_propagation_credentials_repository
     )
