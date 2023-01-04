@@ -6,6 +6,7 @@ from serpentarium.logging import configure_host_process_logger
 
 # isort: on
 import argparse
+import atexit
 import logging
 import logging.handlers
 import os
@@ -13,6 +14,7 @@ import sys
 import traceback
 from multiprocessing import Queue, freeze_support, get_context
 from pathlib import Path
+from typing import Sequence, Tuple, Union
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
@@ -26,6 +28,27 @@ from infection_monkey.utils.monkey_log_path import get_agent_log_path, get_dropp
 def main():
     freeze_support()  # required for multiprocessing + pyinstaller on windows
 
+    mode, mode_specific_args = _parse_args()
+
+    # TODO: Use an Enum for this
+    if mode not in [MONKEY_ARG, DROPPER_ARG]:
+        raise ValueError(f'The mode argument must be either "{MONKEY_ARG}" or "{DROPPER_ARG}"')
+
+    multiprocessing_context = get_context(method="spawn")
+    ipc_logger_queue = multiprocessing_context.Queue()
+
+    log_path = _get_log_file_path(mode)
+
+    queue_listener = _configure_queue_listener(ipc_logger_queue, log_path)
+    queue_listener.start()
+    atexit.register(queue_listener.stop)
+
+    logger = _configure_logger()
+    logger.info(f"writing log file to {log_path}")
+    _run_agent(mode, mode_specific_args, ipc_logger_queue, logger)
+
+
+def _parse_args() -> Tuple[str, Sequence[str]]:
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument(
         "mode",
@@ -35,57 +58,16 @@ def main():
         f"and will start it on a separate process.",
     )
     mode_args, mode_specific_args = arg_parser.parse_known_args()
-    mode = mode_args.mode
+    mode = str(mode_args.mode)
 
-    try:
-        if MONKEY_ARG == mode:
-            log_path = get_agent_log_path()
-            monkey_cls = InfectionMonkey
-        elif DROPPER_ARG == mode:
-            log_path = get_dropper_log_path()
-            monkey_cls = MonkeyDrops
-        else:
-            return
-    except ValueError:
-        return
+    return mode, mode_specific_args
 
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
 
-    multiprocessing_context = get_context(method="spawn")
-    ipc_logger_queue = multiprocessing_context.Queue()
+def _get_log_file_path(mode: str):
+    if MONKEY_ARG == mode:
+        return get_agent_log_path()
 
-    queue_listener = _configure_queue_listener(ipc_logger_queue, log_path)
-    queue_listener.start()
-
-    def log_uncaught_exceptions(ex_cls, ex, tb):
-        logger.critical("".join(traceback.format_tb(tb)))
-        logger.critical("{0}: {1}".format(ex_cls, ex))
-
-    sys.excepthook = log_uncaught_exceptions
-
-    logger.info(
-        ">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<", monkey_cls.__name__, os.getpid()
-    )
-
-    logger.info(f"version: {get_version()}")
-    logger.info(f"writing log file to {log_path}")
-
-    monkey = monkey_cls(mode_specific_args, ipc_logger_queue=ipc_logger_queue)
-
-    try:
-        monkey.start()
-    except Exception as err:
-        logger.exception("Exception thrown from monkey's start function. More info: {}".format(err))
-
-    try:
-        monkey.cleanup()
-    except Exception as err:
-        logger.exception(
-            "Exception thrown from monkey's cleanup function: More info: {}".format(err)
-        )
-
-    queue_listener.stop()
+    return get_dropper_log_path()
 
 
 def _configure_queue_listener(
@@ -113,6 +95,51 @@ def _configure_queue_listener(
 
     queue_listener = configure_host_process_logger(ipc_logger_queue, [stream_handler, file_handler])
     return queue_listener
+
+
+def _configure_logger() -> logging.Logger:
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    def log_uncaught_exceptions(ex_cls, ex, tb):
+        logger.critical("".join(traceback.format_tb(tb)))
+        logger.critical("{0}: {1}".format(ex_cls, ex))
+
+    sys.excepthook = log_uncaught_exceptions
+
+    return logger
+
+
+def _run_agent(
+    mode: str,
+    mode_specific_args: Sequence[str],
+    ipc_logger_queue: Queue,
+    logger: logging.Logger,
+):
+    logger.info(
+        ">>>>>>>>>> Initializing the Infection Monkey Agent: PID %s <<<<<<<<<<", os.getpid()
+    )
+
+    logger.info(f"version: {get_version()}")
+
+    monkey: Union[InfectionMonkey, MonkeyDrops]
+    if MONKEY_ARG == mode:
+        monkey = InfectionMonkey(mode_specific_args, ipc_logger_queue=ipc_logger_queue)
+    elif DROPPER_ARG == mode:
+        monkey = MonkeyDrops(mode_specific_args)
+
+    try:
+        logger.info(f"Starting {monkey.__class__.__name__}")
+        monkey.start()
+    except Exception as err:
+        logger.exception("Exception thrown from monkey's start function. More info: {}".format(err))
+
+    try:
+        monkey.cleanup()
+    except Exception as err:
+        logger.exception(
+            "Exception thrown from monkey's cleanup function: More info: {}".format(err)
+        )
 
 
 if "__main__" == __name__:
