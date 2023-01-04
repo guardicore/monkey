@@ -49,15 +49,6 @@ def main():
     except ValueError:
         return True
 
-    if os.path.exists(log_path):
-        # If log exists but can't be removed it means other monkey is running. This usually
-        # happens on upgrade
-        # from 32bit to 64bit monkey on Windows. In all cases this shouldn't be a problem.
-        try:
-            os.remove(log_path)
-        except OSError:
-            pass
-
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
 
