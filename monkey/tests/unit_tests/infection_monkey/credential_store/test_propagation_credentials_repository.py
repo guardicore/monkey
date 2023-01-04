@@ -1,14 +1,19 @@
-from typing import List
-from unittest.mock import MagicMock
+from multiprocessing import Queue, get_context
+from typing import Sequence
 
 import pytest
 from pydantic import SecretStr
-from tests.data_for_tests.propagation_credentials import CREDENTIALS, PASSWORD_1, USERNAME
+from tests.data_for_tests.propagation_credentials import (
+    CREDENTIALS,
+    PASSWORD_1,
+    PASSWORD_3,
+    USERNAME,
+)
 
+from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
+from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
-
-EMPTY_CHANNEL_CREDENTIALS: List[Credentials] = []
 
 STOLEN_USERNAME_1 = "user1"
 STOLEN_USERNAME_2 = "user2"
@@ -53,11 +58,50 @@ STOLEN_SSH_KEYS_CREDENTIALS = [
     )
 ]
 
+NEW_CREDENTIALS = [
+    Credentials(
+        identity=Username(username="new"),
+        secret=Password(password=PASSWORD_3),
+    )
+]
+
+
+class BaseControlChannel(IControlChannel):
+    def should_agent_stop(self) -> bool:
+        pass
+
+    def get_config(self) -> AgentConfiguration:
+        pass
+
+    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
+        pass
+
 
 @pytest.fixture
-def propagation_credentials_repository() -> PropagationCredentialsRepository:
-    control_channel = MagicMock()
-    control_channel.get_credentials_for_propagation.return_value = CREDENTIALS
+def control_channel() -> IControlChannel:
+    return StubControlChannel(CREDENTIALS)
+
+
+class StubControlChannel(BaseControlChannel):
+    def __init__(self, credentials: Sequence[Credentials]):
+        self._credentials = credentials
+
+        self._calls = get_context("spawn").Value("i", 0)
+
+    @property
+    def calls(self):
+        return self._calls.value
+
+    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
+        with self._calls.get_lock():
+            self._calls.value += 1
+            return self._credentials
+
+
+@pytest.fixture
+def propagation_credentials_repository(
+    control_channel: StubControlChannel,
+) -> PropagationCredentialsRepository:
     return PropagationCredentialsRepository(control_channel)
 
 
@@ -78,14 +122,53 @@ def test_add_credentials(propagation_credentials_repository):
     )
 
 
-def test_credentials_obtained_if_propagation_credentials_fails():
-    control_channel = MagicMock()
-    control_channel.get_credentials_for_propagation.return_value = EMPTY_CHANNEL_CREDENTIALS
-    control_channel.get_credentials_for_propagation.side_effect = Exception(
-        "No credentials for you!"
-    )
-    credentials_repository = PropagationCredentialsRepository(control_channel)
+def test_credentials_obtained_if_propagation_credentials_fails(
+    propagation_credentials_repository: PropagationCredentialsRepository,
+    control_channel: StubControlChannel,
+    monkeypatch,
+):
+    def func() -> Sequence[Credentials]:
+        raise Exception("No credentials for you!")
 
-    credentials = credentials_repository.get_credentials()
+    monkeypatch.setattr(control_channel, "get_credentials_for_propagation", func)
+
+    credentials = propagation_credentials_repository.get_credentials()
 
     assert credentials is not None
+
+
+def test_get_credentials__uses_cached_credentials(
+    propagation_credentials_repository: PropagationCredentialsRepository,
+    control_channel: StubControlChannel,
+):
+    credentials1 = propagation_credentials_repository.get_credentials()
+    credentials2 = propagation_credentials_repository.get_credentials()
+
+    assert set(credentials1) == set(credentials2)
+    assert control_channel.calls == 1
+
+
+def get_credentials(
+    propagation_credentials_repository: PropagationCredentialsRepository, queue: Queue
+):
+    credentials = propagation_credentials_repository.get_credentials()
+    queue.put(credentials)
+
+
+def test_get_credentials__used_cached_credentials_multiprocess(
+    propagation_credentials_repository: PropagationCredentialsRepository,
+    control_channel: StubControlChannel,
+):
+    context = get_context("spawn")
+    queue = context.Queue()
+    p1 = context.Process(target=get_credentials, args=(propagation_credentials_repository, queue))
+    p2 = context.Process(target=get_credentials, args=(propagation_credentials_repository, queue))
+    p1.start()
+    p2.start()
+    credentials1 = queue.get()
+    credentials2 = queue.get()
+    p1.join()
+    p2.join()
+
+    assert set(credentials1) == set(credentials2)
+    assert control_channel.calls == 1
