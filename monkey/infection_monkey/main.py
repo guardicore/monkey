@@ -71,7 +71,7 @@ def main():
     logger.info(f"version: {get_version()}")
     logger.info(f"writing log file to {log_path}")
 
-    monkey = monkey_cls(mode_specific_args)
+    monkey = monkey_cls(mode_specific_args, ipc_logger_queue=ipc_logger_queue)
 
     try:
         monkey.start()
