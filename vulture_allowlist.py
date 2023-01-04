@@ -10,6 +10,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.island_api_client import HTTPIslandAPIClient
+from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
@@ -151,3 +152,6 @@ IAgentPluginRepository
 
 # Remove after #2710
 IAgentPluginRepository.get_plugin_catalog
+
+# Remove before completing #2773
+IPropagationCredentialsRepository
