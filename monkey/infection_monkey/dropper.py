@@ -1,7 +1,6 @@
 import argparse
 import filecmp
 import logging
-import multiprocessing
 import os
 import pprint
 import shutil
@@ -41,7 +40,7 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
 
 class MonkeyDrops(object):
-    def __init__(self, args, ipc_logger_queue: multiprocessing.Queue = None):
+    def __init__(self, args):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("-p", "--parent")
         arg_parser.add_argument("-s", "--servers", type=lambda arg: arg.strip().split(","))
