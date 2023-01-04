@@ -16,7 +16,9 @@ from tests.data_for_tests.propagation_credentials import (
 )
 
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
-from infection_monkey.credential_repository import AggregatingPropagationCredentialsRepository
+from infection_monkey.propagation_credentials_repository import (
+    AggregatingPropagationCredentialsRepository,
+)
 
 TRANSFORMED_CONTROL_CHANNEL_CREDENTIALS = {
     "exploit_user_list": {USERNAME, SPECIAL_USERNAME},
