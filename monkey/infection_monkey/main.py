@@ -2,15 +2,17 @@
 # import system prior to any imports
 # isort: off
 import serpentarium  # noqa: F401
+from serpentarium.logging import configure_host_process_logger
 
 # isort: on
 import argparse
 import logging
-import logging.config
+import logging.handlers
 import os
 import sys
 import traceback
-from multiprocessing import freeze_support
+from multiprocessing import Queue, freeze_support, get_context
+from pathlib import Path
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
@@ -20,33 +22,8 @@ from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
 from infection_monkey.utils.monkey_log_path import get_agent_log_path, get_dropper_log_path
 
-logger = None
-
-LOG_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {
-            "format": "%(asctime)s [%(process)d:%(threadName)s:%(levelname)s] %(module)s.%("
-            "funcName)s.%(lineno)d: %(message)s"
-        },
-    },
-    "handlers": {
-        "console": {"class": "logging.StreamHandler", "level": "DEBUG", "formatter": "standard"},
-        "file": {
-            "class": "logging.FileHandler",
-            "level": "DEBUG",
-            "formatter": "standard",
-            "filename": None,
-        },
-    },
-    "root": {"level": "DEBUG", "handlers": ["console"]},
-}
-
 
 def main():
-    global logger
-
     freeze_support()  # required for multiprocessing + pyinstaller on windows
 
     arg_parser = argparse.ArgumentParser()
@@ -68,24 +45,18 @@ def main():
             log_path = get_dropper_log_path()
             monkey_cls = MonkeyDrops
         else:
-            return True
+            return
     except ValueError:
-        return True
+        return
 
-    if os.path.exists(log_path):
-        # If log exists but can't be removed it means other monkey is running. This usually
-        # happens on upgrade
-        # from 32bit to 64bit monkey on Windows. In all cases this shouldn't be a problem.
-        try:
-            os.remove(log_path)
-        except OSError:
-            pass
-    LOG_CONFIG["handlers"]["file"]["filename"] = log_path
-    # noinspection PyUnresolvedReferences
-    LOG_CONFIG["root"]["handlers"].append("file")
-
-    logging.config.dictConfig(LOG_CONFIG)
     logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    multiprocessing_context = get_context(method="spawn")
+    ipc_logger_queue = multiprocessing_context.Queue()
+
+    queue_listener = _configure_queue_listener(ipc_logger_queue, log_path)
+    queue_listener.start()
 
     def log_uncaught_exceptions(ex_cls, ex, tb):
         logger.critical("".join(traceback.format_tb(tb)))
@@ -104,13 +75,45 @@ def main():
 
     try:
         monkey.start()
-        return True
-    except Exception as e:
-        logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))
-    finally:
+    except Exception as err:
+        logger.exception("Exception thrown from monkey's start function. More info: {}".format(err))
+
+    try:
         monkey.cleanup()
+    except Exception as err:
+        logger.exception(
+            "Exception thrown from monkey's cleanup function: More info: {}".format(err)
+        )
+
+    queue_listener.stop()
+
+
+def _configure_queue_listener(
+    ipc_logger_queue: Queue, log_file_path: Path
+) -> logging.handlers.QueueListener:
+    """
+    Gets unstarted configured QueueListener object
+
+    We configure the root logger to use QueueListener with Stream and File handler.
+
+    :param ipc_logger_queue: A Queue shared by the host and child process that stores log messages
+    :param log_path: A Path used to configure the FileHandler
+    """
+    log_format = (
+        "%(asctime)s [%(process)d:%(threadName)s:%(levelname)s] %(module)s.%("
+        "funcName)s.%(lineno)d: %(message)s"
+    )
+    formatter = logging.Formatter(log_format)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setFormatter(formatter)
+
+    queue_listener = configure_host_process_logger(ipc_logger_queue, [stream_handler, file_handler])
+    return queue_listener
 
 
 if "__main__" == __name__:
-    if not main():
-        sys.exit(1)
+    main()
