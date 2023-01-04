@@ -6,10 +6,10 @@ from typing import Any, Callable, Collection, List, Optional, Sequence
 
 from common.agent_configuration import PluginConfiguration
 from common.utils import Timer
-from infection_monkey.credential_repository import IPropagationCredentialsRepository
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
+from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.threading import create_daemon_thread, interruptible_iter
 

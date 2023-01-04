@@ -6,7 +6,7 @@ from common.credentials import Credentials, Password, Username
 from infection_monkey.agent_event_handlers import (
     add_stolen_credentials_to_propagation_credentials_repository,
 )
-from infection_monkey.credential_repository import IPropagationCredentialsRepository
+from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 credentials = [
     Credentials(

@@ -45,7 +45,6 @@ from infection_monkey.credential_collectors import (
     MimikatzCredentialCollector,
     SSHCredentialCollector,
 )
-from infection_monkey.credential_repository import AggregatingPropagationCredentialsRepository
 from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
 from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
@@ -73,6 +72,9 @@ from infection_monkey.network_scanning.mssql_fingerprinter import MSSQLFingerpri
 from infection_monkey.network_scanning.smb_fingerprinter import SMBFingerprinter
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
+from infection_monkey.propagation_credentials_repository import (
+    AggregatingPropagationCredentialsRepository,
+)
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
