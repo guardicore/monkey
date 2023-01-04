@@ -470,6 +470,9 @@ class InfectionMonkey:
         self._island_api_client.send_log(self._agent_id, log_contents)
 
     def _delete_plugin_dir(self):
+        if not self._plugin_dir.exists():
+            return
+
         try:
             shutil.rmtree(self._plugin_dir)
         except Exception as err:
