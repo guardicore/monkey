@@ -403,7 +403,8 @@ class InfectionMonkey:
         self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
-                self._legacy_propagation_credentials_repository
+                self._propagation_credentials_repository,
+                self._legacy_propagation_credentials_repository,
             ),
         )
         self._agent_event_queue.subscribe_type(
