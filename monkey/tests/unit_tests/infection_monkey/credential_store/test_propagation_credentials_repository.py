@@ -90,7 +90,7 @@ class StubControlChannel(BaseControlChannel):
         self._calls = get_context("spawn").Value("i", 0)
 
     @property
-    def calls(self):
+    def calls(self) -> int:
         return self._calls.value
 
     def get_credentials_for_propagation(self) -> Sequence[Credentials]:
@@ -106,13 +106,15 @@ def propagation_credentials_repository(
     return PropagationCredentialsRepository(control_channel)
 
 
-def test_get_credentials__retrieves_from_control_channel(propagation_credentials_repository):
+def test_get_credentials__retrieves_from_control_channel(
+    propagation_credentials_repository: PropagationCredentialsRepository,
+):
     actual_stored_credentials = propagation_credentials_repository.get_credentials()
 
     assert set(actual_stored_credentials) == set(CREDENTIALS)
 
 
-def test_add_credentials(propagation_credentials_repository):
+def test_add_credentials(propagation_credentials_repository: PropagationCredentialsRepository):
     propagation_credentials_repository.add_credentials(STOLEN_CREDENTIALS)
     propagation_credentials_repository.add_credentials(STOLEN_SSH_KEYS_CREDENTIALS)
 
