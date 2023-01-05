@@ -68,7 +68,9 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
 )
 
 EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
-BRUTE_FORCE_EXPLOITERS = (
+EXPLOITERS = (
+    PluginConfiguration(name="Log4ShellExploiter", options={}),
+    PluginConfiguration(name="HadoopExploiter", options={}),
     PluginConfiguration(name="MSSQLExploiter", options={}),
     PluginConfiguration(name="PowerShellExploiter", options={}),
     PluginConfiguration(name="SSHExploiter", options={}),
@@ -76,15 +78,9 @@ BRUTE_FORCE_EXPLOITERS = (
     PluginConfiguration(name="WmiExploiter", options={"smb_download_timeout": 30}),
 )
 
-VULNERABILITY_EXPLOITERS = (
-    PluginConfiguration(name="Log4ShellExploiter", options={}),
-    PluginConfiguration(name="HadoopExploiter", options={}),
-)
-
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
     options=EXPLOITATION_OPTIONS_CONFIGURATION,
-    brute_force=BRUTE_FORCE_EXPLOITERS,
-    vulnerability=VULNERABILITY_EXPLOITERS,
+    exploiters=EXPLOITERS,
 )
 
 PROPAGATION_CONFIGURATION = PropagationConfiguration(
