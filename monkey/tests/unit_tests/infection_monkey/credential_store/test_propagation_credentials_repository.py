@@ -15,9 +15,6 @@ from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
 from infection_monkey.i_control_channel import IControlChannel
 from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
-from infection_monkey.propagation_credentials_repository.propagation_credentials_repository import (
-    CREDENTIALS_POLL_PERIOD_SEC,
-)
 
 STOLEN_USERNAME_1 = "user1"
 STOLEN_USERNAME_2 = "user2"
@@ -178,12 +175,11 @@ def test_get_credentials__used_cached_credentials_multiprocess(
     assert control_channel.calls == 1
 
 
-@pytest.mark.skip
 @pytest.mark.slow
 def test_get_credentials__updates_cache_after_timeout_period(
-    propagation_credentials_repository: PropagationCredentialsRepository,
     control_channel: StubControlChannel,
 ):
+    propagation_credentials_repository = PropagationCredentialsRepository(control_channel, 0.01)
     context = get_context("spawn")
     queue = context.Queue()
     p1 = context.Process(target=get_credentials, args=(propagation_credentials_repository, queue))
@@ -191,7 +187,7 @@ def test_get_credentials__updates_cache_after_timeout_period(
     p1.join()
 
     # Sleep so that the poll period times out
-    sleep(CREDENTIALS_POLL_PERIOD_SEC + 0.01)
+    sleep(0.02)
 
     p2 = context.Process(target=get_credentials, args=(propagation_credentials_repository, queue))
     p2.start()

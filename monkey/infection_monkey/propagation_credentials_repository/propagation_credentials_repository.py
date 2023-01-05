@@ -20,8 +20,11 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
     command and control channel
     """
 
-    def __init__(self, control_channel: IControlChannel):
+    def __init__(
+        self, control_channel: IControlChannel, polling_period: float = CREDENTIALS_POLL_PERIOD_SEC
+    ):
         self._control_channel = control_channel
+        self._polling_period = polling_period
         context = get_context("spawn")
         self._next_update_time = context.Value("d", 0)
         self._stored_credentials = context.Manager().list()
@@ -38,7 +41,7 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
                     propagation_credentials = (
                         self._control_channel.get_credentials_for_propagation()
                     )
-                    self._next_update_time.value = time.monotonic() + CREDENTIALS_POLL_PERIOD_SEC
+                    self._next_update_time.value = time.monotonic() + self._polling_period
                     logger.debug(
                         f"Received {len(propagation_credentials)} from the control channel"
                     )
