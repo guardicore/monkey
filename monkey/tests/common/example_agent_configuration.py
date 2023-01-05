@@ -27,14 +27,12 @@ NETWORK_SCAN_CONFIGURATION = {
     "targets": SCAN_TARGET_CONFIGURATION,
 }
 
-BRUTE_FORCE = [
+EXPLOITERS = [
     {"name": "ex1", "options": {}},
     {
         "name": "ex2",
         "options": {"smb_download_timeout": 10},
     },
-]
-VULNERABILITY = [
     {
         "name": "ex3",
         "options": {"smb_download_timeout": 10},
@@ -42,8 +40,7 @@ VULNERABILITY = [
 ]
 EXPLOITATION_CONFIGURATION = {
     "options": {"http_ports": PORTS},
-    "brute_force": BRUTE_FORCE,
-    "vulnerability": VULNERABILITY,
+    "exploiters": EXPLOITERS,
 }
 
 PROPAGATION_CONFIGURATION = {

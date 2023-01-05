@@ -188,13 +188,11 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
 
     Attributes:
         :param options: Exploitation options shared by all exploiters
-        :param brute_force: Configuration for brute force exploiters
-        :param vulnerability: Configuration for vulnerability exploiters
+        :param exploiters: Configuration enabled exploiters
     """
 
     options: ExploitationOptionsConfiguration = Field(title="Exploiters Options")
-    brute_force: Tuple[PluginConfiguration, ...] = Field(title="Brute force exploiters")
-    vulnerability: Tuple[PluginConfiguration, ...] = Field(title="Vulnerability exploiters")
+    exploiters: Tuple[PluginConfiguration, ...] = Field(title="Enabled exploiters")
 
 
 class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
