@@ -74,6 +74,7 @@ from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.propagation_credentials_repository import (
     AggregatingPropagationCredentialsRepository,
+    PropagationCredentialsRepository,
 )
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 from infection_monkey.puppet.puppet import Puppet
@@ -124,8 +125,11 @@ class InfectionMonkey:
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
         )
-        self._propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
-            self._control_channel
+        self._legacy_propagation_credentials_repository = (
+            AggregatingPropagationCredentialsRepository(self._control_channel)
+        )
+        self._propagation_credentials_repository = PropagationCredentialsRepository(
+            self._island_api_client
         )
         self._register_agent()
 
@@ -304,7 +308,7 @@ class InfectionMonkey:
             puppet,
             self._control_channel,
             local_network_interfaces,
-            self._propagation_credentials_repository,
+            self._legacy_propagation_credentials_repository,
         )
 
     def _build_server_list(self, relay_port: int) -> Sequence[str]:
@@ -399,7 +403,7 @@ class InfectionMonkey:
         self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
-                self._propagation_credentials_repository
+                self._legacy_propagation_credentials_repository
             ),
         )
         self._agent_event_queue.subscribe_type(
