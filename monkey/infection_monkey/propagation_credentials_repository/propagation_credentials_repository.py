@@ -26,7 +26,8 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
         self._control_channel = control_channel
         self._polling_period = polling_period
         context = get_context("spawn")
-        self._next_update_time = context.Value("d", 0)
+        self._lock = context.Lock()
+        self._next_update_time = context.Value("d", 0, lock=False)
         self._stored_credentials = context.Manager().list()
 
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
@@ -35,7 +36,7 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
 
     def get_credentials(self) -> Iterable[Credentials]:
         try:
-            with self._next_update_time.get_lock():
+            with self._lock:
                 now = time.monotonic()
                 if self._next_update_time.value < now:
                     propagation_credentials = (
