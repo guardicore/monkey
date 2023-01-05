@@ -8,6 +8,7 @@ from infection_monkey.agent_event_handlers import (
 )
 from infection_monkey.propagation_credentials_repository import (
     ILegacyPropagationCredentialsRepository,
+    IPropagationCredentialsRepository,
 )
 
 credentials = [
@@ -26,13 +27,15 @@ credentials_stolen_event = CredentialsStolenEvent(
 
 
 def test_add_credentials_from_event_to_propagation_credentials_repository():
-    mock_propagation_credentials_repository = MagicMock(
+    mock_propagation_credentials_repository = MagicMock(spec=IPropagationCredentialsRepository)
+    mock_legacy_propagation_credentials_repository = MagicMock(
         spec=ILegacyPropagationCredentialsRepository
     )
     fn = add_stolen_credentials_to_propagation_credentials_repository(
-        mock_propagation_credentials_repository
+        mock_propagation_credentials_repository, mock_legacy_propagation_credentials_repository
     )
 
     fn(credentials_stolen_event)
 
     assert mock_propagation_credentials_repository.add_credentials.called_with(credentials)
+    assert mock_legacy_propagation_credentials_repository.add_credentials.called_with(credentials)
