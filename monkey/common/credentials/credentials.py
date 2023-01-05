@@ -19,7 +19,7 @@ class Credentials(InfectionMonkeyBaseModel):
     secret: Optional[Secret]
     """Secret part of credentials, like a password or a hash"""
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.identity, self.secret))
 
     class Config(SecretEncodingConfig, InfectionMonkeyModelConfig):

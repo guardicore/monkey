@@ -9,7 +9,7 @@ from .validators import ntlm_hash_regex
 class NTHash(InfectionMonkeyBaseModel):
     nt_hash: SecretStr
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.nt_hash)
 
     @validator("nt_hash")
