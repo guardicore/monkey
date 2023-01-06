@@ -153,8 +153,5 @@ IAgentPluginRepository
 # Remove after #2710
 IAgentPluginRepository.get_plugin_catalog
 
-# Remove before completing #2773
-IPropagationCredentialsRepository
-
 # Remove once #2783 is done
 PluginConfigurationValidationError
