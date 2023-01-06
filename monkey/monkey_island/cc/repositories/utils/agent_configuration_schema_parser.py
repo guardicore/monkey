@@ -16,7 +16,7 @@ SUPPORTED_PLUGINS = {
             " that can be used by the agent.\n",
             "properties": {},
         },
-        "path_in_schema": "definitions.ExploitationConfiguration.properties.brute_force",
+        "path_in_schema": "definitions.ExploitationConfiguration.properties.exploiters",
     }
 }
 
