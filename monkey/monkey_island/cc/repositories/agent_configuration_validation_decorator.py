@@ -1,7 +1,7 @@
 from jsonschema import validate
 
 from common.agent_configuration import AgentConfiguration
-from monkey.cc.repositories import (
+from monkey_island.cc.repositories import (
     IAgentConfigurationRepository,
     PluginConfigurationValidationError,
     RetrievalError,
@@ -16,18 +16,19 @@ class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
 
     def __init__(
         self,
-        agent_configuration_schema_compiler: AgentConfigurationSchemaCompiler,
         agent_configuration_repository: IAgentConfigurationRepository,
+        agent_configuration_schema_compiler: AgentConfigurationSchemaCompiler,
     ):
-        self._agent_configuration_schema_compiler = agent_configuration_schema_compiler
         self._agent_configuration_repository = agent_configuration_repository
+        self._agent_configuration_schema_compiler = agent_configuration_schema_compiler
 
     def get_configuration(self) -> AgentConfiguration:
         try:
             agent_configuration_schema = self._agent_configuration_schema_compiler.get_schema()
             agent_configuration = self._agent_configuration_repository.get_configuration()
-
-            validate(instance=agent_configuration.json(), schema=agent_configuration_schema)
+            validate(
+                instance=agent_configuration.dict(simplify=True), schema=agent_configuration_schema
+            )
             return agent_configuration
         except Exception as err:
             raise RetrievalError(
@@ -36,10 +37,10 @@ class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
 
     def update_configuration(self, agent_configuration: AgentConfiguration):
         try:
-            agent_configuration_json = agent_configuration.json()
+            agent_configuration_dict = agent_configuration.dict(simplify=True)
             agent_configuration_schema = self._agent_configuration_schema_compiler.get_schema()
 
-            validate(instance=agent_configuration_json, schema=agent_configuration_schema)
+            validate(instance=agent_configuration_dict, schema=agent_configuration_schema)
 
             self._agent_configuration_repository.update_configuration(agent_configuration)
         except Exception as err:
