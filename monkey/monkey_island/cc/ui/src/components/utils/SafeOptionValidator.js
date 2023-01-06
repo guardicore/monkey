@@ -1,14 +1,9 @@
 function getPluginDescriptors(schema, config) {
   return ([
     {
-      name: 'Brute force exploiters',
-      allPlugins: schema.properties.propagation.properties.exploitation.properties.brute_force.items.properties.name.anyOf,
-      selectedPlugins: config.propagation.exploitation.brute_force
-    },
-    {
-      name: 'Vulnerability exploiters',
-      allPlugins: schema.properties.propagation.properties.exploitation.properties.vulnerability.items.properties.name.anyOf,
-      selectedPlugins: config.propagation.exploitation.vulnerability
+      name: 'Exploiters',
+      allPlugins: schema.properties.propagation.properties.exploitation.properties.exploiters.items.properties.name.anyOf,
+      selectedPlugins: config.propagation.exploitation.exploiters
     },
     {
       name: 'Fingerprinters',
