@@ -156,7 +156,7 @@ class InfectionMonkey:
         return opts
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
-    def _connect_to_island_api(self) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
+    def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
             self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
@@ -164,7 +164,7 @@ class InfectionMonkey:
 
         server, island_api_client = self._select_server(server_clients)
 
-        if server:
+        if server and island_api_client:
             logger.info(f"Using {server} to communicate with the Island")
         else:
             raise Exception(
