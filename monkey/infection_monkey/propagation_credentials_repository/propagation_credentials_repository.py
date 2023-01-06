@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 CREDENTIALS_POLL_PERIOD_SEC = 10
 
 
+# TODO: See if we can use a multiprocessing proxy object and pass that to plugins instead of this
+#       object. That would allow this object to be ignorant of multiprocessing.
 class PropagationCredentialsRepository(IPropagationCredentialsRepository):
     """
     Repository that stores credentials on the island and saves/gets credentials by using
@@ -37,6 +39,8 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
         self._stored_credentials.extend(set(chain(self._stored_credentials, credentials_to_add)))
 
     def get_credentials(self) -> Iterable[Credentials]:
+        # TODO: If we can't use a proxy object, consider contributing a multiprocessing-safe
+        #       implementation of EggTimer to clean this up.
         try:
             with self._lock:
                 now = time.monotonic()
