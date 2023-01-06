@@ -8,19 +8,9 @@ export default function UiSchema(props) {
   const UiSchema = {
     propagation: {
       exploitation: {
-        brute_force: {
+        exploiters: {
           classNames: 'config-template-no-header',
-          'ui:widget': AdvancedMultiSelect,
-          brute_force_classes: {
-            classNames: 'config-template-no-header'
-          }
-        },
-        vulnerability: {
-          classNames: 'config-template-no-header',
-          'ui:widget': AdvancedMultiSelect,
-          vulnerability_classes: {
-            classNames: 'config-template-no-header'
-          }
+          'ui:widget': AdvancedMultiSelect
         },
         options: {
           http_ports: {
