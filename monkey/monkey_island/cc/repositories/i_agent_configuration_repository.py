@@ -31,8 +31,8 @@ class IAgentConfigurationRepository(ABC):
         Update the agent configuration in the repository
 
         :param agent_configuration: The new agent configuration to store in the repository
-        :raises PluginConfigurationValidationError: If plugin configuration passed has invalid
-        configuration for any plugin
+        :raises PluginConfigurationValidationError: If the new agent configuration has an invalid
+                configuration for any plugin
         :raises StorageError: If the configuration could not be updated
         """
         pass
