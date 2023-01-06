@@ -74,6 +74,7 @@ from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 from infection_monkey.payload.ransomware.ransomware_payload import RansomwarePayload
 from infection_monkey.propagation_credentials_repository import (
     AggregatingPropagationCredentialsRepository,
+    PropagationCredentialsRepository,
 )
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 from infection_monkey.puppet.puppet import Puppet
@@ -124,8 +125,11 @@ class InfectionMonkey:
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
         )
-        self._propagation_credentials_repository = AggregatingPropagationCredentialsRepository(
-            self._control_channel
+        self._legacy_propagation_credentials_repository = (
+            AggregatingPropagationCredentialsRepository(self._control_channel)
+        )
+        self._propagation_credentials_repository = PropagationCredentialsRepository(
+            self._island_api_client
         )
         self._register_agent()
 
@@ -152,7 +156,7 @@ class InfectionMonkey:
         return opts
 
     # TODO: By the time we finish 2292, _connect_to_island_api() may not need to return `server`
-    def _connect_to_island_api(self) -> Tuple[Optional[SocketAddress], Optional[IIslandAPIClient]]:
+    def _connect_to_island_api(self) -> Tuple[SocketAddress, IIslandAPIClient]:
         logger.debug(f"Trying to wake up with servers: {', '.join(map(str, self._opts.servers))}")
         server_clients = find_available_island_apis(
             self._opts.servers, HTTPIslandAPIClientFactory(self._agent_event_serializer_registry)
@@ -160,7 +164,7 @@ class InfectionMonkey:
 
         server, island_api_client = self._select_server(server_clients)
 
-        if server:
+        if server and island_api_client:
             logger.info(f"Using {server} to communicate with the Island")
         else:
             raise Exception(
@@ -304,7 +308,7 @@ class InfectionMonkey:
             puppet,
             self._control_channel,
             local_network_interfaces,
-            self._propagation_credentials_repository,
+            self._legacy_propagation_credentials_repository,
         )
 
     def _build_server_list(self, relay_port: int) -> Sequence[str]:
@@ -399,7 +403,7 @@ class InfectionMonkey:
         self._agent_event_queue.subscribe_type(
             CredentialsStolenEvent,
             add_stolen_credentials_to_propagation_credentials_repository(
-                self._propagation_credentials_repository
+                self._legacy_propagation_credentials_repository
             ),
         )
         self._agent_event_queue.subscribe_type(
