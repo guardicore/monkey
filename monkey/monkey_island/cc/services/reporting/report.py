@@ -436,13 +436,9 @@ class ReportService:
         agent_configuration = cls._agent_configuration_repository.get_configuration()
         exploitation_configuration = agent_configuration.propagation.exploitation
 
-        enabled_exploiters = chain(
-            exploitation_configuration.brute_force, exploitation_configuration.vulnerability
-        )
-
         return [
             ExploiterDescriptorEnum.get_by_class_name(exploiter.name).display_name
-            for exploiter in enabled_exploiters
+            for exploiter in exploitation_configuration.exploiters
         ]
 
     @classmethod

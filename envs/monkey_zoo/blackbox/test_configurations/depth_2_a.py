@@ -21,14 +21,12 @@ from .utils import (
 #     Powershell credential reuse (logging in without credentials
 #       to an identical user on another machine)(10.2.3.44, 10.2.3.46)
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    brute_force = [
+    exploiters = [
+        PluginConfiguration(name="Log4ShellExploiter", options={}),
         PluginConfiguration(name="SSHExploiter", options={}),
         PluginConfiguration(name="PowerShellExploiter", options={}),
     ]
-    vulnerability = [
-        PluginConfiguration(name="Log4ShellExploiter", options={}),
-    ]
-    return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=vulnerability)
+    return add_exploiters(agent_configuration, exploiters=exploiters)
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:

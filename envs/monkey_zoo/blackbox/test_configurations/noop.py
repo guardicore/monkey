@@ -28,7 +28,7 @@ _network_scan_configuration = NetworkScanConfiguration(
 
 _exploitation_options_configuration = ExploitationOptionsConfiguration(http_ports=[])
 _exploitation_configuration = ExploitationConfiguration(
-    options=_exploitation_options_configuration, brute_force=[], vulnerability=[]
+    options=_exploitation_options_configuration, exploiters=[]
 )
 
 _propagation_configuration = PropagationConfiguration(
