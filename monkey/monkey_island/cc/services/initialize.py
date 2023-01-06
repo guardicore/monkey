@@ -74,6 +74,7 @@ from monkey_island.cc.services import (
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
+from ..repositories.utils import AgentConfigurationSchemaParser
 from . import AuthenticationService
 from .reporting.report import ReportService
 
@@ -180,6 +181,9 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         IAgentPluginRepository,
         _decorate_agent_plugin_repository(container.resolve(FileAgentPluginRepository)),
+    )
+    container.register_instance(
+        AgentConfigurationSchemaParser, container.resolve(AgentConfigurationSchemaParser)
     )
 
 
