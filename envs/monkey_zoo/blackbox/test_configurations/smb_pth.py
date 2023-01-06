@@ -16,11 +16,11 @@ from .utils import (
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    brute_force = [
+    exploiters = [
         PluginConfiguration(name="SMBExploiter", options={"smb_download_timeout": 30}),
     ]
 
-    return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=[])
+    return add_exploiters(agent_configuration, exploiters=exploiters)
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:

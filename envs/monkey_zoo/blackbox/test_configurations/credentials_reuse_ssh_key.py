@@ -20,11 +20,11 @@ from .utils import (
 #     SSHCollector steals key from machine A(10.2.3.14),
 #     then B(10.2.4.15) exploits C(10.2.5.16) with that key
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    brute_force = [
+    exploiters = [
         PluginConfiguration(name="SSHExploiter", options={}),
     ]
 
-    return add_exploiters(agent_configuration, brute_force=brute_force, vulnerability=[])
+    return add_exploiters(agent_configuration, exploiters=exploiters)
 
 
 def _add_subnets(agent_configuration: AgentConfiguration) -> AgentConfiguration:
