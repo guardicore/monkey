@@ -340,6 +340,7 @@ class InfectionMonkey:
             plugin_loader,
             agent_binary_repository,
             self._agent_event_publisher,
+            self._propagation_credentials_repository,
         )
         puppet = Puppet(self._agent_event_queue, plugin_registry)
 

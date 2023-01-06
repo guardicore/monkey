@@ -12,6 +12,7 @@ from infection_monkey.island_api_client import (
     IslandAPIError,
     IslandAPIRequestError,
 )
+from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 
 
@@ -35,6 +36,11 @@ def dummy_agent_event_publisher() -> IAgentEventPublisher:
     return MagicMock(spec=IAgentEventPublisher)
 
 
+@pytest.fixture
+def dummy_propagation_credentials_repository() -> IPropagationCredentialsRepository:
+    return MagicMock(spec=IPropagationCredentialsRepository)
+
+
 @pytest.mark.parametrize(
     "error_raised_by_island_api_client, error_raised_by_plugin_registry",
     [(IslandAPIRequestError, UnknownPluginError), (IslandAPIError, IslandAPIError)],
@@ -44,6 +50,7 @@ def test_get_plugin__error_handling(
     dummy_plugin_loader: PluginLoader,
     dummy_agent_binary_repository: IAgentBinaryRepository,
     dummy_agent_event_publisher: IAgentEventPublisher,
+    dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
     error_raised_by_island_api_client: Exception,
     error_raised_by_plugin_registry: Exception,
 ):
@@ -57,6 +64,7 @@ def test_get_plugin__error_handling(
         dummy_plugin_loader,
         dummy_agent_binary_repository,
         dummy_agent_event_publisher,
+        dummy_propagation_credentials_repository,
     )
 
     with pytest.raises(error_raised_by_plugin_registry):
@@ -101,6 +109,7 @@ def plugin_registry(
     mock_plugin_loader: PluginLoader,
     dummy_agent_binary_repository: IAgentBinaryRepository,
     dummy_agent_event_publisher: IAgentEventPublisher,
+    dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
 ) -> PluginRegistry:
     return PluginRegistry(
         mock_island_api_client,
@@ -108,6 +117,7 @@ def plugin_registry(
         mock_plugin_loader,
         dummy_agent_binary_repository,
         dummy_agent_event_publisher,
+        dummy_propagation_credentials_repository,
     )
 
 
