@@ -10,10 +10,10 @@ from tests.data_for_tests.propagation_credentials import (
     PASSWORD_3,
     USERNAME,
 )
+from tests.unit_tests.infection_monkey.base_island_api_client import BaseIslandAPIClient
 
-from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials, LMHash, NTHash, Password, SSHKeypair, Username
-from infection_monkey.i_control_channel import IControlChannel
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.propagation_credentials_repository import PropagationCredentialsRepository
 
 STOLEN_USERNAME_1 = "user1"
@@ -67,23 +67,12 @@ NEW_CREDENTIALS = [
 ]
 
 
-class BaseControlChannel(IControlChannel):
-    def should_agent_stop(self) -> bool:
-        pass
-
-    def get_config(self) -> AgentConfiguration:
-        pass
-
-    def get_credentials_for_propagation(self) -> Sequence[Credentials]:
-        pass
-
-
 @pytest.fixture
-def control_channel() -> IControlChannel:
-    return StubControlChannel(CREDENTIALS)
+def control_channel() -> IIslandAPIClient:
+    return StubIslandAPIClient(CREDENTIALS)
 
 
-class StubControlChannel(BaseControlChannel):
+class StubIslandAPIClient(BaseIslandAPIClient):
     def __init__(self, credentials: Sequence[Credentials]):
         self._credentials = credentials
 
@@ -101,7 +90,7 @@ class StubControlChannel(BaseControlChannel):
 
 @pytest.fixture
 def propagation_credentials_repository(
-    control_channel: StubControlChannel,
+    control_channel: StubIslandAPIClient,
 ) -> PropagationCredentialsRepository:
     return PropagationCredentialsRepository(control_channel)
 
@@ -127,7 +116,7 @@ def test_add_credentials(propagation_credentials_repository: PropagationCredenti
 
 def test_credentials_obtained_if_propagation_credentials_fails(
     propagation_credentials_repository: PropagationCredentialsRepository,
-    control_channel: StubControlChannel,
+    control_channel: StubIslandAPIClient,
     monkeypatch,
 ):
     def func() -> Sequence[Credentials]:
@@ -142,7 +131,7 @@ def test_credentials_obtained_if_propagation_credentials_fails(
 
 def test_get_credentials__uses_cached_credentials(
     propagation_credentials_repository: PropagationCredentialsRepository,
-    control_channel: StubControlChannel,
+    control_channel: StubIslandAPIClient,
 ):
     credentials1 = propagation_credentials_repository.get_credentials()
     credentials2 = propagation_credentials_repository.get_credentials()
@@ -160,7 +149,7 @@ def get_credentials(
 
 def test_get_credentials__used_cached_credentials_multiprocess(
     propagation_credentials_repository: PropagationCredentialsRepository,
-    control_channel: StubControlChannel,
+    control_channel: StubIslandAPIClient,
 ):
     context = get_context("spawn")
     queue = context.Queue()
@@ -179,7 +168,7 @@ def test_get_credentials__used_cached_credentials_multiprocess(
 
 @pytest.mark.slow
 def test_get_credentials__updates_cache_after_timeout_period(
-    control_channel: StubControlChannel,
+    control_channel: StubIslandAPIClient,
 ):
     propagation_credentials_repository = PropagationCredentialsRepository(control_channel, 0.01)
     context = get_context("spawn")

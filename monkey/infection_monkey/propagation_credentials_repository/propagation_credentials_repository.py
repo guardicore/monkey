@@ -5,7 +5,7 @@ from multiprocessing import get_context
 from typing import Iterable
 
 from common.credentials import Credentials
-from infection_monkey.i_control_channel import IControlChannel
+from infection_monkey.island_api_client import IIslandAPIClient
 
 from .i_propagation_credentials_repository import IPropagationCredentialsRepository
 
@@ -21,9 +21,11 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
     """
 
     def __init__(
-        self, control_channel: IControlChannel, polling_period: float = CREDENTIALS_POLL_PERIOD_SEC
+        self,
+        island_api_client: IIslandAPIClient,
+        polling_period: float = CREDENTIALS_POLL_PERIOD_SEC,
     ):
-        self._control_channel = control_channel
+        self._island_api_client = island_api_client
         self._polling_period = polling_period
         context = get_context("spawn")
         self._lock = context.Lock()
@@ -40,7 +42,7 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
                 now = time.monotonic()
                 if self._next_update_time.value < now:
                     propagation_credentials = (
-                        self._control_channel.get_credentials_for_propagation()
+                        self._island_api_client.get_credentials_for_propagation()
                     )
                     self._next_update_time.value = time.monotonic() + self._polling_period
                     logger.debug(
