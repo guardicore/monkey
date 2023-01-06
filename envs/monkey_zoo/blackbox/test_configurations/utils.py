@@ -7,13 +7,11 @@ from envs.monkey_zoo.blackbox.test_configurations.test_configuration import Test
 
 def add_exploiters(
     agent_configuration: AgentConfiguration,
-    brute_force: Sequence[PluginConfiguration] = [],
-    vulnerability: Sequence[PluginConfiguration] = [],
+    exploiters: Sequence[PluginConfiguration] = [],
 ) -> AgentConfiguration:
 
     agent_configuration_copy = agent_configuration.copy(deep=True)
-    agent_configuration_copy.propagation.exploitation.brute_force = brute_force
-    agent_configuration_copy.propagation.exploitation.vulnerability = vulnerability
+    agent_configuration_copy.propagation.exploitation.exploiters = exploiters
 
     return agent_configuration_copy
 
