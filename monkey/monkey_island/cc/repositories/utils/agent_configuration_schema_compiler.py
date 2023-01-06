@@ -21,7 +21,7 @@ SUPPORTED_PLUGINS = {
 }
 
 
-class AgentConfigurationSchemaParser:
+class AgentConfigurationSchemaCompiler:
     def __init__(
         self,
         agent_plugin_repository: IAgentPluginRepository,

@@ -1,4 +1,4 @@
-from monkey_island.cc.repositories.utils import AgentConfigurationSchemaParser
+from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
 
 
 class AgentConfigurationSchemaService:
@@ -6,7 +6,7 @@ class AgentConfigurationSchemaService:
     A service for retrieving the agent configuration schema.
     """
 
-    def __init__(self, parser: AgentConfigurationSchemaParser):
+    def __init__(self, parser: AgentConfigurationSchemaCompiler):
         self.parser = parser
 
     def get_schema(self):
