@@ -192,7 +192,7 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     options: ExploitationOptionsConfiguration = Field(title="Exploiters Options")
-    exploiters: Tuple[PluginConfiguration, ...] = Field(title="Enabled exploiters")
+    exploiters: Dict = Field(title="Enabled exploiters")
 
 
 class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
