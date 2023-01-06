@@ -12,6 +12,7 @@ from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import ExploiterResultData
 from infection_monkey.model import TargetHost
+from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.utils.threading import interruptible_iter
 
 logger = logging.getLogger(__name__)
@@ -23,11 +24,13 @@ class Plugin:
         agent_id: AgentID,
         agent_binary_repository: IAgentBinaryRepository,
         agent_event_publisher: IAgentEventPublisher,
+        propagation_credentials_repository: IPropagationCredentialsRepository,
         plugin_name="",
     ):
         self._agent_id = agent_id
         self._agent_binary_repository = agent_binary_repository
         self._agent_event_publisher = agent_event_publisher
+        self._propagation_credentials_repository = propagation_credentials_repository
 
     def run(
         self,
@@ -43,6 +46,10 @@ class Plugin:
 
         Plugin._log_options(options)
         Plugin._sleep(options.get("sleep_duration", 0), interrupt)
+
+        credentials = self._propagation_credentials_repository.get_credentials()
+        credentials_str = "\n".join(map(str, credentials))
+        logger.debug(f"Credentials: \n{credentials_str}")
 
         event_fields = {
             "source": self._agent_id,
