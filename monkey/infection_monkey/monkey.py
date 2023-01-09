@@ -121,6 +121,7 @@ class InfectionMonkey:
             Path(gettempdir()) / f"infection_monkey_plugins_{self._agent_id}_{random_filename()}"
         )
         self._island_address, self._island_api_client = self._connect_to_island_api()
+        self._register_agent()
 
         self._control_channel = ControlChannel(
             str(self._island_address), self._agent_id, self._island_api_client
@@ -131,7 +132,6 @@ class InfectionMonkey:
         self._propagation_credentials_repository = PropagationCredentialsRepository(
             self._island_api_client
         )
-        self._register_agent()
 
         self._heart = Heart(self._island_api_client)
         self._heart.start()
