@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Any, Dict
 
 import pytest
 from tests.monkey_island import InMemoryAgentPluginRepository
@@ -40,7 +41,7 @@ def expected_plugin_schema(plugin: AgentPlugin):
     return schema
 
 
-EXPECTED_PLUGIN_SCHEMA = {  # type: ignore[index]
+EXPECTED_PLUGIN_SCHEMA: Dict[str, Any] = {
     FAKE_NAME: FAKE_AGENT_PLUGIN_1.config_schema,
     FAKE_NAME2: FAKE_AGENT_PLUGIN_2.config_schema,
 }
