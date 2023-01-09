@@ -9,8 +9,7 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_2,
 )
 
-from common.agent_configuration import PluginConfiguration
-from common.agent_plugins import AgentPlugin
+from common.agent_plugins import AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
 from monkey_island.cc.repositories.utils.hard_coded_exploiters import HARD_CODED_EXPLOITER_PLUGINS
