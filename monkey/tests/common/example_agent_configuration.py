@@ -27,17 +27,12 @@ NETWORK_SCAN_CONFIGURATION = {
     "targets": SCAN_TARGET_CONFIGURATION,
 }
 
-EXPLOITERS = [
-    {"name": "ex1", "options": {}},
-    {
-        "name": "ex2",
-        "options": {"smb_download_timeout": 10},
-    },
-    {
-        "name": "ex3",
-        "options": {"smb_download_timeout": 10},
-    },
-]
+EXPLOITERS = {
+    "ex1": {},
+    "ex2": {},
+    "ex3": {"smb_download_timeout": 10},
+}
+
 EXPLOITATION_CONFIGURATION = {
     "options": {"http_ports": PORTS},
     "exploiters": EXPLOITERS,
