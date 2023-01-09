@@ -68,15 +68,15 @@ NETWORK_SCAN_CONFIGURATION = NetworkScanConfiguration(
 )
 
 EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports=HTTP_PORTS)
-EXPLOITERS = (
-    PluginConfiguration(name="Log4ShellExploiter", options={}),
-    PluginConfiguration(name="HadoopExploiter", options={}),
-    PluginConfiguration(name="MSSQLExploiter", options={}),
-    PluginConfiguration(name="PowerShellExploiter", options={}),
-    PluginConfiguration(name="SSHExploiter", options={}),
-    PluginConfiguration(name="SMBExploiter", options={"smb_download_timeout": 30}),
-    PluginConfiguration(name="WmiExploiter", options={"smb_download_timeout": 30}),
-)
+EXPLOITERS = {
+    "Log4ShellExploiter": {},
+    "HadoopExploiter": {},
+    "MSSQLExploiter": {},
+    "PowerShellExploiter": {},
+    "SSHExploiter": {},
+    "SMBExploiter": {"smb_download_timeout": 30},
+    "WmiExploiter": {"smb_download_timeout": 30},
+}
 
 EXPLOITATION_CONFIGURATION = ExploitationConfiguration(
     options=EXPLOITATION_OPTIONS_CONFIGURATION,
