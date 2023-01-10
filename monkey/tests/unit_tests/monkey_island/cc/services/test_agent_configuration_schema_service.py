@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Any, Dict
 
 import pytest
 from tests.monkey_island import InMemoryAgentPluginRepository
@@ -9,12 +10,10 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
 )
 
 from common.agent_configuration import PluginConfiguration
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
-from monkey_island.cc.repositories.utils.agent_configuration_schema_compiler import (
-    SUPPORTED_PLUGINS,
-)
+from monkey_island.cc.repositories.utils.hard_coded_exploiters import HARD_CODED_EXPLOITER_PLUGINS
 from monkey_island.cc.services import AgentConfigurationSchemaService
 
 
@@ -42,11 +41,11 @@ def expected_plugin_schema(plugin: AgentPlugin):
     return schema
 
 
-EXPECTED_PLUGIN_SCHEMA = SUPPORTED_PLUGINS[AgentPluginType.EXPLOITER]["subschema"]
-EXPECTED_PLUGIN_SCHEMA["properties"] = {  # type: ignore[index]
-    FAKE_NAME: FAKE_AGENT_PLUGIN_1,
-    FAKE_NAME2: FAKE_AGENT_PLUGIN_2,
+EXPECTED_PLUGIN_SCHEMA: Dict[str, Any] = {
+    FAKE_NAME: FAKE_AGENT_PLUGIN_1.config_schema,
+    FAKE_NAME2: FAKE_AGENT_PLUGIN_2.config_schema,
 }
+EXPECTED_PLUGIN_SCHEMA.update(HARD_CODED_EXPLOITER_PLUGINS)
 
 
 def test_get_schema__adds_exploiter_plugins_to_schema(
@@ -56,4 +55,7 @@ def test_get_schema__adds_exploiter_plugins_to_schema(
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
 
     actual_config_schema = config_schema_service.get_schema()
-    assert actual_config_schema["definitions"]["exploiter"] == EXPECTED_PLUGIN_SCHEMA
+    retrieved_exploiter_schema = actual_config_schema["definitions"]["ExploitationConfiguration"][
+        "properties"
+    ]["exploiters"]["properties"]
+    assert retrieved_exploiter_schema == EXPECTED_PLUGIN_SCHEMA

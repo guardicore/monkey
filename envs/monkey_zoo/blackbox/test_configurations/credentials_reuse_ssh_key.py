@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Dict, Mapping
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, Password, Username
@@ -20,9 +21,9 @@ from .utils import (
 #     SSHCollector steals key from machine A(10.2.3.14),
 #     then B(10.2.4.15) exploits C(10.2.5.16) with that key
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    exploiters = [
-        PluginConfiguration(name="SSHExploiter", options={}),
-    ]
+    exploiters: Dict[str, Mapping] = {
+        "SSHExploiter": {},
+    }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
 

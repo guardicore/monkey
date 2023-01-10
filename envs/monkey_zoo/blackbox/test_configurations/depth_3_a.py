@@ -1,6 +1,7 @@
 import dataclasses
+from typing import Dict, Mapping
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials, NTHash, Password, Username
 
 from .noop import noop_test_configuration
@@ -21,11 +22,11 @@ from .utils import (
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    exploiters = [
-        PluginConfiguration(name="PowerShellExploiter", options={}),
-        PluginConfiguration(name="SSHExploiter", options={}),
-        PluginConfiguration(name="WmiExploiter", options={"smb_download_timeout": 30}),
-    ]
+    exploiters: Dict[str, Mapping] = {
+        "PowerShellExploiter": {},
+        "SSHExploiter": {},
+        "WmiExploiter": {"smb_download_timeout": 30},
+    }
 
     return add_exploiters(agent_configuration, exploiters=exploiters)
 
