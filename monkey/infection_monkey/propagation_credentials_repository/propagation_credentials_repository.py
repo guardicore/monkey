@@ -2,6 +2,7 @@ import logging
 import time
 from itertools import chain
 from multiprocessing import get_context
+from multiprocessing.managers import SyncManager
 from typing import Iterable
 
 from common.credentials import Credentials
@@ -25,6 +26,7 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
     def __init__(
         self,
         island_api_client: IIslandAPIClient,
+        manager: SyncManager,
         polling_period: float = CREDENTIALS_POLL_PERIOD_SEC,
     ):
         self._island_api_client = island_api_client
@@ -32,7 +34,7 @@ class PropagationCredentialsRepository(IPropagationCredentialsRepository):
         context = get_context("spawn")
         self._lock = context.Lock()
         self._next_update_time = context.Value("d", 0, lock=False)
-        self._stored_credentials = context.Manager().list()
+        self._stored_credentials = manager.list()
 
     def add_credentials(self, credentials_to_add: Iterable[Credentials]):
         logger.debug("Adding credentials")

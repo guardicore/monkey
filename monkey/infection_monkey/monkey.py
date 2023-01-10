@@ -106,6 +106,7 @@ class InfectionMonkey:
         self._opts = self._get_arguments(args)
 
         self._ipc_logger_queue = ipc_logger_queue
+        self._manager = multiprocessing.get_context("spawn").Manager()
 
         self._agent_event_forwarder = None
         self._agent_event_queue = self._setup_agent_event_queue()
@@ -130,7 +131,7 @@ class InfectionMonkey:
             AggregatingPropagationCredentialsRepository(self._control_channel)
         )
         self._propagation_credentials_repository = PropagationCredentialsRepository(
-            self._island_api_client
+            self._island_api_client, self._manager
         )
 
         self._heart = Heart(self._island_api_client)
@@ -329,6 +330,7 @@ class InfectionMonkey:
 
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
+            manager=self._manager,
         )
 
         plugin_loader = PluginLoader(
