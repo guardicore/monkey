@@ -330,6 +330,7 @@ class InfectionMonkey:
 
         agent_binary_repository = CachingAgentBinaryRepository(
             island_api_client=self._island_api_client,
+            manager=self._manager,
         )
 
         plugin_loader = PluginLoader(
