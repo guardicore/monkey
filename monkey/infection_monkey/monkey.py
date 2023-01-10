@@ -454,6 +454,7 @@ class InfectionMonkey:
             self._plugin_event_forwarder.stop()
             self._agent_event_forwarder.stop()
             self._delete_plugin_dir()
+            self._manager.shutdown()
             with contextlib.suppress(AssertionError):
                 self._singleton.unlock()
 
