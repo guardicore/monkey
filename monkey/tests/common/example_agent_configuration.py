@@ -27,11 +27,7 @@ NETWORK_SCAN_CONFIGURATION = {
     "targets": SCAN_TARGET_CONFIGURATION,
 }
 
-EXPLOITERS = {
-    "ex1": {},
-    "ex2": {},
-    "ex3": {"smb_download_timeout": 10},
-}
+EXPLOITERS = {"SSHExploiter": {}, "WmiExploiter": {}, "HadoopExploiter": {}}
 
 EXPLOITATION_CONFIGURATION = {
     "options": {"http_ports": PORTS},
