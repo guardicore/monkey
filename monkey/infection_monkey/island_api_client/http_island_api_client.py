@@ -2,7 +2,7 @@ import functools
 import json
 import logging
 from pprint import pformat
-from typing import List, Sequence
+from typing import Any, Dict, List, Sequence
 
 import requests
 
@@ -71,6 +71,13 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response = self.http_client.get(f"agent-signals/{agent_id}", timeout=SHORT_REQUEST_TIMEOUT)
 
         return AgentSignals(**response.json())
+
+    @handle_response_parsing_errors
+    def get_agent_configuration_schema(self) -> Dict[str, Any]:
+        response = self.http_client.get("agent-configuration-schema", timeout=SHORT_REQUEST_TIMEOUT)
+        schema = response.json()
+
+        return schema
 
     @handle_response_parsing_errors
     def get_config(self) -> AgentConfiguration:
