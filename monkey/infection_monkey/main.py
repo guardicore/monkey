@@ -47,7 +47,7 @@ def main():
     try:
         _run_agent(mode, mode_specific_args, ipc_logger_queue, logger)
     except Exception as err:
-        logger.critical(f"An unexpected error occurred while running the agent: {err}")
+        logger.exception(f"An unexpected error occurred while running the agent: {err}")
     finally:
         queue_listener.stop()
 
