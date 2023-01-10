@@ -16,13 +16,13 @@
         "exploitation_success": {
             "title": "Exploitation success",
             "description": "A boolean field that will determine if the exploitation is successful",
-            "type": "bool",
+            "type": "boolean",
             "default": true
         },
         "propagation_success": {
             "title": "Propagation success",
             "description": "A boolean field that will determine if the exploitation is successful",
-            "type": "bool",
+            "type": "boolean",
             "default": false
         }
     }

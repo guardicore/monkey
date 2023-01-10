@@ -1,5 +1,4 @@
 from copy import deepcopy
-from typing import Any, Dict
 
 import pytest
 from tests.monkey_island import InMemoryAgentPluginRepository
@@ -9,8 +8,6 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
     FAKE_AGENT_PLUGIN_2,
 )
 
-from common.agent_configuration import PluginConfiguration
-from common.agent_plugins import AgentPlugin
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
 from monkey_island.cc.repositories.utils.hard_coded_exploiters import HARD_CODED_EXPLOITER_PLUGINS
@@ -31,31 +28,26 @@ def config_schema_service(
     )
 
 
-def expected_plugin_schema(plugin: AgentPlugin):
-    schema = deepcopy(PluginConfiguration.schema())
-    # Need to specify the name here, otherwise the options can be matched with
-    # any plugin's configuration
-    schema["properties"]["name"]["title"] = plugin.plugin_manifest.title
-    schema["properties"]["options"]["properties"] = plugin.config_schema
+@pytest.fixture
+def expected_exploiters_plugin_schema():
+    expected_exploiters_plugin_schema = deepcopy(HARD_CODED_EXPLOITER_PLUGINS)
+    expected_exploiters_plugin_schema[FAKE_NAME] = FAKE_AGENT_PLUGIN_1.config_schema
+    expected_exploiters_plugin_schema[FAKE_NAME2] = FAKE_AGENT_PLUGIN_2.config_schema
 
-    return schema
-
-
-EXPECTED_PLUGIN_SCHEMA: Dict[str, Any] = {
-    FAKE_NAME: FAKE_AGENT_PLUGIN_1.config_schema,
-    FAKE_NAME2: FAKE_AGENT_PLUGIN_2.config_schema,
-}
-EXPECTED_PLUGIN_SCHEMA.update(HARD_CODED_EXPLOITER_PLUGINS)
+    return expected_exploiters_plugin_schema
 
 
 def test_get_schema__adds_exploiter_plugins_to_schema(
-    config_schema_service, agent_plugin_repository
+    config_schema_service, agent_plugin_repository, expected_exploiters_plugin_schema
 ):
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
     agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
 
     actual_config_schema = config_schema_service.get_schema()
-    retrieved_exploiter_schema = actual_config_schema["definitions"]["ExploitationConfiguration"][
-        "properties"
-    ]["exploiters"]["properties"]
-    assert retrieved_exploiter_schema == EXPECTED_PLUGIN_SCHEMA
+
+    assert (
+        actual_config_schema["definitions"]["ExploitationConfiguration"]["properties"][
+            "exploiters"
+        ]["properties"]
+        == expected_exploiters_plugin_schema
+    )

@@ -51,7 +51,7 @@
         "random_boolean": {
             "title": "Random boolean",
             "description": "A random boolean field for testing",
-            "type": "bool",
+            "type": "boolean",
             "default": true
         },
         "sleep_duration": {

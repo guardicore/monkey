@@ -31,6 +31,7 @@ from monkey_island.cc.event_queue import (
 )
 from monkey_island.cc.repositories import (
     AgentBinaryRepository,
+    AgentConfigurationValidationDecorator,
     AgentMachineFacade,
     AgentPluginRepositoryCachingDecorator,
     AgentPluginRepositoryLoggingDecorator,
@@ -160,9 +161,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         ),
     )
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
-    container.register_instance(
-        IAgentConfigurationRepository, container.resolve(FileAgentConfigurationRepository)
-    )
+
     container.register_instance(ISimulationRepository, container.resolve(FileSimulationRepository))
     container.register_instance(
         ICredentialsRepository, container.resolve(MongoCredentialsRepository)
@@ -185,11 +184,32 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         AgentConfigurationSchemaCompiler, container.resolve(AgentConfigurationSchemaCompiler)
     )
+    container.register_instance(
+        IAgentConfigurationRepository, _build_file_agent_configuration_repository(container)
+    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
     return FileRepositoryLockingDecorator(
         FileRepositoryLoggingDecorator(FileRepositoryCachingDecorator(file_repository))
+    )
+
+
+def _decorate_agent_configuration_repository(
+    agent_configuration_repository: IAgentConfigurationRepository,
+    agent_configuration_schema_compiler: AgentConfigurationSchemaCompiler,
+) -> IAgentConfigurationRepository:
+
+    return AgentConfigurationValidationDecorator(
+        agent_configuration_repository, agent_configuration_schema_compiler
+    )
+
+
+def _build_file_agent_configuration_repository(container: DIContainer):
+    file_agent_configuration_repository = container.resolve(FileAgentConfigurationRepository)
+    agent_configuration_schema_compiler = container.resolve(AgentConfigurationSchemaCompiler)
+    return _decorate_agent_configuration_repository(
+        file_agent_configuration_repository, agent_configuration_schema_compiler
     )
 
 
