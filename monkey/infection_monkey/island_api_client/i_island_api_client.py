@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Sequence
+from typing import Any, Dict, Sequence
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -72,6 +72,18 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
         :return: The relevant agent's signals
+        """
+
+    @abstractmethod
+    def get_agent_configuration_schema(self) -> Dict[str, Any]:
+        """
+        Gets the agent configuration schema from the island
+
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: The agent configuration schema
         """
 
     @abstractmethod
