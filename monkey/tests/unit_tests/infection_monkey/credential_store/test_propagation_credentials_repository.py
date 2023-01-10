@@ -1,4 +1,5 @@
 from multiprocessing import Queue, get_context
+from multiprocessing.managers import SyncManager
 from time import sleep
 from typing import Sequence
 
@@ -89,10 +90,16 @@ class StubIslandAPIClient(BaseIslandAPIClient):
 
 
 @pytest.fixture
+def manager() -> SyncManager:
+    return get_context("spawn").Manager()
+
+
+@pytest.fixture
 def propagation_credentials_repository(
     control_channel: StubIslandAPIClient,
+    manager: SyncManager,
 ) -> PropagationCredentialsRepository:
-    return PropagationCredentialsRepository(control_channel)
+    return PropagationCredentialsRepository(control_channel, manager)
 
 
 def test_get_credentials__retrieves_from_control_channel(
@@ -169,8 +176,11 @@ def test_get_credentials__used_cached_credentials_multiprocess(
 @pytest.mark.slow
 def test_get_credentials__updates_cache_after_timeout_period(
     control_channel: StubIslandAPIClient,
+    manager: SyncManager,
 ):
-    propagation_credentials_repository = PropagationCredentialsRepository(control_channel, 0.01)
+    propagation_credentials_repository = PropagationCredentialsRepository(
+        control_channel, manager, 0.01
+    )
     context = get_context("spawn")
     queue = context.Queue()
     p1 = context.Process(target=get_credentials, args=(propagation_credentials_repository, queue))

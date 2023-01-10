@@ -131,7 +131,7 @@ class InfectionMonkey:
             AggregatingPropagationCredentialsRepository(self._control_channel)
         )
         self._propagation_credentials_repository = PropagationCredentialsRepository(
-            self._island_api_client
+            self._island_api_client, self._manager
         )
 
         self._heart = Heart(self._island_api_client)
