@@ -33,58 +33,54 @@ def in_memory_agent_plugin_repository() -> IAgentPluginRepository:
     return InMemoryAgentPluginRepository()
 
 
-def test_get_configuration_validated(
-    in_memory_agent_configuration_repository, in_memory_agent_plugin_repository
+@pytest.fixture
+def agent_configuration_repository(
+    in_memory_agent_plugin_repository, in_memory_agent_configuration_repository
 ):
     agent_configuration_schema_compiler = AgentConfigurationSchemaCompiler(
         in_memory_agent_plugin_repository
     )
-    agent_configuration_repository = AgentConfigurationValidationDecorator(
+    agent_configuration_repository_decorated = AgentConfigurationValidationDecorator(
         in_memory_agent_configuration_repository, agent_configuration_schema_compiler
     )
-    actual_configuration = agent_configuration_repository.get_configuration()
+    return agent_configuration_repository_decorated
+
+
+def test_get_configuration_validated(
+    in_memory_agent_configuration_repository, agent_configuration_repository
+):
     expected_configuration = in_memory_agent_configuration_repository.get_configuration()
+
+    actual_configuration = agent_configuration_repository.get_configuration()
+
     assert actual_configuration == expected_configuration
 
 
 def test_get_configuration_raise_retrieval_error(
-    fake_configuration, in_memory_agent_configuration_repository, in_memory_agent_plugin_repository
+    fake_configuration, in_memory_agent_configuration_repository, agent_configuration_repository
 ):
     in_memory_agent_configuration_repository.update_configuration(fake_configuration)
-    agent_configuration_schema_compiler = AgentConfigurationSchemaCompiler(
-        in_memory_agent_plugin_repository
-    )
-    agent_configuration_repository = AgentConfigurationValidationDecorator(
-        in_memory_agent_configuration_repository, agent_configuration_schema_compiler
-    )
+
     with pytest.raises(RetrievalError):
         agent_configuration_repository.get_configuration()
 
 
 def test_update_configuration_validated(
-    in_memory_agent_configuration_repository, in_memory_agent_plugin_repository
+    in_memory_agent_configuration_repository,
+    in_memory_agent_plugin_repository,
+    agent_configuration_repository,
 ):
-
-    agent_configuration_schema_compiler = AgentConfigurationSchemaCompiler(
-        in_memory_agent_plugin_repository
-    )
-    agent_configuration_repository = AgentConfigurationValidationDecorator(
-        in_memory_agent_configuration_repository, agent_configuration_schema_compiler
-    )
     agent_configuration_repository.update_configuration(DEFAULT_AGENT_CONFIGURATION)
+
     expected_configuration = in_memory_agent_configuration_repository.get_configuration()
+
     assert DEFAULT_AGENT_CONFIGURATION == expected_configuration
 
 
 def test_update_configuration_raise_plugin_configuration_validation_error(
-    fake_configuration, in_memory_agent_configuration_repository, in_memory_agent_plugin_repository
+    fake_configuration, in_memory_agent_configuration_repository, agent_configuration_repository
 ):
-    agent_configuration_schema_compiler = AgentConfigurationSchemaCompiler(
-        in_memory_agent_plugin_repository
-    )
     in_memory_agent_configuration_repository.update_configuration(fake_configuration)
-    agent_configuration_repository = AgentConfigurationValidationDecorator(
-        in_memory_agent_configuration_repository, agent_configuration_schema_compiler
-    )
+
     with pytest.raises(PluginConfigurationValidationError):
         agent_configuration_repository.update_configuration(fake_configuration)
