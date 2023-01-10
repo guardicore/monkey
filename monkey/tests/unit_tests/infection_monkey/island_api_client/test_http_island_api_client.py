@@ -14,6 +14,7 @@ from common.agent_event_serializers import (
     PydanticAgentEventSerializer,
 )
 from common.agent_events import AbstractAgentEvent
+from common.base_models import InfectionMonkeyBaseModel
 from common.credentials import Credentials
 from common.types import SocketAddress
 from infection_monkey.island_api_client import HTTPIslandAPIClient, IslandAPIRequestError
@@ -42,6 +43,7 @@ ISLAND_SEND_EVENTS_URI = f"https://{SERVER}/api/agent-events"
 ISLAND_REGISTER_AGENT_URI = f"https://{SERVER}/api/agents"
 ISLAND_AGENT_STOP_URI = f"https://{SERVER}/api/monkey-control/needs-to-stop/{AGENT_ID}"
 ISLAND_GET_CONFIG_URI = f"https://{SERVER}/api/agent-configuration"
+ISLAND_GET_AGENT_CONFIGURATION_SCHEMA_URI = f"https://{SERVER}/api/agent-configuration-schema"
 ISLAND_GET_PROPAGATION_CREDENTIALS_URI = f"https://{SERVER}/api/propagation-credentials"
 ISLAND_GET_AGENT_SIGNALS = f"https://{SERVER}/api/agent-signals/{AGENT_ID}"
 ISLAND_SEND_HEARTBEAT_URI = f"https://{SERVER}/api/agent/{AGENT_ID}/heartbeat"
@@ -57,6 +59,11 @@ class Event2(AbstractAgentEvent):
 
 class Event3(AbstractAgentEvent):
     c: int
+
+
+class AgentConfigurationSchema(InfectionMonkeyBaseModel):
+    some_field: str
+    other_field: float
 
 
 def agent_event_serializer_registry():
@@ -162,6 +169,37 @@ def test_island_api_client_get_agent_signals__bad_json(timestamp):
 
     with pytest.raises(IslandAPIResponseParsingError):
         api_client.get_agent_signals(agent_id=AGENT_ID)
+
+
+def test_island_api_client_get_agent_configuration_schema():
+    expected_agent_configuration_schema = {
+        "title": "AgentConfigurationSchema",
+        "type": "object",
+        "properties": {
+            "some_field": {"title": "Some Field", "type": "string"},
+            "other_field": {"title": "Other Field", "type": "number"},
+        },
+        "required": ["some_field", "other_field"],
+        "additionalProperties": False,
+    }
+    client_spy = MagicMock()
+    client_spy.get.return_value.json.return_value = AgentConfigurationSchema.schema()
+    api_client = build_api_client(client_spy)
+
+    actual_agent_configuration_schema = api_client.get_agent_configuration_schema()
+    assert actual_agent_configuration_schema == expected_agent_configuration_schema
+
+
+@pytest.mark.parametrize(
+    "raised_error", [json.JSONDecodeError, requests.JSONDecodeError, ValueError, TypeError]
+)
+def test_island_api_client_get_agent_configuration_schema__parsing_error(raised_error):
+    client_stub = MagicMock()
+    client_stub.get = MagicMock(side_effect=raised_error)
+    api_client = build_api_client(client_stub)
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.get_agent_configuration_schema()
 
 
 @pytest.mark.parametrize(

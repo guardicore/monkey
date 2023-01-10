@@ -121,6 +121,7 @@ MonkeyExploitation.label
 
 # Unused plugin infrastructure
 HTTPIslandAPIClient.get_agent_plugin
+HTTPIslandAPIClient.get_agent_configuration_schema
 
 # Remove after #2518
 AgentHeartbeat
