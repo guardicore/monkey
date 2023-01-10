@@ -83,6 +83,8 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIRequestError: If there was a problem with the client request
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
+        :raises IslandAPIError: If an unexpected error occurs while attempting to get the
+                                configuration from the island
         :return: Agent configuration
         """
 
