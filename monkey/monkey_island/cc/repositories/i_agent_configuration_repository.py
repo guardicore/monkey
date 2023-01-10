@@ -2,8 +2,10 @@ from abc import ABC, abstractmethod
 
 from common.agent_configuration import AgentConfiguration
 
+from . import RepositoryError
 
-class PluginConfigurationValidationError(Exception):
+
+class PluginConfigurationValidationError(RepositoryError):
     """
     Raised when invalid plugin configuration is encountered
     """
