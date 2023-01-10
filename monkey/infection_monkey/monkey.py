@@ -507,7 +507,7 @@ class InfectionMonkey:
                 mark_file_for_deletion_on_windows(WindowsPath(sys.executable))
                 InfectionMonkey._self_delete_windows()
             else:
-                logger.info("Deleteing the Agent binary")
+                logger.info("Deleting the Agent binary")
                 InfectionMonkey._self_delete_linux()
 
             return True
