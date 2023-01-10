@@ -13,8 +13,10 @@ class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
     """
     A IAgentConfigurationRepository decorator that validates the agent configuration
 
-    This decorator validated the agent configuration against the jsonschema describing it.
-    It makes sure that only valid configurations get pulled/pushed to repositories.
+    This decorator validates the agent configuration against the JSON Schema that includes plugin
+    configurations. Since the AgentConfiguration class has no knowledge of valid or invalid plugin
+    configurations, this decorator ensures that only valid configurations get pulled from or pushed
+    to the decorated repository.
     """
 
     def __init__(
