@@ -437,7 +437,7 @@ class ReportService:
         exploitation_configuration = agent_configuration.propagation.exploitation
 
         return [
-            ExploiterDescriptorEnum.get_by_class_name(exploiter.name).display_name
+            ExploiterDescriptorEnum.get_by_class_name(exploiter)
             for exploiter in exploitation_configuration.exploiters
         ]
 
