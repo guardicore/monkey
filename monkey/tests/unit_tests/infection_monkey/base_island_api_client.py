@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Any, Dict, Sequence
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -20,6 +20,9 @@ class BaseIslandAPIClient(IIslandAPIClient):
         pass
 
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
+        pass
+
+    def get_agent_configuration_schema(self) -> Dict[str, Any]:
         pass
 
     def get_config(self) -> AgentConfiguration:
