@@ -1,6 +1,7 @@
 import dataclasses
+from typing import Dict, Mapping
 
-from common.agent_configuration import AgentConfiguration, PluginConfiguration
+from common.agent_configuration import AgentConfiguration
 
 from .noop import noop_test_configuration
 from .utils import (
@@ -13,10 +14,10 @@ from .utils import (
 
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    exploiters = [
-        PluginConfiguration(name="ZerologonExploiter", options={}),
-        PluginConfiguration(name="SMBExploiter", options={"smb_download_timeout": 30}),
-    ]
+    exploiters: Dict[str, Mapping] = {
+        "ZerologonExploiter": {},
+        "SMBExploiter": {"smb_download_timeout": 30},
+    }
 
     return add_exploiters(agent_configuration, exploiters)
 

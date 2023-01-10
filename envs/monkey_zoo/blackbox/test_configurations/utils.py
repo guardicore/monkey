@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple
+from typing import Dict, Mapping, Optional, Sequence, Tuple
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials
@@ -7,10 +7,12 @@ from envs.monkey_zoo.blackbox.test_configurations.test_configuration import Test
 
 def add_exploiters(
     agent_configuration: AgentConfiguration,
-    exploiters: Sequence[PluginConfiguration] = [],
+    exploiters: Optional[Dict[str, Mapping]],
 ) -> AgentConfiguration:
 
     agent_configuration_copy = agent_configuration.copy(deep=True)
+    if not exploiters:
+        exploiters = {}
     agent_configuration_copy.propagation.exploitation.exploiters = exploiters
 
     return agent_configuration_copy

@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Dict, Mapping
 
 from common.agent_configuration import AgentConfiguration, PluginConfiguration
 from common.credentials import Credentials, Password, Username
@@ -21,11 +22,12 @@ from .utils import (
 #     Powershell credential reuse (logging in without credentials
 #       to an identical user on another machine)(10.2.3.44, 10.2.3.46)
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
-    exploiters = [
-        PluginConfiguration(name="Log4ShellExploiter", options={}),
-        PluginConfiguration(name="SSHExploiter", options={}),
-        PluginConfiguration(name="PowerShellExploiter", options={}),
-    ]
+    exploiters: Dict[str, Mapping] = {
+        "Log4ShellExploiter": {},
+        "SSHExploiter": {},
+        "PowerShellExploiter": {},
+    }
+
     return add_exploiters(agent_configuration, exploiters=exploiters)
 
 
