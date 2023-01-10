@@ -1,5 +1,4 @@
 import argparse
-import contextlib
 import logging
 import multiprocessing
 import os
@@ -455,8 +454,10 @@ class InfectionMonkey:
             self._agent_event_forwarder.stop()
             self._delete_plugin_dir()
             self._manager.shutdown()
-            with contextlib.suppress(AssertionError):
+            try:
                 self._singleton.unlock()
+            except AssertionError as err:
+                logger.warning(f"Failed to release the singleton: {err}")
 
         logger.info("Agent is shutting down")
 
