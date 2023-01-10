@@ -12,6 +12,9 @@ from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
 class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
     """
     A IAgentConfigurationRepository decorator that validates the agent configuration
+
+    This decorator validated the agent configuration against the jsonschema describing it.
+    It makes sure that only valid configurations get pulled/pushed to repositories.
     """
 
     def __init__(
