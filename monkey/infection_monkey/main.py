@@ -6,7 +6,6 @@ from serpentarium.logging import configure_host_process_logger
 
 # isort: on
 import argparse
-import atexit
 import logging
 import logging.handlers
 import os
@@ -41,11 +40,16 @@ def main():
 
     queue_listener = _configure_queue_listener(ipc_logger_queue, log_path)
     queue_listener.start()
-    atexit.register(queue_listener.stop)
 
     logger = _configure_logger()
     logger.info(f"writing log file to {log_path}")
-    _run_agent(mode, mode_specific_args, ipc_logger_queue, logger)
+
+    try:
+        _run_agent(mode, mode_specific_args, ipc_logger_queue, logger)
+    except Exception as err:
+        logger.critical(f"An unexpected error occurred while running the agent: {err}")
+    finally:
+        queue_listener.stop()
 
 
 def _parse_args() -> Tuple[str, Sequence[str]]:
