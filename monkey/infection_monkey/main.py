@@ -10,6 +10,8 @@ import logging
 import logging.handlers
 import os
 import sys
+import tempfile
+import time
 import traceback
 from multiprocessing import Queue, freeze_support, get_context
 from pathlib import Path
@@ -21,7 +23,6 @@ from common.version import get_version
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
-from infection_monkey.utils.monkey_log_path import get_agent_log_path, get_dropper_log_path
 
 
 def main():
@@ -36,7 +37,7 @@ def main():
     multiprocessing_context = get_context(method="spawn")
     ipc_logger_queue = multiprocessing_context.Queue()
 
-    log_path = _get_log_file_path(mode)
+    log_path = _create_secure_log_file(mode)
 
     queue_listener = _configure_queue_listener(ipc_logger_queue, log_path)
     queue_listener.start()
@@ -45,7 +46,7 @@ def main():
     logger.info(f"writing log file to {log_path}")
 
     try:
-        _run_agent(mode, mode_specific_args, ipc_logger_queue, logger)
+        _run_agent(mode, mode_specific_args, ipc_logger_queue, logger, log_path)
     except Exception as err:
         logger.exception(f"An unexpected error occurred while running the agent: {err}")
     finally:
@@ -67,11 +68,22 @@ def _parse_args() -> Tuple[str, Sequence[str]]:
     return mode, mode_specific_args
 
 
-def _get_log_file_path(mode: str):
-    if MONKEY_ARG == mode:
-        return get_agent_log_path()
+def _create_secure_log_file(monkey_arg: str) -> Path:
+    """
+    Create and cache secure log file
 
-    return get_dropper_log_path()
+    :param monkey_arg: Argument for the agent. Possible `agent` or `dropper`
+    :return: Path of the secure log file
+    """
+    mode = "agent" if monkey_arg == MONKEY_ARG else "dropper"
+    timestamp = time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())
+    prefix = f"infection-monkey-{mode}-{timestamp}-"
+    suffix = ".log"
+
+    handle, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
+    os.close(handle)
+
+    return Path(monkey_log_path)
 
 
 def _configure_queue_listener(
@@ -119,6 +131,7 @@ def _run_agent(
     mode_specific_args: Sequence[str],
     ipc_logger_queue: Queue,
     logger: logging.Logger,
+    log_path: Path,
 ):
     logger.info(
         ">>>>>>>>>> Initializing the Infection Monkey Agent: PID %s <<<<<<<<<<", os.getpid()
@@ -128,7 +141,9 @@ def _run_agent(
 
     monkey: Union[InfectionMonkey, MonkeyDrops]
     if MONKEY_ARG == mode:
-        monkey = InfectionMonkey(mode_specific_args, ipc_logger_queue=ipc_logger_queue)
+        monkey = InfectionMonkey(
+            mode_specific_args, ipc_logger_queue=ipc_logger_queue, log_path=log_path
+        )
     elif DROPPER_ARG == mode:
         monkey = MonkeyDrops(mode_specific_args)
 

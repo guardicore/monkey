@@ -83,7 +83,6 @@ from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
 from infection_monkey.utils.monkey_dir import create_monkey_dir, remove_monkey_dir
-from infection_monkey.utils.monkey_log_path import get_agent_log_path
 from infection_monkey.utils.propagation import maximum_depth_reached
 from infection_monkey.utils.signal_handler import register_signal_handlers, reset_signal_handlers
 
@@ -95,10 +94,11 @@ logging.getLogger("urllib3").setLevel(logging.INFO)
 
 
 class InfectionMonkey:
-    def __init__(self, args, ipc_logger_queue: multiprocessing.Queue):
+    def __init__(self, args, ipc_logger_queue: multiprocessing.Queue, log_path: Path):
         logger.info("Agent is initializing...")
 
         self._agent_id = get_agent_id()
+        self._log_path = log_path
         logger.info(f"Agent ID: {self._agent_id}")
         logger.info(f"Process ID: {os.getpid()}")
 
@@ -477,12 +477,13 @@ class InfectionMonkey:
 
     def _send_log(self):
         logger.info("Sending agent logs to the Island")
-        monkey_log_path = get_agent_log_path()
-        if monkey_log_path.is_file():
-            with open(monkey_log_path, "r") as f:
+        log_contents = ""
+
+        try:
+            with open(self._log_path, "r") as f:
                 log_contents = f.read()
-        else:
-            log_contents = ""
+        except FileNotFoundError:
+            logger.exception(f"Log file {self._log_path} is not found.")
 
         self._island_api_client.send_log(self._agent_id, log_contents)
 
