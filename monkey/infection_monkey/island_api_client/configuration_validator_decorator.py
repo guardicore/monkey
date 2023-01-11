@@ -18,8 +18,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
 
     This decorator validates the agent configuration against the JSON Schema that includes plugin
     configurations. Since the AgentConfiguration class has no knowledge of valid or invalid plugin
-    configurations, this decorator ensures that only valid configurations get pulled from or pushed
-    to the decorated repository.
+    configurations, this decorator ensures that only valid configurations are returned to the
+    caller.
     """
 
     def __init__(self, island_api_client: IIslandAPIClient):
