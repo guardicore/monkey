@@ -7,7 +7,13 @@ from pathlib import Path
 
 # Cache the result of the call so that subsequent calls always return the same result
 @lru_cache(maxsize=None)
-def _get_log_path(monkey_arg: str) -> Path:
+def _create_secure_log_file(monkey_arg: str) -> Path:
+    """
+    Create and cache secure log file
+
+    :param monkey_arg: Argument for the agent. Possible `agent` or `dropper`
+    :return: Path of the secure log file
+    """
     timestamp = time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())
     prefix = f"infection-monkey-{monkey_arg}-{timestamp}-"
     suffix = ".log"
@@ -18,5 +24,5 @@ def _get_log_path(monkey_arg: str) -> Path:
     return Path(monkey_log_path)
 
 
-get_agent_log_path = partial(_get_log_path, "agent")
-get_dropper_log_path = partial(_get_log_path, "dropper")
+create_secure_agent_log_file = partial(_create_secure_log_file, "agent")
+create_secure_dropper_log_file = partial(_create_secure_log_file, "dropper")

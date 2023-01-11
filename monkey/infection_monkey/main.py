@@ -21,7 +21,10 @@ from common.version import get_version
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
-from infection_monkey.utils.monkey_log_path import get_agent_log_path, get_dropper_log_path
+from infection_monkey.utils.monkey_log_path import (
+    create_secure_agent_log_file,
+    create_secure_dropper_log_file,
+)
 
 
 def main():
@@ -68,10 +71,15 @@ def _parse_args() -> Tuple[str, Sequence[str]]:
 
 
 def _get_log_file_path(mode: str):
-    if MONKEY_ARG == mode:
-        return get_agent_log_path()
+    """
+    Get path of secure monkey log file
 
-    return get_dropper_log_path()
+    :param mode: Mode of the agent. Possible `agent` or `dropper`
+    """
+    if MONKEY_ARG == mode:
+        return create_secure_agent_log_file()
+
+    return create_secure_dropper_log_file()
 
 
 def _configure_queue_listener(
