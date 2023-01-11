@@ -38,7 +38,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     <div>
       {props.title}
       {props.description}
-      <PluginSelector plugins={{"TODO": {"title": "pass in actual schema"}}}
+      <PluginSelector plugins={props.schema.properties}
                       onClick={(pluginName) => {
         setElement(pluginName)
       }}/>
