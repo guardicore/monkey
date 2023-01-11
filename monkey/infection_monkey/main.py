@@ -10,6 +10,8 @@ import logging
 import logging.handlers
 import os
 import sys
+import tempfile
+import time
 import traceback
 from multiprocessing import Queue, freeze_support, get_context
 from pathlib import Path
@@ -21,10 +23,6 @@ from common.version import get_version
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
-from infection_monkey.utils.monkey_log_path import (
-    create_secure_agent_log_file,
-    create_secure_dropper_log_file,
-)
 
 
 def main():
@@ -39,7 +37,7 @@ def main():
     multiprocessing_context = get_context(method="spawn")
     ipc_logger_queue = multiprocessing_context.Queue()
 
-    log_path = _get_log_file_path(mode)
+    log_path = _create_secure_log_file(mode)
 
     queue_listener = _configure_queue_listener(ipc_logger_queue, log_path)
     queue_listener.start()
@@ -70,16 +68,22 @@ def _parse_args() -> Tuple[str, Sequence[str]]:
     return mode, mode_specific_args
 
 
-def _get_log_file_path(mode: str):
+def _create_secure_log_file(monkey_arg: str) -> Path:
     """
-    Get path of secure monkey log file
+    Create and cache secure log file
 
-    :param mode: Mode of the agent. Possible `agent` or `dropper`
+    :param monkey_arg: Argument for the agent. Possible `agent` or `dropper`
+    :return: Path of the secure log file
     """
-    if MONKEY_ARG == mode:
-        return create_secure_agent_log_file()
+    mode = "agent" if monkey_arg == MONKEY_ARG else "dropper"
+    timestamp = time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())
+    prefix = f"infection-monkey-{mode}-{timestamp}-"
+    suffix = ".log"
 
-    return create_secure_dropper_log_file()
+    handle, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
+    os.close(handle)
+
+    return Path(monkey_log_path)
 
 
 def _configure_queue_listener(
