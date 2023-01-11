@@ -22,7 +22,7 @@ export const SCHEMA = {
           'title': 'Keep tunnel open time',
           'type': 'number',
           'default': 30,
-          'description': 'Time to keep tunnel open before going down after last exploit (in seconds)'
+          'description': 'Time in seconds after the last exploit for keeping the tunnel open'
         }
       }
     }

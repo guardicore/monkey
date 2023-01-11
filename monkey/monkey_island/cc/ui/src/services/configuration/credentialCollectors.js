@@ -1,6 +1,6 @@
 const CREDENTIAL_COLLECTORS = {
     'title': 'Credential Collectors',
-    'description': 'Click on a credential collector to find out what it collects.',
+    'description': 'Click on a credential collector for more information.',
     'type': 'string',
     'pluginDefs': {
       'MimikatzCollector':{'name': 'MimikatzCollector', 'options': {}},
