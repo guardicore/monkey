@@ -3,6 +3,7 @@ import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
 import WarningBox from './WarningBox';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
+import PluginSelectorTemplate from './PluginSelectorTemplate';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -10,7 +11,7 @@ export default function UiSchema(props) {
       exploitation: {
         exploiters: {
           classNames: 'config-template-no-header',
-          'ui:widget': AdvancedMultiSelect
+          'ui:ObjectFieldTemplate': PluginSelectorTemplate
         },
         options: {
           http_ports: {

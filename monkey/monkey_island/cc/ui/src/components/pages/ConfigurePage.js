@@ -1,6 +1,7 @@
 import React from 'react';
 import Form from '@rjsf/bootstrap-4';
 import {Col, Nav} from 'react-bootstrap';
+import _ from 'lodash';
 import AuthComponent from '../AuthComponent';
 import UiSchema from '../configuration-components/UiSchema';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -26,6 +27,7 @@ import {
 import validator from '@rjsf/validator-ajv8';
 
 const CONFIG_URL = '/api/agent-configuration';
+const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
 const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
 
@@ -46,7 +48,7 @@ class ConfigurePageComponent extends AuthComponent {
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
-      schema: {},
+      schema: SCHEMA,
       sections: [],
       selectedSection: this.currentSection,
       showUnsafeOptionsConfirmation: false,
@@ -77,7 +79,21 @@ class ConfigurePageComponent extends AuthComponent {
     this.initialConfig = JSON.parse(JSON.stringify(config));
   }
 
+  injectExploitersIntoLegacySchema = (newSchema) => {
+    // legacy schema is defined in UI,
+    // but we should use the schema provided by "/api/agent-configuration-schema"
+    // Remove when #2750 is done
+    let injectedSchema = _.cloneDeep(this.state.schema);
+    injectedSchema['properties']['propagation']['properties']['exploitation']['properties']['exploiters'] =
+      newSchema['definitions']['ExploitationConfiguration']['properties']['exploiters']
+    return injectedSchema;
+  }
+
   componentDidMount = () => {
+    this.authFetch(SCHEMA_URL).then(res => res.json())
+      .then(schema => {
+        this.setState({schema: this.injectExploitersIntoLegacySchema(schema)})
+      })
     this.authFetch(CONFIG_URL).then(res => res.json())
       .then(monkeyConfig => {
         let sections = [];
@@ -92,7 +108,6 @@ class ConfigurePageComponent extends AuthComponent {
         }
 
         this.setState({
-          schema: SCHEMA,
           configuration: monkeyConfig,
           sections: sections,
           currentFormData: monkeyConfig[this.state.selectedSection]
