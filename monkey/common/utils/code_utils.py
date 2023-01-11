@@ -1,5 +1,7 @@
 import logging
 import queue
+import random
+import string
 from threading import Event, Thread
 from typing import Any, Callable, Dict, List, MutableMapping, Optional, Type, TypeVar
 
@@ -39,6 +41,24 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
     :param key: A key to delete from `mapping`
     """
     mapping.pop(key, None)
+
+
+def insecure_generate_random_string(
+    n: int, character_set: str = string.ascii_letters + string.digits
+):
+    """
+    Generate a random string
+
+    This function generates a random string. The length is specified by the user. The character set
+    can optionally be specified by the user.
+
+    Note that this function is not safe to use for cryptographic purposes.
+
+    :param n: The desired number of characters in the random string
+    :param character set: The set of characters that may be included in the random string, defaults
+                          to alphanumerics
+    """
+    return "".join(random.choices(character_set, k=n))  # noqa: DUO102
 
 
 class PeriodicCaller:
