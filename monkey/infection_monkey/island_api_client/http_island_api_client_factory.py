@@ -1,6 +1,11 @@
 from common.agent_event_serializers import AgentEventSerializerRegistry
 
-from . import AbstractIslandAPIClientFactory, HTTPIslandAPIClient, IIslandAPIClient
+from . import (
+    AbstractIslandAPIClientFactory,
+    ConfigurationValidatorDecorator,
+    HTTPIslandAPIClient,
+    IIslandAPIClient,
+)
 from .http_client import HTTPClient
 
 
@@ -12,4 +17,6 @@ class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
         self._agent_event_serializer_registry = agent_event_serializer_registry
 
     def create_island_api_client(self) -> IIslandAPIClient:
-        return HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient())
+        return ConfigurationValidatorDecorator(
+            HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient())
+        )
