@@ -483,7 +483,7 @@ class InfectionMonkey:
             with open(self._log_path, "r") as f:
                 log_contents = f.read()
         except FileNotFoundError:
-            logger.exception("Log file {log_path} is not found.")
+            logger.exception(f"Log file {self._log_path} is not found.")
 
         self._island_api_client.send_log(self._agent_id, log_contents)
 
