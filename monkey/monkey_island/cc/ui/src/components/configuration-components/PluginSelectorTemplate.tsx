@@ -1,6 +1,9 @@
 import {ObjectFieldTemplateProps} from '@rjsf/utils';
 import React, {useState} from 'react';
 import {Dropdown} from 'react-bootstrap';
+import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
+import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
+import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
 
 const PluginSelector = (props) => {
   let selectOptions = [];
@@ -33,16 +36,41 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     }
   }
 
-  let [element, setElement] = useState(null);
+  console.log(props)
+
+  let [plugin, setPlugin] = useState(null);
+  let [enabledPlugins, setEnabledPlugins] = useState([]);
+
+  let selectorOptions = [];
+  for(let [name, schema] of Object.entries(props.schema.properties)) {
+    selectorOptions.push({label: schema.title, value: name});
+  }
+
+  function toggleEnabledPluggin(pluginName) {
+    let plugins = [];
+    if(enabledPlugins.includes(pluginName)){
+      plugins = enabledPlugins.filter(plugin => plugin !== pluginName)
+    } else {
+      plugins = [...enabledPlugins, pluginName];
+    }
+    setEnabledPlugins(plugins);
+  }
+
   return (
-    <div>
-      {props.title}
-      {props.description}
-      <PluginSelector plugins={props.schema.properties}
-                      onClick={(pluginName) => {
-        setElement(pluginName)
-      }}/>
-      {getPluginDisplay(element, props.properties)}
+    <div className={'advanced-multi-select'}>
+      <AdvancedMultiSelectHeader title={props.schema.title}
+                                 onCheckboxClick={() => {}}
+                                 checkboxState={MasterCheckboxState.NONE}
+                                 hideReset={false}
+                                 onResetClick={() => {}}/>
+
+      <ChildCheckboxContainer id={"abc"} multiple={true} required={false}
+                              autoFocus={false} selectedValues={enabledPlugins}
+                              onCheckboxClick={toggleEnabledPluggin}
+                              isSafe={(something) => true}
+                              onPaneClick={setPlugin}
+                              enumOptions={selectorOptions}/>
+      {getPluginDisplay(plugin, props.properties)}
     </div>
   );
 }

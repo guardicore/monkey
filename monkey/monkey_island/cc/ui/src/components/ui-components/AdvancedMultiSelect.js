@@ -8,7 +8,7 @@ import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
 import ChildCheckboxContainer from './ChildCheckbox';
 import {getFullDefinitionByKey} from './JsonSchemaHelpers';
 
-function AdvancedMultiSelectHeader(props) {
+export function AdvancedMultiSelectHeader(props) {
   const {
     title,
     onCheckboxClick,

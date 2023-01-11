@@ -39,7 +39,6 @@ class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.initialConfig = {};
     this.currentSection = this.getSectionsOrder()[0];
 
     this.state = {
@@ -99,7 +98,6 @@ class ConfigurePageComponent extends AuthComponent {
         let sections = [];
         monkeyConfig = reformatConfig(monkeyConfig);
 
-        this.setInitialConfig(monkeyConfig);
         for (let sectionKey of this.getSectionsOrder()) {
           sections.push({
             key: sectionKey,
