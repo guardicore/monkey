@@ -46,7 +46,7 @@ def main():
     logger.info(f"writing log file to {log_path}")
 
     try:
-        _run_agent(mode, mode_specific_args, ipc_logger_queue, logger)
+        _run_agent(mode, mode_specific_args, ipc_logger_queue, logger, log_path)
     except Exception as err:
         logger.exception(f"An unexpected error occurred while running the agent: {err}")
     finally:
@@ -131,6 +131,7 @@ def _run_agent(
     mode_specific_args: Sequence[str],
     ipc_logger_queue: Queue,
     logger: logging.Logger,
+    log_path: Path,
 ):
     logger.info(
         ">>>>>>>>>> Initializing the Infection Monkey Agent: PID %s <<<<<<<<<<", os.getpid()
@@ -140,7 +141,9 @@ def _run_agent(
 
     monkey: Union[InfectionMonkey, MonkeyDrops]
     if MONKEY_ARG == mode:
-        monkey = InfectionMonkey(mode_specific_args, ipc_logger_queue=ipc_logger_queue)
+        monkey = InfectionMonkey(
+            mode_specific_args, ipc_logger_queue=ipc_logger_queue, log_path=log_path
+        )
     elif DROPPER_ARG == mode:
         monkey = MonkeyDrops(mode_specific_args)
 
