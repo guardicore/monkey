@@ -15,7 +15,7 @@ from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, SocketAddress
 
-from . import AbstractIslandAPIClientFactory, IIslandAPIClient, IslandAPIRequestError
+from . import IIslandAPIClient, IslandAPIRequestError
 from .http_client import HTTPClient
 from .island_api_client_errors import IslandAPIResponseParsingError
 
@@ -125,14 +125,3 @@ class HTTPIslandAPIClient(IIslandAPIClient):
             f"agent-logs/{agent_id}",
             log_contents,
         )
-
-
-class HTTPIslandAPIClientFactory(AbstractIslandAPIClientFactory):
-    def __init__(
-        self,
-        agent_event_serializer_registry: AgentEventSerializerRegistry,
-    ):
-        self._agent_event_serializer_registry = agent_event_serializer_registry
-
-    def create_island_api_client(self) -> IIslandAPIClient:
-        return HTTPIslandAPIClient(self._agent_event_serializer_registry, HTTPClient())
