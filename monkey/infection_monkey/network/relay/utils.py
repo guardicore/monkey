@@ -7,6 +7,7 @@ from common.common_consts.timeouts import LONG_REQUEST_TIMEOUT
 from common.types import SocketAddress
 from infection_monkey.island_api_client import (
     AbstractIslandAPIClientFactory,
+    ConfigurationValidatorDecorator,
     IIslandAPIClient,
     IslandAPIConnectionError,
     IslandAPIError,
@@ -62,7 +63,9 @@ def _check_if_island_server(
     logger.debug(f"Trying to connect to server: {server}")
 
     try:
-        client = island_api_client_factory.create_island_api_client()
+        client = ConfigurationValidatorDecorator(
+            island_api_client_factory.create_island_api_client()
+        )
         client.connect(server)
 
         logger.debug(f"Successfully connected to the Island via {server}")
