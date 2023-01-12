@@ -9,5 +9,6 @@ class OperatingSystem(Enum):
     member is the member's name in all lower-case characters.
     """
 
+    ANY = "any"
     LINUX = "linux"
     WINDOWS = "windows"
