@@ -4,6 +4,7 @@ from typing import IO, Any, BinaryIO, Dict
 
 import yaml
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
 MANIFEST_FILENAME = "plugin.yaml"
@@ -39,7 +40,12 @@ def parse_plugin(file: BinaryIO) -> AgentPlugin:
     except KeyError as err:
         raise ValueError(f"Invalid plugin archive: {err}")
 
-    return AgentPlugin(plugin_manifest=manifest, config_schema=schema, source_archive=source)
+    return AgentPlugin(
+        plugin_manifest=manifest,
+        config_schema=schema,
+        source_archive=source,
+        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+    )
 
 
 def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
