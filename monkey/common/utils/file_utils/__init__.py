@@ -4,7 +4,6 @@ from .file_utils import (
     get_binary_io_sha256_hash,
     get_text_file_contents,
     InvalidPath,
-    random_filename,
 )
 from .secure_directory import create_secure_directory
 from .secure_file import open_new_securely_permissioned_file
