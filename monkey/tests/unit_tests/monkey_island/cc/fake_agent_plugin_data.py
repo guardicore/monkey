@@ -3,6 +3,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
     FAKE_NAME2,
 )
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
 FAKE_PLUGIN_CONFIG_SCHEMA_1 = {
@@ -36,6 +37,7 @@ FAKE_AGENT_PLUGIN_1 = AgentPlugin(
     plugin_manifest=FAKE_MANIFEST_OBJECT,
     config_schema=FAKE_PLUGIN_CONFIG_SCHEMA_1,
     source_archive=FAKE_PLUGIN_ARCHIVE_1,
+    host_operating_systems=(OperatingSystem.LINUX,),
 )
 
 
@@ -65,4 +67,5 @@ FAKE_AGENT_PLUGIN_2 = AgentPlugin(
     plugin_manifest=AgentPluginManifest(**_manifest_params),
     config_schema=FAKE_PLUGIN_CONFIG_SCHEMA_2,
     source_archive=FAKE_PLUGIN_ARCHIVE_2,
+    host_operating_systems=(OperatingSystem.WINDOWS,),
 )
