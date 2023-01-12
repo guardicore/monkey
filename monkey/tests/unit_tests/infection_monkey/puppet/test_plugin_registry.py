@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from serpentarium import MultiprocessingPlugin, PluginLoader
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.exploit import IAgentBinaryRepository
@@ -77,7 +78,12 @@ PLUGIN_NAME = "test_plugin"
 @pytest.fixture
 def agent_plugin() -> AgentPlugin:
     manifest = AgentPluginManifest(name=PLUGIN_NAME, plugin_type=AgentPluginType.EXPLOITER)
-    return AgentPlugin(plugin_manifest=manifest, config_schema={}, source_archive=b"1234")
+    return AgentPlugin(
+        plugin_manifest=manifest,
+        config_schema={},
+        source_archive=b"1234",
+        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+    )
 
 
 @pytest.fixture
