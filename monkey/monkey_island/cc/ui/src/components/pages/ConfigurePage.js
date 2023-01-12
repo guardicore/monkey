@@ -186,7 +186,9 @@ class ConfigurePageComponent extends AuthComponent {
     for(let exploiter of [...this.state.selectedExploiters]){
       filteredExploiters[exploiter] = exploiterFormData[exploiter];
     }
-    return filteredExploiters;
+    let config = _.cloneDeep(this.state.configuration)
+    _.set(config, EXPLOITERS_CONFIG_PATH, filteredExploiters)
+    return config;
   }
 
   configSubmit(config) {
