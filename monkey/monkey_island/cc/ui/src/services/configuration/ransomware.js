@@ -5,8 +5,9 @@ const RANSOMWARE_SCHEMA = {
             'title': 'Ransomware simulation',
             'type': 'object',
             'description': 'To simulate ransomware encryption, you\'ll need to provide Infection ' +
-                'Monkey with files that it can safely encrypt. On each machine where you would like ' +
-                'the ransomware simulation to run, create a directory and put some files in it.' +
+                'Monkey with files that it can safely encrypt. ' +
+              'Create a directory and put some files on each machine where ' +
+                'the ransomware simulation will run.' +
                 '\n\nProvide the path to the directory that was created on each machine.',
             'properties': {
                 'enabled': {
@@ -38,7 +39,7 @@ const RANSOMWARE_SCHEMA = {
                             'format': 'valid-ransomware-target-path-linux',
                             'default': '',
                             'description': 'A path to a directory on Linux systems that contains ' +
-                                'files that you will allow Infection Monkey to encrypt. If no ' +
+                                'files you will allow Infection Monkey to encrypt. If no ' +
                                 'directory is specified, no files will be encrypted.'
                         },
                         'windows_target_dir': {
@@ -47,7 +48,7 @@ const RANSOMWARE_SCHEMA = {
                             'format': 'valid-ransomware-target-path-windows',
                             'default': '',
                             'description': 'A path to a directory on Windows systems that contains ' +
-                                'files that you will allow Infection Monkey to encrypt. If no ' +
+                                'files you will allow Infection Monkey to encrypt. If no ' +
                                 'directory is specified, no files will be encrypted.'
                         }
                     }
