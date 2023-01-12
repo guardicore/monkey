@@ -4,6 +4,7 @@ import {Dropdown} from 'react-bootstrap';
 import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
 import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
+import {getFullDefinitionByKey} from '../ui-components/JsonSchemaHelpers';
 
 const PluginSelector = (props) => {
   let selectOptions = [];
@@ -82,6 +83,11 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     setEnabledPlugins(newPlugins);
   }
 
+  function isPluginSafe(itemKey){
+    let itemSchema = Object.entries(props.schema.properties).filter(e => e[0] == itemKey)[0][1];
+    return itemSchema['safe'];
+  }
+
   return (
     <div className={'advanced-multi-select'}>
       <AdvancedMultiSelectHeader title={props.schema.title}
@@ -93,7 +99,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
       <ChildCheckboxContainer id={"abc"} multiple={true} required={false}
                               autoFocus={false} selectedValues={enabledPlugins}
                               onCheckboxClick={toggleEnabledPluggin}
-                              isSafe={(something) => true}
+                              isSafe={isPluginSafe}
                               onPaneClick={setPlugin}
                               enumOptions={getOptions()}/>
       {getPluginDisplay(plugin, props.properties)}
