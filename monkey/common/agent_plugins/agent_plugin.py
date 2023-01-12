@@ -14,8 +14,8 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     Attributes:
         :param plugin_manifest: Metadata describing the plugin
         :param config_schema: JSONSchema describing the configuration options
-        :param default_config: Dictionary of default configuration options
         :param source_archive: Contents of the plugin codebase
+        :param host_operating_system: Operating system on which the plugin should run
     """
 
     plugin_manifest: AgentPluginManifest
