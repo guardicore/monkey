@@ -135,11 +135,6 @@ Lock.locked
 # Remove after we construct it
 QueuedAgentEventPublisher
 
-# Remove after #2638
-AgentPlugin.plugin_manifest
-AgentPlugin.config_schema
-AgentPlugin.source_archive
-
 AgentPluginManifest
 AgentPluginManifest.supported_operating_systems
 AgentPluginManifest.description
