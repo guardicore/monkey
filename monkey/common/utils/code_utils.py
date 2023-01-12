@@ -1,5 +1,8 @@
 import logging
 import queue
+import random
+import secrets
+import string
 from threading import Event, Thread
 from typing import Any, Callable, Dict, List, MutableMapping, Optional, Type, TypeVar
 
@@ -39,6 +42,49 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
     :param key: A key to delete from `mapping`
     """
     mapping.pop(key, None)
+
+
+def insecure_generate_random_string(
+    n: int, character_set: str = string.ascii_letters + string.digits
+) -> str:
+    """
+    Generate a random string
+
+    This function generates a random string. The length is specified by the user. The character set
+    can optionally be specified by the user.
+
+    WARNING: This function is not safe to use for cryptographic purposes.
+
+    :param n: The desired number of characters in the random string
+    :param character set: The set of characters that may be included in the random string, defaults
+                          to alphanumerics
+    """
+    return _generate_random_string(random.choices, n, character_set)  # noqa: DUO102
+
+
+def secure_generate_random_string(
+    n: int, character_set: str = string.ascii_letters + string.digits
+) -> str:
+    """
+    Generate a random string
+
+    This function generates a random string. The length is specified by the user. The character set
+    can optionally be specified by the user.
+
+    This function is safe to use for cryptographic purposes.
+
+    WARNING: This function may block if the system does not have sufficient entropy.
+
+    :param n: The desired number of characters in the random string
+    :param character set: The set of characters that may be included in the random string, defaults
+                          to alphanumerics
+    """
+    return _generate_random_string(secrets.SystemRandom().choices, n, character_set)
+
+
+# Note: Trying to typehint the rng parameter is more trouble than it's worth
+def _generate_random_string(rng, n: int, character_set: str) -> str:
+    return "".join(rng(character_set, k=n))
 
 
 class PeriodicCaller:

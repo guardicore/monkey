@@ -1,6 +1,14 @@
 from queue import Queue
+from typing import Callable
 
-from common.utils.code_utils import del_key, queue_to_list
+import pytest
+
+from common.utils.code_utils import (
+    del_key,
+    insecure_generate_random_string,
+    queue_to_list,
+    secure_generate_random_string,
+)
 
 
 def test_empty_queue_to_empty_list():
@@ -43,3 +51,37 @@ def test_del_key__nonexistant_key():
     # This test passes if the following call does not raise an error
     del_key(my_dict, key_to_delete)
     assert key_to_delete not in my_dict
+
+
+@pytest.mark.parametrize(
+    "generate_random_string", [insecure_generate_random_string, secure_generate_random_string]
+)
+@pytest.mark.parametrize("n", [1, 2, 4, 8, 16, 32])
+def test_generate_random_string__random_value(generate_random_string: Callable[..., str], n):
+    assert generate_random_string(n=n) != generate_random_string(n=n)
+
+
+@pytest.mark.parametrize(
+    "generate_random_string", [insecure_generate_random_string, secure_generate_random_string]
+)
+@pytest.mark.parametrize("n", [1, 2, 4, 8, 16, 32])
+def test_generate_random_string__str_length(generate_random_string: Callable[..., str], n: int):
+    assert len(generate_random_string(n=n)) == n
+
+
+@pytest.mark.parametrize(
+    "generate_random_string", [insecure_generate_random_string, secure_generate_random_string]
+)
+def test_generate_random_string__invalid_length_type(generate_random_string: Callable[..., str]):
+    with pytest.raises(TypeError):
+        generate_random_string(n="string")
+
+
+def test_character_set():
+    character_set = "abcde"
+    n = len(character_set) * 5
+
+    random_str = insecure_generate_random_string(n=n, character_set=character_set)
+
+    for c in random_str:
+        assert c in character_set
