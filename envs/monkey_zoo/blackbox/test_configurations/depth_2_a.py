@@ -23,6 +23,8 @@ from .utils import (
 #       to an identical user on another machine)(10.2.3.44, 10.2.3.46)
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
+        # Log4Shell is required to hop into 46, which then uses credential reuse on 44.
+        # Look at envs/monkey_zoo/docs/network_diagrams/powershell_credential_reuse.drawio.png
         "Log4ShellExploiter": {},
         "SSHExploiter": {},
         "PowerShellExploiter": {},
