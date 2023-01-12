@@ -1,6 +1,7 @@
 from base64 import b64encode
 from typing import Any, Dict
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest
 from common.base_models import InfectionMonkeyBaseModel
 from common.types.b64_bytes import B64Bytes
@@ -22,6 +23,7 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     # https://github.com/pydantic/pydantic/pull/1844
     config_schema: Dict[str, Any]
     source_archive: B64Bytes
+    host_operating_system: OperatingSystem
 
     class Config:
         # b64encode() returns bytes, so we call decode() to transform bytes to str
