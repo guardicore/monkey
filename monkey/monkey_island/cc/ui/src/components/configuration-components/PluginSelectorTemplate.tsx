@@ -76,7 +76,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                                  onResetClick={() => {
                                  }}/>
 
-      <ChildCheckboxContainer id={'abc'} multiple={true} required={false}
+      <ChildCheckboxContainer multiple={true} required={false}
                               autoFocus={false}
                               selectedValues={[...props.formContext.selectedExploiters]}
                               onCheckboxClick={togglePluggin}
