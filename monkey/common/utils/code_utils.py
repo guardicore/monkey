@@ -45,7 +45,7 @@ def del_key(mapping: MutableMapping[T, Any], key: T):
 
 def insecure_generate_random_string(
     n: int, character_set: str = string.ascii_letters + string.digits
-):
+) -> str:
     """
     Generate a random string
 
