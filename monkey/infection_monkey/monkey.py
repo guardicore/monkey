@@ -35,7 +35,8 @@ from common.network.network_utils import get_my_ip_addresses, get_network_interf
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
 from common.types import SocketAddress
 from common.utils.argparse_types import positive_int
-from common.utils.file_utils import create_secure_directory, random_filename
+from common.utils.code_utils import secure_generate_random_string
+from common.utils.file_utils import create_secure_directory
 from infection_monkey.agent_event_handlers import (
     AgentEventForwarder,
     add_stolen_credentials_to_propagation_credentials_repository,
@@ -119,7 +120,8 @@ class InfectionMonkey:
         self._agent_event_publisher = QueuedAgentEventPublisher(plugin_event_queue)
 
         self._plugin_dir = (
-            Path(gettempdir()) / f"infection_monkey_plugins_{self._agent_id}_{random_filename()}"
+            Path(gettempdir())
+            / f"infection_monkey_plugins_{self._agent_id}_{secure_generate_random_string(n=20)}"
         )
         self._island_address, self._island_api_client = self._connect_to_island_api()
         self._register_agent()
