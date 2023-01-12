@@ -25,12 +25,6 @@ def _get_agent_path(host: TargetHost) -> PurePath:
     return PurePosixPath(AGENT_BINARY_PATH_LINUX)
 
 
-def get_random_file_suffix() -> str:
-    character_set = string.ascii_letters + string.digits + "_" + "-"
-    # Avoid the risk of blocking by using insecure_generate_random_string()
-    return insecure_generate_random_string(n=RAND_SUFFIX_LEN, character_set=character_set)
-
-
 #  Turns C:\\monkey.exe into C:\\monkey-<random_string>.exe
 #  Useful to avoid duplicate file paths
 def _add_random_suffix(path: PurePath) -> PurePath:
@@ -38,3 +32,9 @@ def _add_random_suffix(path: PurePath) -> PurePath:
     stem = f"{stem}-{get_random_file_suffix()}"
     rand_filename = "".join([stem, *path.suffixes])
     return path.with_name(rand_filename)
+
+
+def get_random_file_suffix() -> str:
+    character_set = string.ascii_letters + string.digits + "_" + "-"
+    # Avoid the risk of blocking by using insecure_generate_random_string()
+    return insecure_generate_random_string(n=RAND_SUFFIX_LEN, character_set=character_set)
