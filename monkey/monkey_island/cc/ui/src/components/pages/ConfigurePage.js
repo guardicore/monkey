@@ -78,11 +78,6 @@ class ConfigurePageComponent extends AuthComponent {
     return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
-  setInitialConfig(config) {
-    // Sets a reference to know if config was changed
-    this.initialConfig = JSON.parse(JSON.stringify(config));
-  }
-
   injectExploitersIntoLegacySchema = (newSchema) => {
     // legacy schema is defined in UI,
     // but we should use the schema provided by "/api/agent-configuration-schema"
@@ -150,7 +145,6 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(data => {
         data = reformatConfig(data);
-        this.setInitialConfig(data);
         this.setState({
           selectedExploiters: _.get(data, EXPLOITERS_CONFIG_PATH),
           configuration: data,
@@ -168,7 +162,6 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   async attemptConfigSubmit() {
-    await this.updateConfigSection();
     if (this.canSafelySubmitConfig(this.state.configuration)) {
       this.configSubmit();
       if (this.state.lastAction === configExportAction) {
@@ -196,15 +189,6 @@ class ConfigurePageComponent extends AuthComponent {
   onCredentialChange = (credentials) => {
     this.setState({credentials: credentials});
   }
-
-  updateConfigSection = () => {
-    let newConfig = this.state.configuration;
-
-    if (Object.keys(this.state.currentFormData).length > 0) {
-      newConfig[this.currentSection] = this.state.currentFormData;
-    }
-    this.setState({configuration: newConfig});
-  };
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
@@ -246,7 +230,6 @@ class ConfigurePageComponent extends AuthComponent {
 
   setSelectedSection = (key) => {
     this.resetLastAction();
-    this.updateConfigSection();
     this.currentSection = key;
     let selectedSectionData = this.state.configuration[key];
 
