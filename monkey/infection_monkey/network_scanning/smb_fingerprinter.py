@@ -188,10 +188,12 @@ class SMBFingerprinter(IFingerprinter):
 
                 logger.debug(f'os_version: "{os_version}", service_client: "{service_client}"')
 
-                if os_version.lower() != "unix":
+                if "windows" in os_version.lower():
                     os_type = OperatingSystem.WINDOWS
-                else:
+                elif os_version.lower() == "unix":
                     os_type = OperatingSystem.LINUX
+                else:
+                    os_type = OperatingSystem.ANY
 
                 smb_service["name"] = service_client
 
