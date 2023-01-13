@@ -1,14 +1,17 @@
+import io
 import tarfile
 from tarfile import TarFile
+from unittest.mock import MagicMock
 
 import pytest
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories.plugin_archive_parser import (
     get_plugin_manifest,
     get_plugin_schema,
     get_plugin_source,
+    parse_plugin,
 )
 
 
@@ -40,6 +43,26 @@ EXPECTED_MANIFEST = AgentPluginManifest(
     description="A dummy exploiter",
     safe=True,
 )
+
+
+def test_parse_plugin__single_vendor(plugin_file, plugin_tarfile):
+    manifest = get_plugin_manifest(plugin_tarfile)
+    schema = get_plugin_schema(plugin_tarfile)
+    data = get_plugin_source(plugin_tarfile)
+
+    expected_agent_plugin_object = AgentPlugin(
+        plugin_manifest=manifest,
+        config_schema=schema,
+        source_archive=data,
+        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+    )
+    expected_return = {
+        OperatingSystem.WINDOWS: expected_agent_plugin_object,
+        OperatingSystem.LINUX: expected_agent_plugin_object,
+    }
+
+    with open(plugin_file, "rb") as f:
+        assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 
 def test_get_plugin_manifest(plugin_tarfile):
