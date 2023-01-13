@@ -1,5 +1,4 @@
 import argparse
-import contextlib
 import logging
 import multiprocessing
 import os
@@ -103,11 +102,14 @@ class InfectionMonkey:
         logger.info(f"Agent ID: {self._agent_id}")
         logger.info(f"Process ID: {os.getpid()}")
 
+        # Spawn the manager before the acquiring the singleton in case the file handle gets copied
+        # over to the manager process
+        self._manager = multiprocessing.get_context("spawn").Manager()
+
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
 
         self._ipc_logger_queue = ipc_logger_queue
-        self._manager = multiprocessing.get_context("spawn").Manager()
 
         self._agent_event_forwarder = None
         self._agent_event_queue = self._setup_agent_event_queue()
@@ -454,8 +456,11 @@ class InfectionMonkey:
             self._plugin_event_forwarder.stop()
             self._agent_event_forwarder.stop()
             self._delete_plugin_dir()
-            with contextlib.suppress(AssertionError):
+            self._manager.shutdown()
+            try:
                 self._singleton.unlock()
+            except AssertionError as err:
+                logger.warning(f"Failed to release the singleton: {err}")
 
         logger.info("Agent is shutting down")
 

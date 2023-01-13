@@ -50,6 +50,7 @@ def main():
     except Exception as err:
         logger.exception(f"An unexpected error occurred while running the agent: {err}")
     finally:
+        logger.debug("Stopping the queue listener")
         queue_listener.stop()
 
 
