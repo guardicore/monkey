@@ -21,6 +21,11 @@ def plugin_tarfile(plugin_file) -> TarFile:
 
 
 @pytest.fixture
+def single_vendor_plugin_tarfile(single_vendor_plugin_file) -> TarFile:
+    return tarfile.open(single_vendor_plugin_file)
+
+
+@pytest.fixture
 def bad_plugin_tarfile(bad_plugin_file) -> TarFile:
     return tarfile.open(bad_plugin_file)
 
@@ -45,10 +50,10 @@ EXPECTED_MANIFEST = AgentPluginManifest(
 )
 
 
-def test_parse_plugin__single_vendor(plugin_file, plugin_tarfile):
-    manifest = get_plugin_manifest(plugin_tarfile)
-    schema = get_plugin_schema(plugin_tarfile)
-    data = get_plugin_source(plugin_tarfile)
+def test_parse_plugin__single_vendor(single_vendor_plugin_file, single_vendor_plugin_tarfile):
+    manifest = get_plugin_manifest(single_vendor_plugin_tarfile)
+    schema = get_plugin_schema(single_vendor_plugin_tarfile)
+    data = get_plugin_source(single_vendor_plugin_tarfile)
 
     expected_agent_plugin_object = AgentPlugin(
         plugin_manifest=manifest,
@@ -61,9 +66,7 @@ def test_parse_plugin__single_vendor(plugin_file, plugin_tarfile):
         OperatingSystem.LINUX: expected_agent_plugin_object,
     }
 
-    with open(plugin_file, "rb") as f:
-        ### This will pass once we pass it a plugin with `vendor/``.
-        ### We're using `plugin_file` right now which doesn't have one, so it errors.
+    with open(single_vendor_plugin_file, "rb") as f:
         assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 

@@ -9,6 +9,11 @@ def plugin_file(plugin_data_dir) -> Path:
 
 
 @pytest.fixture
+def single_vendor_plugin_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "SingleVendor-exploiter.tar"
+
+
+@pytest.fixture
 def bad_plugin_file(plugin_data_dir) -> Path:
     return plugin_data_dir / "bad-exploiter.tar"
 
