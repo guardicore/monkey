@@ -14,6 +14,12 @@ def test_get_os__linux(monkeypatch):
     assert get_os() == OperatingSystem.LINUX
 
 
+@pytest.mark.parametrize("os", ["Darwin", "Java"])
+def test_get_os__any(monkeypatch, os):
+    monkeypatch.setattr("platform.system", lambda: os)
+    assert get_os() == OperatingSystem.ANY
+
+
 def test_get_os__unsupported(monkeypatch):
     monkeypatch.setattr("platform.system", lambda: "")
 

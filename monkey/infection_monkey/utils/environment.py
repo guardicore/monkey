@@ -8,11 +8,15 @@ def get_os() -> OperatingSystem:
     """
     Get the OperatingSystem of the current execution environment.
     """
+    # platform.system can return 'Linux', 'Windows', 'Darwin', 'Java'
+    # or empty string if the value can't be determined
     system = platform.system()
     if system == "Windows":
         return OperatingSystem.WINDOWS
-    if system == "Linux":
+    elif system == "Linux":
         return OperatingSystem.LINUX
+    elif system != "":
+        return OperatingSystem.ANY
     raise RuntimeError(f"Agent is not supported on OS: '{system}'")
 
 
