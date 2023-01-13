@@ -1,22 +1,17 @@
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
-from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.agent_plugins import AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
-from common.event_queue import QueuedAgentEventPublisher
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
-from infection_monkey.island_api_client import HTTPIslandAPIClient
-from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
-from monkey_island.cc.repositories.i_agent_plugin_repository import IAgentPluginRepository
-from monkey_island.cc.resources.agent_heartbeat import AgentHeartbeat
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
     ExploiterDescriptorEnum,
@@ -51,6 +46,12 @@ FileEncryptionEvent._file_path_to_pure_path
 
 AbstractAgentEvent.smart_union
 
+AgentPluginManifest.title
+AgentPluginManifest.description
+AgentPluginManifest.link_to_documentation
+AgentPluginManifest.safe
+AgentPluginManifest.supported_operating_systems
+
 # Unused, but kept for future potential
 DIContainer.release_convention
 
@@ -80,8 +81,6 @@ RemoteShell.do_get
 RemoteShell.do_exit
 prompt
 
-agent.stop_time  # \monkey\monkey_island\cc\agent_event_handlers\update_agent_shutdown_status.py:17: unused attribute 'stop_time'
-
 # Server configurations
 app.url_map.strict_slashes
 api.representations
@@ -95,8 +94,6 @@ Deployment.DOCKER
 # Pymongo models
 Machine.Config.json_dumps
 Machine._socketaddress_from_string
-# Maybe we'll use this later
-Machine.operating_system_version
 
 IslandMode.ADVANCED
 
@@ -119,40 +116,8 @@ AWSCommandResults.response_code  # monkey_island/cc/services/aws/aws_command_run
 
 MonkeyExploitation.label
 
-# Unused plugin infrastructure
-HTTPIslandAPIClient.get_agent_plugin
-HTTPIslandAPIClient.get_agent_configuration_schema
-
-# Remove after #2518
-AgentHeartbeat
-
 Lock.exc_type
 Lock.exc_val
 Lock.exc_tb
 Lock.blocking
 Lock.locked
-
-# Remove after we construct it
-QueuedAgentEventPublisher
-
-# Remove after #2638
-AgentPlugin.plugin_manifest
-AgentPlugin.config_schema
-AgentPlugin.source_archive
-
-AgentPluginManifest
-AgentPluginManifest.supported_operating_systems
-AgentPluginManifest.description
-AgentPluginManifest.name
-AgentPluginManifest.plugin_type
-AgentPluginManifest.title
-AgentPluginManifest.link_to_documentation
-AgentPluginManifest.safe
-
-IAgentPluginRepository
-
-# Remove after #2710
-IAgentPluginRepository.get_plugin_catalog
-
-# Remove once #2783 is done
-PluginConfigurationValidationError
