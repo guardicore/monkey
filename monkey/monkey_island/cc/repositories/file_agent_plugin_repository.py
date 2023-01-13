@@ -1,4 +1,5 @@
 from typing import Any, Dict, Sequence
+from pathlib import Path
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
@@ -12,11 +13,12 @@ class FileAgentPluginRepository(IAgentPluginRepository):
     A repository for retrieving agent plugins.
     """
 
-    def __init__(self, plugin_file_repository: IFileRepository):
+    def __init__(self, plugin_file_repository: IFileRepository, data_dir: Path):
         """
         :param plugin_file_repository: IFileRepository containing the plugins
         """
         self._plugin_file_repository = plugin_file_repository
+        self._data_dir = data_dir
 
     def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
@@ -37,7 +39,7 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
         try:
             with self._plugin_file_repository.open_file(plugin_file_name) as f:
-                return parse_plugin(f)
+                return parse_plugin(f, self._data_dir)
         except ValueError as err:
             raise RetrievalError(f"Error retrieving the agent plugin {plugin_file_name}: {err}")
 
