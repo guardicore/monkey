@@ -1,5 +1,5 @@
 import Form from '@rjsf/bootstrap-4';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import CredentialsConfig from './CredentialsConfig';
@@ -14,6 +14,9 @@ const sectionOrder = [
 
 const initialSection = sectionOrder[0];
 
+export const EXPLOITERS_PATH_PROPAGATION = 'exploitation.exploiters';
+export const EXPLOITERS_CONFIG_PATH = 'propagation.' + EXPLOITERS_PATH_PROPAGATION;
+
 export default function PropagationConfig(props) {
   const {
     schema,
@@ -23,15 +26,26 @@ export default function PropagationConfig(props) {
     className,
     configuration,
     credentials,
-    onCredentialChange
+    onCredentialChange,
+    exploiters
   } = props;
+
+
+  // rjsf component automatically creates an instance from the defaults in the schema
+  // https://github.com/rjsf-team/react-jsonschema-form/issues/2980
+  // we don't want that, because we won't know which plugins were enabled
   const [selectedSection, setSelectedSection] = useState(initialSection);
+  const [selectedExploiters, setSelectedExploiters] = useState(exploiters);
+
+  useEffect(() => onFormDataChange(configuration[selectedSection]),
+    [selectedExploiters]);
 
   const onFormDataChange = (formData) => {
-    let formDataClone = _.clone(formData.formData);
-    let configurationClone = _.clone(configuration);
+    let formDataClone = _.cloneDeep(formData.formData);
+    let configurationClone = _.cloneDeep(configuration);
 
     configurationClone[selectedSection] = formDataClone;
+    _.set(configurationClone, EXPLOITERS_PATH_PROPAGATION, selectedExploiters)
     onChange(configurationClone);
   }
 
@@ -75,7 +89,9 @@ export default function PropagationConfig(props) {
                    key={selectedSection}
                    liveValidate
                    // children={true} hides the submit button
-                   children={true}/>
+                   children={true}
+                   formContext={{'selectedExploiters': selectedExploiters,
+                   'setSelectedExploiters': setSelectedExploiters}}/>
     }
   }
 

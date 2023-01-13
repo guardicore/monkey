@@ -9,7 +9,9 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
-import PropagationConfig from '../configuration-components/PropagationConfig'
+import PropagationConfig, {
+  EXPLOITERS_CONFIG_PATH
+} from '../configuration-components/PropagationConfig'
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
@@ -30,6 +32,8 @@ const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
 const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
+const EXPLOITERS_SCHEMA_PATH_NEW = 'definitions.ExploitationConfiguration.properties.exploiters';
+const EXPLOITERS_SCHEMA_PATH_LEGACY = 'properties.propagation.properties.exploitation.properties.exploiters';
 
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
@@ -52,7 +56,8 @@ class ConfigurePageComponent extends AuthComponent {
       selectedSection: this.currentSection,
       showUnsafeOptionsConfirmation: false,
       showConfigExportModal: false,
-      showConfigImportModal: false
+      showConfigImportModal: false,
+      selectedExploiters: {}
     };
   }
 
@@ -83,8 +88,7 @@ class ConfigurePageComponent extends AuthComponent {
     // but we should use the schema provided by "/api/agent-configuration-schema"
     // Remove when #2750 is done
     let injectedSchema = _.cloneDeep(this.state.schema);
-    injectedSchema['properties']['propagation']['properties']['exploitation']['properties']['exploiters'] =
-      newSchema['definitions']['ExploitationConfiguration']['properties']['exploiters']
+    _.set(injectedSchema, EXPLOITERS_SCHEMA_PATH_LEGACY, _.get(newSchema, EXPLOITERS_SCHEMA_PATH_NEW));
     return injectedSchema;
   }
 
@@ -107,8 +111,9 @@ class ConfigurePageComponent extends AuthComponent {
 
         this.setState({
           configuration: monkeyConfig,
+          selectedExploiters: _.get(monkeyConfig, EXPLOITERS_CONFIG_PATH),
           sections: sections,
-          currentFormData: monkeyConfig[this.state.selectedSection]
+          currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
       });
     this.updateCredentials();
@@ -147,8 +152,9 @@ class ConfigurePageComponent extends AuthComponent {
         data = reformatConfig(data);
         this.setInitialConfig(data);
         this.setState({
+          selectedExploiters: _.get(data, EXPLOITERS_CONFIG_PATH),
           configuration: data,
-          currentFormData: data[this.state.selectedSection]
+          currentFormData: _.cloneDeep(data[this.state.selectedSection])
         });
       });
   }
@@ -343,6 +349,7 @@ class ConfigurePageComponent extends AuthComponent {
       delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
       return (<PropagationConfig {...formProperties}
                                  credentials={this.state.credentials}
+                                 exploiters={this.state.selectedExploiters}
                                  onCredentialChange={this.onCredentialChange}/>)
     } else {
       formProperties['onChange'] = (formData) => {
