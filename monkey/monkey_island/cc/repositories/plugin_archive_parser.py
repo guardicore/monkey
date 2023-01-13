@@ -50,7 +50,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
 
         plugin_vendors = _get_plugin_vendors(plugin_tar)
 
-        if len(plugin_vendors) == 1 and plugin_vendors[0] == "vendor":
+        if len(plugin_vendors) == 1 and plugin_vendors[0].name == "vendor":
             plugin = AgentPlugin(
                 plugin_manifest=manifest,
                 config_schema=schema,
@@ -61,8 +61,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
             parsed_plugin[OperatingSystem.WINDOWS] = plugin
 
         else:
-            path = None  ### somewhere in data_dir/plugins/
-            _extract_vendors_to_path(plugin_tar, plugin_vendors, path)
+            source_paths = _extract_vendors_to_path(plugin_tar, plugin_vendors, data_dir)
 
             for vendor in plugin_vendors:
                 if vendor.name == "vendor":
@@ -80,23 +79,27 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
                     break
 
                 if vendor.name == "vendor-linux":
-                    ### create new dir in data_dir with only the required vendor, package new source
-                    linux_source = None
+                    # create new dir in data_dir with only the required vendor, package new source
+                    with open(source_paths["linux"], "r") as f:
+                        linux_source = io.BytesIO(f.read())
+
                     parsed_plugin[OperatingSystem.LINUX] = AgentPlugin(
                         plugin_manifest=manifest,
                         config_schema=schema,
                         source_archive=linux_source,
-                        host_operating_systems=OperatingSystem.LINUX,
+                        host_operating_systems=(OperatingSystem.LINUX,),
                     )
 
                 if vendor.name == "vendor-windows":
-                    ### create new dir in data_dir with only the required vendor, package new source
-                    windows_source = None
+                    # create new dir in data_dir with only the required vendor, package new source
+                    windows_source = b""
+                    with open(source_paths["windows"], "r") as f:
+                        windows_source = io.BytesIO(f.read())
                     parsed_plugin[OperatingSystem.WINDOWS] = AgentPlugin(
                         plugin_manifest=manifest,
                         config_schema=schema,
                         source_archive=windows_source,
-                        host_operating_systems=OperatingSystem.WINDOWS,
+                        host_operating_systems=(OperatingSystem.WINDOWS,),
                     )
 
     except KeyError as err:
@@ -158,7 +161,7 @@ def _safe_extract_file(tar: TarFile, filename: str) -> IO[bytes]:
 
 def _get_plugin_vendors(plugin_tar: TarFile) -> Sequence[TarInfo]:
     plugin_vendors = [
-        member.name
+        member
         for member in plugin_tar.getmembers()
         if (member.name.startswith("vendor") and member.isdir())
     ]
@@ -166,8 +169,21 @@ def _get_plugin_vendors(plugin_tar: TarFile) -> Sequence[TarInfo]:
 
 
 def _extract_vendors_to_path(plugin_tar, plugin_vendors, path):
+    source_paths = {}
     for vendor in plugin_vendors:
         contents = [
-            tarinfo for tarinfo in vendor.getmembers() if tarinfo.name.startswith(f"{vendor.name}/")
+            tarinfo
+            for tarinfo in plugin_tar.getmembers()
+            if tarinfo.name.startswith(f"{vendor.name}/")
         ]
-        plugin_tar.extractall(members=contents, path=path)
+
+        plugin_contents = [
+            tarinfo for tarinfo in plugin_tar.getmembers() if not tarinfo.name.startswith("vendor")
+        ] + contents
+
+        vendor_os = vendor.name.split("-")[1]
+        plugin_source_path = path / vendor_os
+        plugin_tar.extractall(members=plugin_contents, path=plugin_source_path)
+        source_paths[vendor_os] = plugin_source_path
+
+    return source_paths
