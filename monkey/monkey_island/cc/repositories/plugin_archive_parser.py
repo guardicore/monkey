@@ -50,7 +50,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
 
         plugin_vendors = _get_plugin_vendors(plugin_tar)
 
-        if len(plugin_vendors) == 1 and plugin_vendors[0].name == "vendor":
+        if len(plugin_vendors) == 1 and plugin_vendors[0] == "vendor":
             plugin = AgentPlugin(
                 plugin_manifest=manifest,
                 config_schema=schema,
@@ -65,10 +65,6 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
             _extract_vendors_to_path(plugin_tar, plugin_vendors, path)
 
             for vendor in plugin_vendors:
-                ### Q: How do we want to handle cases where, for example, both vendor/ and
-                ###    vendor-linux/ exist? Merge them and then package it for the Linux plugin?
-                ###    Right now, this just overwrites the vendor/-plugin with the vendor-linux/-plugin
-                ###    for Linux. Whatever we decide, implement the logic for both Windows and Linux.
                 if vendor.name == "vendor":
                     plugin = AgentPlugin(
                         plugin_manifest=manifest,
@@ -78,6 +74,10 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
                     )
                     parsed_plugin[OperatingSystem.LINUX] = plugin
                     parsed_plugin[OperatingSystem.WINDOWS] = plugin
+
+                    # if found just vendor/ we don't want check if we have vendor-linux or
+                    # vendor-windows
+                    break
 
                 if vendor.name == "vendor-linux":
                     ### create new dir in data_dir with only the required vendor, package new source
