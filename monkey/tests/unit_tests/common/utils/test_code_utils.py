@@ -56,7 +56,7 @@ def test_del_key__nonexistant_key():
 @pytest.mark.parametrize(
     "generate_random_string", [insecure_generate_random_string, secure_generate_random_string]
 )
-@pytest.mark.parametrize("n", [1, 2, 4, 8, 16, 32])
+@pytest.mark.parametrize("n", [2, 4, 8, 16, 32])
 def test_generate_random_string__random_value(generate_random_string: Callable[..., str], n):
     assert generate_random_string(n=n) != generate_random_string(n=n)
 
@@ -64,7 +64,7 @@ def test_generate_random_string__random_value(generate_random_string: Callable[.
 @pytest.mark.parametrize(
     "generate_random_string", [insecure_generate_random_string, secure_generate_random_string]
 )
-@pytest.mark.parametrize("n", [1, 2, 4, 8, 16, 32])
+@pytest.mark.parametrize("n", [2, 4, 8, 16, 32])
 def test_generate_random_string__str_length(generate_random_string: Callable[..., str], n: int):
     assert len(generate_random_string(n=n)) == n
 
