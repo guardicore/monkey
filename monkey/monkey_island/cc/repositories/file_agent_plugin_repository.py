@@ -1,5 +1,6 @@
 from typing import Sequence, Tuple
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
 
 from . import IAgentPluginRepository, IFileRepository, RetrievalError
@@ -25,6 +26,20 @@ class FileAgentPluginRepository(IAgentPluginRepository):
                 return parse_plugin(f)
         except ValueError as err:
             raise RetrievalError(f"Error retrieving the agent plugin {plugin_file_name}: {err}")
+
+    def get_plugin_for_os(
+        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+    ) -> AgentPlugin:
+        plugin = self.get_plugin(plugin_type, name)
+
+        if host_operating_system in plugin.host_operating_systems:
+            # TODO: Return the plugin with only the operating system specific dependencies
+            return plugin
+        else:
+            raise RetrievalError(
+                f"Error retrieving the agent plugin {name} of type {plugin_type} "
+                f"for OS {host_operating_system}"
+            )
 
     def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
         plugin_catalog = []
