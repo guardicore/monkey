@@ -27,6 +27,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     supported_operating_systems: Tuple[OperatingSystem, ...] = (
         OperatingSystem.WINDOWS,
         OperatingSystem.LINUX,
+        OperatingSystem.ANY,
     )
     title: Optional[str]
     description: Optional[str]

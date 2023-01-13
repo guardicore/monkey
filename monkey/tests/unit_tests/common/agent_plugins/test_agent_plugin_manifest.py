@@ -10,7 +10,7 @@ from common.agent_plugins.agent_plugin_type import AgentPluginType
 FAKE_NAME = "rdp_exploiter"
 FAKE_NAME2 = "ssh_exploiter"
 FAKE_TYPE = "Exploiter"
-FAKE_OPERATING_SYSTEMS = ["linux"]
+FAKE_OPERATING_SYSTEMS = ["linux", "windows", "any"]
 FAKE_TITLE = "Remote Desktop Protocol exploiter"
 FAKE_LINK = "www.beefface.com"
 

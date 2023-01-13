@@ -41,7 +41,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
             "name": "rdp_exploiter",
             "plugin_type": "Exploiter",
             "safe": False,
-            "supported_operating_systems": ["linux"],
+            "supported_operating_systems": ["linux", "windows", "any"],
             "title": "Remote Desktop Protocol exploiter",
         },
         "source_archive": "cmFuZG9tIGJ5dGVz",
