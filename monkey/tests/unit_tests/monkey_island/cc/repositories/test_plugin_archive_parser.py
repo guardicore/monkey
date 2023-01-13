@@ -62,6 +62,8 @@ def test_parse_plugin__single_vendor(plugin_file, plugin_tarfile):
     }
 
     with open(plugin_file, "rb") as f:
+        ### This will pass once we pass it a plugin with `vendor/``.
+        ### We're using `plugin_file` right now which doesn't have one, so it errors.
         assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 
