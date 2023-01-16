@@ -52,7 +52,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
 
         extracted_plugin = _safe_extract_file(tar=tar_file, filename="plugin.tar")
         plugin_tar = tarfile.TarFile(fileobj=io.BytesIO(extracted_plugin.read()))
-        plugin_vendors = _get_plugin_vendors(plugin_tar)
+        plugin_vendors = get_plugin_vendors(plugin_tar)
 
         if "vendor" in [vendor.name for vendor in plugin_vendors]:
             plugin = AgentPlugin(
@@ -69,7 +69,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
             # exist
             return parsed_plugin
 
-        os_specific_plugin_source_archives = _get_os_specific_plugin_source_archives(
+        os_specific_plugin_source_archives = get_os_specific_plugin_source_archives(
             plugin_tar, plugin_vendors, data_dir
         )
         for os_, os_specific_plugin_source_archive in os_specific_plugin_source_archives.items():
@@ -137,7 +137,7 @@ def _safe_extract_file(tar: TarFile, filename: str) -> IO[bytes]:
     return file_obj
 
 
-def _get_plugin_vendors(plugin_tar: TarFile) -> Sequence[TarInfo]:
+def get_plugin_vendors(plugin_tar: TarFile) -> Sequence[TarInfo]:
     plugin_vendors = [
         member
         for member in plugin_tar.getmembers()
@@ -146,10 +146,12 @@ def _get_plugin_vendors(plugin_tar: TarFile) -> Sequence[TarInfo]:
     return plugin_vendors
 
 
-def _get_os_specific_plugin_source_archives(
+def get_os_specific_plugin_source_archives(
     plugin_tar, plugin_vendors, path
 ) -> Mapping[OperatingSystem, bytes]:
     os_specific_plugin_source_archives = {}
+
+    print(plugin_tar.getmembers())
 
     plugin_directory = path / f"plugin-{random_filename()}"
     create_secure_directory(plugin_directory)
