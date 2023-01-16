@@ -9,6 +9,7 @@ import yaml
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
+from common.utils.file_utils import create_secure_directory, random_filename
 
 MANIFEST_FILENAME = "plugin.yaml"
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
@@ -157,8 +158,12 @@ def _get_plugin_vendors(plugin_tar: TarFile) -> Sequence[TarInfo]:
 
 def _extract_vendors_to_path(plugin_tar, plugin_vendors, path):
     source_paths = {}
+
+    temporary_plugin_directory = path / f"plugin-{random_filename()}"
+    create_secure_directory(temporary_plugin_directory)
+
     for vendor in plugin_vendors:
-        contents = [
+        vendor_contents = [
             tarinfo
             for tarinfo in plugin_tar.getmembers()
             if tarinfo.name.startswith(f"{vendor.name}/")
@@ -166,10 +171,10 @@ def _extract_vendors_to_path(plugin_tar, plugin_vendors, path):
 
         plugin_contents = [
             tarinfo for tarinfo in plugin_tar.getmembers() if not tarinfo.name.startswith("vendor")
-        ] + contents
+        ] + vendor_contents
 
         vendor_os = vendor.name.split("-")[1]
-        plugin_source_path = path / vendor_os
+        plugin_source_path = temporary_plugin_directory / vendor_os
         plugin_tar.extractall(members=plugin_contents, path=plugin_source_path)
         source_paths[vendor_os] = plugin_source_path
 
