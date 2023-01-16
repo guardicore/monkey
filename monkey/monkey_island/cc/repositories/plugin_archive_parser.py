@@ -45,67 +45,54 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
         source = get_plugin_source(tar_file)
 
         extracted_plugin = _safe_extract_file(tar=tar_file, filename="plugin.tar")
-
         plugin_tar = tarfile.TarFile(fileobj=io.BytesIO(extracted_plugin.read()))
-
         plugin_vendors = _get_plugin_vendors(plugin_tar)
 
-        if len(plugin_vendors) == 1 and plugin_vendors[0].name == "vendor":
+        if "vendor" in [vendor.name for vendor in plugin_vendors]:
             plugin = AgentPlugin(
                 plugin_manifest=manifest,
                 config_schema=schema,
                 source_archive=source,
                 host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
             )
+
             parsed_plugin[OperatingSystem.LINUX] = plugin
             parsed_plugin[OperatingSystem.WINDOWS] = plugin
 
-        else:
-            source_paths = _extract_vendors_to_path(plugin_tar, plugin_vendors, data_dir)
+            # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/
+            # exist
+            return parsed_plugin
 
-            for vendor in plugin_vendors:
-                if vendor.name == "vendor":
-                    plugin = AgentPlugin(
-                        plugin_manifest=manifest,
-                        config_schema=schema,
-                        source_archive=source,
-                        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
-                    )
-                    parsed_plugin[OperatingSystem.LINUX] = plugin
-                    parsed_plugin[OperatingSystem.WINDOWS] = plugin
+        source_paths = _extract_vendors_to_path(plugin_tar, plugin_vendors, data_dir)
+        for vendor in plugin_vendors:
+            if vendor.name == "vendor-linux":
+                # create new dir in data_dir with only the required vendor, package new source
+                with open(source_paths["linux"], "r") as f:
+                    linux_source = io.BytesIO(f.read())
 
-                    # if found just vendor/ we don't want check if we have vendor-linux or
-                    # vendor-windows
-                    break
+                parsed_plugin[OperatingSystem.LINUX] = AgentPlugin(
+                    plugin_manifest=manifest,
+                    config_schema=schema,
+                    source_archive=linux_source,
+                    host_operating_systems=(OperatingSystem.LINUX,),
+                )
 
-                if vendor.name == "vendor-linux":
-                    # create new dir in data_dir with only the required vendor, package new source
-                    with open(source_paths["linux"], "r") as f:
-                        linux_source = io.BytesIO(f.read())
+            elif vendor.name == "vendor-windows":
+                # create new dir in data_dir with only the required vendor, package new source
+                with open(source_paths["windows"], "r") as f:
+                    windows_source = io.BytesIO(f.read())
 
-                    parsed_plugin[OperatingSystem.LINUX] = AgentPlugin(
-                        plugin_manifest=manifest,
-                        config_schema=schema,
-                        source_archive=linux_source,
-                        host_operating_systems=(OperatingSystem.LINUX,),
-                    )
+                parsed_plugin[OperatingSystem.WINDOWS] = AgentPlugin(
+                    plugin_manifest=manifest,
+                    config_schema=schema,
+                    source_archive=windows_source,
+                    host_operating_systems=(OperatingSystem.WINDOWS,),
+                )
 
-                if vendor.name == "vendor-windows":
-                    # create new dir in data_dir with only the required vendor, package new source
-                    windows_source = b""
-                    with open(source_paths["windows"], "r") as f:
-                        windows_source = io.BytesIO(f.read())
-                    parsed_plugin[OperatingSystem.WINDOWS] = AgentPlugin(
-                        plugin_manifest=manifest,
-                        config_schema=schema,
-                        source_archive=windows_source,
-                        host_operating_systems=(OperatingSystem.WINDOWS,),
-                    )
+        return parsed_plugin
 
     except KeyError as err:
         raise ValueError(f"Invalid plugin archive: {err}")
-
-    return parsed_plugin
 
 
 def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
