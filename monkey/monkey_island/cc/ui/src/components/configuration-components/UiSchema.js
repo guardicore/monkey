@@ -10,7 +10,7 @@ export default function UiSchema(props) {
     propagation: {
       exploitation: {
         exploiters: {
-          classNames: 'config-template-no-header',
+          'ui:classNames': 'config-template-no-header',
           'ui:ObjectFieldTemplate': PluginSelectorTemplate
         },
         options: {
@@ -31,19 +31,19 @@ export default function UiSchema(props) {
         },
         exploit_password_list: {
           items: {
-            classNames: 'config-template-no-header',
+            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
         exploit_lm_hash_list: {
           items: {
-            classNames: 'config-template-no-header',
+            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
         exploit_ntlm_hash_list: {
           items: {
-            classNames: 'config-template-no-header',
+            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         }
@@ -52,12 +52,12 @@ export default function UiSchema(props) {
         targets: {
           blocked_ips: {
             items: {
-              classNames: 'config-template-no-header'
+              'ui:classNames': 'config-template-no-header'
             }
           },
           inaccessible_subnets: {
             items: {
-              classNames: 'config-template-no-header'
+              'ui:classNames': 'config-template-no-header'
             }
           },
           info_box_scan_my_networks: {
@@ -65,29 +65,29 @@ export default function UiSchema(props) {
           },
           subnets: {
             items: {
-              classNames: 'config-template-no-header'
+              'ui:classNames': 'config-template-no-header'
             }
           }
         },
         tcp: {
           ports: {
             items: {
-              classNames: 'config-template-no-header'
+              'ui:classNames': 'config-template-no-header'
             }
           }
         },
         fingerprinters: {
-          classNames: 'config-template-no-header',
+          'ui:classNames': 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect,
           fingerprinter_classes: {
-            classNames: 'config-template-no-header'
+            'ui:classNames': 'config-template-no-header'
           }
 
         }
       }
     },
     payloads: {
-      classNames: 'config-template-no-header',
+      'ui:classNames': 'config-template-no-header',
       encryption: {
         info_box: {
           'ui:field': InfoBox
@@ -110,10 +110,10 @@ export default function UiSchema(props) {
       }
     },
     credential_collectors: {
-      classNames: 'config-template-no-header',
+      'ui:classNames': 'config-template-no-header',
       'ui:widget': AdvancedMultiSelect,
       credential_collectors_classes: {
-        classNames: 'config-template-no-header'
+        'ui:classNames': 'config-template-no-header'
       }
     }
   };
