@@ -1,5 +1,8 @@
 import io
 import json
+import logging
+import os
+import shutil
 import tarfile
 from pathlib import Path
 from tarfile import TarFile, TarInfo
@@ -14,6 +17,8 @@ from common.utils.file_utils import create_secure_directory, random_filename
 MANIFEST_FILENAME = "plugin.yaml"
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
 SOURCE_ARCHIVE_FILENAME = "plugin.tar"
+
+logger = logging.getLogger(__name__)
 
 
 def tarinfo_type(tar: TarInfo) -> str:
@@ -64,31 +69,16 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
             # exist
             return parsed_plugin
 
-        source_paths = _extract_vendors_to_path(plugin_tar, plugin_vendors, data_dir)
-        for vendor in plugin_vendors:
-            if vendor.name == "vendor-linux":
-                # create new dir in data_dir with only the required vendor, package new source
-                with open(source_paths["linux"], "r") as f:
-                    linux_source = io.BytesIO(f.read())
-
-                parsed_plugin[OperatingSystem.LINUX] = AgentPlugin(
-                    plugin_manifest=manifest,
-                    config_schema=schema,
-                    source_archive=linux_source,
-                    host_operating_systems=(OperatingSystem.LINUX,),
-                )
-
-            elif vendor.name == "vendor-windows":
-                # create new dir in data_dir with only the required vendor, package new source
-                with open(source_paths["windows"], "r") as f:
-                    windows_source = io.BytesIO(f.read())
-
-                parsed_plugin[OperatingSystem.WINDOWS] = AgentPlugin(
-                    plugin_manifest=manifest,
-                    config_schema=schema,
-                    source_archive=windows_source,
-                    host_operating_systems=(OperatingSystem.WINDOWS,),
-                )
+        os_specific_plugin_source_archives = _get_os_specific_plugin_source_archives(
+            plugin_tar, plugin_vendors, data_dir
+        )
+        for os_, os_specific_plugin_source_archive in os_specific_plugin_source_archives.items():
+            parsed_plugin[os_] = AgentPlugin(
+                plugin_manifest=manifest,
+                config_schema=schema,
+                source_archive=os_specific_plugin_source_archive,
+                host_operating_systems=(os_,),
+            )
 
         return parsed_plugin
 
@@ -156,26 +146,42 @@ def _get_plugin_vendors(plugin_tar: TarFile) -> Sequence[TarInfo]:
     return plugin_vendors
 
 
-def _extract_vendors_to_path(plugin_tar, plugin_vendors, path):
-    source_paths = {}
+def _get_os_specific_plugin_source_archives(
+    plugin_tar, plugin_vendors, path
+) -> Mapping[OperatingSystem, bytes]:
+    os_specific_plugin_source_archives = {}
 
-    temporary_plugin_directory = path / f"plugin-{random_filename()}"
-    create_secure_directory(temporary_plugin_directory)
+    plugin_directory = path / f"plugin-{random_filename()}"
+    create_secure_directory(plugin_directory)
 
     for vendor in plugin_vendors:
-        vendor_contents = [
+        if "linux" in vendor.name:
+            vendor_os = OperatingSystem.LINUX
+        elif "windows" in vendor.name:
+            vendor_os = OperatingSystem.WINDOWS
+        else:
+            logger.info(f"Operating system of vendor directory ({vendor.name}) not recognised")
+
+        os_specific_plugin_dir_path = plugin_directory / vendor_os.value
+        create_secure_directory(os_specific_plugin_dir_path)
+        os_specific_plugin_source_path = os_specific_plugin_dir_path / "source"
+        create_secure_directory(os_specific_plugin_source_path)
+
+        contents = [
             tarinfo
             for tarinfo in plugin_tar.getmembers()
-            if tarinfo.name.startswith(f"{vendor.name}/")
+            if tarinfo.name.startswith(f"{vendor.name}/") or not tarinfo.name.startswith("vendor")
         ]
+        plugin_tar.extractall(members=contents, path=os_specific_plugin_source_path)
 
-        plugin_contents = [
-            tarinfo for tarinfo in plugin_tar.getmembers() if not tarinfo.name.startswith("vendor")
-        ] + vendor_contents
+        os_specific_plugin_tar_path = os_specific_plugin_dir_path / "plugin.tar"
+        with tarfile.TarFile(name=os_specific_plugin_tar_path, mode="w") as os_specific_plugin_tar:
+            for item in os.listdir(os_specific_plugin_source_path):
+                os_specific_plugin_tar.add(os_specific_plugin_source_path / item)
 
-        vendor_os = vendor.name.split("-")[1]
-        plugin_source_path = temporary_plugin_directory / vendor_os
-        plugin_tar.extractall(members=plugin_contents, path=plugin_source_path)
-        source_paths[vendor_os] = plugin_source_path
+        with open(os_specific_plugin_tar_path, "rb") as f:
+            os_specific_plugin_source_archives[vendor_os] = f.read()
 
-    return source_paths
+        shutil.rmtree(os_specific_plugin_source_path)
+
+    return os_specific_plugin_source_archives
