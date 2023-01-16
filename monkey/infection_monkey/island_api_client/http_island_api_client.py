@@ -70,7 +70,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
     def get_agent_plugin_manifest(
         self, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPluginManifest:
-        response = self.http_client.get(f"agent-plugins-manifest/{plugin_type.value}/{plugin_name}")
+        response = self.http_client.get(f"agent-plugins/{plugin_type.value}/{plugin_name}/manifest")
 
         return AgentPluginManifest(**response.json())
 
