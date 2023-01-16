@@ -1,6 +1,5 @@
 import io
 import tarfile
-from pathlib import Path
 from tarfile import TarFile
 from unittest.mock import MagicMock
 
@@ -46,11 +45,6 @@ def dir_tarfile(dir_plugin_file) -> TarFile:
     return tarfile.open(dir_plugin_file)
 
 
-@pytest.fixture
-def tmp_data_dir(tmp_path) -> Path:
-    return tmp_path / "data_dir"
-
-
 EXPECTED_MANIFEST = AgentPluginManifest(
     name="test",
     plugin_type=AgentPluginType.EXPLOITER,
@@ -81,11 +75,10 @@ def test_parse_plugin__single_vendor(single_vendor_plugin_file, single_vendor_pl
         assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 
-def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tarfile, tmp_data_dir):
+def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tarfile, tmp_path):
     manifest = get_plugin_manifest(two_vendor_plugin_tarfile)
     schema = get_plugin_schema(two_vendor_plugin_tarfile)
-    data = b""
-    # data = get_plugin_source(two_vendor_plugin_tarfile)
+    data = get_plugin_source(two_vendor_plugin_tarfile)
 
     expected_linux_agent_plugin_object = AgentPlugin(
         plugin_manifest=manifest,
@@ -105,7 +98,7 @@ def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tar
     }
 
     with open(two_vendor_plugin_file, "rb") as f:
-        assert parse_plugin(io.BytesIO(f.read()), tmp_data_dir) == expected_return
+        assert parse_plugin(io.BytesIO(f.read()), tmp_path) == expected_return
 
     assert False
 
