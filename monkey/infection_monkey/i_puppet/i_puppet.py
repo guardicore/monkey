@@ -16,6 +16,14 @@ class UnknownPluginError(Exception):
     pass
 
 
+class RejectedRequestError(Exception):
+    pass
+
+
+class IncompatibleOperatingSystemError(RejectedRequestError):
+    pass
+
+
 @dataclass
 class ExploiterResultData:
     exploitation_success: bool = False
