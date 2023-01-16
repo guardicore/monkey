@@ -5,7 +5,7 @@ from jsonschema import validate
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
 from common.types import AgentID, SocketAddress
 
@@ -33,6 +33,13 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
 
     def get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> AgentPlugin:
         return self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
+
+    def get_agent_plugin_manifest(
+        self,
+        plugin_type: AgentPluginType,
+        plugin_name: str,
+    ) -> AgentPluginManifest:
+        return self._island_api_client.get_agent_plugin_manifest(plugin_type, plugin_name)
 
     def get_agent_signals(self, agent_id: str) -> AgentSignals:
         return self._island_api_client.get_agent_signals(agent_id)
