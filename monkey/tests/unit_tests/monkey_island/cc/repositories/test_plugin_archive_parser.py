@@ -8,9 +8,11 @@ import pytest
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories.plugin_archive_parser import (
+    get_os_specific_plugin_source_archives,
     get_plugin_manifest,
     get_plugin_schema,
     get_plugin_source,
+    get_plugin_vendors,
     parse_plugin,
 )
 
@@ -75,21 +77,30 @@ def test_parse_plugin__single_vendor(single_vendor_plugin_file, single_vendor_pl
         assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 
-def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tarfile, tmp_path):
+def test_parse_plugin__two_vendors(
+    monkeypatch, two_vendor_plugin_file, two_vendor_plugin_tarfile, tmp_path
+):
+    monkeypatch.setattr(
+        "monkey_island.cc.repositories.plugin_archive_parser.random_filename", lambda: "something"
+    )
     manifest = get_plugin_manifest(two_vendor_plugin_tarfile)
     schema = get_plugin_schema(two_vendor_plugin_tarfile)
-    data = get_plugin_source(two_vendor_plugin_tarfile)
 
+    plugin_source_tar = TarFile(fileobj=io.BytesIO(get_plugin_source(two_vendor_plugin_tarfile)))
+    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    os_specific_data = get_os_specific_plugin_source_archives(
+        plugin_source_tar, plugin_vendors, tmp_path
+    )
     expected_linux_agent_plugin_object = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
-        source_archive=data,
+        source_archive=os_specific_data[OperatingSystem.LINUX],
         host_operating_systems=(OperatingSystem.LINUX,),
     )
     expected_windows_agent_plugin_object = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
-        source_archive=data,
+        source_archive=os_specific_data[OperatingSystem.WINDOWS],
         host_operating_systems=(OperatingSystem.WINDOWS,),
     )
     expected_return = {
@@ -98,9 +109,9 @@ def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tar
     }
 
     with open(two_vendor_plugin_file, "rb") as f:
-        assert parse_plugin(io.BytesIO(f.read()), tmp_path) == expected_return
-
-    assert False
+        actual_return = parse_plugin(io.BytesIO(f.read()), tmp_path)
+        assert len(actual_return) == len(expected_return)
+        assert actual_return == expected_return
 
 
 def test_get_plugin_manifest(plugin_tarfile):
