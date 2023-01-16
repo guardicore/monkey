@@ -1,5 +1,5 @@
 import Form from '@rjsf/bootstrap-4';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import CredentialsConfig from './CredentialsConfig';
@@ -27,25 +27,17 @@ export default function PropagationConfig(props) {
     configuration,
     credentials,
     onCredentialChange,
-    exploiters
+    selectedExploiters,
+    setSelectedExploiters
   } = props;
 
-
-  // rjsf component automatically creates an instance from the defaults in the schema
-  // https://github.com/rjsf-team/react-jsonschema-form/issues/2980
-  // we don't want that, because we won't know which plugins were enabled
   const [selectedSection, setSelectedSection] = useState(initialSection);
-  const [selectedExploiters, setSelectedExploiters] = useState(exploiters);
-
-  useEffect(() => onFormDataChange(configuration[selectedSection]),
-    [selectedExploiters]);
 
   const onFormDataChange = (formData) => {
-    let formDataClone = _.cloneDeep(formData.formData);
-    let configurationClone = _.cloneDeep(configuration);
+    let formDataClone = _.clone(formData.formData);
+    let configurationClone = _.clone(configuration);
 
     configurationClone[selectedSection] = formDataClone;
-    _.set(configurationClone, EXPLOITERS_PATH_PROPAGATION, selectedExploiters)
     onChange(configurationClone);
   }
 
@@ -90,8 +82,10 @@ export default function PropagationConfig(props) {
                    liveValidate
                    // children={true} hides the submit button
                    children={true}
-                   formContext={{'selectedExploiters': selectedExploiters,
-                   'setSelectedExploiters': setSelectedExploiters}}/>
+                   formContext={{
+                     'selectedExploiters': selectedExploiters,
+                     'setSelectedExploiters': setSelectedExploiters
+                   }}/>
     }
   }
 

@@ -57,7 +57,7 @@ class ConfigurePageComponent extends AuthComponent {
       showUnsafeOptionsConfirmation: false,
       showConfigExportModal: false,
       showConfigImportModal: false,
-      selectedExploiters: {}
+      selectedExploiters: new Set()
     };
   }
 
@@ -103,10 +103,9 @@ class ConfigurePageComponent extends AuthComponent {
             title: SCHEMA.properties[sectionKey].title
           });
         }
-
         this.setState({
           configuration: monkeyConfig,
-          selectedExploiters: _.get(monkeyConfig, EXPLOITERS_CONFIG_PATH),
+          selectedExploiters: new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
           sections: sections,
           currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
@@ -146,11 +145,15 @@ class ConfigurePageComponent extends AuthComponent {
       .then(data => {
         data = reformatConfig(data);
         this.setState({
-          selectedExploiters: _.get(data, EXPLOITERS_CONFIG_PATH),
+          selectedExploiters: new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
           configuration: data,
           currentFormData: _.cloneDeep(data[this.state.selectedSection])
         });
       });
+  }
+
+  setSelectedExploiters = (exploiters) => {
+    this.setState({selectedExploiters: exploiters})
   }
 
   onSubmit = () => {
@@ -162,8 +165,9 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   async attemptConfigSubmit() {
-    if (this.canSafelySubmitConfig(this.state.configuration)) {
-      this.configSubmit();
+    let config = this.filterUnselectedPlugins()
+    if (this.canSafelySubmitConfig(config)) {
+      this.configSubmit(config);
       if (this.state.lastAction === configExportAction) {
         this.setState({showConfigExportModal: true})
       }
@@ -172,10 +176,23 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
-  configSubmit() {
+  // rjsf component automatically creates an instance from the defaults in the schema
+  // https://github.com/rjsf-team/react-jsonschema-form/issues/2980
+  // Until the issue is fixed, we need to manually remove plugins that were not selected before
+  // submitting/exporting the configuration
+  filterUnselectedPlugins() {
+    let filteredExploiters = {};
+    let exploiterFormData = _.get(this.state.configuration, EXPLOITERS_CONFIG_PATH);
+    for(let exploiter of [...this.state.selectedExploiters]){
+      filteredExploiters[exploiter] = exploiterFormData[exploiter];
+    }
+    return filteredExploiters;
+  }
+
+  configSubmit(config) {
     this.sendCredentials().then(res => {
       if(res.ok) {
-        this.sendConfig();
+        this.sendConfig(config);
       }
     });
   }
@@ -192,7 +209,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
-                               configuration={this.state.configuration}
+                               configuration={this.filterUnselectedPlugins()}
                                credentials={this.state.credentials}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
@@ -261,8 +278,7 @@ class ConfigurePageComponent extends AuthComponent {
     await this.attemptConfigSubmit();
   };
 
-  sendConfig() {
-    let config = JSON.parse(JSON.stringify(this.state.configuration))
+  sendConfig(config) {
     config = reformatConfig(config, true);
     delete config['advanced'];
     delete config['propagation']['general'];
@@ -332,7 +348,8 @@ class ConfigurePageComponent extends AuthComponent {
       delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
       return (<PropagationConfig {...formProperties}
                                  credentials={this.state.credentials}
-                                 exploiters={this.state.selectedExploiters}
+                                 selectedExploiters={this.state.selectedExploiters}
+                                 setSelectedExploiters={this.setSelectedExploiters}
                                  onCredentialChange={this.onCredentialChange}/>)
     } else {
       formProperties['onChange'] = (formData) => {

@@ -1,6 +1,5 @@
 import {getDefaultFormState, ObjectFieldTemplateProps} from '@rjsf/utils';
 import React, {useState} from 'react';
-import _ from 'lodash';
 import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
 import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
@@ -8,14 +7,14 @@ import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
 
-  function getPluginDisplay(plugin, allPlugins){
+  let [selectedPlugin, setSelectedPlugin] = useState(null);
+
+  function getPluginDisplay(plugin, allPlugins) {
     let selectedPlugin = allPlugins.filter((pluginInArray) => pluginInArray.name == plugin)
-    if(selectedPlugin.length === 1){
+    if (selectedPlugin.length === 1) {
       return <div className="property-wrapper">{selectedPlugin[0].content}</div>
     }
   }
-
-  let [plugin, setPlugin] = useState(null);
 
   function getOptions() {
     let selectorOptions = [];
@@ -25,20 +24,12 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     return selectorOptions;
   }
 
-  function getEnabledPlugins() {
-    let enabled = [];
-    for (let plugin of Object.keys(props.formContext.selectedExploiters)) {
-      enabled.push(plugin);
-    }
-    return enabled;
-  }
-
   function togglePluggin(pluginName) {
-    let plugins = _.cloneDeep(props.formContext.selectedExploiters);
-    if (Object.prototype.hasOwnProperty.call(props.formContext.selectedExploiters, pluginName)) {
-      _.unset(plugins, pluginName);
+    let plugins = new Set(props.formContext.selectedExploiters);
+    if (props.formContext.selectedExploiters.has(pluginName)) {
+      plugins.delete(pluginName);
     } else {
-      plugins[plugin] = props.formData[plugin];
+      plugins.add(pluginName);
     }
     props.formContext.setSelectedExploiters(plugins)
   }
@@ -79,19 +70,20 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
       <AdvancedMultiSelectHeader title={props.schema.title}
                                  onCheckboxClick={onMasterPluginCheckboxClick}
                                  checkboxState={
-                                   getMasterCheckboxState(props.formContext.selectedExploiters)}
+                                   getMasterCheckboxState(
+                                     [...props.formContext.selectedExploiters])}
                                  hideReset={false}
                                  onResetClick={() => {
                                  }}/>
 
       <ChildCheckboxContainer id={'abc'} multiple={true} required={false}
                               autoFocus={false}
-                              selectedValues={getEnabledPlugins()}
+                              selectedValues={[...props.formContext.selectedExploiters]}
                               onCheckboxClick={togglePluggin}
                               isSafe={isPluginSafe}
-                              onPaneClick={setPlugin}
+                              onPaneClick={setSelectedPlugin}
                               enumOptions={getOptions()}/>
-      {getPluginDisplay(plugin, props.properties)}
+      {getPluginDisplay(selectedPlugin, props.properties)}
     </div>
   );
 }
