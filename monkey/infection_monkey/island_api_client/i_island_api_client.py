@@ -4,7 +4,7 @@ from typing import Any, Dict, Sequence
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.credentials import Credentials
 from common.types import AgentID, SocketAddress
 
@@ -59,6 +59,22 @@ class IIslandAPIClient(ABC):
         :raises IslandAPIRequestFailedError: If the server experienced an error
         :raises IslandAPITimeoutError: If the command timed out
         :return: The agent plugin
+        """
+
+    @abstractmethod
+    def get_agent_plugin_manifest(
+        self, plugin_type: AgentPluginType, plugin_name: str
+    ) -> AgentPluginManifest:
+        """
+        Gets the manifest of a plugin
+
+        :param plugin_type: Type of the plugin
+        :param plugin_name: Name of the plugin
+        :raises IslandAPIConnectionError: If the client could not connect to the island
+        :raises IslandAPIRequestError: If there was a problem with the client request
+        :raises IslandAPIRequestFailedError: If the server experienced an error
+        :raises IslandAPITimeoutError: If the command timed out
+        :return: The agent plugin manifest
         """
 
     @abstractmethod

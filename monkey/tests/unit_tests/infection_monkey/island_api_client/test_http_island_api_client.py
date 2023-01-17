@@ -6,6 +6,11 @@ import pytest
 import requests
 from tests.common.example_agent_configuration import AGENT_CONFIGURATION
 from tests.data_for_tests.propagation_credentials import CREDENTIALS_DICTS
+from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
+    FAKE_AGENT_MANIFEST_DICT,
+    FAKE_MANIFEST_OBJECT,
+    FAKE_NAME,
+)
 
 from common import AgentRegistrationData, AgentSignals, OperatingSystem
 from common.agent_configuration import AgentConfiguration
@@ -14,6 +19,7 @@ from common.agent_event_serializers import (
     PydanticAgentEventSerializer,
 )
 from common.agent_events import AbstractAgentEvent
+from common.agent_plugins import AgentPluginType
 from common.base_models import InfectionMonkeyBaseModel
 from common.credentials import Credentials
 from common.types import SocketAddress
@@ -147,6 +153,28 @@ def test_island_api_client__handled_exceptions():
 
     with pytest.raises(IslandAPIResponseParsingError):
         api_client.get_agent_signals(agent_id=AGENT_ID)
+
+
+def test_island_api_client_get_agent_plugin_manifest():
+    expected_agent_plugin_manifest = FAKE_MANIFEST_OBJECT
+    client_spy = MagicMock()
+    client_spy.get.return_value.json.return_value = FAKE_AGENT_MANIFEST_DICT
+    api_client = build_api_client(client_spy)
+
+    actual_agent_plugin_manifest = api_client.get_agent_plugin_manifest(
+        AgentPluginType.EXPLOITER, FAKE_NAME
+    )
+
+    assert actual_agent_plugin_manifest == expected_agent_plugin_manifest
+
+
+def test_island_api_client_get_agent_plugin_manifest__bad_json():
+    client_spy = MagicMock()
+    client_spy.get.return_value.json.return_value = {"bogus": "vogus"}
+    api_client = build_api_client(client_spy)
+
+    with pytest.raises(IslandAPIResponseParsingError):
+        api_client.get_agent_plugin_manifest(AgentPluginType.EXPLOITER, FAKE_NAME)
 
 
 @pytest.mark.parametrize("timestamp", [TIMESTAMP, None])
