@@ -44,14 +44,17 @@ class PluginCompatabilityVerifier:
         Request island for plugin manifest if it doesn't exists and return it
         :param exploiter_name: Name of exploiter
         """
-        if exploiter_name not in self._exploiter_plugin_manifests:
-            try:
-                plugin_manifest = self._island_api_client.get_agent_plugin_manifest(
-                    AgentPluginType.EXPLOITER, exploiter_name
-                )
+        if exploiter_name in self._exploiter_plugin_manifests:
+            return self._exploiter_plugin_manifests[exploiter_name]
 
-                self._exploiter_plugin_manifests[exploiter_name] = plugin_manifest
-            except IslandAPIError:
-                logger.exception(f"No plugin manifest found for {exploiter_name}")
-                return None
-        return self._exploiter_plugin_manifests[exploiter_name]
+        try:
+            plugin_manifest = self._island_api_client.get_agent_plugin_manifest(
+                AgentPluginType.EXPLOITER, exploiter_name
+            )
+            self._exploiter_plugin_manifests[exploiter_name] = plugin_manifest
+
+            return plugin_manifest
+        except IslandAPIError:
+            logger.exception(f"No plugin manifest found for {exploiter_name}")
+
+        return None
