@@ -27,25 +27,21 @@ class PluginCompatabilityVerifier:
         """
         Verify exploiter compatibility to run on a target host
 
-        It verifies based on a target host operating system and exploiter manifest
-        supported operating systems.
         :param exploiter_name: Name of the exploiter
         :param target_host: Target host
-        :raises IncompatibleOperatingSystemError: If exploiter is not compatible to run
+        :raises IncompatibleOperatingSystemError: If the exploiter is not compatible to run on the
+        target operating system
         """
-        exploiter_agent_plugin_manifest = self._get_exploiter_plugin_manifest(exploiter_name)
-        supported_exploiter_os = exploiter_agent_plugin_manifest.supported_operating_systems
+        exploiter_plugin_manifest = self._get_exploiter_plugin_manifest(exploiter_name)
+        supported_os = exploiter_plugin_manifest.supported_operating_systems
 
-        if (
-            target_host.operating_system is None
-            or target_host.operating_system in supported_exploiter_os
-        ):
-            return target_host
-        else:
-            raise IncompatibleOperatingSystemError(
-                f"Incompatible operating system for exploiter:{exploiter_name} and"
-                f" target_host:{target_host}"
-            )
+        if target_host.operating_system is None or target_host.operating_system in supported_os:
+            return True
+
+        raise IncompatibleOperatingSystemError(
+            f"Incompatible operating system for exploiter:{exploiter_name} and"
+            f" target_host:{target_host}"
+        )
 
     def _get_exploiter_plugin_manifest(self, exploiter_name: str) -> AgentPluginManifest:
         """

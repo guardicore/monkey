@@ -35,11 +35,9 @@ def test_os_compatability_verifier__hard_coded_exploiters(
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    actual_target_host = plugin_compatability_verifier.verify_exploiter_compatibility(
+    assert plugin_compatability_verifier.verify_exploiter_compatibility(
         "HadoopExploiter", target_host
     )
-
-    assert actual_target_host == target_host
 
 
 @pytest.mark.parametrize(
@@ -68,11 +66,7 @@ def test_os_compatability_verifier__island_api_client(
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    actual_target_host = plugin_compatability_verifier.verify_exploiter_compatibility(
-        FAKE_NAME, target_host
-    )
-
-    assert actual_target_host == target_host
+    assert plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME, target_host)
 
 
 def test_os_compatability_verifier__island_api_client_incompatable(
