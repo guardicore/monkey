@@ -48,10 +48,13 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> AgentPlugin:
+    def get_agent_plugin(
+        self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
+    ) -> AgentPlugin:
         """
         Gets plugin from the Island based on plugin type and name
 
+        :param operating_system: The OS on which the plugin will run
         :param plugin_type: Type of plugin to be fetched
         :param plugin_name: Name of plugin to be fetched
         :raises IslandAPIConnectionError: If the client could not connect to the island

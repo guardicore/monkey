@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
 from infection_monkey.i_puppet import PingScanData
@@ -13,7 +14,13 @@ from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 @pytest.fixture
 def mock_plugin_registry() -> PluginRegistry:
     return PluginRegistry(
-        MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock()
+        OperatingSystem.WINDOWS,
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
     )
 
 
