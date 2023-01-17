@@ -109,7 +109,7 @@ def test_exploit_host(
         current_depth=1,
         servers=[],
         options={},
-        interrupt=None,
+        interrupt=threading.Event(),
     )
 
     exploiter_object.run.assert_called_once()
@@ -136,5 +136,5 @@ def test_exploit_host__incompatable(
             current_depth=1,
             servers=[],
             options={},
-            interrupt=None,
+            interrupt=threading.Event(),
         )
