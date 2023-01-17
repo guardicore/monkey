@@ -52,3 +52,28 @@ def test_get_plugin__RetrievalError_if_bad_plugin(
         agent_plugin_repository.get_plugin(
             OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, "bad"
         )
+
+
+def test_get_plugin__RetrievalError_if_unsupported_os():
+    pass
+
+
+def test_get_all_plugin_manifests(
+    plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
+):
+    with open(plugin_file, "rb") as file:
+        file_repository.save_file(basename(plugin_file), file)
+
+    actual_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
+
+    assert actual_plugin_manifests == {AgentPluginType.EXPLOITER: {"test": EXPECTED_MANIFEST}}
+
+
+def test_get_all_plugin_manifests__RetrievalError_if_bad_plugin_type(
+    plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
+):
+    with open(plugin_file, "rb") as file:
+        file_repository.save_file("ssh-bogus.tar", file)
+
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_all_plugin_manifests()
