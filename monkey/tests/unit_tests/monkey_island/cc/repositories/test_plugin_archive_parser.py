@@ -1,4 +1,5 @@
 import io
+import os
 import tarfile
 from tarfile import TarFile
 from unittest.mock import MagicMock
@@ -47,14 +48,79 @@ def dir_tarfile(dir_plugin_file) -> TarFile:
     return tarfile.open(dir_plugin_file)
 
 
-EXPECTED_MANIFEST = AgentPluginManifest(
-    name="test",
-    plugin_type=AgentPluginType.EXPLOITER,
-    supported_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
-    title="dummy-exploiter",
-    description="A dummy exploiter",
-    safe=True,
-)
+@pytest.fixture
+def plugin_with_three_vendors_tarfile(plugin_with_three_vendors_file) -> TarFile:
+    return tarfile.open(plugin_with_three_vendors_file)
+
+
+@pytest.fixture
+def plugin_with_two_vendor_dirs_one_vendor_file_tarfile(
+    plugin_with_two_vendor_dirs_one_vendor_file_file,
+) -> TarFile:
+    return tarfile.open(plugin_with_two_vendor_dirs_one_vendor_file_file)
+
+
+@pytest.fixture
+def only_windows_vendor_plugin_tarfile(only_windows_vendor_plugin_file) -> TarFile:
+    return tarfile.open(only_windows_vendor_plugin_file)
+
+
+def _get_plugin_source_tar(tarfile_):
+    return TarFile(fileobj=io.BytesIO(get_plugin_source(tarfile_)))
+
+
+def test_get_os_specific_plugin_source_archives(two_vendor_plugin_tarfile, tmp_path):
+    plugin_source_tar = _get_plugin_source_tar(two_vendor_plugin_tarfile)
+    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    os_specific_data = get_os_specific_plugin_source_archives(
+        plugin_source_tar, plugin_vendors, tmp_path
+    )
+
+    assert os_specific_data[OperatingSystem.WINDOWS] != os_specific_data[OperatingSystem.LINUX]
+
+
+def test_get_os_specific_plugin_source_archives__only_windows(
+    only_windows_vendor_plugin_tarfile, tmp_path
+):
+    plugin_source_tar = _get_plugin_source_tar(only_windows_vendor_plugin_tarfile)
+    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    os_specific_data = get_os_specific_plugin_source_archives(
+        plugin_source_tar, plugin_vendors, tmp_path
+    )
+
+    assert len(os_specific_data.keys()) == 1
+    assert list(os_specific_data.keys()) == [OperatingSystem.WINDOWS]
+
+
+def test_get_os_specific_plugin_source_archives__unrecognised_os(
+    plugin_with_three_vendors_tarfile, tmp_path
+):
+    plugin_source_tar = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
+    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    os_specific_data = get_os_specific_plugin_source_archives(
+        plugin_source_tar, plugin_vendors, tmp_path
+    )
+
+    assert len(os_specific_data.keys()) == 0
+    assert list(os_specific_data.keys()) == []
+
+
+def test_get_plugin_vendors__3_vendor_dirs(plugin_with_three_vendors_tarfile):
+    plugin_source_tarfile = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
+    vendors = get_plugin_vendors(plugin_source_tarfile)
+
+    assert len(vendors) == 3
+
+
+def test_get_plugin_vendors__2_vendor_dirs_1_Vendor_file(
+    plugin_with_two_vendor_dirs_one_vendor_file_tarfile,
+):
+    plugin_source_tarfile = _get_plugin_source_tar(
+        plugin_with_two_vendor_dirs_one_vendor_file_tarfile
+    )
+    vendors = get_plugin_vendors(plugin_source_tarfile)
+
+    assert len(vendors) == 2
 
 
 def test_parse_plugin__single_vendor(single_vendor_plugin_file, single_vendor_plugin_tarfile):
@@ -83,6 +149,7 @@ def test_parse_plugin__two_vendors(
     monkeypatch.setattr(
         "monkey_island.cc.repositories.plugin_archive_parser.random_filename", lambda: "something"
     )
+
     manifest = get_plugin_manifest(two_vendor_plugin_tarfile)
     schema = get_plugin_schema(two_vendor_plugin_tarfile)
 
@@ -91,6 +158,7 @@ def test_parse_plugin__two_vendors(
     os_specific_data = get_os_specific_plugin_source_archives(
         plugin_source_tar, plugin_vendors, tmp_path
     )
+
     expected_linux_agent_plugin_object = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
@@ -110,8 +178,23 @@ def test_parse_plugin__two_vendors(
 
     with open(two_vendor_plugin_file, "rb") as f:
         actual_return = parse_plugin(io.BytesIO(f.read()), tmp_path)
-        assert len(actual_return) == len(expected_return)
-        assert actual_return == expected_return
+
+    assert actual_return == expected_return
+
+    assert not os.path.exists(tmp_path / "plugin-something" / "linux" / "source")
+    assert not os.path.exists(tmp_path / "plugin-something" / "windows" / "source")
+    assert os.path.exists(tmp_path / "plugin-something" / "linux")
+    assert os.path.exists(tmp_path / "plugin-something" / "windows")
+
+
+EXPECTED_MANIFEST = AgentPluginManifest(
+    name="test",
+    plugin_type=AgentPluginType.EXPLOITER,
+    supported_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
+    title="dummy-exploiter",
+    description="A dummy exploiter",
+    safe=True,
+)
 
 
 def test_get_plugin_manifest(plugin_tarfile):
