@@ -78,6 +78,9 @@ def test_get_os_specific_plugin_source_archives(two_vendor_plugin_tarfile, tmp_p
 
     assert os_specific_data[OperatingSystem.WINDOWS] != os_specific_data[OperatingSystem.LINUX]
 
+    assert not os.path.exists(tmp_path / "linux")
+    assert not os.path.exists(tmp_path / "windows")
+
 
 def test_get_os_specific_plugin_source_archives__only_windows(
     only_windows_vendor_plugin_tarfile, tmp_path
@@ -91,6 +94,9 @@ def test_get_os_specific_plugin_source_archives__only_windows(
     assert len(os_specific_data.keys()) == 1
     assert list(os_specific_data.keys()) == [OperatingSystem.WINDOWS]
 
+    assert not os.path.exists(tmp_path / "linux")
+    assert not os.path.exists(tmp_path / "windows")
+
 
 def test_get_os_specific_plugin_source_archives__unrecognised_os(
     plugin_with_three_vendors_tarfile, tmp_path
@@ -103,6 +109,9 @@ def test_get_os_specific_plugin_source_archives__unrecognised_os(
 
     assert len(os_specific_data.keys()) == 0
     assert list(os_specific_data.keys()) == []
+
+    assert not os.path.exists(tmp_path / "linux")
+    assert not os.path.exists(tmp_path / "windows")
 
 
 def test_get_plugin_vendors__3_vendor_dirs(plugin_with_three_vendors_tarfile):
@@ -143,13 +152,7 @@ def test_parse_plugin__single_vendor(single_vendor_plugin_file, single_vendor_pl
         assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 
-def test_parse_plugin__two_vendors(
-    monkeypatch, two_vendor_plugin_file, two_vendor_plugin_tarfile, tmp_path
-):
-    monkeypatch.setattr(
-        "monkey_island.cc.repositories.plugin_archive_parser.random_filename", lambda: "something"
-    )
-
+def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tarfile, tmp_path):
     manifest = get_plugin_manifest(two_vendor_plugin_tarfile)
     schema = get_plugin_schema(two_vendor_plugin_tarfile)
 
@@ -184,10 +187,7 @@ def test_parse_plugin__two_vendors(
 
     assert actual_return == expected_return
 
-    assert not os.path.exists(parsed_plugins_dir / "plugin-something" / "linux" / "source")
-    assert not os.path.exists(parsed_plugins_dir / "plugin-something" / "windows" / "source")
-    assert os.path.exists(parsed_plugins_dir / "plugin-something" / "linux")
-    assert os.path.exists(parsed_plugins_dir / "plugin-something" / "windows")
+    assert not os.path.exists(parsed_plugins_dir)
 
 
 EXPECTED_MANIFEST = AgentPluginManifest(
