@@ -46,10 +46,7 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
         return plugins
 
-    def get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
-        return self._get_plugin(plugin_type, name)
-
-    def get_plugin_for_os(
+    def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
     ) -> AgentPlugin:
         plugin = self._get_plugin(plugin_type, name)
