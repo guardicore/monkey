@@ -13,7 +13,7 @@ from monkey_island.cc.repositories.plugin_archive_parser import (
     get_plugin_manifest,
     get_plugin_schema,
     get_plugin_source,
-    get_plugin_vendors,
+    get_plugin_source_vendors,
     parse_plugin,
 )
 
@@ -71,7 +71,7 @@ def _get_plugin_source_tar(tarfile_):
 
 def test_get_os_specific_plugin_source_archives(two_vendor_plugin_tarfile, tmp_path):
     plugin_source_tar = _get_plugin_source_tar(two_vendor_plugin_tarfile)
-    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
         plugin_source_tar, plugin_vendors, tmp_path
     )
@@ -83,7 +83,7 @@ def test_get_os_specific_plugin_source_archives__only_windows(
     only_windows_vendor_plugin_tarfile, tmp_path
 ):
     plugin_source_tar = _get_plugin_source_tar(only_windows_vendor_plugin_tarfile)
-    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
         plugin_source_tar, plugin_vendors, tmp_path
     )
@@ -96,7 +96,7 @@ def test_get_os_specific_plugin_source_archives__unrecognised_os(
     plugin_with_three_vendors_tarfile, tmp_path
 ):
     plugin_source_tar = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
-    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
         plugin_source_tar, plugin_vendors, tmp_path
     )
@@ -107,7 +107,7 @@ def test_get_os_specific_plugin_source_archives__unrecognised_os(
 
 def test_get_plugin_vendors__3_vendor_dirs(plugin_with_three_vendors_tarfile):
     plugin_source_tarfile = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
-    vendors = get_plugin_vendors(plugin_source_tarfile)
+    vendors = get_plugin_source_vendors(plugin_source_tarfile)
 
     assert len(vendors) == 3
 
@@ -118,7 +118,7 @@ def test_get_plugin_vendors__2_vendor_dirs_1_Vendor_file(
     plugin_source_tarfile = _get_plugin_source_tar(
         plugin_with_two_vendor_dirs_one_vendor_file_tarfile
     )
-    vendors = get_plugin_vendors(plugin_source_tarfile)
+    vendors = get_plugin_source_vendors(plugin_source_tarfile)
 
     assert len(vendors) == 2
 
@@ -153,10 +153,13 @@ def test_parse_plugin__two_vendors(
     manifest = get_plugin_manifest(two_vendor_plugin_tarfile)
     schema = get_plugin_schema(two_vendor_plugin_tarfile)
 
+    parsed_plugins_dir = tmp_path / "parsed_plugins"
+    os.mkdir(parsed_plugins_dir)
+
     plugin_source_tar = TarFile(fileobj=io.BytesIO(get_plugin_source(two_vendor_plugin_tarfile)))
-    plugin_vendors = get_plugin_vendors(plugin_source_tar)
+    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
-        plugin_source_tar, plugin_vendors, tmp_path
+        plugin_source_tar, plugin_vendors, tmp_path / "parsed_plugins"
     )
 
     expected_linux_agent_plugin_object = AgentPlugin(
@@ -181,10 +184,10 @@ def test_parse_plugin__two_vendors(
 
     assert actual_return == expected_return
 
-    assert not os.path.exists(tmp_path / "plugin-something" / "linux" / "source")
-    assert not os.path.exists(tmp_path / "plugin-something" / "windows" / "source")
-    assert os.path.exists(tmp_path / "plugin-something" / "linux")
-    assert os.path.exists(tmp_path / "plugin-something" / "windows")
+    assert not os.path.exists(parsed_plugins_dir / "plugin-something" / "linux" / "source")
+    assert not os.path.exists(parsed_plugins_dir / "plugin-something" / "windows" / "source")
+    assert os.path.exists(parsed_plugins_dir / "plugin-something" / "linux")
+    assert os.path.exists(parsed_plugins_dir / "plugin-something" / "windows")
 
 
 EXPECTED_MANIFEST = AgentPluginManifest(
