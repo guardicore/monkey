@@ -31,3 +31,18 @@ def symlink_plugin_file(plugin_data_dir) -> Path:
 @pytest.fixture
 def dir_plugin_file(plugin_data_dir) -> Path:
     return plugin_data_dir / "dir-exploiter.tar"
+
+
+@pytest.fixture
+def plugin_with_three_vendors_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "plugin-with-three-vendors.tar"
+
+
+@pytest.fixture
+def plugin_with_two_vendor_dirs_one_vendor_file_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "plugin-with-two-vendor-dir-one-vendor-file.tar"
+
+
+@pytest.fixture
+def only_windows_vendor_plugin_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "only-windows-vendor-plugin-file.tar"
