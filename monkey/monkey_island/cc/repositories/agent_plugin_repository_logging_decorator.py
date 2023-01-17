@@ -2,7 +2,7 @@ import logging
 from typing import Any, Dict
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 
 from . import IAgentPluginRepository
 
@@ -27,3 +27,7 @@ class AgentPluginRepositoryLoggingDecorator(IAgentPluginRepository):
     def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         logger.debug("Retrieving plugin config schemas")
         return self._agent_plugin_repository.get_all_plugin_config_schemas()
+
+    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+        logger.debug("Retrieving plugin manifests")
+        return self._agent_plugin_repository.get_all_plugin_manifests()

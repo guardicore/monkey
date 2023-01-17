@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository, RetrievalError, UnknownRecordError
 
 
@@ -29,6 +29,17 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
             schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
 
         return schemas
+
+    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+        manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
+
+        for plugin in self._plugins.values():
+            plugin_type = plugin.plugin_manifest.plugin_type
+            if plugin_type not in manifests.keys():
+                manifests[plugin_type] = {}
+            manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
+
+        return manifests
 
     def save_plugin(self, plugin: AgentPlugin):
         self._plugins[plugin.plugin_manifest.name] = plugin

@@ -1,7 +1,7 @@
 from typing import Any, Dict, Sequence
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 
 from . import IAgentPluginRepository, IFileRepository, RetrievalError
 from .plugin_archive_parser import parse_plugin
@@ -69,3 +69,13 @@ class FileAgentPluginRepository(IAgentPluginRepository):
             schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
 
         return schemas
+
+    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+        manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
+        for plugin in self._get_all_plugins():
+            plugin_type = plugin.plugin_manifest.plugin_type
+            if plugin_type not in manifests:
+                manifests[plugin_type] = {}
+            manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
+
+        return manifests
