@@ -1,4 +1,5 @@
 import threading
+from typing import Optional
 from unittest.mock import MagicMock
 
 import pytest
@@ -56,7 +57,7 @@ def test_puppet_run_payload_success(puppet: Puppet):
     payload.run.assert_called_once()
 
 
-def test_puppet_run_multiple_payloads(puppet):
+def test_puppet_run_multiple_payloads(puppet: Puppet):
     payload_1 = MagicMock()
     payload1_name = "PayloadOne"
 
@@ -80,7 +81,9 @@ def test_puppet_run_multiple_payloads(puppet):
     payload_3.run.assert_called_once()
 
 
-def test_fingerprint_exception_handling(monkeypatch, puppet, mock_plugin_registry):
+def test_fingerprint_exception_handling(
+    monkeypatch, puppet: Puppet, mock_plugin_registry: PluginRegistry
+):
     mock_plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert (
         puppet.fingerprint("", "", PingScanData(response_received=False, os="windows"), {}, {})
@@ -93,9 +96,9 @@ def test_fingerprint_exception_handling(monkeypatch, puppet, mock_plugin_registr
     [(None, FAKE_NAME), (OperatingSystem.LINUX, FAKE_NAME), (OperatingSystem.WINDOWS, FAKE_NAME2)],
 )
 def test_exploit_host(
-    target_host_os,
-    exploiter_name,
-    puppet,
+    target_host_os: Optional[OperatingSystem],
+    exploiter_name: str,
+    puppet: Puppet,
 ):
     exploiter_object = MagicMock()
     puppet.load_plugin(AgentPluginType.EXPLOITER, exploiter_name, exploiter_object)
@@ -117,10 +120,10 @@ def test_exploit_host(
     [(OperatingSystem.WINDOWS, FAKE_NAME), (OperatingSystem.LINUX, FAKE_NAME2)],
 )
 def test_exploit_host__incompatable(
-    target_host_os,
-    exploiter_name,
-    puppet,
-    mock_plugin_compatability_verifier,
+    target_host_os: Optional[OperatingSystem],
+    exploiter_name: str,
+    puppet: Puppet,
+    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
 ):
     mock_plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(
         return_value=False
