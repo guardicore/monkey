@@ -32,6 +32,6 @@ class AgentPluginRepositoryLoggingDecorator(IAgentPluginRepository):
             host_operating_system, plugin_type, name
         )
 
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
         logger.debug("Retrieving plugin catalog")
         return self._agent_plugin_repository.get_plugin_catalog()
