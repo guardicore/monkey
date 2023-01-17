@@ -60,6 +60,7 @@ def test_get_plugin__error_handling(
         side_effect=error_raised_by_island_api_client
     )
     plugin_registry = PluginRegistry(
+        OperatingSystem.LINUX,
         mock_island_api_client,
         dummy_plugin_source_extractor,
         dummy_plugin_loader,
@@ -118,6 +119,7 @@ def plugin_registry(
     dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
 ) -> PluginRegistry:
     return PluginRegistry(
+        OperatingSystem.LINUX,
         mock_island_api_client,
         mock_plugin_source_extractor,
         mock_plugin_loader,

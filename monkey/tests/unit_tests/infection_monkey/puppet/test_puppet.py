@@ -22,7 +22,13 @@ def mock_agent_event_queue() -> IAgentEventQueue:
 @pytest.fixture
 def mock_plugin_registry() -> PluginRegistry:
     return PluginRegistry(
-        MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock()
+        OperatingSystem.WINDOWS,
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
     )
 
 
