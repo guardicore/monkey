@@ -122,9 +122,11 @@ class ConfigurePageComponent extends AuthComponent {
   onUnsafeConfirmationContinueClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false});
     if (this.state.lastAction === configSubmitAction) {
-      this.configSubmit();
+      let config = this.filterUnselectedPlugins();
+      this.configSubmit(config);
     } else if (this.state.lastAction === configExportAction) {
-      this.configSubmit();
+      let config = this.filterUnselectedPlugins();
+      this.configSubmit(config);
       this.setState({showConfigExportModal: true});
     }
   }
@@ -167,7 +169,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   async attemptConfigSubmit() {
-    let config = this.filterUnselectedPlugins()
+    let config = this.filterUnselectedPlugins();
     if (this.canSafelySubmitConfig(config)) {
       this.configSubmit(config);
       if (this.state.lastAction === configExportAction) {
@@ -186,7 +188,11 @@ class ConfigurePageComponent extends AuthComponent {
     let filteredExploiters = {};
     let exploiterFormData = _.get(this.state.configuration, EXPLOITERS_CONFIG_PATH);
     for(let exploiter of [...this.state.selectedExploiters]){
-      filteredExploiters[exploiter] = exploiterFormData[exploiter];
+      if (exploiterFormData[exploiter] === undefined){
+        filteredExploiters[exploiter] = {};
+      } else {
+        filteredExploiters[exploiter] = exploiterFormData[exploiter];
+      }
     }
     let config = _.cloneDeep(this.state.configuration)
     _.set(config, EXPLOITERS_CONFIG_PATH, filteredExploiters)
@@ -302,7 +308,6 @@ class ConfigurePageComponent extends AuthComponent {
             this.setState({
               lastAction: configSaveAction
             });
-            this.setInitialConfig(this.state.configuration);
             this.props.onStatusChange();
           }
           return res;
