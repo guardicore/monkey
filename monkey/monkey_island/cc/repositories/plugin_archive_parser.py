@@ -82,7 +82,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
                 host_operating_systems=(os_,),
             )
 
-        shutil.rmtree(parsed_plugins_dir)
+        _remove_directory(parsed_plugins_dir)
 
         return parsed_plugin
 
@@ -183,7 +183,14 @@ def get_os_specific_plugin_source_archives(
         with open(os_specific_plugin_tar_path, "rb") as f:
             os_specific_plugin_source_archives[vendor_os] = f.read()
 
-    shutil.rmtree(linux_plugin_dir_path)
-    shutil.rmtree(windows_plugin_dir_path)
+    _remove_directory(linux_plugin_dir_path)
+    _remove_directory(windows_plugin_dir_path)
 
     return os_specific_plugin_source_archives
+
+
+def _remove_directory(path: Path):
+    try:
+        shutil.rmtree(path)
+    except Exception as ex:
+        logger.debug(f"Exception encountered when trying to remove {path}: {ex}")
