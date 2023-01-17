@@ -304,7 +304,6 @@ class ConfigurePageComponent extends AuthComponent {
             this.setState({
               lastAction: configSaveAction
             });
-            this.setInitialConfig(this.state.configuration);
             this.props.onStatusChange();
           }
           return res;
