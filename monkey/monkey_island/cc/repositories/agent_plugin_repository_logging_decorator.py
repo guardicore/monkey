@@ -1,5 +1,5 @@
 import logging
-from typing import Sequence, Tuple
+from typing import Any, Dict
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
@@ -32,6 +32,6 @@ class AgentPluginRepositoryLoggingDecorator(IAgentPluginRepository):
             host_operating_system, plugin_type, name
         )
 
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
-        logger.debug("Retrieving plugin catalog")
-        return self._agent_plugin_repository.get_plugin_catalog()
+    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+        logger.debug("Retrieving plugin config schemas")
+        return self._agent_plugin_repository.get_all_plugin_config_schemas()
