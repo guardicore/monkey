@@ -1,7 +1,6 @@
 import logging
 from typing import Dict
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from infection_monkey.i_puppet import IncompatibleOperatingSystemError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
@@ -18,7 +17,7 @@ class PluginCompatabilityVerifier:
     def __init__(
         self,
         island_api_client: IIslandAPIClient,
-        exploiter_plugin_manifests: Dict[str, AgentPluginManifest] = HARD_CODED_EXPLOITER_MANIFESTS,
+        exploiter_plugin_manifests: Dict[str, AgentPluginManifest],
     ):
         self._island_api_client = island_api_client
         self._exploiter_plugin_manifests = exploiter_plugin_manifests
