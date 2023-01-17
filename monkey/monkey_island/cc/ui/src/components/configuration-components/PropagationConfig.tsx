@@ -14,6 +14,9 @@ const sectionOrder = [
 
 const initialSection = sectionOrder[0];
 
+export const EXPLOITERS_PATH_PROPAGATION = 'exploitation.exploiters';
+export const EXPLOITERS_CONFIG_PATH = 'propagation.' + EXPLOITERS_PATH_PROPAGATION;
+
 export default function PropagationConfig(props) {
   const {
     schema,
@@ -23,8 +26,11 @@ export default function PropagationConfig(props) {
     className,
     configuration,
     credentials,
-    onCredentialChange
+    onCredentialChange,
+    selectedExploiters,
+    setSelectedExploiters
   } = props;
+
   const [selectedSection, setSelectedSection] = useState(initialSection);
 
   const onFormDataChange = (formData) => {
@@ -75,7 +81,11 @@ export default function PropagationConfig(props) {
                    key={selectedSection}
                    liveValidate
                    // children={true} hides the submit button
-                   children={true}/>
+                   children={true}
+                   formContext={{
+                     'selectedExploiters': selectedExploiters,
+                     'setSelectedExploiters': setSelectedExploiters
+                   }}/>
     }
   }
 

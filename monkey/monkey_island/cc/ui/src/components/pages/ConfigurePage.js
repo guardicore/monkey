@@ -9,7 +9,9 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
-import PropagationConfig from '../configuration-components/PropagationConfig'
+import PropagationConfig, {
+  EXPLOITERS_CONFIG_PATH
+} from '../configuration-components/PropagationConfig'
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
@@ -30,6 +32,10 @@ const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
 const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
+// "new" schema is the one coming from back-end, the legacy one is defined in
+// monkey/monkey_island/cc/ui/src/services/configuration/configSchema.js
+const EXPLOITERS_SCHEMA_PATH_NEW = 'definitions.ExploitationConfiguration.properties.exploiters';
+const EXPLOITERS_SCHEMA_PATH_LEGACY = 'properties.propagation.properties.exploitation.properties.exploiters';
 
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
@@ -39,7 +45,6 @@ class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.initialConfig = {};
     this.currentSection = this.getSectionsOrder()[0];
 
     this.state = {
@@ -53,7 +58,8 @@ class ConfigurePageComponent extends AuthComponent {
       selectedSection: this.currentSection,
       showUnsafeOptionsConfirmation: false,
       showConfigExportModal: false,
-      showConfigImportModal: false
+      showConfigImportModal: false,
+      selectedExploiters: new Set()
     };
   }
 
@@ -74,18 +80,12 @@ class ConfigurePageComponent extends AuthComponent {
     return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
-  setInitialConfig(config) {
-    // Sets a reference to know if config was changed
-    this.initialConfig = JSON.parse(JSON.stringify(config));
-  }
-
   injectExploitersIntoLegacySchema = (newSchema) => {
     // legacy schema is defined in UI,
     // but we should use the schema provided by "/api/agent-configuration-schema"
     // Remove when #2750 is done
     let injectedSchema = _.cloneDeep(this.state.schema);
-    injectedSchema['properties']['propagation']['properties']['exploitation']['properties']['exploiters'] =
-      newSchema['definitions']['ExploitationConfiguration']['properties']['exploiters']
+    _.set(injectedSchema, EXPLOITERS_SCHEMA_PATH_LEGACY, _.get(newSchema, EXPLOITERS_SCHEMA_PATH_NEW));
     return injectedSchema;
   }
 
@@ -99,18 +99,17 @@ class ConfigurePageComponent extends AuthComponent {
         let sections = [];
         monkeyConfig = reformatConfig(monkeyConfig);
 
-        this.setInitialConfig(monkeyConfig);
         for (let sectionKey of this.getSectionsOrder()) {
           sections.push({
             key: sectionKey,
             title: SCHEMA.properties[sectionKey].title
           });
         }
-
         this.setState({
           configuration: monkeyConfig,
+          selectedExploiters: new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
           sections: sections,
-          currentFormData: monkeyConfig[this.state.selectedSection]
+          currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
       });
     this.updateCredentials();
@@ -147,12 +146,16 @@ class ConfigurePageComponent extends AuthComponent {
       .then(res => res.json())
       .then(data => {
         data = reformatConfig(data);
-        this.setInitialConfig(data);
         this.setState({
+          selectedExploiters: new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
           configuration: data,
-          currentFormData: data[this.state.selectedSection]
+          currentFormData: _.cloneDeep(data[this.state.selectedSection])
         });
       });
+  }
+
+  setSelectedExploiters = (exploiters) => {
+    this.setState({selectedExploiters: exploiters})
   }
 
   onSubmit = () => {
@@ -164,9 +167,9 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   async attemptConfigSubmit() {
-    await this.updateConfigSection();
-    if (this.canSafelySubmitConfig(this.state.configuration)) {
-      this.configSubmit();
+    let config = this.filterUnselectedPlugins()
+    if (this.canSafelySubmitConfig(config)) {
+      this.configSubmit(config);
       if (this.state.lastAction === configExportAction) {
         this.setState({showConfigExportModal: true})
       }
@@ -175,10 +178,25 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
-  configSubmit() {
+  // rjsf component automatically creates an instance from the defaults in the schema
+  // https://github.com/rjsf-team/react-jsonschema-form/issues/2980
+  // Until the issue is fixed, we need to manually remove plugins that were not selected before
+  // submitting/exporting the configuration
+  filterUnselectedPlugins() {
+    let filteredExploiters = {};
+    let exploiterFormData = _.get(this.state.configuration, EXPLOITERS_CONFIG_PATH);
+    for(let exploiter of [...this.state.selectedExploiters]){
+      filteredExploiters[exploiter] = exploiterFormData[exploiter];
+    }
+    let config = _.cloneDeep(this.state.configuration)
+    _.set(config, EXPLOITERS_CONFIG_PATH, filteredExploiters)
+    return config;
+  }
+
+  configSubmit(config) {
     this.sendCredentials().then(res => {
       if(res.ok) {
-        this.sendConfig();
+        this.sendConfig(config);
       }
     });
   }
@@ -193,18 +211,9 @@ class ConfigurePageComponent extends AuthComponent {
     this.setState({credentials: credentials});
   }
 
-  updateConfigSection = () => {
-    let newConfig = this.state.configuration;
-
-    if (Object.keys(this.state.currentFormData).length > 0) {
-      newConfig[this.currentSection] = this.state.currentFormData;
-    }
-    this.setState({configuration: newConfig});
-  };
-
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
-                               configuration={this.state.configuration}
+                               configuration={this.filterUnselectedPlugins()}
                                credentials={this.state.credentials}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
@@ -242,7 +251,6 @@ class ConfigurePageComponent extends AuthComponent {
 
   setSelectedSection = (key) => {
     this.resetLastAction();
-    this.updateConfigSection();
     this.currentSection = key;
     let selectedSectionData = this.state.configuration[key];
 
@@ -274,8 +282,7 @@ class ConfigurePageComponent extends AuthComponent {
     await this.attemptConfigSubmit();
   };
 
-  sendConfig() {
-    let config = JSON.parse(JSON.stringify(this.state.configuration))
+  sendConfig(config) {
     config = reformatConfig(config, true);
     delete config['advanced'];
     delete config['propagation']['general'];
@@ -345,6 +352,8 @@ class ConfigurePageComponent extends AuthComponent {
       delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
       return (<PropagationConfig {...formProperties}
                                  credentials={this.state.credentials}
+                                 selectedExploiters={this.state.selectedExploiters}
+                                 setSelectedExploiters={this.setSelectedExploiters}
                                  onCredentialChange={this.onCredentialChange}/>)
     } else {
       formProperties['onChange'] = (formData) => {
