@@ -161,6 +161,7 @@ def get_os_specific_plugin_source_archives(
             vendor_os = OperatingSystem.WINDOWS
         else:
             logger.info(f"Operating system of vendor directory ({vendor.name}) not recognised")
+            continue
 
         os_specific_plugin_dir_path = plugin_directory / vendor_os.value
         create_secure_directory(os_specific_plugin_dir_path)
