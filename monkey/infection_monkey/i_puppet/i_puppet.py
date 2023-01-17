@@ -129,7 +129,8 @@ class IPuppet(metaclass=abc.ABCMeta):
                              exploiter
         :param Event interrupt: An `Event` object that signals the exploit to stop
                                           executing and clean itself up.
-        :raises IncompatibleOperatingSystemError: If a exploit is not compatabile with the host
+        :raises IncompatibleOperatingSystemError: If an exploiter is not compatible with the target
+                                                  host's operating system
         :return: True if exploitation was successful, False otherwise
         :rtype: ExploiterResultData
         """
