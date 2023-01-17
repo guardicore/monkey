@@ -1,8 +1,6 @@
 import io
 import json
 import logging
-import os
-import shutil
 import tarfile
 from pathlib import Path
 from tarfile import TarFile, TarInfo
@@ -169,24 +167,19 @@ def get_os_specific_plugin_source_archives(
 
         os_specific_plugin_dir_path = plugin_directory / vendor_os.value
         create_secure_directory(os_specific_plugin_dir_path)
-        os_specific_plugin_source_path = os_specific_plugin_dir_path / "source"
-        create_secure_directory(os_specific_plugin_source_path)
 
         contents = [
             tarinfo
             for tarinfo in plugin_source_tar.getmembers()
             if tarinfo.name.startswith(f"{vendor.name}/") or not tarinfo.name.startswith("vendor")
         ]
-        plugin_source_tar.extractall(members=contents, path=os_specific_plugin_source_path)
 
         os_specific_plugin_tar_path = os_specific_plugin_dir_path / "plugin.tar"
         with tarfile.TarFile(name=os_specific_plugin_tar_path, mode="w") as os_specific_plugin_tar:
-            for item in os.listdir(os_specific_plugin_source_path):
-                os_specific_plugin_tar.add(os_specific_plugin_source_path / item)
+            for item in contents:
+                os_specific_plugin_tar.addfile(tarinfo=item)
 
         with open(os_specific_plugin_tar_path, "rb") as f:
             os_specific_plugin_source_archives[vendor_os] = f.read()
-
-        shutil.rmtree(os_specific_plugin_source_path)
 
     return os_specific_plugin_source_archives
