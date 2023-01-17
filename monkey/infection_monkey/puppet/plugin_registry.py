@@ -5,6 +5,7 @@ from typing import Any, Dict
 
 from serpentarium import PluginLoader, PluginThreadName, SingleUsePlugin
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.exploit import IAgentBinaryRepository
@@ -21,6 +22,7 @@ logger = logging.getLogger()
 class PluginRegistry:
     def __init__(
         self,
+        operating_system: OperatingSystem,
         island_api_client: IIslandAPIClient,
         plugin_source_extractor: PluginSourceExtractor,
         plugin_loader: PluginLoader,
@@ -38,6 +40,8 @@ class PluginRegistry:
             }
         """
         self._registry: Dict[AgentPluginType, Dict[str, SingleUsePlugin]] = {}
+
+        self._operating_system = operating_system
         self._island_api_client = island_api_client
         self._plugin_source_extractor = plugin_source_extractor
         self._plugin_loader = plugin_loader
@@ -75,7 +79,9 @@ class PluginRegistry:
         self, plugin_name: str, plugin_type: AgentPluginType
     ) -> AgentPlugin:
         try:
-            plugin = self._island_api_client.get_agent_plugin(plugin_type, plugin_name)
+            plugin = self._island_api_client.get_agent_plugin(
+                self._operating_system, plugin_type, plugin_name
+            )
         except IslandAPIRequestError as err:
             raise UnknownPluginError(
                 f"Unknown plugin '{plugin_name}' of type '{plugin_type.value}': {err}"
