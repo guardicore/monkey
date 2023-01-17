@@ -122,9 +122,11 @@ class ConfigurePageComponent extends AuthComponent {
   onUnsafeConfirmationContinueClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false});
     if (this.state.lastAction === configSubmitAction) {
-      this.configSubmit();
+      let config = this.filterUnselectedPlugins();
+      this.configSubmit(config);
     } else if (this.state.lastAction === configExportAction) {
-      this.configSubmit();
+      let config = this.filterUnselectedPlugins();
+      this.configSubmit(config);
       this.setState({showConfigExportModal: true});
     }
   }
@@ -167,7 +169,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   async attemptConfigSubmit() {
-    let config = this.filterUnselectedPlugins()
+    let config = this.filterUnselectedPlugins();
     if (this.canSafelySubmitConfig(config)) {
       this.configSubmit(config);
       if (this.state.lastAction === configExportAction) {
