@@ -64,10 +64,7 @@ def test_os_compatability_verifier__incompatable_os_error(
 def test_os_compatability_verifier__island_api_client(
     target_host_os, island_api_client, plugin_compatability_verifier
 ):
-    def get_plugin_manifest_object(plugin_type, name):
-        return FAKE_MANIFEST_OBJECT
-
-    island_api_client.get_agent_plugin_manifest = get_plugin_manifest_object
+    island_api_client.get_agent_plugin_manifest = lambda _, __: FAKE_MANIFEST_OBJECT
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
@@ -81,10 +78,7 @@ def test_os_compatability_verifier__island_api_client(
 def test_os_compatability_verifier__island_api_client_incompatable(
     island_api_client, plugin_compatability_verifier
 ):
-    def get_plugin_manifest_object(plugin_type, name):
-        return FAKE_MANIFEST_OBJECT
-
-    island_api_client.get_agent_plugin_manifest = get_plugin_manifest_object
+    island_api_client.get_agent_plugin_manifest = lambda _, __: FAKE_MANIFEST_OBJECT
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
 
