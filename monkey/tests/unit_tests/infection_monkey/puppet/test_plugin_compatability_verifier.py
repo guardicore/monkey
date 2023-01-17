@@ -11,7 +11,7 @@ from common import OperatingSystem
 from infection_monkey.i_puppet import IncompatibleOperatingSystemError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 from infection_monkey.model import TargetHost
-from infection_monkey.plugin_compatability_verifier import PluginCompatabilityVerifier
+from infection_monkey.puppet import PluginCompatabilityVerifier
 
 
 @pytest.fixture

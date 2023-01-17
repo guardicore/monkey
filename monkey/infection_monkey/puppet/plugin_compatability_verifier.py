@@ -3,10 +3,9 @@ from typing import Dict
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
-
-from .i_puppet import IncompatibleOperatingSystemError
-from .island_api_client import IIslandAPIClient, IslandAPIError
-from .model import TargetHost
+from infection_monkey.i_puppet import IncompatibleOperatingSystemError
+from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
+from infection_monkey.model import TargetHost
 
 logger = logging.getLogger(__name__)
 
