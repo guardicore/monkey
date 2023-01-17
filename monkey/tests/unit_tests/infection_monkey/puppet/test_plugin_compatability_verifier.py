@@ -13,9 +13,11 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
 from common import OperatingSystem
 from common.agent_plugins.agent_plugin_manifest import AgentPluginManifest
 from infection_monkey.i_puppet import IncompatibleOperatingSystemError
-from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.model import TargetHost
 from infection_monkey.puppet import PluginCompatabilityVerifier
+
+FAKE_NAME3 = "BogusExploiter"
 
 FAKE_MANIFEST_OBJECT_2 = AgentPluginManifest(
     name=FAKE_NAME2,
@@ -48,11 +50,6 @@ def plugin_compatability_verifier(island_api_client):
 def test_os_compatability_verifier__hard_coded_exploiters(
     target_host_os, exploiter_name, island_api_client, plugin_compatability_verifier
 ):
-    def raise_island_api_error(plugin_type, name):
-        raise IslandAPIError
-
-    island_api_client.get_agent_plugin_manifest = raise_island_api_error
-
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
     assert plugin_compatability_verifier.verify_exploiter_compatibility(exploiter_name, target_host)
@@ -65,11 +62,6 @@ def test_os_compatability_verifier__hard_coded_exploiters(
 def test_os_compatability_verifier__incompatable_os_error(
     target_host_os, exploiter_name, island_api_client, plugin_compatability_verifier
 ):
-    def raise_island_api_error(plugin_type, name):
-        raise IslandAPIError
-
-    island_api_client.get_agent_plugin_manifest = raise_island_api_error
-
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
     with pytest.raises(IncompatibleOperatingSystemError):
@@ -84,7 +76,7 @@ def test_os_compatability_verifier__island_api_client(
 
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=target_host_os)
 
-    assert plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME, target_host)
+    assert plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)
 
 
 def test_os_compatability_verifier__island_api_client_incompatable(
@@ -95,4 +87,4 @@ def test_os_compatability_verifier__island_api_client_incompatable(
     target_host = TargetHost(ip=IPv4Address("1.1.1.1"), operating_system=OperatingSystem.WINDOWS)
 
     with pytest.raises(IncompatibleOperatingSystemError):
-        plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME, target_host)
+        plugin_compatability_verifier.verify_exploiter_compatibility(FAKE_NAME3, target_host)

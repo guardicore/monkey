@@ -1,12 +1,9 @@
-import logging
 from typing import Dict
 
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from infection_monkey.i_puppet import IncompatibleOperatingSystemError
-from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
+from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.model import TargetHost
-
-logger = logging.getLogger(__name__)
 
 
 class PluginCompatabilityVerifier:
@@ -46,13 +43,13 @@ class PluginCompatabilityVerifier:
         """
         Get exploiter plugin manifest
 
-        Request island to find the plugin manifest, if it is not
-        successful it looks at the hard coded exploiter manifests.
+        Request island for plugin manifest if it doesn't exists and return it
         :param exploiter_name: Name of exploiter
         """
-        try:
-            return self._island_api_client.get_agent_plugin_manifest(
+        if exploiter_name not in self._exploiter_plugin_manifests:
+            plugin_manifest = self._island_api_client.get_agent_plugin_manifest(
                 AgentPluginType.EXPLOITER, exploiter_name
             )
-        except IslandAPIError:
-            return self._exploiter_plugin_manifests[exploiter_name]
+
+            self._exploiter_plugin_manifests[exploiter_name] = plugin_manifest
+        return self._exploiter_plugin_manifests[exploiter_name]
