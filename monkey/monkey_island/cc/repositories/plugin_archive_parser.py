@@ -151,8 +151,6 @@ def get_os_specific_plugin_source_archives(
 ) -> Mapping[OperatingSystem, bytes]:
     os_specific_plugin_source_archives = {}
 
-    print(plugin_tar.getmembers())
-
     plugin_directory = path / f"plugin-{random_filename()}"
     create_secure_directory(plugin_directory)
 
