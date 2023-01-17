@@ -31,7 +31,7 @@ class AgentConfigurationSchemaCompiler:
     def _add_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         schema = self._add_properties_field_to_plugin_types(schema)
         schema = self._add_non_plugin_exploiters(schema)
-        config_schemas = self._agent_plugin_repository.get_all_plugin_config_schemas()
+        config_schemas = self._agent_plugin_repository.get_all_plugin_configuration_schemas()
 
         for plugin_type in config_schemas.keys():
             for plugin_name in config_schemas[plugin_type].keys():
