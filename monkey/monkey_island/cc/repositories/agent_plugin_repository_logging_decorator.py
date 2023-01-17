@@ -27,7 +27,7 @@ class AgentPluginRepositoryLoggingDecorator(IAgentPluginRepository):
     def get_all_plugin_configuration_schemas(
         self,
     ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
-        logger.debug("Retrieving plugin config schemas")
+        logger.debug("Retrieving plugin configuration schemas")
         return self._agent_plugin_repository.get_all_plugin_configuration_schemas()
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
