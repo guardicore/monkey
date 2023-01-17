@@ -24,8 +24,7 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
 
         for plugin in self._plugins.values():
             plugin_type = plugin.plugin_manifest.plugin_type
-            if plugin_type not in schemas.keys():
-                schemas[plugin_type] = {}
+            schemas.setdefault(plugin_type, {})
             schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
 
         return schemas
@@ -35,8 +34,7 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
 
         for plugin in self._plugins.values():
             plugin_type = plugin.plugin_manifest.plugin_type
-            if plugin_type not in manifests.keys():
-                manifests[plugin_type] = {}
+            manifests.setdefault(plugin_type, {})
             manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
 
         return manifests
