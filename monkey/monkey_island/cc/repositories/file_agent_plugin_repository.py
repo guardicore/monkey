@@ -18,6 +18,20 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         """
         self._plugin_file_repository = plugin_file_repository
 
+    def get_plugin(
+        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+    ) -> AgentPlugin:
+        plugin = self._get_plugin(plugin_type, name)
+
+        if host_operating_system in plugin.host_operating_systems:
+            # TODO: Return the plugin with only the operating system specific dependencies
+            return plugin
+        else:
+            raise RetrievalError(
+                f"Error retrieving the agent plugin {name} of type {plugin_type} "
+                f"for OS {host_operating_system}"
+            )
+
     def _get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
         plugin_file_name = f"{name}-{plugin_type.value.lower()}.tar"
 
@@ -26,6 +40,16 @@ class FileAgentPluginRepository(IAgentPluginRepository):
                 return parse_plugin(f)
         except ValueError as err:
             raise RetrievalError(f"Error retrieving the agent plugin {plugin_file_name}: {err}")
+
+    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+        schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
+        for plugin in self._get_all_plugins():
+            plugin_type = plugin.plugin_manifest.plugin_type
+            if plugin_type not in schemas:
+                schemas[plugin_type] = {}
+            schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
+
+        return schemas
 
     def _get_all_plugins(self) -> Sequence[AgentPlugin]:
         plugins = []
@@ -45,30 +69,6 @@ class FileAgentPluginRepository(IAgentPluginRepository):
                 )
 
         return plugins
-
-    def get_plugin(
-        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
-    ) -> AgentPlugin:
-        plugin = self._get_plugin(plugin_type, name)
-
-        if host_operating_system in plugin.host_operating_systems:
-            # TODO: Return the plugin with only the operating system specific dependencies
-            return plugin
-        else:
-            raise RetrievalError(
-                f"Error retrieving the agent plugin {name} of type {plugin_type} "
-                f"for OS {host_operating_system}"
-            )
-
-    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
-        schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
-        for plugin in self._get_all_plugins():
-            plugin_type = plugin.plugin_manifest.plugin_type
-            if plugin_type not in schemas:
-                schemas[plugin_type] = {}
-            schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
-
-        return schemas
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
