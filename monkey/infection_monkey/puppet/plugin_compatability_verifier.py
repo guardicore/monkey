@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Optional
+from typing import Mapping, Optional
 
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
@@ -16,10 +16,10 @@ class PluginCompatabilityVerifier:
     def __init__(
         self,
         island_api_client: IIslandAPIClient,
-        exploiter_plugin_manifests: Dict[str, AgentPluginManifest],
+        exploiter_plugin_manifests: Mapping[str, AgentPluginManifest],
     ):
         self._island_api_client = island_api_client
-        self._exploiter_plugin_manifests = exploiter_plugin_manifests
+        self._exploiter_plugin_manifests = dict(exploiter_plugin_manifests)
 
     def verify_exploiter_compatibility(self, exploiter_name: str, target_host: TargetHost) -> bool:
         """
