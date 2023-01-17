@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask import make_response
 
 from common.agent_plugins import AgentPluginType
-from monkey_island.cc.repositories import IAgentPluginRepository, UnknownRecordError
+from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
@@ -32,11 +32,10 @@ class AgentPluginsManifest(AbstractResource):
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
         try:
-            agent_plugin_manifest = self._agent_plugin_repository.get_plugin(
-                plugin_type=agent_plugin_type, name=name
-            ).plugin_manifest
+            plugin_manifests = self._agent_plugin_repository.get_all_plugin_manifests()
+            agent_plugin_manifest = plugin_manifests[agent_plugin_type][name]
             return make_response(agent_plugin_manifest.dict(simplify=True), HTTPStatus.OK)
-        except UnknownRecordError:
+        except KeyError:
             message = f"Plugin '{name}' of type '{plugin_type}' not found."
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)

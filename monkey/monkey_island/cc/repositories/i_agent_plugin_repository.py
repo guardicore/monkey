@@ -1,16 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Tuple
+from typing import Any, Dict
 
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common import OperatingSystem
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 
 
 class IAgentPluginRepository(ABC):
     """A repository used to store `Agent` plugins"""
 
     @abstractmethod
-    def get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
+    def get_plugin(
+        self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
+    ) -> AgentPlugin:
         """
-        Retrieve AgentPlugin based on it's name and type
+        Retrieve AgentPlugin based on its name and type
 
         :param plugin_type: The type of the plugin
         :param name: The name of the plugin
@@ -20,9 +23,22 @@ class IAgentPluginRepository(ABC):
         pass
 
     @abstractmethod
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+    def get_all_plugin_configuration_schemas(
+        self,
+    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         """
-        Retrieve a sequence of pairs of agent plugin type and plugin name.
+        Retrieve the configuration schemas for all plugins.
 
-        :raises RetrievalError: If an error occurs while attempting to retrieve the catalog
+        :raises RetrievalError: If an error occurs while trying to retrieve the configuration
+            schemas
         """
+        pass
+
+    @abstractmethod
+    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+        """
+        Retrieve a sequence of plugin manifests for all plugins.
+
+        :raises RetrievalError: If an error occurs while trying to retrieve the manifests
+        """
+        pass
