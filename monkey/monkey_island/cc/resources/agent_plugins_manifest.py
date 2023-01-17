@@ -35,7 +35,7 @@ class AgentPluginsManifest(AbstractResource):
             plugin_manifests = self._agent_plugin_repository.get_all_plugin_manifests()
             agent_plugin_manifest = plugin_manifests[agent_plugin_type][name]
             return make_response(agent_plugin_manifest.dict(simplify=True), HTTPStatus.OK)
-        except (KeyError):
+        except KeyError:
             message = f"Plugin '{name}' of type '{plugin_type}' not found."
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
