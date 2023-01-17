@@ -33,29 +33,30 @@ def mock_plugin_compatability_verifier() -> PluginCompatabilityVerifier:
     return pcv
 
 
-def test_puppet_run_payload_success(mock_agent_event_queue, mock_plugin_registry):
-    p = Puppet(
+@pytest.fixture
+def puppet(
+    mock_agent_event_queue: IAgentEventQueue,
+    mock_plugin_registry: PluginRegistry,
+    mock_plugin_compatability_verifier: PluginCompatabilityVerifier,
+) -> Puppet:
+    return Puppet(
         agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=MagicMock(),
+        plugin_compatability_verifier=mock_plugin_compatability_verifier,
     )
 
+
+def test_puppet_run_payload_success(puppet: Puppet):
     payload = MagicMock()
     payload_name = "PayloadOne"
 
-    p.load_plugin(AgentPluginType.PAYLOAD, payload_name, payload)
-    p.run_payload(payload_name, {}, threading.Event())
+    puppet.load_plugin(AgentPluginType.PAYLOAD, payload_name, payload)
+    puppet.run_payload(payload_name, {}, threading.Event())
 
     payload.run.assert_called_once()
 
 
-def test_puppet_run_multiple_payloads(mock_agent_event_queue, mock_plugin_registry):
-    p = Puppet(
-        agent_event_queue=mock_agent_event_queue,
-        plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=MagicMock(),
-    )
-
+def test_puppet_run_multiple_payloads(puppet):
     payload_1 = MagicMock()
     payload1_name = "PayloadOne"
 
@@ -65,29 +66,24 @@ def test_puppet_run_multiple_payloads(mock_agent_event_queue, mock_plugin_regist
     payload_3 = MagicMock()
     payload3_name = "PayloadThree"
 
-    p.load_plugin(AgentPluginType.PAYLOAD, payload1_name, payload_1)
-    p.load_plugin(AgentPluginType.PAYLOAD, payload2_name, payload_2)
-    p.load_plugin(AgentPluginType.PAYLOAD, payload3_name, payload_3)
+    puppet.load_plugin(AgentPluginType.PAYLOAD, payload1_name, payload_1)
+    puppet.load_plugin(AgentPluginType.PAYLOAD, payload2_name, payload_2)
+    puppet.load_plugin(AgentPluginType.PAYLOAD, payload3_name, payload_3)
 
-    p.run_payload(payload1_name, {}, threading.Event())
+    puppet.run_payload(payload1_name, {}, threading.Event())
     payload_1.run.assert_called_once()
 
-    p.run_payload(payload2_name, {}, threading.Event())
+    puppet.run_payload(payload2_name, {}, threading.Event())
     payload_2.run.assert_called_once()
 
-    p.run_payload(payload3_name, {}, threading.Event())
+    puppet.run_payload(payload3_name, {}, threading.Event())
     payload_3.run.assert_called_once()
 
 
-def test_fingerprint_exception_handling(monkeypatch, mock_agent_event_queue, mock_plugin_registry):
-    p = Puppet(
-        agent_event_queue=mock_agent_event_queue,
-        plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=MagicMock(),
-    )
-    p._plugin_registry.get_plugin = MagicMock(side_effect=Exception)
+def test_fingerprint_exception_handling(monkeypatch, puppet, mock_plugin_registry):
+    mock_plugin_registry.get_plugin = MagicMock(side_effect=Exception)
     assert (
-        p.fingerprint("", "", PingScanData(response_received=False, os="windows"), {}, {})
+        puppet.fingerprint("", "", PingScanData(response_received=False, os="windows"), {}, {})
         == EMPTY_FINGERPRINT
     )
 
@@ -99,20 +95,12 @@ def test_fingerprint_exception_handling(monkeypatch, mock_agent_event_queue, moc
 def test_exploit_host(
     target_host_os,
     exploiter_name,
-    mock_agent_event_queue,
-    mock_plugin_registry,
-    mock_plugin_compatability_verifier,
+    puppet,
 ):
-    p = Puppet(
-        agent_event_queue=mock_agent_event_queue,
-        plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=mock_plugin_compatability_verifier,
-    )
-
     exploiter_object = MagicMock()
-    p.load_plugin(AgentPluginType.EXPLOITER, exploiter_name, exploiter_object)
+    puppet.load_plugin(AgentPluginType.EXPLOITER, exploiter_name, exploiter_object)
 
-    p.exploit_host(
+    puppet.exploit_host(
         name=exploiter_name,
         host=TargetHost(ip="1.1.1.1", operating_system=target_host_os),
         current_depth=1,
@@ -131,21 +119,15 @@ def test_exploit_host(
 def test_exploit_host__incompatable(
     target_host_os,
     exploiter_name,
-    mock_agent_event_queue,
-    mock_plugin_registry,
+    puppet,
     mock_plugin_compatability_verifier,
 ):
     mock_plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(
         return_value=False
     )
-    p = Puppet(
-        agent_event_queue=mock_agent_event_queue,
-        plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=mock_plugin_compatability_verifier,
-    )
 
     with pytest.raises(IncompatibleOperatingSystemError):
-        p.exploit_host(
+        puppet.exploit_host(
             name=exploiter_name,
             host=TargetHost(ip="1.1.1.1", operating_system=target_host_os),
             current_depth=1,
