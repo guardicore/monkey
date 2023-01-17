@@ -26,7 +26,7 @@ def mock_plugin_registry() -> PluginRegistry:
 
 
 @pytest.fixture
-def plugin_compatability_verifier() -> PluginCompatabilityVerifier:
+def mock_plugin_compatability_verifier() -> PluginCompatabilityVerifier:
     pcv = MagicMock(spec=PluginCompatabilityVerifier)
     pcv.verify_exploiter_compatibility = MagicMock(return_value=True)
 
@@ -101,12 +101,12 @@ def test_exploit_host(
     exploiter_name,
     mock_agent_event_queue,
     mock_plugin_registry,
-    plugin_compatability_verifier,
+    mock_plugin_compatability_verifier,
 ):
     p = Puppet(
         agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=plugin_compatability_verifier,
+        plugin_compatability_verifier=mock_plugin_compatability_verifier,
     )
 
     exploiter_object = MagicMock()
@@ -133,13 +133,15 @@ def test_exploit_host__incompatable(
     exploiter_name,
     mock_agent_event_queue,
     mock_plugin_registry,
-    plugin_compatability_verifier,
+    mock_plugin_compatability_verifier,
 ):
-    plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(return_value=False)
+    mock_plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(
+        return_value=False
+    )
     p = Puppet(
         agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
-        plugin_compatability_verifier=plugin_compatability_verifier,
+        plugin_compatability_verifier=mock_plugin_compatability_verifier,
     )
 
     with pytest.raises(IncompatibleOperatingSystemError):
