@@ -6,7 +6,6 @@ import shutil
 import subprocess
 import sys
 import time
-from copy import deepcopy
 from functools import partial
 from itertools import chain
 from pathlib import Path, WindowsPath
@@ -355,7 +354,7 @@ class InfectionMonkey:
             self._propagation_credentials_repository,
         )
         plugin_compatability_verifier = PluginCompatabilityVerifier(
-            self._island_api_client, deepcopy(HARD_CODED_EXPLOITER_MANIFESTS)
+            self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
         )
         puppet = Puppet(self._agent_event_queue, plugin_registry, plugin_compatability_verifier)
 
