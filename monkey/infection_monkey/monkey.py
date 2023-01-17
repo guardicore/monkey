@@ -17,6 +17,7 @@ from serpentarium import PluginLoader
 from serpentarium.logging import configure_child_process_logger
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS
+from common import OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -231,16 +232,16 @@ class InfectionMonkey:
             logger.info("The Monkey Island has instructed this agent to stop")
             return
 
-        self._discover_os()
+        operating_system = self._discover_os()
         self._discover_hostname()
 
-        self._setup()
+        self._setup(operating_system)
 
     def _setup_agent_event_forwarder(self):
         self._agent_event_forwarder = AgentEventForwarder(self._island_api_client)
         self._agent_event_queue.subscribe_all_events(self._agent_event_forwarder.send_event)
 
-    def _discover_os(self):
+    def _discover_os(self) -> OperatingSystem:
         timestamp = time.time()
         operating_system = environment.get_os()
         operating_system_version = environment.get_os_version()
@@ -254,6 +255,8 @@ class InfectionMonkey:
         )
         self._agent_event_queue.publish(event)
 
+        return operating_system
+
     def _discover_hostname(self):
         timestamp = time.time()
         hostname = environment.get_hostname()
@@ -266,7 +269,7 @@ class InfectionMonkey:
         )
         self._agent_event_queue.publish(event)
 
-    def _setup(self):
+    def _setup(self, operating_system: OperatingSystem):
         logger.debug("Starting the setup phase.")
 
         create_monkey_dir()
@@ -286,7 +289,7 @@ class InfectionMonkey:
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()
 
-        self._build_master(relay_port)
+        self._build_master(relay_port, operating_system)
 
         register_signal_handlers(self._master)
 
@@ -306,11 +309,11 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self, relay_port: int):
+    def _build_master(self, relay_port: int, operating_system: OperatingSystem):
         servers = self._build_server_list(relay_port)
         local_network_interfaces = get_network_interfaces()
 
-        puppet = self._build_puppet()
+        puppet = self._build_puppet(operating_system)
 
         self._master = AutomatedMaster(
             self._current_depth,
@@ -330,7 +333,7 @@ class InfectionMonkey:
 
         return list(ordered_servers.keys())
 
-    def _build_puppet(self) -> IPuppet:
+    def _build_puppet(self, operating_system: OperatingSystem) -> IPuppet:
         create_secure_directory(self._plugin_dir)
         # SECURITY: Don't log the plugin directory name before it's created! This could introduce a
         #           race condition where the attacker may tail the log and create the directory with
@@ -346,6 +349,7 @@ class InfectionMonkey:
             self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
         )
         plugin_registry = PluginRegistry(
+            operating_system,
             self._island_api_client,
             PluginSourceExtractor(self._plugin_dir),
             plugin_loader,
