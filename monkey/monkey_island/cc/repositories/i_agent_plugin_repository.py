@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 
 
 class IAgentPluginRepository(ABC):
@@ -28,5 +28,14 @@ class IAgentPluginRepository(ABC):
         Retrieve the configuration schemas for all plugins.
 
         :raises RetrievalError: If an error occurs while trying to retrieve the config schemas
+        """
+        pass
+
+    @abstractmethod
+    def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
+        """
+        Retrieve a sequence of plugin manifests for all plugins.
+
+        :raises RetrievalError: If an error occurs while trying to retrieve the manifests
         """
         pass
