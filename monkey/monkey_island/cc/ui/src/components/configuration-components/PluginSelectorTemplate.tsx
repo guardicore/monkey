@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
 import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
+import {InfoPane, WarningType} from '../ui-components/InfoPane';
 
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
@@ -10,9 +11,15 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   let [selectedPlugin, setSelectedPlugin] = useState(null);
 
   function getPluginDisplay(plugin, allPlugins) {
-    let selectedPlugin = allPlugins.filter((pluginInArray) => pluginInArray.name == plugin)
-    if (selectedPlugin.length === 1) {
-      return <div className="property-wrapper">{selectedPlugin[0].content}</div>
+    let selectedPlugins = allPlugins.filter((pluginInArray) => pluginInArray.name == plugin)
+    if (selectedPlugins.length === 1) {
+      let selectedPlugin = selectedPlugins[0];
+      let pluginWarningType = isPluginSafe(selectedPlugin.name) ?
+        WarningType.NONE : WarningType.SINGLE;
+      return <InfoPane title={''}
+                       body={selectedPlugin.content}
+                       link={selectedPlugin.content.props.schema.link}
+                       warningType={pluginWarningType}/>
     }
   }
 
@@ -76,7 +83,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                                  onResetClick={() => {
                                  }}/>
 
-      <ChildCheckboxContainer id={'abc'} multiple={true} required={false}
+      <ChildCheckboxContainer multiple={true} required={false}
                               autoFocus={false}
                               selectedValues={[...props.formContext.selectedExploiters]}
                               onCheckboxClick={togglePluggin}
