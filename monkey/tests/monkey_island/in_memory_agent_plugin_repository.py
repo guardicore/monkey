@@ -1,4 +1,4 @@
-from typing import Sequence, Tuple
+from typing import Any, Dict
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
@@ -24,15 +24,16 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
             )
         return plugin
 
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
-        return [
-            (
-                plugin.plugin_manifest.plugin_type,
-                plugin.plugin_manifest.name,
-                plugin.host_operating_systems,
-            )
-            for plugin in self._plugins.values()
-        ]
+    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+        schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
+
+        for plugin in self._plugins.values():
+            plugin_type = plugin.plugin_manifest.plugin_type
+            if plugin_type not in schemas.keys():
+                schemas[plugin_type] = {}
+            schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
+
+        return schemas
 
     def save_plugin(self, plugin: AgentPlugin):
         self._plugins[plugin.plugin_manifest.name] = plugin

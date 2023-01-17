@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Tuple
+from typing import Any, Dict
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
@@ -36,9 +36,10 @@ class IAgentPluginRepository(ABC):
         pass
 
     @abstractmethod
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
+    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         """
-        Retrieve a sequence of agent plugin type, plugin name and supported operating systems.
+        Retrieve the configuration schemas for all plugins.
 
-        :raises RetrievalError: If an error occurs while attempting to retrieve the catalog
+        :raises RetrievalError: If an error occurs while trying to retrieve the config schemas
         """
+        pass
