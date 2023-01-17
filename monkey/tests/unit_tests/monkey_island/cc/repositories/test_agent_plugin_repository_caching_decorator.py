@@ -38,20 +38,24 @@ def test_get_cached_plugin(agent_plugin_repository, in_memory_agent_plugin_repos
     )
 
     in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
-    retrieved_plugin_1 = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, common_name)
+    retrieved_plugin_1 = agent_plugin_repository.get_plugin(
+        OperatingSystem.LINUX, AgentPluginType.EXPLOITER, common_name
+    )
 
     in_memory_agent_plugin_repository.save_plugin(agent_plugin_with_same_name)
-    retrieved_plugin_2 = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, common_name)
+    retrieved_plugin_2 = agent_plugin_repository.get_plugin(
+        OperatingSystem.LINUX, AgentPluginType.EXPLOITER, common_name
+    )
 
     assert retrieved_plugin_1 == retrieved_plugin_2
     assert retrieved_plugin_2.config_schema != agent_plugin_with_same_name.config_schema
 
 
-def test_get_cached_plugin_catalog(agent_plugin_repository, in_memory_agent_plugin_repository):
+def test_get_cached_plugin_manifests(agent_plugin_repository, in_memory_agent_plugin_repository):
     in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
-    request_1_plugin_catalog = agent_plugin_repository.get_plugin_catalog()
+    request_1_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
 
     in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_2)
-    request_2_plugin_catalog = agent_plugin_repository.get_plugin_catalog()
+    request_2_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
 
-    assert request_2_plugin_catalog == request_1_plugin_catalog
+    assert request_2_plugin_manifests == request_1_plugin_manifests

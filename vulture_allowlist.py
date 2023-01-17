@@ -146,8 +146,5 @@ AgentPluginManifest.safe
 
 IAgentPluginRepository
 
-# Remove after #2710
-IAgentPluginRepository.get_plugin_catalog
-
 # Remove once #2783 is done
 PluginConfigurationValidationError
