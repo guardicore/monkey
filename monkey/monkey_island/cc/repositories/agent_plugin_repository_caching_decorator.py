@@ -28,5 +28,5 @@ class AgentPluginRepositoryCachingDecorator(IAgentPluginRepository):
         )
 
     @lru_cache()
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
         return self._agent_plugin_repository.get_plugin_catalog()
