@@ -1,18 +1,13 @@
 import threading
-from copy import deepcopy
 from unittest.mock import MagicMock
 
 import pytest
 from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAKE_NAME, FAKE_NAME2
-from tests.unit_tests.infection_monkey.puppet.test_plugin_compatability_verifier import (
-    FAKE_HARD_CODED_PLUGIN_MANIFESTS,
-)
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
 from infection_monkey.i_puppet import IncompatibleOperatingSystemError, PingScanData
-from infection_monkey.island_api_client import IIslandAPIClient
 from infection_monkey.model import TargetHost
 from infection_monkey.puppet import PluginCompatabilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
@@ -27,9 +22,10 @@ def mock_plugin_registry() -> PluginRegistry:
 
 @pytest.fixture
 def plugin_compatability_verifier() -> PluginCompatabilityVerifier:
-    return PluginCompatabilityVerifier(
-        MagicMock(spec=IIslandAPIClient), deepcopy(FAKE_HARD_CODED_PLUGIN_MANIFESTS)
-    )
+    pcv = MagicMock(spec=PluginCompatabilityVerifier)
+    pcv.verify_exploiter_compatibility = MagicMock(return_value=True)
+
+    return pcv
 
 
 def test_puppet_run_payload_success(mock_plugin_registry):
@@ -126,13 +122,12 @@ def test_exploit_host(
 def test_exploit_host__incompatable(
     target_host_os, exploiter_name, mock_plugin_registry, plugin_compatability_verifier
 ):
+    plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(return_value=False)
     p = Puppet(
         agent_event_queue=MagicMock(spec=IAgentEventQueue),
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=plugin_compatability_verifier,
     )
-
-    p.load_plugin(AgentPluginType.EXPLOITER, exploiter_name, MagicMock())
 
     with pytest.raises(IncompatibleOperatingSystemError):
         p.exploit_host(
