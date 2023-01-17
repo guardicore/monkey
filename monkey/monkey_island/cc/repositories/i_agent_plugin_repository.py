@@ -23,11 +23,14 @@ class IAgentPluginRepository(ABC):
         pass
 
     @abstractmethod
-    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+    def get_all_plugin_configuration_schemas(
+        self,
+    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         """
         Retrieve the configuration schemas for all plugins.
 
-        :raises RetrievalError: If an error occurs while trying to retrieve the config schemas
+        :raises RetrievalError: If an error occurs while trying to retrieve the configuration
+            schemas
         """
         pass
 

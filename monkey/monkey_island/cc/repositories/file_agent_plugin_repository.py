@@ -41,7 +41,9 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         except ValueError as err:
             raise RetrievalError(f"Error retrieving the agent plugin {plugin_file_name}: {err}")
 
-    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+    def get_all_plugin_configuration_schemas(
+        self,
+    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
         for plugin in self._get_all_plugins():
             plugin_type = plugin.plugin_manifest.plugin_type

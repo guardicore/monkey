@@ -22,8 +22,10 @@ class AgentPluginRepositoryCachingDecorator(IAgentPluginRepository):
         return self._agent_plugin_repository.get_plugin(host_operating_system, plugin_type, name)
 
     @lru_cache()
-    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
-        return self._agent_plugin_repository.get_all_plugin_config_schemas()
+    def get_all_plugin_configuration_schemas(
+        self,
+    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+        return self._agent_plugin_repository.get_all_plugin_configuration_schemas()
 
     @lru_cache()
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
