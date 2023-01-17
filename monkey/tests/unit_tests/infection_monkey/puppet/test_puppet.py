@@ -14,6 +14,11 @@ from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet
 
 
 @pytest.fixture
+def mock_agent_event_queue() -> IAgentEventQueue:
+    return MagicMock(spec=IAgentEventQueue)
+
+
+@pytest.fixture
 def mock_plugin_registry() -> PluginRegistry:
     return PluginRegistry(
         MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock(), MagicMock()
@@ -28,9 +33,9 @@ def plugin_compatability_verifier() -> PluginCompatabilityVerifier:
     return pcv
 
 
-def test_puppet_run_payload_success(mock_plugin_registry):
+def test_puppet_run_payload_success(mock_agent_event_queue, mock_plugin_registry):
     p = Puppet(
-        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=MagicMock(),
     )
@@ -44,9 +49,9 @@ def test_puppet_run_payload_success(mock_plugin_registry):
     payload.run.assert_called_once()
 
 
-def test_puppet_run_multiple_payloads(mock_plugin_registry):
+def test_puppet_run_multiple_payloads(mock_agent_event_queue, mock_plugin_registry):
     p = Puppet(
-        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=MagicMock(),
     )
@@ -74,9 +79,9 @@ def test_puppet_run_multiple_payloads(mock_plugin_registry):
     payload_3.run.assert_called_once()
 
 
-def test_fingerprint_exception_handling(monkeypatch, mock_plugin_registry):
+def test_fingerprint_exception_handling(monkeypatch, mock_agent_event_queue, mock_plugin_registry):
     p = Puppet(
-        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=MagicMock(),
     )
@@ -92,10 +97,14 @@ def test_fingerprint_exception_handling(monkeypatch, mock_plugin_registry):
     [(None, FAKE_NAME), (OperatingSystem.LINUX, FAKE_NAME), (OperatingSystem.WINDOWS, FAKE_NAME2)],
 )
 def test_exploit_host(
-    target_host_os, exploiter_name, mock_plugin_registry, plugin_compatability_verifier
+    target_host_os,
+    exploiter_name,
+    mock_agent_event_queue,
+    mock_plugin_registry,
+    plugin_compatability_verifier,
 ):
     p = Puppet(
-        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=plugin_compatability_verifier,
     )
@@ -120,11 +129,15 @@ def test_exploit_host(
     [(OperatingSystem.WINDOWS, FAKE_NAME), (OperatingSystem.LINUX, FAKE_NAME2)],
 )
 def test_exploit_host__incompatable(
-    target_host_os, exploiter_name, mock_plugin_registry, plugin_compatability_verifier
+    target_host_os,
+    exploiter_name,
+    mock_agent_event_queue,
+    mock_plugin_registry,
+    plugin_compatability_verifier,
 ):
     plugin_compatability_verifier.verify_exploiter_compatibility = MagicMock(return_value=False)
     p = Puppet(
-        agent_event_queue=MagicMock(spec=IAgentEventQueue),
+        agent_event_queue=mock_agent_event_queue,
         plugin_registry=mock_plugin_registry,
         plugin_compatability_verifier=plugin_compatability_verifier,
     )
