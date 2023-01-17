@@ -19,7 +19,9 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
             raise RetrievalError(f"{host_operating_system} not supported for plugin '{name}'")
         return plugin
 
-    def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
+    def get_all_plugin_configuration_schemas(
+        self,
+    ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
 
         for plugin in self._plugins.values():
