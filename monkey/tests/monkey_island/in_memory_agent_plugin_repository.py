@@ -2,26 +2,21 @@ from typing import Any, Dict
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginType
-from monkey_island.cc.repositories import IAgentPluginRepository, UnknownRecordError
+from monkey_island.cc.repositories import IAgentPluginRepository, RetrievalError, UnknownRecordError
 
 
 class InMemoryAgentPluginRepository(IAgentPluginRepository):
     def __init__(self):
         self._plugins = {}
 
-    def get_plugin(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
-        if name not in self._plugins:
-            raise UnknownRecordError(f"Plugin '{name}' does not exist.")
-        return self._plugins[name]
-
-    def get_plugin_for_os(
+    def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
     ) -> AgentPlugin:
-        plugin = self.get_plugin(plugin_type, name)
+        if name not in self._plugins:
+            raise UnknownRecordError(f"Plugin '{name}' does not exist.")
+        plugin = self._plugins[name]
         if host_operating_system not in plugin.host_operating_systems:
-            raise UnknownRecordError(
-                f"OS '{host_operating_system}' does not exist for plugin '{name}'."
-            )
+            raise RetrievalError(f"{host_operating_system} not supported for plugin '{name}'")
         return plugin
 
     def get_all_plugin_config_schemas(self) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
