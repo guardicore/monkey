@@ -41,14 +41,20 @@ class FileAgentPluginRepository(IAgentPluginRepository):
                 f"for OS {host_operating_system}"
             )
 
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
         plugin_catalog = []
 
         plugin_file_names = self._plugin_file_repository.get_all_file_names()
         for plugin_file_name in plugin_file_names:
             plugin_name, plugin_type = plugin_file_name.split(".")[0].split("-")
+
             try:
-                plugin_catalog.append((AgentPluginType[plugin_type.upper()], plugin_name))
+                agent_plugin_type = AgentPluginType[plugin_type.upper()]
+                plugin = self.get_plugin(agent_plugin_type, plugin_name)
+                operating_systems = plugin.host_operating_systems
+                plugin_catalog.append(
+                    (AgentPluginType[plugin_type.upper()], plugin_name, operating_systems)
+                )
             except KeyError as err:
                 raise RetrievalError(
                     f"Error retrieving plugin catalog for plugin {plugin_name} of "

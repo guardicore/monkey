@@ -85,13 +85,11 @@ def test_get_plugin_catalog(
 ):
     with open(plugin_file, "rb") as file:
         file_repository.save_file(basename(plugin_file), file)
-        file_repository.save_file("ssh-payload.tar", file)
 
     actual_plugin_catalog = agent_plugin_repository.get_plugin_catalog()
 
     assert actual_plugin_catalog == [
-        (AgentPluginType.EXPLOITER, "test"),
-        (AgentPluginType.PAYLOAD, "ssh"),
+        (AgentPluginType.EXPLOITER, "test", (OperatingSystem.LINUX, OperatingSystem.WINDOWS)),
     ]
 
 

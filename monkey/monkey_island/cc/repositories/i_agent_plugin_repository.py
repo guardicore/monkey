@@ -36,9 +36,9 @@ class IAgentPluginRepository(ABC):
         pass
 
     @abstractmethod
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
         """
-        Retrieve a sequence of pairs of agent plugin type and plugin name.
+        Retrieve a sequence of agent plugin type, plugin name and supported operating systems.
 
         :raises RetrievalError: If an error occurs while attempting to retrieve the catalog
         """

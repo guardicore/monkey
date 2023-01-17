@@ -33,7 +33,7 @@ class AgentConfigurationSchemaCompiler:
         schema = self._add_non_plugin_exploiters(schema)
         plugin_catalog = self._agent_plugin_repository.get_plugin_catalog()
 
-        for (plugin_type, name) in plugin_catalog:
+        for (plugin_type, name, _) in plugin_catalog:
             plugin = self._agent_plugin_repository.get_plugin(plugin_type, name)
             schema = self._add_plugin_to_schema(schema, plugin_type, plugin)
 

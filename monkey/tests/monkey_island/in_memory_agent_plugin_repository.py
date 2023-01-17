@@ -24,8 +24,15 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
             )
         return plugin
 
-    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str]]:
-        return [(AgentPluginType.EXPLOITER, plugin_name) for plugin_name in self._plugins.keys()]
+    def get_plugin_catalog(self) -> Sequence[Tuple[AgentPluginType, str, Tuple[OperatingSystem]]]:
+        return [
+            (
+                plugin.plugin_manifest.plugin_type,
+                plugin.plugin_manifest.name,
+                plugin.host_operating_systems,
+            )
+            for plugin in self._plugins.values()
+        ]
 
     def save_plugin(self, plugin: AgentPlugin):
         self._plugins[plugin.plugin_manifest.name] = plugin
