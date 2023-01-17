@@ -10,11 +10,13 @@ from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
+    IncompatibleOperatingSystemError,
     IPuppet,
     PingScanData,
     PortScanData,
 )
 from infection_monkey.model import TargetHost
+from infection_monkey.puppet import PluginCompatabilityVerifier
 
 from . import PluginRegistry
 
@@ -25,10 +27,14 @@ logger = logging.getLogger()
 
 class Puppet(IPuppet):
     def __init__(
-        self, agent_event_queue: IAgentEventQueue, plugin_registry: PluginRegistry
+        self,
+        agent_event_queue: IAgentEventQueue,
+        plugin_registry: PluginRegistry,
+        plugin_compatability_verifier: PluginCompatabilityVerifier,
     ) -> None:
         self._plugin_registry = plugin_registry
         self._agent_event_queue = agent_event_queue
+        self._plugin_compatability_verifier = plugin_compatability_verifier
 
     def load_plugin(self, plugin_type: AgentPluginType, plugin_name: str, plugin: object) -> None:
         self._plugin_registry.load_plugin(plugin_type, plugin_name, plugin)
@@ -73,6 +79,10 @@ class Puppet(IPuppet):
         options: Dict,
         interrupt: Event,
     ) -> ExploiterResultData:
+        if self._plugin_compatability_verifier.verify_exploiter_compatibility(name, host) is False:
+            raise IncompatibleOperatingSystemError(
+                f"Incompatible operating system for " f"exploiter:{name} and host:{host}"
+            )
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
         return exploiter.run(
             host=host,
