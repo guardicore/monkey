@@ -61,8 +61,12 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         return response.content
 
     @handle_response_parsing_errors
-    def get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> AgentPlugin:
-        response = self.http_client.get(f"agent-plugins/{plugin_type.value}/{plugin_name}")
+    def get_agent_plugin(
+        self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
+    ) -> AgentPlugin:
+        response = self.http_client.get(
+            f"agent-plugins/{operating_system.value}/{plugin_type.value}/{plugin_name}"
+        )
 
         return AgentPlugin(**response.json())
 
