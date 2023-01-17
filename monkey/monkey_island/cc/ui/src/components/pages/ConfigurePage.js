@@ -32,6 +32,8 @@ const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
 const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
+// "new" schema is the one coming from back-end, the legacy one is defined in
+// monkey/monkey_island/cc/ui/src/services/configuration/configSchema.js
 const EXPLOITERS_SCHEMA_PATH_NEW = 'definitions.ExploitationConfiguration.properties.exploiters';
 const EXPLOITERS_SCHEMA_PATH_LEGACY = 'properties.propagation.properties.exploitation.properties.exploiters';
 
