@@ -32,9 +32,10 @@ class PluginCompatabilityVerifier:
         if exploiter_plugin_manifest is None:
             return False
 
-        supported_os = exploiter_plugin_manifest.supported_operating_systems
-
-        return target_host.operating_system is None or target_host.operating_system in supported_os
+        return (
+            target_host.operating_system is None
+            or target_host.operating_system in exploiter_plugin_manifest.supported_operating_systems
+        )
 
     def _get_exploiter_plugin_manifest(self, exploiter_name: str) -> Optional[AgentPluginManifest]:
         """
