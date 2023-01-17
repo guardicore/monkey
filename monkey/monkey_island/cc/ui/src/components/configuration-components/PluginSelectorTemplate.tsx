@@ -54,9 +54,9 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   function onMasterPluginCheckboxClick() {
     let checkboxState = getMasterCheckboxState(props.formContext.selectedExploiters);
     if (checkboxState == MasterCheckboxState.ALL) {
-      props.formContext.setSelectedExploiters({});
+      props.formContext.setSelectedExploiters([]);
     } else {
-      props.formContext.setSelectedExploiters(generateDefaultConfig());
+      props.formContext.setSelectedExploiters(Object.keys(generateDefaultConfig()));
     }
   }
 
