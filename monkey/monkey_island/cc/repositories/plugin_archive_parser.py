@@ -41,8 +41,8 @@ class VendorDirName(Enum):
 
 
 VENDOR_IGNORE_LIST = {
-    OperatingSystem.LINUX: [VendorDirName.WINDOWS_VENDOR.value],
-    OperatingSystem.WINDOWS: [VendorDirName.LINUX_VENDOR.value],
+    VendorDirName.LINUX_VENDOR: [VendorDirName.WINDOWS_VENDOR.value],
+    VendorDirName.WINDOWS_VENDOR: [VendorDirName.LINUX_VENDOR.value],
 }
 
 
@@ -202,24 +202,30 @@ def _get_os_specific_plugin_source_archives(
 
     for vendor in plugin_source_vendors:
         vendor_os = VendorDirName.to_operating_system(vendor)
-        vendor_ignore_list = VENDOR_IGNORE_LIST[vendor_os]
-
-        file_obj = io.BytesIO()
-        with TarFile(fileobj=file_obj, mode="w") as os_specific_plugin_tar:
-            for member in plugin_source_tar.getmembers():
-                member_path = PurePath(member.name)
-                if member_path.parts[0] in vendor_ignore_list:
-                    continue
-
-                new_member = deepcopy(member)
-                if member_path.parts[0] == vendor.value:
-                    new_member.name = re.sub(f"^{vendor.value}", "vendor", member.name, count=1)
-
-                os_specific_plugin_tar.addfile(
-                    tarinfo=new_member, fileobj=plugin_source_tar.extractfile(member)
-                )
-
-        file_obj.seek(0)
-        os_specific_plugin_source_archives[vendor_os] = file_obj.read()
+        os_specific_plugin_source_archives[vendor_os] = _rewrite_os_specific_vendor_paths(
+            plugin_source_tar, vendor
+        )
 
     return os_specific_plugin_source_archives
+
+
+def _rewrite_os_specific_vendor_paths(plugin_source_tar: TarFile, vendor: VendorDirName) -> bytes:
+    vendor_ignore_list = VENDOR_IGNORE_LIST[vendor]
+
+    file_obj = io.BytesIO()
+    with TarFile(fileobj=file_obj, mode="w") as os_specific_plugin_tar:
+        for member in plugin_source_tar.getmembers():
+            member_first_part = PurePath(member.name).parts[0]
+
+            if member_first_part in vendor_ignore_list:
+                continue
+
+            new_member = deepcopy(member)
+            if member_first_part == vendor.value:
+                new_member.name = re.sub(f"^{vendor.value}", "vendor", member.name, count=1)
+
+            extracted_file = plugin_source_tar.extractfile(member)
+            os_specific_plugin_tar.addfile(tarinfo=new_member, fileobj=extracted_file)
+    file_obj.seek(0)
+
+    return file_obj.read()
