@@ -4,14 +4,21 @@ import pytest
 from tests.monkey_island import InMemoryFileRepository
 
 from common import OperatingSystem
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories import (
     FileAgentPluginRepository,
     RetrievalError,
     UnknownRecordError,
 )
 
-from .test_plugin_archive_parser import EXPECTED_MANIFEST
+EXPECTED_MANIFEST = AgentPluginManifest(
+    name="test",
+    plugin_type=AgentPluginType.EXPLOITER,
+    supported_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
+    title="dummy-exploiter",
+    description="A dummy exploiter",
+    safe=True,
+)
 
 
 @pytest.fixture
