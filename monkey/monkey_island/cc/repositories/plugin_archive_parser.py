@@ -49,7 +49,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
         schema = get_plugin_schema(tar_file)
         source = get_plugin_source(tar_file)
 
-        extracted_plugin = _safe_extract_file(tar=tar_file, filename="plugin.tar")
+        extracted_plugin = _safe_extract_file(tar=tar_file, filename=SOURCE_ARCHIVE_FILENAME)
         plugin_source_tar = tarfile.TarFile(fileobj=io.BytesIO(extracted_plugin.read()))
         plugin_source_vendors = get_plugin_source_vendors(plugin_source_tar)
 
@@ -170,7 +170,9 @@ def get_os_specific_plugin_source_archives(
             logger.info(f"Operating system of vendor directory ({vendor.name}) not recognised")
             continue
 
-        os_specific_plugin_tar_path = data_dir_parsed_plugins_path / vendor_os.value / "plugin.tar"
+        os_specific_plugin_tar_path = (
+            data_dir_parsed_plugins_path / vendor_os.value / SOURCE_ARCHIVE_FILENAME
+        )
         with tarfile.TarFile(name=os_specific_plugin_tar_path, mode="w") as os_specific_plugin_tar:
             for item in [
                 tarinfo
