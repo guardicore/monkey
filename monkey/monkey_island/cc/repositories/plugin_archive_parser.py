@@ -1,7 +1,6 @@
 import io
 import json
 import logging
-import shutil
 from pathlib import Path
 from tarfile import TarFile, TarInfo
 from typing import IO, Any, BinaryIO, Dict, Mapping, Sequence
@@ -10,7 +9,6 @@ import yaml
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
-from common.utils.file_utils import create_secure_directory, random_filename
 
 MANIFEST_FILENAME = "plugin.yaml"
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
@@ -64,7 +62,6 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
             # vendor/ doesn't exist, so parse plugins based on OS-specific vendor directories
             _parse_plugin_with_multiple_vendors(
                 parsed_plugin=parsed_plugin,
-                data_dir=data_dir,
                 plugin_source_tar=plugin_source_tar,
                 plugin_source_vendors=plugin_source_vendors,
                 manifest=manifest,
@@ -96,14 +93,13 @@ def _parse_plugin_with_generic_vendor(
 
 def _parse_plugin_with_multiple_vendors(
     parsed_plugin: Dict[OperatingSystem, AgentPlugin],
-    data_dir: Path,
     plugin_source_tar: TarFile,
     plugin_source_vendors: Sequence[TarInfo],
     manifest: AgentPluginManifest,
     schema: Dict[str, Any],
 ):
     os_specific_plugin_source_archives = get_os_specific_plugin_source_archives(
-        data_dir, plugin_source_tar, plugin_source_vendors
+        plugin_source_tar, plugin_source_vendors
     )
 
     for os_, os_specific_plugin_source_archive in os_specific_plugin_source_archives.items():
@@ -176,16 +172,10 @@ def get_plugin_source_vendors(plugin_source_tar: TarFile) -> Sequence[TarInfo]:
 
 
 def get_os_specific_plugin_source_archives(
-    data_dir, plugin_source_tar, plugin_source_vendors
+    plugin_source_tar, plugin_source_vendors
 ) -> Mapping[OperatingSystem, bytes]:
 
     os_specific_plugin_source_archives = {}
-
-    # Create a directory to store the new OS-specific plugins. This is deleted later.
-    # We're using a random filename so that if the directory isn't deleted for some reason,
-    # other plugins can still be parsed in a different directory.
-    parsed_plugin_dir = data_dir / f"parsed_plugin_{random_filename()}"
-    create_secure_directory(parsed_plugin_dir)
 
     for vendor in plugin_source_vendors:
         if "linux" in vendor.name:
@@ -196,9 +186,8 @@ def get_os_specific_plugin_source_archives(
             logger.info(f"Operating system of vendor directory ({vendor.name}) not recognised")
             continue
 
-        new_plugin_tar_path = parsed_plugin_dir / SOURCE_ARCHIVE_FILENAME
-
-        with TarFile(name=new_plugin_tar_path, mode="w") as os_specific_plugin_tar:
+        file_handle = io.BytesIO()
+        with TarFile(fileobj=file_handle, mode="w") as os_specific_plugin_tar:
             for item in [
                 tarinfo
                 for tarinfo in plugin_source_tar.getmembers()
@@ -207,16 +196,6 @@ def get_os_specific_plugin_source_archives(
             ]:
                 os_specific_plugin_tar.addfile(tarinfo=item)
 
-        with open(new_plugin_tar_path, "rb") as f:
-            os_specific_plugin_source_archives[vendor_os] = f.read()
-
-    _try_remove_directory(parsed_plugin_dir)
+            os_specific_plugin_source_archives[vendor_os] = file_handle.getvalue()
 
     return os_specific_plugin_source_archives
-
-
-def _try_remove_directory(path: Path):
-    try:
-        shutil.rmtree(path)
-    except Exception as ex:
-        logger.debug(f"Exception encountered when trying to remove {path}: {ex}")
