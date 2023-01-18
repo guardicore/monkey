@@ -1,7 +1,7 @@
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
-from common.agent_plugins import AgentPluginManifest
+from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
 from common.types import Lock, NetworkPort, PluginName
@@ -121,3 +121,5 @@ Lock.exc_val
 Lock.exc_tb
 Lock.blocking
 Lock.locked
+
+AgentPlugin.host_operating_systems
