@@ -1,34 +1,220 @@
 import io
+import json
 import tarfile
-from tarfile import TarFile
+from pathlib import Path
+from tarfile import TarFile, TarInfo
+from typing import Any, BinaryIO, Callable, Dict, Tuple
 
 import pytest
+import yaml
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories.plugin_archive_parser import (
-    get_os_specific_plugin_source_archives,
     get_plugin_manifest,
     get_plugin_schema,
     get_plugin_source,
-    get_plugin_source_vendors,
     parse_plugin,
 )
 
 
 @pytest.fixture
+def simple_agent_plugin(build_agent_plugin) -> AgentPlugin:
+    fileobj = io.BytesIO()
+    with TarFile(fileobj=fileobj, mode="w") as tar:
+        plugin_py_tarinfo = TarInfo("plugin.py")
+        plugin_py_bytes = b'print("Hello world!")'
+        plugin_py_tarinfo.size = len(plugin_py_bytes)
+        tar.addfile(plugin_py_tarinfo, io.BytesIO(plugin_py_bytes))
+    fileobj.seek(0)
+
+    return build_agent_plugin(source_archive=fileobj.getvalue())
+
+
+BuildAgentPluginCallable = Callable[[bytes, Tuple[OperatingSystem, ...]], AgentPlugin]
+
+
+@pytest.fixture
+def build_agent_plugin_tar_with_source_tar(build_agent_plugin: BuildAgentPluginCallable):
+    def inner(input_tar_path: Path) -> BinaryIO:
+        with open(input_tar_path, "rb") as f:
+            source_archive = f.read()
+            agent_plugin = build_agent_plugin(source_archive, tuple())
+            return build_agent_plugin_tar(agent_plugin)
+
+    return inner
+
+
+@pytest.fixture
+def build_agent_plugin(agent_plugin_manifest: AgentPluginManifest, config_schema: Dict[str, Any]):
+    def inner(
+        source_archive: bytes = b"",
+        host_operating_systems: Tuple[OperatingSystem, ...] = (
+            OperatingSystem.LINUX,
+            OperatingSystem.WINDOWS,
+        ),
+    ) -> AgentPlugin:
+        return AgentPlugin(
+            plugin_manifest=agent_plugin_manifest,
+            config_schema=config_schema,
+            source_archive=source_archive,
+            host_operating_systems=host_operating_systems,
+        )
+
+    return inner
+
+
+@pytest.fixture
+def agent_plugin_manifest() -> AgentPluginManifest:
+    return AgentPluginManifest(
+        name="TestPlugin",
+        plugin_type=AgentPluginType.EXPLOITER,
+        supported_operating_systems=[OperatingSystem.LINUX, OperatingSystem.WINDOWS],
+    )
+
+
+@pytest.fixture
+def config_schema() -> Dict[str, Any]:
+    return {"type": "object", "properties": {"name": {"type": "string"}}}
+
+
+def build_agent_plugin_tar(agent_plugin: AgentPlugin) -> BinaryIO:
+    fileobj = io.BytesIO()
+    with TarFile(fileobj=fileobj, mode="w") as tar:
+        manifest_tarinfo = TarInfo("plugin.yaml")
+        manifest_bytes = yaml.safe_dump(agent_plugin.plugin_manifest.dict(simplify=True)).encode()
+        manifest_tarinfo.size = len(manifest_bytes)
+        tar.addfile(manifest_tarinfo, io.BytesIO(manifest_bytes))
+
+        config_schema_tarinfo = TarInfo("config-schema.json")
+        config_schema_bytes = json.dumps(agent_plugin.config_schema).encode()
+        config_schema_tarinfo.size = len(config_schema_bytes)
+        tar.addfile(config_schema_tarinfo, io.BytesIO(config_schema_bytes))
+
+        plugin_source_archive_tarinfo = TarInfo("plugin.tar")
+        plugin_source_archive_tarinfo.size = len(agent_plugin.source_archive)
+        tar.addfile(plugin_source_archive_tarinfo, io.BytesIO(agent_plugin.source_archive))
+
+    fileobj.seek(0)
+    return fileobj
+
+
+def test_parse_plugin_manifest(
+    simple_agent_plugin: AgentPlugin, agent_plugin_manifest: AgentPluginManifest
+):
+    agent_plugin_tar = build_agent_plugin_tar(simple_agent_plugin)
+    parsed_plugin = parse_plugin(agent_plugin_tar)
+
+    for plugin in parsed_plugin.values():
+        assert plugin.plugin_manifest == agent_plugin_manifest
+
+
+def test_parse_plugin_config_schema(
+    simple_agent_plugin: AgentPlugin, config_schema: Dict[str, Any]
+):
+    agent_plugin_tar = build_agent_plugin_tar(simple_agent_plugin)
+    parsed_plugin = parse_plugin(agent_plugin_tar)
+
+    for plugin in parsed_plugin.values():
+        assert plugin.config_schema == config_schema
+
+
+def assert_parsed_plugin_archive_equals_expected(
+    actual_source_archive: bytes, expected_tar_path: Path
+):
+    actual = TarFile(fileobj=io.BytesIO(actual_source_archive))
+
+    with TarFile(fileobj=io.BytesIO(actual_source_archive)) as actual:
+        with open(expected_tar_path, "rb") as f:
+            with TarFile(fileobj=f) as expected:
+                assert actual.getnames() == expected.getnames()
+                assert len(actual.getmembers()) == len(expected.getmembers())
+
+                for member in actual.getmembers():
+                    a = actual.extractfile(member)
+                    e = expected.extractfile(member)
+                    if a is None or e is None:
+                        assert a == e
+                    else:
+                        assert a.read() == e.read()
+
+
+def test_parse_windows_vendor_only(
+    plugin_data_dir: Path, build_agent_plugin_tar_with_source_tar: Callable[[Path], BinaryIO]
+):
+    agent_plugin_tar = build_agent_plugin_tar_with_source_tar(
+        plugin_data_dir / "only-windows-vendor-plugin-source-input.tar"
+    )
+
+    parsed_plugin = parse_plugin(agent_plugin_tar)
+
+    assert OperatingSystem.LINUX not in parsed_plugin
+    assert_parsed_plugin_archive_equals_expected(
+        parsed_plugin[OperatingSystem.WINDOWS].source_archive,
+        plugin_data_dir / "only-windows-vendor-plugin-source-expected-output.tar",
+    )
+
+
+def test_parse_linux_vendor_only(
+    plugin_data_dir: Path, build_agent_plugin_tar_with_source_tar: Callable[[Path], BinaryIO]
+):
+    agent_plugin_tar = build_agent_plugin_tar_with_source_tar(
+        plugin_data_dir / "only-linux-vendor-plugin-source-input.tar"
+    )
+
+    parsed_plugin = parse_plugin(agent_plugin_tar)
+
+    assert OperatingSystem.WINDOWS not in parsed_plugin
+    assert_parsed_plugin_archive_equals_expected(
+        parsed_plugin[OperatingSystem.LINUX].source_archive,
+        plugin_data_dir / "only-linux-vendor-plugin-source-expected-output.tar",
+    )
+
+
+def test_parse_multi_vendor(
+    plugin_data_dir: Path, build_agent_plugin_tar_with_source_tar: Callable[[Path], BinaryIO]
+):
+    agent_plugin_tar = build_agent_plugin_tar_with_source_tar(
+        plugin_data_dir / "multi-vendor-plugin-source-input.tar"
+    )
+
+    parsed_plugin = parse_plugin(agent_plugin_tar)
+
+    assert_parsed_plugin_archive_equals_expected(
+        parsed_plugin[OperatingSystem.LINUX].source_archive,
+        plugin_data_dir / "multi-vendor-plugin-source-expected-linux-output.tar",
+    )
+    assert_parsed_plugin_archive_equals_expected(
+        parsed_plugin[OperatingSystem.WINDOWS].source_archive,
+        plugin_data_dir / "multi-vendor-plugin-source-expected-windows-output.tar",
+    )
+
+
+def test_parse_cross_platform(
+    plugin_data_dir: Path, build_agent_plugin_tar_with_source_tar: Callable[[Path], BinaryIO]
+):
+    agent_plugin_tar = build_agent_plugin_tar_with_source_tar(
+        plugin_data_dir / "cross-platform-plugin-source.tar"
+    )
+
+    parsed_plugin = parse_plugin(agent_plugin_tar)
+
+    assert_parsed_plugin_archive_equals_expected(
+        parsed_plugin[OperatingSystem.LINUX].source_archive,
+        plugin_data_dir / "cross-platform-plugin-source.tar",
+    )
+    assert_parsed_plugin_archive_equals_expected(
+        parsed_plugin[OperatingSystem.WINDOWS].source_archive,
+        plugin_data_dir / "cross-platform-plugin-source.tar",
+    )
+
+
+# --------------------------------------------------------------------------------------------------
+
+
+@pytest.fixture
 def plugin_tarfile(plugin_file) -> TarFile:
     return tarfile.open(plugin_file)
-
-
-@pytest.fixture
-def plugin_with_one_vendor_tarfile(plugin_with_one_vendor_file) -> TarFile:
-    return tarfile.open(plugin_with_one_vendor_file)
-
-
-@pytest.fixture
-def plugin_with_two_vendors_tarfile(plugin_with_two_vendors_file) -> TarFile:
-    return tarfile.open(plugin_with_two_vendors_file)
 
 
 @pytest.fixture
@@ -44,149 +230,6 @@ def symlink_tarfile(symlink_plugin_file) -> TarFile:
 @pytest.fixture
 def dir_tarfile(dir_plugin_file) -> TarFile:
     return tarfile.open(dir_plugin_file)
-
-
-@pytest.fixture
-def plugin_with_three_vendors_tarfile(plugin_with_three_vendors_file) -> TarFile:
-    return tarfile.open(plugin_with_three_vendors_file)
-
-
-@pytest.fixture
-def plugin_with_two_vendor_dirs_one_vendor_file_tarfile(
-    plugin_with_two_vendor_dirs_one_vendor_file_file,
-) -> TarFile:
-    return tarfile.open(plugin_with_two_vendor_dirs_one_vendor_file_file)
-
-
-@pytest.fixture
-def only_windows_vendor_plugin_tarfile(only_windows_vendor_plugin_file) -> TarFile:
-    return tarfile.open(only_windows_vendor_plugin_file)
-
-
-@pytest.fixture
-def plugin_with_no_vendor_tarfile(plugin_with_no_vendor_file) -> TarFile:
-    return tarfile.open(plugin_with_no_vendor_file)
-
-
-def _get_plugin_source_tar(tarfile_):
-    return TarFile(fileobj=io.BytesIO(get_plugin_source(tarfile_)))
-
-
-def test_get_os_specific_plugin_source_archives(plugin_with_two_vendors_tarfile):
-    plugin_source_tar = _get_plugin_source_tar(plugin_with_two_vendors_tarfile)
-    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
-
-    assert os_specific_data[OperatingSystem.WINDOWS] != os_specific_data[OperatingSystem.LINUX]
-
-
-def test_get_os_specific_plugin_source_archives__only_windows(only_windows_vendor_plugin_tarfile):
-    plugin_source_tar = _get_plugin_source_tar(only_windows_vendor_plugin_tarfile)
-    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
-
-    assert len(os_specific_data.keys()) == 1
-    assert list(os_specific_data.keys()) == [OperatingSystem.WINDOWS]
-
-
-def test_get_os_specific_plugin_source_archives__unrecognised_os(plugin_with_three_vendors_tarfile):
-    plugin_source_tar = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
-    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
-
-    assert len(os_specific_data.keys()) == 0
-    assert list(os_specific_data.keys()) == []
-
-
-def test_get_plugin_vendors__3_vendor_dirs(plugin_with_three_vendors_tarfile):
-    plugin_source_tarfile = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
-    vendors = get_plugin_source_vendors(plugin_source_tarfile)
-
-    assert len(vendors) == 3
-
-
-def test_get_plugin_vendors__2_vendor_dirs_1_Vendor_file(
-    plugin_with_two_vendor_dirs_one_vendor_file_tarfile,
-):
-    plugin_source_tarfile = _get_plugin_source_tar(
-        plugin_with_two_vendor_dirs_one_vendor_file_tarfile
-    )
-    vendors = get_plugin_source_vendors(plugin_source_tarfile)
-
-    assert len(vendors) == 2
-
-
-def test_parse_plugin__no_vendor(plugin_with_no_vendor_file, plugin_with_no_vendor_tarfile):
-    manifest = get_plugin_manifest(plugin_with_no_vendor_tarfile)
-    schema = get_plugin_schema(plugin_with_no_vendor_tarfile)
-    data = get_plugin_source(plugin_with_no_vendor_tarfile)
-
-    expected_agent_plugin_object = AgentPlugin(
-        plugin_manifest=manifest,
-        config_schema=schema,
-        source_archive=data,
-        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
-    )
-    expected_return = {
-        OperatingSystem.WINDOWS: expected_agent_plugin_object,
-        OperatingSystem.LINUX: expected_agent_plugin_object,
-    }
-
-    with open(plugin_with_no_vendor_file, "rb") as f:
-        assert parse_plugin(io.BytesIO(f.read())) == expected_return
-
-
-def test_parse_plugin__single_vendor(plugin_with_one_vendor_file, plugin_with_one_vendor_tarfile):
-    manifest = get_plugin_manifest(plugin_with_one_vendor_tarfile)
-    schema = get_plugin_schema(plugin_with_one_vendor_tarfile)
-    data = get_plugin_source(plugin_with_one_vendor_tarfile)
-
-    expected_agent_plugin_object = AgentPlugin(
-        plugin_manifest=manifest,
-        config_schema=schema,
-        source_archive=data,
-        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
-    )
-    expected_return = {
-        OperatingSystem.WINDOWS: expected_agent_plugin_object,
-        OperatingSystem.LINUX: expected_agent_plugin_object,
-    }
-
-    with open(plugin_with_one_vendor_file, "rb") as f:
-        assert parse_plugin(io.BytesIO(f.read())) == expected_return
-
-
-def test_parse_plugin__two_vendors(plugin_with_two_vendors_file, plugin_with_two_vendors_tarfile):
-    manifest = get_plugin_manifest(plugin_with_two_vendors_tarfile)
-    schema = get_plugin_schema(plugin_with_two_vendors_tarfile)
-
-    plugin_source_tar = TarFile(
-        fileobj=io.BytesIO(get_plugin_source(plugin_with_two_vendors_tarfile))
-    )
-    plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
-
-    expected_linux_agent_plugin_object = AgentPlugin(
-        plugin_manifest=manifest,
-        config_schema=schema,
-        source_archive=os_specific_data[OperatingSystem.LINUX],
-        host_operating_systems=(OperatingSystem.LINUX,),
-    )
-    expected_windows_agent_plugin_object = AgentPlugin(
-        plugin_manifest=manifest,
-        config_schema=schema,
-        source_archive=os_specific_data[OperatingSystem.WINDOWS],
-        host_operating_systems=(OperatingSystem.WINDOWS,),
-    )
-    expected_return = {
-        OperatingSystem.WINDOWS: expected_windows_agent_plugin_object,
-        OperatingSystem.LINUX: expected_linux_agent_plugin_object,
-    }
-
-    with open(plugin_with_two_vendors_file, "rb") as f:
-        actual_return = parse_plugin(io.BytesIO(f.read()))
-
-    assert actual_return == expected_return
 
 
 EXPECTED_MANIFEST = AgentPluginManifest(
