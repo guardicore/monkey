@@ -224,6 +224,9 @@ def _rewrite_os_specific_vendor_paths(plugin_source_tar: TarFile, vendor: Vendor
             if member_first_part == vendor.value:
                 new_member.name = re.sub(f"^{vendor.value}", "vendor", member.name, count=1)
 
+            # SECURITY: We're not checking file types or other security concerns here. The contents
+            # of this tar archive will be run by the Agent. This can do whatever it wants when it's
+            # run, meaning security checks have little meaning. Don't run untrusted plugins!
             extracted_file = plugin_source_tar.extractfile(member)
             os_specific_plugin_tar.addfile(tarinfo=new_member, fileobj=extracted_file)
     file_obj.seek(0)
