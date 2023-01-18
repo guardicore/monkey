@@ -249,6 +249,12 @@ def test_get_plugin_manifest(plugin_tarfile):
     assert actual == expected
 
 
+def test_missing_manifest(missing_manifest_plugin_file):
+    with open(missing_manifest_plugin_file, "rb") as f:
+        with pytest.raises(ValueError):
+            parse_plugin(f)
+
+
 def test_get_plugin_schema(plugin_tarfile):
     expected = {"type": "object", "properties": {"name": {"type": "string"}}}
 
