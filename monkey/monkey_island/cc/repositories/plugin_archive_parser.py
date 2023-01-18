@@ -10,7 +10,7 @@ import yaml
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
-from common.utils.file_utils import create_secure_directory
+from common.utils.file_utils import create_secure_directory, random_filename
 
 MANIFEST_FILENAME = "plugin.yaml"
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
@@ -99,12 +99,8 @@ def _parse_plugin_with_multiple_vendors(
     manifest: AgentPluginManifest,
     schema: Dict[str, Any],
 ):
-    # create dir to store files and plugins per OS
-    parsed_plugins_dir = data_dir / "parsed_plugins"
-    create_secure_directory(parsed_plugins_dir)
-
     os_specific_plugin_source_archives = get_os_specific_plugin_source_archives(
-        plugin_source_tar, plugin_source_vendors, parsed_plugins_dir
+        data_dir, plugin_source_tar, plugin_source_vendors
     )
 
     for os_, os_specific_plugin_source_archive in os_specific_plugin_source_archives.items():
@@ -114,8 +110,6 @@ def _parse_plugin_with_multiple_vendors(
             source_archive=os_specific_plugin_source_archive,
             host_operating_systems=(os_,),
         )
-
-    _remove_directory(parsed_plugins_dir)
 
 
 def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
@@ -179,15 +173,16 @@ def get_plugin_source_vendors(plugin_source_tar: TarFile) -> Sequence[TarInfo]:
 
 
 def get_os_specific_plugin_source_archives(
-    plugin_source_tar, plugin_source_vendors, data_dir_parsed_plugins_path
+    data_dir, plugin_source_tar, plugin_source_vendors
 ) -> Mapping[OperatingSystem, bytes]:
 
     os_specific_plugin_source_archives = {}
 
-    linux_plugin_dir_path = data_dir_parsed_plugins_path / "linux"
-    windows_plugin_dir_path = data_dir_parsed_plugins_path / "windows"
-    create_secure_directory(linux_plugin_dir_path)
-    create_secure_directory(windows_plugin_dir_path)
+    # Create a directory to store the new OS-specific plugins. This is deleted later.
+    # We're using a random filename so that if the directory isn't deleted for some reason,
+    # other plugins can still be parsed in a different directory.
+    parsed_plugin_dir = data_dir / f"parsed_plugin_{random_filename()}"
+    create_secure_directory(parsed_plugin_dir)
 
     for vendor in plugin_source_vendors:
         if "linux" in vendor.name:
@@ -198,10 +193,9 @@ def get_os_specific_plugin_source_archives(
             logger.info(f"Operating system of vendor directory ({vendor.name}) not recognised")
             continue
 
-        os_specific_plugin_tar_path = (
-            data_dir_parsed_plugins_path / vendor_os.value / SOURCE_ARCHIVE_FILENAME
-        )
-        with TarFile(name=os_specific_plugin_tar_path, mode="w") as os_specific_plugin_tar:
+        new_plugin_tar_path = parsed_plugin_dir / SOURCE_ARCHIVE_FILENAME
+
+        with TarFile(name=new_plugin_tar_path, mode="w") as os_specific_plugin_tar:
             for item in [
                 tarinfo
                 for tarinfo in plugin_source_tar.getmembers()
@@ -210,16 +204,15 @@ def get_os_specific_plugin_source_archives(
             ]:
                 os_specific_plugin_tar.addfile(tarinfo=item)
 
-        with open(os_specific_plugin_tar_path, "rb") as f:
+        with open(new_plugin_tar_path, "rb") as f:
             os_specific_plugin_source_archives[vendor_os] = f.read()
 
-    _remove_directory(linux_plugin_dir_path)
-    _remove_directory(windows_plugin_dir_path)
+    _try_remove_directory(parsed_plugin_dir)
 
     return os_specific_plugin_source_archives
 
 
-def _remove_directory(path: Path):
+def _try_remove_directory(path: Path):
     try:
         shutil.rmtree(path)
     except Exception as ex:
