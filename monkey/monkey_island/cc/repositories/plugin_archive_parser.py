@@ -1,7 +1,10 @@
 import io
 import json
 import logging
+import re
+from copy import deepcopy
 from enum import Enum
+from pathlib import PurePath
 from tarfile import TarFile, TarInfo
 from typing import IO, Any, BinaryIO, Dict, Mapping, Sequence
 
@@ -180,8 +183,10 @@ def get_os_specific_plugin_source_archives(
     for vendor in plugin_source_vendors:
         if vendor.name == VendorDirName.LINUX_VENDOR.value:
             vendor_os = OperatingSystem.LINUX
+            vendor_ignore_list = [VendorDirName.WINDOWS_VENDOR.value]
         elif vendor.name == VendorDirName.WINDOWS_VENDOR.value:
             vendor_os = OperatingSystem.WINDOWS
+            vendor_ignore_list = [VendorDirName.LINUX_VENDOR.value]
         else:
             logger.info(
                 f"Operating system of vendor directory ({vendor.name}) not recognised."
@@ -190,16 +195,22 @@ def get_os_specific_plugin_source_archives(
             )
             continue
 
-        file_handle = io.BytesIO()
-        with TarFile(fileobj=file_handle, mode="w") as os_specific_plugin_tar:
-            for item in [
-                tarinfo
-                for tarinfo in plugin_source_tar.getmembers()
-                if tarinfo.name.startswith(f"{vendor.name}/")
-                or not tarinfo.name.startswith("vendor")
-            ]:
-                os_specific_plugin_tar.addfile(tarinfo=item)
+        file_obj = io.BytesIO()
+        with TarFile(fileobj=file_obj, mode="w") as os_specific_plugin_tar:
+            for member in plugin_source_tar.getmembers():
+                member_path = PurePath(member.name)
+                if member_path.parts[0] in vendor_ignore_list:
+                    continue
 
-            os_specific_plugin_source_archives[vendor_os] = file_handle.getvalue()
+                new_member = deepcopy(member)
+                if member_path.parts[0] == vendor.name:
+                    new_member.name = re.sub(f"^{vendor.name}", "vendor", member.name, count=1)
+
+                os_specific_plugin_tar.addfile(
+                    tarinfo=new_member, fileobj=plugin_source_tar.extractfile(member)
+                )
+
+        file_obj.seek(0)
+        os_specific_plugin_source_archives[vendor_os] = file_obj.read()
 
     return os_specific_plugin_source_archives
