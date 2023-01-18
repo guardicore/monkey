@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import io
 import json
 import logging
@@ -25,6 +27,23 @@ class VendorDirName(Enum):
     LINUX_VENDOR = "vendor-linux"
     WINDOWS_VENDOR = "vendor-windows"
     ANY_VENDOR = "vendor"
+
+    @staticmethod
+    def to_operating_system(vendor_dir_name: VendorDirName) -> OperatingSystem:
+        if vendor_dir_name == VendorDirName.LINUX_VENDOR:
+            return OperatingSystem.LINUX
+        elif vendor_dir_name == VendorDirName.WINDOWS_VENDOR:
+            return OperatingSystem.WINDOWS
+        else:
+            raise ValueError(
+                f"Cannot convert vendor dir name {vendor_dir_name.value} to operating system"
+            )
+
+
+VENDOR_IGNORE_LIST = {
+    OperatingSystem.LINUX: [VendorDirName.WINDOWS_VENDOR.value],
+    OperatingSystem.WINDOWS: [VendorDirName.LINUX_VENDOR.value],
+}
 
 
 def tarinfo_type(tar: TarInfo) -> str:
@@ -182,19 +201,16 @@ def _get_os_specific_plugin_source_archives(
     os_specific_plugin_source_archives = {}
 
     for vendor in plugin_source_vendors:
-        if vendor == VendorDirName.LINUX_VENDOR:
-            vendor_os = OperatingSystem.LINUX
-            vendor_ignore_list = [VendorDirName.WINDOWS_VENDOR.value]
-        elif vendor == VendorDirName.WINDOWS_VENDOR:
-            vendor_os = OperatingSystem.WINDOWS
-            vendor_ignore_list = [VendorDirName.LINUX_VENDOR.value]
-        else:
+        if vendor == VendorDirName.ANY_VENDOR:
             logger.warning(
                 f"Operating system of vendor directory ({vendor.name}) not recognised."
                 f"Vendor directory should be named one of the following names based on the"
                 f"supported operating systems: {[v.value for v in VendorDirName]}"
             )
             continue
+
+        vendor_os = VendorDirName.to_operating_system(vendor)
+        vendor_ignore_list = VENDOR_IGNORE_LIST[vendor_os]
 
         file_obj = io.BytesIO()
         with TarFile(fileobj=file_obj, mode="w") as os_specific_plugin_tar:

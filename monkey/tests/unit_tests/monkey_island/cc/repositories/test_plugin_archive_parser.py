@@ -15,6 +15,7 @@ from monkey_island.cc.repositories.plugin_archive_parser import (
     get_plugin_schema,
     get_plugin_source,
     parse_plugin,
+    VendorDirName,
 )
 
 
@@ -209,9 +210,6 @@ def test_parse_cross_platform(
     )
 
 
-# --------------------------------------------------------------------------------------------------
-
-
 @pytest.fixture
 def plugin_tarfile(plugin_file) -> TarFile:
     return tarfile.open(plugin_file)
@@ -303,3 +301,18 @@ def test_get_plugin_source__ValueError_if_bad(tarfile_fixture_name, request):
     tarfile = request.getfixturevalue(tarfile_fixture_name)
     with pytest.raises(ValueError):
         get_plugin_source(tarfile)
+
+
+@pytest.mark.parametrize(
+    "input_vendor_dir_name, expected_os",
+    [
+        (VendorDirName.LINUX_VENDOR, OperatingSystem.LINUX),
+        (VendorDirName.WINDOWS_VENDOR, OperatingSystem.WINDOWS),
+    ],
+)
+def test_to_operating_system(input_vendor_dir_name: VendorDirName, expected_os: OperatingSystem):
+    assert VendorDirName.to_operating_system(input_vendor_dir_name) == expected_os
+
+def test_to_operating_system__raises_ValueError():
+    with pytest.raises(ValueError):
+        VendorDirName.to_operating_system(VendorDirName.ANY_VENDOR)
