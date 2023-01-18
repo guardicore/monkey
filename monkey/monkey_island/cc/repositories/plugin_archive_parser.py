@@ -2,7 +2,6 @@ import io
 import json
 import logging
 import shutil
-import tarfile
 from pathlib import Path
 from tarfile import TarFile, TarInfo
 from typing import IO, Any, BinaryIO, Dict, Mapping, Sequence
@@ -41,7 +40,7 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
     :raises ValueError: If the file is not a valid plugin
     """
 
-    parsed_plugin = {}
+    parsed_plugin: Dict[OperatingSystem, AgentPlugin] = {}
 
     tar_file = TarFile(fileobj=file)
     try:
@@ -50,44 +49,73 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
         source = get_plugin_source(tar_file)
 
         extracted_plugin = _safe_extract_file(tar=tar_file, filename=SOURCE_ARCHIVE_FILENAME)
-        plugin_source_tar = tarfile.TarFile(fileobj=io.BytesIO(extracted_plugin.read()))
+        plugin_source_tar = TarFile(fileobj=io.BytesIO(extracted_plugin.read()))
         plugin_source_vendors = get_plugin_source_vendors(plugin_source_tar)
 
         if "vendor" in [vendor.name for vendor in plugin_source_vendors]:
-            # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/
-            # exist
-            plugin = AgentPlugin(
-                plugin_manifest=manifest,
-                config_schema=schema,
-                source_archive=source,
-                host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+            # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
+            _parse_plugin_with_generic_vendor(
+                parsed_plugin=parsed_plugin, manifest=manifest, schema=schema, source=source
             )
-            parsed_plugin[OperatingSystem.LINUX] = plugin
-            parsed_plugin[OperatingSystem.WINDOWS] = plugin
-
-            return parsed_plugin
-
-        # create dir to store files and plugins per OS
-        parsed_plugins_dir = data_dir / "parsed_plugins"
-        create_secure_directory(parsed_plugins_dir)
-
-        os_specific_plugin_source_archives = get_os_specific_plugin_source_archives(
-            plugin_source_tar, plugin_source_vendors, parsed_plugins_dir
-        )
-        for os_, os_specific_plugin_source_archive in os_specific_plugin_source_archives.items():
-            parsed_plugin[os_] = AgentPlugin(
-                plugin_manifest=manifest,
-                config_schema=schema,
-                source_archive=os_specific_plugin_source_archive,
-                host_operating_systems=(os_,),
+        else:
+            # vendor/ doesn't exist, so parse plugins based on OS-specific vendor directories
+            _parse_plugin_with_multiple_vendors(
+                parsed_plugin=parsed_plugin,
+                data_dir=data_dir,
+                plugin_source_tar=plugin_source_tar,
+                plugin_source_vendors=plugin_source_vendors,
+                manifest=manifest,
+                schema=schema,
             )
-
-        _remove_directory(parsed_plugins_dir)
 
         return parsed_plugin
 
     except KeyError as err:
         raise ValueError(f"Invalid plugin archive: {err}")
+
+
+def _parse_plugin_with_generic_vendor(
+    parsed_plugin: Dict[OperatingSystem, AgentPlugin],
+    manifest: AgentPluginManifest,
+    schema: Dict[str, Any],
+    source: bytes,
+):
+    plugin = AgentPlugin(
+        plugin_manifest=manifest,
+        config_schema=schema,
+        source_archive=source,
+        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+    )
+
+    parsed_plugin[OperatingSystem.LINUX] = plugin
+    parsed_plugin[OperatingSystem.WINDOWS] = plugin
+
+
+def _parse_plugin_with_multiple_vendors(
+    parsed_plugin: Dict[OperatingSystem, AgentPlugin],
+    data_dir: Path,
+    plugin_source_tar: TarFile,
+    plugin_source_vendors: Sequence[TarInfo],
+    manifest: AgentPluginManifest,
+    schema: Dict[str, Any],
+):
+    # create dir to store files and plugins per OS
+    parsed_plugins_dir = data_dir / "parsed_plugins"
+    create_secure_directory(parsed_plugins_dir)
+
+    os_specific_plugin_source_archives = get_os_specific_plugin_source_archives(
+        plugin_source_tar, plugin_source_vendors, parsed_plugins_dir
+    )
+
+    for os_, os_specific_plugin_source_archive in os_specific_plugin_source_archives.items():
+        parsed_plugin[os_] = AgentPlugin(
+            plugin_manifest=manifest,
+            config_schema=schema,
+            source_archive=os_specific_plugin_source_archive,
+            host_operating_systems=(os_,),
+        )
+
+    _remove_directory(parsed_plugins_dir)
 
 
 def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
@@ -173,7 +201,7 @@ def get_os_specific_plugin_source_archives(
         os_specific_plugin_tar_path = (
             data_dir_parsed_plugins_path / vendor_os.value / SOURCE_ARCHIVE_FILENAME
         )
-        with tarfile.TarFile(name=os_specific_plugin_tar_path, mode="w") as os_specific_plugin_tar:
+        with TarFile(name=os_specific_plugin_tar_path, mode="w") as os_specific_plugin_tar:
             for item in [
                 tarinfo
                 for tarinfo in plugin_source_tar.getmembers()
