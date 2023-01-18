@@ -80,6 +80,12 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     return !(selectValues.every((value) => isPluginSafe(value)));
   }
 
+  function onResetClick() {
+    let safePluginNames = [...props.formContext.selectedExploiters].filter(
+      pluginName => isPluginSafe(pluginName));
+    props.formContext.setSelectedExploiters(new Set(safePluginNames));
+  }
+
   return (
     <div className={'advanced-multi-select'}>
       <AdvancedMultiSelectHeader title={props.schema.title}
@@ -87,12 +93,11 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                                  checkboxState={
                                    getMasterCheckboxState(
                                      [...props.formContext.selectedExploiters])}
-                                 hideReset={getHideResetState([...props.formContext.selectedExploiters])}
-                                 onResetClick={() => {
-                                 }}/>
-
+                                 hideReset={getHideResetState(
+                                       [...props.formContext.selectedExploiters])}
+                                 onResetClick={onResetClick}/>
       <ChildCheckboxContainer multiple={true} required={false}
-                              autoFocus={false}
+                              autoFocus={true}
                               selectedValues={[...props.formContext.selectedExploiters]}
                               onCheckboxClick={togglePluggin}
                               isSafe={isPluginSafe}
