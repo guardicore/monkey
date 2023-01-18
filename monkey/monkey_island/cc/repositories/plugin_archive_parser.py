@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+from enum import Enum
 from tarfile import TarFile, TarInfo
 from typing import IO, Any, BinaryIO, Dict, Mapping, Sequence
 
@@ -14,6 +15,12 @@ CONFIG_SCHEMA_FILENAME = "config-schema.json"
 SOURCE_ARCHIVE_FILENAME = "plugin.tar"
 
 logger = logging.getLogger(__name__)
+
+
+class VendorDirName(Enum):
+    LINUX_VENDOR = "vendor-linux"
+    WINDOWS_VENDOR = "vendor-windows"
+    ANY_VENDOR = "vendor"
 
 
 def tarinfo_type(tar: TarInfo) -> str:
@@ -49,7 +56,7 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
 
         # if no vendor directories, ship plugin.tar as is
         # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
-        if len(plugin_source_vendors) == 0 or "vendor" in [
+        if len(plugin_source_vendors) == 0 or VendorDirName.ANY_VENDOR.value in [
             vendor.name for vendor in plugin_source_vendors
         ]:
             return _parse_plugin_with_generic_vendor(
@@ -123,7 +130,7 @@ def get_plugin_source_vendors(plugin_source_tar: TarFile) -> Sequence[TarInfo]:
     plugin_source_vendors = [
         member
         for member in plugin_source_tar.getmembers()
-        if (member.name.startswith("vendor") and member.isdir())
+        if (member.name in [vendor_dir.value for vendor_dir in VendorDirName] and member.isdir())
     ]
     return plugin_source_vendors
 
@@ -172,12 +179,16 @@ def get_os_specific_plugin_source_archives(
     os_specific_plugin_source_archives = {}
 
     for vendor in plugin_source_vendors:
-        if "linux" in vendor.name:
+        if vendor.name == VendorDirName.LINUX_VENDOR.value:
             vendor_os = OperatingSystem.LINUX
-        elif "windows" in vendor.name:
+        elif vendor.name == VendorDirName.WINDOWS_VENDOR.value:
             vendor_os = OperatingSystem.WINDOWS
         else:
-            logger.info(f"Operating system of vendor directory ({vendor.name}) not recognised")
+            logger.info(
+                f"Operating system of vendor directory ({vendor.name}) not recognised."
+                f"Vendor directory should be named one of the following names based on the"
+                f"supported operating systems: {[v.value for v in VendorDirName]}"
+            )
             continue
 
         file_handle = io.BytesIO()
