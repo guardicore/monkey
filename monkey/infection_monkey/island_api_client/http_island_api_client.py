@@ -10,7 +10,7 @@ from common import AgentHeartbeat, AgentRegistrationData, AgentSignals, Operatin
 from common.agent_configuration import AgentConfiguration
 from common.agent_event_serializers import AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent
-from common.agent_plugins import AgentPlugin, AgentPluginType
+from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
 from common.credentials import Credentials
 from common.types import AgentID, JSONSerializable, SocketAddress
@@ -65,6 +65,14 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response = self.http_client.get(f"agent-plugins/{plugin_type.value}/{plugin_name}")
 
         return AgentPlugin(**response.json())
+
+    @handle_response_parsing_errors
+    def get_agent_plugin_manifest(
+        self, plugin_type: AgentPluginType, plugin_name: str
+    ) -> AgentPluginManifest:
+        response = self.http_client.get(f"agent-plugins/{plugin_type.value}/{plugin_name}/manifest")
+
+        return AgentPluginManifest(**response.json())
 
     @handle_response_parsing_errors
     def get_agent_signals(self, agent_id: str) -> AgentSignals:

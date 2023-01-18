@@ -8,6 +8,7 @@ from common.types import Event, PortStatus
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
+    IncompatibleOperatingSystemError,
     IPuppet,
     PingScanData,
     PortScanData,
@@ -207,8 +208,18 @@ class MockPuppet(IPuppet):
             },
         }
 
+        supported_os = {
+            "SSHExploiter": [OperatingSystem.LINUX],
+            "ZerologonExploiter": [OperatingSystem.WINDOWS],
+            "WmiExploiter": [OperatingSystem.WINDOWS],
+            "PowerShellExploiter": [OperatingSystem.WINDOWS],
+            "MSSQLExploiter": [OperatingSystem.WINDOWS],
+        }
+
         try:
-            return successful_exploiters[host.ip][name]
+            if host.operating_system in supported_os[name] or host.operating_system is None:
+                return successful_exploiters[host.ip][name]
+            raise IncompatibleOperatingSystemError
         except KeyError:
             return ExploiterResultData(
                 False,

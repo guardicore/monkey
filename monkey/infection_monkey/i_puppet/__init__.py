@@ -5,6 +5,8 @@ from .i_puppet import (
     ExploiterResultData,
     FingerprintData,
     UnknownPluginError,
+    RejectedRequestError,
+    IncompatibleOperatingSystemError,
 )
 from .i_fingerprinter import IFingerprinter
 from .i_credential_collector import ICredentialCollector

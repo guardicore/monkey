@@ -16,6 +16,7 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader
 from serpentarium.logging import configure_child_process_logger
 
+from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
@@ -76,7 +77,11 @@ from infection_monkey.propagation_credentials_repository import (
     AggregatingPropagationCredentialsRepository,
     PropagationCredentialsRepository,
 )
-from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
+from infection_monkey.puppet import (
+    PluginCompatabilityVerifier,
+    PluginRegistry,
+    PluginSourceExtractor,
+)
 from infection_monkey.puppet.puppet import Puppet
 from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.utils import agent_process, environment
@@ -348,7 +353,10 @@ class InfectionMonkey:
             self._agent_event_publisher,
             self._propagation_credentials_repository,
         )
-        puppet = Puppet(self._agent_event_queue, plugin_registry)
+        plugin_compatability_verifier = PluginCompatabilityVerifier(
+            self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
+        )
+        puppet = Puppet(self._agent_event_queue, plugin_registry, plugin_compatability_verifier)
 
         puppet.load_plugin(
             AgentPluginType.CREDENTIAL_COLLECTOR,
