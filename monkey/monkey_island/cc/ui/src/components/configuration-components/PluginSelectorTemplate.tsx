@@ -21,6 +21,9 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                        link={selectedPlugin.content.props.schema.link}
                        warningType={pluginWarningType}/>
     }
+    return <InfoPane title={props.schema.title}
+                     body={props.schema.description}
+                     warningType={WarningType.NONE}/>
   }
 
   function getOptions() {
