@@ -189,7 +189,7 @@ def _get_os_specific_plugin_source_archives(
             vendor_os = OperatingSystem.WINDOWS
             vendor_ignore_list = [VendorDirName.LINUX_VENDOR.value]
         else:
-            logger.info(
+            logger.warning(
                 f"Operating system of vendor directory ({vendor.name}) not recognised."
                 f"Vendor directory should be named one of the following names based on the"
                 f"supported operating systems: {[v.value for v in VendorDirName]}"
