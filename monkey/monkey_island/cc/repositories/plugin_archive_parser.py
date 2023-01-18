@@ -37,8 +37,6 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
     :raises ValueError: If the file is not a valid plugin
     """
 
-    parsed_plugin: Dict[OperatingSystem, AgentPlugin] = {}
-
     tar_file = TarFile(fileobj=file)
     try:
         manifest = get_plugin_manifest(tar_file)
@@ -54,31 +52,27 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
         if len(plugin_source_vendors) == 0 or "vendor" in [
             vendor.name for vendor in plugin_source_vendors
         ]:
-            _parse_plugin_with_generic_vendor(
-                parsed_plugin=parsed_plugin, manifest=manifest, schema=schema, source=source
+            return _parse_plugin_with_generic_vendor(
+                manifest=manifest, schema=schema, source=source
             )
         else:
             # vendor/ doesn't exist, so parse plugins based on OS-specific vendor directories
-            _parse_plugin_with_multiple_vendors(
-                parsed_plugin=parsed_plugin,
+            return _parse_plugin_with_multiple_vendors(
                 plugin_source_tar=plugin_source_tar,
                 plugin_source_vendors=plugin_source_vendors,
                 manifest=manifest,
                 schema=schema,
             )
 
-        return parsed_plugin
-
     except KeyError as err:
         raise ValueError(f"Invalid plugin archive: {err}")
 
 
 def _parse_plugin_with_generic_vendor(
-    parsed_plugin: Dict[OperatingSystem, AgentPlugin],
     manifest: AgentPluginManifest,
     schema: Dict[str, Any],
     source: bytes,
-):
+) -> Mapping[OperatingSystem, AgentPlugin]:
     plugin = AgentPlugin(
         plugin_manifest=manifest,
         config_schema=schema,
@@ -86,21 +80,20 @@ def _parse_plugin_with_generic_vendor(
         host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
 
-    parsed_plugin[OperatingSystem.LINUX] = plugin
-    parsed_plugin[OperatingSystem.WINDOWS] = plugin
+    return {OperatingSystem.LINUX: plugin, OperatingSystem.WINDOWS: plugin}
 
 
 def _parse_plugin_with_multiple_vendors(
-    parsed_plugin: Dict[OperatingSystem, AgentPlugin],
     plugin_source_tar: TarFile,
     plugin_source_vendors: Sequence[TarInfo],
     manifest: AgentPluginManifest,
     schema: Dict[str, Any],
-):
+) -> Mapping[OperatingSystem, AgentPlugin]:
     os_specific_plugin_source_archives = get_os_specific_plugin_source_archives(
         plugin_source_tar, plugin_source_vendors
     )
 
+    parsed_plugin = {}
     for os_, os_specific_plugin_source_archive in os_specific_plugin_source_archives.items():
         parsed_plugin[os_] = AgentPlugin(
             plugin_manifest=manifest,
@@ -108,6 +101,8 @@ def _parse_plugin_with_multiple_vendors(
             source_archive=os_specific_plugin_source_archive,
             host_operating_systems=(os_,),
         )
+
+    return parsed_plugin
 
 
 def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
