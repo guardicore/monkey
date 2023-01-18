@@ -1,10 +1,25 @@
-from typing import Any, Dict, List, Mapping
+from pathlib import Path
+from typing import Any, Dict, Generator, List, Mapping
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 
 from . import IAgentPluginRepository, IFileRepository, RetrievalError
 from .plugin_archive_parser import parse_plugin
+
+
+def _deduplicate_os_specific_plugins(
+    plugins: List[Mapping[OperatingSystem, AgentPlugin]]
+) -> Generator[AgentPlugin, None, None]:
+    """
+    Given OS-specific plugins, select only one plugin object per name
+
+    Information like manifests and config schemas are OS-independent. This function takes
+    OS-specific plugins and selects only one plugin object per name. The selected plugins may
+    support any OS.
+    """
+    for plugin in plugins:
+        yield list(plugin.values())[0]
 
 
 class FileAgentPluginRepository(IAgentPluginRepository):
@@ -46,16 +61,10 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         self,
     ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
-        for parsed_plugin in self._get_all_plugins():
-            plugin_objects = list(parsed_plugin.values())
-            try:
-                # doesn't matter which OS's plugin this is since the config_schema is the same
-                plugin = plugin_objects[0]
-                plugin_type = plugin.plugin_manifest.plugin_type
-                schemas.setdefault(plugin_type, {})
-                schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
-            except IndexError:
-                pass
+        for plugin in _deduplicate_os_specific_plugins(self._get_all_plugins()):
+            plugin_type = plugin.plugin_manifest.plugin_type
+            schemas.setdefault(plugin_type, {})
+            schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
 
         return schemas
 
@@ -80,15 +89,9 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
-        for parsed_plugin in self._get_all_plugins():
-            plugin_objects = list(parsed_plugin.values())
-            try:
-                # doesn't matter which OS's plugin this is since the manifest is the same
-                plugin = plugin_objects[0]
-                plugin_type = plugin.plugin_manifest.plugin_type
-                manifests.setdefault(plugin_type, {})
-                manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
-            except IndexError:
-                pass
+        for plugin in _deduplicate_os_specific_plugins(self._get_all_plugins()):
+            plugin_type = plugin.plugin_manifest.plugin_type
+            manifests.setdefault(plugin_type, {})
+            manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
 
         return manifests
