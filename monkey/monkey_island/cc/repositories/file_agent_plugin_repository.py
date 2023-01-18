@@ -73,19 +73,23 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
         plugin_file_names = self._plugin_file_repository.get_all_file_names()
         for plugin_file_name in plugin_file_names:
-            plugin_name, plugin_type = plugin_file_name.split(".")[0].split("-")
-
-            try:
-                agent_plugin_type = AgentPluginType[plugin_type.upper()]
-            except KeyError as err:
-                raise RetrievalError(
-                    f"Error retrieving plugin {plugin_name} of type {plugin_type.upper()}: {err}"
-                )
-
-            plugin = self._load_plugin_from_file(agent_plugin_type, plugin_name)
-            plugins.append(plugin)
+            plugins.append(self._load_plugin_from_file_name(plugin_file_name))
 
         return plugins
+
+    def _load_plugin_from_file_name(
+        self, plugin_file_name: str
+    ) -> Mapping[OperatingSystem, AgentPlugin]:
+        plugin_name, plugin_type = plugin_file_name.split(".")[0].split("-")
+
+        try:
+            agent_plugin_type = AgentPluginType[plugin_type.upper()]
+        except KeyError as err:
+            raise RetrievalError(
+                f"Error retrieving plugin {plugin_name} of type {plugin_type.upper()}: {err}"
+            )
+
+        return self._load_plugin_from_file(agent_plugin_type, plugin_name)
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
