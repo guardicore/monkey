@@ -48,10 +48,9 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
     try:
         manifest = get_plugin_manifest(tar_file)
         schema = get_plugin_schema(tar_file)
-        source = get_plugin_source(tar_file)
+        source_archive = get_plugin_source(tar_file)
 
-        extracted_plugin = _safe_extract_file(tar=tar_file, filename=SOURCE_ARCHIVE_FILENAME)
-        plugin_source_tar = TarFile(fileobj=io.BytesIO(extracted_plugin.read()))
+        plugin_source_tar = TarFile(fileobj=io.BytesIO(source_archive))
         plugin_source_vendors = get_plugin_source_vendors(plugin_source_tar)
 
         # if no vendor directories, ship plugin.tar as is
@@ -60,7 +59,7 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
             vendor.name for vendor in plugin_source_vendors
         ]:
             return _parse_plugin_with_generic_vendor(
-                manifest=manifest, schema=schema, source=source
+                manifest=manifest, schema=schema, source=source_archive
             )
         else:
             # vendor/ doesn't exist, so parse plugins based on OS-specific vendor directories
