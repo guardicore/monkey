@@ -21,18 +21,19 @@ class FileAgentPluginRepository(IAgentPluginRepository):
     def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
     ) -> AgentPlugin:
-        plugin = self._load_plugin_from_file(plugin_type, name)
+        parsed_plugin = self._load_plugin_from_file(plugin_type, name)
 
-        if host_operating_system in plugin.host_operating_systems:
-            # TODO: Return the plugin with only the operating system specific dependencies
-            return plugin
+        if host_operating_system in parsed_plugin:
+            return parsed_plugin[host_operating_system]
         else:
             raise RetrievalError(
                 f"Error retrieving the agent plugin {name} of type {plugin_type} "
                 f"for OS {host_operating_system}"
             )
 
-    def _load_plugin_from_file(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
+    def _load_plugin_from_file(
+        self, plugin_type: AgentPluginType, name: str
+    ) -> Dict[OperatingSystem, AgentPlugin]:
         plugin_file_name = f"{name}-{plugin_type.value.lower()}.tar"
 
         try:
