@@ -14,7 +14,8 @@ export function AdvancedMultiSelectHeader(props) {
     onCheckboxClick,
     checkboxState,
     hideReset,
-    onResetClick
+    onResetClick,
+    resetButtonTitle
   } = props;
 
 
@@ -23,7 +24,7 @@ export function AdvancedMultiSelectHeader(props) {
       <MasterCheckbox title={title} onClick={onCheckboxClick} checkboxState={checkboxState}/>
       <Button className={'reset-safe-defaults'} type={'reset'} variant={'warning'}
               hidden={hideReset} onClick={onResetClick}>
-        Reset to safe options
+        {resetButtonTitle}
       </Button>
     </Card.Header>
   );

@@ -72,6 +72,20 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     return itemSchema['safe'];
   }
 
+  function getHideResetState(selectValues) {
+    return !(isUnsafePluginSelected(selectValues))
+  }
+
+  function isUnsafePluginSelected(selectValues) {
+    return !(selectValues.every((value) => isPluginSafe(value)));
+  }
+
+  function onResetClick() {
+    let safePluginNames = [...props.formContext.selectedExploiters].filter(
+      pluginName => isPluginSafe(pluginName));
+    props.formContext.setSelectedExploiters(new Set(safePluginNames));
+  }
+
   return (
     <div className={'advanced-multi-select'}>
       <AdvancedMultiSelectHeader title={props.schema.title}
@@ -79,12 +93,12 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                                  checkboxState={
                                    getMasterCheckboxState(
                                      [...props.formContext.selectedExploiters])}
-                                 hideReset={false}
-                                 onResetClick={() => {
-                                 }}/>
-
+                                 hideReset={getHideResetState(
+                                       [...props.formContext.selectedExploiters])}
+                                 onResetClick={onResetClick}
+                                 resetButtonTitle={'Disable unsafe exploiters'}/>
       <ChildCheckboxContainer multiple={true} required={false}
-                              autoFocus={false}
+                              autoFocus={true}
                               selectedValues={[...props.formContext.selectedExploiters]}
                               onCheckboxClick={togglePluggin}
                               isSafe={isPluginSafe}
