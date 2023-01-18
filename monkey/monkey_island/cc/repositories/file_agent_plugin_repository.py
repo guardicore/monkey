@@ -77,13 +77,13 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
             try:
                 agent_plugin_type = AgentPluginType[plugin_type.upper()]
-                plugin = self._load_plugin_from_file(agent_plugin_type, plugin_name)
-                plugins.append(plugin)
             except KeyError as err:
                 raise RetrievalError(
-                    f"Error retrieving plugin {plugin_name} of "
-                    f"type {plugin_type.upper()}: {err}"
+                    f"Error retrieving plugin {plugin_name} of type {plugin_type.upper()}: {err}"
                 )
+
+            plugin = self._load_plugin_from_file(agent_plugin_type, plugin_name)
+            plugins.append(plugin)
 
         return plugins
 
