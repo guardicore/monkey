@@ -1,10 +1,25 @@
-from typing import Any, Dict, Sequence
+from pathlib import Path
+from typing import Any, Dict, Generator, List, Mapping
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 
 from . import IAgentPluginRepository, IFileRepository, RetrievalError
 from .plugin_archive_parser import parse_plugin
+
+
+def _deduplicate_os_specific_plugins(
+    plugins: List[Mapping[OperatingSystem, AgentPlugin]]
+) -> Generator[AgentPlugin, None, None]:
+    """
+    Given OS-specific plugins, select only one plugin object per name
+
+    Information like manifests and config schemas are OS-independent. This function takes
+    OS-specific plugins and selects only one plugin object per name. The selected plugins may
+    support any OS.
+    """
+    for plugin in plugins:
+        yield list(plugin.values())[0]
 
 
 class FileAgentPluginRepository(IAgentPluginRepository):
@@ -21,18 +36,19 @@ class FileAgentPluginRepository(IAgentPluginRepository):
     def get_plugin(
         self, host_operating_system: OperatingSystem, plugin_type: AgentPluginType, name: str
     ) -> AgentPlugin:
-        plugin = self._load_plugin_from_file(plugin_type, name)
+        parsed_plugin = self._load_plugin_from_file(plugin_type, name)
 
-        if host_operating_system in plugin.host_operating_systems:
-            # TODO: Return the plugin with only the operating system specific dependencies
-            return plugin
+        if host_operating_system in parsed_plugin:
+            return parsed_plugin[host_operating_system]
         else:
             raise RetrievalError(
                 f"Error retrieving the agent plugin {name} of type {plugin_type} "
                 f"for OS {host_operating_system}"
             )
 
-    def _load_plugin_from_file(self, plugin_type: AgentPluginType, name: str) -> AgentPlugin:
+    def _load_plugin_from_file(
+        self, plugin_type: AgentPluginType, name: str
+    ) -> Mapping[OperatingSystem, AgentPlugin]:
         plugin_file_name = f"{name}-{plugin_type.value.lower()}.tar"
 
         try:
@@ -45,35 +61,39 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         self,
     ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
-        for plugin in self._get_all_plugins():
+        for plugin in _deduplicate_os_specific_plugins(self._get_all_plugins()):
             plugin_type = plugin.plugin_manifest.plugin_type
             schemas.setdefault(plugin_type, {})
             schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
 
         return schemas
 
-    def _get_all_plugins(self) -> Sequence[AgentPlugin]:
+    def _get_all_plugins(self) -> List[Mapping[OperatingSystem, AgentPlugin]]:
         plugins = []
 
         plugin_file_names = self._plugin_file_repository.get_all_file_names()
         for plugin_file_name in plugin_file_names:
-            plugin_name, plugin_type = plugin_file_name.split(".")[0].split("-")
-
-            try:
-                agent_plugin_type = AgentPluginType[plugin_type.upper()]
-                plugin = self._load_plugin_from_file(agent_plugin_type, plugin_name)
-                plugins.append(plugin)
-            except KeyError as err:
-                raise RetrievalError(
-                    f"Error retrieving plugin {plugin_name} of "
-                    f"type {plugin_type.upper()}: {err}"
-                )
+            plugins.append(self._load_plugin_from_file_name(plugin_file_name))
 
         return plugins
 
+    def _load_plugin_from_file_name(
+        self, plugin_file_name: str
+    ) -> Mapping[OperatingSystem, AgentPlugin]:
+        plugin_name, plugin_type = plugin_file_name.split(".")[0].split("-")
+
+        try:
+            agent_plugin_type = AgentPluginType[plugin_type.upper()]
+        except KeyError as err:
+            raise RetrievalError(
+                f"Error retrieving plugin {plugin_name} of type {plugin_type.upper()}: {err}"
+            )
+
+        return self._load_plugin_from_file(agent_plugin_type, plugin_name)
+
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
-        for plugin in self._get_all_plugins():
+        for plugin in _deduplicate_os_specific_plugins(self._get_all_plugins()):
             plugin_type = plugin.plugin_manifest.plugin_type
             manifests.setdefault(plugin_type, {})
             manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest

@@ -61,8 +61,13 @@ def test_get_plugin__RetrievalError_if_bad_plugin(
         )
 
 
-def test_get_plugin__RetrievalError_if_unsupported_os():
-    pass
+def test_get_plugin__RetrievalError_if_unsupported_os(
+    plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
+):
+    with open(plugin_file, "rb") as file:
+        file_repository.save_file(basename(plugin_file), file)
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_plugin("unrecognised OS", AgentPluginType.EXPLOITER, "test")
 
 
 def test_get_all_plugin_manifests(
