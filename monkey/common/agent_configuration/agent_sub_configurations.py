@@ -192,7 +192,12 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     options: ExploitationOptionsConfiguration = Field(title="Exploiters Options")
-    exploiters: Dict = Field(title="Enabled exploiters")
+    exploiters: Dict = Field(
+        title="Enabled exploiters",
+        description="Click on an exploiter to get more information"
+        " about it. \n \u26A0 Note that using unsafe exploits may"
+        " cause crashes of the exploited machine/service.",
+    )
 
 
 class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
