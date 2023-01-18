@@ -95,7 +95,8 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                                      [...props.formContext.selectedExploiters])}
                                  hideReset={getHideResetState(
                                        [...props.formContext.selectedExploiters])}
-                                 onResetClick={onResetClick}/>
+                                 onResetClick={onResetClick}
+                                 resetButtonTitle={'Disable unsafe exploiters'}/>
       <ChildCheckboxContainer multiple={true} required={false}
                               autoFocus={true}
                               selectedValues={[...props.formContext.selectedExploiters]}
