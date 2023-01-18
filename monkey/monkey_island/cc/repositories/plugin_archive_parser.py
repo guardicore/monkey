@@ -53,27 +53,26 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
         manifest = get_plugin_manifest(tar_file)
         schema = get_plugin_schema(tar_file)
         source_archive = get_plugin_source(tar_file)
-
-        plugin_source_tar = TarFile(fileobj=io.BytesIO(source_archive))
-        plugin_source_vendors = _get_plugin_source_vendors(plugin_source_tar)
-
-        # if no vendor directories, ship plugin.tar as is
-        # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
-        if (len(plugin_source_vendors) == 0) or (VendorDirName.ANY_VENDOR in plugin_source_vendors):
-            return _parse_plugin_with_generic_vendor(
-                manifest=manifest, schema=schema, source=source_archive
-            )
-        else:
-            # vendor/ doesn't exist, so parse plugins based on OS-specific vendor directories
-            return _parse_plugin_with_multiple_vendors(
-                plugin_source_tar=plugin_source_tar,
-                plugin_source_vendors=plugin_source_vendors,
-                manifest=manifest,
-                schema=schema,
-            )
-
     except KeyError as err:
         raise ValueError(f"Invalid plugin archive: {err}")
+
+    plugin_source_tar = TarFile(fileobj=io.BytesIO(source_archive))
+    plugin_source_vendors = _get_plugin_source_vendors(plugin_source_tar)
+
+    # if no vendor directories, ship plugin.tar as is
+    # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
+    if (len(plugin_source_vendors) == 0) or (VendorDirName.ANY_VENDOR in plugin_source_vendors):
+        return _parse_plugin_with_generic_vendor(
+            manifest=manifest, schema=schema, source=source_archive
+        )
+    else:
+        # vendor/ doesn't exist, so parse plugins based on OS-specific vendor directories
+        return _parse_plugin_with_multiple_vendors(
+            plugin_source_tar=plugin_source_tar,
+            plugin_source_vendors=plugin_source_vendors,
+            manifest=manifest,
+            schema=schema,
+        )
 
 
 def get_plugin_manifest(tar: TarFile) -> AgentPluginManifest:
