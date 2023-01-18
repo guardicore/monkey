@@ -24,13 +24,13 @@ def plugin_tarfile(plugin_file) -> TarFile:
 
 
 @pytest.fixture
-def single_vendor_plugin_tarfile(single_vendor_plugin_file) -> TarFile:
-    return tarfile.open(single_vendor_plugin_file)
+def plugin_with_one_vendor_tarfile(plugin_with_one_vendor_file) -> TarFile:
+    return tarfile.open(plugin_with_one_vendor_file)
 
 
 @pytest.fixture
-def two_vendor_plugin_tarfile(two_vendor_plugin_file) -> TarFile:
-    return tarfile.open(two_vendor_plugin_file)
+def plugin_with_two_vendors_tarfile(plugin_with_two_vendors_file) -> TarFile:
+    return tarfile.open(plugin_with_two_vendors_file)
 
 
 @pytest.fixture
@@ -69,8 +69,8 @@ def _get_plugin_source_tar(tarfile_):
     return TarFile(fileobj=io.BytesIO(get_plugin_source(tarfile_)))
 
 
-def test_get_os_specific_plugin_source_archives(two_vendor_plugin_tarfile, tmp_path):
-    plugin_source_tar = _get_plugin_source_tar(two_vendor_plugin_tarfile)
+def test_get_os_specific_plugin_source_archives(plugin_with_two_vendors_tarfile, tmp_path):
+    plugin_source_tar = _get_plugin_source_tar(plugin_with_two_vendors_tarfile)
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
         tmp_path, plugin_source_tar, plugin_vendors
@@ -132,10 +132,10 @@ def test_get_plugin_vendors__2_vendor_dirs_1_Vendor_file(
     assert len(vendors) == 2
 
 
-def test_parse_plugin__single_vendor(single_vendor_plugin_file, single_vendor_plugin_tarfile):
-    manifest = get_plugin_manifest(single_vendor_plugin_tarfile)
-    schema = get_plugin_schema(single_vendor_plugin_tarfile)
-    data = get_plugin_source(single_vendor_plugin_tarfile)
+def test_parse_plugin__single_vendor(plugin_with_one_vendor_file, plugin_with_one_vendor_tarfile):
+    manifest = get_plugin_manifest(plugin_with_one_vendor_tarfile)
+    schema = get_plugin_schema(plugin_with_one_vendor_tarfile)
+    data = get_plugin_source(plugin_with_one_vendor_tarfile)
 
     expected_agent_plugin_object = AgentPlugin(
         plugin_manifest=manifest,
@@ -148,18 +148,22 @@ def test_parse_plugin__single_vendor(single_vendor_plugin_file, single_vendor_pl
         OperatingSystem.LINUX: expected_agent_plugin_object,
     }
 
-    with open(single_vendor_plugin_file, "rb") as f:
+    with open(plugin_with_one_vendor_file, "rb") as f:
         assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 
-def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tarfile, tmp_path):
-    manifest = get_plugin_manifest(two_vendor_plugin_tarfile)
-    schema = get_plugin_schema(two_vendor_plugin_tarfile)
+def test_parse_plugin__two_vendors(
+    plugin_with_two_vendors_file, plugin_with_two_vendors_tarfile, tmp_path
+):
+    manifest = get_plugin_manifest(plugin_with_two_vendors_tarfile)
+    schema = get_plugin_schema(plugin_with_two_vendors_tarfile)
 
     parsed_plugins_dir = tmp_path / "parsed_plugins"
     os.mkdir(parsed_plugins_dir)
 
-    plugin_source_tar = TarFile(fileobj=io.BytesIO(get_plugin_source(two_vendor_plugin_tarfile)))
+    plugin_source_tar = TarFile(
+        fileobj=io.BytesIO(get_plugin_source(plugin_with_two_vendors_tarfile))
+    )
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
         parsed_plugins_dir, plugin_source_tar, plugin_vendors
@@ -182,7 +186,7 @@ def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tar
         OperatingSystem.LINUX: expected_linux_agent_plugin_object,
     }
 
-    with open(two_vendor_plugin_file, "rb") as f:
+    with open(plugin_with_two_vendors_file, "rb") as f:
         actual_return = parse_plugin(io.BytesIO(f.read()), tmp_path)
 
     assert actual_return == expected_return

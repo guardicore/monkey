@@ -9,13 +9,13 @@ def plugin_file(plugin_data_dir) -> Path:
 
 
 @pytest.fixture
-def single_vendor_plugin_file(plugin_data_dir) -> Path:
-    return plugin_data_dir / "SingleVendor-exploiter.tar"
+def plugin_with_one_vendor_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "plugin-with-one-vendor.tar"
 
 
 @pytest.fixture
-def two_vendor_plugin_file(plugin_data_dir) -> Path:
-    return plugin_data_dir / "TwoVendors-exploiter.tar"
+def plugin_with_two_vendors_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "plugin-with-two-vendors.tar"
 
 
 @pytest.fixture
