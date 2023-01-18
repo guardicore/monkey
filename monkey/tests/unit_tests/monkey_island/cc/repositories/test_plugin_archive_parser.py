@@ -65,6 +65,11 @@ def only_windows_vendor_plugin_tarfile(only_windows_vendor_plugin_file) -> TarFi
     return tarfile.open(only_windows_vendor_plugin_file)
 
 
+@pytest.fixture
+def plugin_with_no_vendor_tarfile(plugin_with_no_vendor_file) -> TarFile:
+    return tarfile.open(plugin_with_no_vendor_file)
+
+
 def _get_plugin_source_tar(tarfile_):
     return TarFile(fileobj=io.BytesIO(get_plugin_source(tarfile_)))
 
@@ -130,6 +135,26 @@ def test_get_plugin_vendors__2_vendor_dirs_1_Vendor_file(
     vendors = get_plugin_source_vendors(plugin_source_tarfile)
 
     assert len(vendors) == 2
+
+
+def test_parse_plugin__no_vendor(plugin_with_no_vendor_file, plugin_with_no_vendor_tarfile):
+    manifest = get_plugin_manifest(plugin_with_no_vendor_tarfile)
+    schema = get_plugin_schema(plugin_with_no_vendor_tarfile)
+    data = get_plugin_source(plugin_with_no_vendor_tarfile)
+
+    expected_agent_plugin_object = AgentPlugin(
+        plugin_manifest=manifest,
+        config_schema=schema,
+        source_archive=data,
+        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+    )
+    expected_return = {
+        OperatingSystem.WINDOWS: expected_agent_plugin_object,
+        OperatingSystem.LINUX: expected_agent_plugin_object,
+    }
+
+    with open(plugin_with_no_vendor_file, "rb") as f:
+        assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
 
 
 def test_parse_plugin__single_vendor(plugin_with_one_vendor_file, plugin_with_one_vendor_tarfile):
