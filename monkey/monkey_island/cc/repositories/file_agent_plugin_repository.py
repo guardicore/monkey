@@ -1,4 +1,4 @@
-from typing import Any, Dict, Sequence
+from typing import Any, Dict, List, Mapping
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
@@ -33,7 +33,7 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
     def _load_plugin_from_file(
         self, plugin_type: AgentPluginType, name: str
-    ) -> Dict[OperatingSystem, AgentPlugin]:
+    ) -> Mapping[OperatingSystem, AgentPlugin]:
         plugin_file_name = f"{name}-{plugin_type.value.lower()}.tar"
 
         try:
@@ -46,14 +46,20 @@ class FileAgentPluginRepository(IAgentPluginRepository):
         self,
     ) -> Dict[AgentPluginType, Dict[str, Dict[str, Any]]]:
         schemas: Dict[AgentPluginType, Dict[str, Dict[str, Any]]] = {}
-        for plugin in self._get_all_plugins():
-            plugin_type = plugin.plugin_manifest.plugin_type
-            schemas.setdefault(plugin_type, {})
-            schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
+        for parsed_plugin in self._get_all_plugins():
+            plugin_objects = list(parsed_plugin.values())
+            try:
+                # doesn't matter which OS's plugin this is since the config_schema is the same
+                plugin = plugin_objects[0]
+                plugin_type = plugin.plugin_manifest.plugin_type
+                schemas.setdefault(plugin_type, {})
+                schemas[plugin_type][plugin.plugin_manifest.name] = plugin.config_schema
+            except IndexError:
+                pass
 
         return schemas
 
-    def _get_all_plugins(self) -> Sequence[AgentPlugin]:
+    def _get_all_plugins(self) -> List[Mapping[OperatingSystem, AgentPlugin]]:
         plugins = []
 
         plugin_file_names = self._plugin_file_repository.get_all_file_names()
@@ -74,9 +80,15 @@ class FileAgentPluginRepository(IAgentPluginRepository):
 
     def get_all_plugin_manifests(self) -> Dict[AgentPluginType, Dict[str, AgentPluginManifest]]:
         manifests: Dict[AgentPluginType, Dict[str, AgentPluginManifest]] = {}
-        for plugin in self._get_all_plugins():
-            plugin_type = plugin.plugin_manifest.plugin_type
-            manifests.setdefault(plugin_type, {})
-            manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
+        for parsed_plugin in self._get_all_plugins():
+            plugin_objects = list(parsed_plugin.values())
+            try:
+                # doesn't matter which OS's plugin this is since the manifest is the same
+                plugin = plugin_objects[0]
+                plugin_type = plugin.plugin_manifest.plugin_type
+                manifests.setdefault(plugin_type, {})
+                manifests[plugin_type][plugin.plugin_manifest.name] = plugin.plugin_manifest
+            except IndexError:
+                pass
 
         return manifests
