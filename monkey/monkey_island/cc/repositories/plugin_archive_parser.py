@@ -1,7 +1,6 @@
 import io
 import json
 import logging
-from pathlib import Path
 from tarfile import TarFile, TarInfo
 from typing import IO, Any, BinaryIO, Dict, Mapping, Sequence
 
@@ -31,7 +30,7 @@ def tarinfo_type(tar: TarInfo) -> str:
     return "unknown"
 
 
-def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, AgentPlugin]:
+def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
     """
     Load a plugin from a tar file.
 
