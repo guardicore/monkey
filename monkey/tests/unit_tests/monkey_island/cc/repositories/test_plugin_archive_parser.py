@@ -1,8 +1,6 @@
 import io
-import os
 import tarfile
 from tarfile import TarFile
-from unittest.mock import MagicMock
 
 import pytest
 
@@ -74,49 +72,30 @@ def _get_plugin_source_tar(tarfile_):
     return TarFile(fileobj=io.BytesIO(get_plugin_source(tarfile_)))
 
 
-def test_get_os_specific_plugin_source_archives(plugin_with_two_vendors_tarfile, tmp_path):
+def test_get_os_specific_plugin_source_archives(plugin_with_two_vendors_tarfile):
     plugin_source_tar = _get_plugin_source_tar(plugin_with_two_vendors_tarfile)
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(
-        tmp_path, plugin_source_tar, plugin_vendors
-    )
+    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
 
     assert os_specific_data[OperatingSystem.WINDOWS] != os_specific_data[OperatingSystem.LINUX]
 
-    assert not os.path.exists(tmp_path / "linux")
-    assert not os.path.exists(tmp_path / "windows")
 
-
-def test_get_os_specific_plugin_source_archives__only_windows(
-    only_windows_vendor_plugin_tarfile, tmp_path
-):
+def test_get_os_specific_plugin_source_archives__only_windows(only_windows_vendor_plugin_tarfile):
     plugin_source_tar = _get_plugin_source_tar(only_windows_vendor_plugin_tarfile)
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(
-        tmp_path, plugin_source_tar, plugin_vendors
-    )
+    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
 
     assert len(os_specific_data.keys()) == 1
     assert list(os_specific_data.keys()) == [OperatingSystem.WINDOWS]
 
-    assert not os.path.exists(tmp_path / "linux")
-    assert not os.path.exists(tmp_path / "windows")
 
-
-def test_get_os_specific_plugin_source_archives__unrecognised_os(
-    plugin_with_three_vendors_tarfile, tmp_path
-):
+def test_get_os_specific_plugin_source_archives__unrecognised_os(plugin_with_three_vendors_tarfile):
     plugin_source_tar = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(
-        tmp_path, plugin_source_tar, plugin_vendors
-    )
+    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
 
     assert len(os_specific_data.keys()) == 0
     assert list(os_specific_data.keys()) == []
-
-    assert not os.path.exists(tmp_path / "linux")
-    assert not os.path.exists(tmp_path / "windows")
 
 
 def test_get_plugin_vendors__3_vendor_dirs(plugin_with_three_vendors_tarfile):
@@ -154,7 +133,7 @@ def test_parse_plugin__no_vendor(plugin_with_no_vendor_file, plugin_with_no_vend
     }
 
     with open(plugin_with_no_vendor_file, "rb") as f:
-        assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
+        assert parse_plugin(io.BytesIO(f.read())) == expected_return
 
 
 def test_parse_plugin__single_vendor(plugin_with_one_vendor_file, plugin_with_one_vendor_tarfile):
@@ -174,25 +153,18 @@ def test_parse_plugin__single_vendor(plugin_with_one_vendor_file, plugin_with_on
     }
 
     with open(plugin_with_one_vendor_file, "rb") as f:
-        assert parse_plugin(io.BytesIO(f.read()), MagicMock()) == expected_return
+        assert parse_plugin(io.BytesIO(f.read())) == expected_return
 
 
-def test_parse_plugin__two_vendors(
-    plugin_with_two_vendors_file, plugin_with_two_vendors_tarfile, tmp_path
-):
+def test_parse_plugin__two_vendors(plugin_with_two_vendors_file, plugin_with_two_vendors_tarfile):
     manifest = get_plugin_manifest(plugin_with_two_vendors_tarfile)
     schema = get_plugin_schema(plugin_with_two_vendors_tarfile)
-
-    parsed_plugins_dir = tmp_path / "parsed_plugins"
-    os.mkdir(parsed_plugins_dir)
 
     plugin_source_tar = TarFile(
         fileobj=io.BytesIO(get_plugin_source(plugin_with_two_vendors_tarfile))
     )
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
-    os_specific_data = get_os_specific_plugin_source_archives(
-        parsed_plugins_dir, plugin_source_tar, plugin_vendors
-    )
+    os_specific_data = get_os_specific_plugin_source_archives(plugin_source_tar, plugin_vendors)
 
     expected_linux_agent_plugin_object = AgentPlugin(
         plugin_manifest=manifest,
@@ -212,11 +184,9 @@ def test_parse_plugin__two_vendors(
     }
 
     with open(plugin_with_two_vendors_file, "rb") as f:
-        actual_return = parse_plugin(io.BytesIO(f.read()), tmp_path)
+        actual_return = parse_plugin(io.BytesIO(f.read()))
 
     assert actual_return == expected_return
-
-    assert list(parsed_plugins_dir.iterdir()) == []
 
 
 EXPECTED_MANIFEST = AgentPluginManifest(
