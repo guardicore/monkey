@@ -2,11 +2,12 @@ import io
 import json
 import logging
 import re
+from contextlib import suppress
 from copy import deepcopy
 from enum import Enum
 from pathlib import PurePath
 from tarfile import TarFile, TarInfo
-from typing import IO, Any, BinaryIO, Dict, Mapping, Sequence
+from typing import IO, Any, BinaryIO, Dict, List, Mapping, Sequence
 
 import yaml
 
@@ -54,13 +55,11 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
         source_archive = get_plugin_source(tar_file)
 
         plugin_source_tar = TarFile(fileobj=io.BytesIO(source_archive))
-        plugin_source_vendors = get_plugin_source_vendors(plugin_source_tar)
+        plugin_source_vendors = _get_plugin_source_vendors(plugin_source_tar)
 
         # if no vendor directories, ship plugin.tar as is
         # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
-        if len(plugin_source_vendors) == 0 or VendorDirName.ANY_VENDOR.value in [
-            vendor.name for vendor in plugin_source_vendors
-        ]:
+        if (len(plugin_source_vendors) == 0) or (VendorDirName.ANY_VENDOR in plugin_source_vendors):
             return _parse_plugin_with_generic_vendor(
                 manifest=manifest, schema=schema, source=source_archive
             )
@@ -128,13 +127,16 @@ def _safe_extract_file(tar: TarFile, filename: str) -> IO[bytes]:
     return file_obj
 
 
-def get_plugin_source_vendors(plugin_source_tar: TarFile) -> Sequence[TarInfo]:
-    plugin_source_vendors = [
-        member
-        for member in plugin_source_tar.getmembers()
-        if (member.name in [vendor_dir.value for vendor_dir in VendorDirName] and member.isdir())
-    ]
-    return plugin_source_vendors
+def _get_plugin_source_vendors(plugin_source_tar: TarFile) -> Sequence[VendorDirName]:
+    source_vendors: List[VendorDirName] = []
+    for member in plugin_source_tar.getmembers():
+        if not member.isdir():
+            continue
+
+        with suppress(ValueError):
+            source_vendors.append(VendorDirName(member.name))
+
+    return source_vendors
 
 
 def _parse_plugin_with_generic_vendor(
@@ -154,11 +156,11 @@ def _parse_plugin_with_generic_vendor(
 
 def _parse_plugin_with_multiple_vendors(
     plugin_source_tar: TarFile,
-    plugin_source_vendors: Sequence[TarInfo],
+    plugin_source_vendors: Sequence[VendorDirName],
     manifest: AgentPluginManifest,
     schema: Dict[str, Any],
 ) -> Mapping[OperatingSystem, AgentPlugin]:
-    os_specific_plugin_source_archives = get_os_specific_plugin_source_archives(
+    os_specific_plugin_source_archives = _get_os_specific_plugin_source_archives(
         plugin_source_tar, plugin_source_vendors
     )
 
@@ -174,17 +176,17 @@ def _parse_plugin_with_multiple_vendors(
     return parsed_plugin
 
 
-def get_os_specific_plugin_source_archives(
-    plugin_source_tar, plugin_source_vendors
+def _get_os_specific_plugin_source_archives(
+    plugin_source_tar: TarFile, plugin_source_vendors: Sequence[VendorDirName]
 ) -> Mapping[OperatingSystem, bytes]:
 
     os_specific_plugin_source_archives = {}
 
     for vendor in plugin_source_vendors:
-        if vendor.name == VendorDirName.LINUX_VENDOR.value:
+        if vendor == VendorDirName.LINUX_VENDOR:
             vendor_os = OperatingSystem.LINUX
             vendor_ignore_list = [VendorDirName.WINDOWS_VENDOR.value]
-        elif vendor.name == VendorDirName.WINDOWS_VENDOR.value:
+        elif vendor == VendorDirName.WINDOWS_VENDOR:
             vendor_os = OperatingSystem.WINDOWS
             vendor_ignore_list = [VendorDirName.LINUX_VENDOR.value]
         else:
@@ -203,8 +205,8 @@ def get_os_specific_plugin_source_archives(
                     continue
 
                 new_member = deepcopy(member)
-                if member_path.parts[0] == vendor.name:
-                    new_member.name = re.sub(f"^{vendor.name}", "vendor", member.name, count=1)
+                if member_path.parts[0] == vendor.value:
+                    new_member.name = re.sub(f"^{vendor.value}", "vendor", member.name, count=1)
 
                 os_specific_plugin_tar.addfile(
                     tarinfo=new_member, fileobj=plugin_source_tar.extractfile(member)
