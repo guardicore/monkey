@@ -52,8 +52,11 @@ def parse_plugin(file: BinaryIO, data_dir: Path) -> Mapping[OperatingSystem, Age
         plugin_source_tar = TarFile(fileobj=io.BytesIO(extracted_plugin.read()))
         plugin_source_vendors = get_plugin_source_vendors(plugin_source_tar)
 
-        if "vendor" in [vendor.name for vendor in plugin_source_vendors]:
-            # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
+        # if no vendor directories, ship plugin.tar as is
+        # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
+        if len(plugin_source_vendors) == 0 or "vendor" in [
+            vendor.name for vendor in plugin_source_vendors
+        ]:
             _parse_plugin_with_generic_vendor(
                 parsed_plugin=parsed_plugin, manifest=manifest, schema=schema, source=source
             )
