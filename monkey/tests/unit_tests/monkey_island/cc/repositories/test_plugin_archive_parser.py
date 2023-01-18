@@ -73,7 +73,7 @@ def test_get_os_specific_plugin_source_archives(two_vendor_plugin_tarfile, tmp_p
     plugin_source_tar = _get_plugin_source_tar(two_vendor_plugin_tarfile)
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
-        plugin_source_tar, plugin_vendors, tmp_path
+        tmp_path, plugin_source_tar, plugin_vendors
     )
 
     assert os_specific_data[OperatingSystem.WINDOWS] != os_specific_data[OperatingSystem.LINUX]
@@ -88,7 +88,7 @@ def test_get_os_specific_plugin_source_archives__only_windows(
     plugin_source_tar = _get_plugin_source_tar(only_windows_vendor_plugin_tarfile)
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
-        plugin_source_tar, plugin_vendors, tmp_path
+        tmp_path, plugin_source_tar, plugin_vendors
     )
 
     assert len(os_specific_data.keys()) == 1
@@ -104,7 +104,7 @@ def test_get_os_specific_plugin_source_archives__unrecognised_os(
     plugin_source_tar = _get_plugin_source_tar(plugin_with_three_vendors_tarfile)
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
-        plugin_source_tar, plugin_vendors, tmp_path
+        tmp_path, plugin_source_tar, plugin_vendors
     )
 
     assert len(os_specific_data.keys()) == 0
@@ -162,7 +162,7 @@ def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tar
     plugin_source_tar = TarFile(fileobj=io.BytesIO(get_plugin_source(two_vendor_plugin_tarfile)))
     plugin_vendors = get_plugin_source_vendors(plugin_source_tar)
     os_specific_data = get_os_specific_plugin_source_archives(
-        plugin_source_tar, plugin_vendors, tmp_path / "parsed_plugins"
+        parsed_plugins_dir, plugin_source_tar, plugin_vendors
     )
 
     expected_linux_agent_plugin_object = AgentPlugin(
@@ -187,7 +187,7 @@ def test_parse_plugin__two_vendors(two_vendor_plugin_file, two_vendor_plugin_tar
 
     assert actual_return == expected_return
 
-    assert not os.path.exists(parsed_plugins_dir)
+    assert list(parsed_plugins_dir.iterdir()) == []
 
 
 EXPECTED_MANIFEST = AgentPluginManifest(
