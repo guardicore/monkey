@@ -29,7 +29,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   function getOptions() {
     let selectorOptions = [];
     for (let [name, schema] of Object.entries(props.schema.properties)) {
-      selectorOptions.push({label: schema.title, value: name});
+      selectorOptions.push({label: schema.title, value: name, isActive: (name === selectedPlugin)});
     }
     return selectorOptions;
   }
