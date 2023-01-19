@@ -1,4 +1,4 @@
-from common.agent_configuration import TCPScanConfiguration
+from common.agent_configuration import ExploitationConfiguration, TCPScanConfiguration
 
 expected_tcp_schema = {
     "type": "object",
@@ -30,3 +30,28 @@ def test_sub_config_to_json_schema():
     del tcp_schema["description"]
 
     assert tcp_schema == expected_tcp_schema
+
+
+raw_exploitation_configuration = {
+    "exploiters": {
+        "Exploiter1": {},
+        "SSHExploiter": {},
+        "Exploiter2": {},
+        "WmiExploiter": {"smb_download_timeout": 30},
+        "Exploiter3": {},
+        "Exploiter4": {},
+        "Exploiter5": {},
+        "Exploiter6": {},
+    },
+    "options": {"http_ports": []},
+}
+
+
+def test_exploitation_sub_configurations__preserve_exploiter_order():
+    parsed_exploiter_config = ExploitationConfiguration(**raw_exploitation_configuration)
+
+    for actual, expected in zip(
+        parsed_exploiter_config.exploiters.keys(),
+        raw_exploitation_configuration["exploiters"].keys(),
+    ):
+        assert actual == expected
