@@ -16,8 +16,7 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader
 from serpentarium.logging import configure_child_process_logger
 
-from common import HARD_CODED_EXPLOITER_MANIFESTS
-from common import OperatingSystem
+from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
     register_common_agent_event_serializers,
