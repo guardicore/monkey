@@ -115,7 +115,7 @@ class IPuppet(metaclass=abc.ABCMeta):
         host: TargetHost,
         current_depth: int,
         servers: Sequence[str],
-        options: Dict,
+        options: Mapping,
         interrupt: Event,
     ) -> ExploiterResultData:
         """
