@@ -27,12 +27,13 @@ function ChildCheckboxContainer(props) {
       id={id} multiple={multiple} className='choice-block form-control'
       required={required} autoFocus={autofocus}>
       {
-        enumOptions.map(({value, label}, i) => {
+        enumOptions.map(({value, label, isActive}, i) => {
+
           return (
             <ChildCheckbox key={i} onPaneClick={onPaneClick}
             onClick={onCheckboxClick} value={value}
             label={label} checkboxState={selectedValues.includes(value)}
-            safe={isSafe(value)}/>
+            safe={isSafe(value)} active={isActive}/>
           );
         }
       )}
@@ -47,11 +48,12 @@ function ChildCheckbox(props) {
     value,
     label,
     checkboxState,
-    safe
+    safe,
+    active
   } = props;
 
   return (
-    <Form.Group onClick={() => onPaneClick(value)}>
+    <Form.Group onClick={() => onPaneClick(value)} className={active ? 'active-checkbox': ''}>
       <Button value={value} variant={'link'} onClick={() => onClick(value)}>
         <FontAwesomeIcon icon={checkboxState ? faCheckSquare : faSquare}/>
       </Button>
