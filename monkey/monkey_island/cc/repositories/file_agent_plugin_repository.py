@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Dict, Generator, List, Mapping
 
 from common import OperatingSystem
