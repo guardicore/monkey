@@ -335,10 +335,10 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderConfigContent = (displayedSchema) => {
     let formProperties = {};
-    formProperties['schema'] = displayedSchema
-    formProperties['uiSchema'] = UiSchema({
+    let fullUiSchema = UiSchema({
       selectedSection: this.state.selectedSection
     })
+    formProperties['schema'] = displayedSchema
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['onChange'] = this.onChange;
     formProperties['onFocus'] = this.resetLastAction;
@@ -351,11 +351,12 @@ class ConfigurePageComponent extends AuthComponent {
 
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],
-      formProperties['uiSchema']);
+      fullUiSchema);
 
     if (this.state.selectedSection === 'propagation') {
       delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
       return (<PropagationConfig {...formProperties}
+                                 fullUiSchema={fullUiSchema}
                                  credentials={this.state.credentials}
                                  selectedExploiters={this.state.selectedExploiters}
                                  setSelectedExploiters={this.setSelectedExploiters}
@@ -366,7 +367,7 @@ class ConfigurePageComponent extends AuthComponent {
       };
       return (
         <div>
-          <Form {...formProperties} key={displayedSchema.title}>
+          <Form {...formProperties} uiSchema={fullUiSchema} key={displayedSchema.title}>
             <button type='submit' className={'hidden'}>Submit</button>
           </Form>
         </div>

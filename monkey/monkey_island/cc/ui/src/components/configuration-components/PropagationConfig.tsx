@@ -20,7 +20,7 @@ export const EXPLOITERS_CONFIG_PATH = 'propagation.' + EXPLOITERS_PATH_PROPAGATI
 export default function PropagationConfig(props) {
   const {
     schema,
-    uiSchema,
+    fullUiSchema,
     onChange,
     customFormats,
     className,
@@ -32,6 +32,7 @@ export default function PropagationConfig(props) {
   } = props;
 
   const [selectedSection, setSelectedSection] = useState(initialSection);
+  const [propagationUiSchema, setPropagationUiSchema] = useState(fullUiSchema);
 
   const onFormDataChange = (formData) => {
     let formDataClone = _.clone(formData.formData);
@@ -39,6 +40,12 @@ export default function PropagationConfig(props) {
 
     configurationClone[selectedSection] = formDataClone;
     onChange(configurationClone);
+  }
+
+  const setUiSchemaForCurrentSection = (uiSubschema, path) => {
+    let newSchema = _.cloneDeep(propagationUiSchema);
+    _.set(newSchema, path, uiSubschema);
+    setPropagationUiSchema(newSchema);
   }
 
   const renderNav = () => {
@@ -58,7 +65,7 @@ export default function PropagationConfig(props) {
 
   const getForm = () => {
     let displayedSchema = getSchemaByKey(schema, selectedSection);
-    let displayedUiSchema = getUiSchemaByKey(uiSchema, selectedSection);
+    let displayedUiSchema = getUiSchemaByKey(propagationUiSchema, selectedSection);
     if (selectedSection === 'credentials') {
       return <CredentialsConfig schema={displayedSchema}
                                 uiSchema={displayedUiSchema}
@@ -84,7 +91,8 @@ export default function PropagationConfig(props) {
                    children={true}
                    formContext={{
                      'selectedExploiters': selectedExploiters,
-                     'setSelectedExploiters': setSelectedExploiters
+                     'setSelectedExploiters': setSelectedExploiters,
+                     'setUiSchema': setUiSchemaForCurrentSection
                    }}/>
     }
   }

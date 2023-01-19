@@ -11,7 +11,7 @@ export default function UiSchema(props) {
       exploitation: {
         exploiters: {
           'ui:classNames': 'config-template-no-header',
-          'ui:ObjectFieldTemplate': PluginSelectorTemplate
+          'ui:ObjectFieldTemplate': PluginSelectorTemplate,
         },
         options: {
           http_ports: {
