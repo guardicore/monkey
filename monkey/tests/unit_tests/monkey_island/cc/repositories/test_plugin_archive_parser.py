@@ -11,11 +11,11 @@ import yaml
 from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories.plugin_archive_parser import (
+    VendorDirName,
     get_plugin_manifest,
     get_plugin_schema,
     get_plugin_source,
     parse_plugin,
-    VendorDirName,
 )
 
 
@@ -312,6 +312,7 @@ def test_get_plugin_source__ValueError_if_bad(tarfile_fixture_name, request):
 )
 def test_to_operating_system(input_vendor_dir_name: VendorDirName, expected_os: OperatingSystem):
     assert VendorDirName.to_operating_system(input_vendor_dir_name) == expected_os
+
 
 def test_to_operating_system__raises_ValueError():
     with pytest.raises(ValueError):
