@@ -1,24 +1,28 @@
 import {getDefaultFormState, ObjectFieldTemplateProps} from '@rjsf/utils';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import _ from 'lodash';
 import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
 import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
 import {InfoPane, WarningType} from '../ui-components/InfoPane';
+import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
 
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
 
-  let [selectedPlugin, setSelectedPlugin] = useState(null);
+  let [activePlugin, setActivePlugin] = useState(null);
+
+  useEffect(() => updateUISchema(), [props.formContext.selectedExploiters]);
 
   function getPluginDisplay(plugin, allPlugins) {
-    let selectedPlugins = allPlugins.filter((pluginInArray) => pluginInArray.name == plugin)
-    if (selectedPlugins.length === 1) {
-      let selectedPlugin = selectedPlugins[0];
-      let pluginWarningType = isPluginSafe(selectedPlugin.name) ?
+    let activePlugins = allPlugins.filter((pluginInArray) => pluginInArray.name == plugin);
+    if (activePlugins.length === 1) {
+      let activePlugin = activePlugins[0];
+      let pluginWarningType = isPluginSafe(activePlugin.name) ?
         WarningType.NONE : WarningType.SINGLE;
       return <InfoPane title={''}
-                       body={selectedPlugin.content}
-                       link={selectedPlugin.content.props.schema.link}
+                       body={activePlugin.content}
+                       link={activePlugin.content.props.schema.link}
                        warningType={pluginWarningType}/>
     }
     return <InfoPane title={props.schema.title}
@@ -29,7 +33,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   function getOptions() {
     let selectorOptions = [];
     for (let [name, schema] of Object.entries(props.schema.properties)) {
-      selectorOptions.push({label: schema.title, value: name, isActive: (name === selectedPlugin)});
+      selectorOptions.push({label: schema.title, value: name, isActive: (name === activePlugin)});
     }
     return selectorOptions;
   }
@@ -41,7 +45,19 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     } else {
       plugins.add(pluginName);
     }
-    props.formContext.setSelectedExploiters(plugins)
+    props.formContext.setSelectedExploiters(plugins);
+  }
+
+  function updateUISchema(){
+    let uiSchema = _.cloneDeep(props.uiSchema);
+    for(let pluginName of Object.keys(generateDefaultConfig())) {
+      if(!props.formContext.selectedExploiters.has(pluginName)){
+        uiSchema[pluginName] = {"ui:readonly": true};
+      } else {
+        uiSchema[pluginName] = {};
+      }
+    }
+    props.formContext.setUiSchema(uiSchema, EXPLOITERS_PATH_PROPAGATION);
   }
 
   function getMasterCheckboxState(selectValues) {
@@ -105,9 +121,9 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
                               selectedValues={[...props.formContext.selectedExploiters]}
                               onCheckboxClick={togglePluggin}
                               isSafe={isPluginSafe}
-                              onPaneClick={setSelectedPlugin}
+                              onPaneClick={setActivePlugin}
                               enumOptions={getOptions()}/>
-      {getPluginDisplay(selectedPlugin, props.properties)}
+      {getPluginDisplay(activePlugin, props.properties)}
     </div>
   );
 }
