@@ -6,7 +6,10 @@
 DEFAULT_DEPENDENCY_VERSION=1.0.0
 MANIFEST_FILENAME=plugin.yaml
 SCHEMA_FILENAME=config-schema.json
-DEPENDENCY_FILE="src/vendor/mock_dependency.py"
+VENDOR_DIRECTORY_NAME_LINUX="vendor-linux"
+VENDOR_DIRECTORY_NAME_WINDOWS="vendor-windows"
+DEPENDENCY_FILE_LINUX="src/$VENDOR_DIRECTORY_NAME_LINUX/mock_dependency.py"
+DEPENDENCY_FILE_WINDOWS="src/$VENDOR_DIRECTORY_NAME_WINDOWS/mock_dependency.py"
 ROOT="$( cd "$( dirname "$0" )" && pwd )"
 
 get_value_from_key() {
@@ -30,12 +33,13 @@ version=$DEFAULT_DEPENDENCY_VERSION
 if [ "$1" ]; then
     version=$1
 fi
-echo "__version__ = \"${version}\"" > "$ROOT/$DEPENDENCY_FILE"
+echo "__version__ = \"${version}-linux\"" > "$ROOT/$DEPENDENCY_FILE_LINUX"
+echo "__version__ = \"${version}-windows\"" > "$ROOT/$DEPENDENCY_FILE_WINDOWS"
 
 
 # Package everything up
 cd "$ROOT/src" || exit 1
-tar -cf "$ROOT/plugin.tar" plugin.py vendor
+tar -cf "$ROOT/plugin.tar" plugin.py $VENDOR_DIRECTORY_NAME_LINUX $VENDOR_DIRECTORY_NAME_WINDOWS
 cd "$ROOT" || exit 1
 
 
