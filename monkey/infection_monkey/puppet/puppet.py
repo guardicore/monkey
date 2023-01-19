@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Sequence
+from typing import Dict, Mapping, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
@@ -76,7 +76,7 @@ class Puppet(IPuppet):
         host: TargetHost,
         current_depth: int,
         servers: Sequence[str],
-        options: Dict,
+        options: Mapping,
         interrupt: Event,
     ) -> ExploiterResultData:
         if self._plugin_compatability_verifier.verify_exploiter_compatibility(name, host) is False:
