@@ -1,15 +1,12 @@
 #!/bin/sh
 
 # Build the plugin package
-# Usage: ./build.sh <version>
+# Usage: ./build.sh
 
-DEFAULT_DEPENDENCY_VERSION=1.0.0
 MANIFEST_FILENAME=plugin.yaml
 SCHEMA_FILENAME=config-schema.json
 VENDOR_DIRECTORY_NAME_LINUX="vendor-linux"
 VENDOR_DIRECTORY_NAME_WINDOWS="vendor-windows"
-DEPENDENCY_FILE_LINUX="src/$VENDOR_DIRECTORY_NAME_LINUX/mock_dependency.py"
-DEPENDENCY_FILE_WINDOWS="src/$VENDOR_DIRECTORY_NAME_WINDOWS/mock_dependency.py"
 ROOT="$( cd "$( dirname "$0" )" && pwd )"
 
 get_value_from_key() {
@@ -27,14 +24,6 @@ get_value_from_key() {
 lower() {
     echo "$1" | tr "[:upper:]" "[:lower:]"
 }
-
-# Generate the dependency
-version=$DEFAULT_DEPENDENCY_VERSION
-if [ "$1" ]; then
-    version=$1
-fi
-echo "__version__ = \"${version}-linux\"" > "$ROOT/$DEPENDENCY_FILE_LINUX"
-echo "__version__ = \"${version}-windows\"" > "$ROOT/$DEPENDENCY_FILE_WINDOWS"
 
 
 # Package everything up
