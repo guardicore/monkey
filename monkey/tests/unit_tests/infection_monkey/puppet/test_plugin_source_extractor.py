@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from tests.utils import assert_directories_equal
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.utils.environment import is_windows_os
 from infection_monkey.puppet import PluginSourceExtractor
@@ -16,6 +17,7 @@ def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin
         plugin_manifest=manifest,
         config_schema={},
         source_archive=read_file_to_bytes(source_tar_path),
+        host_operating_systems=(OperatingSystem.WINDOWS,),
     )
 
 

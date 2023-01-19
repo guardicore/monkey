@@ -73,7 +73,7 @@ def test_get_plugins_manifest__server_error(flask_client, agent_plugin_repositor
     def raise_retrieval_error(plugin_type, name):
         raise RetrievalError
 
-    agent_plugin_repository.get_plugin = raise_retrieval_error
+    agent_plugin_repository.get_all_plugin_manifests = raise_retrieval_error
 
     resp = flask_client.get(
         get_url_for_resource(AgentPluginsManifest, plugin_type="Payload", name="name")

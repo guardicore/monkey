@@ -8,6 +8,7 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import (
     FAKE_MANIFEST_OBJECT,
 )
 
+from common import OperatingSystem
 from common.agent_plugins.agent_plugin import AgentPlugin
 
 FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA = {
@@ -43,20 +44,25 @@ FAKE_ZEROLOGON_PLUGIN_CONFIG = {
 
 FAKE_ZEROLOGON_PLUGIN_ARCHIVE = b"random bytes"
 
+FAKE_ZEROLOGON_HOST_OS = (OperatingSystem.LINUX, OperatingSystem.WINDOWS)
+
 FAKE_AGENT_PLUGIN_DICT_IN: Dict[str, Any] = {
     "plugin_manifest": FAKE_AGENT_MANIFEST_DICT_IN,
     "config_schema": FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA,
     "source_archive": FAKE_ZEROLOGON_PLUGIN_ARCHIVE,
+    "host_operating_systems": FAKE_ZEROLOGON_HOST_OS,
 }
 
 FAKE_AGENT_PLUGIN_DICT_OUT = copy.deepcopy(FAKE_AGENT_PLUGIN_DICT_IN)
 FAKE_AGENT_PLUGIN_DICT_OUT["plugin_manifest"] = FAKE_AGENT_MANIFEST_DICT_OUT
 FAKE_AGENT_PLUGIN_DICT_OUT["source_archive"] = b64encode(FAKE_ZEROLOGON_PLUGIN_ARCHIVE).decode()
+FAKE_AGENT_PLUGIN_DICT_OUT["host_operating_systems"] = [FAKE_ZEROLOGON_HOST_OS[0].value, FAKE_ZEROLOGON_HOST_OS[1].value]
 
 FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
     plugin_manifest=FAKE_MANIFEST_OBJECT,
     config_schema=FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA,
     source_archive=FAKE_ZEROLOGON_PLUGIN_ARCHIVE,
+    host_operating_systems=FAKE_ZEROLOGON_HOST_OS,
 )
 
 

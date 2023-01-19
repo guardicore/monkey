@@ -3,14 +3,22 @@ from os.path import basename
 import pytest
 from tests.monkey_island import InMemoryFileRepository
 
-from common.agent_plugins import AgentPluginType
+from common import OperatingSystem
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories import (
     FileAgentPluginRepository,
     RetrievalError,
     UnknownRecordError,
 )
 
-from .test_plugin_archive_parser import EXPECTED_MANIFEST
+EXPECTED_MANIFEST = AgentPluginManifest(
+    name="test",
+    plugin_type=AgentPluginType.EXPLOITER,
+    supported_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
+    title="dummy-exploiter",
+    description="A dummy exploiter",
+    safe=True,
+)
 
 
 @pytest.fixture
@@ -26,7 +34,9 @@ def agent_plugin_repository(file_repository: InMemoryFileRepository) -> FileAgen
 def test_get_plugin(plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository):
     with open(plugin_file, "rb") as file:
         file_repository.save_file(basename(plugin_file), file)
-    plugin = agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "test")
+    plugin = agent_plugin_repository.get_plugin(
+        OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, "test"
+    )
 
     assert plugin.plugin_manifest == EXPECTED_MANIFEST
     assert isinstance(plugin.config_schema, dict)
@@ -35,7 +45,9 @@ def test_get_plugin(plugin_file, file_repository: InMemoryFileRepository, agent_
 
 def test_get_plugin__UnknownRecordError_if_not_exist(agent_plugin_repository):
     with pytest.raises(UnknownRecordError):
-        agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "does_not_exist")
+        agent_plugin_repository.get_plugin(
+            OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, "does_not_exist"
+        )
 
 
 def test_get_plugin__RetrievalError_if_bad_plugin(
@@ -44,29 +56,36 @@ def test_get_plugin__RetrievalError_if_bad_plugin(
     with open(bad_plugin_file, "rb") as file:
         file_repository.save_file(basename(bad_plugin_file), file)
     with pytest.raises(RetrievalError):
-        agent_plugin_repository.get_plugin(AgentPluginType.EXPLOITER, "bad")
+        agent_plugin_repository.get_plugin(
+            OperatingSystem.WINDOWS, AgentPluginType.EXPLOITER, "bad"
+        )
 
 
-def test_get_plugin_catalog(
+def test_get_plugin__RetrievalError_if_unsupported_os(
     plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
 ):
     with open(plugin_file, "rb") as file:
         file_repository.save_file(basename(plugin_file), file)
-        file_repository.save_file("ssh-payload.tar", file)
-
-    actual_plugin_catalog = agent_plugin_repository.get_plugin_catalog()
-
-    assert actual_plugin_catalog == [
-        (AgentPluginType.EXPLOITER, "test"),
-        (AgentPluginType.PAYLOAD, "ssh"),
-    ]
+    with pytest.raises(RetrievalError):
+        agent_plugin_repository.get_plugin("unrecognised OS", AgentPluginType.EXPLOITER, "test")
 
 
-def test_get_plugin_catalog__RetrievalError_if_bad_plugin_type(
+def test_get_all_plugin_manifests(
+    plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
+):
+    with open(plugin_file, "rb") as file:
+        file_repository.save_file(basename(plugin_file), file)
+
+    actual_plugin_manifests = agent_plugin_repository.get_all_plugin_manifests()
+
+    assert actual_plugin_manifests == {AgentPluginType.EXPLOITER: {"test": EXPECTED_MANIFEST}}
+
+
+def test_get_all_plugin_manifests__RetrievalError_if_bad_plugin_type(
     plugin_file, file_repository: InMemoryFileRepository, agent_plugin_repository
 ):
     with open(plugin_file, "rb") as file:
         file_repository.save_file("ssh-bogus.tar", file)
 
     with pytest.raises(RetrievalError):
-        agent_plugin_repository.get_plugin_catalog()
+        agent_plugin_repository.get_all_plugin_manifests()

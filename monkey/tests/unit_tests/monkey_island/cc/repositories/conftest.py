@@ -9,6 +9,11 @@ def plugin_file(plugin_data_dir) -> Path:
 
 
 @pytest.fixture
+def missing_manifest_plugin_file(plugin_data_dir) -> Path:
+    return plugin_data_dir / "missing-manifest.tar"
+
+
+@pytest.fixture
 def bad_plugin_file(plugin_data_dir) -> Path:
     return plugin_data_dir / "bad-exploiter.tar"
 

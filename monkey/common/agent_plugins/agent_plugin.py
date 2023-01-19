@@ -1,6 +1,7 @@
 from base64 import b64encode
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest
 from common.base_models import InfectionMonkeyBaseModel
 from common.types.b64_bytes import B64Bytes
@@ -13,8 +14,8 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     Attributes:
         :param plugin_manifest: Metadata describing the plugin
         :param config_schema: JSONSchema describing the configuration options
-        :param default_config: Dictionary of default configuration options
         :param source_archive: Contents of the plugin codebase
+        :param host_operating_systems: Operating systems on which the plugin can run
     """
 
     plugin_manifest: AgentPluginManifest
@@ -22,6 +23,7 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     # https://github.com/pydantic/pydantic/pull/1844
     config_schema: Dict[str, Any]
     source_archive: B64Bytes
+    host_operating_systems: Tuple[OperatingSystem, ...]
 
     class Config:
         # b64encode() returns bytes, so we call decode() to transform bytes to str

@@ -30,9 +30,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - GET method to `/api/agent-events`. #2405
 - `/api/nodes` endpoint. #2334
 - Scrollbar to preview pane's exploit timeline in the map page. #2455
-- `api/agent-plugins/<string:type>/<string:name>` endpoint. #2578
+- `/api/agent-plugins/<string:os>/<string:type>/<string:name>` endpoint. #2578, #2811
 - `/api/agent-configuration-schema` endpoint. #2710
-- `api/agent-plugins/<string:type>/<string:name>/manifest` endpoint. #2786
+- `/api/agent-plugins/<string:type>/<string:name>/manifest` endpoint. #2786
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without

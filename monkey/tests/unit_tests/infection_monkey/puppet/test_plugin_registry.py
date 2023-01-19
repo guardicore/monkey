@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from serpentarium import MultiprocessingPlugin, PluginLoader
 
+from common import OperatingSystem
 from common.agent_plugins import AgentPlugin, AgentPluginManifest, AgentPluginType
 from common.event_queue import IAgentEventPublisher
 from infection_monkey.exploit import IAgentBinaryRepository
@@ -59,6 +60,7 @@ def test_get_plugin__error_handling(
         side_effect=error_raised_by_island_api_client
     )
     plugin_registry = PluginRegistry(
+        OperatingSystem.LINUX,
         mock_island_api_client,
         dummy_plugin_source_extractor,
         dummy_plugin_loader,
@@ -77,7 +79,12 @@ PLUGIN_NAME = "test_plugin"
 @pytest.fixture
 def agent_plugin() -> AgentPlugin:
     manifest = AgentPluginManifest(name=PLUGIN_NAME, plugin_type=AgentPluginType.EXPLOITER)
-    return AgentPlugin(plugin_manifest=manifest, config_schema={}, source_archive=b"1234")
+    return AgentPlugin(
+        plugin_manifest=manifest,
+        config_schema={},
+        source_archive=b"1234",
+        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+    )
 
 
 @pytest.fixture
@@ -112,6 +119,7 @@ def plugin_registry(
     dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
 ) -> PluginRegistry:
     return PluginRegistry(
+        OperatingSystem.LINUX,
         mock_island_api_client,
         mock_plugin_source_extractor,
         mock_plugin_loader,
