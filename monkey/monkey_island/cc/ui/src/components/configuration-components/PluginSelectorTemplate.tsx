@@ -1,5 +1,5 @@
 import {getDefaultFormState, ObjectFieldTemplateProps} from '@rjsf/utils';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
 import ChildCheckboxContainer from '../ui-components/ChildCheckbox';
 import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
@@ -12,8 +12,9 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
 
   let [activePlugin, setActivePlugin] = useState(null);
 
+  useEffect(() => updateUISchema(), [props.formContext.selectedExploiters]);
+
   function getPluginDisplay(plugin, allPlugins) {
-    updateUISchema();
     let activePlugins = allPlugins.filter((pluginInArray) => pluginInArray.name == plugin);
     if (activePlugins.length === 1) {
       let activePlugin = activePlugins[0];
