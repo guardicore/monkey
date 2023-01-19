@@ -60,7 +60,7 @@ class Plugin:
 
         logger.debug(f"Exploit success: {exploitation_success}")
         logger.debug(f"Prop success: {propagation_success}")
-        logger.debug("OS: str(host.os)")
+        logger.debug(f"OS: {str(host.os)}")
         exploiter_result_data = ExploiterResultData(
             exploitation_success=exploitation_success,
             propagation_success=propagation_success,
