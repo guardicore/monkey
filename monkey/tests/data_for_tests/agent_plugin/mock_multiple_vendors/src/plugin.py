@@ -56,7 +56,7 @@ class Plugin:
         event_fields = {
             "source": self._agent_id,
             "target": host.ip,
-            "exploiter_name": "Mock1Exploiter",
+            "exploiter_name": "MockWithMultipleVendorsExploiter",
         }
 
         exploitation_success = self._exploit(options, event_fields)
@@ -101,7 +101,7 @@ class Plugin:
         self._agent_event_publisher.publish(
             ExploitationEvent(
                 success=exploitation_success,
-                tags=frozenset(["mock1-plugin-exploitation"]),
+                tags=frozenset(["mock-with-multiple-vendors-plugin-exploitation"]),
                 **event_fields,
             )
         )
@@ -113,7 +113,7 @@ class Plugin:
         self._agent_event_publisher.publish(
             PropagationEvent(
                 success=propagation_success,
-                tags=frozenset(["mock1-plugin-propagation"]),
+                tags=frozenset(["mock-with-multiple-vendors-plugin-propagation"]),
                 **event_fields,
             )
         )
