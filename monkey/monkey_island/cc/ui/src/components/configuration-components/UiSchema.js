@@ -11,24 +11,10 @@ export default function UiSchema(props) {
       exploitation: {
         exploiters: {
           'ui:classNames': 'config-template-no-header',
-          'ui:ObjectFieldTemplate': PluginSelectorTemplate,
-        },
-        options: {
-          http_ports: {
-            items: {
-            }
-          }
+          'ui:ObjectFieldTemplate': PluginSelectorTemplate
         }
       },
       credentials: {
-        exploit_ssh_keys: {
-          items: {
-            public_key: {
-            },
-            private_key: {
-            }
-          }
-        },
         exploit_password_list: {
           items: {
             'ui:classNames': 'config-template-no-header',
@@ -82,7 +68,6 @@ export default function UiSchema(props) {
           fingerprinter_classes: {
             'ui:classNames': 'config-template-no-header'
           }
-
         }
       }
     },
