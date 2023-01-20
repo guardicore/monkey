@@ -33,6 +33,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   function getOptions() {
     let selectorOptions = [];
     for (let [name, schema] of Object.entries(props.schema.properties)) {
+      // @ts-expect-error
       selectorOptions.push({label: schema.title, value: name, isActive: (name === activePlugin)});
     }
     return selectorOptions;
@@ -73,16 +74,17 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   }
 
   function generateDefaultConfig() {
+    // @ts-expect-error
     return getDefaultFormState(props.registry.schemaUtils.validator,
       props.schema, {}, props.registry.rootSchema, true);
   }
 
   function onMasterPluginCheckboxClick() {
-    let checkboxState = getMasterCheckboxState(props.formContext.selectedExploiters);
+    let checkboxState = getMasterCheckboxState([...props.formContext.selectedExploiters]);
     if (checkboxState == MasterCheckboxState.ALL) {
-      props.formContext.setSelectedExploiters([]);
+      props.formContext.setSelectedExploiters(new Set());
     } else {
-      props.formContext.setSelectedExploiters(Object.keys(generateDefaultConfig()));
+      props.formContext.setSelectedExploiters(new Set(Object.keys(generateDefaultConfig())));
     }
   }
 
