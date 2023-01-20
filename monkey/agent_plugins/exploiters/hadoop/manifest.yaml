@@ -8,12 +8,10 @@ description: >-
   Remote code execution on Hadoop server with YARN and default settings.
   Logic based on https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn.
 safe: true
-remediation_suggestion:
-  - overview: >-
+remediation_suggestion: >-
     Run Hadoop in secure mode ([add Kerberos authentication](
     http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html)).
-  - description: >-
-    Hadoop server is vulnerable to a remote code execution attack.
 
-    The attack was made possible due to the default Hadoop/YARN configuration being insecure.
+    The server is vulnerable to a remote code execution attack.
+    This attack was possible due to the default Hadoop/YARN configuration being insecure.
 link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/hadoop
