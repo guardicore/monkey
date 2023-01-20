@@ -166,7 +166,7 @@ def _parse_plugin_with_generic_vendor(
         plugin_manifest=manifest,
         config_schema=schema,
         source_archive=source,
-        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+        supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
 
     return {OperatingSystem.LINUX: plugin, OperatingSystem.WINDOWS: plugin}
@@ -188,7 +188,7 @@ def _parse_plugin_with_multiple_vendors(
             plugin_manifest=manifest,
             config_schema=schema,
             source_archive=os_specific_plugin_source_archive,
-            host_operating_systems=(os_,),
+            supported_operating_systems=(os_,),
         )
 
     return parsed_plugin

@@ -122,4 +122,4 @@ Lock.exc_tb
 Lock.blocking
 Lock.locked
 
-AgentPlugin.host_operating_systems
+AgentPlugin.supported_operating_systems

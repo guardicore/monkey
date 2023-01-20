@@ -83,7 +83,7 @@ def agent_plugin() -> AgentPlugin:
         plugin_manifest=manifest,
         config_schema={},
         source_archive=b"1234",
-        host_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
+        supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     )
 
 

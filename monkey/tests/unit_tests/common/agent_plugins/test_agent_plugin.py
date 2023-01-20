@@ -50,13 +50,13 @@ FAKE_AGENT_PLUGIN_DICT_IN: Dict[str, Any] = {
     "plugin_manifest": FAKE_AGENT_MANIFEST_DICT_IN,
     "config_schema": FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA,
     "source_archive": FAKE_ZEROLOGON_PLUGIN_ARCHIVE,
-    "host_operating_systems": FAKE_ZEROLOGON_HOST_OS,
+    "supported_operating_systems": FAKE_ZEROLOGON_HOST_OS,
 }
 
 FAKE_AGENT_PLUGIN_DICT_OUT = copy.deepcopy(FAKE_AGENT_PLUGIN_DICT_IN)
 FAKE_AGENT_PLUGIN_DICT_OUT["plugin_manifest"] = FAKE_AGENT_MANIFEST_DICT_OUT
 FAKE_AGENT_PLUGIN_DICT_OUT["source_archive"] = b64encode(FAKE_ZEROLOGON_PLUGIN_ARCHIVE).decode()
-FAKE_AGENT_PLUGIN_DICT_OUT["host_operating_systems"] = [
+FAKE_AGENT_PLUGIN_DICT_OUT["supported_operating_systems"] = [
     FAKE_ZEROLOGON_HOST_OS[0].value,
     FAKE_ZEROLOGON_HOST_OS[1].value,
 ]
@@ -65,7 +65,7 @@ FAKE_AGENT_PLUGIN_OBJECT = AgentPlugin(
     plugin_manifest=FAKE_MANIFEST_OBJECT,
     config_schema=FAKE_ZEROLOGON_PLUGIN_CONFIG_SCHEMA,
     source_archive=FAKE_ZEROLOGON_PLUGIN_ARCHIVE,
-    host_operating_systems=FAKE_ZEROLOGON_HOST_OS,
+    supported_operating_systems=FAKE_ZEROLOGON_HOST_OS,
 )
 
 

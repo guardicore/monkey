@@ -45,7 +45,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
             "title": "Remote Desktop Protocol exploiter",
         },
         "source_archive": "cmFuZG9tIGJ5dGVz",
-        "host_operating_systems": ["linux"],
+        "supported_operating_systems": ["linux"],
     }
 
     resp = flask_client.get(
