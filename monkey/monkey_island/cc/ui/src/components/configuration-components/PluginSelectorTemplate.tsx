@@ -33,6 +33,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   function getOptions() {
     let selectorOptions = [];
     for (let [name, schema] of Object.entries(props.schema.properties)) {
+      // @ts-expect-error
       selectorOptions.push({label: schema.title, value: name, isActive: (name === activePlugin)});
     }
     return selectorOptions;
@@ -73,6 +74,7 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
   }
 
   function generateDefaultConfig() {
+    // @ts-expect-error
     return getDefaultFormState(props.registry.schemaUtils.validator,
       props.schema, {}, props.registry.rootSchema, true);
   }
