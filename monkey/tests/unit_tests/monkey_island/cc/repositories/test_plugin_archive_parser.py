@@ -50,7 +50,7 @@ def build_agent_plugin_tar_with_source_tar(build_agent_plugin: BuildAgentPluginC
 def build_agent_plugin(agent_plugin_manifest: AgentPluginManifest, config_schema: Dict[str, Any]):
     def inner(
         source_archive: bytes = b"",
-        host_operating_systems: Tuple[OperatingSystem, ...] = (
+        supported_operating_systems: Tuple[OperatingSystem, ...] = (
             OperatingSystem.LINUX,
             OperatingSystem.WINDOWS,
         ),
@@ -59,7 +59,7 @@ def build_agent_plugin(agent_plugin_manifest: AgentPluginManifest, config_schema
             plugin_manifest=agent_plugin_manifest,
             config_schema=config_schema,
             source_archive=source_archive,
-            host_operating_systems=host_operating_systems,
+            supported_operating_systems=supported_operating_systems,
         )
 
     return inner

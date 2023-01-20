@@ -15,7 +15,7 @@ class InMemoryAgentPluginRepository(IAgentPluginRepository):
         if name not in self._plugins:
             raise UnknownRecordError(f"Plugin '{name}' does not exist.")
         plugin = self._plugins[name]
-        if host_operating_system not in plugin.host_operating_systems:
+        if host_operating_system not in plugin.supported_operating_systems:
             raise RetrievalError(f"{host_operating_system} not supported for plugin '{name}'")
         return plugin
 

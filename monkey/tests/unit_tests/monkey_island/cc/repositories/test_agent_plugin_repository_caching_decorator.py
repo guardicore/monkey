@@ -34,7 +34,7 @@ def test_get_cached_plugin(agent_plugin_repository, in_memory_agent_plugin_repos
         plugin_manifest=AgentPluginManifest(**manifest_params),
         config_schema=FAKE_PLUGIN_CONFIG_SCHEMA_2,
         source_archive=FAKE_PLUGIN_ARCHIVE_2,
-        host_operating_systems=(OperatingSystem.LINUX,),
+        supported_operating_systems=(OperatingSystem.LINUX,),
     )
 
     in_memory_agent_plugin_repository.save_plugin(FAKE_AGENT_PLUGIN_1)
