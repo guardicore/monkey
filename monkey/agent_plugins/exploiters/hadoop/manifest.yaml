@@ -13,7 +13,7 @@ remediation_suggestion:
     Run Hadoop in secure mode ([add Kerberos authentication](
     http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SecureMode.html)).
   - description: >-
-    The Hadoop server at {machine} ({ip_address}) is vulnerable to a remote code execution attack.
+    Hadoop server is vulnerable to a remote code execution attack.
 
     The attack was made possible due to the default Hadoop/YARN configuration being insecure.
 link_to_documentation: https://techdocs.akamai.com/infection-monkey/docs/hadoop
