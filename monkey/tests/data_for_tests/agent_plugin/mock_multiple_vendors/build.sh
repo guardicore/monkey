@@ -3,7 +3,7 @@
 # Build the plugin package
 # Usage: ./build.sh
 
-MANIFEST_FILENAME=plugin.yaml
+MANIFEST_FILENAME=manifest.yaml
 SCHEMA_FILENAME=config-schema.json
 VENDOR_DIRECTORY_NAME_LINUX="vendor-linux"
 VENDOR_DIRECTORY_NAME_WINDOWS="vendor-windows"

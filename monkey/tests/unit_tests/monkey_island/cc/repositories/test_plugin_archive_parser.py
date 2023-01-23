@@ -82,7 +82,7 @@ def config_schema() -> Dict[str, Any]:
 def build_agent_plugin_tar(agent_plugin: AgentPlugin) -> BinaryIO:
     fileobj = io.BytesIO()
     with TarFile(fileobj=fileobj, mode="w") as tar:
-        manifest_tarinfo = TarInfo("plugin.yaml")
+        manifest_tarinfo = TarInfo("manifest.yaml")
         manifest_bytes = yaml.safe_dump(agent_plugin.plugin_manifest.dict(simplify=True)).encode()
         manifest_tarinfo.size = len(manifest_bytes)
         tar.addfile(manifest_tarinfo, io.BytesIO(manifest_bytes))
