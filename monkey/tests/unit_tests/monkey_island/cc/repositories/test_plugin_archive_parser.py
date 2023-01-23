@@ -92,7 +92,7 @@ def build_agent_plugin_tar(agent_plugin: AgentPlugin) -> BinaryIO:
         config_schema_tarinfo.size = len(config_schema_bytes)
         tar.addfile(config_schema_tarinfo, io.BytesIO(config_schema_bytes))
 
-        plugin_source_archive_tarinfo = TarInfo("plugin.tar")
+        plugin_source_archive_tarinfo = TarInfo("source.tar")
         plugin_source_archive_tarinfo.size = len(agent_plugin.source_archive)
         tar.addfile(plugin_source_archive_tarinfo, io.BytesIO(agent_plugin.source_archive))
 
