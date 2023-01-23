@@ -27,7 +27,7 @@ NETWORK_SCAN_CONFIGURATION = {
     "targets": SCAN_TARGET_CONFIGURATION,
 }
 
-EXPLOITERS = {"SSHExploiter": {}, "WmiExploiter": {}, "HadoopExploiter": {}}
+EXPLOITERS = {"SSHExploiter": {}, "WmiExploiter": {}, "Log4ShellExploiter": {}}
 
 EXPLOITATION_CONFIGURATION = {
     "options": {"http_ports": PORTS},
