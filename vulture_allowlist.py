@@ -108,7 +108,6 @@ MongoAgentEventRepository.get_events_by_source
 ExploiterDescriptorEnum.SMB
 ExploiterDescriptorEnum.WMI
 ExploiterDescriptorEnum.SSH
-ExploiterDescriptorEnum.HADOOP
 ExploiterDescriptorEnum.MSSQL
 ExploiterDescriptorEnum.POWERSHELL
 ExploiterDescriptorEnum.LOG4SHELL
