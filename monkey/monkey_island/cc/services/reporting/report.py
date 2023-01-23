@@ -26,6 +26,7 @@ from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repositories import (
     IAgentConfigurationRepository,
     IAgentEventRepository,
+    IAgentPluginRepository,
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
@@ -66,6 +67,7 @@ class ReportService:
     _agent_event_repository: Optional[IAgentEventRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
+    _agent_plugin_repository: Optional[IAgentPluginRepository] = None
     _report: Dict[str, Dict] = {}
     _report_generation_lock: Lock = Lock()
 
@@ -80,12 +82,14 @@ class ReportService:
         agent_event_repository: IAgentEventRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
+        agent_plugin_repository: IAgentPluginRepository,
     ):
         cls._agent_repository = agent_repository
         cls._agent_configuration_repository = agent_configuration_repository
         cls._agent_event_repository = agent_event_repository
         cls._machine_repository = machine_repository
         cls._node_repository = node_repository
+        cls._agent_plugin_repository = agent_plugin_repository
 
     # This should pull from Simulation entity
     @classmethod
@@ -489,7 +493,9 @@ class ReportService:
 
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(
-            get_monkey_exploited(cls._agent_event_repository, cls._machine_repository)
+            get_monkey_exploited(
+                cls._agent_event_repository, cls._machine_repository, cls._agent_plugin_repository
+            )
         )
         return {
             "overview": {
