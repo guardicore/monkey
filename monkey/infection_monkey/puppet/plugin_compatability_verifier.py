@@ -34,7 +34,7 @@ class PluginCompatabilityVerifier:
 
         return (
             target_host.operating_system is None
-            or target_host.operating_system in exploiter_plugin_manifest.supported_operating_systems
+            or target_host.operating_system in exploiter_plugin_manifest.target_operating_systems
         )
 
     def _get_exploiter_plugin_manifest(self, exploiter_name: str) -> Optional[AgentPluginManifest]:
