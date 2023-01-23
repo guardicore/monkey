@@ -1,3 +1,5 @@
+from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
@@ -115,3 +117,5 @@ Lock.blocking
 Lock.locked
 
 AgentPlugin.supported_operating_systems
+
+HadoopPlugin
