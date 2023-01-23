@@ -117,7 +117,6 @@ class LockedHTTPServer(threading.Thread):
         local_ip,
         local_port,
         victim_os,
-        dropper_target_path,
         agent_binary_repository,
         lock,
         max_downloads=1,
