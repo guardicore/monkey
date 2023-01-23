@@ -30,5 +30,6 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     )
     title: Optional[str]
     description: Optional[str]
+    remediation_suggestion: Optional[str]
     link_to_documentation: Optional[str]
     safe: bool = False

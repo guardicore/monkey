@@ -50,6 +50,7 @@ AgentPluginManifest.title
 AgentPluginManifest.description
 AgentPluginManifest.link_to_documentation
 AgentPluginManifest.safe
+AgentPluginManifest.remediation_suggestion
 AgentPluginManifest.target_operating_systems
 
 # Unused, but kept for future potential
