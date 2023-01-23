@@ -17,7 +17,7 @@ FAKE_LINK = "www.beefface.com"
 FAKE_AGENT_MANIFEST_DICT_IN: Dict[str, Any] = {
     "name": FAKE_NAME,
     "plugin_type": FAKE_TYPE,
-    "supported_operating_systems": FAKE_OPERATING_SYSTEMS,
+    "target_operating_systems": FAKE_OPERATING_SYSTEMS,
     "title": FAKE_TITLE,
     "link_to_documentation": FAKE_LINK,
 }
@@ -29,7 +29,7 @@ FAKE_AGENT_MANIFEST_DICT_OUT["safe"] = False
 FAKE_AGENT_MANIFEST_DICT = {
     "name": FAKE_NAME,
     "plugin_type": AgentPluginType.EXPLOITER,
-    "supported_operating_systems": [OperatingSystem.LINUX],
+    "target_operating_systems": [OperatingSystem.LINUX],
     "title": FAKE_TITLE,
     "link_to_documentation": FAKE_LINK,
 }
@@ -37,7 +37,7 @@ FAKE_AGENT_MANIFEST_DICT = {
 FAKE_MANIFEST_OBJECT = AgentPluginManifest(
     name=FAKE_NAME,
     plugin_type=FAKE_TYPE,
-    supported_operating_systems=FAKE_OPERATING_SYSTEMS,
+    target_operating_systems=FAKE_OPERATING_SYSTEMS,
     title=FAKE_TITLE,
     link_to_documentation=FAKE_LINK,
 )
@@ -77,7 +77,7 @@ def test_agent_plugin_manifest__invalid_name(name):
         AgentPluginManifest(
             name=name,
             plugin_type=FAKE_TYPE,
-            supported_operating_systems=FAKE_OPERATING_SYSTEMS,
+            target_operating_systems=FAKE_OPERATING_SYSTEMS,
             title=FAKE_TITLE,
             link_to_documentation=FAKE_LINK,
         )

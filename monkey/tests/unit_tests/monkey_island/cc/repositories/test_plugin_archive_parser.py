@@ -70,7 +70,7 @@ def agent_plugin_manifest() -> AgentPluginManifest:
     return AgentPluginManifest(
         name="TestPlugin",
         plugin_type=AgentPluginType.EXPLOITER,
-        supported_operating_systems=[OperatingSystem.LINUX, OperatingSystem.WINDOWS],
+        target_operating_systems=[OperatingSystem.LINUX, OperatingSystem.WINDOWS],
     )
 
 
@@ -233,7 +233,7 @@ def dir_tarfile(dir_plugin_file) -> TarFile:
 EXPECTED_MANIFEST = AgentPluginManifest(
     name="test",
     plugin_type=AgentPluginType.EXPLOITER,
-    supported_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
+    target_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
     title="dummy-exploiter",
     description="A dummy exploiter",
     safe=True,
