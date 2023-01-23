@@ -28,7 +28,7 @@ lower() {
 
 # Package everything up
 cd "$ROOT/src" || exit 1
-tar -cf "$ROOT/plugin.tar" plugin.py $VENDOR_DIRECTORY_NAME_LINUX $VENDOR_DIRECTORY_NAME_WINDOWS
+tar -cf "$ROOT/source.tar" plugin.py $VENDOR_DIRECTORY_NAME_LINUX $VENDOR_DIRECTORY_NAME_WINDOWS
 cd "$ROOT" || exit 1
 
 
@@ -37,5 +37,5 @@ name=$(get_value_from_key $MANIFEST_FILENAME name | xargs)
 type=$(lower "$(get_value_from_key $MANIFEST_FILENAME plugin_type | xargs)")
 
 plugin_filename="${name}-${type}.tar"
-tar -cf "$ROOT/$plugin_filename" $MANIFEST_FILENAME $SCHEMA_FILENAME plugin.tar
-rm "$ROOT/plugin.tar"
+tar -cf "$ROOT/$plugin_filename" $MANIFEST_FILENAME $SCHEMA_FILENAME source.tar
+rm "$ROOT/source.tar"
