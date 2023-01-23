@@ -4,7 +4,7 @@
 # Usage: ./build.sh <version>
 
 DEFAULT_DEPENDENCY_VERSION=1.0.0
-MANIFEST_FILENAME=plugin.yaml
+MANIFEST_FILENAME=manifest.yaml
 SCHEMA_FILENAME=config-schema.json
 DEPENDENCY_FILE="src/vendor/mock_dependency.py"
 ROOT="$( cd "$( dirname "$0" )" && pwd )"
