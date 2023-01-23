@@ -18,7 +18,7 @@ from common.agent_plugins import AgentPlugin, AgentPluginManifest
 
 MANIFEST_FILENAME = "plugin.yaml"
 CONFIG_SCHEMA_FILENAME = "config-schema.json"
-SOURCE_ARCHIVE_FILENAME = "plugin.tar"
+SOURCE_ARCHIVE_FILENAME = "source.tar"
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +78,7 @@ def parse_plugin(file: BinaryIO) -> Mapping[OperatingSystem, AgentPlugin]:
     plugin_source_tar = TarFile(fileobj=io.BytesIO(source_archive))
     plugin_source_vendors = _get_plugin_source_vendors(plugin_source_tar)
 
-    # if no vendor directories, ship plugin.tar as is
+    # if no vendor directories, ship source.tar as is
     # if vendor/ exists, we don't want to check if vendor-linux/ or vendor-windows/ exist
     if (len(plugin_source_vendors) == 0) or (VendorDirName.ANY_VENDOR in plugin_source_vendors):
         return _parse_plugin_with_generic_vendor(
