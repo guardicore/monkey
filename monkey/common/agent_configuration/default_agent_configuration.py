@@ -72,7 +72,6 @@ EXPLOITATION_OPTIONS_CONFIGURATION = ExploitationOptionsConfiguration(http_ports
 # Order is preserved and agent will run exploiters in this sequence
 EXPLOITERS = {
     "Log4ShellExploiter": {},
-    "HadoopExploiter": {},
     "MSSQLExploiter": {},
     "PowerShellExploiter": {},
     "SSHExploiter": {},
