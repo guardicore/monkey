@@ -47,7 +47,6 @@ from infection_monkey.credential_collectors import (
     SSHCredentialCollector,
 )
 from infection_monkey.exploit import CachingAgentBinaryRepository, ExploiterWrapper
-from infection_monkey.exploit.hadoop import HadoopExploiter
 from infection_monkey.exploit.log4shell import Log4ShellExploiter
 from infection_monkey.exploit.mssqlexec import MSSQLExploiter
 from infection_monkey.exploit.powershell import PowerShellExploiter
@@ -379,9 +378,6 @@ class InfectionMonkey:
 
         exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
 
-        puppet.load_plugin(
-            AgentPluginType.EXPLOITER, "HadoopExploiter", exploit_wrapper.wrap(HadoopExploiter)
-        )
         puppet.load_plugin(
             AgentPluginType.EXPLOITER,
             "Log4ShellExploiter",

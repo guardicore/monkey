@@ -15,7 +15,6 @@ import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {smbReport} from './security/issues/SmbIssue';
-import {hadoopIssueOverview, hadoopIssueReport} from './security/issues/HadoopIssue';
 import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
 import {wmiIssueReport} from './security/issues/WmiIssue';
 import {shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
@@ -69,11 +68,6 @@ class ReportPageComponent extends AuthComponent {
     {
       'SMBExploiter': {
         [this.issueContentTypes.REPORT]: smbReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'HadoopExploiter': {
-        [this.issueContentTypes.OVERVIEW]: hadoopIssueOverview,
-        [this.issueContentTypes.REPORT]: hadoopIssueReport,
         [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       'MSSQLExploiter': {

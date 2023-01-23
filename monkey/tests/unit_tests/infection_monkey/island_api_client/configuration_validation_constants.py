@@ -196,14 +196,6 @@ SCHEMA = {
                             "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/log4shell/",
                             "properties": {},
                         },
-                        "HadoopExploiter": {
-                            "type": "object",
-                            "title": "Hadoop/Yarn Exploiter",
-                            "safe": True,
-                            "description": "Remote code execution on HADOOP server with YARN and default settings. Logic based on https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn.",
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/hadoop/",
-                            "properties": {},
-                        },
                         "SMBExploiter": {
                             "type": "object",
                             "title": "SMB Exploiter",
