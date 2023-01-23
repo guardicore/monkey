@@ -1,6 +1,10 @@
 from typing import Dict, List
 
-from monkey_island.cc.repositories import IAgentEventRepository, IMachineRepository
+from monkey_island.cc.repositories import (
+    IAgentEventRepository,
+    IAgentPluginRepository,
+    IMachineRepository,
+)
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     MonkeyExploitation,
     get_monkey_exploited,
@@ -11,9 +15,10 @@ from monkey_island.cc.services.reporting.report import ReportService
 def get_propagation_stats(
     event_repository: IAgentEventRepository,
     machine_repository: IMachineRepository,
+    agent_plugin_repository: IAgentPluginRepository,
 ) -> Dict:
     scanned = ReportService.get_scanned()
-    exploited = get_monkey_exploited(event_repository, machine_repository)
+    exploited = get_monkey_exploited(event_repository, machine_repository, agent_plugin_repository)
 
     return {
         "num_scanned_nodes": len(scanned),
