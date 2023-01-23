@@ -34,7 +34,7 @@ def test_get_plugin_manifest(flask_client, agent_plugin_repository):
         "name": "rdp_exploiter",
         "plugin_type": "Exploiter",
         "safe": False,
-        "supported_operating_systems": ["linux"],
+        "target_operating_systems": ["linux"],
         "title": "Remote Desktop Protocol exploiter",
     }
     resp = flask_client.get(

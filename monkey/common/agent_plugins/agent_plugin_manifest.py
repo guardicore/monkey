@@ -14,7 +14,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
         :param name: Plugin name in snake case
         :param plugin_type: Type of the plugin (exploiter, fingerprinter,
          credential collector, etc.)
-        :param supported_operating_systems: List of operating systems the plugin supports
+        :param target_operating_systems: List of operating systems the plugin can target
         :param title: Human readable name for the plugin
         :param description: Description of the plugin
         :param link_to_documentation: Link to the documentation of the plugin
@@ -24,7 +24,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
 
     name: PluginName
     plugin_type: AgentPluginType
-    supported_operating_systems: Tuple[OperatingSystem, ...] = (
+    target_operating_systems: Tuple[OperatingSystem, ...] = (
         OperatingSystem.WINDOWS,
         OperatingSystem.LINUX,
     )

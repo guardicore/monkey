@@ -1,6 +1,6 @@
 name: Hadoop
 plugin_type: Exploiter
-supported_operating_systems:
+target_operating_systems:
   - linux
   - windows
 title: Hadoop/YARN Exploiter
