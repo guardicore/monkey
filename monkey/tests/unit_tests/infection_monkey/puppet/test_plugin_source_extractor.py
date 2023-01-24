@@ -17,7 +17,7 @@ def build_agent_plugin(source_tar_path: Path, name="test_plugin") -> AgentPlugin
         plugin_manifest=manifest,
         config_schema={},
         source_archive=read_file_to_bytes(source_tar_path),
-        target_operating_systems=(OperatingSystem.WINDOWS,),
+        supported_operating_systems=(OperatingSystem.WINDOWS,),
     )
 
 
