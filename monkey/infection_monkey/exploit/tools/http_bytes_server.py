@@ -88,7 +88,6 @@ class HTTPBytesServer:
 
         :return: True if the victim has downloaded the bytes from the server. False
                  otherwise.
-        :rtype: bool
         """
         return self._bytes_downloaded.is_set()
 
