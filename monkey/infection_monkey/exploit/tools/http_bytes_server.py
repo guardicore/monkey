@@ -19,23 +19,23 @@ class HTTPBytesServer:
     """
 
     def __init__(
-        self, socket_address: SocketAddress, bytes_to_serve: bytes, poll_interval: float = 0.5
+        self, bind_address: SocketAddress, bytes_to_serve: bytes, poll_interval: float = 0.5
     ):
         """
         :param socket_address: The address that this server will listen on
         :param bytes_to_server: The data (bytes) that the server will serve
         :param poll_interval: Poll for shutdown every `poll_interval` seconds, defaults to 0.5.
         """
-        logger.debug(f"The server will be accessible at http://{socket_address}")
+        logger.debug(f"The server will be accessible at http://{bind_address}")
 
-        self._bind_address = socket_address
+        self._bind_address = bind_address
         self._bytes_downloaded = threading.Event()
         self._poll_interval = poll_interval
 
         HTTPHandler = _get_new_http_handler_class(bytes_to_serve, self._bytes_downloaded)
 
-        server_ip = str(socket_address.ip)
-        server_port = int(socket_address.port)
+        server_ip = str(bind_address.ip)
+        server_port = int(bind_address.port)
         self._server = http.server.HTTPServer((server_ip, server_port), HTTPHandler)
 
         server_thread_name = (
