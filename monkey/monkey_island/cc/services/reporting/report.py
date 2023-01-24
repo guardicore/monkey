@@ -438,7 +438,7 @@ class ReportService:
         return cross_segment_issues
 
     @classmethod
-    def get_config_exploits(cls):
+    def get_config_exploits(cls) -> List[str]:
         configured_exploiter_names = []
 
         agent_configuration = cls._agent_configuration_repository.get_configuration()
