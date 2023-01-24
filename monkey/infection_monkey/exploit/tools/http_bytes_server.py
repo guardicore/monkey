@@ -28,6 +28,7 @@ class HTTPBytesServer:
         """
         logger.debug(f"The server will be accessible at http://{socket_address}")
 
+        self._bind_address = socket_address
         self._bytes_downloaded = threading.Event()
         self._poll_interval = poll_interval
 
@@ -90,6 +91,15 @@ class HTTPBytesServer:
         :rtype: bool
         """
         return self._bytes_downloaded.is_set()
+
+    @property
+    def download_url(self) -> str:
+        """
+        Returns the URL that should be used to download the bytes from the server
+
+        :return: The URL that should be used to download the bytes from the server
+        """
+        return f"http://{self._bind_address}/"
 
 
 def _get_new_http_handler_class(
