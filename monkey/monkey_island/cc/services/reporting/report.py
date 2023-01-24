@@ -443,13 +443,14 @@ class ReportService:
 
         agent_configuration = cls._agent_configuration_repository.get_configuration()
         exploitation_configuration = agent_configuration.propagation.exploitation
-
         exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(
             AgentPluginType.EXPLOITER, {}
         )
         if not exploiter_manifests:
             logger.debug("No plugin exploiter manifests were found")
+
         exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+
         for exploiter_name, manifest in exploiter_manifests.items():
             if exploiter_name not in exploitation_configuration.exploiters:
                 continue
