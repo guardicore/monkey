@@ -2,7 +2,7 @@ import http.server
 import logging
 import threading
 from http import HTTPStatus
-from typing import Type
+from typing import Optional, Type
 
 from common.types import SocketAddress
 from common.utils.code_utils import insecure_generate_random_string
@@ -63,7 +63,7 @@ class HTTPBytesServer:
         # for more information.
         self._server_thread.start()
 
-    def stop(self, timeout: float = None):
+    def stop(self, timeout: Optional[float] = None):
         """
         Stops the HTTP server.
 
