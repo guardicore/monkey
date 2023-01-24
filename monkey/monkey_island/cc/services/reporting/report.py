@@ -447,6 +447,9 @@ class ReportService:
         exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(
             AgentPluginType.EXPLOITER, {}
         )
+        if not exploiter_manifests:
+            logger.debug("No plugin exploiter manifests were found")
+
         exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
         for exploiter, manifest in exploiter_manifests.items():
             if exploiter in exploitation_configuration.exploiters:
