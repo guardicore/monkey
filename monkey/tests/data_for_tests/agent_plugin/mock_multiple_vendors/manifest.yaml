@@ -1,5 +1,8 @@
 name: MockWithMultipleVendors
 plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
 target_operating_systems:
   - windows
   - linux
