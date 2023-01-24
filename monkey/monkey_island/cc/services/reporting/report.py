@@ -11,6 +11,7 @@ from itertools import chain, product
 from threading import Lock
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
+from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_events import (
     AbstractAgentEvent,
     ExploitationEvent,
@@ -18,6 +19,7 @@ from common.agent_events import (
     PingScanEvent,
     TCPScanEvent,
 )
+from common.agent_plugins import AgentPluginType
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_if_in_subnet
@@ -437,13 +439,23 @@ class ReportService:
 
     @classmethod
     def get_config_exploits(cls):
+        configured_exploiter_names = []
+
         agent_configuration = cls._agent_configuration_repository.get_configuration()
         exploitation_configuration = agent_configuration.propagation.exploitation
 
-        return [
-            ExploiterDescriptorEnum.get_by_class_name(exploiter)
-            for exploiter in exploitation_configuration.exploiters
-        ]
+        plugin_exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(
+            AgentPluginType.EXPLOITER, {}
+        )
+        for exploiter, manifest in plugin_exploiter_manifests.items():
+            if exploiter in exploitation_configuration.exploiters:
+                configured_exploiter_names.append(manifest.title)
+
+        for exploiter, manifest in HARD_CODED_EXPLOITER_MANIFESTS.items():
+            if exploiter in exploitation_configuration.exploiters:
+                configured_exploiter_names.append(manifest.title)
+
+        return configured_exploiter_names
 
     @classmethod
     def get_config_ips(cls):
