@@ -450,7 +450,10 @@ class ReportService:
         exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
         for exploiter, manifest in exploiter_manifests.items():
             if exploiter in exploitation_configuration.exploiters:
-                configured_exploiter_names.append(manifest.title)
+                if manifest.title:
+                    configured_exploiter_names.append(manifest.title)
+                else:
+                    configured_exploiter_names.append(manifest.name)
 
         return configured_exploiter_names
 
