@@ -11,6 +11,7 @@ from itertools import chain, product
 from threading import Lock
 from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
 
+from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_events import (
     AbstractAgentEvent,
     ExploitationEvent,
@@ -18,6 +19,7 @@ from common.agent_events import (
     PingScanEvent,
     TCPScanEvent,
 )
+from common.agent_plugins import AgentPluginType
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_if_in_subnet
@@ -100,7 +102,7 @@ class ReportService:
 
     @classmethod
     def get_last_monkey_dead_time(cls) -> Optional[datetime]:
-        agents = cls._agent_repository.get_agents()
+        agents = cls._agent_repository.get_agents()  # type: ignore[union-attr] # noqa: E501
         if not agents:
             return None
 
@@ -436,14 +438,29 @@ class ReportService:
         return cross_segment_issues
 
     @classmethod
-    def get_config_exploits(cls):
-        agent_configuration = cls._agent_configuration_repository.get_configuration()
-        exploitation_configuration = agent_configuration.propagation.exploitation
+    def get_config_exploits(cls) -> List[str]:
+        configured_exploiter_names = []
 
-        return [
-            ExploiterDescriptorEnum.get_by_class_name(exploiter)
-            for exploiter in exploitation_configuration.exploiters
-        ]
+        agent_configuration = cls._agent_configuration_repository.get_configuration()  # type: ignore[union-attr] # noqa: E501
+        exploitation_configuration = agent_configuration.propagation.exploitation
+        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
+            AgentPluginType.EXPLOITER, {}
+        )
+        if not exploiter_manifests:
+            logger.debug("No plugin exploiter manifests were found")
+
+        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+
+        for exploiter_name, manifest in exploiter_manifests.items():
+            if exploiter_name not in exploitation_configuration.exploiters:
+                continue
+
+            if manifest.title:
+                configured_exploiter_names.append(manifest.title)
+            else:
+                configured_exploiter_names.append(manifest.name)
+
+        return configured_exploiter_names
 
     @classmethod
     def get_config_ips(cls):
@@ -563,7 +580,7 @@ class ReportService:
             return report_latest_event_timestamp != latest_event_timestamp
 
         # Report is not outadated if it is empty and no agents are running
-        return bool(cls._agent_repository.get_agents())
+        return bool(cls._agent_repository.get_agents())  # type: ignore[union-attr] # noqa: E501
 
     @classmethod
     def update_report(cls):
