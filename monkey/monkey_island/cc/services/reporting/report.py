@@ -449,14 +449,15 @@ class ReportService:
         )
         if not exploiter_manifests:
             logger.debug("No plugin exploiter manifests were found")
-
         exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
-        for exploiter, manifest in exploiter_manifests.items():
-            if exploiter in exploitation_configuration.exploiters:
-                if manifest.title:
-                    configured_exploiter_names.append(manifest.title)
-                else:
-                    configured_exploiter_names.append(manifest.name)
+        for exploiter_name, manifest in exploiter_manifests.items():
+            if exploiter_name not in exploitation_configuration.exploiters:
+                continue
+
+            if manifest.title:
+                configured_exploiter_names.append(manifest.title)
+            else:
+                configured_exploiter_names.append(manifest.name)
 
         return configured_exploiter_names
 
