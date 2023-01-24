@@ -8,19 +8,25 @@ import pytz
 from tests.monkey_island import (
     InMemoryAgentConfigurationRepository,
     InMemoryAgentEventRepository,
-    InMemoryAgentPluginRepository,
     InMemoryAgentRepository,
 )
 
+from common import OperatingSystem
 from common.agent_events import (
     AgentShutdownEvent,
     ExploitationEvent,
     PasswordRestorationEvent,
     PropagationEvent,
 )
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.hard_coded_exploiter_manifests import HARD_CODED_EXPLOITER_MANIFESTS
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
-from monkey_island.cc.repositories import IAgentEventRepository, IAgentRepository
+from monkey_island.cc.repositories import (
+    IAgentEventRepository,
+    IAgentPluginRepository,
+    IAgentRepository,
+)
 from monkey_island.cc.services.reporting.report import ReportService
 
 EVENT_1 = AgentShutdownEvent(source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"), timestamp=10)
@@ -159,6 +165,26 @@ EXPECTED_SCANNED_MACHINES = [
     },
 ]
 
+REMEDIATION_SUGGESTION = "Fix it like this!"
+
+MOCK_EXPLOITER_NAME = "MockExploiter"
+
+PLUGIN_MANIFESTS = {
+    AgentPluginType.EXPLOITER: {
+        MOCK_EXPLOITER_NAME: AgentPluginManifest(
+            name=MOCK_EXPLOITER_NAME,
+            plugin_type=AgentPluginType.EXPLOITER,
+            supported_operating_systems=(OperatingSystem.WINDOWS,),
+            target_operating_systems=(OperatingSystem.WINDOWS,),
+            title="Mock Exploiter",
+            description="Description for mock exploiter",
+            remediation_suggestion=REMEDIATION_SUGGESTION,
+            link_to_documentation="htp:/no_link",
+            safe=True,
+        )
+    }
+}
+
 
 def get_machine_by_id(machine_id):
     return [machine for machine in MACHINES if machine_id == machine.id][0]
@@ -182,9 +208,16 @@ def agent_event_repository() -> IAgentEventRepository:
     return repo
 
 
+@pytest.fixture
+def mock_agent_plugin_repository() -> IAgentPluginRepository:
+    return MagicMock(spec=IAgentPluginRepository)
+
+
 @pytest.fixture(autouse=True)
 def report_service(
-    agent_repository: IAgentRepository, agent_event_repository: IAgentEventRepository
+    agent_repository: IAgentRepository,
+    agent_event_repository: IAgentEventRepository,
+    mock_agent_plugin_repository: IAgentPluginRepository,
 ):
     ReportService._machine_repository = MagicMock()
     ReportService._machine_repository.get_machines.return_value = MACHINES
@@ -194,7 +227,7 @@ def report_service(
     ReportService._node_repository.get_nodes.return_value = NODES
     ReportService._agent_event_repository = agent_event_repository
     ReportService._agent_configuration_repository = InMemoryAgentConfigurationRepository()
-    ReportService._agent_plugin_repository = InMemoryAgentPluginRepository()
+    ReportService._agent_plugin_repository = mock_agent_plugin_repository
 
 
 def test_get_scanned():
@@ -238,6 +271,7 @@ def test_report_service_get_latest_event_timestamp():
 def test_report_generation(monkeypatch, agent_event_repository):
     monkeypatch.setattr(ReportService, "get_issues", lambda: [])
     monkeypatch.setattr(ReportService, "get_cross_segment_issues", lambda: [])
+    monkeypatch.setattr(ReportService, "get_remediation_suggestions", lambda _: {})
 
     ReportService.update_report()
     actual_report = ReportService.get_report()
@@ -260,3 +294,35 @@ def test_report_generation__no_agent_repository():
 
     with pytest.raises(RuntimeError):
         ReportService.update_report()
+
+
+@pytest.mark.parametrize(
+    "issues_set, expected_remediation_suggestions",
+    [
+        ({MOCK_EXPLOITER_NAME}, {MOCK_EXPLOITER_NAME: REMEDIATION_SUGGESTION}),
+        ({"NonExistingExploiter"}, {}),
+        ({}, {}),
+        (
+            {"SSHExploiter"},
+            {"SSHExploiter": HARD_CODED_EXPLOITER_MANIFESTS["SSHExploiter"].remediation_suggestion},
+        ),
+        (
+            {MOCK_EXPLOITER_NAME, "SSHExploiter"},
+            {
+                "SSHExploiter": HARD_CODED_EXPLOITER_MANIFESTS[
+                    "SSHExploiter"
+                ].remediation_suggestion,
+                MOCK_EXPLOITER_NAME: REMEDIATION_SUGGESTION,
+            },
+        ),
+    ],
+)
+def test_report__get_remediation_suggestions(
+    issues_set,
+    expected_remediation_suggestions,
+    mock_agent_plugin_repository,
+):
+    mock_agent_plugin_repository.get_all_plugin_manifests.return_value = PLUGIN_MANIFESTS
+    actual_remediation_suggestion = ReportService.get_remediation_suggestions(issues_set)
+
+    assert actual_remediation_suggestion == expected_remediation_suggestions

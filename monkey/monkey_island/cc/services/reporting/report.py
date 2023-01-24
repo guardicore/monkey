@@ -19,7 +19,7 @@ from common.agent_events import (
     PingScanEvent,
     TCPScanEvent,
 )
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_if_in_subnet
@@ -443,13 +443,7 @@ class ReportService:
 
         agent_configuration = cls._agent_configuration_repository.get_configuration()  # type: ignore[union-attr] # noqa: E501
         exploitation_configuration = agent_configuration.propagation.exploitation
-        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
-            AgentPluginType.EXPLOITER, {}
-        )
-        if not exploiter_manifests:
-            logger.debug("No plugin exploiter manifests were found")
-
-        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+        exploiter_manifests = cls._get_exploiter_manifests()
 
         for exploiter_name, manifest in exploiter_manifests.items():
             if exploiter_name not in exploitation_configuration.exploiters:
@@ -508,6 +502,8 @@ class ReportService:
         cross_segment_issues = ReportService.get_cross_segment_issues()
         latest_event_timestamp = ReportService.get_latest_event_timestamp()
 
+        remediation_suggestions = ReportService.get_remediation_suggestions(issue_set)
+
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(
             get_monkey_exploited(
@@ -530,7 +526,10 @@ class ReportService:
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
             },
-            "recommendations": {"issues": issues},
+            "recommendations": {
+                "issues": issues,
+                "remediation_suggestions": remediation_suggestions,
+            },
             "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
 
@@ -565,6 +564,30 @@ class ReportService:
         )
 
         return latest_timestamp
+
+    @classmethod
+    def get_remediation_suggestions(cls, issues_set: Set[str]) -> Dict[str, Any]:
+        exploiter_manifests = cls._get_exploiter_manifests()
+
+        remediation_suggestions = {
+            issue: exploiter_manifests.get(issue).remediation_suggestion  # type: ignore[union-attr]
+            for issue in issues_set
+            if issue in exploiter_manifests
+        }
+
+        return remediation_suggestions
+
+    @classmethod
+    def _get_exploiter_manifests(cls) -> Dict[str, AgentPluginManifest]:
+        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
+            AgentPluginType.EXPLOITER, {}
+        )
+        if not exploiter_manifests:
+            logger.debug("No plugin exploiter manifests were found")
+
+        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+
+        return exploiter_manifests
 
     @classmethod
     def report_is_outdated(cls) -> bool:
