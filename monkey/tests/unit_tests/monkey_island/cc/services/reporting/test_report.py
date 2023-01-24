@@ -8,6 +8,7 @@ import pytz
 from tests.monkey_island import (
     InMemoryAgentConfigurationRepository,
     InMemoryAgentEventRepository,
+    InMemoryAgentPluginRepository,
     InMemoryAgentRepository,
 )
 
@@ -193,6 +194,7 @@ def report_service(
     ReportService._node_repository.get_nodes.return_value = NODES
     ReportService._agent_event_repository = agent_event_repository
     ReportService._agent_configuration_repository = InMemoryAgentConfigurationRepository()
+    ReportService._agent_plugin_repository = InMemoryAgentPluginRepository()
 
 
 def test_get_scanned():
