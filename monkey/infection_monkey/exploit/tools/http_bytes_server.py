@@ -82,6 +82,7 @@ class HTTPBytesServer:
         else:
             logger.debug("The HTTP server has stopped")
 
+    @property
     def download_requested(self) -> bool:
         """
         Returns whether or not a victim has downloaded the bytes from the server.
