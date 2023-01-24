@@ -14,6 +14,7 @@ from monkey_island.cc.repositories import (
 EXPECTED_MANIFEST = AgentPluginManifest(
     name="test",
     plugin_type=AgentPluginType.EXPLOITER,
+    supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     target_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
     title="dummy-exploiter",
     description="A dummy exploiter",

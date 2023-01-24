@@ -1,5 +1,8 @@
 name: Mock2
 plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
 target_operating_systems:
   - linux
 title: Mock2 exploiter plugin

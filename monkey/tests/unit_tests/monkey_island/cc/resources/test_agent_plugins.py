@@ -42,6 +42,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
             "plugin_type": FAKE_TYPE,
             "safe": False,
             "remediation_suggestion": None,
+            "supported_operating_systems": ["linux", "windows"],
             "target_operating_systems": ["linux"],
             "title": "Remote Desktop Protocol exploiter",
         },

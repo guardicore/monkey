@@ -22,6 +22,7 @@ FAKE_NAME3 = "BogusExploiter"
 FAKE_MANIFEST_OBJECT_2 = AgentPluginManifest(
     name=FAKE_NAME2,
     plugin_type=FAKE_TYPE,
+    supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     target_operating_systems=(OperatingSystem.WINDOWS,),
     title="Some exploiter title",
     link_to_documentation=FAKE_LINK,
