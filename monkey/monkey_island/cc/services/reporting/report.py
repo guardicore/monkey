@@ -444,14 +444,11 @@ class ReportService:
         agent_configuration = cls._agent_configuration_repository.get_configuration()
         exploitation_configuration = agent_configuration.propagation.exploitation
 
-        plugin_exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(
+        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(
             AgentPluginType.EXPLOITER, {}
         )
-        for exploiter, manifest in plugin_exploiter_manifests.items():
-            if exploiter in exploitation_configuration.exploiters:
-                configured_exploiter_names.append(manifest.title)
-
-        for exploiter, manifest in HARD_CODED_EXPLOITER_MANIFESTS.items():
+        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+        for exploiter, manifest in exploiter_manifests.items():
             if exploiter in exploitation_configuration.exploiters:
                 configured_exploiter_names.append(manifest.title)
 
