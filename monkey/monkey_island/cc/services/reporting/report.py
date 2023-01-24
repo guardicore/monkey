@@ -102,7 +102,7 @@ class ReportService:
 
     @classmethod
     def get_last_monkey_dead_time(cls) -> Optional[datetime]:
-        agents = cls._agent_repository.get_agents()
+        agents = cls._agent_repository.get_agents()  # type: ignore[union-attr] # noqa: E501
         if not agents:
             return None
 
@@ -441,9 +441,9 @@ class ReportService:
     def get_config_exploits(cls) -> List[str]:
         configured_exploiter_names = []
 
-        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        agent_configuration = cls._agent_configuration_repository.get_configuration()  # type: ignore[union-attr] # noqa: E501
         exploitation_configuration = agent_configuration.propagation.exploitation
-        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(
+        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
             AgentPluginType.EXPLOITER, {}
         )
         if not exploiter_manifests:
@@ -580,7 +580,7 @@ class ReportService:
             return report_latest_event_timestamp != latest_event_timestamp
 
         # Report is not outadated if it is empty and no agents are running
-        return bool(cls._agent_repository.get_agents())
+        return bool(cls._agent_repository.get_agents())  # type: ignore[union-attr] # noqa: E501
 
     @classmethod
     def update_report(cls):
