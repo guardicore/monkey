@@ -38,6 +38,7 @@ import {
   getMachineIPs,
   getManuallyStartedAgents
 } from '../utils/ServerUtils';
+import CollapsibleWellComponent from './security/CollapsibleWell';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -314,8 +315,16 @@ class ReportPageComponent extends AuthComponent {
 
     if (this.state.report.recommendations.remediation_suggestions.hasOwnProperty(issue.type)) {
       let reportContents = this.state.report.recommendations.remediation_suggestions[issue.type];
+      let reportContentsArray = reportContents.split("\n\n");
+      let description = reportContentsArray[0];
+      let details = reportContentsArray[1];
       // TODO: figure out how to highlight link in ReactMarkdown
-      reportContentComponent = <ReactMarkdown children={reportContents}/>;
+      reportContentComponent = <div>
+        <ReactMarkdown children={description}/>
+        <CollapsibleWellComponent>
+          <ReactMarkdown children={details}/>
+        </CollapsibleWellComponent>
+      </div>
     }
     else {
       reportContentComponent = this.IssueDescriptorEnum[issue.type][this.issueContentTypes.REPORT](issue);
