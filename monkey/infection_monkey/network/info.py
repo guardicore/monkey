@@ -1,9 +1,10 @@
 import socket
 import struct
 from dataclasses import dataclass
+from multiprocessing.context import BaseContext
+from multiprocessing.managers import DictProxy, SyncManager
 from random import shuffle  # noqa: DUO102
-from threading import Lock
-from typing import Dict, Optional, Set
+from typing import Optional, Set
 
 import psutil
 from egg_timer import EggTimer
@@ -95,13 +96,13 @@ class TCPPortSelector:
     the requester's server is listening on the port, the OS will report the port as "LISTEN".
     """
 
-    def __init__(self):
-        self._leases: Dict[int, EggTimer] = {}
-        self._lock = Lock()
+    def __init__(self, context: BaseContext, manager: SyncManager):
+        self._leases: DictProxy[int, EggTimer] = manager.dict()
+        self._lock = context.Lock()
 
     def get_free_tcp_port(
         self, min_range: int = 1024, max_range: int = 65535, lease_time_sec: float = 30
-    ):
+    ) -> Optional[int]:
         """
         Get a free TCP port that a new server can listen on
 
@@ -114,7 +115,6 @@ class TCPPortSelector:
                           65535
         :param lease_time_sec: The amount of time a port should be reserved for if the OS does not
                                report it as in use, defaults to 30 seconds
-        :return: A TCP port number
         """
         with self._lock:
             ports_in_use = {conn.laddr[1] for conn in psutil.net_connections()}
@@ -125,7 +125,7 @@ class TCPPortSelector:
 
             return self._get_free_random_port(ports_in_use, min_range, max_range, lease_time_sec)
 
-    def _get_free_common_port(self, ports_in_use: Set[int], lease_time_sec):
+    def _get_free_common_port(self, ports_in_use: Set[int], lease_time_sec: float) -> Optional[int]:
         for port in COMMON_PORTS:
             if self._port_is_available(port, ports_in_use):
                 self._reserve_port(port, lease_time_sec)
@@ -135,9 +135,12 @@ class TCPPortSelector:
 
     def _get_free_random_port(
         self, ports_in_use: Set[int], min_range: int, max_range: int, lease_time_sec: float
-    ):
+    ) -> Optional[int]:
         min_range = max(1, min_range)
-        max_range = min(65535, max_range)
+        # In range the first argument will be in the list and the second one won't.
+        # which means that if we select 65535 as max range, that port will not get
+        # into the range
+        max_range = min(65535, max_range) + 1
         ports = list(range(min_range, max_range))
         shuffle(ports)
         for port in ports:
@@ -147,7 +150,7 @@ class TCPPortSelector:
 
         return None
 
-    def _port_is_available(self, port: int, ports_in_use: Set[int]):
+    def _port_is_available(self, port: int, ports_in_use: Set[int]) -> bool:
         if port in ports_in_use:
             return False
 
@@ -163,12 +166,3 @@ class TCPPortSelector:
         timer = EggTimer()
         timer.set(lease_time_sec)
         self._leases[port] = timer
-
-
-# TODO: This function is here because existing components rely on it. Refactor these components to
-#       accept a TCPPortSelector instance and use that instead.
-def get_free_tcp_port(min_range=1024, max_range=65535, lease_time_sec=30):
-    return get_free_tcp_port.port_selector.get_free_tcp_port(min_range, max_range, lease_time_sec)
-
-
-get_free_tcp_port.port_selector = TCPPortSelector()  # type: ignore[attr-defined]
