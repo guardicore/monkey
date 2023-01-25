@@ -2,10 +2,6 @@ import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 import { Button } from 'react-bootstrap';
 
-export function log4shellIssueOverview() {
-  return (<li>Some servers are vulnerable to the Log4Shell remote code execution exploit.</li>)
-}
-
 export function log4shellIssueReport(issue) {
   return (
     <>

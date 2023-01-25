@@ -1,11 +1,7 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function sshIssueOverview() {
-  return (<li>Stolen SSH keys are used to exploit other machines.</li>)
-}
-
-export function shhIssueReport(issue) {
+port function shhIssueReport(issue) {
   return (
     <>
       Change user passwords to a complex one-use password that is not shared with other computers on the network.

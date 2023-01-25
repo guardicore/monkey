@@ -1,10 +1,6 @@
 import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 
-export function powershellIssueOverview() {
-    return (<li>Windows servers allow PowerShell remote command execution.</li>);
-  }
-
 export function powershellIssueReport(issue) {
     return (
       <>

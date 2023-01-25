@@ -2,15 +2,6 @@ import React from 'react';
 import CollapsibleWellComponent from '../CollapsibleWell';
 import {generateInfoBadges} from './utils';
 
-export function sharedPasswordsIssueOverview() {
-   return (<li key={'shared_passwords'}>Multiple users have the same password</li>)
-}
-
-export function sharedAdminsDomainIssueOverview() {
-   return (<li key={'admin_domains'}>Shared local administrator account - Different machines have the same account as a local
-                      administrator.</li>)
-}
-
 export function sharedCredsDomainIssueReport(issue) {
     return (
       <>
