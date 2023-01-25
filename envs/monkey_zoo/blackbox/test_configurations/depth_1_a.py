@@ -26,7 +26,12 @@ from .utils import (
 
 def _add_exploiters(agent_configuration: AgentConfiguration) -> AgentConfiguration:
     exploiters: Dict[str, Mapping] = {
-        "HadoopExploiter": {},
+        "Hadoop": {
+            "target_ports": [8088],
+            "request_timeout": 15,
+            "agent_binary_download_timeout": 60,
+            "yarn_application_suffix": "M0NK3Y3XPL01T",
+        },
         "Log4ShellExploiter": {},
         "MSSQLExploiter": {},
         "SMBExploiter": {"smb_download_timeout": 30},
