@@ -6,7 +6,7 @@ from typing import Tuple
 
 import pytest
 
-from infection_monkey.network.info import TCPPortSelector
+from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.ports import COMMON_PORTS
 
 MULTIPROCESSING_PORT = 2222
