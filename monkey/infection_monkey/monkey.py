@@ -61,7 +61,6 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.info import TCPPortSelector
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
     IslandAPISearchResults,
