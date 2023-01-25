@@ -36,11 +36,13 @@ class Plugin:
 
     def run(
         self,
+        *,
         host: TargetHost,
         servers: Sequence[str],
         current_depth: int,
         options: Dict[str, Any],
         interrupt: Event,
+        **kwargs,
     ) -> ExploiterResultData:
 
         logger.info(f"Main thread name {current_thread().name}")
