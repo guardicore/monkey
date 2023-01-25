@@ -11,6 +11,7 @@ from common.event_queue import IAgentEventPublisher
 from infection_monkey.exploit import IAgentBinaryRepository
 from infection_monkey.i_puppet import UnknownPluginError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIRequestError
+from infection_monkey.network import TCPPortSelector
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.utils.ids import get_agent_id
 
@@ -19,6 +20,8 @@ from . import PluginSourceExtractor
 logger = logging.getLogger()
 
 
+# TODO: We should add an ExploiterPluginFactor and pass that to this component instead of passing
+# all of the requirements for exploiters.
 class PluginRegistry:
     def __init__(
         self,
@@ -29,6 +32,7 @@ class PluginRegistry:
         agent_binary_repository: IAgentBinaryRepository,
         agent_event_publisher: IAgentEventPublisher,
         propagation_credentials_repository: IPropagationCredentialsRepository,
+        tcp_port_selector: TCPPortSelector,
     ):
         """
         `self._registry` looks like -
@@ -48,6 +52,7 @@ class PluginRegistry:
         self._agent_binary_repository = agent_binary_repository
         self._agent_event_publisher = agent_event_publisher
         self._propagation_credentials_repository = propagation_credentials_repository
+        self._tcp_port_selector = tcp_port_selector
 
         self._agent_id = get_agent_id()
         self._lock = RLock()
@@ -71,6 +76,7 @@ class PluginRegistry:
             agent_binary_repository=self._agent_binary_repository,
             agent_event_publisher=self._agent_event_publisher,
             propagation_credentials_repository=self._propagation_credentials_repository,
+            tcp_port_selector=self._tcp_port_selector,
         )
 
         self.load_plugin(plugin_type, plugin_name, multiprocessing_plugin)
