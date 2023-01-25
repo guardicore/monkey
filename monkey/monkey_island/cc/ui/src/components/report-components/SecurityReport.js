@@ -35,6 +35,7 @@ import {
   getMachineByAgent,
   getMachineByID,
   getMachineHostname,
+  getMachineIPs,
   getManuallyStartedAgents
 } from '../utils/ServerUtils';
 
@@ -325,12 +326,15 @@ class ReportPageComponent extends AuthComponent {
 
   generateIssues = (issues) => {
     let issuesDivArray = [];
+
     for (let machineId of Object.keys(issues)) {
       let machine = getMachineByID(parseInt(machineId), this.state.machines);
       let hostname = getMachineHostname(machine);
+      let machineIPs = getMachineIPs(machine);
+
       issuesDivArray.push(
         <li key={machineId}>
-          <h4><b>{hostname}</b></h4>
+          <h4><b>{hostname} ({machineIPs.join(", ")})</b></h4>
           <ol>
             {issues[machineId].map(this.generateIssue)}
             {this.getTunnelIssue(parseInt(machineId))}
