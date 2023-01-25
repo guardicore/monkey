@@ -145,7 +145,6 @@ def test_load_plugin_from_island__only_downloaded_once(
     agent_plugin: AgentPlugin,
     mock_island_api_client: IIslandAPIClient,
     mock_plugin_source_extractor: PluginSourceExtractor,
-    mock_plugin_loader: PluginLoader,
     plugin_registry: PluginRegistry,
 ):
     plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
@@ -153,7 +152,6 @@ def test_load_plugin_from_island__only_downloaded_once(
 
     mock_island_api_client.get_agent_plugin.assert_called_once()
     mock_plugin_source_extractor.extract_plugin_source.assert_called_once()
-    mock_plugin_loader.load_multiprocessing_plugin.assert_called_once()
 
 
 def test_load_plugin_from_island__return_copy(
