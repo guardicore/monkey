@@ -16,18 +16,14 @@ import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {
-  crossSegmentIssueOverview,
   islandCrossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
 import {
-  sharedAdminsDomainIssueOverview,
   sharedCredsDomainIssueReport,
   sharedCredsIssueReport,
   sharedLocalAdminsIssueReport,
-  sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
 import {getAllTunnels, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
-import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
 import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
   zerologonOverviewWithFailedPassResetWarning
@@ -53,19 +49,17 @@ class ReportPageComponent extends AuthComponent {
 
   IssueDescriptorEnum =
     {
+      // TODO: Fix this to show the warning with the Zerologon issue
       'zerologon_pass_restore_failed': {
         [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning
       },
       'island_cross_segment': {
-        [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
         [this.issueContentTypes.REPORT]: islandCrossSegmentIssueReport,
       },
       'shared_passwords': {
-        [this.issueContentTypes.OVERVIEW]: sharedPasswordsIssueOverview,
         [this.issueContentTypes.REPORT]: sharedCredsIssueReport,
       },
       'shared_admins_domain': {
-        [this.issueContentTypes.OVERVIEW]: sharedAdminsDomainIssueOverview,
         [this.issueContentTypes.REPORT]: sharedLocalAdminsIssueReport,
       },
       'shared_passwords_domain': {
@@ -73,11 +67,6 @@ class ReportPageComponent extends AuthComponent {
       },
       'strong_users_on_crit': {
         [this.issueContentTypes.REPORT]: strongUsersOnCritIssueReport,
-      },
-      // TODO: Add used_password issue: configured password that were
-      // successfull exploiting a machine, previously called 'weak_password'
-      'stolen_creds': {
-        [this.issueContentTypes.OVERVIEW]: stolenCredsIssueOverview,
       }
     }
 
