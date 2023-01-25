@@ -502,8 +502,6 @@ class ReportService:
         cross_segment_issues = ReportService.get_cross_segment_issues()
         latest_event_timestamp = ReportService.get_latest_event_timestamp()
 
-        remediation_suggestions = ReportService.get_remediation_suggestions(issue_set)
-
         scanned_nodes = ReportService.get_scanned()
         exploited_cnt = len(
             get_monkey_exploited(
@@ -528,13 +526,12 @@ class ReportService:
             },
             "recommendations": {
                 "issues": issues,
-                "remediation_suggestions": remediation_suggestions,
             },
             "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
 
-    @staticmethod
-    def get_issues():
+    @classmethod
+    def get_issues(cls):
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
             ReportService.get_island_cross_segment_issues,
@@ -544,6 +541,7 @@ class ReportService:
 
         issues_dict = {}
         for issue in issues:
+            issue = cls.add_remediation_to_issue(issue)
             if issue.get("is_local", True):
                 machine_id = issue.get("machine_id")
                 if machine_id not in issues_dict:
@@ -551,6 +549,12 @@ class ReportService:
                 issues_dict[machine_id].append(issue)
         logger.info("Issues generated for reporting")
         return issues_dict
+
+    @classmethod
+    def add_remediation_to_issue(cls, issue: Dict[str, Any]) -> Dict[str, Any]:
+        manifests = cls._get_exploiter_manifests()
+        issue["remediation_suggestion"] = manifests.get(issue["type"], "")
+        return issue
 
     @classmethod
     def get_latest_event_timestamp(cls) -> Optional[float]:
@@ -564,18 +568,6 @@ class ReportService:
         )
 
         return latest_timestamp
-
-    @classmethod
-    def get_remediation_suggestions(cls, issues_set: Set[str]) -> Dict[str, Any]:
-        exploiter_manifests = cls._get_exploiter_manifests()
-
-        remediation_suggestions = {
-            issue: exploiter_manifests.get(issue).remediation_suggestion  # type: ignore[union-attr]
-            for issue in issues_set
-            if issue in exploiter_manifests
-        }
-
-        return remediation_suggestions
 
     @classmethod
     def _get_exploiter_manifests(cls) -> Dict[str, AgentPluginManifest]:
