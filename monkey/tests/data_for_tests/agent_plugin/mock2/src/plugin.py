@@ -18,11 +18,13 @@ logger = logging.getLogger(__name__)
 class Plugin:
     def __init__(
         self,
+        *,
         agent_id: AgentID,
         agent_binary_repository: IAgentBinaryRepository,
         agent_event_publisher: IAgentEventPublisher,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         plugin_name="",
+        **kwargs,
     ):
         self._agent_id = agent_id
         self._agent_binary_repository = agent_binary_repository
@@ -31,11 +33,13 @@ class Plugin:
 
     def run(
         self,
+        *,
         host: TargetHost,
         servers: Sequence[str],
         current_depth: int,
         options: Dict[str, Any],
         interrupt: Event,
+        **kwargs,
     ) -> ExploiterResultData:
 
         logger.info(f"Main thread name {current_thread().name}")
@@ -60,7 +64,7 @@ class Plugin:
 
         logger.debug(f"Exploit success: {exploitation_success}")
         logger.debug(f"Prop success: {propagation_success}")
-        logger.debug(f"OS: {str(host.os)}")
+        logger.debug(f"OS: {str(host.operating_system)}")
         exploiter_result_data = ExploiterResultData(
             exploitation_success=exploitation_success,
             propagation_success=propagation_success,
