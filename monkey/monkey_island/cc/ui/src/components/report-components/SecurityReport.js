@@ -9,6 +9,7 @@ import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
+import ReactMarkdown from 'react-markdown'
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
@@ -512,10 +513,8 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateIssue = (issue) => {
-    let issueDescriptor = this.IssueDescriptorEnum[issue.type];
-    let reportFnc = issueDescriptor[this.issueContentTypes.REPORT];
-    let reportContents = reportFnc(issue);
-    return <li key={JSON.stringify(issue)}>{reportContents}</li>;
+    let reportContents = this.state.report.recommendations.remediation_suggestions[issue.type]
+    return <li key={JSON.stringify(issue)}><ReactMarkdown children={reportContents}/></li>;
   };
 
   generateIssues = (issues) => {
