@@ -514,7 +514,10 @@ class ReportPageComponent extends AuthComponent {
 
   generateIssue = (issue) => {
     let reportContents = this.state.report.recommendations.remediation_suggestions[issue.type]
-    return <li key={JSON.stringify(issue)}><ReactMarkdown children={reportContents}/></li>;
+    // TODO: figure out how to highlight link in ReactMarkdown
+    return <li key={JSON.stringify(issue)}>
+      <ReactMarkdown children={reportContents}/>
+    </li>;
   };
 
   generateIssues = (issues) => {
