@@ -15,14 +15,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
-import {smbReport} from './security/issues/SmbIssue';
-import {mssqlIssueOverview, mssqlIssueReport} from './security/issues/MssqlIssue';
-import {wmiIssueReport} from './security/issues/WmiIssue';
-import {shhIssueReport, sshIssueOverview} from './security/issues/SshIssue';
-import {log4shellIssueOverview, log4shellIssueReport} from './security/issues/Log4ShellIssue';
 import {
   crossSegmentIssueOverview,
-  crossSegmentIssueReport,
   islandCrossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
 import {
@@ -32,15 +26,12 @@ import {
   sharedLocalAdminsIssueReport,
   sharedPasswordsIssueOverview
 } from './security/issues/SharedPasswordsIssue';
-import {getAllTunnels, tunnelIssueOverview, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
+import {getAllTunnels, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
 import {stolenCredsIssueOverview} from './security/issues/StolenCredsIssue';
 import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
-  zerologonIssueOverview,
-  zerologonIssueReport,
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
-import {powershellIssueOverview, powershellIssueReport} from './security/issues/PowershellIssue';
 import AvailableCredentials from './security/AvailableCredentials';
 import {
   getAllAgents,
