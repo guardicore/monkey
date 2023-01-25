@@ -60,77 +60,33 @@ class ReportPageComponent extends AuthComponent {
     TYPE: 'type'
   }
 
-  issueTypes = {
-    WARNING: 'warning',
-    DANGER: 'danger'
-  }
-
   IssueDescriptorEnum =
     {
-      'SMBExploiter': {
-        [this.issueContentTypes.REPORT]: smbReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'MSSQLExploiter': {
-        [this.issueContentTypes.OVERVIEW]: mssqlIssueOverview,
-        [this.issueContentTypes.REPORT]: mssqlIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'WmiExploiter': {
-        [this.issueContentTypes.REPORT]: wmiIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'SSHExploiter': {
-        [this.issueContentTypes.OVERVIEW]: sshIssueOverview,
-        [this.issueContentTypes.REPORT]: shhIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'PowerShellExploiter': {
-        [this.issueContentTypes.OVERVIEW]: powershellIssueOverview,
-        [this.issueContentTypes.REPORT]: powershellIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'ZerologonExploiter': {
-        [this.issueContentTypes.OVERVIEW]: zerologonIssueOverview,
-        [this.issueContentTypes.REPORT]: zerologonIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
-      'Log4ShellExploiter': {
-        [this.issueContentTypes.OVERVIEW]: log4shellIssueOverview,
-        [this.issueContentTypes.REPORT]: log4shellIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
-      },
       'zerologon_pass_restore_failed': {
         [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning
       },
       'island_cross_segment': {
         [this.issueContentTypes.OVERVIEW]: crossSegmentIssueOverview,
         [this.issueContentTypes.REPORT]: islandCrossSegmentIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_passwords': {
         [this.issueContentTypes.OVERVIEW]: sharedPasswordsIssueOverview,
         [this.issueContentTypes.REPORT]: sharedCredsIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_admins_domain': {
         [this.issueContentTypes.OVERVIEW]: sharedAdminsDomainIssueOverview,
         [this.issueContentTypes.REPORT]: sharedLocalAdminsIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'shared_passwords_domain': {
         [this.issueContentTypes.REPORT]: sharedCredsDomainIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.WARNING
       },
       'strong_users_on_crit': {
         [this.issueContentTypes.REPORT]: strongUsersOnCritIssueReport,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       },
       // TODO: Add used_password issue: configured password that were
       // successfull exploiting a machine, previously called 'weak_password'
       'stolen_creds': {
         [this.issueContentTypes.OVERVIEW]: stolenCredsIssueOverview,
-        [this.issueContentTypes.TYPE]: this.issueTypes.DANGER
       }
     }
 
@@ -189,7 +145,6 @@ class ReportPageComponent extends AuthComponent {
       content =
         <div>
           {this.generateReportOverviewSection()}
-          {this.generateReportFindingsSection()}
           {this.generateReportRecommendationsSection()}
           {this.generateReportGlanceSection()}
           {this.generateReportFooter()}
@@ -304,145 +259,6 @@ class ReportPageComponent extends AuthComponent {
     );
   }
 
-  generateReportFindingsSection() {
-    let overviews = this.getPotentialSecurityIssuesOverviews()
-    return (
-      <div id='findings'>
-        <h3>
-          Security Findings
-        </h3>
-        {this.getImmediateThreats()}
-        <div>
-          <h3>
-            Potential Security Issues
-          </h3>
-          {
-            overviews.length > 0 ?
-              <div>
-                The Monkey uncovered the following possible set of issues:
-                <ul>
-                  {this.getPotentialSecurityIssuesOverviews()}
-                </ul>
-              </div>
-              :
-              <div>
-                The Monkey did not find any issues.
-              </div>
-          }
-        </div>
-        {this.state.report.overview.cross_segment_issues.length > 0 ?
-          <div>
-            <h3>
-              Segmentation Issues
-            </h3>
-            <div>
-              The Monkey uncovered the following set of segmentation issues:
-              <ul>
-                {this.state.report.overview.cross_segment_issues.map(x => crossSegmentIssueReport(x))}
-              </ul>
-            </div>
-          </div>
-          :
-          ''
-        }
-      </div>
-    );
-  }
-
-  getPotentialSecurityIssuesOverviews() {
-    let overviews = [];
-    let issues = this.state.report.overview.issues;
-    let state_issues = this.state.issues;
-    issues.push(...state_issues);
-    issues = [...new Set(issues)];
-
-    for (let i = 0; i < issues.length; i++) {
-      if (this.isIssuePotentialSecurityIssue(issues[i])) {
-        overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
-      }
-    }
-
-    overviews.push(tunnelIssueOverview(this.allTunnels));
-
-    return overviews;
-  }
-
-  isIssuePotentialSecurityIssue(issueName) {
-    let issueDescriptor = this.IssueDescriptorEnum[issueName];
-    return Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.TYPE) &&
-      issueDescriptor[this.issueContentTypes.TYPE] === this.issueTypes.WARNING &&
-      Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.OVERVIEW);
-  }
-
-  getImmediateThreats() {
-    let threatCount = this.getImmediateThreatCount()
-    return (
-      <div>
-        <h3>
-          Immediate Threats
-        </h3>
-        <div>During this simulated attack the Monkey uncovered
-          {
-            <>
-              <span className="badge badge-warning">
-                {threatCount} threats
-              </span>:
-              <ul>
-                {this.getImmediateThreatsOverviews()}
-              </ul>
-            </>
-          }
-        </div>
-      </div>)
-  }
-
-  getImmediateThreatCount() {
-    let threatCount = 0;
-    let issues = this.state.report.overview.issues;
-    let state_issues = this.state.issues;
-
-    issues.push(...state_issues);
-    issues = [...new Set(issues)];
-
-    for (let i = 0; i < issues.length; i++) {
-      if (this.isIssueImmediateThreat(issues[i])) {
-        threatCount++;
-      }
-    }
-    return threatCount;
-  }
-
-  isIssueImmediateThreat(issueName) {
-    let issueDescriptor = this.IssueDescriptorEnum[issueName];
-    return Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.TYPE) &&
-      issueDescriptor[this.issueContentTypes.TYPE] === this.issueTypes.DANGER &&
-      Object.prototype.hasOwnProperty.call(issueDescriptor, this.issueContentTypes.OVERVIEW);
-  }
-
-  getImmediateThreatsOverviews() {
-    let overviews = [];
-    let issues = this.state.report.overview.issues;
-    let state_issues = this.state.issues;
-
-    issues.push(...state_issues);
-    issues = [...new Set(issues)];
-
-    for (let i = 0; i < issues.length; i++) {
-      if (this.isIssueImmediateThreat(issues[i])) {
-        if (issues[i] === 'ZerologonExploiter' && issues.includes('zerologon_pass_restore_failed')) {
-          overviews.push(this.getIssueOverview(this.IssueDescriptorEnum['zerologon_pass_restore_failed']));
-        } else {
-          overviews.push(this.getIssueOverview(this.IssueDescriptorEnum[issues[i]]));
-        }
-      }
-    }
-    return overviews;
-  }
-
-  getIssueOverview(issueDescriptor) {
-    return issueDescriptor[this.issueContentTypes.OVERVIEW]();
-  }
-
   generateReportRecommendationsSection() {
     return (
       <div id='recommendations'>
@@ -513,11 +329,18 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateIssue = (issue) => {
-    let reportContents = this.state.report.recommendations.remediation_suggestions[issue.type]
-    // TODO: figure out how to highlight link in ReactMarkdown
-    return <li key={JSON.stringify(issue)}>
-      <ReactMarkdown children={reportContents}/>
-    </li>;
+    let reportContentComponent = <div></div>;
+
+    if (this.state.report.recommendations.remediation_suggestions.hasOwnProperty(issue.type)) {
+      let reportContents = this.state.report.recommendations.remediation_suggestions[issue.type];
+      // TODO: figure out how to highlight link in ReactMarkdown
+      reportContentComponent = <ReactMarkdown children={reportContents}/>;
+    }
+    else {
+      reportContentComponent = this.IssueDescriptorEnum[issue.type][this.issueContentTypes.REPORT](issue);
+    }
+
+    return <li key={JSON.stringify(issue)}>{reportContentComponent}</li>;
   };
 
   generateIssues = (issues) => {
