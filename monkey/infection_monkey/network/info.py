@@ -166,12 +166,3 @@ class TCPPortSelector:
         timer = EggTimer()
         timer.set(lease_time_sec)
         self._leases[port] = timer
-
-
-# TODO: This function is here because existing components rely on it. Refactor these components to
-#       accept a TCPPortSelector instance and use that instead.
-def get_free_tcp_port(min_range=1024, max_range=65535, lease_time_sec=30):
-    return get_free_tcp_port.port_selector.get_free_tcp_port(min_range, max_range, lease_time_sec)
-
-
-get_free_tcp_port.port_selector = TCPPortSelector()  # type: ignore[attr-defined]
