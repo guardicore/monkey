@@ -21,11 +21,13 @@ logger = logging.getLogger(__name__)
 class Plugin:
     def __init__(
         self,
+        *,
         agent_id: AgentID,
         agent_binary_repository: IAgentBinaryRepository,
         agent_event_publisher: IAgentEventPublisher,
         propagation_credentials_repository: IPropagationCredentialsRepository,
         plugin_name="",
+        **kwargs,
     ):
         self._agent_id = agent_id
         self._agent_binary_repository = agent_binary_repository
