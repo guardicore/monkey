@@ -48,7 +48,7 @@ def test_tcp_port_selector__checks_other_ports_if_common_ports_unavailable(
         "infection_monkey.network.info.psutil.net_connections", lambda: unavailable_ports
     )
 
-    assert tcp_port_selector.get_free_tcp_port() is not None
+    assert tcp_port_selector.get_free_tcp_port() not in COMMON_PORTS
 
 
 def test_tcp_port_selector__none_if_no_available_ports(

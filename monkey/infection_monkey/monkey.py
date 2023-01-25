@@ -61,7 +61,7 @@ from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
 from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
-from infection_monkey.network.info import get_free_tcp_port
+from infection_monkey.network.info import TCPPortSelector
 from infection_monkey.network.relay import TCPRelay
 from infection_monkey.network.relay.utils import (
     IslandAPISearchResults,
@@ -110,7 +110,8 @@ class InfectionMonkey:
 
         # Spawn the manager before the acquiring the singleton in case the file handle gets copied
         # over to the manager process
-        self._manager = multiprocessing.get_context("spawn").Manager()
+        context = multiprocessing.get_context("spawn")
+        self._manager = context.Manager()
 
         self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
@@ -121,7 +122,7 @@ class InfectionMonkey:
         self._agent_event_queue = self._setup_agent_event_queue()
         self._agent_event_serializer_registry = self._setup_agent_event_serializers()
 
-        plugin_event_queue = multiprocessing.get_context("spawn").Queue()
+        plugin_event_queue = context.Queue()
         self._plugin_event_forwarder = PluginEventForwarder(
             plugin_event_queue, self._agent_event_queue
         )
@@ -150,6 +151,7 @@ class InfectionMonkey:
         self._current_depth = self._opts.depth
         self._master = None
         self._relay: Optional[TCPRelay] = None
+        self._tcp_port_selector = TCPPortSelector(context, self._manager)
 
     @staticmethod
     def _get_arguments(args):
@@ -279,7 +281,7 @@ class InfectionMonkey:
 
         config = self._control_channel.get_config()
 
-        relay_port = get_free_tcp_port()
+        relay_port = self._tcp_port_selector.get_free_tcp_port()
         self._relay = TCPRelay(
             relay_port,
             self._island_address,
@@ -382,7 +384,9 @@ class InfectionMonkey:
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "smb", SMBFingerprinter())
         puppet.load_plugin(AgentPluginType.FINGERPRINTER, "ssh", SSHFingerprinter())
 
-        exploit_wrapper = ExploiterWrapper(self._agent_event_queue, agent_binary_repository)
+        exploit_wrapper = ExploiterWrapper(
+            self._agent_event_queue, agent_binary_repository, self._tcp_port_selector
+        )
 
         puppet.load_plugin(
             AgentPluginType.EXPLOITER,
