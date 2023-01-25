@@ -16,6 +16,7 @@ from pubsub.core import Publisher
 from serpentarium import PluginLoader
 from serpentarium.logging import configure_child_process_logger
 
+import infection_monkey.network.info
 from common import HARD_CODED_EXPLOITER_MANIFESTS, OperatingSystem
 from common.agent_event_serializers import (
     AgentEventSerializerRegistry,
@@ -58,6 +59,7 @@ from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
 from infection_monkey.master.control_channel import ControlChannel
+from infection_monkey.network import TCPPortSelector
 from infection_monkey.network.firewall import app as firewall
 from infection_monkey.network.info import get_free_tcp_port
 from infection_monkey.network.relay import TCPRelay
@@ -346,6 +348,7 @@ class InfectionMonkey:
         plugin_loader = PluginLoader(
             self._plugin_dir, partial(configure_child_process_logger, self._ipc_logger_queue)
         )
+        tcp_port_selector = TCPPortSelector()
         plugin_registry = PluginRegistry(
             operating_system,
             self._island_api_client,
@@ -354,7 +357,10 @@ class InfectionMonkey:
             agent_binary_repository,
             self._agent_event_publisher,
             self._propagation_credentials_repository,
+            tcp_port_selector=tcp_port_selector,
         )
+        # HACK: Fix this when TCPPortSelector is multiprocessing-safe
+        infection_monkey.network.info.get_free_tcp_port.port_selector = tcp_port_selector
         plugin_compatability_verifier = PluginCompatabilityVerifier(
             self._island_api_client, HARD_CODED_EXPLOITER_MANIFESTS
         )
