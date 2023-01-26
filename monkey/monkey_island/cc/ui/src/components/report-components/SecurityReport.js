@@ -243,6 +243,7 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportRecommendationsSection() {
+    console.log(this.state.report.recommendations.issues)
     return (
       <div id='recommendations'>
         {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
@@ -312,25 +313,28 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateIssue = (issue) => {
-    let reportContentComponent = <div></div>;
+    let remediation = <ReactMarkdown children={"No remediation available"} />;
+    let description = "";
 
-    if (issue.remediation_suggestion === "undefined") {
-      reportContentComponent = this.IssueDescriptorEnum[issue.type][this.issueContentTypes.REPORT](issue);
-    } else {
-      // TODO: figure out how to highlight link in ReactMarkdown
-      reportContentComponent = <div>
-        <ReactMarkdown children={issue.remediation_suggestion}
+    if(_.has(issue, "remediation_suggestion") && issue.remediation_suggestion !== undefined){
+      remediation = <ReactMarkdown children={issue.remediation_suggestion}
                        plugins={[remarkBreaks]}
                        linkTarget={"_blank"}
                        className={"markdown"}/>
-        <CollapsibleWellComponent>
-          <ReactMarkdown children={issue.description}
-                         plugins={[remarkBreaks]}
-                         linkTarget={"_blank"}
-                         className={"markdown"}/>
-        </CollapsibleWellComponent>
-      </div>
     }
+    if(_.has(issue, "description") && issue.description !== undefined){
+       description = <ReactMarkdown children={issue.description}
+                                   plugins={[remarkBreaks]}
+                                   linkTarget={"_blank"}
+                                   className={"markdown"}/>
+    }
+
+    let reportContentComponent = <div>
+      {remediation}
+      <CollapsibleWellComponent>
+        {description}
+      </CollapsibleWellComponent>
+    </div>
 
     return <li key={JSON.stringify(issue)}>{reportContentComponent}</li>;
   };
