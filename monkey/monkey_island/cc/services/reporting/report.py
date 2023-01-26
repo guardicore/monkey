@@ -552,8 +552,9 @@ class ReportService:
 
     @classmethod
     def add_remediation_to_issue(cls, issue: Dict[str, Any]) -> Dict[str, Any]:
-        manifests = cls._get_exploiter_manifests()
-        issue["remediation_suggestion"] = manifests.get(issue["type"], "")
+        manifest = cls._get_exploiter_manifests().get(issue["type"])
+        if manifest:
+            issue["remediation_suggestion"] = manifest.remediation_suggestion
         return issue
 
     @classmethod

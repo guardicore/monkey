@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 from ipaddress import IPv4Address, IPv4Interface
 from unittest.mock import MagicMock
@@ -5,20 +6,22 @@ from uuid import UUID
 
 import pytest
 import pytz
+
+from common.agent_plugins import AgentPluginType
+from tests.data_for_tests.agent_plugin.manifests import EXPLOITER_NAME_1, EXPLOITER_NAME_2,\
+    REMEDIATION_SUGGESTION_1, REMEDIATION_SUGGESTION_2, EXPLOITER_INCOMPLETE_MANIFEST,\
+    PLUGIN_MANIFESTS
 from tests.monkey_island import (
     InMemoryAgentConfigurationRepository,
     InMemoryAgentEventRepository,
     InMemoryAgentRepository,
 )
-
-from common import OperatingSystem
 from common.agent_events import (
     AgentShutdownEvent,
     ExploitationEvent,
     PasswordRestorationEvent,
     PropagationEvent,
 )
-from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.hard_coded_exploiter_manifests import HARD_CODED_EXPLOITER_MANIFESTS
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
@@ -31,118 +34,117 @@ from monkey_island.cc.services.reporting.report import ReportService
 
 EVENT_1 = AgentShutdownEvent(source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"), timestamp=10)
 EVENT_2 = ExploitationEvent(
-    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
-    target=IPv4Address("1.1.1.1"),
-    success=False,
-    exploiter_name="ssh",
-    timestamp=1,
+        source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+        target=IPv4Address("1.1.1.1"),
+        success=False,
+        exploiter_name="ssh",
+        timestamp=1,
 )
 EVENT_3 = ExploitationEvent(
-    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
-    target=IPv4Address("1.1.1.1"),
-    success=True,
-    exploiter_name="ssh",
-    timestamp=2,
+        source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+        target=IPv4Address("1.1.1.1"),
+        success=True,
+        exploiter_name="ssh",
+        timestamp=2,
 )
 EVENT_4 = PropagationEvent(
-    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
-    target=IPv4Address("1.1.1.1"),
-    success=True,
-    exploiter_name="ssh",
-    timestamp=3,
+        source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+        target=IPv4Address("1.1.1.1"),
+        success=True,
+        exploiter_name="ssh",
+        timestamp=3,
 )
 EVENT_5 = PasswordRestorationEvent(
-    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
-    target=IPv4Address("1.1.1.1"),
-    success=True,
-    timestamp=4,
+        source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+        target=IPv4Address("1.1.1.1"),
+        success=True,
+        timestamp=4,
 )
 
 EVENT_6 = ExploitationEvent(
-    source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
-    target=IPv4Address("2.2.2.2"),
-    success=False,
-    exploiter_name="wmi",
-    timestamp=11,
+        source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+        target=IPv4Address("2.2.2.2"),
+        success=False,
+        exploiter_name="wmi",
+        timestamp=11,
 )
 EVENTS = [EVENT_2, EVENT_3, EVENT_4, EVENT_1, EVENT_5]
 
 ISLAND_MACHINE = Machine(
-    id=99,
-    island=True,
-    hostname="Island",
-    hardware_id=5,
-    network_interfaces=[IPv4Interface("10.10.10.99/24")],
+        id=99,
+        island=True,
+        hostname="Island",
+        hardware_id=5,
+        network_interfaces=[IPv4Interface("10.10.10.99/24")],
 )
 
 MACHINE_1 = Machine(
-    id=1,
-    hardware_id=9,
-    hostname="machine_1",
-    network_interfaces=[IPv4Interface("10.10.10.1/24")],
+        id=1,
+        hardware_id=9,
+        hostname="machine_1",
+        network_interfaces=[IPv4Interface("10.10.10.1/24")],
 )
 
 MACHINE_2 = Machine(
-    id=2,
-    hardware_id=9,
-    network_interfaces=[IPv4Interface("10.10.10.2/24")],
+        id=2,
+        hardware_id=9,
+        network_interfaces=[IPv4Interface("10.10.10.2/24")],
 )
 
 MACHINE_3 = Machine(
-    id=3,
-    hardware_id=9,
-    network_interfaces=[IPv4Interface("10.10.10.3/24")],
+        id=3,
+        hardware_id=9,
+        network_interfaces=[IPv4Interface("10.10.10.3/24")],
 )
 
 AGENTS = [
     Agent(
-        id=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
-        machine_id=1,
-        start_time=100,
-        stop_time=500,
-        cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+            id=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"),
+            machine_id=1,
+            start_time=100,
+            stop_time=500,
+            cc_server=SocketAddress(ip="127.0.0.1", port=5000),
     ),
     Agent(
-        id=UUID("65c641f2-af47-4a42-929b-109b30f0d8d6"),
-        machine_id=2,
-        start_time=200,
-        stop_time=600,
-        cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+            id=UUID("65c641f2-af47-4a42-929b-109b30f0d8d6"),
+            machine_id=2,
+            start_time=200,
+            stop_time=600,
+            cc_server=SocketAddress(ip="127.0.0.1", port=5000),
     ),
     Agent(
-        id=UUID("290da3c3-f410-4f5e-a472-b04416860a2c"),
-        machine_id=3,
-        start_time=300,
-        stop_time=700,
-        cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+            id=UUID("290da3c3-f410-4f5e-a472-b04416860a2c"),
+            machine_id=3,
+            start_time=300,
+            stop_time=700,
+            cc_server=SocketAddress(ip="127.0.0.1", port=5000),
     ),
     Agent(
-        id=UUID("e5cd334a-5ca5-4f19-a2ab-a68d515fea46"),
-        machine_id=1,
-        start_time=600,
-        stop_time=40309,
-        cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+            id=UUID("e5cd334a-5ca5-4f19-a2ab-a68d515fea46"),
+            machine_id=1,
+            start_time=600,
+            stop_time=40309,
+            cc_server=SocketAddress(ip="127.0.0.1", port=5000),
     ),
 ]
 
 AGENT_NOT_DEAD = Agent(
-    id=UUID("10e603df-609f-42c6-af08-59c63e82b873"),
-    machine_id=2,
-    start_time=601,
-    stop_time=None,
-    cc_server=SocketAddress(ip="127.0.0.1", port=5000),
+        id=UUID("10e603df-609f-42c6-af08-59c63e82b873"),
+        machine_id=2,
+        start_time=601,
+        stop_time=None,
+        cc_server=SocketAddress(ip="127.0.0.1", port=5000),
 )
-
 
 NODES = [
     Node(
-        machine_id=1,
-        connections={"2": frozenset([CommunicationType.EXPLOITED, CommunicationType.SCANNED])},
+            machine_id=1,
+            connections={"2": frozenset([CommunicationType.EXPLOITED, CommunicationType.SCANNED])},
     ),
     Node(machine_id=99, connections={"1": frozenset([CommunicationType.SCANNED])}),
     Node(
-        machine_id=3,
-        connections={"99": frozenset([CommunicationType.CC, CommunicationType.EXPLOITED])},
+            machine_id=3,
+            connections={"99": frozenset([CommunicationType.CC, CommunicationType.EXPLOITED])},
     ),
 ]
 
@@ -165,25 +167,26 @@ EXPECTED_SCANNED_MACHINES = [
     },
 ]
 
-REMEDIATION_SUGGESTION = "Fix it like this!"
+ISSUE_1 = {'machine_id': 8,
+           'machine': 'hadoop-2',
+           'ip_address': '10.2.2.2',
+           'type': EXPLOITER_NAME_1,
+           'password_restored': None}
 
-MOCK_EXPLOITER_NAME = "MockExploiter"
+ISSUE_2 = {'machine_id': 9, 'machine': 'hadoop-3',
+           'ip_address': '10.2.2.3',
+           'type': EXPLOITER_NAME_2,
+           'password_restored': True}
 
-PLUGIN_MANIFESTS = {
-    AgentPluginType.EXPLOITER: {
-        MOCK_EXPLOITER_NAME: AgentPluginManifest(
-            name=MOCK_EXPLOITER_NAME,
-            plugin_type=AgentPluginType.EXPLOITER,
-            supported_operating_systems=(OperatingSystem.WINDOWS,),
-            target_operating_systems=(OperatingSystem.WINDOWS,),
-            title="Mock Exploiter",
-            description="Description for mock exploiter",
-            remediation_suggestion=REMEDIATION_SUGGESTION,
-            link_to_documentation="htp:/no_link",
-            safe=True,
-        )
-    }
-}
+ISSUE_3 = {'machine_id': 10, 'machine': 'hadoop-4',
+           'ip_address': '10.2.2.4',
+           'type': EXPLOITER_INCOMPLETE_MANIFEST,
+           'password_restored': True}
+
+ISSUE_4 = {'machine_id': 10, 'machine': 'hadoop-4',
+           'ip_address': '10.2.2.4',
+           'type': 'non existent',
+           'password_restored': True}
 
 
 def get_machine_by_id(machine_id):
@@ -215,9 +218,9 @@ def mock_agent_plugin_repository() -> IAgentPluginRepository:
 
 @pytest.fixture(autouse=True)
 def report_service(
-    agent_repository: IAgentRepository,
-    agent_event_repository: IAgentEventRepository,
-    mock_agent_plugin_repository: IAgentPluginRepository,
+        agent_repository: IAgentRepository,
+        agent_event_repository: IAgentEventRepository,
+        mock_agent_plugin_repository: IAgentPluginRepository,
 ):
     ReportService._machine_repository = MagicMock()
     ReportService._machine_repository.get_machines.return_value = MACHINES
@@ -271,7 +274,7 @@ def test_report_service_get_latest_event_timestamp():
 def test_report_generation(monkeypatch, agent_event_repository):
     monkeypatch.setattr(ReportService, "get_issues", lambda: [])
     monkeypatch.setattr(ReportService, "get_cross_segment_issues", lambda: [])
-    monkeypatch.setattr(ReportService, "get_remediation_suggestions", lambda _: {})
+    monkeypatch.setattr(ReportService, "add_remediation_to_issue", lambda issue: issue)
 
     ReportService.update_report()
     actual_report = ReportService.get_report()
@@ -297,32 +300,25 @@ def test_report_generation__no_agent_repository():
 
 
 @pytest.mark.parametrize(
-    "issues_set, expected_remediation_suggestions",
-    [
-        ({MOCK_EXPLOITER_NAME}, {MOCK_EXPLOITER_NAME: REMEDIATION_SUGGESTION}),
-        ({"NonExistingExploiter"}, {}),
-        ({}, {}),
-        (
-            {"SSHExploiter"},
-            {"SSHExploiter": HARD_CODED_EXPLOITER_MANIFESTS["SSHExploiter"].remediation_suggestion},
-        ),
-        (
-            {MOCK_EXPLOITER_NAME, "SSHExploiter"},
-            {
-                "SSHExploiter": HARD_CODED_EXPLOITER_MANIFESTS[
-                    "SSHExploiter"
-                ].remediation_suggestion,
-                MOCK_EXPLOITER_NAME: REMEDIATION_SUGGESTION,
-            },
-        ),
-    ],
+        "issue, expected_remediation",
+        [(ISSUE_1, REMEDIATION_SUGGESTION_1),
+         (ISSUE_2, REMEDIATION_SUGGESTION_2),
+         (ISSUE_3, None)]
 )
-def test_report__get_remediation_suggestions(
-    issues_set,
-    expected_remediation_suggestions,
-    mock_agent_plugin_repository,
-):
-    mock_agent_plugin_repository.get_all_plugin_manifests.return_value = PLUGIN_MANIFESTS
-    actual_remediation_suggestion = ReportService.get_remediation_suggestions(issues_set)
+def test_report__add_remediation_to_issue(issue, expected_remediation, monkeypatch):
+    monkeypatch.setattr(ReportService, "_get_exploiter_manifests",
+                        MagicMock(return_value=PLUGIN_MANIFESTS[AgentPluginType.EXPLOITER]))
 
-    assert actual_remediation_suggestion == expected_remediation_suggestions
+    issue = deepcopy(issue)
+    issue_with_remediation = ReportService.add_remediation_to_issue(issue)
+
+    assert issue_with_remediation["remediation_suggestion"] == expected_remediation
+
+
+def test_report__add_remediation_to_issue_missing_manifest(monkeypatch):
+    monkeypatch.setattr(ReportService, "_get_exploiter_manifests",
+                        MagicMock(return_value={}))
+
+    issue = ReportService.add_remediation_to_issue(deepcopy(ISSUE_1))
+
+    assert "remediation_suggestion" not in issue
