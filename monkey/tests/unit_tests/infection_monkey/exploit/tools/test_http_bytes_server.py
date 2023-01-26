@@ -79,21 +79,21 @@ def test_only_single_download_allowed(download_url: str, bytes_to_serve: bytes):
 
 
 def test_download_requested(server: HTTPBytesServer, download_url: str):
-    assert not server.download_requested
+    assert not server.download_requested.is_set()
 
     requests.get(download_url)
 
-    assert server.download_requested
+    assert server.download_requested.is_set()
 
 
 def test_thread_safety(server: HTTPBytesServer, second_server: HTTPBytesServer, download_url: str):
-    assert not server.download_requested
-    assert not second_server.download_requested
+    assert not server.download_requested.is_set()
+    assert not second_server.download_requested.is_set()
 
     requests.get(download_url)
 
-    assert server.download_requested
-    assert not second_server.download_requested
+    assert server.download_requested.is_set()
+    assert not second_server.download_requested.is_set()
 
 
 def test_download_url(server: HTTPBytesServer, download_url: str):
