@@ -541,7 +541,9 @@ class ReportService:
 
         issues_dict = {}
         for issue in issues:
-            issue = cls.add_remediation_to_issue(issue)
+            manifest = cls._get_exploiter_manifests().get(issue["type"])
+            issue = cls.add_remediation_to_issue(issue, manifest)
+            issue = cls.add_description_to_issue(issue, manifest)
             if issue.get("is_local", True):
                 machine_id = issue.get("machine_id")
                 if machine_id not in issues_dict:
@@ -551,10 +553,19 @@ class ReportService:
         return issues_dict
 
     @classmethod
-    def add_remediation_to_issue(cls, issue: Dict[str, Any]) -> Dict[str, Any]:
-        manifest = cls._get_exploiter_manifests().get(issue["type"])
+    def add_remediation_to_issue(
+        cls, issue: Dict[str, Any], manifest: Optional[AgentPluginManifest]
+    ) -> Dict[str, Any]:
         if manifest:
             issue["remediation_suggestion"] = manifest.remediation_suggestion
+        return issue
+
+    @classmethod
+    def add_description_to_issue(
+        cls, issue: Dict[str, Any], manifest: Optional[AgentPluginManifest]
+    ) -> Dict[str, Any]:
+        if manifest:
+            issue["description"] = manifest.description
         return issue
 
     @classmethod

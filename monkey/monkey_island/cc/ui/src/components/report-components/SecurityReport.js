@@ -324,7 +324,10 @@ class ReportPageComponent extends AuthComponent {
                        linkTarget={"_blank"}
                        className={"markdown"}/>
         <CollapsibleWellComponent>
-          <ReactMarkdown children={issue.remediation_suggestion}/>
+          <ReactMarkdown children={issue.description}
+                         plugins={[remarkBreaks]}
+                         linkTarget={"_blank"}
+                         className={"markdown"}/>
         </CollapsibleWellComponent>
       </div>
     }
