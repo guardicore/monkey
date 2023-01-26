@@ -89,11 +89,54 @@ class ConfigurePageComponent extends AuthComponent {
     return injectedSchema;
   }
 
+  extractPluginsFromSchema = (schema) => {
+    // search the schema for plugins
+    let plugins = [];
+
+    // Search exploiters
+    for (let key of Object.keys(_.get(schema, EXPLOITERS_SCHEMA_PATH_NEW + '.properties'))) {
+      plugins.push(['Exploiter', key]);
+    }
+
+    return plugins
+  }
+
+  injectManifestIntoSchema = (manifest, schema) => {
+    let safe = manifest['safe'];
+    let link = manifest['link_to_documentation'];
+    let injectedSchema = _.cloneDeep(schema);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${manifest['name']}.safe`, safe);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${manifest['name']}.link`, link);
+    return injectedSchema;
+  }
+
   componentDidMount = () => {
-    this.authFetch(SCHEMA_URL).then(res => res.json())
-      .then(schema => {
-        this.setState({schema: this.injectExploitersIntoLegacySchema(schema)})
-      })
+    let schema = this.authFetch(SCHEMA_URL).then(res => res.json())
+    let manifests = schema.then(schema => {
+        let plugins = this.extractPluginsFromSchema(schema);
+        let plugin_manifests = [];
+        for (let plugin of plugins) {
+          let manifest_url = `/api/agent-plugins/${plugin[0]}/${plugin[1]}/manifest`;
+          plugin_manifests.push(this.authFetch(manifest_url).then(res => {
+            // Because no manifests exist for the hard-coded plugins, we reject failed requests
+            if (!res.ok) {
+              return Promise.reject(new Error(res.json()['message']));
+            }
+            return res.json();
+          }));
+        }
+
+        // Don't include the manifests that we failed to obtain
+        return Promise.allSettled(plugin_manifests).then(
+          res => res.filter(r => r.status === 'fulfilled').map(r => r.value)
+        );
+      });
+    Promise.all([schema, manifests]).then(([schema, manifests]) => {
+      for (let manifest of manifests) {
+        schema = this.injectManifestIntoSchema(manifest, schema);
+      }
+      this.setState({schema: this.injectExploitersIntoLegacySchema(schema)});
+    });
     this.authFetch(CONFIG_URL).then(res => res.json())
       .then(monkeyConfig => {
         let sections = [];
