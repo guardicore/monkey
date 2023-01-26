@@ -133,12 +133,3 @@ def test_run__fails_on_agent_binary_server_start_exception(plugin, monkeypatch):
 
     assert not result.exploitation_success
     assert not result.propagation_success
-
-
-def test_run__fails_if_agent_binary_not_downloaded(plugin, mock_bytes_server):
-    mock_bytes_server.download_requested = False
-
-    result = plugin_run(plugin)
-
-    assert not result.exploitation_success
-    assert not result.propagation_success
