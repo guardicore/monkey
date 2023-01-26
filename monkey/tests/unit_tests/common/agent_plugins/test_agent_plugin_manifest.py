@@ -101,12 +101,3 @@ def test_agent_plugin_manifest__remediation_suggestion():
     agent_manifest_object = AgentPluginManifest(**agent_manifest_dict)
 
     assert agent_manifest_object.remediation_suggestion == remediation_suggestion
-
-
-def test_agent_plugin_manifest__version():
-    import pydantic
-
-    from common.types import PluginVersion
-
-    class MyModel(pydantic.BaseModel):
-        version: PluginVersion
