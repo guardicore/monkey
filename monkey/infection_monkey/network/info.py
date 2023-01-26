@@ -100,6 +100,7 @@ class TCPPortSelector:
         self._leases: DictProxy[int, EggTimer] = manager.dict()
         self._lock = context.Lock()
 
+    # TODO: Return a `NetworkPort` instead of `int`
     def get_free_tcp_port(
         self, min_range: int = 1024, max_range: int = 65535, lease_time_sec: float = 30
     ) -> Optional[int]:
