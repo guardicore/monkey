@@ -17,6 +17,7 @@ EXPECTED_MANIFEST = AgentPluginManifest(
     supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     target_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
     title="dummy-exploiter",
+    version="1.0.0",
     description="A dummy exploiter",
     safe=True,
 )

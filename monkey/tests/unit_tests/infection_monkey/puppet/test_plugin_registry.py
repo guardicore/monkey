@@ -78,7 +78,9 @@ PLUGIN_NAME = "test_plugin"
 
 @pytest.fixture
 def agent_plugin() -> AgentPlugin:
-    manifest = AgentPluginManifest(name=PLUGIN_NAME, plugin_type=AgentPluginType.EXPLOITER)
+    manifest = AgentPluginManifest(
+        name=PLUGIN_NAME, version="1.0.0", plugin_type=AgentPluginType.EXPLOITER
+    )
     return AgentPlugin(
         plugin_manifest=manifest,
         config_schema={},

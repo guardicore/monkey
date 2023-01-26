@@ -21,6 +21,7 @@ FAKE_AGENT_MANIFEST_DICT_IN: Dict[str, Any] = {
     "supported_operating_systems": FAKE_SUPPORTED_OPERATING_SYSTEMS,
     "target_operating_systems": FAKE_OPERATING_SYSTEMS,
     "title": FAKE_TITLE,
+    "version": "1.0.0",
     "link_to_documentation": FAKE_LINK,
 }
 
@@ -35,6 +36,7 @@ FAKE_AGENT_MANIFEST_DICT = {
     "supported_operating_systems": [OperatingSystem.LINUX, OperatingSystem.WINDOWS],
     "target_operating_systems": [OperatingSystem.LINUX],
     "title": FAKE_TITLE,
+    "version": "1.0.0",
     "link_to_documentation": FAKE_LINK,
 }
 
@@ -44,6 +46,7 @@ FAKE_MANIFEST_OBJECT = AgentPluginManifest(
     supported_operating_systems=FAKE_SUPPORTED_OPERATING_SYSTEMS,
     target_operating_systems=FAKE_OPERATING_SYSTEMS,
     title=FAKE_TITLE,
+    version="1.0.0",
     link_to_documentation=FAKE_LINK,
 )
 
@@ -85,6 +88,7 @@ def test_agent_plugin_manifest__invalid_name(name):
             supported_operating_systems=FAKE_SUPPORTED_OPERATING_SYSTEMS,
             target_operating_systems=FAKE_OPERATING_SYSTEMS,
             title=FAKE_TITLE,
+            version="1.0.0",
             link_to_documentation=FAKE_LINK,
         )
 
@@ -97,3 +101,12 @@ def test_agent_plugin_manifest__remediation_suggestion():
     agent_manifest_object = AgentPluginManifest(**agent_manifest_dict)
 
     assert agent_manifest_object.remediation_suggestion == remediation_suggestion
+
+
+def test_agent_plugin_manifest__version():
+    import pydantic
+
+    from common.types import PluginVersion
+
+    class MyModel(pydantic.BaseModel):
+        version: PluginVersion

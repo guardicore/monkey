@@ -70,6 +70,7 @@ def agent_plugin_manifest() -> AgentPluginManifest:
     return AgentPluginManifest(
         name="TestPlugin",
         plugin_type=AgentPluginType.EXPLOITER,
+        version="1.0.0",
         supported_operating_systems=[OperatingSystem.LINUX, OperatingSystem.WINDOWS],
         target_operating_systems=[OperatingSystem.LINUX, OperatingSystem.WINDOWS],
     )
@@ -237,6 +238,7 @@ EXPECTED_MANIFEST = AgentPluginManifest(
     supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     target_operating_systems=(OperatingSystem.WINDOWS, OperatingSystem.LINUX),
     title="dummy-exploiter",
+    version="1.0.0",
     description="A dummy exploiter",
     safe=True,
 )
