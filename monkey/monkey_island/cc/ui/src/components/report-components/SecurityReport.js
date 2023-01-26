@@ -9,7 +9,8 @@ import ReportHeader, {ReportTypes} from './common/ReportHeader';
 import ReportLoader from './common/ReportLoader';
 import SecurityIssuesGlance from './common/SecurityIssuesGlance';
 import PrintReportButton from './common/PrintReportButton';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import guardicoreLogoImage from '../../images/guardicore-logo.png'
@@ -313,21 +314,19 @@ class ReportPageComponent extends AuthComponent {
   generateIssue = (issue) => {
     let reportContentComponent = <div></div>;
 
-    if (this.state.report.recommendations.remediation_suggestions.hasOwnProperty(issue.type)) {
-      let reportContents = this.state.report.recommendations.remediation_suggestions[issue.type];
-      let reportContentsArray = reportContents.split("\n\n");
-      let description = reportContentsArray[0];
-      let details = reportContentsArray[1];
+    if (issue.remediation_suggestion === "undefined") {
+      reportContentComponent = this.IssueDescriptorEnum[issue.type][this.issueContentTypes.REPORT](issue);
+    } else {
       // TODO: figure out how to highlight link in ReactMarkdown
       reportContentComponent = <div>
-        <ReactMarkdown children={description}/>
+        <ReactMarkdown children={issue.remediation_suggestion}
+                       plugins={[remarkBreaks]}
+                       linkTarget={"_blank"}
+                       className={"markdown"}/>
         <CollapsibleWellComponent>
-          <ReactMarkdown children={details}/>
+          <ReactMarkdown children={issue.remediation_suggestion}/>
         </CollapsibleWellComponent>
       </div>
-    }
-    else {
-      reportContentComponent = this.IssueDescriptorEnum[issue.type][this.issueContentTypes.REPORT](issue);
     }
 
     return <li key={JSON.stringify(issue)}>{reportContentComponent}</li>;
