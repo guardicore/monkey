@@ -3,7 +3,8 @@ from typing import Any, Dict, Tuple
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest
-from common.base_models import InfectionMonkeyBaseModel
+from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
+from common.types import PluginVersion
 from common.types.b64_bytes import B64Bytes
 
 
@@ -25,6 +26,11 @@ class AgentPlugin(InfectionMonkeyBaseModel):
     source_archive: B64Bytes
     supported_operating_systems: Tuple[OperatingSystem, ...]
 
-    class Config:
+    class Config(InfectionMonkeyModelConfig):
         # b64encode() returns bytes, so we call decode() to transform bytes to str
-        json_encoders = {bytes: lambda byte_field: b64encode(byte_field).decode()}
+        # PluginVersion needs to have json encoder also at the top level,
+        # as pydantic is not able to inherit AgentPluginManifest json encoders
+        json_encoders = {
+            bytes: lambda byte_field: b64encode(byte_field).decode(),
+            PluginVersion: lambda v: str(v),
+        }
