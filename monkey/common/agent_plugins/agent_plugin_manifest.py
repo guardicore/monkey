@@ -2,8 +2,8 @@ from typing import Optional, Tuple
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
-from common.base_models import InfectionMonkeyBaseModel
-from common.types import PluginName
+from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
+from common.types import PluginName, PluginVersion
 
 
 class AgentPluginManifest(InfectionMonkeyBaseModel):
@@ -18,6 +18,7 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
         :param target_operating_systems: Operating systems that the plugin can target
         :param title: Human readable name for the plugin
         :param description: Description of the plugin
+        :param version: Version of the plugin
         :param link_to_documentation: Link to the documentation of the plugin
         :param safe: Is the plugin safe to run. If there's a chance that running the plugin could
          disrupt the regular activities of the servers or the network, then the plugin is not safe.
@@ -34,7 +35,11 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
         OperatingSystem.LINUX,
     )
     title: Optional[str]
+    version: PluginVersion
     description: Optional[str]
     remediation_suggestion: Optional[str]
     link_to_documentation: Optional[str]
     safe: bool = False
+
+    class Config(InfectionMonkeyModelConfig):
+        json_encoders = {PluginVersion: lambda v: str(v)}
