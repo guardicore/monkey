@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 from ipaddress import IPv4Address, IPv4Interface
 from unittest.mock import MagicMock
@@ -5,10 +6,17 @@ from uuid import UUID
 
 import pytest
 import pytz
+from tests.data_for_tests.agent_plugin.manifests import (
+    EXPLOITER_INCOMPLETE_MANIFEST,
+    EXPLOITER_NAME_1,
+    EXPLOITER_NAME_2,
+    PLUGIN_MANIFESTS,
+    REMEDIATION_SUGGESTION_1,
+    REMEDIATION_SUGGESTION_2,
+)
 from tests.monkey_island import (
     InMemoryAgentConfigurationRepository,
     InMemoryAgentEventRepository,
-    InMemoryAgentPluginRepository,
     InMemoryAgentRepository,
 )
 
@@ -20,7 +28,11 @@ from common.agent_events import (
 )
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
-from monkey_island.cc.repositories import IAgentEventRepository, IAgentRepository
+from monkey_island.cc.repositories import (
+    IAgentEventRepository,
+    IAgentPluginRepository,
+    IAgentRepository,
+)
 from monkey_island.cc.services.reporting.report import ReportService
 
 EVENT_1 = AgentShutdownEvent(source=UUID("2d56f972-78a8-4026-9f47-2dfd550ee207"), timestamp=10)
@@ -127,7 +139,6 @@ AGENT_NOT_DEAD = Agent(
     cc_server=SocketAddress(ip="127.0.0.1", port=5000),
 )
 
-
 NODES = [
     Node(
         machine_id=1,
@@ -159,6 +170,38 @@ EXPECTED_SCANNED_MACHINES = [
     },
 ]
 
+ISSUE_1 = {
+    "machine_id": 8,
+    "machine": "hadoop-2",
+    "ip_address": "10.2.2.2",
+    "type": EXPLOITER_NAME_1,
+    "password_restored": None,
+}
+
+ISSUE_2 = {
+    "machine_id": 9,
+    "machine": "hadoop-3",
+    "ip_address": "10.2.2.3",
+    "type": EXPLOITER_NAME_2,
+    "password_restored": True,
+}
+
+ISSUE_3 = {
+    "machine_id": 10,
+    "machine": "hadoop-4",
+    "ip_address": "10.2.2.4",
+    "type": EXPLOITER_INCOMPLETE_MANIFEST,
+    "password_restored": True,
+}
+
+ISSUE_4 = {
+    "machine_id": 10,
+    "machine": "hadoop-4",
+    "ip_address": "10.2.2.4",
+    "type": "non existent",
+    "password_restored": True,
+}
+
 
 def get_machine_by_id(machine_id):
     return [machine for machine in MACHINES if machine_id == machine.id][0]
@@ -182,9 +225,16 @@ def agent_event_repository() -> IAgentEventRepository:
     return repo
 
 
+@pytest.fixture
+def mock_agent_plugin_repository() -> IAgentPluginRepository:
+    return MagicMock(spec=IAgentPluginRepository)
+
+
 @pytest.fixture(autouse=True)
 def report_service(
-    agent_repository: IAgentRepository, agent_event_repository: IAgentEventRepository
+    agent_repository: IAgentRepository,
+    agent_event_repository: IAgentEventRepository,
+    mock_agent_plugin_repository: IAgentPluginRepository,
 ):
     ReportService._machine_repository = MagicMock()
     ReportService._machine_repository.get_machines.return_value = MACHINES
@@ -194,7 +244,7 @@ def report_service(
     ReportService._node_repository.get_nodes.return_value = NODES
     ReportService._agent_event_repository = agent_event_repository
     ReportService._agent_configuration_repository = InMemoryAgentConfigurationRepository()
-    ReportService._agent_plugin_repository = InMemoryAgentPluginRepository()
+    ReportService._agent_plugin_repository = mock_agent_plugin_repository
 
 
 def test_get_scanned():
@@ -238,6 +288,7 @@ def test_report_service_get_latest_event_timestamp():
 def test_report_generation(monkeypatch, agent_event_repository):
     monkeypatch.setattr(ReportService, "get_issues", lambda: [])
     monkeypatch.setattr(ReportService, "get_cross_segment_issues", lambda: [])
+    monkeypatch.setattr(ReportService, "add_remediation_to_issue", lambda issue: issue)
 
     ReportService.update_report()
     actual_report = ReportService.get_report()
@@ -260,3 +311,28 @@ def test_report_generation__no_agent_repository():
 
     with pytest.raises(RuntimeError):
         ReportService.update_report()
+
+
+@pytest.mark.parametrize(
+    "issue, expected_remediation",
+    [(ISSUE_1, REMEDIATION_SUGGESTION_1), (ISSUE_2, REMEDIATION_SUGGESTION_2), (ISSUE_3, None)],
+)
+def test_report__add_remediation_to_issue(issue, expected_remediation, monkeypatch):
+    mock_plugin_repo = MagicMock()
+    mock_plugin_repo.get_all_plugin_manifests = MagicMock(return_value=PLUGIN_MANIFESTS)
+    monkeypatch.setattr(ReportService, "_agent_plugin_repository", mock_plugin_repo)
+
+    issue = deepcopy(issue)
+    issue_with_remediation = ReportService.add_remediation_to_issue(issue)
+
+    assert issue_with_remediation["remediation_suggestion"] == expected_remediation
+
+
+def test_report__add_remediation_to_issue_missing_manifest(monkeypatch):
+    mock_plugin_repo = MagicMock()
+    mock_plugin_repo.get_all_plugin_manifests = MagicMock(return_value={})
+    monkeypatch.setattr(ReportService, "_agent_plugin_repository", mock_plugin_repo)
+
+    issue = ReportService.add_remediation_to_issue(deepcopy(ISSUE_1))
+
+    assert "remediation_suggestion" not in issue

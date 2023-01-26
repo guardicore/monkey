@@ -19,7 +19,7 @@ from common.agent_events import (
     PingScanEvent,
     TCPScanEvent,
 )
-from common.agent_plugins import AgentPluginType
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.network.network_range import NetworkRange
 from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_if_in_subnet
@@ -443,13 +443,7 @@ class ReportService:
 
         agent_configuration = cls._agent_configuration_repository.get_configuration()  # type: ignore[union-attr] # noqa: E501
         exploitation_configuration = agent_configuration.propagation.exploitation
-        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
-            AgentPluginType.EXPLOITER, {}
-        )
-        if not exploiter_manifests:
-            logger.debug("No plugin exploiter manifests were found")
-
-        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+        exploiter_manifests = cls._get_exploiter_manifests()
 
         for exploiter_name, manifest in exploiter_manifests.items():
             if exploiter_name not in exploitation_configuration.exploiters:
@@ -530,12 +524,14 @@ class ReportService:
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
             },
-            "recommendations": {"issues": issues},
+            "recommendations": {
+                "issues": issues,
+            },
             "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
 
-    @staticmethod
-    def get_issues():
+    @classmethod
+    def get_issues(cls):
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
             ReportService.get_island_cross_segment_issues,
@@ -545,6 +541,7 @@ class ReportService:
 
         issues_dict = {}
         for issue in issues:
+            issue = cls.add_remediation_to_issue(issue)
             if issue.get("is_local", True):
                 machine_id = issue.get("machine_id")
                 if machine_id not in issues_dict:
@@ -552,6 +549,13 @@ class ReportService:
                 issues_dict[machine_id].append(issue)
         logger.info("Issues generated for reporting")
         return issues_dict
+
+    @classmethod
+    def add_remediation_to_issue(cls, issue: Dict[str, Any]) -> Dict[str, Any]:
+        manifest = cls._get_exploiter_manifests().get(issue["type"])
+        if manifest:
+            issue["remediation_suggestion"] = manifest.remediation_suggestion
+        return issue
 
     @classmethod
     def get_latest_event_timestamp(cls) -> Optional[float]:
@@ -565,6 +569,18 @@ class ReportService:
         )
 
         return latest_timestamp
+
+    @classmethod
+    def _get_exploiter_manifests(cls) -> Dict[str, AgentPluginManifest]:
+        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
+            AgentPluginType.EXPLOITER, {}
+        )
+        if not exploiter_manifests:
+            logger.debug("No plugin exploiter manifests were found")
+
+        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+
+        return exploiter_manifests
 
     @classmethod
     def report_is_outdated(cls) -> bool:
