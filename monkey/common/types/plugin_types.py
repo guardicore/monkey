@@ -26,10 +26,10 @@ class PluginVersion(Version):
         """Inject/mutate the pydantic field schema in-place."""
         field_schema.update(
             examples=[
-                "1.0.2",
-                "3.6.2+dev",
-                "1.3.4+23daf123",
-                "2.15.3-alpha",
-                "21.3.15-beta+12345",
+                "v1.0.2",
+                "v3.6.2+dev",
+                "v1.3.4+23daf123",
+                "v2.15.3-alpha",
+                "v21.3.15-beta+12345",
             ]
         )
