@@ -29,7 +29,8 @@ def exploit_urls():
 def mock_bytes_server() -> HTTPBytesServer:
     mock_bytes_server = MagicMock(spec=HTTPBytesServer)
     mock_bytes_server.download_url = DOWNLOAD_URL
-    mock_bytes_server.download_requested = True
+    mock_bytes_server.download_requested = Event()
+    mock_bytes_server.download_requested.set()
     return mock_bytes_server
 
 
