@@ -295,20 +295,22 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateIssue = (issue) => {
-    let remediation = <ReactMarkdown children={'No remediation available'} />;
+    let remediation = <ReactMarkdown> 'No remediation available'</ReactMarkdown>;
     let description = '';
 
     if(_.has(issue, 'remediation_suggestion') && issue.remediation_suggestion !== undefined){
-      remediation = <ReactMarkdown children={issue.remediation_suggestion}
-                       plugins={[remarkBreaks]}
+      remediation = <ReactMarkdown plugins={[remarkBreaks]}
                        linkTarget={'_blank'}
-                       className={'markdown'}/>
+                       className={'markdown'}>
+        {issue.remediation_suggestion}
+      </ReactMarkdown>
     }
     if(_.has(issue, 'description') && issue.description !== undefined){
-       description = <ReactMarkdown children={issue.description}
-                                   plugins={[remarkBreaks]}
+       description = <ReactMarkdown plugins={[remarkBreaks]}
                                    linkTarget={'_blank'}
-                                   className={'markdown'}/>
+                                   className={'markdown'}>
+        {issue.description}
+      </ReactMarkdown>
     }
 
     if(issue.type === 'ZerologonExploiter' && issue.password_restored === false){
