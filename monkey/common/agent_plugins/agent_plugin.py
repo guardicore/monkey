@@ -1,10 +1,9 @@
 from base64 import b64encode
-from typing import Any, Dict, Tuple
+from typing import Any, Callable, Dict, Mapping, Tuple, Type
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginManifest
 from common.base_models import InfectionMonkeyBaseModel, InfectionMonkeyModelConfig
-from common.types import PluginVersion
 from common.types.b64_bytes import B64Bytes
 
 
@@ -28,9 +27,9 @@ class AgentPlugin(InfectionMonkeyBaseModel):
 
     class Config(InfectionMonkeyModelConfig):
         # b64encode() returns bytes, so we call decode() to transform bytes to str
-        # PluginVersion needs to have json encoder also at the top level,
-        # as pydantic is not able to inherit AgentPluginManifest json encoders
-        json_encoders = {
+        # Pydantic is not able to inherit AgentPluginManifest json encoders
+        # so we update the current encoders
+        json_encoders: Mapping[Type, Callable[[Any], Any]] = {
             bytes: lambda byte_field: b64encode(byte_field).decode(),
-            PluginVersion: lambda v: str(v),
+            **AgentPluginManifest.Config.json_encoders,
         }
