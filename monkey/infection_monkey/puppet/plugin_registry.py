@@ -119,9 +119,12 @@ class MultiprocessingPluginWrapper(MultiUsePlugin):
         self._constructor_kwargs = kwargs
 
     def run(self, **kwargs) -> Any:
+        logger.debug(f"Constructing a new instance of {self._name}")
         plugin = self._plugin_loader.load_multiprocessing_plugin(
             plugin_name=self._name, **self._constructor_kwargs
         )
+
+        logger.debug("Invoking plugin.run()")
         return plugin.run(**kwargs)
 
     @property
