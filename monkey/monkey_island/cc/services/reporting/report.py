@@ -518,8 +518,8 @@ class ReportService:
                 ),
                 "monkey_duration": ReportService.get_monkey_duration(),
                 "issues": issue_set,
-                "cross_segment_issues": cross_segment_issues,
             },
+            "cross_segment_issues": cross_segment_issues,
             "glance": {
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,

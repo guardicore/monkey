@@ -17,6 +17,7 @@ import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {
+  crossSegmentIssueReport,
   islandCrossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
 import {
@@ -128,6 +129,7 @@ class ReportPageComponent extends AuthComponent {
       content =
         <div>
           {this.generateReportOverviewSection()}
+          {this.generateSegmentationSection()}
           {this.generateReportRecommendationsSection()}
           {this.generateReportGlanceSection()}
           {this.generateReportFooter()}
@@ -252,6 +254,26 @@ class ReportPageComponent extends AuthComponent {
         </div>
       </div>
     );
+  }
+
+  generateSegmentationSection() {
+    if(this.state.report.cross_segment_issues.length === 0){
+      return '';
+    } else {
+      return (
+        <div>
+          <h2>
+            Segmentation Issues
+          </h2>
+          <div>
+            The Monkey uncovered the following set of segmentation issues:
+            <ul>
+              {this.state.report.cross_segment_issues.map(x => crossSegmentIssueReport(x))}
+            </ul>
+          </div>
+        </div>
+      )
+    }
   }
 
   generateReportGlanceSection() {
