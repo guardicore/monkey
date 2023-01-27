@@ -38,6 +38,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Reset workflow. Now it's possible to delete data gathered by agents without
   resetting the configuration and reset procedure requires fewer clicks. #957
 - Reduced the map refresh rate from 5 seconds to 1.
+- Cleaned up and removed duplication in security report. #2885
 - The setup procedure for custom server_config.json files to be simpler. #1576
 - The order and content of Monkey Island's initialization logging to give
   clearer instructions to the user and avoid confusion. #1684
