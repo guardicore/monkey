@@ -13,9 +13,6 @@ from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (
-    ExploiterDescriptorEnum,
-)
 
 # Pydantic configurations are not picked up
 ScanTargetConfiguration.blocked_ips_valid
@@ -93,9 +90,11 @@ Deployment.DEVELOP
 Deployment.APPIMAGE
 Deployment.DOCKER
 
-# Pymongo models
+# Pydantic models
 Machine.Config.json_dumps
 Machine._socketaddress_from_string
+# Unused, but potentially useful
+Machine.island
 
 IslandMode.ADVANCED
 
@@ -104,14 +103,6 @@ IAgentEventRepository.get_events_by_tag
 IAgentEventRepository.get_events_by_source
 MongoAgentEventRepository.get_events_by_tag
 MongoAgentEventRepository.get_events_by_source
-
-# ExploiterDescriptorEnum
-ExploiterDescriptorEnum.SMB
-ExploiterDescriptorEnum.WMI
-ExploiterDescriptorEnum.SSH
-ExploiterDescriptorEnum.MSSQL
-ExploiterDescriptorEnum.POWERSHELL
-ExploiterDescriptorEnum.LOG4SHELL
 
 AWSCommandResults.response_code  # monkey_island/cc/services/aws/aws_command_runner.py:26
 

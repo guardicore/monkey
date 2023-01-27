@@ -38,12 +38,6 @@ import CollapsibleWellComponent from './security/CollapsibleWell';
 
 class ReportPageComponent extends AuthComponent {
 
-  issueContentTypes = {
-    OVERVIEW: 'overview',
-    REPORT: 'report',
-    TYPE: 'type'
-  }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -212,7 +206,6 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateReportRecommendationsSection() {
-    console.log(this.state.report.recommendations.issues)
     return (
       <div id='recommendations'>
         {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
