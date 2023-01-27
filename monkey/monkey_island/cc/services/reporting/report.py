@@ -36,7 +36,6 @@ from monkey_island.cc.services.reporting.exploitations.monkey_exploitation impor
     get_monkey_exploited,
 )
 
-from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
 from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
@@ -71,9 +70,6 @@ class ReportService:
     _agent_plugin_repository: Optional[IAgentPluginRepository] = None
     _report: Dict[str, Dict] = {}
     _report_generation_lock: Lock = Lock()
-
-    class DerivedIssueEnum:
-        ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
 
     @classmethod
     def initialize(
@@ -435,13 +431,6 @@ class ReportService:
     def get_config_scan(cls):
         agent_configuration = cls._agent_configuration_repository.get_configuration()
         return agent_configuration.propagation.network_scan.targets.scan_my_networks
-
-    @staticmethod
-    def _is_zerologon_pass_restore_failed(issue: dict):
-        return (
-            issue["type"] == ExploiterDescriptorEnum.ZEROLOGON.value.class_name
-            and not issue["password_restored"]
-        )
 
     @classmethod
     def is_report_generated(cls) -> bool:

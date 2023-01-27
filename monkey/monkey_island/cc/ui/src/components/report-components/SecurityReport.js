@@ -44,14 +44,6 @@ class ReportPageComponent extends AuthComponent {
     TYPE: 'type'
   }
 
-  IssueDescriptorEnum =
-    {
-      // TODO: Fix this to show the warning with the Zerologon issue
-      'zerologon_pass_restore_failed': {
-        [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning
-      }
-    }
-
   constructor(props) {
     super(props);
     this.state = {
@@ -324,6 +316,14 @@ class ReportPageComponent extends AuthComponent {
                                    plugins={[remarkBreaks]}
                                    linkTarget={"_blank"}
                                    className={"markdown"}/>
+    }
+
+    if(issue.type === "ZerologonExploiter" && issue.password_restored === false){
+      remediation = <>
+        {zerologonOverviewWithFailedPassResetWarning()}
+        <br/>
+        <li>{remediation}</li>
+      </>
     }
 
     let reportContentComponent = <div>
