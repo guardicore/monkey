@@ -1,4 +1,5 @@
 import logging
+import threading
 from typing import Mapping, Optional
 
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
@@ -20,6 +21,7 @@ class PluginCompatabilityVerifier:
     ):
         self._island_api_client = island_api_client
         self._exploiter_plugin_manifests = dict(exploiter_plugin_manifests)
+        self._cache_lock = threading.Lock()
 
     def verify_exploiter_compatibility(self, exploiter_name: str, target_host: TargetHost) -> bool:
         """
@@ -44,17 +46,18 @@ class PluginCompatabilityVerifier:
         Request island for plugin manifest if it doesn't exists and return it
         :param exploiter_name: Name of exploiter
         """
-        if exploiter_name in self._exploiter_plugin_manifests:
-            return self._exploiter_plugin_manifests[exploiter_name]
+        with self._cache_lock:
+            if exploiter_name in self._exploiter_plugin_manifests:
+                return self._exploiter_plugin_manifests[exploiter_name]
 
-        try:
-            plugin_manifest = self._island_api_client.get_agent_plugin_manifest(
-                AgentPluginType.EXPLOITER, exploiter_name
-            )
-            self._exploiter_plugin_manifests[exploiter_name] = plugin_manifest
+            try:
+                plugin_manifest = self._island_api_client.get_agent_plugin_manifest(
+                    AgentPluginType.EXPLOITER, exploiter_name
+                )
+                self._exploiter_plugin_manifests[exploiter_name] = plugin_manifest
 
-            return plugin_manifest
-        except IslandAPIError:
-            logger.exception(f"No plugin manifest found for {exploiter_name}")
+                return plugin_manifest
+            except IslandAPIError:
+                logger.exception(f"No plugin manifest found for {exploiter_name}")
 
-        return None
+            return None
