@@ -58,5 +58,5 @@ def test_hadoop_options__default():
     ],
 )
 def test_hadoop_options_constrains(options_dict):
-    with pytest.raises(pydantic.errors.NumberNotGeError):
+    with pytest.raises((pydantic.errors.NumberNotGeError, pydantic.errors.NumberNotGtError)):
         HadoopOptions(**options_dict)
