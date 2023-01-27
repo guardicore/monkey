@@ -18,7 +18,6 @@ import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {
   crossSegmentIssueReport,
-  islandCrossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
 import {getAllTunnels, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
 import {
@@ -50,10 +49,7 @@ class ReportPageComponent extends AuthComponent {
       // TODO: Fix this to show the warning with the Zerologon issue
       'zerologon_pass_restore_failed': {
         [this.issueContentTypes.OVERVIEW]: zerologonOverviewWithFailedPassResetWarning
-      },
-      'island_cross_segment': {
-        [this.issueContentTypes.REPORT]: islandCrossSegmentIssueReport,
-      },
+      }
     }
 
   constructor(props) {
