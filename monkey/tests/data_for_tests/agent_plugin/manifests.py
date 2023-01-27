@@ -14,6 +14,7 @@ PLUGIN_MANIFESTS = {
             name=EXPLOITER_NAME_1,
             plugin_type=AgentPluginType.EXPLOITER,
             title="Mock Exploiter",
+            version="1.0.0",
             target_operating_systems=(OperatingSystem.WINDOWS,),
             description="Mocked description",
             link_to_documentation="http://no_mocked.com",
@@ -24,6 +25,7 @@ PLUGIN_MANIFESTS = {
             name=EXPLOITER_NAME_2,
             plugin_type=AgentPluginType.EXPLOITER,
             title=None,
+            version="1.0.0",
             target_operating_systems=(OperatingSystem.WINDOWS,),
             description="Another Mocked description",
             link_to_documentation="http://nopenope.com",
@@ -34,6 +36,7 @@ PLUGIN_MANIFESTS = {
             name=EXPLOITER_INCOMPLETE_MANIFEST,
             plugin_type=AgentPluginType.EXPLOITER,
             target_operating_systems=tuple(),
+            version="1.0.0",
         ),
     }
 }

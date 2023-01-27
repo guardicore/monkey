@@ -34,6 +34,7 @@ def test_get_plugin_manifest(flask_client, agent_plugin_repository):
         "name": "rdp_exploiter",
         "plugin_type": "Exploiter",
         "safe": False,
+        "version": "1.0.0",
         "remediation_suggestion": None,
         "supported_operating_systems": ["linux", "windows"],
         "target_operating_systems": ["linux"],

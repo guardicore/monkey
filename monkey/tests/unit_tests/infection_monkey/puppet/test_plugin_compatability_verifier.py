@@ -25,6 +25,7 @@ FAKE_MANIFEST_OBJECT_2 = AgentPluginManifest(
     supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
     target_operating_systems=(OperatingSystem.WINDOWS,),
     title="Some exploiter title",
+    version="1.0.0",
     link_to_documentation=FAKE_LINK,
 )
 

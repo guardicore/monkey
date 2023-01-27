@@ -7,5 +7,6 @@ target_operating_systems:
   - linux
 title: Mock2 exploiter plugin
 description: A second exploiter plugin for testing purposes
+version: 1.0.0
 safe: false
 link_to_documentation: https://www.akamai.com/infectionmonkey

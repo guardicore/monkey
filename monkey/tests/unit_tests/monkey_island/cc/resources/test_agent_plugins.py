@@ -40,6 +40,7 @@ def test_get_plugin(flask_client, agent_plugin_repository):
             "link_to_documentation": "www.beefface.com",
             "name": FAKE_NAME,
             "plugin_type": FAKE_TYPE,
+            "version": "1.0.0",
             "safe": False,
             "remediation_suggestion": None,
             "supported_operating_systems": ["linux", "windows"],

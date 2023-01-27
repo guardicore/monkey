@@ -21,6 +21,7 @@ FAKE_AGENT_MANIFEST_DICT_IN: Dict[str, Any] = {
     "supported_operating_systems": FAKE_SUPPORTED_OPERATING_SYSTEMS,
     "target_operating_systems": FAKE_OPERATING_SYSTEMS,
     "title": FAKE_TITLE,
+    "version": "1.0.0",
     "link_to_documentation": FAKE_LINK,
 }
 
@@ -35,6 +36,7 @@ FAKE_AGENT_MANIFEST_DICT = {
     "supported_operating_systems": [OperatingSystem.LINUX, OperatingSystem.WINDOWS],
     "target_operating_systems": [OperatingSystem.LINUX],
     "title": FAKE_TITLE,
+    "version": "1.0.0",
     "link_to_documentation": FAKE_LINK,
 }
 
@@ -44,6 +46,7 @@ FAKE_MANIFEST_OBJECT = AgentPluginManifest(
     supported_operating_systems=FAKE_SUPPORTED_OPERATING_SYSTEMS,
     target_operating_systems=FAKE_OPERATING_SYSTEMS,
     title=FAKE_TITLE,
+    version="1.0.0",
     link_to_documentation=FAKE_LINK,
 )
 
@@ -85,6 +88,37 @@ def test_agent_plugin_manifest__invalid_name(name):
             supported_operating_systems=FAKE_SUPPORTED_OPERATING_SYSTEMS,
             target_operating_systems=FAKE_OPERATING_SYSTEMS,
             title=FAKE_TITLE,
+            version="1.0.0",
+            link_to_documentation=FAKE_LINK,
+        )
+
+
+@pytest.mark.parametrize(
+    "version",
+    [
+        "v1.0.0",
+        "version-1.0.0",
+        "1..0.0",
+        "4.5.6.7.8.9.6.4",
+        "some_string",
+        "12314223",
+        "1 0 0",
+        "1.0.0!",
+        "1.0.0; malicious command",
+        "`1.0.0`",
+        "$(shell_injection)",
+        "bash -c shell_injection",
+    ],
+)
+def test_agent_plugin_manifest__invalid_version(version):
+    with pytest.raises(ValueError):
+        AgentPluginManifest(
+            name=FAKE_NAME,
+            plugin_type=FAKE_TYPE,
+            supported_operating_systems=FAKE_SUPPORTED_OPERATING_SYSTEMS,
+            target_operating_systems=FAKE_OPERATING_SYSTEMS,
+            title=FAKE_TITLE,
+            version=version,
             link_to_documentation=FAKE_LINK,
         )
 
