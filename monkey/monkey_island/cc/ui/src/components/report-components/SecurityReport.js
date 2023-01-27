@@ -20,13 +20,7 @@ import {
   crossSegmentIssueReport,
   islandCrossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
-import {
-  sharedCredsDomainIssueReport,
-  sharedCredsIssueReport,
-  sharedLocalAdminsIssueReport,
-} from './security/issues/SharedPasswordsIssue';
 import {getAllTunnels, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
-import {strongUsersOnCritIssueReport} from './security/issues/StrongUsersOnCritIssue';
 import {
   zerologonOverviewWithFailedPassResetWarning
 } from './security/issues/ZerologonIssue';
@@ -60,18 +54,6 @@ class ReportPageComponent extends AuthComponent {
       'island_cross_segment': {
         [this.issueContentTypes.REPORT]: islandCrossSegmentIssueReport,
       },
-      'shared_passwords': {
-        [this.issueContentTypes.REPORT]: sharedCredsIssueReport,
-      },
-      'shared_admins_domain': {
-        [this.issueContentTypes.REPORT]: sharedLocalAdminsIssueReport,
-      },
-      'shared_passwords_domain': {
-        [this.issueContentTypes.REPORT]: sharedCredsDomainIssueReport,
-      },
-      'strong_users_on_crit': {
-        [this.issueContentTypes.REPORT]: strongUsersOnCritIssueReport,
-      }
     }
 
   constructor(props) {
