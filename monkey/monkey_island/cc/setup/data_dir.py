@@ -5,6 +5,7 @@ from pathlib import Path
 
 from common.utils.file_utils import create_secure_directory
 from common.version import get_version
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.setup.env_utils import is_running_on_docker
 from monkey_island.cc.setup.version_file_setup import get_version_from_dir, write_version
 
@@ -22,6 +23,7 @@ def setup_data_dir(data_dir_path: Path):
         _handle_old_data_directory(data_dir_path)
     create_secure_directory(data_dir_path)
     write_version(data_dir_path)
+    _copy_plugins_into_data_dir(data_dir_path)
     logger.info(f"Data directory set up in {data_dir_path}.")
 
 
@@ -90,3 +92,31 @@ def _data_dir_version_mismatch_exists(data_dir_path: Path) -> bool:
     island_version = get_version()
 
     return island_version != data_dir_version
+
+
+def _copy_plugins_into_data_dir(data_dir_path: Path):
+    plugin_path = Path(MONKEY_ISLAND_ABS_PATH) / "plugins"
+    try:
+        plugins_destination_path = _create_plugins_dir(data_dir_path)
+        plugin_tar_paths = list(plugin_path.glob("*.tar"))
+    except Exception:
+        logger.exception(f"An error occured while creating plugins data directory: {plugin_path}")
+        return
+
+    for plugin_tar_path in plugin_tar_paths:
+        try:
+            shutil.copy2(plugin_tar_path, plugins_destination_path)
+        except FileNotFoundError:
+            logger.exception(
+                f"An error occured while copying plugin {plugin_tar_path} "
+                f"to the data directory: {data_dir_path}"
+            )
+
+
+def _create_plugins_dir(plugins_dir_parent_dir: Path) -> Path:
+    plugins_dir = plugins_dir_parent_dir / "plugins"
+    logger.info(f"Plugins directory: {plugins_dir}")
+
+    if not plugins_dir.exists():
+        create_secure_directory(plugins_dir)
+    return plugins_dir
