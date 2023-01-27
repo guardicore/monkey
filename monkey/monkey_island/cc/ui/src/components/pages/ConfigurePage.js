@@ -110,28 +110,31 @@ class ConfigurePageComponent extends AuthComponent {
     return injectedSchema;
   }
 
+  fulfilledPromises = (res) => {
+    return res.filter(r =>  r.status === 'fulfilled').map(r => r.value);
+  }
+
+  rejectIfFailed = (res) => {
+    if (!res.ok) {
+      return Promise.reject(new Error(res.json()['message']));
+    }
+    return res.json();
+  }
+
   componentDidMount = () => {
-    let schema = this.authFetch(SCHEMA_URL).then(res => res.json())
-    let manifests = schema.then(schema => {
+    let schema_promise = this.authFetch(SCHEMA_URL).then(res => res.json())
+    let manifests_promise = schema_promise.then(schema => {
         let plugins = this.extractPluginsFromSchema(schema);
         let plugin_manifests = [];
         for (let plugin of plugins) {
           let manifest_url = `/api/agent-plugins/${plugin[0]}/${plugin[1]}/manifest`;
-          plugin_manifests.push(this.authFetch(manifest_url).then(res => {
-            // Because no manifests exist for the hard-coded plugins, we reject failed requests
-            if (!res.ok) {
-              return Promise.reject(new Error(res.json()['message']));
-            }
-            return res.json();
-          }));
+          // Because no manifests exist for the hard-coded plugins, we reject failed requests
+          plugin_manifests.push(this.authFetch(manifest_url).then(this.rejectIfFailed));
         }
+        return Promise.allSettled(plugin_manifests);
+      }).then(this.fulfilledPromises);
 
-        // Don't include the manifests that we failed to obtain
-        return Promise.allSettled(plugin_manifests).then(
-          res => res.filter(r => r.status === 'fulfilled').map(r => r.value)
-        );
-      });
-    Promise.all([schema, manifests]).then(([schema, manifests]) => {
+    Promise.all([schema_promise, manifests_promise]).then(([schema, manifests]) => {
       for (let manifest of manifests) {
         schema = this.injectManifestIntoSchema(manifest, schema);
       }
