@@ -124,14 +124,15 @@ def _get_new_http_handler_class(
                 )
                 return
 
-            self.class_downloaded.set()
+            logger.info("Received a GET request!")
 
-        logger.info("Received a GET request!")
-        self.send_response(HTTPStatus.OK)
-        self.send_header("Content-type", "application/octet-stream")
-        self.end_headers()
-        logger.info("Sending the bytes to the requester")
-        self.wfile.write(self.bytes_to_serve)
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-type", "application/octet-stream")
+            self.end_headers()
+
+            logger.info("Sending the bytes to the requester")
+            self.wfile.write(self.bytes_to_serve)
+            self.class_downloaded.set()
 
     return type(
         "HTTPHandler",
