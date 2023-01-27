@@ -200,9 +200,6 @@ class ReportPageComponent extends AuthComponent {
         <ul>
           {[...new Set(manualMonkeyHostnames)].map(x => <li key={x}>{x}</li>)}
         </ul>
-        <p>
-          The monkeys were run with the following configuration:
-        </p>
         <AvailableCredentials stolen={this.state.stolenCredentials} configured={this.state.configuredCredentials} />
         {
           this.state.report.overview.config_exploits.length > 0 ?
