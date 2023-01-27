@@ -17,7 +17,7 @@ import guardicoreLogoImage from '../../images/guardicore-logo.png'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {
-  crossSegmentIssueReport,
+  crossSegmentIssueReport
 } from './security/issues/CrossSegmentIssue';
 import {getAllTunnels, tunnelIssueReportByMachine} from './security/issues/TunnelIssue';
 import {
@@ -295,23 +295,23 @@ class ReportPageComponent extends AuthComponent {
   }
 
   generateIssue = (issue) => {
-    let remediation = <ReactMarkdown children={"No remediation available"} />;
-    let description = "";
+    let remediation = <ReactMarkdown children={'No remediation available'} />;
+    let description = '';
 
-    if(_.has(issue, "remediation_suggestion") && issue.remediation_suggestion !== undefined){
+    if(_.has(issue, 'remediation_suggestion') && issue.remediation_suggestion !== undefined){
       remediation = <ReactMarkdown children={issue.remediation_suggestion}
                        plugins={[remarkBreaks]}
-                       linkTarget={"_blank"}
-                       className={"markdown"}/>
+                       linkTarget={'_blank'}
+                       className={'markdown'}/>
     }
-    if(_.has(issue, "description") && issue.description !== undefined){
+    if(_.has(issue, 'description') && issue.description !== undefined){
        description = <ReactMarkdown children={issue.description}
                                    plugins={[remarkBreaks]}
-                                   linkTarget={"_blank"}
-                                   className={"markdown"}/>
+                                   linkTarget={'_blank'}
+                                   className={'markdown'}/>
     }
 
-    if(issue.type === "ZerologonExploiter" && issue.password_restored === false){
+    if(issue.type === 'ZerologonExploiter' && issue.password_restored === false){
       remediation = <>
         {zerologonOverviewWithFailedPassResetWarning()}
         <br/>
@@ -339,7 +339,7 @@ class ReportPageComponent extends AuthComponent {
 
       issuesDivArray.push(
         <li key={machineId}>
-          <h4><b>{hostname} ({machineIPs.join(", ")})</b></h4>
+          <h4><b>{hostname} ({machineIPs.join(', ')})</b></h4>
           <ol>
             {issues[machineId].map(this.generateIssue)}
             {this.getTunnelIssue(parseInt(machineId))}
