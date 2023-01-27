@@ -83,7 +83,7 @@ class HTTPBytesServer:
             logger.debug("The HTTP server has stopped")
 
     @property
-    def download_requested(self) -> Event:
+    def bytes_downloaded(self) -> Event:
         """
         Returns whether or not a victim has downloaded the bytes from the server.
 
@@ -103,7 +103,7 @@ class HTTPBytesServer:
 
 
 def _get_new_http_handler_class(
-    bytes_to_serve: bytes, class_downloaded: threading.Event
+    bytes_to_serve: bytes, bytes_downloaded: threading.Event
 ) -> Type[http.server.BaseHTTPRequestHandler]:
     """
     Dynamically create a new subclass of http.server.BaseHTTPRequestHandler and return it to the
@@ -117,28 +117,29 @@ def _get_new_http_handler_class(
 
     def do_GET(self):
         with self.download_lock:
-            if self.class_downloaded.is_set():
+            if self.bytes_downloaded.is_set():
                 self.send_error(
                     HTTPStatus.TOO_MANY_REQUESTS,
                     "A download has already been requested",
                 )
                 return
 
-            self.class_downloaded.set()
+            logger.info("Received a GET request!")
 
-        logger.info("Received a GET request!")
-        self.send_response(HTTPStatus.OK)
-        self.send_header("Content-type", "application/octet-stream")
-        self.end_headers()
-        logger.info("Sending the bytes to the requester")
-        self.wfile.write(self.bytes_to_serve)
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-type", "application/octet-stream")
+            self.end_headers()
+
+            logger.info("Sending the bytes to the requester")
+            self.wfile.write(self.bytes_to_serve)
+            self.bytes_downloaded.set()
 
     return type(
         "HTTPHandler",
         (http.server.BaseHTTPRequestHandler,),
         {
             "bytes_to_serve": bytes_to_serve,
-            "class_downloaded": class_downloaded,
+            "bytes_downloaded": bytes_downloaded,
             "download_lock": threading.Lock(),
             "do_GET": do_GET,
         },
