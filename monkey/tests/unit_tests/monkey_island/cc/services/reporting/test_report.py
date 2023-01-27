@@ -26,6 +26,7 @@ from common.agent_events import (
     PasswordRestorationEvent,
     PropagationEvent,
 )
+from common.agent_plugins import AgentPluginType
 from common.types import SocketAddress
 from monkey_island.cc.models import Agent, CommunicationType, Machine, Node
 from monkey_island.cc.repositories import (
@@ -317,22 +318,18 @@ def test_report_generation__no_agent_repository():
     "issue, expected_remediation",
     [(ISSUE_1, REMEDIATION_SUGGESTION_1), (ISSUE_2, REMEDIATION_SUGGESTION_2), (ISSUE_3, None)],
 )
-def test_report__add_remediation_to_issue(issue, expected_remediation, monkeypatch):
-    mock_plugin_repo = MagicMock()
-    mock_plugin_repo.get_all_plugin_manifests = MagicMock(return_value=PLUGIN_MANIFESTS)
-    monkeypatch.setattr(ReportService, "_agent_plugin_repository", mock_plugin_repo)
-
+def test_report__add_remediation_to_issue(issue, expected_remediation):
     issue = deepcopy(issue)
-    issue_with_remediation = ReportService.add_remediation_to_issue(issue)
+    manifest = PLUGIN_MANIFESTS[AgentPluginType.EXPLOITER][issue["type"]]
+
+    issue_with_remediation = ReportService.add_remediation_to_issue(issue, manifest)
 
     assert issue_with_remediation["remediation_suggestion"] == expected_remediation
 
 
-def test_report__add_remediation_to_issue_missing_manifest(monkeypatch):
-    mock_plugin_repo = MagicMock()
-    mock_plugin_repo.get_all_plugin_manifests = MagicMock(return_value={})
-    monkeypatch.setattr(ReportService, "_agent_plugin_repository", mock_plugin_repo)
+def test_report__add_remediation_to_issue_missing_manifest():
+    manifest = None
 
-    issue = ReportService.add_remediation_to_issue(deepcopy(ISSUE_1))
+    issue = ReportService.add_remediation_to_issue(deepcopy(ISSUE_1), manifest)
 
     assert "remediation_suggestion" not in issue
