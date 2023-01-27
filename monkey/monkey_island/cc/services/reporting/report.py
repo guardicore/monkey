@@ -467,19 +467,6 @@ class ReportService:
         return agent_configuration.propagation.network_scan.targets.scan_my_networks
 
     @staticmethod
-    def get_issue_set(issues):
-        issue_set = set()
-
-        for machine in issues:
-            for issue in issues[machine]:
-                if ReportService._is_zerologon_pass_restore_failed(issue):
-                    issue_set.add(ReportService.DerivedIssueEnum.ZEROLOGON_PASS_RESTORE_FAILED)
-
-                issue_set.add(issue["type"])
-
-        return issue_set
-
-    @staticmethod
     def _is_zerologon_pass_restore_failed(issue: dict):
         return (
             issue["type"] == ExploiterDescriptorEnum.ZEROLOGON.value.class_name
@@ -498,7 +485,6 @@ class ReportService:
             return RuntimeError("Machine repository does not exist")
 
         issues = ReportService.get_issues()
-        issue_set = ReportService.get_issue_set(issues)
         cross_segment_issues = ReportService.get_cross_segment_issues()
         latest_event_timestamp = ReportService.get_latest_event_timestamp()
 
@@ -517,7 +503,6 @@ class ReportService:
                     "%d/%m/%Y %H:%M:%S"
                 ),
                 "monkey_duration": ReportService.get_monkey_duration(),
-                "issues": issue_set,
             },
             "cross_segment_issues": cross_segment_issues,
             "glance": {
