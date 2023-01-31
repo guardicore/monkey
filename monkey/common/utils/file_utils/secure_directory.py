@@ -16,12 +16,6 @@ logger = logging.getLogger(__name__)
 def create_secure_directory(path: Path):
     # TODO: Raise an exception if the directory exists and is not secure. Otherwise, the caller may
     #       think a secure directory was created when it wasn't.
-    if (
-        path.exists()
-        and (path.stat().st_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)) != stat.S_IRWXU
-    ):
-        raise Exception(f"The directory {path} exists and it is not secure.")
-
     if not path.is_dir():
         if is_windows_os():
             _create_secure_directory_windows(path)
