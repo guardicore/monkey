@@ -1,4 +1,4 @@
-from pathlib import WindowsPath
+from pathlib import Path
 
 import ntsecuritycon
 import win32api
@@ -34,7 +34,7 @@ def get_security_descriptor_for_owner_only_perms():
     return security_descriptor
 
 
-def is_secure_windows_directory(path: WindowsPath):
+def is_secure_windows_directory(path: Path):
     acl, user_sid = get_acl_and_sid_from_path(path)
 
     if acl.GetAceCount() == 1:
@@ -53,7 +53,7 @@ def is_secure_windows_directory(path: WindowsPath):
     return False
 
 
-def get_acl_and_sid_from_path(path: WindowsPath):
+def get_acl_and_sid_from_path(path: Path):
     sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
     security_descriptor = win32security.GetNamedSecurityInfo(
         str(path), win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
