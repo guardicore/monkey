@@ -75,8 +75,9 @@ const IslandResetModal = (props: Props) => {
                 onClick={() => {
                   setResetAll(Loading);
                   try {
-                    resetAll();
-                    setResetAll(Done);
+                    resetAll(() => {
+                      setResetAll(Done)
+                    });
                     props.onClose();
                   } catch (err) {
                     // TODO: Display error message to user
@@ -101,7 +102,7 @@ const IslandResetModal = (props: Props) => {
         }
       })
   }
-  function resetAll() {
+  function resetAll(callback: () => void) {
     auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
         if (res.ok) {
@@ -123,7 +124,9 @@ const IslandResetModal = (props: Props) => {
             )
         }})
       .then(res => {
-        if (!res.ok) {
+        if (res.ok) {
+          callback();
+        } else {
           throw 'Error resetting the simulation'
         }
       })
