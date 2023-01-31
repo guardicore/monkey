@@ -3,28 +3,19 @@ from pathlib import WindowsPath
 from common.utils.environment import is_windows_os
 
 if is_windows_os():
-    import win32api
-    import win32security
-
-    FULL_CONTROL = 2032127
-    ACE_ACCESS_MODE_GRANT_ACCESS = win32security.GRANT_ACCESS
-    ACE_INHERIT_OBJECT_AND_CONTAINER = 3
+    from common.utils.windows_permissions import (
+        ACE_ACCESS_MODE_GRANT_ACCESS,
+        ACE_INHERIT_OBJECT_AND_CONTAINER,
+        FULL_CONTROL,
+        get_acl_and_sid_from_path,
+    )
 else:
     import os
     import stat
 
 
-def _get_acl_and_sid_from_path(path: WindowsPath):
-    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
-    security_descriptor = win32security.GetNamedSecurityInfo(
-        str(path), win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
-    )
-    acl = security_descriptor.GetSecurityDescriptorDacl()
-    return acl, sid
-
-
 def assert_windows_permissions(path: WindowsPath):
-    acl, user_sid = _get_acl_and_sid_from_path(path)
+    acl, user_sid = get_acl_and_sid_from_path(path)
 
     assert acl.GetAceCount() == 1
 
