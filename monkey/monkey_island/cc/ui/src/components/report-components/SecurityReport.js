@@ -44,7 +44,6 @@ class ReportPageComponent extends AuthComponent {
       report: props.report,
       stolenCredentials: [],
       configuredCredentials: [],
-      issues: [],
       agents: [],
       machines: []
     };
@@ -78,7 +77,6 @@ class ReportPageComponent extends AuthComponent {
   componentDidUpdate(prevProps) {
     if (this.props.report !== prevProps.report) {
       this.setState({ report: this.props.report });
-      this.addIssuesToOverviewIssues();
     }
   }
 
@@ -360,23 +358,6 @@ class ReportPageComponent extends AuthComponent {
     } else {
       return null;
     }
-  }
-
-  addIssuesToOverviewIssues() {
-    let overview_issues = this.state.issues;
-
-    if (this.shouldAddStolenCredentialsIssue()) {
-      overview_issues.push('stolen_creds');
-    }
-    this.setState({
-      issues: overview_issues
-    });
-  }
-
-  shouldAddStolenCredentialsIssue() {
-    // TODO: This should check if any stolen credentials are used to
-    // exploit a machine
-    return (this.state.stolenCredentials.length > 0)
   }
 }
 
