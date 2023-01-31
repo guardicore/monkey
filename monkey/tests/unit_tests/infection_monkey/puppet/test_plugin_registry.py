@@ -13,6 +13,7 @@ from infection_monkey.island_api_client import (
     IslandAPIError,
     IslandAPIRequestError,
 )
+from infection_monkey.network import TCPPortSelector
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 from infection_monkey.puppet import PluginRegistry, PluginSourceExtractor
 
@@ -42,6 +43,11 @@ def dummy_propagation_credentials_repository() -> IPropagationCredentialsReposit
     return MagicMock(spec=IPropagationCredentialsRepository)
 
 
+@pytest.fixture
+def dummy_tcp_port_selector() -> TCPPortSelector:
+    return MagicMock(spec=TCPPortSelector)
+
+
 @pytest.mark.parametrize(
     "error_raised_by_island_api_client, error_raised_by_plugin_registry",
     [(IslandAPIRequestError, UnknownPluginError), (IslandAPIError, IslandAPIError)],
@@ -52,6 +58,7 @@ def test_get_plugin__error_handling(
     dummy_agent_binary_repository: IAgentBinaryRepository,
     dummy_agent_event_publisher: IAgentEventPublisher,
     dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
+    dummy_tcp_port_selector: TCPPortSelector,
     error_raised_by_island_api_client: Exception,
     error_raised_by_plugin_registry: Exception,
 ):
@@ -67,6 +74,7 @@ def test_get_plugin__error_handling(
         dummy_agent_binary_repository,
         dummy_agent_event_publisher,
         dummy_propagation_credentials_repository,
+        dummy_tcp_port_selector,
     )
 
     with pytest.raises(error_raised_by_plugin_registry):
@@ -119,6 +127,7 @@ def plugin_registry(
     dummy_agent_binary_repository: IAgentBinaryRepository,
     dummy_agent_event_publisher: IAgentEventPublisher,
     dummy_propagation_credentials_repository: IPropagationCredentialsRepository,
+    dummy_tcp_port_selector: TCPPortSelector,
 ) -> PluginRegistry:
     return PluginRegistry(
         OperatingSystem.LINUX,
@@ -128,6 +137,7 @@ def plugin_registry(
         dummy_agent_binary_repository,
         dummy_agent_event_publisher,
         dummy_propagation_credentials_repository,
+        dummy_tcp_port_selector,
     )
 
 
@@ -135,7 +145,6 @@ def test_load_plugin_from_island__only_downloaded_once(
     agent_plugin: AgentPlugin,
     mock_island_api_client: IIslandAPIClient,
     mock_plugin_source_extractor: PluginSourceExtractor,
-    mock_plugin_loader: PluginLoader,
     plugin_registry: PluginRegistry,
 ):
     plugin_registry.get_plugin(AgentPluginType.EXPLOITER, PLUGIN_NAME)
@@ -143,7 +152,6 @@ def test_load_plugin_from_island__only_downloaded_once(
 
     mock_island_api_client.get_agent_plugin.assert_called_once()
     mock_plugin_source_extractor.extract_plugin_source.assert_called_once()
-    mock_plugin_loader.load_multiprocessing_plugin.assert_called_once()
 
 
 def test_load_plugin_from_island__return_copy(
