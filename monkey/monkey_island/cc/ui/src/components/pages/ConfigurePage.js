@@ -102,11 +102,16 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   injectManifestIntoSchema = (manifest, schema) => {
+    let pluginName = manifest['name'];
     let safe = manifest['safe'];
     let link = manifest['link_to_documentation'];
+    let description = manifest['description'];
+    let title = manifest['title'];
     let injectedSchema = _.cloneDeep(schema);
-    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${manifest['name']}.safe`, safe);
-    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${manifest['name']}.link`, link);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.safe`, safe);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.link`, link);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.description`, description);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.title`, title);
     return injectedSchema;
   }
 
