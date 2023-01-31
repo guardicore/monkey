@@ -1,7 +1,13 @@
+from pathlib import WindowsPath
+
 import ntsecuritycon
 import win32api
 import win32con
 import win32security
+
+FULL_CONTROL = 2032127
+ACE_ACCESS_MODE_GRANT_ACCESS = win32security.GRANT_ACCESS
+ACE_INHERIT_OBJECT_AND_CONTAINER = 3
 
 
 def get_security_descriptor_for_owner_only_perms():
@@ -26,6 +32,34 @@ def get_security_descriptor_for_owner_only_perms():
     security_descriptor.SetSecurityDescriptorDacl(1, dacl, 0)
 
     return security_descriptor
+
+
+def is_secure_windows_directory(path: WindowsPath):
+    acl, user_sid = get_acl_and_sid_from_path(path)
+
+    if acl.GetAceCount() == 1:
+        ace = acl.GetExplicitEntriesFromAcl()[0]
+
+        ace_access_mode = ace["AccessMode"]
+        ace_permissions = ace["AccessPermissions"]
+        ace_inheritance = ace["Inheritance"]
+        ace_sid = ace["Trustee"]["Identifier"]
+
+        return (
+            (ace_sid == user_sid)
+            & (ace_permissions == FULL_CONTROL & ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS)
+            & (ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER)
+        )
+    return False
+
+
+def get_acl_and_sid_from_path(path: WindowsPath):
+    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
+    security_descriptor = win32security.GetNamedSecurityInfo(
+        str(path), win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
+    )
+    acl = security_descriptor.GetSecurityDescriptorDacl()
+    return acl, sid
 
 
 def get_user_pySID_object():
