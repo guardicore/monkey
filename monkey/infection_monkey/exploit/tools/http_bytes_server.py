@@ -39,7 +39,7 @@ class HTTPBytesServer:
         self._server = http.server.HTTPServer((server_ip, server_port), HTTPHandler)
 
         server_thread_name = (
-            f"{threading.current_thread()}-HTTPBytesServer-"
+            f"{threading.current_thread().name}-HTTPBytesServer-"
             f"{insecure_generate_random_string(n=8)}"
         )
         self._server_thread = create_daemon_thread(
