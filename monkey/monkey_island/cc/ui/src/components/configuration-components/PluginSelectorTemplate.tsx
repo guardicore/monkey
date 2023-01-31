@@ -6,6 +6,7 @@ import {AdvancedMultiSelectHeader} from '../ui-components/AdvancedMultiSelect';
 import {MasterCheckboxState} from '../ui-components/MasterCheckbox';
 import {InfoPane, WarningType} from '../ui-components/InfoPane';
 import {EXPLOITERS_PATH_PROPAGATION} from './PropagationConfig';
+import MarkdownDescriptionTemplate from './MarkdownDescriptionTemplate';
 
 
 export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) {
@@ -53,9 +54,10 @@ export default function PluginSelectorTemplate(props: ObjectFieldTemplateProps) 
     let uiSchema = _.cloneDeep(props.uiSchema);
     for(let pluginName of Object.keys(generateDefaultConfig())) {
       if(!props.formContext.selectedExploiters.has(pluginName)){
-        uiSchema[pluginName] = {"ui:readonly": true};
+        uiSchema[pluginName] = {"ui:readonly": true,
+          'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate};
       } else {
-        uiSchema[pluginName] = {};
+        uiSchema[pluginName] = {'ui:DescriptionFieldTemplate': MarkdownDescriptionTemplate};
       }
     }
     props.formContext.setUiSchema(uiSchema, EXPLOITERS_PATH_PROPAGATION);

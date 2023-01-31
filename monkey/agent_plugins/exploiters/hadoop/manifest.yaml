@@ -9,7 +9,8 @@ target_operating_systems:
 title: Hadoop/YARN Exploiter
 description: >-
   Remote code execution on Hadoop server with YARN and default settings.
-  Logic based on https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn.
+
+  Logic based on [POC in vulnhub](https://github.com/vulhub/vulhub/tree/master/hadoop/unauthorized-yarn).
 safe: true
 remediation_suggestion: >-
     Run Hadoop in secure mode ([add Kerberos authentication](
