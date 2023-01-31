@@ -210,7 +210,7 @@ class ReportPageComponent extends AuthComponent {
         {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
          * don't render it (since the issues themselves will be empty. */}
         {Object.keys(this.state.report.recommendations.issues).length !== 0 ?
-          <h2>Machine related recommendations</h2> : null}
+          <h2>Machine-related Recommendations</h2> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
@@ -285,9 +285,9 @@ class ReportPageComponent extends AuthComponent {
   generateReportFooter() {
     return (
       <div id='footer' className='text-center' style={{ marginTop: '20px' }}>
-        For questions, suggestions or any other feedback
-        contact: <a href='mailto://labs@guardicore.com' className='no-print'>labs@guardicore.com</a>
-        <div className='force-print' style={{ display: 'none' }}>labs@guardicore.com</div>
+        For questions, suggestions, or any other feedback,
+        contact <a href='mailto://labs@guardicore.com' className='no-print'>labs@guardicore.com</a>
+        <div className='force-print' style={{ display: 'none' }}>labs@guardicore.com</div>.
         <img src={guardicoreLogoImage} alt='GuardiCore' className='center-block' style={{ height: '50px' }} />
       </div>
     );
