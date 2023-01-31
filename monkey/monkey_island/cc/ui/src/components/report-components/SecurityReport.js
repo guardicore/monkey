@@ -1,4 +1,5 @@
 import React, {Fragment} from 'react';
+import _ from 'lodash';
 import Pluralize from 'pluralize';
 import BreachedServers from 'components/report-components/security/BreachedServers';
 import ScannedServers from 'components/report-components/security/ScannedServers';
