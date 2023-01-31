@@ -90,9 +90,9 @@ const SideNavComponent = ({
           </Button>
           <IslandResetModal show={showResetModal}
                             allMonkeysAreDead={areMonkeysDead()}
+                            onReset={onStatusChange}
                             onClose={() => {
                               setShowResetModal(false);
-                              onStatusChange();
                             }}/>
         </li>
       </ul>

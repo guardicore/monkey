@@ -12,7 +12,8 @@ import AuthService from '../../services/AuthService';
 type Props = {
   show: boolean,
   allMonkeysAreDead: boolean,
-  onClose: () => void
+  onClose: () => void,
+  onReset: () => void
 }
 
 // Button statuses
@@ -75,8 +76,10 @@ const IslandResetModal = (props: Props) => {
                 onClick={() => {
                   setResetAll(Loading);
                   try {
-                    resetAll();
-                    setResetAll(Done);
+                    resetAll().then(() => {
+                      setResetAll(Done);
+                      props.onReset();
+                    });
                     props.onClose();
                   } catch (err) {
                     // TODO: Display error message to user
@@ -101,8 +104,9 @@ const IslandResetModal = (props: Props) => {
         }
       })
   }
-  function resetAll() {
-    auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
+
+  function resetAll(): Promise<void> {
+    return auth.authFetch('/api/reset-agent-configuration', {method: 'POST'})
       .then(res => {
         if (res.ok) {
             return auth.authFetch('/api/clear-simulation-data', {method: 'POST'})
@@ -123,7 +127,7 @@ const IslandResetModal = (props: Props) => {
             )
         }})
       .then(res => {
-        if (!res.ok) {
+        if (! res.ok) {
           throw 'Error resetting the simulation'
         }
       })
