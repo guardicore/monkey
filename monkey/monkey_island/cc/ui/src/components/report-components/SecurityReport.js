@@ -286,8 +286,8 @@ class ReportPageComponent extends AuthComponent {
     return (
       <div id='footer' className='text-center' style={{ marginTop: '20px' }}>
         For questions, suggestions, or any other feedback,
-        contact <a href='mailto://labs@guardicore.com' className='no-print'>labs@guardicore.com</a>
-        <div className='force-print' style={{ display: 'none' }}>labs@guardicore.com</div>.
+        contact <a href='mailto:support@infectionmonkey.com' className='no-print'>support@infectionmonkey.com</a>
+        <div className='force-print' style={{ display: 'none' }}>support@infectionmonkey.com</div>.
         <img src={guardicoreLogoImage} alt='GuardiCore' className='center-block' style={{ height: '50px' }} />
       </div>
     );
