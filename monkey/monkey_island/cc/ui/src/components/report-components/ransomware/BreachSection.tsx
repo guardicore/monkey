@@ -8,7 +8,7 @@ import {parseTimeToDateString} from '../../utils/DateUtils';
 
 const BREACH_DESCRIPTION = <>
                              Ransomware attacks start after machines in the internal network get
-                             compromised. The initial compromise was simulated by running Monkey Agents
+                             compromised. The initial compromise was simulated by running Infection Monkey Agents
                              manually. Detecting ransomware at this stage will minimize the impact to the
                              organization.
                              <br />

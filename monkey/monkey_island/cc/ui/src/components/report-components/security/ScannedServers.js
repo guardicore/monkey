@@ -74,7 +74,7 @@ function ScannedServersComponent(props) {
   return (
     <>
       <p>
-        The Monkey discovered&nbsp;
+        Infection Monkey discovered&nbsp;
         <span className="badge badge-danger">{scannedServicesAmount}</span> open&nbsp;
         {Pluralize('service', scannedServicesAmount)} on&nbsp;
         <span className="badge badge-warning">{scannedMachinesCount}</span>&nbsp;
