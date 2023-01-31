@@ -209,7 +209,7 @@ class ReportPageComponent extends AuthComponent {
         {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
          * don't render it (since the issues themselves will be empty. */}
         {Object.keys(this.state.report.recommendations.issues).length !== 0 ?
-          <h3>Machine related recommendations</h3> : null}
+          <h2>Machine related recommendations</h2> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
@@ -242,9 +242,9 @@ class ReportPageComponent extends AuthComponent {
       (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
     return (
       <div id='glance'>
-        <h3>
+        <h2>
           The Network from the Monkey's Eyes
-        </h3>
+        </h2>
         <div>
           <p>
             The Monkey discovered <span
