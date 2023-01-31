@@ -1,3 +1,7 @@
+.markdown p {
+  white-space: pre-wrap;
+}
+
 .config-nav .nav-item>a {
   color: $black;
   padding: 15px 10px 15px 10px;
