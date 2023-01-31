@@ -65,7 +65,7 @@ from monkey_island.cc.repositories import (
     RetrievalError,
     initialize_machine_repository,
 )
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
     AgentConfigurationSchemaService,
@@ -158,7 +158,7 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IFileRepository,
         "plugin_file_repository",
         FileRepositoryLockingDecorator(
-            FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / "plugins"))
+            FileRepositoryLoggingDecorator(LocalStorageFileRepository(data_dir / PLUGIN_DIR_NAME))
         ),
     )
     container.register_instance(IAgentBinaryRepository, _build_agent_binary_repository())
