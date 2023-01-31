@@ -128,7 +128,7 @@ class ReportPageComponent extends AuthComponent {
     if (this.state.report.overview.monkey_duration) {
       return <>
         After <span
-        className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all monkeys finished
+        className='badge badge-info'>{this.state.report.overview.monkey_duration}</span>, all Agents finished
         propagation attempts.
       </>
     } else {
@@ -156,11 +156,11 @@ class ReportPageComponent extends AuthComponent {
             </p>
         }
         <p>
-          The first monkey run was started on <span
+          The first Infection Monkey Agent ran on <span
             className='badge badge-info'>{this.state.report.overview.monkey_start_time}</span>. {this.getMonkeyDuration()}
         </p>
         <p>
-          The monkey started propagating from the following machines where it was manually installed:
+          Infection Monkey started propagating from the following machines where it was manually installed:
         </p>
         <ul>
           {[...new Set(manualMonkeyHostnames)].map(x => <li key={x}>{x}</li>)}
@@ -170,7 +170,7 @@ class ReportPageComponent extends AuthComponent {
           this.state.report.overview.config_exploits.length > 0 ?
             (
               <p>
-                The Monkey attempted the following exploitation methods:
+                Configured exploitation methods:
                 <ul>
                   {this.state.report.overview.config_exploits.map(x => <li key={x}>{x}</li>)}
                 </ul>
@@ -184,7 +184,7 @@ class ReportPageComponent extends AuthComponent {
         {
           this.state.report.overview.config_ips.length > 0 ?
             <p>
-              The Monkey scans the following IPs:
+              Configured IPs to scan:
               <ul>
                 {this.state.report.overview.config_ips.map(x => <li key={x}>{x}</li>)}
               </ul>
@@ -197,7 +197,7 @@ class ReportPageComponent extends AuthComponent {
             ''
             :
             <p>
-              Note: Monkeys were configured to avoid scanning of the local network.
+              Note: Infection Monkey was configured to avoid scanning the local network.
             </p>
         }
       </div>
@@ -210,7 +210,7 @@ class ReportPageComponent extends AuthComponent {
         {/* Checks if there are any issues. If there are more then one: render the title. Otherwise,
          * don't render it (since the issues themselves will be empty. */}
         {Object.keys(this.state.report.recommendations.issues).length !== 0 ?
-          <h2>Machine related recommendations</h2> : null}
+          <h2>Machine-related Recommendations</h2> : null}
         <div>
           {this.generateIssues(this.state.report.recommendations.issues)}
         </div>
@@ -228,7 +228,7 @@ class ReportPageComponent extends AuthComponent {
             Segmentation Issues
           </h2>
           <div>
-            The Monkey uncovered the following set of segmentation issues:
+            Infection Monkey uncovered the following set of segmentation issues:
             <ul>
               {this.state.report.cross_segment_issues.map(x => crossSegmentIssueReport(x))}
             </ul>
@@ -244,11 +244,11 @@ class ReportPageComponent extends AuthComponent {
     return (
       <div id='glance'>
         <h2>
-          The Network from the Monkey's Eyes
+          The Network from Infection Monkey's Eyes
         </h2>
         <div>
           <p>
-            The Monkey discovered <span
+            Infection Monkey discovered <span
               className='badge badge-warning'>{this.state.report.glance.scanned.length}</span> machines and
             successfully breached <span
               className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
@@ -267,7 +267,7 @@ class ReportPageComponent extends AuthComponent {
 
         <div style={{ marginBottom: '20px' }}>
           <p>
-            The Monkey successfully breached&nbsp;
+            Infection Monkey successfully breached&nbsp;
             <span className="badge badge-danger">
               {this.state.report.glance.exploited_cnt}
             </span> {Pluralize('machine', this.state.report.glance.exploited_cnt)}:
@@ -285,9 +285,9 @@ class ReportPageComponent extends AuthComponent {
   generateReportFooter() {
     return (
       <div id='footer' className='text-center' style={{ marginTop: '20px' }}>
-        For questions, suggestions or any other feedback
-        contact: <a href='mailto://labs@guardicore.com' className='no-print'>labs@guardicore.com</a>
-        <div className='force-print' style={{ display: 'none' }}>labs@guardicore.com</div>
+        For questions, suggestions, or any other feedback,
+        contact <a href='mailto:support@infectionmonkey.com' className='no-print'>support@infectionmonkey.com</a>
+        <div className='force-print' style={{ display: 'none' }}>support@infectionmonkey.com</div>.
         <img src={guardicoreLogoImage} alt='GuardiCore' className='center-block' style={{ height: '50px' }} />
       </div>
     );

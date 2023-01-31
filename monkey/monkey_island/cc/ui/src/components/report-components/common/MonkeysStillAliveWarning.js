@@ -12,7 +12,7 @@ export default class MonkeysStillAliveWarning extends Component {
           :
           (<p className="alert alert-warning">
             <FontAwesomeIcon icon={faExclamationTriangle} style={{'marginRight': '5px'}}/>
-            Some monkeys are still running. To get the best report it's best to wait for all of them to finish
+            Some Agents are still running. To get the best report, wait for all of them to finish
             running.
           </p>)
       }

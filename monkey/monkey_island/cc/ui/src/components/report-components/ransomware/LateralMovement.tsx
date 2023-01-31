@@ -46,7 +46,7 @@ function LateralMovement({propagationStats}: {propagationStats: PropagationStats
 function getScannedVsExploitedStats(num_scanned_nodes: number, num_exploited_nodes: number): ReactElement {
   return(
     <p>
-      The Monkey discovered <span className='badge badge-warning'>{num_scanned_nodes}</span> machines
+      Infection Monkey discovered <span className='badge badge-warning'>{num_scanned_nodes}</span> machines
       and successfully breached <span className='badge badge-danger'>{num_exploited_nodes}</span> of them.
     </p>
   );
