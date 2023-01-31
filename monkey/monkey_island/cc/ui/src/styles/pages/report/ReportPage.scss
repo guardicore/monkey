@@ -94,3 +94,13 @@ span.cross-segment-service {
 .rt-resizable-header {
   text-align: left;
 }
+
+.markdown a {
+  color: $monkey-alt;
+}
+
+.markdown a:hover {
+  color: $monkey-alt;
+  background-color: unset;
+  text-decoration: underline;
+}

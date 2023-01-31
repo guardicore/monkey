@@ -21,7 +21,6 @@ from common.agent_events import (
 )
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.network.network_range import NetworkRange
-from common.network.network_utils import get_my_ip_addresses_legacy, get_network_interfaces
 from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.models import CommunicationType, Machine
@@ -37,7 +36,6 @@ from monkey_island.cc.services.reporting.exploitations.monkey_exploitation impor
     get_monkey_exploited,
 )
 
-from .issue_processing.exploit_processing.exploiter_descriptor_enum import ExploiterDescriptorEnum
 from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
@@ -72,9 +70,6 @@ class ReportService:
     _agent_plugin_repository: Optional[IAgentPluginRepository] = None
     _report: Dict[str, Dict] = {}
     _report_generation_lock: Lock = Lock()
-
-    class DerivedIssueEnum:
-        ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
 
     @classmethod
     def initialize(
@@ -228,35 +223,6 @@ class ReportService:
 
         # Convert the ExploitationEvent into an ExploiterReportInfo
         return [asdict(cls.process_exploit_event(e, password_restored)) for e in filtered_exploits]
-
-    @classmethod
-    def get_island_cross_segment_issues(cls):
-        issues = []
-        island_ips = get_my_ip_addresses_legacy()
-        island_machines = [m for m in cls._machine_repository.get_machines() if m.island]
-        for island_machine in island_machines:
-            found_good_ip = False
-            island_subnets = island_machine.network_interfaces
-            for subnet in island_subnets:
-                if str(subnet.ip) in island_ips:
-                    found_good_ip = True
-                    break
-                if found_good_ip:
-                    break
-            if not found_good_ip:
-                issues.append(
-                    {
-                        "machine_id": island_machine.id,
-                        "type": "island_cross_segment",
-                        "machine": island_machine.hostname,
-                        "networks": [str(subnet) for subnet in island_subnets],
-                        "server_networks": [
-                            str(interface.network) for interface in get_network_interfaces()
-                        ],
-                    }
-                )
-
-        return issues
 
     @classmethod
     def get_cross_segment_issues_of_single_machine(
@@ -466,26 +432,6 @@ class ReportService:
         agent_configuration = cls._agent_configuration_repository.get_configuration()
         return agent_configuration.propagation.network_scan.targets.scan_my_networks
 
-    @staticmethod
-    def get_issue_set(issues):
-        issue_set = set()
-
-        for machine in issues:
-            for issue in issues[machine]:
-                if ReportService._is_zerologon_pass_restore_failed(issue):
-                    issue_set.add(ReportService.DerivedIssueEnum.ZEROLOGON_PASS_RESTORE_FAILED)
-
-                issue_set.add(issue["type"])
-
-        return issue_set
-
-    @staticmethod
-    def _is_zerologon_pass_restore_failed(issue: dict):
-        return (
-            issue["type"] == ExploiterDescriptorEnum.ZEROLOGON.value.class_name
-            and not issue["password_restored"]
-        )
-
     @classmethod
     def is_report_generated(cls) -> bool:
         return bool(cls._report)
@@ -498,7 +444,6 @@ class ReportService:
             return RuntimeError("Machine repository does not exist")
 
         issues = ReportService.get_issues()
-        issue_set = ReportService.get_issue_set(issues)
         cross_segment_issues = ReportService.get_cross_segment_issues()
         latest_event_timestamp = ReportService.get_latest_event_timestamp()
 
@@ -517,9 +462,8 @@ class ReportService:
                     "%d/%m/%Y %H:%M:%S"
                 ),
                 "monkey_duration": ReportService.get_monkey_duration(),
-                "issues": issue_set,
-                "cross_segment_issues": cross_segment_issues,
             },
+            "cross_segment_issues": cross_segment_issues,
             "glance": {
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
@@ -534,14 +478,15 @@ class ReportService:
     def get_issues(cls):
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
-            ReportService.get_island_cross_segment_issues,
         ]
 
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
 
         issues_dict = {}
         for issue in issues:
-            issue = cls.add_remediation_to_issue(issue)
+            manifest = cls._get_exploiter_manifests().get(issue["type"])
+            issue = cls.add_remediation_to_issue(issue, manifest)
+            issue = cls.add_description_to_issue(issue, manifest)
             if issue.get("is_local", True):
                 machine_id = issue.get("machine_id")
                 if machine_id not in issues_dict:
@@ -551,10 +496,19 @@ class ReportService:
         return issues_dict
 
     @classmethod
-    def add_remediation_to_issue(cls, issue: Dict[str, Any]) -> Dict[str, Any]:
-        manifest = cls._get_exploiter_manifests().get(issue["type"])
+    def add_remediation_to_issue(
+        cls, issue: Dict[str, Any], manifest: Optional[AgentPluginManifest]
+    ) -> Dict[str, Any]:
         if manifest:
             issue["remediation_suggestion"] = manifest.remediation_suggestion
+        return issue
+
+    @classmethod
+    def add_description_to_issue(
+        cls, issue: Dict[str, Any], manifest: Optional[AgentPluginManifest]
+    ) -> Dict[str, Any]:
+        if manifest:
+            issue["description"] = manifest.description
         return issue
 
     @classmethod

@@ -42,15 +42,6 @@ export function getAllTunnels(agents, machines) {
   return tunnels;
 }
 
-export function tunnelIssueOverview(allTunnels) {
-  if (allTunnels.length > 0) {
-    return ( <li key="tunnel">Weak segmentation -
-      Machines were able to relay communications over unused ports.</li>)
-  } else {
-    return null;
-  }
-}
-
 export function tunnelIssueReportByMachine(machineId, allTunnels) {
   if (allTunnels.length > 0) {
     let tunnelIssuesByMachine = getTunnelIssuesByMachine(machineId, allTunnels);

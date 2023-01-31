@@ -5,10 +5,6 @@ from typing import List, Optional, Sequence, Tuple
 from netifaces import AF_INET, ifaddresses, interfaces
 
 
-def get_my_ip_addresses_legacy() -> Sequence[str]:
-    return [str(ip) for ip in get_my_ip_addresses()]
-
-
 def get_my_ip_addresses() -> Sequence[IPv4Address]:
     return [interface.ip for interface in get_network_interfaces()]
 
