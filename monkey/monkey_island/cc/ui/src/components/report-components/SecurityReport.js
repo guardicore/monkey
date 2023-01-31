@@ -170,7 +170,7 @@ class ReportPageComponent extends AuthComponent {
           this.state.report.overview.config_exploits.length > 0 ?
             (
               <p>
-                The Monkey attempted the following exploitation methods:
+                Configured exploitation methods:
                 <ul>
                   {this.state.report.overview.config_exploits.map(x => <li key={x}>{x}</li>)}
                 </ul>
@@ -184,7 +184,7 @@ class ReportPageComponent extends AuthComponent {
         {
           this.state.report.overview.config_ips.length > 0 ?
             <p>
-              The Monkey scans the following IPs:
+              Configured IPs to scan:
               <ul>
                 {this.state.report.overview.config_ips.map(x => <li key={x}>{x}</li>)}
               </ul>
@@ -197,7 +197,7 @@ class ReportPageComponent extends AuthComponent {
             ''
             :
             <p>
-              Note: Monkeys were configured to avoid scanning of the local network.
+              Note: The Monkey was configured to avoid scanning the local network.
             </p>
         }
       </div>
