@@ -76,7 +76,8 @@ const IslandResetModal = (props: Props) => {
                   setResetAll(Loading);
                   try {
                     resetAll(() => {
-                      setResetAll(Done)
+                      setResetAll(Done);
+                      window.location.reload();
                     });
                     props.onClose();
                   } catch (err) {
