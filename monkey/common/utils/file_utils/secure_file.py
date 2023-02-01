@@ -55,7 +55,7 @@ def _get_file_descriptor_for_new_secure_file_windows(path: str) -> int:
 
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
-            windows_permissions.get_security_descriptor_for_owner_only_perms()
+            windows_permissions.get_security_descriptor_for_owner_only_permissions()
         )
         file_creation = win32file.CREATE_NEW  # fails if file exists
         file_attributes = win32file.FILE_FLAG_BACKUP_SEMANTICS

@@ -13,7 +13,7 @@ INHERITANCE_OBJECT_AND_CONTAINER = (
 )
 
 
-def get_security_descriptor_for_owner_only_perms():
+def get_security_descriptor_for_owner_only_permissions():
     user_sid = _get_user_pySID_object()
     entries = [_get_ace_for_owner_only_permissions(user_sid)]
 

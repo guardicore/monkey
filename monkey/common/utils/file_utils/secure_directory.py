@@ -70,7 +70,7 @@ def _create_secure_directory_windows(path: Path):
         # because it will temporarily create an accessible directory which anyone can use.
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
-            windows_permissions.get_security_descriptor_for_owner_only_perms()
+            windows_permissions.get_security_descriptor_for_owner_only_permissions()
         )
         win32file.CreateDirectory(str(path), security_attributes)
 
