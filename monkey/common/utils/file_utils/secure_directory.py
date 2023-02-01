@@ -20,15 +20,15 @@ class FailedDirectoryCreationError(Exception):
 
 def create_secure_directory(path: Path):
     if is_windows_os():
-        change_existing_directory_to_secure_for_os = _change_existing_directory_to_secure_windows
+        make_existing_directory_secure_for_os = _make_existing_directory_secure_windows
         create_secure_directory_for_os = _create_secure_directory_windows
     else:
-        change_existing_directory_to_secure_for_os = _change_existing_directory_to_secure_linux
+        make_existing_directory_secure_for_os = _make_existing_directory_secure_linux
         create_secure_directory_for_os = _create_secure_directory_linux
 
     if path.exists():
         _check_path_is_directory(path)
-        _change_existing_directory_to_secure(change_existing_directory_to_secure_for_os, path)
+        _make_existing_directory_secure(make_existing_directory_secure_for_os, path)
     else:
         _create_secure_directory(create_secure_directory_for_os, path)
 
@@ -42,7 +42,7 @@ def _check_path_is_directory(path: Path):
     logger.info(f"A directory already exists at {path}")
 
 
-def _change_existing_directory_to_secure(fn_for_os: Callable, path: Path):
+def _make_existing_directory_secure(fn_for_os: Callable, path: Path):
     try:
         fn_for_os(path)
     except Exception as err:
@@ -63,7 +63,7 @@ def _create_secure_directory(fn_for_os: Callable, path: Path):
         raise FailedDirectoryCreationError(message)
 
 
-def _change_existing_directory_to_secure_windows(path: Path):
+def _make_existing_directory_secure_windows(path: Path):
     security_descriptor = windows_permissions.get_security_descriptor_for_owner_only_permissions()
     win32security.SetFileSecurity(
         str(path), win32security.DACL_SECURITY_INFORMATION, security_descriptor
@@ -78,7 +78,7 @@ def _create_secure_directory_windows(path: Path):
     win32file.CreateDirectory(str(path), security_attributes)
 
 
-def _change_existing_directory_to_secure_linux(path: Path):
+def _make_existing_directory_secure_linux(path: Path):
     path.chmod(mode=stat.S_IRWXU)
 
 
