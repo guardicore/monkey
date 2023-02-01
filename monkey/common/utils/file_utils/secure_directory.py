@@ -60,5 +60,22 @@ def _create_secure_directory_windows(path: Path):
 
 
 def _check_existing_secure_directory_windows(path: Path):
-    if not windows_permissions.is_secure_windows_directory(path):
+    acl, user_sid = windows_permissions.get_acl_and_sid_from_path(path)
+
+    if acl.GetAceCount() == 1:
+        ace = acl.GetExplicitEntriesFromAcl()[0]
+
+        ace_access_mode = ace["AccessMode"]
+        ace_permissions = ace["AccessPermissions"]
+        ace_inheritance = ace["Inheritance"]
+        ace_sid = ace["Trustee"]["Identifier"]
+
+        is_secure = (
+            (ace_sid == user_sid)
+            & (ace_permissions == windows_permissions.FULL_CONTROL)
+            & (ace_access_mode == windows_permissions.ACE_ACCESS_MODE_GRANT_ACCESS)
+            & (ace_inheritance == windows_permissions.ACE_INHERIT_OBJECT_AND_CONTAINER)
+        )
+
+    if not is_secure:
         raise Exception(f'The directory "{path}" already exists and is insecure')

@@ -34,25 +34,6 @@ def get_security_descriptor_for_owner_only_perms():
     return security_descriptor
 
 
-def is_secure_windows_directory(path: Path):
-    acl, user_sid = get_acl_and_sid_from_path(path)
-
-    if acl.GetAceCount() == 1:
-        ace = acl.GetExplicitEntriesFromAcl()[0]
-
-        ace_access_mode = ace["AccessMode"]
-        ace_permissions = ace["AccessPermissions"]
-        ace_inheritance = ace["Inheritance"]
-        ace_sid = ace["Trustee"]["Identifier"]
-
-        return (
-            (ace_sid == user_sid)
-            & (ace_permissions == FULL_CONTROL & ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS)
-            & (ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER)
-        )
-    return False
-
-
 def get_acl_and_sid_from_path(path: Path):
     sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
     security_descriptor = win32security.GetNamedSecurityInfo(
