@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Mapping
 
 import ntsecuritycon
@@ -46,12 +45,3 @@ def _get_ace_for_owner_only_permissions(user_sid) -> Mapping[str, Any]:
             "Identifier": user_sid,
         },
     }
-
-
-def get_acl_and_sid_from_path(path: Path):
-    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
-    security_descriptor = win32security.GetNamedSecurityInfo(
-        str(path), win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
-    )
-    acl = security_descriptor.GetSecurityDescriptorDacl()
-    return acl, sid
