@@ -3,6 +3,9 @@ from pathlib import WindowsPath
 from common.utils.environment import is_windows_os
 
 if is_windows_os():
+    import win32api
+    import win32security
+
     import common.utils.windows_permissions as windows_permissions
 else:
     import os
@@ -10,7 +13,7 @@ else:
 
 
 def assert_windows_permissions(path: WindowsPath):
-    acl, user_sid = windows_permissions.get_acl_and_sid_from_path(path)
+    acl, user_sid = _get_acl_and_sid_from_path(path)
 
     assert acl.GetAceCount() == 1
 
@@ -27,6 +30,15 @@ def assert_windows_permissions(path: WindowsPath):
         and ace_access_mode == windows_permissions.ACCESS_MODE_GRANT_ACCESS
     )
     assert ace_inheritance == windows_permissions.INHERITANCE_OBJECT_AND_CONTAINER
+
+
+def _get_acl_and_sid_from_path(path: WindowsPath):
+    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
+    security_descriptor = win32security.GetNamedSecurityInfo(
+        str(path), win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
+    )
+    acl = security_descriptor.GetSecurityDescriptorDacl()
+    return acl, sid
 
 
 def assert_linux_permissions(path: str):
