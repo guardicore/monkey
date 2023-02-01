@@ -1,6 +1,7 @@
 import logging
 import stat
 from pathlib import Path
+from typing import Callable
 
 from ..environment import is_windows_os
 
@@ -13,35 +14,73 @@ if is_windows_os():
 logger = logging.getLogger(__name__)
 
 
+class FailedDirectoryCreationError(Exception):
+    pass
+
+
 def create_secure_directory(path: Path):
-    # TODO: Raise an exception if the directory exists and is not secure. Otherwise, the caller may
-    #       think a secure directory was created when it wasn't.
+    if is_windows_os():
+        make_existing_directory_secure_for_os = _make_existing_directory_secure_windows
+        create_secure_directory_for_os = _create_secure_directory_windows
+    else:
+        make_existing_directory_secure_for_os = _make_existing_directory_secure_linux
+        create_secure_directory_for_os = _create_secure_directory_linux
+
+    if path.exists():
+        _check_path_is_directory(path)
+        _make_existing_directory_secure(make_existing_directory_secure_for_os, path)
+    else:
+        _create_secure_directory(create_secure_directory_for_os, path)
+
+
+def _check_path_is_directory(path: Path):
     if not path.is_dir():
-        if is_windows_os():
-            _create_secure_directory_windows(path)
-        else:
-            _create_secure_directory_linux(path)
+        raise FailedDirectoryCreationError(
+            f'The path "{path}" already exists and is not a directory'
+        )
+
+    logger.info(f"A directory already exists at {path}")
 
 
-def _create_secure_directory_linux(path: Path):
+def _make_existing_directory_secure(fn_for_os: Callable, path: Path):
     try:
-        # Don't split directory creation and permission setting
-        # because it will temporarily create an accessible directory which anyone can use.
-        path.mkdir(mode=stat.S_IRWXU)
+        fn_for_os(path)
+    except Exception as err:
+        message = (
+            "An error occured while changing the existing directory's permissions"
+            f"to be secure: {str(err)}"
+        )
+        logger.exception(message)
+        raise FailedDirectoryCreationError(err)
 
-    except Exception as ex:
-        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
-        raise ex
+
+def _create_secure_directory(fn_for_os: Callable, path: Path):
+    try:
+        fn_for_os(path)
+    except Exception as err:
+        message = f"Could not create a secure directory at {path}: {str(err)}"
+        logger.error(message)
+        raise FailedDirectoryCreationError(message)
+
+
+def _make_existing_directory_secure_windows(path: Path):
+    security_descriptor = windows_permissions.get_security_descriptor_for_owner_only_permissions()
+    win32security.SetFileSecurity(
+        str(path), win32security.DACL_SECURITY_INFORMATION, security_descriptor
+    )
 
 
 def _create_secure_directory_windows(path: Path):
-    try:
-        security_attributes = win32security.SECURITY_ATTRIBUTES()
-        security_attributes.SECURITY_DESCRIPTOR = (
-            windows_permissions.get_security_descriptor_for_owner_only_perms()
-        )
-        win32file.CreateDirectory(str(path), security_attributes)
+    security_attributes = win32security.SECURITY_ATTRIBUTES()
+    security_attributes.SECURITY_DESCRIPTOR = (
+        windows_permissions.get_security_descriptor_for_owner_only_permissions()
+    )
+    win32file.CreateDirectory(str(path), security_attributes)
 
-    except Exception as ex:
-        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
-        raise ex
+
+def _make_existing_directory_secure_linux(path: Path):
+    path.chmod(mode=stat.S_IRWXU)
+
+
+def _create_secure_directory_linux(path: Path):
+    path.mkdir(mode=stat.S_IRWXU)
