@@ -18,6 +18,11 @@ def mock_version(monkeypatch):
     )
 
 
+@pytest.fixture()
+def skip_secure_directory_check(monkeypatch):
+    monkeypatch.setattr("monkey_island.cc.setup.data_dir.create_secure_directory", lambda _: None)
+
+
 @pytest.fixture
 def temp_data_dir_path(tmp_path) -> Path:
     return tmp_path / "data_dir"
@@ -73,7 +78,9 @@ def test_old_version_not_removed(
     assert bogus_file_path.is_file()
 
 
-def test_data_dir_setup_not_needed(temp_data_dir_path, temp_version_file_path):
+def test_data_dir_setup_not_needed(
+    temp_data_dir_path, temp_version_file_path, skip_secure_directory_check
+):
     temp_data_dir_path.mkdir()
     temp_version_file_path.write_text(current_version)
     bogus_file_path = create_bogus_file(temp_data_dir_path)
@@ -83,14 +90,16 @@ def test_data_dir_setup_not_needed(temp_data_dir_path, temp_version_file_path):
     assert bogus_file_path.is_file()
 
 
-def test_empty_data_dir(temp_data_dir_path, temp_version_file_path):
+def test_empty_data_dir(temp_data_dir_path, temp_version_file_path, skip_secure_directory_check):
     temp_data_dir_path.mkdir()
 
     setup_data_dir(temp_data_dir_path)
     assert temp_version_file_path.read_text() == current_version
 
 
-def test_new_data_dir_docker(monkeypatch, temp_data_dir_path, temp_version_file_path):
+def test_new_data_dir_docker(
+    monkeypatch, temp_data_dir_path, temp_version_file_path, skip_secure_directory_check
+):
     monkeypatch.setenv(DOCKER_ENV_VAR, "true")
 
     temp_data_dir_path.mkdir()
@@ -112,7 +121,9 @@ def test_data_dir_docker_old_version(monkeypatch, temp_data_dir_path, temp_versi
         setup_data_dir(temp_data_dir_path)
 
 
-def test_empty_data_dir_docker(monkeypatch, temp_data_dir_path, temp_version_file_path):
+def test_empty_data_dir_docker(
+    monkeypatch, temp_data_dir_path, temp_version_file_path, skip_secure_directory_check
+):
     monkeypatch.setenv(DOCKER_ENV_VAR, "true")
 
     temp_data_dir_path.mkdir()
