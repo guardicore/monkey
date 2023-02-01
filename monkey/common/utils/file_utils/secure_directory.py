@@ -42,7 +42,10 @@ def _create_secure_directory_linux(path: Path):
 
 def _check_existing_secure_directory_linux(path: Path):
     path_mode = path.stat().st_mode
-    if path_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO) != stat.S_IRWXU:
+
+    is_secure = (path_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)) == stat.S_IRWXU
+
+    if not is_secure:
         raise Exception(f'The directory "{path}" already exists and is insecure')
 
 
@@ -64,7 +67,6 @@ def _check_existing_secure_directory_windows(path: Path):
 
     if acl.GetAceCount() == 1:
         ace = acl.GetExplicitEntriesFromAcl()[0]
-
         ace_access_mode = ace["AccessMode"]
         ace_permissions = ace["AccessPermissions"]
         ace_inheritance = ace["Inheritance"]
