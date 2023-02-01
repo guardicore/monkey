@@ -13,6 +13,10 @@ if is_windows_os():
 logger = logging.getLogger(__name__)
 
 
+class FailedDirectoryCreationError(Exception):
+    pass
+
+
 def create_secure_directory(path: Path):
     if is_windows_os():
         _check_existing_directory_is_secure = _check_existing_directory_is_secure_windows
@@ -23,7 +27,9 @@ def create_secure_directory(path: Path):
 
     if path.exists():
         if not path.is_dir():
-            raise Exception(f'The path "{path}" already exists and is not a directory')
+            raise FailedDirectoryCreationError(
+                f'The path "{path}" already exists and is not a directory'
+            )
         _check_existing_directory_is_secure(path)
     else:
         _create_secure_directory(path)
@@ -49,7 +55,9 @@ def _check_existing_directory_is_secure_windows(path: Path):
         )
 
     if not is_secure_and_accessible:
-        raise Exception(f'The directory "{path}" already exists and is insecure or unaccessible')
+        raise FailedDirectoryCreationError(
+            f'The directory "{path}" already exists and is insecure or unaccessible'
+        )
 
 
 def _create_secure_directory_windows(path: Path):
@@ -63,8 +71,9 @@ def _create_secure_directory_windows(path: Path):
         win32file.CreateDirectory(str(path), security_attributes)
 
     except Exception as ex:
-        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
-        raise ex
+        message = f'Could not create a directory at "{path}": {str(ex)}'
+        logger.error(message)
+        raise FailedDirectoryCreationError(message)
 
 
 def _check_existing_directory_is_secure_linux(path: Path):
@@ -73,7 +82,7 @@ def _check_existing_directory_is_secure_linux(path: Path):
     is_secure = (path_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)) == stat.S_IRWXU
 
     if not is_secure:
-        raise Exception(f'The directory "{path}" already exists and is insecure')
+        raise FailedDirectoryCreationError(f'The directory "{path}" already exists and is insecure')
 
 
 def _create_secure_directory_linux(path: Path):
@@ -83,5 +92,6 @@ def _create_secure_directory_linux(path: Path):
         path.mkdir(mode=stat.S_IRWXU)
 
     except Exception as ex:
-        logger.error(f'Could not create a directory at "{path}": {str(ex)}')
-        raise ex
+        message = f'Could not create a directory at "{path}": {str(ex)}'
+        logger.error(message)
+        raise FailedDirectoryCreationError(message)
