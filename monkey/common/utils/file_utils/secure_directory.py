@@ -19,15 +19,15 @@ class FailedDirectoryCreationError(Exception):
 
 def create_secure_directory(path: Path):
     if is_windows_os():
-        _check_existing_directory_is_secure = _check_existing_directory_is_secure_windows
+        _change_existing_directory_to_secure = _change_existing_directory_to_secure_windows
         _create_secure_directory = _create_secure_directory_windows
     else:
-        _check_existing_directory_is_secure = _check_existing_directory_is_secure_linux
+        _change_existing_directory_to_secure = _change_existing_directory_to_secure_linux
         _create_secure_directory = _create_secure_directory_linux
 
     if path.exists():
         _check_path_is_directory(path)
-        _check_existing_directory_is_secure(path)
+        _change_existing_directory_to_secure(path)
     else:
         _create_secure_directory(path)
 
@@ -39,7 +39,7 @@ def _check_path_is_directory(path: Path):
         )
 
 
-def _check_existing_directory_is_secure_windows(path: Path):
+def _change_existing_directory_to_secure_windows(path: Path):
     acl, user_sid = windows_permissions.get_acl_and_sid_from_path(path)
 
     if acl.GetAceCount() != 1:
@@ -80,13 +80,12 @@ def _create_secure_directory_windows(path: Path):
         raise FailedDirectoryCreationError(message)
 
 
-def _check_existing_directory_is_secure_linux(path: Path):
-    path_mode = path.stat().st_mode
-
-    is_secure = (path_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)) == stat.S_IRWXU
-
-    if not is_secure:
-        raise FailedDirectoryCreationError(f'The directory "{path}" already exists and is insecure')
+def _change_existing_directory_to_secure_linux(path: Path):
+    try:
+        path.chmod(mode=stat.S_IRWXU)
+    except Exception as err:
+        logger.exception(f'An error occured while changing permissions for directory: "{path}"')
+        raise err
 
 
 def _create_secure_directory_linux(path: Path):

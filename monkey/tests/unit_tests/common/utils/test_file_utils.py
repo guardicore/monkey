@@ -75,8 +75,8 @@ def test_create_secure_directory__already_exists_secure_linux(test_path):
 def test_create_secure_directory__already_exists_insecure_linux(test_path):
     test_path.mkdir(mode=0o777)
 
-    with pytest.raises(Exception):
-        create_secure_directory(test_path)
+    create_secure_directory(test_path)
+    assert_linux_permissions(test_path)
 
 
 @pytest.mark.skipif(is_windows_os(), reason="Tests Posix (not Windows) permissions.")
