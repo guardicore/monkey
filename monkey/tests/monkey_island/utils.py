@@ -3,19 +3,14 @@ from pathlib import WindowsPath
 from common.utils.environment import is_windows_os
 
 if is_windows_os():
-    from common.utils.windows_permissions import (
-        ACE_ACCESS_MODE_GRANT_ACCESS,
-        ACE_INHERIT_OBJECT_AND_CONTAINER,
-        FULL_CONTROL,
-        get_acl_and_sid_from_path,
-    )
+    import common.utils.windows_permissions as windows_permissions
 else:
     import os
     import stat
 
 
 def assert_windows_permissions(path: WindowsPath):
-    acl, user_sid = get_acl_and_sid_from_path(path)
+    acl, user_sid = windows_permissions.get_acl_and_sid_from_path(path)
 
     assert acl.GetAceCount() == 1
 
@@ -27,8 +22,11 @@ def assert_windows_permissions(path: WindowsPath):
     ace_sid = ace["Trustee"]["Identifier"]
 
     assert ace_sid == user_sid
-    assert ace_permissions == FULL_CONTROL and ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS
-    assert ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER
+    assert (
+        ace_permissions == windows_permissions.ACCESS_PERMISSIONS_FULL_CONTROL
+        and ace_access_mode == windows_permissions.ACCESS_MODE_GRANT_ACCESS
+    )
+    assert ace_inheritance == windows_permissions.INHERITANCE_OBJECT_AND_CONTAINER
 
 
 def assert_linux_permissions(path: str):
