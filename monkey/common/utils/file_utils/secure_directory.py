@@ -65,18 +65,20 @@ def _create_secure_directory_windows(path: Path):
 def _check_existing_secure_directory_windows(path: Path):
     acl, user_sid = windows_permissions.get_acl_and_sid_from_path(path)
 
-    if acl.GetAceCount() == 1:
+    if acl.GetAceCount() != 1:
+        is_secure = False
+    else:
         ace = acl.GetExplicitEntriesFromAcl()[0]
-        ace_access_mode = ace["AccessMode"]
-        ace_permissions = ace["AccessPermissions"]
-        ace_inheritance = ace["Inheritance"]
         ace_sid = ace["Trustee"]["Identifier"]
+        ace_permissions = ace["AccessPermissions"]
+        ace_access_mode = ace["AccessMode"]
+        ace_inheritance = ace["Inheritance"]
 
         is_secure = (
             (ace_sid == user_sid)
-            & (ace_permissions == windows_permissions.FULL_CONTROL)
-            & (ace_access_mode == windows_permissions.ACE_ACCESS_MODE_GRANT_ACCESS)
-            & (ace_inheritance == windows_permissions.ACE_INHERIT_OBJECT_AND_CONTAINER)
+            & (ace_permissions == windows_permissions.ACCESS_PERMISSIONS_FULL_CONTROL)
+            & (ace_access_mode == windows_permissions.ACCESS_MODE_GRANT_ACCESS)
+            & (ace_inheritance == windows_permissions.INHERITANCE_OBJECT_AND_CONTAINER)
         )
 
     if not is_secure:
