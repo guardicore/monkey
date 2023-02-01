@@ -17,16 +17,16 @@ def create_secure_directory(path: Path):
     # TODO: Raise an exception if the directory exists and is not secure. Otherwise, the caller may
     #       think a secure directory was created when it wasn't.
     if is_windows_os():
-        _check_existing_directory_is_secure = _check_existing_secure_directory_windows
-        _create_new_secure_directory = _create_secure_directory_windows
+        _check_existing_directory_is_secure = _check_existing_directory_is_secure_windows
+        _create_secure_directory = _create_secure_directory_windows
     else:
-        _check_existing_directory_is_secure = _check_existing_secure_directory_linux
-        _create_new_secure_directory = _create_secure_directory_linux
+        _check_existing_directory_is_secure = _check_existing_directory_is_secure_linux
+        _create_secure_directory = _create_secure_directory_linux
 
     if path.exists():
         _check_existing_directory_is_secure(path)
     else:
-        _create_new_secure_directory(path)
+        _create_secure_directory(path)
 
 
 def _create_secure_directory_linux(path: Path):
@@ -40,7 +40,7 @@ def _create_secure_directory_linux(path: Path):
         raise ex
 
 
-def _check_existing_secure_directory_linux(path: Path):
+def _check_existing_directory_is_secure_linux(path: Path):
     path_mode = path.stat().st_mode
 
     is_secure = (path_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)) == stat.S_IRWXU
@@ -62,11 +62,11 @@ def _create_secure_directory_windows(path: Path):
         raise ex
 
 
-def _check_existing_secure_directory_windows(path: Path):
+def _check_existing_directory_is_secure_windows(path: Path):
     acl, user_sid = windows_permissions.get_acl_and_sid_from_path(path)
 
     if acl.GetAceCount() != 1:
-        is_secure = False
+        is_secure_and_accessible = False
     else:
         ace = acl.GetExplicitEntriesFromAcl()[0]
         ace_sid = ace["Trustee"]["Identifier"]
@@ -74,12 +74,12 @@ def _check_existing_secure_directory_windows(path: Path):
         ace_access_mode = ace["AccessMode"]
         ace_inheritance = ace["Inheritance"]
 
-        is_secure = (
+        is_secure_and_accessible = (
             (ace_sid == user_sid)
             & (ace_permissions == windows_permissions.ACCESS_PERMISSIONS_FULL_CONTROL)
             & (ace_access_mode == windows_permissions.ACCESS_MODE_GRANT_ACCESS)
             & (ace_inheritance == windows_permissions.INHERITANCE_OBJECT_AND_CONTAINER)
         )
 
-    if not is_secure:
-        raise Exception(f'The directory "{path}" already exists and is insecure')
+    if not is_secure_and_accessible:
+        raise Exception(f'The directory "{path}" already exists and is insecure or unaccessible')
