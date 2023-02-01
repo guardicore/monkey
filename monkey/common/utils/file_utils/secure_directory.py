@@ -38,6 +38,8 @@ def _check_path_is_directory(path: Path):
             f'The path "{path}" already exists and is not a directory'
         )
 
+    logger.info(f"A directory already exists at {path}")
+
 
 def _change_existing_directory_to_secure_windows(path: Path):
     try:
@@ -47,9 +49,14 @@ def _change_existing_directory_to_secure_windows(path: Path):
         win32security.SetFileSecurity(
             str(path), win32security.DACL_SECURITY_INFORMATION, security_descriptor
         )
+
     except Exception as err:
-        logger.exception(f'An error occured while changing permissions for directory: "{path}"')
-        raise err
+        message = (
+            "An error occured while changing the existing directory's permissions"
+            f"to be secure: {str(err)}"
+        )
+        logger.exception(message)
+        raise FailedDirectoryCreationError(err)
 
 
 def _create_secure_directory_windows(path: Path):
@@ -63,7 +70,7 @@ def _create_secure_directory_windows(path: Path):
         win32file.CreateDirectory(str(path), security_attributes)
 
     except Exception as err:
-        message = f'Could not create a directory at "{path}": {str(err)}'
+        message = f"Could not create a secure directory at {path}: {str(err)}"
         logger.error(message)
         raise FailedDirectoryCreationError(message)
 
@@ -71,9 +78,14 @@ def _create_secure_directory_windows(path: Path):
 def _change_existing_directory_to_secure_linux(path: Path):
     try:
         path.chmod(mode=stat.S_IRWXU)
+
     except Exception as err:
-        logger.exception(f'An error occured while changing permissions for directory: "{path}"')
-        raise err
+        message = (
+            "An error occured while changing the existing directory's permissions"
+            f"to be secure: {str(err)}"
+        )
+        logger.exception(message)
+        raise FailedDirectoryCreationError(err)
 
 
 def _create_secure_directory_linux(path: Path):
@@ -83,6 +95,6 @@ def _create_secure_directory_linux(path: Path):
         path.mkdir(mode=stat.S_IRWXU)
 
     except Exception as err:
-        message = f'Could not create a directory at "{path}": {str(err)}'
+        message = f"Could not create a secure directory at {path}: {str(err)}"
         logger.error(message)
         raise FailedDirectoryCreationError(message)
