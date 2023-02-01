@@ -6,7 +6,17 @@ from tests.monkey_island.utils import assert_linux_permissions, assert_windows_p
 
 from common.utils.environment import is_windows_os
 from common.utils.file_utils import create_secure_directory, open_new_securely_permissioned_file
-from common.utils.file_utils.secure_directory import _create_secure_directory_windows
+
+if is_windows_os():
+    import win32api
+    import win32con
+    import win32security
+
+    from common.utils.windows_permissions import (
+        ACCESS_MODE_GRANT_ACCESS,
+        ACCESS_PERMISSIONS_FULL_CONTROL,
+        INHERITANCE_OBJECT_AND_CONTAINER,
+    )
 
 
 @pytest.fixture
@@ -92,9 +102,35 @@ def test_open_new_securely_permissioned_file__perm_linux(test_path):
 # Windows-only tests
 
 
+@pytest.fixture
+def monkeypatch_get_acl_and_sid_from_path(monkeypatch):
+    username = win32api.GetUserNameEx(win32con.NameSamCompatible)
+    user_sid, _, _ = win32security.LookupAccountName("", username)
+    acl = win32security.ACL()
+    acl.SetEntriesInAcl(
+        [
+            {
+                "AccessMode": ACCESS_MODE_GRANT_ACCESS,
+                "AccessPermissions": ACCESS_PERMISSIONS_FULL_CONTROL,
+                "Inheritance": INHERITANCE_OBJECT_AND_CONTAINER,
+                "Trustee": {
+                    "TrusteeType": win32security.TRUSTEE_IS_USER,
+                    "TrusteeForm": win32security.TRUSTEE_IS_SID,
+                    "Identifier": user_sid,
+                },
+            }
+        ]
+    )
+
+    monkeypatch.setattr(
+        "common.utils.windows_permissions.get_acl_and_sid_from_path", lambda _: (acl, user_sid)
+    )
+
+
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
-def test_create_secure_directory__already_exists_secure_windows(test_path):
-    _create_secure_directory_windows(test_path)
+def test_create_secure_directory__already_exists_secure_windows(
+    test_path, monkeypatch_get_acl_and_sid_from_path
+):
     create_secure_directory(test_path)
 
 
