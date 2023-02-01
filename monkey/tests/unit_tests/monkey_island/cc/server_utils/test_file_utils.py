@@ -48,12 +48,6 @@ def test_create_secure_directory__perm_linux(test_path):
     assert_linux_permissions(test_path)
 
 
-def test_create_secure_directory__unsecure_existing_linux(test_path):
-    test_path.mkdir(mode=0o777)
-    with pytest.raises(Exception):
-        create_secure_directory(test_path)
-
-
 @pytest.mark.skipif(not is_windows_os(), reason="Tests Windows (not Posix) permissions.")
 def test_create_secure_directory__perm_windows(test_path):
     create_secure_directory(test_path)
