@@ -22,6 +22,7 @@ installed, but the ones that we've tested are:
 - Ubuntu Bionic 18.04
 - Ubuntu Focal 20.04
 - Ubuntu Hirsute 21.04
+- Ubuntu Jammy 22.04
 
 On Windows, AppImage can be run in WSL 2.
 
@@ -36,6 +37,13 @@ On Windows, AppImage can be run in WSL 2.
     ```bash
     ./InfectionMonkey-v1.13.0.AppImage
     ```
+
+   If you get errors related to FUSE, you may need to install FUSE 2.X first:
+   ```bash
+   sudo apt update
+   sudo apt install libfuse2
+   ```
+   More information about fixing FUSE-related errors can be found [here](https://docs.appimage.org/user-guide/troubleshooting/fuse.html).
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
