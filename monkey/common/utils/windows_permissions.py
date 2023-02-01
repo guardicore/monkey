@@ -14,8 +14,8 @@ INHERITANCE_OBJECT_AND_CONTAINER = (
 
 
 def get_security_descriptor_for_owner_only_perms():
-    user_sid = get_user_pySID_object()
-    entries = [get_ace_for_owner_only_permissions(user_sid)]
+    user_sid = _get_user_pySID_object()
+    entries = [_get_ace_for_owner_only_permissions(user_sid)]
 
     dacl = win32security.ACL()
     dacl.SetEntriesInAcl(entries)
@@ -26,7 +26,16 @@ def get_security_descriptor_for_owner_only_perms():
     return security_descriptor
 
 
-def get_ace_for_owner_only_permissions(user_sid) -> Mapping[str, Any]:
+def _get_user_pySID_object():
+    # get current user's name
+    username = win32api.GetUserNameEx(win32con.NameSamCompatible)
+    # pySID object for the current user
+    user, _, _ = win32security.LookupAccountName("", username)
+
+    return user
+
+
+def _get_ace_for_owner_only_permissions(user_sid) -> Mapping[str, Any]:
     return {
         "AccessMode": ACCESS_MODE_GRANT_ACCESS,
         "AccessPermissions": ACCESS_PERMISSIONS_FULL_CONTROL,
@@ -46,12 +55,3 @@ def get_acl_and_sid_from_path(path: Path):
     )
     acl = security_descriptor.GetSecurityDescriptorDacl()
     return acl, sid
-
-
-def get_user_pySID_object():
-    # get current user's name
-    username = win32api.GetUserNameEx(win32con.NameSamCompatible)
-    # pySID object for the current user
-    user, _, _ = win32security.LookupAccountName("", username)
-
-    return user
