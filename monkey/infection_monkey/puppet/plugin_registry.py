@@ -1,4 +1,5 @@
 import logging
+import threading
 from copy import copy
 from threading import RLock
 from typing import Any, Dict
@@ -113,6 +114,8 @@ class MultiprocessingPluginWrapper(MultiUsePlugin):
     Wraps a MultiprocessingPlugin so it can be used like a MultiUsePlugin
     """
 
+    process_start_lock = threading.Lock()
+
     def __init__(self, *, plugin_loader: PluginLoader, plugin_name: str, **kwargs):
         self._plugin_loader = plugin_loader
         self._name = plugin_name
@@ -124,8 +127,15 @@ class MultiprocessingPluginWrapper(MultiUsePlugin):
             plugin_name=self._name, **self._constructor_kwargs
         )
 
-        logger.debug("Invoking plugin.run()")
-        return plugin.run(**kwargs)
+        # HERE BE DRAGONS! multiprocessing.Process.start() is not thread-safe on Linux when used
+        # with the "spawn" method. See https://github.com/pyinstaller/pyinstaller/issues/7410 for
+        # more details.
+        with MultiprocessingPluginWrapper.process_start_lock:
+            logger.debug("Invoking plugin.start()")
+            plugin.start(**kwargs)
+
+        plugin.join()
+        return plugin.return_value
 
     @property
     def name(self) -> str:
