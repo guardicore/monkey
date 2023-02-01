@@ -6,6 +6,7 @@ from tests.monkey_island.utils import assert_linux_permissions, assert_windows_p
 
 from common.utils.environment import is_windows_os
 from common.utils.file_utils import create_secure_directory, open_new_securely_permissioned_file
+from common.utils.file_utils.secure_directory import FailedDirectoryCreationError
 
 
 @pytest.fixture
@@ -49,6 +50,12 @@ def test_open_new_securely_permissioned_file__write(test_path):
 
     with open(test_path, "rb") as f:
         assert f.read() == TEST_STR
+
+
+def test_create_secure_directory__path_exists_as_file(test_path):
+    with open(test_path, "w"):
+        with pytest.raises(FailedDirectoryCreationError):
+            create_secure_directory(test_path)
 
 
 # Linux-only tests
