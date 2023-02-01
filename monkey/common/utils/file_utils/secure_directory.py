@@ -16,18 +16,23 @@ logger = logging.getLogger(__name__)
 def create_secure_directory(path: Path):
     # TODO: Raise an exception if the directory exists and is not secure. Otherwise, the caller may
     #       think a secure directory was created when it wasn't.
-    if not path.is_dir():
-        if is_windows_os():
-            _create_secure_directory_windows(path)
-        else:
-            _create_secure_directory_linux(path)
+    if is_windows_os():
+        _check_existing_directory_is_secure = _check_existing_secure_directory_windows
+        _create_new_secure_directory = _create_secure_directory_windows
+    else:
+        _check_existing_directory_is_secure = _check_existing_secure_directory_linux
+        _create_new_secure_directory = _create_secure_directory_linux
+
+    if path.exists():
+        _check_existing_directory_is_secure(path)
+    else:
+        _create_new_secure_directory(path)
 
 
 def _create_secure_directory_linux(path: Path):
     try:
         # Don't split directory creation and permission setting
         # because it will temporarily create an accessible directory which anyone can use.
-        _check_existing_secure_directory_linux(path)
         path.mkdir(mode=stat.S_IRWXU)
 
     except Exception as ex:
@@ -36,15 +41,13 @@ def _create_secure_directory_linux(path: Path):
 
 
 def _check_existing_secure_directory_linux(path: Path):
-    if path.exists():
-        path_st_mode = path.stat().st_mode
-        if path_st_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO) != stat.S_IRWXU:
-            raise Exception(f'The directory "{path}" it is unsecure')
+    path_mode = path.stat().st_mode
+    if path_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO) != stat.S_IRWXU:
+        raise Exception(f'The directory "{path}" already exists and is insecure')
 
 
 def _create_secure_directory_windows(path: Path):
     try:
-        _check_existing_secure_directory_windows(path)
         security_attributes = win32security.SECURITY_ATTRIBUTES()
         security_attributes.SECURITY_DESCRIPTOR = (
             windows_permissions.get_security_descriptor_for_owner_only_perms()
@@ -57,6 +60,5 @@ def _create_secure_directory_windows(path: Path):
 
 
 def _check_existing_secure_directory_windows(path: Path):
-    if path.exists():
-        if not windows_permissions.is_secure_windows_directory(path):
-            raise Exception(f'The directory "{path}" it is unsecure')
+    if not windows_permissions.is_secure_windows_directory(path):
+        raise Exception(f'The directory "{path}" already exists and is insecure')
