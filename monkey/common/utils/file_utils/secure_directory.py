@@ -24,6 +24,8 @@ def create_secure_directory(path: Path):
         _create_secure_directory = _create_secure_directory_linux
 
     if path.exists():
+        if not path.is_dir():
+            raise Exception(f'The path "{path}" already exists and is not a directory')
         _check_existing_directory_is_secure(path)
     else:
         _create_secure_directory(path)
