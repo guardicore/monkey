@@ -53,16 +53,16 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * WMI
   * Log4Shell
   * Zerologon
-  * and more, see our [Documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/) for more information about our RCE exploiters.
+  * and more, see our [Documentation hub](https://techdocs.akamai.com/infection-monkey/docs/exploiters/) for more information about our RCE exploiters.
 
 ## Setup
-Check out the [Setup](https://www.guardicore.com/infectionmonkey/docs/setup/) page in the Wiki or a quick getting [started guide](https://www.guardicore.com/infectionmonkey/docs/usage/getting-started/).
+Check out the [Setup](https://techdocs.akamai.com/infection-monkey/docs/setting-up-infection-monkey/) page in the Wiki or a quick getting [started guide](https://techdocs.akamai.com/infection-monkey/docs/getting-started/).
 
-The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/operating_systems_support/).
+The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://techdocs.akamai.com/infection-monkey/docs/operating-systems/).
 
 ## Building the Monkey from source
 To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts)
-folder or follow documentation in [documentation hub](https://www.guardicore.com/infectionmonkey/docs/development/setup-development-environment/).
+folder or follow documentation in [documentation hub](https://techdocs.akamai.com/infection-monkey/docs/development-setup/).
 
 ### Build status
 | Branch | Status |
