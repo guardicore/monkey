@@ -7,6 +7,7 @@ import IslandHttpClient, {APIEndpoint} from '../IslandHttpClient';
 import LoadingIcon from './LoadingIcon';
 import {getEventSourceHostname, getMachineHostname, getMachineIPs} from '../utils/ServerUtils';
 import {parseTimeToDateString} from '../utils/DateUtils';
+import _ from 'lodash';
 
 const columns = [
   {label: 'Time', name: 'timestamp'},
@@ -71,14 +72,16 @@ const renderTarget = (event_target, machines) => {
 
 const renderTags = (val) => val.join(', ');
 
-function filterEventSpecificFields(event) {
+function formatEventFields(event) {
   let filtered_event = deleteAbstractAgentEventFields(event);
-  return <JSONTree data={filtered_event} level={1} theme="eighties" invertTheme={true}/>
+  let formatted_event = redactSecretsInEventFields(filtered_event);
+
+  return <JSONTree data={formatted_event} level={1} theme="eighties" invertTheme={true}/>
 }
 
 function deleteAbstractAgentEventFields(myObj) {
   let abstract_agent_event_fields = ['source', 'target', 'timestamp', 'type', 'tags'];
-  let tempObj = JSON.parse(JSON.stringify(myObj)); /* deepcopy */
+  let tempObj = _.cloneDeep(myObj)
 
   for (let index = 0; index < abstract_agent_event_fields.length; index++) {
     delete tempObj[abstract_agent_event_fields[index]];
@@ -87,7 +90,24 @@ function deleteAbstractAgentEventFields(myObj) {
   return tempObj;
 }
 
-const renderEventSpecificFields = (val) => filterEventSpecificFields(val);
+function redactSecretsInEventFields(myObj) {
+  let tempObj = _.cloneDeep(myObj);
+
+  let stolenCredentialsFieldName = 'stolen_credentials';
+  let secretFieldName = 'secret';
+
+  if (_.has(tempObj, stolenCredentialsFieldName)) {
+    for (let stolenCredential of tempObj[stolenCredentialsFieldName]) {
+      let secrets = stolenCredential[secretFieldName];
+      for (let secretType in secrets) {
+        let redactedSecret = '*'.repeat(stolenCredential[secretFieldName][secretType].length);
+        stolenCredential[secretFieldName][secretType] = redactedSecret;
+      }
+    }
+  }
+
+  return tempObj;
+}
 
 
 class EventsTable extends React.Component {
@@ -132,7 +152,7 @@ class EventsTable extends React.Component {
               renderTarget(item.target, this.state.machines),
               item.type,
               renderTags(item.tags),
-              renderEventSpecificFields(item)
+              formatEventFields(item)
             ]})}
           options={table_options}
         />
