@@ -98,7 +98,7 @@ function ScenarioInfo() {
     <>
       <div className={'scenario-info'}>
         Check the Infection Monkey documentation hub for more information
-        on <a href='https://www.guardicore.com/infectionmonkey/docs/usage/scenarios/' rel="noopener noreferrer"
+        on <a href='https://techdocs.akamai.com/infection-monkey/docs/scenarios' rel="noopener noreferrer"
               target="_blank">
         scenarios
       </a>.

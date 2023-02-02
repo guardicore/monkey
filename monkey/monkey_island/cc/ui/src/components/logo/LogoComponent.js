@@ -18,7 +18,7 @@ function Logo() {
         </a>
       </div>
       <div className='license-link text-center'>
-        <a href='https://www.guardicore.com/infectionmonkey/docs' rel="noopener noreferrer" target="_blank">
+        <a href='https://techdocs.akamai.com/infection-monkey/docs' rel="noopener noreferrer" target="_blank">
           <FontAwesomeIcon icon={faExternalLinkAlt} /> Documentation
         </a>
         <br/>
