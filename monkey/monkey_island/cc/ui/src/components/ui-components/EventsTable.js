@@ -88,6 +88,24 @@ function deleteAbstractAgentEventFields(myObj) {
 }
 
 const renderEventSpecificFields = (val) => filterEventSpecificFields(val);
+function redactSecretsInEventFields(myObj) {
+  let tempObj = JSON.parse(JSON.stringify(myObj)); /* deepcopy */
+
+  let stolenCredentialsFieldName = "stolen_credentials";
+  let secretFieldName = "secret";
+
+  if (tempObj.hasOwnProperty(stolenCredentialsFieldName)) {
+    for (let stolenCredential of tempObj[stolenCredentialsFieldName]) {
+      let secrets = stolenCredential[secretFieldName];
+      for (let secretType in secrets) {
+        let redactedSecret = "*".repeat(stolenCredential[secretFieldName][secretType].length);
+        stolenCredential[secretFieldName][secretType] = redactedSecret;
+      }
+    }
+  }
+
+  return tempObj;
+}
 
 
 class EventsTable extends React.Component {
