@@ -14,7 +14,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import guardicoreLogoImage from '../../images/guardicore-logo.png'
+import akamaiLogoImage from '../../images/akamai-logo.svg'
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/App.css';
 import {
@@ -288,7 +288,7 @@ class ReportPageComponent extends AuthComponent {
         For questions, suggestions, or any other feedback,
         contact <a href='mailto:support@infectionmonkey.com' className='no-print'>support@infectionmonkey.com</a>
         <div className='force-print' style={{ display: 'none' }}>support@infectionmonkey.com</div>.
-        <img src={guardicoreLogoImage} alt='GuardiCore' className='center-block' style={{ height: '50px' }} />
+        <img src={akamaiLogoImage} alt='Akamai' className='center-block' style={{ height: '55px' }} />
       </div>
     );
   }
