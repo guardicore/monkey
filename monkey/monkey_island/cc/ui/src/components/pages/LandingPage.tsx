@@ -4,10 +4,10 @@ import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/LandingPage.scss';
-import IslandHttpClient from "../IslandHttpClient";
+import IslandHttpClient from '../IslandHttpClient';
 
 import ParticleBackground from '../ui-components/ParticleBackground';
-import Logo from "../logo/LogoComponent";
+import Logo from '../logo/LogoComponent';
 
 const monkeyIcon = require('../../images/monkey-icon.svg')
 const infectionMonkey = require('../../images/infection-monkey.svg')
@@ -27,7 +27,7 @@ const LandingPageComponent = (props: Props) => {
         <div className={'scenario-header'}>
           <ScenarioButtons/>
           <br/>
-          <Col className={'guardicore-logo'}>
+          <Col className={'akamai-logo'}>
             <Logo/>
           </Col>
         </div>

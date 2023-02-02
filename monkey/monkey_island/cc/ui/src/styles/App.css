@@ -111,7 +111,7 @@ body {
     border-top-color: #ccc !important;
   }
 
-  .guardicore-link span {
+  .akamai-link span {
     color: #999;
     vertical-align: middle;
     padding-left: 4px;
@@ -119,8 +119,8 @@ body {
     font-size: 1.7em;
   }
 
-  .guardicore-link img {
-    height: 38px;
+  .akamai-link img {
+    height: 55px;
     padding-left: 4px;
     padding-right: 4px;
     vertical-align: middle;
@@ -128,8 +128,8 @@ body {
 }
 
 @media (max-width: 575px) {
-  .guardicore-link img {
-    height: 28px;
+  .akamai-link img {
+    height: 45px;
     padding-left: 4px;
     padding-right: 4px;
     vertical-align: middle;
