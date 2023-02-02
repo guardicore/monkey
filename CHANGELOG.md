@@ -75,6 +75,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Information displayed in the preview pane in the map page. #2455
 - Telemetry page to Event page in the UI. #2501
 - '/infection/telemetry' to 'infection/events'. #2501
+- The Hadoop exploiter to a plugin. #2826
 
 ### Removed
 - VSFTPD exploiter. #1533
