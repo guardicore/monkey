@@ -80,7 +80,7 @@ const getContents = (props) => {
         <p className="alert alert-info">
           <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
           Not sure what this is? Not seeing your AWS EC2 instances? <a
-          href="https://www.guardicore.com/infectionmonkey/docs/usage/integrations/aws-run-on-ec2-machine/"
+          href="https://techdocs.akamai.com/infection-monkey/docs/running-the-monkey-on-aws-ec2-instances/"
           rel="noopener noreferrer" target="_blank">Read the documentation</a>!
         </p>
       </div>
