@@ -148,8 +148,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   #594, #1635, #2261
 - A bug in network map page that caused delay of telemetry log loading. #1545
 - Windows "run as a user" powershell command for manual agent runs. #1556
-- A bug where T1216_random_executable.exe was copied to disk even if the signed
-  script proxy execution PBA was disabled. #1864
+- A bug in the map where side pane would not appear if the node was
+  dragged around before click. #2914
 - Unnecessary collection of kerberos credentials. #1771
 - A bug where bogus users were collected by Mimikatz and added to the config. #1860
 - A bug where windows executable was not self deleting. #1763
