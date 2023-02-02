@@ -53,7 +53,7 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * WMI
   * Log4Shell
   * Zerologon
-  * and more, see our [Documentation hub](https://techdocs.akamai.com/infection-monkey/docs/exploiters/) for more information about our RCE exploiters.
+  * and more, see our [documentation hub](https://techdocs.akamai.com/infection-monkey/docs/exploiters/) for more information.
 
 ## Setup
 Check out the [Setup](https://techdocs.akamai.com/infection-monkey/docs/setting-up-infection-monkey/) page and the [Getting Started](https://techdocs.akamai.com/infection-monkey/docs/getting-started/) guide in our documentation.
