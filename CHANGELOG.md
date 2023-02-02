@@ -165,6 +165,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Malformed MSSQL agent launch command. #2018
 - A bug where the Log4Shell exploiter that could leave LDAP servers and child
   processes running. #2820
+- A bug in registration process that caused the button to be stuck with loading icon. #2916
 
 ### Security
 - Log files are created with random names and secure permissions. #1761, #2775
