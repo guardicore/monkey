@@ -56,7 +56,7 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * and more, see our [Documentation hub](https://techdocs.akamai.com/infection-monkey/docs/exploiters/) for more information about our RCE exploiters.
 
 ## Setup
-Check out the [Setup](https://techdocs.akamai.com/infection-monkey/docs/setting-up-infection-monkey/) page in the Wiki or a quick getting [started guide](https://techdocs.akamai.com/infection-monkey/docs/getting-started/).
+Check out the [Setup](https://techdocs.akamai.com/infection-monkey/docs/setting-up-infection-monkey/) page and the [Getting Started](https://techdocs.akamai.com/infection-monkey/docs/getting-started/) guide in our documentation.
 
 The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://techdocs.akamai.com/infection-monkey/docs/operating-systems/).
 
