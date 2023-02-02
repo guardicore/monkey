@@ -48,7 +48,7 @@ def _is_docker_data_dir_old(data_dir_path: Path) -> bool:
                 "Found an old volume. "
                 "You must create an empty volume for each docker container "
                 "as specified in setup documentation: "
-                "https://www.guardicore.com/infectionmonkey/docs/setup/docker/"
+                "https://techdocs.akamai.com/infection-monkey/docs/docker/"
             )
     else:
         return False
