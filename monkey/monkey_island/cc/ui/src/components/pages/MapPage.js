@@ -22,7 +22,7 @@ class MapPageComponent extends AuthComponent {
   }
 
   events = {
-    select: event => this.selectionChanged(event)
+    click: event => this.selectionChanged(event)
   };
 
   selectionChanged(event) {
