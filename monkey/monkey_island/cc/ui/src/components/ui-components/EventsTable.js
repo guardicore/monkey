@@ -71,9 +71,11 @@ const renderTarget = (event_target, machines) => {
 
 const renderTags = (val) => val.join(', ');
 
-function filterEventSpecificFields(event) {
+function formatEventFields(event) {
   let filtered_event = deleteAbstractAgentEventFields(event);
-  return <JSONTree data={filtered_event} level={1} theme="eighties" invertTheme={true}/>
+  let formatted_event = redactSecretsInEventFields(filtered_event);
+
+  return <JSONTree data={formatted_event} level={1} theme="eighties" invertTheme={true}/>
 }
 
 function deleteAbstractAgentEventFields(myObj) {
@@ -87,7 +89,6 @@ function deleteAbstractAgentEventFields(myObj) {
   return tempObj;
 }
 
-const renderEventSpecificFields = (val) => filterEventSpecificFields(val);
 function redactSecretsInEventFields(myObj) {
   let tempObj = JSON.parse(JSON.stringify(myObj)); /* deepcopy */
 
@@ -106,6 +107,8 @@ function redactSecretsInEventFields(myObj) {
 
   return tempObj;
 }
+
+const renderFormattedEventFields = (val) => formatEventFields(val);
 
 
 class EventsTable extends React.Component {
@@ -150,7 +153,7 @@ class EventsTable extends React.Component {
               renderTarget(item.target, this.state.machines),
               item.type,
               renderTags(item.tags),
-              renderEventSpecificFields(item)
+              renderFormattedEventFields(item)
             ]})}
           options={table_options}
         />
