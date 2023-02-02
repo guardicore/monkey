@@ -96,7 +96,7 @@ function redactSecretsInEventFields(myObj) {
   let stolenCredentialsFieldName = 'stolen_credentials';
   let secretFieldName = 'secret';
 
-  if (Object.prototype.hasOwnProperty.call(tempObj, stolenCredentialsFieldName)) {
+  if (_.has(tempObj, stolenCredentialsFieldName)) {
     for (let stolenCredential of tempObj[stolenCredentialsFieldName]) {
       let secrets = stolenCredential[secretFieldName];
       for (let secretType in secrets) {
@@ -108,8 +108,6 @@ function redactSecretsInEventFields(myObj) {
 
   return tempObj;
 }
-
-const renderFormattedEventFields = (val) => formatEventFields(val);
 
 
 class EventsTable extends React.Component {
@@ -154,7 +152,7 @@ class EventsTable extends React.Component {
               renderTarget(item.target, this.state.machines),
               item.type,
               renderTags(item.tags),
-              renderFormattedEventFields(item)
+              formatEventFields(item)
             ]})}
           options={table_options}
         />
