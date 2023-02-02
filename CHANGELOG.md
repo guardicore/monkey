@@ -7,53 +7,49 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
-- credentials.json file for storing Monkey Island user login information. #1206
-- "GET /api/propagation-credentials/<string:guid>" endpoint for agents to
+- `credentials.json` file for storing Monkey Island user login information. #1206
+- `GET /api/propagation-credentials/<string:guid>` endpoint for agents to
   retrieve updated credentials from the Island. #1538
-- "GET /api/island/ip-addresses" endpoint to get IP addresses of the Island server
+- `GET /api/island/ip-addresses` endpoint to get IP addresses of the Island server
   network interfaces. #1996
 - SSHCollector as a configurable System info Collector. #1606
 - deployment_scrips/install-infection-monkey-service.sh to install an AppImage
   as a service. #1552
 - The ability to download the Monkey Island logs from the Infection Map page. #1640
-- `/api/reset-agent-configuration` endpoint. #2036
-- `/api/clear-simulation-data` endpoint. #2036
-- `/api/registration-status` endpoint. #2149
-- authentication to `/api/island/version`. #2109
-- `/api/agent-events` endpoint. #2155, #2300
-- The ability to customize the file extension used by ransomware when
-  encrypting files. #1242
-- `/api/agents` endpoint. #2362
-- `/api/agent-signals` endpoint. #2261
-- `/api/agent-logs/<uuid:agent_id>` endpoint. #2274
-- `/api/machines` endpoint. #2362
-- GET method to `/api/agent-events`. #2405
-- `/api/nodes` endpoint. #2334
+- `POST /api/reset-agent-configuration` endpoint. #2036
+- `POST /api/clear-simulation-data` endpoint. #2036
+- `GET /api/registration-status` endpoint. #2149
+- Authentication to `/api/island/version`. #2109
+- The ability to customize the file extension used by the ransomware payload
+  when encrypting files. #1242
+- `{GET,POST} /api/agents` endpoint. #2362
+- `GET /api/agent-signals` endpoint. #2261
+- `GET /api/agent-logs/<uuid:agent_id>` endpoint. #2274
+- `GET /api/machines` endpoint. #2362
+- `{GET,POST} /api/agent-events` endpoints. #2405
+- `GET /api/nodes` endpoint. #2155, #2300, #2334
 - Scrollbar to preview pane's exploit timeline in the map page. #2455
-- `/api/agent-plugins/<string:os>/<string:type>/<string:name>` endpoint. #2578, #2811
-- `/api/agent-configuration-schema` endpoint. #2710
-- `/api/agent-plugins/<string:type>/<string:name>/manifest` endpoint. #2786
+- `GET /api/agent-plugins/<string:os>/<string:type>/<string:name>` endpoint. #2578, #2811
+- `GET /api/agent-configuration-schema` endpoint. #2710
+- `GET /api/agent-plugins/<string:type>/<string:name>/manifest` endpoint. #2786
+- `GET /api/agent-binaries/<string:os>` endpoint. #1675, #1978
 
 ### Changed
 - Reset workflow. Now it's possible to delete data gathered by agents without
-  resetting the configuration and reset procedure requires fewer clicks. #957
+  resetting the configuration. Additionally, the reset procedure requires fewer
+  clicks. #957
 - Reduced the map refresh rate from 5 seconds to 1.
-- Cleaned up and removed duplication in security report. #2885
-- The setup procedure for custom server_config.json files to be simpler. #1576
+- Cleaned up and removed duplication in the security report. #2885
+- The setup procedure for custom `server_config.json` files to be simpler. #1576
 - The order and content of Monkey Island's initialization logging to give
   clearer instructions to the user and avoid confusion. #1684
-- The "/api/monkey/download" endpoint to accept an OS and return a file. #1675
+- The `GET /api/monkey/download` to `GET /api/agent-binaries/<string:os>. #1675, #1978
 - Log messages to contain human-readable thread names. #1766
 - The log file name to `infection-monkey-agent-<TIMESTAMP>-<RANDOM_STRING>.log`. #1761
-- "Logs" page renamed to "Telemetries". #1640
-- The "/api/test/clear_caches" endpoint to "/api/test/clear-caches". #1888
-- All "/api/monkey_control" endpoints to "/api/monkey-control". #1888
-- All "/api/monkey" endpoints to "/api/agent". #1888
+- "Logs" page renamed to "Events". #1640, #2501
 - Analytics and version update queries are sent separately instead of just one query. #2165
 - Update MongoDB version to 4.4.x. #1924
-- Endpoint to get agent binaries from "/api/agent/download/<string:os>" to
-  "/api/agent-binaries/<string:os>". #1978
-- Depth flag (-d) on the agent now acts the  way you would expect(it represents
+- Depth flag (-d) on the agent now acts the way you would expect (it represents
   the current depth of the agent, not hops remaining). #2033
 - Agent configuration structure. #1996, #1998, #1961, #1997, #1994, #1741,
   #1761, #1695, #1605, #2028, #2003, #2785
@@ -64,17 +60,15 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/api/auth` endpoint to `/api/authenticate`. #2105
 - `/api/registration` endpoint to `/api/register`. #2105
 - Improved the speed of ransomware encryption by 2-3x. #2123
-- "-s/--server" to "-s/--servers". #2216
-- "-s/--servers" accepts list of servers separated by comma. #2216
+- `-s/--server` to `-s/--servers`. #2216
+- `-s/--servers` accepts list a comma-separated list of servers. #2216
 - Tunneling to relays to provide better firewall evasion, faster Island
   connection times, unlimited hops, and a more resilient way for agents to call
   home. #2216, #1583
-- "/api/monkey-control/stop-all-agents" to "/api/agent-signals/terminate-all-agents". #2261
+- `/api/monkey-control/stop-all-agents` to `POST /api/agent-signals/terminate-all-agents`. #2261
 - Format of scanned machines table in the security report. #2267
 - "Local network scan" option to "Scan Agent's networks". #2299
 - Information displayed in the preview pane in the map page. #2455
-- Telemetry page to Event page in the UI. #2501
-- '/infection/telemetry' to 'infection/events'. #2501
 - The Hadoop exploiter to a plugin. #2826
 
 ### Removed
@@ -86,17 +80,18 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Checkbox to disable/enable sending log to server. #1537
 - Checkbox for self deleting a monkey agent on cleanup. #1537
 - Checkbox for file logging. #1537
-- Remove serialization of config. #1537
+- Serialization of config. #1537
 - Checkbox that gave the option to not try to first move the dropper file. #1537
 - Custom singleton mutex name config option. #1589
-- Removed environment system info collector #1535
+- Environment system info collector #1535
 - Azure credential collector, because it was broken (not gathering credentials). #1535
 - Custom monkey directory name config option. #1537
 - Hostname system info collector. #1535
-- Max iterations and timeout between iterations config options. #1600
+- Max iterations config option. #1600
+- Timeout between iterations config options. #1600
 - MITRE ATT&CK configuration screen. #1532
-- Propagation credentials from "GET /api/monkey/<string:guid>" endpoint. #1538
-- "GET /api/monkey_control/check_remote_port/<string:port>" endpoint. #1635
+- Propagation credentials from `GET /api/monkey/<string:guid>` endpoint. #1538
+- `GET /api/monkey_control/check_remote_port/<string:port>` endpoint. #1635
 - Max victims to find/exploit, TCP scan interval and TCP scan get banner internal options. #1597
 - MySQL fingerprinter. #1648
 - MS08-067 (Conficker) exploiter. #1677
@@ -112,47 +107,44 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Drupal exploiter. #1869
 - WebLogic exploiter. #1869
 - The /api/t1216-pba/download endpoint. #1864
-- Island log download button from "Telemetries"(previously called "Logs") page. #1640
-- "/api/client-monkey" endpoint. #1889
+- `/api/test/clear_caches` endpoint. #1888, #2092
+- All `/api/monkey_control` endpoints. #1888, #2261
+- Island log download button from "Events" (previously called "Logs") page. #1640
+- `/api/client-monkey` endpoint. #1889
 - "+dev" from version numbers. #1553
-- agent's "--config" argument. #906
+- agent's `--config` argument. #906
 - Option to export monkey telemetries. #1998
-- "/api/configuration/import" endpoint. #2002
-- "/api/configuration/export" endpoint. #2002
-- "/api/island-configuration" endpoint. #2003
-- "-t/--tunnel" from agent command line arguments. #2216
-- "/api/monkey-control/neets-to-stop". #2261
-- "GET /api/test/monkey" endpoint. #2269
-- "GET /api/test/log" endpoint. #2269
+- `/api/configuration/import` endpoint. #2002
+- `/api/configuration/export` endpoint. #2002
+- `/api/island-configuration` endpoint. #2003
+- `-t/--tunnel` from agent command line arguments. #2216
+- `/api/monkey-control/needs-to-stop`. #2261
+- `GET /api/test/monkey` endpoint. #2269
+- `GET /api/test/log` endpoint. #2269
 - Node Map from Security Report. #2334
 - "Accessible From" and "Services" from the preview pane in the map page. #2430
-- "GET /api/netmap" endpoint. #2334
-- "GET /api/netmap/node-states" endpoint. #2334
+- All `GET /api/netmap` endpoints. #2334, #2453
 - The MITRE ATT&CK report. #2440
 - The Zero Trust report. #2441
-- "GET /api/zero-trust/finding-event/<string:finding_id>" endpoint. #2441
-- "GET /api/report/zero-trust/<string:report_data>" endpoint. #2441
+- `GET /api/zero-trust/finding-event/<string:finding_id>` endpoint. #2441
+-`"GET /api/report/zero-trust/<string:report_data>` endpoint. #2441
 - AWS Security Hub integration. #2443
 - The Post breach actions configuration tab. #2442
 - The Custom PBA configuration tab. #2442
-- "GET /api/pba/download/<string:filename>" endpoint. #2442
-- "GET /api/pba/upload/<string:target_os>" endpoint. #2442
-- "POST /api/pba/upload/<string:target_os>?load=<string:filename>" endpoint. #2442
-- "POST /api/pba/upload/<string:target_os>?restore=<string:filename>" endpoint. #2442
-- "GET /api/netmap/node" endpoint. #2453
-- "GET /api/netmap/edge" endpoint. #2453
+- All `/api/pba` endpoints. #2442
 - The TelemetryLog component from the Infection Map page. #2500
-- "GET /api/telemetry-feed" endpoint. #2502
-- "GET /api/log" endpoint. #2485
-- "POST /api/log" endpoint. #2485
-- "GET /api/local-monkey" endpoint. #2506
-- "/api/telemetry" endpoint. #2503
-- "/api/agent" endpoint. #2542
-- "/api/exploitations/manual" endpoint. #2509
-- "/api/island/ip-addresses" endpoint. #2565
+- `GET /api/telemetry-feed` endpoint. #2502
+- `{GET,POST} /api/log` endpoint. #2485
+- `GET /api/local-monkey` endpoint. #2506
+- `/api/telemetry` endpoint. #2503
+- `/api/agent` endpoint. #2542
+- `/api/exploitations/manual` endpoint. #2509
+- `/api/island/ip-addresses` endpoint. #2565
 - ElasticSearch fingerprinter. #2674
 
 ### Fixed
+- Various bugs that prevented agents from stopping reliably. #556, #578, #581,
+  #594, #1635, #2261
 - A bug in network map page that caused delay of telemetry log loading. #1545
 - Windows "run as a user" powershell command for manual agent runs. #1556
 - A bug where T1216_random_executable.exe was copied to disk even if the signed
@@ -164,14 +156,17 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automatic jumping to the bottom in the telemetry overview windows. #1850
 - 2-second delay when the Island server starts, and it's not running on AWS. #1636
 - Malformed MSSQL agent launch command. #2018
-- A bug where the Log4Shell exploiter that could leave LDAP servers and child
+- A bug where the Log4Shell exploiter could leave LDAP servers and child
   processes running. #2820
 
 ### Security
+- Upgrade Cryptography dependency. #1482
 - Log files are created with random names and secure permissions. #1761, #2775
 - Change SSH exploiter so that it does not set the permissions of the agent
   binary in /tmp on the target system to 777, as this could allow a malicious
   actor with local access to escalate their privileges. #1750
+- Fixed constant agent file names in `/tmp`. #1782
+- Update MongoDB version to 4.4.x. #1924
 - The `/api/telemetry` endpoint allowed arbitrary queries to be submitted,
   which could result in javascript execution. #2503
 
