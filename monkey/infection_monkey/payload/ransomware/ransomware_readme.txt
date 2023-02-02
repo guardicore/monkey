@@ -47,4 +47,4 @@ and are unsure about how to proceed, please contact your administrator.
 For more information about Infection Monkey, see https://www.akamai.com/infectionmonkey.
 
 For more information about Infection Monkey's ransomware simulation, see
-https://www.guardicore.com/infectionmonkey/docs/reference/ransomware.
+https://techdocs.akamai.com/infection-monkey/docs/ransomware-simulation.
