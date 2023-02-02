@@ -185,7 +185,7 @@ SCHEMA = {
                             "title": "Zerologon Exploiter",
                             "safe": False,
                             "description": "Exploits a privilege escalation vulnerability (CVE-2020-1472) in a Windows server domain controller (DC) by using the Netlogon Remote Protocol (MS-NRPC). This exploiter changes the password of a Windows server DC account, steals credentials, and then attempts to restore the original DC password. The victim DC will be unable to communicate with other DCs until the original password has been restored. If Infection Monkey fails to restore the password automatically, you'll have to do it manually. For more information, see the documentation.",
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/zerologon/",
+                            "link": "https://techdocs.akamai.com/infection-monkey/docs/zerologon/",
                             "properties": {},
                         },
                         "Log4ShellExploiter": {
@@ -193,7 +193,7 @@ SCHEMA = {
                             "title": "Log4Shell Exploiter",
                             "safe": True,
                             "description": "Exploits a software vulnerability (CVE-2021-44228) in Apache Log4j, a Java logging framework. Exploitation is attempted on the following services - Apache Solr, Apache Tomcat, Logstash.",
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/log4shell/",
+                            "link": "https://techdocs.akamai.com/infection-monkey/docs/log4shell/",
                             "properties": {},
                         },
                         "SMBExploiter": {
@@ -201,7 +201,7 @@ SCHEMA = {
                             "title": "SMB Exploiter",
                             "safe": True,
                             "description": "Brute forces using credentials provided by user and hashes gathered by mimikatz.",
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/smbexec/",
+                            "link": "https://techdocs.akamai.com/infection-monkey/docs/smbexec/",
                             "properties": {
                                 "smb_download_timeout": {
                                     "title": "SMB download timeout",
@@ -218,7 +218,7 @@ SCHEMA = {
                             "title": "PowerShell Remoting Exploiter",
                             "description": "Exploits PowerShell remote execution setups. PowerShell Remoting uses Windows Remote Management (WinRM) to allow users to run PowerShell commands on remote computers.",
                             "safe": True,
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/powershell",
+                            "link": "https://techdocs.akamai.com/infection-monkey/docs/powershell",
                             "properties": {},
                         },
                         "WmiExploiter": {
@@ -226,7 +226,7 @@ SCHEMA = {
                             "title": "WMI Exploiter",
                             "safe": True,
                             "description": "Brute forces WMI (Windows Management Instrumentation) using credentials provided by user and hashes gathered by mimikatz.",
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/wmiexec/",
+                            "link": "https://techdocs.akamai.com/infection-monkey/docs/wmiexec/",
                             "properties": {
                                 "smb_download_timeout": {
                                     "title": "SMB download timeout",
@@ -243,7 +243,7 @@ SCHEMA = {
                             "title": "MSSQL Exploiter",
                             "safe": True,
                             "description": "Tries to brute force into MsSQL server and uses insecure configuration to execute commands on server.",
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/mssql/",
+                            "link": "https://techdocs.akamai.com/infection-monkey/docs/mssql/",
                             "properties": {},
                         },
                         "SSHExploiter": {
@@ -251,7 +251,7 @@ SCHEMA = {
                             "title": "SSH Exploiter",
                             "safe": True,
                             "description": "Brute forces using credentials provided by user and SSH keys gathered from systems.",
-                            "link": "https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/sshexec/",
+                            "link": "https://techdocs.akamai.com/infection-monkey/docs/sshexec/",
                             "properties": {},
                         },
                         "Mock1": {
