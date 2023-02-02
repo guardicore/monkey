@@ -70,7 +70,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - "Local network scan" option to "Scan Agent's networks". #2299
 - Information displayed in the preview pane in the map page. #2455
 - The Hadoop exploiter to a plugin. #2826
-- The Guardicore logo to Akamai logo.
+- The Guardicore logo to Akamai logo. #2913
 
 ### Removed
 - VSFTPD exploiter. #1533
