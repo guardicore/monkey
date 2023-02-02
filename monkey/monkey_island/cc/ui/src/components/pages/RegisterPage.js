@@ -17,6 +17,7 @@ class RegisterPageComponent extends React.Component {
         this.redirectToHome();
       } else {
         this.setState({
+          loading: false,
           failed: true,
           error: res['error']
         });
