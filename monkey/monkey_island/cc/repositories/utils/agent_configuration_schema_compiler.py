@@ -5,7 +5,9 @@ import dpath.util
 from common.agent_configuration import AgentConfiguration
 from common.agent_plugins import AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
-from monkey_island.cc.repositories.utils.hard_coded_exploiters import HARD_CODED_EXPLOITER_PLUGINS
+from monkey_island.cc.repositories.utils.hard_coded_exploiter_schemas import (
+    HARD_CODED_EXPLOITER_SCHEMAS,
+)
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters"
@@ -53,7 +55,7 @@ class AgentConfigurationSchemaCompiler:
         properties = dpath.util.get(
             schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.EXPLOITER] + ".properties", "."
         )
-        properties.update(HARD_CODED_EXPLOITER_PLUGINS)
+        properties.update(HARD_CODED_EXPLOITER_SCHEMAS)
         return schema
 
     def _add_plugin_to_schema(
