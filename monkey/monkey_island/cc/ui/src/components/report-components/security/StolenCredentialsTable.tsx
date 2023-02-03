@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import ReactTable from 'react-table'
-import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import {reformatSecret} from '../credentialParsing';
 import _ from 'lodash';
@@ -24,7 +23,7 @@ const StolenCredentialsTable = (props) => {
 
   useEffect(() => {
     setCredentialsTableData(getCredentialsTableData(props.stolenCredentials));
-  }, [])
+  }, [props.stolenCredentials])
 
   if(credentialsTableData === null){
     return (<LoadingIcon />)
@@ -32,7 +31,6 @@ const StolenCredentialsTable = (props) => {
 
     let defaultPageSize = credentialsTableData.length > pageSize ? pageSize : credentialsTableData.length;
     let showPagination = credentialsTableData.length > pageSize;
-
     return (
       <div className="data-table-container">
         <ReactTable
@@ -64,5 +62,7 @@ function getCredentialsTableData(credentials){
     }
   }
 
-  return tableData;
+  // React table v6 is deprecated and seems to not compare arrays properly, thus it
+  // does not update once array is changed, so don't use []
+  return _.isEmpty(tableData) ? null : tableData;
 }
