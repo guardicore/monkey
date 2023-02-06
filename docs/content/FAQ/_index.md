@@ -157,27 +157,11 @@ If internet access is available, the Infection Monkey will use the internet for 
 
 ### Exactly what internet queries does the Infection Monkey perform?
 
-The Monkey performs queries out to the Internet on two separate occasions:
-
-1. The Infection Monkey agent checks if it has internet access by performing
-   requests to pre-configured domains. By default, these domains are
-   `monkey.guardicore.com` and `www.google.com`, which can be changed.  The
-   request doesn't include any extra information - it's a GET request with no
-   extra parameters. Since the Infection Monkey is 100% open-source, you can
-   find the domains in the configuration
-   [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/config.py#L152)
-   and the code that performs the internet check
-   [here](https://github.com/guardicore/monkey/blob/85c70a3e7125217c45c751d89205e95985b279eb/monkey/infection_monkey/network/info.py#L123).
-   This **IS NOT** used for statistics collection.
-1. After the Monkey Island starts it sends a GET request with current
-   deployment type to the update server to fetch the latest version and a
-   download link for it. This information is used by the Monkey Island to
-   suggest an update if one is available. No information gets collected during
-   this process.
-1. After the Monkey Island starts it sends a GET request to the analytics
-   server with your deployment type and a version number. This information gets
-   collected on the analytics server. It is used to understand which deployment
-   types/versions are no longer used and can be deprecated.
+After the Monkey Island starts, a GET request with the current deployment type
+is sent to the update server to fetch the latest version number and a
+download link for it. This information is used by the Monkey Island to
+suggest an update if one is available. No information gets collected during
+this process.
 
 ## Logging and how to find logs
 
@@ -305,7 +289,7 @@ See our detailed [getting started]({{< ref "/usage/getting-started" >}}) guide.
 
 If you wish to simulate a very “deep” attack into your network, you can increase the *propagation depth* parameter in the configuration. This parameter tells the Infection Monkey how far to propagate into your network from the “patient zero” machine.
 
-To do this, change the *Distance from Island* parameter in the “Basic - Network” tab of the configuration:
+To do this, change the `Configuration -> Propagation -> General -> Maximum scan depth` configuration option:
 
 ![How to increase propagation depth](/images/faq/prop_depth.png "How to increase propagation depth")
 
@@ -337,35 +321,22 @@ further nor continue to scan or propagate.
 ![What is scan depth](/images/faq/propagation_depth_diagram.png "What is scan
 depth")
 
-
 #### Enable or disable scanning the local subnet
 
 You can find the settings that define how the Infection Monkey will scan your
-network in `Configuration -> Network`. Each agent will scan its entire local
-subnet by default, but you can disable this behavior by unchecking the `Local
-network scan` button.
+network in `Configuration -> Propagation -> Network analysis`. If enabled,
+the `Scan Agent's networks` setting instruct an Agent to scan its entire local subnet.
 
 #### Add IPs to the IP allow list
 
-You can specify which hosts you want the Infection Monkey agents to attempt to
-scan in the `Configuration -> Network -> Scan target list` section.
+You can specify which hosts you want the Infection Monkey Agents to attempt to
+scan in the `Configuration -> Propagation -> Network analysis -> Scan target list` section.
 
 #### Add IPs to the IP block list
 
-
 If there are any hosts on your network that you would like to prevent the
 Infection Monkey from scanning or exploiting, you can add them to the list of
-"Blocked IPs" in `Configuration -> Network -> Blocked IPs`.
-
-#### Specify max number of victims to find/exploit
-
-Two settings in `Configuration -> Internal -> Monkey` allow you to further
-limit the Infection Monkey's propagation:
-
-- **Max victims to find**: This limits the total number of machines that the
-Infection Monkey is allowed to scan.
-- **Max victims to exploit**: This limits the total number of machines that the
-Infection Monkey is allowed to successfully exploit.
+"Blocked IPs" in `Configuration -> Propagation -> Network analysis -> Blocked IPs`.
 
 
 ## How can I get involved with the project?
