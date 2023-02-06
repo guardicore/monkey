@@ -31,10 +31,12 @@ vulnerabilities, brute-forcing and other safe exploiters.
   times.
 - **Propagation -> Network analysis -> Network** Make sure to properly
   configure the scope of the scan. You can select **Scan Agent's networks** and
-  allow Monkey to propagate until maximum **Scan depth**(hop count) is reached,
+  allow Monkey to propagate until **Maximum scan depth** (hop count) is reached,
   or you can fine tune it by providing specific network ranges in **Scan target
   list**. Scanning a local network is more realistic, but providing specific
   targets will make the scanning process substantially faster.
+  - **Maximum scan depth** can be configured from the **Propagation ->
+    General** tab.
 - **(Optional) Propagation -> Network Analysis -> TCP scanner** Here you can
   add custom ports your organization is using.
 
