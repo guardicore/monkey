@@ -53,7 +53,7 @@ class AdvancedMultiSelect extends React.Component {
 
   getOptions() {
     let names = this.props.schema.items.properties.name.anyOf;
-    return names.map(v => ({label: v.title, schema: v, value: v.enum[0]}));
+    return names.map(v => ({label: v.title, schema: v, value: v.enum[0], isActive: false}));
   }
 
   getSelectedPluginNames = () => {
@@ -154,9 +154,14 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   setPaneInfo = (itemKey) => {
+    let pluginOptions = this.getOptions();
+    pluginOptions.forEach(v => {
+      v['isActive'] = (v['value'] == itemKey);
+    });
     let definitionObj = getFullDefinitionByKey(this.props.schema.items.properties.name, itemKey);
     this.setState(
       {
+        nameOptions: pluginOptions,
         infoPaneParams: {
           title: definitionObj.title,
           content: definitionObj.info,
