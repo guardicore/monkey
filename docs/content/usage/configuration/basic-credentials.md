@@ -5,6 +5,6 @@ draft: false
 description: "Configure credentials that the Monkey will use for propagation."
 ---
 
-On this screen you can feed the Infection Monkey “stolen” credentials from your network, simulating an attacker with inside knowledge.
+On this screen you can feed the Infection Monkey "stolen" credentials from your network, simulating an attacker with inside knowledge.
 
 ![Configure credentials](/images/usage/configuration/credentials.png "Configure credentials")

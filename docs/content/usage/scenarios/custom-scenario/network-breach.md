@@ -45,7 +45,7 @@ selector")
 
 ## Suggested run mode
 
-Decide which machines you want to simulate a breach on and use the “Manual” run
+Decide which machines you want to simulate a breach on and use the "Manual" run
 option to start the Infection Monkey Agent on them. Use administrative privileges to
 run the Infection Monkey to simulate an attacker that was able to elevate their
 privileges. You could also simulate an attack initiated from an unidentified

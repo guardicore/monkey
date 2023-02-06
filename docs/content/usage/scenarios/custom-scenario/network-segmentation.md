@@ -24,7 +24,7 @@ You can use the Infection Monkey's cross-segment traffic feature to verify that 
 
 ## Suggested run mode
 
-Execute The Infection Monkey on machines in different subnetworks using the “Manual” run option.
+Execute The Infection Monkey on machines in different subnetworks using the "Manual" run option.
 
  Note that if the Infection Monkey can't communicate to the Monkey Island, it will
  not be able to send scan results, so make sure all machines can reach the Monkey Island.
