@@ -47,29 +47,55 @@ const ConfigImportModal = (props: Props) => {
   }, [configContents, configCredentials, unsafeOptionsVerified])
 
   function tryImport() {
-    if (configEncrypted && !showPassword){
+    if (configEncrypted && !showPassword) {
       setShowPassword(true);
     } else if (configEncrypted && showPassword) {
-      try {
-        let decryptedConfig = JSON.parse(decryptText(configContents, password));
-        let decryptedConfigCredentials = JSON.parse(decryptText(configCredentials, password));
-        setConfigEncrypted(false);
-        setConfigContents(decryptedConfig);
-        setConfigCredentials(decryptedConfigCredentials);
-      } catch (e) {
-        setUploadStatus(UploadStatuses.error);
-        setErrorMessage('Decryption failed: Password is wrong or the file is corrupted');
-      }
-    } else if(!unsafeOptionsVerified) {
-      if(isUnsafeOptionSelected(props.schema, configContents)){
-        setShowUnsafeOptionsConfirmation(true);
-      } else {
-        setUnsafeOptionsVerified(true);
-      }
+      decryptAndSetConfig();
+    } else if (!unsafeOptionsVerified) {
+      checkUnsafeOptions();
     } else {
+      submitImport();
+    }
+  }
+
+  function checkUnsafeOptions() {
+    let unsafeSelected = true;
+    try {
+      unsafeSelected = isUnsafeOptionSelected(props.schema, configContents);
+    } catch {
+      setUploadStatus(UploadStatuses.error);
+      setErrorMessage('Configuration file is corrupt or in an outdated format');
+      return;
+    }
+
+    if (unsafeSelected) {
+      setShowUnsafeOptionsConfirmation(true);
+    } else {
+      setUnsafeOptionsVerified(true);
+    }
+  }
+
+  function decryptAndSetConfig() {
+    try {
+      let decryptedConfig = JSON.parse(decryptText(configContents, password));
+      let decryptedConfigCredentials = JSON.parse(decryptText(configCredentials, password));
+      setConfigEncrypted(false);
+      setConfigContents(decryptedConfig);
+      setConfigCredentials(decryptedConfigCredentials);
+    } catch {
+      setUploadStatus(UploadStatuses.error);
+      setErrorMessage('Decryption failed: Password is wrong or the file is corrupted');
+    }
+  }
+
+  function submitImport() {
+    try {
       sendConfigToServer();
       sendConfigCredentialsToServer();
       setUploadStatus(UploadStatuses.success);
+    } catch {
+      setUploadStatus(UploadStatuses.error);
+      setErrorMessage('Configuration file is corrupt or in an outdated format');
     }
   }
 
@@ -82,14 +108,14 @@ const ConfigImportModal = (props: Props) => {
         body: JSON.stringify(credentials)
       }
     ).then(res => {
-        if (res.ok) {
-          resetState();
-          props.onClose(true);
-        } else {
-          setUploadStatus(UploadStatuses.error);
-          setErrorMessage("Configuration file is corrupt or in an outdated format.");
-        }
-      })
+      if (res.ok) {
+        resetState();
+        props.onClose(true);
+      } else {
+        setUploadStatus(UploadStatuses.error);
+        setErrorMessage('Configuration file is corrupt or in an outdated format.');
+      }
+    })
   }
 
   function sendConfigToServer() {
@@ -103,14 +129,14 @@ const ConfigImportModal = (props: Props) => {
         body: JSON.stringify(config)
       }
     ).then(res => {
-        if (res.ok) {
-          resetState();
-          props.onClose(true);
-        } else {
-          setUploadStatus(UploadStatuses.error);
-          setErrorMessage("Configuration file is corrupt or in an outdated format");
-        }
-      })
+      if (res.ok) {
+        resetState();
+        props.onClose(true);
+      } else {
+        setUploadStatus(UploadStatuses.error);
+        setErrorMessage('Configuration file is corrupt or in an outdated format');
+      }
+    })
   }
 
   function isImportDisabled(): boolean {
@@ -139,7 +165,7 @@ const ConfigImportModal = (props: Props) => {
       try {
         let contents = event.target.result as string;
         importContents = JSON.parse(contents);
-      } catch (e){
+      } catch (e) {
         setErrorMessage('File is not in a valid json format');
         return
       }
@@ -151,9 +177,8 @@ const ConfigImportModal = (props: Props) => {
       } catch (e) {
         if (e instanceof TypeError) {
           setErrorMessage('Missing required fields; configuration file is most '
-          + 'likely from an older version of Infection Monkey.')
-        }
-        else {
+            + 'likely from an older version of Infection Monkey.')
+        } else {
           throw e;
         }
       }
@@ -196,16 +221,18 @@ const ConfigImportModal = (props: Props) => {
         <div className={`mb-3 config-import-option`}>
           {showVerificationDialog()}
           <Form>
-            <Form.File id='importConfigFileSelector'
-                       label='Please choose a configuration file'
-                       accept='.conf'
+            <Form.File id="importConfigFileSelector"
+                       label="Please choose a configuration file"
+                       accept=".conf"
                        onChange={uploadFile}
                        className={'file-input'}
                        key={fileFieldKey}/>
             <UploadStatusIcon status={uploadStatus}/>
 
-            {showPassword && <PasswordInput onChange={(password) => {setPassword(password);
-              setErrorMessage('')}}/>}
+            {showPassword && <PasswordInput onChange={(password) => {
+              setPassword(password);
+              setErrorMessage('')
+            }}/>}
 
             {errorMessage &&
               <Alert variant={'danger'} className={'import-error'}>
@@ -232,8 +259,8 @@ const PasswordInput = (props: {
   return (
     <div className={'config-import-password-input'}>
       <p>File is protected. Please enter the password:</p>
-      <Form.Control type='password'
-                    placeholder='Password'
+      <Form.Control type="password"
+                    placeholder="Password"
                     onChange={evt => (props.onChange(evt.target.value))}/>
     </div>
   )
