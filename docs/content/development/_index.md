@@ -11,6 +11,10 @@ tags = ["development", "contribute"]
 
 Want to help secure networks? That's great!
 
+{{% notice warning %}}
+The Infection Monkey project is currently undergoing major changes. Most of the information here is outdated and will be updated soon.
+{{% /notice %}}
+
 ## How should I start?
 
 Here are a few short links to help you get started:
