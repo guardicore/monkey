@@ -22,7 +22,7 @@ vulnerabilities, brute-forcing and other safe exploiters.
 
 ## Configuration
 
-- **Propagation -> Exploiters** Here you can review the exploits the Infection
+- **Propagation -> Propagation** Here you can review the exploits the Infection
   Monkey will be using. By default all safe exploiters are selected.
 - **Propagation -> Credentials** This configuration value will be used for
   brute-forcing. The Infection Monkey uses the most popular default passwords
