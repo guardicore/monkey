@@ -11,6 +11,11 @@ tags = ["development", "contribute"]
 
 Want to help secure networks? That's great!
 
+{{% notice warning %}}
+The Infection Monkey project is currently undergoing major changes. Some of the
+information here may be outdated and will be updated soon.
+{{% /notice %}}
+
 ## How should I start?
 
 Here are a few short links to help you get started:
@@ -24,7 +29,7 @@ You can take a look at [our roadmap](https://github.com/guardicore/monkey/projec
 
 ### More exploits! 💥
 
-The best way to find weak spots in a network is by attacking it. The [*Adding Exploits*](./adding-exploits/) page will help you add exploits.
+The best way to find weak spots in a network is by attacking it.
 
 It's important to note that the Infection Monkey must be absolutely reliable. Otherwise, no one will use it, so avoid memory corruption exploits unless they're rock solid and focus on the logical vulns such as Hadoop.
 
