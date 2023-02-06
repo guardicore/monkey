@@ -42,8 +42,6 @@ If you're running the Infection Monkey in an AWS cloud environment, check out [U
 
 Next, click **Infection Map** to see the Infection Monkey in action.
 
-![Run page to infection map page](/images/usage/getting-started/run_page_button.JPG "Run page to infection map page")
-
 At first, the Infection Map will look like this:
 
 ![Start of Monkey execution](/images/usage/getting-started/run_island.JPG "Start of Monkey execution")
