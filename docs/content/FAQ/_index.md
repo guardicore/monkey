@@ -287,7 +287,7 @@ See our detailed [getting started]({{< ref "/usage/getting-started" >}}) guide.
 
 ## How can I make the Infection Monkey Agent propagate “deeper” into the network?
 
-If you wish to simulate a very “deep” attack into your network, you can increase the *propagation depth* parameter in the configuration. This parameter tells the Infection Monkey how far to propagate into your network from the “patient zero” machine.
+If you wish to simulate a very “deep” attack into your network, you can increase the *Maximum scan depth* parameter in the configuration. This parameter tells the Infection Monkey how far to propagate into your network from the “patient zero” machine.
 
 To do this, change the `Configuration -> Propagation -> General -> Maximum scan depth` configuration option:
 
