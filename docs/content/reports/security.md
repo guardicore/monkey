@@ -71,13 +71,7 @@ This section contains recommendations for improving your security, including act
 
 ## The network from the Monkey's eyes
 
-This section contains the infection map and summary tables on servers the Infection Monkey found.
-
-### Network infection map
-
-This section shows the network map and a breakdown of how many machines the Infection Monkey breached.
-
-![Network map](/images/usage/reports/sec_report_7_network_map.png "Network map")
+This section contains tables that summarize what Infection Monkey found.
 
 ### Scanned servers
 
