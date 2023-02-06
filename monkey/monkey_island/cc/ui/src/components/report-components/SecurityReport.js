@@ -276,7 +276,10 @@ class ReportPageComponent extends AuthComponent {
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <StolenCredentialsTable stolenCredentials={this.state.stolenCredentials} />
+          <p>
+            Infection Monkey stole the following credentials:
+          </p>
+          <StolenCredentialsTable />
         </div>
       </div>
     );
