@@ -8,7 +8,7 @@ weight: 100
 
 ## Overview
 This page provides additional information about configuring the Infection
-Monkey, tips and tricks and creative usage scenarios.
+Monkey, tips and tricks, and creative usage scenarios.
 
 ## Accelerate the test
 

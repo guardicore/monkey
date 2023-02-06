@@ -34,6 +34,6 @@ Execute The Infection Monkey on machines in different subnetworks using the “M
 
 ## Assessing results
 
-Check the infection map and security report for segmentation problems. Ideally, all scanned nodes should only have edges with the Monkey Island Server.
+Check the Infection Map and Security Report for segmentation problems. Ideally, all scanned nodes should only have edges with the Monkey Island Server.
 
 ![Map](/images/usage/use-cases/segmentation-map.PNG "Map")

@@ -28,8 +28,9 @@ To run the Infection Monkey, select one of the following options:
 
 ![Run Page](/images/usage/getting-started/run_page_with_arrows.jpg "Run Page")
 
-1. Click **Run on C&C Server** to run the Infection Monkey on the Monkey Island server. This simulates an attacker trying to propagate through your local network from the Monkey Island machine.
-2. Click **Run on machine of your choice**  to download and execute the Infection Monkey on a machine of your choice. Then follow the instructions and run the generated command on the machine you selected. This simulates an attacker who has breached one of your servers. The Infection Monkey will map all accessible machines and their open services, attempting to steal credentials and use exploits to propagate.
+1. Click **From Island** to run the Infection Monkey on the Monkey Island server. This simulates an attacker trying to propagate through your local network from the Monkey Island machine.
+2. Click **Manual**  to download and execute the Infection Monkey on a machine of your choice.
+Follow the instructions and run the generated command on the machine you selected. This simulates an attacker who has breached one of your servers. The Infection Monkey will map all accessible machines and their open services, attempt to steal credentials, and use exploits to propagate.
 
 ![Run on machine of your choice](/images/usage/getting-started/run_page_button_no_arrow.jpg "Run on machine of your choice")
 
@@ -43,7 +44,7 @@ Next, click **Infection Map** to see the Infection Monkey in action.
 
 ![Run page to infection map page](/images/usage/getting-started/run_page_button.JPG "Run page to infection map page")
 
-At first, the infection map will look like this:
+At first, the Infection Map will look like this:
 
 ![Start of Monkey execution](/images/usage/getting-started/run_island.JPG "Start of Monkey execution")
 

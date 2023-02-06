@@ -16,7 +16,7 @@ going to the "Run Monkey" -> "Manual" page.
 ### Downloading the agent manually
 
 Agent binaries can be downloaded by sending a `GET` request to
-`https://[IP]:5000/api/agent/download/[OS]`, where `[IP]` stands for the IP
+`https://[IP]:5000/api/agent-binaries/download/[OS]`, where `[IP]` stands for the IP
 address of the Island server and `[OS]` is either `windows` or `linux`.
 
 ### Running the agent binary
