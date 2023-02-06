@@ -10,8 +10,8 @@ Below are some of the most common questions we receive about the Infection Monke
 - [Where can I get the latest version of the Infection Monkey?](#where-can-i-get-the-latest-version-of-the-infection-monkey)
 - [I updated to a new version of the Infection Monkey and I'm being asked to delete my existing data directory. Why?](#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why)
 - [How can I use an old data directory?](#how-can-i-use-an-old-data-directory)
-- [How long does a single Infection Monkey agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
-- [How long does it take to stop all running Infection Monkey agents?](#how-long-does-it-take-to-stop-all-running-infection-monkey-agents)
+- [How long does a single Infection Monkey Agent run? Is there a time limit?](#how-long-does-a-single-infection-monkey-agent-run-is-there-a-time-limit)
+- [How long does it take to stop all running Infection Monkey Agents?](#how-long-does-it-take-to-stop-all-running-infection-monkey-agents)
 - [Is the Infection Monkey a malware/virus?](#is-the-infection-monkey-a-malwarevirus)
 - [Reset the Monkey Island password](#reset-the-monkey-island-password)
 - [Should I run the Infection Monkey continuously?](#should-i-run-the-infection-monkey-continuously)
@@ -20,7 +20,7 @@ Below are some of the most common questions we receive about the Infection Monke
   - [Downloading logs](#downloading-logs)
   - [Log locations](#log-locations)
   - [Monkey Island server logs](#monkey-island-server-logs)
-  - [Infection Monkey agent logs](#infection-monkey-agent-logs)
+  - [Infection Monkey Agent logs](#infection-monkey-agent-logs)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
   - [What's the Infection Monkey Agent's impact on system resources usage?](#whats-the-infection-monkey-agents-impact-on-system-resources-usage)
@@ -28,8 +28,8 @@ Below are some of the most common questions we receive about the Infection Monke
   - [Is it safe to use real passwords and usernames in the Infection Monkey's configuration?](#is-it-safe-to-use-real-passwords-and-usernames-in-the-infection-monkeys-configuration)
   - [How do you store sensitive information on Monkey Island?](#how-do-you-store-sensitive-information-on-monkey-island)
   - [How stable are the exploits used by the Infection Monkey? Will the Infection Monkey crash my systems with its exploits?](#how-stable-are-the-exploits-used-by-the-infection-monkey-will-the-infection-monkey-crash-my-systems-with-its-exploits)
-- [After I've set up Monkey Island, how can I execute the Infection Monkey agent?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
-- [How can I make the Infection Monkey agents propagate “deeper” into the network?](#how-can-i-make-the-infection-monkey-agent-propagate-deeper-into-the-network)
+- [After I've set up Monkey Island, how can I execute the Infection Monkey Agent?](#after-ive-set-up-monkey-island-how-can-i-execute-the-infection-monkey-agent)
+- [How can I make the Infection Monkey Agents propagate “deeper” into the network?](#how-can-i-make-the-infection-monkey-agent-propagate-deeper-into-the-network)
 - [What if the report returns a blank screen?](#what-if-the-report-returns-a-blank-screen)
 - [Can I limit how the Infection Monkey propagates through my network?](#can-i-limit-how-the-infection-monkey-propagates-through-my-network)
 - [How can I get involved with the project?](#how-can-i-get-involved-with-the-project)
@@ -58,13 +58,13 @@ version of the Monkey Island which matches your data directory's version. Then,
 copy the backup of your old data directory to the [appropriate location]({{<
 ref "/reference/data_directory" >}}).
 
-## How long does a single Infection Monkey agent run? Is there a time limit?
+## How long does a single Infection Monkey Agent run? Is there a time limit?
 
-The Infection Monkey agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
+The Infection Monkey Agent shuts off either when it can't find new victims or it has exceeded the quota of victims as defined in the configuration.
 
-## How long does it take to stop all running Infection Monkey agents?
+## How long does it take to stop all running Infection Monkey Agents?
 
-On the Infection Map page, when <b>Kill All Monkeys</b> is pressed, the agents
+On the Infection Map page, when <b>Kill All Monkeys</b> is pressed, the Agents
 try to finish execution safely. This can take up to 2 minutes, but will be much
 shorter on average.
 
@@ -196,11 +196,11 @@ It's also possible to change the default log level by editing `log_level` value 
 `log_level` can be set to `info`(default, less verbose) or `debug`(more verbose).
 
 
-#### Infection Monkey agent logs
+#### Infection Monkey Agent logs
 
-The Infection Monkey agent log file can be found in directories specified for
+The Infection Monkey Agent log file can be found in directories specified for
 temporary files on the machines where it was executed. In most cases, this will
-be `/tmp` on Linux and `%temp%` on Windows. The agent searches a standard list
+be `/tmp` on Linux and `%temp%` on Windows. The Agent searches a standard list
 of directories to find an appropriate place to store the log:
 
 1. The directory named by the `TMPDIR` environment variable.
@@ -213,7 +213,7 @@ of directories to find an appropriate place to store the log:
 
 Infection Monkey log file name is constructed to the following pattern: `infection-monkey-agent-<TIMESTAMP>-<RANDOM_STRING>.log`
 
-The logs contain information about the internals of the Infection Monkey agent's execution. The log will contain entries like these:
+The logs contain information about the internals of the Infection Monkey Agent's execution. The log will contain entries like these:
 
 ```log
 2019-07-22 19:16:44,228 [77598:140654230214464:INFO] main.main.116: >>>>>>>>>> Initializing monkey (InfectionMonkey): PID 77598 <<<<<<<<<<
@@ -271,7 +271,7 @@ We advise users to limit access to the Monkey Island server by following our [pa
 
 ### How do you store sensitive information on Monkey Island?
 
-Sensitive data such as passwords, SSH keys and hashes are stored on the Monkey Island's database in an encrypted fashion. This data is transmitted to the Infection Monkey agents in an encrypted fashion (HTTPS) and is not stored locally on victim machines.
+Sensitive data such as passwords, SSH keys and hashes are stored on the Monkey Island's database in an encrypted fashion. This data is transmitted to the Infection Monkey Agents in an encrypted fashion (HTTPS) and is not stored locally on victim machines.
 
 When you reset the Monkey Island configuration, the Monkey Island wipes the information.
 
@@ -281,11 +281,11 @@ The Infection Monkey does not use any exploits or attacks that may impact the vi
 
 This means we avoid using some powerful (and famous) exploits such as [EternalBlue](https://www.guardicore.com/2017/05/detecting-mitigating-wannacry-copycat-attacks-using-guardicore-centra-platform/). This exploit was used in WannaCry and NotPetya with huge impact, but, because it may crash a production system, we aren't using it.
 
-## After I've set up Monkey Island, how can I execute the Infection Monkey agent?
+## After I've set up Monkey Island, how can I execute the Infection Monkey Agent?
 
 See our detailed [getting started]({{< ref "/usage/getting-started" >}}) guide.
 
-## How can I make the Infection Monkey agent propagate “deeper” into the network?
+## How can I make the Infection Monkey Agent propagate “deeper” into the network?
 
 If you wish to simulate a very “deep” attack into your network, you can increase the *propagation depth* parameter in the configuration. This parameter tells the Infection Monkey how far to propagate into your network from the “patient zero” machine.
 
@@ -306,15 +306,15 @@ Yes! To limit how the Infection Monkey propagates through your network, you can:
 
 #### Adjust the scan depth
 
-The scan depth limits the number of hops that the Infection Monkey agent will
-spread from patient zero. If you set the scan depth to one, the agent will only
+The scan depth limits the number of hops that the Infection Monkey Agent will
+spread from patient zero. If you set the scan depth to one, the Agent will only
 reach a single hop from the initially infected machine. Scan depth does not
 limit the number of devices, just the number of hops.
 
 - **Example**: In this example, the scan depth is set to two. _Host A_ scans the
-network and finds hosts _B, C, D_ and _E_. The Infection Monkey agent
+network and finds hosts _B, C, D_ and _E_. The Infection Monkey Agent
 successfully propagates from _Host A_ to _Host C_. Since the scan depth is 2,
-the agent will pivot from _Host C_ and continue to scan other machines on the
+the Agent will pivot from _Host C_ and continue to scan other machines on the
 network. However, if _Host C_ successfully breaches _Host E_, it will not pivot
 further nor continue to scan or propagate.
 
@@ -325,7 +325,7 @@ depth")
 
 You can find the settings that define how the Infection Monkey will scan your
 network in `Configuration -> Propagation -> Network analysis`. If enabled,
-the `Scan Agent's networks` setting instruct an Agent to scan its entire local subnet.
+the `Scan Agent's networks` setting instructs an Agent to scan its entire local subnet.
 
 #### Add IPs to the IP allow list
 
