@@ -51,17 +51,19 @@ class AdvancedMultiSelect extends React.Component {
     };
   }
 
-  getOptions() {
+  getOptions(activeElementKey) {
     let names = this.props.schema.items.properties.name.anyOf;
-    return names.map(v => ({label: v.title, schema: v, value: v.enum[0]}));
+    names = names.map(v => ({
+      label: v.title,
+      schema: v,
+      value: v.enum[0],
+      isActive: (v.enum[0] === activeElementKey)
+    }));
+    return names.sort(this.compareOptions);
   }
 
   getSelectedPluginNames = () => {
     return this.props.value.map(v => v.name);
-  }
-
-  getOptionList = () => {
-    return this.state.nameOptions.sort(this.compareOptions);
   }
 
   onChange = (strValues) => {
@@ -71,7 +73,7 @@ class AdvancedMultiSelect extends React.Component {
 
   namesToPlugins = (names, allPlugins) => {
     let plugins = [];
-    for (let i = 0; i < names.length; i++){
+    for (let i = 0; i < names.length; i++) {
       plugins.push(cloneDeep(allPlugins[names[i]]));
     }
     return plugins
@@ -95,7 +97,7 @@ class AdvancedMultiSelect extends React.Component {
     if (checkboxState === MasterCheckboxState.ALL) {
       var newValues = [];
     } else {
-      newValues = this.getOptionList().map(({value}) => value);
+      newValues = this.getOptions().map(({value}) => value);
     }
 
     this.onChange(newValues);
@@ -117,19 +119,12 @@ class AdvancedMultiSelect extends React.Component {
     }
   }
 
-  setMasterCheckboxState(selectValues) {
-    let newState = this.getMasterCheckboxState(selectValues);
-    if (newState !== this.state.masterCheckboxState) {
-      this.setState({masterCheckboxState: newState});
-    }
-  }
-
   getMasterCheckboxState(selectValues) {
     if (selectValues.length === 0) {
       return MasterCheckboxState.NONE;
     }
 
-    if (selectValues.length !== this.getOptionList().length) {
+    if (selectValues.length !== this.getOptions().length) {
       return MasterCheckboxState.MIXED;
     }
 
@@ -157,6 +152,7 @@ class AdvancedMultiSelect extends React.Component {
     let definitionObj = getFullDefinitionByKey(this.props.schema.items.properties.name, itemKey);
     this.setState(
       {
+        nameOptions: this.getOptions(itemKey),
         infoPaneParams: {
           title: definitionObj.title,
           content: definitionObj.info,
@@ -187,9 +183,9 @@ class AdvancedMultiSelect extends React.Component {
         <AdvancedMultiSelectHeader title={schema.title}
                                    onCheckboxClick={this.onMasterCheckboxClick}
                                    checkboxState={this.getMasterCheckboxState(
-                                      this.getSelectedPluginNames())}
+                                     this.getSelectedPluginNames())}
                                    hideReset={this.getHideResetState(
-                                      this.getSelectedPluginNames())}
+                                     this.getSelectedPluginNames())}
                                    onResetClick={this.onResetClick}/>
 
         <ChildCheckboxContainer id={id} multiple={multiple} required={required}
