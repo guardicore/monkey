@@ -43,7 +43,7 @@ finished.
 The results of running Monkey Agents are:
  - A map which displays how much of the network an attacker can see, what
    services are accessible and potential propagation routes.
- - A security report, which displays security issues that Monkey Agents
+ - A report, which displays security issues that Monkey Agents
    discovered and/or exploited.
 
 A more in-depth description of reports generated can be found in the [reports
