@@ -7,7 +7,7 @@ pre: '<i class="fas fa-network-wired"></i> '
 tags: ["reference"]
 ---
 
-The Infection Monkey agent takes two steps before attempting to exploit a victim, scanning and fingerprinting. It's possible to customize both steps in the configuration files.
+The Infection Monkey Agent takes two steps before attempting to exploit a victim, scanning and fingerprinting. It's possible to customize both steps in the configuration files.
 
 ## Scanning
 

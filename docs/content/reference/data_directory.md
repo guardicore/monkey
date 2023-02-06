@@ -8,7 +8,7 @@ weight: 9
 
 ## What is the data directory?
 
-The data directory is where the Island server stores runtime artifacts. These
+The data directory is where the Island Server stores runtime artifacts. These
 include the Island logs, configuration files, etc.
 
 ## Where is it located?

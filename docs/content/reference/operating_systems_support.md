@@ -9,7 +9,7 @@ tags: ["setup", "reference", "windows", "linux"]
 
 The Infection Monkey project supports many popular OSes (but we are always interested in supporting more).
 
-The Infection Monkey agent has been tested to run on the following operating systems (on the x86_64 architecture):
+The Infection Monkey Agent has been tested to run on the following operating systems (on the x86_64 architecture):
 
 ### Agent support
 

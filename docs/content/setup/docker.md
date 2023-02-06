@@ -57,7 +57,7 @@ user [provide Infection Monkey with a
 certificate](#start-monkey-island-with-user-provided-certificate) that has
 been signed by a private certificate authority.
 
-1. Run the Monkey Island server
+1. Run the Monkey Island Server
     ```bash
     sudo docker run \
         --tty \

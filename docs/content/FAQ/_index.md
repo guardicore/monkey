@@ -19,7 +19,7 @@ Below are some of the most common questions we receive about the Infection Monke
 - [Logging and how to find logs](#logging-and-how-to-find-logs)
   - [Downloading logs](#downloading-logs)
   - [Log locations](#log-locations)
-  - [Monkey Island server logs](#monkey-island-server-logs)
+  - [Monkey Island Server logs](#monkey-island-server-logs)
   - [Infection Monkey Agent logs](#infection-monkey-agent-logs)
 - [Running the Infection Monkey in a production environment](#running-the-infection-monkey-in-a-production-environment)
   - [How much of a footprint does the Infection Monkey leave?](#how-much-of-a-footprint-does-the-infection-monkey-leave)
@@ -88,7 +88,7 @@ However, you can save the Monkey's existing configuration by logging in with you
 
 ### On Windows and Linux (AppImage)
 
-When you first access the Monkey Island server, you'll be prompted to create an account.
+When you first access the Monkey Island Server, you'll be prompted to create an account.
 Creating an account will write your credentials in `credentials.json` file
 under [data directory]({{< ref "/reference/data_directory" >}}).
 To reset the credentials:
@@ -108,7 +108,7 @@ directory]({{< ref "/reference/data_directory" >}}) and then restarting the
 Monkey Island process.
 
 ### On Docker
-When you first access the Monkey Island server, you'll be prompted to create an account.
+When you first access the Monkey Island Server, you'll be prompted to create an account.
 To reset the credentials, you'll need to perform a complete factory reset:
 
 1. Kill the Monkey Island container:
@@ -179,7 +179,7 @@ the Infection Map.
 If the logs can't be downloaded through the UI for any reason, you can collect the log files
 directly from the machine where an Agent or Monkey Island ran.
 
-#### Monkey Island server logs
+#### Monkey Island Server logs
 
 The Monkey Island's log file is located in the
 [data directory]({{< ref "/reference/data_directory" >}}).
@@ -265,9 +265,9 @@ If you do experience any performance issues please let us know on [our Slack cha
 
 ### Is it safe to use real passwords and usernames in the Infection Monkey's configuration?
 
-Absolutely! User credentials are stored encrypted in the Monkey Island server. This information is accessible only to users that have access to the specific Monkey Island.
+Absolutely! User credentials are stored encrypted in the Monkey Island Server. This information is accessible only to users that have access to the specific Monkey Island.
 
-We advise users to limit access to the Monkey Island server by following our [password protection guide]({{< ref "/setup/accounts-and-security" >}}).
+We advise users to limit access to the Monkey Island Server by following our [password protection guide]({{< ref "/setup/accounts-and-security" >}}).
 
 ### How do you store sensitive information on Monkey Island?
 
