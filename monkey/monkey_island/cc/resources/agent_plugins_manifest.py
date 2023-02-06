@@ -3,7 +3,8 @@ from http import HTTPStatus
 
 from flask import make_response
 
-from common.agent_plugins import AgentPluginType
+from common import HARD_CODED_EXPLOITER_MANIFESTS
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 
@@ -21,21 +22,31 @@ class AgentPluginsManifest(AbstractResource):
         """
         Get the plugin manifest of the specified type and name.
 
-        :param type: The type of plugin (e.g. Exploiter)
+        :param plugin_type: The type of plugin (e.g. "Exploiter")
         :param name: The name of the plugin
         """
         try:
-            agent_plugin_type = AgentPluginType(plugin_type)
+            plugin_type_ = AgentPluginType(plugin_type)
         except ValueError:
             message = f"Invalid type '{plugin_type}'."
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
 
         try:
-            plugin_manifests = self._agent_plugin_repository.get_all_plugin_manifests()
-            agent_plugin_manifest = plugin_manifests[agent_plugin_type][name]
-            return make_response(agent_plugin_manifest.dict(simplify=True), HTTPStatus.OK)
+            plugin_manifest = self._get_plugin_manifest(plugin_type_, name)
         except KeyError:
-            message = f"Plugin '{name}' of type '{plugin_type}' not found."
+            message = f"Plugin '{name}' of type '{plugin_type_}' not found."
             logger.warning(message)
             return make_response({"message": message}, HTTPStatus.NOT_FOUND)
+
+        return make_response(plugin_manifest.dict(simplify=True), HTTPStatus.OK)
+
+    def _get_plugin_manifest(self, plugin_type: AgentPluginType, name: str) -> AgentPluginManifest:
+        plugin_manifests = self._agent_plugin_repository.get_all_plugin_manifests()
+        try:
+            return plugin_manifests[plugin_type][name]
+        except KeyError as err:
+            if plugin_type == AgentPluginType.EXPLOITER:
+                return HARD_CODED_EXPLOITER_MANIFESTS[name]
+            else:
+                raise err

@@ -10,7 +10,9 @@ from tests.unit_tests.monkey_island.cc.fake_agent_plugin_data import (
 
 from monkey_island.cc.repositories import IAgentPluginRepository
 from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
-from monkey_island.cc.repositories.utils.hard_coded_exploiters import HARD_CODED_EXPLOITER_PLUGINS
+from monkey_island.cc.repositories.utils.hard_coded_exploiter_schemas import (
+    HARD_CODED_EXPLOITER_SCHEMAS,
+)
 from monkey_island.cc.services import AgentConfigurationSchemaService
 
 
@@ -30,7 +32,7 @@ def config_schema_service(
 
 @pytest.fixture
 def expected_exploiters_plugin_schema():
-    expected_exploiters_plugin_schema = deepcopy(HARD_CODED_EXPLOITER_PLUGINS)
+    expected_exploiters_plugin_schema = deepcopy(HARD_CODED_EXPLOITER_SCHEMAS)
     expected_exploiters_plugin_schema[FAKE_NAME] = FAKE_AGENT_PLUGIN_1.config_schema
     expected_exploiters_plugin_schema[FAKE_NAME2] = FAKE_AGENT_PLUGIN_2.config_schema
 

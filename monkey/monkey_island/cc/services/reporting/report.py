@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 import logging
 from collections import defaultdict
+from copy import deepcopy
 from dataclasses import asdict
 from datetime import datetime
 from enum import Enum
@@ -529,6 +530,7 @@ class ReportService:
         exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
             AgentPluginType.EXPLOITER, {}
         )
+        exploiter_manifests = deepcopy(exploiter_manifests)
         if not exploiter_manifests:
             logger.debug("No plugin exploiter manifests were found")
 
