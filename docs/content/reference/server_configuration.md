@@ -6,9 +6,9 @@ pre: '<i class="fas fa-cogs"></i> '
 weight: 1
 ---
 
-## Configuring the Island
+## Configuring the Monkey Island
 
-The Island Server(C&C) is configured by creating a `server_config.json` file.
+The Monkey Island Server is configured by creating a `server_config.json` file.
 
 ### Creating a configuration file
 
