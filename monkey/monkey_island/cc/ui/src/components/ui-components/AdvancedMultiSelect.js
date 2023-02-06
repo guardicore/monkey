@@ -117,13 +117,6 @@ class AdvancedMultiSelect extends React.Component {
     }
   }
 
-  setMasterCheckboxState(selectValues) {
-    let newState = this.getMasterCheckboxState(selectValues);
-    if (newState !== this.state.masterCheckboxState) {
-      this.setState({masterCheckboxState: newState});
-    }
-  }
-
   getMasterCheckboxState(selectValues) {
     if (selectValues.length === 0) {
       return MasterCheckboxState.NONE;
