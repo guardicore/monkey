@@ -4,7 +4,7 @@ date: 2020-05-26T20:57:28+03:00
 draft: false
 pre: '<i class="fab fa-docker"></i> '
 weight: 4
-tags: ["setup", "docker", "linux", "windows"]
+tags: ["setup", "docker", "linux"]
 ---
 
 ## Supported operating systems
