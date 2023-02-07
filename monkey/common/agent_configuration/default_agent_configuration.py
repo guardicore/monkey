@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from . import AgentConfiguration
 from .agent_sub_configurations import (
     ExploitationConfiguration,
@@ -97,4 +99,5 @@ DEFAULT_AGENT_CONFIGURATION = AgentConfiguration(
     propagation=PROPAGATION_CONFIGURATION,
 )
 
-DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = DEFAULT_AGENT_CONFIGURATION.copy()
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION = deepcopy(DEFAULT_AGENT_CONFIGURATION)
+DEFAULT_RANSOMWARE_AGENT_CONFIGURATION.credential_collectors = tuple()
