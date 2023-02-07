@@ -49,6 +49,7 @@ def start_machines(machine_list):
         LOGGER.info("GCP machines successfully started.")
     except Exception as e:
         LOGGER.error("GCP Handler failed to start GCP machines: %s" % e)
+        raise e
 
 
 def stop_machines(machine_list):
@@ -69,10 +70,14 @@ def get_set_project_command(project):
 
 def run_gcp_command(arglist):
     gcp_cmd, machine_list, zone = arglist
-    subprocess.call(  # noqa DUO116
+    ret = subprocess.run(  # noqa DUO116
         (gcp_cmd % (" ".join(machine_list), zone)),
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE,
         shell=True,
     )
+    if ret != 0:
+        raise Exception(f"Failed starting GCP machines: {ret.stderr}")
 
 
 def run_gcp_pool(gcp_command, machine_list):
