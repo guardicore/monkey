@@ -146,15 +146,14 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Various bugs that prevented agents from stopping reliably. #556, #578, #581,
   #594, #1635, #2261
-- A bug in network map page that caused delay of telemetry log loading. #1545
+- A bug in the network map where it would drift away and
+  improved overall stability of the map. #2939
 - Windows "run as a user" powershell command for manual agent runs. #1556
 - A bug in the map where side pane would not appear if the node was
   dragged around before click. #2914
 - Unnecessary collection of kerberos credentials. #1771
 - A bug where bogus users were collected by Mimikatz and added to the config. #1860
 - A bug where windows executable was not self deleting. #1763
-- Incorrect line number in the telemetry overview window on the Map page. #1850
-- Automatic jumping to the bottom in the telemetry overview windows. #1850
 - 2-second delay when the Island server starts, and it's not running on AWS. #1636
 - Malformed MSSQL agent launch command. #2018
 - A bug where the Log4Shell exploiter could leave LDAP servers and child

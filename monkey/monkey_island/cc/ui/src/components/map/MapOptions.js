@@ -31,10 +31,11 @@ export const basic_options = {
       gravitationalConstant: -120000,
       avoidOverlap: 0.5,
       springLength: 100,
-      springConstant: 0.025
+      springConstant: 0.025,
+      damping: 0.3
     },
-    minVelocity: 0.7,
-    maxVelocity: 25
+    minVelocity: 1,
+    maxVelocity: 20,
   }
 };
 
