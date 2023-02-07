@@ -81,6 +81,16 @@ You can configure the server by mounting a volume and specifying a
     mkdir ./monkey_island_data
     chmod 700 ./monkey_island_data
     ```
+1. Run the container with a mounted volume, and the `--setup-only` flag:
+```bash
+sudo docker run \
+    --rm \
+    --name monkey-island \
+    --network=host \
+    --user "$(id -u ${USER}):$(id -g ${USER})" \
+    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+    guardicore/monkey-island:VERSION --setup-only
+```
 1. Move your `server_config.json` file to `./monkey_island_data` directory.
 1. Run the container with a mounted volume, specify the path to the `server_config.json`:
 ```bash
@@ -90,7 +100,7 @@ sudo docker run \
     --network=host \
     --user "$(id -u ${USER}):$(id -g ${USER})" \
     --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-    guardicore/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
+    guardicore/monkey-island:VERSION --server-config="/monkey_island_data/server_config.json"
 ```
 
 ### Start Monkey Island with user-provided certificate
