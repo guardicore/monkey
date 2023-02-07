@@ -14,79 +14,43 @@ The Infection Monkey's **Security Report** provides you with actionable recommen
 
 {{%attachments title="Download the PDF" pattern=".*(pdf)"/%}}
 
-The report is split into three main categories:
+The report is split into the following categories:
 
 - [Overview](#overview)
-  - [High-level information](#high-level-information)
-  - [Used credentials](#used-credentials)
-  - [Exploits and targets](#exploits-and-targets)
-  - [Security findings](#security-findings)
-- [Recommendations](#recommendations)
-  - [Machine-related recommendations relating to specific CVEs](#machine-related-recommendations-relating-to-specific-cves)
-  - [Machine-related recommendations relating to network security and segmentation](#machine-related-recommendations-relating-to-network-security-and-segmentation)
-- [The network from the Monkey's eyes](#the-network-from-the-monkeys-eyes)
-  - [Network infection map](#network-infection-map)
-  - [Scanned servers](#scanned-servers)
-  - [Stolen credentials](#stolen-credentials)
+- [Segmentation Issues](#segmentation-issues)
+- [Machine-related Recommendations](#machine-related-recommendations)
+- [The Network from Infection Monkey's Eyes](#the-network-from-infection-monkeys-eyes)
 
 ## Overview
 
-The overview section of the report provides high-level information about the Infection Monkey's execution and main security findings.
-
-### High-level information
-
-This section shows general information about the Infection Monkey's execution, including which machine the infection originated from and how long the breach simulation took.
+The Overview section of the report provides high-level information about the Infection Monkey's
+execution, including the machines from which the infection originated, how long the breach
+simulation took, and the configuration of the Agents.
 
 ![Overview](/images/usage/reports/sec_report_1_overview.png "Overview")
 
-### Used credentials
-
-This section shows which credentials were used for brute-forcing.
-
 ![Used Credentials](/images/usage/reports/sec_report_2_users_passwords.png "Used Credentials")
 
-### Exploits and targets
+## Segmentation Issues
 
-This section shows which exploits were attempted in this simulation and which targets the Infection Monkey scanned and tried to exploit.
+This section reports the segmentation issues in your network.
 
-![Exploits and Targets](/images/usage/reports/sec_report_3_exploits_ips.png "Exploits and Targets")
+TODO: Add screenshot!
 
-### Security findings
+## Machine-related Recommendations
 
-This section highlights the most important security threats and issues discovered during the attack.
-
-![Threats and issues](/images/usage/reports/sec_report_4_threats_and_issues.png "Threats and issues")
-
-## Recommendations
-
-This section contains recommendations for improving your security, including actionable mitigation steps.
-
-### Machine-related recommendations relating to specific CVEs
+Here, you will find recommendations for improving your network's
+security, including actionable mitigation steps.
 
 ![Machine-related recommendations](/images/usage/reports/sec_report_5_machine_related.png "Machine related recommendations")
 
-### Machine-related recommendations relating to network security and segmentation
-
 ![Machine-related recommendations](/images/usage/reports/sec_report_6_machine_related_network.png "Machine related recommendations")
 
-## The network from the Monkey's eyes
+## The Network from Infection Monkey's Eyes
 
-This section contains the infection map and summary tables on servers the Infection Monkey found.
-
-### Network infection map
-
-This section shows the network map and a breakdown of how many machines the Infection Monkey breached.
-
-![Network map](/images/usage/reports/sec_report_7_network_map.png "Network map")
-
-### Scanned servers
-
-This section shows the attack surface the Infection Monkey discovered.
+This section contains a summary of what Infection Monkey found, including
+details of scanned servers, breached servers, and stolen credentials.
 
 ![Scanned servers](/images/usage/reports/sec_report_8_network_services.png "Scanned servers")
-
-### Stolen credentials
-
-This section shows which credentials the Infection Monkey was able to steal from breached machines during this simulation.
 
 ![Stolen creds](/images/usage/reports/sec_report_10_stolen_credentials.png "Stolen creds")

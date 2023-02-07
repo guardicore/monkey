@@ -1,5 +1,5 @@
 ---
-title: "Running the agent on AWS EC2 instances"
+title: "Running the Agent on AWS EC2 instances"
 date: 2020-06-28T10:44:05+03:00
 draft: false
 description: "Use AWS SSM to execute Infection Monkey on your AWS instances."
@@ -8,7 +8,7 @@ tags: ["aws", "integration"]
 
 ## When to use this feature
 
-This feature allows execution of the Infection Monkey agent on EC2 instances with the help of an SSM agent.
+This feature allows execution of the Infection Monkey Agent on EC2 instances with the help of an SSM agent.
 
 Alternatively, you can execute a command on an EC2 instance manually (see [running manually](../../running-manually)) or using other management tools.
 
@@ -20,7 +20,7 @@ Assuming your network is already set up in AWS EC2, follow the steps below to ge
 
 ### Monkey Island deployment
 
-In order to run the Infection Monkey agents directly from the Monkey Island server, you need to deploy the Monkey Island server to an AWS EC2 instance in the same network which you want to test. For information about deploying the Monkey Island server, see [setup](../../../setup).
+In order to run the Infection Monkey Agents directly from the Monkey Island Server, you need to deploy the Monkey Island Server to an AWS EC2 instance in the same network which you want to test. For information about deploying the Monkey Island Server, see [setup](../../../setup).
 
 ### Setup IAM roles
 
@@ -52,13 +52,13 @@ See [Amazon's documentation about working with SSM agents](https://docs.aws.amaz
 
 ### Firewall rules
 
-Make sure that all machines that will run the Monkey agent can access the Island(port 5000).
+Make sure that all machines that will run the Monkey Agent can access the Island(port 5000).
 
 ## Usage
 
 ### Running the Infection Monkey
 
-When you run the Monkey Island on an AWS instance, the island detects it's running on AWS and presents the following option on the _"Run Monkey"_ page:
+When you run the Monkey Island on an AWS instance, the Island detects it's running on AWS and presents the following option on the _"Run Monkey"_ page:
 
 ![Running a Monkey on EC2 Instance](/images/usage/integrations/monkey-island-aws-screenshot-1.png "Running a Monkey on EC2 Instance")
 

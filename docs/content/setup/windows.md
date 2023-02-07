@@ -60,7 +60,7 @@ private certificate authority.
 
 ### Change logging level
 
-1. Stop the Island server.
+1. Stop the Island Server.
 1. Modify the `server_config.json` (by default located in `C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`) by adding the following lines:
     ```json
     {

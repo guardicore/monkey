@@ -28,11 +28,10 @@ To login to the machine, use *ubuntu* username.
 
 ## Integration with AWS services
 
-The Infection Monkey has built-in integrations with AWS that allows running agents on EC2 instances.
+The Infection Monkey has built-in integrations with AWS that allows running Agents on EC2 instances.
 See [Usage -> Integrations](../../usage/integrations) for more details.
 
 ## Upgrading
-
 
 Currently, there's no "upgrade-in-place" option when a new version is released.
 To get an updated version, you can deploy a new machine from the marketplace.

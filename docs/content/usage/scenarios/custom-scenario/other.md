@@ -8,7 +8,7 @@ weight: 100
 
 ## Overview
 This page provides additional information about configuring the Infection
-Monkey, tips and tricks and creative usage scenarios.
+Monkey, tips and tricks, and creative usage scenarios.
 
 ## Accelerate the test
 
@@ -18,7 +18,7 @@ of the local network**.
 The following configuration values also have an impact on scanning speed:
 - **Propagation -> Credentials** - The more usernames and passwords you input,
   the longer it will take the Infection Monkey to scan machines that have
-  remote access services. The Infection Monkey agents try to stay elusive and
+  remote access services. The Infection Monkey Agents try to stay elusive and
   leave a low impact, and thus brute-forcing takes longer than with loud
   conventional tools.
 - **Propagation -> Network analysis -> Network** - Scanning large networks with

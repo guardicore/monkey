@@ -22,7 +22,7 @@ vulnerabilities, brute-forcing and other safe exploiters.
 
 ## Configuration
 
-- **Propagation -> Exploiters** Here you can review the exploits the Infection
+- **Propagation -> Propagation** Here you can review the exploits the Infection
   Monkey will be using. By default all safe exploiters are selected.
 - **Propagation -> Credentials** This configuration value will be used for
   brute-forcing. The Infection Monkey uses the most popular default passwords
@@ -31,10 +31,12 @@ vulnerabilities, brute-forcing and other safe exploiters.
   times.
 - **Propagation -> Network analysis -> Network** Make sure to properly
   configure the scope of the scan. You can select **Scan Agent's networks** and
-  allow Monkey to propagate until maximum **Scan depth**(hop count) is reached,
+  allow Monkey to propagate until **Maximum scan depth** (hop count) is reached,
   or you can fine tune it by providing specific network ranges in **Scan target
   list**. Scanning a local network is more realistic, but providing specific
   targets will make the scanning process substantially faster.
+  - **Maximum scan depth** can be configured from the **Propagation ->
+    General** tab.
 - **(Optional) Propagation -> Network Analysis -> TCP scanner** Here you can
   add custom ports your organization is using.
 
@@ -43,8 +45,8 @@ selector")
 
 ## Suggested run mode
 
-Decide which machines you want to simulate a breach on and use the “Manual” run
-option to start the Infection Monkey on them. Use administrative privileges to
+Decide which machines you want to simulate a breach on and use the "Manual" run
+option to start the Infection Monkey Agent on them. Use administrative privileges to
 run the Infection Monkey to simulate an attacker that was able to elevate their
 privileges. You could also simulate an attack initiated from an unidentified
 machine connected to the network (e.g., a technician laptop or third-party
@@ -54,7 +56,7 @@ IP in the network you wish to test.
 
 ## Assessing results
 
-Check the infection map and Security report to see how far The Infection Monkey
+Check the Infection Map and Security Report to see how far Infection Monkey
 managed to propagate in your network and which vulnerabilities it successfully
 exploited.
 
