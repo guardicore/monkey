@@ -7,4 +7,4 @@ description: "Configure credentials that the Infection Monkey will use for propa
 
 On this screen you can feed the Infection Monkey "stolen" credentials from your network, simulating an attacker with inside knowledge.
 
-![Configure credentials](/images/usage/configuration/credentials.png "Configure credentials")
+![Configure credentials](/images/island/configuration_page/credentials_configuration.png "Configure credentials")

@@ -29,11 +29,10 @@ Execute The Infection Monkey on machines in different subnetworks using the "Man
  Note that if the Infection Monkey can't communicate to the Monkey Island, it will
  not be able to send scan results, so make sure all machines can reach the Monkey Island.
 
-![How to configure network segmentation testing](/images/usage/scenarios/segmentation-config.png "How to configure network segmentation testing")
-
+![How to configure network segmentation testing](/images/island/configuration_page/segmentation_configuration.png "How to configure network segmentation testing")
 
 ## Assessing results
 
 Check the Infection Map and Security Report for segmentation problems. Ideally, all scanned nodes should only have edges with the Monkey Island Server.
 
-![Map](/images/usage/use-cases/segmentation-map.PNG "Map")
+![Map](/images/island/infection_map_page/segmentation_map.png "Map")

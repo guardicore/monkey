@@ -40,7 +40,7 @@ vulnerabilities, brute-forcing and other safe exploiters.
 - **(Optional) Propagation -> Network Analysis -> TCP scanner** Here you can
   add custom ports your organization is using.
 
-![Exploiter selector](/images/usage/use-cases/network-breach.PNG "Exploiter
+![Exploiter selector](/images/island/configuration_page/propagation_configuration.png "Exploiter
 selector")
 
 ## Suggested run mode
@@ -60,4 +60,4 @@ Check the Infection Map and Security Report to see how far Infection Monkey
 managed to propagate in your network and which vulnerabilities it successfully
 exploited.
 
-![Map](/images/usage/use-cases/map-full-cropped.png "Map")
+![Map](/images/island/infection_map_page/infection_map.png "Map")
