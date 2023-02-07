@@ -146,7 +146,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Various bugs that prevented agents from stopping reliably. #556, #578, #581,
   #594, #1635, #2261
-- A bug in network map page that caused delay of telemetry log loading. #1545
+- A bug in the network map page that caused delay of telemetry log loading. #1545
+- A bug in the network map where it would drift away and
+  improved overall stability of the map. #2939
 - Windows "run as a user" powershell command for manual agent runs. #1556
 - A bug in the map where side pane would not appear if the node was
   dragged around before click. #2914
