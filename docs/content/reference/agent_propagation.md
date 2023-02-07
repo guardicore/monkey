@@ -14,5 +14,5 @@ Agent has achieved remote code execution on the victim, it executes commands
 that are similar to the ones described in the [manual run
 page](../../usage/running-manually/).
 
-On Windows targets, the Agent is copied to `C:\Windows\temp\monkey64.exe`. On
-Linux targets, it is copied to `/tmp/monkey`.
+On Windows targets, the Agent is copied to `C:\Windows\temp\monkey64-<random_string>.exe`.
+On Linux targets, it is copied to `/tmp/monkey-<random_string>`.
