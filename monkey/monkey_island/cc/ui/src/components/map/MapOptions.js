@@ -35,7 +35,7 @@ export const basic_options = {
       damping: 0.3
     },
     minVelocity: 1,
-    maxVelocity: 20,
+    maxVelocity: 20
   }
 };
 
