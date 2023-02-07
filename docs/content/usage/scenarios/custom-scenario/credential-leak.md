@@ -28,7 +28,7 @@ To make sure SSH keys were gathered successfully, refresh the page and check thi
 Execute the Infection Monkey on a chosen machine in your network using the "Manual" run option.
 Run the Infection Monkey as a privileged user to make sure it gathers as many credentials from the system as possible.
 
-![Exploit password and user lists](/images/usage/scenarios/user-password-lists.png "Exploit password and user lists")
+![Exploit password and user lists](/images/island/configuration_page/credentials_configuration.png "Exploit password and user lists")
 
 ## Assessing results
 

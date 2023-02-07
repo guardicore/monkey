@@ -176,7 +176,7 @@ machine from which you want to download logs and press the "Download log" button
 Note that you can only download the Monkey Island log by clicking on the Monkey Island machine in
 the Infection Map.
 
-![How to download logs](/images/faq/log_download.jpg "How to download logs")
+![How to download logs](/images/island/infection_map_page/agent_log_download.png "How to download logs")
 
 ### Log locations
 
@@ -295,7 +295,7 @@ If you wish to simulate a very "deep" attack into your network, you can increase
 
 To do this, change the `Configuration -> Propagation -> General -> Maximum scan depth` configuration option:
 
-![How to increase propagation depth](/images/faq/prop_depth.png "How to increase propagation depth")
+![How to increase propagation depth](/images/island/configuration_page/max_scan_depth_configuration.png "How to increase propagation depth")
 
 ## What if the report returns a blank screen?
 
@@ -322,7 +322,7 @@ the Agent will pivot from _Host C_ and continue to scan other machines on the
 network. However, if _Host C_ successfully breaches _Host E_, it will not pivot
 further nor continue to scan or propagate.
 
-![What is scan depth](/images/faq/propagation_depth_diagram.png "What is scan
+![What is scan depth](/images/island/others/propagation_depth_diagram.png "What is scan
 depth")
 
 #### Enable or disable scanning the local subnet

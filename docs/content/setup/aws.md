@@ -39,4 +39,4 @@ To get an updated version, you can deploy a new machine from the marketplace.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Export configuration](../../images/setup/export-configuration.png "Export configuration")
+![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")
