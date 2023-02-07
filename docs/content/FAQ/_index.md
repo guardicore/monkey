@@ -157,11 +157,15 @@ If internet access is available, the Infection Monkey will use the internet for 
 
 ### Exactly what internet queries does the Infection Monkey perform?
 
-After the Monkey Island starts, a GET request with the current deployment type
+1. While the Monkey Island Server is being set up, a GET request with the deployment
+type and version number is sent to the analytics server. This information is
+collected to understand which deployment types and versions are no longer used
+and can be deprecated.
+
+1. After the Monkey Island starts, a GET request with the deployment type
 is sent to the update server to fetch the latest version number and a
 download link for it. This information is used by the Monkey Island to
-suggest an update if one is available. No information gets collected during
-this process.
+suggest an update if one is available.
 
 ## Logging and how to find logs
 
