@@ -68,6 +68,11 @@ To uninstall it, run:
 ./InfectionMonkey-v1.13.0.AppImage service --uninstall
 ```
 
+{{% notice info %}}
+Service installation has been tested on Ubuntu. This feature may not work
+properly on other Linux distributions.
+{{% /notice %}}
+
 ## Configuring the server
 
 You can configure the server by creating
