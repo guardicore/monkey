@@ -23,7 +23,7 @@ class LicensePageComponent extends React.Component {
         <h1 className="page-title">License</h1>
         <div style={{'fontSize': '1.2em'}}>
           <p>
-            Copyright <FontAwesomeIcon icon={faCopyright}/> {rainge(2015)} Guardicore Ltd.
+            Copyright <FontAwesomeIcon icon={faCopyright}/> {rainge(2015)} Akamai Technologies, Inc.
             <br/>
             Licensed under <a href="https://www.gnu.org/licenses/gpl-3.0.html" rel="noopener noreferrer" target="_blank">GPLv3</a>.
           </p>
