@@ -30,7 +30,7 @@ egg-timer = "*"
 # These are the last versions of bcrypt and cryptography that have
 # manylinux2010 wheels. We need these locked to 3.2.2 and 37.0.4 respectively
 # until we can upgrade our build environment.
-cryptography = "==37.0.4"
+cryptography = "==39.0.1"
 bcrypt = "==3.2.2"
 pyopenssl = "==22.0.0" # 22.1.0 reqiures cryptography <39, >=38.0.0
 winacl = "==0.1.3" # 0.1.5 requires cryptography >=38.0.1
