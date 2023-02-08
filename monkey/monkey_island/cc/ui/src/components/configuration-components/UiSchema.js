@@ -10,26 +10,22 @@ export default function UiSchema(props) {
     propagation: {
       exploitation: {
         exploiters: {
-          'ui:classNames': 'config-template-no-header',
           'ui:ObjectFieldTemplate': PluginSelectorTemplate
         }
       },
       credentials: {
         exploit_password_list: {
           items: {
-            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
         exploit_lm_hash_list: {
           items: {
-            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         },
         exploit_ntlm_hash_list: {
           items: {
-            'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
         }
@@ -63,7 +59,6 @@ export default function UiSchema(props) {
           }
         },
         fingerprinters: {
-          'ui:classNames': 'config-template-no-header',
           'ui:widget': AdvancedMultiSelect,
           fingerprinter_classes: {
             'ui:classNames': 'config-template-no-header'
@@ -72,7 +67,6 @@ export default function UiSchema(props) {
       }
     },
     payloads: {
-      'ui:classNames': 'config-template-no-header',
       encryption: {
         info_box: {
           'ui:field': InfoBox
@@ -95,7 +89,6 @@ export default function UiSchema(props) {
       }
     },
     credential_collectors: {
-      'ui:classNames': 'config-template-no-header',
       'ui:widget': AdvancedMultiSelect,
       credential_collectors_classes: {
         'ui:classNames': 'config-template-no-header'
