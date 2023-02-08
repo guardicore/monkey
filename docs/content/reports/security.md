@@ -33,7 +33,7 @@ simulation took, and the configuration of the Agents.
 
 This section reports the segmentation issues in your network.
 
-TODO: Add screenshot!
+![Segmentation Issues](/images/island/reports_page/security_report_segmentation_issues.png "Segmentation Issues")
 
 ## Machine-related Recommendations
 
