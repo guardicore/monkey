@@ -159,6 +159,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - A bug where the Log4Shell exploiter could leave LDAP servers and child
   processes running. #2820
 - A bug in registration process that caused the button to be stuck with loading icon. #2916
+- Configurability of SSH key pairs. #1416
 
 ### Security
 - Upgrade Cryptography dependency. #1482
