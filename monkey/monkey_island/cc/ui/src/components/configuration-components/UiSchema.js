@@ -32,6 +32,16 @@ export default function UiSchema(props) {
             'ui:classNames': 'config-template-no-header',
             'ui:widget': SensitiveTextInput
           }
+        },
+        exploit_ssh_keys: {
+          items: {
+            public_key: {
+              'ui:widget': 'TextareaWidget'
+            },
+            private_key: {
+              'ui:widget': 'TextareaWidget'
+            }
+          }
         }
       },
       network_scan: {
