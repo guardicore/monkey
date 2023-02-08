@@ -40,6 +40,10 @@ div.form-group.field.field-array label.form-label {
   display: none;
 }
 
+div.form-group.field.field-array .field-object label.form-label {
+  display: inline-block;
+}
+
 div.form-group.field.field-array button.btn-sm{
     height: calc(1.5em + 0.75rem + 5px);
 }
