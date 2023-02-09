@@ -162,6 +162,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 - Configurability of SSH key pairs. #1416
 - A bug in the security report that didn't show the correct percentage of exploited machines. #2954
 - A bug where ransomware README file is not readable on older Windows machines. #2951
+- An exception being raised if the ransomware target directory does not exist. #2953
+- A bug where the ransomware payload could follow a symlink. #2953
 
 ### Security
 - Upgrade Cryptography dependency. #1482

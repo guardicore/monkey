@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 
 import pytest
 from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
@@ -73,3 +74,33 @@ def test_pre_existing_readme_is_selected(ransomware_target, stable_file, file_se
     selected_files = file_selector(ransomware_target)
 
     assert readme_file in selected_files
+
+
+def test_directory_doesnt_exist(file_selector):
+    selected_files = file_selector(Path("/nonexistent"))
+
+    assert len(list(selected_files)) == 0
+
+
+def test_target_directory_is_file(tmp_path, file_selector):
+    target_file = tmp_path / "target_file.txt"
+    target_file.touch()
+    assert target_file.exists()
+    assert target_file.is_file()
+
+    selected_files = file_selector(target_file)
+
+    assert len(list(selected_files)) == 0
+
+
+@pytest.mark.skipif(
+    os.name == "nt" and not is_user_admin(), reason="Test requires admin rights on Windows"
+)
+def test_target_directory_is_symlink(tmp_path, ransomware_test_data, file_selector):
+    link_directory = tmp_path / "link_directory"
+    link_directory.symlink_to(ransomware_test_data, target_is_directory=True)
+    assert len(list(link_directory.iterdir())) > 0
+
+    selected_files = file_selector(link_directory)
+
+    assert len(list(selected_files)) == 0

@@ -1,5 +1,6 @@
+import os
 import threading
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Type
 from unittest.mock import MagicMock
 
@@ -9,6 +10,7 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
     HELLO_TXT,
     TEST_KEYBOARD_TXT,
 )
+from tests.utils import is_user_admin
 
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.event_queue import AgentEventSubscriber, IAgentEventQueue
@@ -259,3 +261,58 @@ def test_file_encryption_event_publishing__failed(
         assert not event.success
         assert event.target is None
         assert event.file_path == PurePosixPath(file_not_exists)
+
+
+def test_no_action_if_directory_doesnt_exist(
+    ransomware_options, build_ransomware, mock_file_selector, mock_leave_readme
+):
+    ransomware_options.target_directory = Path("/noexist")
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
+
+    ransomware.run(threading.Event())
+
+    mock_file_selector.assert_not_called()
+    mock_leave_readme.assert_not_called()
+
+
+def test_no_action_if_directory_is_file(
+    tmp_path, ransomware_options, build_ransomware, mock_file_selector, mock_leave_readme
+):
+    target_file = tmp_path / "target_file.txt"
+    target_file.touch()
+    assert target_file.exists()
+    assert target_file.is_file()
+
+    ransomware_options.target_directory = target_file
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
+
+    ransomware.run(threading.Event())
+
+    mock_file_selector.assert_not_called()
+    mock_leave_readme.assert_not_called()
+
+
+@pytest.mark.skipif(
+    os.name == "nt" and not is_user_admin(), reason="Test requires admin rights on Windows"
+)
+def test_no_action_if_directory_is_symlink(
+    tmp_path, ransomware_options, build_ransomware, mock_file_selector, mock_leave_readme
+):
+    link_target = tmp_path / "link_target"
+    link_target.mkdir()
+    assert link_target.exists()
+    assert link_target.is_dir()
+
+    link = tmp_path / "link"
+    link.symlink_to(link_target, target_is_directory=True)
+
+    ransomware_options.target_directory = link
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
+
+    ransomware.run(threading.Event())
+
+    mock_file_selector.assert_not_called()
+    mock_leave_readme.assert_not_called()
