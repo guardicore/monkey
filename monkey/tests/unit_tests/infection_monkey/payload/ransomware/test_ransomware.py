@@ -272,3 +272,21 @@ def test_no_action_if_directory_doesnt_exist(
 
     mock_file_selector.assert_not_called()
     mock_leave_readme.assert_not_called()
+
+
+def test_no_action_if_directory_is_file(
+    tmp_path, ransomware_options, build_ransomware, mock_file_selector, mock_leave_readme
+):
+    target_file = tmp_path / "target_file.txt"
+    target_file.touch()
+    assert target_file.exists()
+    assert target_file.is_file()
+
+    ransomware_options.target_directory = target_file
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
+
+    ransomware.run(threading.Event())
+
+    mock_file_selector.assert_not_called()
+    mock_leave_readme.assert_not_called()
