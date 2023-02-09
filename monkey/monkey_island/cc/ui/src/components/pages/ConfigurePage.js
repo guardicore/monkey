@@ -116,7 +116,7 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   fulfilledPromises = (res) => {
-    return res.filter(r =>  r.status === 'fulfilled').map(r => r.value);
+    return res.filter(r => r.status === 'fulfilled').map(r => r.value);
   }
 
   rejectIfFailed = (res) => {
@@ -129,15 +129,15 @@ class ConfigurePageComponent extends AuthComponent {
   componentDidMount = () => {
     let schema_promise = this.authFetch(SCHEMA_URL).then(res => res.json())
     let manifests_promise = schema_promise.then(schema => {
-        let plugins = this.extractPluginsFromSchema(schema);
-        let plugin_manifests = [];
-        for (let plugin of plugins) {
-          let manifest_url = `/api/agent-plugins/${plugin[0]}/${plugin[1]}/manifest`;
-          // Because no manifests exist for the hard-coded plugins, we reject failed requests
-          plugin_manifests.push(this.authFetch(manifest_url).then(this.rejectIfFailed));
-        }
-        return Promise.allSettled(plugin_manifests);
-      }).then(this.fulfilledPromises);
+      let plugins = this.extractPluginsFromSchema(schema);
+      let plugin_manifests = [];
+      for (let plugin of plugins) {
+        let manifest_url = `/api/agent-plugins/${plugin[0]}/${plugin[1]}/manifest`;
+        // Because no manifests exist for the hard-coded plugins, we reject failed requests
+        plugin_manifests.push(this.authFetch(manifest_url).then(this.rejectIfFailed));
+      }
+      return Promise.allSettled(plugin_manifests);
+    }).then(this.fulfilledPromises);
 
     Promise.all([schema_promise, manifests_promise]).then(([schema, manifests]) => {
       for (let manifest of manifests) {
@@ -238,8 +238,8 @@ class ConfigurePageComponent extends AuthComponent {
   filterUnselectedPlugins() {
     let filteredExploiters = {};
     let exploiterFormData = _.get(this.state.configuration, EXPLOITERS_CONFIG_PATH);
-    for(let exploiter of [...this.state.selectedExploiters]){
-      if (exploiterFormData[exploiter] === undefined){
+    for (let exploiter of [...this.state.selectedExploiters]) {
+      if (exploiterFormData[exploiter] === undefined) {
         filteredExploiters[exploiter] = {};
       } else {
         filteredExploiters[exploiter] = exploiterFormData[exploiter];
@@ -252,7 +252,7 @@ class ConfigurePageComponent extends AuthComponent {
 
   configSubmit(config) {
     this.sendCredentials().then(res => {
-      if(res.ok) {
+      if (res.ok) {
         this.sendConfig(config);
       }
     });
@@ -331,7 +331,7 @@ class ConfigurePageComponent extends AuthComponent {
           this.props.onStatusChange();
         }
       )
-      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'})) ;
+      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}));
   };
 
   exportConfig = async () => {
@@ -368,20 +368,20 @@ class ConfigurePageComponent extends AuthComponent {
   sendCredentials() {
     return (
       this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
-      {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
-      })
-      .then(res => {
-        if (!res.ok) {
-          throw Error()
-        }
-        return res;
-      }).catch((error) => {
-      console.log(`bad configuration ${error}`);
-      this.setState({lastAction: 'invalid_configuration'});
-    }));
+        {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw Error()
+          }
+          return res;
+        }).catch((error) => {
+        console.log(`bad configuration ${error}`);
+        this.setState({lastAction: 'invalid_configuration'});
+      }));
   }
 
   renderConfigContent = (displayedSchema) => {
