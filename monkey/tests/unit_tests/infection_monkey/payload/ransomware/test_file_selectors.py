@@ -93,6 +93,9 @@ def test_target_directory_is_file(tmp_path, file_selector):
     assert len(list(selected_files)) == 0
 
 
+@pytest.mark.skipif(
+    os.name == "nt" and not is_user_admin(), reason="Test requires admin rights on Windows"
+)
 def test_target_directory_is_symlink(tmp_path, ransomware_test_data, file_selector):
     link_directory = tmp_path / "link_directory"
     link_directory.symlink_to(ransomware_test_data, target_is_directory=True)

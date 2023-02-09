@@ -1,3 +1,4 @@
+import os
 import threading
 from pathlib import Path, PurePosixPath
 from typing import Type
@@ -9,6 +10,7 @@ from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_file
     HELLO_TXT,
     TEST_KEYBOARD_TXT,
 )
+from tests.utils import is_user_admin
 
 from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.event_queue import AgentEventSubscriber, IAgentEventQueue
@@ -292,6 +294,9 @@ def test_no_action_if_directory_is_file(
     mock_leave_readme.assert_not_called()
 
 
+@pytest.mark.skipif(
+    os.name == "nt" and not is_user_admin(), reason="Test requires admin rights on Windows"
+)
 def test_no_action_if_directory_is_symlink(
     tmp_path, ransomware_options, build_ransomware, mock_file_selector, mock_leave_readme
 ):
