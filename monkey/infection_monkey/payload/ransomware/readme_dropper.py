@@ -10,7 +10,10 @@ def leave_readme(src: Path, dest: Path):
         return
 
     logger.info(f"Leaving a ransomware README file at {dest}")
-    # Opening file to convert line endings
+
+    # Line endings differ on Windows and Linux. The README file may be stored with Linux line
+    # endings. Using open() to open the destination files converts the line endings to Windows if
+    # necessary. See https://github.com/guardicore/monkey/issues/2951.
     with open(src, "r") as src_file:
         with open(dest, "w") as dst_file:
             dst_file.write(src_file.read())
