@@ -290,3 +290,24 @@ def test_no_action_if_directory_is_file(
 
     mock_file_selector.assert_not_called()
     mock_leave_readme.assert_not_called()
+
+
+def test_no_action_if_directory_is_symlink(
+    tmp_path, ransomware_options, build_ransomware, mock_file_selector, mock_leave_readme
+):
+    link_target = tmp_path / "link_target"
+    link_target.mkdir()
+    assert link_target.exists()
+    assert link_target.is_dir()
+
+    link = tmp_path / "link"
+    link.symlink_to(link_target, target_is_directory=True)
+
+    ransomware_options.target_directory = link
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
+
+    ransomware.run(threading.Event())
+
+    mock_file_selector.assert_not_called()
+    mock_leave_readme.assert_not_called()

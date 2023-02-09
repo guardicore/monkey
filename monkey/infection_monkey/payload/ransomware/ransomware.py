@@ -55,6 +55,13 @@ class Ransomware:
             logger.warning(f"Target directory {self._target_directory} is not a directory")
             return
 
+        if self._target_directory.is_symlink():
+            logger.warning(
+                "The ransomware payload will not follow symlinks - skipping "
+                f"{self._target_directory}"
+            )
+            return
+
         if self._config.encryption_enabled:
             files_to_encrypt = self._find_files()
             self._encrypt_files(files_to_encrypt, interrupt)
