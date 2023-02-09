@@ -33,7 +33,7 @@ def test_readme_already_exists(src_readme, dest_readme):
 
 
 @pytest.mark.skipif(
-    is_windows_os(), reason="Skip on Windows because the output " "will have different line endings"
+    is_windows_os(), reason="Skip on Windows because the output will have different line endings"
 )
 def test_leave_readme_linux(src_readme, dest_readme):
     leave_readme(src_readme, dest_readme)
