@@ -242,8 +242,15 @@ class ReportPageComponent extends AuthComponent {
     let exploitPercentage =
       (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
 
-    if (isNaN(exploitPercentage)) {
-      exploitPercentage = 0;
+    let exploitPercentageSection = "";
+    if (! isNaN(exploitPercentage)) {
+      exploitPercentageSection = (
+        <div className='text-center' style={{ margin: '10px' }}>
+          <Line style={{ width: '300px', marginRight: '5px' }} percent={exploitPercentage}
+                strokeWidth='4' trailWidth='4' strokeColor='#d9534f' trailColor='#f0ad4e' />
+          <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
+        </div>
+      )
     }
 
     return (
@@ -258,12 +265,7 @@ class ReportPageComponent extends AuthComponent {
             successfully breached <span
               className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
           </p>
-          <div className='text-center' style={{ margin: '10px' }}>
-            <Line style={{ width: '300px', marginRight: '5px' }} percent={exploitPercentage} strokeWidth='4'
-              trailWidth='4'
-              strokeColor='#d9534f' trailColor='#f0ad4e' />
-            <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
-          </div>
+          {exploitPercentageSection}
         </div>
 
         <div style={{ marginBottom: '20px' }}>
