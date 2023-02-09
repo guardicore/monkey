@@ -76,7 +76,7 @@ def run_gcp_command(arglist):
         stdout=subprocess.PIPE,
         shell=True,
     )
-    if ret != 0:
+    if ret.returncode != 0:
         raise Exception(f"Failed starting GCP machines: {ret.stderr}")
 
 
