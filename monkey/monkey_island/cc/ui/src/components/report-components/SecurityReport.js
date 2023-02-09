@@ -35,6 +35,7 @@ import {
   getManuallyStartedAgents
 } from '../utils/ServerUtils';
 import CollapsibleWellComponent from './security/CollapsibleWell';
+import { parseTimeToDateString } from '../utils/DateUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -157,7 +158,7 @@ class ReportPageComponent extends AuthComponent {
         }
         <p>
           The first Infection Monkey Agent ran on <span
-            className='badge badge-info'>{this.state.report.overview.monkey_start_time}</span>. {this.getMonkeyDuration()}
+            className='badge badge-info'>{parseTimeToDateString(this.state.report.overview.monkey_start_time)}</span>. {this.getMonkeyDuration()}
         </p>
         <p>
           Infection Monkey started propagating from the following machines where it was manually installed:
