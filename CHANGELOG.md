@@ -160,6 +160,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
   processes running. #2820
 - A bug in registration process that caused the button to be stuck with loading icon. #2916
 - Configurability of SSH key pairs. #1416
+- A bug in the security report that didn't show the correct percentage of exploited machines. #2954
 
 ### Security
 - Upgrade Cryptography dependency. #1482
