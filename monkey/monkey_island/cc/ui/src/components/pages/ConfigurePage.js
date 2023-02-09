@@ -26,7 +26,7 @@ import {
   formatCredentialsForForm,
   formatCredentialsForIsland
 } from '../configuration-components/ReformatHook';
-import validator from '@rjsf/validator-ajv8';
+import {customizeValidator, CustomValidatorOptionsType} from '@rjsf/validator-ajv8';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
@@ -393,12 +393,11 @@ class ConfigurePageComponent extends AuthComponent {
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
     formProperties['onChange'] = this.onChange;
     formProperties['onFocus'] = this.resetLastAction;
-    formProperties['customFormats'] = formValidationFormats;
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
     formProperties['formData'] = this.state.currentFormData;
-    formProperties['validator'] = validator;
+    formProperties['validator'] = customizeValidator( {customFormats: formValidationFormats});
 
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],
