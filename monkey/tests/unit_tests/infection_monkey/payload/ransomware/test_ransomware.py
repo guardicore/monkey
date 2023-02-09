@@ -1,5 +1,5 @@
 import threading
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Type
 from unittest.mock import MagicMock
 
@@ -259,3 +259,16 @@ def test_file_encryption_event_publishing__failed(
         assert not event.success
         assert event.target is None
         assert event.file_path == PurePosixPath(file_not_exists)
+
+
+def test_no_action_if_directory_doesnt_exist(
+    ransomware_options, build_ransomware, mock_file_selector, mock_leave_readme
+):
+    ransomware_options.target_directory = Path("/noexist")
+    ransomware_options.readme_enabled = True
+    ransomware = build_ransomware(ransomware_options)
+
+    ransomware.run(threading.Event())
+
+    mock_file_selector.assert_not_called()
+    mock_leave_readme.assert_not_called()
