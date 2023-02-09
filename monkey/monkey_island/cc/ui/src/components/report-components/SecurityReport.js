@@ -241,6 +241,11 @@ class ReportPageComponent extends AuthComponent {
   generateReportGlanceSection() {
     let exploitPercentage =
       (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
+
+    if (isNaN(exploitPercentage)) {
+      exploitPercentage = 0;
+    }
+
     return (
       <div id='glance'>
         <h2>
