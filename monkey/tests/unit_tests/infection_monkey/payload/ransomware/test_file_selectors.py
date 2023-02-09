@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 
 import pytest
 from tests.unit_tests.infection_monkey.payload.ransomware.ransomware_target_files import (
@@ -73,3 +74,9 @@ def test_pre_existing_readme_is_selected(ransomware_target, stable_file, file_se
     selected_files = file_selector(ransomware_target)
 
     assert readme_file in selected_files
+
+
+def test_directory_doesnt_exist(file_selector):
+    selected_files = file_selector(Path("/nonexistent"))
+
+    assert len(list(selected_files)) == 0
