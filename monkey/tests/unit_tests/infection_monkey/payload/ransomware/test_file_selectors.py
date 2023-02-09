@@ -80,3 +80,14 @@ def test_directory_doesnt_exist(file_selector):
     selected_files = file_selector(Path("/nonexistent"))
 
     assert len(list(selected_files)) == 0
+
+
+def test_target_directory_is_file(tmp_path, file_selector):
+    target_file = tmp_path / "target_file.txt"
+    target_file.touch()
+    assert target_file.exists()
+    assert target_file.is_file()
+
+    selected_files = file_selector(target_file)
+
+    assert len(list(selected_files)) == 0

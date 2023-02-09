@@ -25,6 +25,10 @@ class ProductionSafeTargetFileSelector:
             logger.warning(f"Target directory {target_dir} does not exist")
             return iter([])
 
+        if not target_dir.is_dir():
+            logger.warning(f"Target directory {target_dir} is not a directory")
+            return iter([])
+
         file_filters = [
             file_extension_filter(self._targeted_file_extensions),
             is_not_shortcut_filter,
