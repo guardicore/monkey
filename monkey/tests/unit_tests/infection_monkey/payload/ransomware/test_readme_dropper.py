@@ -37,8 +37,5 @@ def test_leave_readme(src_readme, dest_readme):
 
 
 def test_leave_readme_windows(monkeypatch, src_readme, dest_readme, expected_readme_windows):
-    monkeypatch.setattr(
-        "infection_monkey.payload.ransomware.readme_dropper.is_windows_os", lambda: True
-    )
     leave_readme(src_readme, dest_readme)
     assert filecmp.cmp(dest_readme, expected_readme_windows)
