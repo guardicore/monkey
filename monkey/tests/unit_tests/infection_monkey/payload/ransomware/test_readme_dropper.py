@@ -19,6 +19,11 @@ def dest_readme(tmp_path):
     return tmp_path / DEST_FILE
 
 
+@pytest.fixture
+def expected_readme_windows(data_for_tests_dir):
+    return data_for_tests_dir / "test_readme_windows.txt"
+
+
 def test_readme_already_exists(src_readme, dest_readme):
     dest_readme.touch()
 
@@ -29,3 +34,11 @@ def test_readme_already_exists(src_readme, dest_readme):
 def test_leave_readme(src_readme, dest_readme):
     leave_readme(src_readme, dest_readme)
     assert filecmp.cmp(src_readme, dest_readme)
+
+
+def test_leave_readme_windows(monkeypatch, src_readme, dest_readme, expected_readme_windows):
+    monkeypatch.setattr(
+        "infection_monkey.payload.ransomware.readme_dropper.is_windows_os", lambda: True
+    )
+    leave_readme(src_readme, dest_readme)
+    assert filecmp.cmp(dest_readme, expected_readme_windows)
