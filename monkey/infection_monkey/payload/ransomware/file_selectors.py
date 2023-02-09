@@ -29,6 +29,13 @@ class ProductionSafeTargetFileSelector:
             logger.warning(f"Target directory {target_dir} is not a directory")
             return iter([])
 
+        if target_dir.is_symlink():
+            logger.warning(
+                "The ProductionSafeTargetFileSelector will not follow symlinks - skipping "
+                f"{target_dir}"
+            )
+            return iter([])
+
         file_filters = [
             file_extension_filter(self._targeted_file_extensions),
             is_not_shortcut_filter,
