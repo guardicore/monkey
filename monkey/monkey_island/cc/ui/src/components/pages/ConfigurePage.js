@@ -26,7 +26,7 @@ import {
   formatCredentialsForForm,
   formatCredentialsForIsland
 } from '../configuration-components/ReformatHook';
-import {customizeValidator, CustomValidatorOptionsType} from '@rjsf/validator-ajv8';
+import {customizeValidator} from '@rjsf/validator-ajv8';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
