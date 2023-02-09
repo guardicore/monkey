@@ -3,6 +3,7 @@ import filecmp
 import pytest
 from tests.utils import get_file_sha256_hash
 
+from common.utils.environment import is_windows_os
 from infection_monkey.payload.ransomware.readme_dropper import leave_readme
 
 DEST_FILE = "README.TXT"
@@ -36,6 +37,7 @@ def test_leave_readme(src_readme, dest_readme):
     assert filecmp.cmp(src_readme, dest_readme)
 
 
+@pytest.mark.skipif(not is_windows_os(), reason="Readme is already in unix line endings on Linux")
 def test_leave_readme_windows(monkeypatch, src_readme, dest_readme, expected_readme_windows):
     leave_readme(src_readme, dest_readme)
     assert filecmp.cmp(dest_readme, expected_readme_windows)
