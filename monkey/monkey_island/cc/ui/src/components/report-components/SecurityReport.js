@@ -35,6 +35,7 @@ import {
   getManuallyStartedAgents
 } from '../utils/ServerUtils';
 import CollapsibleWellComponent from './security/CollapsibleWell';
+import { parseTimeToDateString } from '../utils/DateUtils';
 
 
 class ReportPageComponent extends AuthComponent {
@@ -157,7 +158,7 @@ class ReportPageComponent extends AuthComponent {
         }
         <p>
           The first Infection Monkey Agent ran on <span
-            className='badge badge-info'>{this.state.report.overview.monkey_start_time}</span>. {this.getMonkeyDuration()}
+            className='badge badge-info'>{parseTimeToDateString(this.state.report.overview.monkey_start_time)}</span>. {this.getMonkeyDuration()}
         </p>
         <p>
           Infection Monkey started propagating from the following machines where it was manually installed:
@@ -241,6 +242,18 @@ class ReportPageComponent extends AuthComponent {
   generateReportGlanceSection() {
     let exploitPercentage =
       (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
+
+    let exploitPercentageSection = "";
+    if (! isNaN(exploitPercentage)) {
+      exploitPercentageSection = (
+        <div className='text-center' style={{ margin: '10px' }}>
+          <Line style={{ width: '300px', marginRight: '5px' }} percent={exploitPercentage}
+                strokeWidth='4' trailWidth='4' strokeColor='#d9534f' trailColor='#f0ad4e' />
+          <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
+        </div>
+      )
+    }
+
     return (
       <div id='glance'>
         <h2>
@@ -253,12 +266,7 @@ class ReportPageComponent extends AuthComponent {
             successfully breached <span
               className='badge badge-danger'>{this.state.report.glance.exploited_cnt}</span> of them.
           </p>
-          <div className='text-center' style={{ margin: '10px' }}>
-            <Line style={{ width: '300px', marginRight: '5px' }} percent={exploitPercentage} strokeWidth='4'
-              trailWidth='4'
-              strokeColor='#d9534f' trailColor='#f0ad4e' />
-            <b>{Math.round(exploitPercentage)}% of scanned machines exploited</b>
-          </div>
+          {exploitPercentageSection}
         </div>
 
         <div style={{ marginBottom: '20px' }}>

@@ -40,9 +40,9 @@
 
 This is NOT a real ransomware attack.
 
-Infection Monkey is an open-source breach and attack simulation (BAS) platform. The files in this
-directory have been manipulated as part of a ransomware simulation. If you've discovered this file
-and are unsure about how to proceed, please contact your administrator.
+Infection Monkey is an open-source adversary emulation platform. The files in this directory have
+been manipulated as part of a ransomware simulation. If you've discovered this file and are unsure
+about how to proceed, please contact your administrator.
 
 For more information about Infection Monkey, see https://www.akamai.com/infectionmonkey.
 

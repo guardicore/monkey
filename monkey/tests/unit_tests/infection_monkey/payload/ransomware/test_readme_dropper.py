@@ -26,6 +26,6 @@ def test_readme_already_exists(src_readme, dest_readme):
     assert get_file_sha256_hash(dest_readme) == EMPTY_FILE_HASH
 
 
-def test_leave_readme(src_readme, dest_readme):
+def test_leave_readme_linux(src_readme, dest_readme):
     leave_readme(src_readme, dest_readme)
     assert filecmp.cmp(src_readme, dest_readme)

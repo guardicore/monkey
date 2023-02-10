@@ -459,9 +459,7 @@ class ReportService:
                 "config_exploits": ReportService.get_config_exploits(),
                 "config_ips": ReportService.get_config_ips(),
                 "config_scan": ReportService.get_config_scan(),
-                "monkey_start_time": ReportService.get_first_monkey_time().strftime(
-                    "%d/%m/%Y %H:%M:%S"
-                ),
+                "monkey_start_time": ReportService.get_first_monkey_time(),
                 "monkey_duration": ReportService.get_monkey_duration(),
             },
             "cross_segment_issues": cross_segment_issues,

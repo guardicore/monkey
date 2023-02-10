@@ -3,8 +3,8 @@
 import argparse
 from pathlib import Path
 
-MAJOR = "1"
-MINOR = "13"
+MAJOR = "2"
+MINOR = "0"
 PATCH = "0"
 
 build_file_path = Path(__file__).parent.joinpath("BUILD")

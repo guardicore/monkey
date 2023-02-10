@@ -1,6 +1,12 @@
 import React from 'react';
+import _ from 'lodash';
 import CollapsibleWellComponent from '../CollapsibleWell';
-import {getMachineByAgent, getMachineByIP, getMachineHostname, getMachineIPs} from '../../../utils/ServerUtils';
+import {
+  getMachineByAgent,
+  getMachineByIP,
+  getMachineHostname,
+  getMachineIPs
+} from '../../../utils/ServerUtils';
 
 
 export function getAllTunnels(agents, machines) {
@@ -67,24 +73,32 @@ export function tunnelIssueReportByMachine(machineId, allTunnels) {
 
 function machineNameComponent(tunnelMachineInfo) {
   return <>
-      <span className="badge badge-primary">{tunnelMachineInfo.hostname}</span> (
-      <span className="badge badge-info" style={{ margin: '2px' }}>{tunnelMachineInfo.ip}</span>)</>
+    <span className="badge badge-primary">{tunnelMachineInfo.hostname}</span> (
+    <span className="badge badge-info" style={{margin: '2px'}}>{tunnelMachineInfo.ip}</span>)</>
 }
 
 function getTunnelIssuesByMachine(machineId, allTunnels) {
-  let tunnelIssues = [];
+  let uniqueTunnels = [];
 
   for (let tunnel of allTunnels) {
     if (tunnel.agent_machine.id === machineId || tunnel.tunnel_machine.id === machineId) {
       let agentMachineNameComponent = machineNameComponent(tunnel.agent_machine);
       let tunnelMachineNameComponent = machineNameComponent(tunnel.tunnel_machine);
-
-      tunnelIssues.push(
-        <li key={tunnel.agent_machine+tunnel.tunnel_machine}>
-          from {agentMachineNameComponent} to {tunnelMachineNameComponent}
-        </li>
-      );
+      uniqueTunnels.push({
+        agentMachineNameComponent: agentMachineNameComponent,
+        tunnelMachineNameComponent: tunnelMachineNameComponent
+      });
     }
+  }
+
+  uniqueTunnels = _.uniqWith(uniqueTunnels, _.isEqual);
+  let tunnelIssues = [];
+  for (let tunnel of uniqueTunnels) {
+    tunnelIssues.push(
+      <li key={tunnel.agentMachineNameComponent + tunnel.tunnelMachineNameComponent}>
+        from {tunnel.agentMachineNameComponent} to {tunnel.tunnelMachineNameComponent}
+      </li>
+    );
   }
 
   return tunnelIssues;

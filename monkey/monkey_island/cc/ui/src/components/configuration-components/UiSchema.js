@@ -28,6 +28,16 @@ export default function UiSchema(props) {
           items: {
             'ui:widget': SensitiveTextInput
           }
+        },
+        exploit_ssh_keys: {
+          items: {
+            public_key: {
+              'ui:widget': 'TextareaWidget'
+            },
+            private_key: {
+              'ui:widget': 'TextareaWidget'
+            }
+          }
         }
       },
       network_scan: {

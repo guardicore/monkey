@@ -47,6 +47,21 @@ class Ransomware:
 
         logger.info("Running ransomware payload")
 
+        if not self._target_directory.exists():
+            logger.warning(f"Target directory {self._target_directory} does not exist")
+            return
+
+        if not self._target_directory.is_dir():
+            logger.warning(f"Target directory {self._target_directory} is not a directory")
+            return
+
+        if self._target_directory.is_symlink():
+            logger.warning(
+                "The ransomware payload will not follow symlinks - skipping "
+                f"{self._target_directory}"
+            )
+            return
+
         if self._config.encryption_enabled:
             files_to_encrypt = self._find_files()
             self._encrypt_files(files_to_encrypt, interrupt)

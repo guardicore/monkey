@@ -3,7 +3,6 @@ import React, {useState} from 'react';
 import {Nav} from 'react-bootstrap';
 import _ from 'lodash';
 import CredentialsConfig from './CredentialsConfig';
-import validator from '@rjsf/validator-ajv8';
 
 const sectionOrder = [
   'exploitation',
@@ -28,7 +27,8 @@ export default function PropagationConfig(props) {
     credentials,
     onCredentialChange,
     selectedExploiters,
-    setSelectedExploiters
+    setSelectedExploiters,
+    validator
   } = props;
 
   const [selectedSection, setSelectedSection] = useState(initialSection);
