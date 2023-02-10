@@ -1,39 +1,28 @@
 import React, {useEffect, useState} from 'react';
 import NextSelectionButton from '../../ui-components/inline-selection/NextSelectionButton';
 import LocalManualRunOptions from './RunManually/LocalManualRunOptions';
-import AuthComponent from '../../AuthComponent';
 import {faLaptopCode} from '@fortawesome/free-solid-svg-icons/faLaptopCode';
 import InlineSelection from '../../ui-components/inline-selection/InlineSelection';
 import {cloneDeep} from 'lodash';
-import {faCloud, faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
+import {faExpandArrowsAlt} from '@fortawesome/free-solid-svg-icons';
 import RunOnIslandButton from './RunOnIslandButton';
 import AWSRunButton from './RunOnAWS/AWSRunButton';
-import CloudOptions from './scoutsuite-setup/CloudOptions';
-
-const CONFIG_URL = '/api/configuration/island';
+import {getAllMachines, getIslandIPsFromMachines} from '../../utils/ServerUtils';
 
 function RunOptions(props) {
 
   const [currentContent, setCurrentContent] = useState(loadingContents());
-  const [ips, setIps] = useState([]);
+  const [ips, setIPs] = useState([]);
   const [initialized, setInitialized] = useState(false);
-
-  const authComponent = new AuthComponent({})
 
   useEffect(() => {
     if (initialized === false) {
-      authComponent.authFetch(CONFIG_URL)
-      .then(res => res.json())
-      .then(res => {
-        let commandServers = res.configuration.internal.island_server.command_servers;
-        let ipAddresses = commandServers.map(ip => {
-          return ip.split(':', 1);
-        });
-        setIps(ipAddresses);
+      getAllMachines().then(machines => {
+        setIPs(getIslandIPsFromMachines(machines));
         setInitialized(true);
       });
     }
-  })
+  });
 
   useEffect(() => {
     setCurrentContent(getDefaultContents());
@@ -56,7 +45,7 @@ function RunOptions(props) {
     return InlineSelection(defaultContents, newProps);
   }
 
-  function shouldShowScoutsuite(islandMode){
+  function isNotRansomwareMode(islandMode){
     return islandMode !== 'ransomware';
   }
 
@@ -73,15 +62,7 @@ function RunOptions(props) {
                                setComponent(LocalManualRunOptions,
                                  {ips: ips, setComponent: setComponent})
                              }}/>
-        {shouldShowScoutsuite(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
-        {shouldShowScoutsuite(props.islandMode) && <NextSelectionButton title={'Cloud security scan'}
-                             description={'Explains how to enable cloud security scan.'}
-                             icon={faCloud}
-                             onButtonClick={() => {
-                               setComponent(CloudOptions,
-                                 {ips: ips, setComponent: setComponent})
-                             }}/>
-        }
+        {isNotRansomwareMode(props.islandMode) && <AWSRunButton setComponent={setComponent}/> }
       </>
     );
   }

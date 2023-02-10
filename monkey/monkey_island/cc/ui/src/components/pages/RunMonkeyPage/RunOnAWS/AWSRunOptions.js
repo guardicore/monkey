@@ -7,7 +7,7 @@ import {faInfoCircle} from '@fortawesome/free-solid-svg-icons/faInfoCircle';
 import AwsRunTable from './AWSInstanceTable';
 import AuthComponent from '../../../AuthComponent';
 import InlineSelection from '../../../ui-components/inline-selection/InlineSelection';
-
+import {getAllMachines, getIslandIPsFromMachines} from '../../../utils/ServerUtils';
 
 const AWSRunOptions = (props) => {
   return InlineSelection(getContents, {
@@ -32,11 +32,10 @@ const getContents = (props) => {
   }, []);
 
   function getIps() {
-    authComponent.authFetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        setAllIPs(res['ip_addresses']);
-        setSelectedIp(res['ip_addresses'][0]);
+    getAllMachines().then(machines => {
+        let islandIPs = getIslandIPsFromMachines(machines);
+        setAllIPs(islandIPs);
+        setSelectedIp(islandIPs[0]);
       });
   }
 
@@ -81,7 +80,7 @@ const getContents = (props) => {
         <p className="alert alert-info">
           <FontAwesomeIcon icon={faInfoCircle} style={{'marginRight': '5px'}}/>
           Not sure what this is? Not seeing your AWS EC2 instances? <a
-          href="https://github.com/guardicore/monkey/wiki/Monkey-Island:-Running-the-monkey-on-AWS-EC2-instances"
+          href="https://techdocs.akamai.com/infection-monkey/docs/running-the-monkey-on-aws-ec2-instances/"
           rel="noopener noreferrer" target="_blank">Read the documentation</a>!
         </p>
       </div>

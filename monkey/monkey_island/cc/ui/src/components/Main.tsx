@@ -4,9 +4,8 @@ import {Container} from 'react-bootstrap';
 
 import ConfigurePage from './pages/ConfigurePage.js';
 import RunMonkeyPage from './pages/RunMonkeyPage/RunMonkeyPage';
-import MapPage from './pages/MapPage';
-import TelemetryPage from './pages/TelemetryPage';
-import StartOverPage from './pages/StartOverPage';
+import MapPageWrapper from './map/MapPageWrapper';
+import EventPage from './pages/EventPage';
 import ReportPage from './pages/ReportPage';
 import LicensePage from './pages/LicensePage';
 import AuthComponent from './AuthComponent';
@@ -20,17 +19,15 @@ import GettingStartedPage from './pages/GettingStartedPage';
 
 import 'normalize.css/normalize.css';
 import 'styles/App.css';
-import 'react-toggle/style.css';
 import 'react-table/react-table.css';
 import LoadingScreen from './ui-components/LoadingScreen';
 import SidebarLayoutComponent from "./layouts/SidebarLayoutComponent";
 import {CompletedSteps} from "./side-menu/CompletedSteps";
 import Timeout = NodeJS.Timeout;
-import IslandHttpClient from "./IslandHttpClient";
-import _ from "lodash";
+import IslandHttpClient, { APIEndpoint } from "./IslandHttpClient";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
-
+import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -38,8 +35,6 @@ export const Routes = {
   LandingPage: '/landing-page',
   GettingStartedPage: '/',
   Report: '/report',
-  AttackReport: '/report/attack',
-  ZeroTrustReport: '/report/zeroTrust',
   SecurityReport: '/report/security',
   RansomwareReport: '/report/ransomware',
   LoginPage: '/login',
@@ -47,8 +42,7 @@ export const Routes = {
   ConfigurePage: '/configure',
   RunMonkeyPage: '/run-monkey',
   MapPage: '/infection/map',
-  TelemetryPage: '/infection/telemetry',
-  StartOverPage: '/start-over',
+  EventPage: '/infection/events',
   LicensePage: '/license'
 }
 
@@ -61,10 +55,11 @@ class AppComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    let completedSteps = new CompletedSteps(false);
     this.state = {
       loading: true,
-      completedSteps: completedSteps,
+      runMonkey: false,
+      infectionDone: false,
+      completedSteps: new CompletedSteps(false),
       islandMode: undefined,
     };
     this.interval = undefined;
@@ -96,29 +91,55 @@ class AppComponent extends AuthComponent {
     if (res) {
       this.setMode()
         .then(() => {
-            if (this.state.islandMode === null) {
-              return
-            }
-            this.authFetch('/api')
-              .then(res => res.json())
-              .then(res => {
-                let completedSteps = CompletedSteps.buildFromResponse(res.completed_steps);
-                // This check is used to prevent unnecessary re-rendering
-                if (_.isEqual(this.state.completedSteps, completedSteps)) {
-                  return;
-                }
-                this.setState({completedSteps: completedSteps});
-                this.showInfectionDoneNotification();
-              });
+          if (this.state.islandMode === "unset") {
+            return
           }
-        )
+
+          // update status: report generation
+          this.authFetch('/api/report-generation-status')
+            .then(res => res.json())
+            .then(res => {
+              this.setState({
+                completedSteps: new CompletedSteps(
+                                      this.state.completedSteps.runMonkey,
+                                      this.state.completedSteps.infectionDone,
+                                      res.report_done
+                                    )
+              });
+            })
+
+          // update status: if any agent ran
+          doesAnyAgentExist().then(anyAgentExists => {
+            this.setState({
+              completedSteps: new CompletedSteps(
+                                    anyAgentExists,
+                                    this.state.completedSteps.infectionDone,
+                                    this.state.completedSteps.reportDone
+                                  )
+            });
+          });
+
+          // update status: if infection (running and shutting down of all agents) finished
+          didAllAgentsShutdown().then(allAgentsShutdown => {
+            this.setState({
+              completedSteps: new CompletedSteps(
+                                    this.state.completedSteps.runMonkey,
+                                    this.state.completedSteps.runMonkey && allAgentsShutdown,
+                                    this.state.completedSteps.reportDone
+                                  )
+            });
+          });
+
+          this.showInfectionDoneNotification();
+        }
+      )
     }
   };
 
   setMode = () => {
-    return IslandHttpClient.get('/api/island-mode')
+    return IslandHttpClient.get(APIEndpoint.mode)
       .then(res => {
-        this.setState({islandMode: res.body.mode});
+        this.setState({islandMode: res.body});
       });
   }
 
@@ -154,12 +175,12 @@ class AppComponent extends AuthComponent {
   };
 
   needsRedirectionToLandingPage = (route_path) => {
-    return (this.state.islandMode === null && route_path !== Routes.LandingPage)
+    return (this.state.islandMode === "unset" && route_path !== Routes.LandingPage)
   }
 
   needsRedirectionToGettingStarted = (route_path) => {
     return route_path === Routes.LandingPage &&
-      this.state.islandMode !== null && this.state.islandMode !== undefined
+      this.state.islandMode !== "unset" && this.state.islandMode !== undefined
   }
 
   redirectTo = (userPath, targetPath) => {
@@ -230,21 +251,11 @@ class AppComponent extends AuthComponent {
             {this.renderRoute(Routes.RunMonkeyPage,
               <SidebarLayoutComponent component={RunMonkeyPage} {...defaultSideNavProps}/>)}
             {this.renderRoute(Routes.MapPage,
-              <SidebarLayoutComponent component={MapPage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(Routes.TelemetryPage,
-              <SidebarLayoutComponent component={TelemetryPage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(Routes.StartOverPage,
-              <SidebarLayoutComponent component={StartOverPage} {...defaultSideNavProps}/>)}
+              <SidebarLayoutComponent component={MapPageWrapper} {...defaultSideNavProps}/>)}
+            {this.renderRoute(Routes.EventPage,
+              <SidebarLayoutComponent component={EventPage} {...defaultSideNavProps}/>)}
             {this.redirectToReport()}
             {this.renderRoute(Routes.SecurityReport,
-              <SidebarLayoutComponent component={ReportPage}
-                                      islandMode={this.state.islandMode}
-                                      {...defaultSideNavProps}/>)}
-            {this.renderRoute(Routes.AttackReport,
-              <SidebarLayoutComponent component={ReportPage}
-                                      islandMode={this.state.islandMode}
-                                      {...defaultSideNavProps}/>)}
-            {this.renderRoute(Routes.ZeroTrustReport,
               <SidebarLayoutComponent component={ReportPage}
                                       islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
@@ -276,7 +287,7 @@ class AppComponent extends AuthComponent {
       const hostname = window.location.hostname;
       const port = window.location.port;
       const protocol = window.location.protocol;
-      const url = `${protocol}//${hostname}:${port}${Routes.ZeroTrustReport}`;
+      const url = `${protocol}//${hostname}:${port}${Routes.SecurityReport}`;
 
       Notifier.start(
         'Monkey Island',
@@ -288,7 +299,7 @@ class AppComponent extends AuthComponent {
 
   shouldShowNotification() {
     // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infection_done && !window.location.pathname.startsWith(Routes.Report));
+    return (this.state.completedSteps.infectionDone && !window.location.pathname.startsWith(Routes.Report));
   }
 }
 

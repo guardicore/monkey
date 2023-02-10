@@ -7,24 +7,6 @@ data "google_compute_image" "hadoop-3" {
   name = "hadoop-3"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "elastic-4" {
-  name = "elastic-4"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "elastic-5" {
-  name = "elastic-5"
-  project = local.monkeyzoo_project
-}
-
-/*
-data "google_compute_image" "sambacry-6" {
-  name = "sambacry-6"
-}
-*/
-data "google_compute_image" "shellshock-8" {
-  name = "shellshock-8"
-  project = local.monkeyzoo_project
-}
 data "google_compute_image" "tunneling-9" {
   name = "tunneling-9"
   project = local.monkeyzoo_project
@@ -39,6 +21,10 @@ data "google_compute_image" "tunneling-11" {
 }
 data "google_compute_image" "tunneling-12" {
   name = "tunneling-12"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "tunneling-13" {
+  name = "tunneling-13"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "sshkeys-11" {
@@ -73,8 +59,24 @@ data "google_compute_image" "powershell-3-46" {
   name = "powershell-3-46"
   project = local.monkeyzoo_project
 }
+data "google_compute_image" "powershell-3-44" {
+  name = "powershell-3-44"
+  project = local.monkeyzoo_project
+}
 data "google_compute_image" "powershell-3-45" {
   name = "powershell-3-45"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "credentials-reuse-14" {
+  name = "credentials-reuse-14"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "credentials-reuse-15" {
+  name = "credentials-reuse-15"
+  project = local.monkeyzoo_project
+}
+data "google_compute_image" "credentials-reuse-16" {
+  name = "credentials-reuse-16"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "log4j-solr-49" {
@@ -89,8 +91,8 @@ data "google_compute_image" "log4j-tomcat-51" {
   name = "log4j-tomcat-51"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "log4j-solr-50" {
-  name = "log4j-solr-50"
+data "google_compute_image" "log4j-tomcat-52" {
+  name = "log4j-tomcat-52"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "log4j-logstash-55" {
@@ -101,40 +103,8 @@ data "google_compute_image" "log4j-logstash-56" {
   name = "log4j-logstash-56"
   project = local.monkeyzoo_project
 }
-data "google_compute_image" "weblogic-18" {
-  name = "weblogic-18"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "weblogic-19" {
-  name = "weblogic-19"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "smb-20" {
-  name = "smb-20"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "scan-21" {
-  name = "scan-21"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "scan-22" {
-  name = "scan-22"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "struts2-23" {
-  name = "struts2-23"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "struts2-24" {
-  name = "struts2-24"
-  project = local.monkeyzoo_project
-}
 data "google_compute_image" "zerologon-25" {
   name = "zerologon-25"
-  project = local.monkeyzoo_project
-}
-data "google_compute_image" "drupal-28" {
-  name = "drupal-28"
   project = local.monkeyzoo_project
 }
 data "google_compute_image" "island-linux-250" {

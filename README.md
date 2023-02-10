@@ -1,7 +1,7 @@
 # Infection Monkey
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/guardicore/monkey)](https://github.com/guardicore/monkey/releases)
 
-[![Build Status](https://travis-ci.com/guardicore/monkey.svg?branch=develop)](https://travis-ci.com/guardicore/monkey)
+[![Build Status](https://app.travis-ci.com/guardicore/monkey.svg?branch=develop)](https://app.travis-ci.com/guardicore/monkey)
 [![codecov](https://codecov.io/gh/guardicore/monkey/branch/develop/graph/badge.svg)](https://codecov.io/gh/guardicore/monkey)
 
 ![GitHub stars](https://img.shields.io/github/stars/guardicore/monkey)
@@ -18,7 +18,18 @@ The Infection Monkey is comprised of two parts:
 * **Monkey** - A tool which infects other machines and propagates to them.
 * **Monkey Island** - A dedicated server to control and visualize the Infection Monkey's progress inside the data center.
 
-To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonkey.com).
+To read more about the Monkey, visit [akamai.com/infectionmonkey](https://www.akamai.com/infectionmonkey).
+
+## 💥 We're Hiring 💥
+We are looking for a software engineering manager with a passion for UX and
+cybersecurity to join the Infection Monkey development team. This is a remote
+position and is open anywhere in Israel. You can learn more about Infection
+Monkey on our [website](https://www.akamai.com/infectionmonkey).
+
+For more information, or to apply, see the official job post:
+  - [Israel](https://akamaicareers.inflightcloud.com/jobdetails/aka_ext/028224?section=aka_ext&job=028224)
+
+
 
 ## Screenshots
 
@@ -27,12 +38,6 @@ To read more about the Monkey, visit [infectionmonkey.com](https://infectionmonk
 
 ### Security report
 <img src=".github/security-report.png"  width="800" height="500">
-
-### Zero trust report
-<img src=".github/zero-trust-report.png"  width="800" height="500">
-
-### ATT&CK report
-<img src=".github/attack-report.png"  width="900" height="500">
 
 ## Main Features
 
@@ -46,21 +51,18 @@ The Infection Monkey uses the following techniques and exploits to propagate to 
   * SSH
   * SMB
   * WMI
-  * Shellshock
-  * Conficker
-  * SambaCry
-  * Elastic Search (CVE-2015-1427)
-  * Weblogic server
-  * and more, see our [Documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/exploiters/) for more information about our RCE exploiters.
+  * Log4Shell
+  * Zerologon
+  * and more, see our [documentation hub](https://techdocs.akamai.com/infection-monkey/docs/exploiters/) for more information.
 
 ## Setup
-Check out the [Setup](https://www.guardicore.com/infectionmonkey/docs/setup/) page in the Wiki or a quick getting [started guide](https://www.guardicore.com/infectionmonkey/docs/usage/getting-started/).
+Check out the [Setup](https://techdocs.akamai.com/infection-monkey/docs/setting-up-infection-monkey/) page and the [Getting Started](https://techdocs.akamai.com/infection-monkey/docs/getting-started/) guide in our documentation.
 
-The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://www.guardicore.com/infectionmonkey/docs/reference/operating_systems_support/).
+The Infection Monkey supports a variety of platforms, documented [in our documentation hub](https://techdocs.akamai.com/infection-monkey/docs/operating-systems/).
 
 ## Building the Monkey from source
 To deploy development version of monkey you should refer to readme in the [deployment scripts](deployment_scripts)
-folder or follow documentation in [documentation hub](https://www.guardicore.com/infectionmonkey/docs/development/setup-development-environment/).
+folder or follow documentation in [documentation hub](https://techdocs.akamai.com/infection-monkey/docs/development-setup/).
 
 ### Build status
 | Branch | Status |

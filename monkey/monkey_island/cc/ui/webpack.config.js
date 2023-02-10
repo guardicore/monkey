@@ -1,26 +1,45 @@
 const path = require('path');
-const HtmlWebPackPlugin = require("html-webpack-plugin");
 
-module.exports = {
+var isProduction = process.argv[process.argv.indexOf('--mode') + 1] === 'production';
+
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const smp = new SpeedMeasurePlugin({ disable: isProduction });
+
+
+module.exports = smp.wrap({
+  mode : isProduction ? 'production' : 'development',
   module: {
     rules: [
       { test: /\.tsx?$/,
-        loader: "ts-loader"
+        use: [ 'thread-loader', {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
+            happyPackMode: true
+          }
+        }]
       },
       {
         test: /\.js$/,
-        loader: "source-map-loader"
+        use: ['thread-loader', 'source-map-loader'],
+        enforce: 'pre'
       },
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        }
+        use: [ 'thread-loader', {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true
+          }
+        }]
       },
       {
         test: /\.css$/,
         use: [
+          'thread-loader',
           'style-loader',
           'css-loader'
         ]
@@ -28,6 +47,7 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [
+          'thread-loader',
           'style-loader',
           'css-loader',
           'sass-loader'
@@ -35,37 +55,39 @@ module.exports = {
       },
       {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: {
-          loader: 'file-loader'
-        }
+        type: 'asset/resource'
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: {
-          loader: 'url-loader?limit=10000&mimetype=application/font-woff'
-        }
+        type: 'asset'
       },
       {
         test: /\.(png|jpg|gif)$/,
-        use: {
-          loader: 'url-loader?limit=8192'
-        }
+        type: 'asset'
       },
       {
         test: /\.html$/,
         use: [
           {
-            loader: "html-loader"
+            loader: 'html-loader'
           }
         ]
       }
     ]
   },
-  devtool: "source-map",
+  devtool: isProduction ? 'source-map' : 'eval-source-map',
   plugins: [
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        diagnosticOptions: {
+          semantic: true,
+          syntactic: true
+        }
+      }
+    }),
     new HtmlWebPackPlugin({
-      template: "./src/index.html",
-      filename: "./index.html"
+      template: './src/index.html',
+      filename: './index.html'
     })
   ],
   resolve: {
@@ -88,4 +110,4 @@ module.exports = {
       }
     }
   }
-};
+});

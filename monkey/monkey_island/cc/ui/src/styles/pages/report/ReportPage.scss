@@ -7,15 +7,15 @@
   font-size: large;
 }
 
-.report-nav > li > a {
+.report-nav>li>a {
   height: 50px !important;
 }
 
-.report-nav .nav-item > a {
+.report-nav .nav-item>a {
   color: $black;
 }
 
-.report-nav .nav-item > a.active {
+.report-nav .nav-item>a.active {
   font-weight: bold;
   color: $black;
 }
@@ -58,21 +58,12 @@
   top: 30%;
 }
 
-.pba-danger {
-  background-color: #ffc7af;
-  white-space: pre-wrap;
-}
-
-.pba-success {
-  background-color: #afd2a2;
-  white-space: pre-wrap;
-}
-
 div.report-wrapper {
   padding-bottom: 20px;
 }
 
-div.report-wrapper .nav-tabs > .nav-item > a:hover:not(.active), .nav-tabs > .nav-item > a:focus:not(.active) {
+div.report-wrapper .nav-tabs>.nav-item>a:hover:not(.active),
+.nav-tabs>.nav-item>a:focus:not(.active) {
   text-decoration: none;
   background-color: $light-gray;
 }
@@ -87,7 +78,8 @@ span.cross-segment-service {
   text-transform: uppercase;
 }
 
-.report-page li a.btn,.security-report-link {
+.report-page li a.btn,
+.security-report-link {
   position: relative;
   font-size: 1em;
   padding: 0 5px;
@@ -100,5 +92,15 @@ span.cross-segment-service {
 }
 
 .rt-resizable-header {
-    text-align: left;
+  text-align: left;
+}
+
+.markdown a {
+  color: $monkey-alt;
+}
+
+.markdown a:hover {
+  color: $monkey-alt;
+  background-color: unset;
+  text-decoration: underline;
 }

@@ -24,17 +24,6 @@ function Configure-precommit([String] $git_repo_dir)
 	}
     Pop-Location
 
-    # Set env variable to skip Swimm verification during pre-commit, Windows not supported yet
-    $skipValue = [System.Environment]::GetEnvironmentVariable('SKIP', [System.EnvironmentVariableTarget]::User)
-    if ($skipValue) {  # if `SKIP` is not empty
-        if (-Not ($skipValue -split ',' -contains 'swimm-verify')) {  # if `SKIP` doesn't already have "swimm-verify"
-            [System.Environment]::SetEnvironmentVariable('SKIP', $env:SKIP + ',swimm-verify', [System.EnvironmentVariableTarget]::User)
-        }
-    }
-    else {
-        [System.Environment]::SetEnvironmentVariable('SKIP', 'swimm-verify', [System.EnvironmentVariableTarget]::User)
-    }
-
     Write-Output "Pre-commit successfully installed"
 }
 
@@ -49,7 +38,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
     # Import the config variables
     $config_filename = New-TemporaryFile
-    $config_filename = "config.ps1"
+    $config_filename = "$PsScriptRoot\config.ps1"
     $config_url = "https://raw.githubusercontent.com/guardicore/monkey/" + $branch + "/deployment_scripts/config.ps1"
     $webClient.DownloadFile($config_url, $config_filename)
     . ./config.ps1
@@ -163,25 +152,8 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         [Environment]::SetEnvironmentVariable("Path", $env:Path, "User")
     }
 
-    # Download mongodb
-    if (!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "mongodb")))
-    {
-        "Downloading mongodb ..."
-        $webClient.DownloadFile($MONGODB_URL, $TEMP_MONGODB_ZIP)
-        "Unzipping mongodb"
-        Expand-Archive $TEMP_MONGODB_ZIP -DestinationPath $binDir
-        # Get unzipped folder's name
-        $mongodb_folder = Get-ChildItem -Path $binDir | Where-Object -FilterScript {
-            ($_.Name -like "mongodb*")
-        } | Select-Object -ExpandProperty Name
-        # Move all files from extracted folder to mongodb folder
-        New-Item -ItemType directory -Path (Join-Path -Path $binDir -ChildPath "mongodb")
-        "Moving extracted files"
-        Move-Item -Path (Join-Path -Path $binDir -ChildPath $mongodb_folder | Join-Path -ChildPath "\bin\*") -Destination (Join-Path -Path $binDir -ChildPath "mongodb\")
-        "Removing zip file"
-        Remove-Item $TEMP_MONGODB_ZIP
-        Remove-Item (Join-Path -Path $binDir -ChildPath $mongodb_folder) -Recurse
-    }
+    $install_mongo_script = (Join-Path -Path $monkey_home -ChildPath "$MONKEY_ISLAND_DIR\windows\install_mongo.ps1")
+    Invoke-Expression "$install_mongo_script -binDir $binDir"
 
     # Download OpenSSL
     "Downloading OpenSSL ..."
@@ -209,9 +181,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Adding binaries"
         $binaries = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\binaries")
         New-Item -ItemType directory -path $binaries -ErrorAction SilentlyContinue
-        $webClient.DownloadFile($LINUX_32_BINARY_URL, (Join-Path -Path $binaries -ChildPath $LINUX_32_BINARY_PATH))
         $webClient.DownloadFile($LINUX_64_BINARY_URL, (Join-Path -Path $binaries -ChildPath $LINUX_64_BINARY_PATH))
-        $webClient.DownloadFile($WINDOWS_32_BINARY_URL, (Join-Path -Path $binaries -ChildPath $WINDOWS_32_BINARY_PATH))
         $webClient.DownloadFile($WINDOWS_64_BINARY_URL, (Join-Path -Path $binaries -ChildPath $WINDOWS_64_BINARY_PATH))
     }
 
@@ -242,7 +212,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     "Updating npm"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\ui")
     & npm update
-    & npm run dist
+    & npm run dev
     Pop-Location
 
     # Create infection_monkey/bin directory if not already present
@@ -262,27 +232,6 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         "Removing zip file"
         Remove-Item $TEMP_UPX_ZIP
     }
-
-    # Download sambacry binaries
-    $samba_path = Join-Path -Path $monkey_home -ChildPath $SAMBA_BINARIES_DIR
-    $samba32_path = Join-Path -Path $samba_path -ChildPath $SAMBA_32_BINARY_NAME
-    if (!(Test-Path -Path $samba32_path))
-    {
-        "Downloading sambacry 32 binary"
-        $webClient.DownloadFile($SAMBA_32_BINARY_URL, $samba32_path)
-    }
-    $samba64_path = Join-Path -Path $samba_path -ChildPath $SAMBA_64_BINARY_NAME
-    if (!(Test-Path -Path $samba64_path))
-    {
-        "Downloading sambacry 64 binary"
-        $webClient.DownloadFile($SAMBA_64_BINARY_URL, $samba64_path)
-    }
-
-    # Get Swimm
-    "Downloading Swimm..."
-    $swimm_filename = Join-Path -Path $HOME -ChildPath "swimm.exe"
-    $webClient.DownloadFile($SWIMM_URL, $swimm_filename)
-    Start-Process $swimm_filename
 
 
     "Script finished"

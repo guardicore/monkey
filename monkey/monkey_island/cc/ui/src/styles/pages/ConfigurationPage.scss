@@ -1,64 +1,81 @@
-.config-nav > li > a{
-  height: 50px !important;
+.markdown p {
+  white-space: pre-wrap;
 }
 
-.config-nav .nav-link.tab-primary{
-  color: $monkey-alt;
-  font-weight: bold;
-}
-
-.config-nav .nav-item > a{
+.config-nav .nav-item>a {
   color: $black;
   padding: 15px 10px 15px 10px;
 }
 
-.config-nav .nav-item > a.active{
+.config-nav .nav-item>a.active {
   font-weight: bold;
   color: $black;
 }
 
-.config-nav .nav-item > a:hover:not(.active),  .config-nav .nav-item > a:focus:not(.active){
-    text-decoration: none;
-    background-color: $light-gray;
+.config-nav .nav-item>a:hover:not(.active),
+.config-nav .nav-item>a:focus:not(.active) {
+  text-decoration: none;
+  background-color: $light-gray;
 }
 
-.config-form legend {
-  border-bottom: 1px solid $light-gray;
+.config-form hr.border-0.bg-secondary {
+  background-color: $light-gray !important;
   margin-bottom: 15px;
+  margin-top: 0;
 }
 
-.config-form .form-group {
+form.config-form > div.form-group {
+  margin-left: 0;
+}
+
+.config-form div.form-group>div.form-group {
   margin-left: 2em;
 }
 
-.config-form div.card.errors {
+.config-form>div.card.border-danger {
   display: none;
 }
 
-.config-template-no-header > p {
+div.form-group.field.field-array label.form-label {
   display: none;
 }
 
-.config-template-no-header > label {
-  display: none;
+div.form-group.field.field-array .field-object label.form-label {
+  display: inline-block;
 }
 
-.config-form .form-group.field > label {
-  margin-top: 10px;
-  margin-bottom: 5px;
-  font-size: 1.2em;
+div.form-group.field.field-array button.btn-sm{
+    height: calc(1.5em + 0.75rem + 5px);
 }
 
-.config-field-hidden {
-  display: none;
+div.form-group.field.field-array .align-items-center div.m-0.p-0{
+  width: 100%;
+  display: flex;
 }
 
-.field-description {
+div.form-group.field.field-array .align-items-center{
+  align-items: flex-start !important;
+}
+
+
+div.form-group.field.field-array .py-4.col-lg-3.col-3{
+  padding: 0 !important;
+}
+
+div.form-group div:not([class]){
   white-space: pre-wrap;
 }
 
 .warning-icon {
-    text-transform: uppercase;
-    color: #FFC107;
-    margin-left: .75em;
+  text-transform: uppercase;
+  color: #FFC107;
+  margin-left: .75em;
+}
+
+.form-group h5 {
+  font-size: 1.4rem;
+}
+
+.form-group label.form-label {
+  font-weight: bold;
 }

@@ -4,44 +4,60 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pyinstaller = "==3.6"
-awscli = "==1.20.44"
+pyinstaller = "==4.9"
 bcrypt = "==3.2.0"
-boto3 = "==1.18.44"
-botocore = "==1.21.44"
-cffi = ">=1.8,!=1.11.3"
+boto3 = "1.26.13"
+botocore = "1.29.13"
 dpath = ">=2.0.5"
 gevent = ">=20.9.0"
 ipaddress = ">=1.0.23"
 jsonschema = "==3.2.0"
 mongoengine = "==0.20"
 netifaces = ">=0.10.9"
-pycryptodome = "==3.9.8"
-python-dateutil = "<3.0.0,>=2.1"
 requests = ">=2.24"
 ring = ">=0.7.3"
-six = ">=1.13.0"
-tqdm = ">=4.47"
 Flask-JWT-Extended = "==4.*"
 Flask-PyMongo = ">=2.3.0"
 Flask-RESTful = ">=0.3.8"
 Flask = ">=1.1"
 Werkzeug = ">=1.0.1"
-ScoutSuite = {git = "https://github.com/guardicode/ScoutSuite"}
 pyaescrypt = "*"
+python-dateutil = "*"
+cffi = "*"  # Without explicit install: ModuleNotFoundError: No module named '_cffi_backend'
+pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
+pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
+readerwriterlock = "*"
+pymongo = "*"
+cryptography = "*"
+semantic-version = "*"
+pypubsub = "*"
+pydantic = "*"
+egg-timer = "*"
+pyyaml = "*"
+semver = "==2.13.0"
 
 [dev-packages]
-virtualenv = ">=20.0.26"
-mongomock = "==3.23.0"
+virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue
+mongomock = "==4.1.2"
 pytest = ">=5.4"
 requests-mock = "==1.8.0"
-black = "==20.8b1"
-dlint = "==0.11.0"
-flake8 = "==3.9.0"
+black = "==22.3.0"
+dlint = "==0.13.0"
+importlib-metadata = "==4.2.0" # Required by Flake8 on Python3.7. See https://github.com/python/importlib_metadata/issues/406
+flake8 = "==5.0.4"
 pytest-cov = "*"
-isort = "==5.8.0"
+isort = "==5.10.1"
 coverage = "*"
 vulture = "==2.3"
+tqdm = "*"  # Used in BB tests
+sphinx = "==4.3.2"  # Used in documentation - Pinned to 4.3.2 due to importlib-metadat/flake8 issue
+sphinx_rtd_theme = "*"
+sphinx_autodoc_typehints = "==1.17.1" # Pinned to 1.17.1 due to importlib-metadat/flake8 issue
+types-python-dateutil = "*"
+mypy = "*"
+types-pytz = "*"
+types-pyyaml = "*"
 
 [requires]
 python_version = "3.7"

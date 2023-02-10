@@ -1,2 +1,0 @@
-class NewUserError(Exception):
-    pass

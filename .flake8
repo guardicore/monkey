@@ -5,7 +5,9 @@ exclude = monkey/monkey_island/cc/ui,vulture_allowlist.py
 show-source = True
 max-complexity = 10
 max-line-length = 100
-per-file-ignores = __init__.py:F401
+per-file-ignores =
+  __init__.py:F401
+  monkey/tests/unit_tests/infection_monkey/island_api_client/configuration_validation_constants.py:E501
 
 ### ignore "whitespace before ':'", "line break before binary operator" for
 ### compatibility with black, and cyclomatic complexity (for now).

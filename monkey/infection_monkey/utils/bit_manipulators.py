@@ -1,11 +1,21 @@
+from typing import Iterable
+
+
+def generate_flipped_bits(data: bytes) -> Iterable[int]:
+    """
+    Yield bytes with the bits flipped
+
+    :param data: The data whose bits to flip
+    """
+    for byte in data:
+        yield 255 - byte
+
+
 def flip_bits(data: bytes) -> bytes:
-    flipped_bits = bytearray(len(data))
+    """
+    Flip all bits in the given bytes
 
-    for i, byte in enumerate(data):
-        flipped_bits[i] = flip_bits_in_single_byte(byte)
-
-    return bytes(flipped_bits)
-
-
-def flip_bits_in_single_byte(byte) -> int:
-    return 255 ^ byte
+    :param data: The bytes whose bits to flip
+    :return: Bytes with the bits flipped
+    """
+    return bytes(generate_flipped_bits(data))

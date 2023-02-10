@@ -11,7 +11,7 @@ chapter: true
 
 The Infection Monkey is a versatile breach and attack simulation tool. Choosing the "Custom" scenario will allow you to access all of its capabilities and configure the simulation exactly according to your needs. You can enhance, optimize, and fine-tune the Monkey's behavior.
 
-![Custom scenario](/images/usage/scenarios/custom-scenario.png "Custom scenario")
+![Custom scenario](/images/island/landing_page/choose_scenario_with_arrow_to_custom.png "Custom scenario")
 
 Below are some examples with instructions on how to configure them.
 

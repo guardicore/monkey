@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -8,10 +7,12 @@ from _pytest.monkeypatch import MonkeyPatch
 MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
+from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
+
 
 @pytest.fixture(scope="session")
 def data_for_tests_dir(pytestconfig):
-    return Path(os.path.join(pytestconfig.rootdir, "monkey", "tests", "data_for_tests"))
+    return Path(pytestconfig.rootdir) / "monkey" / "tests" / "data_for_tests"
 
 
 @pytest.fixture(scope="session")
@@ -39,3 +40,18 @@ def monkeypatch_session():
     monkeypatch_ = MonkeyPatch()
     yield monkeypatch_
     monkeypatch_.undo()
+
+
+@pytest.fixture
+def monkey_configs_dir(data_for_tests_dir) -> Path:
+    return data_for_tests_dir / "monkey_configs"
+
+
+@pytest.fixture
+def plugin_data_dir(data_for_tests_dir) -> Path:
+    return data_for_tests_dir / "plugins"
+
+
+@pytest.fixture
+def default_agent_configuration() -> AgentConfiguration:
+    return DEFAULT_AGENT_CONFIGURATION

@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
+from common.utils.environment import is_windows_os
 from common.utils.file_utils import expand_path
-from monkey_island.cc.server_utils.file_utils import is_windows_os
 
 
 def get_default_data_dir() -> str:
@@ -26,8 +26,6 @@ MONKEY_ISLAND_ABS_PATH = _get_monkey_island_abs_path()
 
 DEFAULT_DATA_DIR = expand_path(get_default_data_dir())
 
-DEFAULT_MONKEY_TTL_EXPIRY_DURATION_IN_SECONDS = 60 * 5
-
 _MONGO_BINARY_DIR = os.path.join(MONKEY_ISLAND_ABS_PATH, "bin", "mongodb")
 _MONGO_EXECUTABLE_PATH_WIN = os.path.join(_MONGO_BINARY_DIR, "mongod.exe")
 _MONGO_EXECUTABLE_PATH_LINUX = os.path.join(_MONGO_BINARY_DIR, "bin", "mongod")
@@ -36,18 +34,15 @@ MONGO_EXECUTABLE_PATH = (
 )
 MONGO_CONNECTION_TIMEOUT = 15
 
-DEFAULT_SERVER_CONFIG_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", SERVER_CONFIG_FILENAME))
-
 DEFAULT_LOG_LEVEL = "INFO"
+
+PLUGIN_DIR_NAME = "plugins"
 
 DEFAULT_START_MONGO_DB = True
 
 DEFAULT_CRT_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.crt"))
 DEFAULT_KEY_PATH = str(Path(MONKEY_ISLAND_ABS_PATH, "cc", "server.key"))
 
-DEFAULT_CERTIFICATE_PATHS = {
-    "ssl_certificate_file": DEFAULT_CRT_PATH,
-    "ssl_certificate_key_file": DEFAULT_KEY_PATH,
-}
-
 GEVENT_EXCEPTION_LOG = "gevent_exceptions.log"
+
+ISLAND_PORT = 5000

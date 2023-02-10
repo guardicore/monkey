@@ -59,7 +59,7 @@ function AWSRunButton(props) {
     <Alert variant={'info'}>Detected ability to run on different AWS instances.
       To enable this feature, follow the &nbsp;
       <Button variant={'link'} className={'inline-link'}
-              href={'https://www.guardicore.com/infectionmonkey/docs/usage/integrations/aws-run-on-ec2-machine/'}>
+              href={'https://techdocs.akamai.com/infection-monkey/docs/running-the-monkey-on-aws-ec2-instances/'}>
         Tutorial
       </Button> and refresh the page. Error received while trying to list AWS instances: {awsMachineCollectionError}
     </Alert> );

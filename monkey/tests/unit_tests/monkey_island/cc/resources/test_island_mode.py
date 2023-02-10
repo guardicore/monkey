@@ -1,63 +1,97 @@
-import json
+from http import HTTPStatus
+from unittest.mock import MagicMock
 
 import pytest
-from tests.utils import raise_
+from tests.common import StubDIContainer
+from tests.monkey_island import InMemorySimulationRepository
 
-from monkey_island.cc.models.island_mode_model import IslandMode
-from monkey_island.cc.resources import island_mode as island_mode_resource
-
-
-@pytest.fixture(scope="function")
-def uses_database():
-    IslandMode.objects().delete()
+from monkey_island.cc.event_queue import IIslandEventQueue
+from monkey_island.cc.models import IslandMode
+from monkey_island.cc.repositories import ISimulationRepository
+from monkey_island.cc.resources.island_mode import IslandMode as IslandModeResource
 
 
-@pytest.mark.parametrize("mode", ["ransomware", "advanced"])
-def test_island_mode_post(flask_client, mode, monkeypatch):
-    monkeypatch.setattr(
-        "monkey_island.cc.resources.island_mode.update_config_on_mode_set",
-        lambda _: None,
+@pytest.fixture
+def flask_client_builder(build_flask_client):
+    def inner(side_effect=None):
+        container = StubDIContainer()
+
+        in_memory_simulation_repository = InMemorySimulationRepository()
+        container.register_instance(ISimulationRepository, in_memory_simulation_repository)
+
+        mock_island_event_queue = MagicMock(spec=IIslandEventQueue)
+        mock_island_event_queue.publish.side_effect = (
+            side_effect
+            if side_effect
+            else lambda topic, mode: in_memory_simulation_repository.set_mode(mode)
+        )
+        container.register_instance(IIslandEventQueue, mock_island_event_queue)
+
+        with build_flask_client(container) as flask_client:
+            return flask_client
+
+    return inner
+
+
+@pytest.fixture
+def flask_client(flask_client_builder):
+    return flask_client_builder()
+
+
+@pytest.fixture
+def flask_client__internal_server_error(flask_client_builder):
+    return flask_client_builder(Exception)
+
+
+@pytest.mark.parametrize(
+    "mode",
+    [IslandMode.RANSOMWARE.value, IslandMode.ADVANCED.value, IslandMode.UNSET.value],
+)
+def test_island_mode_post(flask_client, mode):
+    resp = flask_client.put(
+        IslandModeResource.urls[0],
+        json=mode,
+        follow_redirects=True,
     )
-    resp = flask_client.post(
-        "/api/island-mode", data=json.dumps({"mode": mode}), follow_redirects=True
-    )
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.NO_CONTENT
 
 
 def test_island_mode_post__invalid_mode(flask_client):
-    resp = flask_client.post(
-        "/api/island-mode", data=json.dumps({"mode": "bogus mode"}), follow_redirects=True
+    resp = flask_client.put(
+        IslandModeResource.urls[0],
+        json="bogus mode",
+        follow_redirects=True,
     )
-    assert resp.status_code == 422
+    assert resp.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
 
 
-@pytest.mark.parametrize("invalid_json", ["42", "{test"])
-def test_island_mode_post__invalid_json(flask_client, invalid_json):
-    resp = flask_client.post("/api/island-mode", data="{test", follow_redirects=True)
-    assert resp.status_code == 400
-
-
-def test_island_mode_post__internal_server_error(monkeypatch, flask_client):
-    monkeypatch.setattr(island_mode_resource, "set_mode", lambda x: raise_(Exception()))
-
-    resp = flask_client.post(
-        "/api/island-mode", data=json.dumps({"mode": "ransomware"}), follow_redirects=True
+def test_island_mode_post__internal_server_error(flask_client__internal_server_error):
+    resp = flask_client__internal_server_error.put(
+        IslandModeResource.urls[0],
+        json=IslandMode.RANSOMWARE.value,
+        follow_redirects=True,
     )
-    assert resp.status_code == 500
+    assert resp.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
 
 
-@pytest.mark.parametrize("mode", ["ransomware", "advanced"])
-def test_island_mode_endpoint(flask_client, uses_database, mode):
-    flask_client.post("/api/island-mode", data=json.dumps({"mode": mode}), follow_redirects=True)
-    resp = flask_client.get("/api/island-mode", follow_redirects=True)
-    assert resp.status_code == 200
-    assert json.loads(resp.data)["mode"] == mode
-
-
-def test_island_mode_endpoint__invalid_mode(flask_client, uses_database):
-    resp_post = flask_client.post(
-        "/api/island-mode", data=json.dumps({"mode": "bogus_mode"}), follow_redirects=True
+@pytest.mark.parametrize("mode", [IslandMode.RANSOMWARE.value, IslandMode.ADVANCED.value])
+def test_island_mode_endpoint(flask_client, mode):
+    flask_client.put(
+        IslandModeResource.urls[0],
+        json=mode,
+        follow_redirects=True,
     )
-    resp_get = flask_client.get("/api/island-mode", follow_redirects=True)
-    assert resp_post.status_code == 422
-    assert json.loads(resp_get.data)["mode"] is None
+    resp = flask_client.get(IslandModeResource.urls[0], follow_redirects=True)
+    assert resp.status_code == HTTPStatus.OK
+    assert resp.json == mode
+
+
+def test_island_mode_endpoint__invalid_mode(flask_client):
+    resp_post = flask_client.put(
+        IslandModeResource.urls[0],
+        json="bogus_mode",
+        follow_redirects=True,
+    )
+    resp_get = flask_client.get(IslandModeResource.urls[0], follow_redirects=True)
+    assert resp_post.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert resp_get.json == IslandMode.UNSET.value

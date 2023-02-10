@@ -6,9 +6,10 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faSync} from '@fortawesome/free-solid-svg-icons/faSync';
 import AuthComponent from '../../AuthComponent';
 
-import IslandMonkeyRunErrorModal from '../../ui-components/IslandMonkeyRunErrorModal';
+import ErrorModal from '../../ui-components/ErrorModal';
 import '../../../styles/components/RunOnIslandButton.scss';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import IslandHttpClient, {APIEndpoint} from '../../IslandHttpClient';
 
 
 const MONKEY_STATES = {
@@ -23,25 +24,53 @@ class RunOnIslandButton extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
+      // TODO: Can't we just use true/false for this?
       runningOnIslandState: MONKEY_STATES.NOT_RUNNING,
       showModal: false,
-      errorDetails: ''
+      errorDetails: '',
+      errorMessage: ''
     };
 
     this.closeModal = this.closeModal.bind(this);
   }
 
   componentDidMount() {
-    this.authFetch('/api/local-monkey')
-      .then(res => res.json())
-      .then(res => {
-        if (res['is_running']) {
+    IslandHttpClient.get(APIEndpoint.machines).then(res => {
+      const island_machine_id = this.get_island_machine_id(res.body)
+
+      IslandHttpClient.get(APIEndpoint.agents).then(res => {
+        if (this.agents_running_on_machine(island_machine_id, res.body)) {
           this.setState({runningOnIslandState: MONKEY_STATES.RUNNING});
         } else {
           this.setState({runningOnIslandState: MONKEY_STATES.NOT_RUNNING});
         }
-      });
+      })
+    })
+
   }
+
+  get_island_machine_id(machines) {
+      for (const i in machines) {
+        if (machines[i].island === true) {
+          return machines[i].id
+        }
+      }
+  }
+
+  agents_running_on_machine(machine_id, agents) {
+    for (const i in agents) {
+      if (agents[i].machine_id !== machine_id) {
+        continue;
+      }
+
+      if (agents[i].stop_time === null) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 
   runIslandMonkey = () => {
     this.setState({runningOnIslandState: MONKEY_STATES.STARTING}, this.sendRunMonkeyRequest)
@@ -68,12 +97,52 @@ class RunOnIslandButton extends AuthComponent {
             this.setState({
                 showModal: true,
                 errorDetails: res['error_text'],
-                runningOnIslandState: MONKEY_STATES.FAILED
+                runningOnIslandState: MONKEY_STATES.FAILED,
+                errorMessage: this.getErrorMessageFromErrorText(res['error_text'])
               }
             );
           }
         }
       });
+  }
+
+  getErrorMessageFromErrorText(errorText) {
+    if (errorText.includes('Permission denied:') || errorText.includes('Text file busy')) {
+      return this.getMonkeyAlreadyRunningContent()
+    } else if (errorText.startsWith('Copy file failed') || errorText.includes('No such file or directory')) {
+      return this.getMissingBinariesContent()
+    } else {
+      return this.getUndefinedErrorContent()
+    }
+  }
+
+  getMissingBinariesContent() {
+    return (
+      <span>
+        Some Monkey binaries are not found where they should be...<br/>
+        <b>Make sure that your antivirus is not deleting the binaries.</b><br/><br/>
+        You can download the files from <a href="https://github.com/guardicore/monkey/releases/latest"
+                                           target="blank">here</a>,
+        at the bottommost section titled "Assets", and place them under the
+        directory <code>monkey/monkey_island/cc/binaries</code>.
+      </span>
+    )
+  }
+
+  getMonkeyAlreadyRunningContent() {
+    return (
+      <span>
+        Most likely, monkey is already running on the Island. Wait until it finishes or kill the process to run again.
+      </span>
+    )
+  }
+
+  getUndefinedErrorContent() {
+    return (
+      <span>
+        You encountered an undefined error. Please report it to support@infectionmonkey.com or our slack channel.
+      </span>
+    )
   }
 
   closeModal = () => {
@@ -103,9 +172,10 @@ class RunOnIslandButton extends AuthComponent {
     return (
       <Row>
         <Col>
-          <IslandMonkeyRunErrorModal
+          <ErrorModal
             showModal={this.state.showModal}
             onClose={this.closeModal}
+            errorMessage={this.state.errorMessage}
             errorDetails={this.state.errorDetails}/>
           <Button variant={'outline-monkey'} size='lg' className={'selection-button'}
                   onClick={this.runIslandMonkey}>

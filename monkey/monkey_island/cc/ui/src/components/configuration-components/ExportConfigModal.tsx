@@ -1,52 +1,46 @@
-import {Button, Modal, Form} from 'react-bootstrap';
+import {Button, Form, Modal} from 'react-bootstrap';
 import React, {useState} from 'react';
 
 import FileSaver from 'file-saver';
-import AuthComponent from '../AuthComponent';
 import '../../styles/components/configuration-components/ExportConfigModal.scss';
+import {encryptText} from '../utils/PasswordBasedEncryptor';
+import {reformatConfig} from './ReformatHook';
 
 
 type Props = {
   show: boolean,
+  configuration: object,
+  credentials: string,
   onHide: () => void
 }
 
 const ConfigExportModal = (props: Props) => {
-  const configExportEndpoint = '/api/configuration/export';
-
   const [pass, setPass] = useState('');
   const [radioValue, setRadioValue] = useState('password');
-  const authComponent = new AuthComponent({});
 
   function isExportBtnDisabled() {
     return pass === '' && radioValue === 'password';
   }
 
   function onSubmit() {
-    authComponent.authFetch(configExportEndpoint,
-      {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          should_encrypt: (radioValue === 'password'),
-          password: pass
-        })
-      }
-    )
-      .then(res => res.json())
-      .then(res => {
-        let configToExport = res['config_export'];
-        if (res['encrypted']) {
-          configToExport = new Blob([configToExport]);
-        } else {
-          configToExport = new Blob(
-            [JSON.stringify(configToExport, null, 2)],
-            {type: 'text/plain;charset=utf-8'}
-            );
-        }
-        FileSaver.saveAs(configToExport, 'monkey.conf');
-        props.onHide();
-      })
+    let configuration = reformatConfig(props.configuration, true);
+    let credentials = props.credentials;
+    let metadata = {'encrypted': false};
+
+    if (radioValue === 'password') {
+      configuration = encryptText(JSON.stringify(configuration), pass);
+      credentials = encryptText(JSON.stringify(credentials), pass);
+      metadata = {'encrypted': true};
+    }
+
+    let config_export = {'metadata': metadata, 'configuration': configuration, 'credentials': credentials};
+    let export_json = JSON.stringify(config_export, null, 2);
+    let export_blob = new Blob(
+      [export_json],
+      {type: 'text/plain;charset=utf-8'}
+    );
+    FileSaver.saveAs(export_blob, 'monkey.conf');
+    props.onHide();
   }
 
   return (

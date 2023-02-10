@@ -1,31 +1,34 @@
 from datetime import datetime
+from enum import Enum
+from json import JSONEncoder, dumps
+from typing import Any
 
 import bson
-from bson.json_util import dumps
 from flask import make_response
+from pydantic import BaseModel
 
 
-def normalize_obj(obj):
-    if ("_id" in obj) and ("id" not in obj):
-        obj["id"] = obj["_id"]
-        del obj["_id"]
-
-    for key, value in list(obj.items()):
+class APIEncoder(JSONEncoder):
+    def default(self, value: Any) -> Any:
+        # ObjectId is serializible by default, but returns a dict
+        # So serialize it first into a plain string
         if isinstance(value, bson.objectid.ObjectId):
-            obj[key] = str(value)
+            return str(value)
         if isinstance(value, datetime):
-            obj[key] = str(value)
-        if isinstance(value, dict):
-            obj[key] = normalize_obj(value)
-        if isinstance(value, list):
-            for i in range(0, len(value)):
-                if isinstance(value[i], dict):
-                    value[i] = normalize_obj(value[i])
-    return obj
+            return str(value)
+        if issubclass(type(value), Enum):
+            return value.name
+        if issubclass(type(value), set):
+            return list(value)
+        if issubclass(type(value), BaseModel):
+            return value.dict(simplify=True)
+        try:
+            return JSONEncoder.default(self, value)
+        except TypeError:
+            return value.__dict__
 
 
-def output_json(obj, code, headers=None):
-    obj = normalize_obj(obj)
-    resp = make_response(dumps(obj), code)
+def output_json(value, code, headers=None):
+    resp = make_response(dumps(value, cls=APIEncoder), code)
     resp.headers.extend(headers or {})
     return resp

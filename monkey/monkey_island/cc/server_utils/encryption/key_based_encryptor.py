@@ -1,12 +1,9 @@
 import base64
 import logging
 
-# PyCrypto is deprecated, but we use pycryptodome, which uses the exact same imports but
-# is maintained.
-from Crypto import Random  # noqa: DUO133  # nosec: B413
-from Crypto.Cipher import AES  # noqa: DUO133  # nosec: B413
-from Crypto.Util import Padding  # noqa: DUO133
+from cryptography.fernet import Fernet
 
+from .encryption_key_types import EncryptionKey32Bytes
 from .i_encryptor import IEncryptor
 
 logger = logging.getLogger(__name__)
@@ -21,21 +18,26 @@ logger = logging.getLogger(__name__)
 
 
 class KeyBasedEncryptor(IEncryptor):
+    def __init__(self, key: EncryptionKey32Bytes):
+        """
+        Initializes a KeyBasedEncryptor object
+        :param key: The encryption key with which the object should be initialized.
+        """
+        formatted_key = base64.urlsafe_b64encode(key)
+        self._fernet = Fernet(formatted_key)
 
-    _BLOCK_SIZE = 32
+    def encrypt(self, plaintext: bytes) -> bytes:
+        """
+        Encrypts a given bytestream
+        :param plaintext: The bytestream to encrypt
+        :return: Encrypted message
+        """
+        return self._fernet.encrypt(plaintext)
 
-    def __init__(self, key: bytes):
-        self._key = key
-
-    def encrypt(self, plaintext: str) -> str:
-        cipher_iv = Random.new().read(AES.block_size)
-        cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
-        padded_plaintext = Padding.pad(plaintext.encode(), self._BLOCK_SIZE)
-        return base64.b64encode(cipher_iv + cipher.encrypt(padded_plaintext)).decode()
-
-    def decrypt(self, ciphertext: str):
-        enc_message = base64.b64decode(ciphertext)
-        cipher_iv = enc_message[0 : AES.block_size]
-        cipher = AES.new(self._key, AES.MODE_CBC, cipher_iv)
-        padded_plaintext = cipher.decrypt(enc_message[AES.block_size :])
-        return Padding.unpad(padded_plaintext, self._BLOCK_SIZE).decode()
+    def decrypt(self, ciphertext: bytes) -> bytes:
+        """
+        Decrypts a given bytestream
+        :param ciphertext: The bytestream to decrypt
+        :return: Decrypted message
+        """
+        return self._fernet.decrypt(ciphertext)

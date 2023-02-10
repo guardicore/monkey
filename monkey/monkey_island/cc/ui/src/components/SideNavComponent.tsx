@@ -1,30 +1,37 @@
-import React, {ReactFragment} from 'react';
+import React, {ReactFragment, useState} from 'react';
+import {Button} from 'react-bootstrap';
 import {NavLink} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
 import '../styles/components/SideNav.scss';
-import {CompletedSteps} from "./side-menu/CompletedSteps";
-import {isReportRoute, Routes} from "./Main";
+import {CompletedSteps} from './side-menu/CompletedSteps';
+import {isReportRoute, Routes} from './Main';
+import Logo from './logo/LogoComponent';
+import IslandResetModal from './ui-components/IslandResetModal';
 
 
 const logoImage = require('../images/monkey-icon.svg');
 const infectionMonkeyImage = require('../images/infection-monkey.svg');
 
-import Logo from "./logo/LogoComponent";
-
 type Props = {
   disabled?: boolean,
   completedSteps: CompletedSteps,
   defaultReport: string,
-  header?: ReactFragment
+  header?: ReactFragment,
+  onStatusChange: () => void
 }
 
 
-const SideNavComponent = ({disabled,
-                           completedSteps,
-                           defaultReport,
-                           header=null}: Props) => {
+const SideNavComponent = ({
+                            disabled,
+                            completedSteps,
+                            defaultReport,
+                            header = null,
+                            onStatusChange,
+                          }: Props) => {
+
+  const [showResetModal, setShowResetModal] = useState(false);
 
   return (
     <>
@@ -37,12 +44,12 @@ const SideNavComponent = ({disabled,
 
       <ul className='navigation'>
         {(header !== null) &&
-        <>
-          <li>
-            {header}
-          </li>
-          <hr/>
-        </>}
+          <>
+            <li>
+              {header}
+            </li>
+            <hr/>
+          </>}
 
         <li>
           <NavLink to={Routes.RunMonkeyPage} className={getNavLinkClass()}>
@@ -76,10 +83,17 @@ const SideNavComponent = ({disabled,
           </NavLink>
         </li>
         <li>
-          <NavLink to={Routes.StartOverPage} className={getNavLinkClass()}>
+          <Button variant={null} className={'island-reset-button'}
+                  onClick={() => setShowResetModal(true)} href='#'>
             <span className='number'><FontAwesomeIcon icon={faUndo} style={{'marginLeft': '-1px'}}/></span>
-            Start Over
-          </NavLink>
+            Reset
+          </Button>
+          <IslandResetModal show={showResetModal}
+                            allMonkeysAreDead={areMonkeysDead()}
+                            onReset={onStatusChange}
+                            onClose={() => {
+                              setShowResetModal(false);
+                            }}/>
         </li>
       </ul>
 
@@ -89,17 +103,21 @@ const SideNavComponent = ({disabled,
                      className={getNavLinkClass()}>
           Configuration
         </NavLink></li>
-        <li><NavLink to='/infection/telemetry'
-        className={getNavLinkClass()}>
-          Logs
+        <li><NavLink to='/infection/events'
+                     className={getNavLinkClass()}>
+          Events
         </NavLink></li>
       </ul>
 
       <Logo/>
     </>);
 
+  function areMonkeysDead() {
+    return (!completedSteps['runMonkey']) || (completedSteps['infectionDone'])
+  }
+
   function getNavLinkClass() {
-    if(disabled){
+    if (disabled) {
       return `nav-link disabled`
     } else {
       return ''

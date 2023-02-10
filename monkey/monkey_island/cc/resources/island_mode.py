@@ -1,44 +1,41 @@
 import json
 import logging
+from http import HTTPStatus
 
-import flask_restful
-from flask import make_response, request
+from flask import request
 
-from monkey_island.cc.resources.auth.auth import jwt_required
-from monkey_island.cc.services.config_manipulator import update_config_on_mode_set
-from monkey_island.cc.services.mode.island_mode_service import ModeNotSetError, get_mode, set_mode
-from monkey_island.cc.services.mode.mode_enum import IslandModeEnum
+from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.models import IslandMode as IslandModeEnum
+from monkey_island.cc.repositories import ISimulationRepository
+from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.request_authentication import jwt_required
 
 logger = logging.getLogger(__name__)
 
 
-class IslandMode(flask_restful.Resource):
+class IslandMode(AbstractResource):
+    urls = ["/api/island/mode"]
+
+    def __init__(
+        self,
+        island_event_queue: IIslandEventQueue,
+        simulation_repository: ISimulationRepository,
+    ):
+        self._island_event_queue = island_event_queue
+        self._simulation_repository = simulation_repository
+
     @jwt_required
-    def post(self):
+    def put(self):
         try:
-            body = json.loads(request.data)
-            mode_str = body.get("mode")
-
-            mode = IslandModeEnum(mode_str)
-            set_mode(mode)
-
-            if not update_config_on_mode_set(mode):
-                logger.error(
-                    "Could not apply configuration changes per mode. "
-                    "Using default advanced configuration."
-                )
-
-            return make_response({}, 200)
+            mode = IslandModeEnum(request.json)
+            self._island_event_queue.publish(topic=IslandEventTopic.SET_ISLAND_MODE, mode=mode)
+            return {}, HTTPStatus.NO_CONTENT
         except (AttributeError, json.decoder.JSONDecodeError):
-            return make_response({}, 400)
+            return {}, HTTPStatus.BAD_REQUEST
         except ValueError:
-            return make_response({}, 422)
+            return {}, HTTPStatus.UNPROCESSABLE_ENTITY
 
     @jwt_required
     def get(self):
-        try:
-            island_mode = get_mode()
-            return make_response({"mode": island_mode}, 200)
-
-        except ModeNotSetError:
-            return make_response({"mode": None}, 200)
+        island_mode = self._simulation_repository.get_mode()
+        return island_mode.value, HTTPStatus.OK

@@ -1,41 +1,28 @@
-from infection_monkey.config import GUID
-from infection_monkey.model.host import VictimHost
+import pytest
+
 from infection_monkey.utils.commands import (
     build_monkey_commandline,
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
+from infection_monkey.utils.ids import get_agent_id
 
 
 def test_build_monkey_commandline_explicitly_arguments():
     expected = [
         "-p",
         "101010",
-        "-t",
-        "10.10.101.10",
         "-s",
-        "127.127.127.127:5000",
+        "127.127.127.127:5000,138.138.138.138:5007",
         "-d",
         "0",
         "-l",
         "C:\\windows\\abc",
-        "-vp",
-        "80",
     ]
     actual = build_monkey_commandline_explicitly(
-        "101010", "10.10.101.10", "127.127.127.127:5000", 0, "C:\\windows\\abc", "80"
+        "101010", ["127.127.127.127:5000", "138.138.138.138:5007"], 0, "C:\\windows\\abc"
     )
-
-    assert expected == actual
-
-
-def test_build_monkey_commandline_explicitly_depth_condition_less():
-    expected = [
-        "-d",
-        "0",
-    ]
-    actual = build_monkey_commandline_explicitly(depth=-50)
 
     assert expected == actual
 
@@ -58,17 +45,12 @@ def test_get_monkey_commandline_windows():
         "m0nk3y",
         "-p",
         "101010",
-        "-t",
-        "10.10.101.10",
+        "-s",
+        "127.127.127.127:5000,138.138.138.138:5007",
     ]
     actual = get_monkey_commandline_windows(
         "C:\\windows\\abc",
-        [
-            "-p",
-            "101010",
-            "-t",
-            "10.10.101.10",
-        ],
+        ["-p", "101010", "-s", "127.127.127.127:5000,138.138.138.138:5007"],
     )
 
     assert expected == actual
@@ -80,29 +62,30 @@ def test_get_monkey_commandline_linux():
         "m0nk3y",
         "-p",
         "101010",
-        "-t",
-        "10.10.101.10",
+        "-s",
+        "127.127.127.127:5000,138.138.138.138:5007",
     ]
     actual = get_monkey_commandline_linux(
         "/home/user/monkey-linux-64",
-        [
-            "-p",
-            "101010",
-            "-t",
-            "10.10.101.10",
-        ],
+        ["-p", "101010", "-s", "127.127.127.127:5000,138.138.138.138:5007"],
     )
 
     assert expected == actual
 
 
 def test_build_monkey_commandline():
-    example_host = VictimHost(ip_addr="bla")
-    example_host.set_default_server("101010")
+    servers = ["10.10.10.10:5000", "11.11.11.11:5007"]
 
-    expected = f" -p {GUID} -s 101010 -d 0 -l /home/bla -vp 80"
-    actual = build_monkey_commandline(
-        target_host=example_host, depth=0, vulnerable_port="80", location="/home/bla"
-    )
+    expected = f" -p {get_agent_id()} -s 10.10.10.10:5000,11.11.11.11:5007 -d 0 -l /home/bla"
+    actual = build_monkey_commandline(servers=servers, depth=0, location="/home/bla")
+
+    assert expected == actual
+
+
+@pytest.mark.parametrize("servers", [None, []])
+def test_build_monkey_commandline_empty_servers(servers):
+
+    expected = f" -p {get_agent_id()} -d 0 -l /home/bla"
+    actual = build_monkey_commandline(servers, depth=0, location="/home/bla")
 
     assert expected == actual

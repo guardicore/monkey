@@ -1,22 +1,39 @@
-import re
-from urllib.parse import urlparse
+import ipaddress
+from ipaddress import IPv4Address, IPv4Interface
+from typing import List, Optional, Sequence, Tuple
+
+from netifaces import AF_INET, ifaddresses, interfaces
 
 
-def get_host_from_network_location(network_location: str) -> str:
+def get_my_ip_addresses() -> Sequence[IPv4Address]:
+    return [interface.ip for interface in get_network_interfaces()]
+
+
+def get_network_interfaces() -> List[IPv4Interface]:
+    local_interfaces = []
+    for interface in interfaces():
+        addresses = ifaddresses(interface).get(AF_INET, [])
+        local_interfaces.extend(
+            [
+                ipaddress.IPv4Interface(link["addr"] + "/" + link["netmask"])
+                for link in addresses
+                if link["addr"] != "127.0.0.1"
+            ]
+        )
+    return local_interfaces
+
+
+# TODO: `address_to_port()` should return the port as an integer.
+def address_to_ip_port(address: str) -> Tuple[str, Optional[str]]:
     """
-    URL structure is "<scheme>://<net_loc>/<path>;<params>?<query>#<fragment>" (
-    https://tools.ietf.org/html/rfc1808.html)
-    And the net_loc is "<user>:<password>@<host>:<port>" (
-    https://tools.ietf.org/html/rfc1738#section-3.1)
-    :param network_location:  server network location
-    :return:  host part of the network location
+    Split a string containing an IP address (and optionally a port) into IP and Port components.
+    Currently only works for IPv4 addresses.
+
+    :param address: The address string.
+    :return: Tuple of IP and port strings. The port may be None if no port was in the address.
     """
-    url = urlparse("http://" + network_location)
-    return str(url.hostname)
-
-
-def remove_port(url):
-    parsed = urlparse(url)
-    with_port = f"{parsed.scheme}://{parsed.netloc}"
-    without_port = re.sub(":[0-9]+(?=$|/)", "", with_port)
-    return without_port
+    if ":" in address:
+        ip, port = address.split(":")
+        return ip, port or None
+    else:
+        return address, None

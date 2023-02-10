@@ -1,18 +1,23 @@
+import logging
 import platform
 import subprocess
 import sys
 
+from common.common_consts.timeouts import SHORT_REQUEST_TIMEOUT
+
+logger = logging.getLogger(__name__)
+
 
 def _run_netsh_cmd(command, args):
-    cmd = subprocess.Popen(
+    output = subprocess.check_output(
         "netsh %s %s"
         % (
             command,
             " ".join(['%s="%s"' % (key, value) for key, value in list(args.items()) if value]),
         ),
-        stdout=subprocess.PIPE,
+        timeout=SHORT_REQUEST_TIMEOUT,
     )
-    return cmd.stdout.read().strip().lower().endswith("ok.")
+    return output.strip().lower().endswith(b"ok.")
 
 
 class FirewallApp(object):
@@ -44,19 +49,23 @@ class WinAdvFirewall(FirewallApp):
 
     def is_enabled(self):
         try:
-            cmd = subprocess.Popen("netsh advfirewall show currentprofile", stdout=subprocess.PIPE)
-            out = cmd.stdout.readlines()
-
-            for line in out:
-                if line.startswith("State"):
-                    state = line.split()[-1].strip()
-
-            return state == "ON"
+            out = subprocess.check_output(
+                "netsh advfirewall show currentprofile", timeout=SHORT_REQUEST_TIMEOUT
+            )
+        except subprocess.TimeoutExpired:
+            return None
         except Exception:
             return None
 
+        for line in out.decode().splitlines():
+            if line.startswith("State"):
+                state = line.split()[-1].strip()
+                return state == "ON"
+
+        return None
+
     def add_firewall_rule(
-        self, name="Firewall", direction="in", action="allow", program=sys.executable, **kwargs
+        self, name="MonkeyRule", direction="in", action="allow", program=sys.executable, **kwargs
     ):
         netsh_args = {"name": name, "dir": direction, "action": action, "program": program}
         netsh_args.update(kwargs)
@@ -66,8 +75,11 @@ class WinAdvFirewall(FirewallApp):
                 return True
             else:
                 return False
-        except Exception:
-            return None
+        except subprocess.CalledProcessError as err:
+            logger.info(f"Failed adding a firewall rule: {err.stdout}")
+        except subprocess.TimeoutExpired:
+            logger.info("Timeout expired trying to add a firewall rule.")
+        return None
 
     def remove_firewall_rule(self, name="Firewall", **kwargs):
         netsh_args = {"name": name}

@@ -1,37 +1,58 @@
 import React, {useEffect, useState} from 'react';
-import IslandHttpClient from '../../IslandHttpClient';
 import NumberedReportSection from './NumberedReportSection';
 import LoadingIcon from '../../ui-components/LoadingIcon';
 import {renderLimitedArray} from '../common/RenderArrays';
 import ExternalLink from '../common/ExternalLink';
+import {getAllAgents, getAllMachines, getManuallyStartedAgents, getMachineByAgent, getMachineHostname, getMachineIPs} from '../../utils/ServerUtils';
+import {parseTimeToDateString} from '../../utils/DateUtils';
 
 const BREACH_DESCRIPTION = <>
                              Ransomware attacks start after machines in the internal network get
-                             compromised. The initial compromise was simulated by running Monkey Agents
+                             compromised. The initial compromise was simulated by running Infection Monkey Agents
                              manually. Detecting ransomware at this stage will minimize the impact to the
                              organization.
                              <br />
                              <br />
                              <ExternalLink
-                               url="https://www.guardicore.com/blog/4-techniques-for-early-ransomware-detection/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
-                               text="Learn techniques for early ransomware detection on Guardicore's blog"
+                               url="https://www.akamai.com/blog/security/4-techniques-for-early-ransomware-detection/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
+                               text="Learn techniques for early ransomware detection on Akamai's blog"
                              />
                            </>
 
 function BreachSection() {
+  const [agents, setAgents] = useState(null);
   const [machines, setMachines] = useState(null);
 
   useEffect(() => {
-    IslandHttpClient.get('/api/exploitations/manual')
-      .then(resp => setMachines(resp.body['manual_exploitations']));
+    getAllAgents().then(agents => setAgents(agents));
+    getAllMachines().then(machines => setMachines(machines));
   }, []);
 
-  if(machines !== null){
-    let body = getBreachSectionBody(machines);
+  if((machines !== null) && (agents !== null)){
+    let manuallyExploitedMachines = getManuallyExploitedMachines(agents, machines);
+    let body = getBreachSectionBody(manuallyExploitedMachines);
     return (<NumberedReportSection index={1} title={'Breach'} description={BREACH_DESCRIPTION} body={body}/>)
   } else {
     return <LoadingIcon />
   }
+}
+
+function getManuallyExploitedMachines(agents, machines){
+  let manuallyExploitedMachines = [];
+  let manuallyStartedAgents = getManuallyStartedAgents(agents);
+  for (let agent of manuallyStartedAgents) {
+    let machine = getMachineByAgent(agent, machines);
+    if (machine !== null){
+      let manuallyExploitatedMachine = {};
+      manuallyExploitatedMachine['hostname'] = getMachineHostname(machine);
+      manuallyExploitatedMachine['ip_addresses'] = getMachineIPs(machine);
+      manuallyExploitatedMachine['start_time'] = parseTimeToDateString(agent['start_time']);
+
+      manuallyExploitedMachines.push(manuallyExploitatedMachine);
+    }
+  }
+
+  return manuallyExploitedMachines;
 }
 
 function getBreachSectionBody(machines) {
@@ -51,7 +72,7 @@ function getBreachSectionBody(machines) {
 
 function getMachine(machine) {
   return (
-    <li key={machine['hostname']}>
+    <li key={machine['hostname']+machine['start_time']}>
     <b>{machine['hostname']}</b>&nbsp;
       ({renderLimitedArray(machine['ip_addresses'], 2, 'ip-address')}) at <b>{machine['start_time']}</b>
     </li>

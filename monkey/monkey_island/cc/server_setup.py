@@ -2,13 +2,20 @@ import atexit
 import json
 import logging
 import sys
+from ipaddress import IPv4Address
 from pathlib import Path
-from sys import exit
 from threading import Thread
-from typing import Tuple
+from typing import Optional, Sequence, Tuple
 
 import gevent.hub
+import requests
 from gevent.pywsgi import WSGIServer
+
+from monkey_island.cc import Version
+from monkey_island.cc.deployment import Deployment
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
+from monkey_island.cc.server_utils.island_logger import get_log_file_path
+from monkey_island.cc.setup.config_setup import get_server_config
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
 # "monkey_island." work.
@@ -16,24 +23,26 @@ MONKEY_ISLAND_DIR_BASE_PATH = str(Path(__file__).parent.parent)
 if str(MONKEY_ISLAND_DIR_BASE_PATH) not in sys.path:
     sys.path.insert(0, MONKEY_ISLAND_DIR_BASE_PATH)
 
-import monkey_island.cc.environment.environment_singleton as env_singleton  # noqa: E402
-import monkey_island.cc.setup.config_setup as config_setup  # noqa: E402
+from common import DIContainer  # noqa: E402
+from common.network.network_utils import get_my_ip_addresses  # noqa: E402
 from common.version import get_version  # noqa: E402
 from monkey_island.cc.app import init_app  # noqa: E402
 from monkey_island.cc.arg_parser import IslandCmdArgs  # noqa: E402
 from monkey_island.cc.arg_parser import parse_cli_args  # noqa: E402
-from monkey_island.cc.resources.monkey_download import MonkeyDownload  # noqa: E402
-from monkey_island.cc.server_utils.bootloader_server import BootloaderHttpServer  # noqa: E402
 from monkey_island.cc.server_utils.consts import (  # noqa: E402
     GEVENT_EXCEPTION_LOG,
     MONGO_CONNECTION_TIMEOUT,
+    MONKEY_ISLAND_ABS_PATH,
 )
 from monkey_island.cc.server_utils.island_logger import reset_logger, setup_logging  # noqa: E402
 from monkey_island.cc.services.initialize import initialize_services  # noqa: E402
-from monkey_island.cc.services.reporting.exporter_init import populate_exporter_list  # noqa: E402
-from monkey_island.cc.services.utils.network_utils import local_ip_addresses  # noqa: E402
-from monkey_island.cc.setup import island_config_options_validator  # noqa: E402
-from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory  # noqa: E402
+from monkey_island.cc.setup import (  # noqa: E402
+    PyWSGILoggingFilter,
+    island_config_options_validator,
+    setup_agent_event_handlers,
+    setup_island_event_handlers,
+)
+from monkey_island.cc.setup.data_dir import IncompatibleDataDirectory, setup_data_dir  # noqa: E402
 from monkey_island.cc.setup.gevent_hub_error_handler import GeventHubErrorHandler  # noqa: E402
 from monkey_island.cc.setup.island_config_options import IslandConfigOptions  # noqa: E402
 from monkey_island.cc.setup.mongo import mongo_setup  # noqa: E402
@@ -44,43 +53,47 @@ logger = logging.getLogger(__name__)
 
 def run_monkey_island():
     island_args = parse_cli_args()
-    config_options, server_config_path = _setup_data_dir(island_args)
-
+    config_options = _extract_config(island_args)
     _exit_on_invalid_config_options(config_options)
 
+    _setup_data_dir(config_options.data_dir)
     _configure_logging(config_options)
-    _initialize_globals(config_options, server_config_path)
 
-    mongo_db_process = None
-    if config_options.start_mongodb:
-        mongo_db_process = _start_mongodb(config_options.data_dir)
+    ip_addresses, deployment, version = _collect_system_info()
 
-    _connect_to_mongodb(mongo_db_process)
+    _send_analytics(deployment, version)
 
-    _configure_gevent_exception_handling(Path(config_options.data_dir))
-    _start_island_server(island_args.setup_only, config_options)
+    _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
+
+    container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
+    setup_island_event_handlers(container)
+    setup_agent_event_handlers(container)
+
+    _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
 
 
-def _setup_data_dir(island_args: IslandCmdArgs) -> Tuple[IslandConfigOptions, str]:
+def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
     try:
-        return config_setup.setup_server_config(island_args)
-    except OSError as ex:
-        print(f"Error opening server config file: {ex}")
-        exit(1)
-    except json.JSONDecodeError as ex:
-        print(f"Error loading server config: {ex}")
-        exit(1)
-    except IncompatibleDataDirectory as ex:
-        print(f"Incompatible data directory: {ex}")
-        exit(1)
+        return get_server_config(island_args)
+    except json.JSONDecodeError as err:
+        print(f"Error loading server config: {err}")
+        sys.exit(1)
+
+
+def _setup_data_dir(data_dir_path: Path):
+    try:
+        setup_data_dir(data_dir_path)
+    except IncompatibleDataDirectory as err:
+        print(f"Incompatible data directory: {err}")
+        sys.exit(1)
 
 
 def _exit_on_invalid_config_options(config_options: IslandConfigOptions):
     try:
         island_config_options_validator.raise_on_invalid_options(config_options)
-    except Exception as ex:
-        print(f"Configuration error: {ex}")
-        exit(1)
+    except Exception as err:
+        print(f"Configuration error: {err}")
+        sys.exit(1)
 
 
 def _configure_logging(config_options):
@@ -88,10 +101,48 @@ def _configure_logging(config_options):
     setup_logging(config_options.data_dir, config_options.log_level)
 
 
-def _initialize_globals(config_options: IslandConfigOptions, server_config_path: str):
-    env_singleton.initialize_from_file(server_config_path)
+def _collect_system_info() -> Tuple[Sequence[IPv4Address], Deployment, Version]:
+    deployment = _get_deployment()
+    version = Version(get_version(), deployment)
+    return (get_my_ip_addresses(), deployment, version)
 
-    initialize_services(config_options.data_dir)
+
+def _get_deployment() -> Deployment:
+    deployment_file_path = Path(MONKEY_ISLAND_ABS_PATH) / "cc" / "deployment.json"
+    try:
+        with open(deployment_file_path, "r") as deployment_info_file:
+            deployment_info = json.load(deployment_info_file)
+            return Deployment[deployment_info["deployment"].upper()]
+    except KeyError as err:
+        raise Exception(
+            f"The deployment file ({deployment_file_path}) did not contain the expected data: "
+            f"missing key {err}"
+        )
+    except Exception as err:
+        raise Exception(f"Failed to fetch the deployment from {deployment_file_path}: {err}")
+
+
+def _initialize_di_container(
+    ip_addresses: Sequence[IPv4Address], version: Version, data_dir: Path
+) -> DIContainer:
+    container = DIContainer()
+
+    container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
+    container.register_instance(Version, version)
+    container.register_convention(Path, "data_dir", data_dir)
+    container.register_convention(Path, "island_log_file_path", get_log_file_path(data_dir))
+
+    initialize_services(container, data_dir)
+
+    return container
+
+
+def _initialize_mongodb_connection(start_mongodb: bool, data_dir: Path):
+    mongo_db_process = None
+    if start_mongodb:
+        mongo_db_process = _start_mongodb(data_dir)
+
+    _connect_to_mongodb(mongo_db_process)
 
 
 def _start_mongodb(data_dir: Path) -> MongoDbProcess:
@@ -101,23 +152,54 @@ def _start_mongodb(data_dir: Path) -> MongoDbProcess:
     return mongo_db_process
 
 
-def _connect_to_mongodb(mongo_db_process: MongoDbProcess):
+def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
     try:
         mongo_setup.connect_to_mongodb(MONGO_CONNECTION_TIMEOUT)
-    except mongo_setup.MongoDBTimeOutError as ex:
+    except mongo_setup.MongoDBTimeOutError as err:
         if mongo_db_process and not mongo_db_process.is_running():
             logger.error(
                 f"Failed to start MongoDB process. Check log at {mongo_db_process.log_file}."
             )
         else:
-            logger.error(ex)
+            logger.error(err)
         sys.exit(1)
-    except mongo_setup.MongoDBVersionError as ex:
-        logger.error(ex)
+    except mongo_setup.MongoDBVersionError as err:
+        logger.error(err)
         sys.exit(1)
 
 
-def _configure_gevent_exception_handling(data_dir):
+def _start_island_server(
+    ip_addresses: Sequence[IPv4Address],
+    should_setup_only: bool,
+    config_options: IslandConfigOptions,
+    container: DIContainer,
+):
+    _configure_gevent_exception_handling(config_options.data_dir)
+
+    app = init_app(mongo_setup.MONGO_URL, container)
+
+    if should_setup_only:
+        logger.warning("Setup only flag passed. Exiting.")
+        return
+
+    logger.info(
+        f"Using certificate path: {config_options.crt_path}, and key path: "
+        f"{config_options.key_path}."
+    )
+
+    http_server = WSGIServer(
+        ("0.0.0.0", ISLAND_PORT),
+        app,
+        certfile=config_options.crt_path,
+        keyfile=config_options.key_path,
+        log=_get_wsgi_server_logger(),
+        error_log=logger,
+    )
+    _log_init_info(ip_addresses)
+    http_server.serve_forever()
+
+
+def _configure_gevent_exception_handling(data_dir: Path):
     hub = gevent.hub.get_hub()
 
     gevent_exception_log = open(data_dir / GEVENT_EXCEPTION_LOG, "w+", buffering=1)
@@ -129,61 +211,44 @@ def _configure_gevent_exception_handling(data_dir):
     hub.handle_error = GeventHubErrorHandler(hub, logger)
 
 
-def _start_island_server(should_setup_only, config_options: IslandConfigOptions):
-    populate_exporter_list()
-    app = init_app(mongo_setup.MONGO_URL)
+def _get_wsgi_server_logger() -> logging.Logger:
+    wsgi_server_logger = logger.getChild("wsgi")
+    wsgi_server_logger.addFilter(PyWSGILoggingFilter())
 
-    if should_setup_only:
-        logger.warning("Setup only flag passed. Exiting.")
-        return
-
-    bootloader_server_thread = _start_bootloader_server()
-
-    logger.info(
-        f"Using certificate path: {config_options.crt_path}, and key path: "
-        f"{config_options.key_path}."
-    )
-
-    if env_singleton.env.is_debug():
-        app.run(
-            host="0.0.0.0",
-            debug=True,
-            ssl_context=(config_options.crt_path, config_options.key_path),
-        )
-    else:
-        http_server = WSGIServer(
-            ("0.0.0.0", env_singleton.env.get_island_port()),
-            app,
-            certfile=config_options.crt_path,
-            keyfile=config_options.key_path,
-            log=logger,
-            error_log=logger,
-        )
-        _log_init_info()
-        http_server.serve_forever()
-
-    bootloader_server_thread.join()
+    return wsgi_server_logger
 
 
-def _start_bootloader_server() -> Thread:
-    bootloader_server_thread = Thread(target=BootloaderHttpServer().serve_forever, daemon=True)
-
-    bootloader_server_thread.start()
-
-    return bootloader_server_thread
-
-
-def _log_init_info():
+def _log_init_info(ip_addresses: Sequence[IPv4Address]):
     logger.info("Monkey Island Server is running!")
     logger.info(f"version: {get_version()}")
+
+    _log_web_interface_access_urls(ip_addresses)
+
+
+def _log_web_interface_access_urls(ip_addresses: Sequence[IPv4Address]):
+    web_interface_urls = ", ".join([f"https://{ip}:{ISLAND_PORT}" for ip in ip_addresses])
     logger.info(
-        "Listening on the following URLs: {}".format(
-            ", ".join(
-                [
-                    "https://{}:{}".format(x, env_singleton.env.get_island_port())
-                    for x in local_ip_addresses()
-                ]
-            )
-        )
+        "To access the web interface, navigate to one of the the following URLs using your "
+        f"browser: {web_interface_urls}"
     )
-    MonkeyDownload.log_executable_hashes()
+
+
+def _send_analytics(deployment: Deployment, version: Version):
+    def _inner(deployment: Deployment, version: Version):
+        url = (
+            "https://m15mjynko3.execute-api.us-east-1.amazonaws.com/default"
+            f"?version={version.version_number}&deployment={deployment.value}"
+        )
+
+        try:
+            response = requests.get(url).json()
+            logger.info(
+                f"Version number and deployment type was sent to analytics server. "
+                f"The response is: {response}"
+            )
+        except requests.exceptions.ConnectionError as err:
+            logger.info(
+                f"Failed to send deployment type and version number to the analytics server: {err}"
+            )
+
+    Thread(target=_inner, args=(deployment, version), daemon=True).start()

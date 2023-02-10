@@ -1,122 +1,122 @@
+# serpentarium must be the first import, as it needs to save the state of the
+# import system prior to any imports
+# isort: off
+import serpentarium  # noqa: F401
+from serpentarium.logging import configure_host_process_logger
+
+# isort: on
 import argparse
-import json
 import logging
-import logging.config
+import logging.handlers
 import os
 import sys
+import tempfile
+import time
 import traceback
-from multiprocessing import freeze_support
-from pprint import pformat
+from multiprocessing import Queue, freeze_support, get_context
+from pathlib import Path
+from typing import Sequence, Tuple, Union
 
 # dummy import for pyinstaller
 # noinspection PyUnresolvedReferences
-import infection_monkey.post_breach  # noqa: F401
 from common.version import get_version
-from infection_monkey.config import EXTERNAL_CONFIG_FILE, WormConfiguration
 from infection_monkey.dropper import MonkeyDrops
 from infection_monkey.model import DROPPER_ARG, MONKEY_ARG
 from infection_monkey.monkey import InfectionMonkey
-from infection_monkey.utils.monkey_log_path import get_dropper_log_path, get_monkey_log_path
-
-logger = None
-
-LOG_CONFIG = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {
-            "format": "%(asctime)s [%(process)d:%(thread)d:%(levelname)s] %(module)s.%("
-            "funcName)s.%(lineno)d: %(message)s"
-        },
-    },
-    "handlers": {
-        "console": {"class": "logging.StreamHandler", "level": "DEBUG", "formatter": "standard"},
-        "file": {
-            "class": "logging.FileHandler",
-            "level": "DEBUG",
-            "formatter": "standard",
-            "filename": None,
-        },
-    },
-    "root": {"level": "DEBUG", "handlers": ["console"]},
-}
 
 
 def main():
-    global logger
-
-    if 2 > len(sys.argv):
-        return True
     freeze_support()  # required for multiprocessing + pyinstaller on windows
-    monkey_mode = sys.argv[1]
 
-    if not (monkey_mode in [MONKEY_ARG, DROPPER_ARG]):
-        return True
+    mode, mode_specific_args = _parse_args()
 
-    config_file = EXTERNAL_CONFIG_FILE
+    # TODO: Use an Enum for this
+    if mode not in [MONKEY_ARG, DROPPER_ARG]:
+        raise ValueError(f'The mode argument must be either "{MONKEY_ARG}" or "{DROPPER_ARG}"')
 
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("-c", "--config")
-    opts, monkey_args = arg_parser.parse_known_args(sys.argv[2:])
-    if opts.config:
-        config_file = opts.config
-    if os.path.isfile(config_file):
-        # using print because config can also change log locations
-        print("Loading config from %s." % config_file)
-        try:
-            with open(config_file) as config_fo:
-                json_dict = json.load(config_fo)
-                WormConfiguration.from_kv(json_dict)
-        except ValueError as e:
-            print("Error loading config: %s, using default" % (e,))
-    else:
-        print(
-            "Config file wasn't supplied and default path: %s wasn't found, using internal "
-            "default" % (config_file,)
-        )
+    multiprocessing_context = get_context(method="spawn")
+    ipc_logger_queue = multiprocessing_context.Queue()
 
-    formatted_config = pformat(WormConfiguration.hide_sensitive_info(WormConfiguration.as_dict()))
-    print(f"Loaded Configuration:\n{formatted_config}")
+    log_path = _create_secure_log_file(mode)
 
-    # Make sure we're not in a machine that has the kill file
-    kill_path = (
-        os.path.expandvars(WormConfiguration.kill_file_path_windows)
-        if sys.platform == "win32"
-        else WormConfiguration.kill_file_path_linux
-    )
-    if os.path.exists(kill_path):
-        print("Kill path found, finished run")
-        return True
+    queue_listener = _configure_queue_listener(ipc_logger_queue, log_path)
+    queue_listener.start()
+
+    logger = _configure_logger()
+    logger.info(f"writing log file to {log_path}")
 
     try:
-        if MONKEY_ARG == monkey_mode:
-            log_path = get_monkey_log_path()
-            monkey_cls = InfectionMonkey
-        elif DROPPER_ARG == monkey_mode:
-            log_path = get_dropper_log_path()
-            monkey_cls = MonkeyDrops
-        else:
-            return True
-    except ValueError:
-        return True
+        _run_agent(mode, mode_specific_args, ipc_logger_queue, logger, log_path)
+    except Exception as err:
+        logger.exception(f"An unexpected error occurred while running the agent: {err}")
+    finally:
+        logger.debug("Stopping the queue listener")
+        queue_listener.stop()
 
-    if WormConfiguration.use_file_logging:
-        if os.path.exists(log_path):
-            # If log exists but can't be removed it means other monkey is running. This usually
-            # happens on upgrade
-            # from 32bit to 64bit monkey on Windows. In all cases this shouldn't be a problem.
-            try:
-                os.remove(log_path)
-            except OSError:
-                pass
-        LOG_CONFIG["handlers"]["file"]["filename"] = log_path
-        # noinspection PyUnresolvedReferences
-        LOG_CONFIG["root"]["handlers"].append("file")
-    else:
-        del LOG_CONFIG["handlers"]["file"]
 
-    logging.config.dictConfig(LOG_CONFIG)
+def _parse_args() -> Tuple[str, Sequence[str]]:
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument(
+        "mode",
+        choices=[MONKEY_ARG, DROPPER_ARG],
+        help=f"'{MONKEY_ARG}' mode will run the agent in the current session/terminal."
+        f"'{DROPPER_ARG}' will detach the agent from the current session "
+        f"and will start it on a separate process.",
+    )
+    mode_args, mode_specific_args = arg_parser.parse_known_args()
+    mode = str(mode_args.mode)
+
+    return mode, mode_specific_args
+
+
+def _create_secure_log_file(monkey_arg: str) -> Path:
+    """
+    Create and cache secure log file
+
+    :param monkey_arg: Argument for the agent. Possible `agent` or `dropper`
+    :return: Path of the secure log file
+    """
+    mode = "agent" if monkey_arg == MONKEY_ARG else "dropper"
+    timestamp = time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())
+    prefix = f"infection-monkey-{mode}-{timestamp}-"
+    suffix = ".log"
+
+    handle, monkey_log_path = tempfile.mkstemp(suffix=suffix, prefix=prefix)
+    os.close(handle)
+
+    return Path(monkey_log_path)
+
+
+def _configure_queue_listener(
+    ipc_logger_queue: Queue, log_file_path: Path
+) -> logging.handlers.QueueListener:
+    """
+    Gets unstarted configured QueueListener object
+
+    We configure the root logger to use QueueListener with Stream and File handler.
+
+    :param ipc_logger_queue: A Queue shared by the host and child process that stores log messages
+    :param log_path: A Path used to configure the FileHandler
+    """
+    log_format = (
+        "%(asctime)s [%(process)d:%(threadName)s:%(levelname)s] %(module)s.%("
+        "funcName)s.%(lineno)d: %(message)s"
+    )
+    formatter = logging.Formatter(log_format)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+
+    file_handler = logging.FileHandler(log_file_path)
+    file_handler.setFormatter(formatter)
+
+    queue_listener = configure_host_process_logger(ipc_logger_queue, [stream_handler, file_handler])
+    return queue_listener
+
+
+def _configure_logger() -> logging.Logger:
     logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
 
     def log_uncaught_exceptions(ex_cls, ex, tb):
         logger.critical("".join(traceback.format_tb(tb)))
@@ -124,37 +124,43 @@ def main():
 
     sys.excepthook = log_uncaught_exceptions
 
+    return logger
+
+
+def _run_agent(
+    mode: str,
+    mode_specific_args: Sequence[str],
+    ipc_logger_queue: Queue,
+    logger: logging.Logger,
+    log_path: Path,
+):
     logger.info(
-        ">>>>>>>>>> Initializing monkey (%s): PID %s <<<<<<<<<<", monkey_cls.__name__, os.getpid()
+        ">>>>>>>>>> Initializing the Infection Monkey Agent: PID %s <<<<<<<<<<", os.getpid()
     )
 
     logger.info(f"version: {get_version()}")
 
-    monkey = monkey_cls(monkey_args)
-    monkey.initialize()
+    monkey: Union[InfectionMonkey, MonkeyDrops]
+    if MONKEY_ARG == mode:
+        monkey = InfectionMonkey(
+            mode_specific_args, ipc_logger_queue=ipc_logger_queue, log_path=log_path
+        )
+    elif DROPPER_ARG == mode:
+        monkey = MonkeyDrops(mode_specific_args)
 
     try:
+        logger.info(f"Starting {monkey.__class__.__name__}")
         monkey.start()
+    except Exception as err:
+        logger.exception("Exception thrown from monkey's start function. More info: {}".format(err))
 
-        if WormConfiguration.serialize_config:
-            with open(config_file, "w") as config_fo:
-                json_dict = WormConfiguration.as_dict()
-                json.dump(
-                    json_dict,
-                    config_fo,
-                    skipkeys=True,
-                    sort_keys=True,
-                    indent=4,
-                    separators=(",", ": "),
-                )
-
-        return True
-    except Exception as e:
-        logger.exception("Exception thrown from monkey's start function. More info: {}".format(e))
-    finally:
+    try:
         monkey.cleanup()
+    except Exception as err:
+        logger.exception(
+            "Exception thrown from monkey's cleanup function: More info: {}".format(err)
+        )
 
 
 if "__main__" == __name__:
-    if not main():
-        sys.exit(1)
+    main()

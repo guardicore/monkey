@@ -100,40 +100,6 @@ $black: #000000;
   }
 }
 
-.attack-matrix .ui-checkbox-btn label {
-  width:100%;
-  font-weight: 700;
-  padding-top: 0;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin-bottom: 5px;
-  margin-top: 5px;
-}
-
-.attack-matrix div.rt-td>div {
-  height: 100%;
-  padding: 0;
-}
-
-.attack-matrix div.rt-td {
-  padding: 0;
-  border-right: 3px solid rgba(0,0,0,0) !important;
-}
-
-.attack-matrix .rt-tr-group div.rt-td:first-child {
-  border-left: 3px solid rgba(0,0,0,0) !important;
-}
-
-
-.attack-matrix .rt-tr-group {
-  border-top: 3px solid white !important;
-  border-bottom: none !important;
-}
-
-.attack-matrix .rt-tr-group:last-child {
-  margin-bottom: 3px !important;
-}
-
 .icon-checked {
   color: $green
 }

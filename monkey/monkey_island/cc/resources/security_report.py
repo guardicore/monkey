@@ -1,10 +1,12 @@
-import flask_restful
-
-from monkey_island.cc.resources.auth.auth import jwt_required
+from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.reporting.report import ReportService
 
 
-class SecurityReport(flask_restful.Resource):
+class SecurityReport(AbstractResource):
+    urls = ["/api/report/security"]
+
     @jwt_required
     def get(self):
+        ReportService.update_report()
         return ReportService.get_report()

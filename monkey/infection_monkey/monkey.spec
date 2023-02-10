@@ -5,13 +5,10 @@ import sys
 
 
 
-from PyInstaller.utils.hooks import collect_data_files
-
 block_cipher = None
 
 
 def main():
-    print(collect_data_files('policyuniverse'))
     a = Analysis(['main.py'],
                  pathex=['..'],
                  hiddenimports=get_hidden_imports(),
@@ -25,7 +22,6 @@ def main():
                  cipher=block_cipher
                  )
 
-    a.binaries += get_binaries()
     a.datas = process_datas(a.datas)
 
     pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
@@ -47,10 +43,6 @@ def is_windows():
     return platform.system().find("Windows") >= 0
 
 
-def is_32_bit():
-    return sys.maxsize <= 2 ** 32
-
-
 def get_bin_folder():
     return os.path.join('.', 'bin')
 
@@ -63,36 +55,26 @@ def process_datas(orig_datas):
     datas = orig_datas
     if is_windows():
         datas = [i for i in datas if i[0].find('Include') < 0]
+    else:
+        datas = [i for i in datas if not i[0].endswith("T1216_random_executable.exe")]
     return datas
-
-
-def get_binaries():
-    return get_sc_binaries()
 
 
 def get_hidden_imports():
     imports = ['_cffi_backend', '_mssql']
     if is_windows():
         imports.append('queue')
+        imports.append('pkg_resources.py2_warn')
     return imports
-
-
-def get_sc_binaries():
-    return [(x, get_bin_file_path(x), 'BINARY') for x in ['sc_monkey_runner32.so', 'sc_monkey_runner64.so']]
 
 
 def get_monkey_filename():
     name = 'monkey-'
     if is_windows():
-        name = name + "windows-"
+        name = name + "windows-64.exe"
     else:
-        name = name + "linux-"
-    if is_32_bit():
-        name = name + "32"
-    else:
-        name = name + "64"
-    if is_windows():
-        name = name + ".exe"
+        name = name + "linux-64"
+
     return name
 
 

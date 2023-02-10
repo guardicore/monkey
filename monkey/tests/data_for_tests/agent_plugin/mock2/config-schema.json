@@ -1,0 +1,29 @@
+{
+    "title": "Mock2 exploiter",
+    "description": "Configuration settings for Mock2 exploiter.",
+    "type": "object",
+    "properties": {
+        "list_of_strings": {
+            "title": "List of random strings",
+            "description": "A list of random strings for testing",
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "string"
+            },
+            "default": []
+        },
+        "exploitation_success": {
+            "title": "Exploitation success",
+            "description": "A boolean field that will determine if the exploitation is successful",
+            "type": "boolean",
+            "default": true
+        },
+        "propagation_success": {
+            "title": "Propagation success",
+            "description": "A boolean field that will determine if the exploitation is successful",
+            "type": "boolean",
+            "default": false
+        }
+    }
+}

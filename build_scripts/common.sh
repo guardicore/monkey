@@ -42,9 +42,7 @@ download_monkey_agent_binaries() {
   load_monkey_binary_config
 
   mkdir -p "${island_binaries_path}" || handle_error
-  curl -L -o "${island_binaries_path}/${LINUX_32_BINARY_NAME}" "${LINUX_32_BINARY_URL}"
   curl -L -o "${island_binaries_path}/${LINUX_64_BINARY_NAME}" "${LINUX_64_BINARY_URL}"
-  curl -L -o "${island_binaries_path}/${WINDOWS_32_BINARY_NAME}" "${WINDOWS_32_BINARY_URL}"
   curl -L -o "${island_binaries_path}/${WINDOWS_64_BINARY_NAME}" "${WINDOWS_64_BINARY_URL}"
 }
 
@@ -76,11 +74,18 @@ generate_ssl_cert() {
 
 build_frontend() {
   local ui_dir="$1/monkey_island/cc/ui"
+  local is_release_build=$2
   pushd "$ui_dir" || handle_error
 
   log_message "Generating front end"
   npm ci
-  npm run dist
+  if [ "$is_release_build" == true ]; then
+    log_message "Running production front end build"
+    npm run dist
+  else
+    log_message "Running development front end build"
+    npm run dev
+  fi
 
   popd || handle_error
 

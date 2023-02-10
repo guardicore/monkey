@@ -1,0 +1,1 @@
+EVENT_TYPE_FIELD = "type"

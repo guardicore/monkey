@@ -4,7 +4,7 @@ date: 2020-05-26T20:57:28+03:00
 draft: false
 pre: '<i class="fab fa-docker"></i> '
 weight: 4
-tags: ["setup", "docker", "linux", "windows"]
+tags: ["setup", "docker", "linux"]
 ---
 
 ## Supported operating systems
@@ -23,13 +23,13 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
 1. Extract the Monkey Island Docker tarball:
 
     ```bash
-    tar -xvzf InfectionMonkey-docker-v1.13.0.tgz
+    tar -xvzf InfectionMonkey-docker-v2.0.0.tgz
     ```
 
 1. Load the Monkey Island Docker image:
 
     ```bash
-    sudo docker load -i InfectionMonkey-docker-v1.13.0.tar
+    sudo docker load -i InfectionMonkey-docker-v2.0.0.tar
     ```
 
 ### 2. Start MongoDB
@@ -49,41 +49,85 @@ any MongoDB containers or volumes associated with the previous version.
         mongo:4.2
     ```
 
-### 3a. Start Monkey Island with default certificate
+### 3. Start Monkey Island with default certificate
 
 By default, Infection Monkey comes with a [self-signed SSL certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
 enterprise or other security-sensitive environments, it is recommended that the
 user [provide Infection Monkey with a
-certificate](#3b-start-monkey-island-with-user-provided-certificate) that has
+certificate](#start-monkey-island-with-user-provided-certificate) that has
 been signed by a private certificate authority.
 
-1. Run the Monkey Island server
+1. Run the Monkey Island Server
     ```bash
     sudo docker run \
         --tty \
         --interactive \
         --name monkey-island \
         --network=host \
-        guardicore/monkey-island:v1.13.0
+        guardicore/monkey-island:VERSION
     ```
 
-### 3b. Start Monkey Island with user-provided certificate
-{{% notice info %}}
-If you are upgrading the Infection Monkey to a new version, be sure to remove
-any volumes associated with the previous version.
-{{% /notice %}}
+### 4. Accessing Monkey Island
 
-1. Create a directory named `monkey_island_data`. If you already have it,
-   **make sure it's empty**. This will serve as the location where Infection
-   Monkey stores its configuration and runtime artifacts.
+After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost:5000`.
 
+## Configuring the server
+
+You can configure the server by mounting a volume and specifying a
+ [server configuration file](../../reference/server_configuration):
+
+1. Create a directory for server configuration file, e.g. `monkey_island_data`:
     ```bash
     mkdir ./monkey_island_data
     chmod 700 ./monkey_island_data
     ```
+1. Run the container with a mounted volume, and the `--setup-only` flag:
+```bash
+sudo docker run \
+    --rm \
+    --name monkey-island \
+    --network=host \
+    --user "$(id -u ${USER}):$(id -g ${USER})" \
+    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+    guardicore/monkey-island:VERSION --setup-only
+```
+1. Move your `server_config.json` file to `./monkey_island_data` directory.
+1. Run the container with a mounted volume, specify the path to the `server_config.json`:
+```bash
+sudo docker run \
+    --rm \
+    --name monkey-island \
+    --network=host \
+    --user "$(id -u ${USER}):$(id -g ${USER})" \
+    --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
+    guardicore/monkey-island:VERSION --server-config="/monkey_island_data/server_config.json"
+```
 
-1. Run Monkey Island with the `--setup-only` flag to populate the `./monkey_island_data` directory with a default `server_config.json` file.
+### Start Monkey Island with user-provided certificate
 
+By default, Infection Monkey comes with a [self-signed SSL
+certificate](https://aboutssl.org/what-is-self-sign-certificate/). In
+enterprise or other security-sensitive environments, it is recommended that the
+user provide Infection Monkey with a certificate that has been signed by a
+private certificate authority.
+
+1. Terminate the docker container if it's already running.
+1. Move your `.crt` and `.key` files to `./monkey_island_data` (directory created for the volume).
+1. Make sure that your `.crt` and `.key` files are readable only by you.
+    ```bash
+    chmod 600 <PATH_TO_KEY_FILE>
+    chmod 600 <PATH_TO_CRT_FILE>
+    ```
+1. Modify the [server configuration file](../../reference/server_configuration) and add the following lines:
+    ```json
+    {
+        "ssl_certificate": {
+            "ssl_certificate_file": "/monkey_island_data/my_cert.crt",
+            "ssl_certificate_key_file": "/monkey_island_data/my_key.key"
+        }
+    }
+    ```
+1. Run the container with a mounted volume, specify the path to the `server_config.json`:
     ```bash
     sudo docker run \
         --rm \
@@ -91,55 +135,32 @@ any volumes associated with the previous version.
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:v1.13.0 --setup-only
+        guardicore/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
+1. Access the Monkey Island web UI by pointing your browser at
+   `https://localhost:5000`.
 
-1. Move your `.crt` and `.key` files to `./monkey_island_data`.
+### Change logging level
 
-1. Make sure that your `.crt` and `.key` files are readable and writeable only by you.
-
-    ```bash
-    chmod 600 ./monkey_island_data/<KEY_FILE>
-    chmod 600 ./monkey_island_data/<CRT_FILE>
-    ```
-
-1.  Edit `./monkey_island_data/server_config.json` to configure Monkey Island
-    to use your certificate. Your config should look something like this:
-
-    ```json {linenos=inline,hl_lines=["11-14"]}
+1. Stop the docker container if it's already running.
+1. Modify the [server configuration file](../../reference/server_configuration) by adding the following lines:
+    ```json
     {
-      "data_dir": "/monkey_island_data",
-      "log_level": "DEBUG",
-      "environment": {
-        "server_config": "password",
-        "deployment": "docker"
-      },
-      "mongodb": {
-        "start_mongodb": false
-     },
-      "ssl_certificate": {
-        "ssl_certificate_file": "/monkey_island_data/<CRT_FILE>",
-        "ssl_certificate_key_file": "/monkey_island_data/<KEY_FILE>"
-      }
+        "log_level": "INFO"
     }
     ```
-
-1. Start the Monkey Island server:
-
+1. Run the container with a mounted volume, specify the path to the `server_config.json`:
     ```bash
     sudo docker run \
-        --tty \
-        --interactive \
+        --rm \
         --name monkey-island \
         --network=host \
         --user "$(id -u ${USER}):$(id -g ${USER})" \
         --volume "$(realpath ./monkey_island_data)":/monkey_island_data \
-        guardicore/monkey-island:v1.13.0
+        guardicore/monkey-island:VERSION --setup-only --server-config="/monkey_island_data/server_config.json"
     ```
-
-### 4. Accessing Monkey Island
-
-After the Monkey Island docker container starts, you can access Monkey Island by pointing your browser at `https://localhost:5000`.
+1. Access the Monkey Island web UI by pointing your browser at
+   `https://localhost:5000`.
 
 ## Upgrading
 
@@ -151,7 +172,7 @@ again with the new file.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Export configuration](../../images/setup/export-configuration.png "Export configuration")
+![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")
 
 ## Troubleshooting
 

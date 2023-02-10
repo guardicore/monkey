@@ -1,33 +1,20 @@
-# Without these imports pytests can't use fixtures,
-# because they are not found
-import json
-import os
+from unittest.mock import MagicMock
 
 import pytest
 from tests.unit_tests.monkey_island.cc.mongomock_fixtures import *  # noqa: F401,F403,E402
-from tests.unit_tests.monkey_island.cc.server_utils.encryption.test_password_based_encryption import (  # noqa: E501
-    MONKEY_CONFIGS_DIR_PATH,
-    STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME,
-)
 
-from monkey_island.cc.server_utils.encryption import unlock_datastore_encryptor
+from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 
-@pytest.fixture
-def monkey_config(data_for_tests_dir):
-    plaintext_monkey_config_standard_path = os.path.join(
-        data_for_tests_dir, MONKEY_CONFIGS_DIR_PATH, STANDARD_PLAINTEXT_MONKEY_CONFIG_FILENAME
-    )
-    plaintext_config = json.loads(open(plaintext_monkey_config_standard_path, "r").read())
-    return plaintext_config
+def reverse(data: bytes) -> bytes:
+    return bytes(reversed(data))
 
 
 @pytest.fixture
-def monkey_config_json(monkey_config):
-    return json.dumps(monkey_config)
+def repository_encryptor():
+    # NOTE: Tests will fail if any inputs to this mock encryptor are palindromes.
+    repository_encryptor = MagicMock(spec=ILockableEncryptor)
+    repository_encryptor.encrypt = MagicMock(side_effect=reverse)
+    repository_encryptor.decrypt = MagicMock(side_effect=reverse)
 
-
-@pytest.fixture
-def uses_encryptor(data_for_tests_dir):
-    secret = "m0nk3y_u53r:3cr3t_p455w0rd"
-    unlock_datastore_encryptor(data_for_tests_dir, secret)
+    return repository_encryptor

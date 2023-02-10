@@ -1,11 +1,11 @@
 import functools
 import logging
-from datetime import timedelta
+import time
 from typing import Dict
 
+import jwt
 import requests
-
-from envs.monkey_zoo.blackbox.island_client.supported_request_method import SupportedRequestMethod
+from egg_timer import EggTimer
 
 ISLAND_USERNAME = "test"
 ISLAND_PASSWORD = "test"
@@ -24,29 +24,8 @@ class InvalidRegistrationCredentialsError(Exception):
 class MonkeyIslandRequests(object):
     def __init__(self, server_address):
         self.addr = "https://{IP}/".format(IP=server_address)
+        self.refresh_token_timer = EggTimer()
         self.token = self.try_get_jwt_from_server()
-        self.supported_request_methods = {
-            SupportedRequestMethod.GET: self.get,
-            SupportedRequestMethod.POST: self.post,
-            SupportedRequestMethod.PATCH: self.patch,
-            SupportedRequestMethod.DELETE: self.delete,
-        }
-
-    def get_request_time(self, url, method: SupportedRequestMethod, data=None):
-        response = self.send_request_by_method(url, method, data)
-        if response.ok:
-            LOGGER.debug(f"Got ok for {url} content peek:\n{response.content[:120].strip()}")
-            return response.elapsed
-        else:
-            LOGGER.error(f"Trying to get {url} but got unexpected {str(response)}")
-            # instead of raising for status, mark failed responses as maxtime
-            return timedelta.max
-
-    def send_request_by_method(self, url, method=SupportedRequestMethod.GET, data=None):
-        if data:
-            return self.supported_request_methods[method](url, data)
-        else:
-            return self.supported_request_methods[method](url)
 
     def try_get_jwt_from_server(self):
         try:
@@ -63,18 +42,28 @@ class MonkeyIslandRequests(object):
             assert False
 
     def get_jwt_from_server(self):
+        if not self.refresh_token_timer.is_expired():
+            return self.token
+
         resp = requests.post(  # noqa: DUO123
-            self.addr + "api/auth",
+            self.addr + "api/authenticate",
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
         if resp.status_code == 401:
             raise AuthenticationFailedError
-        return resp.json()["access_token"]
+
+        token = resp.json()["access_token"]
+        token_expire_time = jwt.decode(
+            token, algorithms="HS256", options={"verify_signature": False}
+        )["exp"]
+        self.refresh_token_timer.set((token_expire_time - time.time()) * 0.8)
+
+        return token
 
     def try_set_island_to_credentials(self):
         resp = requests.post(  # noqa: DUO123
-            self.addr + "api/registration",
+            self.addr + "api/register",
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
@@ -108,9 +97,21 @@ class MonkeyIslandRequests(object):
         )
 
     @_Decorators.refresh_jwt_token
-    def post_json(self, url, data: Dict):
+    def put(self, url, data):
+        return requests.put(  # noqa: DUO123
+            self.addr + url, data=data, headers=self.get_jwt_header(), verify=False
+        )
+
+    @_Decorators.refresh_jwt_token
+    def put_json(self, url, json: Dict):
+        return requests.put(  # noqa: DUO123
+            self.addr + url, json=json, headers=self.get_jwt_header(), verify=False
+        )
+
+    @_Decorators.refresh_jwt_token
+    def post_json(self, url, json: Dict):
         return requests.post(  # noqa: DUO123
-            self.addr + url, json=data, headers=self.get_jwt_header(), verify=False
+            self.addr + url, json=json, headers=self.get_jwt_header(), verify=False
         )
 
     @_Decorators.refresh_jwt_token

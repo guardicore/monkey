@@ -1,0 +1,6 @@
+{
+    "title": "MockWithMultipleVendors exploiter",
+    "description": "Configuration settings for MockWithMultipleVendors exploiter.",
+    "type": "object",
+    "properties": {}
+}

@@ -1,52 +1,65 @@
 import React from 'react';
-import Form from 'react-jsonschema-form-bs4';
-import {Button, Col, Modal, Nav} from 'react-bootstrap';
+import Form from '@rjsf/bootstrap-4';
+import {Col, Nav} from 'react-bootstrap';
+import _ from 'lodash';
 import AuthComponent from '../AuthComponent';
-import ConfigMatrixComponent from '../attack/ConfigMatrixComponent';
 import UiSchema from '../configuration-components/UiSchema';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faExclamationCircle} from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 import {formValidationFormats} from '../configuration-components/ValidationFormats';
 import transformErrors from '../configuration-components/ValidationErrorMessages';
-import InternalConfig from '../configuration-components/InternalConfig';
+import PropagationConfig, {
+  EXPLOITERS_CONFIG_PATH
+} from '../configuration-components/PropagationConfig'
 import UnsafeConfigOptionsConfirmationModal
   from '../configuration-components/UnsafeConfigOptionsConfirmationModal.js';
-import UnsafeOptionsWarningModal from '../configuration-components/UnsafeOptionsWarningModal.js';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
 import ConfigExportModal from '../configuration-components/ExportConfigModal';
 import ConfigImportModal from '../configuration-components/ImportConfigModal';
 import applyUiSchemaManipulators from '../configuration-components/UISchemaManipulators.tsx';
 import HtmlFieldDescription from '../configuration-components/HtmlFieldDescription.js';
 import CONFIGURATION_TABS_PER_MODE from '../configuration-components/ConfigurationTabs.js';
+import {SCHEMA} from '../../services/configuration/configSchema.js';
+import {
+  reformatConfig,
+  formatCredentialsForForm,
+  formatCredentialsForIsland
+} from '../configuration-components/ReformatHook';
+import {customizeValidator} from '@rjsf/validator-ajv8';
 
-const ATTACK_URL = '/api/attack';
-const CONFIG_URL = '/api/configuration/island';
-export const API_PBA_LINUX = '/api/fileUpload/PBAlinux';
-export const API_PBA_WINDOWS = '/api/fileUpload/PBAwindows';
+const CONFIG_URL = '/api/agent-configuration';
+const SCHEMA_URL = '/api/agent-configuration-schema';
+const RESET_URL = '/api/reset-agent-configuration';
+const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
+// "new" schema is the one coming from back-end, the legacy one is defined in
+// monkey/monkey_island/cc/ui/src/services/configuration/configSchema.js
+const EXPLOITERS_SCHEMA_PATH_NEW = 'definitions.ExploitationConfiguration.properties.exploiters';
+const EXPLOITERS_SCHEMA_PATH_LEGACY = 'properties.propagation.properties.exploitation.properties.exploiters';
+
+const configSubmitAction = 'config-submit';
+const configExportAction = 'config-export';
+const configSaveAction = 'config-saved';
 
 class ConfigurePageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.initialConfig = {};
-    this.initialAttackConfig = {};
     this.currentSection = this.getSectionsOrder()[0];
 
     this.state = {
-      attackConfig: {},
       configuration: {},
+      credentials: {},
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
-      schema: {},
+      schema: SCHEMA,
       sections: [],
       selectedSection: this.currentSection,
-      showAttackAlert: false,
       showUnsafeOptionsConfirmation: false,
-      showUnsafeAttackOptionsWarning: false,
       showConfigExportModal: false,
-      showConfigImportModal: false
+      showConfigImportModal: false,
+      selectedExploiters: new Set()
     };
   }
 
@@ -57,197 +70,208 @@ class ConfigurePageComponent extends AuthComponent {
     }
   }
 
+  resetLastAction = () => {
+    this.setState({lastAction: 'none'});
+  }
+
   getSectionsOrder() {
-    let islandMode = this.props.islandMode ? this.props.islandMode : 'advanced'
+    let islandModeSet = (this.props.islandMode !== 'unset' && this.props.islandMode !== undefined)
+    let islandMode = islandModeSet ? this.props.islandMode : 'advanced'
     return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
-  setInitialConfig(config) {
-    // Sets a reference to know if config was changed
-    config['attack'] = {}
-    this.initialConfig = JSON.parse(JSON.stringify(config));
+  injectExploitersIntoLegacySchema = (newSchema) => {
+    // legacy schema is defined in UI,
+    // but we should use the schema provided by "/api/agent-configuration-schema"
+    // Remove when #2750 is done
+    let injectedSchema = _.cloneDeep(this.state.schema);
+    _.set(injectedSchema, EXPLOITERS_SCHEMA_PATH_LEGACY, _.get(newSchema, EXPLOITERS_SCHEMA_PATH_NEW));
+    return injectedSchema;
   }
 
-  setInitialAttackConfig(attackConfig) {
-    // Sets a reference to know if attack config was changed
-    this.initialAttackConfig = JSON.parse(JSON.stringify(attackConfig));
+  extractPluginsFromSchema = (schema) => {
+    // search the schema for plugins
+    let plugins = [];
+
+    // Search exploiters
+    for (let key of Object.keys(_.get(schema, EXPLOITERS_SCHEMA_PATH_NEW + '.properties'))) {
+      plugins.push(['Exploiter', key]);
+    }
+
+    return plugins
+  }
+
+  injectManifestIntoSchema = (manifest, schema) => {
+    let pluginName = manifest['name'];
+    let safe = manifest['safe'];
+    let link = manifest['link_to_documentation'];
+    let description = manifest['description'];
+    let title = manifest['title'];
+    let injectedSchema = _.cloneDeep(schema);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.safe`, safe);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.link`, link);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.description`, description);
+    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.title`, title);
+    return injectedSchema;
+  }
+
+  fulfilledPromises = (res) => {
+    return res.filter(r => r.status === 'fulfilled').map(r => r.value);
+  }
+
+  rejectIfFailed = (res) => {
+    if (!res.ok) {
+      return Promise.reject(new Error(res.json()['message']));
+    }
+    return res.json();
   }
 
   componentDidMount = () => {
-    let urls = [CONFIG_URL, ATTACK_URL];
-    // ??? Why fetch config here and not in `render()`?
-    Promise.all(urls.map(url => this.authFetch(url).then(res => res.json())))
-      .then(data => {
+    let schema_promise = this.authFetch(SCHEMA_URL).then(res => res.json())
+    let manifests_promise = schema_promise.then(schema => {
+      let plugins = this.extractPluginsFromSchema(schema);
+      let plugin_manifests = [];
+      for (let plugin of plugins) {
+        let manifest_url = `/api/agent-plugins/${plugin[0]}/${plugin[1]}/manifest`;
+        // Because no manifests exist for the hard-coded plugins, we reject failed requests
+        plugin_manifests.push(this.authFetch(manifest_url).then(this.rejectIfFailed));
+      }
+      return Promise.allSettled(plugin_manifests);
+    }).then(this.fulfilledPromises);
+
+    Promise.all([schema_promise, manifests_promise]).then(([schema, manifests]) => {
+      for (let manifest of manifests) {
+        schema = this.injectManifestIntoSchema(manifest, schema);
+      }
+      this.setState({schema: this.injectExploitersIntoLegacySchema(schema)});
+    });
+    this.authFetch(CONFIG_URL).then(res => res.json())
+      .then(monkeyConfig => {
         let sections = [];
-        let attackConfig = data[1];
-        let monkeyConfig = data[0];
-        this.setInitialConfig(monkeyConfig.configuration);
-        this.setInitialAttackConfig(attackConfig.configuration);
+        monkeyConfig = reformatConfig(monkeyConfig);
+
         for (let sectionKey of this.getSectionsOrder()) {
-          if (sectionKey === 'attack') {
-            sections.push({key: sectionKey, title: 'ATT&CK'})
-          } else {
-            sections.push({
-              key: sectionKey,
-              title: monkeyConfig.schema.properties[sectionKey].title
-            });
-          }
+          sections.push({
+            key: sectionKey,
+            title: SCHEMA.properties[sectionKey].title
+          });
         }
         this.setState({
-          schema: monkeyConfig.schema,
-          configuration: monkeyConfig.configuration,
-          attackConfig: attackConfig.configuration,
+          configuration: monkeyConfig,
+          selectedExploiters: new Set(Object.keys(_.get(monkeyConfig, EXPLOITERS_CONFIG_PATH))),
           sections: sections,
-          currentFormData: monkeyConfig.configuration[this.state.selectedSection]
+          currentFormData: _.cloneDeep(monkeyConfig[this.state.selectedSection])
         })
       });
+    this.updateCredentials();
   };
 
   onUnsafeConfirmationCancelClick = () => {
-    this.setState({showUnsafeOptionsConfirmation: false});
+    this.setState({showUnsafeOptionsConfirmation: false, lastAction: 'none'});
   }
 
   onUnsafeConfirmationContinueClick = () => {
     this.setState({showUnsafeOptionsConfirmation: false});
-
-    if (this.state.lastAction === 'submit_attempt') {
-      this.configSubmit();
+    if (this.state.lastAction === configSubmitAction) {
+      let config = this.filterUnselectedPlugins();
+      this.configSubmit(config);
+    } else if (this.state.lastAction === configExportAction) {
+      let config = this.filterUnselectedPlugins();
+      this.configSubmit(config);
+      this.setState({showConfigExportModal: true});
     }
   }
 
-  onUnsafeAttackContinueClick = () => {
-    this.setState({showUnsafeAttackOptionsWarning: false});
+  updateCredentials = () => {
+    this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL)
+      .then(res => res.json())
+      .then(credentials => {
+        credentials = formatCredentialsForForm(credentials);
+        this.setState({
+          credentials: credentials
+        });
+      });
   }
 
-  updateConfig = (callback = null) => {
+  updateConfig = () => {
+    this.updateCredentials();
     this.authFetch(CONFIG_URL)
       .then(res => res.json())
       .then(data => {
-        this.setInitialConfig(data.configuration);
-        this.setState({configuration: data.configuration,
-          currentFormData: data.configuration[this.state.selectedSection]}, callback);
-      })
-  };
+        data = reformatConfig(data);
+        this.setState({
+          selectedExploiters: new Set(Object.keys(_.get(data, EXPLOITERS_CONFIG_PATH))),
+          configuration: data,
+          currentFormData: _.cloneDeep(data[this.state.selectedSection])
+        });
+      });
+  }
+
+  setSelectedExploiters = (exploiters) => {
+    this.setState({selectedExploiters: exploiters})
+  }
 
   onSubmit = () => {
-    if (this.state.selectedSection === 'attack') {
-      this.matrixSubmit();
-    } else {
-      this.attemptConfigSubmit();
-    }
+    this.setState({lastAction: configSubmitAction}, this.attemptConfigSubmit)
   };
 
   canSafelySubmitConfig(config) {
     return !isUnsafeOptionSelected(this.state.schema, config);
   }
 
-  matrixSubmit = () => {
-    // Submit attack matrix
-    this.authFetch(ATTACK_URL,
-      {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(this.state.attackConfig)
-      })
-      .then(res => {
-        if (!res.ok) {
-          throw Error()
-        }
-        return res;
-      })
-      .then(() => {
-        this.setInitialAttackConfig(this.state.attackConfig);
-      })
-      .then(() => this.updateConfig(this.checkAndShowUnsafeAttackWarning))
-      .then(() => this.setState({lastAction: 'saved'}))
-      .catch(error => {
-        console.log('Bad configuration: ' + error.toString());
-        this.setState({lastAction: 'invalid_configuration'});
-      });
-  };
-
-  checkAndShowUnsafeAttackWarning = () => {
-    if (isUnsafeOptionSelected(this.state.schema, this.state.configuration)) {
-      this.setState({showUnsafeAttackOptionsWarning: true});
+  async attemptConfigSubmit() {
+    let config = this.filterUnselectedPlugins();
+    if (this.canSafelySubmitConfig(config)) {
+      this.configSubmit(config);
+      if (this.state.lastAction === configExportAction) {
+        this.setState({showConfigExportModal: true})
+      }
+    } else {
+      this.setState({showUnsafeOptionsConfirmation: true});
     }
   }
 
-  attemptConfigSubmit() {
-    this.updateConfigSection();
-    this.setState({lastAction: 'submit_attempt'}, () => {
-        if (this.canSafelySubmitConfig(this.state.configuration)) {
-          this.configSubmit();
-        } else {
-          this.setState({showUnsafeOptionsConfirmation: true});
-        }
+  // rjsf component automatically creates an instance from the defaults in the schema
+  // https://github.com/rjsf-team/react-jsonschema-form/issues/2980
+  // Until the issue is fixed, we need to manually remove plugins that were not selected before
+  // submitting/exporting the configuration
+  filterUnselectedPlugins() {
+    let filteredExploiters = {};
+    let exploiterFormData = _.get(this.state.configuration, EXPLOITERS_CONFIG_PATH);
+    for (let exploiter of [...this.state.selectedExploiters]) {
+      if (exploiterFormData[exploiter] === undefined) {
+        filteredExploiters[exploiter] = {};
+      } else {
+        filteredExploiters[exploiter] = exploiterFormData[exploiter];
       }
-    );
+    }
+    let config = _.cloneDeep(this.state.configuration)
+    _.set(config, EXPLOITERS_CONFIG_PATH, filteredExploiters)
+    return config;
   }
 
-  configSubmit() {
-    this.sendConfig()
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          lastAction: 'saved',
-          schema: res.schema,
-          configuration: res.configuration
-        });
-        this.setInitialConfig(res.configuration);
-        this.props.onStatusChange();
-      }).catch(error => {
-      console.log('Bad configuration: ' + error.toString());
-      this.setState({lastAction: 'invalid_configuration'});
+  configSubmit(config) {
+    this.sendCredentials().then(res => {
+      if (res.ok) {
+        this.sendConfig(config);
+      }
     });
   }
 
-  // Alters attack configuration when user toggles technique
-  attackTechniqueChange = (technique, value, mapped = false) => {
-    // Change value in attack configuration
-    // Go trough each column in matrix, searching for technique
-    Object.entries(this.state.attackConfig).forEach(techType => {
-      if (Object.prototype.hasOwnProperty.call(techType[1].properties, technique)) {
-        let tempMatrix = this.state.attackConfig;
-        tempMatrix[techType[0]].properties[technique].value = value;
-        this.setState({attackConfig: tempMatrix});
-
-        // Toggle all mapped techniques
-        if (!mapped) {
-          // Loop trough each column and each row
-          Object.entries(this.state.attackConfig).forEach(otherType => {
-            Object.entries(otherType[1].properties).forEach(otherTech => {
-              // If this technique depends on a technique that was changed
-              if (Object.prototype.hasOwnProperty.call(otherTech[1], 'depends_on') &&
-                otherTech[1]['depends_on'].includes(technique)) {
-                this.attackTechniqueChange(otherTech[0], value, true)
-              }
-            })
-          });
-        }
-      }
-    });
-  };
-
-  onChange = ({formData}) => {
+  onChange = (formData) => {
     let configuration = this.state.configuration;
-    if (this.state.selectedSection === 'attack'){
-      formData = {};
-    }
     configuration[this.state.selectedSection] = formData;
     this.setState({currentFormData: formData, configuration: configuration});
   };
 
-  updateConfigSection = () => {
-    let newConfig = this.state.configuration;
-
-    if (Object.keys(this.state.currentFormData).length > 0) {
-      newConfig[this.currentSection] = this.state.currentFormData;
-    }
-    this.setState({configuration: newConfig, lastAction: 'none'});
-  };
+  onCredentialChange = (credentials) => {
+    this.setState({credentials: credentials});
+  }
 
   renderConfigExportModal = () => {
     return (<ConfigExportModal show={this.state.showConfigExportModal}
+                               configuration={this.filterUnselectedPlugins()}
+                               credentials={this.state.credentials}
                                onHide={() => {
                                  this.setState({showConfigExportModal: false});
                                }}/>);
@@ -255,45 +279,22 @@ class ConfigurePageComponent extends AuthComponent {
 
   renderConfigImportModal = () => {
     return (<ConfigImportModal show={this.state.showConfigImportModal}
+                               schema={this.state.schema}
                                onClose={this.onClose}/>);
   }
 
   onClose = (importSuccessful) => {
-    if(importSuccessful === true){
+    if (importSuccessful === true) {
       this.updateConfig();
-      this.setState({lastAction: 'import_success',
-                          showConfigImportModal: false});
+      this.setState({
+        lastAction: 'import_success',
+        showConfigImportModal: false
+      });
 
     } else {
       this.setState({showConfigImportModal: false});
     }
   }
-
-  renderAttackAlertModal = () => {
-    return (<Modal show={this.state.showAttackAlert} onHide={() => {
-      this.setState({showAttackAlert: false})
-    }}>
-      <Modal.Body>
-        <h2>
-          <div className='text-center'>Warning</div>
-        </h2>
-        <p className='text-center' style={{'fontSize': '1.2em', 'marginBottom': '2em'}}>
-          You have unsubmitted changes. Submit them before proceeding.
-        </p>
-        <div className='text-center'>
-          <Button type='button'
-                  className='btn btn-success'
-                  size='lg'
-                  style={{margin: '5px'}}
-                  onClick={() => {
-                    this.setState({showAttackAlert: false})
-                  }}>
-            Cancel
-          </Button>
-        </div>
-      </Modal.Body>
-    </Modal>)
-  };
 
   renderUnsafeOptionsConfirmationModal() {
     return (
@@ -305,110 +306,72 @@ class ConfigurePageComponent extends AuthComponent {
     );
   }
 
-  renderUnsafeAttackOptionsWarningModal() {
-    return (
-      <UnsafeOptionsWarningModal
-        show={this.state.showUnsafeAttackOptionsWarning}
-        onContinueClick={this.onUnsafeAttackContinueClick}
-      />
-    );
-  }
-
-  userChangedConfig() {
-    try {
-      if (JSON.stringify(this.state.configuration) === JSON.stringify(this.initialConfig)) {
-        if (Object.keys(this.state.currentFormData).length === 0 ||
-          JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)) {
-          return false;
-        }
-      }
-    } catch (TypeError) {
-      if (JSON.stringify(this.initialConfig[this.currentSection]) === JSON.stringify(this.state.currentFormData)){
-         return false;
-      }
-    }
-    return true;
-  }
-
-  userChangedMatrix() {
-    return (JSON.stringify(this.state.attackConfig) !== JSON.stringify(this.initialAttackConfig))
-  }
-
   setSelectedSection = (key) => {
-    if ((key === 'attack' && this.userChangedConfig()) ||
-      (this.currentSection === 'attack' && this.userChangedMatrix())) {
-      this.setState({showAttackAlert: true});
-      return;
-    }
-
-    this.updateConfigSection();
+    this.resetLastAction();
     this.currentSection = key;
+    let selectedSectionData = this.state.configuration[key];
+
     this.setState({
       selectedSection: key,
-      currentFormData: this.state.configuration[key]
+      currentFormData: selectedSectionData
     });
   };
 
   resetConfig = () => {
-    this.authFetch(CONFIG_URL,
+    this.authFetch(RESET_URL,
       {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({'reset': true})
+        method: 'POST'
       })
       .then(res => res.json())
-      .then(res => {
-          res.configuration['attack'] = {}
+      .then(() => {
           this.setState({
-            lastAction: 'reset',
-            schema: res.schema,
-            configuration: res.configuration,
-            currentFormData: res.configuration[this.state.selectedSection]
+            lastAction: 'reset'
           });
-          this.setInitialConfig(res.configuration);
+          this.updateConfig();
           this.props.onStatusChange();
         }
-      ).then(() => {
-      this.removePBAfile(API_PBA_WINDOWS, this.setPbaFilenameWindows)
-      this.removePBAfile(API_PBA_LINUX, this.setPbaFilenameLinux)
-    });
-    this.authFetch(ATTACK_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify('reset_attack_matrix')
-    })
-      .then(res => res.json())
-      .then(res => {
-        this.setState({attackConfig: res.configuration});
-        this.setInitialAttackConfig(res.configuration);
-      })
+      )
+      .then(this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL, {method: 'PUT', body: '[]'}));
   };
 
-  removePBAfile(apiEndpoint, setFilenameFnc) {
-    this.sendPbaRemoveRequest(apiEndpoint)
-    setFilenameFnc('')
-  }
-
-  sendPbaRemoveRequest(apiEndpoint) {
-    let request_options = {
-      method: 'DELETE',
-      headers: {'Content-Type': 'text/plain'}
-    };
-    this.authFetch(apiEndpoint, request_options);
-  }
-
-  exportConfig = () => {
-    this.updateConfigSection();
-    this.setState({showConfigExportModal: true});
+  exportConfig = async () => {
+    await this.setState({lastAction: configExportAction});
+    await this.attemptConfigSubmit();
   };
 
-  sendConfig() {
+  sendConfig(config) {
+    config = reformatConfig(config, true);
+    delete config['advanced'];
+    delete config['propagation']['general'];
+
     return (
-      this.authFetch('/api/configuration/island',
+      this.authFetch(CONFIG_URL,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(this.state.configuration)
+          body: JSON.stringify(config)
+        })
+        .then(res => {
+          if (!res.ok) {
+            console.log(`bad configuration submited ${res.status}`);
+            this.setState({lastAction: 'invalid_configuration'});
+          } else {
+            this.setState({
+              lastAction: configSaveAction
+            });
+            this.props.onStatusChange();
+          }
+          return res;
+        }));
+  }
+
+  sendCredentials() {
+    return (
+      this.authFetch(CONFIGURED_PROPAGATION_CREDENTIALS_URL,
+        {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(formatCredentialsForIsland(this.state.credentials))
         })
         .then(res => {
           if (!res.ok) {
@@ -421,63 +384,46 @@ class ConfigurePageComponent extends AuthComponent {
       }));
   }
 
-  renderMatrix = () => {
-    return (<ConfigMatrixComponent configuration={this.state.attackConfig}
-                                   submit={this.componentDidMount}
-                                   reset={this.resetConfig}
-                                   change={this.attackTechniqueChange}/>)
-  };
-
   renderConfigContent = (displayedSchema) => {
     let formProperties = {};
-    formProperties['schema'] = displayedSchema
-    formProperties['uiSchema'] = UiSchema({
-      PBA_linux_filename: this.state.configuration.monkey.post_breach.PBA_linux_filename,
-      PBA_windows_filename: this.state.configuration.monkey.post_breach.PBA_windows_filename,
-      setPbaFilenameWindows: this.setPbaFilenameWindows,
-      setPbaFilenameLinux: this.setPbaFilenameLinux,
+    let fullUiSchema = UiSchema({
       selectedSection: this.state.selectedSection
     })
+    formProperties['schema'] = displayedSchema
     formProperties['fields'] = {DescriptionField: HtmlFieldDescription};
-    formProperties['formData'] = this.state.currentFormData;
     formProperties['onChange'] = this.onChange;
-    formProperties['customFormats'] = formValidationFormats;
+    formProperties['onFocus'] = this.resetLastAction;
     formProperties['transformErrors'] = transformErrors;
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
+    formProperties['formData'] = this.state.currentFormData;
+    formProperties['validator'] = customizeValidator( {customFormats: formValidationFormats});
 
     applyUiSchemaManipulators(this.state.selectedSection,
-                              formProperties['formData'],
-                              formProperties['uiSchema']);
+      formProperties['formData'],
+      fullUiSchema);
 
-    if (this.state.selectedSection === 'internal') {
-      return (<InternalConfig {...formProperties}/>)
+    if (this.state.selectedSection === 'propagation') {
+      delete Object.assign(formProperties, {'configuration': formProperties.formData}).formData;
+      return (<PropagationConfig {...formProperties}
+                                 fullUiSchema={fullUiSchema}
+                                 credentials={this.state.credentials}
+                                 selectedExploiters={this.state.selectedExploiters}
+                                 setSelectedExploiters={this.setSelectedExploiters}
+                                 onCredentialChange={this.onCredentialChange}/>)
     } else {
+      formProperties['onChange'] = (formData) => {
+        this.onChange(formData.formData)
+      };
       return (
         <div>
-          <Form {...formProperties}>
+          <Form {...formProperties} uiSchema={fullUiSchema} key={displayedSchema.title}>
             <button type='submit' className={'hidden'}>Submit</button>
           </Form>
         </div>
       )
     }
   };
-
-  setPbaFilenameWindows = (filename) => {
-    let config = this.state.configuration
-    config.monkey.post_breach.PBA_windows_filename = filename
-    this.setState({
-      configuration: config
-    })
-  }
-
-  setPbaFilenameLinux = (filename) => {
-    let config = this.state.configuration
-    config.monkey.post_breach.PBA_linux_filename = filename
-    this.setState({
-      configuration: config
-    })
-  }
 
   renderNav = () => {
     return (<Nav variant='tabs'
@@ -486,10 +432,9 @@ class ConfigurePageComponent extends AuthComponent {
                  style={{'marginBottom': '2em'}}
                  className={'config-nav'}>
       {this.state.sections.map(section => {
-        let classProp = section.key.startsWith('basic') ? 'tab-primary' : '';
         return (
           <Nav.Item key={section.key}>
-            <Nav.Link className={classProp} eventKey={section.key}>{section.title}</Nav.Link>
+            <Nav.Link eventKey={section.key}>{section.title}</Nav.Link>
           </Nav.Item>);
       })}
     </Nav>)
@@ -497,15 +442,13 @@ class ConfigurePageComponent extends AuthComponent {
 
   render() {
     let displayedSchema = {};
-    if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties') && this.state.selectedSection !== 'attack') {
+    if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
       displayedSchema['definitions'] = this.state.schema['definitions'];
     }
 
     let content = '';
-    if (this.state.selectedSection === 'attack' && Object.entries(this.state.attackConfig).length !== 0) {
-      content = this.renderMatrix()
-    } else if (this.state.selectedSection !== 'attack' && Object.entries(this.state.configuration).length !== 0) {
+    if (Object.entries(this.state.configuration).length !== 0) {
       content = this.renderConfigContent(displayedSchema)
     }
     return (
@@ -514,9 +457,7 @@ class ConfigurePageComponent extends AuthComponent {
            className={'main'}>
         {this.renderConfigExportModal()}
         {this.renderConfigImportModal()}
-        {this.renderAttackAlertModal()}
         {this.renderUnsafeOptionsConfirmationModal()}
-        {this.renderUnsafeAttackOptionsWarningModal()}
         <h1 className='page-title'>Monkey Configuration</h1>
         {this.renderNav()}
         {content}
@@ -550,7 +491,7 @@ class ConfigurePageComponent extends AuthComponent {
               Configuration reset successfully.
             </div>
             : ''}
-          {this.state.lastAction === 'saved' ?
+          {this.state.lastAction === configSaveAction ?
             <div className='alert alert-success'>
               <FontAwesomeIcon icon={faCheck} style={{'marginRight': '5px'}}/>
               Configuration saved successfully.

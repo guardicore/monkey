@@ -9,7 +9,7 @@ tags: ["usage", "password"]
 
 ## Security in the Infection Monkey
 
-The first time you launch Monkey Island (the Infection Monkey C&C server), you'll be prompted to create an account and secure your island. After account creation, the server will only be accessible via the credentials you entered.
+The first time you launch Monkey Island (the Infection Monkey C&C server), you'll be prompted to create an account and secure your Island. After account creation, the server will only be accessible via the credentials you entered.
 
 ## Resetting your account credentials
 

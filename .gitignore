@@ -59,7 +59,7 @@ coverage.xml
 *.log
 
 # Sphinx documentation
-docs/_build/
+/monkey/monkey_island/docs/source/_autosummary
 
 # PyBuilder
 target/
@@ -98,3 +98,16 @@ profiler_logs/
 
 # Virtualenv
 venv/
+
+# Hugo
+.hugo_build.lock
+
+# mypy
+.mypy_cache
+
+# MacOS
+.DS_Store
+
+# Terraform usage files
+envs/monkey_zoo/terraform/.terraform*
+envs/monkey_zoo/terraform/terraform.*

@@ -3,17 +3,20 @@
 import argparse
 from pathlib import Path
 
-MAJOR = "1"
-MINOR = "13"
+MAJOR = "2"
+MINOR = "0"
 PATCH = "0"
 
 build_file_path = Path(__file__).parent.joinpath("BUILD")
 with open(build_file_path, "r") as build_file:
-    BUILD = build_file.read()
+    BUILD = build_file.read().strip()
 
 
 def get_version(build=BUILD):
-    return f"{MAJOR}.{MINOR}.{PATCH}+{build}"
+    if build:
+        return f"{MAJOR}.{MINOR}.{PATCH}+{build}"
+    else:
+        return f"{MAJOR}.{MINOR}.{PATCH}"
 
 
 def print_version():

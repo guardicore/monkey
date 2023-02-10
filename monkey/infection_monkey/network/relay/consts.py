@@ -1,0 +1,3 @@
+from common.common_consts import HEARTBEAT_INTERVAL
+
+SOCKET_TIMEOUT = 2 * HEARTBEAT_INTERVAL

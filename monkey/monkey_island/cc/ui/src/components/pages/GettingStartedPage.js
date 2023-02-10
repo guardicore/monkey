@@ -48,7 +48,7 @@ function HomepageCallToActions() {
             </Link>
           </div>
           <div className="col-lg-4 col-sm-6">
-            <a href="https://infectionmonkey.com" className="px-4 py-5 bg-white shadow text-center d-block" rel="noopener noreferrer" target="_blank">
+            <a href="https://www.akamai.com/infectionmonkey" className="px-4 py-5 bg-white shadow text-center d-block" rel="noopener noreferrer" target="_blank">
               <h4><FontAwesomeIcon icon={faBookOpen}/> Read more</h4>
               <p>Visit our homepage for more information.</p>
             </a>

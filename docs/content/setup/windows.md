@@ -15,7 +15,7 @@ Don't get scared if the Infection Monkey gets [flagged as malware during the ins
 
 After running the installer, the following prompt should appear on the screen:
 
-![Windows installer screenshot](../../images/setup/windows/installer-screenshot-1.png "Windows installer screenshot")
+![Windows installer screenshot](../../images/island/others/windows_installer.png "Windows installer screenshot")
 
 1. Follow the steps to complete the installation.
 1. Run the Monkey Island by clicking on the desktop shortcut.
@@ -26,6 +26,13 @@ do, see the [FAQ]({{< ref
 "/faq/#i-updated-to-a-new-version-of-the-infection-monkey-and-im-being-asked-to-delete-my-existing-data-directory-why"
 >}}) for more information.
 {{% /notice %}}
+>
+## Configuring the server
+
+You can configure the server by editing [the configuration
+file](../../reference/server_configuration) located in installation directory.
+The default path is
+`C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`.
 
 ### Start Monkey Island with user-provided certificate
 
@@ -34,32 +41,35 @@ enterprise or other security-sensitive environments, it is recommended that the
 user provide Infection Monkey with a certificate that has been signed by a
 private certificate authority.
 
-1. If you haven't already, run the Monkey Island by clicking on the desktop
-   shortcut. This will populate MongoDB, as well as create and populate
-   `%AppData%\monkey_island`.
 1. Stop the Monkey Island process.
 1. (Optional but recommended) Move your `.crt` and `.key` files to `%AppData%\monkey_island`.
-1. Edit `%AppData%\monkey_island\server_config.json` to configure Monkey Island
-   to use your certificate. Your config should look something like this:
-
-    ```json {linenos=inline,hl_lines=["11-14"]}
+1. Modify the `server_config.json` (by default located in `C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`) by adding the following lines:
+    ```json
     {
-      "log_level": "DEBUG",
-      "environment": {
-        "server_config": "password",
-        "deployment": "windows"
-      },
-      "mongodb": {
-        "start_mongodb": true
-     },
+      ...
       "ssl_certificate": {
-        "ssl_certificate_file": "<PATH_TO_CRT_FILE>",
-        "ssl_certificate_key_file": "<PATH_TO_KEY_FILE>"
-      }
+            "ssl_certificate_file": "%AppData%\\monkey_island\\my_cert.crt",
+            "ssl_certificate_key_file": "%AppData%\\monkey_island\\my_key.key"
+      },
+      ...
     }
     ```
 1. Run the Monkey Island by clicking on the desktop shortcut.
+1. Access the Monkey Island web UI by pointing your browser at
+   `https://localhost:5000`.
 
+### Change logging level
+
+1. Stop the Island Server.
+1. Modify the `server_config.json` (by default located in `C:\Program Files\Guardicore\Monkey Island\monkey\monkey_island\cc\server_config.json`) by adding the following lines:
+    ```json
+    {
+        ...
+        "log_level": "INFO",
+        ...
+    }
+    ```
+1. Run the Monkey Island by clicking on the desktop shortcut.
 1. Access the Monkey Island web UI by pointing your browser at
    `https://localhost:5000`.
 
@@ -93,4 +103,4 @@ it. The new Monkey version will be installed over the old version.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Export configuration](../../images/setup/export-configuration.png "Export configuration")
+![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")

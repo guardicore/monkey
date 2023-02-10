@@ -1,9 +1,9 @@
 #!/bin/bash
 
 LINUXDEPLOY_URL="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-PYTHON_VERSION="3.7.12"
+PYTHON_VERSION="3.7.16"
 PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
-APPIMAGE_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
+APPIMAGE_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 APPDIR="$APPIMAGE_DIR/squashfs-root"
 BUILD_DIR="$APPDIR/usr/src"
 
@@ -28,8 +28,9 @@ setup_build_dir() {
   local agent_binary_dir=$1
   local monkey_repo=$2
   local deployment_type=$3
+  local is_release_build=$4
 
-  pushd $APPIMAGE_DIR
+  pushd "$APPIMAGE_DIR" || handle_error
 
   setup_python_37_appdir
 
@@ -37,6 +38,7 @@ setup_build_dir() {
 
   copy_monkey_island_to_build_dir "$monkey_repo/monkey" "$BUILD_DIR"
   copy_server_config_to_build_dir
+  copy_infection_monkey_service_to_build_dir
   modify_deployment "$deployment_type" "$BUILD_DIR"
   add_agent_binaries_to_build_dir "$agent_binary_dir" "$BUILD_DIR"
 
@@ -44,11 +46,11 @@ setup_build_dir() {
   install_mongodb
 
   generate_ssl_cert "$BUILD_DIR"
-  build_frontend "$BUILD_DIR"
+  build_frontend "$BUILD_DIR" "$is_release_build"
 
   remove_python_appdir_artifacts
 
-  popd
+  popd || handle_error
 }
 
 setup_python_37_appdir() {
@@ -63,30 +65,28 @@ setup_python_37_appdir() {
   rm "$PYTHON_APPIMAGE"
 }
 
+copy_infection_monkey_service_to_build_dir() {
+  cp "$APPIMAGE_DIR"/install-infection-monkey-service.sh "$APPDIR"
+}
+
 copy_server_config_to_build_dir() {
-    cp "$APPIMAGE_DIR"/server_config.json.standard "$BUILD_DIR"/monkey_island/cc/server_config.json
+  cp "$APPIMAGE_DIR"/server_config.json.standard "$BUILD_DIR"/monkey_island/cc/server_config.json
 }
 
 install_monkey_island_python_dependencies() {
   log_message "Installing island requirements"
 
   log_message "Installing pipenv"
-  "$APPDIR"/AppRun -m pip install pipenv || handle_error
+  "$APPDIR"/AppRun -m pip install pipenv==2022.7.4 || handle_error
+  export CI=1
 
-  requirements_island="$BUILD_DIR/monkey_island/requirements.txt"
-  generate_requirements_from_pipenv_lock "$requirements_island"
+  log_message "Installing dependencies"
+  pushd "$BUILD_DIR/monkey_island" || handle_error
+  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" sync --system || handle_error
+  popd || handle_error
 
-  log_message "Installing island python requirements"
-  "$APPDIR"/AppRun -m pip install -r "${requirements_island}"  --ignore-installed || handle_error
-}
-
-generate_requirements_from_pipenv_lock () {
-  local requirements_island=$1
-
-  log_message "Generating a requirements.txt file with 'pipenv lock -r'"
-  pushd "$BUILD_DIR/monkey_island"
-  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" lock -r > "$requirements_island" || handle_error
-  popd
+  log_message "Uninstalling pipenv (build dependency only)"
+  "$APPDIR"/AppRun -m pip uninstall --yes pipenv virtualenv || handle_error
 }
 
 
@@ -104,18 +104,12 @@ remove_python_appdir_artifacts() {
 }
 
 build_package() {
-  local commit_id=$2
-  local dist_dir=$3
+  local version=$1
+  local dist_dir=$2
 
   log_message "Building AppImage"
 
-  if [ -n "$1" ]; then
-    local version="v$1"
-  else
-    local version="$commit_id"
-  fi
-
-  pushd "$APPIMAGE_DIR"
+  pushd "$APPIMAGE_DIR" || handle_error
   ARCH="x86_64" linuxdeploy \
       --appdir "$APPIMAGE_DIR/squashfs-root" \
       --icon-file "$ICON_PATH" \
@@ -125,11 +119,17 @@ build_package() {
       --output appimage
 
   dst_name="InfectionMonkey-$version.AppImage"
-  move_package_to_dist_dir $dist_dir $dst_name
+  move_package_to_dist_dir "$dist_dir" "$dst_name"
 
-  popd
+  popd || handle_error
 }
 
 move_package_to_dist_dir() {
     mv Infection*Monkey*.AppImage "$1/$2"
+}
+
+cleanup() {
+  echo "Cleaning appimage build dirs"
+
+  rm -rf "$APPIMAGE_DIR/squashfs-root"
 }

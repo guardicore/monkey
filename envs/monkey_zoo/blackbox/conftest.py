@@ -1,4 +1,8 @@
+from typing import Collection, Dict, Mapping, Set
+
 import pytest
+
+from envs.monkey_zoo.blackbox.gcp_test_machine_list import GCP_SINGLE_TEST_LIST
 
 
 def pytest_addoption(parser):
@@ -14,25 +18,6 @@ def pytest_addoption(parser):
         default=False,
         help="Use for no interaction with the cloud.",
     )
-    parser.addoption(
-        "--quick-performance-tests",
-        action="store_true",
-        default=False,
-        help="If enabled performance tests won't reset island and won't send telemetries, "
-        "instead will just test performance of already present island state.",
-    )
-    parser.addoption(
-        "--run-performance-tests",
-        action="store_true",
-        default=False,
-        help="If enabled performance tests will be run.",
-    )
-    parser.addoption(
-        "--skip-powershell-reuse",
-        action="store_true",
-        default=False,
-        help="Use to run PowerShell credentials reuse test.",
-    )
 
 
 @pytest.fixture(scope="session")
@@ -46,22 +31,14 @@ def no_gcp(request):
 
 
 @pytest.fixture(scope="session")
-def quick_performance_tests(request):
-    return request.config.getoption("--quick-performance-tests")
+def gcp_machines_to_start(request: pytest.FixtureRequest) -> Mapping[str, Collection[str]]:
+    machines_to_start: Dict[str, Set[str]] = {}
 
+    enabled_tests = (test.originalname for test in request.node.items)
+    machines_for_enabled_tests = (GCP_SINGLE_TEST_LIST[test] for test in enabled_tests)
 
-def pytest_runtest_setup(item):
-    if "run_performance_tests" in item.keywords and not item.config.getoption(
-        "--run-performance-tests"
-    ):
-        pytest.skip(
-            "Skipping performance test because " "--run-performance-tests flag isn't specified."
-        )
+    for machine_dict in machines_for_enabled_tests:
+        for zone, machines in machine_dict.items():
+            machines_to_start.setdefault(zone, set()).update(machines)
 
-    if "skip_powershell_reuse" in item.keywords and item.config.getoption(
-        "--skip-powershell-reuse"
-    ):
-        pytest.skip(
-            "Skipping powershell credentials reuse test because "
-            "--skip-powershell-cached flag isn't specified."
-        )
+    return machines_to_start

@@ -4,8 +4,13 @@ import random
 import socket
 import struct
 from abc import ABCMeta, abstractmethod
+from typing import Iterable, List, Tuple
 
 logger = logging.getLogger(__name__)
+
+
+class InvalidNetworkRangeError(Exception):
+    """Raise when invalid network range is provided"""
 
 
 class NetworkRange(object, metaclass=ABCMeta):
@@ -44,26 +49,53 @@ class NetworkRange(object, metaclass=ABCMeta):
         if not address_str:  # Empty string
             return None
         address_str = address_str.strip()
+        if address_str.endswith("/32"):
+            address_str = address_str[:-3]
         if NetworkRange.check_if_range(address_str):
             return IpRange(ip_range=address_str)
-        if -1 != address_str.find("/"):
+        if "/" in address_str:
             return CidrRange(cidr_range=address_str)
         return SingleIpRange(ip_address=address_str)
 
     @staticmethod
+    def filter_invalid_ranges(ranges: Iterable[str], error_msg: str) -> List[str]:
+        valid_ranges = []
+        for target_range in ranges:
+            try:
+                NetworkRange.validate_range(target_range)
+            except InvalidNetworkRangeError as e:
+                logger.error(f"{error_msg} {e}")
+                continue
+            valid_ranges.append(target_range)
+        return valid_ranges
+
+    @staticmethod
+    def validate_range(address_str: str):
+        try:
+            NetworkRange.get_range_obj(address_str)
+        except (ValueError, OSError) as e:
+            raise InvalidNetworkRangeError(e)
+
+    @staticmethod
     def check_if_range(address_str):
         if -1 != address_str.find("-"):
-            ips = address_str.split("-")
             try:
-                ipaddress.ip_address(ips[0]) and ipaddress.ip_address(ips[1])
+                NetworkRange._range_to_ips(address_str)
             except ValueError:
                 return False
             return True
         return False
 
     @staticmethod
+    def _range_to_ips(ip_range: str) -> Tuple[str, str]:
+        ips = ip_range.split("-")
+        ips = [ip.strip() for ip in ips]
+        ips = sorted(ips, key=lambda ip: socket.inet_aton(ip))
+        return ips[0], ips[1]
+
+    @staticmethod
     def _ip_to_number(address):
-        return struct.unpack(">L", socket.inet_aton(address))[0]
+        return struct.unpack(">L", socket.inet_aton(str(address)))[0]
 
     @staticmethod
     def _number_to_ip(num):
@@ -94,12 +126,7 @@ class IpRange(NetworkRange):
     def __init__(self, ip_range=None, lower_end_ip=None, higher_end_ip=None, shuffle=True):
         super(IpRange, self).__init__(shuffle=shuffle)
         if ip_range is not None:
-            addresses = ip_range.split("-")
-            if len(addresses) != 2:
-                raise ValueError(
-                    "Illegal IP range format: %s. Format is 192.168.0.5-192.168.0.20" % ip_range
-                )
-            self._lower_end_ip, self._higher_end_ip = [x.strip() for x in addresses]
+            self._lower_end_ip, self._higher_end_ip = IpRange._range_to_ips(ip_range)
         elif (lower_end_ip is not None) and (higher_end_ip is not None):
             self._lower_end_ip = lower_end_ip.strip()
             self._higher_end_ip = higher_end_ip.strip()
@@ -136,13 +163,14 @@ class SingleIpRange(NetworkRange):
         """
         We have to check if we have an IP to return, because user could have entered invalid
         domain name and no IP was found
+
         :return: IP if there is one
         """
         if self.ip_found():
             yield self._number_to_ip(self.get_range()[0])
 
     def is_in_range(self, ip_address):
-        return self._ip_address == ip_address
+        return self._ip_address == str(ip_address)
 
     def _get_range(self):
         return [SingleIpRange._ip_to_number(self._ip_address)]
@@ -150,6 +178,7 @@ class SingleIpRange(NetworkRange):
     def ip_found(self):
         """
         Checks if we could translate domain name entered into IP address
+
         :return: True if dns found domain name and false otherwise
         """
         return self._ip_address
@@ -159,11 +188,15 @@ class SingleIpRange(NetworkRange):
         """
         Converts the string that user entered in "Scan IP/subnet list" to a tuple of domain name
         and ip
+
         :param string_: String that was entered in "Scan IP/subnet list"
         :return: A tuple in format (IP, domain_name). Eg. (192.168.55.1, www.google.com)
         """
         # The most common use case is to enter ip/range into "Scan IP/subnet list"
-        domain_name = ""
+        domain_name = None
+
+        if " " in string_:
+            raise ValueError(f'"{string_}" is not a valid IP address or domain name.')
 
         # Try casting user's input as IP
         try:
@@ -174,10 +207,9 @@ class SingleIpRange(NetworkRange):
                 ip = socket.gethostbyname(string_)
                 domain_name = string_
             except socket.error:
-                logger.error(
+                raise ValueError(
                     "Your specified host: {} is not found as a domain name and"
                     " it's not an IP address".format(string_)
                 )
-                return None, string_
         # If a string_ was entered instead of IP we presume that it was domain name and translate it
         return ip, domain_name

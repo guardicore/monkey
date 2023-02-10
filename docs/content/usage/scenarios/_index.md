@@ -18,11 +18,10 @@ The Infection Monkey has pre-built scenarios to simulate common types of attacks
 
 Choosing the "Custom" scenario will allow you to fine-tune your simulation and access all available features. [Read more about configuring a custom simulation.](/custom-scenario/_index.md)
 
-![Choose scenario](/images/usage/scenarios/choose-scenario.png "Choose a scenario")
+![Choose scenario](/images/island/landing_page/choose_scenario.png "Choose a scenario")
 
-To exit a scenario and select another one, click on "Start Over".
-
-![Start over](/images/usage/scenarios/start-over.png "Start over")
+To exit a scenario and select another one, click on "Reset".
+![Reset](/images/island/others/reset_modal.png "Reset")
 
 ## Section contents
 

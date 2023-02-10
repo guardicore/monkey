@@ -20,10 +20,16 @@ log_cli = 1
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)s] %(module)s.%(funcName)s.%(lineno)d: %(message)s"
 log_cli_date_format = "%H:%M:%S"
-addopts = "-v --capture=sys tests/unit_tests"
+addopts = "-v --capture=sys tests/unit_tests tests/integration_tests"
 norecursedirs = "node_modules dist"
 markers = ["slow: mark test as slow"]
+pythonpath = "./monkey"
+filterwarnings = ["ignore:.*'propagate_exceptions' is deprecated and will be removed in Flask 2.3:DeprecationWarning"]  # Remove when Flask is up to v2.3
 
 [tool.vulture]
-exclude = ["monkey/monkey_island/cc/ui/", "monkey/tests/"]
+exclude = ["monkey/monkey_island/cc/ui/", "monkey/tests/", "monkey/monkey_island/docs/", "monkey/infection_monkey/pyinstaller_hooks", "envs"]
 paths = ["."]
+
+[tool.mypy]
+exclude = 'vulture_allowlist\.py'
+show_error_codes = true

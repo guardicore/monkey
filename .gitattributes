@@ -1,4 +1,3 @@
 monkey/tests/data_for_tests/ransomware_targets/** -text
 monkey/tests/data_for_tests/test_readme.txt -text
 monkey/tests/data_for_tests/stable_file.txt -text
-monkey/infection_monkey/ransomware/ransomware_readme.txt -text

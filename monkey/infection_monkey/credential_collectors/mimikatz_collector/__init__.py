@@ -1,0 +1,1 @@
+from .mimikatz_credential_collector import MimikatzCredentialCollector

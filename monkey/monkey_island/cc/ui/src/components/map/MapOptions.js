@@ -1,36 +1,24 @@
+import { CommunicationType, NodeGroup } from 'components/types/MapNode';
+
 let getGroupsOptions = (stateList) => {
   let groupOptions = {};
   for (let stateName of stateList) {
     groupOptions[stateName] =
-      {
-        shape: 'image',
-        size: 50,
-        image: require('../../images/nodes/' + stateName + '.png')
-      };
+    {
+      shape: 'image',
+      size: 50,
+      image: require('../../images/nodes/' + stateName + '.png')
+    };
   }
 
-  return groupOptions;
-};
-
-const groupNamesPth = ['normal', 'critical'];
-
-let getGroupsOptionsPth = () => {
-  let groupOptions = {};
-  for (let groupName of groupNamesPth) {
-    groupOptions[groupName] =
-      {
-        shape: 'image',
-        size: 50,
-        image: require('../../images/nodes/pth/' + groupName + '.png')
-      };
-  }
   return groupOptions;
 };
 
 export const basic_options = {
   autoResize: true,
   layout: {
-    improvedLayout: false
+    improvedLayout: false,
+    randomSeed: 1
   },
   edges: {
     width: 2,
@@ -43,35 +31,37 @@ export const basic_options = {
       gravitationalConstant: -120000,
       avoidOverlap: 0.5,
       springLength: 100,
-      springConstant: 0.025
+      springConstant: 0.025,
+      damping: 0.3
     },
-    minVelocity: 0.7,
-    maxVelocity: 25
+    minVelocity: 1,
+    maxVelocity: 20
   }
 };
 
-export function getOptions(stateList) {
+// Move the camera to the right
+// to compensate for the side panel on the right
+export const startingPosition = {'position': {'x': 130, 'y': 0}}
+
+
+const nodeStates = Object.keys(NodeGroup);
+const groupsOptions = getGroupsOptions(nodeStates);
+
+export function getOptions() {
   let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
-  opts.groups = getGroupsOptions(stateList);
+  opts.groups = groupsOptions;
   return opts;
 }
 
-export const optionsPth = (() => {
-  let opts = JSON.parse(JSON.stringify(basic_options)); /* Deep copy */
-  opts.groups = getGroupsOptionsPth();
-  opts.physics.barnesHut.gravitationalConstant = -20000;
-  return opts;
-})();
-
 export function edgeGroupToColor(group) {
   switch (group) {
-    case 'exploited':
+    case CommunicationType.exploited:
       return '#c00';
-    case 'tunnel':
+    case CommunicationType.relay:
       return '#0058aa';
-    case 'scan':
+    case CommunicationType.scanned:
       return '#f90';
-    case 'island':
+    case CommunicationType.cc:
       return '#aaa';
   }
   return 'black';

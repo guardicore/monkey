@@ -2,35 +2,44 @@ import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
+import AuthComponent from '../AuthComponent';
 
-class VersionComponent extends React.Component {
+class VersionComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      currentVersion: undefined,
-      newerVersion: undefined,
+      versionNumber: undefined,
+      latestVersion: undefined,
       downloadLink: undefined
     }
   }
 
   componentDidMount() {
-    fetch('/api/version-update') // This is not authenticated on purpose
+    this.authFetch('/api/island/version')
       .then(res => res.json())
       .then(res => {
         this.setState({
-          currentVersion: res['current_version'],
-          newerVersion: res['newer_version'],
+          versionNumber: res['version_number'],
+          latestVersion: res['latest_version'],
           downloadLink: res['download_link']
         });
       });
   }
 
+  newerVersionAvailable() {
+    const semverGt = require('semver/functions/gt');
+    if(this.state.latestVersion !== undefined && this.state.versionNumber !== undefined) {
+      return semverGt(this.state.latestVersion, this.state.versionNumber);
+    }
+    return false;
+  }
+
   render() {
     return (
       <div className="version-text text-center">
-        Infection Monkey Version: {this.state.currentVersion}
+        Infection Monkey Version: {this.state.versionNumber}
         {
-          this.state.newerVersion ?
+          this.newerVersionAvailable() ?
             <div>
               <b>Newer version available!</b>
               <br/>

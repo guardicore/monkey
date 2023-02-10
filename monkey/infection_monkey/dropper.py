@@ -1,5 +1,4 @@
 import argparse
-import ctypes
 import filecmp
 import logging
 import os
@@ -8,22 +7,24 @@ import shutil
 import subprocess
 import sys
 import time
-from ctypes import c_char_p
+from pathlib import PosixPath, WindowsPath
 
-from common.utils.attack_utils import ScanStatus, UsageEnum
-from infection_monkey.config import WormConfiguration
-from infection_monkey.system_info import OperatingSystem, SystemInfoCollector
-from infection_monkey.telemetry.attack.t1106_telem import T1106Telem
+from common.utils.argparse_types import positive_int
+from common.utils.environment import is_windows_os
 from infection_monkey.utils.commands import (
     build_monkey_commandline_explicitly,
     get_monkey_commandline_linux,
     get_monkey_commandline_windows,
 )
+from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 
 if "win32" == sys.platform:
     from win32process import DETACHED_PROCESS
+
+    DATE_REFERENCE_PATH_WINDOWS = os.path.expandvars(WindowsPath(r"%windir%\system32\kernel32.dll"))
 else:
     DETACHED_PROCESS = 0
+    DATE_REFERENCE_PATH_LINUX = PosixPath("/bin/sh")
 
 # Linux doesn't have WindowsError
 try:
@@ -42,20 +43,17 @@ class MonkeyDrops(object):
     def __init__(self, args):
         arg_parser = argparse.ArgumentParser()
         arg_parser.add_argument("-p", "--parent")
-        arg_parser.add_argument("-t", "--tunnel")
-        arg_parser.add_argument("-s", "--server")
-        arg_parser.add_argument("-d", "--depth", type=int)
+        arg_parser.add_argument("-s", "--servers", type=lambda arg: arg.strip().split(","))
+        arg_parser.add_argument("-d", "--depth", type=positive_int, default=0)
         arg_parser.add_argument("-l", "--location")
         arg_parser.add_argument("-vp", "--vulnerable-port")
-        self.monkey_args = args[1:]
-        self.opts, _ = arg_parser.parse_known_args(args)
+        self.opts = arg_parser.parse_args(args)
 
         self._config = {
             "source_path": os.path.abspath(sys.argv[0]),
             "destination_path": self.opts.location,
         }
 
-    def initialize(self):
         logger.debug("Dropper is running with config:\n%s", pprint.pformat(self._config))
 
     def start(self):
@@ -72,8 +70,8 @@ class MonkeyDrops(object):
         if not file_moved and os.path.exists(self._config["destination_path"]):
             os.remove(self._config["destination_path"])
 
-        # first try to move the file
-        if not file_moved and WormConfiguration.dropper_try_move_first:
+        # always try to move the file first
+        if not file_moved:
             try:
                 shutil.move(self._config["source_path"], self._config["destination_path"])
 
@@ -112,38 +110,32 @@ class MonkeyDrops(object):
 
                 return False
 
-        if WormConfiguration.dropper_set_date:
-            if sys.platform == "win32":
-                dropper_date_reference_path = os.path.expandvars(
-                    WormConfiguration.dropper_date_reference_path_windows
-                )
-            else:
-                dropper_date_reference_path = WormConfiguration.dropper_date_reference_path_linux
+        if sys.platform == "win32":
+            dropper_date_reference_path = DATE_REFERENCE_PATH_WINDOWS
+        else:
+            dropper_date_reference_path = DATE_REFERENCE_PATH_LINUX
+
+        try:
+            ref_stat = os.stat(dropper_date_reference_path)
+        except OSError:
+            logger.warning(
+                "Cannot set reference date using '%s', file not found",
+                dropper_date_reference_path,
+            )
+        else:
             try:
-                ref_stat = os.stat(dropper_date_reference_path)
+                os.utime(self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime))
             except OSError:
-                logger.warning(
-                    "Cannot set reference date using '%s', file not found",
-                    dropper_date_reference_path,
-                )
-            else:
-                try:
-                    os.utime(
-                        self._config["destination_path"], (ref_stat.st_atime, ref_stat.st_mtime)
-                    )
-                except OSError:
-                    logger.warning("Cannot set reference date to destination file")
+                logger.warning("Cannot set reference date to destination file")
 
         monkey_options = build_monkey_commandline_explicitly(
             parent=self.opts.parent,
-            tunnel=self.opts.tunnel,
-            server=self.opts.server,
+            servers=self.opts.servers,
             depth=self.opts.depth,
             location=None,
-            vulnerable_port=self.opts.vulnerable_port,
         )
 
-        if OperatingSystem.Windows == SystemInfoCollector.get_os():
+        if is_windows_os():
             monkey_commandline = get_monkey_commandline_windows(
                 self._config["destination_path"], monkey_options
             )
@@ -187,11 +179,9 @@ class MonkeyDrops(object):
         logger.info("Cleaning up the dropper")
 
         try:
-            if (
-                (self._config["source_path"].lower() != self._config["destination_path"].lower())
-                and os.path.exists(self._config["source_path"])
-                and WormConfiguration.dropper_try_move_first
-            ):
+            if self._config["source_path"].lower() != self._config[
+                "destination_path"
+            ].lower() and os.path.exists(self._config["source_path"]):
 
                 # try removing the file first
                 try:
@@ -202,23 +192,7 @@ class MonkeyDrops(object):
                     )
 
                     # mark the file for removal on next boot
-                    dropper_source_path_ctypes = c_char_p(self._config["source_path"].encode())
-                    if 0 == ctypes.windll.kernel32.MoveFileExA(
-                        dropper_source_path_ctypes, None, MOVEFILE_DELAY_UNTIL_REBOOT
-                    ):
-                        logger.debug(
-                            "Error marking source file '%s' for deletion on next boot (error "
-                            "%d)",
-                            self._config["source_path"],
-                            ctypes.windll.kernel32.GetLastError(),
-                        )
-                    else:
-                        logger.debug(
-                            "Dropper source file '%s' is marked for deletion on next boot",
-                            self._config["source_path"],
-                        )
-                        T1106Telem(ScanStatus.USED, UsageEnum.DROPPER_WINAPI).send()
-
+                    mark_file_for_deletion_on_windows(WindowsPath(self._config["source_path"]))
             logger.info("Dropper cleanup complete")
         except AttributeError:
             logger.error("Invalid configuration options. Failing")

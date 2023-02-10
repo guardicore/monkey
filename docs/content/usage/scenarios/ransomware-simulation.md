@@ -37,19 +37,25 @@ To ensure minimum interference and easy recoverability, the ransomware
 simulation will only encrypt files contained in a user-specified directory. If
 no directory is specified, no files will be encrypted.
 
-![Ransomware configuration](/images/usage/scenarios/ransomware-config.png "Ransomware configuration")
+Infection Monkey appends the `.m0nk3y` file extension to files that it
+encrypts. You may optionally provide a custom file extension for Infection
+Monkey to use instead. You can even provide no file extension, but take
+caution: you'll no longer be able to tell if the file has been encrypted based
+on the filename alone!
+
+![Ransomware configuration](/images/island/configuration_page/ransomware_configuration.png "Ransomware configuration")
 
 ### How are the files encrypted?
 
 Files are "encrypted" in place with a simple bit flip. Encrypted files are
-renamed to have `.m0nk3y` appended to their names. This is a safe way to
-simulate encryption since it is easy to "decrypt" your files. You can simply
-perform a bit flip on the files again and rename them to remove the appended
-`.m0nk3y` extension.
+renamed to have a file extension (`.m0nk3y` by default) appended to their
+names. This is a safe way to simulate encryption since it is easy to "decrypt"
+your files. You can simply perform a bit flip on the files again and rename
+them to remove the appended `.m0nk3y` extension.
 
 Flipping a file's bits is sufficient to simulate the encryption behavior of
 ransomware, as the data in your files has been manipulated (leaving them
-temporarily unusuable). Files are then renamed with a new extension appended,
+temporarily unusable). Files are then renamed with a new extension appended,
 which is similar to the way that many ransomwares behave. As this is a
 simulation, your
 security solutions should be triggered to notify you or prevent these changes

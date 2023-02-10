@@ -19,7 +19,7 @@ Select the [Infection Monkey from the Azure Marketplace](https://azuremarketplac
     1. Choose a machine size with at least 1GB of RAM for optimal performance.
 1. Under **Settings**
     1. Choose the network for the new instance.
-    1. In the **Network Security Group** field, make sure ports 5000 and 5001 on the machine are accessible for inbound TCP traffic.
+    1. In the **Network Security Group** field, make sure port 5000 on the machine is accessible for inbound TCP traffic.
 1. Under **Summary**
     1. Review the details of the offer and click **Create**.
 
@@ -36,4 +36,4 @@ To get the updated version, you can deploy a new machine from the marketplace.
 If you'd like to keep your existing configuration, you can export it to a file
 using the *Export config* button and then import it to the new Monkey Island.
 
-![Export configuration](../../images/setup/export-configuration.png "Export configuration")
+![Import/export configuration](../../images/island/configuration_page/import_export_configuration.png "Import/export configuration")

@@ -12,8 +12,8 @@ const LATERAL_MOVEMENT_DESCRIPTION = <>
                                        <br />
                                        <br />
                                        <ExternalLink
-                                         url="https://www.guardicore.com/blog/stopping-ransomware-with-segmentation/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
-                                         text="See some real-world examples on Guardicore's blog"
+                                         url="https://www.akamai.com/blog/security/stopping-ransomware-with-segmentation/?utm_medium=monkey-request&utm_source=web-report&utm_campaign=monkey-security-report"
+                                         text="See some real-world examples on Akamai's blog"
                                        />
                                      </>
 
@@ -46,7 +46,7 @@ function LateralMovement({propagationStats}: {propagationStats: PropagationStats
 function getScannedVsExploitedStats(num_scanned_nodes: number, num_exploited_nodes: number): ReactElement {
   return(
     <p>
-      The Monkey discovered <span className='badge badge-warning'>{num_scanned_nodes}</span> machines
+      Infection Monkey discovered <span className='badge badge-warning'>{num_scanned_nodes}</span> machines
       and successfully breached <span className='badge badge-danger'>{num_exploited_nodes}</span> of them.
     </p>
   );

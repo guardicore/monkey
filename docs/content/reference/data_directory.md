@@ -8,9 +8,8 @@ weight: 9
 
 ## What is the data directory?
 
-The data directory is where the Island server stores runtime artifacts.
-These include the Island logs, any custom post-breach action files,
-configuration files, etc.
+The data directory is where the Island Server stores runtime artifacts. These
+include the Island logs, configuration files, etc.
 
 ## Where is it located?
 
@@ -22,8 +21,8 @@ On Windows, the default path is `%AppData%\monkey_island`.
 The location of the data directory is set in the `data_dir` field in the
 `server_config.json` file.
 
-1. Create a custom `server_config.json` file and set the `data_dir` field. Its
-   contents will look like:
+1. [Create a custom server_config.json file](../server_configuration) and set the `data_dir` field. Its
+   contents will look like this:
 
     ```json
     {

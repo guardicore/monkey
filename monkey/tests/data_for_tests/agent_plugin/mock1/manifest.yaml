@@ -1,0 +1,13 @@
+name: Mock1
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+  - linux
+title: Mock1 exploiter plugin
+description: An exploiter plugin for testing purposes
+version: 1.0.0
+safe: true
+link_to_documentation: https://www.akamai.com/infectionmonkey

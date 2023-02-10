@@ -70,16 +70,26 @@ function AWSInstanceTable(props) {
     let color = 'inherit';
     if (r) {
       let instId = r.original.instance_id;
+      let runResult = getRunResults(instId);
       if (isSelected(instId)) {
         color = '#ffed9f';
-      } else if (Object.prototype.hasOwnProperty.call(props.results, instId)) {
-        color = props.results[instId] ? '#00f01b' : '#f00000'
+      } else if (runResult) {
+        color = runResult.status === 'error' ? '#f00000' : '#00f01b'
       }
     }
 
     return {
       style: {backgroundColor: color}
     };
+  }
+
+  function getRunResults(instanceId) {
+    for(let result of props.results){
+      if (result.instance_id === instanceId){
+        return result
+      }
+    }
+    return false
   }
 
   return (

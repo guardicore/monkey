@@ -1,54 +1,76 @@
 import logging
-import os
 import platform
 import stat
 import subprocess
-from shutil import copyfile
+from ipaddress import IPv4Address
+from pathlib import Path
+from shutil import copyfileobj
+from typing import Sequence
 
-import monkey_island.cc.environment.environment_singleton as env_singleton
-from monkey_island.cc.resources.monkey_download import get_monkey_executable
-from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.services.utils.network_utils import local_ip_addresses
+from monkey_island.cc.repositories import IAgentBinaryRepository, RetrievalError
+from monkey_island.cc.server_utils.consts import ISLAND_PORT
 
 logger = logging.getLogger(__name__)
 
+AGENT_NAMES = {"linux": "monkey-linux-64", "windows": "monkey-windows-64.exe"}
+
 
 class LocalMonkeyRunService:
-    DATA_DIR = None
+    def __init__(
+        self,
+        data_dir: Path,
+        agent_binary_repository: IAgentBinaryRepository,
+        ip_addresses: Sequence[IPv4Address],
+    ):
+        self._data_dir = data_dir
+        self._agent_binary_repository = agent_binary_repository
+        self._ips = ip_addresses
 
-    # TODO: A number of these services should be instance objects instead of
-    # static/singleton hybrids. At the moment, this requires invasive refactoring that's
-    # not a priority.
-    @classmethod
-    def initialize(cls, data_dir):
-        cls.DATA_DIR = data_dir
-
-    @staticmethod
-    def run_local_monkey():
+    def run_local_monkey(self):
         # get the monkey executable suitable to run on the server
-        result = get_monkey_executable(platform.system().lower(), platform.machine().lower())
-        if not result:
-            return False, "OS Type not found"
+        operating_system = platform.system().lower()
+        try:
+            agents = {
+                "linux": self._agent_binary_repository.get_linux_binary,
+                "windows": self._agent_binary_repository.get_windows_binary,
+            }
 
-        src_path = os.path.join(MONKEY_ISLAND_ABS_PATH, "cc", "binaries", result["filename"])
-        dest_path = os.path.join(LocalMonkeyRunService.DATA_DIR, result["filename"])
+            agent_binary = agents[platform.system().lower()]()
+        except RetrievalError as err:
+            logger.error(
+                f"No Agent can be retrieved for the specified operating system"
+                f'"{operating_system}"'
+            )
+            return False, str(err)
+        except KeyError as err:
+            logger.error(
+                f"No Agents are available for unsupported operating system" f'"{operating_system}"'
+            )
+            return False, str(err)
+        except Exception as err:
+            logger.error(f"Error running agent from island: {err}")
+            return False, str(err)
+
+        dest_path = self._data_dir / AGENT_NAMES[operating_system]
 
         # copy the executable to temp path (don't run the monkey from its current location as it may
         # delete itself)
         try:
-            copyfile(src_path, dest_path)
-            os.chmod(dest_path, stat.S_IRWXU | stat.S_IRWXG)
+            with open(dest_path, "wb") as dest_agent:
+                copyfileobj(agent_binary, dest_agent)
+
+            dest_path.chmod(stat.S_IRWXU | stat.S_IRWXG)
         except Exception as exc:
             logger.error("Copy file failed", exc_info=True)
             return False, "Copy file failed: %s" % exc
 
         # run the monkey
         try:
-            ip = local_ip_addresses()[0]
-            port = env_singleton.env.get_island_port()
+            ip = self._ips[0]
+            port = ISLAND_PORT
 
-            args = [dest_path, "m0nk3y", "-s", f"{ip}:{port}"]
-            subprocess.Popen(args, cwd=LocalMonkeyRunService.DATA_DIR)
+            args = [str(dest_path), "m0nk3y", "-s", f"{ip}:{port}"]
+            subprocess.Popen(args, cwd=self._data_dir)
         except Exception as exc:
             logger.error("popen failed", exc_info=True)
             return False, "popen failed: %s" % exc

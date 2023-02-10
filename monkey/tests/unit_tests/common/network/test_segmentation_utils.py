@@ -1,20 +1,19 @@
+from ipaddress import IPv4Address
+
 from common.network.network_range import CidrRange
-from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
+from common.network.segmentation_utils import get_ip_if_in_subnet
+
+SUBNET = CidrRange("10.10.2.0/24")
 
 
-class TestSegmentationUtils:
-    def test_get_ip_in_src_and_not_in_dst(self):
-        source = CidrRange("1.1.1.0/24")
-        target = CidrRange("2.2.2.0/24")
+def test_get_ip_if_in_subnet__none_if_not_in_subnet():
+    ip = get_ip_if_in_subnet([IPv4Address("10.10.1.1")], SUBNET)
 
-        # IP not in both
-        assert get_ip_in_src_and_not_in_dst(["3.3.3.3", "4.4.4.4"], source, target) is None
+    assert ip is None
 
-        # IP not in source, in target
-        assert (get_ip_in_src_and_not_in_dst(["2.2.2.2"], source, target)) is None
 
-        # IP in source, not in target
-        assert get_ip_in_src_and_not_in_dst(["8.8.8.8", "1.1.1.1"], source, target)
+def test_get_ip_if_in_subnet():
+    IP = IPv4Address("10.10.2.1")
+    ip = get_ip_if_in_subnet([IP], SUBNET)
 
-        # IP in both subnets
-        assert (get_ip_in_src_and_not_in_dst(["8.8.8.8", "1.1.1.1"], source, source)) is None
+    assert ip == IP

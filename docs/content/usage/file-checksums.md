@@ -6,7 +6,7 @@ weight: 100
 pre: "<i class='fas fa-certificate'></i> "
 ---
 
-The official distribution of Infection Monkey is compiled and supplied by Guardicore ([download from our official site here](https://www.guardicore.com/infectionmonkey/#download)). The team signs all software packages to certify that a particular Infection Monkey package is a valid and unaltered Infection Monkey release. Before installing Monkey, you should validate the package using the SHA-256 checksum.
+The official distribution of Infection Monkey is compiled and supplied by Guardicore ([download from our official site here](https://www.akamai.com/infectionmonkey#download)). The team signs all software packages to certify that a particular Infection Monkey package is a valid and unaltered Infection Monkey release. Before installing Infection Monkey, you should validate the package using the SHA-256 checksum.
 
 ## How to get SHA-256 checksum
 
@@ -37,6 +37,17 @@ $ sha256sum monkey-linux-64
 
 | Filename                                             | Type              | Version | SHA256                                                             |
 |------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
+| monkey-windows-64.exe                                | Windows Agent     | 2.0.0   | `7d848e1cc4855b8476b27e81dfb01b4e38a2d0a421f80507b08a99ab7c71e4ea` |
+| monkey-linux-64                                      | Linux Agent       | 2.0.0   | `07c8ed75f1a83ace2d018f4645b7a147c31075f41963a1d801e4e5133014189a` |
+| InfectionMonkey-v2.0.0.AppImage                      | Linux Package     | 2.0.0   | `b40ffde3e55f2b2198e8f26c44a1beb33a84a0979764a47ffb5ce26f07f4fa8e` |
+| InfectionMonkey-docker-v2.0.0.tgz                    | Docker            | 2.0.0   | `fa75631d6fa6d6d5086d936077e8005b8b7f59626c78ca561de80470ce5d42f0` |
+| InfectionMonkey-v2.0.0.exe                           | Windows Installer | 2.0.0   | `bbe670cec5c16fbfbec63719594830a52f9495899f96a06fd5c587c6390c3269` |
+
+
+## Older checksums
+
+| Filename                                             | Type              | Version | SHA256                                                             |
+|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-windows-64.exe                                | Windows Agent     | 1.13.0  | `3EDD20DE2247047C8A822C84145981936CE2FD0BDF843EB5CA777CA4D2478B35` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.13.0  | `7497907E3CF4FFEB121A7795BFA16709800E6E0F99770F64AF7FFF684ECBA6D6` |
 | monkey-linux-64                                      | Linux Agent       | 1.13.0  | `F21E709CB7BA8DAF90B908AF5FE485BA43866C325D3C7CE1EB07E8A2323E07C1` |
@@ -44,12 +55,6 @@ $ sha256sum monkey-linux-64
 | InfectionMonkey-v1.13.0.AppImage                     | Linux Package     | 1.13.0  | `CDED4E8394A4D2A809BA9B74B924AEA590317515B9B032BA8005A93DFCE1C861` |
 | InfectionMonkey-docker-v1.13.0.tgz                   | Docker            | 1.13.0  | `342701BA8EC5B754C59685896FC3DCDBB93362FFFAD0EC7F9E2E5B99DA26F5EC` |
 | InfectionMonkey-v1.13.0.exe                          | Windows Installer | 1.13.0  | `D35ED6CAF21AC786D9A438510282FA07AEF812590A5E6405A01F2B06661B33B9` |
-
-
-## Older checksums
-
-| Filename                                             | Type              | Version | SHA256                                                             |
-|------------------------------------------------------|-------------------|---------|--------------------------------------------------------------------|
 | monkey-windows-64.exe                                | Windows Agent     | 1.12.0  | `02e5e051a96e2ca61ae8e661b3a5828ee53a0fc00aca6502d5c73a46754f0d07` |
 | monkey-windows-32.exe                                | Windows Agent     | 1.12.0  | `3c10f610f47c4fd227cf85f6bf800d66ed31fe37dc2e2ed408860483685ba504` |
 | monkey-linux-64                                      | Linux Agent       | 1.12.0  | `1ad52eabd704a9b0fbf642fa552629f30d3c5c27e431a687bd4cba4e0104d3f7` |

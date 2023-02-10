@@ -29,7 +29,7 @@
 }
 
 .advanced-multi-select .choice-block .form-group {
-  margin: 0;
+  margin: 0 !important;
   padding: 3px 0 0 0;
   height: 30px;
 }
@@ -46,4 +46,8 @@
 
 .advanced-multi-select .option-text {
   margin-left: 10px;
+}
+
+.active-checkbox {
+  background-color: $monkey-alt-active;
 }

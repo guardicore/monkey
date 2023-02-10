@@ -8,6 +8,6 @@ pre = "<i class='fas fa-scroll'></i> "
 
 # Infection Monkey's Reports
 
-The Infection Monkey offers three reports:
+Infection Monkey offers the following reports:
 
 {{% children description=true style="p"%}}

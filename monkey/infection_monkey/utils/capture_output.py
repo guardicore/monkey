@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import io
 import sys
 
 
 class StdoutCapture:
-    def __enter__(self) -> None:
+    def __enter__(self) -> StdoutCapture:
         self._orig_stdout = sys.stdout
         self._new_stdout = io.StringIO()
         sys.stdout = self._new_stdout

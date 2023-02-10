@@ -1,6 +1,6 @@
 import React from 'react';
 import {Route} from 'react-router-dom';
-import SideNavComponent from '../SideNavComponent.tsx';
+import SideNavComponent from '../SideNavComponent';
 import {Col, Row} from 'react-bootstrap';
 
 const SidebarLayoutComponent = ({component: Component,
@@ -9,6 +9,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   completedSteps = null,
                                   defaultReport = '',
                                   sideNavHeader = (<></>),
+                                  onStatusChange = () => {},
                                   ...other
                                 }) => (
   <Route {...other} render={() => {
@@ -18,9 +19,10 @@ const SidebarLayoutComponent = ({component: Component,
           <SideNavComponent disabled={sideNavDisabled}
                             completedSteps={completedSteps}
                             defaultReport={defaultReport}
-                            header={sideNavHeader}/>
+                            header={sideNavHeader}
+                            onStatusChange={onStatusChange}/>
         </Col>}
-        <Component {...other} />
+        <Component onStatusChange={onStatusChange} {...other} />
       </Row>)
   }}/>
 )

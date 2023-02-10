@@ -1,19 +1,24 @@
-import os
 import shutil
 import tempfile
+from pathlib import Path
 
-from infection_monkey.config import WormConfiguration
+MONKEY_DIR_PREFIX = "monkey_dir_"
+_monkey_dir = None
 
 
-def create_monkey_dir():
+# TODO: Check if we even need this. Individual plugins can just use tempfile.mkdtemp() or
+#       tempfile.mkftemp() if they need to.
+def create_monkey_dir() -> Path:
     """
     Creates directory for monkey and related files
     """
-    if not os.path.exists(get_monkey_dir_path()):
-        os.mkdir(get_monkey_dir_path())
+    global _monkey_dir
+
+    _monkey_dir = Path(tempfile.mkdtemp(prefix=MONKEY_DIR_PREFIX, dir=tempfile.gettempdir()))
+    return _monkey_dir
 
 
-def remove_monkey_dir():
+def remove_monkey_dir() -> bool:
     """
     Removes monkey's root directory
     :return True if removed without errors and False otherwise
@@ -25,5 +30,8 @@ def remove_monkey_dir():
         return False
 
 
-def get_monkey_dir_path():
-    return os.path.join(tempfile.gettempdir(), WormConfiguration.monkey_dir_name)
+def get_monkey_dir_path() -> Path:
+    if _monkey_dir is None:
+        create_monkey_dir()
+
+    return _monkey_dir  # type: ignore

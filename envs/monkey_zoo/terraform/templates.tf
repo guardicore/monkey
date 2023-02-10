@@ -6,15 +6,13 @@ resource "google_compute_instance_template" "ubuntu16" {
 
   machine_type         = "n1-standard-1"
   can_ip_forward       = false
-
   disk {
-    source_image = "ubuntu-os-cloud/ubuntu-1604-lts"
+    source_image = "ubuntu-os-pro-cloud/ubuntu-pro-1604-lts"
   }
   network_interface {
     subnetwork="monkeyzoo-main"
     access_config {
-      // Cheaper, non-premium routing
-      network_tier = "STANDARD"
+
     }
   }
   service_account {
@@ -37,6 +35,9 @@ resource "google_compute_instance_template" "windows2016" {
   }
   network_interface {
     subnetwork="monkeyzoo-main"
+    access_config {
+
+    }
   }
   service_account {
     email=local.service_account_email

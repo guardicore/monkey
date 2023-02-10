@@ -1,46 +1,27 @@
-class VictimHost(object):
-    def __init__(self, ip_addr, domain_name=""):
-        self.ip_addr = ip_addr
-        self.domain_name = str(domain_name)
-        self.os = {}
-        self.services = {}
-        self.icmp = False
-        self.monkey_exe = None
-        self.default_tunnel = None
-        self.default_server = None
+from ipaddress import IPv4Address
+from typing import Any, Dict, Optional
 
-    def as_dict(self):
-        return self.__dict__
+from pydantic import Field
+
+from common import OperatingSystem
+from common.base_models import MutableInfectionMonkeyBaseModel
+
+
+class TargetHost(MutableInfectionMonkeyBaseModel):
+    ip: IPv4Address
+    operating_system: Optional[OperatingSystem] = Field(default=None)
+    services: Dict[str, Any] = Field(default={})  # deprecated
+    icmp: bool = Field(default=False)
 
     def __hash__(self):
-        return hash(self.ip_addr)
-
-    def __eq__(self, other):
-        if not isinstance(other, VictimHost):
-            return False
-
-        return self.ip_addr.__eq__(other.ip_addr)
-
-    def __cmp__(self, other):
-        if not isinstance(other, VictimHost):
-            return -1
-
-        return self.ip_addr.__cmp__(other.ip_addr)
-
-    def __repr__(self):
-        return "VictimHost({0!r})".format(self.ip_addr)
+        return hash(self.ip)
 
     def __str__(self):
-        victim = "Victim Host %s: " % self.ip_addr
-        victim += "OS - ["
-        for k, v in list(self.os.items()):
-            victim += "%s-%s " % (k, v)
-        victim += "] Services - ["
+        victim = "Target Host %s: " % self.ip
+        if self.operating_system is not None:
+            victim += "OS - [ %s ]" % self.operating_system.value
+        victim += "Services - ["
         for k, v in list(self.services.items()):
             victim += "%s-%s " % (k, v)
         victim += "] ICMP: %s " % (self.icmp)
-        victim += "target monkey: %s" % self.monkey_exe
         return victim
-
-    def set_default_server(self, default_server):
-        self.default_server = default_server

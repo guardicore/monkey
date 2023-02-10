@@ -1,75 +1,124 @@
-import functools
-import ipaddress
-import itertools
-import logging
-from typing import List
+from __future__ import annotations
 
-from common.config_value_paths import (
-    EXPLOITER_CLASSES_PATH,
-    LOCAL_NETWORK_SCAN_PATH,
-    PASSWORD_LIST_PATH,
-    SUBNET_SCAN_LIST_PATH,
-    USER_LIST_PATH,
+import functools
+import logging
+from collections import defaultdict
+from copy import deepcopy
+from dataclasses import asdict
+from datetime import datetime
+from enum import Enum
+from ipaddress import IPv4Address
+from itertools import chain, product
+from threading import Lock
+from typing import Any, DefaultDict, Dict, Iterable, List, Optional, Sequence, Set, Type, Union
+
+from common import HARD_CODED_EXPLOITER_MANIFESTS
+from common.agent_events import (
+    AbstractAgentEvent,
+    ExploitationEvent,
+    PasswordRestorationEvent,
+    PingScanEvent,
+    TCPScanEvent,
 )
+from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.network.network_range import NetworkRange
-from common.network.segmentation_utils import get_ip_in_src_and_not_in_dst
-from monkey_island.cc.database import mongo
-from monkey_island.cc.models import Monkey
-from monkey_island.cc.models.report import get_report, save_report
-from monkey_island.cc.models.telemetries import get_telemetry_by_query
-from monkey_island.cc.services.config import ConfigService
-from monkey_island.cc.services.configuration.utils import (
-    get_config_network_segments_as_subnet_groups,
+from common.network.segmentation_utils import get_ip_if_in_subnet
+from common.types import PortStatus
+from monkey_island.cc.models import CommunicationType, Machine
+from monkey_island.cc.repositories import (
+    IAgentConfigurationRepository,
+    IAgentEventRepository,
+    IAgentPluginRepository,
+    IAgentRepository,
+    IMachineRepository,
+    INodeRepository,
 )
-from monkey_island.cc.services.node import NodeService
-from monkey_island.cc.services.reporting.exploitations.manual_exploitation import get_manual_monkeys
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
 )
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.exploiter_descriptor_enum import (  # noqa: E501
-    ExploiterDescriptorEnum,
-)
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.cred_exploit import (  # noqa: E501
-    CredentialType,
-)
-from monkey_island.cc.services.reporting.issue_processing.exploit_processing.processors.exploit import (  # noqa: E501
-    ExploiterReportInfo,
-)
-from monkey_island.cc.services.reporting.pth_report import PTHReportService
-from monkey_island.cc.services.reporting.report_exporter_manager import ReportExporterManager
-from monkey_island.cc.services.reporting.report_generation_synchronisation import (
-    safe_generate_regular_report,
-)
-from monkey_island.cc.services.utils.network_utils import get_subnets, local_ip_addresses
+
+from .issue_processing.exploit_processing.exploiter_report_info import ExploiterReportInfo
 
 logger = logging.getLogger(__name__)
 
+ScanEvent = Union[PingScanEvent, TCPScanEvent]
+
+
+class ScanTypeEnum(Enum):
+    ICMP = "ICMP"
+    TCP = "TCP"
+    UNKNOWN = "Unknown"
+
+    @staticmethod
+    def from_event(event: AbstractAgentEvent) -> ScanTypeEnum:
+        if isinstance(event, PingScanEvent):
+            return ScanTypeEnum.ICMP
+        if isinstance(event, TCPScanEvent):
+            return ScanTypeEnum.TCP
+        return ScanTypeEnum.UNKNOWN
+
+
+def has_open_ports(event: TCPScanEvent):
+    return any(s == PortStatus.OPEN for s in event.ports.values())
+
 
 class ReportService:
-    class DerivedIssueEnum:
-        WEAK_PASSWORD = "weak_password"
-        STOLEN_CREDS = "stolen_creds"
-        ZEROLOGON_PASS_RESTORE_FAILED = "zerologon_pass_restore_failed"
+    _agent_repository: Optional[IAgentRepository] = None
+    _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
+    _agent_event_repository: Optional[IAgentEventRepository] = None
+    _machine_repository: Optional[IMachineRepository] = None
+    _node_repository: Optional[INodeRepository] = None
+    _agent_plugin_repository: Optional[IAgentPluginRepository] = None
+    _report: Dict[str, Dict] = {}
+    _report_generation_lock: Lock = Lock()
+
+    @classmethod
+    def initialize(
+        cls,
+        agent_repository: IAgentRepository,
+        agent_configuration_repository: IAgentConfigurationRepository,
+        agent_event_repository: IAgentEventRepository,
+        machine_repository: IMachineRepository,
+        node_repository: INodeRepository,
+        agent_plugin_repository: IAgentPluginRepository,
+    ):
+        cls._agent_repository = agent_repository
+        cls._agent_configuration_repository = agent_configuration_repository
+        cls._agent_event_repository = agent_event_repository
+        cls._machine_repository = machine_repository
+        cls._node_repository = node_repository
+        cls._agent_plugin_repository = agent_plugin_repository
+
+    # This should pull from Simulation entity
+    @classmethod
+    def get_first_monkey_time(cls):
+        agents = cls._agent_repository.get_agents()
+
+        return min(agents, key=lambda a: a.start_time).start_time
+
+    @classmethod
+    def get_last_monkey_dead_time(cls) -> Optional[datetime]:
+        agents = cls._agent_repository.get_agents()  # type: ignore[union-attr] # noqa: E501
+        if not agents:
+            return None
+
+        # TODO: Make sure that the case where an agent doesn't have a stop time
+        #       because it doesn't send a shutdown event is solved after #2518.
+        #       Till then, if an agent doesn't have stop time, the total run duration
+        #       won't be shown in the report.
+        all_agents_dead = all((agent.stop_time is not None for agent in agents))
+        if not all_agents_dead:
+            return None
+
+        return max(agents, key=lambda a: a.stop_time).stop_time
 
     @staticmethod
-    def get_first_monkey_time():
-        return (
-            mongo.db.telemetry.find({}, {"timestamp": 1})
-            .sort([("$natural", 1)])
-            .limit(1)[0]["timestamp"]
-        )
+    def get_monkey_duration() -> Optional[str]:
+        last_monkey_dead_time = ReportService.get_last_monkey_dead_time()
+        if not last_monkey_dead_time:
+            return None
 
-    @staticmethod
-    def get_last_monkey_dead_time():
-        return (
-            mongo.db.telemetry.find({}, {"timestamp": 1})
-            .sort([("$natural", -1)])
-            .limit(1)[0]["timestamp"]
-        )
-
-    @staticmethod
-    def get_monkey_duration():
-        delta = ReportService.get_last_monkey_dead_time() - ReportService.get_first_monkey_time()
+        delta = last_monkey_dead_time - ReportService.get_first_monkey_time()
         st = ""
         hours, rem = divmod(delta.seconds, 60 * 60)
         minutes, seconds = divmod(rem, 60)
@@ -82,366 +131,242 @@ class ReportService:
 
         return st
 
-    @staticmethod
-    def get_tunnels():
-        return [
-            {
-                "type": "tunnel",
-                "machine": NodeService.get_node_hostname(
-                    NodeService.get_node_or_monkey_by_id(tunnel["_id"])
-                ),
-                "dest": NodeService.get_node_hostname(
-                    NodeService.get_node_or_monkey_by_id(tunnel["tunnel"])
-                ),
-            }
-            for tunnel in mongo.db.monkey.find({"tunnel": {"$exists": True}}, {"tunnel": 1})
-        ]
-
-    @staticmethod
-    def get_azure_issues():
-        creds = ReportService.get_azure_creds()
-        machines = set([instance["origin"] for instance in creds])
-
-        logger.info("Azure issues generated for reporting")
-
-        return [
-            {
-                "type": "azure_password",
-                "machine": machine,
-                "users": set(
-                    [instance["username"] for instance in creds if instance["origin"] == machine]
-                ),
-            }
-            for machine in machines
-        ]
-
+    # This should be replaced by machine query for "scanned" status
     @staticmethod
     def get_scanned():
         formatted_nodes = []
 
-        nodes = ReportService.get_all_displayed_nodes()
+        machines = ReportService._machine_repository.get_machines()
 
-        for node in nodes:
-            nodes_that_can_access_current_node = node["accessible_from_nodes_hostnames"]
-            formatted_nodes.append(
-                {
-                    "label": node["label"],
-                    "ip_addresses": node["ip_addresses"],
-                    "accessible_from_nodes": nodes_that_can_access_current_node,
-                    "services": node["services"],
-                    "domain_name": node["domain_name"],
-                    "pba_results": node["pba_results"] if "pba_results" in node else "None",
-                }
-            )
-
-        logger.info("Scanned nodes generated for reporting")
+        for machine in machines:
+            accessible_from = ReportService.get_scanners_of_machine(machine)
+            if accessible_from:
+                formatted_nodes.append(
+                    {
+                        "hostname": machine.hostname,
+                        "ip_addresses": [str(iface.ip) for iface in machine.network_interfaces],
+                        "accessible_from_nodes": [m.dict(simplify=True) for m in accessible_from],
+                        "domain_name": "",
+                        # TODO add services
+                        "services": [],
+                    }
+                )
 
         return formatted_nodes
 
-    @staticmethod
-    def get_all_displayed_nodes():
-        nodes_without_monkeys = [
-            NodeService.get_displayed_node_by_id(node["_id"], True)
-            for node in mongo.db.node.find({}, {"_id": 1})
-        ]
-        nodes_with_monkeys = [
-            NodeService.get_displayed_node_by_id(monkey["_id"], True)
-            for monkey in mongo.db.monkey.find({}, {"_id": 1})
-        ]
-        nodes = nodes_without_monkeys + nodes_with_monkeys
-        return nodes
+    @classmethod
+    def get_scanners_of_machine(cls, machine: Machine) -> List[Machine]:
+        if not cls._node_repository:
+            raise RuntimeError("Node repository does not exist")
+        if not cls._machine_repository:
+            raise RuntimeError("Machine repository does not exist")
 
-    @staticmethod
-    def get_stolen_creds():
-        creds = []
+        nodes = cls._node_repository.get_nodes()
+        scanner_machines = set()
+        for node in nodes:
+            for dest, conn in node.connections.items():
+                if CommunicationType.SCANNED in conn and dest == machine.id:
+                    scanner_machine = cls._machine_repository.get_machine_by_id(node.machine_id)
+                    scanner_machines.add(scanner_machine)
 
-        stolen_system_info_creds = ReportService._get_credentials_from_system_info_telems()
-        creds.extend(stolen_system_info_creds)
+        return list(scanner_machines)
 
-        stolen_exploit_creds = ReportService._get_credentials_from_exploit_telems()
-        creds.extend(stolen_exploit_creds)
+    @classmethod
+    def process_exploit_event(
+        cls,
+        exploitation_event: ExploitationEvent,
+        password_restored: DefaultDict[IPv4Address, bool],
+    ) -> ExploiterReportInfo:
+        if not cls._machine_repository:
+            raise RuntimeError("Machine repository does not exist")
 
-        logger.info("Stolen creds generated for reporting")
-        return creds
-
-    @staticmethod
-    def _get_credentials_from_system_info_telems():
-        formatted_creds = []
-        for telem in get_telemetry_by_query(
-            {"telem_category": "system_info", "data.credentials": {"$exists": True}},
-            {"data.credentials": 1, "monkey_guid": 1},
-        ):
-            creds = telem["data"]["credentials"]
-            origin = NodeService.get_monkey_by_guid(telem["monkey_guid"])["hostname"]
-            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds, origin))
-        return formatted_creds
-
-    @staticmethod
-    def _get_credentials_from_exploit_telems():
-        formatted_creds = []
-        for telem in mongo.db.telemetry.find(
-            {"telem_category": "exploit", "data.info.credentials": {"$exists": True}},
-            {"data.info.credentials": 1, "data.machine": 1, "monkey_guid": 1},
-        ):
-            creds = telem["data"]["info"]["credentials"]
-            domain_name = telem["data"]["machine"]["domain_name"]
-            ip = telem["data"]["machine"]["ip_addr"]
-            origin = domain_name if domain_name else ip
-            formatted_creds.extend(ReportService._format_creds_for_reporting(telem, creds, origin))
-        return formatted_creds
-
-    @staticmethod
-    def _format_creds_for_reporting(telem, monkey_creds, origin):
-        creds = []
-        CRED_TYPE_DICT = {
-            "password": "Clear Password",
-            "lm_hash": "LM hash",
-            "ntlm_hash": "NTLM hash",
-        }
-        if len(monkey_creds) == 0:
-            return []
-
-        for user in monkey_creds:
-            for cred_type in CRED_TYPE_DICT:
-                if cred_type not in monkey_creds[user] or not monkey_creds[user][cred_type]:
-                    continue
-                username = (
-                    monkey_creds[user]["username"] if "username" in monkey_creds[user] else user
-                )
-                cred_row = {
-                    "username": username,
-                    "type": CRED_TYPE_DICT[cred_type],
-                    "origin": origin,
-                }
-                if cred_row not in creds:
-                    creds.append(cred_row)
-        return creds
-
-    @staticmethod
-    def get_ssh_keys():
-        """
-        Return private ssh keys found as credentials
-        :return: List of credentials
-        """
-        creds = []
-        for telem in mongo.db.telemetry.find(
-            {"telem_category": "system_info", "data.ssh_info": {"$exists": True}},
-            {"data.ssh_info": 1, "monkey_guid": 1},
-        ):
-            origin = NodeService.get_monkey_by_guid(telem["monkey_guid"])["hostname"]
-            if telem["data"]["ssh_info"]:
-                # Pick out all ssh keys not yet included in creds
-                ssh_keys = [
-                    {
-                        "username": key_pair["name"],
-                        "type": "Clear SSH private key",
-                        "origin": origin,
-                    }
-                    for key_pair in telem["data"]["ssh_info"]
-                    if key_pair["private_key"]
-                    and {
-                        "username": key_pair["name"],
-                        "type": "Clear SSH private key",
-                        "origin": origin,
-                    }
-                    not in creds
-                ]
-                creds.extend(ssh_keys)
-        return creds
-
-    @staticmethod
-    def get_azure_creds():
-        """
-        Recover all credentials marked as being from an Azure machine
-        :return: List of credentials.
-        """
-        creds = []
-        for telem in mongo.db.telemetry.find(
-            {"telem_category": "system_info", "data.Azure": {"$exists": True}},
-            {"data.Azure": 1, "monkey_guid": 1},
-        ):
-            azure_users = telem["data"]["Azure"]["usernames"]
-            if len(azure_users) == 0:
-                continue
-            origin = NodeService.get_monkey_by_guid(telem["monkey_guid"])["hostname"]
-            azure_leaked_users = [
-                {"username": user.replace(",", "."), "type": "Clear Password", "origin": origin}
-                for user in azure_users
-            ]
-            creds.extend(azure_leaked_users)
-
-        logger.info("Azure machines creds generated for reporting")
-        return creds
-
-    @staticmethod
-    def process_exploit(exploit) -> ExploiterReportInfo:
-        exploiter_type = exploit["data"]["exploiter"]
-        exploiter_descriptor = ExploiterDescriptorEnum.get_by_class_name(exploiter_type)
-        processor = exploiter_descriptor.processor()
-        exploiter_info = processor.get_exploit_info_by_dict(exploiter_type, exploit)
-        return exploiter_info
-
-    @staticmethod
-    def get_exploits() -> List[dict]:
-        query = [
-            {"$match": {"telem_category": "exploit", "data.result": True}},
-            {
-                "$group": {
-                    "_id": {"ip_address": "$data.machine.ip_addr"},
-                    "data": {"$first": "$$ROOT"},
-                }
-            },
-            {"$replaceRoot": {"newRoot": "$data"}},
-        ]
-        exploits = []
-        for exploit in mongo.db.telemetry.aggregate(query):
-            new_exploit = ReportService.process_exploit(exploit)
-            if new_exploit not in exploits:
-                exploits.append(new_exploit.__dict__)
-        return exploits
-
-    @staticmethod
-    def get_monkey_subnets(monkey_guid):
-        network_info = mongo.db.telemetry.find_one(
-            {"telem_category": "system_info", "monkey_guid": monkey_guid},
-            {"data.network_info.networks": 1},
+        target_machine = cls._machine_repository.get_machines_by_ip(exploitation_event.target)[0]
+        hostname = (
+            target_machine.hostname
+            if target_machine.hostname
+            else str(target_machine.network_interfaces[0].ip)
         )
-        if network_info is None or not network_info["data"]:
-            return []
-
-        return [
-            ipaddress.ip_interface(str(network["addr"] + "/" + network["netmask"])).network
-            for network in network_info["data"]["network_info"]["networks"]
-        ]
-
-    @staticmethod
-    def get_island_cross_segment_issues():
-        issues = []
-        island_ips = local_ip_addresses()
-        for monkey in mongo.db.monkey.find(
-            {"tunnel": {"$exists": False}}, {"tunnel": 1, "guid": 1, "hostname": 1}
-        ):
-            found_good_ip = False
-            monkey_subnets = ReportService.get_monkey_subnets(monkey["guid"])
-            for subnet in monkey_subnets:
-                for ip in island_ips:
-                    if ipaddress.ip_address(str(ip)) in subnet:
-                        found_good_ip = True
-                        break
-                if found_good_ip:
-                    break
-            if not found_good_ip:
-                issues.append(
-                    {
-                        "type": "island_cross_segment",
-                        "machine": monkey["hostname"],
-                        "networks": [str(subnet) for subnet in monkey_subnets],
-                        "server_networks": [str(subnet) for subnet in get_subnets()],
-                    }
-                )
-
-        return issues
+        return ExploiterReportInfo(
+            target_machine.id,
+            hostname,
+            str(exploitation_event.target),
+            exploitation_event.exploiter_name,
+            password_restored=password_restored[exploitation_event.target],
+        )
 
     @staticmethod
-    def get_cross_segment_issues_of_single_machine(source_subnet_range, target_subnet_range):
+    def filter_single_exploit_per_ip(
+        exploitation_events: Iterable[ExploitationEvent],
+    ) -> Iterable[ExploitationEvent]:
         """
-        Gets list of cross segment issues of a single machine. Meaning a machine has an interface
-        for each of the
-        subnets.
-        :param source_subnet_range:   The subnet range which shouldn't be able to access
-        target_subnet.
-        :param target_subnet_range:   The subnet range which shouldn't be accessible from
-        source_subnet.
+        Yields the first exploit for each target IP
+        """
+        ips = set()
+        for exploit in exploitation_events:
+            if exploit.target not in ips:
+                ips.add(exploit.target)
+                yield exploit
+
+    @classmethod
+    def get_exploits(cls) -> List[dict]:
+        if not cls._agent_event_repository:
+            raise RuntimeError("Agent event repository does not exist")
+
+        # Get the successful exploits
+        exploits = cls._agent_event_repository.get_events_by_type(ExploitationEvent)
+        successful_exploits = filter(lambda x: x.success, exploits)
+        filtered_exploits = cls.filter_single_exploit_per_ip(successful_exploits)
+
+        zerologon_events = cls._agent_event_repository.get_events_by_type(PasswordRestorationEvent)
+        password_restored = defaultdict(
+            lambda: None, {e.target: e.success for e in zerologon_events}
+        )
+
+        # Convert the ExploitationEvent into an ExploiterReportInfo
+        return [asdict(cls.process_exploit_event(e, password_restored)) for e in filtered_exploits]
+
+    @classmethod
+    def get_cross_segment_issues_of_single_machine(
+        cls, source_subnet_range: NetworkRange, target_subnet_range: NetworkRange
+    ) -> List[Dict[str, Any]]:
+        """
+        Gets list of cross segment issues of a single machine.
+        Meaning a machine has an interface for each of the subnets
+
+        :param source_subnet_range: The subnet range which shouldn't be able to access target_subnet
+        :param target_subnet_range: The subnet range which shouldn't be accessible from
+            source_subnet
         :return:
         """
+        if cls._agent_repository is None:
+            raise RuntimeError("Agent repository does not exist")
+        if cls._machine_repository is None:
+            raise RuntimeError("Machine repository does not exist")
+
         cross_segment_issues = []
 
-        for monkey in mongo.db.monkey.find({}, {"ip_addresses": 1, "hostname": 1}):
-            ip_in_src = None
-            ip_in_dst = None
-            for ip_addr in monkey["ip_addresses"]:
-                if source_subnet_range.is_in_range(str(ip_addr)):
-                    ip_in_src = ip_addr
+        # Get IP addresses and hostname for each agent
+        machine_dict = {m.id: m for m in cls._machine_repository.get_machines()}
+        issues_dict: DefaultDict[Machine, DefaultDict[IPv4Address, Set[IPv4Address]]] = defaultdict(
+            lambda: defaultdict(set)
+        )
+        for agent in cls._agent_repository.get_agents():
+            machine = machine_dict[agent.machine_id]
+
+            ip_in_src: Optional[IPv4Address] = None
+            for iface in machine.network_interfaces:
+                if source_subnet_range.is_in_range(str(iface.ip)):
+                    ip_in_src = iface.ip
                     break
 
-            # No point searching the dst subnet if there are no IPs in src subnet.
             if not ip_in_src:
                 continue
 
-            for ip_addr in monkey["ip_addresses"]:
-                if target_subnet_range.is_in_range(str(ip_addr)):
-                    ip_in_dst = ip_addr
+            ip_in_dst: Optional[IPv4Address] = None
+            for iface in machine.network_interfaces:
+                if target_subnet_range.is_in_range(str(iface.ip)):
+                    ip_in_dst = iface.ip
                     break
 
             if ip_in_dst:
-                cross_segment_issues.append(
-                    {
-                        "source": ip_in_src,
-                        "hostname": monkey["hostname"],
-                        "target": ip_in_dst,
-                        "services": None,
-                        "is_self": True,
-                    }
-                )
+                issues_dict[machine][ip_in_src].add(ip_in_dst)
+
+        for machine, src_dict in issues_dict.items():
+            for src_ip, target_ips in src_dict.items():
+                for target_ip in sorted(target_ips):
+                    cross_segment_issues.append(
+                        {
+                            "source": str(src_ip),
+                            "hostname": machine.hostname,
+                            "target": str(target_ip),
+                            "services": None,
+                            "is_self": True,
+                        }
+                    )
 
         return cross_segment_issues
 
-    @staticmethod
-    def get_cross_segment_issues_per_subnet_pair(scans, source_subnet, target_subnet):
+    @classmethod
+    def get_cross_segment_issues_per_subnet_pair(
+        cls,
+        scans: Sequence[Union[PingScanEvent, TCPScanEvent]],
+        source_subnet: str,
+        target_subnet: str,
+    ) -> List[Dict[str, Any]]:
         """
         Gets list of cross segment issues from source_subnet to target_subnet.
-        :param scans:           List of all scan telemetry entries. Must have monkey_guid,
-        ip_addr and services.
-                                This should be a PyMongo cursor object.
+
+        :param scans: List of all successful scan events.
         :param source_subnet:   The subnet which shouldn't be able to access target_subnet.
         :param target_subnet:   The subnet which shouldn't be accessible from source_subnet.
         :return:
         """
         if source_subnet == target_subnet:
             return []
+
+        if cls._agent_repository is None:
+            raise RuntimeError("Agent repository does not exist")
+        if cls._machine_repository is None:
+            raise RuntimeError("Machine repository does not exist")
+
         source_subnet_range = NetworkRange.get_range_obj(source_subnet)
         target_subnet_range = NetworkRange.get_range_obj(target_subnet)
 
         cross_segment_issues = []
 
-        scans.rewind()  # If we iterated over scans already we need to rewind.
+        agents_dict = {a.id: a for a in cls._agent_repository.get_agents()}
+        machines_dict = {m.id: m for m in cls._machine_repository.get_machines()}
+        machine_events: DefaultDict[
+            Machine, DefaultDict[IPv4Address, Dict[Type, ScanEvent]]
+        ] = defaultdict(lambda: defaultdict(dict))
+
+        # Store events for which the target IP is in the target subnet, indexed
+        # by the scanning machine, target IP, and event type
         for scan in scans:
-            target_ip = scan["data"]["machine"]["ip_addr"]
+            target_ip = scan.target
             if target_subnet_range.is_in_range(str(target_ip)):
-                monkey = NodeService.get_monkey_by_guid(scan["monkey_guid"])
-                cross_segment_ip = get_ip_in_src_and_not_in_dst(
-                    monkey["ip_addresses"], source_subnet_range, target_subnet_range
-                )
+                agent = agents_dict[scan.source]
+                machine = machines_dict[agent.machine_id]
+                machine_events[machine][target_ip][type(scan)] = scan
+
+        # Report issues when the machine has an IP in the source subnet range
+        for machine, scan_dict in machine_events.items():
+            machine_ips = [iface.ip for iface in machine.network_interfaces]
+            for target_ip, scan_type_dict in scan_dict.items():
+                cross_segment_ip = get_ip_if_in_subnet(machine_ips, source_subnet_range)
 
                 if cross_segment_ip is not None:
                     cross_segment_issues.append(
                         {
-                            "source": cross_segment_ip,
-                            "hostname": monkey["hostname"],
-                            "target": target_ip,
-                            "services": scan["data"]["machine"]["services"],
-                            "icmp": scan["data"]["machine"]["icmp"],
+                            "source": str(cross_segment_ip),
+                            "hostname": machine.hostname,
+                            "target": str(target_ip),
+                            "services": {str(a): s for a, s in machine.network_services.items()},
+                            "types": [
+                                ScanTypeEnum.from_event(s).value for _, s in scan_type_dict.items()
+                            ],
                             "is_self": False,
                         }
                     )
 
-        return cross_segment_issues + ReportService.get_cross_segment_issues_of_single_machine(
+        return cross_segment_issues + cls.get_cross_segment_issues_of_single_machine(
             source_subnet_range, target_subnet_range
         )
 
     @staticmethod
-    def get_cross_segment_issues_per_subnet_group(scans, subnet_group):
+    def get_cross_segment_issues_per_subnet_group(
+        scans: Sequence[Union[PingScanEvent, TCPScanEvent]], subnet_group: str
+    ):
         """
         Gets list of cross segment issues within given subnet_group.
-        :param scans:           List of all scan telemetry entries. Must have monkey_guid,
-        ip_addr and services.
-                                This should be a PyMongo cursor object.
-        :param subnet_group:    List of subnets which shouldn't be accessible from each other.
-        :return:                Cross segment issues regarding the subnets in the group.
+
+        :param scans: List of all scan events.
+        :param subnet_group: List of subnets which shouldn't be accessible from each other.
+        :return: Cross segment issues regarding the subnets in the group.
         """
         cross_segment_issues = []
 
-        for subnet_pair in itertools.product(subnet_group, subnet_group):
+        for subnet_pair in product(subnet_group, subnet_group):
             source_subnet = subnet_pair[0]
             target_subnet = subnet_pair[1]
             pair_issues = ReportService.get_cross_segment_issues_per_subnet_pair(
@@ -458,244 +383,184 @@ class ReportService:
 
         return cross_segment_issues
 
-    @staticmethod
-    def get_cross_segment_issues():
-        scans = mongo.db.telemetry.find(
-            {"telem_category": "scan"},
-            {
-                "monkey_guid": 1,
-                "data.machine.ip_addr": 1,
-                "data.machine.services": 1,
-                "data.machine.icmp": 1,
-            },
-        )
+    @classmethod
+    def get_cross_segment_issues(cls):
+        ping_scans = cls._agent_event_repository.get_events_by_type(PingScanEvent)
+        tcp_scans = cls._agent_event_repository.get_events_by_type(TCPScanEvent)
+        successful_ping_scans = (s for s in ping_scans if s.response_received)
+        successful_tcp_scans = (s for s in tcp_scans if has_open_ports(s))
+        scans = [s for s in chain(successful_ping_scans, successful_tcp_scans)]
 
         cross_segment_issues = []
 
         # For now the feature is limited to 1 group.
-        subnet_groups = get_config_network_segments_as_subnet_groups()
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        subnet_groups = [agent_configuration.propagation.network_scan.targets.inaccessible_subnets]
 
         for subnet_group in subnet_groups:
-            cross_segment_issues += ReportService.get_cross_segment_issues_per_subnet_group(
+            cross_segment_issues += cls.get_cross_segment_issues_per_subnet_group(
                 scans, subnet_group
             )
 
         return cross_segment_issues
 
-    @staticmethod
-    def get_domain_issues():
-        ISSUE_GENERATORS = [
-            PTHReportService.get_duplicated_passwords_issues,
-            PTHReportService.get_shared_admins_issues,
-        ]
-        issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
-        domain_issues_dict = {}
-        for issue in issues:
-            if not issue.get("is_local", True):
-                machine = issue.get("machine").upper()
-                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get("machine"))
-                if machine not in domain_issues_dict:
-                    domain_issues_dict[machine] = []
-                if aws_instance_id:
-                    issue["aws_instance_id"] = aws_instance_id
-                domain_issues_dict[machine].append(issue)
-        logger.info("Domain issues generated for reporting")
-        return domain_issues_dict
+    @classmethod
+    def get_config_exploits(cls) -> List[str]:
+        configured_exploiter_names = []
 
-    @staticmethod
-    def get_machine_aws_instance_id(hostname):
-        aws_instance_id_list = list(
-            mongo.db.monkey.find({"hostname": hostname}, {"aws_instance_id": 1})
-        )
-        if aws_instance_id_list:
-            if "aws_instance_id" in aws_instance_id_list[0]:
-                return str(aws_instance_id_list[0]["aws_instance_id"])
-        else:
-            return None
+        agent_configuration = cls._agent_configuration_repository.get_configuration()  # type: ignore[union-attr] # noqa: E501
+        exploitation_configuration = agent_configuration.propagation.exploitation
+        exploiter_manifests = cls._get_exploiter_manifests()
 
-    @staticmethod
-    def get_manual_monkey_hostnames():
-        return [monkey["hostname"] for monkey in get_manual_monkeys()]
+        for exploiter_name, manifest in exploiter_manifests.items():
+            if exploiter_name not in exploitation_configuration.exploiters:
+                continue
 
-    @staticmethod
-    def get_config_users():
-        return ConfigService.get_config_value(USER_LIST_PATH, True, True)
+            if manifest.title:
+                configured_exploiter_names.append(manifest.title)
+            else:
+                configured_exploiter_names.append(manifest.name)
 
-    @staticmethod
-    def get_config_passwords():
-        return ConfigService.get_config_value(PASSWORD_LIST_PATH, True, True)
+        return configured_exploiter_names
 
-    @staticmethod
-    def get_config_exploits():
-        exploits_config_value = EXPLOITER_CLASSES_PATH
-        default_exploits = ConfigService.get_default_config(False)
-        for namespace in exploits_config_value:
-            default_exploits = default_exploits[namespace]
-        exploits = ConfigService.get_config_value(exploits_config_value, True, True)
+    @classmethod
+    def get_config_ips(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        return agent_configuration.propagation.network_scan.targets.subnets
 
-        if exploits == default_exploits:
-            return ["default"]
+    @classmethod
+    def get_config_scan(cls):
+        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        return agent_configuration.propagation.network_scan.targets.scan_my_networks
 
-        return [
-            ExploiterDescriptorEnum.get_by_class_name(exploit).display_name for exploit in exploits
-        ]
+    @classmethod
+    def is_report_generated(cls) -> bool:
+        return bool(cls._report)
 
-    @staticmethod
-    def get_config_ips():
-        return ConfigService.get_config_value(SUBNET_SCAN_LIST_PATH, True, True)
+    @classmethod
+    def generate_report(cls):
+        if cls._agent_event_repository is None:
+            return RuntimeError("Agent event repository does not exist")
+        if cls._machine_repository is None:
+            return RuntimeError("Machine repository does not exist")
 
-    @staticmethod
-    def get_config_scan():
-        return ConfigService.get_config_value(LOCAL_NETWORK_SCAN_PATH, True, True)
-
-    @staticmethod
-    def get_issue_set(issues, config_users, config_passwords):
-        issue_set = set()
-
-        for machine in issues:
-            for issue in issues[machine]:
-                if ReportService._is_weak_credential_issue(issue, config_users, config_passwords):
-                    issue_set.add(ReportService.DerivedIssueEnum.WEAK_PASSWORD)
-                elif ReportService._is_stolen_credential_issue(issue):
-                    issue_set.add(ReportService.DerivedIssueEnum.STOLEN_CREDS)
-                elif ReportService._is_zerologon_pass_restore_failed(issue):
-                    issue_set.add(ReportService.DerivedIssueEnum.ZEROLOGON_PASS_RESTORE_FAILED)
-
-                issue_set.add(issue["type"])
-
-        return issue_set
-
-    @staticmethod
-    def _is_weak_credential_issue(
-        issue: dict, config_usernames: List[str], config_passwords: List[str]
-    ) -> bool:
-        # Only credential exploiter issues have 'credential_type'
-        return (
-            "credential_type" in issue
-            and issue["credential_type"] == CredentialType.PASSWORD.value
-            and issue["password"] in config_passwords
-            and issue["username"] in config_usernames
-        )
-
-    @staticmethod
-    def _is_stolen_credential_issue(issue: dict) -> bool:
-        # Only credential exploiter issues have 'credential_type'
-        return "credential_type" in issue and (
-            issue["credential_type"] == CredentialType.PASSWORD.value
-            or issue["credential_type"] == CredentialType.HASH.value
-        )
-
-    @staticmethod
-    def _is_zerologon_pass_restore_failed(issue: dict):
-        return (
-            issue["type"] == ExploiterDescriptorEnum.ZEROLOGON.value.class_name
-            and not issue["password_restored"]
-        )
-
-    @staticmethod
-    def is_report_generated():
-        generated_report = mongo.db.report.find_one({})
-        return generated_report is not None
-
-    @staticmethod
-    def generate_report():
-        domain_issues = ReportService.get_domain_issues()
         issues = ReportService.get_issues()
-        config_users = ReportService.get_config_users()
-        config_passwords = ReportService.get_config_passwords()
-        issue_set = ReportService.get_issue_set(issues, config_users, config_passwords)
         cross_segment_issues = ReportService.get_cross_segment_issues()
-        monkey_latest_modify_time = Monkey.get_latest_modifytime()
+        latest_event_timestamp = ReportService.get_latest_event_timestamp()
 
         scanned_nodes = ReportService.get_scanned()
-        exploited_cnt = len(get_monkey_exploited())
-        report = {
+        exploited_cnt = len(
+            get_monkey_exploited(
+                cls._agent_event_repository, cls._machine_repository, cls._agent_plugin_repository
+            )
+        )
+        return {
             "overview": {
-                "manual_monkeys": ReportService.get_manual_monkey_hostnames(),
-                "config_users": config_users,
-                "config_passwords": config_passwords,
                 "config_exploits": ReportService.get_config_exploits(),
                 "config_ips": ReportService.get_config_ips(),
                 "config_scan": ReportService.get_config_scan(),
-                "monkey_start_time": ReportService.get_first_monkey_time().strftime(
-                    "%d/%m/%Y %H:%M:%S"
-                ),
+                "monkey_start_time": ReportService.get_first_monkey_time(),
                 "monkey_duration": ReportService.get_monkey_duration(),
-                "issues": issue_set,
-                "cross_segment_issues": cross_segment_issues,
             },
+            "cross_segment_issues": cross_segment_issues,
             "glance": {
                 "scanned": scanned_nodes,
                 "exploited_cnt": exploited_cnt,
-                "stolen_creds": ReportService.get_stolen_creds(),
-                "azure_passwords": ReportService.get_azure_creds(),
-                "ssh_keys": ReportService.get_ssh_keys(),
-                "strong_users": PTHReportService.get_strong_users_on_crit_details(),
             },
-            "recommendations": {"issues": issues, "domain_issues": domain_issues},
-            "meta_info": {"latest_monkey_modifytime": monkey_latest_modify_time},
+            "recommendations": {
+                "issues": issues,
+            },
+            "meta_info": {"latest_event_timestamp": latest_event_timestamp},
         }
-        ReportExporterManager().export(report)
-        save_report(report)
-        return report
 
-    @staticmethod
-    def get_issues():
+    @classmethod
+    def get_issues(cls):
         ISSUE_GENERATORS = [
             ReportService.get_exploits,
-            ReportService.get_tunnels,
-            ReportService.get_island_cross_segment_issues,
-            ReportService.get_azure_issues,
-            PTHReportService.get_duplicated_passwords_issues,
-            PTHReportService.get_strong_users_on_crit_issues,
         ]
 
         issues = functools.reduce(lambda acc, issue_gen: acc + issue_gen(), ISSUE_GENERATORS, [])
 
         issues_dict = {}
         for issue in issues:
+            manifest = cls._get_exploiter_manifests().get(issue["type"])
+            issue = cls.add_remediation_to_issue(issue, manifest)
+            issue = cls.add_description_to_issue(issue, manifest)
             if issue.get("is_local", True):
-                machine = issue.get("machine").upper()
-                aws_instance_id = ReportService.get_machine_aws_instance_id(issue.get("machine"))
-                if machine not in issues_dict:
-                    issues_dict[machine] = []
-                if aws_instance_id:
-                    issue["aws_instance_id"] = aws_instance_id
-                issues_dict[machine].append(issue)
+                machine_id = issue.get("machine_id")
+                if machine_id not in issues_dict:
+                    issues_dict[machine_id] = []
+                issues_dict[machine_id].append(issue)
         logger.info("Issues generated for reporting")
         return issues_dict
 
-    @staticmethod
-    def is_latest_report_exists():
+    @classmethod
+    def add_remediation_to_issue(
+        cls, issue: Dict[str, Any], manifest: Optional[AgentPluginManifest]
+    ) -> Dict[str, Any]:
+        if manifest:
+            issue["remediation_suggestion"] = manifest.remediation_suggestion
+        return issue
+
+    @classmethod
+    def add_description_to_issue(
+        cls, issue: Dict[str, Any], manifest: Optional[AgentPluginManifest]
+    ) -> Dict[str, Any]:
+        if manifest:
+            issue["description"] = manifest.description
+        return issue
+
+    @classmethod
+    def get_latest_event_timestamp(cls) -> Optional[float]:
+        if not cls._agent_event_repository:
+            raise RuntimeError("Agent event repository does not exist")
+
+        # TODO: Add `get_latest_event` to the IAgentEventRepository
+        agent_events = cls._agent_event_repository.get_events()
+        latest_timestamp = (
+            max(agent_events, key=lambda event: event.timestamp).timestamp if agent_events else None
+        )
+
+        return latest_timestamp
+
+    @classmethod
+    def _get_exploiter_manifests(cls) -> Dict[str, AgentPluginManifest]:
+        exploiter_manifests = cls._agent_plugin_repository.get_all_plugin_manifests().get(  # type: ignore[union-attr] # noqa: E501
+            AgentPluginType.EXPLOITER, {}
+        )
+        exploiter_manifests = deepcopy(exploiter_manifests)
+        if not exploiter_manifests:
+            logger.debug("No plugin exploiter manifests were found")
+
+        exploiter_manifests.update(HARD_CODED_EXPLOITER_MANIFESTS)
+
+        return exploiter_manifests
+
+    @classmethod
+    def report_is_outdated(cls) -> bool:
         """
-        This function checks if a monkey report was already generated and if it's the latest one.
-        :return: True if report is the latest one, False if there isn't a report or its not the
-        latest.
+        This function checks if a report is outadated.
+
+        :return: True if the report is outdated, False if there is already a report or it is up to
+        date.
         """
-        latest_report_doc = mongo.db.report.find_one({}, {"meta_info.latest_monkey_modifytime": 1})
+        if cls._report:
+            report_latest_event_timestamp = cls._report["meta_info"]["latest_event_timestamp"]
+            latest_event_timestamp = cls.get_latest_event_timestamp()
+            return report_latest_event_timestamp != latest_event_timestamp
 
-        if latest_report_doc:
-            report_latest_modifytime = latest_report_doc["meta_info"]["latest_monkey_modifytime"]
-            latest_monkey_modifytime = Monkey.get_latest_modifytime()
-            return report_latest_modifytime == latest_monkey_modifytime
+        # Report is not outadated if it is empty and no agents are running
+        return bool(cls._agent_repository.get_agents())  # type: ignore[union-attr] # noqa: E501
 
-        return False
+    @classmethod
+    def update_report(cls):
+        if cls._agent_repository is None:
+            raise RuntimeError("Agent repository does not exists")
 
-    @staticmethod
-    def delete_saved_report_if_exists():
-        """
-        This function clears the saved report from the DB.
-        :raises RuntimeError if deletion failed
-        """
-        delete_result = mongo.db.report.delete_many({})
-        if mongo.db.report.count_documents({}) != 0:
-            raise RuntimeError(
-                "Report cache not cleared. DeleteResult: " + delete_result.raw_result
-            )
+        with cls._report_generation_lock:
+            if cls.report_is_outdated():
+                cls._report = cls.generate_report()
 
-    @staticmethod
-    def get_report():
-        if not ReportService.is_latest_report_exists():
-            return safe_generate_regular_report()
-
-        return get_report()
+    @classmethod
+    def get_report(cls):
+        return cls._report

@@ -1,18 +1,24 @@
-import os
-import struct
-import sys
+import platform
+import socket
+
+from common import OperatingSystem
 
 
-def is_64bit_windows_os():
+def get_os() -> OperatingSystem:
     """
-    Checks for 64 bit Windows OS using environment variables.
+    Get the OperatingSystem of the current execution environment.
     """
-    return "PROGRAMFILES(X86)" in os.environ
+    system = platform.system()
+    if system == "Windows":
+        return OperatingSystem.WINDOWS
+    if system == "Linux":
+        return OperatingSystem.LINUX
+    raise RuntimeError(f"Agent is not supported on OS: '{system}'")
 
 
-def is_64bit_python():
-    return struct.calcsize("P") == 8
+def get_os_version() -> str:
+    return platform.platform()
 
 
-def is_windows_os():
-    return sys.platform.startswith("win")
+def get_hostname():
+    return socket.gethostname()

@@ -3,9 +3,10 @@ import logging
 import sys
 from abc import ABCMeta, abstractmethod
 
-from infection_monkey.config import WormConfiguration
-
 logger = logging.getLogger(__name__)
+
+
+SINGLETON_MUTEX_NAME = "{2384ec59-0df8-4ab9-918c-843740924a28}"
 
 
 class _SystemSingleton(object, metaclass=ABCMeta):
@@ -20,7 +21,7 @@ class _SystemSingleton(object, metaclass=ABCMeta):
 
 class WindowsSystemSingleton(_SystemSingleton):
     def __init__(self):
-        self._mutex_name = r"Global\%s" % (WormConfiguration.singleton_mutex_name,)
+        self._mutex_name = r"Global\%s" % (SINGLETON_MUTEX_NAME,)
         self._mutex_handle = None
 
     def try_lock(self):
@@ -55,7 +56,7 @@ class WindowsSystemSingleton(_SystemSingleton):
 
 class LinuxSystemSingleton(_SystemSingleton):
     def __init__(self):
-        self._unix_sock_name = str(WormConfiguration.singleton_mutex_name)
+        self._unix_sock_name = str(SINGLETON_MUTEX_NAME)
         self._sock_handle = None
 
     def try_lock(self):

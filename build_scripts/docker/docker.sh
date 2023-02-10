@@ -1,4 +1,5 @@
 DOCKER_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
+DOCKER_IMAGE_NAME="guardicore/monkey-island"
 
 source "$DOCKER_DIR/../common.sh"
 
@@ -9,6 +10,7 @@ install_package_specific_build_prereqs() {
 setup_build_dir() {
   local agent_binary_dir=$1
   local monkey_repo=$2
+  local is_release_build=$4
   local build_dir=$DOCKER_DIR/monkey
 
   mkdir "$build_dir"
@@ -22,7 +24,7 @@ setup_build_dir() {
 
   generate_ssl_cert "$build_dir"
 
-  build_frontend "$build_dir"
+  build_frontend "$build_dir" "$is_release_build"
 }
 
 copy_entrypoint_to_build_dir() {
@@ -36,20 +38,12 @@ copy_server_config_to_build_dir() {
 
 build_package() {
   local version=$1
-  local commit_id=$2
-  local dist_dir=$3
+  local dist_dir=$2
   pushd ./docker
 
-  if [ -n "$1" ]; then
-    version="v$version"
-  else
-    version="$commit_id"
-  fi
-
-  docker_image_name="guardicore/monkey-island:$version"
   tar_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tar"
 
-  build_docker_image_tar "$docker_image_name" "$tar_name"
+  build_docker_image_tar "$DOCKER_IMAGE_NAME:$version" "$tar_name"
 
   tgz_name="$DOCKER_DIR/InfectionMonkey-docker-$version.tgz"
   build_docker_image_tgz "$tar_name" "$tgz_name"
@@ -73,4 +67,12 @@ build_docker_image_tgz() {
 
 move_package_to_dist_dir() {
     mv "$1" "$2/"
+}
+
+cleanup() {
+   local tag=$1
+   echo "Cleaning docker images"
+
+   sudo docker rmi "$DOCKER_IMAGE_NAME:$tag"
+   sudo docker image prune --force
 }

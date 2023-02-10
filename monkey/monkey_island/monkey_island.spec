@@ -4,7 +4,6 @@ import platform
 import sys
 
 
-
 block_cipher = None
 
 
@@ -12,8 +11,7 @@ def main():
     # These data files and folders will be included in the bundle.
     # The format of the tuples is (src, dest_dir). See https://pythonhosted.org/PyInstaller/spec-files.html#adding-data-files
     added_datas = [
-        ("../common/BUILD", "/common"),
-        ("../monkey_island/cc/setup/mongo/attack_mitigations.json", "/monkey_island/cc/setup/mongo/attack_mitigations.json")
+        ("../common/BUILD", "/common")
     ]
 
     a = Analysis(['main.py'],

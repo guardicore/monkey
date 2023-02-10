@@ -22,7 +22,7 @@ The first argument is an empty directory (script can create one). The second arg
 
 - `.\deploy_windows.ps1` (Sets up monkey in current directory under .\infection_monkey)
 - `.\deploy_windows.ps1 -monkey_home "C:\test"` (Sets up monkey in C:\test)
-- `.\deploy_windows.ps1 -branch "master"` (Sets up master branch instead of develop in current dir)
+- `.\deploy_windows.ps1 -branch 'master'` (Sets up master branch instead of develop in current dir)
 
 You may also pass in an optional `agents=$false` parameter to disable downloading the latest agent binaries.
 
@@ -85,9 +85,3 @@ been run or all issues have not been resolved.
 To install and configure pre-commit manually, run `pip install --user
 pre-commit`. Next, go to the top level directory of this repository and run
 `pre-commit install -t pre-commit -t pre-push` Now, pre-commit will automatically run whenever you `git commit`.
-
-## Swimm
-
-Infection Monkey has development tutorials that use [`swimm.io`](https://swimm.io/) to help teach new developers how to perform common code tasks in the Infection Monkey codebase and accelerate the ramp-up process. The tutorials include adding new configuration values, new system info collectors and more.
-
-In order to pass the pre-commit checks, you'll have to [install Swimm successfully](https://www.guardicore.com/infectionmonkey/docs/development/swimm/). Both the Linux and Windows deployment scrips will install [Swimm](https://swimm.io/), but you'll have to sign up [here](https://swimm.io/sign-beta) to complete the process.

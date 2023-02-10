@@ -1,24 +1,18 @@
-from monkey_island.cc.server_utils.file_utils import is_windows_os
+from pathlib import WindowsPath
+
+from common.utils.environment import is_windows_os
 
 if is_windows_os():
     import win32api
     import win32security
 
-    FULL_CONTROL = 2032127
-    ACE_ACCESS_MODE_GRANT_ACCESS = win32security.GRANT_ACCESS
-    ACE_INHERIT_OBJECT_AND_CONTAINER = 3
+    import common.utils.windows_permissions as windows_permissions
+else:
+    import os
+    import stat
 
 
-def _get_acl_and_sid_from_path(path: str):
-    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
-    security_descriptor = win32security.GetNamedSecurityInfo(
-        path, win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
-    )
-    acl = security_descriptor.GetSecurityDescriptorDacl()
-    return acl, sid
-
-
-def assert_windows_permissions(path: str):
+def assert_windows_permissions(path: WindowsPath):
     acl, user_sid = _get_acl_and_sid_from_path(path)
 
     assert acl.GetAceCount() == 1
@@ -31,5 +25,26 @@ def assert_windows_permissions(path: str):
     ace_sid = ace["Trustee"]["Identifier"]
 
     assert ace_sid == user_sid
-    assert ace_permissions == FULL_CONTROL and ace_access_mode == ACE_ACCESS_MODE_GRANT_ACCESS
-    assert ace_inheritance == ACE_INHERIT_OBJECT_AND_CONTAINER
+    assert (
+        ace_permissions == windows_permissions.ACCESS_PERMISSIONS_FULL_CONTROL
+        and ace_access_mode == windows_permissions.ACCESS_MODE_GRANT_ACCESS
+    )
+    assert ace_inheritance == windows_permissions.INHERITANCE_OBJECT_AND_CONTAINER
+
+
+def _get_acl_and_sid_from_path(path: WindowsPath):
+    sid, _, _ = win32security.LookupAccountName("", win32api.GetUserName())
+    security_descriptor = win32security.GetNamedSecurityInfo(
+        str(path), win32security.SE_FILE_OBJECT, win32security.DACL_SECURITY_INFORMATION
+    )
+    acl = security_descriptor.GetSecurityDescriptorDacl()
+    return acl, sid
+
+
+def assert_linux_permissions(path: str):
+    st = os.stat(path)
+
+    expected_mode = stat.S_IRWXU
+    actual_mode = st.st_mode & (stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+
+    assert expected_mode == actual_mode

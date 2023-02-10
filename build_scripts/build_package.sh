@@ -1,7 +1,7 @@
 WORKSPACE=${WORKSPACE:-$HOME}
 DEFAULT_REPO_MONKEY_HOME=$WORKSPACE/git/monkey
 MONKEY_ORIGIN_URL="https://github.com/guardicore/monkey.git"
-NODE_SRC=https://deb.nodesource.com/setup_12.x
+NODE_SRC=https://deb.nodesource.com/setup_16.x
 BUILD_SCRIPTS_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
 DIST_DIR="$BUILD_SCRIPTS_DIR/dist"
 
@@ -98,11 +98,22 @@ clone_monkey_repo() {
 
 install_build_prereqs() {
   sudo apt-get update
-  sudo apt-get upgrade -y
+  sudo apt-get upgrade -y -o Dpkg::Options::="--force-confold"
 
   # monkey island prereqs
   sudo apt-get install -y curl libcurl4 openssl git build-essential moreutils
   install_nodejs
+}
+
+format_version() {
+  local unformatted_version=$1
+  local commit_id=$2
+
+  if [ -n "$unformatted_version" ]; then
+      echo "v$monkey_version"
+  else
+      echo "$commit_id"
+  fi
 }
 
 agent_binary_dir=""
@@ -196,10 +207,24 @@ fi
 install_build_prereqs
 install_package_specific_build_prereqs "$WORKSPACE"
 
-
-setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type"
 commit_id=$(get_commit_id "$monkey_repo")
-build_package "$monkey_version" "$commit_id" "$DIST_DIR"
+
+is_release_build=false
+# Monkey version is empty on release build
+if [ ! -z "$monkey_version" ]; then
+    is_release_build=true
+    echo -n "" > "$monkey_repo/monkey/common/BUILD"
+else
+    echo $commit_id > "$monkey_repo/monkey/common/BUILD"
+fi
+
+setup_build_dir "$agent_binary_dir" "$monkey_repo" "$deployment_type" "$is_release_build"
+
+monkey_version=$(format_version "$monkey_version" "$commit_id")
+
+build_package "$monkey_version" "$DIST_DIR"
+
+cleanup "$monkey_version"
 
 log_message "Finished building package: $package"
 exit 0

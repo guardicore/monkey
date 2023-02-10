@@ -1,7 +1,7 @@
-import AuthComponent from "./AuthComponent";
-import React from "react";
+import AuthComponent from './AuthComponent';
+import React from 'react';
 
-export class Response{
+export class Response {
   body: any
   status: number
 
@@ -11,23 +11,44 @@ export class Response{
   }
 }
 
+export enum APIEndpoint {
+  agents = '/api/agents',
+  machines = '/api/machines',
+  nodes = '/api/nodes',
+  agentEvents = '/api/agent-events',
+  mode = '/api/island/mode',
+  monkey_exploitation = '/api/exploitations/monkey',
+  stolenCredentials = '/api/propagation-credentials/stolen-credentials'
+}
+
 class IslandHttpClient extends AuthComponent {
-  post(endpoint: string, contents: any): Promise<Response>{
+  put(endpoint: string, contents: any): Promise<Response> {
     let status = null;
     return this.authFetch(endpoint,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(contents)
       })
-      .then(res => {status = res.status; return res.json()})
+      .then(res => {
+        status = res.status;
+        return res
+      })
       .then(res => new Response(res, status));
   }
 
-  get(endpoint: string): Promise<Response>{
+  get(endpoint: APIEndpoint, args: Record<string, any>={}): Promise<Response> {
     let status = null;
-    return this.authFetch(endpoint)
-      .then(res => {status = res.status; return res.json()})
+    let params = new URLSearchParams(args);
+    let url = String(endpoint);
+    if(params.toString() !== ''){
+      url = endpoint + '?' + params;
+    }
+    return this.authFetch(url)
+      .then(res => {
+        status = res.status;
+        return res.json()
+      })
       .then(res => new Response(res, status));
   }
 }

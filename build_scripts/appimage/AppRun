@@ -13,6 +13,10 @@ export TKPATH="${TK_LIBRARY}"
 # Export SSL certificate
 export SSL_CERT_FILE="${APPDIR}/opt/_internal/certs.pem"
 
+if [ "$1" == "service" ] ; then
+    exec /bin/bash "${APPDIR}/install-infection-monkey-service.sh" ${@:2}
+fi
+
 # Call the entry point
 for opt in "$@"
 do

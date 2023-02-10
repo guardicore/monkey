@@ -31,7 +31,8 @@ body {
     display: block;
     padding: 0px !important;
     overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    overflow-y: auto;
+    /* Scrollable contents if viewport is shorter than content. */
     background-color: #f5f5f5;
     border-right: 1px solid #e8e8e8;
   }
@@ -110,7 +111,7 @@ body {
     border-top-color: #ccc !important;
   }
 
-  .guardicore-link span {
+  .akamai-link span {
     color: #999;
     vertical-align: middle;
     padding-left: 4px;
@@ -118,8 +119,8 @@ body {
     font-size: 1.7em;
   }
 
-  .guardicore-link img {
-    height: 38px;
+  .akamai-link img {
+    height: 55px;
     padding-left: 4px;
     padding-right: 4px;
     vertical-align: middle;
@@ -127,8 +128,8 @@ body {
 }
 
 @media (max-width: 575px) {
-  .guardicore-link img {
-    height: 28px;
+  .akamai-link img {
+    height: 45px;
     padding-left: 4px;
     padding-right: 4px;
     vertical-align: middle;
@@ -151,6 +152,10 @@ body {
   font-size: 2.5em;
   color: #ffcc00;
   font-family: 'Alegreya', serif;
+}
+
+.map-page-title {
+  margin-bottom: 10px;
 }
 
 @media (min-width: 768px) {
@@ -184,10 +189,6 @@ body {
  * Configuration Page
  */
 
-.linux-pba-file-info, .windows-pba-file-info {
-  display: none
-}
-
 .filepond--root li {
   overflow: visible;
 }
@@ -204,11 +205,11 @@ body {
   display: none;
 }
 
-.nav-tabs > li > a {
+.nav-tabs>li>a {
   height: 63px
 }
 
-.nav > li > a:focus {
+.nav>li>a:focus {
   background-color: transparent !important;
 }
 
@@ -220,6 +221,10 @@ body {
   display: inline-block !important;
   width: 130px !important;
   margin-left: 1em;
+}
+
+.pull-right {
+  float: right;
 }
 
 /*
@@ -261,7 +266,8 @@ body {
   margin-top: 0;
 }
 
-.preview-pane .table tr:first-child th, .preview-pane .table tr:first-child td {
+.preview-pane .table tr:first-child th,
+.preview-pane .table tr:first-child td {
   border-top: 0;
 }
 
@@ -269,7 +275,8 @@ body {
   text-align: left;
 }
 
-.preview-pane p, .preview-pane .timeline {
+.preview-pane p,
+.preview-pane .timeline {
   margin-left: 1em;
 }
 
@@ -290,23 +297,35 @@ body {
 }
 
 .timeline li {
-  margin-left: 1.5em;
   position: relative;
   overflow: visible;
   margin-bottom: 1em;
 }
 
+.timeline .event-count {
+  text-align: center;
+}
+
 .timeline .bullet {
-  width: 16px;
-  height: 16px;
+  height: 25px;
+  width: 35px;
+  left: -1.3em;
   background: #ccc;
   position: absolute;
-  right: 100%;
   top: 0;
   bottom: 0;
   margin: 2px 0.5em;
   z-index: 2;
   border-radius: 10px;
+}
+
+.timeline .timeline-content {
+  margin-left: 1.5em;
+}
+
+.exploit-timeline svg.loading-icon {
+  position: absolute;
+  margin: 0;
 }
 
 .timeline .bullet.bad {
@@ -317,24 +336,26 @@ body {
  * Full Logs Page
  */
 
-.data-table-container > .container {
+.data-table-container>.container {
   width: inherit;
   padding: 0;
 }
 
-.data-table-container > .container th, .data-table-container > .container td {
+.data-table-container>.container th,
+.data-table-container>.container td {
   padding: 15px 8px;
 }
 
-.data-table-container > .container > .row:first-child > div:first-child > div {
+.data-table-container>.container>.row:first-child>div:first-child>div {
   display: inline-block;
 }
 
-.data-table-container > .container > .row:first-child > div:first-child > div:last-child {
+.data-table-container>.container>.row:first-child>div:first-child>div:last-child {
   margin-left: 1em;
 }
 
-#search-field, #page-menu {
+#search-field,
+#page-menu {
   margin-left: 0.5em;
   margin-bottom: 1em;
   height: 34px;
@@ -357,7 +378,8 @@ body {
   width: 100px;
 }
 
-.license-link a:link, .license-link a:visited {
+.license-link a:link,
+.license-link a:visited {
   color: #797979 !important;
   font-size: 0.9em;
 }
@@ -463,15 +485,6 @@ body {
   }
 }
 
-/* Attack pages */
-.attack-matrix .messages {
-  margin-bottom: 30px;
-}
-
-.attack-matrix {
-  margin-bottom: 20px;
-}
-
 .icon-info {
   color: #ade3eb !important;
 }
@@ -502,11 +515,6 @@ body {
 
 .status-default {
   color: #575556 !important;
-}
-
-.attack-legend {
-  text-align: center;
-  margin-bottom: 20px;
 }
 
 .version-text {

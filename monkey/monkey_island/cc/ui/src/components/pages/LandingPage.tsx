@@ -4,16 +4,19 @@ import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFileCode, faLightbulb} from '@fortawesome/free-solid-svg-icons';
 import '../../styles/pages/LandingPage.scss';
-import IslandHttpClient from "../IslandHttpClient";
+import IslandHttpClient from '../IslandHttpClient';
 
 import ParticleBackground from '../ui-components/ParticleBackground';
-import Logo from "../logo/LogoComponent";
+import Logo from '../logo/LogoComponent';
 
 const monkeyIcon = require('../../images/monkey-icon.svg')
 const infectionMonkey = require('../../images/infection-monkey.svg')
 
-const LandingPageComponent = (props) => {
+type Props = {
+  onStatusChange: () => void
+}
 
+const LandingPageComponent = (props: Props) => {
   return (
     <>
       <ParticleBackground/>
@@ -24,7 +27,7 @@ const LandingPageComponent = (props) => {
         <div className={'scenario-header'}>
           <ScenarioButtons/>
           <br/>
-          <Col className={'guardicore-logo'}>
+          <Col className={'akamai-logo'}>
             <Logo/>
           </Col>
         </div>
@@ -71,7 +74,7 @@ const LandingPageComponent = (props) => {
   }
 
   function setScenario(scenario: string) {
-    IslandHttpClient.post('/api/island-mode', {'mode': scenario})
+    IslandHttpClient.put('/api/island/mode',  scenario)
       .then(() => {
         props.onStatusChange();
       });
@@ -95,7 +98,7 @@ function ScenarioInfo() {
     <>
       <div className={'scenario-info'}>
         Check the Infection Monkey documentation hub for more information
-        on <a href='https://www.guardicore.com/infectionmonkey/docs/usage/scenarios/' rel="noopener noreferrer"
+        on <a href='https://techdocs.akamai.com/infection-monkey/docs/scenarios' rel="noopener noreferrer"
               target="_blank">
         scenarios
       </a>.

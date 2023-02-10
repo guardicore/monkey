@@ -4,9 +4,10 @@ FROM bitnami/python:3.7 as builder
 COPY ./monkey /monkey
 WORKDIR /monkey
 RUN virtualenv .
+RUN export CI=1
 RUN . bin/activate && \
     cd monkey_island && \
-    pip install pipenv && \
+    pip install pipenv==2022.7.4 && \
     pipenv sync
 
 
@@ -17,7 +18,6 @@ RUN apt-get update && apt-get install -y iputils-ping && apt-get clean
 COPY --from=builder /monkey /monkey
 WORKDIR /monkey
 EXPOSE 5000
-EXPOSE 5001
 ENV MONKEY_DOCKER_CONTAINER=true
 RUN groupadd -r monkey-island && useradd --no-log-init -r -g monkey-island monkey-island
 RUN chmod 444 /monkey/monkey_island/cc/server.key

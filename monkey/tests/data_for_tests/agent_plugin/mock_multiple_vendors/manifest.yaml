@@ -1,0 +1,13 @@
+name: MockWithMultipleVendors
+plugin_type: Exploiter
+supported_operating_systems:
+  - linux
+  - windows
+target_operating_systems:
+  - windows
+  - linux
+title: Mock exploiter plugin with multiple vendors
+description: An exploiter plugin with vendor-windows/ and vendor-linux/ for testing purposes
+version: 1.0.0
+safe: true
+link_to_documentation: https://www.akamai.com/infectionmonkey

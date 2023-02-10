@@ -3,31 +3,25 @@ import {Route} from 'react-router-dom';
 import {Col, Nav} from 'react-bootstrap';
 import AuthComponent from '../AuthComponent';
 import MustRunMonkeyWarning from '../report-components/common/MustRunMonkeyWarning';
-import AttackReport from '../report-components/AttackReport';
 import SecurityReport from '../report-components/SecurityReport';
-import ZeroTrustReport from '../report-components/ZeroTrustReport';
 import RansomwareReport from '../report-components/RansomwareReport';
-import {extractExecutionStatusFromServerResponse} from '../report-components/common/ExecutionStatus';
 import MonkeysStillAliveWarning from '../report-components/common/MonkeysStillAliveWarning';
+import {doesAnyAgentExist, didAllAgentsShutdown} from '../utils/ServerUtils.tsx'
 
 
 class ReportPageComponent extends AuthComponent {
 
   constructor(props) {
     super(props);
-    this.sections = ['security', 'zeroTrust', 'attack', 'ransomware'];
+    this.sections = ['security', 'ransomware'];
 
     this.state = {
       securityReport: {},
-      attackReport: {},
-      zeroTrustReport: {},
       ransomwareReport: {},
       allMonkeysAreDead: false,
       runStarted: true,
       selectedSection: ReportPageComponent.selectReport(this.sections),
-      orderedSections: [{key: 'security', title: 'Security report'},
-        {key: 'zeroTrust', title: 'Zero trust report'},
-        {key: 'attack', title: 'ATT&CK report'}]
+      orderedSections: [{key: 'security', title: 'Security report'}]
     };
 
   }
@@ -41,77 +35,43 @@ class ReportPageComponent extends AuthComponent {
     }
   }
 
-  getReportFromServer(res) {
-    if (res['completed_steps']['run_monkey']) {
-      this.authFetch('/api/report/security')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            securityReport: res
+  getReportFromServer() {
+    doesAnyAgentExist().then(anyAgentExists => {
+      if (anyAgentExists) {
+        this.authFetch('/api/report/security')
+          .then(res => res.json())
+          .then(res => {
+            this.setState({
+              securityReport: res
+            });
           });
-        });
-      this.authFetch('/api/report/attack')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            attackReport: res
+        this.authFetch('/api/report/ransomware')
+          .then(res => res.json())
+          .then(res => {
+            this.setState({
+              ransomwareReport: res
+            });
           });
-        });
-      this.getZeroTrustReportFromServer().then((ztReport) => {
-        this.setState({zeroTrustReport: ztReport})
-      });
-      this.authFetch('/api/report/ransomware')
-        .then(res => res.json())
-        .then(res => {
-          this.setState({
-            ransomwareReport: res
-          });
-        });
-    }
-  }
-
-  getZeroTrustReportFromServer = async () => {
-    let ztReport = {findings: {}, principles: {}, pillars: {}, scoutsuite_data: {}};
-    await this.authFetch('/api/report/zero-trust/findings')
-      .then(res => res.json())
-      .then(res => {
-        ztReport.findings = res;
-      });
-    await this.authFetch('/api/report/zero-trust/principles')
-      .then(res => res.json())
-      .then(res => {
-        ztReport.principles = res;
-      });
-    await this.authFetch('/api/report/zero-trust/pillars')
-      .then(res => res.json())
-      .then(res => {
-        ztReport.pillars = res;
-      });
-    await this.authFetch('/api/report/zero-trust/scoutsuite')
-      .then(res => res.json())
-      .then(res => {
-        ztReport.scoutsuite_data = res;
-      });
-    return ztReport
-  };
-
-  componentWillUnmount() {
-    clearInterval(this.state.ztReportRefreshInterval);
+      }
+    });
   }
 
   updateMonkeysRunning = () => {
-    return this.authFetch('/api')
-      .then(res => res.json())
-      .then(res => {
-        this.setState(extractExecutionStatusFromServerResponse(res));
-        return res;
-      });
+    doesAnyAgentExist().then(anyAgentExists => {
+      this.setState({
+        runStarted: anyAgentExists
+      })
+    })
+    didAllAgentsShutdown().then(allAgentsShutdown => {
+      this.setState({
+        allMonkeysAreDead: !this.state.runStarted || allAgentsShutdown
+      })
+    })
   };
 
   componentDidMount() {
-    const ztReportRefreshInterval = setInterval(this.updateZeroTrustReportFromServer, 8000);
-    this.setState({ztReportRefreshInterval: ztReportRefreshInterval});
-    this.updateMonkeysRunning().then(res => this.getReportFromServer(res));
+    this.updateMonkeysRunning();
+    this.getReportFromServer();
   }
 
   setSelectedSection = (key) => {
@@ -151,10 +111,6 @@ class ReportPageComponent extends AuthComponent {
     switch (this.state.selectedSection) {
       case 'security':
         return (<SecurityReport report={this.state.securityReport}/>);
-      case 'attack':
-        return (<AttackReport report={this.state.attackReport}/>);
-      case 'zeroTrust':
-        return (<ZeroTrustReport report={this.state.zeroTrustReport}/>);
       case 'ransomware':
         return (
           <RansomwareReport
@@ -186,15 +142,14 @@ class ReportPageComponent extends AuthComponent {
   }
 
   render() {
-    let content;
+    let content = <MustRunMonkeyWarning/>;
 
     this.addRansomwareTab();
 
     if (this.state.runStarted) {
       content = this.getReportContent();
-    } else {
-      content = <MustRunMonkeyWarning/>;
     }
+
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 9}} xl={{offset: 2, span: 10}}

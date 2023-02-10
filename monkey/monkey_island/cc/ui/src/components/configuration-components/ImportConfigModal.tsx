@@ -9,22 +9,29 @@ import UnsafeConfigOptionsConfirmationModal
   from './UnsafeConfigOptionsConfirmationModal.js';
 import UploadStatusIcon, {UploadStatuses} from '../ui-components/UploadStatusIcon';
 import isUnsafeOptionSelected from '../utils/SafeOptionValidator.js';
-
+import {decryptText} from '../utils/PasswordBasedEncryptor';
+import {
+  reformatConfig,
+  formatCredentialsForIsland
+} from '../configuration-components/ReformatHook';
 
 type Props = {
   show: boolean,
+  schema: object,
   onClose: (importSuccessful: boolean) => void
 }
 
 
 const ConfigImportModal = (props: Props) => {
-  const configImportEndpoint = '/api/configuration/import';
+  const configImportEndpoint = '/api/agent-configuration';
+  const credentialsEndpoint = '/api/propagation-credentials/configured-credentials';
 
   const [uploadStatus, setUploadStatus] = useState(UploadStatuses.clean);
   const [configContents, setConfigContents] = useState(null);
-  const [candidateConfig, setCandidateConfig] = useState(null);
+  const [configCredentials, setConfigCredentials] = useState(null);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [configEncrypted, setConfigEncrypted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [unsafeOptionsVerified, setUnsafeOptionsVerified] = useState(false);
   const [showUnsafeOptionsConfirmation,
@@ -34,73 +41,147 @@ const ConfigImportModal = (props: Props) => {
   const authComponent = new AuthComponent({});
 
   useEffect(() => {
-    if (configContents !== null) {
-      sendConfigToServer();
+    if (configContents !== null && configCredentials !== null) {
+      tryImport();
     }
-  }, [configContents, unsafeOptionsVerified])
+  }, [configContents, configCredentials, unsafeOptionsVerified])
 
+  function tryImport() {
+    if (configEncrypted && !showPassword) {
+      setShowPassword(true);
+    } else if (configEncrypted && showPassword) {
+      decryptAndSetConfig();
+    } else if (!unsafeOptionsVerified) {
+      checkUnsafeOptions();
+    } else {
+      submitImport();
+    }
+  }
+
+  function checkUnsafeOptions() {
+    let unsafeSelected = true;
+    try {
+      unsafeSelected = isUnsafeOptionSelected(props.schema, configContents);
+    } catch {
+      setUploadStatus(UploadStatuses.error);
+      setErrorMessage('Configuration file is corrupt or in an outdated format');
+      return;
+    }
+
+    if (unsafeSelected) {
+      setShowUnsafeOptionsConfirmation(true);
+    } else {
+      setUnsafeOptionsVerified(true);
+    }
+  }
+
+  function decryptAndSetConfig() {
+    try {
+      let decryptedConfig = JSON.parse(decryptText(configContents, password));
+      let decryptedConfigCredentials = JSON.parse(decryptText(configCredentials, password));
+      setConfigEncrypted(false);
+      setConfigContents(decryptedConfig);
+      setConfigCredentials(decryptedConfigCredentials);
+    } catch {
+      setUploadStatus(UploadStatuses.error);
+      setErrorMessage('Decryption failed: Password is wrong or the file is corrupted');
+    }
+  }
+
+  function submitImport() {
+    try {
+      sendConfigToServer();
+      sendConfigCredentialsToServer();
+      setUploadStatus(UploadStatuses.success);
+    } catch {
+      setUploadStatus(UploadStatuses.error);
+      setErrorMessage('Configuration file is corrupt or in an outdated format');
+    }
+  }
+
+  function sendConfigCredentialsToServer() {
+    let credentials = formatCredentialsForIsland(configCredentials);
+    authComponent.authFetch(credentialsEndpoint,
+      {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(credentials)
+      }
+    ).then(res => {
+      if (res.ok) {
+        resetState();
+        props.onClose(true);
+      } else {
+        setUploadStatus(UploadStatuses.error);
+        setErrorMessage('Configuration file is corrupt or in an outdated format.');
+      }
+    })
+  }
 
   function sendConfigToServer() {
+    let config = reformatConfig(configContents, true);
+    delete config['advanced'];
+    delete config['propagation']['general'];
     authComponent.authFetch(configImportEndpoint,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          config: configContents,
-          password: password,
-          unsafeOptionsVerified: unsafeOptionsVerified
-        })
+        body: JSON.stringify(config)
       }
-    ).then(res => res.json())
-      .then(res => {
-        if (res['import_status'] === 'invalid_credentials') {
-          setUploadStatus(UploadStatuses.success);
-          if (showPassword){
-            setErrorMessage(res['message']);
-          } else {
-            setShowPassword(true);
-            setErrorMessage('');
-          }
-        } else if (res['import_status'] === 'invalid_configuration') {
-          setUploadStatus(UploadStatuses.error);
-          setErrorMessage(res['message']);
-        } else if (res['import_status'] === 'unsafe_options_verification_required') {
-          setUploadStatus(UploadStatuses.success);
-          setErrorMessage('');
-
-          if (isUnsafeOptionSelected(res['config_schema'], JSON.parse(res['config']))) {
-            setShowUnsafeOptionsConfirmation(true);
-            setCandidateConfig(res['config']);
-          } else {
-            setUnsafeOptionsVerified(true);
-          }
-        } else if (res['import_status'] === 'imported'){
-          resetState();
-          props.onClose(true);
-        }
-      })
+    ).then(res => {
+      if (res.ok) {
+        resetState();
+        props.onClose(true);
+      } else {
+        setUploadStatus(UploadStatuses.error);
+        setErrorMessage('Configuration file is corrupt or in an outdated format');
+      }
+    })
   }
 
   function isImportDisabled(): boolean {
-    return uploadStatus !== UploadStatuses.success || (showPassword && password === '')
+    // Don't allow import if password input is empty or there's an error
+    return (showPassword && password === '') || (errorMessage !== '');
   }
 
   function resetState() {
     setUploadStatus(UploadStatuses.clean);
     setPassword('');
     setConfigContents(null);
+    setConfigCredentials(null);
     setErrorMessage('');
     setShowPassword(false);
     setShowUnsafeOptionsConfirmation(false);
     setUnsafeOptionsVerified(false);
     setFileFieldKey(Date.now());  // Resets the file input
+    setConfigEncrypted(false);
   }
 
   function uploadFile(event) {
     setShowPassword(false);
     let reader = new FileReader();
     reader.onload = (event) => {
-      setConfigContents(event.target.result);
+      let importContents = null;
+      try {
+        let contents = event.target.result as string;
+        importContents = JSON.parse(contents);
+      } catch (e) {
+        setErrorMessage('File is not in a valid json format');
+        return
+      }
+
+      try {
+        setConfigEncrypted(importContents['metadata']['encrypted']);
+        setConfigContents(importContents['configuration']);
+        setConfigCredentials(importContents['credentials']);
+      } catch (e) {
+        if (e instanceof TypeError) {
+          setErrorMessage('Missing required fields; configuration file is most '
+            + 'likely from an older version of Infection Monkey.')
+        } else {
+          throw e;
+        }
+      }
     };
     reader.readAsText(event.target.files[0]);
   }
@@ -114,7 +195,6 @@ const ConfigImportModal = (props: Props) => {
         }}
         onContinueClick={() => {
           setUnsafeOptionsVerified(true);
-          setConfigContents(candidateConfig);
         }}
       />
     );
@@ -141,28 +221,31 @@ const ConfigImportModal = (props: Props) => {
         <div className={`mb-3 config-import-option`}>
           {showVerificationDialog()}
           <Form>
-            <Form.File id='importConfigFileSelector'
-                       label='Please choose a configuration file'
-                       accept='.conf'
+            <Form.File id="importConfigFileSelector"
+                       label="Please choose a configuration file"
+                       accept=".conf"
                        onChange={uploadFile}
                        className={'file-input'}
                        key={fileFieldKey}/>
             <UploadStatusIcon status={uploadStatus}/>
 
-            {showPassword && <PasswordInput onChange={setPassword}/>}
+            {showPassword && <PasswordInput onChange={(password) => {
+              setPassword(password);
+              setErrorMessage('')
+            }}/>}
 
             {errorMessage &&
-            <Alert variant={'danger'} className={'import-error'}>
-              <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
-              {errorMessage}
-            </Alert>
+              <Alert variant={'danger'} className={'import-error'}>
+                <FontAwesomeIcon icon={faExclamationCircle} style={{'marginRight': '5px'}}/>
+                {errorMessage}
+              </Alert>
             }
           </Form>
         </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant={'info'}
-                onClick={sendConfigToServer}
+                onClick={tryImport}
                 disabled={isImportDisabled()}>
           Import
         </Button>
@@ -176,8 +259,8 @@ const PasswordInput = (props: {
   return (
     <div className={'config-import-password-input'}>
       <p>File is protected. Please enter the password:</p>
-      <Form.Control type='password'
-                    placeholder='Password'
+      <Form.Control type="password"
+                    placeholder="Password"
                     onChange={evt => (props.onChange(evt.target.value))}/>
     </div>
   )

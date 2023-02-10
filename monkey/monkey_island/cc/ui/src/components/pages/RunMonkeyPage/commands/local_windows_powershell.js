@@ -1,15 +1,16 @@
-import {OS_TYPES} from '../utils/OsTypes';
+function getAgentDownloadCommand(ip) {
+  return `$execCmd = @"\r\n`
+    + `[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {\`$true};`
+    + `(New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/agent-binaries/windows',`
+    + `"""$env:TEMP\\monkey.exe""");Start-Process -FilePath '$env:TEMP\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`
+    + `\r\n"@; \r\n`
+    + `Start-Process -FilePath powershell.exe -ArgumentList $execCmd`;
+}
 
-
-export default function generateLocalWindowsPowershell(ip, osType, username) {
-  let bitText = osType === OS_TYPES.WINDOWS_32 ? '32' : '64';
-  let command = `[System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}; `
-    + `(New-Object System.Net.WebClient).DownloadFile('https://${ip}:5000/api/monkey/download/`
-    + `monkey-windows-${bitText}.exe','.\\monkey.exe'); `
-    + `;Start-Process -FilePath '.\\monkey.exe' -ArgumentList 'm0nk3y -s ${ip}:5000';`;
-
-  if (username != '') {
-    command = `Start-Process powershell.exe -ArgumentList "-noexit ${command}" -Credential ${username}`;
+export default function generateLocalWindowsPowershell(ip, username) {
+  let command = getAgentDownloadCommand(ip)
+  if (username !== '') {
+    command += ` -Credential ${username}`;
   }
 
   return command;

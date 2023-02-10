@@ -11,6 +11,11 @@ tags = ["development", "contribute"]
 
 Want to help secure networks? That's great!
 
+{{% notice warning %}}
+The Infection Monkey project is currently undergoing major changes. Some of the
+information here may be outdated and will be updated soon.
+{{% /notice %}}
+
 ## How should I start?
 
 Here are a few short links to help you get started:
@@ -24,9 +29,9 @@ You can take a look at [our roadmap](https://github.com/guardicore/monkey/projec
 
 ### More exploits! 💥
 
-The best way to find weak spots in a network is by attacking it. The [*Adding Exploits*](./adding-exploits/) page will help you add exploits.
+The best way to find weak spots in a network is by attacking it.
 
-It's important to note that the Infection Monkey must be absolutely reliable. Otherwise, no one will use it, so avoid memory corruption exploits unless they're rock solid and focus on the logical vulns such as Shellshock.
+It's important to note that the Infection Monkey must be absolutely reliable. Otherwise, no one will use it, so avoid memory corruption exploits unless they're rock solid and focus on the logical vulns such as Hadoop.
 
 ### Analysis plugins 🔬
 
@@ -38,6 +43,6 @@ We always want to improve the core Infection Monkey code to make it smaller, fas
 
 ### Documentation 📚
 
-Every project requires excellent documentation. The Infection Monkey is no different. Please feel free to open pull requests with suggestions, improvements or issues and asking us to document various parts of the Monkey.
+Every project requires excellent documentation. The Infection Monkey is no different. Please feel free to open pull requests with suggestions, improvements or issues and ask us to document various parts of the Monkey.
 
 The Infection Monkey's documentation is stored in the `/docs/content` directory.

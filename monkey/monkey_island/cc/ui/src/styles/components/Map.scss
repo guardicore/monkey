@@ -1,48 +1,25 @@
 .map-legend {
   font-size: 18px;
+  position: absolute;
+  z-index: 1;
 }
 
 .map-window {
   position: relative;
 }
 
-.telemetry-console {
-  z-index: 2;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 130px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 5px;
-  border: 3px solid #aaa;
-  padding: 0.5em;
-  color: white;
-  font-family: Consolas, "Courier New", monospace;
-  overflow: auto;
-}
-
-.telemetry-console .date {
-  color: #ccc;
-}
-
-.telemetry-console .source {
-  font-weight: bold;
-}
-
-.telemetry-lines {
-  z-index: 3;
-  position: absolute;
-  bottom: 103px;
-  right: 20px;
-  background: #000000cc;
-  border-radius: 5px;
-  padding: 1px;
-  color: white;
+#map-column {
+  flex: auto;
+  max-width: 100%;
 }
 
 .net-graph-wrapper {
-  height: calc(100% - 130px);
+  height: 89vh;
   width: 100%;
   padding-bottom: 10px;
+}
+
+.exploit-timeline {
+  overflow-y: auto;
+  max-height: 500px;
 }
