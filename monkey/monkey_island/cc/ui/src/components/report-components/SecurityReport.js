@@ -243,7 +243,7 @@ class ReportPageComponent extends AuthComponent {
     let exploitPercentage =
       (100 * this.state.report.glance.exploited_cnt) / this.state.report.glance.scanned.length;
 
-    let exploitPercentageSection = "";
+    let exploitPercentageSection = '';
     if (! isNaN(exploitPercentage)) {
       exploitPercentageSection = (
         <div className='text-center' style={{ margin: '10px' }}>
