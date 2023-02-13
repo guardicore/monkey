@@ -22,6 +22,19 @@ RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
 
 
+def port_range(min_range: int, max_range: int):
+    min_, max_ = min_range, max_range
+    if min_range > max_range:
+        min_, max_ = max_range, min_range
+
+    min_ = max(0, min_)
+    max_ = min(65535, max_) + 1
+    current = min_
+    while current < max_:
+        yield NetworkPort(current)
+        current += 1
+
+
 @dataclass
 class NetworkAddress:
     ip: str
@@ -142,12 +155,7 @@ class TCPPortSelector:
     def _get_free_random_port(
         self, ports_in_use: Set[NetworkPort], min_range: int, max_range: int, lease_time_sec: float
     ) -> Optional[NetworkPort]:
-        min_range = max(1, min_range)
-        # In range the first argument will be in the list and the second one won't.
-        # which means that if we select 65535 as max range, that port will not get
-        # into the range
-        max_range = min(65535, max_range) + 1
-        ports = list(range(min_range, max_range))
+        ports = list(port_range(min_range, max_range))
         shuffle(ports)
         for port in ports:
             if self._port_is_available(port, ports_in_use):
