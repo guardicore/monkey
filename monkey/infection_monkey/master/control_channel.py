@@ -6,6 +6,7 @@ from urllib3 import disable_warnings
 
 from common.agent_configuration import AgentConfiguration
 from common.credentials import Credentials
+from common.types import AgentID
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
 
@@ -26,7 +27,7 @@ def handle_island_api_errors(func):
 
 
 class ControlChannel(IControlChannel):
-    def __init__(self, server: str, agent_id: str, api_client: IIslandAPIClient):
+    def __init__(self, server: str, agent_id: AgentID, api_client: IIslandAPIClient):
         self._agent_id = agent_id
         self._control_channel_server = server
         self._island_api_client = api_client
