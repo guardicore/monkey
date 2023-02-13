@@ -5,7 +5,7 @@ from typing import Dict, Mapping, Optional, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
-from common.types import Event
+from common.types import Event, NetworkPort
 from infection_monkey.i_puppet import PingScanData
 from infection_monkey.model import TargetHost
 
@@ -72,16 +72,15 @@ class IPuppet(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def scan_tcp_ports(
-        self, host: str, ports: Sequence[int], timeout: float = 3
-    ) -> Dict[int, PortScanData]:
+        self, host: str, ports: Sequence[NetworkPort], timeout: float = 3
+    ) -> Dict[NetworkPort, PortScanData]:
         """
         Scans a list of TCP ports on a remote host
 
-        :param str host: The domain name or IP address of a host
-        :param int ports: List of TCP port numbers to scan
-        :param float timeout: The maximum amount of time (in seconds) to wait for a response
+        :param host: The domain name or IP address of a host
+        :param ports: List of TCP port numbers to scan
+        :param timeout: The maximum amount of time (in seconds) to wait for a response
         :return: The data collected by scanning the provided host:ports combination
-        :rtype: Dict[int, PortScanData]
         """
 
     @abc.abstractmethod
@@ -90,20 +89,20 @@ class IPuppet(metaclass=abc.ABCMeta):
         name: str,
         host: str,
         ping_scan_data: PingScanData,
-        port_scan_data: Dict[int, PortScanData],
+        port_scan_data: Dict[NetworkPort, PortScanData],
         options: Dict,
     ) -> FingerprintData:
         """
         Runs a specific fingerprinter to attempt to gather detailed information about a host and its
         services
 
-        :param str name: The name of the fingerprinter to run
-        :param str host: The domain name or IP address of a host
-        :param PingScanData ping_scan_data: Data retrieved from the target host via ICMP
-        :param Dict[int, PortScanData] port_scan_data: Data retrieved from the target host via a TCP
+        :param name: The name of the fingerprinter to run
+        :param host: The domain name or IP address of a host
+        :param ping_scan_data: Data retrieved from the target host via ICMP
+        :param port_scan_data: Data retrieved from the target host via a TCP
                                                        port scan
-        :param Dict options: A dictionary containing options that modify the behavior of the
-                             fingerprinter
+        :param options: A dictionary containing options that modify the behavior of the
+                        fingerprinter
         :return: Detailed information about the target host
         :rtype: FingerprintData
         """

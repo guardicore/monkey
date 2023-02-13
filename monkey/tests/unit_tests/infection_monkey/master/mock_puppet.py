@@ -4,7 +4,7 @@ from typing import Dict, Sequence
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import Event, PortStatus
+from common.types import Event, NetworkPort, PortStatus
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
@@ -73,7 +73,7 @@ class MockPuppet(IPuppet):
 
     def scan_tcp_ports(
         self, host: str, ports: Sequence[int], timeout: float = 3
-    ) -> Dict[int, PortScanData]:
+    ) -> Dict[NetworkPort, PortScanData]:
         logger.debug(f"run_scan_tcp_port({host}, {ports}, {timeout})")
         dot_1_results = {
             22: PortScanData(port=22, status=PortStatus.CLOSED),

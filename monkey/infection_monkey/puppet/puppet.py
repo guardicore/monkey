@@ -5,7 +5,7 @@ from common.agent_plugins import AgentPluginType
 from common.common_consts.timeouts import CONNECTION_TIMEOUT
 from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue
-from common.types import Event
+from common.types import Event, NetworkPort
 from infection_monkey import network_scanning
 from infection_monkey.i_puppet import (
     ExploiterResultData,
@@ -49,8 +49,8 @@ class Puppet(IPuppet):
         return network_scanning.ping(host, timeout, self._agent_event_queue)
 
     def scan_tcp_ports(
-        self, host: str, ports: Sequence[int], timeout: float = CONNECTION_TIMEOUT
-    ) -> Dict[int, PortScanData]:
+        self, host: str, ports: Sequence[NetworkPort], timeout: float = CONNECTION_TIMEOUT
+    ) -> Dict[NetworkPort, PortScanData]:
         return network_scanning.scan_tcp_ports(host, ports, timeout, self._agent_event_queue)
 
     def fingerprint(
@@ -58,7 +58,7 @@ class Puppet(IPuppet):
         name: str,
         host: str,
         ping_scan_data: PingScanData,
-        port_scan_data: Dict[int, PortScanData],
+        port_scan_data: Dict[NetworkPort, PortScanData],
         options: Dict,
     ) -> FingerprintData:
         try:
