@@ -81,7 +81,7 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def get_agent_signals(self, agent_id: str) -> AgentSignals:
+    def get_agent_signals(self, agent_id: AgentID) -> AgentSignals:
         """
         Gets an agent's signals from the island
 
@@ -161,7 +161,7 @@ class IIslandAPIClient(ABC):
         """
 
     @abstractmethod
-    def send_heartbeat(self, agent: AgentID, timestamp: float):
+    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
         """
         Send a "heartbeat" to the Island to indicate that the agent is still alive
 
