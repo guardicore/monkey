@@ -54,6 +54,7 @@ from infection_monkey.exploit.smbexec import SMBExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
+from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
@@ -147,7 +148,7 @@ class InfectionMonkey:
         self._heart.start()
 
         self._current_depth = self._opts.depth
-        self._master = None
+        self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
         self._tcp_port_selector = TCPPortSelector(context, self._manager)
 
