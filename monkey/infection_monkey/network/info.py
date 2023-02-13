@@ -9,6 +9,7 @@ from typing import Optional, Set
 import psutil
 from egg_timer import EggTimer
 
+from common.types import NetworkPort
 from common.utils.environment import is_windows_os
 
 from .ports import COMMON_PORTS
@@ -97,13 +98,12 @@ class TCPPortSelector:
     """
 
     def __init__(self, context: BaseContext, manager: SyncManager):
-        self._leases: DictProxy[int, EggTimer] = manager.dict()
+        self._leases: DictProxy[NetworkPort, EggTimer] = manager.dict()
         self._lock = context.Lock()
 
-    # TODO: Return a `NetworkPort` instead of `int`
     def get_free_tcp_port(
         self, min_range: int = 1024, max_range: int = 65535, lease_time_sec: float = 30
-    ) -> Optional[int]:
+    ) -> Optional[NetworkPort]:
         """
         Get a free TCP port that a new server can listen on
 
@@ -116,9 +116,12 @@ class TCPPortSelector:
                           65535
         :param lease_time_sec: The amount of time a port should be reserved for if the OS does not
                                report it as in use, defaults to 30 seconds
+        :return: The selected port, or None if no ports are available
         """
         with self._lock:
-            ports_in_use = {conn.laddr[1] for conn in psutil.net_connections()}
+            ports_in_use = {
+                NetworkPort(conn.laddr[1]) for conn in psutil.net_connections()  # type: ignore
+            }
 
             common_port = self._get_free_common_port(ports_in_use, lease_time_sec)
             if common_port is not None:
@@ -126,7 +129,9 @@ class TCPPortSelector:
 
             return self._get_free_random_port(ports_in_use, min_range, max_range, lease_time_sec)
 
-    def _get_free_common_port(self, ports_in_use: Set[int], lease_time_sec: float) -> Optional[int]:
+    def _get_free_common_port(
+        self, ports_in_use: Set[NetworkPort], lease_time_sec: float
+    ) -> Optional[NetworkPort]:
         for port in COMMON_PORTS:
             if self._port_is_available(port, ports_in_use):
                 self._reserve_port(port, lease_time_sec)
@@ -135,8 +140,8 @@ class TCPPortSelector:
         return None
 
     def _get_free_random_port(
-        self, ports_in_use: Set[int], min_range: int, max_range: int, lease_time_sec: float
-    ) -> Optional[int]:
+        self, ports_in_use: Set[NetworkPort], min_range: int, max_range: int, lease_time_sec: float
+    ) -> Optional[NetworkPort]:
         min_range = max(1, min_range)
         # In range the first argument will be in the list and the second one won't.
         # which means that if we select 65535 as max range, that port will not get
@@ -151,7 +156,7 @@ class TCPPortSelector:
 
         return None
 
-    def _port_is_available(self, port: int, ports_in_use: Set[int]) -> bool:
+    def _port_is_available(self, port: NetworkPort, ports_in_use: Set[NetworkPort]) -> bool:
         if port in ports_in_use:
             return False
 
@@ -163,7 +168,7 @@ class TCPPortSelector:
 
         return False
 
-    def _reserve_port(self, port: int, lease_time_sec: float):
+    def _reserve_port(self, port: NetworkPort, lease_time_sec: float):
         timer = EggTimer()
         timer.set(lease_time_sec)
         self._leases[port] = timer
