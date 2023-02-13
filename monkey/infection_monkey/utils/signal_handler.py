@@ -22,6 +22,8 @@ class StopSignalHandler:
         else:
             self._handle_posix_signals(signum, args)
 
+        return None
+
     def _handle_windows_signals(self, signum: int) -> bool:
         import win32con
 
