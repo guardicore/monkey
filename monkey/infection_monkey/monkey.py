@@ -281,6 +281,10 @@ class InfectionMonkey:
         config = self._control_channel.get_config()
 
         relay_port = self._tcp_port_selector.get_free_tcp_port()
+        if relay_port is None:
+            logger.error("No available ports. Unable to create a TCP relay.")
+            return
+
         self._relay = TCPRelay(
             relay_port,
             self._island_address,
