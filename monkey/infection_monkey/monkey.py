@@ -290,7 +290,7 @@ class InfectionMonkey:
         if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
             self._relay.start()
 
-        self._build_master(relay_port, operating_system)
+        self._master = self._build_master(relay_port, operating_system)
 
         register_signal_handlers(self._master)
 
@@ -310,13 +310,13 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self, relay_port: int, operating_system: OperatingSystem):
+    def _build_master(self, relay_port: int, operating_system: OperatingSystem) -> IMaster:
         servers = self._build_server_list(relay_port)
         local_network_interfaces = get_network_interfaces()
 
         puppet = self._build_puppet(operating_system)
 
-        self._master = AutomatedMaster(
+        return AutomatedMaster(
             self._current_depth,
             servers,
             puppet,
