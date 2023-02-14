@@ -9,7 +9,6 @@ from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
-from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
@@ -89,10 +88,6 @@ def init_app_config(app, mongo_url):
 
 def init_app_services(app):
     init_jwt(app)
-    mongo.init_app(app)
-
-    with app.app_context():
-        database.init()
 
 
 def init_app_url_rules(app):
