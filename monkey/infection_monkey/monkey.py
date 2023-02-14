@@ -33,7 +33,7 @@ from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
-from common.types import SocketAddress
+from common.types import NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import secure_generate_random_string
 from common.utils.file_utils import create_secure_directory
@@ -54,6 +54,7 @@ from infection_monkey.exploit.smbexec import SMBExploiter
 from infection_monkey.exploit.sshexec import SSHExploiter
 from infection_monkey.exploit.wmiexec import WmiExploiter
 from infection_monkey.exploit.zerologon import ZerologonExploiter
+from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
 from infection_monkey.island_api_client import HTTPIslandAPIClientFactory, IIslandAPIClient
 from infection_monkey.master import AutomatedMaster
@@ -147,7 +148,7 @@ class InfectionMonkey:
         self._heart.start()
 
         self._current_depth = self._opts.depth
-        self._master = None
+        self._master: Optional[IMaster] = None
         self._relay: Optional[TCPRelay] = None
         self._tcp_port_selector = TCPPortSelector(context, self._manager)
 
@@ -280,16 +281,20 @@ class InfectionMonkey:
         config = self._control_channel.get_config()
 
         relay_port = self._tcp_port_selector.get_free_tcp_port()
-        self._relay = TCPRelay(
-            relay_port,
-            self._island_address,
-            client_disconnect_timeout=config.keep_tunnel_open_time,
-        )
+        if relay_port is None:
+            logger.error("No available ports. Unable to create a TCP relay.")
+        else:
+            self._relay = TCPRelay(
+                relay_port,
+                self._island_address,
+                client_disconnect_timeout=config.keep_tunnel_open_time,
+            )
 
-        if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
-            self._relay.start()
+            if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+                self._relay.start()
 
-        self._build_master(relay_port, operating_system)
+        servers = self._build_server_list(relay_port)
+        self._master = self._build_master(servers, operating_system)
 
         register_signal_handlers(self._master)
 
@@ -309,13 +314,11 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self, relay_port: int, operating_system: OperatingSystem):
-        servers = self._build_server_list(relay_port)
+    def _build_master(self, servers: Sequence[str], operating_system: OperatingSystem) -> IMaster:
         local_network_interfaces = get_network_interfaces()
-
         puppet = self._build_puppet(operating_system)
 
-        self._master = AutomatedMaster(
+        return AutomatedMaster(
             self._current_depth,
             servers,
             puppet,
@@ -324,8 +327,8 @@ class InfectionMonkey:
             self._legacy_propagation_credentials_repository,
         )
 
-    def _build_server_list(self, relay_port: int) -> Sequence[str]:
-        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
+    def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
+        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()] if relay_port else []
         known_servers = chain(map(str, self._opts.servers), my_relays)
 
         # Dictionaries in Python 3.7 and later preserve key order. Sets do not preserve order.
@@ -426,9 +429,11 @@ class InfectionMonkey:
                 self._legacy_propagation_credentials_repository,
             ),
         )
-        self._agent_event_queue.subscribe_type(
-            PropagationEvent, notify_relay_on_propagation(self._relay)
-        )
+
+        if self._relay:
+            self._agent_event_queue.subscribe_type(
+                PropagationEvent, notify_relay_on_propagation(self._relay)
+            )
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()

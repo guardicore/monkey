@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Callable, Mapping, Optional, Tuple, Type
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
@@ -42,4 +42,4 @@ class AgentPluginManifest(InfectionMonkeyBaseModel):
     safe: bool = False
 
     class Config(InfectionMonkeyModelConfig):
-        json_encoders = {PluginVersion: lambda v: str(v)}
+        json_encoders: Mapping[Type, Callable] = {PluginVersion: lambda v: str(v)}

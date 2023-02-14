@@ -3,7 +3,7 @@ from logging import getLogger
 from threading import Lock, Thread
 from time import sleep
 
-from common.types import SocketAddress
+from common.types import NetworkPort, SocketAddress
 from infection_monkey.network.relay import (
     RelayConnectionHandler,
     RelayUserHandler,
@@ -22,7 +22,7 @@ class TCPRelay(Thread, InterruptableThreadMixin):
 
     def __init__(
         self,
-        relay_port: int,
+        relay_port: NetworkPort,
         dest_address: SocketAddress,
         client_disconnect_timeout: float,
     ):

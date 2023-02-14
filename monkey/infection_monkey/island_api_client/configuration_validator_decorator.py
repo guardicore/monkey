@@ -43,7 +43,7 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     ) -> AgentPluginManifest:
         return self._island_api_client.get_agent_plugin_manifest(plugin_type, plugin_name)
 
-    def get_agent_signals(self, agent_id: str) -> AgentSignals:
+    def get_agent_signals(self, agent_id: AgentID) -> AgentSignals:
         return self._island_api_client.get_agent_signals(agent_id)
 
     def get_agent_configuration_schema(self) -> Dict[str, Any]:
@@ -69,8 +69,8 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def send_events(self, events: Sequence[AbstractAgentEvent]):
         return self._island_api_client.send_events(events)
 
-    def send_heartbeat(self, agent: AgentID, timestamp: float):
-        return self._island_api_client.send_heartbeat(agent, timestamp)
+    def send_heartbeat(self, agent_id: AgentID, timestamp: float):
+        return self._island_api_client.send_heartbeat(agent_id, timestamp)
 
     def send_log(self, agent_id: AgentID, log_contents: str):
         return self._island_api_client.send_log(agent_id, log_contents)
