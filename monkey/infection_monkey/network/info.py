@@ -29,11 +29,11 @@ class IntRange:
     Ensures that min <= max.
     """
 
-    def __init__(self, min: int, max: int):
-        self._min = min
-        self._max = max
-        if min > max:
-            self._min, self._max = max, min
+    def __init__(self, a: int, b: int):
+        self._min = a
+        self._max = b
+        if a > b:
+            self._min, self._max = b, a
 
     @property
     def max(self) -> int:
