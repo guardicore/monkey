@@ -19,9 +19,8 @@ class StopSignalHandler:
     def __call__(self, signum: int, *args) -> Optional[bool]:
         if is_windows_os():
             return self._handle_windows_signals(signum)
-        else:
-            self._handle_posix_signals(signum, args)
 
+        self._handle_posix_signals(signum, args)
         return None
 
     def _handle_windows_signals(self, signum: int) -> bool:
