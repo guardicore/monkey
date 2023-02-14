@@ -3,6 +3,7 @@ import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
 import WarningBox from './WarningBox';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
+import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
 import PluginSelectorTemplate from './PluginSelectorTemplate';
 
 export default function UiSchema(props) {
@@ -35,7 +36,7 @@ export default function UiSchema(props) {
               'ui:widget': 'TextareaWidget'
             },
             private_key: {
-              'ui:widget': 'TextareaWidget'
+              'ui:widget': SensitiveTextareaInput
             }
           }
         }
