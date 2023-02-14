@@ -22,6 +22,30 @@ RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
 
 
+class IntRange:
+    """
+    Represents an inclusive range of integers, with a step size of 1.
+
+    Ensures that min <= max.
+    """
+
+    def __init__(self, min: int, max: int):
+        self._min = min
+        self._max = max
+        if min > max:
+            self._min, self._max = max, min
+
+    @property
+    def max(self) -> int:
+        """The maximum value in the range."""
+        return self._max
+
+    @property
+    def min(self) -> int:
+        """The minimum value in the range."""
+        return self._min
+
+
 def port_range(min_range: int, max_range: int) -> Iterator[NetworkPort]:
     min_, max_ = min_range, max_range
     if min_range > max_range:
