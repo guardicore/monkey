@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from multiprocessing.context import BaseContext
 from multiprocessing.managers import DictProxy, SyncManager
 from random import shuffle  # noqa: DUO102
-from typing import Optional, Set
+from typing import Iterator, Optional, Set
 
 import psutil
 from egg_timer import EggTimer
@@ -22,7 +22,7 @@ RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
 
 
-def port_range(min_range: int, max_range: int):
+def port_range(min_range: int, max_range: int) -> Iterator[NetworkPort]:
     min_, max_ = min_range, max_range
     if min_range > max_range:
         min_, max_ = max_range, min_range
