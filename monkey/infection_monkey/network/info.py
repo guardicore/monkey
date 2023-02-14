@@ -24,7 +24,7 @@ RTF_REJECT = 0x0200
 
 class IntRange:
     """
-    Represents an inclusive range of integers, with a step size of 1.
+    Represents a range of integers, with a step size of 1.
 
     Ensures that min <= max.
     """
