@@ -86,10 +86,6 @@ def init_app_config(app, mongo_url):
     app.url_map.strict_slashes = False
 
 
-def init_app_services(app):
-    init_jwt(app)
-
-
 def init_app_url_rules(app):
     app.add_url_rule("/", "serve_home", serve_home)
     app.add_url_rule("/<path:static_path>", "serve_static_file", serve_static_file)
@@ -196,7 +192,7 @@ def init_app(mongo_url: str, container: DIContainer):
     api.representations = {"application/json": output_json}
 
     init_app_config(app, mongo_url)
-    init_app_services(app)
+    init_jwt(app)
     init_app_url_rules(app)
 
     flask_resource_manager = FlaskDIWrapper(api, container)
