@@ -104,7 +104,6 @@ class IPuppet(metaclass=abc.ABCMeta):
         :param options: A dictionary containing options that modify the behavior of the
                         fingerprinter
         :return: Detailed information about the target host
-        :rtype: FingerprintData
         """
 
     @abc.abstractmethod
