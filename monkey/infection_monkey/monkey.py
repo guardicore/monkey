@@ -283,18 +283,18 @@ class InfectionMonkey:
         relay_port = self._tcp_port_selector.get_free_tcp_port()
         if relay_port is None:
             logger.error("No available ports. Unable to create a TCP relay.")
-            return
+        else:
+            self._relay = TCPRelay(
+                relay_port,
+                self._island_address,
+                client_disconnect_timeout=config.keep_tunnel_open_time,
+            )
 
-        self._relay = TCPRelay(
-            relay_port,
-            self._island_address,
-            client_disconnect_timeout=config.keep_tunnel_open_time,
-        )
+            if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
+                self._relay.start()
 
-        if not maximum_depth_reached(config.propagation.maximum_depth, self._current_depth):
-            self._relay.start()
-
-        self._master = self._build_master(relay_port, operating_system)
+        servers = self._build_server_list(relay_port)
+        self._master = self._build_master(servers, operating_system)
 
         register_signal_handlers(self._master)
 
@@ -314,10 +314,8 @@ class InfectionMonkey:
 
         return agent_event_serializer_registry
 
-    def _build_master(self, relay_port: int, operating_system: OperatingSystem) -> IMaster:
-        servers = self._build_server_list(relay_port)
+    def _build_master(self, servers: Sequence[str], operating_system: OperatingSystem) -> IMaster:
         local_network_interfaces = get_network_interfaces()
-
         puppet = self._build_puppet(operating_system)
 
         return AutomatedMaster(
@@ -329,8 +327,8 @@ class InfectionMonkey:
             self._legacy_propagation_credentials_repository,
         )
 
-    def _build_server_list(self, relay_port: int) -> Sequence[str]:
-        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()]
+    def _build_server_list(self, relay_port: Optional[int]) -> Sequence[str]:
+        my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()] if relay_port else []
         known_servers = chain(map(str, self._opts.servers), my_relays)
 
         # Dictionaries in Python 3.7 and later preserve key order. Sets do not preserve order.
@@ -431,9 +429,11 @@ class InfectionMonkey:
                 self._legacy_propagation_credentials_repository,
             ),
         )
-        self._agent_event_queue.subscribe_type(
-            PropagationEvent, notify_relay_on_propagation(self._relay)
-        )
+
+        if self._relay:
+            self._agent_event_queue.subscribe_type(
+                PropagationEvent, notify_relay_on_propagation(self._relay)
+            )
 
     def _is_another_monkey_running(self):
         return not self._singleton.try_lock()
