@@ -4,8 +4,10 @@ import os
 import time
 from pathlib import Path
 
+from pymongo import MongoClient
+from pymongo.errors import ServerSelectionTimeoutError
+
 from common.utils.file_utils import create_secure_directory
-from monkey_island.cc.database import get_db_version, is_db_server_up
 from monkey_island.cc.setup.mongo import mongo_connector
 from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
@@ -52,13 +54,22 @@ def connect_to_mongodb(timeout: float):
 def _wait_for_mongo_db_server(mongo_url, timeout):
     start_time = time.time()
 
-    while not is_db_server_up(mongo_url):
+    while not _is_db_server_up(mongo_url):
         logger.info(f"Waiting for MongoDB server on {mongo_url}")
 
         if (time.time() - start_time) > timeout:
             raise MongoDBTimeOutError(f"Failed to connect to MongoDB after {timeout} seconds.")
 
         time.sleep(1)
+
+
+def _is_db_server_up(mongo_url):
+    client = MongoClient(mongo_url, serverSelectionTimeoutMS=100)
+    try:
+        client.server_info()
+        return True
+    except ServerSelectionTimeoutError:
+        return False
 
 
 def _assert_mongo_db_version(mongo_url):
@@ -68,13 +79,24 @@ def _assert_mongo_db_version(mongo_url):
     :param mongo_url: URL to the mongo the Island will use
     """
     required_version = tuple(MINIMUM_MONGO_DB_VERSION_REQUIRED.split("."))
-    server_version = get_db_version(mongo_url)
+    server_version = _get_db_version(mongo_url)
     if server_version < required_version:
         raise MongoDBVersionError(
             f"Mongo DB version too old. {required_version} is required, but got {server_version}."
         )
     else:
         logger.info(f"Mongo DB version OK. Got {server_version}")
+
+
+def _get_db_version(mongo_url):
+    """
+    Return the mongo db version
+    :param mongo_url: Which mongo to check.
+    :return: version as a tuple (e.g. `(u'4', u'0', u'8')`)
+    """
+    client = MongoClient(mongo_url, serverSelectionTimeoutMS=100)
+    server_version = tuple(client.server_info()["version"].split("."))
+    return server_version
 
 
 class MongoDBTimeOutError(Exception):

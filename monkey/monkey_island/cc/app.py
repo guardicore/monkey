@@ -9,7 +9,6 @@ from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
-from monkey_island.cc.database import database, mongo
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
@@ -85,14 +84,6 @@ def init_app_config(app, mongo_url):
     app.config["JSON_SORT_KEYS"] = False
 
     app.url_map.strict_slashes = False
-
-
-def init_app_services(app):
-    init_jwt(app)
-    mongo.init_app(app)
-
-    with app.app_context():
-        database.init()
 
 
 def init_app_url_rules(app):
@@ -201,7 +192,7 @@ def init_app(mongo_url: str, container: DIContainer):
     api.representations = {"application/json": output_json}
 
     init_app_config(app, mongo_url)
-    init_app_services(app)
+    init_jwt(app)
     init_app_url_rules(app)
 
     flask_resource_manager = FlaskDIWrapper(api, container)
