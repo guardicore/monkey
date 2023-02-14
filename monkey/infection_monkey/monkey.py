@@ -33,7 +33,7 @@ from common.agent_registration_data import AgentRegistrationData
 from common.event_queue import IAgentEventQueue, PyPubSubAgentEventQueue, QueuedAgentEventPublisher
 from common.network.network_utils import get_my_ip_addresses, get_network_interfaces
 from common.tags.attack import T1082_ATTACK_TECHNIQUE_TAG
-from common.types import SocketAddress
+from common.types import NetworkPort, SocketAddress
 from common.utils.argparse_types import positive_int
 from common.utils.code_utils import secure_generate_random_string
 from common.utils.file_utils import create_secure_directory
@@ -327,7 +327,7 @@ class InfectionMonkey:
             self._legacy_propagation_credentials_repository,
         )
 
-    def _build_server_list(self, relay_port: Optional[int]) -> Sequence[str]:
+    def _build_server_list(self, relay_port: Optional[NetworkPort]) -> Sequence[str]:
         my_relays = [f"{ip}:{relay_port}" for ip in get_my_ip_addresses()] if relay_port else []
         known_servers = chain(map(str, self._opts.servers), my_relays)
 
