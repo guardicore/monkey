@@ -46,14 +46,12 @@ class IntRange:
         return self._min
 
 
-def port_range(min_range: int, max_range: int) -> Iterator[NetworkPort]:
-    min_, max_ = min_range, max_range
-    if min_range > max_range:
-        min_, max_ = max_range, min_range
-
-    min_ = max(0, min_)
-    max_ = min(65535, max_) + 1
+def port_range(range: IntRange) -> Iterator[NetworkPort]:
+    """Yields port values in the provided range, bounded by [0, 65535]."""
+    min_ = max(0, range.min)
+    max_ = min(65535, range.max) + 1
     current = min_
+
     while current < max_:
         yield NetworkPort(current)
         current += 1
@@ -179,7 +177,7 @@ class TCPPortSelector:
     def _get_free_random_port(
         self, ports_in_use: Set[NetworkPort], min_range: int, max_range: int, lease_time_sec: float
     ) -> Optional[NetworkPort]:
-        ports = list(port_range(min_range, max_range))
+        ports = list(port_range(IntRange(min_range, max_range)))
         shuffle(ports)
         for port in ports:
             if self._port_is_available(port, ports_in_use):
