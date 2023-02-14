@@ -9,7 +9,7 @@ from typing import Iterator, Optional, Set
 import psutil
 from egg_timer import EggTimer
 
-from common.types import NetworkPort
+from common.types import IntRange, NetworkPort
 from common.utils.environment import is_windows_os
 
 from .ports import COMMON_PORTS
@@ -20,30 +20,6 @@ SIOCGIFADDR = 0x8915  # get PA address
 SIOCGIFNETMASK = 0x891B  # get network PA mask
 RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
-
-
-class IntRange:
-    """
-    Represents a range of integers, with a step size of 1.
-
-    Ensures that min <= max.
-    """
-
-    def __init__(self, a: int, b: int):
-        self._min = a
-        self._max = b
-        if a > b:
-            self._min, self._max = b, a
-
-    @property
-    def max(self) -> int:
-        """The maximum value in the range."""
-        return self._max
-
-    @property
-    def min(self) -> int:
-        """The minimum value in the range."""
-        return self._min
 
 
 def port_range(range: IntRange) -> Iterator[NetworkPort]:
