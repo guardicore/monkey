@@ -4,7 +4,7 @@ import os
 import time
 from pathlib import Path
 
-from flask_pymongo import MongoClient
+from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError
 
 from common.utils.file_utils import create_secure_directory
