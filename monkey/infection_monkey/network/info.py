@@ -22,10 +22,10 @@ RTF_UP = 0x0001  # Route usable
 RTF_REJECT = 0x0200
 
 
-def port_range(range: IntRange) -> Iterator[NetworkPort]:
+def port_range(int_range: IntRange) -> Iterator[NetworkPort]:
     """Yields port values in the provided range, bounded by [0, 65535]."""
-    min_ = max(0, range.min)
-    max_ = min(65535, range.max) + 1
+    min_ = max(0, int_range.min)
+    max_ = min(65535, int_range.max) + 1
     current = min_
 
     while current < max_:
