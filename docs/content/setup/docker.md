@@ -14,10 +14,10 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
 ## Deployment
 
 ### 1. Load the docker images
-1. Pull the MongoDB v4.2 Docker image:
+1. Pull the MongoDB v6.0 Docker image:
 
     ```bash
-    sudo docker pull mongo:4.2
+    sudo docker pull mongo:6.0
     ```
 
 1. Extract the Monkey Island Docker tarball:
@@ -46,7 +46,7 @@ any MongoDB containers or volumes associated with the previous version.
         --network=host \
         --volume db:/data/db \
         --detach \
-        mongo:4.2
+        mongo:6.0
     ```
 
 ### 3. Start Monkey Island with default certificate
