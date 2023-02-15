@@ -58,7 +58,6 @@ class AppComponent extends AuthComponent {
     this.state = {
       completedSteps: new CompletedSteps(false),
       islandMode: undefined,
-      notificationSent: false,
     };
     this.interval = undefined;
     this.setMode();
@@ -119,20 +118,19 @@ class AppComponent extends AuthComponent {
 
           // update status: if infection (running and shutting down of all agents) finished
           didAllAgentsShutdown().then(allAgentsShutdown => {
+            let infectionDone = this.state.completedSteps.runMonkey && allAgentsShutdown;
+            if(this.state.completedSteps.infectionDone === false
+              && infectionDone){
+              this.showInfectionDoneNotification();
+            }
             this.setState({
               completedSteps: new CompletedSteps(
                                     this.state.completedSteps.runMonkey,
-                                    this.state.completedSteps.runMonkey && allAgentsShutdown,
+                                    infectionDone,
                                     this.state.completedSteps.reportDone
                                   )
             });
-
-            if (!this.state.completedSteps.infectionDone) {
-              this.setState({notificationSent: false})
-            }
           });
-
-          this.showInfectionDoneNotification();
         }
       )
     }
@@ -285,28 +283,18 @@ class AppComponent extends AuthComponent {
   }
 
   showInfectionDoneNotification() {
-    if (this.shouldShowNotification()) {
-      const hostname = window.location.hostname;
-      const port = window.location.port;
-      const protocol = window.location.protocol;
-      const url = `${protocol}//${hostname}:${port}${Routes.SecurityReport}`;
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    const protocol = window.location.protocol;
+    const url = `${protocol}//${hostname}:${port}${Routes.SecurityReport}`;
 
-      Notifier.start(
-        'Monkey Island',
-        'Infection is done! Click here to go to the report page.',
-        url,
-        notificationIcon);
-
-      this.setState({notificationSent: true});
-    }
+    Notifier.start(
+      'Monkey Island',
+      'Infection is done! Click here to go to the report page.',
+      url,
+      notificationIcon);
   }
 
-  shouldShowNotification() {
-    // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infectionDone &&
-            !window.location.pathname.startsWith(Routes.Report) &&
-            !this.state.notificationSent);
-  }
 }
 
 export default AppComponent;
