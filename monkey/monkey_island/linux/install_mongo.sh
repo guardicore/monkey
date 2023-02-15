@@ -20,6 +20,9 @@ elif [[ ${os_version_monkey} == "Ubuntu 22.04"* ]]; then
 elif [[ ${os_version_monkey} == "Debian GNU/Linux 10"* ]]; then
   echo Detected Debian 10
   export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-6.0.4.tgz"
+elif [[ ${os_version_monkey} == "Debian GNU/Linux 11"* ]]; then
+  echo Detected Debian 11
+  export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian11-6.0.4.tgz"
 elif [[ ${os_version_monkey} == "Kali GNU/Linux"* ]]; then
   echo Detected Kali Linux
   export tgz_url="https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-debian10-6.0.4.tgz"
