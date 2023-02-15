@@ -3,7 +3,7 @@ param(
     [String]$binDir
 )
 
-$MONGODB_URL = "https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.20.zip"
+$MONGODB_URL = "https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-6.0.4.zip"
 $TEMP_MONGODB_ZIP = (Join-Path -path $(Get-Location) -ChildPath ".\mongodb.zip")
 
 
