@@ -283,18 +283,19 @@ class AppComponent extends AuthComponent {
   }
 
   showInfectionDoneNotification() {
-    const hostname = window.location.hostname;
-    const port = window.location.port;
-    const protocol = window.location.protocol;
-    const url = `${protocol}//${hostname}:${port}${Routes.SecurityReport}`;
+    if (!window.location.pathname.startsWith(Routes.Report)) {
+      const hostname = window.location.hostname;
+      const port = window.location.port;
+      const protocol = window.location.protocol;
+      const url = `${protocol}//${hostname}:${port}${Routes.SecurityReport}`;
 
-    Notifier.start(
-      'Monkey Island',
-      'Infection is done! Click here to go to the report page.',
-      url,
-      notificationIcon);
+      Notifier.start(
+        'Monkey Island',
+        'Infection is done! Click here to go to the report page.',
+        url,
+        notificationIcon);
+    }
   }
-
 }
 
 export default AppComponent;
