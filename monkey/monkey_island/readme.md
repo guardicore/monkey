@@ -31,7 +31,7 @@
 
     OR
     - Use already running instance of mongodb
-        1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"'. Replace '<SERVER ADDR>' with address of mongo server
+        1. Run 'set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkey_island"'. Replace '<SERVER ADDR>' with address of mongo server
 
 1. Place portable version of OpenSSL
     - Download from: <https://indy.fulgan.com/SSL/Archive/openssl-1.0.2p-i386-win32.zip>
@@ -104,7 +104,7 @@
 
     OR
     - Use already running instance of mongodb
-        1. Run `set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkeyisland"`. Replace '<SERVER ADDR>' with address of mongo server
+        1. Run `set MONKEY_MONGO_URL="mongodb://<SERVER ADDR>:27017/monkey_island"`. Replace '<SERVER ADDR>' with address of mongo server
 
 1. Generate SSL Certificate:
     - `cd ./monkey_island`

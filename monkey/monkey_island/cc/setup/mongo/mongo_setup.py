@@ -8,12 +8,13 @@ from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError
 
 from common.utils.file_utils import create_secure_directory
-from monkey_island.cc.setup.mongo import mongo_connector
-from monkey_island.cc.setup.mongo.mongo_connector import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
 
 DB_DIR_NAME = "db"
 MONGO_LOG_FILENAME = "mongodb.log"
+MONGO_DB_NAME = "monkey_island"
+MONGO_DB_HOST = "localhost"
+MONGO_DB_PORT = 27017
 MONGO_URL = os.environ.get(
     "MONKEY_MONGO_URL",
     "mongodb://{0}:{1}/{2}".format(MONGO_DB_HOST, MONGO_DB_PORT, MONGO_DB_NAME),
@@ -48,7 +49,6 @@ def register_mongo_shutdown_callback(mongo_db_process: MongoDbProcess):
 def connect_to_mongodb(timeout: float):
     _wait_for_mongo_db_server(MONGO_URL, timeout)
     _assert_mongo_db_version(MONGO_URL)
-    mongo_connector.connect_dal_to_mongodb()
 
 
 def _wait_for_mongo_db_server(mongo_url, timeout):
