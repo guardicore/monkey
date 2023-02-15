@@ -61,6 +61,7 @@ class AppComponent extends AuthComponent {
       infectionDone: false,
       completedSteps: new CompletedSteps(false),
       islandMode: undefined,
+      notificationSent: false,
     };
     this.interval = undefined;
     this.setMode();
@@ -128,6 +129,10 @@ class AppComponent extends AuthComponent {
                                     this.state.completedSteps.reportDone
                                   )
             });
+
+            if (!this.state.completedSteps.infectionDone) {
+              this.setState({notificationSent: false})
+            }
           });
 
           this.showInfectionDoneNotification();
@@ -294,12 +299,16 @@ class AppComponent extends AuthComponent {
         'Infection is done! Click here to go to the report page.',
         url,
         notificationIcon);
+
+      this.setState({notificationSent: true});
     }
   }
 
   shouldShowNotification() {
     // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infectionDone && !window.location.pathname.startsWith(Routes.Report));
+    return (this.state.completedSteps.infectionDone &&
+            !window.location.pathname.startsWith(Routes.Report) &&
+            !this.state.notificationSent);
   }
 }
 
