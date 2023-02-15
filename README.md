@@ -20,16 +20,6 @@ The Infection Monkey is comprised of two parts:
 
 To read more about the Monkey, visit [akamai.com/infectionmonkey](https://www.akamai.com/infectionmonkey).
 
-## 💥 We're Hiring 💥
-We are looking for a software engineering manager with a passion for UX and
-cybersecurity to join the Infection Monkey development team. This is a remote
-position and is open anywhere in Israel. You can learn more about Infection
-Monkey on our [website](https://www.akamai.com/infectionmonkey).
-
-For more information, or to apply, see the official job post:
-  - [Israel](https://akamaicareers.inflightcloud.com/jobdetails/aka_ext/028224?section=aka_ext&job=028224)
-
-
 
 ## Screenshots
 
