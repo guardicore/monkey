@@ -14,6 +14,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Security
 - Fixed plaintext private key in SSHKey pair list in UI. #2950
+- MongoDB version from 4.x to 6.0.4. #2706
 
 ## [2.0.0] - 2023-02-08
 ### Added
