@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from tests.unit_tests.infection_monkey.master.mock_puppet import MockPuppet
+from tests.utils import ThreadSafeMagicMock
 
 from common import OperatingSystem
 from common.agent_configuration.agent_sub_configurations import (
@@ -56,7 +57,7 @@ def stop():
 
 @pytest.fixture
 def callback():
-    return MagicMock()
+    return ThreadSafeMagicMock()
 
 
 def assert_port_status(port_scan_data, expected_open_ports: Set[int]):

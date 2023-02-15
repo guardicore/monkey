@@ -1,8 +1,10 @@
 import ctypes
 import filecmp
 import os
+import threading
 from pathlib import Path
 from typing import Iterable
+from unittest.mock import MagicMock
 
 from common.utils.file_utils import get_binary_io_sha256_hash
 
@@ -62,3 +64,17 @@ def _assert_dircmp_equal(dircmp: filecmp.dircmp):
 
     for subdir_cmp in dircmp.subdirs.values():
         _assert_dircmp_equal(subdir_cmp)
+
+
+class ThreadSafeMagicMock:
+    def __init__(self, *args, **kwargs):
+        self._lock = threading.Lock()
+        self._mock = MagicMock()
+
+    def __call__(self, *args, **kwargs):
+        with self._lock:
+            return self._mock(*args, **kwargs)
+
+    def __getattr__(self, name):
+        with self._lock:
+            return getattr(self._mock, name)
