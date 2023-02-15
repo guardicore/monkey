@@ -56,9 +56,6 @@ class AppComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      runMonkey: false,
-      infectionDone: false,
       completedSteps: new CompletedSteps(false),
       islandMode: undefined,
       notificationSent: false,
