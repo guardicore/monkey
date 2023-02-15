@@ -43,6 +43,7 @@ const CREDENTIALS = {
       'default': [],
       'items': {
         'type': 'object',
+        'title': 'SSH keypair',
         'properties': {
           'public_key': {
             'title': 'Public Key',
