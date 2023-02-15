@@ -3,7 +3,9 @@ import InfoBox from './InfoBox';
 import TextBox from './TextBox.js';
 import WarningBox from './WarningBox';
 import SensitiveTextInput from '../ui-components/SensitiveTextInput';
+import SensitiveTextareaInput from '../ui-components/SensitiveTextareaInput';
 import PluginSelectorTemplate from './PluginSelectorTemplate';
+import ArrayFieldTitleTemplate from './ArrayFieldTitleTemplate';
 
 export default function UiSchema(props) {
   const UiSchema = {
@@ -31,11 +33,12 @@ export default function UiSchema(props) {
         },
         exploit_ssh_keys: {
           items: {
+            'ui:TitleFieldTemplate': ArrayFieldTitleTemplate,
             public_key: {
               'ui:widget': 'TextareaWidget'
             },
             private_key: {
-              'ui:widget': 'TextareaWidget'
+              'ui:widget': SensitiveTextareaInput
             }
           }
         }

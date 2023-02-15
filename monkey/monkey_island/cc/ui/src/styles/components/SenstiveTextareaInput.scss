@@ -1,0 +1,11 @@
+@font-face {
+  font-family: 'password';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./external/password.ttf);
+}
+
+.password {
+  font-family: 'password';
+  width: 100px; height: 16px;
+}
