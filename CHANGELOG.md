@@ -10,6 +10,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 ### Removed
 ### Fixed
+- Notification spam bug. #2731
+
 ### Security
 - Fixed plaintext private key in SSHKey pair list in UI. #2950
 

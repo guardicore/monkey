@@ -56,9 +56,6 @@ class AppComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      runMonkey: false,
-      infectionDone: false,
       completedSteps: new CompletedSteps(false),
       islandMode: undefined,
     };
@@ -121,16 +118,19 @@ class AppComponent extends AuthComponent {
 
           // update status: if infection (running and shutting down of all agents) finished
           didAllAgentsShutdown().then(allAgentsShutdown => {
+            let infectionDone = this.state.completedSteps.runMonkey && allAgentsShutdown;
+            if(this.state.completedSteps.infectionDone === false
+              && infectionDone){
+              this.showInfectionDoneNotification();
+            }
             this.setState({
               completedSteps: new CompletedSteps(
                                     this.state.completedSteps.runMonkey,
-                                    this.state.completedSteps.runMonkey && allAgentsShutdown,
+                                    infectionDone,
                                     this.state.completedSteps.reportDone
                                   )
             });
           });
-
-          this.showInfectionDoneNotification();
         }
       )
     }
@@ -283,7 +283,7 @@ class AppComponent extends AuthComponent {
   }
 
   showInfectionDoneNotification() {
-    if (this.shouldShowNotification()) {
+    if (!window.location.pathname.startsWith(Routes.Report)) {
       const hostname = window.location.hostname;
       const port = window.location.port;
       const protocol = window.location.protocol;
@@ -295,11 +295,6 @@ class AppComponent extends AuthComponent {
         url,
         notificationIcon);
     }
-  }
-
-  shouldShowNotification() {
-    // No need to show the notification to redirect to the report if we're already in the report page
-    return (this.state.completedSteps.infectionDone && !window.location.pathname.startsWith(Routes.Report));
   }
 }
 
