@@ -26,7 +26,7 @@
 
 1. Setup mongodb (Use one of the following two options):
     - Place portable version of mongodb
-       1. Download from: <https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.1.zip>
+       1. Download from: <https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-6.0.4.zip>
        2. Extract contents of bin folder to \monkey\monkey_island\bin\mongodb.
 
     OR
