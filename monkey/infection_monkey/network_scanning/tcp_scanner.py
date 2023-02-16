@@ -72,7 +72,7 @@ def _build_port_scan_data(
             banner = open_ports[port]
 
             port_scan_data[port] = PortScanData(
-                port=port, status=PortStatus.OPEN, banner=banner, service=service
+                port=port, status=PortStatus.OPEN, banner=banner, service_deprecated=service
             )
         else:
             port_scan_data[port] = _get_closed_port_data(port)
