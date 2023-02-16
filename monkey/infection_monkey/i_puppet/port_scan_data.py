@@ -10,5 +10,5 @@ class PortScanData(InfectionMonkeyBaseModel):
     port: NetworkPort
     status: PortStatus
     banner: Optional[str] = Field(default=None)
-    service: Optional[NetworkService] = Field(default=None)
+    service: NetworkService = Field(default=NetworkService.UNKNOWN)
     service_deprecated: Optional[str] = Field(default=None)
