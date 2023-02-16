@@ -1,12 +1,15 @@
 import time
+from warnings import warn
 
 
+# TODO: Use EggTimer
 class Timer:
     """
     A class for checking whether or not a certain amount of time has elapsed.
     """
 
     def __init__(self):
+        warn("Timer is deprecated. EggTimer instead.", DeprecationWarning, stacklevel=2)
         self._timeout_sec = 0
         self._start_time = 0
 
