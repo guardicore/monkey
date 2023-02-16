@@ -98,11 +98,11 @@ def assert_scan_results_no_1(
 
     assert psd_445.port == 445
     assert psd_445.banner == "SMB BANNER"
-    assert psd_445.service == "tcp-445"
+    assert psd_445.service_deprecated == "tcp-445"
 
     assert psd_3389.port == 3389
     assert psd_3389.banner == ""
-    assert psd_3389.service == "tcp-3389"
+    assert psd_3389.service_deprecated == "tcp-3389"
 
     assert_port_status(port_scan_data, {445, 3389})
     assert_fingerprint_results_no_1(fingerprint_data)
@@ -137,11 +137,11 @@ def assert_scan_results_no_3(
 
     assert psd_443.port == 443
     assert psd_443.banner == "HTTPS BANNER"
-    assert psd_443.service == "tcp-443"
+    assert psd_443.service_deprecated == "tcp-443"
 
     assert psd_22.port == 22
     assert psd_22.banner == "SSH BANNER"
-    assert psd_22.service == "tcp-22"
+    assert psd_22.service_deprecated == "tcp-22"
 
     assert_port_status(port_scan_data, {22, 443})
     assert_fingerprint_results_no_3(fingerprint_data)
