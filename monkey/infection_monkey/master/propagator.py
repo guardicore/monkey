@@ -147,11 +147,11 @@ class Propagator:
         for psd in filter(
             lambda scan_data: scan_data.status == PortStatus.OPEN, port_scan_data.values()
         ):
-            target_host.services[psd.service] = {}
-            target_host.services[psd.service]["display_name"] = "unknown(TCP)"
-            target_host.services[psd.service]["port"] = psd.port
+            target_host.services[psd.service_deprecated] = {}
+            target_host.services[psd.service_deprecated]["display_name"] = "unknown(TCP)"
+            target_host.services[psd.service_deprecated]["port"] = psd.port
             if psd.banner is not None:
-                target_host.services[psd.service]["banner"] = psd.banner
+                target_host.services[psd.service_deprecated]["banner"] = psd.banner
 
     @staticmethod
     def _process_fingerprinter_results(

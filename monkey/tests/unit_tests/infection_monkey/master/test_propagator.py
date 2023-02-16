@@ -20,8 +20,12 @@ dot_1_scan_results = IPScanResults(
     PingScanData(response_received=True, os=OperatingSystem.WINDOWS),
     {
         22: PortScanData(port=22, status=PortStatus.CLOSED),
-        445: PortScanData(port=445, status=PortStatus.OPEN, banner="SMB BANNER", service="tcp-445"),
-        3389: PortScanData(port=3389, status=PortStatus.OPEN, banner="", service="tcp-3389"),
+        445: PortScanData(
+            port=445, status=PortStatus.OPEN, banner="SMB BANNER", service_deprecated="tcp-445"
+        ),
+        3389: PortScanData(
+            port=3389, status=PortStatus.OPEN, banner="", service_deprecated="tcp-3389"
+        ),
     },
     {
         "SMBFinger": FingerprintData("windows", "vista", {"tcp-445": {"name": "smb_service_name"}}),
@@ -33,9 +37,11 @@ dot_1_scan_results = IPScanResults(
 dot_3_scan_results = IPScanResults(
     PingScanData(response_received=True, os=OperatingSystem.LINUX),
     {
-        22: PortScanData(port=22, status=PortStatus.OPEN, banner="SSH BANNER", service="tcp-22"),
+        22: PortScanData(
+            port=22, status=PortStatus.OPEN, banner="SSH BANNER", service_deprecated="tcp-22"
+        ),
         443: PortScanData(
-            port=443, status=PortStatus.OPEN, banner="HTTPS BANNER", service="tcp-443"
+            port=443, status=PortStatus.OPEN, banner="HTTPS BANNER", service_deprecated="tcp-443"
         ),
         3389: PortScanData(port=3389, status=PortStatus.CLOSED, banner=""),
     },
