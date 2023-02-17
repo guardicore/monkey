@@ -6,7 +6,7 @@ from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
-from common.types import Lock, NetworkPort, PluginName
+from common.types import Lock, NetworkPort, NetworkService, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
@@ -119,3 +119,8 @@ Lock.locked
 AgentPlugin.supported_operating_systems
 
 HadoopPlugin
+
+# Remove after #2136
+NetworkService.HTTP
+NetworkService.MSSQL
+NetworkService.SMB

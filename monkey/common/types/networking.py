@@ -17,6 +17,9 @@ class NetworkService(Enum):
     member is the member's name in all lower-case characters.
     """
 
+    HTTP = "http"
+    MSSQL = "mssql"
+    SMB = "smb"
     UNKNOWN = "unknown"
 
 
