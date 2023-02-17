@@ -6,10 +6,9 @@ from typing import Dict, Mapping, Optional, Sequence
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
 from common.types import Event, NetworkPort
-from infection_monkey.i_puppet import PingScanData
-from infection_monkey.model import TargetHost
+from infection_monkey.i_puppet.target_host import TargetHost
 
-from . import PortScanData
+from . import PingScanData, PortScanData
 
 
 class UnknownPluginError(Exception):

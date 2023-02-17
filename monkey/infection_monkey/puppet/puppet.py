@@ -14,8 +14,8 @@ from infection_monkey.i_puppet import (
     IPuppet,
     PingScanData,
     PortScanData,
+    TargetHost,
 )
-from infection_monkey.model import TargetHost
 from infection_monkey.puppet import PluginCompatabilityVerifier
 
 from . import PluginRegistry
