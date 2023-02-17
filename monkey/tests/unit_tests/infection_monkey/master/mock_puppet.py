@@ -5,13 +5,13 @@ from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
 from common.types import Event, NetworkPort, PortStatus
+from infection_monkey.dataclasses import PortScanData
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
     IncompatibleOperatingSystemError,
     IPuppet,
     PingScanData,
-    PortScanData,
 )
 from infection_monkey.model import TargetHost
 

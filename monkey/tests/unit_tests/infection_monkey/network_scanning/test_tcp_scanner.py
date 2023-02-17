@@ -4,7 +4,7 @@ import pytest
 
 from common.agent_events import TCPScanEvent
 from common.types import PortStatus
-from infection_monkey.i_puppet import PortScanData
+from infection_monkey.dataclasses import PortScanData
 from infection_monkey.network_scanning import scan_tcp_ports
 from infection_monkey.network_scanning.tcp_scanner import EMPTY_PORT_SCAN
 from infection_monkey.utils.ids import get_agent_id
