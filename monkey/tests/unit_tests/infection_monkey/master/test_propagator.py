@@ -11,7 +11,7 @@ from common.agent_configuration.agent_sub_configurations import (
     ScanTargetConfiguration,
 )
 from common.types import NetworkProtocol, NetworkService, PortStatus
-from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData, QueriedService
+from infection_monkey.i_puppet import DiscoveredService, FingerprintData, PingScanData, PortScanData
 from infection_monkey.master import IPScanResults, Propagator
 
 empty_fingerprint_data = FingerprintData(os_type=None, os_version=None, services=[])
@@ -32,7 +32,9 @@ dot_1_scan_results = IPScanResults(
             os_type=OperatingSystem.WINDOWS,
             os_version="vista",
             services=[
-                QueriedService(protocol=NetworkProtocol.TCP, port=445, services=NetworkService.SMB)
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=445, services=NetworkService.SMB
+                )
             ],
         ),
         "SSHFinger": empty_fingerprint_data,
@@ -56,15 +58,19 @@ dot_3_scan_results = IPScanResults(
             os_type=OperatingSystem.LINUX,
             os_version="ubuntu",
             services=[
-                QueriedService(protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH)
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
+                )
             ],
         ),
         "HTTPFinger": FingerprintData(
             os_type=None,
             os_version=None,
             services=[
-                QueriedService(protocol=NetworkProtocol.TCP, port=80, services=NetworkService.HTTP),
-                QueriedService(
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=80, services=NetworkService.HTTP
+                ),
+                DiscoveredService(
                     protocol=NetworkProtocol.TCP, port=443, services=NetworkService.HTTPS
                 ),
             ],
