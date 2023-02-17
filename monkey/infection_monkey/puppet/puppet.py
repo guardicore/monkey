@@ -7,13 +7,13 @@ from common.credentials import Credentials
 from common.event_queue import IAgentEventQueue
 from common.types import Event, NetworkPort
 from infection_monkey import network_scanning
+from infection_monkey.dataclasses import PortScanData
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
     IncompatibleOperatingSystemError,
     IPuppet,
     PingScanData,
-    PortScanData,
 )
 from infection_monkey.model import TargetHost
 from infection_monkey.puppet import PluginCompatabilityVerifier

@@ -10,7 +10,7 @@ from common.agent_events import TCPScanEvent
 from common.event_queue import IAgentEventQueue
 from common.types import NetworkPort, PortStatus
 from common.utils import Timer
-from infection_monkey.i_puppet import PortScanData
+from infection_monkey.dataclasses import PortScanData
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_port_to_service
 from infection_monkey.utils.ids import get_agent_id
 

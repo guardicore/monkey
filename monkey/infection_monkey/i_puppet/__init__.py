@@ -1,5 +1,4 @@
 from .ping_scan_data import PingScanData
-from .port_scan_data import PortScanData
 from .i_puppet import (
     IPuppet,
     ExploiterResultData,

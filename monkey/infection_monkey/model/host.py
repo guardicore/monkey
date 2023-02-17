@@ -7,7 +7,7 @@ from typing_extensions import Literal  # import from `typing` once we switch to 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel
 from common.types import NetworkPort, NetworkProtocol
-from infection_monkey.i_puppet import PortScanData
+from infection_monkey.dataclasses import PortScanData
 
 
 class TargetHost(MutableInfectionMonkeyBaseModel):

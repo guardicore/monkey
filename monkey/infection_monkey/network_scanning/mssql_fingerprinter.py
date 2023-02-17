@@ -3,7 +3,8 @@ import logging
 import socket
 from typing import Any, Dict, Optional
 
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
+from infection_monkey.dataclasses import PortScanData
+from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData
 
 MSSQL_SERVICE = "MSSQL"
 DISPLAY_NAME = MSSQL_SERVICE

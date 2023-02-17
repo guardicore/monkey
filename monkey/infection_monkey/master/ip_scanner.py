@@ -9,7 +9,8 @@ from common.agent_configuration.agent_sub_configurations import (
     PluginConfiguration,
 )
 from common.types import Event, NetworkPort, PortStatus
-from infection_monkey.i_puppet import FingerprintData, IPuppet, PingScanData, PortScanData
+from infection_monkey.dataclasses import PortScanData
+from infection_monkey.i_puppet import FingerprintData, IPuppet, PingScanData
 from infection_monkey.network import NetworkAddress
 from infection_monkey.utils.threading import interruptible_iter, run_worker_threads
 
