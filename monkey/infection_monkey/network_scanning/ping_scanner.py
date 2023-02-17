@@ -11,7 +11,7 @@ from common import OperatingSystem
 from common.agent_events import PingScanEvent
 from common.event_queue import IAgentEventQueue
 from common.utils.environment import is_windows_os
-from infection_monkey.i_puppet import PingScanData
+from infection_monkey.dataclasses import PingScanData
 from infection_monkey.utils.ids import get_agent_id
 
 TTL_REGEX = re.compile(r"TTL=([0-9]+)\b", re.IGNORECASE)

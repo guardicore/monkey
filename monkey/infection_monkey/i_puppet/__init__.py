@@ -1,8 +1,5 @@
-from .ping_scan_data import PingScanData
 from .i_puppet import (
     IPuppet,
-    ExploiterResultData,
-    FingerprintData,
     UnknownPluginError,
     RejectedRequestError,
     IncompatibleOperatingSystemError,

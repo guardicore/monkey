@@ -6,8 +6,8 @@ from requests import head
 from requests.exceptions import ConnectionError, Timeout
 
 from common.types import PortStatus
-from infection_monkey.dataclasses import PortScanData
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData
+from infection_monkey.dataclasses import FingerprintData, PingScanData, PortScanData
+from infection_monkey.i_puppet import IFingerprinter
 
 logger = logging.getLogger(__name__)
 
