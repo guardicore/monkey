@@ -8,8 +8,7 @@ from common.agent_events import ExploitationEvent
 from common.event_queue import IAgentEventPublisher
 from common.types import AgentID
 from infection_monkey.exploit import IAgentBinaryRepository
-from infection_monkey.i_puppet import ExploiterResultData
-from infection_monkey.model import TargetHost
+from infection_monkey.i_puppet import ExploiterResultData, TargetHost
 from infection_monkey.propagation_credentials_repository import IPropagationCredentialsRepository
 
 logger = logging.getLogger(__name__)
