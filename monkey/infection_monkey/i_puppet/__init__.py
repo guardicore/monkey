@@ -1,8 +1,8 @@
 from .ping_scan_data import PingScanData
 from .port_scan_data import PortScanData
+from .exploiter_result_data import ExploiterResultData
 from .i_puppet import (
     IPuppet,
-    ExploiterResultData,
     FingerprintData,
     UnknownPluginError,
     RejectedRequestError,

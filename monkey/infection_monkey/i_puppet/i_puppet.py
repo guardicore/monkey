@@ -1,14 +1,13 @@
 import abc
 from collections import namedtuple
-from dataclasses import dataclass
-from typing import Dict, Mapping, Optional, Sequence
+from typing import Dict, Mapping, Sequence
 
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials
 from common.types import Event, NetworkPort
 from infection_monkey.i_puppet.target_host import TargetHost
 
-from . import PingScanData, PortScanData
+from . import ExploiterResultData, PingScanData, PortScanData
 
 
 class UnknownPluginError(Exception):
@@ -21,15 +20,6 @@ class RejectedRequestError(Exception):
 
 class IncompatibleOperatingSystemError(RejectedRequestError):
     pass
-
-
-@dataclass
-class ExploiterResultData:
-    exploitation_success: bool = False
-    propagation_success: bool = False
-    os: str = ""
-    info: Optional[Mapping] = None
-    error_message: str = ""
 
 
 FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
