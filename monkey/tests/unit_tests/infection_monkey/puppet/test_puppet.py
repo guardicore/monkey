@@ -8,7 +8,8 @@ from tests.unit_tests.common.agent_plugins.test_agent_plugin_manifest import FAK
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.event_queue import IAgentEventQueue
-from infection_monkey.i_puppet import IncompatibleOperatingSystemError, PingScanData
+from infection_monkey.dataclasses import PingScanData
+from infection_monkey.i_puppet import IncompatibleOperatingSystemError
 from infection_monkey.model import TargetHost
 from infection_monkey.puppet import PluginCompatabilityVerifier, PluginRegistry
 from infection_monkey.puppet.puppet import EMPTY_FINGERPRINT, Puppet

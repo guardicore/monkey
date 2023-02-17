@@ -7,7 +7,7 @@ import pytest
 import infection_monkey.network_scanning.ping_scanner  # noqa: F401
 from common import OperatingSystem
 from common.agent_events import PingScanEvent
-from infection_monkey.i_puppet import PingScanData
+from infection_monkey.dataclasses import PingScanData
 from infection_monkey.network_scanning import ping
 from infection_monkey.network_scanning.ping_scanner import EMPTY_PING_SCAN
 from infection_monkey.utils.ids import get_agent_id

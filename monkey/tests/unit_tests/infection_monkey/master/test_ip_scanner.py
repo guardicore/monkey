@@ -14,8 +14,7 @@ from common.agent_configuration.agent_sub_configurations import (
     TCPScanConfiguration,
 )
 from common.types import PortStatus
-from infection_monkey.dataclasses import PortScanData
-from infection_monkey.i_puppet import FingerprintData, PingScanData
+from infection_monkey.dataclasses import FingerprintData, PingScanData, PortScanData
 from infection_monkey.master import IPScanner
 from infection_monkey.network import NetworkAddress
 
