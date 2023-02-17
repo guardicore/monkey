@@ -1,14 +1,18 @@
 from ipaddress import IPv4Address
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from pydantic import Field
-from typing_extensions import Literal  # import from `typing` once we switch to Python 3.8
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel
-from common.types import NetworkPort, NetworkProtocol
+from common.types import NetworkPort
 
 from . import PortScanData
+
+
+class TargetHostPorts(MutableInfectionMonkeyBaseModel):
+    tcp_ports: List[Dict[NetworkPort, PortScanData]] = Field(default=[])
+    udp_ports: List[Dict[NetworkPort, PortScanData]] = Field(default=[])
 
 
 class TargetHost(MutableInfectionMonkeyBaseModel):
@@ -16,10 +20,7 @@ class TargetHost(MutableInfectionMonkeyBaseModel):
     operating_system: Optional[OperatingSystem] = Field(default=None)
     services: Dict[str, Any] = Field(default={})  # deprecated
     icmp: bool = Field(default=False)
-    port_status: Dict[
-        Union[Literal[NetworkProtocol.TCP], Literal[NetworkProtocol.UDP]],
-        Dict[NetworkPort, PortScanData],
-    ] = Field(default={})
+    ports_status: Optional[TargetHostPorts]
 
     def __hash__(self):
         return hash(self.ip)
