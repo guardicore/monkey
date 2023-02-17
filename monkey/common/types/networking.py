@@ -9,6 +9,19 @@ from common.base_models import InfectionMonkeyBaseModel
 from common.network.network_utils import address_to_ip_port
 
 
+class NetworkProtocol(Enum):
+    """
+    An Enum representing network protocols
+
+    This Enum represents network protocols. The value of each
+    member is the member's name in all lower-case characters.
+    """
+
+    TCP = "tcp"
+    UDP = "udp"
+    ICMP = "icmp"
+
+
 class NetworkService(Enum):
     """
     An Enum representing network services
