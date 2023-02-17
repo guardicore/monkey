@@ -1,5 +1,4 @@
 import abc
-from collections import namedtuple
 from typing import Dict, Mapping, Sequence
 
 from common.agent_plugins import AgentPluginType
@@ -7,7 +6,7 @@ from common.credentials import Credentials
 from common.types import Event, NetworkPort
 from infection_monkey.i_puppet.target_host import TargetHost
 
-from . import ExploiterResultData, PingScanData, PortScanData
+from . import ExploiterResultData, FingerprintData, PingScanData, PortScanData
 
 
 class UnknownPluginError(Exception):
@@ -20,9 +19,6 @@ class RejectedRequestError(Exception):
 
 class IncompatibleOperatingSystemError(RejectedRequestError):
     pass
-
-
-FingerprintData = namedtuple("FingerprintData", ["os_type", "os_version", "services"])
 
 
 class IPuppet(metaclass=abc.ABCMeta):
