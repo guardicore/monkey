@@ -5,7 +5,7 @@ from common.base_models import InfectionMonkeyBaseModel
 from common.types import NetworkPort, NetworkProtocol, NetworkService
 
 
-class QueriedService(InfectionMonkeyBaseModel):
+class DiscoveredService(InfectionMonkeyBaseModel):
     protocol: NetworkProtocol
     port: NetworkPort
     services: NetworkService
@@ -14,4 +14,4 @@ class QueriedService(InfectionMonkeyBaseModel):
 class FingerprintData(InfectionMonkeyBaseModel):
     os_type: Optional[OperatingSystem]
     os_version: Optional[str]
-    services: List[QueriedService]
+    services: List[DiscoveredService]

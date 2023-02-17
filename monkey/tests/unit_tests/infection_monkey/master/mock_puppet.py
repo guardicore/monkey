@@ -6,13 +6,13 @@ from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
 from common.types import Event, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
+    DiscoveredService,
     ExploiterResultData,
     FingerprintData,
     IncompatibleOperatingSystemError,
     IPuppet,
     PingScanData,
     PortScanData,
-    QueriedService,
     TargetHost,
 )
 
@@ -122,7 +122,7 @@ class MockPuppet(IPuppet):
                 os_type=OperatingSystem.WINDOWS,
                 os_version="vista",
                 services=[
-                    QueriedService(
+                    DiscoveredService(
                         protocol=NetworkProtocol.TCP, port=445, services=NetworkService.SMB
                     )
                 ],
@@ -134,7 +134,7 @@ class MockPuppet(IPuppet):
                 os_type=OperatingSystem.LINUX,
                 os_version="ubuntu",
                 services=[
-                    QueriedService(
+                    DiscoveredService(
                         protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
                     )
                 ],
@@ -143,10 +143,10 @@ class MockPuppet(IPuppet):
                 os_type=None,
                 os_version=None,
                 services=[
-                    QueriedService(
+                    DiscoveredService(
                         protocol=NetworkProtocol.TCP, port=80, services=NetworkService.HTTP
                     ),
-                    QueriedService(
+                    DiscoveredService(
                         protocol=NetworkProtocol.TCP, port=443, services=NetworkService.HTTPS
                     ),
                 ],
