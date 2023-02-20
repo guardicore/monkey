@@ -9,7 +9,7 @@ from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatu
 class PortScanData(InfectionMonkeyBaseModel):
     port: NetworkPort
     status: PortStatus
-    protocol: Optional[NetworkProtocol]
+    protocol: NetworkProtocol = Field(default=NetworkProtocol.UNKNOWN)
     banner: Optional[str] = Field(default=None)
     service: NetworkService = Field(default=NetworkService.UNKNOWN)
     service_deprecated: Optional[str] = Field(default=None)
