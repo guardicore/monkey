@@ -46,6 +46,7 @@ class ConfigurePageComponent extends AuthComponent {
   constructor(props) {
     super(props);
     this.currentSection = this.getSectionsOrder()[0];
+    this.validator = customizeValidator( {customFormats: formValidationFormats});
 
     this.state = {
       configuration: {},
@@ -397,7 +398,7 @@ class ConfigurePageComponent extends AuthComponent {
     formProperties['className'] = 'config-form';
     formProperties['liveValidate'] = true;
     formProperties['formData'] = this.state.currentFormData;
-    formProperties['validator'] = customizeValidator( {customFormats: formValidationFormats});
+    formProperties['validator'] = this.validator;
 
     applyUiSchemaManipulators(this.state.selectedSection,
       formProperties['formData'],
@@ -440,6 +441,11 @@ class ConfigurePageComponent extends AuthComponent {
     </Nav>)
   };
 
+  isSubmitDisabled = () => {
+    let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
+    return errors.errors.length > 0
+  }
+
   render() {
     let displayedSchema = {};
     if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties')) {
@@ -463,7 +469,8 @@ class ConfigurePageComponent extends AuthComponent {
         {content}
         <div className='text-center'>
           <button type='submit' onClick={this.onSubmit} className='btn btn-success btn-lg'
-                  style={{margin: '5px'}}>
+                  style={{margin: '5px'}}
+          disabled={this.isSubmitDisabled()}>
             Submit
           </button>
           <button type='button' onClick={this.resetConfig} className='btn btn-danger btn-lg'

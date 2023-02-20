@@ -10,6 +10,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 ### Removed
 ### Fixed
+- Invalid configuration submit bug. #1301
 - Notification spam bug. #2731
 
 ### Security
