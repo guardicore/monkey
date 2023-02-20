@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from common.types import PortStatus
+from common.types import NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.http_fingerprinter import HTTPFingerprinter
 
@@ -77,10 +77,11 @@ def test_fingerprint_only_port_443(mock_get_http_headers, http_fingerprinter):
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services.keys()) == 1
+    assert len(fingerprint_data.services) == 1
 
-    assert fingerprint_data.services["tcp-443"]["data"][0] == PYTHON_SERVER_HEADER["Server"]
-    assert fingerprint_data.services["tcp-443"]["data"][1] is True
+    assert fingerprint_data.services[0].protocol == NetworkProtocol.TCP
+    assert fingerprint_data.services[0].port == 443
+    assert fingerprint_data.services[0].services == NetworkService.HTTPS
 
 
 def test_open_port_no_http_server(mock_get_http_headers, http_fingerprinter):
@@ -106,7 +107,7 @@ def test_open_port_no_http_server(mock_get_http_headers, http_fingerprinter):
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services.keys()) == 0
+    assert len(fingerprint_data.services) == 0
 
 
 def test_multiple_open_ports(mock_get_http_headers, http_fingerprinter):
@@ -130,12 +131,15 @@ def test_multiple_open_ports(mock_get_http_headers, http_fingerprinter):
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services.keys()) == 2
+    assert len(fingerprint_data.services) == 2
 
-    assert fingerprint_data.services["tcp-443"]["data"][0] == PYTHON_SERVER_HEADER["Server"]
-    assert fingerprint_data.services["tcp-443"]["data"][1] is True
-    assert fingerprint_data.services["tcp-8080"]["data"][0] == APACHE_SERVER_HEADER["Server"]
-    assert fingerprint_data.services["tcp-8080"]["data"][1] is False
+    assert fingerprint_data.services[0].protocol == NetworkProtocol.TCP
+    assert fingerprint_data.services[0].port == 443
+    assert fingerprint_data.services[0].services == NetworkService.HTTPS
+
+    assert fingerprint_data.services[1].protocol == NetworkProtocol.TCP
+    assert fingerprint_data.services[1].port == 8080
+    assert fingerprint_data.services[1].services == NetworkService.HTTP
 
 
 def test_server_missing_from_http_headers(mock_get_http_headers, http_fingerprinter):
@@ -152,7 +156,8 @@ def test_server_missing_from_http_headers(mock_get_http_headers, http_fingerprin
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services.keys()) == 1
+    assert len(fingerprint_data.services) == 1
 
-    assert fingerprint_data.services["tcp-1080"]["data"][0] == ""
-    assert fingerprint_data.services["tcp-1080"]["data"][1] is False
+    assert fingerprint_data.services[0].protocol == NetworkProtocol.TCP
+    assert fingerprint_data.services[0].port == 1080
+    assert fingerprint_data.services[0].services == NetworkService.HTTP

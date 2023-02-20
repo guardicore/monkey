@@ -73,7 +73,7 @@ def _get_http_headers(url: str) -> Optional[Dict[str, Any]]:
     try:
         logger.debug(f"Sending request for headers to {url}")
         with closing(head(url, verify=False, timeout=1)) as response:  # noqa: DUO123
-            return response.headers
+            return response.headers  # type: ignore[return-value]
     except Timeout:
         logger.debug(f"Timeout while requesting headers from {url}")
     except ConnectionError:  # Someone doesn't like us
