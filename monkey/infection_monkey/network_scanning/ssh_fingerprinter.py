@@ -2,11 +2,17 @@ import re
 from typing import Dict, Optional, Tuple
 
 from common import OperatingSystem
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
+from common.types import NetworkProtocol, NetworkService
+from infection_monkey.i_puppet import (
+    DiscoveredService,
+    FingerprintData,
+    IFingerprinter,
+    PingScanData,
+    PortScanData,
+)
 
 SSH_REGEX = r"SSH-\d\.\d-OpenSSH"
 LINUX_DIST_SSH = ["ubuntu", "debian"]
-DISPLAY_NAME = "SSH"
 
 
 class SSHFingerprinter(IFingerprinter):
@@ -22,20 +28,23 @@ class SSHFingerprinter(IFingerprinter):
     ) -> FingerprintData:
         os_type = None
         os_version = None
-        services = {}
+        services = []
 
         for ps_data in port_scan_data.values():
             if ps_data.banner and self._banner_regex.search(ps_data.banner):
                 os_type, os_version = self._get_host_os(ps_data.banner)
-                services[f"tcp-{ps_data.port}"] = {
-                    "display_name": DISPLAY_NAME,
-                    "port": ps_data.port,
-                    "name": "ssh",
-                }
-        return FingerprintData(os_type, os_version, services)
+                services.append(
+                    DiscoveredService(
+                        protocol=NetworkProtocol.TCP,
+                        port=ps_data.port,
+                        services=NetworkService.SSH,
+                    )
+                )
+
+        return FingerprintData(os_type=os_type, os_version=os_version, services=services)
 
     @staticmethod
-    def _get_host_os(banner) -> Tuple[Optional[str], Optional[str]]:
+    def _get_host_os(banner) -> Tuple[Optional[OperatingSystem], Optional[str]]:
         os = None
         os_version = None
         for dist in LINUX_DIST_SSH:
