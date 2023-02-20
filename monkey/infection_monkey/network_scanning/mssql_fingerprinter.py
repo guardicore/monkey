@@ -1,12 +1,17 @@
 import errno
 import logging
 import socket
-from typing import Any, Dict, Optional
+from typing import Dict, List, Sequence
 
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
+from common.types import NetworkPort, NetworkProtocol, NetworkService
+from infection_monkey.i_puppet import (
+    DiscoveredService,
+    FingerprintData,
+    IFingerprinter,
+    PingScanData,
+    PortScanData,
+)
 
-MSSQL_SERVICE = "MSSQL"
-DISPLAY_NAME = MSSQL_SERVICE
 SQL_BROWSER_DEFAULT_PORT = 1434
 _BUFFER_SIZE = 4096
 _MSSQL_SOCKET_TIMEOUT = 5
@@ -23,7 +28,7 @@ class MSSQLFingerprinter(IFingerprinter):
         options: Dict,
     ):
         """Gets Microsoft SQL Server instance information by querying the SQL Browser service."""
-        services = {}
+        services = []
 
         try:
             data = _query_mssql_for_instance_data(host)
@@ -32,10 +37,10 @@ class MSSQLFingerprinter(IFingerprinter):
         except Exception as ex:
             logger.debug(f"Did not detect an MSSQL server: {ex}")
 
-        return FingerprintData(None, None, services)
+        return FingerprintData(os_type=None, os_version=None, services=services)
 
 
-def _query_mssql_for_instance_data(host: str) -> Optional[bytes]:
+def _query_mssql_for_instance_data(host: str) -> bytes:
     # Create a UDP socket and sets a timeout
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(_MSSQL_SOCKET_TIMEOUT)
@@ -44,10 +49,10 @@ def _query_mssql_for_instance_data(host: str) -> Optional[bytes]:
 
     # The message is a CLNT_UCAST_EX packet to get all instances
     # https://msdn.microsoft.com/en-us/library/cc219745.aspx
-    message = "\x03"
+    request = "\x03"
 
     # Encode the message as a bytes array
-    message = message.encode()
+    message = request.encode()
 
     # send data and receive response
     try:
@@ -77,27 +82,46 @@ def _query_mssql_for_instance_data(host: str) -> Optional[bytes]:
         sock.close()
 
 
-def _get_services_from_server_data(data: bytes) -> Dict[str, Any]:
-    services = {MSSQL_SERVICE: {}}
-    services[MSSQL_SERVICE]["display_name"] = DISPLAY_NAME
-    services[MSSQL_SERVICE]["port"] = SQL_BROWSER_DEFAULT_PORT
+def _get_instance_info(instance_info: Sequence[str]) -> Dict[str, str]:
+    info = {}
+    it = iter(instance_info)
+    for k in it:
+        info[k] = next(it)
+
+    return info
+
+
+def _parse_instance(instance: str) -> Dict[str, str]:
+    instance_info = instance.split(";")
+    if len(instance_info) > 1:
+        return _get_instance_info(instance_info)
+
+    return {}
+
+
+def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
+    services = [
+        DiscoveredService(
+            protocol=NetworkProtocol.UDP,
+            port=NetworkPort(SQL_BROWSER_DEFAULT_PORT),
+            services=NetworkService.MSSQL,
+        )
+    ]
 
     # Loop through the server data
+    # Example data:
+    # yServerName;MSSQL-16;InstanceName;MSSQLSERVER;IsClustered;No;Version;14.0.1000.169;tcp;1433;np;\\MSSQL-16\pipe\sql\query;;
     mssql_instances = filter(lambda i: i != "", data[3:].decode().split(";;"))
-
     for instance in mssql_instances:
-        instance_info = instance.split(";")
-        if len(instance_info) > 1:
-            services[MSSQL_SERVICE][instance_info[1]] = {}
-            for i in range(1, len(instance_info), 2):
-                # Each instance's info is nested under its own name, if there are multiple
-                # instances
-                # each will appear under its own name
-                services[MSSQL_SERVICE][instance_info[1]][instance_info[i - 1]] = instance_info[i]
-
-            logger.debug(f"Found MSSQL instance: {instance}")
-
-    if len(services[MSSQL_SERVICE].keys()) == 2:
-        services = {}
+        instance_info = _parse_instance(instance)
+        if "tcp" in instance_info:
+            services.append(
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP,
+                    port=NetworkPort(instance_info["tcp"]),
+                    services=NetworkService.MSSQL,
+                )
+            )
+        logger.debug(f"Found MSSQL instance: {instance}")
 
     return services
