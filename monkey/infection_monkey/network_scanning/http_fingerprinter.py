@@ -1,9 +1,10 @@
 import logging
 from contextlib import closing
-from typing import Any, Dict, Iterable, Optional, Set
+from typing import Dict, Iterable, Optional, Set
 
 from requests import head
 from requests.exceptions import ConnectionError, Timeout
+from requests.structures import CaseInsensitiveDict
 
 from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
@@ -69,11 +70,11 @@ def _get_server_from_headers(url: str) -> Optional[str]:
     return None
 
 
-def _get_http_headers(url: str) -> Optional[Dict[str, Any]]:
+def _get_http_headers(url: str) -> Optional[CaseInsensitiveDict]:
     try:
         logger.debug(f"Sending request for headers to {url}")
         with closing(head(url, verify=False, timeout=1)) as response:  # noqa: DUO123
-            return response.headers  # type: ignore[return-value]
+            return response.headers
     except Timeout:
         logger.debug(f"Timeout while requesting headers from {url}")
     except ConnectionError:  # Someone doesn't like us
