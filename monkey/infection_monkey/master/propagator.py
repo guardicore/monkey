@@ -10,7 +10,7 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import Event, NetworkPort, PortStatus
+from common.types import Event, NetworkPort, NetworkProtocol, PortStatus
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
@@ -169,6 +169,23 @@ class Propagator:
 
             for service, details in fd.services.items():
                 target_host.services.setdefault(service, {}).update(details)
+
+            for service in fd.services:
+                # TODO: do we want to overwrite?
+                if service.protocol == NetworkProtocol.TCP:
+                    target_host.ports_status.tcp_ports[service.port] = PortScanData(
+                        port=service.port,
+                        status=PortStatus.OPEN,
+                        protocol=NetworkProtocol.TCP,
+                        service=service.services,
+                    )
+                elif service.protocol == NetworkProtocol.UDP:
+                    target_host.ports_status.udp_ports[service.port] = PortScanData(
+                        port=service.port,
+                        status=PortStatus.OPEN,
+                        protocol=NetworkProtocol.UDP,
+                        service=service.services,
+                    )
 
     def _exploit_hosts(
         self,
