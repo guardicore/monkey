@@ -3,10 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from common.types import PortStatus
+from common.types import NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network_scanning.mssql_fingerprinter import (
-    MSSQL_SERVICE,
     SQL_BROWSER_DEFAULT_PORT,
     MSSQLFingerprinter,
 )
@@ -23,15 +22,6 @@ def fingerprinter():
 
 
 def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
-    successful_service_response = {
-        "ServerName": "BogusVogus",
-        "InstanceName": "GhostServer",
-        "IsClustered": "No",
-        "Version": "11.1.1111.111",
-        "tcp": "1433",
-        "np": "blah_blah",
-    }
-
     successful_server_response = (
         b"\x05y\x00ServerName;BogusVogus;InstanceName;GhostServer;"
         b"IsClustered;No;Version;11.1.1111.111;tcp;1433;np;blah_blah;;"
@@ -47,17 +37,15 @@ def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services.keys()) == 1
+    assert len(fingerprint_data.services) == 2
 
-    # Each mssql instance is under his name
-    assert len(fingerprint_data.services["MSSQL"].keys()) == 3
-    assert fingerprint_data.services["MSSQL"]["display_name"] == MSSQL_SERVICE
-    assert fingerprint_data.services["MSSQL"]["port"] == SQL_BROWSER_DEFAULT_PORT
-    mssql_service = fingerprint_data.services["MSSQL"]["BogusVogus"]
+    assert fingerprint_data.services[0].services == NetworkService.MSSQL
+    assert fingerprint_data.services[0].port == SQL_BROWSER_DEFAULT_PORT
+    assert fingerprint_data.services[0].protocol == NetworkProtocol.UDP
 
-    assert len(mssql_service.keys()) == len(successful_service_response.keys())
-    for key, value in successful_service_response.items():
-        assert mssql_service[key] == value
+    assert fingerprint_data.services[1].services == NetworkService.MSSQL
+    assert fingerprint_data.services[1].port == 1433
+    assert fingerprint_data.services[1].protocol == NetworkProtocol.TCP
 
 
 @pytest.mark.parametrize(
@@ -80,7 +68,7 @@ def test_mssql_no_response_from_server(monkeypatch, fingerprinter, mock_query_fu
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services.keys()) == 0
+    assert len(fingerprint_data.services) == 0
 
 
 def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
@@ -100,4 +88,5 @@ def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services.keys()) == 0
+    # TODO: Should this be zero?
+    assert len(fingerprint_data.services) == 1

@@ -56,15 +56,13 @@ def _query_mssql_for_instance_data(host: str) -> bytes:
 
     # send data and receive response
     try:
-        logger.info(f"Sending message to requested host: {host}, {message}")
+        logger.info(f"Sending message to requested host: {host}, {message!r}")
         sock.sendto(message, server_address)
         data, _ = sock.recvfrom(_BUFFER_SIZE)
 
         return data
     except socket.timeout as err:
-        logger.debug(
-            f"Socket timeout reached, maybe browser service on host: {host} doesnt " "exist"
-        )
+        logger.debug(f"Socket timeout reached, maybe browser service on host: {host} doesn't exist")
         raise err
     except socket.error as err:
         if err.errno == errno.ECONNRESET:
