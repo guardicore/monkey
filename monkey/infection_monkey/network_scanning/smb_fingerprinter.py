@@ -15,7 +15,7 @@ from infection_monkey.i_puppet import (
     PortScanData,
 )
 
-SMB_PORT = 445
+SMB_PORT = NetworkPort(445)
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +196,7 @@ class SMBFingerprinter(IFingerprinter):
             services.append(
                 DiscoveredService(
                     protocol=NetworkProtocol.TCP,
-                    port=NetworkPort(SMB_PORT),
+                    port=SMB_PORT,
                     services=NetworkService.SMB,
                 )
             )
