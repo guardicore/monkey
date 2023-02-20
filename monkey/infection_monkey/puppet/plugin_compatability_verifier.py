@@ -3,8 +3,8 @@ import threading
 from typing import Mapping, Optional
 
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from infection_monkey.i_puppet import TargetHost
 from infection_monkey.island_api_client import IIslandAPIClient, IslandAPIError
-from infection_monkey.model import TargetHost
 
 logger = logging.getLogger(__name__)
 

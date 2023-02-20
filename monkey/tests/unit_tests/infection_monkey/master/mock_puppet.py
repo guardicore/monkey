@@ -12,8 +12,8 @@ from infection_monkey.i_puppet import (
     IPuppet,
     PingScanData,
     PortScanData,
+    TargetHost,
 )
-from infection_monkey.model import TargetHost
 
 DOT_1 = "10.0.0.1"
 DOT_2 = "10.0.0.2"
