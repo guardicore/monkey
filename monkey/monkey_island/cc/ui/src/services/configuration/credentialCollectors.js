@@ -1,14 +1,14 @@
 const CREDENTIAL_COLLECTORS = {
     'title': 'Credential Collectors',
     'description': 'Click on a credential collector for more information.',
-    'type': 'string',
+    'type': 'object',
     'pluginDefs': {
       'MimikatzCollector':{'name': 'MimikatzCollector', 'options': {}},
       'SSHCollector':{'name': 'SSHCollector', 'options': {}}
     },
     'properties':{
-      'type': 'string',
       'name': {
+        'type': 'string',
         'anyOf': [
           {
             'type': 'string',
