@@ -32,8 +32,10 @@ class NetworkService(Enum):
     """
 
     HTTP = "http"
+    HTTPS = "https"
     MSSQL = "mssql"
     SMB = "smb"
+    SSH = "ssh"
     UNKNOWN = "unknown"
 
 

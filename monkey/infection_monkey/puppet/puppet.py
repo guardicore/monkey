@@ -20,7 +20,7 @@ from infection_monkey.puppet import PluginCompatabilityVerifier
 
 from . import PluginRegistry
 
-EMPTY_FINGERPRINT = FingerprintData(None, None, [])
+EMPTY_FINGERPRINT = FingerprintData(os_type=None, os_version=None, services=[])
 
 logger = logging.getLogger()
 

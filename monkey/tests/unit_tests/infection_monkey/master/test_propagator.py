@@ -10,11 +10,11 @@ from common.agent_configuration.agent_sub_configurations import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import PortStatus
-from infection_monkey.i_puppet import FingerprintData, PingScanData, PortScanData
+from common.types import NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import DiscoveredService, FingerprintData, PingScanData, PortScanData
 from infection_monkey.master import IPScanResults, Propagator
 
-empty_fingerprint_data = FingerprintData(None, None, {})
+empty_fingerprint_data = FingerprintData(os_type=None, os_version=None, services=[])
 
 dot_1_scan_results = IPScanResults(
     PingScanData(response_received=True, os=OperatingSystem.WINDOWS),
@@ -28,7 +28,15 @@ dot_1_scan_results = IPScanResults(
         ),
     },
     {
-        "SMBFinger": FingerprintData("windows", "vista", {"tcp-445": {"name": "smb_service_name"}}),
+        "SMBFinger": FingerprintData(
+            os_type=OperatingSystem.WINDOWS,
+            os_version="vista",
+            services=[
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=445, services=NetworkService.SMB
+                )
+            ],
+        ),
         "SSHFinger": empty_fingerprint_data,
         "HTTPFinger": empty_fingerprint_data,
     },
@@ -47,15 +55,25 @@ dot_3_scan_results = IPScanResults(
     },
     {
         "SSHFinger": FingerprintData(
-            "linux", "ubuntu", {"tcp-22": {"name": "SSH", "banner": "SSH BANNER"}}
+            os_type=OperatingSystem.LINUX,
+            os_version="ubuntu",
+            services=[
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
+                )
+            ],
         ),
         "HTTPFinger": FingerprintData(
-            None,
-            None,
-            {
-                "tcp-80": {"name": "http", "data": ("SERVER_HEADERS", False)},
-                "tcp-443": {"name": "http", "data": ("SERVER_HEADERS_2", True)},
-            },
+            os_type=None,
+            os_version=None,
+            services=[
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=80, services=NetworkService.HTTP
+                ),
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP, port=443, services=NetworkService.HTTPS
+                ),
+            ],
         ),
         "SMBFinger": empty_fingerprint_data,
     },
