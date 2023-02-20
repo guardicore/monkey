@@ -1,9 +1,17 @@
 import pytest
 
 from common import OperatingSystem
-from common.types import PortStatus
-from infection_monkey.i_puppet import FingerprintData, PortScanData
+from common.types import NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import DiscoveredService, FingerprintData, PortScanData
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
+
+SSH_SERVICE_22 = DiscoveredService(
+    protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
+)
+
+SSH_SERVICE_2222 = DiscoveredService(
+    protocol=NetworkProtocol.TCP, port=2222, services=NetworkService.SSH
+)
 
 
 @pytest.fixture
@@ -23,7 +31,7 @@ def test_no_ssh_ports_open(ssh_fingerprinter):
     }
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
 
-    assert results == FingerprintData(None, None, {})
+    assert results == FingerprintData(os_type=None, os_version=None, services=[])
 
 
 def test_no_os(ssh_fingerprinter):
@@ -50,20 +58,9 @@ def test_no_os(ssh_fingerprinter):
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
 
     assert results == FingerprintData(
-        None,
-        None,
-        {
-            "tcp-22": {
-                "display_name": "SSH",
-                "port": 22,
-                "name": "ssh",
-            },
-            "tcp-2222": {
-                "display_name": "SSH",
-                "port": 2222,
-                "name": "ssh",
-            },
-        },
+        os_type=None,
+        os_version=None,
+        services=[SSH_SERVICE_22, SSH_SERVICE_2222],
     )
 
 
@@ -85,15 +82,7 @@ def test_ssh_os(ssh_fingerprinter):
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
 
     assert results == FingerprintData(
-        OperatingSystem.LINUX,
-        "Ubuntu-4ubuntu0.2",
-        {
-            "tcp-22": {
-                "display_name": "SSH",
-                "port": 22,
-                "name": "ssh",
-            }
-        },
+        os_type=OperatingSystem.LINUX, os_version="Ubuntu-4ubuntu0.2", services=[SSH_SERVICE_22]
     )
 
 
@@ -121,18 +110,7 @@ def test_multiple_os(ssh_fingerprinter):
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
 
     assert results == FingerprintData(
-        OperatingSystem.LINUX,
-        "Debian",
-        {
-            "tcp-22": {
-                "display_name": "SSH",
-                "port": 22,
-                "name": "ssh",
-            },
-            "tcp-2222": {
-                "display_name": "SSH",
-                "port": 2222,
-                "name": "ssh",
-            },
-        },
+        os_type=OperatingSystem.LINUX,
+        os_version="Debian",
+        services=[SSH_SERVICE_22, SSH_SERVICE_2222],
     )
