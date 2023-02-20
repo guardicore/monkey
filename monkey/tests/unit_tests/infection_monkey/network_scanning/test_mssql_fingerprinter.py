@@ -37,15 +37,11 @@ def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    assert len(fingerprint_data.services) == 2
+    assert len(fingerprint_data.services) == 1
 
     assert fingerprint_data.services[0].services == NetworkService.MSSQL
-    assert fingerprint_data.services[0].port == SQL_BROWSER_DEFAULT_PORT
-    assert fingerprint_data.services[0].protocol == NetworkProtocol.UDP
-
-    assert fingerprint_data.services[1].services == NetworkService.MSSQL
-    assert fingerprint_data.services[1].port == 1433
-    assert fingerprint_data.services[1].protocol == NetworkProtocol.TCP
+    assert fingerprint_data.services[0].port == 1433
+    assert fingerprint_data.services[0].protocol == NetworkProtocol.TCP
 
 
 @pytest.mark.parametrize(
@@ -88,5 +84,8 @@ def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
 
     assert fingerprint_data.os_type is None
     assert fingerprint_data.os_version is None
-    # TODO: Should this be zero?
     assert len(fingerprint_data.services) == 1
+
+    assert fingerprint_data.services[0].services == NetworkService.UNKNOWN
+    assert fingerprint_data.services[0].port == SQL_BROWSER_DEFAULT_PORT
+    assert fingerprint_data.services[0].protocol == NetworkProtocol.UDP

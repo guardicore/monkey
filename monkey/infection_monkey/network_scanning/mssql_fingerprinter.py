@@ -12,7 +12,7 @@ from infection_monkey.i_puppet import (
     PortScanData,
 )
 
-SQL_BROWSER_DEFAULT_PORT = 1434
+SQL_BROWSER_DEFAULT_PORT = NetworkPort(1434)
 _BUFFER_SIZE = 4096
 _MSSQL_SOCKET_TIMEOUT = 5
 
@@ -98,19 +98,14 @@ def _parse_instance(instance: str) -> Dict[str, str]:
 
 
 def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
-    services = [
-        DiscoveredService(
-            protocol=NetworkProtocol.UDP,
-            port=NetworkPort(SQL_BROWSER_DEFAULT_PORT),
-            services=NetworkService.MSSQL,
-        )
-    ]
+    services = []
 
     # Loop through the server data
     # Example data:
     # yServerName;MSSQL-16;InstanceName;MSSQLSERVER;IsClustered;No;Version;14.0.1000.169;tcp;1433;np;\\MSSQL-16\pipe\sql\query;;
     mssql_instances = filter(lambda i: i != "", data[3:].decode().split(";;"))
     for instance in mssql_instances:
+
         instance_info = _parse_instance(instance)
         if "tcp" in instance_info:
             services.append(
@@ -121,5 +116,14 @@ def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
                 )
             )
         logger.debug(f"Found MSSQL instance: {instance}")
+
+    if not services:
+        services.append(
+            DiscoveredService(
+                protocol=NetworkProtocol.UDP,
+                port=SQL_BROWSER_DEFAULT_PORT,
+                services=NetworkService.UNKNOWN,
+            )
+        )
 
     return services
