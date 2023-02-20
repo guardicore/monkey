@@ -1,7 +1,7 @@
 import errno
 import logging
 import socket
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional
 
 from common.types import NetworkPort, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import (
@@ -80,50 +80,40 @@ def _query_mssql_for_instance_data(host: str) -> bytes:
         sock.close()
 
 
-def _get_instance_info(instance_info: Sequence[str]) -> Dict[str, str]:
-    info = {}
-    it = iter(instance_info)
-    for k in it:
-        info[k] = next(it)
-
-    return info
-
-
-def _parse_instance(instance: str) -> Dict[str, str]:
-    instance_info = instance.split(";")
-    if len(instance_info) > 1:
-        return _get_instance_info(instance_info)
-
-    return {}
+def _get_tcp_port_from_response(response: str) -> Optional[NetworkPort]:
+    response_info = response.split(";")
+    try:
+        return NetworkPort(response_info[response_info.index("tcp") + 1])
+    except (KeyError, ValueError):
+        logger.warning(
+            "Got a malformed response from MSSQL server, "
+            "fingerprinter failed to locate the TCP port"
+        )
+        return None
 
 
 def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
     services = []
 
-    # Loop through the server data
-    # Example data:
-    # yServerName;MSSQL-16;InstanceName;MSSQLSERVER;IsClustered;No;Version;14.0.1000.169;tcp;1433;np;\\MSSQL-16\pipe\sql\query;;
-    mssql_instances = filter(lambda i: i != "", data[3:].decode().split(";;"))
-    for instance in mssql_instances:
-
-        instance_info = _parse_instance(instance)
-        if "tcp" in instance_info:
+    mssql_responses = filter(lambda i: i != "", data[3:].decode().split(";;"))
+    for response in mssql_responses:
+        response_tcp_port = _get_tcp_port_from_response(response)
+        if response_tcp_port:
             services.append(
                 DiscoveredService(
                     protocol=NetworkProtocol.TCP,
-                    port=NetworkPort(instance_info["tcp"]),
+                    port=NetworkPort(response_tcp_port),
                     services=NetworkService.MSSQL,
                 )
             )
-        logger.debug(f"Found MSSQL instance: {instance}")
-
-    if not services:
-        services.append(
-            DiscoveredService(
-                protocol=NetworkProtocol.UDP,
-                port=SQL_BROWSER_DEFAULT_PORT,
-                services=NetworkService.UNKNOWN,
+        else:
+            services.append(
+                DiscoveredService(
+                    protocol=NetworkProtocol.UDP,
+                    port=SQL_BROWSER_DEFAULT_PORT,
+                    services=NetworkService.UNKNOWN,
+                )
             )
-        )
+        logger.debug(f"An MSSQL response has been recieved: {response}")
 
     return services
