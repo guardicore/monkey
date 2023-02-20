@@ -18,7 +18,8 @@ After running the installer, the following prompt should appear on the screen:
 ![Windows installer screenshot](../../images/island/others/windows_installer.png "Windows installer screenshot")
 
 1. Follow the steps to complete the installation.
-1. Run the Monkey Island by clicking on the desktop shortcut.
+1. Run the Infection Monkey by clicking on the desktop shortcut. **Note**: If you want Agents to
+collect more data on the current machine, consider running as Administrator.
 
 {{% notice info %}}
 If you're prompted to delete your data directory and you're not sure what to
