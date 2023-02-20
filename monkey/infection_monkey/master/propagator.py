@@ -153,6 +153,8 @@ class Propagator:
             if psd.banner is not None:
                 target_host.services[psd.service_deprecated]["banner"] = psd.banner
 
+            target_host.ports_status.tcp_ports[psd.port] = psd
+
     @staticmethod
     def _process_fingerprinter_results(
         target_host: TargetHost, fingerprint_data: Mapping[FingerprinterName, FingerprintData]
