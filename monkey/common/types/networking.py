@@ -20,6 +20,7 @@ class NetworkProtocol(Enum):
     TCP = "tcp"
     UDP = "udp"
     ICMP = "icmp"
+    UNKNOWN = "unknown"
 
 
 class NetworkService(Enum):
