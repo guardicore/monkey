@@ -10,10 +10,6 @@ from common.types import NetworkPort
 from . import PortScanData
 
 
-# TODO: do we really need this? Can't we just have
-# `TargetHost.ports_status` be `Dict[NetworkPort, PortScanData]`?
-# `PortScanData` already has protocol information so having `tcp_ports`
-# and `udp_ports` is redundant.
 class TargetHostPorts(MutableInfectionMonkeyBaseModel):
     tcp_ports: Dict[NetworkPort, PortScanData] = Field(default={})
     udp_ports: Dict[NetworkPort, PortScanData] = Field(default={})
