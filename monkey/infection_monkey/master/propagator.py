@@ -2,7 +2,7 @@ import logging
 import threading
 from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
-from typing import List, Mapping, Sequence
+from typing import List, Mapping, Sequence, Set
 
 from common.agent_configuration import (
     ExploitationConfiguration,
@@ -10,7 +10,7 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import Event, NetworkPort, NetworkProtocol, PortStatus
+from common.types import Event, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
     ExploiterResultData,
     FingerprintData,
@@ -170,21 +170,34 @@ class Propagator:
             for service, details in fd.services.items():
                 target_host.services.setdefault(service, {}).update(details)
 
-            for service in fd.services:
-                # TODO: do we want to overwrite?
-                if service.protocol == NetworkProtocol.TCP:
-                    target_host.ports_status.tcp_ports[service.port] = PortScanData(
-                        port=service.port,
+            for discovered_service in fd.services:
+                protocol = discovered_service.protocol
+                port = discovered_service.port
+
+                updated_services: Set[NetworkService] = set()
+                # add new service from fingerprint data
+                updated_services.add(discovered_service.services)
+
+                if protocol == NetworkProtocol.TCP:
+                    if port in target_host.ports_status.tcp_ports:
+                        updated_services.update(target_host.ports_status.tcp_ports[port].services)
+
+                    target_host.ports_status.tcp_ports[port] = PortScanData(
+                        port=port,
                         status=PortStatus.OPEN,
-                        protocol=NetworkProtocol.TCP,
-                        service=service.services,
+                        protocol=protocol,
+                        services=updated_services,
                     )
-                elif service.protocol == NetworkProtocol.UDP:
-                    target_host.ports_status.udp_ports[service.port] = PortScanData(
-                        port=service.port,
+
+                elif protocol == NetworkProtocol.UDP:
+                    if port in target_host.ports_status.udp_ports:
+                        updated_services.update(target_host.ports_status.udp_ports[port].services)
+
+                    target_host.ports_status.udp_ports[port] = PortScanData(
+                        port=port,
                         status=PortStatus.OPEN,
-                        protocol=NetworkProtocol.UDP,
-                        service=service.services,
+                        protocol=protocol,
+                        services=updated_services,
                     )
 
     def _exploit_hosts(
