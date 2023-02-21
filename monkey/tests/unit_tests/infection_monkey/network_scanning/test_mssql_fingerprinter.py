@@ -38,7 +38,7 @@ def test_mssql_fingerprint_successful(monkeypatch, fingerprinter):
     )
     monkeypatch.setattr(
         "infection_monkey.network_scanning.mssql_fingerprinter._query_mssql_for_instance_data",
-        lambda _: successful_server_response,
+        lambda _, __: successful_server_response,
     )
 
     fingerprint_data = fingerprinter.get_host_fingerprint(
@@ -77,14 +77,13 @@ def test_mssql_no_response_from_server(monkeypatch, fingerprinter, mock_query_fu
 
 
 def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
-
     mangled_server_response = (
         b"Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         b"Pellentesque ultrices ornare libero, ;;"
     )
     monkeypatch.setattr(
-        "infection_monkey.network_scanning.mssql_fingerprinter._query_mssql_for_instance_data",
-        lambda _: mangled_server_response,
+        "infection_monkey.network_scanning.mssql_fingerprinter.socket.socket.recvfrom",
+        lambda _, __: (mangled_server_response, _),
     )
 
     fingerprint_data = fingerprinter.get_host_fingerprint(
