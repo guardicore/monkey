@@ -154,13 +154,13 @@ class Propagator:
                 target_host.services[psd.service_deprecated]["banner"] = psd.banner
 
             # keep latest information about a port, but retain old information about `services`
-            services = psd.services + target_host.ports_status.tcp_ports[psd.port].services
+            updated_services = psd.services + target_host.ports_status.tcp_ports[psd.port].services
             target_host.ports_status.tcp_ports[psd.port] = PortScanData(
                 port=psd.port,
                 status=psd.status,
                 protocol=psd.protocol,
                 banner=psd.banner,
-                services=services,
+                services=updated_services,
                 service_deprecated=psd.service_deprecated,
             )
 
@@ -188,26 +188,36 @@ class Propagator:
                 # add new service from fingerprint data
                 updated_services.add(discovered_service.service)
 
+                banner = None
+
                 if protocol == NetworkProtocol.TCP:
                     if port in target_host.ports_status.tcp_ports:
-                        updated_services.update(target_host.ports_status.tcp_ports[port].services)
+                        existing_psd = target_host.ports_status.tcp_ports[port]
+
+                        updated_services.update(existing_psd.services)
+                        banner = existing_psd.banner
 
                     target_host.ports_status.tcp_ports[port] = PortScanData(
                         port=port,
                         status=PortStatus.OPEN,
                         protocol=protocol,
                         services=updated_services,
+                        banner=banner,
                     )
 
                 elif protocol == NetworkProtocol.UDP:
                     if port in target_host.ports_status.udp_ports:
-                        updated_services.update(target_host.ports_status.udp_ports[port].services)
+                        existing_psd = target_host.ports_status.udp_ports[port]
+
+                        updated_services.update(existing_psd.services)
+                        banner = existing_psd.banner
 
                     target_host.ports_status.udp_ports[port] = PortScanData(
                         port=port,
                         status=PortStatus.OPEN,
                         protocol=protocol,
                         services=updated_services,
+                        banner=banner,
                     )
 
     def _exploit_hosts(
