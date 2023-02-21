@@ -142,3 +142,22 @@ def test_exploit_host__incompatable(
             options={},
             interrupt=threading.Event(),
         )
+
+
+def test_malfunctioning_plugin__exploiter(puppet: Puppet):
+    malfunctioning_exploiter = MagicMock()
+    malfunctioning_exploiter.run = MagicMock(return_value=None)
+    puppet.load_plugin(AgentPluginType.EXPLOITER, FAKE_NAME, malfunctioning_exploiter)
+
+    exploiter_result_data = puppet.exploit_host(
+        name=FAKE_NAME,
+        host=TargetHost(ip="1.1.1.1", operating_system=OperatingSystem.WINDOWS),
+        current_depth=1,
+        servers=[],
+        options={},
+        interrupt=threading.Event(),
+    )
+
+    assert exploiter_result_data.exploitation_success is False
+    assert exploiter_result_data.propagation_success is False
+    assert exploiter_result_data.error_message != ""

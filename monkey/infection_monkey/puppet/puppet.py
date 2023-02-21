@@ -84,13 +84,25 @@ class Puppet(IPuppet):
                 f'The exploiter, "{name}", is not compatible with the operating system on {host}'
             )
         exploiter = self._plugin_registry.get_plugin(AgentPluginType.EXPLOITER, name)
-        return exploiter.run(
+        exploiter_result_data = exploiter.run(
             host=host,
             servers=servers,
             current_depth=current_depth,
             options=options,
             interrupt=interrupt,
         )
+
+        if exploiter_result_data is None:
+            exploiter_result_data = ExploiterResultData(
+                exploitation_success=False,
+                propagation_success=False,
+                error_message=(
+                    f"An unexpected error occurred while running {name} and the exploiter did not "
+                    "return any data"
+                ),
+            )
+
+        return exploiter_result_data
 
     def run_payload(self, name: str, options: Dict, interrupt: Event):
         payload = self._plugin_registry.get_plugin(AgentPluginType.PAYLOAD, name)
