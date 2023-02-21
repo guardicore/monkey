@@ -1,7 +1,7 @@
 import errno
 import logging
 import socket
-from typing import Dict, List, Optional
+from typing import Dict, Optional, Set
 
 from common.types import NetworkPort, NetworkProtocol, NetworkService
 from infection_monkey.i_puppet import (
@@ -28,19 +28,19 @@ class MSSQLFingerprinter(IFingerprinter):
         options: Dict,
     ):
         """Gets Microsoft SQL Server instance information by querying the SQL Browser service."""
-        services = []
+        services: Set[DiscoveredService] = set()
 
         try:
-            data = _query_mssql_for_instance_data(host)
-            services = _get_services_from_server_data(data)
+            data = _query_mssql_for_instance_data(host, services)
+            _get_services_from_server_data(data, services)
 
         except Exception as ex:
             logger.debug(f"Did not detect an MSSQL server: {ex}")
 
-        return FingerprintData(os_type=None, os_version=None, services=services)
+        return FingerprintData(os_type=None, os_version=None, services=list(services))
 
 
-def _query_mssql_for_instance_data(host: str) -> bytes:
+def _query_mssql_for_instance_data(host: str, services: Set[DiscoveredService]) -> bytes:
     # Create a UDP socket and sets a timeout
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(_MSSQL_SOCKET_TIMEOUT)
@@ -59,6 +59,14 @@ def _query_mssql_for_instance_data(host: str) -> bytes:
         logger.info(f"Sending message to requested host: {host}, {message!r}")
         sock.sendto(message, server_address)
         data, _ = sock.recvfrom(_BUFFER_SIZE)
+
+        services.add(
+            DiscoveredService(
+                protocol=NetworkProtocol.UDP,
+                port=SQL_BROWSER_DEFAULT_PORT,
+                service=NetworkService.UNKNOWN,
+            )
+        )
 
         return data
     except socket.timeout as err:
@@ -92,9 +100,7 @@ def _get_tcp_port_from_response(response: str) -> Optional[NetworkPort]:
         return None
 
 
-def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
-    services = set()
-
+def _get_services_from_server_data(data: bytes, services: Set[DiscoveredService]):
     mssql_responses = filter(lambda i: i != "", data[3:].decode().split(";;"))
     for response in mssql_responses:
         response_tcp_port = _get_tcp_port_from_response(response)
@@ -113,14 +119,5 @@ def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
                     service=NetworkService.MSSQL_BROWSER,
                 )
             )
-        else:
-            services.add(
-                DiscoveredService(
-                    protocol=NetworkProtocol.UDP,
-                    port=SQL_BROWSER_DEFAULT_PORT,
-                    service=NetworkService.UNKNOWN,
-                )
-            )
-        logger.debug(f"An MSSQL response has been recieved: {response}")
 
-    return list(services)
+        logger.debug(f"An MSSQL response has been recieved: {response}")
