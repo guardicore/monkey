@@ -8,7 +8,7 @@ from common.types import NetworkPort, NetworkProtocol, NetworkService
 class DiscoveredService(InfectionMonkeyBaseModel):
     protocol: NetworkProtocol
     port: NetworkPort
-    services: NetworkService
+    service: NetworkService
 
     def __hash__(self) -> int:
         return hash((self.protocol, self.port))

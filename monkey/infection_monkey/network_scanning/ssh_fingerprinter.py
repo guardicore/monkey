@@ -37,7 +37,7 @@ class SSHFingerprinter(IFingerprinter):
                     DiscoveredService(
                         protocol=NetworkProtocol.TCP,
                         port=ps_data.port,
-                        services=NetworkService.SSH,
+                        service=NetworkService.SSH,
                     )
                 )
 

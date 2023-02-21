@@ -197,7 +197,7 @@ class SMBFingerprinter(IFingerprinter):
                 DiscoveredService(
                     protocol=NetworkProtocol.TCP,
                     port=SMB_PORT,
-                    services=NetworkService.SMB,
+                    service=NetworkService.SMB,
                 )
             )
         except Exception as exc:
