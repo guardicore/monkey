@@ -176,7 +176,7 @@ class Propagator:
             if fd.os_type is not None:
                 target_host.operating_system = fd.os_type
 
-            # TODO: this won't work, missed in #2987
+            # this won't work, but it'll be removed as part of #2136
             for service, details in fd.services.items():
                 target_host.services.setdefault(service, {}).update(details)
 
