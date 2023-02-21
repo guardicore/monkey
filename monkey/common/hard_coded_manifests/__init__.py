@@ -1,0 +1,1 @@
+from .hard_coded_exploiter_manifests import HARD_CODED_EXPLOITER_MANIFESTS
