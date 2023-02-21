@@ -119,7 +119,7 @@ def assert_fingerprint_results_no_1(fingerprint_data: FingerprintData):
     assert len(fingerprint_data["SMBFinger"].services) == 1
     assert fingerprint_data["SMBFinger"].services[0].port == 445
     assert fingerprint_data["SMBFinger"].services[0].protocol == NetworkProtocol.TCP
-    assert fingerprint_data["SMBFinger"].services[0].services == NetworkService.SMB
+    assert fingerprint_data["SMBFinger"].services[0].service == NetworkService.SMB
 
 
 def assert_scan_results_no_3(
@@ -159,16 +159,16 @@ def assert_fingerprint_results_no_3(fingerprint_data: FingerprintData):
     assert len(fingerprint_data["SSHFinger"].services) == 1
     assert fingerprint_data["SSHFinger"].services[0].port == 22
     assert fingerprint_data["SSHFinger"].services[0].protocol == NetworkProtocol.TCP
-    assert fingerprint_data["SSHFinger"].services[0].services == NetworkService.SSH
+    assert fingerprint_data["SSHFinger"].services[0].service == NetworkService.SSH
 
     assert len(fingerprint_data["HTTPFinger"].services) == 2
     assert fingerprint_data["HTTPFinger"].services[0].port == 80
     assert fingerprint_data["HTTPFinger"].services[0].protocol == NetworkProtocol.TCP
-    assert fingerprint_data["HTTPFinger"].services[0].services == NetworkService.HTTP
+    assert fingerprint_data["HTTPFinger"].services[0].service == NetworkService.HTTP
 
     assert fingerprint_data["HTTPFinger"].services[1].port == 443
     assert fingerprint_data["HTTPFinger"].services[1].protocol == NetworkProtocol.TCP
-    assert fingerprint_data["HTTPFinger"].services[1].services == NetworkService.HTTPS
+    assert fingerprint_data["HTTPFinger"].services[1].service == NetworkService.HTTPS
 
 
 def assert_scan_results_host_down(

@@ -81,7 +81,7 @@ def test_fingerprint_only_port_443(mock_get_http_headers, http_fingerprinter):
 
     assert fingerprint_data.services[0].protocol == NetworkProtocol.TCP
     assert fingerprint_data.services[0].port == 443
-    assert fingerprint_data.services[0].services == NetworkService.HTTPS
+    assert fingerprint_data.services[0].service == NetworkService.HTTPS
 
 
 def test_open_port_no_http_server(mock_get_http_headers, http_fingerprinter):
@@ -135,11 +135,11 @@ def test_multiple_open_ports(mock_get_http_headers, http_fingerprinter):
 
     assert fingerprint_data.services[0].protocol == NetworkProtocol.TCP
     assert fingerprint_data.services[0].port == 443
-    assert fingerprint_data.services[0].services == NetworkService.HTTPS
+    assert fingerprint_data.services[0].service == NetworkService.HTTPS
 
     assert fingerprint_data.services[1].protocol == NetworkProtocol.TCP
     assert fingerprint_data.services[1].port == 8080
-    assert fingerprint_data.services[1].services == NetworkService.HTTP
+    assert fingerprint_data.services[1].service == NetworkService.HTTP
 
 
 def test_server_missing_from_http_headers(mock_get_http_headers, http_fingerprinter):
@@ -160,4 +160,4 @@ def test_server_missing_from_http_headers(mock_get_http_headers, http_fingerprin
 
     assert fingerprint_data.services[0].protocol == NetworkProtocol.TCP
     assert fingerprint_data.services[0].port == 1080
-    assert fingerprint_data.services[0].services == NetworkService.HTTP
+    assert fingerprint_data.services[0].service == NetworkService.HTTP
