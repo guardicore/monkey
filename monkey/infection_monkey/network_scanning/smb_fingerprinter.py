@@ -1,17 +1,21 @@
 import logging
 import socket
 import struct
-from typing import Dict
+from typing import Dict, List
 
 from odict import odict
 
 from common import OperatingSystem
-from common.types import PortStatus
-from infection_monkey.i_puppet import FingerprintData, IFingerprinter, PingScanData, PortScanData
+from common.types import NetworkPort, NetworkProtocol, NetworkService, PortStatus
+from infection_monkey.i_puppet import (
+    DiscoveredService,
+    FingerprintData,
+    IFingerprinter,
+    PingScanData,
+    PortScanData,
+)
 
-DISPLAY_NAME = "SMB"
-SMB_PORT = 445
-SMB_SERVICE = "tcp-445"
+SMB_PORT = NetworkPort(445)
 
 logger = logging.getLogger(__name__)
 
@@ -139,16 +143,12 @@ class SMBFingerprinter(IFingerprinter):
         port_scan_data: Dict[int, PortScanData],
         _options: Dict,
     ) -> FingerprintData:
-        services = {}
-        smb_service = {
-            "display_name": DISPLAY_NAME,
-            "port": SMB_PORT,
-        }
+        services: List[DiscoveredService] = []
         os_type = None
         os_version = None
 
         if (SMB_PORT not in port_scan_data) or (port_scan_data[SMB_PORT].status != PortStatus.OPEN):
-            return FingerprintData(None, None, services)
+            return FingerprintData(os_type=None, os_version=None, services=services)
 
         logger.debug(f"Fingerprinting potential SMB port {SMB_PORT} on {host}")
 
@@ -193,10 +193,14 @@ class SMBFingerprinter(IFingerprinter):
                 else:
                     os_type = OperatingSystem.LINUX
 
-                smb_service["name"] = service_client
-
-            services[SMB_SERVICE] = smb_service
+            services.append(
+                DiscoveredService(
+                    protocol=NetworkProtocol.TCP,
+                    port=SMB_PORT,
+                    service=NetworkService.SMB,
+                )
+            )
         except Exception as exc:
             logger.debug("Error getting smb fingerprint: %s", exc)
 
-        return FingerprintData(os_type, os_version, services)
+        return FingerprintData(os_type=os_type, os_version=os_version, services=services)
