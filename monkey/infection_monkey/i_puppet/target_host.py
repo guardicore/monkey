@@ -1,5 +1,5 @@
 from ipaddress import IPv4Address
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from pydantic import Field
 
@@ -18,7 +18,6 @@ class TargetHostPorts(MutableInfectionMonkeyBaseModel):
 class TargetHost(MutableInfectionMonkeyBaseModel):
     ip: IPv4Address
     operating_system: Optional[OperatingSystem] = Field(default=None)
-    services: Dict[str, Any] = Field(default={})  # deprecated
     icmp: bool = Field(default=False)
     ports_status: TargetHostPorts = Field(default=TargetHostPorts())
 
@@ -26,11 +25,4 @@ class TargetHost(MutableInfectionMonkeyBaseModel):
         return hash(self.ip)
 
     def __str__(self):
-        victim = "Target Host %s: " % self.ip
-        if self.operating_system is not None:
-            victim += "OS - [ %s ]" % self.operating_system.value
-        victim += "Services - ["
-        for k, v in list(self.services.items()):
-            victim += "%s-%s " % (k, v)
-        victim += "] ICMP: %s " % (self.icmp)
-        return victim
+        return str(self.dict(simplify=True))
