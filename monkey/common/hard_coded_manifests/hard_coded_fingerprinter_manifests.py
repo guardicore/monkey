@@ -1,7 +1,7 @@
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.operating_system import OperatingSystem
 
-HARD_CODED_EXPLOITER_MANIFESTS = {
+HARD_CODED_FINGERPRINTER_MANIFESTS = {
     "smb": AgentPluginManifest(
         name="smb",
         plugin_type=AgentPluginType.FINGERPRINTER,

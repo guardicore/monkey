@@ -1,7 +1,7 @@
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.operating_system import OperatingSystem
 
-HARD_CODED_EXPLOITER_MANIFESTS = {
+HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS = {
     "MimikatzCollector": AgentPluginManifest(
         name="MimikatzCollector",
         plugin_type=AgentPluginType.CREDENTIAL_COLLECTOR,
