@@ -14,6 +14,10 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.repositories.utils.hard_coded_credential_collector_schemas import\
+    HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS
+from monkey_island.cc.repositories.utils.hard_coded_fingerprinter_schemas import\
+    HARD_CODED_FINGERPRINTER_SCHEMAS
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
 # Pydantic configurations are not picked up
@@ -124,3 +128,7 @@ HadoopPlugin
 NetworkService.HTTP
 NetworkService.MSSQL
 NetworkService.SMB
+
+# Remove after #2750
+HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS
+HARD_CODED_FINGERPRINTER_SCHEMAS
