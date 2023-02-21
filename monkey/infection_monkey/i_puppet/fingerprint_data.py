@@ -10,6 +10,9 @@ class DiscoveredService(InfectionMonkeyBaseModel):
     port: NetworkPort
     services: NetworkService
 
+    def __hash__(self) -> int:
+        return hash((self.protocol, self.port))
+
 
 class FingerprintData(InfectionMonkeyBaseModel):
     os_type: Optional[OperatingSystem]
