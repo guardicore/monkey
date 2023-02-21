@@ -103,14 +103,14 @@ def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
                 DiscoveredService(
                     protocol=NetworkProtocol.TCP,
                     port=response_tcp_port,
-                    services=NetworkService.MSSQL,
+                    service=NetworkService.MSSQL,
                 )
             )
             services.add(
                 DiscoveredService(
                     protocol=NetworkProtocol.UDP,
                     port=SQL_BROWSER_DEFAULT_PORT,
-                    services=NetworkService.MSSQL_BROWSER,
+                    service=NetworkService.MSSQL_BROWSER,
                 )
             )
         else:
@@ -118,7 +118,7 @@ def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
                 DiscoveredService(
                     protocol=NetworkProtocol.UDP,
                     port=SQL_BROWSER_DEFAULT_PORT,
-                    services=NetworkService.UNKNOWN,
+                    service=NetworkService.UNKNOWN,
                 )
             )
         logger.debug(f"An MSSQL response has been recieved: {response}")

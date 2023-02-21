@@ -41,7 +41,7 @@ class HTTPFingerprinter(IFingerprinter):
             if service:
                 services.append(
                     DiscoveredService(
-                        protocol=NetworkProtocol.TCP, port=NetworkPort(port), services=service
+                        protocol=NetworkProtocol.TCP, port=NetworkPort(port), service=service
                     )
                 )
 
