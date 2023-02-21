@@ -205,6 +205,7 @@ class Propagator:
         protocol = discovered_service.protocol
         port = discovered_service.port
         service = discovered_service.service
+        banner = None
 
         if port in ports:
             existing_psd = ports[port]
