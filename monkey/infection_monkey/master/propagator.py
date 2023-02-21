@@ -178,7 +178,7 @@ class Propagator:
 
                 updated_services: Set[NetworkService] = set()
                 # add new service from fingerprint data
-                updated_services.add(discovered_service.services)
+                updated_services.add(discovered_service.service)
 
                 if protocol == NetworkProtocol.TCP:
                     if port in target_host.ports_status.tcp_ports:
