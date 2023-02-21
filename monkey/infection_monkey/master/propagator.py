@@ -146,23 +146,10 @@ class Propagator:
         target_host: TargetHost, port_scan_data: Mapping[NetworkPort, PortScanData]
     ):
         for psd in port_scan_data.values():
-            if psd.status == PortStatus.OPEN:
-                Propagator._update_host_services(target_host, psd)
-
             if psd.port in target_host.ports_status.tcp_ports:
                 logger.warning("Unexpected TCP scan data is being overwritten.")
 
             target_host.ports_status.tcp_ports[psd.port] = psd
-
-    @staticmethod
-    def _update_host_services(target_host: TargetHost, port_scan_data: PortScanData):
-        target_host.services[port_scan_data.service_deprecated] = {}
-        target_host.services[port_scan_data.service_deprecated]["display_name"] = "unknown(TCP)"
-        target_host.services[port_scan_data.service_deprecated]["port"] = port_scan_data.port
-        if port_scan_data.banner is not None:
-            target_host.services[port_scan_data.service_deprecated][
-                "banner"
-            ] = port_scan_data.banner
 
     @staticmethod
     def _process_fingerprinter_results(
@@ -175,10 +162,6 @@ class Propagator:
             #       conflicts. Reevaluate this logic when we overhaul our scanners/fingerprinters.
             if fd.os_type is not None:
                 target_host.operating_system = fd.os_type
-
-            # this won't work, but it'll be removed as part of #2136
-            for service in fd.services:
-                target_host.services.setdefault(f"{str(service.protocol)}-{service.port}", {})
 
             for discovered_service in fd.services:
                 if discovered_service.protocol == NetworkProtocol.TCP:
