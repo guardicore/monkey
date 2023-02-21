@@ -7,6 +7,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
+- Add an option to the Hadoop exploiter to try all discovered HTTP ports. #2136
 ### Changed
 ### Removed
 ### Fixed
