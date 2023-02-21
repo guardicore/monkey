@@ -153,8 +153,16 @@ class Propagator:
             if psd.banner is not None:
                 target_host.services[psd.service_deprecated]["banner"] = psd.banner
 
-            # TODO: update to retain information if `port` already exists in `tcp_ports`
-            target_host.ports_status.tcp_ports[psd.port] = psd
+            # keep latest information about a port, but retain old information about `services`
+            services = psd.services + target_host.ports_status.tcp_ports[psd.port].services
+            target_host.ports_status.tcp_ports[psd.port] = PortScanData(
+                port=psd.port,
+                status=psd.status,
+                protocol=psd.protocol,
+                banner=psd.banner,
+                services=services,
+                service_deprecated=psd.service_deprecated,
+            )
 
     @staticmethod
     def _process_fingerprinter_results(
