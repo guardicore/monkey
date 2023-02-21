@@ -145,13 +145,9 @@ class Propagator:
     def _process_tcp_scan_results(
         target_host: TargetHost, port_scan_data: Mapping[NetworkPort, PortScanData]
     ):
-        open_port_data = (p for p in port_scan_data.values() if p.status == PortStatus.OPEN)
-        for psd in open_port_data:
-            target_host.services[psd.service_deprecated] = {}
-            target_host.services[psd.service_deprecated]["display_name"] = "unknown(TCP)"
-            target_host.services[psd.service_deprecated]["port"] = psd.port
-            if psd.banner is not None:
-                target_host.services[psd.service_deprecated]["banner"] = psd.banner
+        for psd in port_scan_data.values():
+            if psd.status == PortStatus.OPEN:
+                Propagator._update_host_services(target_host, psd)
 
             if psd.port in target_host.ports_status.tcp_ports:
                 logger.warning("Unexpected TCP scan data is being overwritten.")
@@ -166,6 +162,16 @@ class Propagator:
             )
 
     @staticmethod
+    def _update_host_services(target_host: TargetHost, port_scan_data: PortScanData):
+        target_host.services[port_scan_data.service_deprecated] = {}
+        target_host.services[port_scan_data.service_deprecated]["display_name"] = "unknown(TCP)"
+        target_host.services[port_scan_data.service_deprecated]["port"] = port_scan_data.port
+        if port_scan_data.banner is not None:
+            target_host.services[port_scan_data.service_deprecated][
+                "banner"
+            ] = port_scan_data.banner
+
+    @staticmethod
     def _process_fingerprinter_results(
         target_host: TargetHost, fingerprint_data: Mapping[FingerprinterName, FingerprintData]
     ):
@@ -178,8 +184,8 @@ class Propagator:
                 target_host.operating_system = fd.os_type
 
             # this won't work, but it'll be removed as part of #2136
-            for service, details in fd.services.items():
-                target_host.services.setdefault(service, {}).update(details)
+            for service in fd.services:
+                target_host.services.setdefault(f"{str(service.protocol)}-{service.port}", {})
 
             for discovered_service in fd.services:
                 if discovered_service.protocol == NetworkProtocol.TCP:
