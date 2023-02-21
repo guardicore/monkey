@@ -38,7 +38,7 @@ class HTTPFingerprinter(IFingerprinter):
         for port in ports_to_fingerprint:
             service = _query_potential_http_server(host, port)
 
-            if service is not None:
+            if service:
                 services.append(
                     DiscoveredService(
                         protocol=NetworkProtocol.TCP, port=NetworkPort(port), services=service
