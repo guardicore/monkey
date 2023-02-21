@@ -153,6 +153,7 @@ class Propagator:
             if psd.banner is not None:
                 target_host.services[psd.service_deprecated]["banner"] = psd.banner
 
+            # TODO: update to retain information if `port` already exists in `tcp_ports`
             target_host.ports_status.tcp_ports[psd.port] = psd
 
     @staticmethod
@@ -167,6 +168,7 @@ class Propagator:
             if fd.os_type is not None:
                 target_host.operating_system = fd.os_type
 
+            # TODO: this won't work, missed in #2987
             for service, details in fd.services.items():
                 target_host.services.setdefault(service, {}).update(details)
 
