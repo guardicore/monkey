@@ -2,7 +2,7 @@ import logging
 import threading
 from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
-from typing import List, Mapping, Sequence, Set
+from typing import Dict, List, Mapping, Sequence
 
 from common.agent_configuration import (
     ExploitationConfiguration,
@@ -12,6 +12,7 @@ from common.agent_configuration import (
 )
 from common.types import Event, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
+    DiscoveredService,
     ExploiterResultData,
     FingerprintData,
     PingScanData,
@@ -144,23 +145,23 @@ class Propagator:
     def _process_tcp_scan_results(
         target_host: TargetHost, port_scan_data: Mapping[NetworkPort, PortScanData]
     ):
-        for psd in filter(
-            lambda scan_data: scan_data.status == PortStatus.OPEN, port_scan_data.values()
-        ):
+        open_port_data = (p for p in port_scan_data.values() if p.status == PortStatus.OPEN)
+        for psd in open_port_data:
             target_host.services[psd.service_deprecated] = {}
             target_host.services[psd.service_deprecated]["display_name"] = "unknown(TCP)"
             target_host.services[psd.service_deprecated]["port"] = psd.port
             if psd.banner is not None:
                 target_host.services[psd.service_deprecated]["banner"] = psd.banner
 
-            # keep latest information about a port, but retain old information about `services`
-            updated_services = psd.services + target_host.ports_status.tcp_ports[psd.port].services
+            if psd.port in target_host.ports_status.tcp_ports:
+                logger.warning("Unexpected TCP scan data is being overwritten.")
+
             target_host.ports_status.tcp_ports[psd.port] = PortScanData(
                 port=psd.port,
                 status=psd.status,
                 protocol=psd.protocol,
                 banner=psd.banner,
-                services=updated_services,
+                service=psd.service,
                 service_deprecated=psd.service_deprecated,
             )
 
@@ -181,44 +182,38 @@ class Propagator:
                 target_host.services.setdefault(service, {}).update(details)
 
             for discovered_service in fd.services:
-                protocol = discovered_service.protocol
-                port = discovered_service.port
-
-                updated_services: Set[NetworkService] = set()
-                # add new service from fingerprint data
-                updated_services.add(discovered_service.service)
-
-                banner = None
-
-                if protocol == NetworkProtocol.TCP:
-                    if port in target_host.ports_status.tcp_ports:
-                        existing_psd = target_host.ports_status.tcp_ports[port]
-
-                        updated_services.update(existing_psd.services)
-                        banner = existing_psd.banner
-
-                    target_host.ports_status.tcp_ports[port] = PortScanData(
-                        port=port,
-                        status=PortStatus.OPEN,
-                        protocol=protocol,
-                        services=updated_services,
-                        banner=banner,
+                if discovered_service.protocol == NetworkProtocol.TCP:
+                    Propagator._update_port_data(
+                        target_host.ports_status.tcp_ports, discovered_service
                     )
 
-                elif protocol == NetworkProtocol.UDP:
-                    if port in target_host.ports_status.udp_ports:
-                        existing_psd = target_host.ports_status.udp_ports[port]
-
-                        updated_services.update(existing_psd.services)
-                        banner = existing_psd.banner
-
-                    target_host.ports_status.udp_ports[port] = PortScanData(
-                        port=port,
-                        status=PortStatus.OPEN,
-                        protocol=protocol,
-                        services=updated_services,
-                        banner=banner,
+                elif discovered_service.protocol == NetworkProtocol.UDP:
+                    Propagator._update_port_data(
+                        target_host.ports_status.udp_ports, discovered_service
                     )
+
+    @staticmethod
+    def _update_port_data(
+        ports: Dict[NetworkPort, PortScanData], discovered_service: DiscoveredService
+    ):
+        protocol = discovered_service.protocol
+        port = discovered_service.port
+        service = discovered_service.service
+
+        if port in ports:
+            existing_psd = ports[port]
+
+            if service == NetworkService.UNKNOWN:
+                service = existing_psd.service
+            banner = existing_psd.banner
+
+        ports[port] = PortScanData(
+            port=port,
+            status=PortStatus.OPEN,
+            protocol=protocol,
+            service=service,
+            banner=banner,
+        )
 
     def _exploit_hosts(
         self,
