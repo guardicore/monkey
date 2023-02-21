@@ -93,21 +93,28 @@ def _get_tcp_port_from_response(response: str) -> Optional[NetworkPort]:
 
 
 def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
-    services = []
+    services = set()
 
     mssql_responses = filter(lambda i: i != "", data[3:].decode().split(";;"))
     for response in mssql_responses:
         response_tcp_port = _get_tcp_port_from_response(response)
         if response_tcp_port:
-            services.append(
+            services.add(
                 DiscoveredService(
                     protocol=NetworkProtocol.TCP,
-                    port=NetworkPort(response_tcp_port),
+                    port=response_tcp_port,
                     services=NetworkService.MSSQL,
                 )
             )
+            services.add(
+                DiscoveredService(
+                    protocol=NetworkProtocol.UDP,
+                    port=SQL_BROWSER_DEFAULT_PORT,
+                    services=NetworkService.MSSQL_BROWSER,
+                )
+            )
         else:
-            services.append(
+            services.add(
                 DiscoveredService(
                     protocol=NetworkProtocol.UDP,
                     port=SQL_BROWSER_DEFAULT_PORT,
@@ -116,4 +123,4 @@ def _get_services_from_server_data(data: bytes) -> List[DiscoveredService]:
             )
         logger.debug(f"An MSSQL response has been recieved: {response}")
 
-    return services
+    return list(services)
