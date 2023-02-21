@@ -123,7 +123,7 @@ class MockPuppet(IPuppet):
                 os_version="vista",
                 services=[
                     DiscoveredService(
-                        protocol=NetworkProtocol.TCP, port=445, services=NetworkService.SMB
+                        protocol=NetworkProtocol.TCP, port=445, service=NetworkService.SMB
                     )
                 ],
             )
@@ -135,7 +135,7 @@ class MockPuppet(IPuppet):
                 os_version="ubuntu",
                 services=[
                     DiscoveredService(
-                        protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
+                        protocol=NetworkProtocol.TCP, port=22, service=NetworkService.SSH
                     )
                 ],
             ),
@@ -144,10 +144,10 @@ class MockPuppet(IPuppet):
                 os_version=None,
                 services=[
                     DiscoveredService(
-                        protocol=NetworkProtocol.TCP, port=80, services=NetworkService.HTTP
+                        protocol=NetworkProtocol.TCP, port=80, service=NetworkService.HTTP
                     ),
                     DiscoveredService(
-                        protocol=NetworkProtocol.TCP, port=443, services=NetworkService.HTTPS
+                        protocol=NetworkProtocol.TCP, port=443, service=NetworkService.HTTPS
                     ),
                 ],
             ),

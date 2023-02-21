@@ -36,6 +36,7 @@ class NetworkService(Enum):
     MSSQL = "mssql"
     SMB = "smb"
     SSH = "ssh"
+    MSSQL_BROWSER = "mssql_browser"
     UNKNOWN = "unknown"
 
 

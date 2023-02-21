@@ -8,23 +8,23 @@ from infection_monkey.i_puppet import DiscoveredService, FingerprintData
 
 LINUX_VERSION = "xenial"
 
-DISCOVERED_SERVICE_DICT_1 = {"protocol": "tcp", "port": 80, "services": "http"}
+DISCOVERED_SERVICE_DICT_1 = {"protocol": "tcp", "port": 80, "service": "http"}
 
 DISCOVERED_SERVICE_OBJECT_1 = DiscoveredService(
-    protocol=NetworkProtocol.TCP, port=80, services=NetworkService.HTTP
+    protocol=NetworkProtocol.TCP, port=80, service=NetworkService.HTTP
 )
 
-DISCOVERED_SERVICE_DICT_2 = {"protocol": "tcp", "port": 443, "services": "https"}
+DISCOVERED_SERVICE_DICT_2 = {"protocol": "tcp", "port": 443, "service": "https"}
 
 DISCOVERED_SERVICE_OBJECT_2 = DiscoveredService(
-    protocol=NetworkProtocol.TCP, port=443, services=NetworkService.HTTPS
+    protocol=NetworkProtocol.TCP, port=443, service=NetworkService.HTTPS
 )
 
 
-DISCOVERED_SERVICE_DICT_3 = {"protocol": "tcp", "port": 22, "services": "ssh"}
+DISCOVERED_SERVICE_DICT_3 = {"protocol": "tcp", "port": 22, "service": "ssh"}
 
 DISCOVERED_SERVICE_OBJECT_3 = DiscoveredService(
-    protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
+    protocol=NetworkProtocol.TCP, port=22, service=NetworkService.SSH
 )
 
 
@@ -76,4 +76,4 @@ def test_discovered_service__deserialization(discovered_service_object, discover
 @pytest.mark.parametrize("port", ["", 70000, None, -12342])
 def test_discovered_service__invalid_port(port):
     with pytest.raises(ValueError):
-        DiscoveredService(portocol=NetworkProtocol.TCP, port=port, services=NetworkService.SSH)
+        DiscoveredService(portocol=NetworkProtocol.TCP, port=port, service=NetworkService.SSH)
