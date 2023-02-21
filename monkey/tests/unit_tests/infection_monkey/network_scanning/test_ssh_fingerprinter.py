@@ -6,11 +6,11 @@ from infection_monkey.i_puppet import DiscoveredService, FingerprintData, PortSc
 from infection_monkey.network_scanning.ssh_fingerprinter import SSHFingerprinter
 
 SSH_SERVICE_22 = DiscoveredService(
-    protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
+    protocol=NetworkProtocol.TCP, port=22, service=NetworkService.SSH
 )
 
 SSH_SERVICE_2222 = DiscoveredService(
-    protocol=NetworkProtocol.TCP, port=2222, services=NetworkService.SSH
+    protocol=NetworkProtocol.TCP, port=2222, service=NetworkService.SSH
 )
 
 

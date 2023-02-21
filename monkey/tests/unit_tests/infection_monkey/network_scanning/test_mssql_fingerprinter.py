@@ -16,13 +16,13 @@ PORT_SCAN_DATA_BOGUS = {
 }
 
 MSSQL_DISCOVERED_SERVICE = DiscoveredService(
-    protocol=NetworkProtocol.TCP, port=NetworkPort(1433), services=NetworkService.MSSQL
+    protocol=NetworkProtocol.TCP, port=NetworkPort(1433), service=NetworkService.MSSQL
 )
 
 SQL_BROWSER_DISCOVERED_SERVICE = DiscoveredService(
     protocol=NetworkProtocol.UDP,
     port=SQL_BROWSER_DEFAULT_PORT,
-    services=NetworkService.MSSQL_BROWSER,
+    service=NetworkService.MSSQL_BROWSER,
 )
 
 
@@ -95,6 +95,6 @@ def test_mssql_wrong_response_from_server(monkeypatch, fingerprinter):
     assert fingerprint_data.os_version is None
     assert len(fingerprint_data.services) == 1
 
-    assert fingerprint_data.services[0].services == NetworkService.UNKNOWN
+    assert fingerprint_data.services[0].service == NetworkService.UNKNOWN
     assert fingerprint_data.services[0].port == SQL_BROWSER_DEFAULT_PORT
     assert fingerprint_data.services[0].protocol == NetworkProtocol.UDP

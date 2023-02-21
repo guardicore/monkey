@@ -33,7 +33,7 @@ dot_1_scan_results = IPScanResults(
             os_version="vista",
             services=[
                 DiscoveredService(
-                    protocol=NetworkProtocol.TCP, port=445, services=NetworkService.SMB
+                    protocol=NetworkProtocol.TCP, port=445, service=NetworkService.SMB
                 )
             ],
         ),
@@ -58,9 +58,7 @@ dot_3_scan_results = IPScanResults(
             os_type=OperatingSystem.LINUX,
             os_version="ubuntu",
             services=[
-                DiscoveredService(
-                    protocol=NetworkProtocol.TCP, port=22, services=NetworkService.SSH
-                )
+                DiscoveredService(protocol=NetworkProtocol.TCP, port=22, service=NetworkService.SSH)
             ],
         ),
         "HTTPFinger": FingerprintData(
@@ -68,10 +66,10 @@ dot_3_scan_results = IPScanResults(
             os_version=None,
             services=[
                 DiscoveredService(
-                    protocol=NetworkProtocol.TCP, port=80, services=NetworkService.HTTP
+                    protocol=NetworkProtocol.TCP, port=80, service=NetworkService.HTTP
                 ),
                 DiscoveredService(
-                    protocol=NetworkProtocol.TCP, port=443, services=NetworkService.HTTPS
+                    protocol=NetworkProtocol.TCP, port=443, service=NetworkService.HTTPS
                 ),
             ],
         ),
