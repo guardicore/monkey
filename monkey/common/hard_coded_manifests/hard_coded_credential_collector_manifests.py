@@ -9,7 +9,7 @@ HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS = {
         target_operating_systems=(OperatingSystem.WINDOWS,),
         title="Mimikatz Credentials Collector",
         version="1.0.0",
-        description="Collects credentials from Windows " "credential manager.",
+        description="Collects credentials from Windows credential manager.",
         safe=True,
     ),
     "SSHCollector": AgentPluginManifest(

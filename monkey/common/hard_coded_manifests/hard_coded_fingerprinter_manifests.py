@@ -9,7 +9,7 @@ HARD_CODED_FINGERPRINTER_MANIFESTS = {
         target_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
         title="SMB Fingerprinter",
         version="1.0.0",
-        description="Figures out if SMB is running " "and what's the version of it.",
+        description="Figures out if SMB is running and what's the version of it.",
         safe=True,
     ),
     "ssh": AgentPluginManifest(
