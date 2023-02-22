@@ -39,15 +39,15 @@ def http_fingerprinter():
 
 def test_no_http_ports_open(mock_get_http_headers, http_fingerprinter):
     port_scan_data = {
-        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-80"),
+        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP),
         123: PortScanData(
-            port=123, status=PortStatus.OPEN, banner="", service_deprecated="tcp-123"
+            port=123, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
         ),
         443: PortScanData(
-            port=443, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTPS
         ),
         8080: PortScanData(
-            port=8080, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-8080"
+            port=8080, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP
         ),
     }
     http_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, OPTIONS)
@@ -57,15 +57,15 @@ def test_no_http_ports_open(mock_get_http_headers, http_fingerprinter):
 
 def test_fingerprint_only_port_443(mock_get_http_headers, http_fingerprinter):
     port_scan_data = {
-        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-80"),
+        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP),
         123: PortScanData(
-            port=123, status=PortStatus.OPEN, banner="", service_deprecated="tcp-123"
+            port=123, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
         ),
         443: PortScanData(
-            port=443, status=PortStatus.OPEN, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.OPEN, banner="", service=NetworkService.HTTPS
         ),
         8080: PortScanData(
-            port=8080, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-8080"
+            port=8080, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP
         ),
     }
     fingerprint_data = http_fingerprinter.get_host_fingerprint(
@@ -86,15 +86,15 @@ def test_fingerprint_only_port_443(mock_get_http_headers, http_fingerprinter):
 
 def test_open_port_no_http_server(mock_get_http_headers, http_fingerprinter):
     port_scan_data = {
-        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-80"),
+        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP),
         123: PortScanData(
-            port=123, status=PortStatus.OPEN, banner="", service_deprecated="tcp-123"
+            port=123, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
         ),
         443: PortScanData(
-            port=443, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTPS
         ),
         9200: PortScanData(
-            port=9200, status=PortStatus.OPEN, banner="", service_deprecated="tcp-9200"
+            port=9200, status=PortStatus.OPEN, banner="", service=NetworkService.HTTP
         ),
     }
     fingerprint_data = http_fingerprinter.get_host_fingerprint(
@@ -112,12 +112,12 @@ def test_open_port_no_http_server(mock_get_http_headers, http_fingerprinter):
 
 def test_multiple_open_ports(mock_get_http_headers, http_fingerprinter):
     port_scan_data = {
-        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-80"),
+        80: PortScanData(port=80, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP),
         443: PortScanData(
-            port=443, status=PortStatus.OPEN, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.OPEN, banner="", service=NetworkService.HTTPS
         ),
         8080: PortScanData(
-            port=8080, status=PortStatus.OPEN, banner="", service_deprecated="tcp-8080"
+            port=8080, status=PortStatus.OPEN, banner="", service=NetworkService.HTTP
         ),
     }
     fingerprint_data = http_fingerprinter.get_host_fingerprint(
@@ -145,7 +145,7 @@ def test_multiple_open_ports(mock_get_http_headers, http_fingerprinter):
 def test_server_missing_from_http_headers(mock_get_http_headers, http_fingerprinter):
     port_scan_data = {
         1080: PortScanData(
-            port=1080, status=PortStatus.OPEN, banner="", service_deprecated="tcp-1080"
+            port=1080, status=PortStatus.OPEN, banner="", service=NetworkService.HTTP
         ),
     }
     fingerprint_data = http_fingerprinter.get_host_fingerprint(

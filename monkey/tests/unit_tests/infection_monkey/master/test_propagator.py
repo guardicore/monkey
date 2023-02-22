@@ -27,10 +27,10 @@ dot_1_scan_results = IPScanResults(
     {
         22: PortScanData(port=22, status=PortStatus.CLOSED),
         445: PortScanData(
-            port=445, status=PortStatus.OPEN, banner="SMB BANNER", service_deprecated="tcp-445"
+            port=445, status=PortStatus.OPEN, banner="SMB BANNER", service=NetworkService.SMB
         ),
         3389: PortScanData(
-            port=3389, status=PortStatus.OPEN, banner="", service_deprecated="tcp-3389"
+            port=3389, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
         ),
     },
     {
@@ -51,7 +51,9 @@ dot_1_scan_results = IPScanResults(
 dot_2_scan_results = IPScanResults(
     PingScanData(response_received=True, os=OperatingSystem.LINUX),
     {
-        99: PortScanData(port=99, status=PortStatus.OPEN, banner="", service_deprecated="udp-99"),
+        99: PortScanData(
+            port=99, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
+        ),
     },
     {
         "FirstFinger": FingerprintData(
@@ -79,10 +81,10 @@ dot_3_scan_results = IPScanResults(
     PingScanData(response_received=True, os=OperatingSystem.LINUX),
     {
         22: PortScanData(
-            port=22, status=PortStatus.OPEN, banner="SSH BANNER", service_deprecated="tcp-22"
+            port=22, status=PortStatus.OPEN, banner="SSH BANNER", service=NetworkService.SSH
         ),
         443: PortScanData(
-            port=443, status=PortStatus.OPEN, banner="HTTPS BANNER", service_deprecated="tcp-443"
+            port=443, status=PortStatus.OPEN, banner="HTTPS BANNER", service=NetworkService.HTTPS
         ),
         3389: PortScanData(port=3389, status=PortStatus.CLOSED, banner=""),
     },
@@ -274,7 +276,7 @@ def test_targethost_udpated_from_portscan(mock_ip_scanner, default_agent_configu
     host = scan_host("10.0.0.3", mock_ip_scanner, default_agent_configuration)
 
     # port, status, banner
-    # protocol, service, service_deprecated
+    # protocol, service
     assert host.ports_status.tcp_ports[22].port == 22
     assert host.ports_status.tcp_ports[22].status == PortStatus.OPEN
     assert host.ports_status.tcp_ports[22].banner == "SSH BANNER"

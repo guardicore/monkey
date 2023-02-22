@@ -12,4 +12,3 @@ class PortScanData(InfectionMonkeyBaseModel):
     protocol: NetworkProtocol = Field(default=NetworkProtocol.UNKNOWN)
     banner: Optional[str] = Field(default=None)
     service: NetworkService = Field(default=NetworkService.UNKNOWN)
-    service_deprecated: Optional[str] = Field(default=None)

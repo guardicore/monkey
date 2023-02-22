@@ -21,12 +21,12 @@ def ssh_fingerprinter():
 
 def test_no_ssh_ports_open(ssh_fingerprinter):
     port_scan_data = {
-        22: PortScanData(port=22, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-22"),
+        22: PortScanData(port=22, status=PortStatus.CLOSED, banner="", service=NetworkService.SSH),
         123: PortScanData(
-            port=123, status=PortStatus.OPEN, banner="", service_deprecated="tcp-123"
+            port=123, status=PortStatus.OPEN, banner="", service=NetworkService.UNKNOWN
         ),
         443: PortScanData(
-            port=443, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTPS
         ),
     }
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
@@ -40,19 +40,19 @@ def test_no_os(ssh_fingerprinter):
             port=22,
             status=PortStatus.OPEN,
             banner="SSH-2.0-OpenSSH_8.2p1",
-            service_deprecated="tcp-22",
+            service=NetworkService.SSH,
         ),
         2222: PortScanData(
             port=2222,
             status=PortStatus.OPEN,
             banner="SSH-2.0-OpenSSH_8.2p1",
-            service_deprecated="tcp-2222",
+            service=NetworkService.SSH,
         ),
         443: PortScanData(
-            port=443, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTPS
         ),
         8080: PortScanData(
-            port=8080, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-8080"
+            port=8080, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP
         ),
     }
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
@@ -70,13 +70,13 @@ def test_ssh_os(ssh_fingerprinter):
             port=22,
             status=PortStatus.OPEN,
             banner="SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2",
-            service_deprecated="tcp-22",
+            service=NetworkService.SSH,
         ),
         443: PortScanData(
-            port=443, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTPS
         ),
         8080: PortScanData(
-            port=8080, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-8080"
+            port=8080, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP
         ),
     }
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)
@@ -92,19 +92,19 @@ def test_multiple_os(ssh_fingerprinter):
             port=22,
             status=PortStatus.OPEN,
             banner="SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.2",
-            service_deprecated="tcp-22",
+            service=NetworkService.SSH,
         ),
         2222: PortScanData(
             port=2222,
             status=PortStatus.OPEN,
             banner="SSH-2.0-OpenSSH_8.2p1 Debian",
-            service_deprecated="tcp-2222",
+            service=NetworkService.SSH,
         ),
         443: PortScanData(
-            port=443, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-443"
+            port=443, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTPS
         ),
         8080: PortScanData(
-            port=8080, status=PortStatus.CLOSED, banner="", service_deprecated="tcp-8080"
+            port=8080, status=PortStatus.CLOSED, banner="", service=NetworkService.HTTP
         ),
     }
     results = ssh_fingerprinter.get_host_fingerprint("127.0.0.1", None, port_scan_data, None)

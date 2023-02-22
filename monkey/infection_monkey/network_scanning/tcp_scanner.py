@@ -11,7 +11,7 @@ from common.event_queue import IAgentEventQueue
 from common.types import NetworkPort, PortStatus
 from common.utils import Timer
 from infection_monkey.i_puppet import PortScanData
-from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT, tcp_port_to_service
+from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT
 from infection_monkey.utils.ids import get_agent_id
 
 logger = logging.getLogger(__name__)
@@ -68,12 +68,9 @@ def _build_port_scan_data(
     port_scan_data = {}
     for port in ports_to_scan:
         if port in open_ports:
-            service = tcp_port_to_service(port)
             banner = open_ports[port]
 
-            port_scan_data[port] = PortScanData(
-                port=port, status=PortStatus.OPEN, banner=banner, service_deprecated=service
-            )
+            port_scan_data[port] = PortScanData(port=port, status=PortStatus.OPEN, banner=banner)
         else:
             port_scan_data[port] = _get_closed_port_data(port)
 

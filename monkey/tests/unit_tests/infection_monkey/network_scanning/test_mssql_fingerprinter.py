@@ -11,8 +11,8 @@ from infection_monkey.network_scanning.mssql_fingerprinter import (
 )
 
 PORT_SCAN_DATA_BOGUS = {
-    80: PortScanData(port=80, status=PortStatus.OPEN, banner="", service_deprecated="tcp-80"),
-    8080: PortScanData(port=8080, status=PortStatus.OPEN, banner="", service_deprecated="tcp-8080"),
+    80: PortScanData(port=80, status=PortStatus.OPEN, banner="", service=NetworkService.HTTP),
+    8080: PortScanData(port=8080, status=PortStatus.OPEN, banner="", service=NetworkService.HTTPS),
 }
 
 MSSQL_DISCOVERED_SERVICE = DiscoveredService(
