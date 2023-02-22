@@ -152,14 +152,7 @@ class Propagator:
             if psd.port in target_host.ports_status.tcp_ports:
                 logger.warning("Unexpected TCP scan data is being overwritten.")
 
-            target_host.ports_status.tcp_ports[psd.port] = PortScanData(
-                port=psd.port,
-                status=psd.status,
-                protocol=psd.protocol,
-                banner=psd.banner,
-                service=psd.service,
-                service_deprecated=psd.service_deprecated,
-            )
+            target_host.ports_status.tcp_ports[psd.port] = psd
 
     @staticmethod
     def _update_host_services(target_host: TargetHost, port_scan_data: PortScanData):
