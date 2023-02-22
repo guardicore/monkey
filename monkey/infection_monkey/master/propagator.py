@@ -2,7 +2,7 @@ import logging
 import threading
 from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
-from typing import Dict, List, Mapping, Sequence
+from typing import List, Mapping, MutableMapping, Sequence
 
 from common.agent_configuration import (
     ExploitationConfiguration,
@@ -193,7 +193,7 @@ class Propagator:
 
     @staticmethod
     def _update_port_data(
-        ports: Dict[NetworkPort, PortScanData], discovered_service: DiscoveredService
+        ports: MutableMapping[NetworkPort, PortScanData], discovered_service: DiscoveredService
     ):
         protocol = discovered_service.protocol
         port = discovered_service.port
