@@ -4,13 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pyinstaller = "==4.9"
+pyinstaller = "*"
 impacket = ">=0.9"
 ipaddress = ">=1.0.23"
 netifaces = ">=0.10.9"
 odict = "==1.7.0"
 psutil = ">=5.7.0"
-pymssql = "==2.1.5"
+pymssql = "*"
 pypykatz = "==0.5.2"
 requests = ">=2.24"
 urllib3 = "==1.26.5"
@@ -27,15 +27,8 @@ paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/Vaka
 pypubsub = "*"
 pydantic = "*"
 egg-timer = "*"
-# These are the last versions of bcrypt and cryptography that have
-# manylinux2010 wheels. We need these locked to 3.2.2 and 37.0.4 respectively
-# until we can upgrade our build environment.
-cryptography = "==37.0.4"
-bcrypt = "==3.2.2"
-pyopenssl = "==22.0.0" # 22.1.0 reqiures cryptography <39, >=38.0.0
-winacl = "==0.1.3" # 0.1.5 requires cryptography >=38.0.1
-msldap = "==0.4.0" # 0.4.6 requires winacl >= 0.1.4, which requires cryptography >= 38.0.1
-aiosmb = "==0.4.0" # 0.4.3 requires winacl >= 0.1.5, which requires cryptography >= 38.0.1
+cryptography = "*"
+bcrypt = "*"
 serpentarium = "==0.5.0"
 jsonschema = "*"
 semver = "==2.13.0"
