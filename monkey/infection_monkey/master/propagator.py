@@ -2,7 +2,7 @@ import logging
 import threading
 from ipaddress import IPv4Address, IPv4Interface
 from queue import Queue
-from typing import List, Mapping, Sequence
+from typing import List, Mapping, MutableMapping, Sequence
 
 from common.agent_configuration import (
     ExploitationConfiguration,
@@ -10,8 +10,9 @@ from common.agent_configuration import (
     PropagationConfiguration,
     ScanTargetConfiguration,
 )
-from common.types import Event, NetworkPort, PortStatus
+from common.types import Event, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
+    DiscoveredService,
     ExploiterResultData,
     FingerprintData,
     PingScanData,
@@ -144,14 +145,11 @@ class Propagator:
     def _process_tcp_scan_results(
         target_host: TargetHost, port_scan_data: Mapping[NetworkPort, PortScanData]
     ):
-        for psd in filter(
-            lambda scan_data: scan_data.status == PortStatus.OPEN, port_scan_data.values()
-        ):
-            target_host.services[psd.service_deprecated] = {}
-            target_host.services[psd.service_deprecated]["display_name"] = "unknown(TCP)"
-            target_host.services[psd.service_deprecated]["port"] = psd.port
-            if psd.banner is not None:
-                target_host.services[psd.service_deprecated]["banner"] = psd.banner
+        for psd in port_scan_data.values():
+            if psd.port in target_host.ports_status.tcp_ports:
+                logger.warning("Unexpected TCP scan data is being overwritten.")
+
+            target_host.ports_status.tcp_ports[psd.port] = psd
 
     @staticmethod
     def _process_fingerprinter_results(
@@ -165,8 +163,40 @@ class Propagator:
             if fd.os_type is not None:
                 target_host.operating_system = fd.os_type
 
-            for service, details in fd.services.items():
-                target_host.services.setdefault(service, {}).update(details)
+            for discovered_service in fd.services:
+                if discovered_service.protocol == NetworkProtocol.TCP:
+                    Propagator._update_port_data(
+                        target_host.ports_status.tcp_ports, discovered_service
+                    )
+
+                elif discovered_service.protocol == NetworkProtocol.UDP:
+                    Propagator._update_port_data(
+                        target_host.ports_status.udp_ports, discovered_service
+                    )
+
+    @staticmethod
+    def _update_port_data(
+        ports: MutableMapping[NetworkPort, PortScanData], discovered_service: DiscoveredService
+    ):
+        protocol = discovered_service.protocol
+        port = discovered_service.port
+        service = discovered_service.service
+        banner = None
+
+        if port in ports:
+            existing_psd = ports[port]
+
+            if service == NetworkService.UNKNOWN:
+                service = existing_psd.service
+            banner = existing_psd.banner
+
+        ports[port] = PortScanData(
+            port=port,
+            status=PortStatus.OPEN,
+            protocol=protocol,
+            service=service,
+            banner=banner,
+        )
 
     def _exploit_hosts(
         self,

@@ -4,8 +4,9 @@ from typing import Dict, Sequence
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
 from common.credentials import Credentials, LMHash, Password, SSHKeypair, Username
-from common.types import Event, NetworkPort, PortStatus
+from common.types import Event, NetworkPort, NetworkProtocol, NetworkService, PortStatus
 from infection_monkey.i_puppet import (
+    DiscoveredService,
     ExploiterResultData,
     FingerprintData,
     IncompatibleOperatingSystemError,
@@ -78,21 +79,19 @@ class MockPuppet(IPuppet):
         dot_1_results = {
             22: PortScanData(port=22, status=PortStatus.CLOSED),
             445: PortScanData(
-                port=445, status=PortStatus.OPEN, banner="SMB BANNER", service_deprecated="tcp-445"
+                port=445, status=PortStatus.OPEN, banner="SMB BANNER", service=NetworkService.SMB
             ),
-            3389: PortScanData(
-                port=3389, status=PortStatus.OPEN, banner="", service_deprecated="tcp-3389"
-            ),
+            3389: PortScanData(port=3389, status=PortStatus.OPEN, banner=""),
         }
         dot_3_results = {
             22: PortScanData(
-                port=22, status=PortStatus.OPEN, banner="SSH BANNER", service_deprecated="tcp-22"
+                port=22, status=PortStatus.OPEN, banner="SSH BANNER", service=NetworkService.SSH
             ),
             443: PortScanData(
                 port=443,
                 status=PortStatus.OPEN,
                 banner="HTTPS BANNER",
-                service_deprecated="tcp-443",
+                service=NetworkService.HTTPS,
             ),
             3389: PortScanData(port=3389, status=PortStatus.CLOSED, banner=""),
         }
@@ -114,25 +113,41 @@ class MockPuppet(IPuppet):
         options: Dict,
     ) -> FingerprintData:
         logger.debug(f"fingerprint({name}, {host})")
-        empty_fingerprint_data = FingerprintData(None, None, {})
+        empty_fingerprint_data = FingerprintData(os_type=None, os_version=None, services=[])
 
         dot_1_results = {
             "SMBFinger": FingerprintData(
-                "windows", "vista", {"tcp-445": {"name": "smb_service_name"}}
+                os_type=OperatingSystem.WINDOWS,
+                os_version="vista",
+                services=[
+                    DiscoveredService(
+                        protocol=NetworkProtocol.TCP, port=445, service=NetworkService.SMB
+                    )
+                ],
             )
         }
 
         dot_3_results = {
             "SSHFinger": FingerprintData(
-                "linux", "ubuntu", {"tcp-22": {"name": "SSH", "banner": "SSH BANNER"}}
+                os_type=OperatingSystem.LINUX,
+                os_version="ubuntu",
+                services=[
+                    DiscoveredService(
+                        protocol=NetworkProtocol.TCP, port=22, service=NetworkService.SSH
+                    )
+                ],
             ),
             "HTTPFinger": FingerprintData(
-                None,
-                None,
-                {
-                    "tcp-80": {"name": "http", "data": ("SERVER_HEADERS", False)},
-                    "tcp-443": {"name": "http", "data": ("SERVER_HEADERS_2", True)},
-                },
+                os_type=None,
+                os_version=None,
+                services=[
+                    DiscoveredService(
+                        protocol=NetworkProtocol.TCP, port=80, service=NetworkService.HTTP
+                    ),
+                    DiscoveredService(
+                        protocol=NetworkProtocol.TCP, port=443, service=NetworkService.HTTPS
+                    ),
+                ],
             ),
         }
 
