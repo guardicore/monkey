@@ -1,3 +1,4 @@
+import pprint
 from ipaddress import IPv4Address
 from typing import Dict, Optional
 
@@ -25,4 +26,4 @@ class TargetHost(MutableInfectionMonkeyBaseModel):
         return hash(self.ip)
 
     def __str__(self):
-        return str(self.dict(simplify=True))
+        return pprint.pformat(self.dict(simplify=True))
