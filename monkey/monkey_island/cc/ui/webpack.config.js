@@ -4,16 +4,19 @@ var isProduction = process.argv[process.argv.indexOf('--mode') + 1] === 'product
 
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const smp = new SpeedMeasurePlugin({ disable: isProduction });
+const smp = new SpeedMeasurePlugin({disable: isProduction});
 
 
 module.exports = smp.wrap({
-  mode : isProduction ? 'production' : 'development',
+  mode: isProduction ? 'production' : 'development',
   module: {
+    noParse: /iconv-loader\.js/,
     rules: [
-      { test: /\.tsx?$/,
-        use: [ 'thread-loader', {
+      {
+        test: /\.tsx?$/,
+        use: ['thread-loader', {
           loader: 'ts-loader',
           options: {
             transpileOnly: true,
@@ -29,7 +32,7 @@ module.exports = smp.wrap({
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: [ 'thread-loader', {
+        use: ['thread-loader', {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true
@@ -75,6 +78,7 @@ module.exports = smp.wrap({
       }
     ]
   },
+  ignoreWarnings: [/Failed to parse source map/],
   devtool: isProduction ? 'source-map' : 'eval-source-map',
   plugins: [
     new ForkTsCheckerWebpackPlugin({
@@ -88,14 +92,33 @@ module.exports = smp.wrap({
     new HtmlWebPackPlugin({
       template: './src/index.html',
       filename: './index.html'
-    })
+    }),
+    new NodePolyfillPlugin()
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
     modules: [
       'node_modules',
       path.resolve(__dirname, 'src/')
-    ]
+    ],
+    fallback: {
+      //"buffer": require.resolve("buffer/"),
+      //"http": require.resolve("stream-http"),
+      //"url": require.resolve("url/"),
+      //"util": require.resolve("util/"),
+      //"stream": require.resolve("stream-browserify"),
+      //"zlib": require.resolve("browserify-zlib"),
+      //"https": require.resolve("https-browserify")
+      //"buffer": false,
+      //"http": false,
+      //"url": false,
+      //"util": false,
+      //"stream": false,
+      //"zlib": false,
+      //"https": false,
+      //"path": false
+      "fs": false
+    }
   },
   output: {
     publicPath: '/'

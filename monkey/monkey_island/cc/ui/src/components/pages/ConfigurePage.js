@@ -27,6 +27,9 @@ import {
   formatCredentialsForIsland
 } from '../configuration-components/ReformatHook';
 import {customizeValidator} from '@rjsf/validator-ajv8';
+import LoadingIcon from '../ui-components/LoadingIcon';
+import mergeAllOf from 'json-schema-merge-allof';
+import $RefParser from '@apidevtools/json-schema-ref-parser';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
@@ -54,7 +57,7 @@ class ConfigurePageComponent extends AuthComponent {
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
-      schema: SCHEMA,
+      schema: null,
       sections: [],
       selectedSection: this.currentSection,
       showUnsafeOptionsConfirmation: false,
@@ -141,10 +144,14 @@ class ConfigurePageComponent extends AuthComponent {
     }).then(this.fulfilledPromises);
 
     Promise.all([schema_promise, manifests_promise]).then(([schema, manifests]) => {
+      const refParser = new $RefParser();
+      refParser.dereference(schema).then((schema) =>
+        console.log(JSON.parse(JSON.stringify(mergeAllOf(schema)))))
+      console.log(JSON.parse(JSON.stringify(SCHEMA)))
       for (let manifest of manifests) {
         schema = this.injectManifestIntoSchema(manifest, schema);
       }
-      this.setState({schema: this.injectExploitersIntoLegacySchema(schema)});
+      this.setState({schema: schema});
     });
     this.authFetch(CONFIG_URL).then(res => res.json())
       .then(monkeyConfig => {
@@ -447,6 +454,12 @@ class ConfigurePageComponent extends AuthComponent {
   }
 
   render() {
+    if (this.state.schema === null) {
+      return (<Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
+                   className={'main'}><LoadingIcon /></Col>)
+    }
+
     let displayedSchema = {};
     if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
@@ -457,6 +470,7 @@ class ConfigurePageComponent extends AuthComponent {
     if (Object.entries(this.state.configuration).length !== 0) {
       content = this.renderConfigContent(displayedSchema)
     }
+
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
