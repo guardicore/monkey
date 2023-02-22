@@ -6,12 +6,20 @@ import dpath.util
 from common.agent_configuration import AgentConfiguration
 from common.agent_plugins import AgentPluginType
 from monkey_island.cc.repositories import IAgentPluginRepository
+from monkey_island.cc.repositories.utils.hard_coded_credential_collector_schemas import (
+    HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS,
+)
 from monkey_island.cc.repositories.utils.hard_coded_exploiter_schemas import (
     HARD_CODED_EXPLOITER_SCHEMAS,
 )
+from monkey_island.cc.repositories.utils.hard_coded_fingerprinter_schemas import (
+    HARD_CODED_FINGERPRINTER_SCHEMAS,
+)
 
 PLUGIN_PATH_IN_SCHEMA = {
-    AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters"
+    AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
+    AgentPluginType.CREDENTIAL_COLLECTOR: "properties.credential_collectors",
+    AgentPluginType.FINGERPRINTER: "definitions.NetworkScanConfiguration.properties.fingerprinters",
 }
 
 
@@ -33,7 +41,13 @@ class AgentConfigurationSchemaCompiler:
 
     def _add_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         schema = self._add_properties_field_to_plugin_types(schema)
+
+        # Hard coded plugins need to be added manually. Remove all methods starting with
+        # _add_non_plugin once they are turned into plugins
         schema = self._add_non_plugin_exploiters(schema)
+        schema = self._add_non_plugin_fingerprinters(schema)
+        schema = self._add_non_plugin_credential_collectors(schema)
+
         config_schemas = deepcopy(
             self._agent_plugin_repository.get_all_plugin_configuration_schemas()
         )
@@ -52,13 +66,25 @@ class AgentConfigurationSchemaCompiler:
             plugin_schema["additionalProperties"] = False
         return schema
 
-    # Exploiters that are not plugins need to be added manually. This should be removed
-    # once all exploiters are turned into plugins
     def _add_non_plugin_exploiters(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         properties = dpath.util.get(
             schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.EXPLOITER] + ".properties", "."
         )
         properties.update(HARD_CODED_EXPLOITER_SCHEMAS)
+        return schema
+
+    def _add_non_plugin_credential_collectors(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+        properties = dpath.util.get(
+            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.CREDENTIAL_COLLECTOR] + ".properties", "."
+        )
+        properties.update(HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS)
+        return schema
+
+    def _add_non_plugin_fingerprinters(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+        properties = dpath.util.get(
+            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.FINGERPRINTER] + ".properties", "."
+        )
+        properties.update(HARD_CODED_FINGERPRINTER_SCHEMAS)
         return schema
 
     def _add_plugin_to_schema(
