@@ -9,7 +9,6 @@ from .i_agent_configuration_repository import (
 )
 from .i_simulation_repository import ISimulationRepository
 from .i_credentials_repository import ICredentialsRepository
-from .i_user_repository import IUserRepository
 from .i_machine_repository import IMachineRepository
 from .i_agent_repository import IAgentRepository
 from .i_node_repository import INodeRepository
@@ -31,7 +30,6 @@ from .agent_configuration_validation_decorator import AgentConfigurationValidati
 from .agent_binary_repository import AgentBinaryRepository
 from .file_agent_configuration_repository import FileAgentConfigurationRepository
 from .file_simulation_repository import FileSimulationRepository
-from .json_file_user_repository import JSONFileUserRepository
 from .mongo_credentials_repository import MongoCredentialsRepository
 from .mongo_machine_repository import MongoMachineRepository
 from .mongo_agent_repository import MongoAgentRepository
