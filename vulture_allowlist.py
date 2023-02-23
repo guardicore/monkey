@@ -19,7 +19,7 @@ from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServer
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import IslandMode, Machine
+from monkey_island.cc.models import IslandMode, Machine, Role, User
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.repositories.utils.hard_coded_credential_collector_schemas import (
     HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS,
@@ -148,3 +148,10 @@ HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS
 HARD_CODED_FINGERPRINTER_MANIFESTS
 HARD_CODED_PAYLOADS_MANIFESTS
 HARD_CODED_PAYLOADS_SCHEMAS
+
+# Remove after #2157
+User.active
+User.fs_uniquifier
+User.roles
+User.get_by_id
+Role.permissions
