@@ -5,7 +5,6 @@ from .i_file_repository import FileNotFoundError, IFileRepository
 from .i_agent_binary_repository import IAgentBinaryRepository
 from .i_simulation_repository import ISimulationRepository
 from .i_credentials_repository import ICredentialsRepository
-from .i_user_repository import IUserRepository
 from .i_machine_repository import IMachineRepository
 from .i_agent_repository import IAgentRepository
 from .i_node_repository import INodeRepository
@@ -25,7 +24,6 @@ from .agent_plugin_repository_caching_decorator import AgentPluginRepositoryCach
 
 from .agent_binary_repository import AgentBinaryRepository
 from .file_simulation_repository import FileSimulationRepository
-from .json_file_user_repository import JSONFileUserRepository
 from .mongo_credentials_repository import MongoCredentialsRepository
 from .mongo_machine_repository import MongoMachineRepository
 from .mongo_agent_repository import MongoAgentRepository
