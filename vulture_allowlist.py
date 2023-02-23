@@ -6,6 +6,7 @@ from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
+from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
 from common.hard_coded_manifests.hard_coded_credential_collector_manifests import (
     HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS,
 )
@@ -25,6 +26,9 @@ from monkey_island.cc.repositories.utils.hard_coded_credential_collector_schemas
 )
 from monkey_island.cc.repositories.utils.hard_coded_fingerprinter_schemas import (
     HARD_CODED_FINGERPRINTER_SCHEMAS,
+)
+from monkey_island.cc.repositories.utils.hard_coded_payloads_schemas import (
+    HARD_CODED_PAYLOADS_SCHEMAS,
 )
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
@@ -142,3 +146,5 @@ HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS
 HARD_CODED_FINGERPRINTER_SCHEMAS
 HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS
 HARD_CODED_FINGERPRINTER_MANIFESTS
+HARD_CODED_PAYLOADS_MANIFESTS
+HARD_CODED_PAYLOADS_SCHEMAS
