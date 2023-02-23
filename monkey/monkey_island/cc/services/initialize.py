@@ -53,8 +53,6 @@ from monkey_island.cc.repositories import (
     IMachineRepository,
     INodeRepository,
     ISimulationRepository,
-    IUserRepository,
-    JSONFileUserRepository,
     LocalStorageFileRepository,
     MongoAgentEventRepository,
     MongoAgentRepository,
@@ -167,7 +165,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         ICredentialsRepository, container.resolve(MongoCredentialsRepository)
     )
-    container.register_instance(IUserRepository, container.resolve(JSONFileUserRepository))
     container.register_instance(IAgentEventRepository, container.resolve(MongoAgentEventRepository))
 
     container.register_instance(INodeRepository, container.resolve(MongoNodeRepository))
