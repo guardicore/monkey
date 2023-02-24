@@ -14,4 +14,4 @@ then
   fi
 fi
 
-pyinstaller --log-level=DEBUG --clean monkey.spec
+pyinstaller --log-level=DEBUG --clean monkey.spec 2>&1

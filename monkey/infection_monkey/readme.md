@@ -48,11 +48,11 @@ Tested on Ubuntu 16.04.
     - `python3.7 -m pip install -r requirements.txt`
 
 1. To build, run in terminal:
-    - `cd [code location]/infection_monkey`
-    - `chmod +x build_linux.sh`
-    - `pipenv run ./build_linux.sh`
+    - `cd [code location]/build_scripts`
+    - `chmod +x build_agent_linux.sh`
+    - `./build_agent_linux.sh`
 
-    Output is placed under `dist/monkey64`.
+    Output is placed under `build_scripts/agent-dist/monkey64`.
 
 ### Troubleshooting
 
