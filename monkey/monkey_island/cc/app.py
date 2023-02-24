@@ -82,6 +82,9 @@ def init_app_config(app, mongo_url, data_dir: Path):
 
     flask_security_config = generate_flask_security_configuration(data_dir)
 
+    # TODO: After we switch to token base authentication investigate the purpose
+    # of `SECRET_KEY` and `SECURITY_PASSWORD_SALT`, take into consideration
+    # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
     app.config["SECRET_KEY"] = flask_security_config["secret_key"]
     app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
     app.config["SECURITY_USERNAME_ENABLE"] = True
