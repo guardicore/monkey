@@ -34,8 +34,6 @@ pydantic = "*"
 egg-timer = "*"
 pyyaml = "*"
 semver = "==2.13.0"
-flask-login = "*"
-flask-wtf = "*"
 flask-security = "*"
 flask-mongoengine = "*"
 
