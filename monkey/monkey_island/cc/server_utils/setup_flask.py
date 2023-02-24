@@ -9,12 +9,12 @@ SECRET_FILE_NAME = ".flask_security_configuration.json"
 
 
 def generate_flask_security_configuration(data_dir: Path) -> Dict[str, Any]:
-    SECRET_FILE_PATH = str(data_dir / SECRET_FILE_NAME)
+    secret_file_path = str(data_dir / SECRET_FILE_NAME)
     try:
-        with open(SECRET_FILE_PATH, "r") as secret_file:
+        with open(secret_file_path, "r") as secret_file:
             return json.load(secret_file)
     except FileNotFoundError:
-        with open_new_securely_permissioned_file(SECRET_FILE_PATH, "w") as secret_file:
+        with open_new_securely_permissioned_file(secret_file_path, "w") as secret_file:
             secret_key = secrets.token_urlsafe(32)
             password_salt = secrets.SystemRandom().getrandbits(128)
 
