@@ -136,6 +136,9 @@ AgentPlugin.supported_operating_systems
 
 HadoopPlugin
 
+# Remove once migrated to pydantic v2
+pydantic.schema.model_process_schema
+
 # Remove after #2136
 NetworkService.HTTP
 NetworkService.MSSQL
