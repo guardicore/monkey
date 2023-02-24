@@ -37,7 +37,7 @@ from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
-from monkey_island.cc.server_utils import generate_flask_secret_key
+from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import register_agent_configuration_resources
 from monkey_island.cc.services.representations import output_json
@@ -80,7 +80,10 @@ def init_app_config(app, mongo_url, data_dir: Path):
         }
     ]
 
-    app.config["SECRET_KEY"] = generate_flask_secret_key(data_dir)
+    flask_security_config = generate_flask_security_configuration(data_dir)
+
+    app.config["SECRET_KEY"] = flask_security_config["secret_key"]
+    app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
 
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
