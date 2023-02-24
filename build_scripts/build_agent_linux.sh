@@ -92,10 +92,11 @@ else
   "
 fi
 
-docker pull infectionmonkey/agent-builder:latest
+TAG="latest"
+docker pull infectionmonkey/agent-builder:$TAG
 docker run \
     --rm \
     -v "${DIST_DIR}:/dist" \
-    infectionmonkey/agent-builder:latest \
     -v "${SCRIPT_DIR}/../:/src" \
+    infectionmonkey/agent-builder:$TAG \
     /bin/bash -c "${docker_commands}" | ts  '[%Y-%m-%d %H:%M:%S]'
