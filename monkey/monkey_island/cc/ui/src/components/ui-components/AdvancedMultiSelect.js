@@ -6,7 +6,6 @@ import {cloneDeep} from 'lodash';
 import {getDefaultPaneParams, InfoPane, WarningType} from './InfoPane';
 import {MasterCheckbox, MasterCheckboxState} from './MasterCheckbox';
 import ChildCheckboxContainer from './ChildCheckbox';
-import {getFullDefinitionByKey} from './JsonSchemaHelpers';
 
 export function AdvancedMultiSelectHeader(props) {
   const {
@@ -37,29 +36,25 @@ class AdvancedMultiSelect extends React.Component {
     let allPluginNames = nameOptions.map(v => v.value);
 
     this.state = {
-      nameOptions: nameOptions
-    };
-    this.state = {
       nameOptions: nameOptions,
       infoPaneParams: getDefaultPaneParams(
-        this.props.schema.items,
+        this.props.schema,
         this.isUnsafeOptionSelected(this.getSelectedPluginNames())
       ),
       allPluginNames: allPluginNames,
       masterCheckboxState: this.getMasterCheckboxState(this.getSelectedPluginNames()),
-      pluginDefinitions: this.props.schema.items.pluginDefs
     };
   }
 
   getOptions(activeElementKey) {
-    let names = this.props.schema.items.properties.name.anyOf;
-    names = names.map(v => ({
+    let plugin_schemas = this.props.schema.properties;
+    plugin_schemas = Object.values(plugin_schemas).map(v => ({
       label: v.title,
       schema: v,
-      value: v.enum[0],
-      isActive: (v.enum[0] === activeElementKey)
+      value: v.name,
+      isActive: (v.name === activeElementKey)
     }));
-    return names.sort(this.compareOptions);
+    return plugin_schemas.sort(this.compareOptions);
   }
 
   getSelectedPluginNames = () => {
@@ -67,14 +62,14 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   onChange = (strValues) => {
-    let pluginArray = this.namesToPlugins(strValues, this.state.pluginDefinitions);
+    let pluginArray = this.namesToPlugins(strValues);
     this.props.onChange(pluginArray)
   }
 
-  namesToPlugins = (names, allPlugins) => {
+  namesToPlugins = (names) => {
     let plugins = [];
     for (let i = 0; i < names.length; i++) {
-      plugins.push(cloneDeep(allPlugins[names[i]]));
+      plugins.push({"name": names[i], "options": {}});
     }
     return plugins
   }
@@ -144,18 +139,18 @@ class AdvancedMultiSelect extends React.Component {
   }
 
   isSafe = (itemKey) => {
-    let fullDef = getFullDefinitionByKey(this.props.schema.items.properties.name, itemKey);
+    let fullDef = this.props.schema.properties[itemKey];
     return fullDef.safe;
   }
 
   setPaneInfo = (itemKey) => {
-    let definitionObj = getFullDefinitionByKey(this.props.schema.items.properties.name, itemKey);
+    let definitionObj = this.props.schema.properties[itemKey];
     this.setState(
       {
         nameOptions: this.getOptions(itemKey),
         infoPaneParams: {
           title: definitionObj.title,
-          content: definitionObj.info,
+          content: definitionObj.description,
           link: definitionObj.link,
           warningType: this.isSafe(itemKey) ? WarningType.NONE : WarningType.SINGLE
         }
