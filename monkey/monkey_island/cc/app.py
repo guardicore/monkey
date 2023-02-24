@@ -93,7 +93,7 @@ def init_app_config(app, mongo_url, data_dir: Path):
 
     # Setup Flask-Security
     user_datastore = MongoEngineUserDatastore(db, User, Role)
-    _ = Security(app, user_datastore)
+    Security(app, user_datastore)
 
 
 def init_app_url_rules(app):
