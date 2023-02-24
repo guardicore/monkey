@@ -1,1 +1,1 @@
-from .setup_flask import generate_flask_secret_key
+from .setup_flask import generate_flask_security_configuration
