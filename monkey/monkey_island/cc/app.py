@@ -87,6 +87,7 @@ def init_app_config(app, mongo_url, data_dir: Path):
 
     app.config["SECRET_KEY"] = flask_security_config["secret_key"]
     app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
+    app.config["SECURITY_USERNAME_ENABLE"] = True
 
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
