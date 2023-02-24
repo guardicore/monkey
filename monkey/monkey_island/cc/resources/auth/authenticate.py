@@ -1,7 +1,6 @@
 import logging
 from http import HTTPStatus
 
-import flask_jwt_extended
 from flask import make_response, request
 
 from common.utils.exceptions import IncorrectCredentialsError
@@ -11,13 +10,6 @@ from monkey_island.cc.resources.request_authentication import create_access_toke
 from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
-
-
-def init_jwt(app):
-    _ = flask_jwt_extended.JWTManager(app)
-    logger.debug(
-        "Initialized JWT with secret key that started with " + app.config["JWT_SECRET_KEY"][:4]
-    )
 
 
 class Authenticate(AbstractResource):
