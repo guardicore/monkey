@@ -1,10 +1,11 @@
 #! /bin/bash
 #
 SCRIPT_NAME="$(basename "$0")"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd)
 
 BRANCH="develop"
 LOCAL=false
-DIST_DIR="${PWD}/agent-dist"
+DIST_DIR="${SCRIPT_DIR}/agent-dist"
 
 die() {
     echo "$1" >&2
@@ -95,6 +96,6 @@ docker pull infectionmonkey/agent-builder:latest
 docker run \
     --rm \
     -v "${DIST_DIR}:/dist" \
-    -v "${PWD}/../:/src" \
     infectionmonkey/agent-builder:latest \
+    -v "${SCRIPT_DIR}/../:/src" \
     /bin/bash -c "${docker_commands}" | ts  '[%Y-%m-%d %H:%M:%S]'
