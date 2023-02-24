@@ -78,7 +78,7 @@ install_monkey_island_python_dependencies() {
   log_message "Installing island requirements"
 
   log_message "Installing pipenv"
-  "$APPDIR"/AppRun -m pip install pipenv || handle_error
+  "$APPDIR"/AppRun -m pip install pipenv==2022.8.14 || handle_error
   export CI=1
 
   log_message "Installing dependencies"
