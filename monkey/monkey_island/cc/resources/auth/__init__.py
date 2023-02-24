@@ -1,3 +1,3 @@
-from .authenticate import Authenticate, init_jwt
+from .authenticate import Authenticate
 from .register import Register
 from .registration_status import RegistrationStatus
