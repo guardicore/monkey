@@ -1,24 +1,27 @@
+ARG PYTHON_VERSION=3.11
 # Install python dependencies using the bitnami/python:3.7 image, which includes
 # development dependencies.
-FROM bitnami/python:3.7 as builder
+FROM python:$PYTHON_VERSION-slim as builder
 COPY ./monkey /monkey
 WORKDIR /monkey
-RUN virtualenv .
+RUN apt-get update && apt-get install -y gcc
+RUN python -m venv .
 RUN export CI=1
 RUN . bin/activate && \
+    pip install -U pip && \
     cd monkey_island && \
-    pip install pipenv==2022.7.4 && \
+    pip install pipenv && \
     pipenv sync
 
 
-# Build the final application using the bitnami/python:3.7-prod image, which
+# Build the final application using a second image, which
 # does not include development dependencies.
-FROM bitnami/python:3.7-prod
-RUN apt-get update && apt-get install -y iputils-ping && apt-get clean
+FROM python:$PYTHON_VERSION-slim
 COPY --from=builder /monkey /monkey
 WORKDIR /monkey
 EXPOSE 5000
 ENV MONKEY_DOCKER_CONTAINER=true
+RUN apt-get update && apt-get install -y iputils-ping && apt-get clean
 RUN groupadd -r monkey-island && useradd --no-log-init -r -g monkey-island monkey-island
 RUN chmod 444 /monkey/monkey_island/cc/server.key
 RUN chmod 444 /monkey/monkey_island/cc/server.csr
