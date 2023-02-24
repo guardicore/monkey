@@ -151,6 +151,7 @@ HARD_CODED_PAYLOADS_SCHEMAS
 
 # Remove after #2157
 User.active
+User.password_hash
 User.fs_uniquifier
 User.roles
 User.get_by_id
