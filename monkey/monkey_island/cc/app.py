@@ -41,6 +41,7 @@ from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import register_agent_configuration_resources
 from monkey_island.cc.services.representations import output_json
+from monkey_island.cc.setup.mongo.mongo_setup import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 
 HOME_FILE = "index.html"
 
@@ -73,9 +74,9 @@ def init_app_config(app, mongo_url, data_dir: Path):
     app.config["MONGO_URI"] = mongo_url
     app.config["MONGODB_SETTINGS"] = [
         {
-            "db": "monkeyisland",
-            "host": "localhost",
-            "port": 27017,
+            "db": MONGO_DB_NAME,
+            "host": MONGO_DB_HOST,
+            "port": MONGO_DB_PORT,
             "alias": "flask-security",
         }
     ]
