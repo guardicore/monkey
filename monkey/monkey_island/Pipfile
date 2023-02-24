@@ -34,8 +34,8 @@ pydantic = "*"
 egg-timer = "*"
 pyyaml = "*"
 semver = "==2.13.0"
-flask-login = "*"
-flask-wtf = "*"
+flask-security = "*"
+flask-mongoengine = "*"
 
 [dev-packages]
 virtualenv = "==20.16.2" # Pinned to 20.16.2 due to importlib-metadat/flake8 issue

@@ -1,12 +1,14 @@
 import os
-import uuid
-from datetime import timedelta
+from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
+from flask_mongoengine import MongoEngine
+from flask_security import MongoEngineUserDatastore, Security
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
+from monkey_island.cc.models import Role, User
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
@@ -27,7 +29,7 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
+from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
@@ -35,12 +37,13 @@ from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
+from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import register_agent_configuration_resources
 from monkey_island.cc.services.representations import output_json
+from monkey_island.cc.setup.mongo.mongo_setup import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 
 HOME_FILE = "index.html"
-AUTH_EXPIRATION_TIME = timedelta(minutes=30)
 
 
 def serve_static_file(static_path):
@@ -66,21 +69,36 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
-def init_app_config(app, mongo_url):
+def init_app_config(app, mongo_url, data_dir: Path):
+    db = MongoEngine(app)
     app.config["MONGO_URI"] = mongo_url
+    app.config["MONGODB_SETTINGS"] = [
+        {
+            "db": MONGO_DB_NAME,
+            "host": MONGO_DB_HOST,
+            "port": MONGO_DB_PORT,
+            "alias": "flask-security",
+        }
+    ]
 
-    # See https://flask-jwt-extended.readthedocs.io/en/stable/options
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = AUTH_EXPIRATION_TIME
-    # Invalidate the signature of JWTs if the server process restarts. This avoids the edge case
-    # of getting a JWT,
-    # deciding to reset credentials and then still logging in with the old JWT.
-    app.config["JWT_SECRET_KEY"] = str(uuid.uuid4())
+    flask_security_config = generate_flask_security_configuration(data_dir)
+
+    # TODO: After we switch to token base authentication investigate the purpose
+    # of `SECRET_KEY` and `SECURITY_PASSWORD_SALT`, take into consideration
+    # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
+    app.config["SECRET_KEY"] = flask_security_config["secret_key"]
+    app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
+    app.config["SECURITY_USERNAME_ENABLE"] = True
 
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
     app.url_map.strict_slashes = False
+
+    # Setup Flask-Security
+    user_datastore = MongoEngineUserDatastore(db, User, Role)
+    Security(app, user_datastore)
 
 
 def init_app_url_rules(app):
@@ -136,7 +154,7 @@ def init_rpc_endpoints(api: FlaskDIWrapper):
     api.add_resource(TerminateAllAgents)
 
 
-def init_app(mongo_url: str, container: DIContainer):
+def init_app(mongo_url: str, container: DIContainer, data_dir: Path):
     """
     Simple docstirng for init_app
 
@@ -148,8 +166,7 @@ def init_app(mongo_url: str, container: DIContainer):
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
-    init_app_config(app, mongo_url)
-    init_jwt(app)
+    init_app_config(app, mongo_url, data_dir)
     init_app_url_rules(app)
 
     flask_resource_manager = FlaskDIWrapper(api, container)
