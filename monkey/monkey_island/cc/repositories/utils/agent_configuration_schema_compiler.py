@@ -103,11 +103,9 @@ class AgentConfigurationSchemaCompiler:
     def _add_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         schema = self._add_properties_field_to_plugin_types(schema)
 
-        # Hard coded plugins need to be added manually. Remove all methods starting with
-        # _add_non_plugin once they are turned into plugins
-        schema = self._add_non_plugin_exploiters(schema)
-        schema = self._add_non_plugin_fingerprinters(schema)
-        schema = self._add_non_plugin_credential_collectors(schema)
+        # Hard coded plugins need to be added manually until they are refactored into
+        # proper plugins
+        schema = self._add_hard_coded_plugins(schema)
 
         config_schemas = deepcopy(
             self._agent_plugin_repository.get_all_plugin_configuration_schemas()
@@ -116,8 +114,17 @@ class AgentConfigurationSchemaCompiler:
         for plugin_type in config_schemas.keys():
             for plugin_name in config_schemas[plugin_type].keys():
                 config_schema = config_schemas[plugin_type][plugin_name]
+                plugin_manifest = self._agent_plugin_repository.get_all_plugin_manifests()[
+                    plugin_type
+                ][plugin_name]
+                config_schema.update(plugin_manifest.dict(simplify=True))
                 schema = self._add_plugin_to_schema(schema, plugin_type, plugin_name, config_schema)
+        return schema
 
+    def _add_hard_coded_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+        schema = self._add_non_plugin_exploiters(schema)
+        schema = self._add_non_plugin_fingerprinters(schema)
+        schema = self._add_non_plugin_credential_collectors(schema)
         return schema
 
     def _add_properties_field_to_plugin_types(self, schema: Dict[str, Any]) -> Dict[str, Any]:
