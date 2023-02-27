@@ -102,21 +102,6 @@ module.exports = smp.wrap({
       path.resolve(__dirname, 'src/')
     ],
     fallback: {
-      //"buffer": require.resolve("buffer/"),
-      //"http": require.resolve("stream-http"),
-      //"url": require.resolve("url/"),
-      //"util": require.resolve("util/"),
-      //"stream": require.resolve("stream-browserify"),
-      //"zlib": require.resolve("browserify-zlib"),
-      //"https": require.resolve("https-browserify")
-      //"buffer": false,
-      //"http": false,
-      //"url": false,
-      //"util": false,
-      //"stream": false,
-      //"zlib": false,
-      //"https": false,
-      //"path": false
       "fs": false
     }
   },
