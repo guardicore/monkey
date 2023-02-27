@@ -385,8 +385,12 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   isSubmitDisabled = () => {
+    if(_.isEmpty(this.state.configuration)){
+      return true;
+    }
     let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
-    return errors.errors.length > 0
+    let credentialErrors = this.validator.validateFormData(this.state.credentials, CREDENTIALS);
+    return errors.errors.length+credentialErrors.errors.length > 0
   }
 
   render() {
