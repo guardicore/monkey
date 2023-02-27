@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import bcrypt
+from flask_security.utils import hash_password, verify_and_update_password
 
 from common.utils.exceptions import (
     IncorrectCredentialsError,
@@ -46,7 +46,7 @@ class AuthenticationService:
         if not username or not password:
             raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
 
-        User(username=username, password_hash=_hash_password(password)).save()
+        User(username=username, password=hash_password(password)).save()
 
         self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
         self._island_event_queue.publish(IslandEventTopic.RESET_AGENT_CONFIGURATION)
@@ -58,16 +58,14 @@ class AuthenticationService:
 
     def authenticate(self, username: str, password: str):
         try:
-            registered_user = User.objects.first()
+            registered_user = User.objects.filter(username=username).first()
         except UnknownUserError:
             raise IncorrectCredentialsError()
 
-        if not registered_user.verify_and_update_password(password):
+        if registered_user is None or not verify_and_update_password(password, registered_user):
             raise IncorrectCredentialsError()
 
         self._unlock_repository_encryptor(username, password)
-
-        return registered_user
 
     def _unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
@@ -77,13 +75,6 @@ class AuthenticationService:
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
-
-
-def _hash_password(plaintext_password: str) -> str:
-    salt = bcrypt.gensalt()
-    password_hash = bcrypt.hashpw(plaintext_password.encode("utf-8"), salt)
-
-    return password_hash.decode()
 
 
 def _get_secret_from_credentials(username: str, password: str) -> str:
