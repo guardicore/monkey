@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError
+from common.utils.exceptions import IncorrectCredentialsError, InvalidRegistrationCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -10,7 +10,7 @@ from monkey_island.cc.services import AuthenticationService
 
 USERNAME = "user1"
 PASSWORD = "test"
-PASSWORD_HASH = "$2b$12$YsGjjuJFddYJ6z5S5/nMCuKkCzKHB1AWY9SXkQ02i25d8TgdhIRS2"
+PASSWORD_HASH = "$2b$12$yQzymz55fRvm8rApg7erluIvIAKSFSDrNIOIrOlxC4sXsDSkeu9z2"
 
 
 # Some tests have these fixtures as arguments even though `autouse=True`, because
@@ -28,6 +28,35 @@ def mock_island_event_queue(autouse=True):
     return MagicMock(spec=IIslandEventQueue)
 
 
+def test_needs_registration__true(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+
+    assert a_s.needs_registration()
+
+
+def test_needs_registration__false(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+
+    a_s.register_new_user(USERNAME, PASSWORD)
+
+    assert not a_s.needs_registration()
+
+
+# TODO: Add UserLimitError and implement one user limit
+# def test_needs_registration__two_users(
+#    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+# ):
+#    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+#    a_s.register_new_user(USERNAME, PASSWORD)
+#
+#    with pytest.raises(UserLimitError):
+#        a_s.register_new_user("user2", PASSWORD)
+
+
 def test_register_new_user__empty_password_fails(
     tmp_path, mock_repository_encryptor, mock_island_event_queue
 ):
@@ -42,7 +71,9 @@ def test_register_new_user__empty_password_fails(
 
 
 @pytest.mark.slow
-def test_register_new_user(tmp_path, mock_repository_encryptor, mock_island_event_queue):
+def test_register_new_user(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
     a_s.register_new_user(USERNAME, PASSWORD)
@@ -54,7 +85,7 @@ def test_register_new_user(tmp_path, mock_repository_encryptor, mock_island_even
 
 @pytest.mark.slow
 def test_register_new_user__publish_to_event_topics(
-    tmp_path, mock_repository_encryptor, mock_island_event_queue
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
@@ -71,9 +102,39 @@ def test_register_new_user__publish_to_event_topics(
 
 
 @pytest.mark.slow
-def test_authenticate__success(tmp_path, mock_repository_encryptor):
+@pytest.mark.parametrize(
+    ("username", "password"), [("wrong_username", PASSWORD), (USERNAME, "wrong_password")]
+)
+def test_authenticate__failed_wrong_credentials(
+    mock_flask_app, tmp_path, username, password, mock_repository_encryptor, mock_island_event_queue
+):
+
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    a_s.register_new_user(USERNAME, PASSWORD)
+    with pytest.raises(IncorrectCredentialsError):
+        a_s.authenticate(username, password)
+
+    mock_repository_encryptor.unlock.call_count == 2
+
+
+@pytest.mark.slow
+def test_authenticate__success(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
     # If authentication fails, this function will raise an exception and the test will fail.
+    a_s.register_new_user(USERNAME, PASSWORD)
     a_s.authenticate(USERNAME, PASSWORD)
-    mock_repository_encryptor.unlock.assert_called_once()
+    mock_repository_encryptor.unlock.call_count == 2
+
+
+def test_authenticate__failed_no_registered_user(
+    mock_flask_app, tmp_path, mock_repository_encryptor
+):
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+
+    with pytest.raises(IncorrectCredentialsError):
+        a_s.authenticate(USERNAME, PASSWORD)
+
+    mock_repository_encryptor.unlock.assert_not_called()
