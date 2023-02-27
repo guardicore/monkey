@@ -16,7 +16,7 @@ def generate_flask_security_configuration(data_dir: Path) -> Dict[str, Any]:
     except FileNotFoundError:
         with open_new_securely_permissioned_file(secret_file_path, "w") as secret_file:
             secret_key = secrets.token_urlsafe(32)
-            password_salt = secrets.SystemRandom().getrandbits(128)
+            password_salt = str(secrets.SystemRandom().getrandbits(128))
 
             security_options = {"secret_key": secret_key, "password_salt": password_salt}
             json.dump(security_options, secret_file)
