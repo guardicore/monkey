@@ -96,10 +96,7 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         response = self.http_client.get("agent-configuration", timeout=SHORT_REQUEST_TIMEOUT)
 
         config_dict = response.json()
-        # TODO: pformat() sorts dictionary entries, which could be problematic during debugging. See
-        #       issue #2860. Python 3.8 and later allow you to specify (sort_dicts=False). Fix this
-        #       when we upgrade to Python 3.8.
-        logger.debug(f"Received configuration:\n{pformat(config_dict)}")
+        logger.debug(f"Received configuration:\n{pformat(config_dict, sort_dicts=False)}")
 
         return AgentConfiguration(**config_dict)
 
