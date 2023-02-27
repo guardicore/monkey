@@ -2,7 +2,11 @@ from pathlib import Path
 
 import bcrypt
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError
+from common.utils.exceptions import (
+    IncorrectCredentialsError,
+    InvalidRegistrationCredentialsError,
+    UnknownUserError,
+)
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -53,7 +57,17 @@ class AuthenticationService:
         self._reset_repository_encryptor(username, password)
 
     def authenticate(self, username: str, password: str):
+        try:
+            registered_user = User.objects.first()
+        except UnknownUserError:
+            raise IncorrectCredentialsError()
+
+        if not _credentials_match_registered_user(username, password, registered_user):
+            raise IncorrectCredentialsError()
+
         self._unlock_repository_encryptor(username, password)
+
+        return registered_user
 
     def _unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
@@ -70,6 +84,16 @@ def _hash_password(plaintext_password: str) -> str:
     password_hash = bcrypt.hashpw(plaintext_password.encode("utf-8"), salt)
 
     return password_hash.decode()
+
+
+def _credentials_match_registered_user(username: str, password: str, registered_user: User) -> bool:
+    return (registered_user.username == username) and _password_matches_hash(
+        password, registered_user.password_hash
+    )
+
+
+def _password_matches_hash(plaintext_password: str, password_hash: str) -> bool:
+    return bcrypt.checkpw(plaintext_password.encode("utf-8"), password_hash.encode("utf-8"))
 
 
 def _get_secret_from_credentials(username: str, password: str) -> str:
