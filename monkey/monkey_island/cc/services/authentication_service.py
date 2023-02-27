@@ -2,11 +2,7 @@ from pathlib import Path
 
 from flask_security.utils import hash_password, verify_and_update_password
 
-from common.utils.exceptions import (
-    IncorrectCredentialsError,
-    InvalidRegistrationCredentialsError,
-    UnknownUserError,
-)
+from common.utils.exceptions import IncorrectCredentialsError, InvalidRegistrationCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -56,16 +52,15 @@ class AuthenticationService:
 
         self._reset_repository_encryptor(username, password)
 
-    def authenticate(self, username: str, password: str):
-        try:
-            registered_user = User.objects.filter(username=username).first()
-        except UnknownUserError:
-            raise IncorrectCredentialsError()
+    def authenticate(self, username: str, password: str) -> User:
+        registered_user = User.objects.filter(username=username).first()
 
         if registered_user is None or not verify_and_update_password(password, registered_user):
             raise IncorrectCredentialsError()
 
         self._unlock_repository_encryptor(username, password)
+
+        return registered_user
 
     def _unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
