@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Dict, Tuple
 
 from pydantic import Field, confloat
 
@@ -16,5 +16,5 @@ class AgentConfiguration(MutableInfectionMonkeyBaseModel):
         default=30,
     )
     credential_collectors: Tuple[PluginConfiguration, ...] = Field(title="Credential collectors")
-    payloads: Tuple[PluginConfiguration, ...] = Field(title="Payloads")
+    payloads: Dict[str, Dict] = Field(title="Payloads")
     propagation: PropagationConfiguration = Field(title="Propagation")

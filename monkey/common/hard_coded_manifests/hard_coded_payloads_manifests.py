@@ -2,8 +2,8 @@ from common.agent_plugins import AgentPluginManifest, AgentPluginType
 from common.operating_system import OperatingSystem
 
 HARD_CODED_PAYLOADS_MANIFESTS = {
-    "Ransomware": AgentPluginManifest(
-        name="Ransomware",
+    "ransomware": AgentPluginManifest(
+        name="ransomware",
         plugin_type=AgentPluginType.PAYLOAD,
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
         target_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
