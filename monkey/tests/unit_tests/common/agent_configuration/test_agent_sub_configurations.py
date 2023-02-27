@@ -34,13 +34,13 @@ def test_sub_config_to_json_schema():
 
 raw_exploitation_configuration = {
     "exploiters": {
-        "Exploiter1": {},
-        "SSHExploiter": {},
-        "Exploiter2": {},
-        "WmiExploiter": {"smb_download_timeout": 30},
-        "Exploiter3": {},
-        "Exploiter4": {},
         "Exploiter5": {},
+        "Exploiter4": {},
+        "WmiExploiter": {"smb_download_timeout": 30},
+        "Exploiter2": {},
+        "SSHExploiter": {},
+        "Exploiter3": {},
+        "Exploiter1": {},
         "Exploiter6": {},
     },
     "options": {"http_ports": []},
