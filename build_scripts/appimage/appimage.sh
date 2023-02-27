@@ -1,8 +1,9 @@
 #!/bin/bash
 
+# Changes: python version
 LINUXDEPLOY_URL="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
-PYTHON_VERSION="3.7.16"
-PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.7/python${PYTHON_VERSION}-cp37-cp37m-manylinux1_x86_64.AppImage"
+PYTHON_VERSION="3.11.2"
+PYTHON_APPIMAGE_URL="https://github.com/niess/python-appimage/releases/download/python3.11/python${PYTHON_VERSION}-cp311-cp311-manylinux2014_x86_64.AppImage"
 APPIMAGE_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 APPDIR="$APPIMAGE_DIR/squashfs-root"
 BUILD_DIR="$APPDIR/usr/src"
@@ -32,7 +33,7 @@ setup_build_dir() {
 
   pushd "$APPIMAGE_DIR" || handle_error
 
-  setup_python_37_appdir
+  setup_python_appdir
 
   mkdir -p "$BUILD_DIR"
 
@@ -53,10 +54,10 @@ setup_build_dir() {
   popd || handle_error
 }
 
-setup_python_37_appdir() {
+setup_python_appdir() {
   PYTHON_APPIMAGE="python${PYTHON_VERSION}_x86_64.AppImage"
 
-  log_message "downloading Python3.7 Appimage"
+  log_message "downloading Python Appimage"
   curl -L -o "$PYTHON_APPIMAGE" "$PYTHON_APPIMAGE_URL"
 
   chmod u+x "$PYTHON_APPIMAGE"
@@ -77,12 +78,14 @@ install_monkey_island_python_dependencies() {
   log_message "Installing island requirements"
 
   log_message "Installing pipenv"
-  "$APPDIR"/AppRun -m pip install pipenv==2022.7.4 || handle_error
+  "$APPDIR"/AppRun -m pip install pipenv || handle_error
   export CI=1
 
   log_message "Installing dependencies"
   pushd "$BUILD_DIR/monkey_island" || handle_error
-  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" sync --system || handle_error
+  "$APPDIR"/AppRun -m pipenv --python "$APPDIR/AppRun" requirements > requirements.txt || handle_error
+  "$APPDIR"/AppRun -m pip install -r requirements.txt || handle_error
+  rm requirements.txt
   popd || handle_error
 
   log_message "Uninstalling pipenv (build dependency only)"
