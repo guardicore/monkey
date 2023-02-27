@@ -1,8 +1,10 @@
 from pathlib import Path
 
+import bcrypt
+
 from common.utils.exceptions import InvalidRegistrationCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode
+from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 
@@ -21,6 +23,14 @@ class AuthenticationService:
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
 
+    def needs_registration(self) -> bool:
+        """
+        Checks if a user is already registered on the Island
+
+        :return: Whether registration is required on the Island
+        """
+        return not User.objects.first()
+
     def register_new_user(self, username: str, password: str):
         """
         Registers a new user on the Island, then resets the encryptor and database
@@ -31,6 +41,8 @@ class AuthenticationService:
         """
         if not username or not password:
             raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
+
+        User(username=username, password_hash=_hash_password(password)).save()
 
         self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
         self._island_event_queue.publish(IslandEventTopic.RESET_AGENT_CONFIGURATION)
@@ -51,6 +63,13 @@ class AuthenticationService:
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
+
+
+def _hash_password(plaintext_password: str) -> str:
+    salt = bcrypt.gensalt()
+    password_hash = bcrypt.hashpw(plaintext_password.encode("utf-8"), salt)
+
+    return password_hash.decode()
 
 
 def _get_secret_from_credentials(username: str, password: str) -> str:
