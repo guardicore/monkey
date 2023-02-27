@@ -5,7 +5,6 @@ from botocore.exceptions import ClientError, NoCredentialsError
 from flask import jsonify, make_response, request
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services import AWSService
 from monkey_island.cc.services.aws import AWSCommandResults
 
@@ -28,7 +27,6 @@ class RemoteRun(AbstractResource):
     def __init__(self, aws_service: AWSService):
         self._aws_service = aws_service
 
-    @jwt_required
     def get(self):
         action = request.args.get("action")
         if action == "list_aws":
@@ -49,7 +47,6 @@ class RemoteRun(AbstractResource):
 
         return {}
 
-    @jwt_required
     def post(self):
         body = json.loads(request.data)
         if body.get("type") == "aws":

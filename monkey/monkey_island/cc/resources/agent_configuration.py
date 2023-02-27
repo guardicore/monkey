@@ -10,7 +10,6 @@ from monkey_island.cc.repositories import (
     PluginConfigurationValidationError,
 )
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 
 
 class AgentConfiguration(AbstractResource):
@@ -25,7 +24,6 @@ class AgentConfiguration(AbstractResource):
         configuration_dict = configuration.dict(simplify=True)
         return make_response(configuration_dict, 200)
 
-    @jwt_required
     def put(self):
         try:
             configuration_object = AgentConfigurationObject(**request.json)

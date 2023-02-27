@@ -4,7 +4,6 @@ from flask import make_response
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 
 
 class ResetAgentConfiguration(AbstractResource):
@@ -13,7 +12,6 @@ class ResetAgentConfiguration(AbstractResource):
     def __init__(self, island_event_queue: IIslandEventQueue):
         self._island_event_queue = island_event_queue
 
-    @jwt_required
     def post(self):
         """
         Reset the agent configuration to its default values

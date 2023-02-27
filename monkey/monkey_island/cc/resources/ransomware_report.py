@@ -6,7 +6,6 @@ from monkey_island.cc.repositories import (
     IMachineRepository,
 )
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.ransomware import ransomware_report
 
 
@@ -23,7 +22,6 @@ class RansomwareReport(AbstractResource):
         self._machine_repository = machine_repository
         self._agent_plugin_repository = agent_plugin_repository
 
-    @jwt_required
     def get(self):
         return jsonify(
             {
