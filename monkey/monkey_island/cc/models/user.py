@@ -8,9 +8,8 @@ from .role import Role
 
 class User(Document, UserMixin):
     username = StringField(max_length=255, unique=True)
-    password_hash = StringField()
+    password = StringField()
     active = BooleanField(default=True)
-    fs_uniquifier = StringField(max_length=64, unique=True)
     roles = ListField(ReferenceField(Role), default=[])
 
     @staticmethod
