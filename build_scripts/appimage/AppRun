@@ -5,11 +5,6 @@ self="$(readlink -f -- $0)"
 here="${self%/*}"
 APPDIR="${APPDIR:-${here}}"
 
-# Export TCl/Tk
-export TCL_LIBRARY="${APPDIR}/usr/share/tcltk/tcl8.4"
-export TK_LIBRARY="${APPDIR}/usr/share/tcltk/tk8.4"
-export TKPATH="${TK_LIBRARY}"
-
 # Export SSL certificate
 export SSL_CERT_FILE="${APPDIR}/opt/_internal/certs.pem"
 
