@@ -8,7 +8,7 @@ const sectionOrder = [
   'exploitation',
   'network_scan',
   'credentials',
-  'general'
+  'maximum_depth'
 ];
 
 const initialSection = sectionOrder[0];
