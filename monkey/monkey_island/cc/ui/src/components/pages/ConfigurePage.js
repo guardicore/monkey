@@ -24,7 +24,7 @@ import {SCHEMA} from '../../services/configuration/configSchema.js';
 import {
   reformatConfig,
   formatCredentialsForForm,
-  formatCredentialsForIsland
+  formatCredentialsForIsland, reformatSchema
 } from '../configuration-components/ReformatHook';
 import {customizeValidator} from '@rjsf/validator-ajv8';
 import LoadingIcon from '../ui-components/LoadingIcon';
@@ -85,7 +85,7 @@ class ConfigurePageComponent extends AuthComponent {
       .then((schema) => {
         RefParser.dereference(schema).then((schema) => {
           schema = mergeAllOf(schema);
-          schema['properties']['propagation']['properties']['credentials'] = CREDENTIALS;
+          schema = reformatSchema(schema);
           this.setState({schema: schema});
     })});
 
@@ -285,8 +285,6 @@ class ConfigurePageComponent extends AuthComponent {
 
   sendConfig(config) {
     config = reformatConfig(config, true);
-    delete config['advanced'];
-    delete config['propagation']['general'];
 
     return (
       this.authFetch(CONFIG_URL,
