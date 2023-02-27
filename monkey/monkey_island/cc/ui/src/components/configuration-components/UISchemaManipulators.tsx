@@ -13,8 +13,8 @@ function ransomwareDirManipulator(selectedSection,
                                   formData,
                                   uiSchema) {
   if (selectedSection === 'payloads'){
-      uiSchema.encryption.directories =
-        {'ui:disabled': !formData['encryption']['enabled']};
+      uiSchema.ransomware.encryption.directories =
+        {'ui:disabled': !formData['ransomware']['encryption']['enabled']};
     }
 }
 
