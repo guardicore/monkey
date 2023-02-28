@@ -22,6 +22,7 @@ class Authenticate(AbstractResource):
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
 
+    # TODO: Added for debugging. Remove before closing #2157.
     def get(self):
         return jsonify({"authenticated": current_user.is_authenticated})
 
