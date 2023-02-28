@@ -8,6 +8,8 @@ from .role import Role
 
 class User(Document, UserMixin):
     username = StringField(max_length=255, unique=True)
+    # Flask-Security doesn't let you register without an email field
+    email = StringField()
     # We're actually storing the password hash (using Flask-Security's `hash_password()`).
     # Flask-Security's `verify_and_update_password()`, which we're using for authentication,
     # requires that this field is called "password".
