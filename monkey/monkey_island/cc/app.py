@@ -70,14 +70,12 @@ def serve_home():
 
 
 def init_app_config(app, mongo_url, data_dir: Path):
-    db = MongoEngine(app)
     app.config["MONGO_URI"] = mongo_url
     app.config["MONGODB_SETTINGS"] = [
         {
             "db": MONGO_DB_NAME,
             "host": MONGO_DB_HOST,
             "port": MONGO_DB_PORT,
-            "alias": "flask-security",
         }
     ]
 
@@ -95,6 +93,9 @@ def init_app_config(app, mongo_url, data_dir: Path):
     app.config["JSON_SORT_KEYS"] = False
 
     app.url_map.strict_slashes = False
+
+    # The database object needs to be created after we configure the flask application
+    db = MongoEngine(app)
 
     # Setup Flask-Security
     user_datastore = MongoEngineUserDatastore(db, User, Role)
