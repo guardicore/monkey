@@ -8,6 +8,9 @@ from .role import Role
 
 class User(Document, UserMixin):
     username = StringField(max_length=255, unique=True)
+    # We're actually storing the password hash (using Flask-Security's `hash_password()`).
+    # Flask-Security's `verify_and_update_password()`, which we're using for authentication,
+    # requires that this field is called "password".
     password = StringField()
     active = BooleanField(default=True)
     roles = ListField(ReferenceField(Role), default=[])
