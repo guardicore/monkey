@@ -1,10 +1,7 @@
 from copy import deepcopy
-from enum import Enum
-from typing import Any, Dict, Type, cast
+from typing import Any, Dict
 
 import dpath.util
-import pydantic
-from pydantic import BaseModel
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_configuration import AgentConfiguration
@@ -44,66 +41,12 @@ class AgentConfigurationSchemaCompiler:
 
     def get_schema(self) -> Dict[str, Any]:
         try:
-            AgentConfigurationSchemaCompiler._pydantic_schema_generation_override()
             agent_config_schema = AgentConfiguration.schema()
             agent_config_schema = self._add_plugins(agent_config_schema)
 
             return agent_config_schema
         except Exception as err:
             raise RuntimeError(err)
-
-    @staticmethod
-    def _pydantic_schema_generation_override():
-        # See https://github.com/pydantic/pydantic/issues/5106
-        from pydantic.schema import default_ref_template
-
-        def model_process_schema_internal(
-            model,
-            *,
-            by_alias: bool = True,
-            generate_descriptions: bool = True,  # noqa: F841
-            model_name_map,
-            ref_prefix=None,
-            ref_template: str = default_ref_template,  # type: ignore
-            known_models=None,
-            field=None,
-        ):
-            from inspect import signature
-
-            known_models = known_models or set()
-            from pydantic.utils import lenient_issubclass
-
-            if lenient_issubclass(model, Enum):
-                model = cast(Type[Enum], model)
-                from pydantic.schema import enum_process_schema
-
-                s = enum_process_schema(model, field=field)
-                return s, {}, set()
-            model = cast(Type["BaseModel"], model)
-            s = {"title": model.__config__.title or model.__name__}
-            known_models.add(model)
-            from pydantic.schema import model_type_schema
-
-            m_schema, m_definitions, nested_models = model_type_schema(
-                model,
-                by_alias=by_alias,
-                model_name_map=model_name_map,
-                ref_prefix=ref_prefix,
-                ref_template=ref_template,
-                known_models=known_models,
-            )
-            s.update(m_schema)
-            schema_extra = model.__config__.schema_extra
-            if callable(schema_extra):
-                if len(signature(schema_extra).parameters) == 1:
-                    schema_extra(s)
-                else:
-                    schema_extra(s, model)
-            else:
-                s.update(schema_extra)
-            return s, m_definitions, nested_models
-
-        pydantic.schema.model_process_schema = model_process_schema_internal
 
     def _add_plugins(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         schema = self._add_properties_field_to_plugin_types(schema)
