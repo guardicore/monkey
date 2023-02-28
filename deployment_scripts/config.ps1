@@ -5,7 +5,7 @@ $MONKEY_REPO = "guardicore/monkey"
 $MONKEY_GIT_URL = "https://github.com/guardicore/monkey"
 $MONKEY_RELEASES_URL = $MONKEY_GIT_URL + "/releases"
 $MONKEY_API_RELEASES_URL = "https://api.github.com/repos/$MONKEY_REPO/releases"
-$MONKEY_LATEST_VERSION = (Invoke-WebRequest $MONKEY_API_RELEASES_URL | ConvertFrom-Json)[0].tag_name
+$MONKEY_LATEST_VERSION = (Invoke-WebRequest $MONKEY_API_RELEASES_URL -UseBasicParsing | ConvertFrom-Json)[0].tag_name
 $MONKEY_DOWNLOAD_URL = $MONKEY_RELEASES_URL + "/download/" + $MONKEY_LATEST_VERSION + "/"
 # Link to the latest python download or install it manually
 $PYTHON_URL = "https://www.python.org/ftp/python/3.11.2/python-3.11.2-amd64.exe"
