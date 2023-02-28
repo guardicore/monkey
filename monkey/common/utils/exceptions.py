@@ -2,10 +2,6 @@ class FailedExploitationError(Exception):
     """Raise when exploiter fails instead of returning False"""
 
 
-class InvalidRegistrationCredentialsError(Exception):
-    """Raise when server config file changed and island needs to restart"""
-
-
 class IncorrectCredentialsError(Exception):
     """Raise to indicate that authentication failed"""
 
