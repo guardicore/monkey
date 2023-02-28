@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from flask_security.utils import hash_password, verify_and_update_password
 
@@ -6,6 +7,10 @@ from common.utils.exceptions import IncorrectCredentialsError, InvalidRegistrati
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
+
+
+class UserLimitError(Exception):
+    """Raise when the allowed limit of users registered on the Island is being exceeded"""
 
 
 class AuthenticationService:
@@ -42,6 +47,13 @@ class AuthenticationService:
         if not username or not password:
             raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
 
+        if self._user_already_registered():
+            raise UserLimitError(
+                "A registered user already exists. To reset your credentials, follow the "
+                "instructions at https://techdocs.akamai.com/infection-monkey/docs/"
+                "frequently-asked-questions#reset-the-monkey-island-password."
+            )
+
         User(username=username, password=hash_password(password)).save()
 
         self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
@@ -51,6 +63,9 @@ class AuthenticationService:
         )
 
         self._reset_repository_encryptor(username, password)
+
+    def _user_already_registered(self) -> Optional[User]:
+        return User.objects.first()
 
     def authenticate(self, username: str, password: str) -> User:
         registered_user = User.objects.filter(username=username).first()
