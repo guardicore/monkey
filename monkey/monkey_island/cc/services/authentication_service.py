@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-from flask_security.utils import hash_password, verify_and_update_password
+from flask_security.utils import hash_password
 
 from common.utils.exceptions import IncorrectCredentialsError, InvalidRegistrationCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
@@ -70,7 +70,7 @@ class AuthenticationService:
     def authenticate(self, username: str, password: str) -> User:
         registered_user = User.objects.filter(username=username).first()
 
-        if registered_user is None or not verify_and_update_password(password, registered_user):
+        if registered_user is None or not registered_user.verify_and_update_password(password):
             raise IncorrectCredentialsError()
 
         self._unlock_repository_encryptor(username, password)
