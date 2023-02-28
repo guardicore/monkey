@@ -121,6 +121,15 @@ AgentPlugin.supported_operating_systems
 
 HadoopPlugin
 
+# Remove after #2157
+User.active
+User.password_hash
+User.fs_uniquifier
+User.roles
+User.get_by_id
+User.email
+Role.permissions
+
 # Remove after #2952
 generate_brute_force_credentials
 secret_type_filter
