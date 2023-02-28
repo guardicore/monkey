@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from flask_login import UserMixin
+from flask_security import UserMixin
 from mongoengine import BooleanField, Document, ListField, ReferenceField, StringField
 
 from .role import Role
