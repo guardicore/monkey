@@ -7,13 +7,13 @@ The monkey is a PyInstaller compressed python archives.
 
 ## Windows
 
-1. Install python 3.7.4 and choose **ADD to PATH** option when installing.
+1. Install python 3.11.2 and choose **ADD to PATH** option when installing.
 
-    Download and install from: <https://www.python.org/ftp/python/3.7.4/>
+    Download and install from: <https://www.python.org/ftp/python/3.11.2/>
 
     In case you still need to add python directories to path:
-    - Run the following command on a cmd console (Replace C:\Python37 with your python directory if it's different)
-    `setx /M PATH "%PATH%;C:\Python37;C:\Python37\Scripts`
+    - Run the following command on a cmd console (Replace C:\Python311 with your python directory if it's different)
+    `setx /M PATH "%PATH%;C:\Python311;C:\Python311\Scripts`
     - Close the console, make sure you execute all commands in a new cmd console from now on.
 1. Install further dependencies
     - if not installed, install Microsoft Visual C++ 2017 SP1 Redistributable Package
@@ -32,20 +32,20 @@ The monkey is a PyInstaller compressed python archives.
 ## Linux
 
 Tested on Ubuntu 16.04.
-1. On older distributions of Ubuntu (16.04) you'll need to download python3.7 via ppa:
+1. On older distributions of Ubuntu (16.04) you'll need to download python3.11 via ppa:
     - `sudo add-apt-repository ppa:deadsnakes/ppa`
     - `sudo apt-get update`
-    - `sudo apt install python3.7`
+    - `sudo apt install python3.11`
 
 1. Install dependencies by running:
     - `sudo apt install python3-pip`
-    - `python3.7 -m pip install pip`
-    - `sudo apt-get install python3.7-dev libffi-dev upx libssl-dev libc++1`
+    - `python3.11 -m pip install pip`
+    - `sudo apt-get install python3.11-dev libffi-dev upx libssl-dev libc++1`
 
 1. Install the python packages listed in requirements.txt using pip
     - `cd [code location]/infection_monkey`
-    - `python3.7 -m pipenv lock -r --dev > requirements.txt`
-    - `python3.7 -m pip install -r requirements.txt`
+    - `python3.11 -m pipenv lock -r --dev > requirements.txt`
+    - `python3.11 -m pip install -r requirements.txt`
 
 1. To build, run in terminal:
     - `cd [code location]/build_scripts`
@@ -64,11 +64,11 @@ When committing your changes for the first time, you may encounter some errors t
 To resolve this, use `pipenv` to create a `requirements.txt` for both the `infection_monkey/` and `monkey_island/` requirements and install it with `pip`.
 
    - `cd [code location]/infection_monkey`
-   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
-   - `python3.7 -m pip install -r requirements.txt`
+   - `python3.11 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.11 -m pip install -r requirements.txt`
 
    and
 
    - `cd [code location]/monkey_island`
-   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
-   - `python3.7 -m pip install -r requirements.txt`
+   - `python3.11 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.11 -m pip install -r requirements.txt`
