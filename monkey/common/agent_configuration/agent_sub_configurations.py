@@ -193,7 +193,7 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     options: ExploitationOptionsConfiguration = Field(title="Exploiters Options")
-    exploiters: Dict = Field(
+    exploiters: Dict[str, Dict] = Field(
         title="Enabled exploiters",
         description="Click on an exploiter to get more information"
         " about it. \n \u26A0 Note that using unsafe exploits may"
