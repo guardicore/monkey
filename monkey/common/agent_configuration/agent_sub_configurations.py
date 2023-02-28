@@ -151,8 +151,12 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
         :param targets: Configuration for targets to scan
     """
 
-    tcp: TCPScanConfiguration = Field(title="TCP scanner")
-    icmp: ICMPScanConfiguration = Field(title="Ping scanner")
+    tcp: TCPScanConfiguration = Field(
+        title="TCP scanner", description="Configure TCP scanning options"
+    )
+    icmp: ICMPScanConfiguration = Field(
+        title="Ping scanner", description="Configure ICMP scanning options"
+    )
     fingerprinters: Tuple[PluginConfiguration, ...] = Field(
         title="Fingerprinters",
         description="Fingerprint modules collect info about external "
@@ -192,7 +196,9 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
         :param exploiters: Configuration enabled exploiters
     """
 
-    options: ExploitationOptionsConfiguration = Field(title="Exploiters Options")
+    options: ExploitationOptionsConfiguration = Field(
+        title="Exploiters Options", description="Configure other options related to exploitation"
+    )
     exploiters: Dict[str, Dict] = Field(
         title="Enabled exploiters",
         description="Click on an exploiter to get more information"
@@ -222,5 +228,10 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
         "Setting this to 0 will disable all scanning and exploitation.",
         default=2,
     )
-    network_scan: NetworkScanConfiguration = Field(title="Network analysis")
-    exploitation: ExploitationConfiguration = Field(title="Exploiters")
+    network_scan: NetworkScanConfiguration = Field(
+        title="Network analysis",
+        description="Configure the network analysis the Agents will perform",
+    )
+    exploitation: ExploitationConfiguration = Field(
+        title="Exploiters", description="Configure the exploitation step of the attack"
+    )
