@@ -15,15 +15,15 @@ The Infection Monkey Agent has been tested to run on the following operating sys
 
 #### Linux
 
-Compatibility depends on GLIBC version (2.14+)[^1]. By default, these distributions are supported:
+Compatibility depends on GLIBC version (2.23+)[^1]. By default, these
+distributions have been tested:
 
-- Centos 7+
-- Debian 7+
+- Centos 8+
+- Debian 9+
 - Kali 2019+
-- Oracle 7+
-- Rhel 7+
-- Suse 12+
-- Ubuntu 14+
+- Rhel 8+
+- Suse 15+
+- Ubuntu 16+
 
 #### Windows
 
@@ -36,12 +36,14 @@ Compatibility depends on GLIBC version (2.14+)[^1]. By default, these distributi
 
 **The Monkey Island (control server)** runs out of the box on:
 
-- Ubuntu 18.04
-- Debian 9
+- Most modern Linux distros (see the [linux setup page]({{< ref "/setup/linux"
+  >}}) for more details)
 - Windows Server 2012
 - Windows Server 2012 R2
 - Windows Server 2016
 
 We also provide a Dockerfile on our [website](http://infectionmonkey.com/) that lets the Monkey Island run inside a container.
 
-[^1]: The GLIBC >= 2.14 requirement exists because the Infection Monkey was built using this GLIBC version, and GLIBC is not backward compatible. We are also limited to the oldest GLIBC version compatible with Python 3.7.
+[^1]: The GLIBC >= 2.23 requirement exists because the Infection Monkey Agent
+  was built using this GLIBC version, and GLIBC is not backward compatible. We
+  are also limited to the oldest GLIBC version compatible with Python 3.11.
