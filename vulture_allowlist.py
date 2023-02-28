@@ -155,4 +155,5 @@ User.password_hash
 User.fs_uniquifier
 User.roles
 User.get_by_id
+User.email
 Role.permissions
