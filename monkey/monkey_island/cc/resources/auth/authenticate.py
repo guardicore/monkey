@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 
 from flask import jsonify, make_response, request
-from flask_login import current_user, login_user
+from flask_security import current_user, login_user
 
 from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
