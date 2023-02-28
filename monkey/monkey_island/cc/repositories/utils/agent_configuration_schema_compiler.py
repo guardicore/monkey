@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_configuration import AgentConfiguration
 from common.agent_plugins import AgentPluginManifest, AgentPluginType
+from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
 from common.hard_coded_manifests.hard_coded_credential_collector_manifests import (
     HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS,
 )
@@ -25,11 +26,15 @@ from monkey_island.cc.repositories.utils.hard_coded_exploiter_schemas import (
 from monkey_island.cc.repositories.utils.hard_coded_fingerprinter_schemas import (
     HARD_CODED_FINGERPRINTER_SCHEMAS,
 )
+from monkey_island.cc.repositories.utils.hard_coded_payloads_schemas import (
+    HARD_CODED_PAYLOADS_SCHEMAS,
+)
 
 PLUGIN_PATH_IN_SCHEMA = {
     AgentPluginType.EXPLOITER: "definitions.ExploitationConfiguration.properties.exploiters",
     AgentPluginType.CREDENTIAL_COLLECTOR: "properties.credential_collectors",
     AgentPluginType.FINGERPRINTER: "definitions.NetworkScanConfiguration.properties.fingerprinters",
+    AgentPluginType.PAYLOAD: "properties.payloads",
 }
 
 
@@ -125,6 +130,7 @@ class AgentConfigurationSchemaCompiler:
         schema = self._add_non_plugin_exploiters(schema)
         schema = self._add_non_plugin_fingerprinters(schema)
         schema = self._add_non_plugin_credential_collectors(schema)
+        schema = self._add_non_plugin_payloads(schema)
         return schema
 
     def _add_properties_field_to_plugin_types(self, schema: Dict[str, Any]) -> Dict[str, Any]:
@@ -169,6 +175,16 @@ class AgentConfigurationSchemaCompiler:
             HARD_CODED_FINGERPRINTER_SCHEMAS, HARD_CODED_FINGERPRINTER_MANIFESTS
         )
         properties.update(fingerprinter_schemas)
+        return schema
+
+    def _add_non_plugin_payloads(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+        properties = dpath.util.get(
+            schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.PAYLOAD] + ".properties", "."
+        )
+        payload_schemas = self._add_manifests_to_plugins_schema(
+            HARD_CODED_PAYLOADS_SCHEMAS, HARD_CODED_PAYLOADS_MANIFESTS
+        )
+        properties.update(payload_schemas)
         return schema
 
     def _add_plugin_to_schema(

@@ -80,25 +80,27 @@ export default function UiSchema(props) {
       }
     },
     payloads: {
-      encryption: {
-        info_box: {
-          'ui:field': InfoBox
+      ransomware:{
+        encryption: {
+          info_box: {
+            'ui:field': InfoBox
+          },
+          file_extension: {
+            'ui:emptyValue': ''
+          },
+          directories: {
+            // Directory inputs are dynamically hidden
+          },
+          text_box: {
+            'ui:field': TextBox
+          },
+          enabled: {
+            'ui:widget': 'hidden'
+          }
         },
-        file_extension: {
-          'ui:emptyValue': ''
-        },
-        directories: {
-          // Directory inputs are dynamically hidden
-        },
-        text_box: {
-          'ui:field': TextBox
-        },
-        enabled: {
+        other_behaviors: {
           'ui:widget': 'hidden'
         }
-      },
-      other_behaviors: {
-        'ui:widget': 'hidden'
       }
     },
     credential_collectors: {

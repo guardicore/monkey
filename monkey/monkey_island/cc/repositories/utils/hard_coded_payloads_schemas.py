@@ -1,5 +1,5 @@
 HARD_CODED_PAYLOADS_SCHEMAS = {
-    "Ransomware": {
+    "ransomware": {
         "type": "object",
         "properties": {
             "encryption": {

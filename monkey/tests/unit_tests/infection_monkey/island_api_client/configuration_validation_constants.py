@@ -16,8 +16,7 @@ SCHEMA = {
         },
         "payloads": {
             "title": "Payloads",
-            "type": "array",
-            "items": {"$ref": "#/definitions/PluginConfiguration"},
+            "type": "object",
         },
         "propagation": {
             "title": "Propagation",

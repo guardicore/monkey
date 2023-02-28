@@ -155,7 +155,8 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     icmp: ICMPScanConfiguration = Field(title="Ping scanner")
     fingerprinters: Tuple[PluginConfiguration, ...] = Field(
         title="Fingerprinters",
-        description="Fingerprint modules collect info about external services",
+        description="Fingerprint modules collect info about external "
+        "services that Infection Monkey scans.",
     )
     targets: ScanTargetConfiguration = Field(
         title="Network",
@@ -192,7 +193,7 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     options: ExploitationOptionsConfiguration = Field(title="Exploiters Options")
-    exploiters: Dict = Field(
+    exploiters: Dict[str, Dict] = Field(
         title="Enabled exploiters",
         description="Click on an exploiter to get more information"
         " about it. \n \u26A0 Note that using unsafe exploits may"

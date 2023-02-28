@@ -10,8 +10,7 @@ const WarningType = {
   MULTIPLE: 2
 }
 
-function getDefaultPaneParams(items, isUnsafeOptionSelected) {
-  let configSection = items;
+function getDefaultPaneParams(configSection, isUnsafeOptionSelected) {
   return (
     {
       title: configSection.title,

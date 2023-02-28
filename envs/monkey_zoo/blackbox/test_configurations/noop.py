@@ -40,7 +40,7 @@ _propagation_configuration = PropagationConfiguration(
 _agent_configuration = AgentConfiguration(
     keep_tunnel_open_time=0,
     credential_collectors=[],
-    payloads=[],
+    payloads={},
     propagation=_propagation_configuration,
 )
 _propagation_credentials: Tuple[Credentials, ...] = tuple()
