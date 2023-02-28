@@ -1,16 +1,9 @@
 from pathlib import Path
-from typing import Optional
 
-from flask_security.utils import hash_password
-
-from common.utils.exceptions import IncorrectCredentialsError, InvalidRegistrationCredentialsError
+from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-
-
-class UserLimitError(Exception):
-    """Raise when the allowed limit of users registered on the Island is being exceeded"""
 
 
 class AuthenticationService:
@@ -36,26 +29,13 @@ class AuthenticationService:
         """
         return not User.objects.first()
 
-    def register_new_user(self, username: str, password: str):
+    def reset_island(self, username: str, password: str):
         """
-        Registers a new user on the Island, then resets the encryptor and database
+        Resets the encryptor and database
 
-        :param username: Username to register
-        :param password: Password to register
-        :raises InvalidRegistrationCredentialsError: If username or password is empty
+        :param username: Username to reset encryptor
+        :param password: Password to reset encryptor
         """
-        if not username or not password:
-            raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
-
-        if self._user_already_registered():
-            raise UserLimitError(
-                "A registered user already exists. To reset your credentials, follow the "
-                "instructions at https://techdocs.akamai.com/infection-monkey/docs/"
-                "frequently-asked-questions#reset-the-monkey-island-password."
-            )
-
-        User(username=username, password=hash_password(password)).save()
-
         self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
         self._island_event_queue.publish(IslandEventTopic.RESET_AGENT_CONFIGURATION)
         self._island_event_queue.publish(
@@ -63,9 +43,6 @@ class AuthenticationService:
         )
 
         self._reset_repository_encryptor(username, password)
-
-    def _user_already_registered(self) -> Optional[User]:
-        return User.objects.first()
 
     def authenticate(self, username: str, password: str) -> User:
         registered_user = User.objects.filter(username=username).first()
