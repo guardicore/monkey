@@ -4,8 +4,9 @@ from pathlib import Path
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from flask_mongoengine import MongoEngine
-from flask_security import MongoEngineUserDatastore, Security
+from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
 from werkzeug.exceptions import NotFound
+from wtforms import PasswordField, StringField, validators
 
 from common import DIContainer
 from monkey_island.cc.models import Role, User
@@ -69,6 +70,37 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
+def setup_authentication(app, data_dir):
+    flask_security_config = generate_flask_security_configuration(data_dir)
+
+    # TODO: After we switch to token base authentication investigate the purpose
+    # of `SECRET_KEY` and `SECURITY_PASSWORD_SALT`, take into consideration
+    # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
+    app.config["SECRET_KEY"] = flask_security_config["secret_key"]
+    app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
+    app.config["SECURITY_USERNAME_ENABLE"] = True
+    app.config["SECURITY_USERNAME_REQUIRED"] = True
+    app.config["SECURITY_REGISTERABLE"] = True
+    app.config["WTF_CSRF_CHECK_DEFAULT"] = False
+    app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
+    app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+
+    # The database object needs to be created after we configure the flask application
+    db = MongoEngine(app)
+
+    class CustomConfirmRegisterForm(ConfirmRegisterForm):
+        # Flask-Security doesn't let you register without an email field
+        email = StringField("Email", default="dummy@dummy.com")
+        password = PasswordField(
+            "Password",
+            [validators.DataRequired(), validators.Length(min=1, max=25)],
+        )
+
+    user_datastore = MongoEngineUserDatastore(db, User, Role)
+
+    app.security = Security(app, user_datastore, confirm_register_form=CustomConfirmRegisterForm)
+
+
 def init_app_config(app, mongo_url, data_dir: Path):
     app.config["MONGO_URI"] = mongo_url
     app.config["MONGODB_SETTINGS"] = [
@@ -79,27 +111,13 @@ def init_app_config(app, mongo_url, data_dir: Path):
         }
     ]
 
-    flask_security_config = generate_flask_security_configuration(data_dir)
-
-    # TODO: After we switch to token base authentication investigate the purpose
-    # of `SECRET_KEY` and `SECURITY_PASSWORD_SALT`, take into consideration
-    # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
-    app.config["SECRET_KEY"] = flask_security_config["secret_key"]
-    app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
-    app.config["SECURITY_USERNAME_ENABLE"] = True
-
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
 
     app.url_map.strict_slashes = False
 
-    # The database object needs to be created after we configure the flask application
-    db = MongoEngine(app)
-
-    # Setup Flask-Security
-    user_datastore = MongoEngineUserDatastore(db, User, Role)
-    app.security = Security(app, user_datastore)
+    setup_authentication(app, data_dir)
 
 
 def init_app_url_rules(app):
