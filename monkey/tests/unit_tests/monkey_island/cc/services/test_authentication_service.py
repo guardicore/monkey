@@ -6,7 +6,7 @@ from common.utils.exceptions import IncorrectCredentialsError, InvalidRegistrati
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-from monkey_island.cc.services import AuthenticationService
+from monkey_island.cc.services import AuthenticationService, UserLimitError
 
 USERNAME = "user1"
 PASSWORD = "test"
@@ -46,15 +46,14 @@ def test_needs_registration__false(
     assert not a_s.needs_registration()
 
 
-# TODO: Add UserLimitError and implement one user limit
-# def test_needs_registration__two_users(
-#    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
-# ):
-#    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-#    a_s.register_new_user(USERNAME, PASSWORD)
-#
-#    with pytest.raises(UserLimitError):
-#        a_s.register_new_user("user2", PASSWORD)
+def test_needs_registration__two_users(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    a_s.register_new_user(USERNAME, PASSWORD)
+
+    with pytest.raises(UserLimitError):
+        a_s.register_new_user("user2", PASSWORD)
 
 
 def test_register_new_user__empty_password_fails(
