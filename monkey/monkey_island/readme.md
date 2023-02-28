@@ -11,8 +11,8 @@
 
 1. Create folder "bin" under monkey\monkey_island
 
-1. Place portable version of Python 3.7.4
-    - Download and install from: <https://www.python.org/ftp/python/3.7.4/>
+1. Place portable version of Python 3.11.2
+    - Download and install from: <https://www.python.org/ftp/python/3.11.2/>
 
 1. Install pipx
     - `pip install --user -U pipx`
@@ -63,15 +63,15 @@
 
 1. Set your current working directory to `monkey/`.
 
-1. Get python 3.7 and pip if your linux distribution doesn't have it built in (following steps are for Ubuntu 16):
+1. Get python 3.11 and pip if your linux distribution doesn't have it built in (following steps are for Ubuntu 16):
     - `sudo add-apt-repository ppa:deadsnakes/ppa`
     - `sudo apt-get update`
-    - `sudo apt install python3.7 python3-pip python3.7-dev python3.7-venv`
-    - `python3.7 -m pip install pip`
+    - `sudo apt install python3.11 python3-pip python3.11-dev python3.11-venv`
+    - `python3.11 -m pip install pip`
 
 1. Install pipx:
-    - `python3.7 -m pip install --user pipx`
-    - `python3.7 -m pipx ensurepath`
+    - `python3.11 -m pip install --user pipx`
+    - `python3.11 -m pipx ensurepath`
     - `source ~/.profile`
 
 1. Install pipenv:
@@ -124,7 +124,7 @@
 
 #### How to run
 
-1. From the `monkey` directory, run `python3.7 ./monkey_island.py`
+1. From the `monkey` directory, run `python3.11 ./monkey_island.py`
 
 
 #### Troubleshooting
@@ -133,11 +133,11 @@ When committing your changes for the first time, you may encounter some errors t
 To resolve this, use `pipenv` to create a `requirements.txt` for both the `infection_monkey/` and `monkey_island/` requirements and install it with `pip`.
 
    - `cd [code location]/infection_monkey`
-   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
-   - `python3.7 -m pip install -r requirements.txt`
+   - `python3.11 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.11 -m pip install -r requirements.txt`
 
    and
 
    - `cd [code location]/monkey_island`
-   - `python3.7 -m pipenv lock -r --dev > requirements.txt`
-   - `python3.7 -m pip install -r requirements.txt`
+   - `python3.11 -m pipenv lock -r --dev > requirements.txt`
+   - `python3.11 -m pip install -r requirements.txt`
