@@ -156,7 +156,7 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
     fingerprinters: Tuple[PluginConfiguration, ...] = Field(
         title="Fingerprinters",
         description="Fingerprint modules collect info about external "
-        "services Infection Monkey scans.",
+        "services that Infection Monkey scans.",
     )
     targets: ScanTargetConfiguration = Field(
         title="Network",
