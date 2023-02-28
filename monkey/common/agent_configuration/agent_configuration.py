@@ -24,5 +24,5 @@ class AgentConfiguration(MutableInfectionMonkeyBaseModel):
     )
     propagation: PropagationConfiguration = Field(
         title="Propagation",
-        description="Configure options related to the propagation step of the attack",
+        description="Configure options related to the propagation stage of the attack",
     )
