@@ -17,7 +17,7 @@ class AgentConfiguration(MutableInfectionMonkeyBaseModel):
     )
     credential_collectors: Tuple[PluginConfiguration, ...] = Field(
         title="Credential collectors",
-        description="Configure options related to credential collection stage of the attack",
+        description="Configure options related to the credential collection stage of the attack",
     )
     payloads: Dict[str, Dict] = Field(
         title="Payloads", description="Configure payloads that Agents will execute"
