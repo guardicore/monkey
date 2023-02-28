@@ -3,11 +3,10 @@ param(
     [String] $monkey_home = (Get-Item -Path ".\").FullName,
 
     [Parameter(Mandatory = $false, Position = 1)]
-    [System.String]
-    $branch = "develop",
+    [String] $branch = "develop",
+
     [Parameter(Mandatory = $false, Position = 2)]
-    [Bool]
-    $agents = $true
+    [Bool] $agents = $true
 )
 
 function Configure-precommit([String] $git_repo_dir)
