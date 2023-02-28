@@ -91,9 +91,9 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     try
     {
         $version = cmd.exe /c '"python" --version  2>&1'
-        if ($version -like 'Python 3.*')
+        if ($version -like 'Python 3.11*')
         {
-            "Python 3.* was found, installing dependencies"
+            "Python 3.11* was found, installing dependencies"
         }
         else
         {
