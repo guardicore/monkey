@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 
 from flask import jsonify, make_response, request
-from flask_login import current_user, login_required, login_user
+from flask_login import current_user, login_user
 
 from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.flask_utils import AbstractResource
@@ -25,7 +25,6 @@ class Authenticate(AbstractResource):
     def get(self):
         return jsonify({"authenticated": current_user.is_authenticated})
 
-    @login_required
     def post(self):
         """
         Authenticates a user
@@ -45,4 +44,5 @@ class Authenticate(AbstractResource):
             return make_response({"error": "Invalid credentials"}, HTTPStatus.UNAUTHORIZED)
 
         login_user(user)
+
         return jsonify({"login": True})
