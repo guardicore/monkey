@@ -14,6 +14,7 @@ class User(Document, UserMixin):
     password = StringField()
     active = BooleanField(default=True)
     roles = ListField(ReferenceField(Role), default=[])
+    fs_uniquifier = StringField(max_length=64, unique=True)
 
     @staticmethod
     def get_by_id(id: str):
