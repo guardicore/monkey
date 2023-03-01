@@ -9,7 +9,6 @@ from monkey_island.cc.services import AuthenticationService
 @pytest.fixture
 def mock_authentication_service():
     mock_service = MagicMock(spec=AuthenticationService)
-    mock_service.authenticate = MagicMock()
 
     return mock_service
 

@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -75,14 +74,3 @@ def test_reset_island__publish_to_event_topics(
             call(topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET),
         ]
     )
-
-
-def test_authenticate__failed_no_registered_user(
-    mock_flask_app, tmp_path, mock_repository_encryptor
-):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-
-    with pytest.raises(IncorrectCredentialsError):
-        a_s.authenticate(USERNAME, PASSWORD)
-
-    mock_repository_encryptor.unlock.assert_not_called()
