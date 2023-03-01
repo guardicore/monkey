@@ -27,11 +27,10 @@ class Register(AbstractResource):
         Registers a new user using flask security register
 
         """
-        username, password = get_username_password_from_request(request)
-
         response: ResponseValue = register()
         if response.status_code == HTTPStatus.OK:
             self._authentication_service.reset_island_data()
+            username, password = get_username_password_from_request(request)
             self._authentication_service.reset_repository_encryptor(username, password)
 
         return make_response(response)
