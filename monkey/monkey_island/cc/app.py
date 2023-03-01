@@ -6,7 +6,7 @@ from flask import Flask, Response, send_from_directory
 from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
 from werkzeug.exceptions import NotFound
-from wtforms import PasswordField, StringField, validators
+from wtforms import StringField
 
 from common import DIContainer
 from monkey_island.cc.models import Role, User
@@ -93,10 +93,6 @@ def setup_authentication(app, data_dir):
         # so we remove validators from the email field, because we expected username
         # instead of email in the registration request
         email = StringField("Email", default="dummy@dummy.com")
-        password = PasswordField(
-            "Password",
-            [validators.DataRequired(), validators.Length(min=1, max=25)],
-        )
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
 
