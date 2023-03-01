@@ -11,3 +11,4 @@ from .in_memory_machine_repository import InMemoryMachineRepository
 from .in_memory_node_repository import InMemoryNodeRepository
 from .in_memory_agent_event_repository import InMemoryAgentEventRepository
 from .in_memory_agent_plugin_repository import InMemoryAgentPluginRepository
+from .in_memory_agent_configuration_service import InMemoryAgentConfigurationService
