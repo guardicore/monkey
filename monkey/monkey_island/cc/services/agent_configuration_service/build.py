@@ -2,7 +2,8 @@ from common import DIContainer
 from monkey_island.cc.repositories import FileAgentConfigurationRepository
 from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
 
-from . import AgentConfigurationService, IAgentConfigurationService
+from . import IAgentConfigurationService
+from .agent_configuration_service import AgentConfigurationService
 
 
 def build(container: DIContainer) -> IAgentConfigurationService:

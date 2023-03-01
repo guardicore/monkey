@@ -71,10 +71,8 @@ from monkey_island.cc.services import (
     AgentConfigurationSchemaService,
     AgentSignalsService,
     AWSService,
-)
-from monkey_island.cc.services.agent_configuration_service import IAgentConfigurationService
-from monkey_island.cc.services.agent_configuration_service import (
-    build as build_agent_configuration_service,
+    IAgentConfigurationService,
+    build_agent_configuration_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
