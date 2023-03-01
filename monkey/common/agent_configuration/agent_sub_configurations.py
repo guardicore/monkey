@@ -231,7 +231,7 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
     )
     network_scan: NetworkScanConfiguration = Field(
         title="Network analysis",
-        description="Configure the network analysis the Agents will perform",
+        description="Configure the network analysis that the Agents will perform",
     )
     exploitation: ExploitationConfiguration = Field(
         title="Exploiters", description="Configure the exploitation step of the attack"
