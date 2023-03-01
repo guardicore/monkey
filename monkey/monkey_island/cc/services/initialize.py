@@ -72,6 +72,10 @@ from monkey_island.cc.services import (
     AgentSignalsService,
     AWSService,
 )
+from monkey_island.cc.services.agent_configuration_service import IAgentConfigurationService
+from monkey_island.cc.services.agent_configuration_service import (
+    build as build_agent_configuration_service,
+)
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
@@ -283,4 +287,7 @@ def _register_services(container: DIContainer):
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(
         AgentConfigurationSchemaService, container.resolve(AgentConfigurationSchemaService)
+    )
+    container.register_instance(
+        IAgentConfigurationService, build_agent_configuration_service(container)
     )
