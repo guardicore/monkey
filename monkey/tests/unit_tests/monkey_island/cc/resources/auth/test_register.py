@@ -21,16 +21,7 @@ def make_auth_request(flask_client):
     return inner
 
 
-def test_register__already_registered(monkeypatch, make_auth_request, mock_authentication_service):
-    mock_authentication_service.needs_registration.return_value = False
-
-    response = make_auth_request(TEST_REQUEST)
-    assert response.status_code == 400
-
-
-def test_register_with_empty_credentials(
-    monkeypatch, make_auth_request, mock_authentication_service
-):
+def test_register_failed(monkeypatch, make_auth_request, mock_authentication_service):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.register.register",
         lambda: Response(
@@ -40,6 +31,7 @@ def test_register_with_empty_credentials(
     response = make_auth_request("{}")
 
     mock_authentication_service.reset_island.assert_not_called()
+    mock_authentication_service.reset_repository_encryptor.assert_not_called()
     assert response.status_code == 400
 
 
@@ -54,7 +46,8 @@ def test_register_successful(monkeypatch, make_auth_request, mock_authentication
     response = make_auth_request(TEST_REQUEST)
 
     assert response.status_code == 200
-    mock_authentication_service.reset_island.assert_called_with(USERNAME, PASSWORD)
+    mock_authentication_service.reset_island_data.assert_called_once()
+    mock_authentication_service.reset_repository_encryptor.assert_called_once()
 
 
 def test_register_error(monkeypatch, make_auth_request, mock_authentication_service):
@@ -63,7 +56,7 @@ def test_register_error(monkeypatch, make_auth_request, mock_authentication_serv
         lambda: Response(status=200),
     )
 
-    mock_authentication_service.reset_island = MagicMock(side_effect=Exception())
+    mock_authentication_service.reset_island_data = MagicMock(side_effect=Exception())
 
     response = make_auth_request(TEST_REQUEST)
 
