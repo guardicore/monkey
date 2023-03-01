@@ -45,6 +45,7 @@ class AuthenticationService:
         self._reset_repository_encryptor(username, password)
 
     def authenticate(self, username: str, password: str) -> User:
+        # TODO: Fix while doing login
         registered_user = User.objects.filter(username=username).first()
 
         if registered_user is None or not registered_user.verify_and_update_password(password):
