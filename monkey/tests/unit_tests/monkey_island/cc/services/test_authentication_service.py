@@ -53,7 +53,7 @@ def test_reset_island__unlock_encryptor_on_register(
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    a_s.reset_island(USERNAME, PASSWORD)
+    a_s.reset_repository_encryptor(USERNAME, PASSWORD)
 
     mock_repository_encryptor.reset_key.assert_called_once()
     mock_repository_encryptor.unlock.assert_called_once()
@@ -65,7 +65,7 @@ def test_reset_island__publish_to_event_topics(
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    a_s.reset_island(USERNAME, PASSWORD)
+    a_s.reset_island_data()
 
     assert mock_island_event_queue.publish.call_count == 3
     mock_island_event_queue.publish.assert_has_calls(
