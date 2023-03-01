@@ -197,7 +197,8 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     options: ExploitationOptionsConfiguration = Field(
-        title="Exploiters options", description="Configure other options related to exploitation"
+        title="Exploiters options",
+        description="Configure exploitation options shared by all exploiters",
     )
     exploiters: Dict[str, Dict] = Field(
         title="Enabled exploiters",
