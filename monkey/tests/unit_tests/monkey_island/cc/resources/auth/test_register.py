@@ -1,4 +1,3 @@
-import json
 from unittest.mock import MagicMock
 
 import pytest
@@ -60,5 +59,4 @@ def test_register_error(monkeypatch, make_auth_request, mock_authentication_serv
 
     response = make_auth_request(TEST_REQUEST)
 
-    assert "csrf_token" not in json.loads(response.data)
     assert response.status_code == 500

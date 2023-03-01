@@ -77,35 +77,6 @@ def test_reset_island__publish_to_event_topics(
     )
 
 
-# @pytest.mark.slow
-# @pytest.mark.parametrize(
-#    ("username", "password"), [("wrong_username", PASSWORD), (USERNAME, "wrong_password")]
-# )
-# def test_authenticate__failed_wrong_credentials(
-#    mock_flask_app, tmp_path, username, password, mock_repository_encryptor,
-#    mock_island_event_queue
-# ):
-#
-#    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-#    a_s.register_new_user(USERNAME, PASSWORD)
-#    with pytest.raises(IncorrectCredentialsError):
-#        a_s.authenticate(username, password)
-#
-#    mock_repository_encryptor.unlock.call_count == 2
-#
-#
-# @pytest.mark.slow
-# def test_authenticate__success(
-#    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
-# ):
-#    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-#
-#    # If authentication fails, this function will raise an exception and the test will fail.
-#    a_s.register_new_user(USERNAME, PASSWORD)
-#    a_s.authenticate(USERNAME, PASSWORD)
-#    mock_repository_encryptor.unlock.call_count == 2
-
-
 def test_authenticate__failed_no_registered_user(
     mock_flask_app, tmp_path, mock_repository_encryptor
 ):
