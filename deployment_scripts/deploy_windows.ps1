@@ -91,9 +91,9 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     try
     {
         $version = cmd.exe /c '"python" --version  2>&1'
-        if ($version -like 'Python 3.11*')
+        if ($version -match $PYTHON_VERSION_REGEX -and $Matches.2 -ge 2)
         {
-            "Python 3.11* was found, installing dependencies"
+            "$version was found, installing dependencies"
         }
         else
         {
@@ -102,7 +102,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
-        "Downloading python 3 ..."
+        "Downloading python $MONKEY_PYTHON_VERSION ..."
         "Select 'add to PATH' when installing"
         $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
         Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
