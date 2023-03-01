@@ -89,7 +89,9 @@ def setup_authentication(app, data_dir):
     db = MongoEngine(app)
 
     class CustomConfirmRegisterForm(ConfirmRegisterForm):
-        # Flask-Security doesn't let you register without an email field
+        # Flask-Security-Too by default expects email field in the User model
+        # so we remove validators from the email field, because we expected username
+        # instead of email in the registration request
         email = StringField("Email", default="dummy@dummy.com")
         password = PasswordField(
             "Password",
