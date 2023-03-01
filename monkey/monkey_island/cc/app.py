@@ -81,25 +81,27 @@ def setup_authentication(app, data_dir):
     app.config["SECURITY_USERNAME_ENABLE"] = True
     app.config["SECURITY_USERNAME_REQUIRED"] = True
     app.config["SECURITY_REGISTERABLE"] = True
+    app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+    # Ignore CSRF, because it's irrelevant for javascript applications
     app.config["WTF_CSRF_CHECK_DEFAULT"] = False
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
-    app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
 
     # The database object needs to be created after we configure the flask application
     db = MongoEngine(app)
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
 
-    class CustomConfirmRegisterForm(ConfirmRegisterForm):
-        # Validator that check that only single user is registered
-        def validate_no_user_exists_already(_, field):
-            if user_datastore.find_user():
-                raise ValidationError(
-                    "A user already exists. Only a single user can be registered."
-                )
+    # Only one user can be registered in the Island, so we need a custom validator
+    def validate_no_user_exists_already(_, field):
+        if user_datastore.find_user():
+            raise ValidationError("A user already exists. Only a single user can be registered.")
 
-        # Email field is required by ConfirmRegisterForm
-        # Added custom validator on email because we have to override email validators anyway
+    class CustomConfirmRegisterForm(ConfirmRegisterForm):
+
+        # We don't use the email, but the field is required by ConfirmRegisterForm.
+        # Email validators need to be overriden, otherwise an error about invalid email is raised.
+        # Added custom validator to the email field because we have to override
+        # email validators anyway.
         email = StringField(
             "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
         )
