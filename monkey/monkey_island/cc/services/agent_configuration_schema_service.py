@@ -7,7 +7,7 @@ class AgentConfigurationSchemaService:
     """
 
     def __init__(self, parser: AgentConfigurationSchemaCompiler):
-        self.parser = parser
+        self._parser = parser
 
     def get_schema(self):
         """
@@ -16,4 +16,4 @@ class AgentConfigurationSchemaService:
         :return: Agent configuration schema
         :raises RuntimeError: If the schema could not be retrieved
         """
-        return self.parser.get_schema()
+        return self._parser.get_schema()
