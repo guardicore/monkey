@@ -2,15 +2,15 @@ from unittest.mock import MagicMock, call
 
 import pytest
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError
+from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode
+from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services import AuthenticationService
 
 USERNAME = "user1"
 PASSWORD = "test"
-PASSWORD_HASH = "$2b$12$YsGjjuJFddYJ6z5S5/nMCuKkCzKHB1AWY9SXkQ02i25d8TgdhIRS2"
+PASSWORD_HASH = "$2b$12$yQzymz55fRvm8rApg7erluIvIAKSFSDrNIOIrOlxC4sXsDSkeu9z2"
 
 
 # Some tests have these fixtures as arguments even though `autouse=True`, because
@@ -28,37 +28,44 @@ def mock_island_event_queue(autouse=True):
     return MagicMock(spec=IIslandEventQueue)
 
 
-def test_register_new_user__empty_password_fails(
-    tmp_path, mock_repository_encryptor, mock_island_event_queue
+def test_needs_registration__true(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    with pytest.raises(InvalidRegistrationCredentialsError):
-        a_s.register_new_user(USERNAME, "")
-
-    mock_repository_encryptor.reset_key().assert_not_called()
-    mock_repository_encryptor.unlock.assert_not_called()
-    mock_island_event_queue.publish.assert_not_called()
+    assert a_s.needs_registration()
 
 
-@pytest.mark.slow
-def test_register_new_user(tmp_path, mock_repository_encryptor, mock_island_event_queue):
+def test_needs_registration__false(
+    monkeypatch, mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    a_s.register_new_user(USERNAME, PASSWORD)
+    mock_user = MagicMock(spec=User)
+    monkeypatch.setattr("monkey_island.cc.services.authentication_service.User", mock_user)
+    mock_user.objects.first.return_value = User(username=USERNAME)
+
+    assert not a_s.needs_registration()
+
+
+def test_reset_island__unlock_encryptor_on_register(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+
+    a_s.reset_repository_encryptor(USERNAME, PASSWORD)
 
     mock_repository_encryptor.reset_key.assert_called_once()
     mock_repository_encryptor.unlock.assert_called_once()
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
 
 
-@pytest.mark.slow
-def test_register_new_user__publish_to_event_topics(
-    tmp_path, mock_repository_encryptor, mock_island_event_queue
+def test_reset_island__publish_to_event_topics(
+    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    a_s.register_new_user(USERNAME, PASSWORD)
+    a_s.reset_island_data()
 
     assert mock_island_event_queue.publish.call_count == 3
     mock_island_event_queue.publish.assert_has_calls(
@@ -70,10 +77,12 @@ def test_register_new_user__publish_to_event_topics(
     )
 
 
-@pytest.mark.slow
-def test_authenticate__success(tmp_path, mock_repository_encryptor):
+def test_authenticate__failed_no_registered_user(
+    mock_flask_app, tmp_path, mock_repository_encryptor
+):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    # If authentication fails, this function will raise an exception and the test will fail.
-    a_s.authenticate(USERNAME, PASSWORD)
-    mock_repository_encryptor.unlock.assert_called_once()
+    with pytest.raises(IncorrectCredentialsError):
+        a_s.authenticate(USERNAME, PASSWORD)
+
+    mock_repository_encryptor.unlock.assert_not_called()
