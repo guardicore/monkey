@@ -4,7 +4,7 @@ import pytest
 
 from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode
+from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services import AuthenticationService
 
@@ -36,14 +36,16 @@ def test_needs_registration__true(
     assert a_s.needs_registration()
 
 
-# def test_needs_registration__false(
-#    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
-# ):
-#    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-#
-#    a_s.register_new_user(USERNAME, PASSWORD)
-#
-#    assert not a_s.needs_registration()
+def test_needs_registration__false(
+    monkeypatch, mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+):
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+
+    mock_user = MagicMock(spec=User)
+    monkeypatch.setattr("monkey_island.cc.services.authentication_service.User", mock_user)
+    mock_user.objects.first.return_value = User(username=USERNAME)
+
+    assert not a_s.needs_registration()
 
 
 def test_reset_island__unlock_encryptor_on_register(
