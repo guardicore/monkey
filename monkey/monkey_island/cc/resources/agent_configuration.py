@@ -29,8 +29,7 @@ class AgentConfiguration(AbstractResource):
         try:
             configuration_object = AgentConfigurationObject(**request.json)
             self._agent_configuration_service.update_configuration(configuration_object)
-            # API Spec: Should return 204 (NO CONTENT)
-            return make_response({}, HTTPStatus.OK)
+            return make_response({}, HTTPStatus.NO_CONTENT)
         except (
             ValueError,
             TypeError,
