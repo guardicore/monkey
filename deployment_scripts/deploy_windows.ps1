@@ -34,6 +34,31 @@ function Assert-CommandExists($command)
 
 }
 
+function Clone-MonkeyRepo
+{
+    $command = "git clone --single-branch --recurse-submodules -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
+    Write-Output $command
+    $output = cmd.exe /c $command
+    $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
+    if ($output -like "*already exists and is not an empty directory.*")
+    {
+        "Assuming you already have the source directory. If not, make sure to set an empty directory as monkey's home directory."
+    }
+    elseif ($output -like "fatal:*")
+    {
+        "Error while cloning monkey from the repository:"
+        $output
+        exit 1
+    }
+    else
+    {
+        "Monkey cloned from the repository"
+        # Create bin directory
+        New-Item -ItemType directory -path $binDir
+        "Bin directory added"
+    }
+}
+
 function Configure-precommit([String] $git_repo_dir)
 {
     Print-Status "Installing pre-commit and setting up pre-commit hook"
@@ -79,29 +104,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
     # Check if git is installed
     Assert-CommandExists git
-
-    # Download the monkey
-    $command = "git clone --single-branch --recurse-submodules -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
-    Write-Output $command
-    $output = cmd.exe /c $command
-    $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
-    if ($output -like "*already exists and is not an empty directory.*")
-    {
-        "Assuming you already have the source directory. If not, make sure to set an empty directory as monkey's home directory."
-    }
-    elseif ($output -like "fatal:*")
-    {
-        "Error while cloning monkey from the repository:"
-        $output
-        exit 1
-    }
-    else
-    {
-        "Monkey cloned from the repository"
-        # Create bin directory
-        New-Item -ItemType directory -path $binDir
-        "Bin directory added"
-    }
+    Clone-MonkeyRepo
 
     # We check if python is installed
     try
