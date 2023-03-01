@@ -21,7 +21,7 @@ class AgentConfiguration(AbstractResource):
     def get(self):
         configuration = self._agent_configuration_service.get_configuration()
         configuration_dict = configuration.dict(simplify=True)
-        return make_response(configuration_dict, 200)
+        return make_response(configuration_dict, HTTPStatus.OK)
 
     @jwt_required
     def put(self):
