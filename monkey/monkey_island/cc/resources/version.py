@@ -1,8 +1,7 @@
 import logging
 
 from monkey_island.cc import Version as IslandVersion
-from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
+from monkey_island.cc.flask_utils import AbstractResource, jwt_required
 
 logger = logging.getLogger(__name__)
 
