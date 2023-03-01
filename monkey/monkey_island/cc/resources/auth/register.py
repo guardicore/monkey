@@ -27,18 +27,11 @@ class Register(AbstractResource):
         Registers a new user using flask security register
 
         """
-        try:
-            if not self._authentication_service.needs_registration():
-                return make_response(
-                    {"error": "User is already registered"}, HTTPStatus.BAD_REQUEST
-                )
+        username, password = get_username_password_from_request(request)
 
-            username, password = get_username_password_from_request(request)
+        response: ResponseValue = register()
+        if response.status_code == HTTPStatus.OK:
+            self._authentication_service.reset_island_data()
+            self._authentication_service.reset_repository_encryptor(username, password)
 
-            response: ResponseValue = register()
-            if response.status_code == HTTPStatus.OK:
-                self._authentication_service.reset_island(username, password)
-
-            return make_response(response)
-        except Exception as err:
-            return make_response({"error": str(err)}, HTTPStatus.INTERNAL_SERVER_ERROR)
+        return make_response(response)
