@@ -122,6 +122,19 @@ function Install-NPM
     }
 }
 
+function Download-UPX([String] $DestinationPath)
+{
+    Print-Status "Downloading upx ..."
+    $webClient.DownloadFile($UPX_URL, $TEMP_UPX_ZIP)
+    "Unzipping upx"
+    Expand-Archive $TEMP_UPX_ZIP -DestinationPath $DestinationPath -ErrorAction SilentlyContinue
+    Move-Item -Path (Join-Path -Path $DestinationPath -ChildPath $UPX_FOLDER | Join-Path -ChildPath "upx.exe") -Destination $DestinationPath
+    # Remove unnecessary files
+    Remove-Item -Recurse -Force (Join-Path -Path $DestinationPath -ChildPath $UPX_FOLDER)
+    "Removing zip file"
+    Remove-Item $TEMP_UPX_ZIP
+}
+
 function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, [String] $branch = "develop")
 {
     Print-Status "Downloading to $monkey_home"
@@ -238,15 +251,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     # Download upx
     if (!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "upx.exe")))
     {
-        Print-Status "Downloading upx ..."
-        $webClient.DownloadFile($UPX_URL, $TEMP_UPX_ZIP)
-        "Unzipping upx"
-        Expand-Archive $TEMP_UPX_ZIP -DestinationPath $binDir -ErrorAction SilentlyContinue
-        Move-Item -Path (Join-Path -Path $binDir -ChildPath $UPX_FOLDER | Join-Path -ChildPath "upx.exe") -Destination $binDir
-        # Remove unnecessary files
-        Remove-Item -Recurse -Force (Join-Path -Path $binDir -ChildPath $UPX_FOLDER)
-        "Removing zip file"
-        Remove-Item $TEMP_UPX_ZIP
+        Download-UPX $binDir
     }
 
 
