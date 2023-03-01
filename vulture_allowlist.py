@@ -13,7 +13,7 @@ from common.hard_coded_manifests.hard_coded_credential_collector_manifests impor
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
-from common.types import Lock, NetworkPort, NetworkService, PluginName
+from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
@@ -135,8 +135,3 @@ Lock.locked
 AgentPlugin.supported_operating_systems
 
 HadoopPlugin
-
-# Remove after #2136
-NetworkService.HTTP
-NetworkService.MSSQL
-NetworkService.SMB
