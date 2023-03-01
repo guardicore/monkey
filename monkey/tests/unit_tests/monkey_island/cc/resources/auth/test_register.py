@@ -1,4 +1,4 @@
-import re
+import json
 from unittest.mock import MagicMock
 
 import pytest
@@ -24,38 +24,35 @@ def make_auth_request(flask_client):
 def test_register_with_empty_credentials(
     monkeypatch, make_auth_request, mock_authentication_service
 ):
-    monkeypatch.setattr(
-        "flask_security.views.register",
-        lambda: Response(status_code=400),
-    )
     response = make_auth_request("{}")
     mock_authentication_service.reset_island.assert_not_called()
 
     assert response.status_code == 400
 
 
-# def test_authentication_successful(make_auth_request, mock_authentication_service):
-#    response = make_auth_request(TEST_REQUEST)
+def test_register_successful(monkeypatch, make_auth_request, mock_authentication_service):
+    monkeypatch.setattr(
+        "monkey_island.cc.resources.auth.register.register",
+        lambda: Response(
+            status=200,
+        ),
+    )
 
-#    assert response.status_code == 200
-#    assert re.match(
-#        r"^[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=\-_]+$", response.json["csrf_token"]
-#    )
+    response = make_auth_request(TEST_REQUEST)
 
-
-# def test_authentication_failure(make_auth_request, mock_authentication_service):
-#
-#    response = make_auth_request(TEST_REQUEST)
-#
-#    assert "access_token" not in response.json
-#    assert response.status_code == 401
-#    assert response.json["error"] == "Invalid credentials"
+    assert response.status_code == 200
+    mock_authentication_service.reset_island.assert_called_with(USERNAME, PASSWORD)
 
 
-# def test_authentication_error(make_auth_request, mock_authentication_service):
-#    mock_authentication_service.authenticate = MagicMock(side_effect=Exception())
-#
-#    response = make_auth_request(TEST_REQUEST)
-#
-#    assert "access_token" not in response.json
-#    assert response.status_code == 500
+def test_register_error(monkeypatch, make_auth_request, mock_authentication_service):
+    monkeypatch.setattr(
+        "monkey_island.cc.resources.auth.register.register",
+        lambda: Response(status=200),
+    )
+
+    mock_authentication_service.reset_island = MagicMock(side_effect=Exception())
+
+    response = make_auth_request(TEST_REQUEST)
+
+    assert "csrf_token" not in json.loads(response.data)
+    assert response.status_code == 500
