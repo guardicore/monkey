@@ -30,8 +30,7 @@ function Assert-CommandExists($command)
         Write-Output "Command does not exist: $command"
         Write-Output "Please install $command or add it to path before running this script"
         exit 1
-    } 
-
+    }
 }
 
 function Clone-MonkeyRepo
