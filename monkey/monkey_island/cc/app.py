@@ -6,7 +6,7 @@ from flask import Flask, Response, send_from_directory
 from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
 from werkzeug.exceptions import NotFound
-from wtforms import StringField
+from wtforms import StringField, ValidationError
 
 from common import DIContainer
 from monkey_island.cc.models import Role, User
@@ -88,13 +88,21 @@ def setup_authentication(app, data_dir):
     # The database object needs to be created after we configure the flask application
     db = MongoEngine(app)
 
-    class CustomConfirmRegisterForm(ConfirmRegisterForm):
-        # Flask-Security-Too by default expects email field in the User model
-        # so we remove validators from the email field, because we expected username
-        # instead of email in the registration request
-        email = StringField("Email", default="dummy@dummy.com")
-
     user_datastore = MongoEngineUserDatastore(db, User, Role)
+
+    class CustomConfirmRegisterForm(ConfirmRegisterForm):
+        # Validator that check that only single user is registered
+        def validate_no_user_exists_already(_, field):
+            if user_datastore.find_user():
+                raise ValidationError(
+                    "A user already exists. Only a single user can be registered."
+                )
+
+        # Email field is required by ConfirmRegisterForm
+        # Added custom validator on email because we have to override email validators anyway
+        email = StringField(
+            "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
+        )
 
     app.security = Security(app, user_datastore, confirm_register_form=CustomConfirmRegisterForm)
 
