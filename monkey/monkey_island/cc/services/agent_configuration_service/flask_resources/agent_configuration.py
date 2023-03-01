@@ -7,7 +7,8 @@ from common.agent_configuration.agent_configuration import (
     AgentConfiguration as AgentConfigurationObject,
 )
 from monkey_island.cc.flask_utils import AbstractResource, jwt_required
-from monkey_island.cc.services import IAgentConfigurationService, PluginConfigurationValidationError
+
+from .. import IAgentConfigurationService, PluginConfigurationValidationError
 
 
 class AgentConfiguration(AbstractResource):

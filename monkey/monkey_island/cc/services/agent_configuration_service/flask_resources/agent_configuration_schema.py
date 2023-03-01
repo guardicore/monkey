@@ -1,7 +1,8 @@
 from http import HTTPStatus
 
 from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.services import IAgentConfigurationService
+
+from .. import IAgentConfigurationService
 
 
 class AgentConfigurationSchema(AbstractResource):

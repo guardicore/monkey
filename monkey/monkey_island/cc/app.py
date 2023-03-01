@@ -10,8 +10,6 @@ from common import DIContainer
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
-    AgentConfiguration,
-    AgentConfigurationSchema,
     AgentEvents,
     AgentHeartbeat,
     AgentLogs,
@@ -38,6 +36,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.services import register_agent_configuration_resources
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -103,8 +102,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(LocalRun)
 
     api.add_resource(IslandMode)
-    api.add_resource(AgentConfiguration)
-    api.add_resource(AgentConfigurationSchema)
     api.add_resource(AgentBinaries)
     api.add_resource(AgentPlugins)
     api.add_resource(AgentPluginsManifest)
@@ -129,6 +126,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(ReportGenerationStatus)
 
     api.add_resource(AgentHeartbeat)
+
+    register_agent_configuration_resources(api)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):

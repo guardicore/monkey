@@ -13,7 +13,7 @@ from common.agent_configuration import AgentConfiguration
 from common.types import JSONSerializable
 from monkey_island.cc.repositories import StorageError
 from monkey_island.cc.services import IAgentConfigurationService, PluginConfigurationValidationError
-from monkey_island.cc.services.agent_configuration_service.flask_resources import (
+from monkey_island.cc.services.agent_configuration_service.flask_resources.agent_configuration import (  # noqa: E501
     AgentConfiguration as AgentConfigurationResource,
 )
 
