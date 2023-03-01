@@ -29,7 +29,7 @@ def test_register_failed(monkeypatch, make_auth_request, mock_authentication_ser
     )
     response = make_auth_request("{}")
 
-    mock_authentication_service.reset_island.assert_not_called()
+    mock_authentication_service.reset_island_data.assert_not_called()
     mock_authentication_service.reset_repository_encryptor.assert_not_called()
     assert response.status_code == 400
 

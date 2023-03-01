@@ -10,7 +10,6 @@ from monkey_island.cc.services import AuthenticationService
 def mock_authentication_service():
     mock_service = MagicMock(spec=AuthenticationService)
     mock_service.authenticate = MagicMock()
-    mock_service.reset_island = MagicMock()
 
     return mock_service
 
