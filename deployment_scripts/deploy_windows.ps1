@@ -19,6 +19,21 @@ function Print-Status([Parameter(Mandatory = $true)] [string]$Text)
     Write-Output "$($BOLD)$($CYAN)$Text$($RESET)"
 }
 
+function Assert-CommandExists($command)
+{
+    try
+    {
+        Get-Command $command -ErrorAction Stop | Out-Null
+    }
+    catch [System.Management.Automation.CommandNotFoundException]
+    {
+        Write-Output "Command does not exist: $command"
+        Write-Output "Please install $command or add it to path before running this script"
+        exit 1
+    } 
+
+}
+
 function Configure-precommit([String] $git_repo_dir)
 {
     Print-Status "Installing pre-commit and setting up pre-commit hook"
@@ -62,17 +77,8 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
 
 
-    # We check if git is installed
-    try
-    {
-        git | Out-Null -ErrorAction Stop
-        "Git requirement satisfied"
-    }
-    catch [System.Management.Automation.CommandNotFoundException]
-    {
-        "Please install git before running this script or add it to path and restart cmd"
-        exit 1
-    }
+    # Check if git is installed
+    Assert-CommandExists git
 
     # Download the monkey
     $command = "git clone --single-branch --recurse-submodules -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
