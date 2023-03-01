@@ -29,20 +29,15 @@ class AuthenticationService:
         """
         return not User.objects.first()
 
-    def reset_island(self, username: str, password: str):
+    def reset_island_data(self):
         """
-        Resets the encryptor and database
-
-        :param username: Username to reset encryptor
-        :param password: Password to reset encryptor
+        Resets the island
         """
         self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
         self._island_event_queue.publish(IslandEventTopic.RESET_AGENT_CONFIGURATION)
         self._island_event_queue.publish(
             topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET
         )
-
-        self._reset_repository_encryptor(username, password)
 
     def authenticate(self, username: str, password: str) -> User:
         # TODO: Fix while doing login
@@ -55,13 +50,13 @@ class AuthenticationService:
 
         return registered_user
 
-    def _unlock_repository_encryptor(self, username: str, password: str):
-        secret = _get_secret_from_credentials(username, password)
-        self._repository_encryptor.unlock(secret.encode())
-
-    def _reset_repository_encryptor(self, username: str, password: str):
+    def reset_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.reset_key()
+        self._repository_encryptor.unlock(secret.encode())
+
+    def _unlock_repository_encryptor(self, username: str, password: str):
+        secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.unlock(secret.encode())
 
 
