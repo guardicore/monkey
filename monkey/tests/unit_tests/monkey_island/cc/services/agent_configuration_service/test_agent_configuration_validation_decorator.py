@@ -3,17 +3,16 @@ from tests.monkey_island import InMemoryAgentConfigurationRepository, InMemoryAg
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION
 from common.base_models import MutableInfectionMonkeyBaseModel
-from monkey_island.cc.repositories import (
-    IAgentConfigurationRepository,
-    IAgentPluginRepository,
-    PluginConfigurationValidationError,
-    RetrievalError,
-)
+from monkey_island.cc.repositories import IAgentPluginRepository, RetrievalError
+from monkey_island.cc.services import PluginConfigurationValidationError
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_schema_compiler import (  # noqa: E501
     AgentConfigurationSchemaCompiler,
 )
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_validation_decorator import (  # noqa: E501
     AgentConfigurationValidationDecorator,
+)
+from monkey_island.cc.services.agent_configuration_service.i_agent_configuration_repository import (  # noqa: E501
+    IAgentConfigurationRepository,
 )
 
 

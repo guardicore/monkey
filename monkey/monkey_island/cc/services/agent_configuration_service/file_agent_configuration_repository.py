@@ -3,11 +3,9 @@ import json
 
 from common.agent_configuration import AgentConfiguration
 from monkey_island.cc import repositories
-from monkey_island.cc.repositories import (
-    IAgentConfigurationRepository,
-    IFileRepository,
-    RetrievalError,
-)
+from monkey_island.cc.repositories import IFileRepository, RetrievalError
+
+from .i_agent_configuration_repository import IAgentConfigurationRepository
 
 AGENT_CONFIGURATION_FILE_NAME = "agent_configuration.json"
 

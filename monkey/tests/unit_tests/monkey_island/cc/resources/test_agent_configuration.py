@@ -10,9 +10,8 @@ from tests.monkey_island import InMemoryAgentConfigurationService, InMemoryAgent
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.agent_configuration import AgentConfiguration
-from monkey_island.cc.repositories import PluginConfigurationValidationError
 from monkey_island.cc.resources import AgentConfiguration as AgentConfigurationResource
-from monkey_island.cc.services import IAgentConfigurationService
+from monkey_island.cc.services import IAgentConfigurationService, PluginConfigurationValidationError
 
 AGENT_CONFIGURATION_URL = get_url_for_resource(AgentConfigurationResource)
 

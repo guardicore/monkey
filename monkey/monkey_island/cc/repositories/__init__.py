@@ -3,10 +3,6 @@ from .errors import RemovalError, RepositoryError, RetrievalError, StorageError,
 
 from .i_file_repository import FileNotFoundError, IFileRepository
 from .i_agent_binary_repository import IAgentBinaryRepository
-from .i_agent_configuration_repository import (
-    IAgentConfigurationRepository,
-    PluginConfigurationValidationError,
-)
 from .i_simulation_repository import ISimulationRepository
 from .i_credentials_repository import ICredentialsRepository
 from .i_user_repository import IUserRepository

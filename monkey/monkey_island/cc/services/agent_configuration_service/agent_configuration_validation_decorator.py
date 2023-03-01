@@ -1,13 +1,13 @@
 from jsonschema import validate
 
 from common.agent_configuration import AgentConfiguration
-from monkey_island.cc.repositories import (
-    IAgentConfigurationRepository,
-    PluginConfigurationValidationError,
-    RetrievalError,
-)
+from monkey_island.cc.repositories import RetrievalError
 
 from .agent_configuration_schema_compiler import AgentConfigurationSchemaCompiler
+from .i_agent_configuration_repository import (
+    IAgentConfigurationRepository,
+    PluginConfigurationValidationError,
+)
 
 
 class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):
