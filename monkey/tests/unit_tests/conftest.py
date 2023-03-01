@@ -8,6 +8,7 @@ MONKEY_BASE_PATH = str(Path(__file__).parent.parent.parent)
 sys.path.insert(0, MONKEY_BASE_PATH)
 
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION, AgentConfiguration  # noqa: E402
+from common.utils.environment import is_windows_os  # noqa: E402
 
 
 @pytest.fixture(scope="session")
@@ -26,8 +27,16 @@ def stable_file_sha256_hash() -> str:
 
 
 @pytest.fixture
-def patched_home_env(monkeypatch, tmp_path):
-    monkeypatch.setenv("HOME", str(tmp_path))
+def home_env_variable():
+    if is_windows_os():
+        return "$USERPROFILE"
+    else:
+        return "$HOME"
+
+
+@pytest.fixture
+def patched_home_env(monkeypatch, tmp_path, home_env_variable):
+    monkeypatch.setenv(home_env_variable.strip("$"), str(tmp_path))
 
     return tmp_path
 

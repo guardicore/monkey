@@ -42,11 +42,11 @@ def test_data_dir_expanduser(patched_home_env):
     )
 
 
-def test_data_dir_expandvars(patched_home_env):
+def test_data_dir_expandvars(home_env_variable, patched_home_env):
     DATA_DIR_NAME = "test_data_dir"
 
     assert_data_dir_equals(
-        {"data_dir": os.path.join("$HOME", DATA_DIR_NAME)},
+        {"data_dir": os.path.join(home_env_variable, DATA_DIR_NAME)},
         patched_home_env / DATA_DIR_NAME,
     )
 
@@ -91,11 +91,11 @@ def test_crt_path_expanduser(patched_home_env):
     )
 
 
-def test_crt_path_expandvars(patched_home_env):
+def test_crt_path_expandvars(home_env_variable, patched_home_env):
     FILE_NAME = "test.crt"
 
     assert_ssl_certificate_file_equals(
-        {"ssl_certificate": {"ssl_certificate_file": os.path.join("$HOME", FILE_NAME)}},
+        {"ssl_certificate": {"ssl_certificate_file": os.path.join(home_env_variable, FILE_NAME)}},
         patched_home_env / FILE_NAME,
     )
 
@@ -126,11 +126,15 @@ def test_key_path_expanduser(patched_home_env):
     )
 
 
-def test_key_path_expandvars(patched_home_env):
+def test_key_path_expandvars(home_env_variable, patched_home_env):
     FILE_NAME = "test.key"
 
     assert_ssl_certificate_key_file_equals(
-        {"ssl_certificate": {"ssl_certificate_key_file": os.path.join("$HOME", FILE_NAME)}},
+        {
+            "ssl_certificate": {
+                "ssl_certificate_key_file": os.path.join(home_env_variable, FILE_NAME)
+            }
+        },
         patched_home_env / FILE_NAME,
     )
 
