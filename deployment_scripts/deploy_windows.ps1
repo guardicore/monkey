@@ -38,7 +38,6 @@ function Clone-MonkeyRepo
     $command = "git clone --single-branch --recurse-submodules -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
     Write-Output $command
     $output = cmd.exe /c $command
-    $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
     if ($output -like "*already exists and is not an empty directory.*")
     {
         "Assuming you already have the source directory. If not, make sure to set an empty directory as monkey's home directory."
@@ -52,9 +51,6 @@ function Clone-MonkeyRepo
     else
     {
         "Monkey cloned from the repository"
-        # Create bin directory
-        New-Item -ItemType directory -path $binDir
-        "Bin directory added"
     }
 }
 
@@ -200,6 +196,8 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         [Environment]::SetEnvironmentVariable("Path", $env:Path, "User")
     }
 
+    $binDir = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\bin")
+    New-Item -ItemType directory -path $binDir
     $install_mongo_script = (Join-Path -Path $monkey_home -ChildPath "$MONKEY_ISLAND_DIR\windows\install_mongo.ps1")
     Invoke-Expression "$install_mongo_script -binDir $binDir"
 
