@@ -33,9 +33,9 @@ function Assert-CommandExists($command)
     }
 }
 
-function Clone-MonkeyRepo
+function Clone-MonkeyRepo([String] $DestinationPath, [String] $Branch)
 {
-    $command = "git clone --single-branch --recurse-submodules -b $branch $MONKEY_GIT_URL $monkey_home 2>&1"
+    $command = "git clone --single-branch --recurse-submodules -b $Branch $MONKEY_GIT_URL $DestinationPath 2>&1"
     Write-Output $command
     $output = cmd.exe /c $command
     if ($output -like "*already exists and is not an empty directory.*")
@@ -158,7 +158,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
     # Check if git is installed
     Assert-CommandExists git
-    Clone-MonkeyRepo
+    Clone-MonkeyRepo $monkey_home -Branch $branch
     Install-Python
     "$(python --version) is installed"
 
