@@ -2,12 +2,12 @@ function getLegacyPluginDescriptors(schema, config) {
   return ([
     {
       name: 'Fingerprinters',
-      allPlugins: schema.properties.propagation.properties.network_scan.properties.fingerprinters.items.properties.name.anyOf,
+      allPlugins: schema.properties.propagation.properties.network_scan.properties.fingerprinters.properties,
       selectedPlugins: config.propagation.network_scan.fingerprinters
     },
     {
       name: 'CredentialCollectors',
-      allPlugins: schema.properties.credential_collectors.items.properties.name.anyOf,
+      allPlugins: schema.properties.credential_collectors.properties,
       selectedPlugins: config.credential_collectors
     }
   ]);
@@ -41,10 +41,10 @@ function isUnsafeLegacyPluginEnabled(schema, config) {
 
 function getUnsafeLegacyPlugins(pluginDescriptor) {
   let unsafePlugins = [];
-  for (let selectedPlugin of pluginDescriptor.selectedPlugins) {
-    unsafePlugins = pluginDescriptor.allPlugins.filter(
-      (pluginSchema) => pluginSchema.enum[0] === selectedPlugin.name
-        && !isPluginSafe(pluginSchema))
+  for (const [name, subschema] of Object.entries(pluginDescriptor.allPlugins)) {
+    if (!isPluginSafe(subschema)){
+      unsafePlugins.push(name)
+    }
   }
 
   return unsafePlugins;

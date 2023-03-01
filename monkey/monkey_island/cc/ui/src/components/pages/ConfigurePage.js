@@ -24,19 +24,18 @@ import {SCHEMA} from '../../services/configuration/configSchema.js';
 import {
   reformatConfig,
   formatCredentialsForForm,
-  formatCredentialsForIsland
+  formatCredentialsForIsland, reformatSchema
 } from '../configuration-components/ReformatHook';
 import {customizeValidator} from '@rjsf/validator-ajv8';
+import LoadingIcon from '../ui-components/LoadingIcon';
+import mergeAllOf from 'json-schema-merge-allof';
+import RefParser from '@apidevtools/json-schema-ref-parser';
+import CREDENTIALS from '../../services/configuration/propagation/credentials';
 
 const CONFIG_URL = '/api/agent-configuration';
 const SCHEMA_URL = '/api/agent-configuration-schema';
 const RESET_URL = '/api/reset-agent-configuration';
 const CONFIGURED_PROPAGATION_CREDENTIALS_URL = '/api/propagation-credentials/configured-credentials';
-// "new" schema is the one coming from back-end, the legacy one is defined in
-// monkey/monkey_island/cc/ui/src/services/configuration/configSchema.js
-const EXPLOITERS_SCHEMA_PATH_NEW = 'definitions.ExploitationConfiguration.properties.exploiters';
-const EXPLOITERS_SCHEMA_PATH_LEGACY = 'properties.propagation.properties.exploitation.properties.exploiters';
-
 const configSubmitAction = 'config-submit';
 const configExportAction = 'config-export';
 const configSaveAction = 'config-saved';
@@ -54,7 +53,7 @@ class ConfigurePageComponent extends AuthComponent {
       currentFormData: {},
       importCandidateConfig: null,
       lastAction: 'none',
-      schema: SCHEMA,
+      schema: null,
       sections: [],
       selectedSection: this.currentSection,
       showUnsafeOptionsConfirmation: false,
@@ -81,71 +80,15 @@ class ConfigurePageComponent extends AuthComponent {
     return CONFIGURATION_TABS_PER_MODE[islandMode];
   }
 
-  injectExploitersIntoLegacySchema = (newSchema) => {
-    // legacy schema is defined in UI,
-    // but we should use the schema provided by "/api/agent-configuration-schema"
-    // Remove when #2750 is done
-    let injectedSchema = _.cloneDeep(this.state.schema);
-    _.set(injectedSchema, EXPLOITERS_SCHEMA_PATH_LEGACY, _.get(newSchema, EXPLOITERS_SCHEMA_PATH_NEW));
-    return injectedSchema;
-  }
-
-  extractPluginsFromSchema = (schema) => {
-    // search the schema for plugins
-    let plugins = [];
-
-    // Search exploiters
-    for (let key of Object.keys(_.get(schema, EXPLOITERS_SCHEMA_PATH_NEW + '.properties'))) {
-      plugins.push(['Exploiter', key]);
-    }
-
-    return plugins
-  }
-
-  injectManifestIntoSchema = (manifest, schema) => {
-    let pluginName = manifest['name'];
-    let safe = manifest['safe'];
-    let link = manifest['link_to_documentation'];
-    let description = manifest['description'];
-    let title = manifest['title'];
-    let injectedSchema = _.cloneDeep(schema);
-    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.safe`, safe);
-    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.link`, link);
-    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.description`, description);
-    _.set(injectedSchema, `${EXPLOITERS_SCHEMA_PATH_NEW}.properties.${pluginName}.title`, title);
-    return injectedSchema;
-  }
-
-  fulfilledPromises = (res) => {
-    return res.filter(r => r.status === 'fulfilled').map(r => r.value);
-  }
-
-  rejectIfFailed = (res) => {
-    if (!res.ok) {
-      return Promise.reject(new Error(res.json()['message']));
-    }
-    return res.json();
-  }
-
   componentDidMount = () => {
-    let schema_promise = this.authFetch(SCHEMA_URL).then(res => res.json())
-    let manifests_promise = schema_promise.then(schema => {
-      let plugins = this.extractPluginsFromSchema(schema);
-      let plugin_manifests = [];
-      for (let plugin of plugins) {
-        let manifest_url = `/api/agent-plugins/${plugin[0]}/${plugin[1]}/manifest`;
-        // Because no manifests exist for the hard-coded plugins, we reject failed requests
-        plugin_manifests.push(this.authFetch(manifest_url).then(this.rejectIfFailed));
-      }
-      return Promise.allSettled(plugin_manifests);
-    }).then(this.fulfilledPromises);
+    this.authFetch(SCHEMA_URL).then(res => res.json())
+      .then((schema) => {
+        RefParser.dereference(schema).then((schema) => {
+          schema = mergeAllOf(schema);
+          schema = reformatSchema(schema);
+          this.setState({schema: schema});
+    })});
 
-    Promise.all([schema_promise, manifests_promise]).then(([schema, manifests]) => {
-      for (let manifest of manifests) {
-        schema = this.injectManifestIntoSchema(manifest, schema);
-      }
-      this.setState({schema: this.injectExploitersIntoLegacySchema(schema)});
-    });
     this.authFetch(CONFIG_URL).then(res => res.json())
       .then(monkeyConfig => {
         let sections = [];
@@ -342,8 +285,6 @@ class ConfigurePageComponent extends AuthComponent {
 
   sendConfig(config) {
     config = reformatConfig(config, true);
-    delete config['advanced'];
-    delete config['propagation']['general'];
 
     return (
       this.authFetch(CONFIG_URL,
@@ -442,11 +383,21 @@ class ConfigurePageComponent extends AuthComponent {
   };
 
   isSubmitDisabled = () => {
+    if(_.isEmpty(this.state.configuration)){
+      return true;
+    }
     let errors = this.validator.validateFormData(this.state.configuration, this.state.schema);
-    return errors.errors.length > 0
+    let credentialErrors = this.validator.validateFormData(this.state.credentials, CREDENTIALS);
+    return errors.errors.length+credentialErrors.errors.length > 0
   }
 
   render() {
+    if (this.state.schema === null) {
+      return (<Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
+           lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}
+                   className={'main'}><LoadingIcon /></Col>)
+    }
+
     let displayedSchema = {};
     if (Object.prototype.hasOwnProperty.call(this.state.schema, 'properties')) {
       displayedSchema = this.state.schema['properties'][this.state.selectedSection];
@@ -457,6 +408,7 @@ class ConfigurePageComponent extends AuthComponent {
     if (Object.entries(this.state.configuration).length !== 0) {
       content = this.renderConfigContent(displayedSchema)
     }
+
     return (
       <Col sm={{offset: 3, span: 9}} md={{offset: 3, span: 9}}
            lg={{offset: 3, span: 8}} xl={{offset: 2, span: 8}}

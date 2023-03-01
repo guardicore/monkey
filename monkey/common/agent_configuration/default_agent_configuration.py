@@ -27,7 +27,7 @@ RANSOMWARE_OPTIONS = {
     "other_behaviors": {"readme": True},
 }
 
-PAYLOAD_CONFIGURATION = tuple([PluginConfiguration(name="ransomware", options=RANSOMWARE_OPTIONS)])
+PAYLOAD_CONFIGURATION = {"ransomware": RANSOMWARE_OPTIONS}
 
 TCP_PORTS = (
     22,

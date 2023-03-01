@@ -1,3 +1,5 @@
+from typing import Dict
+
 PLUGIN_NAME = "bond"
 PLUGIN_OPTIONS = {"gun": "Walther PPK", "car": "Aston Martin DB5"}
 PLUGIN_CONFIGURATION = {"name": PLUGIN_NAME, "options": PLUGIN_OPTIONS}
@@ -27,7 +29,7 @@ NETWORK_SCAN_CONFIGURATION = {
     "targets": SCAN_TARGET_CONFIGURATION,
 }
 
-EXPLOITERS = {"SSHExploiter": {}, "WmiExploiter": {}, "Log4ShellExploiter": {}}
+EXPLOITERS: Dict[str, Dict] = {"SSHExploiter": {}, "WmiExploiter": {}, "Log4ShellExploiter": {}}
 
 EXPLOITATION_CONFIGURATION = {
     "options": {"http_ports": PORTS},
@@ -43,6 +45,6 @@ PROPAGATION_CONFIGURATION = {
 AGENT_CONFIGURATION = {
     "keep_tunnel_open_time": 30,
     "credential_collectors": [PLUGIN_CONFIGURATION],
-    "payloads": [PLUGIN_CONFIGURATION],
+    "payloads": {},
     "propagation": PROPAGATION_CONFIGURATION,
 }

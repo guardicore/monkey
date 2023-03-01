@@ -151,11 +151,16 @@ class NetworkScanConfiguration(MutableInfectionMonkeyBaseModel):
         :param targets: Configuration for targets to scan
     """
 
-    tcp: TCPScanConfiguration = Field(title="TCP scanner")
-    icmp: ICMPScanConfiguration = Field(title="Ping scanner")
+    tcp: TCPScanConfiguration = Field(
+        title="TCP scanner", description="Configure TCP scanning options"
+    )
+    icmp: ICMPScanConfiguration = Field(
+        title="Ping scanner", description="Configure ICMP scanning options"
+    )
     fingerprinters: Tuple[PluginConfiguration, ...] = Field(
         title="Fingerprinters",
-        description="Fingerprint modules collect info about external services",
+        description="Fingerprint modules collect info about external "
+        "services that Infection Monkey scans.",
     )
     targets: ScanTargetConfiguration = Field(
         title="Network",
@@ -176,8 +181,8 @@ class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     http_ports: Tuple[NetworkPort, ...] = Field(
-        title="HTTP Ports",
-        description="List of ports the monkey will check if are being used for HTTP",
+        title="HTTP ports",
+        description="List of ports the Agent will check for using an HTTP protocol",
         default=[80, 8080, 443, 8008, 7001, 8983, 9600],
     )
 
@@ -191,8 +196,11 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
         :param exploiters: Configuration enabled exploiters
     """
 
-    options: ExploitationOptionsConfiguration = Field(title="Exploiters Options")
-    exploiters: Dict = Field(
+    options: ExploitationOptionsConfiguration = Field(
+        title="Exploiters options",
+        description="Configure exploitation options shared by all exploiters",
+    )
+    exploiters: Dict[str, Dict] = Field(
         title="Enabled exploiters",
         description="Click on an exploiter to get more information"
         " about it. \n \u26A0 Note that using unsafe exploits may"
@@ -221,5 +229,10 @@ class PropagationConfiguration(MutableInfectionMonkeyBaseModel):
         "Setting this to 0 will disable all scanning and exploitation.",
         default=2,
     )
-    network_scan: NetworkScanConfiguration = Field(title="Network analysis")
-    exploitation: ExploitationConfiguration = Field(title="Exploiters")
+    network_scan: NetworkScanConfiguration = Field(
+        title="Network analysis",
+        description="Configure the network analysis that the Agents will perform",
+    )
+    exploitation: ExploitationConfiguration = Field(
+        title="Exploiters", description="Configure the exploitation step of the attack"
+    )
