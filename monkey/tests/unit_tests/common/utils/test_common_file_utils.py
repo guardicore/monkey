@@ -19,8 +19,8 @@ def test_expand_user(patched_home_env):
     assert expand_path(input_path) == expected_path
 
 
-def test_expand_vars(patched_home_env):
-    input_path = os.path.join("$HOME", "test")
+def test_expand_vars(home_env_variable, patched_home_env):
+    input_path = os.path.join(home_env_variable, "test")
     expected_path = patched_home_env / "test"
 
     assert expand_path(input_path) == expected_path
