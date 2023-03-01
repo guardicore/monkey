@@ -59,6 +59,34 @@ function Clone-MonkeyRepo
     }
 }
 
+function Install-Python
+{
+    try
+    {
+        $version = python --version  2>&1
+        if ($version -notmatch $PYTHON_VERSION_REGEX -or $Matches.2 -lt 2)
+        {
+            throw System.Management.Automation.CommandNotFoundException
+        }
+    }
+    catch [System.Management.Automation.CommandNotFoundException]
+    {
+        "Downloading python $MONKEY_PYTHON_VERSION ..."
+        "Select 'add to PATH' when installing"
+        $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
+        Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+        Remove-Item $TEMP_PYTHON_INSTALLER
+        # Check if installed correctly
+        $version = python --version  2>&1
+        if ($version -like '* is not recognized*')
+        {
+            "Python is not found in PATH. Add it to PATH and relaunch the script."
+            exit 1
+        }
+    }
+}
+
 function Configure-precommit([String] $git_repo_dir)
 {
     Print-Status "Installing pre-commit and setting up pre-commit hook"
@@ -105,36 +133,8 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     # Check if git is installed
     Assert-CommandExists git
     Clone-MonkeyRepo
-
-    # We check if python is installed
-    try
-    {
-        $version = cmd.exe /c '"python" --version  2>&1'
-        if ($version -match $PYTHON_VERSION_REGEX -and $Matches.2 -ge 2)
-        {
-            "$version was found, installing dependencies"
-        }
-        else
-        {
-            throw System.Management.Automation.CommandNotFoundException
-        }
-    }
-    catch [System.Management.Automation.CommandNotFoundException]
-    {
-        "Downloading python $MONKEY_PYTHON_VERSION ..."
-        "Select 'add to PATH' when installing"
-        $webClient.DownloadFile($PYTHON_URL, $TEMP_PYTHON_INSTALLER)
-        Start-Process -Wait $TEMP_PYTHON_INSTALLER -ErrorAction Stop
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-        Remove-Item $TEMP_PYTHON_INSTALLER
-        # Check if installed correctly
-        $version = cmd.exe /c '"python" --version  2>&1'
-        if ($version -like '* is not recognized*')
-        {
-            "Python is not found in PATH. Add it to PATH and relaunch the script."
-            exit 1
-        }
-    }
+    Install-Python
+    "$(python --version) is installed"
 
     Print-Status "Upgrading pip..."
     $output = cmd.exe /c 'python -m pip install --user --upgrade pip 2>&1'
