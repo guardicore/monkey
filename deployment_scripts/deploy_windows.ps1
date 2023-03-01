@@ -15,11 +15,11 @@ function Configure-precommit([String] $git_repo_dir)
     Push-Location $git_repo_dir
     python -m pip install pre-commit
 	if ($LastExitCode) {
-		exit
+		exit 1
 	}
     pre-commit install -t pre-commit -t pre-push
 	if ($LastExitCode) {
-		exit
+		exit 1
 	}
     Pop-Location
 
@@ -61,7 +61,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     catch [System.Management.Automation.CommandNotFoundException]
     {
         "Please install git before running this script or add it to path and restart cmd"
-        return
+        exit 1
     }
 
     # Download the monkey
@@ -77,7 +77,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     {
         "Error while cloning monkey from the repository:"
         $output
-        return
+        exit 1
     }
     else
     {
@@ -113,7 +113,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         if ($version -like '* is not recognized*')
         {
             "Python is not found in PATH. Add it to PATH and relaunch the script."
-            return
+            exit 1
         }
     }
 
@@ -123,7 +123,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     if ($output -like '*No module named pip*')
     {
         "Make sure pip module is installed and re-run this script."
-        return
+        exit 1
     }
 
     "Installing pipx"
