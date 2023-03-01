@@ -1,6 +1,5 @@
 ARG PYTHON_VERSION=3.11
-# Install python dependencies using the bitnami/python:3.7 image, which includes
-# development dependencies.
+# Install python and some build dependencies
 FROM python:$PYTHON_VERSION-slim as builder
 COPY ./monkey /monkey
 WORKDIR /monkey
