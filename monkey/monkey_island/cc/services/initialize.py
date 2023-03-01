@@ -65,7 +65,6 @@ from monkey_island.cc.repositories import (
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH, PLUGIN_DIR_NAME
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor, RepositoryEncryptor
 from monkey_island.cc.services import (
-    AgentConfigurationSchemaService,
     AgentSignalsService,
     AWSService,
     IAgentConfigurationService,
@@ -74,7 +73,6 @@ from monkey_island.cc.services import (
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
-from ..repositories.utils import AgentConfigurationSchemaCompiler
 from . import AuthenticationService
 from .reporting.report import ReportService
 
@@ -181,9 +179,6 @@ def _register_repositories(container: DIContainer, data_dir: Path):
         IAgentPluginRepository,
         _decorate_agent_plugin_repository(container.resolve(FileAgentPluginRepository)),
     )
-    container.register_instance(
-        AgentConfigurationSchemaCompiler, container.resolve(AgentConfigurationSchemaCompiler)
-    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
@@ -259,12 +254,6 @@ def _register_services(container: DIContainer):
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
     container.register_instance(AuthenticationService, container.resolve(AuthenticationService))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
-    container.register_instance(
-        AgentConfigurationSchemaService, container.resolve(AgentConfigurationSchemaService)
-    )
-    container.register_instance(
-        IAgentConfigurationService, build_agent_configuration_service(container)
-    )
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
     )

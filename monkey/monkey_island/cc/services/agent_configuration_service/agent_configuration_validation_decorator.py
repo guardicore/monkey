@@ -6,7 +6,8 @@ from monkey_island.cc.repositories import (
     PluginConfigurationValidationError,
     RetrievalError,
 )
-from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
+
+from .agent_configuration_schema_compiler import AgentConfigurationSchemaCompiler
 
 
 class AgentConfigurationValidationDecorator(IAgentConfigurationRepository):

@@ -3,9 +3,9 @@ from monkey_island.cc.repositories import (
     FileAgentConfigurationRepository,
     IAgentConfigurationRepository,
 )
-from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
 
 from . import IAgentConfigurationService
+from .agent_configuration_schema_compiler import AgentConfigurationSchemaCompiler
 from .agent_configuration_service import AgentConfigurationService
 from .agent_configuration_validation_decorator import AgentConfigurationValidationDecorator
 

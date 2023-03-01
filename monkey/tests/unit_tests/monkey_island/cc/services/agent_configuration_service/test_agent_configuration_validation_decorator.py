@@ -9,7 +9,9 @@ from monkey_island.cc.repositories import (
     PluginConfigurationValidationError,
     RetrievalError,
 )
-from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
+from monkey_island.cc.services.agent_configuration_service.agent_configuration_schema_compiler import (  # noqa: E501
+    AgentConfigurationSchemaCompiler,
+)
 from monkey_island.cc.services.agent_configuration_service.agent_configuration_validation_decorator import (  # noqa: E501
     AgentConfigurationValidationDecorator,
 )

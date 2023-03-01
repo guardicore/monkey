@@ -1,8 +1,8 @@
 from common.agent_configuration import AgentConfiguration
 from monkey_island.cc.repositories import IAgentConfigurationRepository
-from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
 
 from . import IAgentConfigurationService
+from .agent_configuration_schema_compiler import AgentConfigurationSchemaCompiler
 
 
 class AgentConfigurationService(IAgentConfigurationService):

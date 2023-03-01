@@ -3,6 +3,5 @@ from .authentication_service import AuthenticationService
 
 from .aws import AWSService
 
-from .agent_configuration_schema_service import AgentConfigurationSchemaService
 from .agent_configuration_service import IAgentConfigurationService
 from .agent_configuration_service import build as build_agent_configuration_service
