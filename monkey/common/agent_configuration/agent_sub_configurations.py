@@ -182,7 +182,7 @@ class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
 
     http_ports: Tuple[NetworkPort, ...] = Field(
         title="HTTP ports",
-        description="List of ports the monkey will check if are being used for HTTP",
+        description="List of ports the Agent will check for using an HTTP protocol",
         default=[80, 8080, 443, 8008, 7001, 8983, 9600],
     )
 
