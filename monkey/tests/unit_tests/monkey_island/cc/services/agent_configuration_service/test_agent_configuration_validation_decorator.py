@@ -4,13 +4,15 @@ from tests.monkey_island import InMemoryAgentConfigurationRepository, InMemoryAg
 from common.agent_configuration import DEFAULT_AGENT_CONFIGURATION
 from common.base_models import MutableInfectionMonkeyBaseModel
 from monkey_island.cc.repositories import (
-    AgentConfigurationValidationDecorator,
     IAgentConfigurationRepository,
     IAgentPluginRepository,
     PluginConfigurationValidationError,
     RetrievalError,
 )
 from monkey_island.cc.repositories.utils import AgentConfigurationSchemaCompiler
+from monkey_island.cc.services.agent_configuration_service.agent_configuration_validation_decorator import (  # noqa: E501
+    AgentConfigurationValidationDecorator,
+)
 
 
 class FakeConfiguration(MutableInfectionMonkeyBaseModel):
