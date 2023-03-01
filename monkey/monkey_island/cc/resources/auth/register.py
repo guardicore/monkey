@@ -27,9 +27,13 @@ class Register(AbstractResource):
         Registers a new user using flask security register
 
         """
-        username, password = get_username_password_from_request(request)
-
         try:
+            username, password = get_username_password_from_request(request)
+            if not username or not password:
+                return make_response(
+                    {"error": "Provided empty credentials"}, HTTPStatus.BAD_REQUEST
+                )
+
             # This method take the request data and pass it to the RegisterForm
             # where a registration request is preform.
             # Return value is a flask.Response object
