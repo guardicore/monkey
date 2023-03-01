@@ -26,13 +26,13 @@ from common.network.segmentation_utils import get_ip_if_in_subnet
 from common.types import PortStatus
 from monkey_island.cc.models import CommunicationType, Machine
 from monkey_island.cc.repositories import (
-    IAgentConfigurationRepository,
     IAgentEventRepository,
     IAgentPluginRepository,
     IAgentRepository,
     IMachineRepository,
     INodeRepository,
 )
+from monkey_island.cc.services import IAgentConfigurationService
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import (
     get_monkey_exploited,
 )
@@ -64,7 +64,7 @@ def has_open_ports(event: TCPScanEvent):
 
 class ReportService:
     _agent_repository: Optional[IAgentRepository] = None
-    _agent_configuration_repository: Optional[IAgentConfigurationRepository] = None
+    _agent_configuration_service: Optional[IAgentConfigurationService] = None
     _agent_event_repository: Optional[IAgentEventRepository] = None
     _machine_repository: Optional[IMachineRepository] = None
     _node_repository: Optional[INodeRepository] = None
@@ -76,14 +76,14 @@ class ReportService:
     def initialize(
         cls,
         agent_repository: IAgentRepository,
-        agent_configuration_repository: IAgentConfigurationRepository,
+        agent_configuration_service: IAgentConfigurationService,
         agent_event_repository: IAgentEventRepository,
         machine_repository: IMachineRepository,
         node_repository: INodeRepository,
         agent_plugin_repository: IAgentPluginRepository,
     ):
         cls._agent_repository = agent_repository
-        cls._agent_configuration_repository = agent_configuration_repository
+        cls._agent_configuration_service = agent_configuration_service
         cls._agent_event_repository = agent_event_repository
         cls._machine_repository = machine_repository
         cls._node_repository = node_repository
@@ -394,7 +394,7 @@ class ReportService:
         cross_segment_issues = []
 
         # For now the feature is limited to 1 group.
-        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        agent_configuration = cls._agent_configuration_service.get_configuration()
         subnet_groups = [agent_configuration.propagation.network_scan.targets.inaccessible_subnets]
 
         for subnet_group in subnet_groups:
@@ -408,7 +408,7 @@ class ReportService:
     def get_config_exploits(cls) -> List[str]:
         configured_exploiter_names = []
 
-        agent_configuration = cls._agent_configuration_repository.get_configuration()  # type: ignore[union-attr] # noqa: E501
+        agent_configuration = cls._agent_configuration_service.get_configuration()  # type: ignore[union-attr] # noqa: E501
         exploitation_configuration = agent_configuration.propagation.exploitation
         exploiter_manifests = cls._get_exploiter_manifests()
 
@@ -425,12 +425,12 @@ class ReportService:
 
     @classmethod
     def get_config_ips(cls):
-        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        agent_configuration = cls._agent_configuration_service.get_configuration()
         return agent_configuration.propagation.network_scan.targets.subnets
 
     @classmethod
     def get_config_scan(cls):
-        agent_configuration = cls._agent_configuration_repository.get_configuration()
+        agent_configuration = cls._agent_configuration_service.get_configuration()
         return agent_configuration.propagation.network_scan.targets.scan_my_networks
 
     @classmethod
