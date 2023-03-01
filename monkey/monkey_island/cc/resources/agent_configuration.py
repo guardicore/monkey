@@ -1,4 +1,5 @@
 import json
+from http import HTTPStatus
 
 from flask import make_response, request
 
@@ -29,7 +30,7 @@ class AgentConfiguration(AbstractResource):
             configuration_object = AgentConfigurationObject(**request.json)
             self._agent_configuration_service.update_configuration(configuration_object)
             # API Spec: Should return 204 (NO CONTENT)
-            return make_response({}, 200)
+            return make_response({}, HTTPStatus.OK)
         except (
             ValueError,
             TypeError,
@@ -39,5 +40,5 @@ class AgentConfiguration(AbstractResource):
 
             return make_response(
                 {"error": f"Invalid configuration supplied: {err}"},
-                400,
+                HTTPStatus.BAD_REQUEST,
             )
