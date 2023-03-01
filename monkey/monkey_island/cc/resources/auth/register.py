@@ -28,6 +28,11 @@ class Register(AbstractResource):
 
         """
         try:
+            if not self._authentication_service.needs_registration():
+                return make_response(
+                    {"error": "User is already registered"}, HTTPStatus.BAD_REQUEST
+                )
+
             username, password = get_username_password_from_request(request)
 
             response: ResponseValue = register()

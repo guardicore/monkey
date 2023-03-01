@@ -21,6 +21,13 @@ def make_auth_request(flask_client):
     return inner
 
 
+def test_register__already_registered(monkeypatch, make_auth_request, mock_authentication_service):
+    mock_authentication_service.needs_registration.return_value = False
+
+    response = make_auth_request(TEST_REQUEST)
+    assert response.status_code == 400
+
+
 def test_register_with_empty_credentials(
     monkeypatch, make_auth_request, mock_authentication_service
 ):
