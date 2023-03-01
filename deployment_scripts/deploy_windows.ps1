@@ -104,6 +104,31 @@ function Configure-precommit([String] $git_repo_dir)
     Print-Status "Pre-commit successfully installed"
 }
 
+function Install-NPM
+{
+    Print-Status "Installing npm"
+    try
+    {
+        $version = cmd.exe /c '"npm" --version  2>&1'
+        if ($version -like "*is not recognized*")
+        {
+            throw System.Management.Automation.CommandNotFoundException
+        }
+        else
+        {
+            "Npm already installed"
+        }
+    }
+    catch [System.Management.Automation.CommandNotFoundException]
+    {
+        "Downloading npm ..."
+        $webClient.DownloadFile($NPM_URL, $TEMP_NPM_INSTALLER)
+        Start-Process -Wait $TEMP_NPM_INSTALLER
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
+        Remove-Item $TEMP_NPM_INSTALLER
+    }
+}
+
 function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, [String] $branch = "develop")
 {
     Print-Status "Downloading to $monkey_home"
@@ -205,27 +230,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
 
     # Check if NPM installed
-    Print-Status "Installing npm"
-    try
-    {
-        $version = cmd.exe /c '"npm" --version  2>&1'
-        if ($version -like "*is not recognized*")
-        {
-            throw System.Management.Automation.CommandNotFoundException
-        }
-        else
-        {
-            "Npm already installed"
-        }
-    }
-    catch [System.Management.Automation.CommandNotFoundException]
-    {
-        "Downloading npm ..."
-        $webClient.DownloadFile($NPM_URL, $TEMP_NPM_INSTALLER)
-        Start-Process -Wait $TEMP_NPM_INSTALLER
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
-        Remove-Item $TEMP_NPM_INSTALLER
-    }
+    Install-NPM
 
     Print-Status "Updating npm"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\ui")
