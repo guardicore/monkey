@@ -29,16 +29,8 @@ class Register(AbstractResource):
         """
         try:
             username, password = get_username_password_from_request(request)
-            if not username or not password:
-                return make_response(
-                    {"error": "Provided empty credentials"}, HTTPStatus.BAD_REQUEST
-                )
 
-            # This method take the request data and pass it to the RegisterForm
-            # where a registration request is preform.
-            # Return value is a flask.Response object
             response: ResponseValue = register()
-
             if response.status_code == HTTPStatus.OK:
                 self._authentication_service.reset_island(username, password)
 

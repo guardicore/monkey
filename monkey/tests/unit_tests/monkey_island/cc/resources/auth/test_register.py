@@ -24,9 +24,15 @@ def make_auth_request(flask_client):
 def test_register_with_empty_credentials(
     monkeypatch, make_auth_request, mock_authentication_service
 ):
+    monkeypatch.setattr(
+        "monkey_island.cc.resources.auth.register.register",
+        lambda: Response(
+            status=400,
+        ),
+    )
     response = make_auth_request("{}")
-    mock_authentication_service.reset_island.assert_not_called()
 
+    mock_authentication_service.reset_island.assert_not_called()
     assert response.status_code == 400
 
 
