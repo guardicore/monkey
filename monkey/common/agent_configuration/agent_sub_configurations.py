@@ -181,7 +181,7 @@ class ExploitationOptionsConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     http_ports: Tuple[NetworkPort, ...] = Field(
-        title="HTTP Ports",
+        title="HTTP ports",
         description="List of ports the monkey will check if are being used for HTTP",
         default=[80, 8080, 443, 8008, 7001, 8983, 9600],
     )
@@ -197,7 +197,7 @@ class ExploitationConfiguration(MutableInfectionMonkeyBaseModel):
     """
 
     options: ExploitationOptionsConfiguration = Field(
-        title="Exploiters Options", description="Configure other options related to exploitation"
+        title="Exploiters options", description="Configure other options related to exploitation"
     )
     exploiters: Dict[str, Dict] = Field(
         title="Enabled exploiters",
