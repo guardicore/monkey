@@ -31,11 +31,9 @@ from monkey_island.cc.event_queue import (
 )
 from monkey_island.cc.repositories import (
     AgentBinaryRepository,
-    AgentConfigurationValidationDecorator,
     AgentMachineFacade,
     AgentPluginRepositoryCachingDecorator,
     AgentPluginRepositoryLoggingDecorator,
-    FileAgentConfigurationRepository,
     FileAgentLogRepository,
     FileAgentPluginRepository,
     FileRepositoryCachingDecorator,
@@ -43,7 +41,6 @@ from monkey_island.cc.repositories import (
     FileRepositoryLoggingDecorator,
     FileSimulationRepository,
     IAgentBinaryRepository,
-    IAgentConfigurationRepository,
     IAgentEventRepository,
     IAgentLogRepository,
     IAgentPluginRepository,
@@ -187,32 +184,11 @@ def _register_repositories(container: DIContainer, data_dir: Path):
     container.register_instance(
         AgentConfigurationSchemaCompiler, container.resolve(AgentConfigurationSchemaCompiler)
     )
-    container.register_instance(
-        IAgentConfigurationRepository, _build_file_agent_configuration_repository(container)
-    )
 
 
 def _decorate_file_repository(file_repository: IFileRepository) -> IFileRepository:
     return FileRepositoryLockingDecorator(
         FileRepositoryLoggingDecorator(FileRepositoryCachingDecorator(file_repository))
-    )
-
-
-def _decorate_agent_configuration_repository(
-    agent_configuration_repository: IAgentConfigurationRepository,
-    agent_configuration_schema_compiler: AgentConfigurationSchemaCompiler,
-) -> IAgentConfigurationRepository:
-
-    return AgentConfigurationValidationDecorator(
-        agent_configuration_repository, agent_configuration_schema_compiler
-    )
-
-
-def _build_file_agent_configuration_repository(container: DIContainer):
-    file_agent_configuration_repository = container.resolve(FileAgentConfigurationRepository)
-    agent_configuration_schema_compiler = container.resolve(AgentConfigurationSchemaCompiler)
-    return _decorate_agent_configuration_repository(
-        file_agent_configuration_repository, agent_configuration_schema_compiler
     )
 
 
@@ -285,6 +261,9 @@ def _register_services(container: DIContainer):
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(
         AgentConfigurationSchemaService, container.resolve(AgentConfigurationSchemaService)
+    )
+    container.register_instance(
+        IAgentConfigurationService, build_agent_configuration_service(container)
     )
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)
