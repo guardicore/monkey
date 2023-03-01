@@ -8,7 +8,7 @@ import pytest
 from flask import Flask
 
 import monkey_island
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.representations import output_json
 
 

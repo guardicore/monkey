@@ -3,7 +3,7 @@ from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import mock_flask_resource_manager
 
 from monkey_island.cc.app import FlaskDIWrapper
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource
 
 
 def get_mock_resource(name, urls):

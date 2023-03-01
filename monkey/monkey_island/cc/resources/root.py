@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from flask import request
 
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentRepository
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
 

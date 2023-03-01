@@ -6,7 +6,7 @@ from flask import make_response, request
 from common.agent_configuration.agent_configuration import (
     AgentConfiguration as AgentConfigurationObject,
 )
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services import IAgentConfigurationService, PluginConfigurationValidationError
 

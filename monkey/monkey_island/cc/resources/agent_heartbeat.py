@@ -6,7 +6,7 @@ from flask import request
 from common import AgentHeartbeat as AgentHeartbeatObject
 from common.types import AgentID
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource
 
 
 class AgentHeartbeat(AbstractResource):

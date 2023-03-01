@@ -8,8 +8,8 @@ from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerialize
 from common.agent_events import AbstractAgentEvent, AgentEventRegistry
 from common.event_queue import IAgentEventQueue
 from common.types import JSONSerializable
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentEventRepository
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
 

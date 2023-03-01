@@ -4,7 +4,7 @@ from http import HTTPStatus
 from flask import make_response, request
 
 from common.utils.exceptions import AlreadyRegisteredError, InvalidRegistrationCredentialsError
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
 from monkey_island.cc.services import AuthenticationService
 

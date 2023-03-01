@@ -1,14 +1,13 @@
 import os
-import re
 import uuid
 from datetime import timedelta
-from typing import Iterable, Set, Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
+from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentConfiguration,
@@ -30,7 +29,6 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
@@ -89,46 +87,6 @@ def init_app_config(app, mongo_url):
 def init_app_url_rules(app):
     app.add_url_rule("/", "serve_home", serve_home)
     app.add_url_rule("/<path:static_path>", "serve_static_file", serve_static_file)
-
-
-class FlaskDIWrapper:
-    class DuplicateURLError(Exception):
-        pass
-
-    url_parameter_regex = re.compile(r"<.*?:.*?>")
-
-    def __init__(self, api: flask_restful.Api, container: DIContainer):
-        self._api = api
-        self._container = container
-        self._reserved_urls: Set[str] = set()
-
-    def add_resource(self, resource: Type[AbstractResource]):
-        if len(resource.urls) == 0:
-            raise ValueError(f"Resource {resource.__name__} has no defined URLs")
-
-        self._reserve_urls(resource.urls)
-
-        # enforce our rule that URLs should not contain a trailing slash
-        for url in resource.urls:
-            if url.endswith("/"):
-                raise ValueError(
-                    f"Resource {resource.__name__} has an invalid URL: A URL "
-                    "should not have a trailing slash."
-                )
-        dependencies = self._container.resolve_dependencies(resource)
-        self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
-
-    def _reserve_urls(self, urls: Iterable[str]):
-        for url in map(FlaskDIWrapper._format_url, urls):
-            if url in self._reserved_urls:
-                raise FlaskDIWrapper.DuplicateURLError(f"URL {url} has already been registered!")
-
-            self._reserved_urls.add(url)
-
-    @staticmethod
-    def _format_url(url: str):
-        new_url = url.strip("/")
-        return FlaskDIWrapper.url_parameter_regex.sub("<PARAMETER_PLACEHOLDER>", new_url)
 
 
 def init_api_resources(api: FlaskDIWrapper):

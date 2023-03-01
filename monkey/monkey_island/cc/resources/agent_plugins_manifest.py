@@ -11,8 +11,8 @@ from common.hard_coded_manifests.hard_coded_credential_collector_manifests impor
 from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentPluginRepository
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
 
