@@ -9,9 +9,19 @@ param(
     [Bool] $agents = $true
 )
 
+$ESCAPE = "$([char]27)"
+$BOLD = "$ESCAPE[1m"
+$CYAN = "$ESCAPE[36m"
+$RESET = "$ESCAPE[0m"
+
+function Print-Status([Parameter(Mandatory = $true)] [string]$Text)
+{
+    Write-Output "$($BOLD)$($CYAN)$Text$($RESET)"
+}
+
 function Configure-precommit([String] $git_repo_dir)
 {
-    Write-Output "Installing pre-commit and setting up pre-commit hook"
+    Print-Status "Installing pre-commit and setting up pre-commit hook"
     Push-Location $git_repo_dir
     python -m pip install pre-commit
 	if ($LastExitCode) {
@@ -23,13 +33,13 @@ function Configure-precommit([String] $git_repo_dir)
 	}
     Pop-Location
 
-    Write-Output "Pre-commit successfully installed"
+    Print-Status "Pre-commit successfully installed"
 }
 
 function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, [String] $branch = "develop")
 {
-    Write-Output "Downloading to $monkey_home"
-    Write-Output "Branch $branch"
+    Print-Status "Downloading to $monkey_home"
+    Print-Status "Branch $branch"
     # Set variables for script execution
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $webClient = New-Object System.Net.WebClient
@@ -117,7 +127,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         }
     }
 
-    "Upgrading pip..."
+    Print-Status "Upgrading pip..."
     $output = cmd.exe /c 'python -m pip install --user --upgrade pip 2>&1'
     $output
     if ($output -like '*No module named pip*')
@@ -126,16 +136,16 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         exit 1
     }
 
-    "Installing pipx"
+    Print-Status "Installing pipx"
     pip install --user -U pipx
     pipx ensurepath
     pipx install pipenv
 
-    "Installing python packages for island"
+    Print-Status "Installing python packages for island"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR) -ErrorAction Stop
     pipenv install --dev
     Pop-Location
-    "Installing python packages for monkey"
+    Print-Status "Installing python packages for monkey"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_DIR) -ErrorAction Stop
     pipenv install --dev
     Pop-Location
@@ -155,7 +165,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     Invoke-Expression "$install_mongo_script -binDir $binDir"
 
     # Download OpenSSL
-    "Downloading OpenSSL ..."
+    Print-Status "Downloading OpenSSL ..."
     $webClient.DownloadFile($OPEN_SSL_URL, $TEMP_OPEN_SSL_ZIP)
     "Unzipping OpenSSl"
     Expand-Archive $TEMP_OPEN_SSL_ZIP -DestinationPath (Join-Path -Path $binDir -ChildPath "openssl") -ErrorAction SilentlyContinue
@@ -163,13 +173,13 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     Remove-Item $TEMP_OPEN_SSL_ZIP
 
     # Download and install C++ redistributable
-    "Downloading C++ redistributable ..."
+    Print-Status "Downloading C++ redistributable ..."
     $webClient.DownloadFile($CPP_URL, $TEMP_CPP_INSTALLER)
     Start-Process -Wait $TEMP_CPP_INSTALLER -ErrorAction Stop
     Remove-Item $TEMP_CPP_INSTALLER
 
     # Generate ssl certificate
-    "Generating ssl certificate"
+    Print-Status "Generating ssl certificate"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR)
     . .\windows\create_certificate.bat
     Pop-Location
@@ -177,7 +187,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     if ($agents)
     {
         # Adding binaries
-        "Adding binaries"
+        Print-Status "Downloading agent binaries"
         $binaries = (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\binaries")
         New-Item -ItemType directory -path $binaries -ErrorAction SilentlyContinue
         $webClient.DownloadFile($LINUX_64_BINARY_URL, (Join-Path -Path $binaries -ChildPath $LINUX_64_BINARY_PATH))
@@ -186,7 +196,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
 
 
     # Check if NPM installed
-    "Installing npm"
+    Print-Status "Installing npm"
     try
     {
         $version = cmd.exe /c '"npm" --version  2>&1'
@@ -208,7 +218,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
         Remove-Item $TEMP_NPM_INSTALLER
     }
 
-    "Updating npm"
+    Print-Status "Updating npm"
     Push-Location -Path (Join-Path -Path $monkey_home -ChildPath $MONKEY_ISLAND_DIR | Join-Path -ChildPath "\cc\ui")
     & npm update
     & npm run dev
@@ -221,7 +231,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     # Download upx
     if (!(Test-Path -Path (Join-Path -Path $binDir -ChildPath "upx.exe")))
     {
-        "Downloading upx ..."
+        Print-Status "Downloading upx ..."
         $webClient.DownloadFile($UPX_URL, $TEMP_UPX_ZIP)
         "Unzipping upx"
         Expand-Archive $TEMP_UPX_ZIP -DestinationPath $binDir -ErrorAction SilentlyContinue
@@ -233,7 +243,7 @@ function Deploy-Windows([String] $monkey_home = (Get-Item -Path ".\").FullName, 
     }
 
 
-    "Script finished"
+    Print-Status "Script finished"
 
 }
 Deploy-Windows -monkey_home $monkey_home -branch $branch
