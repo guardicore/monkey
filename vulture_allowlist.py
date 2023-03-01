@@ -136,18 +136,7 @@ AgentPlugin.supported_operating_systems
 
 HadoopPlugin
 
-# Remove once migrated to pydantic v2
-pydantic.schema.model_process_schema
-
 # Remove after #2136
 NetworkService.HTTP
 NetworkService.MSSQL
 NetworkService.SMB
-
-# Remove after #2750
-HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS
-HARD_CODED_FINGERPRINTER_SCHEMAS
-HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS
-HARD_CODED_FINGERPRINTER_MANIFESTS
-HARD_CODED_PAYLOADS_MANIFESTS
-HARD_CODED_PAYLOADS_SCHEMAS
