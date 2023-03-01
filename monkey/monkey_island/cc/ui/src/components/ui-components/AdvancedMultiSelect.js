@@ -42,7 +42,7 @@ class AdvancedMultiSelect extends React.Component {
         this.isUnsafeOptionSelected(this.getSelectedPluginNames())
       ),
       allPluginNames: allPluginNames,
-      masterCheckboxState: this.getMasterCheckboxState(this.getSelectedPluginNames()),
+      masterCheckboxState: this.getMasterCheckboxState(this.getSelectedPluginNames())
     };
   }
 
@@ -69,7 +69,7 @@ class AdvancedMultiSelect extends React.Component {
   namesToPlugins = (names) => {
     let plugins = [];
     for (let i = 0; i < names.length; i++) {
-      plugins.push({"name": names[i], "options": {}});
+      plugins.push({'name': names[i], 'options': {}});
     }
     return plugins
   }
