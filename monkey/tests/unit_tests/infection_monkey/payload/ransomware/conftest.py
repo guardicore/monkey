@@ -5,13 +5,6 @@ import pytest
 
 
 @pytest.fixture
-def patched_home_env(monkeypatch, tmp_path):
-    monkeypatch.setenv("HOME", str(tmp_path))
-
-    return tmp_path
-
-
-@pytest.fixture
 def ransomware_test_data(data_for_tests_dir):
     return Path(data_for_tests_dir) / "ransomware_targets"
 
