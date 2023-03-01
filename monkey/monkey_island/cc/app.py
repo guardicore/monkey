@@ -6,8 +6,9 @@ from typing import Iterable, Set, Type
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from flask_mongoengine import MongoEngine
-from flask_security import MongoEngineUserDatastore, Security
+from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
 from werkzeug.exceptions import NotFound
+from wtforms import StringField, ValidationError
 
 from common import DIContainer
 from monkey_island.cc.models import Role, User
@@ -72,18 +73,7 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
-def init_app_config(app, mongo_url, data_dir: Path):
-    db = MongoEngine(app)
-    app.config["MONGO_URI"] = mongo_url
-    app.config["MONGODB_SETTINGS"] = [
-        {
-            "db": MONGO_DB_NAME,
-            "host": MONGO_DB_HOST,
-            "port": MONGO_DB_PORT,
-            "alias": "flask-security",
-        }
-    ]
-
+def setup_authentication(app, data_dir):
     flask_security_config = generate_flask_security_configuration(data_dir)
 
     # TODO: After we switch to token base authentication investigate the purpose
@@ -92,6 +82,45 @@ def init_app_config(app, mongo_url, data_dir: Path):
     app.config["SECRET_KEY"] = flask_security_config["secret_key"]
     app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
     app.config["SECURITY_USERNAME_ENABLE"] = True
+    app.config["SECURITY_USERNAME_REQUIRED"] = True
+    app.config["SECURITY_REGISTERABLE"] = True
+    app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+    # Ignore CSRF, because it's irrelevant for javascript applications
+    app.config["WTF_CSRF_CHECK_DEFAULT"] = False
+    app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
+
+    # The database object needs to be created after we configure the flask application
+    db = MongoEngine(app)
+
+    user_datastore = MongoEngineUserDatastore(db, User, Role)
+
+    # Only one user can be registered in the Island, so we need a custom validator
+    def validate_no_user_exists_already(_, field):
+        if user_datastore.find_user():
+            raise ValidationError("A user already exists. Only a single user can be registered.")
+
+    class CustomConfirmRegisterForm(ConfirmRegisterForm):
+
+        # We don't use the email, but the field is required by ConfirmRegisterForm.
+        # Email validators need to be overriden, otherwise an error about invalid email is raised.
+        # Added custom validator to the email field because we have to override
+        # email validators anyway.
+        email = StringField(
+            "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
+        )
+
+    app.security = Security(app, user_datastore, confirm_register_form=CustomConfirmRegisterForm)
+
+
+def init_app_config(app, mongo_url, data_dir: Path):
+    app.config["MONGO_URI"] = mongo_url
+    app.config["MONGODB_SETTINGS"] = [
+        {
+            "db": MONGO_DB_NAME,
+            "host": MONGO_DB_HOST,
+            "port": MONGO_DB_PORT,
+        }
+    ]
 
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
@@ -99,9 +128,7 @@ def init_app_config(app, mongo_url, data_dir: Path):
 
     app.url_map.strict_slashes = False
 
-    # Setup Flask-Security
-    user_datastore = MongoEngineUserDatastore(db, User, Role)
-    Security(app, user_datastore)
+    setup_authentication(app, data_dir)
 
 
 def init_app_url_rules(app):

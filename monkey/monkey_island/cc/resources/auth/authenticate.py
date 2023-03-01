@@ -1,12 +1,12 @@
 import logging
 from http import HTTPStatus
 
-from flask import make_response, request
+from flask import jsonify, make_response, request
+from flask_security import current_user, login_user
 
 from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
-from monkey_island.cc.resources.request_authentication import create_access_token
 from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
@@ -22,6 +22,10 @@ class Authenticate(AbstractResource):
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
 
+    # TODO: Added for debugging. Remove before closing #2157.
+    def get(self):
+        return jsonify({"authenticated": current_user.is_authenticated})
+
     def post(self):
         """
         Authenticates a user
@@ -36,9 +40,10 @@ class Authenticate(AbstractResource):
         username, password = get_username_password_from_request(request)
 
         try:
-            self._authentication_service.authenticate(username, password)
-            access_token = create_access_token(username)
+            user = self._authentication_service.authenticate(username, password)
         except IncorrectCredentialsError:
             return make_response({"error": "Invalid credentials"}, HTTPStatus.UNAUTHORIZED)
 
-        return make_response({"access_token": access_token}, HTTPStatus.OK)
+        login_user(user)
+
+        return jsonify({"login": True})

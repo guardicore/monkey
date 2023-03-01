@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.utils.exceptions import IncorrectCredentialsError
+from monkey_island.cc.models import User
 from monkey_island.cc.resources.auth import Authenticate
 
 USERNAME = "test_user"
@@ -32,13 +33,15 @@ def test_empty_credentials(make_auth_request, mock_authentication_service):
 
 
 def test_authentication_successful(make_auth_request, mock_authentication_service):
-    mock_authentication_service.authenticate = MagicMock(return_value=True)
+    mock_authentication_service.authenticate = MagicMock(
+        return_value=User(username="test", password="test")
+    )
 
     response = make_auth_request(TEST_REQUEST)
 
     assert response.status_code == 200
     assert re.match(
-        r"^[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=\-_]+$", response.json["access_token"]
+        r"^[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=]+\.[a-zA-Z0-9+/=\-_]+$", response.json["csrf_token"]
     )
 
 

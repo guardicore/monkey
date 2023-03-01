@@ -7,7 +7,6 @@ from flask import request
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import TerminateAllAgents as TerminateAllAgentsObject
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +20,6 @@ class TerminateAllAgents(AbstractResource):
     ):
         self._island_event_queue = island_event_queue
 
-    @jwt_required
     def post(self):
         try:
             terminate_all_agents = TerminateAllAgentsObject(**request.json)

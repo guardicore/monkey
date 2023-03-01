@@ -6,7 +6,6 @@ from flask import request
 from common.types import AgentID
 from monkey_island.cc.repositories import IAgentLogRepository, UnknownRecordError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +16,6 @@ class AgentLogs(AbstractResource):
     def __init__(self, agent_log_repository: IAgentLogRepository):
         self._agent_log_repository = agent_log_repository
 
-    @jwt_required
     def get(self, agent_id: AgentID):
         try:
             log_contents = self._agent_log_repository.get_agent_log(agent_id)

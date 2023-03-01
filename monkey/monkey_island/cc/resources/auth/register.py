@@ -2,11 +2,12 @@ import logging
 from http import HTTPStatus
 
 from flask import make_response, request
+from flask.typing import ResponseValue
+from flask_security.views import register
 
-from common.utils.exceptions import AlreadyRegisteredError, InvalidRegistrationCredentialsError
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
-from monkey_island.cc.services import AuthenticationService
+from monkey_island.cc.services.authentication_service import AuthenticationService
 
 logger = logging.getLogger(__name__)
 
@@ -23,20 +24,13 @@ class Register(AbstractResource):
 
     def post(self):
         """
-        Registers a new user
+        Registers a new user using flask security register
 
-        Gets a username and password from the request sent from the client,
-        and registers a new user
-
-        :raises InvalidRegistrationCredentialsError: If username or password is empty
-        :raises AlreadyRegisteredError: If a user has already been registered
         """
+        response: ResponseValue = register()
+        if response.status_code == HTTPStatus.OK:
+            self._authentication_service.reset_island_data()
+            username, password = get_username_password_from_request(request)
+            self._authentication_service.reset_repository_encryptor(username, password)
 
-        username, password = get_username_password_from_request(request)
-
-        try:
-            self._authentication_service.register_new_user(username, password)
-            return make_response({"error": ""}, HTTPStatus.OK)
-        # API Spec: HTTP status code for AlreadyRegisteredError should be 409 (CONFLICT)
-        except (InvalidRegistrationCredentialsError, AlreadyRegisteredError) as e:
-            return make_response({"error": str(e)}, HTTPStatus.BAD_REQUEST)
+        return make_response(response)

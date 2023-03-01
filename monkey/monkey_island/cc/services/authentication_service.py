@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from common.utils.exceptions import InvalidRegistrationCredentialsError
+from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode
+from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 
@@ -21,35 +21,42 @@ class AuthenticationService:
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
 
-    def register_new_user(self, username: str, password: str):
+    def needs_registration(self) -> bool:
         """
-        Registers a new user on the Island, then resets the encryptor and database
+        Checks if a user is already registered on the Island
 
-        :param username: Username to register
-        :param password: Password to register
-        :raises InvalidRegistrationCredentialsError: If username or password is empty
+        :return: Whether registration is required on the Island
         """
-        if not username or not password:
-            raise InvalidRegistrationCredentialsError("Username or password can not be empty.")
+        return not User.objects.first()
 
+    def reset_island_data(self):
+        """
+        Resets the island
+        """
         self._island_event_queue.publish(IslandEventTopic.CLEAR_SIMULATION_DATA)
         self._island_event_queue.publish(IslandEventTopic.RESET_AGENT_CONFIGURATION)
         self._island_event_queue.publish(
             topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET
         )
 
-        self._reset_repository_encryptor(username, password)
+    def authenticate(self, username: str, password: str) -> User:
+        # TODO: Fix while doing login
+        registered_user = User.objects.filter(username=username).first()
 
-    def authenticate(self, username: str, password: str):
+        if registered_user is None or not registered_user.verify_and_update_password(password):
+            raise IncorrectCredentialsError()
+
         self._unlock_repository_encryptor(username, password)
+
+        return registered_user
+
+    def reset_repository_encryptor(self, username: str, password: str):
+        secret = _get_secret_from_credentials(username, password)
+        self._repository_encryptor.reset_key()
+        self._repository_encryptor.unlock(secret.encode())
 
     def _unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
-        self._repository_encryptor.unlock(secret.encode())
-
-    def _reset_repository_encryptor(self, username: str, password: str):
-        secret = _get_secret_from_credentials(username, password)
-        self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
 
 

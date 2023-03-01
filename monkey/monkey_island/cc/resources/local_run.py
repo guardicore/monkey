@@ -3,7 +3,6 @@ import json
 from flask import jsonify, make_response, request
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
 
@@ -14,7 +13,6 @@ class LocalRun(AbstractResource):
         self._local_monkey_run_service = local_monkey_run_service
 
     # API Spec: This should be an RPC-style endpoint
-    @jwt_required
     def post(self):
         body = json.loads(request.data)
         if body.get("action") == "run":
