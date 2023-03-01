@@ -109,15 +109,8 @@ function Install-NPM
     Print-Status "Installing npm"
     try
     {
-        $version = cmd.exe /c '"npm" --version  2>&1'
-        if ($version -like "*is not recognized*")
-        {
-            throw System.Management.Automation.CommandNotFoundException
-        }
-        else
-        {
-            "Npm already installed"
-        }
+        Get-Command npm -ErrorAction Stop | Out-Null
+        "Npm already installed"
     }
     catch [System.Management.Automation.CommandNotFoundException]
     {
