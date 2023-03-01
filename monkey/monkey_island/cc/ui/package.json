@@ -101,7 +101,7 @@
     "react-table": "^6.10.3",
     "react-tsparticles": "^1.42.4",
     "remark-breaks": "^3.0.2",
-    "request": "^2.79.0",
+    "request": "^2.88.2",
     "semver": "^7.3.7",
     "source-map-loader": "^3.0.1"
   },
