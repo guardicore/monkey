@@ -1,9 +1,8 @@
 import json
 from ipaddress import IPv4Interface
-from typing import Any, Dict, Mapping, Optional, Sequence
+from typing import Any, Dict, Mapping, Optional, Sequence, TypeAlias
 
 from pydantic import Field, validator
-from typing_extensions import TypeAlias
 
 from common import OperatingSystem
 from common.base_models import MutableInfectionMonkeyBaseModel, MutableInfectionMonkeyModelConfig
