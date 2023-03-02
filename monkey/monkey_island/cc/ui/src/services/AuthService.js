@@ -1,14 +1,16 @@
-import decode from 'jwt-decode';
-
 export default class AuthService {
-  SECONDS_BEFORE_JWT_EXPIRES = 20;
   LOGIN_ENDPOINT = '/api/login';
+  LOGOUT_ENDPOINT = '/api/logout';
   REGISTRATION_API_ENDPOINT = '/api/register';
   REGISTRATION_STATUS_API_ENDPOINT = '/api/registration-status';
 
   login = (username, password) => {
     return this._login(username, password);
   };
+
+  logout = () => {
+    return this._authFetch(this.LOGOUT_ENDPOINT);
+  }
 
   authFetch = (url, options) => {
     return this._authFetch(url, options);
@@ -103,18 +105,6 @@ export default class AuthService {
   loggedIn() {
     const token = this._getToken();
     return ((token !== null) && !this._isTokenExpired(token));
-  }
-
-  logout = () => {
-    this._removeToken();
-  };
-
-  _isTokenExpired(token) {
-    try {
-      return decode(token)['exp'] - this.SECONDS_BEFORE_JWT_EXPIRES < Date.now() / 1000;
-    } catch (err) {
-      return false;
-    }
   }
 
   _setToken(idToken) {
