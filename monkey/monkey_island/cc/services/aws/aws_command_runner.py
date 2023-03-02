@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 
 import botocore
-
-from common.utils import Timer
+from egg_timer import EggTimer
 
 STATUS_CHECK_SLEEP_TIME = 1
 LINUX_DOCUMENT_NAME = "AWS-RunShellScript"
@@ -111,7 +110,7 @@ def _run_command_async(
 def _wait_for_command_to_complete(
     aws_client: botocore.client.BaseClient, target_instance_id: str, command_id: str, timeout: float
 ):
-    timer = Timer()
+    timer = EggTimer()
     timer.set(timeout)
 
     while not timer.is_expired():
