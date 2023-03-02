@@ -14,16 +14,11 @@ from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
     HARD_CODED_FINGERPRINTER_MANIFESTS,
 )
 from monkey_island.cc.repositories import IAgentPluginRepository
-from monkey_island.cc.repositories.utils.hard_coded_credential_collector_schemas import (
+
+from .hard_coded_schemas import (
     HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS,
-)
-from monkey_island.cc.repositories.utils.hard_coded_exploiter_schemas import (
     HARD_CODED_EXPLOITER_SCHEMAS,
-)
-from monkey_island.cc.repositories.utils.hard_coded_fingerprinter_schemas import (
     HARD_CODED_FINGERPRINTER_SCHEMAS,
-)
-from monkey_island.cc.repositories.utils.hard_coded_payloads_schemas import (
     HARD_CODED_PAYLOADS_SCHEMAS,
 )
 

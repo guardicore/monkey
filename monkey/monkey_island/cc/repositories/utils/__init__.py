@@ -1,3 +1,2 @@
 from .mongo_encoder import mongo_dot_decoder, mongo_dot_encoder
 from .machine_repository_init import initialize_machine_repository
-from .agent_configuration_schema_compiler import AgentConfigurationSchemaCompiler

@@ -15,7 +15,7 @@ from tests.data_for_tests.agent_plugin.manifests import (
     REMEDIATION_SUGGESTION_2,
 )
 from tests.monkey_island import (
-    InMemoryAgentConfigurationRepository,
+    InMemoryAgentConfigurationService,
     InMemoryAgentEventRepository,
     InMemoryAgentRepository,
 )
@@ -244,7 +244,7 @@ def report_service(
     ReportService._node_repository = MagicMock()
     ReportService._node_repository.get_nodes.return_value = NODES
     ReportService._agent_event_repository = agent_event_repository
-    ReportService._agent_configuration_repository = InMemoryAgentConfigurationRepository()
+    ReportService._agent_configuration_service = InMemoryAgentConfigurationService()
     ReportService._agent_plugin_repository = mock_agent_plugin_repository
 
 

@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 
 from common.agent_configuration import AgentConfiguration
-
-from . import RepositoryError
+from monkey_island.cc.repositories import RepositoryError
 
 
 class PluginConfigurationValidationError(RepositoryError):
