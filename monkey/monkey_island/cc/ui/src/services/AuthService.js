@@ -2,7 +2,7 @@ import decode from 'jwt-decode';
 
 export default class AuthService {
   SECONDS_BEFORE_JWT_EXPIRES = 20;
-  AUTHENTICATION_API_ENDPOINT = '/api/authenticate';
+  LOGIN_ENDPOINT = '/api/login';
   REGISTRATION_API_ENDPOINT = '/api/register';
   REGISTRATION_STATUS_API_ENDPOINT = '/api/registration-status';
 
@@ -21,7 +21,7 @@ export default class AuthService {
   };
 
   _login = (username, password) => {
-    return this._authFetch(this.AUTHENTICATION_API_ENDPOINT, {
+    return this._authFetch(this.LOGIN_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify({
         username,
