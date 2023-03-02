@@ -1,10 +1,9 @@
 import logging
 from http import HTTPStatus
 
-from flask import jsonify, make_response, request
-from flask_security import current_user
-from flask_security.views import login
+from flask import make_response, request
 from flask.typing import ResponseValue
+from flask_security.views import login
 
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
@@ -22,10 +21,6 @@ class Authenticate(AbstractResource):
 
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
-
-    # TODO: Added for debugging. Remove before closing #2157.
-    def get(self):
-        return jsonify({"authenticated": current_user.is_authenticated})
 
     def post(self):
         """
