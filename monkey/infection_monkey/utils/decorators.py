@@ -1,7 +1,7 @@
 import threading
 from functools import wraps
 
-from common.utils import Timer
+from egg_timer import EggTimer
 
 
 def request_cache(ttl: float):
@@ -38,7 +38,7 @@ def request_cache(ttl: float):
             return wrapper.cached_value
 
         wrapper.cached_value = None
-        wrapper.timer = Timer()
+        wrapper.timer = EggTimer()
         wrapper.lock = threading.Lock()
 
         return wrapper

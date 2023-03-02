@@ -6,10 +6,11 @@ from pprint import pformat
 from time import sleep, time
 from typing import Collection, Dict, Iterable, Mapping, Tuple
 
+from egg_timer import EggTimer
+
 from common.agent_events import TCPScanEvent
 from common.event_queue import IAgentEventQueue
 from common.types import NetworkPort, PortStatus
-from common.utils import Timer
 from infection_monkey.i_puppet import PortScanData
 from infection_monkey.network.tools import BANNER_READ, DEFAULT_TIMEOUT
 from infection_monkey.utils.ids import get_agent_id
@@ -123,7 +124,7 @@ def _check_tcp_ports(
         if len(possible_ports) != 0:
             sockets_to_try = possible_ports.copy()
 
-            timer = Timer()
+            timer = EggTimer()
             timer.set(timeout)
 
             while (not timer.is_expired()) and sockets_to_try:
