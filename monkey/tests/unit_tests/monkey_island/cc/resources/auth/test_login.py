@@ -37,7 +37,7 @@ def test_empty_credentials(make_login_request, mock_authentication_service):
     mock_authentication_service.unlock_repository_encryptor.assert_not_called()
 
 
-def test_authentication_successful(make_login_request, monkeypatch):
+def test_login_successful(make_login_request, monkeypatch):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
@@ -50,7 +50,7 @@ def test_authentication_successful(make_login_request, monkeypatch):
     assert response.status_code == 200
 
 
-def test_authentication_failure(make_login_request, mock_authentication_service, monkeypatch):
+def test_login_failure(make_login_request, mock_authentication_service, monkeypatch):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
@@ -64,7 +64,7 @@ def test_authentication_failure(make_login_request, mock_authentication_service,
     mock_authentication_service.unlock_repository_encryptor.assert_not_called()
 
 
-def test_authentication_error(make_login_request, mock_authentication_service):
+def test_login_error(make_login_request, mock_authentication_service):
     mock_authentication_service.unlock_repository_encryptor = MagicMock(side_effect=Exception())
 
     response = make_login_request(TEST_REQUEST)
