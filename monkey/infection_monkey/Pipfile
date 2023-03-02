@@ -22,7 +22,7 @@ ldaptor = "*"
 pywin32-ctypes = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
 pywin32 = {version = "*", sys_platform = "== 'win32'"} # Lock file is not created with sys_platform win32 requirement if not explicitly specified
 pefile = {version = "*", sys_platform = "== 'win32'"} # Pyinstaller requirement on windows
-paramiko = {editable = true, ref = "2.10.3.dev1", git = "https://github.com/VakarisZ/paramiko.git"}
+paramiko = {editable = true, ref = "3.0.0.dev1", git = "https://github.com/VakarisZ/paramiko.git"}
 pypubsub = "*"
 pydantic = "*"
 egg-timer = "*"

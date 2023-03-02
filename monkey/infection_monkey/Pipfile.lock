@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "266d00e40cc69ec145fe33784960f578b2e415c3df9bee80777a3ddba4c69f68"
+            "sha256": "0b2ddd10ae03c0702a961922dd8ab2cad4577affa77484cc6f328bfe7ed004ee"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -339,7 +339,7 @@
                 "sha256:224e32b03eb46be70e12ef6d64e0be123a64e621ab4c0822ff6d450d52a540b9",
                 "sha256:89141536394f909066cabd112e3e1a37e4e654db00a25308b0f130bc3152eb46"
             ],
-            "markers": "python_version >= '3.7' and python_version < '4'",
+            "markers": "python_version >= '3.7' and python_version < '4.0'",
             "version": "==2.3.0"
         },
         "egg-timer": {
@@ -585,7 +585,7 @@
         "paramiko": {
             "editable": true,
             "git": "https://github.com/VakarisZ/paramiko.git",
-            "ref": "d554bc53b9712e5fbb5e444750ad9d91f8c0b16f"
+            "ref": "08eb98d63f5f03172ce4734096e7013a56c560ac"
         },
         "passlib": {
             "hashes": [
@@ -608,7 +608,7 @@
                 "sha256:23ac5d50538a9a38c8bde05fecb47d0b403ecd0662857a86f886f798563d5b9b",
                 "sha256:45ea77a2f7c60418850331366c81cf6b5b9cf4c7fd34616f733c5427e6abbb1f"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_full_version >= '3.7.0'",
             "version": "==3.0.38"
         },
         "psutil": {
