@@ -47,6 +47,9 @@ class AuthenticationService:
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.unlock(secret.encode())
 
+    def lock_repository_encryptor(self):
+        self._repository_encryptor.lock()
+
 
 def _get_secret_from_credentials(username: str, password: str) -> str:
     return f"{username}:{password}"
