@@ -4,8 +4,9 @@ import time
 from ipaddress import IPv4Interface
 from typing import Any, Callable, Collection, Dict, List, Optional, Sequence
 
+from egg_timer import EggTimer
+
 from common.agent_configuration import PluginConfiguration
-from common.utils import Timer
 from infection_monkey.i_control_channel import IControlChannel, IslandCommunicationError
 from infection_monkey.i_master import IMaster
 from infection_monkey.i_puppet import IPuppet
@@ -95,7 +96,7 @@ class AutomatedMaster(IMaster):
             "Checking for the stop signal from the island every "
             f"{CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC} seconds."
         )
-        timer = Timer()
+        timer = EggTimer()
         timer.set(CHECK_ISLAND_FOR_STOP_COMMAND_INTERVAL_SEC)
 
         while self._master_thread_should_run():

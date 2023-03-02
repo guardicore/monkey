@@ -2,32 +2,32 @@ import time
 from unittest.mock import MagicMock
 
 import pytest
+from egg_timer import EggTimer
 
-from common.utils import Timer
 from infection_monkey.utils.decorators import request_cache
 
 
-class MockTimer(Timer):
+class MockTimer(EggTimer):
     def __init__(self):
-        self._time_remaining = 0
-        self._set_time = 0
+        self._timeout_ns = 0
+        self._start_time_ns = 0
 
     def set(self, timeout_sec: float):
-        self._time_remaining = timeout_sec
-        self._set_time = timeout_sec
+        self._timeout_ns = timeout_sec * 1e9
+        self._start_time_ns = time.monotonic_ns()
 
     def set_expired(self):
-        self._time_remaining = 0
+        self._timeout_ns = 0
 
     @property
     def time_remaining(self) -> float:
-        return self._time_remaining
+        return self._timeout_ns
 
     def reset(self):
         """
         Reset the timer without changing the timeout
         """
-        self._time_remaining = self._set_time
+        self._timeout_ns = self._start_time_ns
 
 
 class MockTimerFactory:
@@ -52,7 +52,7 @@ mock_timer_factory = MockTimerFactory()
 def mock_timer(monkeypatch):
     mock_timer_factory.reset
 
-    monkeypatch.setattr("infection_monkey.utils.decorators.Timer", mock_timer_factory)
+    monkeypatch.setattr("infection_monkey.utils.decorators.EggTimer", mock_timer_factory)
 
     return mock_timer_factory()
 
