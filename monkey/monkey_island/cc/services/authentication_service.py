@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from common.utils.exceptions import IncorrectCredentialsError
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -39,23 +38,12 @@ class AuthenticationService:
             topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET
         )
 
-    def authenticate(self, username: str, password: str) -> User:
-        # TODO: Fix while doing login
-        registered_user = User.objects.filter(username=username).first()
-
-        if registered_user is None or not registered_user.verify_and_update_password(password):
-            raise IncorrectCredentialsError()
-
-        self._unlock_repository_encryptor(username, password)
-
-        return registered_user
-
     def reset_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
 
-    def _unlock_repository_encryptor(self, username: str, password: str):
+    def unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.unlock(secret.encode())
 

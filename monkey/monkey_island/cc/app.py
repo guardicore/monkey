@@ -30,7 +30,7 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus
+from monkey_island.cc.resources.auth import Login, Register, RegistrationStatus
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
@@ -106,7 +106,11 @@ def setup_authentication(app, data_dir):
             "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
         )
 
-    app.security = Security(app, user_datastore, confirm_register_form=CustomConfirmRegisterForm)
+    app.security = Security(
+        app,
+        user_datastore,
+        confirm_register_form=CustomConfirmRegisterForm,
+    )
 
 
 def init_app_config(app, mongo_url, data_dir: Path):
@@ -142,7 +146,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Root)
     api.add_resource(Register)
     api.add_resource(RegistrationStatus)
-    api.add_resource(Authenticate)
+    api.add_resource(Login)
     api.add_resource(Agents)
     api.add_resource(LocalRun)
 
