@@ -41,12 +41,11 @@ def test_agent_configuration_endpoint(flask_client):
         json=AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True),
         follow_redirects=True,
     )
-    print(resp.data)
     assert resp.status_code == HTTPStatus.NO_CONTENT
+
     resp = flask_client.get(AGENT_CONFIGURATION_URL)
 
     assert resp.status_code == HTTPStatus.OK
-
     assert AgentConfiguration(**json.loads(resp.data)) == AgentConfiguration(**AGENT_CONFIGURATION)
 
 
