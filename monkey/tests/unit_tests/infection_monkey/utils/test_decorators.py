@@ -20,7 +20,7 @@ class MockTimer(EggTimer):
         self._timeout_ns = 0
 
     @property
-    def time_remaining(self) -> float:
+    def time_remaining_sec(self) -> float:
         return self._timeout_ns
 
     def reset(self):

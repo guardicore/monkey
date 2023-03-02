@@ -130,11 +130,13 @@ def _check_tcp_ports(
             while (not timer.is_expired()) and sockets_to_try:
                 # The call to select() may return sockets that are writeable but not actually
                 # connected. Adding this sleep prevents excessive looping.
-                sleep(min(POLL_INTERVAL, timer.time_remaining))
+                sleep(min(POLL_INTERVAL, timer.time_remaining_sec))
 
                 sock_objects = [s[1] for s in sockets_to_try]
 
-                _, writeable_sockets, _ = select.select([], sock_objects, [], timer.time_remaining)
+                _, writeable_sockets, _ = select.select(
+                    [], sock_objects, [], timer.time_remaining_sec
+                )
                 for s in writeable_sockets:
                     try:  # actual test
                         connected_ports.add((s.getpeername()[1], s))
@@ -151,7 +153,7 @@ def _check_tcp_ports(
             open_ports = {port: "" for port, _ in connected_ports}
             if len(connected_ports) != 0:
                 readable_sockets, _, _ = select.select(
-                    [s[1] for s in connected_ports], [], [], timer.time_remaining
+                    [s[1] for s in connected_ports], [], [], timer.time_remaining_sec
                 )
                 # read first BANNER_READ bytes. We ignore errors because service might not send a
                 # decodable byte string.
