@@ -35,7 +35,6 @@ class AgentConfiguration(AbstractResource):
             json.JSONDecodeError,
             PluginConfigurationValidationError,
         ) as err:
-
             return make_response(
                 {"error": f"Invalid configuration supplied: {err}"},
                 HTTPStatus.BAD_REQUEST,

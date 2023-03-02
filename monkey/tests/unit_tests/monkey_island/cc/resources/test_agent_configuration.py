@@ -10,6 +10,8 @@ from tests.monkey_island import InMemoryAgentConfigurationService, InMemoryAgent
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from common.agent_configuration import AgentConfiguration
+from common.types import JSONSerializable
+from monkey_island.cc.repositories import StorageError
 from monkey_island.cc.resources import AgentConfiguration as AgentConfigurationResource
 from monkey_island.cc.services import IAgentConfigurationService, PluginConfigurationValidationError
 
@@ -52,10 +54,8 @@ def test_agent_configuration_endpoint(flask_client):
     "error, expected_status",
     [
         (Exception, HTTPStatus.INTERNAL_SERVER_ERROR),
-        (json.JSONDecodeError, HTTPStatus.BAD_REQUEST),
         (PluginConfigurationValidationError, HTTPStatus.BAD_REQUEST),
-        (TypeError, HTTPStatus.BAD_REQUEST),
-        (ValueError, HTTPStatus.BAD_REQUEST),
+        (StorageError, HTTPStatus.INTERNAL_SERVER_ERROR),
     ],
 )
 def test_agent_configuration_service_raises_exception(
@@ -74,3 +74,24 @@ def test_agent_configuration_service_raises_exception(
             follow_redirects=True,
         )
     assert resp.status_code == expected_status
+
+
+def run_invalid_config_test(flask_client, config: JSONSerializable):
+    resp = flask_client.put(
+        AGENT_CONFIGURATION_URL,
+        json=config,
+        follow_redirects=True,
+    )
+
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+
+
+def test_agent_configuration_invalid_type(flask_client):
+    config = AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True)
+    config["keep_tunnel_open_time"] = "not-a-float"
+
+    run_invalid_config_test(flask_client, config)
+
+
+def test_agent_configuration_missing_key(flask_client):
+    run_invalid_config_test(flask_client, {})
