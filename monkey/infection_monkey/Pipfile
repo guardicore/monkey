@@ -16,7 +16,6 @@ requests = ">=2.24"
 urllib3 = "==1.26.5"
 WMI = {version = "==1.5.1", sys_platform = "== 'win32'"}
 pypsrp = "*"
-typing-extensions = "*" # Allows us to use 3.9 typing features on 3.7 project
 pysmb = "*"
 "WinSys-3.x" = "*"
 ldaptor = "*"
