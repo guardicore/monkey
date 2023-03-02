@@ -65,7 +65,18 @@ def test_login_failure(make_login_request, mock_authentication_service, monkeypa
 
 
 @pytest.mark.parametrize(
-    "login_response", [1111, "adfasdf", None, True, MagicMock(side_effect=Exception)]
+    "login_response",
+    [
+        1111,
+        "adfasdf",
+        None,
+        True,
+        MagicMock(side_effect=Exception),
+        {"some_value": "other_value"},
+        b"bogus_bytes",
+        b"{bogus}",
+        ["item1", 123, "something"],
+    ],
 )
 def test_login_invalid_request(
     monkeypatch, login_response, make_login_request, mock_authentication_service
