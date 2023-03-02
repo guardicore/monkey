@@ -1,7 +1,6 @@
-from typing import Dict, FrozenSet, Mapping, Tuple
+from typing import Dict, FrozenSet, Mapping, Tuple, TypeAlias
 
 from pydantic import Field
-from typing_extensions import TypeAlias
 
 from common.base_models import MutableInfectionMonkeyBaseModel
 from common.types import SocketAddress
