@@ -44,7 +44,18 @@ def test_register_successful(monkeypatch, make_registration_request, mock_authen
 
 
 @pytest.mark.parametrize(
-    "register_response", [1111, "adfasdf", None, True, MagicMock(side_effect=Exception)]
+    "register_response",
+    [
+        1111,
+        "adfasdf",
+        None,
+        True,
+        MagicMock(side_effect=Exception),
+        {"some_value": "other_value"},
+        b"bogus_bytes",
+        b"{bogus}",
+        ["item1", 123, "something"],
+    ],
 )
 def test_register_invalid_request(
     monkeypatch, register_response, make_registration_request, mock_authentication_service
