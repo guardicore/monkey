@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import Any, Dict
 
-import dpath.util
+import dpath
 
 from common import HARD_CODED_EXPLOITER_MANIFESTS
 from common.agent_configuration import AgentConfiguration
@@ -78,7 +78,7 @@ class AgentConfigurationSchemaCompiler:
 
     def _add_properties_field_to_plugin_types(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         for plugin_path in PLUGIN_PATH_IN_SCHEMA.values():
-            plugin_schema = dpath.util.get(schema, plugin_path, ".")
+            plugin_schema = dpath.get(schema, plugin_path, ".")
             plugin_schema["properties"] = {}
             plugin_schema["additionalProperties"] = False
         return schema
@@ -91,7 +91,7 @@ class AgentConfigurationSchemaCompiler:
         return schema
 
     def _add_non_plugin_exploiters(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.util.get(
+        properties = dpath.get(
             schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.EXPLOITER] + ".properties", "."
         )
         exploiter_schemas = self._add_manifests_to_plugins_schema(
@@ -101,7 +101,7 @@ class AgentConfigurationSchemaCompiler:
         return schema
 
     def _add_non_plugin_credential_collectors(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.util.get(
+        properties = dpath.get(
             schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.CREDENTIAL_COLLECTOR] + ".properties", "."
         )
         credential_collector_schemas = self._add_manifests_to_plugins_schema(
@@ -111,7 +111,7 @@ class AgentConfigurationSchemaCompiler:
         return schema
 
     def _add_non_plugin_fingerprinters(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.util.get(
+        properties = dpath.get(
             schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.FINGERPRINTER] + ".properties", "."
         )
         fingerprinter_schemas = self._add_manifests_to_plugins_schema(
@@ -121,7 +121,7 @@ class AgentConfigurationSchemaCompiler:
         return schema
 
     def _add_non_plugin_payloads(self, schema: Dict[str, Any]) -> Dict[str, Any]:
-        properties = dpath.util.get(
+        properties = dpath.get(
             schema, PLUGIN_PATH_IN_SCHEMA[AgentPluginType.PAYLOAD] + ".properties", "."
         )
         payload_schemas = self._add_manifests_to_plugins_schema(
@@ -137,6 +137,6 @@ class AgentConfigurationSchemaCompiler:
         plugin_name: str,
         config_schema: Dict[str, Any],
     ):
-        properties = dpath.util.get(schema, PLUGIN_PATH_IN_SCHEMA[plugin_type] + ".properties", ".")
+        properties = dpath.get(schema, PLUGIN_PATH_IN_SCHEMA[plugin_type] + ".properties", ".")
         properties.update({plugin_name: config_schema})
         return schema
