@@ -5,9 +5,8 @@ from typing import Iterable, Set, Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
-from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
-from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, LoginForm
+from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
 from werkzeug.exceptions import NotFound
 from wtforms import StringField, ValidationError
 
@@ -110,14 +109,10 @@ def setup_authentication(app, data_dir):
             "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
         )
 
-    login_manager = LoginManager()
-    login_manager.init_app(app)
-
     app.security = Security(
         app,
         user_datastore,
         confirm_register_form=CustomConfirmRegisterForm,
-        login_form=LoginForm,
     )
 
 
