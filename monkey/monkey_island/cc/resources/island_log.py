@@ -2,8 +2,7 @@ import logging
 from pathlib import Path
 
 from common.utils.file_utils import get_text_file_contents
-from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
+from monkey_island.cc.flask_utils import AbstractResource, jwt_required
 
 logger = logging.getLogger(__name__)
 

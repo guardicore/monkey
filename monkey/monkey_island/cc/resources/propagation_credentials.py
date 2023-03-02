@@ -3,8 +3,8 @@ from http import HTTPStatus
 from flask import request
 
 from common.credentials import Credentials
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import ICredentialsRepository
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 _configured_collection = "configured-credentials"
 _stolen_collection = "stolen-credentials"

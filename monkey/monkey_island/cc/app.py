@@ -1,18 +1,15 @@
 import os
-import re
 import uuid
 from datetime import timedelta
-from typing import Iterable, Set, Type
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
 from werkzeug.exceptions import NotFound
 
 from common import DIContainer
+from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
-    AgentConfiguration,
-    AgentConfigurationSchema,
     AgentEvents,
     AgentHeartbeat,
     AgentLogs,
@@ -30,7 +27,6 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth import Authenticate, Register, RegistrationStatus, init_jwt
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
@@ -40,6 +36,7 @@ from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
+from monkey_island.cc.services import register_agent_configuration_resources
 from monkey_island.cc.services.representations import output_json
 
 HOME_FILE = "index.html"
@@ -91,46 +88,6 @@ def init_app_url_rules(app):
     app.add_url_rule("/<path:static_path>", "serve_static_file", serve_static_file)
 
 
-class FlaskDIWrapper:
-    class DuplicateURLError(Exception):
-        pass
-
-    url_parameter_regex = re.compile(r"<.*?:.*?>")
-
-    def __init__(self, api: flask_restful.Api, container: DIContainer):
-        self._api = api
-        self._container = container
-        self._reserved_urls: Set[str] = set()
-
-    def add_resource(self, resource: Type[AbstractResource]):
-        if len(resource.urls) == 0:
-            raise ValueError(f"Resource {resource.__name__} has no defined URLs")
-
-        self._reserve_urls(resource.urls)
-
-        # enforce our rule that URLs should not contain a trailing slash
-        for url in resource.urls:
-            if url.endswith("/"):
-                raise ValueError(
-                    f"Resource {resource.__name__} has an invalid URL: A URL "
-                    "should not have a trailing slash."
-                )
-        dependencies = self._container.resolve_dependencies(resource)
-        self._api.add_resource(resource, *resource.urls, resource_class_args=dependencies)
-
-    def _reserve_urls(self, urls: Iterable[str]):
-        for url in map(FlaskDIWrapper._format_url, urls):
-            if url in self._reserved_urls:
-                raise FlaskDIWrapper.DuplicateURLError(f"URL {url} has already been registered!")
-
-            self._reserved_urls.add(url)
-
-    @staticmethod
-    def _format_url(url: str):
-        new_url = url.strip("/")
-        return FlaskDIWrapper.url_parameter_regex.sub("<PARAMETER_PLACEHOLDER>", new_url)
-
-
 def init_api_resources(api: FlaskDIWrapper):
     init_restful_endpoints(api)
     init_rpc_endpoints(api)
@@ -145,8 +102,6 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(LocalRun)
 
     api.add_resource(IslandMode)
-    api.add_resource(AgentConfiguration)
-    api.add_resource(AgentConfigurationSchema)
     api.add_resource(AgentBinaries)
     api.add_resource(AgentPlugins)
     api.add_resource(AgentPluginsManifest)
@@ -171,6 +126,8 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(ReportGenerationStatus)
 
     api.add_resource(AgentHeartbeat)
+
+    register_agent_configuration_resources(api)
 
 
 def init_rpc_endpoints(api: FlaskDIWrapper):

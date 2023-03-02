@@ -3,8 +3,8 @@ from http import HTTPStatus
 
 from flask import make_response, send_file
 
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentBinaryRepository, RetrievalError
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
 

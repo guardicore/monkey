@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import INodeRepository
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 
 class Nodes(AbstractResource):

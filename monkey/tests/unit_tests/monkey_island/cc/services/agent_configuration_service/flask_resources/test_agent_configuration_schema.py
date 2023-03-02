@@ -6,8 +6,10 @@ from tests.common import StubDIContainer
 from tests.unit_tests.monkey_island.conftest import get_url_for_resource
 
 from monkey_island.cc.repositories import RetrievalError
-from monkey_island.cc.resources import AgentConfigurationSchema
 from monkey_island.cc.services import IAgentConfigurationService
+from monkey_island.cc.services.agent_configuration_service.flask_resources.agent_configuration_schema import (  # noqa: E501
+    AgentConfigurationSchema,
+)
 
 AGENT_CONFIGURATION_SCHEMA_URL = get_url_for_resource(AgentConfigurationSchema)
 

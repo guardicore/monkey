@@ -2,7 +2,7 @@ import logging
 from http import HTTPStatus
 
 from common.types import AgentID
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services import AgentSignalsService
 
 logger = logging.getLogger(__name__)

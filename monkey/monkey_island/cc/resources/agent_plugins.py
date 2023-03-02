@@ -5,8 +5,8 @@ from flask import make_response
 
 from common import OperatingSystem
 from common.agent_plugins import AgentPluginType
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentPluginRepository, UnknownRecordError
-from monkey_island.cc.resources.AbstractResource import AbstractResource
 
 logger = logging.getLogger(__name__)
 

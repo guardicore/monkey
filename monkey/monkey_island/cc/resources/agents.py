@@ -6,9 +6,8 @@ from flask import make_response, request
 
 from common import AgentRegistrationData
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
+from monkey_island.cc.flask_utils import AbstractResource, jwt_required
 from monkey_island.cc.repositories import IAgentRepository
-from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 
 logger = logging.getLogger(__name__)
 

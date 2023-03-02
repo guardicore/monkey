@@ -4,9 +4,8 @@ from http import HTTPStatus
 from flask import request
 
 from common.types import AgentID
+from monkey_island.cc.flask_utils import AbstractResource, jwt_required
 from monkey_island.cc.repositories import IAgentLogRepository, UnknownRecordError
-from monkey_island.cc.resources.AbstractResource import AbstractResource
-from monkey_island.cc.resources.request_authentication import jwt_required
 
 logger = logging.getLogger(__name__)
 
