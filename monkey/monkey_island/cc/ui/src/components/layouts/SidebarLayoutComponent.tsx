@@ -12,7 +12,7 @@ const SidebarLayoutComponent = ({component: Component,
                                   onStatusChange = () => {},
                                   ...other
                                 }) => (
-  <Route {...other} render={() => {
+  <Route {...other} element={() => {
     return (
       <Row>
         {sideNavShow &&<Col sm={3} md={3} lg={3} xl={2} className='sidebar'>
