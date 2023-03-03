@@ -1,11 +1,12 @@
 import logging
 from http import HTTPStatus
 
-from flask import make_response
+from flask import Response, make_response
 from flask.typing import ResponseValue
 from flask_security.views import logout
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
 from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,13 @@ class Logout(AbstractResource):
         self._authentication_service = authentication_service
 
     def post(self):
-        response: ResponseValue = logout()
+        try:
+            response: ResponseValue = logout()
+        except Exception:
+            return response_to_invalid_request()
+
+        if not isinstance(response, Response):
+            return response_to_invalid_request()
         if response.status_code == HTTPStatus.OK:
             self._authentication_service.lock_repository_encryptor()
 
