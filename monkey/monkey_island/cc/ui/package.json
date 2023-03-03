@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "10.1.0",
-    "@emotion/core": "11.0.0",
+    "@emotion/react": "^11.10.6",
     "@fortawesome/fontawesome-svg-core": "6.3.0",
     "@fortawesome/free-regular-svg-icons": "6.3.0",
     "@fortawesome/free-solid-svg-icons": "6.3.0",
