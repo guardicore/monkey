@@ -1,11 +1,10 @@
 from unittest.mock import MagicMock
 
-import flask_jwt_extended
 import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import OpenErrorFileRepository
 from tests.unit_tests.monkey_island.cc.mongomock_fixtures import *  # noqa: F401,F403,E402
-from tests.unit_tests.monkey_island.conftest import init_mock_app
+from tests.unit_tests.monkey_island.conftest import init_mock_security_app
 
 import monkey_island.cc.app
 import monkey_island.cc.resources.auth
@@ -30,8 +29,6 @@ def repository_encryptor():
 
 @pytest.fixture
 def flask_client(monkeypatch_session):
-    monkeypatch_session.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
-
     container = MagicMock()
     container.resolve_dependencies.return_value = []
 
@@ -42,19 +39,15 @@ def flask_client(monkeypatch_session):
 @pytest.fixture
 def build_flask_client(monkeypatch_session):
     def inner(container):
-        monkeypatch_session.setattr(flask_jwt_extended, "verify_jwt_in_request", lambda: None)
-
         return get_mock_app(container).test_client()
 
     return inner
 
 
 def get_mock_app(container):
-    app, api = init_mock_app()
+    app, api = init_mock_security_app()
     flask_resource_manager = monkey_island.cc.app.FlaskDIWrapper(api, container)
     monkey_island.cc.app.init_api_resources(flask_resource_manager)
-
-    flask_jwt_extended.JWTManager(app)
 
     return app
 
