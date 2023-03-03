@@ -3,6 +3,7 @@ from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
+from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
 from werkzeug.exceptions import NotFound
@@ -85,6 +86,8 @@ def setup_authentication(app, data_dir):
     # Ignore CSRF, because it's irrelevant for javascript applications
     app.config["WTF_CSRF_CHECK_DEFAULT"] = False
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
+    # Forbid sending authentication token in URL parameters
+    app.config["SECURITY_TOKEN_AUTHENTICATION_KEY"] = None
 
     # The database object needs to be created after we configure the flask application
     db = MongoEngine(app)
@@ -112,6 +115,8 @@ def setup_authentication(app, data_dir):
         confirm_register_form=CustomConfirmRegisterForm,
     )
 
+    app.session_interface = disable_session_cookies()
+
 
 def init_app_config(app, mongo_url, data_dir: Path):
     app.config["MONGO_URI"] = mongo_url
@@ -130,6 +135,19 @@ def init_app_config(app, mongo_url, data_dir: Path):
     app.url_map.strict_slashes = False
 
     setup_authentication(app, data_dir)
+
+
+def disable_session_cookies() -> SecureCookieSessionInterface:
+    class CustomSessionInterface(SecureCookieSessionInterface):
+        """Prevent creating session from API requests."""
+
+        def should_set_cookie(self, *args, **kwargs):
+            return False
+
+        def save_session(self, *args, **kwargs):
+            return
+
+    return CustomSessionInterface()
 
 
 def init_app_url_rules(app):
