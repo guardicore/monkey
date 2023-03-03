@@ -64,7 +64,38 @@ def test_login_failure(make_login_request, mock_authentication_service, monkeypa
     mock_authentication_service.unlock_repository_encryptor.assert_not_called()
 
 
-def test_login_error(make_login_request, mock_authentication_service):
+@pytest.mark.parametrize(
+    "login_response",
+    [
+        1111,
+        "adfasdf",
+        None,
+        True,
+        MagicMock(side_effect=Exception),
+        {"some_value": "other_value"},
+        b"bogus_bytes",
+        b"{bogus}",
+        ["item1", 123, "something"],
+    ],
+)
+def test_login_invalid_request(
+    monkeypatch, login_response, make_login_request, mock_authentication_service
+):
+    monkeypatch.setattr("monkey_island.cc.resources.auth.login.login", lambda: login_response)
+
+    response = make_login_request(b"{}")
+
+    assert response.status_code == 400
+    mock_authentication_service.unlock_repository_encryptor.assert_not_called()
+
+
+def test_login_error(monkeypatch, make_login_request, mock_authentication_service):
+    monkeypatch.setattr(
+        "monkey_island.cc.resources.auth.login.login",
+        lambda: Response(
+            status=200,
+        ),
+    )
     mock_authentication_service.unlock_repository_encryptor = MagicMock(side_effect=Exception())
 
     response = make_login_request(TEST_REQUEST)
