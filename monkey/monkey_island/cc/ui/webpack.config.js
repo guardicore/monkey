@@ -81,9 +81,6 @@ module.exports = smp.wrap({
   ignoreWarnings: [/Failed to parse source map/],
   devtool: isProduction ? 'source-map' : 'eval-source-map',
   plugins: [
-    new ESLintPlugin({
-      extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         diagnosticOptions: {
@@ -96,7 +93,8 @@ module.exports = smp.wrap({
       template: './src/index.html',
       filename: './index.html'
     }),
-    new NodePolyfillPlugin()
+    new NodePolyfillPlugin(),
+    new ESLintPlugin(),
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],

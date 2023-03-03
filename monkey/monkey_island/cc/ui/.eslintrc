@@ -8,15 +8,14 @@
     "plugin:react/recommended"
   ],
   "parserOptions": {
+    "requireConfigFile": false,
     "ecmaVersion": 6,
-    "sourceType": "module",
-    "allowImportExportEverywhere": false,
     "ecmaFeatures": {
       "jsx": true,
       "globalReturn": false
     },
     "babelOptions": {
-      "configFile": ".babelrc"
+      "configFile": false
     }
   },
   "settings": {
