@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock
 
-import flask_security
 import pytest
 from tests.common import StubDIContainer
 from tests.monkey_island import OpenErrorFileRepository
@@ -29,9 +28,7 @@ def repository_encryptor():
 
 
 @pytest.fixture
-def flask_client(monkeypatch_session):
-    monkeypatch_session.setattr(flask_security.decorators, "_check_token", lambda: True)
-
+def flask_client():
     container = MagicMock()
     container.resolve_dependencies.return_value = []
 
@@ -40,9 +37,7 @@ def flask_client(monkeypatch_session):
 
 
 @pytest.fixture
-def build_flask_client(monkeypatch_session):
-    monkeypatch_session.setattr(flask_security.decorators, "_check_token", lambda: True)
-
+def build_flask_client():
     def inner(container):
         return get_mock_app(container).test_client()
 
