@@ -10,8 +10,8 @@ from werkzeug.exceptions import NotFound
 from wtforms import StringField, ValidationError
 
 from common import DIContainer
-from monkey_island.cc.models import Role, User
 from monkey_island.cc.flask_utils import FlaskDIWrapper
+from monkey_island.cc.models import Role, User
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentEvents,
@@ -165,6 +165,7 @@ def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Register)
     api.add_resource(RegistrationStatus)
     api.add_resource(Login)
+    api.add_resource(Logout)
     api.add_resource(Agents)
     api.add_resource(LocalRun)
 
