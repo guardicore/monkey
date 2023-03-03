@@ -100,7 +100,7 @@
     "react-markdown": "8.0.5",
     "react-router-dom": "6.8.2",
     "react-spinners": "0.13.8",
-    "react-table": "7.8.0",
+    "react-table": "^6.11.5",
     "react-tsparticles": "2.9.3",
     "remark-breaks": "3.0.2",
     "request": "^2.88.2",
