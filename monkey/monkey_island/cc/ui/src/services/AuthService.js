@@ -9,7 +9,13 @@ export default class AuthService {
   };
 
   logout = () => {
-    return this._authFetch(this.LOGOUT_ENDPOINT);
+    return this._authFetch(this.LOGOUT_ENDPOINT)
+      .then(response => response.json())
+      .then(response => {
+        if(response.status === 200){
+          this._removeToken();
+        }
+      });
   }
 
   authFetch = (url, options) => {
