@@ -1,9 +1,10 @@
 from http import HTTPStatus
 
 from flask import make_response
+from flask_security import auth_token_required
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.flask_utils import AbstractResource, jwt_required
+from monkey_island.cc.flask_utils import AbstractResource
 
 
 class ClearSimulationData(AbstractResource):
@@ -12,7 +13,7 @@ class ClearSimulationData(AbstractResource):
     def __init__(self, island_event_queue: IIslandEventQueue):
         self._island_event_queue = island_event_queue
 
-    @jwt_required
+    @auth_token_required
     def post(self):
         """
         Clear all data collected during the simulation

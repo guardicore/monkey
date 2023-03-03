@@ -16,6 +16,7 @@ class PropagationCredentials(AbstractResource):
     def __init__(self, credentials_repository: ICredentialsRepository):
         self._credentials_repository = credentials_repository
 
+    # Used by Agent. Can't secure.
     def get(self, collection=None):
         if collection == _configured_collection:
             propagation_credentials = self._credentials_repository.get_configured_credentials()
@@ -28,6 +29,7 @@ class PropagationCredentials(AbstractResource):
 
         return propagation_credentials, HTTPStatus.OK
 
+    # Used by Agent. Can't secure.
     def put(self, collection=None):
         credentials = [Credentials(**c) for c in request.json]
         if collection == _configured_collection:
