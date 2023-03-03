@@ -7,7 +7,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const smp = new SpeedMeasurePlugin({disable: isProduction});
-
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = smp.wrap({
   mode: isProduction ? 'production' : 'development',
@@ -81,6 +81,9 @@ module.exports = smp.wrap({
   ignoreWarnings: [/Failed to parse source map/],
   devtool: isProduction ? 'source-map' : 'eval-source-map',
   plugins: [
+    new ESLintPlugin({
+      extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    }),
     new ForkTsCheckerWebpackPlugin({
       typescript: {
         diagnosticOptions: {
