@@ -1,6 +1,7 @@
 import json
 
 from flask import make_response, request
+from flask_security import auth_token_required
 
 from common.agent_configuration.agent_configuration import (
     AgentConfiguration as AgentConfigurationObject,
@@ -24,6 +25,7 @@ class AgentConfiguration(AbstractResource):
         configuration_dict = configuration.dict(simplify=True)
         return make_response(configuration_dict, 200)
 
+    @auth_token_required
     def put(self):
         try:
             configuration_object = AgentConfigurationObject(**request.json)

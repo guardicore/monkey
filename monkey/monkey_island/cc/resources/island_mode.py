@@ -3,6 +3,7 @@ import logging
 from http import HTTPStatus
 
 from flask import request
+from flask_security import auth_token_required
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode as IslandModeEnum
@@ -23,6 +24,7 @@ class IslandMode(AbstractResource):
         self._island_event_queue = island_event_queue
         self._simulation_repository = simulation_repository
 
+    @auth_token_required
     def put(self):
         try:
             mode = IslandModeEnum(request.json)
@@ -33,6 +35,7 @@ class IslandMode(AbstractResource):
         except ValueError:
             return {}, HTTPStatus.UNPROCESSABLE_ENTITY
 
+    @auth_token_required
     def get(self):
         island_mode = self._simulation_repository.get_mode()
         return island_mode.value, HTTPStatus.OK

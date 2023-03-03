@@ -3,6 +3,7 @@ from http import HTTPStatus
 from typing import Iterable, Optional, Sequence, Tuple, Type
 
 from flask import request
+from flask_security import auth_token_required
 
 from common.agent_event_serializers import EVENT_TYPE_FIELD, AgentEventSerializerRegistry
 from common.agent_events import AbstractAgentEvent, AgentEventRegistry
@@ -29,7 +30,7 @@ class AgentEvents(AbstractResource):
         self._agent_event_repository = agent_event_repository
         self._agent_event_registry = agent_event_registry
 
-    # Agents needs this
+    # Agents need this. Can't secure.
     def post(self):
         events = request.json
 
@@ -45,6 +46,7 @@ class AgentEvents(AbstractResource):
 
         return {}, HTTPStatus.NO_CONTENT
 
+    @auth_token_required
     def get(self):
         try:
             type_, success = self._parse_event_filter_args()

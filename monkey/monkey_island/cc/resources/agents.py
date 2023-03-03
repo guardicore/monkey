@@ -3,6 +3,7 @@ import logging
 from http import HTTPStatus
 
 from flask import make_response, request
+from flask_security import auth_token_required
 
 from common import AgentRegistrationData
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
@@ -19,9 +20,11 @@ class Agents(AbstractResource):
         self._island_event_queue = island_event_queue
         self._agent_repository = agent_repository
 
+    @auth_token_required
     def get(self):
         return self._agent_repository.get_agents(), HTTPStatus.OK
 
+    # Used by Agent. Can't secure.
     def post(self):
         try:
             # Just parse for now

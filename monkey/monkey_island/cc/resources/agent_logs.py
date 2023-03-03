@@ -2,6 +2,7 @@ import logging
 from http import HTTPStatus
 
 from flask import request
+from flask_security import auth_token_required
 
 from common.types import AgentID
 from monkey_island.cc.repositories import IAgentLogRepository, UnknownRecordError
@@ -16,6 +17,7 @@ class AgentLogs(AbstractResource):
     def __init__(self, agent_log_repository: IAgentLogRepository):
         self._agent_log_repository = agent_log_repository
 
+    @auth_token_required
     def get(self, agent_id: AgentID):
         try:
             log_contents = self._agent_log_repository.get_agent_log(agent_id)
@@ -25,6 +27,7 @@ class AgentLogs(AbstractResource):
 
         return log_contents, HTTPStatus.OK
 
+    # Used by Agent. Can't secure.
     def put(self, agent_id: AgentID):
         log_contents = request.json
 

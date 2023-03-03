@@ -3,6 +3,7 @@ from http import HTTPStatus
 from json import JSONDecodeError
 
 from flask import request
+from flask_security import auth_token_required
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import TerminateAllAgents as TerminateAllAgentsObject
@@ -20,6 +21,7 @@ class TerminateAllAgents(AbstractResource):
     ):
         self._island_event_queue = island_event_queue
 
+    @auth_token_required
     def post(self):
         try:
             terminate_all_agents = TerminateAllAgentsObject(**request.json)

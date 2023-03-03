@@ -3,6 +3,7 @@ from typing import Sequence
 
 from botocore.exceptions import ClientError, NoCredentialsError
 from flask import jsonify, make_response, request
+from flask_security import auth_token_required
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.services import AWSService
@@ -27,6 +28,7 @@ class RemoteRun(AbstractResource):
     def __init__(self, aws_service: AWSService):
         self._aws_service = aws_service
 
+    @auth_token_required
     def get(self):
         action = request.args.get("action")
         if action == "list_aws":
@@ -47,6 +49,7 @@ class RemoteRun(AbstractResource):
 
         return {}
 
+    @auth_token_required
     def post(self):
         body = json.loads(request.data)
         if body.get("type") == "aws":

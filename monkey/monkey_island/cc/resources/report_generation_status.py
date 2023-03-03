@@ -1,4 +1,5 @@
 from flask import jsonify
+from flask_security import auth_token_required
 
 from monkey_island.cc.repositories import IAgentRepository
 from monkey_island.cc.resources.AbstractResource import AbstractResource
@@ -11,6 +12,7 @@ class ReportGenerationStatus(AbstractResource):
     def __init__(self, agent_repository: IAgentRepository):
         self._agent_repository = agent_repository
 
+    @auth_token_required
     def get(self):
         return self.report_generation_status()
 
