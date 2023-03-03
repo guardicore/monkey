@@ -234,7 +234,8 @@ class AppComponent extends AuthComponent {
         <Container fluid>
           <Routes>
             <Route path={IslandRoutes.LoginPage} element={<LoginPageComponent onStatusChange={this.updateStatus}/>}/>
-            <Route path={Routes.Logout} element={() => new AuthService().logout()}/>
+            <Route path={Routes.Logout} element={async () => ( await new AuthService().logout()
+              .then(() => (<Redirect to={'/'} />)))}/>
             <Route path={IslandRoutes.RegisterPage} element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
             {this.renderRoute(IslandRoutes.LandingPage,
               <SidebarLayoutComponent component={LandingPage}
