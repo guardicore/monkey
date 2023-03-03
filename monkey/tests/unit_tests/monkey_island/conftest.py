@@ -59,7 +59,29 @@ def init_mock_app():
     user_datastore = MongoEngineUserDatastore(db, User, Role)
     app.security = Security(app, user_datastore)
 
+    ds = app.security.datastore
+    with app.app_context():
+        ds.create_user(
+            email="unittest@me.com",
+            username="test",
+            password="password",
+        )
+        ds.commit()
+
+    set_current_user(app, ds, "unittest@me.com")
+
     return app, api
+
+
+def set_current_user(app, ds, email):
+    """Set up so that when request is received,
+    the token will cause 'user' to be made the current_user
+    """
+
+    def token_cb(request):
+        return ds.find_user(email=email)
+
+    app.security.login_manager.request_loader(token_cb)
 
 
 def mock_flask_resource_manager(container):
