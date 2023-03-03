@@ -1,4 +1,5 @@
 import flask_restful
+import mongomock
 import pytest
 from flask import Flask
 from flask_mongoengine import MongoEngine
@@ -19,7 +20,6 @@ def init_mock_security_app(db_name):
     # Make this plaintext for most tests - reduces unit test time by 50%
     app.config["SECURITY_PASSWORD_HASH"] = "plaintext"
     app.config["TESTING"] = True
-    app.config["MONGO_URI"] = "mongomock://localhost"
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
@@ -27,7 +27,7 @@ def init_mock_security_app(db_name):
 
     db = MongoEngine()
     db.disconnect(alias="default")
-    db.connect(db_name, host="mongomock://localhost")
+    db.connect(db_name, host="mongodb://localhost", mongo_client_class=mongomock.MongoClient)
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
     app.security = Security(app, user_datastore)
