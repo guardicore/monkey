@@ -1,12 +1,13 @@
 import logging
 from http import HTTPStatus
 
-from flask import make_response, request
+from flask import Response, make_response, request
 from flask.typing import ResponseValue
 from flask_security.views import login
 
 from monkey_island.cc.resources.AbstractResource import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
+from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
 from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
@@ -32,10 +33,16 @@ class Login(AbstractResource):
         :return: Access token in the response body
         :raises IncorrectCredentialsError: If credentials are invalid
         """
-
-        response: ResponseValue = login()
-        if response.status_code == HTTPStatus.OK:
+        try:
             username, password = get_username_password_from_request(request)
+            response: ResponseValue = login()
+        except Exception:
+            return response_to_invalid_request()
+
+        if not isinstance(response, Response):
+            return response_to_invalid_request()
+
+        if response.status_code == HTTPStatus.OK:
             self._authentication_service.unlock_repository_encryptor(username, password)
 
         return make_response(response)

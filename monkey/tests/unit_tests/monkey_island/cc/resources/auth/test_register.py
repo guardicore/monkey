@@ -21,12 +21,6 @@ def make_registration_request(flask_client):
 
 
 def test_register_failed(monkeypatch, make_registration_request, mock_authentication_service):
-    monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.register.register",
-        lambda: Response(
-            status=400,
-        ),
-    )
     response = make_registration_request("{}")
 
     mock_authentication_service.reset_island_data.assert_not_called()
@@ -47,6 +41,34 @@ def test_register_successful(monkeypatch, make_registration_request, mock_authen
     assert response.status_code == 200
     mock_authentication_service.reset_island_data.assert_called_once()
     mock_authentication_service.reset_repository_encryptor.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    "register_response",
+    [
+        1111,
+        "adfasdf",
+        None,
+        True,
+        MagicMock(side_effect=Exception),
+        {"some_value": "other_value"},
+        b"bogus_bytes",
+        b"{bogus}",
+        ["item1", 123, "something"],
+    ],
+)
+def test_register_invalid_request(
+    monkeypatch, register_response, make_registration_request, mock_authentication_service
+):
+    monkeypatch.setattr(
+        "monkey_island.cc.resources.auth.register.register", lambda: register_response
+    )
+
+    response = make_registration_request(b"{}")
+
+    assert response.status_code == 400
+    mock_authentication_service.reset_island_data.assert_not_called()
+    mock_authentication_service.reset_repository_encryptor.assert_not_called()
 
 
 def test_register_error(monkeypatch, make_registration_request, mock_authentication_service):
