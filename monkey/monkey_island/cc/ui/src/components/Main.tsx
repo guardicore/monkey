@@ -28,6 +28,7 @@ import IslandHttpClient, { APIEndpoint } from "./IslandHttpClient";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
 import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
+import AuthService from '../services/AuthService';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -39,6 +40,7 @@ export const Routes = {
   RansomwareReport: '/report/ransomware',
   LoginPage: '/login',
   RegisterPage: '/register',
+  Logout: '/logout',
   ConfigurePage: '/configure',
   RunMonkeyPage: '/run-monkey',
   MapPage: '/infection/map',
@@ -236,6 +238,7 @@ class AppComponent extends AuthComponent {
         <Container fluid>
           <Switch>
             <Route path={Routes.LoginPage} render={() => (<LoginPageComponent onStatusChange={this.updateStatus}/>)}/>
+            <Route path={Routes.Logout} render={() => new AuthService().logout()}/>
             <Route path={Routes.RegisterPage} render={() => (<RegisterPageComponent onStatusChange={this.updateStatus}/>)}/>
             {this.renderRoute(Routes.LandingPage,
               <SidebarLayoutComponent component={LandingPage}
