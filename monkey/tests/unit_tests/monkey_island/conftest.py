@@ -4,6 +4,7 @@ from collections.abc import Callable
 from typing import Set, Type
 
 import flask_restful
+import mongomock
 import pytest
 from flask import Flask
 from flask_mongoengine import MongoEngine
@@ -13,6 +14,7 @@ import monkey_island
 from common.utils.code_utils import insecure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.models import Role, User
+from monkey_island.cc.resources.auth import Login, Logout, Register
 from monkey_island.cc.services.representations import output_json
 
 
@@ -44,7 +46,7 @@ def init_mock_security_app():
     app.config["SECURITY_PASSWORD_HASH"] = "plaintext"
     app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
     app.config["TESTING"] = True
-    app.config["MONGO_URI"] = "mongomock://some_host"
+    app.config["MONGO_URI"] = "mongodb://some_host"
     app.config["WTF_CSRF_ENABLED"] = False
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
@@ -54,11 +56,38 @@ def init_mock_security_app():
     db = MongoEngine()
     db.disconnect(alias="default")
     db_name = insecure_generate_random_string(8)
-    db.connect(db_name, host="mongodb://some_host")
+    db.connect(db_name, mongo_client_class=mongomock.MongoClient)
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
     app.security = Security(app, user_datastore)
+    ds = app.security.datastore
+    with app.app_context():
+        ds.create_user(
+            email="unittest@me.com",
+            username="test",
+            password="password",
+        )
+        ds.commit()
+
+    set_current_user(app, ds, "unittest@me.com")
     return app, api
+
+
+def set_current_user(app, ds, email):
+    """Set up so that when request is received,
+    the token will cause 'user' to be made the current_user
+    """
+
+    def token_cb(request):
+        if (
+            Register.urls[0] in request.url
+            or Logout.urls[0] in request.url
+            or Login.urls[0] in request.url
+        ):
+            return
+        return ds.find_user(email=email)
+
+    app.security.login_manager.request_loader(token_cb)
 
 
 def mock_flask_resource_manager(container):
