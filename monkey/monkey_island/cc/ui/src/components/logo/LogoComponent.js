@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExternalLinkAlt} from '@fortawesome/free-solid-svg-icons';
-import {Routes} from '../Main';
+import {routes} from '../Main';
 import VersionComponent from './VersionComponent';
 
 const akamaiLogoImage = require('../../images/akamai-logo.svg');
@@ -22,7 +22,7 @@ function Logo() {
           <FontAwesomeIcon icon={faExternalLinkAlt} /> Documentation
         </a>
         <br/>
-        <Link to={Routes.LicensePage}>License</Link>
+        <Link to={routes.LicensePage}>License</Link>
       </div>
       <VersionComponent/>
     </>

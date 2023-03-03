@@ -148,17 +148,17 @@ class AppComponent extends AuthComponent {
       switch (this.state.isLoggedIn) {
         case true:
           if (this.needsRedirectionToLandingPage(route_path)) {
-            return <Route element={<Navigate replace to={routes.LandingPage}/>}/>
+            return <Navigate replace to={routes.LandingPage}/>;
           } else if (this.needsRedirectionToGettingStarted(route_path)) {
-            return <Route element={<Navigate replace to={routes.GettingStartedPage}/>}/>
+            return <Navigate replace to={routes.GettingStartedPage}/>;
           }
           return page_component;
         case false:
           switch (this.state.needsRegistration) {
             case true:
-              return <Route element={<Navigate replace to={routes.RegisterPage}/>}/>
+              return <Navigate replace to={routes.RegisterPage}/>;
             case false:
-              return <Route element={<Navigate replace to={routes.LoginPage}/>}/>;
+              return <Navigate replace to={routes.LoginPage}/>;
             default:
               return <LoadingScreen text={'Loading page...'}/>;
           }
@@ -167,7 +167,7 @@ class AppComponent extends AuthComponent {
       }
     };
 
-    return <Route path={route_path} element={render_func}/>;
+    return <Route path={route_path} element={render_func()}/>;
   };
 
   needsRedirectionToLandingPage = (route_path) => {
