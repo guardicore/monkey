@@ -41,9 +41,11 @@ def init_mock_app():
     # Our test emails/domain isn't necessarily valid
     app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
     # Make this plaintext for most tests - reduces unit test time by 50%
+    app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
     app.config["SECURITY_PASSWORD_HASH"] = "plaintext"
     app.config["TESTING"] = True
     app.config["MONGO_URI"] = "mongomock://localhost"
+    app.config["WTF_CSRF_ENABLED"] = False
 
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
