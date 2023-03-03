@@ -7,6 +7,7 @@ from common.utils.code_utils import apply_filters
 
 def generate_brute_force_credentials(
     input_credentials: Iterable[Credentials],
+    identity_filters: Iterable[Callable[[Identity], bool]] = (),
     secret_filters: Iterable[Callable[[Secret], bool]] = (),
 ) -> Sequence[Credentials]:
     """
@@ -23,7 +24,7 @@ def generate_brute_force_credentials(
     """
     _input_credentials = set(input_credentials)
     brute_force_credentials = _generate_all_possible_combinations(
-        _input_credentials, secret_filters
+        _input_credentials, identity_filters, secret_filters
     )
 
     return _sort_known_identity_secret_pairs_first(brute_force_credentials, _input_credentials)
@@ -31,6 +32,7 @@ def generate_brute_force_credentials(
 
 def _generate_all_possible_combinations(
     input_credentials: Set[Credentials],
+    identity_filters: Iterable[Callable[[Identity], bool]] = (),
     secret_filters: Iterable[Callable[[Secret], bool]] = (),
 ) -> Iterable[Credentials]:
     brute_force_credentials: List[Credentials] = []
@@ -48,7 +50,7 @@ def _generate_all_possible_combinations(
     # Output will be grouped by secret type. This is not guaranteed by the interface, but if we can
     # arrange these in an orderly sequence, we might as well.
     for secret in apply_filters(chain.from_iterable(secrets.values()), secret_filters):
-        for identity in chain.from_iterable(identities.values()):
+        for identity in apply_filters(chain.from_iterable(identities.values()), identity_filters):
             brute_force_credentials.append(Credentials(identity=identity, secret=secret))
 
     return brute_force_credentials
