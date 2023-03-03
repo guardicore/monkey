@@ -17,6 +17,7 @@ class AgentSignals(AbstractResource):
     ):
         self._agent_signals_service = agent_signals_service
 
+    # Used by Agent. Can't secure.
     def get(self, agent_id: AgentID):
         agent_signals = self._agent_signals_service.get_signals(agent_id)
         return agent_signals.dict(simplify=True), HTTPStatus.OK

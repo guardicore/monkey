@@ -29,7 +29,7 @@ class AgentEvents(AbstractResource):
         self._agent_event_repository = agent_event_repository
         self._agent_event_registry = agent_event_registry
 
-    # Agents needs this
+    # Agents need this. Can't secure.
     def post(self):
         events = request.json
 
