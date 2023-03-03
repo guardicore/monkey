@@ -102,6 +102,10 @@ prompt
 app.url_map.strict_slashes
 api.representations
 hub.exception_stream
+app.login_via_request
+app.should_set_cookie
+app.session_interface
+app.save_session
 
 # Deployment is chosen dynamically
 Deployment.DEVELOP
