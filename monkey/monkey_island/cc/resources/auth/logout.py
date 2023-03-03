@@ -5,7 +5,7 @@ from flask import Response, make_response
 from flask.typing import ResponseValue
 from flask_security.views import logout
 
-from monkey_island.cc.resources.AbstractResource import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
 from monkey_island.cc.services import AuthenticationService
 
