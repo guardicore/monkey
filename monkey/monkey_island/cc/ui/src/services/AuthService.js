@@ -1,15 +1,20 @@
+import _ from 'lodash';
+
 export default class AuthService {
-  LOGIN_ENDPOINT = '/api/login';
+  LOGIN_ENDPOINT = '/api/login?include_auth_token';
   LOGOUT_ENDPOINT = '/api/logout';
-  REGISTRATION_API_ENDPOINT = '/api/register';
+  REGISTRATION_API_ENDPOINT = '/api/register?include_auth_token';
   REGISTRATION_STATUS_API_ENDPOINT = '/api/registration-status';
+
+  TOKEN_NAME_IN_LOCALSTORAGE = 'authentication_token';
+  TOKEN_NAME_IN_RESPONSE = 'authentication_token';
 
   login = (username, password) => {
     return this._login(username, password);
   };
 
   logout = () => {
-    return this._authFetch(this.LOGOUT_ENDPOINT)
+    return this._authFetch(this.LOGOUT_ENDPOINT, {method: 'POST'})
       .then(response => response.json())
       .then(response => {
         if(response.status === 200){
@@ -22,12 +27,6 @@ export default class AuthService {
     return this._authFetch(url, options);
   };
 
-  jwtHeader = () => {
-    if (this.loggedIn()) {
-      return 'Bearer ' + this._getToken();
-    }
-  };
-
   _login = (username, password) => {
     return this._authFetch(this.LOGIN_ENDPOINT, {
       method: 'POST',
@@ -37,8 +36,9 @@ export default class AuthService {
       })
     }).then(response => response.json())
       .then(res => {
-        if (Object.prototype.hasOwnProperty.call(res, 'access_token')) {
-          this._setToken(res['access_token']);
+        let token = this._getTokenFromResponse(res);
+        if (token !== undefined) {
+          this._setToken(token);
           return {result: true};
         } else {
           this._removeToken();
@@ -69,6 +69,10 @@ export default class AuthService {
     })
   };
 
+  _getTokenFromResponse= (response) => {
+    return _.get(response, 'response.user.'+this.TOKEN_NAME_IN_RESPONSE, undefined);
+  }
+
   _authFetch = (url, options = {}) => {
     const headers = {
       'Accept': 'application/json',
@@ -76,7 +80,7 @@ export default class AuthService {
     };
 
     if (this.loggedIn()) {
-      headers['Authorization'] = 'Bearer ' + this._getToken();
+      headers['Authentication-Token'] = this._getToken();
     }
 
     if (Object.prototype.hasOwnProperty.call(options, 'headers')) {
@@ -110,19 +114,19 @@ export default class AuthService {
 
   loggedIn() {
     const token = this._getToken();
-    return ((token !== null) && !this._isTokenExpired(token));
+    return (token !== null);
   }
 
   _setToken(idToken) {
-    localStorage.setItem('jwt', idToken);
+    localStorage.setItem(this.TOKEN_NAME_IN_LOCALSTORAGE, idToken);
   }
 
   _removeToken() {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem(this.TOKEN_NAME_IN_LOCALSTORAGE);
   }
 
   _getToken() {
-    return localStorage.getItem('jwt')
+    return localStorage.getItem(this.TOKEN_NAME_IN_LOCALSTORAGE)
   }
 
 }
