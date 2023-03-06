@@ -1,45 +1,18 @@
-import flask_restful
-import mongomock
 import pytest
-from flask import Flask
-from flask_mongoengine import MongoEngine
-from flask_security import MongoEngineUserDatastore, Security
-
-import monkey_island
-from monkey_island.cc.models import Role, User
-from monkey_island.cc.services.representations import output_json
-
-
-def init_mock_security_app(db_name):
-    app = Flask(__name__)
-
-    app.config["SECRET_KEY"] = "test_key"
-    app.config["SECURITY_PASSWORD_SALT"] = b"somethingsaltyandniceandgood"
-    # Our test emails/domain isn't necessarily valid
-    app.config["SECURITY_EMAIL_VALIDATOR_ARGS"] = {"check_deliverability": False}
-    # Make this plaintext for most tests - reduces unit test time by 50%
-    app.config["SECURITY_PASSWORD_HASH"] = "plaintext"
-    app.config["TESTING"] = True
-    api = flask_restful.Api(app)
-    api.representations = {"application/json": output_json}
-
-    monkey_island.cc.app.init_app_url_rules(app)
-
-    db = MongoEngine()
-    db.disconnect(alias="default")
-    db.connect(db_name, host="mongodb://localhost", mongo_client_class=mongomock.MongoClient)
-
-    user_datastore = MongoEngineUserDatastore(db, User, Role)
-    app.security = Security(app, user_datastore)
-    return app
+from tests.unit_tests.monkey_island.conftest import init_mock_security_app
 
 
 @pytest.fixture(scope="function")
 def mock_flask_app():
-    from common.utils.code_utils import insecure_generate_random_string
+    app, _ = init_mock_security_app()
 
-    db_name = insecure_generate_random_string(8)
-    app = init_mock_security_app(db_name)
+    ds = app.security.datastore
 
     with app.app_context():
+
+        inital_user = ds.find_user(email="unittest@me.com")
+        if inital_user:
+            ds.delete_user(inital_user)
+            ds.commit()
+
         yield app

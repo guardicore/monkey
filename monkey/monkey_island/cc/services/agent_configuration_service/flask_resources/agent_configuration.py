@@ -2,11 +2,12 @@ import json
 from http import HTTPStatus
 
 from flask import make_response, request
+from flask_security import auth_token_required
 
 from common.agent_configuration.agent_configuration import (
     AgentConfiguration as AgentConfigurationObject,
 )
-from monkey_island.cc.flask_utils import AbstractResource, jwt_required
+from monkey_island.cc.flask_utils import AbstractResource
 
 from .. import IAgentConfigurationService, PluginConfigurationValidationError
 
@@ -23,7 +24,7 @@ class AgentConfiguration(AbstractResource):
         configuration_dict = configuration.dict(simplify=True)
         return make_response(configuration_dict, HTTPStatus.OK)
 
-    @jwt_required
+    @auth_token_required
     def put(self):
         try:
             configuration_object = AgentConfigurationObject(**request.json)
