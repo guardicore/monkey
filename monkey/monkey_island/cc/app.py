@@ -9,7 +9,7 @@ from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Securi
 from werkzeug.exceptions import NotFound
 from wtforms import StringField, ValidationError
 
-from common import DIContainer
+from common import DIContainer, UserRoles
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.models import Role, User
 from monkey_island.cc.resources import (
@@ -123,8 +123,8 @@ def setup_authentication(app, data_dir: Path, container: DIContainer):
 
 
 def _create_roles(user_datastore: UserDatastore):
-    user_datastore.create_role(name="island")
-    user_datastore.create_role(name="agent")
+    user_datastore.create_role(name=UserRoles.ISLAND.name)
+    user_datastore.create_role(name=UserRoles.AGENT.name)
 
 
 def init_app_config(app, mongo_url, data_dir: Path, container: DIContainer):
