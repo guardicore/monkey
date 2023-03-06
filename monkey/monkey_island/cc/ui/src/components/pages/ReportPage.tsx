@@ -61,7 +61,7 @@ function ReportPage(props: Props) {
   useEffect(() => {
     updateMonkeysRunning();
     getReportFromServer();
-  });
+  }, [runStarted, allMonkeysAreDead]);
 
   function renderNav() {
     let navigate = useNavigate();
