@@ -45,9 +45,20 @@ def init_mock_security_app():
     # Make this plaintext for most tests - reduces unit test time by 50%
     app.config["SECURITY_PASSWORD_HASH"] = "plaintext"
     app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+
+    # According to https://flask.palletsprojects.com/en/2.2.x/config/#TESTING,
+    # setting 'TESTING' results in exceptions being propagated instead of
+    # letting the app catch and handle them.
+    # Our UT suite consists of tests that check the error handling of the app, which is
+    # why we don't want the exceptions to be propagated. To do this, we're setting
+    # 'PROPAGATE_EXCEPTIONS' to False.
+    # https://flask.palletsprojects.com/en/2.2.x/config/#PROPAGATE_EXCEPTIONS
     app.config["TESTING"] = True
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+
     app.config["MONGO_URI"] = "mongodb://some_host"
     app.config["WTF_CSRF_ENABLED"] = False
+
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
@@ -70,6 +81,7 @@ def init_mock_security_app():
         ds.commit()
 
     set_current_user(app, ds, "unittest@me.com")
+
     return app, api
 
 
