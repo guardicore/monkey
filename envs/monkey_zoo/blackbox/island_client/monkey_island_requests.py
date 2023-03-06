@@ -4,40 +4,26 @@ from http import HTTPStatus
 from typing import Dict
 
 import requests
-from egg_timer import EggTimer
 
 ISLAND_USERNAME = "test"
 ISLAND_PASSWORD = "testtest"
 LOGGER = logging.getLogger(__name__)
 
 
-class AuthenticationFailedError(Exception):
+class InvalidRequestError(Exception):
     pass
 
 
-class InvalidRegistrationCredentialsError(Exception):
-    pass
-
-
-# noinspection PyArgumentList
-class MonkeyIslandRequests(object):
+class MonkeyIslandRequests:
     def __init__(self, server_address):
         self.addr = f"https://{server_address}/"
-        self.refresh_token_timer = EggTimer()
         self.token = self.try_get_token_from_server()
 
     def try_get_token_from_server(self):
         try:
             return self.try_set_island_to_credentials()
-        except (requests.ConnectionError, InvalidRegistrationCredentialsError):
+        except InvalidRequestError:
             return self.get_token_from_server()
-        except AuthenticationFailedError as err:
-            LOGGER.error(
-                "Unable to connect to island, aborting! Error information: {}. Server: {}".format(
-                    err, self.addr
-                )
-            )
-            assert False
 
     def get_token_from_server(self):
         resp = requests.post(  # noqa: DUO123
@@ -47,7 +33,7 @@ class MonkeyIslandRequests(object):
         )
 
         if resp.status_code == 400:
-            raise AuthenticationFailedError
+            raise InvalidRequestError()
 
         token = resp.json()["response"]["user"]["authentication_token"]
         return token
@@ -60,7 +46,7 @@ class MonkeyIslandRequests(object):
         )
 
         if resp.status_code == 400:
-            raise InvalidRegistrationCredentialsError("Missing part of the credentials")
+            raise InvalidRequestError()
 
         token = resp.json()["response"]["user"]["authentication_token"]
         return token
@@ -74,8 +60,9 @@ class MonkeyIslandRequests(object):
                 resp = request_function(self, *args, **kwargs)
                 if resp.status_code == HTTPStatus.UNAUTHORIZED:
                     self.token = self.get_token_from_server()
+                    resp = request_function(self, *args, **kwargs)
 
-                return request_function(self, *args, **kwargs)
+                return resp
 
             return request_function_wrapper
 
@@ -125,4 +112,4 @@ class MonkeyIslandRequests(object):
         )
 
     def get_auth_header(self):
-        return {"Authentication-token": self.token}
+        return {"Authentication-Token": self.token}
