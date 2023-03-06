@@ -1,5 +1,4 @@
 import React from 'react';
-import {Route} from 'react-router-dom';
 import SideNavComponent from '../SideNavComponent';
 import {Col, Row} from 'react-bootstrap';
 

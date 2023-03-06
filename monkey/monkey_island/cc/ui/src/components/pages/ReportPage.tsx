@@ -71,7 +71,7 @@ function ReportPage(props: Props) {
              activeKey={selectedSection}
              onSelect={(key) => {
                setSelectedSection(key);
-               navigate(key);
+               navigate("/report/" + key);
              }}
              className={'report-nav'}>
           {orderedSections.map(section => renderNavButton(section))}

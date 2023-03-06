@@ -20,7 +20,7 @@ type Props = {
   defaultReport: string,
   header?: ReactFragment,
   onStatusChange: () => void
-}
+};
 
 
 const SideNavComponent = ({
@@ -71,7 +71,7 @@ const SideNavComponent = ({
         </li>
         <li>
           <NavLink to={defaultReport}
-                   className={getNavLinkClass()}
+                   className={(isReportRoute(location.pathname) ? 'active' : 'inactive') + ' ' + getNavLinkClass()}
                    >
             <span className='number'>3.</span>
             Security Reports
