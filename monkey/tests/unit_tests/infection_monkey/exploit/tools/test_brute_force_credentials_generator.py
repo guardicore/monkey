@@ -86,6 +86,18 @@ def test_generate_all_combinations_4():
     generate_and_compare_credentials(input_credentials, expected_credentials)
 
 
+def test_generate_all_combinations_single_result():
+    input_credentials = [
+        Credentials(identity=IDENTITIES[0], secret=None),
+        Credentials(identity=None, secret=SECRETS[0]),
+    ]
+    expected_credentials = [Credentials(identity=IDENTITIES[0], secret=SECRETS[0])]
+
+    generated_credentials = generate_brute_force_credentials(input_credentials)
+
+    assert generated_credentials == expected_credentials
+
+
 def test_generate_all_combinations_duplicates():
     input_credentials = [
         Credentials(identity=IDENTITIES[0], secret=SECRETS[0]),
