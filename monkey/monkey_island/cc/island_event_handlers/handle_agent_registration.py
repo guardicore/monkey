@@ -24,7 +24,7 @@ class handle_agent_registration:
         machine_repository: IMachineRepository,
         agent_repository: IAgentRepository,
         node_repository: INodeRepository,
-        get_current_datetime: Callable[[], datetime] = datetime.now(),
+        get_current_datetime: Callable[[], datetime] = datetime.now,
     ):
         self._machine_repository = machine_repository
         self._agent_repository = agent_repository
