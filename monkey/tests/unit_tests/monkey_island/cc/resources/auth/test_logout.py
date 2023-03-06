@@ -19,7 +19,7 @@ def make_logout_request(flask_client):
 
 
 @pytest.mark.parametrize(
-    "request_data",
+    "logout_response",
     [
         "adfasdf",
         None,
@@ -28,8 +28,11 @@ def make_logout_request(flask_client):
         b"{bogus}",
     ],
 )
-def test_logout_failed(monkeypatch, make_logout_request, mock_authentication_service, request_data):
-    response = make_logout_request(request_data)
+def test_logout_failed(
+    monkeypatch, make_logout_request, mock_authentication_service, logout_response
+):
+    monkeypatch.setattr("monkey_island.cc.resources.auth.logout.logout", lambda: logout_response)
+    response = make_logout_request(TEST_REQUEST)
 
     mock_authentication_service.lock_repository_encryptor.assert_not_called()
     assert response.status_code == 400
