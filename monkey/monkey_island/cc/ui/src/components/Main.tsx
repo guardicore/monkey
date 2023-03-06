@@ -31,7 +31,7 @@ import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
-export const routes = {
+export const IslandRoutes = {
   LandingPage: '/landing-page',
   GettingStartedPage: '/',
   Report: '/report',
@@ -47,7 +47,7 @@ export const routes = {
 }
 
 export function isReportRoute(route){
-  return route.startsWith(routes.Report);
+  return route.startsWith(IslandRoutes.Report);
 }
 
 class AppComponent extends AuthComponent {
@@ -148,17 +148,17 @@ class AppComponent extends AuthComponent {
       switch (this.state.isLoggedIn) {
         case true:
           if (this.needsRedirectionToLandingPage(route_path)) {
-            return <Navigate replace to={routes.LandingPage}/>;
+            return <Navigate replace to={IslandRoutes.LandingPage}/>;
           } else if (this.needsRedirectionToGettingStarted(route_path)) {
-            return <Navigate replace to={routes.GettingStartedPage}/>;
+            return <Navigate replace to={IslandRoutes.GettingStartedPage}/>;
           }
           return page_component;
         case false:
           switch (this.state.needsRegistration) {
             case true:
-              return <Navigate replace to={routes.RegisterPage}/>;
+              return <Navigate replace to={IslandRoutes.RegisterPage}/>;
             case false:
-              return <Navigate replace to={routes.LoginPage}/>;
+              return <Navigate replace to={IslandRoutes.LoginPage}/>;
             default:
               return <LoadingScreen text={'Loading page...'}/>;
           }
@@ -171,11 +171,11 @@ class AppComponent extends AuthComponent {
   };
 
   needsRedirectionToLandingPage = (route_path) => {
-    return (this.state.islandMode === "unset" && route_path !== routes.LandingPage)
+    return (this.state.islandMode === "unset" && route_path !== IslandRoutes.LandingPage)
   }
 
   needsRedirectionToGettingStarted = (route_path) => {
-    return route_path === routes.LandingPage &&
+    return route_path === IslandRoutes.LandingPage &&
       this.state.islandMode !== "unset" && this.state.islandMode !== undefined
   }
 
@@ -197,9 +197,9 @@ class AppComponent extends AuthComponent {
 
   getDefaultReport() {
     if(this.state.islandMode === 'ransomware'){
-      return routes.RansomwareReport;
+      return IslandRoutes.RansomwareReport;
     } else {
-      return routes.SecurityReport;
+      return IslandRoutes.SecurityReport;
     }
   }
 
@@ -231,34 +231,34 @@ class AppComponent extends AuthComponent {
       <Router>
         <Container fluid>
           <Routes>
-            <Route path={routes.LoginPage} element={<LoginPageComponent onStatusChange={this.updateStatus}/>}/>
-            <Route path={routes.RegisterPage} element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
-            {this.renderRoute(routes.LandingPage,
+            <Route path={IslandRoutes.LoginPage} element={<LoginPageComponent onStatusChange={this.updateStatus}/>}/>
+            <Route path={IslandRoutes.RegisterPage} element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
+            {this.renderRoute(IslandRoutes.LandingPage,
               <SidebarLayoutComponent component={LandingPage}
                                       sideNavShow={false}
                                       sideNavDisabled={true}
                                       completedSteps={new CompletedSteps()}
                                       onStatusChange={this.updateStatus}/>)}
-            {this.renderRoute(routes.GettingStartedPage,
+            {this.renderRoute(IslandRoutes.GettingStartedPage,
               <SidebarLayoutComponent component={GettingStartedPage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(routes.ConfigurePage,
+            {this.renderRoute(IslandRoutes.ConfigurePage,
               <SidebarLayoutComponent component={ConfigurePage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(routes.RunMonkeyPage,
+            {this.renderRoute(IslandRoutes.RunMonkeyPage,
               <SidebarLayoutComponent component={RunMonkeyPage} {...defaultSideNavProps}/>)}
-            {this.renderRoute(routes.MapPage,
+            {this.renderRoute(IslandRoutes.MapPage,
               <SidebarLayoutComponent component={MapPageWrapper} {...defaultSideNavProps}/>)}
-            {this.renderRoute(routes.EventPage,
+            {this.renderRoute(IslandRoutes.EventPage,
               <SidebarLayoutComponent component={EventPage} {...defaultSideNavProps}/>)}
             {this.redirectToReport()}
-            {this.renderRoute(routes.SecurityReport,
+            {this.renderRoute(IslandRoutes.SecurityReport,
               <SidebarLayoutComponent component={ReportPage}
                                       islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
-            {this.renderRoute(routes.RansomwareReport,
+            {this.renderRoute(IslandRoutes.RansomwareReport,
               <SidebarLayoutComponent component={ReportPage}
                                       islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
-            {this.renderRoute(routes.LicensePage,
+            {this.renderRoute(IslandRoutes.LicensePage,
               <SidebarLayoutComponent component={LicensePage}
                                       islandMode={this.state.islandMode}
                                       {...defaultSideNavProps}/>)}
@@ -271,18 +271,18 @@ class AppComponent extends AuthComponent {
 
   redirectToReport() {
     if (this.state.islandMode === 'ransomware') {
-      return this.redirectTo(routes.Report, routes.RansomwareReport)
+      return this.redirectTo(IslandRoutes.Report, IslandRoutes.RansomwareReport)
     } else {
-      return this.redirectTo(routes.Report, routes.SecurityReport)
+      return this.redirectTo(IslandRoutes.Report, IslandRoutes.SecurityReport)
     }
   }
 
   showInfectionDoneNotification() {
-    if (!window.location.pathname.startsWith(routes.Report)) {
+    if (!window.location.pathname.startsWith(IslandRoutes.Report)) {
       const hostname = window.location.hostname;
       const port = window.location.port;
       const protocol = window.location.protocol;
-      const url = `${protocol}//${hostname}:${port}${routes.SecurityReport}`;
+      const url = `${protocol}//${hostname}:${port}${IslandRoutes.SecurityReport}`;
 
       Notifier.start(
         'Monkey Island',
