@@ -107,7 +107,7 @@ def test_registration_time_immutable():
     a = Agent(**AGENT_SIMPLE_DICT)
 
     with pytest.raises(TypeError):
-        a.start_time = 100
+        a.registration_time = 100
 
 
 def test_start_time_immutable():
