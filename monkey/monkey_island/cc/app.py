@@ -5,7 +5,7 @@ import flask_restful
 from flask import Flask, Response, send_from_directory
 from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
-from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
+from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
 from werkzeug.exceptions import NotFound
 from wtforms import StringField, ValidationError
 
@@ -94,7 +94,7 @@ def setup_authentication(app, data_dir: Path, container: DIContainer):
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
 
-    container.register_convention(MongoEngineUserDatastore, "user_data", user_datastore)
+    container.register_convention(UserDatastore, "user_data", user_datastore)
 
     _create_roles(user_datastore)
 
@@ -122,7 +122,7 @@ def setup_authentication(app, data_dir: Path, container: DIContainer):
     app.session_interface = disable_session_cookies()
 
 
-def _create_roles(user_datastore: MongoEngineUserDatastore):
+def _create_roles(user_datastore: UserDatastore):
     user_datastore.create_role(name="island")
     user_datastore.create_role(name="agent")
 
