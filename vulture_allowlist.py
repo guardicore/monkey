@@ -20,7 +20,7 @@ from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServer
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
-from monkey_island.cc.models import IslandMode, Machine
+from monkey_island.cc.models import Agent, IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
 from monkey_island.cc.repositories.utils.hard_coded_credential_collector_schemas import (
     HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS,
@@ -140,3 +140,6 @@ HadoopPlugin
 # Remove after #2952
 generate_brute_force_credentials
 secret_type_filter
+
+# Remove after #2817
+Agent.registration_time
