@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons/faExclamationTriangle';
 
 import '../../styles/components/IslandResetModal.scss';
-import {Routes} from '../Main';
+import {IslandRoutes} from '../Main';
 import LoadingIcon from './LoadingIcon';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import AuthService from '../../services/AuthService';
@@ -148,7 +148,7 @@ const IslandResetModal = (props: Props) => {
       <Row>
         <Col>
           <p>Reset everything.</p>
-          <p>You might want to <Button variant={'link'} href={Routes.ConfigurePage}>export
+          <p>You might want to <Button variant={'link'} href={IslandRoutes.ConfigurePage}>export
             configuration</Button> before doing this.</p>
         </Col>
         <Col sm={4} className={'text-center'}>

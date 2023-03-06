@@ -6,7 +6,7 @@ import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
 import {faUndo} from '@fortawesome/free-solid-svg-icons/faUndo';
 import '../styles/components/SideNav.scss';
 import {CompletedSteps} from './side-menu/CompletedSteps';
-import {isReportRoute, Routes} from './Main';
+import {isReportRoute, IslandRoutes} from './Main';
 import Logo from './logo/LogoComponent';
 import IslandResetModal from './ui-components/IslandResetModal';
 
@@ -20,7 +20,7 @@ type Props = {
   defaultReport: string,
   header?: ReactFragment,
   onStatusChange: () => void
-}
+};
 
 
 const SideNavComponent = ({
@@ -35,7 +35,7 @@ const SideNavComponent = ({
 
   return (
     <>
-      <NavLink to={Routes.GettingStartedPage} exact={true}>
+      <NavLink to={IslandRoutes.GettingStartedPage} end>
         <div className='header'>
           <img alt='logo' src={logoImage} style={{width: '5vw', margin: '15px'}}/>
           <img src={infectionMonkeyImage} style={{width: '15vw'}} alt='Infection Monkey'/>
@@ -52,7 +52,7 @@ const SideNavComponent = ({
           </>}
 
         <li>
-          <NavLink to={Routes.RunMonkeyPage} className={getNavLinkClass()}>
+          <NavLink to={IslandRoutes.RunMonkeyPage} className={getNavLinkClass()}>
             <span className='number'>1.</span>
             Run Monkey
             {completedSteps.runMonkey ?
@@ -61,7 +61,7 @@ const SideNavComponent = ({
           </NavLink>
         </li>
         <li>
-          <NavLink to={Routes.MapPage} className={getNavLinkClass()}>
+          <NavLink to={IslandRoutes.MapPage} className={getNavLinkClass()}>
             <span className='number'>2.</span>
             Infection Map
             {completedSteps.infectionDone ?
@@ -71,10 +71,8 @@ const SideNavComponent = ({
         </li>
         <li>
           <NavLink to={defaultReport}
-                   className={getNavLinkClass()}
-                   isActive={(_match, location) => {
-                     return (isReportRoute(location.pathname))
-                   }}>
+                   className={(isReportRoute(location.pathname) ? 'active' : 'inactive') + ' ' + getNavLinkClass()}
+                   >
             <span className='number'>3.</span>
             Security Reports
             {completedSteps.reportDone ?
@@ -99,7 +97,7 @@ const SideNavComponent = ({
 
       <hr/>
       <ul>
-        <li><NavLink to={Routes.ConfigurePage}
+        <li><NavLink to={IslandRoutes.ConfigurePage}
                      className={getNavLinkClass()}>
           Configuration
         </NavLink></li>

@@ -7,7 +7,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const smp = new SpeedMeasurePlugin({disable: isProduction});
-
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = smp.wrap({
   mode: isProduction ? 'production' : 'development',
@@ -93,7 +93,8 @@ module.exports = smp.wrap({
       template: './src/index.html',
       filename: './index.html'
     }),
-    new NodePolyfillPlugin()
+    new NodePolyfillPlugin(),
+    new ESLintPlugin(),
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],

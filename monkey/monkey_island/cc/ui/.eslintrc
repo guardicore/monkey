@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "plugins": [
     "react"
   ],
@@ -8,15 +8,14 @@
     "plugin:react/recommended"
   ],
   "parserOptions": {
+    "requireConfigFile": false,
     "ecmaVersion": 6,
-    "sourceType": "module",
-    "allowImportExportEverywhere": false,
     "ecmaFeatures": {
       "jsx": true,
       "globalReturn": false
     },
     "babelOptions": {
-      "configFile": ".babelrc"
+      "configFile": false
     }
   },
   "settings": {
@@ -36,13 +35,23 @@
     "quotes": [
       1,
       "single",
-      {"allowTemplateLiterals": true}
+      {
+        "allowTemplateLiterals": true
+      }
     ],
     "no-undef": 1,
     "global-strict": 0,
     "no-underscore-dangle": 0,
     "no-console": 0,
-    "no-unused-vars": [1, {"vars": "all", "args": "all", "argsIgnorePattern": "^_", "varsIgnorePattern": "^React$" }],
+    "no-unused-vars": [
+      1,
+      {
+        "vars": "all",
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^React$"
+      }
+    ],
     "no-trailing-spaces": [
       1,
       {
@@ -56,7 +65,14 @@
     "react/jsx-key": 1,
     "react/prop-types": 0,
     "react/no-unescaped-entities": 0,
-    "react/no-unknown-property": [1, { "ignore": ["class"] }],
+    "react/no-unknown-property": [
+      1,
+      {
+        "ignore": [
+          "class"
+        ]
+      }
+    ],
     "react/no-string-refs": 1,
     "react/display-name": 1,
     "no-useless-escape": 1,

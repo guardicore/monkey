@@ -25,8 +25,8 @@ const getContents = (props) => {
 
   const [osType, setOsType] = useState(OS_TYPES.WINDOWS_64);
   const [selectedIp, setSelectedIp] = useState(props.ips[0]);
-  const [commands, setCommands] = useState(generateCommands());
   const [customUsername, setCustomUsername] = useState('');
+  const [commands, setCommands] = useState(generateCommands());
 
   useEffect(() => {
     setCommands(generateCommands());

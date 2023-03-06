@@ -1,5 +1,5 @@
 import React from 'react';
-import JSONTree from 'react-json-tree';
+import {JSONTree} from 'react-json-tree';
 import MUIDataTable from 'mui-datatables';
 import AuthService from '../../services/AuthService';
 import '../../styles/pages/EventPage.scss';

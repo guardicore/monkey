@@ -3,6 +3,7 @@
     [
       "@babel/preset-env",
       {
+        "targets": "defaults",
         "useBuiltIns": "entry",
         "corejs": 3
       }
@@ -10,7 +11,7 @@
     "@babel/preset-react"
   ],
   "plugins": [
-    "emotion",
+    "@emotion",
     "@babel/plugin-proposal-class-properties"
   ]
 }
