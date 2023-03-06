@@ -6,7 +6,6 @@ class AuthComponent extends React.Component {
     super(props);
     this.auth = new AuthService();
     this.authFetch = this.auth.authFetch;
-    this.jwtHeader = this.auth.jwtHeader();
   }
 }
 
