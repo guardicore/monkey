@@ -28,7 +28,7 @@ import IslandHttpClient, { APIEndpoint } from "./IslandHttpClient";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileCode, faLightbulb} from "@fortawesome/free-solid-svg-icons";
 import { doesAnyAgentExist, didAllAgentsShutdown } from './utils/ServerUtils';
-import AuthService from '../services/AuthService';
+import LogoutPage from './pages/LogoutPage';
 
 let notificationIcon = require('../images/notification-logo-512x512.png');
 
@@ -234,8 +234,7 @@ class AppComponent extends AuthComponent {
         <Container fluid>
           <Routes>
             <Route path={IslandRoutes.LoginPage} element={<LoginPageComponent onStatusChange={this.updateStatus}/>}/>
-            <Route path={Routes.Logout} element={async () => ( await new AuthService().logout()
-              .then(() => (<Redirect to={'/'} />)))}/>
+            <Route path={Routes.Logout} element={<LogoutPage onStatusChange={this.updateStatus}/>}/>
             <Route path={IslandRoutes.RegisterPage} element={<RegisterPageComponent onStatusChange={this.updateStatus}/>}/>
             {this.renderRoute(IslandRoutes.LandingPage,
               <SidebarLayoutComponent component={LandingPage}

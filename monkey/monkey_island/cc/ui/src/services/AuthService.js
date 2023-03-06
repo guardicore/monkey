@@ -17,9 +17,10 @@ export default class AuthService {
     return this._authFetch(this.LOGOUT_ENDPOINT, {method: 'POST'})
       .then(response => response.json())
       .then(response => {
-        if(response.status === 200){
+        if(response.meta.code === 200){
           this._removeToken();
         }
+        return response;
       });
   }
 
