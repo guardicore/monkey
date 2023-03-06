@@ -26,6 +26,7 @@ class AuthenticationService:
 
         :return: Whether registration is required on the Island
         """
+        # TODO: Use user_datastore.find_user() for this
         return not User.objects.first()
 
     def apply_role_to_user(self, user: User, role: Role):
