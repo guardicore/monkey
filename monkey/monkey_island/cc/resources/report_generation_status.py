@@ -12,10 +12,10 @@ class ReportGenerationStatus(AbstractResource):
     def __init__(self, agent_repository: IAgentRepository):
         self._agent_repository = agent_repository
 
+    @auth_token_required
     def get(self):
         return self.report_generation_status()
 
-    @auth_token_required
     def report_generation_status(self):
         return jsonify(
             report_done=is_report_done(self._agent_repository),
