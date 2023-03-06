@@ -11,12 +11,12 @@ T = TypeVar("T")
 logger = logging.getLogger(__name__)
 
 
-def apply_filters(iterable: Iterable[T], filters: Iterable[Callable[[T], bool]]) -> Iterable[T]:
+def apply_filters(filters: Iterable[Callable[[T], bool]], iterable: Iterable[T]) -> Iterable[T]:
     """
     Applies multiple filters to an iterable
 
-    :param iterable: An iterable to be filtered
     :param filters: An iterable of filters to be applied to the iterable
+    :param iterable: An iterable to be filtered
     :return: A new iterable with the filters applied
     """
     filtered_iterable = iterable

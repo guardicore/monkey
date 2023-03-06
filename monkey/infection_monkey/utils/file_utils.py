@@ -13,7 +13,7 @@ MOVEFILE_DELAY_UNTIL_REBOOT = 4
 def filter_files(
     files: Iterable[Path], file_filters: Iterable[Callable[[Path], bool]]
 ) -> Iterable[Path]:
-    return apply_filters(files, file_filters)
+    return apply_filters(file_filters, files)
 
 
 def file_extension_filter(file_extensions: Set) -> Callable[[Path], bool]:

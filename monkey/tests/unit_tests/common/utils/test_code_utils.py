@@ -16,7 +16,7 @@ def test_apply_filters():
     iterable = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     filters = [lambda x: x % 2 == 0, lambda x: x > 2, lambda x: x != 6]
 
-    filtered_iterable = apply_filters(iterable, filters)
+    filtered_iterable = apply_filters(filters, iterable)
 
     assert list(filtered_iterable) == [4, 8, 10, 12, 14]
 
@@ -24,7 +24,7 @@ def test_apply_filters():
 def test_apply_filters__no_filters_provided():
     iterable = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 
-    filtered_iterable = apply_filters(iterable, [])
+    filtered_iterable = apply_filters([], iterable)
 
     assert list(filtered_iterable) == iterable
 
