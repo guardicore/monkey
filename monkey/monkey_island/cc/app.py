@@ -93,6 +93,7 @@ def setup_authentication(app, data_dir):
     db = MongoEngine(app)
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
+    _create_roles(user_datastore)
 
     # Only one user can be registered in the Island, so we need a custom validator
     def validate_no_user_exists_already(_, field):
@@ -116,6 +117,11 @@ def setup_authentication(app, data_dir):
     )
 
     app.session_interface = disable_session_cookies()
+
+
+def _create_roles(user_datastore: MongoEngineUserDatastore):
+    user_datastore.create_role(name="island")
+    user_datastore.create_role(name="agent")
 
 
 def init_app_config(app, mongo_url, data_dir: Path):
