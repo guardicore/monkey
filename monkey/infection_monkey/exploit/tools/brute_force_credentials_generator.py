@@ -19,6 +19,7 @@ def generate_brute_force_credentials(
     prioritize using known identity/secret pairs before attempting to use random combinations.
 
     :param input_credentials: The credentials used to generate the brute force credentials
+    :param identity_filters: An iterable of filters to apply to the identities
     :param secret_filters: An iterable of filters to apply to the secrets
     :return: A Sequence of credentials
     """
