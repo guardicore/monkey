@@ -1,6 +1,7 @@
+from datetime import datetime
 from contextlib import suppress
 from ipaddress import IPv4Interface
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from common import AgentRegistrationData
 from common.types import SocketAddress
@@ -23,10 +24,12 @@ class handle_agent_registration:
         machine_repository: IMachineRepository,
         agent_repository: IAgentRepository,
         node_repository: INodeRepository,
+        get_current_datetime: Callable[[], datetime] = datetime.now(),
     ):
         self._machine_repository = machine_repository
         self._agent_repository = agent_repository
         self._node_repository = node_repository
+        self._get_current_datetime = get_current_datetime
 
     def __call__(self, agent_registration_data: AgentRegistrationData):
         machine = self._update_machine_repository(agent_registration_data)
@@ -101,6 +104,7 @@ class handle_agent_registration:
         new_agent = Agent(
             id=agent_registration_data.id,
             machine_id=machine.id,
+            registration_time=self._get_current_datetime(),
             start_time=agent_registration_data.start_time,
             parent_id=agent_registration_data.parent_id,
             cc_server=agent_registration_data.cc_server,

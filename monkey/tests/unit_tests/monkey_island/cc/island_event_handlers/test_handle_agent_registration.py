@@ -1,3 +1,4 @@
+from datetime import datetime
 from ipaddress import IPv4Address, IPv4Interface
 from itertools import count
 from typing import Sequence
@@ -28,6 +29,7 @@ MACHINE = Machine(
 )
 
 IP = "192.168.1.1:5000"
+NOW = datetime.fromtimestamp(12345)
 
 AGENT_REGISTRATION_DATA = AgentRegistrationData(
     id=AGENT_ID,
@@ -65,7 +67,10 @@ def node_repository() -> INodeRepository:
 
 @pytest.fixture
 def handler(machine_repository, agent_repository, node_repository) -> handle_agent_registration:
-    return handle_agent_registration(machine_repository, agent_repository, node_repository)
+
+    return handle_agent_registration(
+        machine_repository, agent_repository, node_repository, get_current_datetime=lambda: NOW
+    )
 
 
 def build_get_machines_by_ip(ip_to_match: IPv4Address, machine_to_return: Machine):
@@ -161,6 +166,7 @@ def test_add_agent(handler, agent_repository):
     expected_agent = Agent(
         id=AGENT_REGISTRATION_DATA.id,
         machine_id=SEED_ID,
+        registration_time=NOW,
         start_time=AGENT_REGISTRATION_DATA.start_time,
         parent_id=AGENT_REGISTRATION_DATA.parent_id,
         cc_server=AGENT_REGISTRATION_DATA.cc_server,
