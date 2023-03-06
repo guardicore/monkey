@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from flask import make_response, request, Response
+from flask import Response, make_response, request
 from flask.typing import ResponseValue
 from flask_security.views import register
 
@@ -34,8 +34,7 @@ class Register(AbstractResource):
         except Exception:
             return response_to_invalid_request()
 
-        # Register view treat the request as form submit which may return something
-        # that it is not a response
+        # Mark request as invalid if `register()` returns something other than `Response`
         if not isinstance(response, Response):
             return response_to_invalid_request()
 
