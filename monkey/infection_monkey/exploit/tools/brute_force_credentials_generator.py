@@ -1,7 +1,26 @@
 from itertools import chain
-from typing import Callable, Dict, Iterable, List, Sequence, Set, Type
+from typing import (
+    Callable,
+    Container,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Type,
+    TypeGuard,
+)
 
 from common.credentials import Credentials, Identity, Secret
+
+
+class secret_type_filter:
+    def __init__(self, secret_types: Container[Type[Secret]]):
+        self.secret_types = secret_types
+
+    def __call__(self, secret: Optional[Secret]) -> TypeGuard[Secret]:
+        return type(secret) in self.secret_types
 
 
 def generate_brute_force_credentials(
