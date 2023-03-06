@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode, User
+from monkey_island.cc.models import IslandMode, Role, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
 
@@ -27,6 +27,9 @@ class AuthenticationService:
         :return: Whether registration is required on the Island
         """
         return not User.objects.first()
+
+    def apply_role_to_user(self, user: User, role: Role):
+        pass
 
     def reset_island_data(self):
         """
