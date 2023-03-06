@@ -18,7 +18,7 @@ class Agent(MutableInfectionMonkeyBaseModel):
     machine_id: MachineID = Field(..., allow_mutation=False)
     """The machine that the agent ran on"""
 
-    registration_time: datetime = Field(..., allow_mutation=False)
+    registration_time: datetime = Field(allow_mutation=False, default_factory=datetime.now)
     """The time the agent registered with the island"""
 
     start_time: datetime = Field(..., allow_mutation=False)
