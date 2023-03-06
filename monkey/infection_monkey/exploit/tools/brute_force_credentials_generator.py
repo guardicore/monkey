@@ -2,13 +2,12 @@ from itertools import chain
 from typing import Callable, Dict, Iterable, List, Sequence, Set, Type
 
 from common.credentials import Credentials, Identity, Secret
-from common.utils.code_utils import apply_filters
 
 
 def generate_brute_force_credentials(
     input_credentials: Iterable[Credentials],
-    identity_filters: Iterable[Callable[[Identity], bool]] = (),
-    secret_filters: Iterable[Callable[[Secret], bool]] = (),
+    identity_filter: Callable[[Identity], bool] = lambda identity: True,
+    secret_filter: Callable[[Secret], bool] = lambda secret: True,
 ) -> Sequence[Credentials]:
     """
     Generates all possible combinations of identities and secrets from the inputs
@@ -19,13 +18,13 @@ def generate_brute_force_credentials(
     prioritize using known identity/secret pairs before attempting to use random combinations.
 
     :param input_credentials: The credentials used to generate the brute force credentials
-    :param identity_filters: An iterable of filters to apply to the identities
-    :param secret_filters: An iterable of filters to apply to the secrets
+    :param identity_filter: A filter to apply to the identities
+    :param secret_filter: A filter to apply to the secrets
     :return: A Sequence of credentials
     """
     _input_credentials = set(input_credentials)
     brute_force_credentials = _generate_all_possible_combinations(
-        _input_credentials, identity_filters, secret_filters
+        _input_credentials, identity_filter, secret_filter
     )
 
     return _sort_known_identity_secret_pairs_first(brute_force_credentials, _input_credentials)
@@ -33,8 +32,8 @@ def generate_brute_force_credentials(
 
 def _generate_all_possible_combinations(
     input_credentials: Set[Credentials],
-    identity_filters: Iterable[Callable[[Identity], bool]] = (),
-    secret_filters: Iterable[Callable[[Secret], bool]] = (),
+    identity_filter: Callable[[Identity], bool],
+    secret_filter: Callable[[Secret], bool],
 ) -> Iterable[Credentials]:
     brute_force_credentials: List[Credentials] = []
     identities: Dict[Type[Identity], Set[Identity]] = {}
@@ -50,8 +49,8 @@ def _generate_all_possible_combinations(
 
     # Output will be grouped by secret type. This is not guaranteed by the interface, but if we can
     # arrange these in an orderly sequence, we might as well.
-    for secret in apply_filters(chain.from_iterable(secrets.values()), secret_filters):
-        for identity in apply_filters(chain.from_iterable(identities.values()), identity_filters):
+    for secret in filter(secret_filter, chain.from_iterable(secrets.values())):
+        for identity in filter(identity_filter, chain.from_iterable(identities.values())):
             brute_force_credentials.append(Credentials(identity=identity, secret=secret))
 
     return brute_force_credentials
