@@ -71,7 +71,7 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
-def setup_authentication(app, data_dir):
+def setup_authentication(app, data_dir: Path, container: DIContainer):
     flask_security_config = generate_flask_security_configuration(data_dir)
 
     # TODO: After we switch to token base authentication investigate the purpose
@@ -93,6 +93,9 @@ def setup_authentication(app, data_dir):
     db = MongoEngine(app)
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
+
+    container.register_convention(MongoEngineUserDatastore, "user_data", user_datastore)
+
     _create_roles(user_datastore)
 
     # Only one user can be registered in the Island, so we need a custom validator
@@ -124,7 +127,7 @@ def _create_roles(user_datastore: MongoEngineUserDatastore):
     user_datastore.create_role(name="agent")
 
 
-def init_app_config(app, mongo_url, data_dir: Path):
+def init_app_config(app, mongo_url, data_dir: Path, container: DIContainer):
     app.config["MONGO_URI"] = mongo_url
     app.config["MONGODB_SETTINGS"] = [
         {
@@ -140,7 +143,7 @@ def init_app_config(app, mongo_url, data_dir: Path):
 
     app.url_map.strict_slashes = False
 
-    setup_authentication(app, data_dir)
+    setup_authentication(app, data_dir, container)
 
 
 def disable_session_cookies() -> SecureCookieSessionInterface:
@@ -222,7 +225,7 @@ def init_app(mongo_url: str, container: DIContainer, data_dir: Path):
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
-    init_app_config(app, mongo_url, data_dir)
+    init_app_config(app, mongo_url, data_dir, container)
     init_app_url_rules(app)
 
     flask_resource_manager = FlaskDIWrapper(api, container)
