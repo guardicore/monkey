@@ -1,5 +1,5 @@
-from datetime import datetime
 from contextlib import suppress
+from datetime import datetime
 from ipaddress import IPv4Interface
 from typing import Callable, List, Optional
 
