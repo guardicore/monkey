@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict
 
 from flask_security import UserDatastore
 
@@ -33,7 +34,10 @@ class AuthenticationService:
         # TODO: Use user_datastore.find_user() for this
         return not User.objects.first()
 
-    def apply_role_to_user(self, user: User, role: Role):
+    def apply_role_to_user(self, username: str, role_fields: Dict[str, str]):
+        user = self._user_datastore.find_user(username=username)
+        role = Role(**role_fields)
+
         self._user_datastore.add_role_to_user(user=user, role=role)
 
     def reset_island_data(self):
