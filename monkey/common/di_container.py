@@ -148,13 +148,7 @@ class DIContainer:
                 args.append(self._resolve_convention(parameter.annotation, parameter.name))
                 continue
 
-            try:
-                args.append(self._resolve_type(parameter.annotation))
-            except UnresolvableDependencyError as err:
-                if parameter.default is inspect.Parameter.empty:
-                    raise err
-
-                args.append(parameter.default)
+            args.append(self._resolve_parameter(parameter))
 
         return tuple(args)
 
@@ -166,6 +160,15 @@ class DIContainer:
             raise UnregisteredConventionError(
                 f"Failed to resolve unregistered convention {convention_identifier}"
             )
+
+    def _resolve_parameter(self, parameter: inspect.Parameter) -> Any:
+        try:
+            return self._resolve_type(parameter.annotation)
+        except UnresolvableDependencyError as err:
+            if parameter.default is inspect.Parameter.empty:
+                raise err
+
+            return parameter.default
 
     def _resolve_type(self, type_: Type[T]) -> T:
         if type_ in self._type_registry:
