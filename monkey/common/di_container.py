@@ -151,11 +151,10 @@ class DIContainer:
             try:
                 args.append(self._resolve_type(parameter.annotation))
             except UnresolvableDependencyError as err:
-                if parameter.default is not inspect.Parameter.empty:
-                    # Default value will be used to construct the object. No need to add it to args.
-                    continue
+                if parameter.default is inspect.Parameter.empty:
+                    raise err
 
-                raise err
+                args.append(parameter.default)
 
         return tuple(args)
 

@@ -396,3 +396,17 @@ def test_handle_default_parameter__dependency_registered(container):
 
     has_default = container.resolve(HasDefault)
     assert has_default.dependency.my_int == 42
+
+
+def test_handle_default_parameter__skip_default(container):
+    class HasDefault_2_Parameters:
+        def __init__(self, dependency: Dependency = Dependency(99), my_str: str = "hello"):
+            self.dependency = dependency
+            self.my_str = my_str
+
+    container.register_instance(str, "goodbye")
+
+    has_default = container.resolve(HasDefault_2_Parameters)
+
+    assert has_default.dependency.my_int == 99
+    assert has_default.my_str == "goodbye"
