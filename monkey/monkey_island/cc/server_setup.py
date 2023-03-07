@@ -72,7 +72,7 @@ def run_monkey_island():
 
     container = DIContainer()
 
-    app = _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
+    app = _initialize_island_server(config_options, container)
 
     _setup_di_container(container, ip_addresses, version, config_options.data_dir)
 
@@ -80,6 +80,8 @@ def run_monkey_island():
 
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
+
+    _start_island_server(app, config_options, ip_addresses, island_args.setup_only)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
@@ -145,7 +147,7 @@ def _setup_di_container(
     return container
 
 
-def _initialize_api_resources(app: Flask, container: DIContainer):
+def _initialize_api_resources(container, app: Flask):
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
@@ -184,9 +186,7 @@ def _connect_to_mongodb(mongo_db_process: Optional[MongoDbProcess]):
         sys.exit(1)
 
 
-def _start_island_server(
-    ip_addresses: Sequence[IPv4Address],
-    should_setup_only: bool,
+def _initialize_island_server(
     config_options: IslandConfigOptions,
     container: DIContainer,
 ) -> Flask:
@@ -194,14 +194,23 @@ def _start_island_server(
 
     app = init_app(mongo_setup.MONGO_URL, container, config_options.data_dir)
 
-    if should_setup_only:
-        logger.warning("Setup only flag passed. Exiting.")
-        return
-
     logger.info(
         f"Using certificate path: {config_options.crt_path}, and key path: "
         f"{config_options.key_path}."
     )
+
+    return app
+
+
+def _start_island_server(
+    app,
+    config_options: IslandConfigOptions,
+    ip_addresses: Sequence[IPv4Address],
+    should_setup_only: bool,
+):
+    if should_setup_only:
+        logger.warning("Setup only flag passed. Exiting.")
+        return
 
     http_server = WSGIServer(
         ("0.0.0.0", ISLAND_PORT),
@@ -213,8 +222,6 @@ def _start_island_server(
     )
     _log_init_info(ip_addresses)
     http_server.serve_forever()
-
-    return app
 
 
 def _configure_gevent_exception_handling(data_dir: Path):
