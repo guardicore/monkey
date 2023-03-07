@@ -35,8 +35,7 @@ class AuthenticationService:
 
     def apply_role_to_user(self, username: str, role_fields: Dict[str, str]):
         user = self._user_datastore.find_user(username=username)
-        # TODO: Fix role_fields logic
-        role = self._user_datastore.find_or_create_role(name=role_fields["name"])
+        role = self._user_datastore.find_or_create_role(**role_fields)
 
         self._user_datastore.add_role_to_user(user=user, role=role)
 

@@ -82,16 +82,15 @@ def test_role_apply_to_user(
     mock_island_event_queue,
     mock_user_datastore,
 ):
+    role_fields = {"name": UserRoles.ISLAND.name, "description": UserRoles.ISLAND.value}
     a_s = AuthenticationService(
         tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
     )
 
-    a_s.apply_role_to_user(
-        USERNAME, {"name": UserRoles.ISLAND.name, "description": UserRoles.ISLAND.value}
-    )
+    a_s.apply_role_to_user(USERNAME, role_fields)
 
     mock_user_datastore.find_user.called_with(USERNAME)
-    mock_user_datastore.find_or_create_role.called_with(UserRoles.ISLAND.name)
+    mock_user_datastore.find_or_create_role.called_with(role_fields)
 
     mock_user_datastore.add_role_to_user.called_with(USER, ROLE)
 
