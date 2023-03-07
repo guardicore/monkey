@@ -1,4 +1,7 @@
 from pathlib import Path
+from typing import Dict
+
+from flask_security import UserDatastore
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
@@ -15,10 +18,12 @@ class AuthenticationService:
         data_dir: Path,
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
+        user_datastore: UserDatastore,
     ):
         self._data_dir = data_dir
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
+        self._user_datastore = user_datastore
 
     def needs_registration(self) -> bool:
         """
@@ -27,6 +32,12 @@ class AuthenticationService:
         :return: Whether registration is required on the Island
         """
         return not User.objects.first()
+
+    def apply_role_to_user(self, username: str, role_fields: Dict[str, str]):
+        user = self._user_datastore.find_user(username=username)
+        role = self._user_datastore.find_or_create_role(name=role_fields["name"])
+
+        self._user_datastore.add_role_to_user(user=user, role=role)
 
     def reset_island_data(self):
         """

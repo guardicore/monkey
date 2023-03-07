@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, call
 
 import pytest
+from flask_security import UserDatastore
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
@@ -27,18 +28,42 @@ def mock_island_event_queue(autouse=True):
     return MagicMock(spec=IIslandEventQueue)
 
 
+@pytest.fixture
+def mock_user_datastore(autouse=True):
+    mock_user_datastore = MagicMock(spec=UserDatastore)
+
+    # TODO: Fix this with actual User and Role models
+    mock_user_datastore.find_user = MagicMock(return_value="some_user_object")
+    mock_user_datastore.find_or_create_role = MagicMock(return_value="some_role_object")
+
+    return mock_user_datastore
+
+
 def test_needs_registration__true(
-    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
+    mock_user_datastore,
 ):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    a_s = AuthenticationService(
+        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
+    )
 
     assert a_s.needs_registration()
 
 
 def test_needs_registration__false(
-    monkeypatch, mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+    monkeypatch,
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
+    mock_user_datastore,
 ):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    a_s = AuthenticationService(
+        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
+    )
 
     mock_user = MagicMock(spec=User)
     monkeypatch.setattr("monkey_island.cc.services.authentication_service.User", mock_user)
@@ -47,10 +72,34 @@ def test_needs_registration__false(
     assert not a_s.needs_registration()
 
 
-def test_reset_island__unlock_encryptor_on_register(
-    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+def test_role_apply_to_user(
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
+    mock_user_datastore,
 ):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    a_s = AuthenticationService(
+        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
+    )
+
+    a_s.apply_role_to_user(USERNAME, {"name": "island", "description": "some_description"})
+
+    mock_user_datastore.find_user.called_with("island")
+    mock_user_datastore.find_or_create_role.called_with("island")
+    mock_user_datastore.add_role_to_user.called_with("some_user_object", "some_role_object")
+
+
+def test_reset_island__unlock_encryptor_on_register(
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
+    mock_user_datastore,
+):
+    a_s = AuthenticationService(
+        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
+    )
 
     a_s.reset_repository_encryptor(USERNAME, PASSWORD)
 
@@ -60,9 +109,15 @@ def test_reset_island__unlock_encryptor_on_register(
 
 
 def test_reset_island__publish_to_event_topics(
-    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
+    mock_user_datastore,
 ):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    a_s = AuthenticationService(
+        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
+    )
 
     a_s.reset_island_data()
 
