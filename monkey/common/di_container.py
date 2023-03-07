@@ -124,7 +124,7 @@ class DIContainer:
         :raises UnresolvableDependencyError: If any dependencies could not be successfully resolved
         """
         with suppress(UnresolvableDependencyError):
-            return self._resolve_type(type_)
+            return self._resolve_type(type_, inspect.Parameter.empty)
 
         args = self.resolve_dependencies(type_)
         return type_(*args)
@@ -148,7 +148,7 @@ class DIContainer:
                 args.append(self._resolve_convention(parameter.annotation, parameter.name))
                 continue
 
-            args.append(self._resolve_parameter(parameter))
+            args.append(self._resolve_type(parameter.annotation, parameter.default))
 
         return tuple(args)
 
@@ -161,20 +161,15 @@ class DIContainer:
                 f"Failed to resolve unregistered convention {convention_identifier}"
             )
 
-    def _resolve_parameter(self, parameter: inspect.Parameter) -> Any:
-        try:
-            return self._resolve_type(parameter.annotation)
-        except UnresolvableDependencyError as err:
-            if parameter.default is inspect.Parameter.empty:
-                raise err
-
-            return parameter.default
-
-    def _resolve_type(self, type_: Type[T]) -> T:
+    def _resolve_type(self, type_: Type[T], default: T) -> T:
         if type_ in self._type_registry:
             return self._construct_new_instance(type_)
-        elif type_ in self._instance_registry:
+
+        if type_ in self._instance_registry:
             return self._retrieve_registered_instance(type_)
+
+        if default is not inspect.Parameter.empty:
+            return default
 
         raise UnresolvableDependencyError(
             f'Failed to resolve unregistered type "{DIContainer._format_type_name(type)}"'
