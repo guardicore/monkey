@@ -51,7 +51,7 @@ class AgentSignalsService:
         first_to_register = min(
             agents_on_same_machine, key=lambda a: a.registration_time, default=agent
         )
-        return agent is first_to_register
+        return agent.id == first_to_register.id
 
     def _agents_running_on_machine(self, machine_id: MachineID):
         return [
