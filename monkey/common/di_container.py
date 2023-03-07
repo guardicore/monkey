@@ -124,7 +124,7 @@ class DIContainer:
         :raises UnresolvableDependencyError: If any dependencies could not be successfully resolved
         """
         with suppress(UnresolvableDependencyError):
-            return self._resolve_type(type_, inspect.Parameter.empty)
+            return self._resolve_type(type_)
 
         args = self.resolve_dependencies(type_)
         return type_(*args)
@@ -148,7 +148,18 @@ class DIContainer:
                 args.append(self._resolve_convention(parameter.annotation, parameter.name))
                 continue
 
-            args.append(self._resolve_type(parameter.annotation, parameter.default))
+            with suppress(UnresolvableDependencyError):
+                args.append(self._resolve_type(parameter.annotation))
+                continue
+
+            with suppress(UnresolvableDependencyError):
+                args.append(self._resolve_default(parameter))
+                continue
+
+            raise UnresolvableDependencyError(
+                f"Failed to resolve dependency {parameter.name} of type "
+                f"{DIContainer._format_type_name(parameter.annotation)}"
+            )
 
         return tuple(args)
 
@@ -161,15 +172,12 @@ class DIContainer:
                 f"Failed to resolve unregistered convention {convention_identifier}"
             )
 
-    def _resolve_type(self, type_: Type[T], default: T) -> T:
+    def _resolve_type(self, type_: Type[T]) -> T:
         if type_ in self._type_registry:
             return self._construct_new_instance(type_)
 
         if type_ in self._instance_registry:
             return self._retrieve_registered_instance(type_)
-
-        if default is not inspect.Parameter.empty:
-            return default
 
         raise UnresolvableDependencyError(
             f'Failed to resolve unregistered type "{DIContainer._format_type_name(type)}"'
@@ -185,6 +193,14 @@ class DIContainer:
 
     def _retrieve_registered_instance(self, arg_type: Type[T]) -> T:
         return self._instance_registry[arg_type]
+
+    def _resolve_default(self, parameter: inspect.Parameter) -> Any:
+        if parameter.default is not inspect.Parameter.empty:
+            return parameter.default
+
+        raise UnresolvableDependencyError(
+            f'No default found for "{parameter.name}:{DIContainer._format_type_name(type)}"'
+        )
 
     def release(self, interface: Type[T]):
         """
