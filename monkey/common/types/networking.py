@@ -6,7 +6,6 @@ from ipaddress import IPv4Address
 from pydantic import ConstrainedInt
 
 from common.base_models import InfectionMonkeyBaseModel
-from common.network.network_utils import address_to_ip_port
 
 
 class NetworkProtocol(Enum):
@@ -77,9 +76,10 @@ class SocketAddress(InfectionMonkeyBaseModel):
         :raises ValueError: If the string is not a valid ip:port
         :return: SocketAddress with the IP and port
         """
-        ip, port = address_to_ip_port(address_str)
+        ip, port = address_str.split(":")
         if port is None:
             raise ValueError("SocketAddress requires a port")
+
         return SocketAddress(ip=IPv4Address(ip), port=int(port))
 
     def __hash__(self):
