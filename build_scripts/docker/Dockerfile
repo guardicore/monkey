@@ -3,8 +3,7 @@ ARG PYTHON_VERSION=3.11
 FROM python:$PYTHON_VERSION-slim as builder
 COPY ./monkey /monkey
 WORKDIR /monkey
-RUN apt-get update && apt-get install -y gcc \
-    && python -m venv . \
+RUN python -m venv . \
     && export CI=1 \
     && . bin/activate \
     && pip install -U pip \
