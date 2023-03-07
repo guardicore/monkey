@@ -143,15 +143,16 @@ class DIContainer:
         """
         args = []
 
-        for arg_name, arg_type in inspect.getfullargspec(type_).annotations.items():
+        for parameter in inspect.signature(type_).parameters.values():
             with suppress(UnregisteredConventionError):
-                args.append(self._resolve_convention(arg_type, arg_name))
+                args.append(self._resolve_convention(parameter.annotation, parameter.name))
                 continue
 
             try:
-                args.append(self._resolve_type(arg_type))
+                args.append(self._resolve_type(parameter.annotation))
             except UnresolvableDependencyError as err:
-                if DIContainer._has_default_argument(type_, arg_name):
+                if parameter.default is not inspect.Parameter.empty:
+                    # Default value will be used to construct the object. No need to add it to args.
                     continue
 
                 raise err
@@ -187,11 +188,6 @@ class DIContainer:
 
     def _retrieve_registered_instance(self, arg_type: Type[T]) -> T:
         return self._instance_registry[arg_type]
-
-    @staticmethod
-    def _has_default_argument(type_: Type[T], arg_name: str) -> bool:
-        parameters = inspect.signature(type_).parameters
-        return parameters[arg_name].default is not inspect.Parameter.empty
 
     def release(self, interface: Type[T]):
         """
