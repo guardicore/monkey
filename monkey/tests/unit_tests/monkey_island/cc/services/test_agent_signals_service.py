@@ -1,3 +1,4 @@
+from copy import copy
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -67,15 +68,15 @@ def mock_agent_repository() -> IAgentRepository:
     def get_agent_by_id(agent_id: AgentID) -> Agent:
         for agent in ALL_AGENTS:
             if agent.id == agent_id:
-                return agent
+                return copy(agent)
 
         raise UnknownRecordError(str(agent_id))
 
     agent_repository = MagicMock(spec=IAgentRepository)
-    agent_repository.get_progenitor = MagicMock(return_value=AGENT_1)
+    agent_repository.get_progenitor = MagicMock(return_value=copy(AGENT_1))
     agent_repository.get_agent_by_id = MagicMock(side_effect=get_agent_by_id)
     agent_repository.get_running_agents = MagicMock(
-        return_value=[a for a in ALL_AGENTS if a.stop_time is None]
+        return_value=[copy(a) for a in ALL_AGENTS if a.stop_time is None]
     )
 
     return agent_repository
