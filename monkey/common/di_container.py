@@ -153,7 +153,7 @@ class DIContainer:
                 continue
 
             with suppress(UnresolvableDependencyError):
-                args.append(self._resolve_default(parameter))
+                args.append(self._resolve_default(parameter.name, parameter.default))
                 continue
 
             raise UnresolvableDependencyError(
@@ -194,13 +194,11 @@ class DIContainer:
     def _retrieve_registered_instance(self, arg_type: Type[T]) -> T:
         return self._instance_registry[arg_type]
 
-    def _resolve_default(self, parameter: inspect.Parameter) -> Any:
-        if parameter.default is not inspect.Parameter.empty:
-            return parameter.default
+    def _resolve_default(self, name: str, default: T) -> T:
+        if default is not inspect.Parameter.empty:
+            return default
 
-        raise UnresolvableDependencyError(
-            f'No default found for "{parameter.name}:{DIContainer._format_type_name(type)}"'
-        )
+        raise UnresolvableDependencyError(f'No default found for "{name}"')
 
     def release(self, interface: Type[T]):
         """
