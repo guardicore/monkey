@@ -74,7 +74,9 @@ def mock_agent_repository() -> IAgentRepository:
     agent_repository = MagicMock(spec=IAgentRepository)
     agent_repository.get_progenitor = MagicMock(return_value=AGENT_1)
     agent_repository.get_agent_by_id = MagicMock(side_effect=get_agent_by_id)
-    agent_repository.get_running_agents = MagicMock(return_value=AGENTS)
+    agent_repository.get_running_agents = MagicMock(
+        return_value=[a for a in ALL_AGENTS if a.stop_time is None]
+    )
 
     return agent_repository
 
