@@ -9,7 +9,7 @@ from flask_security import ConfirmRegisterForm, Security, UserDatastore
 from werkzeug.exceptions import NotFound
 from wtforms import StringField, ValidationError
 
-from common import DIContainer
+from common import DIContainer, UserRoles
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
@@ -121,8 +121,8 @@ def setup_authentication(app, data_dir, db, user_datastore):
 
 
 def _create_roles(user_datastore: UserDatastore):
-    user_datastore.find_or_create_role(name="island")
-    user_datastore.find_or_create_role(name="agent")
+    user_datastore.find_or_create_role(name=UserRoles.ISLAND.name)
+    user_datastore.find_or_create_role(name=UserRoles.AGENT.name)
 
 
 def init_app_config(app, mongo_url, data_dir: Path, db: MongoEngine, user_datastore: UserDatastore):

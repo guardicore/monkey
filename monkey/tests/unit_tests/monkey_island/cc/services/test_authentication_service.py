@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, call
 import pytest
 from flask_security import UserDatastore
 
+from common import UserRoles
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -83,10 +84,13 @@ def test_role_apply_to_user(
         tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
     )
 
-    a_s.apply_role_to_user(USERNAME, {"name": "island", "description": "some_description"})
+    a_s.apply_role_to_user(
+        USERNAME, {"name": UserRoles.ISLAND.name, "description": UserRoles.ISLAND.value}
+    )
 
-    mock_user_datastore.find_user.called_with("island")
-    mock_user_datastore.find_or_create_role.called_with("island")
+    mock_user_datastore.find_user.called_with(USERNAME)
+    mock_user_datastore.find_or_create_role.called_with(UserRoles.ISLAND.name)
+
     mock_user_datastore.add_role_to_user.called_with("some_user_object", "some_role_object")
 
 
