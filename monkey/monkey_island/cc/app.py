@@ -215,10 +215,11 @@ def init_rpc_endpoints(api: FlaskDIWrapper):
 
 def init_app(mongo_url: str, container: DIContainer, data_dir: Path):
     """
-    Simple docstirng for init_app
+    Initializes the server app
 
-    :param mongo_url: A url
-    :param container: Dependency injection container
+    :param mongo_url: URL of the Mongo database to use in the app
+    :param container: The dependency injection container to initialize the app with
+    :param data_dir: Path to the data directory that the app should use
     """
     app = Flask(__name__)
 
