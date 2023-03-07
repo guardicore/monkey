@@ -42,7 +42,6 @@ from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import register_agent_configuration_resources
-from monkey_island.cc.services.representations import output_json
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 
 HOME_FILE = "index.html"
@@ -223,13 +222,7 @@ def init_app(mongo_url: str, container: DIContainer, data_dir: Path):
     """
     app = Flask(__name__)
 
-    api = flask_restful.Api(app)
-    api.representations = {"application/json": output_json}
-
     init_app_config(app, mongo_url, data_dir, container)
     init_app_url_rules(app)
-
-    flask_resource_manager = FlaskDIWrapper(api, container)
-    init_api_resources(flask_resource_manager)
 
     return app

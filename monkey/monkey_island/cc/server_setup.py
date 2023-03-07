@@ -7,14 +7,19 @@ from pathlib import Path
 from threading import Thread
 from typing import Optional, Sequence, Tuple
 
+import flask_restful
 import gevent.hub
 import requests
+from flask import Flask
 from gevent.pywsgi import WSGIServer
 
 from monkey_island.cc import Version
+from monkey_island.cc.app import init_api_resources
 from monkey_island.cc.deployment import Deployment
+from monkey_island.cc.flask_utils.flask_di_wrapper import FlaskDIWrapper
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.server_utils.island_logger import get_log_file_path
+from monkey_island.cc.services.representations import output_json
 from monkey_island.cc.setup.config_setup import get_server_config
 
 # Add the monkey_island directory to the path, to make sure imports that don't start with
@@ -65,11 +70,16 @@ def run_monkey_island():
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
 
-    container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
+    container = DIContainer()
+
+    app = _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
+
+    _setup_di_container(container, ip_addresses, version, config_options.data_dir)
+
+    _initialize_api_resources(container, app)
+
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
-
-    _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
@@ -122,11 +132,9 @@ def _get_deployment() -> Deployment:
         raise Exception(f"Failed to fetch the deployment from {deployment_file_path}: {err}")
 
 
-def _initialize_di_container(
-    ip_addresses: Sequence[IPv4Address], version: Version, data_dir: Path
+def _setup_di_container(
+    container: DIContainer, ip_addresses: Sequence[IPv4Address], version: Version, data_dir: Path
 ) -> DIContainer:
-    container = DIContainer()
-
     container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
@@ -135,6 +143,14 @@ def _initialize_di_container(
     initialize_services(container, data_dir)
 
     return container
+
+
+def _initialize_api_resources(app: Flask, container: DIContainer):
+    api = flask_restful.Api(app)
+    api.representations = {"application/json": output_json}
+
+    flask_resource_manager = FlaskDIWrapper(api, container)
+    init_api_resources(flask_resource_manager)
 
 
 def _initialize_mongodb_connection(start_mongodb: bool, data_dir: Path):
@@ -173,7 +189,7 @@ def _start_island_server(
     should_setup_only: bool,
     config_options: IslandConfigOptions,
     container: DIContainer,
-):
+) -> Flask:
     _configure_gevent_exception_handling(config_options.data_dir)
 
     app = init_app(mongo_setup.MONGO_URL, container, config_options.data_dir)
@@ -197,6 +213,8 @@ def _start_island_server(
     )
     _log_init_info(ip_addresses)
     http_server.serve_forever()
+
+    return app
 
 
 def _configure_gevent_exception_handling(data_dir: Path):
