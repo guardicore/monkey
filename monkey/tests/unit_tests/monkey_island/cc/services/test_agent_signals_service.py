@@ -29,7 +29,16 @@ AGENT_2 = Agent(
 AGENT_3 = Agent(
     id=UUID("0fc9afcb-1902-436b-bd5c-1ad194252484"),
     machine_id=3,
+    registration_time=301,
     start_time=300,
+    parent_id=AGENT_2.id,
+)
+
+DUPLICATE_MACHINE_AGENT = Agent(
+    id=UUID("0fc9afcb-1902-436b-bd5c-1ad194252485"),
+    machine_id=3,
+    registration_time=302,
+    start_time=299,
     parent_id=AGENT_2.id,
 )
 
@@ -43,12 +52,14 @@ STOPPED_AGENT = Agent(
     parent_id=AGENT_3.id,
 )
 
-ALL_AGENTS = [*AGENTS, STOPPED_AGENT]
+ALL_AGENTS = [*AGENTS, DUPLICATE_MACHINE_AGENT, STOPPED_AGENT]
 
 
 @pytest.fixture
 def mock_simulation_repository() -> IAgentRepository:
-    return MagicMock(spec=ISimulationRepository)
+    repository = MagicMock(spec=ISimulationRepository)
+    repository.get_simulation = MagicMock(return_value=Simulation(terminate_signal_time=None))
+    return repository
 
 
 @pytest.fixture(scope="session")
@@ -63,6 +74,9 @@ def mock_agent_repository() -> IAgentRepository:
     agent_repository = MagicMock(spec=IAgentRepository)
     agent_repository.get_progenitor = MagicMock(return_value=AGENT_1)
     agent_repository.get_agent_by_id = MagicMock(side_effect=get_agent_by_id)
+    agent_repository.get_running_agents = MagicMock(
+        return_value=[a for a in ALL_AGENTS if a.stop_time is None]
+    )
 
     return agent_repository
 
@@ -77,9 +91,6 @@ def test_stopped_agent(
     mock_simulation_repository: ISimulationRepository,
 ):
     agent = STOPPED_AGENT
-    mock_simulation_repository.get_simulation = MagicMock(
-        return_value=Simulation(terminate_signal_time=None)
-    )
 
     signals = agent_signals_service.get_signals(agent.id)
     assert signals.terminate == agent.stop_time
@@ -91,10 +102,6 @@ def test_terminate_is_none(
     agent_signals_service: AgentSignalsService,
     mock_simulation_repository: ISimulationRepository,
 ):
-    mock_simulation_repository.get_simulation = MagicMock(
-        return_value=Simulation(terminate_signal_time=None)
-    )
-
     signals = agent_signals_service.get_signals(agent.id)
     assert signals.terminate is None
 
@@ -153,7 +160,6 @@ def test_on_terminate_agents_signal__stores_timestamp(
     timestamp = 100
 
     terminate_all_agents = TerminateAllAgents(timestamp=timestamp)
-    mock_simulation_repository.get_simulation = MagicMock(return_value=Simulation())
     agent_signals_service.on_terminate_agents_signal(terminate_all_agents)
 
     expected_value = Simulation(terminate_signal_time=timestamp)
@@ -174,3 +180,24 @@ def test_on_terminate_agents_signal__updates_timestamp(
 
     expected_value = Simulation(mode=IslandMode.RANSOMWARE, terminate_signal_time=timestamp)
     assert mock_simulation_repository.save_simulation.called_once_with(expected_value)
+
+
+def test_terminate_signal__not_set_if_agent_registered_before_another(agent_signals_service):
+    signals = agent_signals_service.get_signals(AGENT_3.id)
+
+    assert signals.terminate is None
+
+
+def test_terminate_signal__set_if_agent_registered_after_another(agent_signals_service):
+    signals = agent_signals_service.get_signals(DUPLICATE_MACHINE_AGENT.id)
+
+    assert signals.terminate is not None
+
+
+def test_terminate_signal__not_set_if_agent_registered_after_stopped_agent(
+    agent_signals_service: AgentSignalsService, mock_agent_repository: IAgentRepository
+):
+    mock_agent_repository.get_running_agents = MagicMock(return_value=[AGENT_1, AGENT_2])
+    signals = agent_signals_service.get_signals(DUPLICATE_MACHINE_AGENT.id)
+
+    assert signals.terminate is None
