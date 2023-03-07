@@ -11,6 +11,7 @@ from flask_mongoengine import MongoEngine
 from flask_security import MongoEngineUserDatastore, Security
 
 import monkey_island
+from common import UserRoles
 from common.utils.code_utils import insecure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.models import Role, User
@@ -70,13 +71,14 @@ def init_mock_security_app():
     db.connect(db_name, mongo_client_class=mongomock.MongoClient)
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
+    island_role = user_datastore.find_or_create_role(
+        name=UserRoles.ISLAND.name, description=UserRoles.ISLAND.value
+    )
     app.security = Security(app, user_datastore)
     ds = app.security.datastore
     with app.app_context():
         ds.create_user(
-            email="unittest@me.com",
-            username="test",
-            password="password",
+            email="unittest@me.com", username="test", password="password", roles=[island_role]
         )
         ds.commit()
 

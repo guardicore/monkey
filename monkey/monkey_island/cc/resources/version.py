@@ -1,7 +1,8 @@
 import logging
 
-from flask_security import auth_token_required
+from flask_security import auth_token_required, roles_required
 
+from common import UserRoles
 from monkey_island.cc import Version as IslandVersion
 from monkey_island.cc.flask_utils import AbstractResource
 
@@ -15,6 +16,7 @@ class Version(AbstractResource):
         self._version = version
 
     @auth_token_required
+    @roles_required(UserRoles.ISLAND.name)
     def get(self):
         return {
             "version_number": self._version.version_number,
