@@ -46,20 +46,17 @@ class AgentSignalsService:
         terminate_timestamp = self._get_terminate_signal_timestamp(agent_id)
         return AgentSignals(terminate=terminate_timestamp)
 
-    def _agents_running_on_machine(self, machine_id: MachineID):
-        return [
-            a
-            for a in self._agent_repository.get_agents()
-            if a.machine_id == machine_id and a.stop_time is None
-        ]
-
     def _agent_is_first_to_register(self, agent: Agent) -> bool:
         agents_on_same_machine = self._agents_running_on_machine(agent.machine_id)
-        print(agents_on_same_machine)
         first_to_register = min(
             agents_on_same_machine, key=lambda a: a.registration_time, default=agent
         )
         return agent is first_to_register
+
+    def _agents_running_on_machine(self, machine_id: MachineID):
+        return [
+            a for a in self._agent_repository.get_running_agents() if a.machine_id == machine_id
+        ]
 
     def _get_terminate_signal_timestamp(self, agent_id: AgentID) -> Optional[datetime]:
         simulation = self._simulation_repository.get_simulation()

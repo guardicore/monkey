@@ -74,7 +74,7 @@ def mock_agent_repository() -> IAgentRepository:
     agent_repository = MagicMock(spec=IAgentRepository)
     agent_repository.get_progenitor = MagicMock(return_value=AGENT_1)
     agent_repository.get_agent_by_id = MagicMock(side_effect=get_agent_by_id)
-    agent_repository.get_agents = MagicMock(return_value=ALL_AGENTS)
+    agent_repository.get_running_agents = MagicMock(return_value=AGENTS)
 
     return agent_repository
 
@@ -192,8 +192,10 @@ def test_terminate_signal__set_if_agent_registered_after_another(agent_signals_s
     assert signals.terminate is not None
 
 
-def test_terminate_signal__not_set_if_agent_registered_after_stopped_agent(agent_signals_service):
-    AGENT_3.stop_time = 400
+def test_terminate_signal__not_set_if_agent_registered_after_stopped_agent(
+    agent_signals_service: AgentSignalsService, mock_agent_repository: IAgentRepository
+):
+    mock_agent_repository.get_running_agents = MagicMock(return_value=[AGENT_1, AGENT_2])
     signals = agent_signals_service.get_signals(AGENT_4.id)
 
     assert signals.terminate is None
