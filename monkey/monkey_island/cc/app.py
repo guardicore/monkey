@@ -94,7 +94,7 @@ def setup_authentication(app, data_dir: Path, container: DIContainer):
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
 
-    container.register_convention(UserDatastore, "user_data", user_datastore)
+    container.register_convention(UserDatastore, "user_datastore", user_datastore)
 
     _create_roles(user_datastore)
 
