@@ -122,8 +122,8 @@ def setup_authentication(app, data_dir: Path, container: DIContainer):
 
 
 def _create_roles(user_datastore: UserDatastore):
-    user_datastore.create_role(name=UserRoles.ISLAND.name)
-    user_datastore.create_role(name=UserRoles.AGENT.name)
+    user_datastore.find_or_create_role(name=UserRoles.ISLAND.name)
+    user_datastore.find_or_create_role(name=UserRoles.AGENT.name)
 
 
 def init_app_config(app, mongo_url, data_dir: Path, container: DIContainer):
