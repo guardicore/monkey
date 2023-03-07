@@ -81,7 +81,6 @@
     "downloadjs": "1.4.7",
     "file-saver": "2.0.5",
     "json-schema-merge-allof": "0.8.1",
-    "jwt-decode": "3.1.2",
     "lodash": "4.17.21",
     "mui-datatables": "^3.8.5",
     "node-polyfill-webpack-plugin": "2.0.1",
