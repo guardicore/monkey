@@ -9,10 +9,13 @@ from typing import Optional, Sequence, Tuple
 
 import gevent.hub
 import requests
+from flask_mongoengine import MongoEngine
+from flask_security import MongoEngineUserDatastore, UserDatastore
 from gevent.pywsgi import WSGIServer
 
 from monkey_island.cc import Version
 from monkey_island.cc.deployment import Deployment
+from monkey_island.cc.models import Role, User
 from monkey_island.cc.server_utils.consts import ISLAND_PORT
 from monkey_island.cc.server_utils.island_logger import get_log_file_path
 from monkey_island.cc.setup.config_setup import get_server_config
@@ -65,11 +68,18 @@ def run_monkey_island():
 
     _initialize_mongodb_connection(config_options.start_mongodb, config_options.data_dir)
 
-    container = _initialize_di_container(ip_addresses, version, config_options.data_dir)
+    db = MongoEngine()
+    user_datastore = MongoEngineUserDatastore(db, User, Role)
+
+    container = _initialize_di_container(
+        ip_addresses, version, config_options.data_dir, user_datastore
+    )
     setup_island_event_handlers(container)
     setup_agent_event_handlers(container)
 
-    _start_island_server(ip_addresses, island_args.setup_only, config_options, container)
+    _start_island_server(
+        ip_addresses, island_args.setup_only, config_options, container, db, user_datastore
+    )
 
 
 def _extract_config(island_args: IslandCmdArgs) -> IslandConfigOptions:
@@ -123,10 +133,14 @@ def _get_deployment() -> Deployment:
 
 
 def _initialize_di_container(
-    ip_addresses: Sequence[IPv4Address], version: Version, data_dir: Path
+    ip_addresses: Sequence[IPv4Address],
+    version: Version,
+    data_dir: Path,
+    user_datastore: UserDatastore,
 ) -> DIContainer:
     container = DIContainer()
 
+    container.register_convention(UserDatastore, "user_datastore", user_datastore)
     container.register_convention(Sequence[IPv4Address], "ip_addresses", ip_addresses)
     container.register_instance(Version, version)
     container.register_convention(Path, "data_dir", data_dir)
@@ -173,10 +187,12 @@ def _start_island_server(
     should_setup_only: bool,
     config_options: IslandConfigOptions,
     container: DIContainer,
+    db: MongoEngine,
+    user_datastore: UserDatastore,
 ):
     _configure_gevent_exception_handling(config_options.data_dir)
 
-    app = init_app(mongo_setup.MONGO_URL, container, config_options.data_dir)
+    app = init_app(mongo_setup.MONGO_URL, container, config_options.data_dir, db, user_datastore)
 
     if should_setup_only:
         logger.warning("Setup only flag passed. Exiting.")
