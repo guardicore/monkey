@@ -111,8 +111,8 @@ class DIContainer:
     def resolve(self, type_: Type[T]) -> T:
         """
         Resolves all dependencies and returns a new instance of `type_` using constructor dependency
-        injection. Note that only positional arguments are resolved. Varargs, keyword-only args, and
-        default values are ignored.
+        injection. Note that only positional arguments or arguments with defaults are resolved.
+        Varargs and keyword-only args are ignored.
 
         Dependencies are resolved with the following precedence
 
@@ -147,7 +147,13 @@ class DIContainer:
             try:
                 instance = self._resolve_convention(arg_type, arg_name)
             except UnregisteredConventionError:
-                instance = self._resolve_type(arg_type)
+                try:
+                    instance = self._resolve_type(arg_type)
+                except UnresolvableDependencyError as err:
+                    if DIContainer._has_default_argument(type_, arg_name):
+                        continue
+
+                    raise err
 
             args.append(instance)
 
@@ -182,6 +188,11 @@ class DIContainer:
 
     def _retrieve_registered_instance(self, arg_type: Type[T]) -> T:
         return self._instance_registry[arg_type]
+
+    @staticmethod
+    def _has_default_argument(type_: Type[T], arg_name: str) -> bool:
+        parameters = inspect.signature(type_).parameters
+        return parameters[arg_name].default is not inspect.Parameter.empty
 
     def release(self, interface: Type[T]):
         """

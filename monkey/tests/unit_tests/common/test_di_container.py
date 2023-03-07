@@ -374,3 +374,25 @@ def test_release_convention(container):
     with pytest.raises(ValueError):
         container.release_convention(str, "my_str")
         container.resolve(TestClass6)
+
+
+class Dependency:
+    def __init__(self, my_int=42):
+        self.my_int = my_int
+
+
+class HasDefault:
+    def __init__(self, dependency: Dependency = Dependency(99)):
+        self.dependency = dependency
+
+
+def test_handle_default_parameter__no_dependency_registered(container):
+    has_default = container.resolve(HasDefault)
+    assert has_default.dependency.my_int == 99
+
+
+def test_handle_default_parameter__dependency_registered(container):
+    container.register(Dependency, Dependency)
+
+    has_default = container.resolve(HasDefault)
+    assert has_default.dependency.my_int == 42
