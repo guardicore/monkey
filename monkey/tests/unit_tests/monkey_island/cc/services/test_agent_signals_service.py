@@ -34,7 +34,7 @@ AGENT_3 = Agent(
     parent_id=AGENT_2.id,
 )
 
-AGENT_4 = Agent(
+DUPLICATE_MACHINE_AGENT = Agent(
     id=UUID("0fc9afcb-1902-436b-bd5c-1ad194252485"),
     machine_id=3,
     registration_time=302,
@@ -52,7 +52,7 @@ STOPPED_AGENT = Agent(
     parent_id=AGENT_3.id,
 )
 
-ALL_AGENTS = [*AGENTS, AGENT_4, STOPPED_AGENT]
+ALL_AGENTS = [*AGENTS, DUPLICATE_MACHINE_AGENT, STOPPED_AGENT]
 
 
 @pytest.fixture
@@ -189,7 +189,7 @@ def test_terminate_signal__not_set_if_agent_registered_before_another(agent_sign
 
 
 def test_terminate_signal__set_if_agent_registered_after_another(agent_signals_service):
-    signals = agent_signals_service.get_signals(AGENT_4.id)
+    signals = agent_signals_service.get_signals(DUPLICATE_MACHINE_AGENT.id)
 
     assert signals.terminate is not None
 
@@ -198,6 +198,6 @@ def test_terminate_signal__not_set_if_agent_registered_after_stopped_agent(
     agent_signals_service: AgentSignalsService, mock_agent_repository: IAgentRepository
 ):
     mock_agent_repository.get_running_agents = MagicMock(return_value=[AGENT_1, AGENT_2])
-    signals = agent_signals_service.get_signals(AGENT_4.id)
+    signals = agent_signals_service.get_signals(DUPLICATE_MACHINE_AGENT.id)
 
     assert signals.terminate is None
