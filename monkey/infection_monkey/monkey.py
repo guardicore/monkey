@@ -220,6 +220,8 @@ class InfectionMonkey:
 
         logger.info("Agent is starting...")
 
+        # This check must be done after the agent event forwarder is started, otherwise the agent
+        # will be unable to send a shutdown event to the Island.
         should_stop = self._control_channel.should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
