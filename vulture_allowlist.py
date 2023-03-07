@@ -1,4 +1,5 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
@@ -91,6 +92,7 @@ app.login_via_request
 app.should_set_cookie
 app.session_interface
 app.save_session
+Security._want_json
 
 # Deployment is chosen dynamically
 Deployment.DEVELOP
