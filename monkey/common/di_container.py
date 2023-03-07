@@ -144,18 +144,17 @@ class DIContainer:
         args = []
 
         for arg_name, arg_type in inspect.getfullargspec(type_).annotations.items():
+            with suppress(UnregisteredConventionError):
+                args.append(self._resolve_convention(arg_type, arg_name))
+                continue
+
             try:
-                instance = self._resolve_convention(arg_type, arg_name)
-            except UnregisteredConventionError:
-                try:
-                    instance = self._resolve_type(arg_type)
-                except UnresolvableDependencyError as err:
-                    if DIContainer._has_default_argument(type_, arg_name):
-                        continue
+                args.append(self._resolve_type(arg_type))
+            except UnresolvableDependencyError as err:
+                if DIContainer._has_default_argument(type_, arg_name):
+                    continue
 
-                    raise err
-
-            args.append(instance)
+                raise err
 
         return tuple(args)
 
