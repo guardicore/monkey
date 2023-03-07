@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from flask import make_response, request, Response
+from flask import Response, make_response, request
 from flask.typing import ResponseValue
 from flask_security.views import register
 
