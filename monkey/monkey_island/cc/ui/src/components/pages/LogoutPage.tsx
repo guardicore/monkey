@@ -1,7 +1,7 @@
 import LoadingScreen from '../ui-components/LoadingScreen';
 import React, {useState} from 'react';
 import AuthService from '../../services/AuthService';
-import {Redirect} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 
 const LogoutPage = (props) => {
   const [logoutDone, setLogoutDone] = useState(false);
@@ -16,7 +16,7 @@ const LogoutPage = (props) => {
     })
 
   if (logoutDone) {
-    return <Redirect to={'/'} />
+    return <Navigate to={'/'} />
   } else {
     return <LoadingScreen text={"Logging out"} />
   }
