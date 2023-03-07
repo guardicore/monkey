@@ -1,6 +1,7 @@
 from flask import jsonify
+from flask_security import auth_token_required
 
-from monkey_island.cc.flask_utils import AbstractResource, jwt_required
+from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import (
     IAgentEventRepository,
     IAgentPluginRepository,
@@ -22,7 +23,7 @@ class RansomwareReport(AbstractResource):
         self._machine_repository = machine_repository
         self._agent_plugin_repository = agent_plugin_repository
 
-    @jwt_required
+    @auth_token_required
     def get(self):
         return jsonify(
             {

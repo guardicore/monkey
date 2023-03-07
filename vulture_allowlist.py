@@ -1,4 +1,5 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from flask_security import Security
 
 from common import DIContainer
 from common.agent_configuration import ScanTargetConfiguration
@@ -6,13 +7,6 @@ from common.agent_events import AbstractAgentEvent, FileEncryptionEvent
 from common.agent_plugins import AgentPlugin, AgentPluginManifest
 from common.base_models import InfectionMonkeyModelConfig, MutableInfectionMonkeyModelConfig
 from common.credentials import LMHash, NTHash, SecretEncodingConfig
-from common.hard_coded_manifests import HARD_CODED_PAYLOADS_MANIFESTS
-from common.hard_coded_manifests.hard_coded_credential_collector_manifests import (
-    HARD_CODED_CREDENTIAL_COLLECTOR_MANIFESTS,
-)
-from common.hard_coded_manifests.hard_coded_fingerprinter_manifests import (
-    HARD_CODED_FINGERPRINTER_MANIFESTS,
-)
 from common.types import Lock, NetworkPort, PluginName
 from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFactory
 from infection_monkey.exploit.tools import generate_brute_force_credentials, secret_type_filter
@@ -22,15 +16,6 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Agent, IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
-from monkey_island.cc.repositories.utils.hard_coded_credential_collector_schemas import (
-    HARD_CODED_CREDENTIAL_COLLECTOR_SCHEMAS,
-)
-from monkey_island.cc.repositories.utils.hard_coded_fingerprinter_schemas import (
-    HARD_CODED_FINGERPRINTER_SCHEMAS,
-)
-from monkey_island.cc.repositories.utils.hard_coded_payloads_schemas import (
-    HARD_CODED_PAYLOADS_SCHEMAS,
-)
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
 # Pydantic configurations are not picked up
@@ -103,6 +88,11 @@ prompt
 app.url_map.strict_slashes
 api.representations
 hub.exception_stream
+app.login_via_request
+app.should_set_cookie
+app.session_interface
+app.save_session
+Security._want_json
 
 # Deployment is chosen dynamically
 Deployment.DEVELOP
@@ -136,6 +126,15 @@ Lock.locked
 AgentPlugin.supported_operating_systems
 
 HadoopPlugin
+
+# Remove after #2157
+User.active
+User.password_hash
+User.fs_uniquifier
+User.roles
+User.get_by_id
+User.email
+Role.permissions
 
 # Remove after #2952
 generate_brute_force_credentials
