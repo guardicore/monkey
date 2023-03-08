@@ -89,23 +89,19 @@ However, you can save the Monkey's existing configuration by logging in with you
 ### On Windows and Linux (AppImage)
 
 When you first access the Monkey Island Server, you'll be prompted to create an account.
-Creating an account will write your credentials in `credentials.json` file
-under [data directory]({{< ref "/reference/data_directory" >}}).
+Creating an account will write your credentials to the database in the [data directory]({{< ref "/reference/data_directory" >}}).
+
 To reset the credentials:
 
-1. **Remove** the `credentials.json` file manually
-(located in the [data directory]({{< ref "/reference/data_directory" >}})).
+1. **Remove** the data directory manually
+
+    Because credentials are stored in the database, you must perform a complete factory reset in order to reset the credentials, which is accomplished by removing the entire [data directory]({{< ref "/reference/data_directory" >}}).
 
 2. Restart the Monkey Island process:
     * On Linux, simply kill the Monkey Island process and execute the AppImage.
     * On Windows, restart the program.
 
 3. Go to the Monkey Island's URL and create a new account.
-
-If you are still unable to log into Monkey Island after following the above
-steps, you can perform a complete factory reset by removing the entire [data
-directory]({{< ref "/reference/data_directory" >}}) and then restarting the
-Monkey Island process.
 
 ### On Docker
 When you first access the Monkey Island Server, you'll be prompted to create an account.
