@@ -3,7 +3,7 @@ from http import HTTPStatus
 from flask import make_response
 from flask_security import auth_token_required, roles_required
 
-from common import AccountRoles
+from common import AccountRole
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.flask_utils import AbstractResource
 
@@ -15,7 +15,7 @@ class ClearSimulationData(AbstractResource):
         self._island_event_queue = island_event_queue
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
+    @roles_required(AccountRole.ISLAND_INTERFACE.name)
     def post(self):
         """
         Clear all data collected during the simulation

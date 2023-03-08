@@ -3,7 +3,7 @@ from pathlib import Path
 
 from flask_security import auth_token_required, roles_required
 
-from common import AccountRoles
+from common import AccountRole
 from common.utils.file_utils import get_text_file_contents
 from monkey_island.cc.flask_utils import AbstractResource
 
@@ -17,7 +17,7 @@ class IslandLog(AbstractResource):
         self._island_log_file_path = island_log_file_path
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
+    @roles_required(AccountRole.ISLAND_INTERFACE.name)
     def get(self):
         try:
             return get_text_file_contents(self._island_log_file_path)
