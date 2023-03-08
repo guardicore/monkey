@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 
-import AuthService from '../../services/AuthService';
+import AuthService, {getErrors} from '../../services/AuthService';
 import monkeyGeneral from '../../images/militant-monkey.svg';
 import ParticleBackground from '../ui-components/ParticleBackground';
 
@@ -12,7 +12,7 @@ class LoginPageComponent extends React.Component {
       if (res['result']) {
         this.redirectToHome();
       } else {
-        this.setState({failed: true});
+        this.setState({failed: true, errors: res['errors']});
       }
     });
   };
@@ -73,7 +73,7 @@ class LoginPageComponent extends React.Component {
                     </Button>
                     {
                       this.state.failed ?
-                        <div className="alert alert-danger" role="alert">Login failed. Bad credentials.</div>
+                        <div className="alert alert-danger" role="alert">{getErrors(this.state.errors)}</div>
                         :
                         ''
                     }

@@ -1,4 +1,15 @@
 import _ from 'lodash';
+import React from 'react';
+
+export function getErrors(errors) {
+  const errorArray = [];
+
+  for (let i=0; i<errors.length; i++) {
+    const key = 'registration-error-' + i
+    errorArray.push(<li key={key}>{errors[i]}</li>);
+  }
+  return <ul>{errorArray}</ul>;
+}
 
 export default class AuthService {
   LOGIN_ENDPOINT = '/api/login?include_auth_token';
@@ -43,7 +54,7 @@ export default class AuthService {
           return {result: true};
         } else {
           this._removeToken();
-          return {result: false};
+          return {result: false, errors: res['response']['errors']};
         }
       })
   };
