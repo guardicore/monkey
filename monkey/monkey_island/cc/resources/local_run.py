@@ -3,7 +3,7 @@ import json
 from flask import jsonify, make_response, request
 from flask_security import auth_token_required, roles_required
 
-from common import UserRoles
+from common import AccountRoles
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
@@ -16,7 +16,7 @@ class LocalRun(AbstractResource):
 
     # API Spec: This should be an RPC-style endpoint
     @auth_token_required
-    @roles_required(UserRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND.name)
     def post(self):
         body = json.loads(request.data)
         if body.get("action") == "run":

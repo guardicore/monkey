@@ -5,7 +5,7 @@ from http import HTTPStatus
 from flask import make_response, request
 from flask_security import auth_token_required, roles_required
 
-from common import AgentRegistrationData, UserRoles
+from common import AccountRoles, AgentRegistrationData
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import IAgentRepository
@@ -21,7 +21,7 @@ class Agents(AbstractResource):
         self._agent_repository = agent_repository
 
     @auth_token_required
-    @roles_required(UserRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND.name)
     def get(self):
         return self._agent_repository.get_agents(), HTTPStatus.OK
 

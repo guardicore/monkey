@@ -5,7 +5,7 @@ from http import HTTPStatus
 from flask import request
 from flask_security import auth_token_required, roles_required
 
-from common import UserRoles
+from common import AccountRoles
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.models import IslandMode as IslandModeEnum
@@ -26,7 +26,7 @@ class IslandMode(AbstractResource):
         self._simulation_repository = simulation_repository
 
     @auth_token_required
-    @roles_required(UserRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND.name)
     def put(self):
         try:
             mode = IslandModeEnum(request.json)
@@ -38,7 +38,7 @@ class IslandMode(AbstractResource):
             return {}, HTTPStatus.UNPROCESSABLE_ENTITY
 
     @auth_token_required
-    @roles_required(UserRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND.name)
     def get(self):
         island_mode = self._simulation_repository.get_mode()
         return island_mode.value, HTTPStatus.OK
