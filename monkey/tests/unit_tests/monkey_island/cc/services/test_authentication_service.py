@@ -77,3 +77,16 @@ def test_handle_successful_registration(
             call(topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET),
         ]
     )
+
+
+def test_handle_sucessful_logout(
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
+):
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+
+    a_s.handle_successful_logout()
+
+    assert mock_repository_encryptor.lock.call_count == 1
