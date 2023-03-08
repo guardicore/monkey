@@ -59,10 +59,9 @@ def test_handle_successful_registration(
 
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
+    assert mock_island_event_queue.publish.call_count == 3
     mock_repository_encryptor.reset_key.assert_called_once()
     mock_repository_encryptor.unlock.assert_called_once()
-
-    assert mock_island_event_queue.publish.call_count == 3
     mock_island_event_queue.publish.assert_has_calls(
         [
             call(IslandEventTopic.CLEAR_SIMULATION_DATA),
