@@ -54,6 +54,7 @@ from monkey_island.cc.services.representations import output_json
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 
 HOME_FILE = "index.html"
+AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes authentication token expiration time
 
 
 def serve_static_file(static_path):
@@ -94,6 +95,8 @@ def setup_authentication(app, data_dir):
     app.config["SECURITY_USERNAME_REQUIRED"] = True
     app.config["SECURITY_REGISTERABLE"] = True
     app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
+
+    app.config["SECURITY_TOKEN_MAX_AGE"] = AUTH_EXPIRATION_TIME
     # Ignore CSRF, because it's irrelevant for javascript applications
     app.config["WTF_CSRF_CHECK_DEFAULT"] = False
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
