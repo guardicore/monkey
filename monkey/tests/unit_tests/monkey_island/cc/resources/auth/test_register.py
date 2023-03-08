@@ -4,6 +4,7 @@ import pytest
 from flask import Response
 
 from monkey_island.cc.resources.auth import Register
+from monkey_island.cc.services import AuthenticationService
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
@@ -20,14 +21,18 @@ def make_registration_request(flask_client):
     return inner
 
 
-def test_register_failed(monkeypatch, make_registration_request, mock_authentication_service):
+def test_register_failed(
+    monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
+):
     response = make_registration_request("{}")
 
     mock_authentication_service.handle_successful_registration.assert_not_called()
     assert response.status_code == 400
 
 
-def test_register_successful(monkeypatch, make_registration_request, mock_authentication_service):
+def test_register_successful(
+    monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
+):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.register.register",
         lambda: Response(
@@ -58,7 +63,10 @@ def test_register_successful(monkeypatch, make_registration_request, mock_authen
     ],
 )
 def test_register_invalid_request(
-    monkeypatch, register_response, make_registration_request, mock_authentication_service
+    monkeypatch,
+    register_response,
+    make_registration_request,
+    mock_authentication_service: AuthenticationService,
 ):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.register.register", lambda: register_response
@@ -70,7 +78,9 @@ def test_register_invalid_request(
     mock_authentication_service.handle_successful_registration.assert_not_called()
 
 
-def test_register_error(monkeypatch, make_registration_request, mock_authentication_service):
+def test_register_error(
+    monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
+):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.register.register",
         lambda: Response(status=200),

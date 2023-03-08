@@ -4,6 +4,7 @@ import pytest
 from flask import Response
 
 from monkey_island.cc.resources.auth import Login
+from monkey_island.cc.services import AuthenticationService
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
@@ -20,7 +21,9 @@ def make_login_request(flask_client):
     return inner
 
 
-def test_credential_parsing(make_login_request, mock_authentication_service, monkeypatch):
+def test_credential_parsing(
+    monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
+):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
@@ -32,7 +35,7 @@ def test_credential_parsing(make_login_request, mock_authentication_service, mon
     mock_authentication_service.handle_successful_login.assert_called_with(USERNAME, PASSWORD)
 
 
-def test_empty_credentials(make_login_request, mock_authentication_service):
+def test_empty_credentials(make_login_request, mock_authentication_service: AuthenticationService):
     make_login_request("{}")
     mock_authentication_service.handle_successful_login.assert_not_called()
 
@@ -50,7 +53,9 @@ def test_login_successful(make_login_request, monkeypatch):
     assert response.status_code == 200
 
 
-def test_login_failure(make_login_request, mock_authentication_service, monkeypatch):
+def test_login_failure(
+    monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
+):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
@@ -79,7 +84,10 @@ def test_login_failure(make_login_request, mock_authentication_service, monkeypa
     ],
 )
 def test_login_invalid_request(
-    monkeypatch, login_response, make_login_request, mock_authentication_service
+    monkeypatch,
+    login_response,
+    make_login_request,
+    mock_authentication_service: AuthenticationService,
 ):
     monkeypatch.setattr("monkey_island.cc.resources.auth.login.login", lambda: login_response)
 
@@ -89,7 +97,9 @@ def test_login_invalid_request(
     mock_authentication_service.handle_successful_login.assert_not_called()
 
 
-def test_login_error(monkeypatch, make_login_request, mock_authentication_service):
+def test_login_error(
+    monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
+):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(

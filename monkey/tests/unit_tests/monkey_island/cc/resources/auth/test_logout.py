@@ -2,6 +2,7 @@ import pytest
 from flask import Response
 
 from monkey_island.cc.resources.auth import Logout
+from monkey_island.cc.services import AuthenticationService
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
@@ -29,7 +30,10 @@ def make_logout_request(flask_client):
     ],
 )
 def test_logout_failed(
-    monkeypatch, make_logout_request, mock_authentication_service, logout_response
+    monkeypatch,
+    logout_response,
+    make_logout_request,
+    mock_authentication_service: AuthenticationService,
 ):
     monkeypatch.setattr("monkey_island.cc.resources.auth.logout.logout", lambda: logout_response)
     response = make_logout_request(TEST_REQUEST)
@@ -38,7 +42,9 @@ def test_logout_failed(
     assert response.status_code == 400
 
 
-def test_logout_successful(monkeypatch, make_logout_request, mock_authentication_service):
+def test_logout_successful(
+    monkeypatch, make_logout_request, mock_authentication_service: AuthenticationService
+):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.logout.logout",
         lambda: Response(
