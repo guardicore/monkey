@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -32,11 +31,10 @@ def mock_island_event_queue(autouse=True) -> IIslandEventQueue:
 @pytest.fixture
 def authentication_service(
     mock_flask_app,
-    tmp_path: Path,
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
 ) -> AuthenticationService:
-    return AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    return AuthenticationService(mock_repository_encryptor, mock_island_event_queue)
 
 
 def test_needs_registration__true(authentication_service: AuthenticationService):

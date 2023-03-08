@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
@@ -13,11 +11,9 @@ class AuthenticationService:
 
     def __init__(
         self,
-        data_dir: Path,
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
     ):
-        self._data_dir = data_dir
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
 
