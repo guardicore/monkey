@@ -34,7 +34,7 @@ def test_logout_failed(
     monkeypatch.setattr("monkey_island.cc.resources.auth.logout.logout", lambda: logout_response)
     response = make_logout_request(TEST_REQUEST)
 
-    mock_authentication_service.lock_repository_encryptor.assert_not_called()
+    mock_authentication_service.handle_successful_logout.assert_not_called()
     assert response.status_code == 400
 
 
@@ -49,4 +49,4 @@ def test_logout_successful(monkeypatch, make_logout_request, mock_authentication
     response = make_logout_request("")
 
     assert response.status_code == 200
-    mock_authentication_service.lock_repository_encryptor.assert_called_once()
+    mock_authentication_service.handle_successful_logout.assert_called_once()

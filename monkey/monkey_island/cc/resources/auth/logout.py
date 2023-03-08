@@ -31,6 +31,6 @@ class Logout(AbstractResource):
         if not isinstance(response, Response):
             return response_to_invalid_request()
         if response.status_code == HTTPStatus.OK:
-            self._authentication_service.lock_repository_encryptor()
+            self._authentication_service.handle_successful_logout()
 
         return make_response(response)
