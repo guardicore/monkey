@@ -26,7 +26,7 @@ class AgentConfiguration(AbstractResource):
         return make_response(configuration_dict, HTTPStatus.OK)
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def put(self):
         try:
             configuration_object = AgentConfigurationObject(**request.json)

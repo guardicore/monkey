@@ -17,7 +17,7 @@ class IslandLog(AbstractResource):
         self._island_log_file_path = island_log_file_path
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self):
         try:
             return get_text_file_contents(self._island_log_file_path)

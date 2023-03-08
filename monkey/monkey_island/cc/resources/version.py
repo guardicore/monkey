@@ -16,7 +16,7 @@ class Version(AbstractResource):
         self._version = version
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self):
         return {
             "version_number": self._version.version_number,

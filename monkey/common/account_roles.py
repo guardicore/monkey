@@ -7,5 +7,5 @@ class AccountRoles(Enum):
     This Enum represents roles that an account can have.
     """
 
-    ISLAND = auto()
+    ISLAND_INTERFACE = auto()
     AGENT = auto()

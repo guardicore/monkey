@@ -16,7 +16,7 @@ class LocalRun(AbstractResource):
 
     # API Spec: This should be an RPC-style endpoint
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def post(self):
         body = json.loads(request.data)
         if body.get("action") == "run":

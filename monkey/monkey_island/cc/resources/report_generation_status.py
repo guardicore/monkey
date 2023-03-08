@@ -14,7 +14,7 @@ class ReportGenerationStatus(AbstractResource):
         self._agent_repository = agent_repository
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self):
         return self.report_generation_status()
 

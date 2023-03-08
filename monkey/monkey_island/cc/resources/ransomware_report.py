@@ -25,7 +25,7 @@ class RansomwareReport(AbstractResource):
         self._agent_plugin_repository = agent_plugin_repository
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self):
         return jsonify(
             {

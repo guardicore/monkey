@@ -30,7 +30,7 @@ class RemoteRun(AbstractResource):
         self._aws_service = aws_service
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self):
         action = request.args.get("action")
         if action == "list_aws":
@@ -52,7 +52,7 @@ class RemoteRun(AbstractResource):
         return {}
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def post(self):
         body = json.loads(request.data)
         if body.get("type") == "aws":

@@ -72,7 +72,7 @@ def init_mock_security_app():
 
     user_datastore = MongoEngineUserDatastore(db, User, Role)
     island_role = user_datastore.find_or_create_role(
-        name=AccountRoles.ISLAND.name, description=AccountRoles.ISLAND.value
+        name=AccountRoles.ISLAND_INTERFACE.name, description=AccountRoles.ISLAND_INTERFACE.value
     )
     app.security = Security(app, user_datastore)
     ds = app.security.datastore

@@ -14,6 +14,6 @@ class Machines(AbstractResource):
         self._machine_repository = machine_repository
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self):
         return self._machine_repository.get_machines(), HTTPStatus.OK

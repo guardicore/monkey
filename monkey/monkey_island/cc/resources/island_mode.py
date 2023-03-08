@@ -26,7 +26,7 @@ class IslandMode(AbstractResource):
         self._simulation_repository = simulation_repository
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def put(self):
         try:
             mode = IslandModeEnum(request.json)
@@ -38,7 +38,7 @@ class IslandMode(AbstractResource):
             return {}, HTTPStatus.UNPROCESSABLE_ENTITY
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self):
         island_mode = self._simulation_repository.get_mode()
         return island_mode.value, HTTPStatus.OK

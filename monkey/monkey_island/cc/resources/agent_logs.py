@@ -19,7 +19,7 @@ class AgentLogs(AbstractResource):
         self._agent_log_repository = agent_log_repository
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def get(self, agent_id: AgentID):
         try:
             log_contents = self._agent_log_repository.get_agent_log(agent_id)

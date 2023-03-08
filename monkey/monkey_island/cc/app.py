@@ -111,7 +111,7 @@ def setup_authentication(app, data_dir):
 
         def to_dict(self, only_user):
             registration_dict = super().to_dict(only_user)
-            registration_dict.update({"roles": [AccountRoles.ISLAND.name]})
+            registration_dict.update({"roles": [AccountRoles.ISLAND_INTERFACE.name]})
             return registration_dict
 
     app.security = Security(
@@ -127,7 +127,7 @@ def setup_authentication(app, data_dir):
 
 
 def _create_roles(user_datastore: UserDatastore):
-    user_datastore.find_or_create_role(name=AccountRoles.ISLAND.name)
+    user_datastore.find_or_create_role(name=AccountRoles.ISLAND_INTERFACE.name)
     user_datastore.find_or_create_role(name=AccountRoles.AGENT.name)
 
 

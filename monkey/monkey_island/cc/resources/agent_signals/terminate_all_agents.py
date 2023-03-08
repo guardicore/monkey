@@ -23,7 +23,7 @@ class TerminateAllAgents(AbstractResource):
         self._island_event_queue = island_event_queue
 
     @auth_token_required
-    @roles_required(AccountRoles.ISLAND.name)
+    @roles_required(AccountRoles.ISLAND_INTERFACE.name)
     def post(self):
         try:
             terminate_all_agents = TerminateAllAgentsObject(**request.json)
