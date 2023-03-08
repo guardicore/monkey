@@ -29,10 +29,10 @@ class AuthenticationService:
         return not User.objects.first()
 
     def handle_successful_registration(self, username: str, password: str):
-        self.reset_island_data()
         self.reset_repository_encryptor(username, password)
+        self._reset_island_data()
 
-    def reset_island_data(self):
+    def _reset_island_data(self):
         """
         Resets the island
         """
