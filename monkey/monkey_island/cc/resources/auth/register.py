@@ -12,13 +12,15 @@ from monkey_island.cc.services.authentication_service import AuthenticationServi
 
 logger = logging.getLogger(__name__)
 
+REGISTER_URL = "/api/register"
+
 
 class Register(AbstractResource):
     """
     A resource for user registration
     """
 
-    urls = ["/api/register"]
+    urls = [REGISTER_URL]
 
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
