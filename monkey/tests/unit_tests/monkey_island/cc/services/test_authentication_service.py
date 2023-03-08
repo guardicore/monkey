@@ -46,10 +46,7 @@ def test_needs_registration__false(
     monkeypatch,
     authentication_service: AuthenticationService,
 ):
-    mock_user = MagicMock(spec=User)
-    monkeypatch.setattr("monkey_island.cc.services.authentication_service.User", mock_user)
-    mock_user.objects.first.return_value = User(username=USERNAME)
-
+    User(username=USERNAME, password=PASSWORD).save()
     assert not authentication_service.needs_registration()
 
 
