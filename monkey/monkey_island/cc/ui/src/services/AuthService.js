@@ -64,7 +64,7 @@ export default class AuthService {
         return this._login(username, password)
       } else {
         return res.json().then(res_json => {
-          return {result: false, error: res_json['error']};
+          return {result: false, errors: res_json['response']['errors']};
         })
       }
     })

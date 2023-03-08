@@ -19,7 +19,7 @@ class RegisterPageComponent extends React.Component {
         this.setState({
           loading: false,
           failed: true,
-          error: res['error']
+          errors: res['errors']
         });
       }
     });
@@ -35,6 +35,16 @@ class RegisterPageComponent extends React.Component {
 
   redirectToHome = () => {
     window.location.href = '/landing-page';
+  };
+
+  getErrors = (errors) => {
+    const errorArray = [];
+
+    for (let i=0; i<errors.length; i++) {
+      const key = 'registration-error-' + i
+      errorArray.push(<li key={key}>{errors[i]}</li>);
+    }
+    return <ul>{errorArray}</ul>;
   };
 
   constructor(props) {
@@ -82,7 +92,7 @@ class RegisterPageComponent extends React.Component {
                       <Col>
                         {
                           this.state.failed ?
-                            <div className='alert alert-danger' role='alert'>{this.state.error}</div>
+                            <div className='alert alert-danger' role='alert'>{this.getErrors(this.state.errors)}</div>
                             :
                             ''
                         }
