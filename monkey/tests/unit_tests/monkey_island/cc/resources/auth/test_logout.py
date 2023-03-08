@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import pytest
 from flask import Response
 
@@ -39,7 +41,7 @@ def test_logout_failed(
     response = make_logout_request(TEST_REQUEST)
 
     mock_authentication_service.handle_successful_logout.assert_not_called()
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_logout_successful(
@@ -48,11 +50,11 @@ def test_logout_successful(
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.logout.logout",
         lambda: Response(
-            status=200,
+            status=HTTPStatus.OK,
         ),
     )
 
     response = make_logout_request("")
 
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
     mock_authentication_service.handle_successful_logout.assert_called_once()

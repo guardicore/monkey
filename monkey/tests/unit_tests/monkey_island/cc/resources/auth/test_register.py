@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from unittest.mock import MagicMock
 
 import pytest
@@ -27,7 +28,7 @@ def test_register_failed(
     response = make_registration_request("{}")
 
     mock_authentication_service.handle_successful_registration.assert_not_called()
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_register_successful(
@@ -36,13 +37,13 @@ def test_register_successful(
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.register.register",
         lambda: Response(
-            status=200,
+            status=HTTPStatus.OK,
         ),
     )
 
     response = make_registration_request(TEST_REQUEST)
 
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
     mock_authentication_service.handle_successful_registration.assert_called_with(
         USERNAME, PASSWORD
     )
@@ -74,7 +75,7 @@ def test_register_invalid_request(
 
     response = make_registration_request(b"{}")
 
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST
     mock_authentication_service.handle_successful_registration.assert_not_called()
 
 
@@ -83,11 +84,11 @@ def test_register_error(
 ):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.register.register",
-        lambda: Response(status=200),
+        lambda: Response(status=HTTPStatus.OK),
     )
 
     mock_authentication_service.handle_successful_registration = MagicMock(side_effect=Exception())
 
     response = make_registration_request(TEST_REQUEST)
 
-    assert response.status_code == 500
+    assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR

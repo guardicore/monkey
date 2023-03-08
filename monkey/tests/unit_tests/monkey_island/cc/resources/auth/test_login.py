@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from unittest.mock import MagicMock
 
 import pytest
@@ -27,7 +28,7 @@ def test_credential_parsing(
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
-            status=200,
+            status=HTTPStatus.OK,
         ),
     )
 
@@ -44,13 +45,13 @@ def test_login_successful(make_login_request, monkeypatch):
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
-            status=200,
+            status=HTTPStatus.OK,
         ),
     )
 
     response = make_login_request(TEST_REQUEST)
 
-    assert response.status_code == 200
+    assert response.status_code == HTTPStatus.OK
 
 
 def test_login_failure(
@@ -59,13 +60,13 @@ def test_login_failure(
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
-            status=400,
+            status=HTTPStatus.BAD_REQUEST,
         ),
     )
 
     response = make_login_request(TEST_REQUEST)
 
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST
     mock_authentication_service.handle_successful_login.assert_not_called()
 
 
@@ -93,7 +94,7 @@ def test_login_invalid_request(
 
     response = make_login_request(b"{}")
 
-    assert response.status_code == 400
+    assert response.status_code == HTTPStatus.BAD_REQUEST
     mock_authentication_service.handle_successful_login.assert_not_called()
 
 
@@ -103,7 +104,7 @@ def test_login_error(
     monkeypatch.setattr(
         "monkey_island.cc.resources.auth.login.login",
         lambda: Response(
-            status=200,
+            status=HTTPStatus.OK,
         ),
     )
     mock_authentication_service.handle_successful_login = MagicMock(side_effect=Exception())
@@ -111,4 +112,4 @@ def test_login_error(
     response = make_login_request(TEST_REQUEST)
 
     assert "access_token" not in response.json
-    assert response.status_code == 500
+    assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR
