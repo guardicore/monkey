@@ -1,11 +1,9 @@
 from unittest.mock import MagicMock, call
 
 import pytest
-from flask_security import UserDatastore
 
-from common import UserRoles
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode, Role, User
+from monkey_island.cc.models import IslandMode, User
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services import AuthenticationService
 
@@ -18,9 +16,6 @@ PASSWORD_HASH = "$2b$12$yQzymz55fRvm8rApg7erluIvIAKSFSDrNIOIrOlxC4sXsDSkeu9z2"
 # to access the object that a fixture returns, it needs to be specified as an argument.
 # See https://stackoverflow.com/a/37046403.
 
-USER = User(username=USERNAME, password=PASSWORD)
-ROLE = Role(name=UserRoles.ISLAND.name, description=UserRoles.ISLAND.value)
-
 
 @pytest.fixture
 def mock_repository_encryptor(autouse=True):
@@ -32,26 +27,13 @@ def mock_island_event_queue(autouse=True):
     return MagicMock(spec=IIslandEventQueue)
 
 
-@pytest.fixture
-def mock_user_datastore(autouse=True):
-    mock_user_datastore = MagicMock(spec=UserDatastore)
-
-    mock_user_datastore.find_user = MagicMock(return_value=USER)
-    mock_user_datastore.find_or_create_role = MagicMock(return_value=ROLE)
-
-    return mock_user_datastore
-
-
 def test_needs_registration__true(
     mock_flask_app,
     tmp_path,
     mock_repository_encryptor,
     mock_island_event_queue,
-    mock_user_datastore,
 ):
-    a_s = AuthenticationService(
-        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
-    )
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
     assert a_s.needs_registration()
 
@@ -62,11 +44,8 @@ def test_needs_registration__false(
     tmp_path,
     mock_repository_encryptor,
     mock_island_event_queue,
-    mock_user_datastore,
 ):
-    a_s = AuthenticationService(
-        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
-    )
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
     mock_user = MagicMock(spec=User)
     monkeypatch.setattr("monkey_island.cc.services.authentication_service.User", mock_user)
@@ -75,36 +54,13 @@ def test_needs_registration__false(
     assert not a_s.needs_registration()
 
 
-def test_role_apply_to_user(
-    mock_flask_app,
-    tmp_path,
-    mock_repository_encryptor,
-    mock_island_event_queue,
-    mock_user_datastore,
-):
-    role_fields = {"name": UserRoles.ISLAND.name, "description": UserRoles.ISLAND.value}
-    a_s = AuthenticationService(
-        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
-    )
-
-    a_s.apply_role_to_user(USERNAME, role_fields)
-
-    mock_user_datastore.find_user.called_with(USERNAME)
-    mock_user_datastore.find_or_create_role.called_with(role_fields)
-
-    mock_user_datastore.add_role_to_user.called_with(USER, ROLE)
-
-
 def test_reset_island__unlock_encryptor_on_register(
     mock_flask_app,
     tmp_path,
     mock_repository_encryptor,
     mock_island_event_queue,
-    mock_user_datastore,
 ):
-    a_s = AuthenticationService(
-        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
-    )
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
     a_s.reset_repository_encryptor(USERNAME, PASSWORD)
 
@@ -118,11 +74,8 @@ def test_reset_island__publish_to_event_topics(
     tmp_path,
     mock_repository_encryptor,
     mock_island_event_queue,
-    mock_user_datastore,
 ):
-    a_s = AuthenticationService(
-        tmp_path, mock_repository_encryptor, mock_island_event_queue, mock_user_datastore
-    )
+    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
     a_s.reset_island_data()
 

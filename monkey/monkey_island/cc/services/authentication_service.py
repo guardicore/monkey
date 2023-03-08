@@ -1,7 +1,4 @@
 from pathlib import Path
-from typing import Dict
-
-from flask_security import UserDatastore
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode, User

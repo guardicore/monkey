@@ -5,12 +5,13 @@ import flask_restful
 from flask import Flask, Response, send_from_directory
 from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
-from flask_security import ConfirmRegisterForm, Security, UserDatastore
+from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
 from werkzeug.exceptions import NotFound
 from wtforms import StringField, ValidationError
 
 from common import DIContainer, UserRoles
 from monkey_island.cc.flask_utils import FlaskDIWrapper
+from monkey_island.cc.models import Role, User
 from monkey_island.cc.resources import (
     AgentBinaries,
     AgentEvents,
@@ -70,7 +71,7 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
-def setup_authentication(app, data_dir, db, user_datastore):
+def setup_authentication(app, data_dir):
     flask_security_config = generate_flask_security_configuration(data_dir)
 
     # TODO: After we switch to token base authentication investigate the purpose
@@ -89,7 +90,8 @@ def setup_authentication(app, data_dir, db, user_datastore):
     app.config["SECURITY_TOKEN_AUTHENTICATION_KEY"] = None
 
     # The database object needs to be created after we configure the flask application
-    db.init_app(app)
+    db = MongoEngine(app)
+    user_datastore = MongoEngineUserDatastore(db, User, Role)
 
     _create_roles(user_datastore)
 
@@ -99,7 +101,6 @@ def setup_authentication(app, data_dir, db, user_datastore):
             raise ValidationError("A user already exists. Only a single user can be registered.")
 
     class CustomConfirmRegisterForm(ConfirmRegisterForm):
-
         # We don't use the email, but the field is required by ConfirmRegisterForm.
         # Email validators need to be overriden, otherwise an error about invalid email is raised.
         # Added custom validator to the email field because we have to override
@@ -109,9 +110,9 @@ def setup_authentication(app, data_dir, db, user_datastore):
         )
 
         def to_dict(self, only_user):
-            dict = super().to_dict(only_user)
-            dict.update({'roles': ['ISLAND']})
-            return dict
+            registration_dict = super().to_dict(only_user)
+            registration_dict.update({"roles": [UserRoles.ISLAND.name]})
+            return registration_dict
 
     app.security = Security(
         app,
@@ -130,7 +131,7 @@ def _create_roles(user_datastore: UserDatastore):
     user_datastore.find_or_create_role(name=UserRoles.AGENT.name)
 
 
-def init_app_config(app, mongo_url, data_dir: Path, db: MongoEngine, user_datastore: UserDatastore):
+def init_app_config(app, mongo_url, data_dir: Path):
     app.config["MONGO_URI"] = mongo_url
     app.config["MONGODB_SETTINGS"] = [
         {
@@ -146,7 +147,7 @@ def init_app_config(app, mongo_url, data_dir: Path, db: MongoEngine, user_datast
 
     app.url_map.strict_slashes = False
 
-    setup_authentication(app, data_dir, db, user_datastore)
+    setup_authentication(app, data_dir)
 
 
 def disable_session_cookies() -> SecureCookieSessionInterface:
@@ -220,8 +221,6 @@ def init_app(
     mongo_url: str,
     container: DIContainer,
     data_dir: Path,
-    db: MongoEngine,
-    user_datastore: UserDatastore,
 ):
     """
     Simple docstirng for init_app
@@ -234,7 +233,7 @@ def init_app(
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
-    init_app_config(app, mongo_url, data_dir, db, user_datastore)
+    init_app_config(app, mongo_url, data_dir)
     init_app_url_rules(app)
 
     flask_resource_manager = FlaskDIWrapper(api, container)

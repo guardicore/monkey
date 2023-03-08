@@ -5,7 +5,6 @@ from flask import Response, make_response, request
 from flask.typing import ResponseValue
 from flask_security.views import register
 
-from common import UserRoles
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.resources.auth.credential_utils import get_username_password_from_request
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
