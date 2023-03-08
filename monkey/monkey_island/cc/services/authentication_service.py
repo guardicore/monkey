@@ -54,6 +54,9 @@ class AuthenticationService:
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.unlock(secret.encode())
 
+    def handle_successful_logout(self):
+        self.lock_repository_encryptor()
+
     def lock_repository_encryptor(self):
         self._repository_encryptor.lock()
 
