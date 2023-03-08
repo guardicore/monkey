@@ -40,10 +40,6 @@ class Register(AbstractResource):
         if not isinstance(response, Response):
             return response_to_invalid_request()
 
-        self._authentication_service.apply_role_to_user(
-            username, {"name": UserRoles.ISLAND.name, "description": UserRoles.ISLAND.value}
-        )
-
         if response.status_code == HTTPStatus.OK:
             self._authentication_service.reset_island_data()
             self._authentication_service.reset_repository_encryptor(username, password)

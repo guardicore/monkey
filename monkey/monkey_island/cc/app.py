@@ -108,6 +108,11 @@ def setup_authentication(app, data_dir, db, user_datastore):
             "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
         )
 
+        def to_dict(self, only_user):
+            dict = super().to_dict(only_user)
+            dict.update({'roles': ['ISLAND']})
+            return dict
+
     app.security = Security(
         app,
         user_datastore,
