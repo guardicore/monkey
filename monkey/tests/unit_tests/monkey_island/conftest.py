@@ -14,8 +14,9 @@ import monkey_island
 from common import AccountRole
 from common.utils.code_utils import insecure_generate_random_string
 from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.models import Role, User
 from monkey_island.cc.resources.auth import Login, Logout, Register
+from monkey_island.cc.services.authentication_service.role import Role
+from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.representations import output_json
 
 

@@ -8,5 +8,3 @@ from .node import Node, TCPConnections
 from common.types import AgentID
 from .agent import Agent
 from .terminate_all_agents import TerminateAllAgents
-from .user import User
-from .role import Role

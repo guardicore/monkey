@@ -4,9 +4,10 @@ from unittest.mock import MagicMock, call
 import pytest
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode, User
+from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from monkey_island.cc.services.authentication_service import AuthenticationService
+from monkey_island.cc.services.authentication_service.user import User
 
 USERNAME = "user1"
 PASSWORD = "test"
