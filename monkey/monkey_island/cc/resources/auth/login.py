@@ -12,13 +12,15 @@ from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
 
+LOGIN_URL = "/api/login"
+
 
 class Login(AbstractResource):
     """
     A resource for user authentication
     """
 
-    urls = ["/api/login"]
+    urls = [LOGIN_URL]
 
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
