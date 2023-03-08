@@ -71,7 +71,7 @@ from monkey_island.cc.services import (
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
-from . import AuthenticationService
+from .authentication_service import AuthenticationService
 from .reporting.report import ReportService
 
 logger = logging.getLogger(__name__)

@@ -4,7 +4,7 @@ import pytest
 from flask import Response
 
 from monkey_island.cc.resources.auth import Logout
-from monkey_island.cc.services import AuthenticationService
+from monkey_island.cc.services.authentication_service import AuthenticationService
 
 USERNAME = "test_user"
 PASSWORD = "test_password"

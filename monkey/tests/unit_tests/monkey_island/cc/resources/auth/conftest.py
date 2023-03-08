@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from tests.common import StubDIContainer
 
-from monkey_island.cc.services import AuthenticationService
+from monkey_island.cc.services.authentication_service import AuthenticationService
 
 
 @pytest.fixture

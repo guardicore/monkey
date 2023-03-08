@@ -7,7 +7,7 @@ from flask_security.views import logout
 
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
-from monkey_island.cc.services import AuthenticationService
+from monkey_island.cc.services.authentication_service import AuthenticationService
 
 logger = logging.getLogger(__name__)
 
