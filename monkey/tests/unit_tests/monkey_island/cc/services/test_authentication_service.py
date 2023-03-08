@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -18,51 +19,46 @@ PASSWORD_HASH = "$2b$12$yQzymz55fRvm8rApg7erluIvIAKSFSDrNIOIrOlxC4sXsDSkeu9z2"
 
 
 @pytest.fixture
-def mock_repository_encryptor(autouse=True):
+def mock_repository_encryptor(autouse=True) -> ILockableEncryptor:
     return MagicMock(spec=ILockableEncryptor)
 
 
 @pytest.fixture
-def mock_island_event_queue(autouse=True):
+def mock_island_event_queue(autouse=True) -> IIslandEventQueue:
     return MagicMock(spec=IIslandEventQueue)
 
 
-def test_needs_registration__true(
+@pytest.fixture
+def authentication_service(
     mock_flask_app,
-    tmp_path,
-    mock_repository_encryptor,
-    mock_island_event_queue,
-):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
+    tmp_path: Path,
+    mock_repository_encryptor: ILockableEncryptor,
+    mock_island_event_queue: IIslandEventQueue,
+) -> AuthenticationService:
+    return AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    assert a_s.needs_registration()
+
+def test_needs_registration__true(authentication_service: AuthenticationService):
+    assert authentication_service.needs_registration()
 
 
 def test_needs_registration__false(
     monkeypatch,
-    mock_flask_app,
-    tmp_path,
-    mock_repository_encryptor,
-    mock_island_event_queue,
+    authentication_service: AuthenticationService,
 ):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-
     mock_user = MagicMock(spec=User)
     monkeypatch.setattr("monkey_island.cc.services.authentication_service.User", mock_user)
     mock_user.objects.first.return_value = User(username=USERNAME)
 
-    assert not a_s.needs_registration()
+    assert not authentication_service.needs_registration()
 
 
 def test_handle_successful_registration(
-    mock_flask_app,
-    tmp_path,
-    mock_repository_encryptor,
-    mock_island_event_queue,
+    mock_repository_encryptor: ILockableEncryptor,
+    mock_island_event_queue: IIslandEventQueue,
+    authentication_service: AuthenticationService,
 ):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-
-    a_s.handle_successful_registration(USERNAME, PASSWORD)
+    authentication_service.handle_successful_registration(USERNAME, PASSWORD)
 
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
@@ -80,13 +76,9 @@ def test_handle_successful_registration(
 
 
 def test_handle_sucessful_logout(
-    mock_flask_app,
-    tmp_path,
-    mock_repository_encryptor,
-    mock_island_event_queue,
+    mock_repository_encryptor: ILockableEncryptor,
+    authentication_service: AuthenticationService,
 ):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-
-    a_s.handle_successful_logout()
+    authentication_service.handle_successful_logout()
 
     assert mock_repository_encryptor.lock.call_count == 1
