@@ -1,12 +1,11 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class AccountRoles(Enum):
     """
-    An Enum representing user roles.
-    This Enum represents roles that the user can have. The value
-    of each member is the description of the role
+    An Enum representing  roles.
+    This Enum represents roles that an account can have.
     """
 
-    ISLAND = "Monkey Island, C&C Server"
-    AGENT = "Infection Monkey Agent"
+    ISLAND = auto()
+    AGENT = auto()
