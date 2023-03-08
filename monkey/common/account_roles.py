@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class UserRoles(Enum):
+class AccountRoles(Enum):
     """
     An Enum representing user roles.
     This Enum represents roles that the user can have. The value
