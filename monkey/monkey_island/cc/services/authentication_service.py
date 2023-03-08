@@ -47,6 +47,9 @@ class AuthenticationService:
         self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
 
+    def handle_successful_login(self, username: str, password: str):
+        self.unlock_repository_encryptor(username, password)
+
     def unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.unlock(secret.encode())
