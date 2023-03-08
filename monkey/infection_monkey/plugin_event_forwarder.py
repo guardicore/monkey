@@ -64,8 +64,9 @@ class PluginEventForwarder:
         :param timeout: The number of seconds to wait for the PluginEventForwarder to stop
         """
         logger.info("Stopping plugin event forwarder")
-        self._stop.set()
-        self._thread.join(timeout)
+        if self._thread.is_alive():
+            self._stop.set()
+            self._thread.join(timeout)
         self.flush()
 
     def flush(self):

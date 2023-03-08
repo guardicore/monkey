@@ -450,7 +450,9 @@ class InfectionMonkey:
             self._publish_agent_shutdown_event()
 
             self._plugin_event_forwarder.flush()
-            self._agent_event_forwarder.flush()
+
+            if self._agent_event_forwarder:
+                self._agent_event_forwarder.flush()
 
             self._heart.stop()
 
@@ -462,7 +464,8 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
         finally:
             self._plugin_event_forwarder.stop()
-            self._agent_event_forwarder.stop()
+            if self._agent_event_forwarder:
+                self._agent_event_forwarder.stop()
             self._delete_plugin_dir()
             self._manager.shutdown()
 
