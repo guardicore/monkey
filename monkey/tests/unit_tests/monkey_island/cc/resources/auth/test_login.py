@@ -29,12 +29,12 @@ def test_credential_parsing(make_login_request, mock_authentication_service, mon
     )
 
     make_login_request(TEST_REQUEST)
-    mock_authentication_service.unlock_repository_encryptor.assert_called_with(USERNAME, PASSWORD)
+    mock_authentication_service.handle_successful_login.assert_called_with(USERNAME, PASSWORD)
 
 
 def test_empty_credentials(make_login_request, mock_authentication_service):
     make_login_request("{}")
-    mock_authentication_service.unlock_repository_encryptor.assert_not_called()
+    mock_authentication_service.handle_successful_login.assert_not_called()
 
 
 def test_login_successful(make_login_request, monkeypatch):
@@ -61,7 +61,7 @@ def test_login_failure(make_login_request, mock_authentication_service, monkeypa
     response = make_login_request(TEST_REQUEST)
 
     assert response.status_code == 400
-    mock_authentication_service.unlock_repository_encryptor.assert_not_called()
+    mock_authentication_service.handle_successful_login.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -86,7 +86,7 @@ def test_login_invalid_request(
     response = make_login_request(b"{}")
 
     assert response.status_code == 400
-    mock_authentication_service.unlock_repository_encryptor.assert_not_called()
+    mock_authentication_service.handle_successful_login.assert_not_called()
 
 
 def test_login_error(monkeypatch, make_login_request, mock_authentication_service):
@@ -96,7 +96,7 @@ def test_login_error(monkeypatch, make_login_request, mock_authentication_servic
             status=200,
         ),
     )
-    mock_authentication_service.unlock_repository_encryptor = MagicMock(side_effect=Exception())
+    mock_authentication_service.handle_successful_login = MagicMock(side_effect=Exception())
 
     response = make_login_request(TEST_REQUEST)
 

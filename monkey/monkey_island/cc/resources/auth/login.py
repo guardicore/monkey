@@ -43,6 +43,6 @@ class Login(AbstractResource):
             return response_to_invalid_request()
 
         if response.status_code == HTTPStatus.OK:
-            self._authentication_service.unlock_repository_encryptor(username, password)
+            self._authentication_service.handle_successful_login(username, password)
 
         return make_response(response)
