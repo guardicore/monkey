@@ -5,11 +5,11 @@ import flask_restful
 from flask import Flask, Response, send_from_directory
 from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
-from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security
+from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
 from werkzeug.exceptions import NotFound
 from wtforms import StringField, ValidationError
 
-from common import DIContainer
+from common import AccountRole, DIContainer
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.models import Role, User
 from monkey_island.cc.resources import (
@@ -91,8 +91,9 @@ def setup_authentication(app, data_dir):
 
     # The database object needs to be created after we configure the flask application
     db = MongoEngine(app)
-
     user_datastore = MongoEngineUserDatastore(db, User, Role)
+
+    _create_roles(user_datastore)
 
     # Only one user can be registered in the Island, so we need a custom validator
     def validate_no_user_exists_already(_, field):
@@ -100,7 +101,6 @@ def setup_authentication(app, data_dir):
             raise ValidationError("A user already exists. Only a single user can be registered.")
 
     class CustomConfirmRegisterForm(ConfirmRegisterForm):
-
         # We don't use the email, but the field is required by ConfirmRegisterForm.
         # Email validators need to be overriden, otherwise an error about invalid email is raised.
         # Added custom validator to the email field because we have to override
@@ -108,6 +108,11 @@ def setup_authentication(app, data_dir):
         email = StringField(
             "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
         )
+
+        def to_dict(self, only_user):
+            registration_dict = super().to_dict(only_user)
+            registration_dict.update({"roles": [AccountRole.ISLAND_INTERFACE.name]})
+            return registration_dict
 
     app.security = Security(
         app,
@@ -119,6 +124,11 @@ def setup_authentication(app, data_dir):
     app.security._want_json = lambda _request: True
 
     app.session_interface = disable_session_cookies()
+
+
+def _create_roles(user_datastore: UserDatastore):
+    user_datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
+    user_datastore.find_or_create_role(name=AccountRole.AGENT.name)
 
 
 def init_app_config(app, mongo_url, data_dir: Path):
@@ -207,7 +217,11 @@ def init_rpc_endpoints(api: FlaskDIWrapper):
     api.add_resource(TerminateAllAgents)
 
 
-def init_app(mongo_url: str, container: DIContainer, data_dir: Path):
+def init_app(
+    mongo_url: str,
+    container: DIContainer,
+    data_dir: Path,
+):
     """
     Simple docstirng for init_app
 

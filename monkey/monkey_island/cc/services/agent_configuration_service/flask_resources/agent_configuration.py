@@ -2,8 +2,9 @@ import json
 from http import HTTPStatus
 
 from flask import make_response, request
-from flask_security import auth_token_required
+from flask_security import auth_token_required, roles_required
 
+from common import AccountRole
 from common.agent_configuration.agent_configuration import (
     AgentConfiguration as AgentConfigurationObject,
 )
@@ -25,6 +26,7 @@ class AgentConfiguration(AbstractResource):
         return make_response(configuration_dict, HTTPStatus.OK)
 
     @auth_token_required
+    @roles_required(AccountRole.ISLAND_INTERFACE.name)
     def put(self):
         try:
             configuration_object = AgentConfigurationObject(**request.json)

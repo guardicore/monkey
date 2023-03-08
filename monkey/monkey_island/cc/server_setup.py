@@ -123,7 +123,9 @@ def _get_deployment() -> Deployment:
 
 
 def _initialize_di_container(
-    ip_addresses: Sequence[IPv4Address], version: Version, data_dir: Path
+    ip_addresses: Sequence[IPv4Address],
+    version: Version,
+    data_dir: Path,
 ) -> DIContainer:
     container = DIContainer()
 

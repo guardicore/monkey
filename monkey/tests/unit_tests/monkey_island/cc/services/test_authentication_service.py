@@ -28,7 +28,10 @@ def mock_island_event_queue(autouse=True):
 
 
 def test_needs_registration__true(
-    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
@@ -36,7 +39,11 @@ def test_needs_registration__true(
 
 
 def test_needs_registration__false(
-    monkeypatch, mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+    monkeypatch,
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
@@ -48,7 +55,10 @@ def test_needs_registration__false(
 
 
 def test_reset_island__unlock_encryptor_on_register(
-    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
@@ -60,7 +70,10 @@ def test_reset_island__unlock_encryptor_on_register(
 
 
 def test_reset_island__publish_to_event_topics(
-    mock_flask_app, tmp_path, mock_repository_encryptor, mock_island_event_queue
+    mock_flask_app,
+    tmp_path,
+    mock_repository_encryptor,
+    mock_island_event_queue,
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
