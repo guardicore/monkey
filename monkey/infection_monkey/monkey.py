@@ -83,7 +83,6 @@ from infection_monkey.puppet import (
     PluginSourceExtractor,
 )
 from infection_monkey.puppet.puppet import Puppet
-from infection_monkey.system_singleton import SystemSingleton
 from infection_monkey.utils import agent_process, environment
 from infection_monkey.utils.file_utils import mark_file_for_deletion_on_windows
 from infection_monkey.utils.ids import get_agent_id, get_machine_id
@@ -107,12 +106,9 @@ class InfectionMonkey:
         logger.info(f"Agent ID: {self._agent_id}")
         logger.info(f"Process ID: {os.getpid()}")
 
-        # Spawn the manager before the acquiring the singleton in case the file handle gets copied
-        # over to the manager process
         context = multiprocessing.get_context("spawn")
         self._manager = context.Manager()
 
-        self._singleton = SystemSingleton()
         self._opts = self._get_arguments(args)
 
         self._ipc_logger_queue = ipc_logger_queue
@@ -222,12 +218,10 @@ class InfectionMonkey:
         self._agent_event_forwarder.start()
         self._plugin_event_forwarder.start()
 
-        if self._is_another_monkey_running():
-            logger.info("Another instance of the monkey is already running")
-            return
-
         logger.info("Agent is starting...")
 
+        # This check must be done after the agent event forwarder is started, otherwise the agent
+        # will be unable to send a shutdown event to the Island.
         should_stop = self._control_channel.should_agent_stop()
         if should_stop:
             logger.info("The Monkey Island has instructed this agent to stop")
@@ -435,9 +429,6 @@ class InfectionMonkey:
                 PropagationEvent, notify_relay_on_propagation(self._relay)
             )
 
-    def _is_another_monkey_running(self):
-        return not self._singleton.try_lock()
-
     def cleanup(self):
         logger.info("Agent cleanup started")
         deleted = None
@@ -459,7 +450,9 @@ class InfectionMonkey:
             self._publish_agent_shutdown_event()
 
             self._plugin_event_forwarder.flush()
-            self._agent_event_forwarder.flush()
+
+            if self._agent_event_forwarder:
+                self._agent_event_forwarder.flush()
 
             self._heart.stop()
 
@@ -471,13 +464,10 @@ class InfectionMonkey:
                 InfectionMonkey._self_delete()
         finally:
             self._plugin_event_forwarder.stop()
-            self._agent_event_forwarder.stop()
+            if self._agent_event_forwarder:
+                self._agent_event_forwarder.stop()
             self._delete_plugin_dir()
             self._manager.shutdown()
-            try:
-                self._singleton.unlock()
-            except AssertionError as err:
-                logger.warning(f"Failed to release the singleton: {err}")
 
         logger.info("Agent is shutting down")
 
