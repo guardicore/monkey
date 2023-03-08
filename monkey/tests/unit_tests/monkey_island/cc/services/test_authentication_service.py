@@ -77,4 +77,15 @@ def test_handle_sucessful_logout(
 ):
     authentication_service.handle_successful_logout()
 
-    assert mock_repository_encryptor.lock.call_count == 1
+    mock_repository_encryptor.lock.assert_called_once()
+
+
+def test_handle_sucessful_login(
+    mock_repository_encryptor: ILockableEncryptor,
+    authentication_service: AuthenticationService,
+):
+    authentication_service.handle_successful_login(USERNAME, PASSWORD)
+
+    mock_repository_encryptor.unlock.assert_called_once()
+    assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
+    assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
