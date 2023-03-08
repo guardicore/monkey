@@ -29,8 +29,8 @@ class AuthenticationService:
         return not User.objects.first()
 
     def handle_successful_registration(self, username: str, password: str):
-        self.reset_repository_encryptor(username, password)
         self._reset_island_data()
+        self._reset_repository_encryptor(username, password)
 
     def _reset_island_data(self):
         """
@@ -42,7 +42,7 @@ class AuthenticationService:
             topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET
         )
 
-    def reset_repository_encryptor(self, username: str, password: str):
+    def _reset_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
