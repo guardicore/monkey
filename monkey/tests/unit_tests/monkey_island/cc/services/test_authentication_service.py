@@ -54,7 +54,7 @@ def test_needs_registration__false(
     assert not a_s.needs_registration()
 
 
-def test_reset_island__unlock_encryptor_on_register(
+def test_handle_successful_registration(
     mock_flask_app,
     tmp_path,
     mock_repository_encryptor,
@@ -62,22 +62,12 @@ def test_reset_island__unlock_encryptor_on_register(
 ):
     a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
 
-    a_s.reset_repository_encryptor(USERNAME, PASSWORD)
+    a_s.handle_successful_registration(USERNAME, PASSWORD)
 
+    assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
+    assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
     mock_repository_encryptor.reset_key.assert_called_once()
     mock_repository_encryptor.unlock.assert_called_once()
-    assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
-
-
-def test_reset_island__publish_to_event_topics(
-    mock_flask_app,
-    tmp_path,
-    mock_repository_encryptor,
-    mock_island_event_queue,
-):
-    a_s = AuthenticationService(tmp_path, mock_repository_encryptor, mock_island_event_queue)
-
-    a_s.reset_island_data()
 
     assert mock_island_event_queue.publish.call_count == 3
     mock_island_event_queue.publish.assert_has_calls(
