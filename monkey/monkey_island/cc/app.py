@@ -32,15 +32,7 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.auth import (
-    LOGIN_URL,
-    LOGOUT_URL,
-    REGISTER_URL,
-    Login,
-    Logout,
-    Register,
-    RegistrationStatus,
-)
+from monkey_island.cc.resources.auth import Login, Logout, Register, RegistrationStatus
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
@@ -89,9 +81,6 @@ def setup_authentication(app, data_dir):
     # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
     app.config["SECRET_KEY"] = flask_security_config["secret_key"]
     app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
-    app.config["SECURITY_LOGIN_URL"] = LOGIN_URL
-    app.config["SECURITY_LOGOUT_URL"] = LOGOUT_URL
-    app.config["SECURITY_REGISTER_URL"] = REGISTER_URL
     app.config["SECURITY_USERNAME_ENABLE"] = True
     app.config["SECURITY_USERNAME_REQUIRED"] = True
     app.config["SECURITY_REGISTERABLE"] = True

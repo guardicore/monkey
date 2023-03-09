@@ -1,4 +1,4 @@
-from .login import Login, LOGIN_URL
-from .logout import Logout, LOGOUT_URL
+from .login import Login
+from .logout import Logout
 from .registration_status import RegistrationStatus
-from .register import Register, REGISTER_URL
+from .register import Register
