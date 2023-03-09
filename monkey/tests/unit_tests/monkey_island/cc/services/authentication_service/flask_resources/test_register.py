@@ -4,7 +4,9 @@ from unittest.mock import MagicMock
 import pytest
 from flask import Response
 
-from monkey_island.cc.services.authentication_service import AuthenticationService
+from monkey_island.cc.services.authentication_service.authentication_service import (
+    AuthenticationService,
+)
 from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 
 USERNAME = "test_user"

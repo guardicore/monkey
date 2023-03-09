@@ -3,7 +3,9 @@ from http import HTTPStatus
 import pytest
 from flask import Response
 
-from monkey_island.cc.services.authentication_service import AuthenticationService
+from monkey_island.cc.services.authentication_service.authentication_service import (
+    AuthenticationService,
+)
 from monkey_island.cc.services.authentication_service.flask_resources.logout import Logout
 
 USERNAME = "test_user"

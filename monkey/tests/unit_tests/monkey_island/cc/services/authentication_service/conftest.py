@@ -3,7 +3,9 @@ from unittest.mock import MagicMock
 import pytest
 from tests.unit_tests.monkey_island.conftest import init_mock_security_app
 
-from monkey_island.cc.services.authentication_service import AuthenticationService
+from monkey_island.cc.services.authentication_service.authentication_service import (
+    AuthenticationService,
+)
 from monkey_island.cc.services.authentication_service.flask_resources import (
     Login,
     Logout,
