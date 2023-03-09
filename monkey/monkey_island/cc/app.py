@@ -1,15 +1,11 @@
 import os
-from datetime import timedelta
 from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
-from flask_mongoengine import MongoEngine
-from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
 from werkzeug.exceptions import NotFound
-from wtforms import StringField, ValidationError
 
-from common import AccountRole, DIContainer
+from common import DIContainer
 from monkey_island.cc.flask_utils import FlaskDIWrapper
 from monkey_island.cc.resources import (
     AgentBinaries,
@@ -41,14 +37,11 @@ from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import (
     register_agent_configuration_resources,
     register_authentication_resources,
+    setup_authentication,
 )
-from monkey_island.cc.services.authentication_service.role import Role
-from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.representations import output_json
-from monkey_island.cc.setup.mongo.mongo_setup import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT
 
 HOME_FILE = "index.html"
-AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes authentication token expiration time
 
 
 def serve_static_file(static_path):
@@ -74,83 +67,7 @@ def serve_home():
     return serve_static_file(HOME_FILE)
 
 
-def setup_authentication(app, data_dir):
-    # TODO: After we switch to token base authentication investigate the purpose
-    # of `SECRET_KEY` and `SECURITY_PASSWORD_SALT`, take into consideration
-    # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
-    # app.config["SECRET_KEY"] = flask_security_config["secret_key"]
-    # app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
-    app.config["SECURITY_LOGIN_URL"] = LOGIN_URL
-    app.config["SECURITY_LOGOUT_URL"] = LOGOUT_URL
-    app.config["SECURITY_REGISTER_URL"] = REGISTER_URL
-    app.config["SECURITY_USERNAME_ENABLE"] = True
-    app.config["SECURITY_USERNAME_REQUIRED"] = True
-    app.config["SECURITY_REGISTERABLE"] = True
-    app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
-
-    app.config["SECURITY_TOKEN_MAX_AGE"] = AUTH_EXPIRATION_TIME
-    # Ignore CSRF, because it's irrelevant for javascript applications
-    app.config["WTF_CSRF_CHECK_DEFAULT"] = False
-    app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
-    # Forbid sending authentication token in URL parameters
-    app.config["SECURITY_TOKEN_AUTHENTICATION_KEY"] = None
-    # Setting this to a negative value disables freshness checking and "verify"
-    # endpoints. We don't need them.
-    # https://flask-security-too.readthedocs.io/en/stable/configuration.html#SECURITY_FRESHNESS
-    app.config["SECURITY_FRESHNESS"] = timedelta(-1)
-
-    # The database object needs to be created after we configure the flask application
-    db = MongoEngine(app)
-    user_datastore = MongoEngineUserDatastore(db, User, Role)
-
-    _create_roles(user_datastore)
-
-    # Only one user can be registered in the Island, so we need a custom validator
-    def validate_no_user_exists_already(_, field):
-        if user_datastore.find_user():
-            raise ValidationError("A user already exists. Only a single user can be registered.")
-
-    class CustomConfirmRegisterForm(ConfirmRegisterForm):
-        # We don't use the email, but the field is required by ConfirmRegisterForm.
-        # Email validators need to be overriden, otherwise an error about invalid email is raised.
-        # Added custom validator to the email field because we have to override
-        # email validators anyway.
-        email = StringField(
-            "Email", default="dummy@dummy.com", validators=[validate_no_user_exists_already]
-        )
-
-        def to_dict(self, only_user):
-            registration_dict = super().to_dict(only_user)
-            registration_dict.update({"roles": [AccountRole.ISLAND_INTERFACE.name]})
-            return registration_dict
-
-    app.security = Security(
-        app,
-        user_datastore,
-        confirm_register_form=CustomConfirmRegisterForm,
-    )
-    # Force Security to always respond as an API rather than HTTP server
-    # This will cause 401 response instead of 301 for unauthorized requests for example
-    app.security._want_json = lambda _request: True
-
-    # app.session_interface = disable_session_cookies()
-
-
-def _create_roles(user_datastore: UserDatastore):
-    user_datastore.find_or_create_role(name=AccountRole.ISLAND_INTERFACE.name)
-    user_datastore.find_or_create_role(name=AccountRole.AGENT.name)
-
-
-def init_app_config(app, mongo_url, data_dir: Path):
-    app.config["MONGO_URI"] = mongo_url
-    app.config["MONGODB_SETTINGS"] = [
-        {
-            "db": MONGO_DB_NAME,
-            "host": MONGO_DB_HOST,
-            "port": MONGO_DB_PORT,
-        }
-    ]
-
+def init_app_config(app, data_dir: Path):
     # By default, Flask sorts keys of JSON objects alphabetically.
     # See https://flask.palletsprojects.com/en/1.1.x/config/#JSON_SORT_KEYS.
     app.config["JSON_SORT_KEYS"] = False
@@ -214,7 +131,6 @@ def init_rpc_endpoints(api: FlaskDIWrapper):
 
 
 def init_app(
-    mongo_url: str,
     container: DIContainer,
     data_dir: Path,
 ):
@@ -229,7 +145,7 @@ def init_app(
     api = flask_restful.Api(app)
     api.representations = {"application/json": output_json}
 
-    init_app_config(app, mongo_url, data_dir)
+    init_app_config(app, data_dir)
     init_app_url_rules(app)
 
     flask_resource_manager = FlaskDIWrapper(api, container)
