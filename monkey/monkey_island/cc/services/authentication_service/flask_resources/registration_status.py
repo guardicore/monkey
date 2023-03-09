@@ -1,5 +1,6 @@
 from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.services.authentication_service import AuthenticationService
+
+from ..authentication_service import AuthenticationService
 
 
 class RegistrationStatus(AbstractResource):

@@ -7,10 +7,9 @@ from flask_security.views import login
 
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
-from monkey_island.cc.services.authentication_service import AuthenticationService
-from monkey_island.cc.services.authentication_service.flask_resources.utils import (
-    get_username_password_from_request,
-)
+
+from ..authentication_service import AuthenticationService
+from .utils import get_username_password_from_request
 
 logger = logging.getLogger(__name__)
 

@@ -11,14 +11,15 @@ from wtforms import StringField, ValidationError
 
 from common import AccountRole
 from common.utils.file_utils import open_new_securely_permissioned_file
-from monkey_island.cc.services.authentication_service.role import Role
-from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.setup.mongo.mongo_setup import (
     MONGO_DB_HOST,
     MONGO_DB_NAME,
     MONGO_DB_PORT,
     MONGO_URL,
 )
+
+from .role import Role
+from .user import User
 
 SECRET_FILE_NAME = ".flask_security_configuration.json"
 AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes authentication token expiration time
