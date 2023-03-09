@@ -26,6 +26,7 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
+from monkey_island.cc.services.authentication_service.flask_resources import RegisterAgent
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
@@ -90,6 +91,7 @@ def init_api_resources(api: FlaskDIWrapper):
 def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Root)
 
+    api.add_resource(RegisterAgent)
     api.add_resource(Agents)
     api.add_resource(LocalRun)
 
