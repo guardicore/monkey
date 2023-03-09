@@ -139,6 +139,3 @@ Role.permissions
 # Remove after #2952
 generate_brute_force_credentials
 secret_type_filter
-
-# Remove after #2817
-Agent.registration_time
