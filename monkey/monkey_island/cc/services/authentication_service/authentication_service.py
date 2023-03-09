@@ -1,7 +1,8 @@
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-from monkey_island.cc.services.authentication_service.user import User
+
+from .user import User
 
 
 class AuthenticationService:
