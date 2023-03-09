@@ -4,12 +4,13 @@ from unittest.mock import MagicMock
 import pytest
 from flask import Response
 
-from monkey_island.cc.resources.auth import Login
 from monkey_island.cc.services.authentication_service import AuthenticationService
+from monkey_island.cc.services.authentication_service.flask_resources.login import Login
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
 TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
+FLASK_LOGIN_IMPORT = "monkey_island.cc.services.authentication_service.flask_resources.login.login"
 
 
 @pytest.fixture
@@ -26,7 +27,7 @@ def test_credential_parsing(
     monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
 ):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.login.login",
+        FLASK_LOGIN_IMPORT,
         lambda: Response(
             status=HTTPStatus.OK,
         ),
@@ -43,7 +44,7 @@ def test_empty_credentials(make_login_request, mock_authentication_service: Auth
 
 def test_login_successful(make_login_request, monkeypatch):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.login.login",
+        FLASK_LOGIN_IMPORT,
         lambda: Response(
             status=HTTPStatus.OK,
         ),
@@ -58,7 +59,7 @@ def test_login_failure(
     monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
 ):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.login.login",
+        FLASK_LOGIN_IMPORT,
         lambda: Response(
             status=HTTPStatus.BAD_REQUEST,
         ),
@@ -90,7 +91,7 @@ def test_login_invalid_request(
     make_login_request,
     mock_authentication_service: AuthenticationService,
 ):
-    monkeypatch.setattr("monkey_island.cc.resources.auth.login.login", lambda: login_response)
+    monkeypatch.setattr(FLASK_LOGIN_IMPORT, lambda: login_response)
 
     response = make_login_request(b"{}")
 
@@ -102,7 +103,7 @@ def test_login_error(
     monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
 ):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.login.login",
+        FLASK_LOGIN_IMPORT,
         lambda: Response(
             status=HTTPStatus.OK,
         ),
