@@ -2,7 +2,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from monkey_island.cc.resources.auth import RegistrationStatus
+from monkey_island.cc.services.authentication_service.flask_resources.registration_status import (
+    RegistrationStatus,
+)
 
 REGISTRATION_STATUS_URL = RegistrationStatus.urls[0]
 

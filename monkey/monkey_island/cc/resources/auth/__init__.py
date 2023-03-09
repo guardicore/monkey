@@ -1,1 +1,0 @@
-from .registration_status import RegistrationStatus
