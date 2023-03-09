@@ -3,8 +3,8 @@ import json
 from flask import jsonify, make_response, request
 from flask_security import auth_token_required, roles_required
 
-from common import AccountRole
 from monkey_island.cc.flask_utils import AbstractResource
+from monkey_island.cc.services.authentication_service import AccountRole
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 
 

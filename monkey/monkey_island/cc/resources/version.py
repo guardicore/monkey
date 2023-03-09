@@ -2,9 +2,9 @@ import logging
 
 from flask_security import auth_token_required, roles_required
 
-from common import AccountRole
 from monkey_island.cc import Version as IslandVersion
 from monkey_island.cc.flask_utils import AbstractResource
+from monkey_island.cc.services.authentication_service import AccountRole
 
 logger = logging.getLogger(__name__)
 

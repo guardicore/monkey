@@ -9,9 +9,9 @@ from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
 from wtforms import StringField, ValidationError
 
-from common import AccountRole
 from common.utils.file_utils import open_new_securely_permissioned_file
 from monkey_island.cc.mongo_consts import MONGO_DB_HOST, MONGO_DB_NAME, MONGO_DB_PORT, MONGO_URL
+from monkey_island.cc.services.authentication_service import AccountRole
 
 from .role import Role
 from .user import User
