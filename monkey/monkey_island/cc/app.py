@@ -4,7 +4,6 @@ from pathlib import Path
 
 import flask_restful
 from flask import Flask, Response, send_from_directory
-from flask.sessions import SecureCookieSessionInterface
 from flask_mongoengine import MongoEngine
 from flask_security import ConfirmRegisterForm, MongoEngineUserDatastore, Security, UserDatastore
 from werkzeug.exceptions import NotFound
@@ -134,7 +133,7 @@ def setup_authentication(app, data_dir):
     # This will cause 401 response instead of 301 for unauthorized requests for example
     app.security._want_json = lambda _request: True
 
-    app.session_interface = disable_session_cookies()
+    # app.session_interface = disable_session_cookies()
 
 
 def _create_roles(user_datastore: UserDatastore):
@@ -159,19 +158,6 @@ def init_app_config(app, mongo_url, data_dir: Path):
     app.url_map.strict_slashes = False
 
     setup_authentication(app, data_dir)
-
-
-def disable_session_cookies() -> SecureCookieSessionInterface:
-    class CustomSessionInterface(SecureCookieSessionInterface):
-        """Prevent creating session from API requests."""
-
-        def should_set_cookie(self, *args, **kwargs):
-            return False
-
-        def save_session(self, *args, **kwargs):
-            return
-
-    return CustomSessionInterface()
 
 
 def init_app_url_rules(app):
