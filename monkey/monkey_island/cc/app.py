@@ -137,6 +137,7 @@ def setup_authentication(app, data_dir):
         app,
         user_datastore,
         confirm_register_form=CustomConfirmRegisterForm,
+        register_blueprint=False,
     )
     # Force Security to always respond as an API rather than HTTP server
     # This will cause 401 response instead of 301 for unauthorized requests for example
