@@ -31,7 +31,7 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.auth import Logout, RegistrationStatus
+from monkey_island.cc.resources.auth import RegistrationStatus
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
@@ -43,6 +43,7 @@ from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import register_agent_configuration_resources
 from monkey_island.cc.services.authentication_service.flask_resources.login import Login
+from monkey_island.cc.services.authentication_service.flask_resources.logout import  Logout
 from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 from monkey_island.cc.services.authentication_service.role import Role
 from monkey_island.cc.services.authentication_service.user import User
@@ -84,6 +85,9 @@ def setup_authentication(app, data_dir):
     # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
     app.config["SECRET_KEY"] = flask_security_config["secret_key"]
     app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
+    app.config["SECURITY_LOGIN_URL"] = LOGIN_URL
+    app.config["SECURITY_LOGOUT_URL"] = LOGOUT_URL
+    app.config["SECURITY_REGISTER_URL"] = REGISTER_URL
     app.config["SECURITY_USERNAME_ENABLE"] = True
     app.config["SECURITY_USERNAME_REQUIRED"] = True
     app.config["SECURITY_REGISTERABLE"] = True
@@ -129,7 +133,6 @@ def setup_authentication(app, data_dir):
         app,
         user_datastore,
         confirm_register_form=CustomConfirmRegisterForm,
-        register_blueprint=False,
     )
     # Force Security to always respond as an API rather than HTTP server
     # This will cause 401 response instead of 301 for unauthorized requests for example

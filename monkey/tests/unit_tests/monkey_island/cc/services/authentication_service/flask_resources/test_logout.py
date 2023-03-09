@@ -3,12 +3,15 @@ from http import HTTPStatus
 import pytest
 from flask import Response
 
-from monkey_island.cc.resources.auth import Logout
 from monkey_island.cc.services.authentication_service import AuthenticationService
+from monkey_island.cc.services.authentication_service.flask_resources.logout import Logout
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
 TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
+FLASK_LOGOUT_IMPORT = (
+    "monkey_island.cc.services.authentication_service.flask_resources.logout.logout"
+)
 
 
 @pytest.fixture
@@ -37,7 +40,7 @@ def test_logout_failed(
     make_logout_request,
     mock_authentication_service: AuthenticationService,
 ):
-    monkeypatch.setattr("monkey_island.cc.resources.auth.logout.logout", lambda: logout_response)
+    monkeypatch.setattr(FLASK_LOGOUT_IMPORT, lambda: logout_response)
     response = make_logout_request(TEST_REQUEST)
 
     mock_authentication_service.handle_successful_logout.assert_not_called()
@@ -48,7 +51,7 @@ def test_logout_successful(
     monkeypatch, make_logout_request, mock_authentication_service: AuthenticationService
 ):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.logout.logout",
+        FLASK_LOGOUT_IMPORT,
         lambda: Response(
             status=HTTPStatus.OK,
         ),
