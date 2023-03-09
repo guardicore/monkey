@@ -11,15 +11,13 @@ from monkey_island.cc.services import AuthenticationService
 
 logger = logging.getLogger(__name__)
 
-LOGOUT_URL = "/api/logout"
-
 
 class Logout(AbstractResource):
     """
     A resource logging out an authenticated user
     """
 
-    urls = [LOGOUT_URL]
+    urls = ["/api/logout"]
 
     def __init__(self, authentication_service: AuthenticationService):
         self._authentication_service = authentication_service
