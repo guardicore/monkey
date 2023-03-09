@@ -31,7 +31,7 @@ from monkey_island.cc.resources import (
     ResetAgentConfiguration,
     TerminateAllAgents,
 )
-from monkey_island.cc.resources.auth import Login, Logout, Register, RegistrationStatus
+from monkey_island.cc.resources.auth import Login, Logout, RegistrationStatus
 from monkey_island.cc.resources.exploitations.monkey_exploitation import MonkeyExploitation
 from monkey_island.cc.resources.island_mode import IslandMode
 from monkey_island.cc.resources.local_run import LocalRun
@@ -42,6 +42,7 @@ from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import register_agent_configuration_resources
+from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 from monkey_island.cc.services.authentication_service.role import Role
 from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.representations import output_json

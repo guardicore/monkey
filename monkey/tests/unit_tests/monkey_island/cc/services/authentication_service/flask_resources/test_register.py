@@ -4,12 +4,15 @@ from unittest.mock import MagicMock
 import pytest
 from flask import Response
 
-from monkey_island.cc.resources.auth import Register
 from monkey_island.cc.services.authentication_service import AuthenticationService
+from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 
 USERNAME = "test_user"
 PASSWORD = "test_password"
 TEST_REQUEST = f'{{"username": "{USERNAME}", "password": "{PASSWORD}"}}'
+FLASK_REGISTER_IMPORT = (
+    "monkey_island.cc.services.authentication_service.flask_resources.register.register"
+)
 
 
 @pytest.fixture
@@ -35,7 +38,7 @@ def test_register_successful(
     monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
 ):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.register.register",
+        FLASK_REGISTER_IMPORT,
         lambda: Response(
             status=HTTPStatus.OK,
         ),
@@ -69,9 +72,7 @@ def test_register_invalid_request(
     make_registration_request,
     mock_authentication_service: AuthenticationService,
 ):
-    monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.register.register", lambda: register_response
-    )
+    monkeypatch.setattr(FLASK_REGISTER_IMPORT, lambda: register_response)
 
     response = make_registration_request(b"{}")
 
@@ -83,7 +84,7 @@ def test_register_error(
     monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
 ):
     monkeypatch.setattr(
-        "monkey_island.cc.resources.auth.register.register",
+        FLASK_REGISTER_IMPORT,
         lambda: Response(status=HTTPStatus.OK),
     )
 
