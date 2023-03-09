@@ -67,12 +67,10 @@ from monkey_island.cc.services import (
     AWSService,
     IAgentConfigurationService,
     build_agent_configuration_service,
-    build_authentication_service,
 )
 from monkey_island.cc.services.run_local_monkey import LocalMonkeyRunService
 from monkey_island.cc.setup.mongo.mongo_setup import MONGO_URL
 
-from .authentication_service import AuthenticationService
 from .reporting.report import ReportService
 
 logger = logging.getLogger(__name__)
@@ -250,7 +248,6 @@ def _log_agent_binary_hashes(agent_binary_repository: IAgentBinaryRepository):
 def _register_services(container: DIContainer):
     container.register_instance(AWSService, container.resolve(AWSService))
     container.register_instance(LocalMonkeyRunService, container.resolve(LocalMonkeyRunService))
-    container.register_instance(AuthenticationService, build_authentication_service(container))
     container.register_instance(AgentSignalsService, container.resolve(AgentSignalsService))
     container.register_instance(
         IAgentConfigurationService, build_agent_configuration_service(container)

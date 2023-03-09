@@ -90,8 +90,6 @@ def init_api_resources(api: FlaskDIWrapper):
 def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Root)
 
-    register_authentication_resources(api)
-
     api.add_resource(Agents)
     api.add_resource(LocalRun)
 
@@ -147,6 +145,8 @@ def init_app(
 
     init_app_config(app, data_dir)
     init_app_url_rules(app)
+
+    register_authentication_resources(api, container)
 
     flask_resource_manager = FlaskDIWrapper(api, container)
     init_api_resources(flask_resource_manager)
