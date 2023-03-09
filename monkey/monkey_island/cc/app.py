@@ -38,7 +38,6 @@ from monkey_island.cc.resources.ransomware_report import RansomwareReport
 from monkey_island.cc.resources.root import Root
 from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
-from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
 from monkey_island.cc.services import (
     register_agent_configuration_resources,
@@ -77,13 +76,11 @@ def serve_home():
 
 
 def setup_authentication(app, data_dir):
-    flask_security_config = generate_flask_security_configuration(data_dir)
-
     # TODO: After we switch to token base authentication investigate the purpose
     # of `SECRET_KEY` and `SECURITY_PASSWORD_SALT`, take into consideration
     # the discussion https://github.com/guardicore/monkey/pull/3006#discussion_r1116944571
-    app.config["SECRET_KEY"] = flask_security_config["secret_key"]
-    app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
+    # app.config["SECRET_KEY"] = flask_security_config["secret_key"]
+    # app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
     app.config["SECURITY_LOGIN_URL"] = LOGIN_URL
     app.config["SECURITY_LOGOUT_URL"] = LOGOUT_URL
     app.config["SECURITY_REGISTER_URL"] = REGISTER_URL
