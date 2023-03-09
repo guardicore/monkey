@@ -1,0 +1,1 @@
+from .register_resources import register_resources

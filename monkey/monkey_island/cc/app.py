@@ -40,12 +40,9 @@ from monkey_island.cc.resources.security_report import SecurityReport
 from monkey_island.cc.resources.version import Version
 from monkey_island.cc.server_utils import generate_flask_security_configuration
 from monkey_island.cc.server_utils.consts import MONKEY_ISLAND_ABS_PATH
-from monkey_island.cc.services import register_agent_configuration_resources
-from monkey_island.cc.services.authentication_service.flask_resources.login import Login
-from monkey_island.cc.services.authentication_service.flask_resources.logout import  Logout
-from monkey_island.cc.services.authentication_service.flask_resources.register import Register
-from monkey_island.cc.services.authentication_service.flask_resources.registration_status import (
-    RegistrationStatus,
+from monkey_island.cc.services import (
+    register_agent_configuration_resources,
+    register_authentication_resources,
 )
 from monkey_island.cc.services.authentication_service.role import Role
 from monkey_island.cc.services.authentication_service.user import User
@@ -192,10 +189,9 @@ def init_api_resources(api: FlaskDIWrapper):
 
 def init_restful_endpoints(api: FlaskDIWrapper):
     api.add_resource(Root)
-    api.add_resource(Register)
-    api.add_resource(RegistrationStatus)
-    api.add_resource(Login)
-    api.add_resource(Logout)
+
+    register_authentication_resources(api)
+
     api.add_resource(Agents)
     api.add_resource(LocalRun)
 
