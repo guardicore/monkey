@@ -8,17 +8,12 @@ from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError
 
 from common.utils.file_utils import create_secure_directory
+from monkey_island.cc.mongo_consts import MONGO_URL
 from monkey_island.cc.setup.mongo.mongo_db_process import MongoDbProcess
 
 DB_DIR_NAME = "db"
 MONGO_LOG_FILENAME = "mongodb.log"
-MONGO_DB_NAME = "monkey_island"
-MONGO_DB_HOST = "localhost"
-MONGO_DB_PORT = 27017
-MONGO_URL = os.environ.get(
-    "MONKEY_MONGO_URL",
-    "mongodb://{0}:{1}/{2}".format(MONGO_DB_HOST, MONGO_DB_PORT, MONGO_DB_NAME),
-)
+
 MINIMUM_MONGO_DB_VERSION_REQUIRED = "4.2.0"
 
 logger = logging.getLogger(__name__)
