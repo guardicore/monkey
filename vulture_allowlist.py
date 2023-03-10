@@ -127,7 +127,7 @@ AgentPlugin.supported_operating_systems
 
 HadoopPlugin
 
-# Remove after #2157
+# User model fields
 User.active
 User.password_hash
 User.fs_uniquifier
