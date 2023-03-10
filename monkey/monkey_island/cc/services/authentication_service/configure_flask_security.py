@@ -30,7 +30,7 @@ def setup_authentication(app, data_dir):
         }
     ]
 
-    flask_security_config = generate_flask_security_configuration(data_dir)
+    flask_security_config = _generate_flask_security_configuration(data_dir)
     app.config["SECRET_KEY"] = flask_security_config["secret_key"]
     app.config["SECURITY_PASSWORD_SALT"] = flask_security_config["password_salt"]
     app.config["SECURITY_USERNAME_ENABLE"] = True
@@ -84,10 +84,10 @@ def setup_authentication(app, data_dir):
     # This will cause 401 response instead of 301 for unauthorized requests for example
     app.security._want_json = lambda _request: True
 
-    app.session_interface = disable_session_cookies()
+    app.session_interface = _disable_session_cookies()
 
 
-def generate_flask_security_configuration(data_dir: Path) -> Dict[str, Any]:
+def _generate_flask_security_configuration(data_dir: Path) -> Dict[str, Any]:
     secret_file_path = str(data_dir / SECRET_FILE_NAME)
     try:
         with open(secret_file_path, "r") as secret_file:
@@ -108,7 +108,7 @@ def _create_roles(user_datastore: UserDatastore):
     user_datastore.find_or_create_role(name=AccountRole.AGENT.name)
 
 
-def disable_session_cookies() -> SecureCookieSessionInterface:
+def _disable_session_cookies() -> SecureCookieSessionInterface:
     class CustomSessionInterface(SecureCookieSessionInterface):
         """Prevent creating session from API requests."""
 
