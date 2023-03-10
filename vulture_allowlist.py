@@ -1,4 +1,5 @@
 from agent_plugins.exploiters.hadoop.plugin import Plugin as HadoopPlugin
+from agent_plugins.exploiters.smb.smb_options import SMBOptions
 from flask_security import Security
 
 from common import DIContainer
@@ -139,3 +140,7 @@ Role.permissions
 # Remove after #2952
 generate_brute_force_credentials
 secret_type_filter
+SMBOptions.agent_binary_upload_timeout
+SMBOptions.use_kerberos
+SMBOptions.rpc_connect_timeout
+SMBOptions.smb_connect_timeout
