@@ -1,6 +1,5 @@
 import json
 import secrets
-from datetime import timedelta
 from pathlib import Path
 from typing import Any, Dict
 
@@ -37,10 +36,6 @@ def setup_authentication(app, data_dir: Path):
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
     # Forbid sending authentication token in URL parameters
     app.config["SECURITY_TOKEN_AUTHENTICATION_KEY"] = None
-    # Setting this to a negative value disables freshness checking and "verify"
-    # endpoints. We don't need them.
-    # https://flask-security-too.readthedocs.io/en/stable/configuration.html#SECURITY_FRESHNESS
-    app.config["SECURITY_FRESHNESS"] = timedelta(-1)
 
     # The database object needs to be created after we configure the flask application
     db = MongoEngine(app)
