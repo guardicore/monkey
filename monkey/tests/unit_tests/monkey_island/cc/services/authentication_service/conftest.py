@@ -12,7 +12,7 @@ from monkey_island.cc.services.authentication_service.flask_resources import (
     Logout,
     Register,
     RegistrationStatus,
-    RegisterAgent,
+    OTPLogin,
 )
 
 
@@ -40,7 +40,7 @@ def get_mock_auth_app(authentication_facade: AuthenticationFacade):
         RegistrationStatus, *RegistrationStatus.urls, resource_class_args=(authentication_facade,)
     )
     api.add_resource(AgentOTP, *AgentOTP.urls)
-    api.add_resource(RegisterAgent, *RegisterAgent.urls)
+    api.add_resource(OTPLogin, *OTPLogin.urls)
 
     return app
 
