@@ -2,8 +2,7 @@ import json
 
 from flask import make_response, request
 
-from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
+from monkey_island.cc.flask_utils import AbstractResource, responses
 
 
 class AgentOTPLogin(AbstractResource):
@@ -30,7 +29,7 @@ class AgentOTPLogin(AbstractResource):
         except Exception:
             pass
 
-        return response_to_invalid_request()
+        return responses.make_response_to_invalid_request()
 
     def _validate_otp(self, otp: str):
         return len(otp) > 0

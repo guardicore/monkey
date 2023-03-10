@@ -5,8 +5,7 @@ from flask import Response, make_response
 from flask.typing import ResponseValue
 from flask_security.views import logout
 
-from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
+from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
 
@@ -27,10 +26,10 @@ class Logout(AbstractResource):
         try:
             response: ResponseValue = logout()
         except Exception:
-            return response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
 
         if not isinstance(response, Response):
-            return response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
         if response.status_code == HTTPStatus.OK:
             self._authentication_facade.handle_successful_logout()
 

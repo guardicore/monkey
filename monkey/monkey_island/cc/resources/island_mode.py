@@ -6,7 +6,7 @@ from flask import request
 from flask_security import auth_token_required, roles_required
 
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.flask_utils import AbstractResource
+from monkey_island.cc.flask_utils import AbstractResource, responses
 from monkey_island.cc.models import IslandMode as IslandModeEnum
 from monkey_island.cc.repositories import ISimulationRepository
 from monkey_island.cc.services.authentication_service import AccountRole
@@ -33,7 +33,7 @@ class IslandMode(AbstractResource):
             self._island_event_queue.publish(topic=IslandEventTopic.SET_ISLAND_MODE, mode=mode)
             return {}, HTTPStatus.NO_CONTENT
         except (AttributeError, json.decoder.JSONDecodeError):
-            return {}, HTTPStatus.BAD_REQUEST
+            return responses.make_response_to_invalid_request()
         except ValueError:
             return {}, HTTPStatus.UNPROCESSABLE_ENTITY
 
