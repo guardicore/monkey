@@ -6,14 +6,14 @@ from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
 
 
-class OTPLogin(AbstractResource):
+class AgentOTPLogin(AbstractResource):
     """
     A resource for logging in using an OTP
 
     A client may authenticate with the Island by providing a one-time password.
     """
 
-    urls = ["/api/otp-login"]
+    urls = ["/api/agent-otp-login"]
 
     def post(self):
         """
