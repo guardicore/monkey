@@ -6,19 +6,17 @@ from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
 
 
-class RegisterAgent(AbstractResource):
+class OTPLogin(AbstractResource):
     """
-    A resource for registering an Agent
+    A resource for logging in using an OTP
 
     Agents may register by providing a one-time password.
     """
 
-    urls = ["/api/register-agent"]
+    urls = ["/api/otp-login"]
 
     def post(self):
         """
-        Requests an authentication token
-
         Gets the one-time password from the request, and returns an authentication token
 
         :return: Authentication token in the response body
