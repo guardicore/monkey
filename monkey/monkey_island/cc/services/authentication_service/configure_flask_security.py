@@ -20,15 +20,8 @@ SECRET_FILE_NAME = ".flask_security_configuration.json"
 AUTH_EXPIRATION_TIME = 30 * 60  # 30 minutes authentication token expiration time
 
 
-def setup_authentication(app, data_dir):
-    app.config["MONGO_URI"] = MONGO_URL
-    app.config["MONGODB_SETTINGS"] = [
-        {
-            "db": MONGO_DB_NAME,
-            "host": MONGO_DB_HOST,
-            "port": MONGO_DB_PORT,
-        }
-    ]
+def setup_authentication(app, data_dir: Path):
+    _setup_flask_mongo(app)
 
     flask_security_config = _generate_flask_security_configuration(data_dir)
     app.config["SECRET_KEY"] = flask_security_config["secret_key"]
@@ -85,6 +78,17 @@ def setup_authentication(app, data_dir):
     app.security._want_json = lambda _request: True
 
     app.session_interface = _disable_session_cookies()
+
+
+def _setup_flask_mongo(app):
+    app.config["MONGO_URI"] = MONGO_URL
+    app.config["MONGODB_SETTINGS"] = [
+        {
+            "db": MONGO_DB_NAME,
+            "host": MONGO_DB_HOST,
+            "port": MONGO_DB_PORT,
+        }
+    ]
 
 
 def _generate_flask_security_configuration(data_dir: Path) -> Dict[str, Any]:
