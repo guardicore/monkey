@@ -5,8 +5,7 @@ from flask import Response, make_response, request
 from flask.typing import ResponseValue
 from flask_security.views import register
 
-from monkey_island.cc.flask_utils import AbstractResource
-from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
+from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
 from .utils import get_username_password_from_request
@@ -33,12 +32,12 @@ class Register(AbstractResource):
             username, password = get_username_password_from_request(request)
             response: ResponseValue = register()
         except Exception:
-            return response_to_invalid_request()
+            return responses.response_to_invalid_request()
 
         # Register view treat the request as form submit which may return something
         # that it is not a response
         if not isinstance(response, Response):
-            return response_to_invalid_request()
+            return responses.response_to_invalid_request()
 
         if response.status_code == HTTPStatus.OK:
             self._authentication_facade.handle_successful_registration(username, password)
