@@ -31,6 +31,7 @@ def setup_authentication(app, data_dir: Path):
     app.config["SECURITY_SEND_REGISTER_EMAIL"] = False
 
     app.config["SECURITY_TOKEN_MAX_AGE"] = AUTH_EXPIRATION_TIME
+    app.config["SECURITY_RETURN_GENERIC_RESPONSES"] = True
     # Ignore CSRF, because we don't store tokens in cookies
     app.config["WTF_CSRF_CHECK_DEFAULT"] = False
     app.config["SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS"] = True
