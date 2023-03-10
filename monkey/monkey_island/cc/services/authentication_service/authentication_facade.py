@@ -1,22 +1,20 @@
-from pathlib import Path
-
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
-from monkey_island.cc.models import IslandMode, User
+from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 
+from .user import User
 
-class AuthenticationService:
+
+class AuthenticationFacade:
     """
     A service for user authentication
     """
 
     def __init__(
         self,
-        data_dir: Path,
         repository_encryptor: ILockableEncryptor,
         island_event_queue: IIslandEventQueue,
     ):
-        self._data_dir = data_dir
         self._repository_encryptor = repository_encryptor
         self._island_event_queue = island_event_queue
 
@@ -28,7 +26,11 @@ class AuthenticationService:
         """
         return not User.objects.first()
 
-    def reset_island_data(self):
+    def handle_successful_registration(self, username: str, password: str):
+        self._reset_island_data()
+        self._reset_repository_encryptor(username, password)
+
+    def _reset_island_data(self):
         """
         Resets the island
         """
@@ -38,16 +40,22 @@ class AuthenticationService:
             topic=IslandEventTopic.SET_ISLAND_MODE, mode=IslandMode.UNSET
         )
 
-    def reset_repository_encryptor(self, username: str, password: str):
+    def _reset_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.reset_key()
         self._repository_encryptor.unlock(secret.encode())
 
-    def unlock_repository_encryptor(self, username: str, password: str):
+    def handle_successful_login(self, username: str, password: str):
+        self._unlock_repository_encryptor(username, password)
+
+    def _unlock_repository_encryptor(self, username: str, password: str):
         secret = _get_secret_from_credentials(username, password)
         self._repository_encryptor.unlock(secret.encode())
 
-    def lock_repository_encryptor(self):
+    def handle_successful_logout(self):
+        self._lock_repository_encryptor()
+
+    def _lock_repository_encryptor(self):
         self._repository_encryptor.lock()
 
 

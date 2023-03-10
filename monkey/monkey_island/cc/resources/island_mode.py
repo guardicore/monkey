@@ -5,11 +5,11 @@ from http import HTTPStatus
 from flask import request
 from flask_security import auth_token_required, roles_required
 
-from common import AccountRole
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.models import IslandMode as IslandModeEnum
 from monkey_island.cc.repositories import ISimulationRepository
+from monkey_island.cc.services.authentication_service import AccountRole
 
 logger = logging.getLogger(__name__)
 

@@ -1,13 +1,13 @@
 from flask import jsonify
 from flask_security import auth_token_required, roles_required
 
-from common import AccountRole
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.repositories import (
     IAgentEventRepository,
     IAgentPluginRepository,
     IMachineRepository,
 )
+from monkey_island.cc.services.authentication_service import AccountRole
 from monkey_island.cc.services.ransomware import ransomware_report
 
 

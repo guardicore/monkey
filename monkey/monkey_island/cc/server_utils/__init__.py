@@ -1,1 +1,0 @@
-from .setup_flask import generate_flask_security_configuration
