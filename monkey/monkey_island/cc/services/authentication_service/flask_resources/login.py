@@ -37,10 +37,10 @@ class Login(AbstractResource):
             username, password = get_username_password_from_request(request)
             response: ResponseValue = login()
         except Exception:
-            return responses.response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
 
         if not isinstance(response, Response):
-            return responses.response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
 
         if response.status_code == HTTPStatus.OK:
             self._authentication_facade.handle_successful_login(username, password)

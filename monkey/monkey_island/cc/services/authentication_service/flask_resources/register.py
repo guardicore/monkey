@@ -32,12 +32,12 @@ class Register(AbstractResource):
             username, password = get_username_password_from_request(request)
             response: ResponseValue = register()
         except Exception:
-            return responses.response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
 
         # Register view treat the request as form submit which may return something
         # that it is not a response
         if not isinstance(response, Response):
-            return responses.response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
 
         if response.status_code == HTTPStatus.OK:
             self._authentication_facade.handle_successful_registration(username, password)

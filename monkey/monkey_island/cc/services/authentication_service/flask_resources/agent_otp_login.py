@@ -29,7 +29,7 @@ class AgentOTPLogin(AbstractResource):
         except Exception:
             pass
 
-        return responses.response_to_invalid_request()
+        return responses.make_response_to_invalid_request()
 
     def _validate_otp(self, otp: str):
         return len(otp) > 0

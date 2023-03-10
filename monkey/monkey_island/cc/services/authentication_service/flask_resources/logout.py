@@ -26,10 +26,10 @@ class Logout(AbstractResource):
         try:
             response: ResponseValue = logout()
         except Exception:
-            return responses.response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
 
         if not isinstance(response, Response):
-            return responses.response_to_invalid_request()
+            return responses.make_response_to_invalid_request()
         if response.status_code == HTTPStatus.OK:
             self._authentication_facade.handle_successful_logout()
 
