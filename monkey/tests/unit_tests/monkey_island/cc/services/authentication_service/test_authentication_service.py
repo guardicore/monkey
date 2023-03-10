@@ -5,8 +5,8 @@ import pytest
 from monkey_island.cc.event_queue import IIslandEventQueue, IslandEventTopic
 from monkey_island.cc.models import IslandMode
 from monkey_island.cc.server_utils.encryption import ILockableEncryptor
-from monkey_island.cc.services.authentication_service.authentication_service import (
-    AuthenticationService,
+from monkey_island.cc.services.authentication_service.authentication_facade import (
+    AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.user import User
 
@@ -31,32 +31,32 @@ def mock_island_event_queue(autouse=True) -> IIslandEventQueue:
 
 
 @pytest.fixture
-def authentication_service(
+def authentication_facade(
     mock_flask_app,
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
-) -> AuthenticationService:
-    return AuthenticationService(mock_repository_encryptor, mock_island_event_queue)
+) -> AuthenticationFacade:
+    return AuthenticationFacade(mock_repository_encryptor, mock_island_event_queue)
 
 
-def test_needs_registration__true(authentication_service: AuthenticationService):
-    assert authentication_service.needs_registration()
+def test_needs_registration__true(authentication_facade: AuthenticationFacade):
+    assert authentication_facade.needs_registration()
 
 
 def test_needs_registration__false(
     monkeypatch,
-    authentication_service: AuthenticationService,
+    authentication_facade: AuthenticationFacade,
 ):
     User(username=USERNAME, password=PASSWORD).save()
-    assert not authentication_service.needs_registration()
+    assert not authentication_facade.needs_registration()
 
 
 def test_handle_successful_registration(
     mock_repository_encryptor: ILockableEncryptor,
     mock_island_event_queue: IIslandEventQueue,
-    authentication_service: AuthenticationService,
+    authentication_facade: AuthenticationFacade,
 ):
-    authentication_service.handle_successful_registration(USERNAME, PASSWORD)
+    authentication_facade.handle_successful_registration(USERNAME, PASSWORD)
 
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME
     assert mock_repository_encryptor.unlock.call_args[0][0] != PASSWORD
@@ -74,18 +74,18 @@ def test_handle_successful_registration(
 
 def test_handle_sucessful_logout(
     mock_repository_encryptor: ILockableEncryptor,
-    authentication_service: AuthenticationService,
+    authentication_facade: AuthenticationFacade,
 ):
-    authentication_service.handle_successful_logout()
+    authentication_facade.handle_successful_logout()
 
     mock_repository_encryptor.lock.assert_called_once()
 
 
 def test_handle_sucessful_login(
     mock_repository_encryptor: ILockableEncryptor,
-    authentication_service: AuthenticationService,
+    authentication_facade: AuthenticationFacade,
 ):
-    authentication_service.handle_successful_login(USERNAME, PASSWORD)
+    authentication_facade.handle_successful_login(USERNAME, PASSWORD)
 
     mock_repository_encryptor.unlock.assert_called_once()
     assert mock_repository_encryptor.unlock.call_args[0][0] != USERNAME

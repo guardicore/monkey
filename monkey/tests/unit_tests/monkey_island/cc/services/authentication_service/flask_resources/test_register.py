@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from flask import Response
 
-from monkey_island.cc.services.authentication_service.authentication_service import (
-    AuthenticationService,
+from monkey_island.cc.services.authentication_service.authentication_facade import (
+    AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.flask_resources.register import Register
 
@@ -28,16 +28,16 @@ def make_registration_request(flask_client):
 
 
 def test_register_failed(
-    monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
+    monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
 ):
     response = make_registration_request("{}")
 
-    mock_authentication_service.handle_successful_registration.assert_not_called()
+    mock_authentication_facade.handle_successful_registration.assert_not_called()
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_register_successful(
-    monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
+    monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
 ):
     monkeypatch.setattr(
         FLASK_REGISTER_IMPORT,
@@ -49,9 +49,7 @@ def test_register_successful(
     response = make_registration_request(TEST_REQUEST)
 
     assert response.status_code == HTTPStatus.OK
-    mock_authentication_service.handle_successful_registration.assert_called_with(
-        USERNAME, PASSWORD
-    )
+    mock_authentication_facade.handle_successful_registration.assert_called_with(USERNAME, PASSWORD)
 
 
 @pytest.mark.parametrize(
@@ -72,25 +70,25 @@ def test_register_invalid_request(
     monkeypatch,
     register_response,
     make_registration_request,
-    mock_authentication_service: AuthenticationService,
+    mock_authentication_facade: AuthenticationFacade,
 ):
     monkeypatch.setattr(FLASK_REGISTER_IMPORT, lambda: register_response)
 
     response = make_registration_request(b"{}")
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
-    mock_authentication_service.handle_successful_registration.assert_not_called()
+    mock_authentication_facade.handle_successful_registration.assert_not_called()
 
 
 def test_register_error(
-    monkeypatch, make_registration_request, mock_authentication_service: AuthenticationService
+    monkeypatch, make_registration_request, mock_authentication_facade: AuthenticationFacade
 ):
     monkeypatch.setattr(
         FLASK_REGISTER_IMPORT,
         lambda: Response(status=HTTPStatus.OK),
     )
 
-    mock_authentication_service.handle_successful_registration = MagicMock(side_effect=Exception())
+    mock_authentication_facade.handle_successful_registration = MagicMock(side_effect=Exception())
 
     response = make_registration_request(TEST_REQUEST)
 

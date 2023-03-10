@@ -8,7 +8,7 @@ from flask_security.views import logout
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
 
-from ..authentication_service import AuthenticationService
+from ..authentication_facade import AuthenticationFacade
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +20,8 @@ class Logout(AbstractResource):
 
     urls = ["/api/logout"]
 
-    def __init__(self, authentication_service: AuthenticationService):
-        self._authentication_service = authentication_service
+    def __init__(self, authentication_facade: AuthenticationFacade):
+        self._authentication_facade = authentication_facade
 
     def post(self):
         try:
@@ -32,6 +32,6 @@ class Logout(AbstractResource):
         if not isinstance(response, Response):
             return response_to_invalid_request()
         if response.status_code == HTTPStatus.OK:
-            self._authentication_service.handle_successful_logout()
+            self._authentication_facade.handle_successful_logout()
 
         return make_response(response)

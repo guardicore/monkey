@@ -3,8 +3,8 @@ from http import HTTPStatus
 import pytest
 from flask import Response
 
-from monkey_island.cc.services.authentication_service.authentication_service import (
-    AuthenticationService,
+from monkey_island.cc.services.authentication_service.authentication_facade import (
+    AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.flask_resources.logout import Logout
 
@@ -40,17 +40,17 @@ def test_logout_failed(
     monkeypatch,
     logout_response,
     make_logout_request,
-    mock_authentication_service: AuthenticationService,
+    mock_authentication_facade: AuthenticationFacade,
 ):
     monkeypatch.setattr(FLASK_LOGOUT_IMPORT, lambda: logout_response)
     response = make_logout_request(TEST_REQUEST)
 
-    mock_authentication_service.handle_successful_logout.assert_not_called()
+    mock_authentication_facade.handle_successful_logout.assert_not_called()
     assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
 def test_logout_successful(
-    monkeypatch, make_logout_request, mock_authentication_service: AuthenticationService
+    monkeypatch, make_logout_request, mock_authentication_facade: AuthenticationFacade
 ):
     monkeypatch.setattr(
         FLASK_LOGOUT_IMPORT,
@@ -62,4 +62,4 @@ def test_logout_successful(
     response = make_logout_request("")
 
     assert response.status_code == HTTPStatus.OK
-    mock_authentication_service.handle_successful_logout.assert_called_once()
+    mock_authentication_facade.handle_successful_logout.assert_called_once()

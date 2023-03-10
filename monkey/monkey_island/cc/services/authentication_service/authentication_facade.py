@@ -5,7 +5,7 @@ from monkey_island.cc.server_utils.encryption import ILockableEncryptor
 from .user import User
 
 
-class AuthenticationService:
+class AuthenticationFacade:
     """
     A service for user authentication
     """

@@ -8,7 +8,7 @@ from flask_security.views import login
 from monkey_island.cc.flask_utils import AbstractResource
 from monkey_island.cc.server_utils.response_utils import response_to_invalid_request
 
-from ..authentication_service import AuthenticationService
+from ..authentication_facade import AuthenticationFacade
 from .utils import get_username_password_from_request
 
 logger = logging.getLogger(__name__)
@@ -21,8 +21,8 @@ class Login(AbstractResource):
 
     urls = ["/api/login"]
 
-    def __init__(self, authentication_service: AuthenticationService):
-        self._authentication_service = authentication_service
+    def __init__(self, authentication_facade: AuthenticationFacade):
+        self._authentication_facade = authentication_facade
 
     def post(self):
         """
@@ -44,6 +44,6 @@ class Login(AbstractResource):
             return response_to_invalid_request()
 
         if response.status_code == HTTPStatus.OK:
-            self._authentication_service.handle_successful_login(username, password)
+            self._authentication_facade.handle_successful_login(username, password)
 
         return make_response(response)

@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from flask import Response
 
-from monkey_island.cc.services.authentication_service.authentication_service import (
-    AuthenticationService,
+from monkey_island.cc.services.authentication_service.authentication_facade import (
+    AuthenticationFacade,
 )
 from monkey_island.cc.services.authentication_service.flask_resources.login import Login
 
@@ -26,7 +26,7 @@ def make_login_request(flask_client):
 
 
 def test_credential_parsing(
-    monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
+    monkeypatch, make_login_request, mock_authentication_facade: AuthenticationFacade
 ):
     monkeypatch.setattr(
         FLASK_LOGIN_IMPORT,
@@ -36,12 +36,12 @@ def test_credential_parsing(
     )
 
     make_login_request(TEST_REQUEST)
-    mock_authentication_service.handle_successful_login.assert_called_with(USERNAME, PASSWORD)
+    mock_authentication_facade.handle_successful_login.assert_called_with(USERNAME, PASSWORD)
 
 
-def test_empty_credentials(make_login_request, mock_authentication_service: AuthenticationService):
+def test_empty_credentials(make_login_request, mock_authentication_facade: AuthenticationFacade):
     make_login_request("{}")
-    mock_authentication_service.handle_successful_login.assert_not_called()
+    mock_authentication_facade.handle_successful_login.assert_not_called()
 
 
 def test_login_successful(make_login_request, monkeypatch):
@@ -58,7 +58,7 @@ def test_login_successful(make_login_request, monkeypatch):
 
 
 def test_login_failure(
-    monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
+    monkeypatch, make_login_request, mock_authentication_facade: AuthenticationFacade
 ):
     monkeypatch.setattr(
         FLASK_LOGIN_IMPORT,
@@ -70,7 +70,7 @@ def test_login_failure(
     response = make_login_request(TEST_REQUEST)
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
-    mock_authentication_service.handle_successful_login.assert_not_called()
+    mock_authentication_facade.handle_successful_login.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -91,18 +91,18 @@ def test_login_invalid_request(
     monkeypatch,
     login_response,
     make_login_request,
-    mock_authentication_service: AuthenticationService,
+    mock_authentication_facade: AuthenticationFacade,
 ):
     monkeypatch.setattr(FLASK_LOGIN_IMPORT, lambda: login_response)
 
     response = make_login_request(b"{}")
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
-    mock_authentication_service.handle_successful_login.assert_not_called()
+    mock_authentication_facade.handle_successful_login.assert_not_called()
 
 
 def test_login_error(
-    monkeypatch, make_login_request, mock_authentication_service: AuthenticationService
+    monkeypatch, make_login_request, mock_authentication_facade: AuthenticationFacade
 ):
     monkeypatch.setattr(
         FLASK_LOGIN_IMPORT,
@@ -110,7 +110,7 @@ def test_login_error(
             status=HTTPStatus.OK,
         ),
     )
-    mock_authentication_service.handle_successful_login = MagicMock(side_effect=Exception())
+    mock_authentication_facade.handle_successful_login = MagicMock(side_effect=Exception())
 
     response = make_login_request(TEST_REQUEST)
 
