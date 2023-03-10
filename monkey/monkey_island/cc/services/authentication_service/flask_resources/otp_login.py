@@ -10,7 +10,7 @@ class OTPLogin(AbstractResource):
     """
     A resource for logging in using an OTP
 
-    Agents may register by providing a one-time password.
+    A client may authenticate with the Island by providing a one-time password.
     """
 
     urls = ["/api/otp-login"]
