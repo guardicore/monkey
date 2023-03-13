@@ -8,7 +8,7 @@ from flask_security.views import register
 from monkey_island.cc.flask_utils import AbstractResource, responses
 
 from ..authentication_facade import AuthenticationFacade
-from .utils import get_username_password_from_request
+from .utils import get_username_password_from_request, include_auth_token
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class Register(AbstractResource):
     def __init__(self, authentication_facade: AuthenticationFacade):
         self._authentication_facade = authentication_facade
 
+    @include_auth_token
     def post(self):
         """
         Registers a new user using flask security register

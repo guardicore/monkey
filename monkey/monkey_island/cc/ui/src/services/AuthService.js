@@ -12,9 +12,9 @@ export function getErrors(errors) {
 }
 
 export default class AuthService {
-  LOGIN_ENDPOINT = '/api/login?include_auth_token';
+  LOGIN_ENDPOINT = '/api/login';
   LOGOUT_ENDPOINT = '/api/logout';
-  REGISTRATION_API_ENDPOINT = '/api/register?include_auth_token';
+  REGISTRATION_API_ENDPOINT = '/api/register';
   REGISTRATION_STATUS_API_ENDPOINT = '/api/registration-status';
 
   TOKEN_NAME_IN_LOCALSTORAGE = 'authentication_token';

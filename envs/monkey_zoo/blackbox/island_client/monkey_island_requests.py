@@ -27,7 +27,7 @@ class MonkeyIslandRequests:
 
     def get_token_from_server(self):
         resp = requests.post(  # noqa: DUO123
-            self.addr + "api/login?include_auth_token",
+            self.addr + "api/login",
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
@@ -40,7 +40,7 @@ class MonkeyIslandRequests:
 
     def try_set_island_to_credentials(self):
         resp = requests.post(  # noqa: DUO123
-            self.addr + "api/register?include_auth_token",
+            self.addr + "api/register",
             json={"username": ISLAND_USERNAME, "password": ISLAND_PASSWORD},
             verify=False,
         )
