@@ -145,7 +145,6 @@ secret_type_filter
 
 SMBOptions.agent_binary_upload_timeout
 SMBOptions.use_kerberos
-SMBOptions.rpc_connect_timeout
 SMBOptions.smb_connect_timeout
 
 # Remove after #3077
