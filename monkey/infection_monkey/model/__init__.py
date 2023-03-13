@@ -17,14 +17,6 @@ MONKEY_CMDLINE_WINDOWS = "%s %%(monkey_path)s %s" % (
     CMD_PREFIX,
     MONKEY_ARG,
 )
-DROPPER_CMDLINE_DETACHED_WINDOWS = "%s start cmd /c %%(dropper_path)s %s" % (
-    CMD_PREFIX,
-    DROPPER_ARG,
-)
-MONKEY_CMDLINE_DETACHED_WINDOWS = "%s start cmd /c %%(monkey_path)s %s" % (
-    CMD_PREFIX,
-    MONKEY_ARG,
-)
 
 # Commands used for downloading monkeys
 POWERSHELL_HTTP_UPLOAD = (
