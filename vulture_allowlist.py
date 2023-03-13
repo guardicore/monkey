@@ -17,6 +17,7 @@ from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Agent, IslandMode, Machine
 from monkey_island.cc.repositories import IAgentEventRepository, MongoAgentEventRepository
+from monkey_island.cc.services.authentication_service.user import User
 from monkey_island.cc.services.reporting.exploitations.monkey_exploitation import MonkeyExploitation
 
 # Pydantic configurations are not picked up
@@ -130,12 +131,10 @@ HadoopPlugin
 
 # User model fields
 User.active
-User.password_hash
 User.fs_uniquifier
 User.roles
 User.get_by_id
 User.email
-Role.permissions
 
 # Remove after #2952
 generate_brute_force_credentials
