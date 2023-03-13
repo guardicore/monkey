@@ -32,6 +32,7 @@ def handle_response_parsing_errors(fn):
             json.JSONDecodeError,
             ValueError,
             TypeError,
+            KeyError,
         ) as err:
             raise IslandAPIResponseParsingError(err)
 
@@ -59,6 +60,11 @@ class HTTPIslandAPIClient(IIslandAPIClient):
         os_name = operating_system.value
         response = self.http_client.get(f"agent-binaries/{os_name}")
         return response.content
+
+    @handle_response_parsing_errors
+    def get_otp(self) -> str:
+        response = self.http_client.get("agent-otp")
+        return response.json()["otp"]
 
     @handle_response_parsing_errors
     def get_agent_plugin(

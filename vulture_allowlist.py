@@ -12,6 +12,7 @@ from infection_monkey.exploit.log4shell_utils.ldap_server import LDAPServerFacto
 from infection_monkey.exploit.tools import generate_brute_force_credentials, secret_type_filter
 from infection_monkey.exploit.zerologon import NetrServerPasswordSet, NetrServerPasswordSetResponse
 from infection_monkey.exploit.zerologon_utils.remote_shell import RemoteShell
+from infection_monkey.island_api_client import http_island_api_client
 from infection_monkey.transport.http import FileServHTTPRequestHandler
 from monkey_island.cc.deployment import Deployment
 from monkey_island.cc.models import Agent, IslandMode, Machine
@@ -139,3 +140,6 @@ Role.permissions
 # Remove after #2952
 generate_brute_force_credentials
 secret_type_filter
+
+# Remove after #3077
+http_island_api_client.get_otp
