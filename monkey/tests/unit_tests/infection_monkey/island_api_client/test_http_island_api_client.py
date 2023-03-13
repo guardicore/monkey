@@ -1,4 +1,5 @@
 import json
+from typing import Dict, List
 from unittest.mock import MagicMock
 from uuid import UUID
 
@@ -84,6 +85,12 @@ def build_api_client(http_client):
     return HTTPIslandAPIClient(agent_event_serializer_registry(), http_client)
 
 
+def _build_client_with_json_response(response):
+    client_stub = MagicMock()
+    client_stub.get.return_value.json.return_value = response
+    return build_api_client(client_stub)
+
+
 def test_island_api_client__get_agent_binary():
     fake_binary = b"agent-binary"
     os = OperatingSystem.LINUX
@@ -102,7 +109,7 @@ def test_island_api_client_send_events__serialization():
         Event1(source=AGENT_ID, timestamp=0, a=1),
         Event2(source=AGENT_ID, timestamp=0, b="hello"),
     ]
-    expected_json = [
+    expected_json: List[Dict] = [
         {
             "source": "80988359-a1cd-42a2-9b47-5b94b37cd673",
             "target": None,
@@ -144,12 +151,6 @@ def test_island_api_client__unhandled_exceptions():
 
     with pytest.raises(OSError):
         api_client.get_agent_signals(agent_id=AGENT_ID)
-
-
-def _build_client_with_json_response(response):
-    client_stub = MagicMock()
-    client_stub.get.return_value.json.return_value = response
-    return build_api_client(client_stub)
 
 
 def test_island_api_client_get_otp():
@@ -201,9 +202,7 @@ def test_island_api_client_get_agent_plugin_manifest__bad_json():
 @pytest.mark.parametrize("timestamp", [TIMESTAMP, None])
 def test_island_api_client_get_agent_signals(timestamp):
     expected_agent_signals = AgentSignals(terminate=timestamp)
-    client_spy = MagicMock()
-    client_spy.get.return_value.json.return_value = {"terminate": timestamp}
-    api_client = build_api_client(client_spy)
+    api_client = _build_client_with_json_response({"terminate": timestamp})
 
     actual_agent_signals = api_client.get_agent_signals(agent_id=AGENT_ID)
 
@@ -212,9 +211,7 @@ def test_island_api_client_get_agent_signals(timestamp):
 
 @pytest.mark.parametrize("timestamp", [TIMESTAMP, None])
 def test_island_api_client_get_agent_signals__bad_json(timestamp):
-    client_stub = MagicMock()
-    client_stub.get.return_value.json.return_value = {"terminate": timestamp, "discombobulate": 20}
-    api_client = build_api_client(client_stub)
+    api_client = _build_client_with_json_response({"terminate": timestamp, "discombobulate": 20})
 
     with pytest.raises(IslandAPIResponseParsingError):
         api_client.get_agent_signals(agent_id=AGENT_ID)
@@ -231,9 +228,7 @@ def test_island_api_client_get_agent_configuration_schema():
         "required": ["some_field", "other_field"],
         "additionalProperties": False,
     }
-    client_spy = MagicMock()
-    client_spy.get.return_value.json.return_value = AgentConfigurationSchema.schema()
-    api_client = build_api_client(client_spy)
+    api_client = _build_client_with_json_response(AgentConfigurationSchema.schema())
 
     actual_agent_configuration_schema = api_client.get_agent_configuration_schema()
     assert actual_agent_configuration_schema == expected_agent_configuration_schema
@@ -276,10 +271,9 @@ def test_island_api_client_get_credentials_for_propagation__parsing_error(raised
 
 
 def test_island_api_client_get_credentials_for_propagation():
-    client_spy = MagicMock()
-    client_spy.get.return_value.json.return_value = CREDENTIALS_DICTS
+    api_client = _build_client_with_json_response(CREDENTIALS_DICTS)
+
     expected_credentials = [Credentials(**cred) for cred in CREDENTIALS_DICTS]
-    api_client = build_api_client(client_spy)
 
     returned_credentials = api_client.get_credentials_for_propagation()
 
@@ -287,10 +281,7 @@ def test_island_api_client_get_credentials_for_propagation():
 
 
 def test_island_api_client_get_config():
-    client_stub = MagicMock()
-    client_stub.get.return_value.json.return_value = AgentConfiguration(**AGENT_CONFIGURATION).dict(
-        simplify=True
-    )
-    api_client = build_api_client(client_stub)
+    agent_config_dict = AgentConfiguration(**AGENT_CONFIGURATION).dict(simplify=True)
+    api_client = _build_client_with_json_response(agent_config_dict)
 
     assert api_client.get_config() == AgentConfiguration(**AGENT_CONFIGURATION)
