@@ -1,5 +1,5 @@
 DOCKER_DIR="$(realpath $(dirname $BASH_SOURCE[0]))"
-DOCKER_IMAGE_NAME="guardicore/monkey-island"
+DOCKER_IMAGE_NAME="infectionmonkey/monkey-island"
 
 source "$DOCKER_DIR/../common.sh"
 
