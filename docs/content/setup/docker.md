@@ -25,7 +25,7 @@ The Infection Monkey Docker container works on Linux only. It is not compatible 
 1. Pull the Monkey Island Docker image through DockerHub:
 
     ```bash
-    sudo docker pull infectionmonkey/monkey_island:v2.0.0
+    sudo docker pull infectionmonkey/monkey_island:latest
     ```
 
 or
