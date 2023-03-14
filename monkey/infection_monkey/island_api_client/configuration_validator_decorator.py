@@ -31,6 +31,9 @@ class ConfigurationValidatorDecorator(IIslandAPIClient):
     def get_agent_binary(self, operating_system: OperatingSystem) -> bytes:
         return self._island_api_client.get_agent_binary(operating_system)
 
+    def get_otp(self) -> str:
+        return self._island_api_client.get_otp()
+
     def get_agent_plugin(
         self, operating_system: OperatingSystem, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPlugin:
