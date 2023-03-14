@@ -37,9 +37,10 @@ HARD_CODED_FINGERPRINTER_MANIFESTS = {
         plugin_type=AgentPluginType.FINGERPRINTER,
         supported_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
         target_operating_systems=(OperatingSystem.LINUX, OperatingSystem.WINDOWS),
-        title="HTTP Fingerprinter",
+        title="MSSQL Fingerprinter",
         version="1.0.0",
-        description="Checks if host has HTTP/HTTPS ports open.",
+        description="Checks if Microsoft SQL service is running and tries to gather "
+        "information about it.",
         safe=True,
     ),
 }
