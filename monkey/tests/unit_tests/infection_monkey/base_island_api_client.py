@@ -19,6 +19,9 @@ class BaseIslandAPIClient(IIslandAPIClient):
     def get_agent_plugin(self, plugin_type: AgentPluginType, plugin_name: str) -> AgentPlugin:
         pass
 
+    def get_otp(self):
+        pass
+
     def get_agent_plugin_manifest(
         self, plugin_type: AgentPluginType, plugin_name: str
     ) -> AgentPluginManifest:
