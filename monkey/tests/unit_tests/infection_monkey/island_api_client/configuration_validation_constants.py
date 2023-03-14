@@ -195,23 +195,6 @@ SCHEMA = {
                             "link": "https://techdocs.akamai.com/infection-monkey/docs/log4shell/",
                             "properties": {},
                         },
-                        "SMBExploiter": {
-                            "type": "object",
-                            "title": "SMB Exploiter",
-                            "safe": True,
-                            "description": "Brute forces using credentials provided by user and hashes gathered by mimikatz.",
-                            "link": "https://techdocs.akamai.com/infection-monkey/docs/smbexec/",
-                            "properties": {
-                                "smb_download_timeout": {
-                                    "title": "SMB download timeout",
-                                    "description": "Maximum time allowd for uploading the Agent binary to the target",
-                                    "type": "number",
-                                    "default": 30,
-                                    "minimum": 0,
-                                    "maximum": 100,
-                                }
-                            },
-                        },
                         "PowerShellExploiter": {
                             "type": "object",
                             "title": "PowerShell Remoting Exploiter",
