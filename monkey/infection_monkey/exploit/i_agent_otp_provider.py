@@ -11,7 +11,7 @@ class IAgentOTPProvider(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def get_otp(self) -> str:
         """
-        Gets a one-time password (OTP)
+        Get a one-time password (OTP)
 
         :return: An OTP
         """
