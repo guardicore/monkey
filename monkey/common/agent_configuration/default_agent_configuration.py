@@ -77,7 +77,6 @@ EXPLOITERS = {
     "MSSQLExploiter": {},
     "PowerShellExploiter": {},
     "SSHExploiter": {},
-    "SMBExploiter": {"smb_download_timeout": 30},
     "WmiExploiter": {"smb_download_timeout": 30},
 }
 
